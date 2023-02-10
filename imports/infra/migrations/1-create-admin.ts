@@ -3,13 +3,13 @@ import { Permission, Role, Scope } from '@domain/roles/roles.enum';
 // @ts-ignore
 Migrations.add({
   down: () => {},
-  up: async () => {
-    await Meteor.users.removeAsync({});
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    // await Meteor.users.removeAsync({});
 
-    Roles.getAllRoles().forEach((role) => {
-      // @ts-ignore
-      Roles.deleteRole(role._id);
-    });
+    // Roles.getAllRoles().forEach((role) => {
+    //   // @ts-ignore
+    //   Roles.deleteRole(role._id);
+    // });
 
     Roles.createRole(Role.Admin);
 
@@ -48,25 +48,9 @@ Migrations.add({
         await Meteor.users.removeAsync(userId);
       }
     }
-  },
+
+    next();
+  }),
+
   version: 1,
-});
-
-// @ts-ignore
-Migrations.add({
-  down: () => {},
-  up: async () => {
-    await Meteor.users.removeAsync({});
-
-    console.log('about to sleep');
-
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(undefined);
-      }, 3000);
-    });
-
-    console.log('woke up');
-  },
-  version: 2,
 });
