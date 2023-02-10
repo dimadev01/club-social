@@ -1,0 +1,5 @@
+{
+  "autoFormat": "onSave",
+  "emptyLinesBetweenGroups": 0,
+  "wrappingStyle": "prettier"
+}

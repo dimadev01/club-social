@@ -1,0 +1,16 @@
+{
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "alias": {
+          "@kernel": "./imports/kernel",
+          "@infra": "./imports/infra",
+          "@domain": "./imports/domain",
+          "@ui": "./imports/ui",
+          "@shared": "./imports/shared"
+        }
+      }
+    ]
+  ]
+}
