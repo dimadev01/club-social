@@ -1,44 +1,37 @@
 import 'reflect-metadata';
+import '@infra/publications/meteor-publications';
 import { Accounts } from 'meteor/accounts-base';
-import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
-import { Permission, Role, Scope } from '@domain/roles/roles.enum';
+import { MigrationsService } from '@infra/migrations/migrations';
 import { Logger } from '@kernel/logger/logger.service';
 
 @singleton()
 export class ServerStartup {
-  public constructor(private readonly _logger: Logger) {}
+  // #region Constructors (1)
+
+  public constructor(
+    private readonly _logger: Logger,
+    private readonly _migrations: MigrationsService
+  ) {}
+
+  // #endregion Constructors (1)
+
+  // #region Public Methods (1)
 
   public async start() {
     this._configureEmails();
 
-    await this._createUserAdmin();
-
-    await this._configureRoles();
+    this._migrate();
 
     if (Meteor.isProduction) {
       this._logger.info('Server startup completed');
     }
   }
 
-  private async _configureRoles() {
-    if ((await Roles.getAllRoles().countAsync()) > 0) {
-      return;
-    }
+  // #endregion Public Methods (1)
 
-    Roles.createRole(Role.Admin);
-
-    Roles.createRole(Role.Member);
-
-    Roles.createRole(Role.Staff);
-
-    Roles.createRole(Permission.Write);
-
-    Roles.createRole(Permission.Delete);
-
-    Roles.createRole(Permission.Read);
-  }
+  // #region Private Methods (4)
 
   private _configureEmails() {
     if (Meteor.isDevelopment) {
@@ -53,39 +46,11 @@ export class ServerStartup {
       'Club Social <info@clubsocialmontegrande.ar>';
   }
 
-  private async _createUserAdmin() {
-    // await Meteor.users.removeAsync({});
-
-    if ((await Meteor.users.find().countAsync()) > 0) {
-      return;
-    }
-
-    let userId: string | null = null;
-
-    try {
-      // @ts-ignore
-      userId = await Accounts.createUserVerifyingEmail({
-        email: 'info@clubsocialmontegrande.ar',
-        password: '3214',
-        profile: {
-          firstName: 'Admin',
-          lastName: 'Admin',
-        },
-      });
-
-      if (userId) {
-        Roles.addUsersToRoles(
-          userId,
-          [Permission.Delete, Permission.Read, Permission.Write],
-          Scope.Users
-        );
-      }
-    } catch (error) {
-      if (userId) {
-        await Meteor.users.removeAsync(userId);
-      }
-    }
+  private _migrate() {
+    this._migrations.start();
   }
+
+  // #endregion Private Methods (4)
 }
 
 Meteor.startup(async () => {

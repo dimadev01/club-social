@@ -3,13 +3,22 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { Routes } from '@ui/Routes/Routes';
 
 export const App = () => {
-  const { user } = useTracker(() => {
+  const { user, isLoggingIn } = useTracker(() => {
     const meteorUser = Meteor.user();
 
-    return { user: meteorUser };
+    const meteorLoggingIn = Meteor.loggingIn();
+
+    return {
+      isLoggingIn: meteorLoggingIn,
+      user: meteorUser,
+    };
   });
 
   console.log(user);
+
+  if (isLoggingIn) {
+    return <>Loading</>;
+  }
 
   return (
     <React.StrictMode>
