@@ -3,7 +3,7 @@ import '@infra/publications/meteor-publications';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
-import { MigrationsService } from '@infra/migrations/migrations';
+import { MigrationsService } from '@infra/migrations/migrations.service';
 import { Logger } from '@kernel/logger/logger.service';
 
 @singleton()

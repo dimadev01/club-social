@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "maildev",
+      "command": "meteor npm run maildev"
+    },
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "meteor",
+      "command": "meteor npm start"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "app",
+      "configurations": ["maildev", "meteor"]
+    }
+  ]
+}
