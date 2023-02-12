@@ -1,15 +1,14 @@
 import React from 'react';
-import { Breadcrumb, Card, Form, Input, message, Select, Spin } from 'antd';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { Breadcrumb, Card, Form, Input, Select, Spin } from 'antd';
+import { NavLink, useParams } from 'react-router-dom';
 import { Role } from '@domain/roles/roles.enum';
-import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
-import { MethodsEnum } from '@infra/methods/methods.enum';
-import { useMutation } from '@tanstack/react-query';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { NotFound } from '@ui/components/NotFound';
 import { PageHeader } from '@ui/components/PageHeader';
-import { useUser } from '@ui/hooks/useUser';
+import { useCreateUser } from '@ui/hooks/users/useCreateUser';
+import { useUpdateUser } from '@ui/hooks/users/useUpdateUser';
+import { useUser } from '@ui/hooks/users/useUser';
 
 type FormValues = {
   email: string;
@@ -21,21 +20,11 @@ type FormValues = {
 export const UsersDetailPage = () => {
   const { id } = useParams<{ id?: string }>();
 
-  const navigate = useNavigate();
-
   const { data, fetchStatus } = useUser(id);
 
-  const createUser = useMutation<string, Error, CreateUserRequestDto>(
-    [MethodsEnum.UsersCreate],
-    (request) => Meteor.callAsync(MethodsEnum.UsersCreate, request),
-    {
-      onSuccess: (userId: string) => {
-        message.success('Usuario creado');
+  const createUser = useCreateUser();
 
-        navigate(`${AppUrl.Users}/${userId}`);
-      },
-    }
-  );
+  const updateUser = useUpdateUser();
 
   const handleSubmit = (values: FormValues) => {
     if (!id) {
@@ -46,11 +35,11 @@ export const UsersDetailPage = () => {
         role: values.role,
       });
     } else {
-      createUser.mutate({
+      updateUser.mutate({
         email: values.email,
         firstName: values.firstName,
+        id,
         lastName: values.lastName,
-        role: values.role,
       });
     }
   };
@@ -128,8 +117,8 @@ export const UsersDetailPage = () => {
 
           <Button
             type="primary"
-            disabled={createUser.isLoading}
-            loading={createUser.isLoading}
+            disabled={createUser.isLoading || updateUser.isLoading}
+            loading={createUser.isLoading || updateUser.isLoading}
             htmlType="submit"
           >
             Guardar

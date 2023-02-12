@@ -5,6 +5,7 @@ import { AppUrl } from '@ui/app.enum';
 import { EnrollPage } from '@ui/pages/EnrollPage';
 import { HomePage } from '@ui/pages/HomePage';
 import { LoginPage } from '@ui/pages/LoginPage';
+import { LoginPasswordlessPage } from '@ui/pages/LoginPasswordlessPage';
 import { LogoutPage } from '@ui/pages/LogoutPage';
 import { UsersDetailPage } from '@ui/pages/UsersEditPage';
 import { UsersPage } from '@ui/pages/UsersPage';
@@ -29,6 +30,14 @@ const router = createBrowserRouter([
       </PublicRoute>
     ),
     path: AppUrl.Login,
+  },
+  {
+    element: (
+      <PublicRoute>
+        <LoginPasswordlessPage />
+      </PublicRoute>
+    ),
+    path: AppUrl.LoginPasswordless,
   },
   {
     element: <LogoutPage />,

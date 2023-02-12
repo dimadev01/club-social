@@ -7,7 +7,7 @@ import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class RemoveUserUseCase
-  extends UseCase
+  extends UseCase<RemoveUserRequestDto>
   implements IUseCase<RemoveUserRequestDto, undefined>
 {
   public async execute(

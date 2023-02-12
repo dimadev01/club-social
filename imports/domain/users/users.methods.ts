@@ -9,6 +9,8 @@ import { GetUsersRequestDto } from '@domain/users/use-cases/get-users/get-users-
 import { GetUsersUseCase } from '@domain/users/use-cases/get-users/get-users.use-case';
 import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
 import { RemoveUserUseCase } from '@domain/users/use-cases/remove-user/remove-user.use-case';
+import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update-user-request.dto';
+import { UpdateUserUseCase } from '@domain/users/use-cases/update-user/update-user.use-case';
 import { BaseMethod } from '@infra/methods/methods.base';
 import { MethodsEnum } from '@infra/methods/methods.enum';
 
@@ -19,23 +21,31 @@ export class UsersMethods extends BaseMethod {
     private readonly _getUserUseCase: GetUserUseCase,
     private readonly _createUserUseCase: CreateUserUseCase,
     private readonly _getUserByToken: GetUserByTokenUseCase,
-    private readonly _removeUserUseCase: RemoveUserUseCase
+    private readonly _removeUserUseCase: RemoveUserUseCase,
+    private readonly _updateUserUseCase: UpdateUserUseCase
   ) {
     super();
   }
 
   public register() {
     Meteor.methods({
-      [MethodsEnum.UsersGet]: (request: GetUsersRequestDto) =>
+      [MethodsEnum.UsersGetGrid]: (request: GetUsersRequestDto) =>
         this.execute(this._getUsersUseCase, request),
-      [MethodsEnum.UsersGetOne]: (request: GetUserRequestDto) =>
+
+      [MethodsEnum.UsersGet]: (request: GetUserRequestDto) =>
         this.execute(this._getUserUseCase, request),
+
+      [MethodsEnum.UsersGetByToken]: (request: GetUserByTokenRequestDto) =>
+        this.execute(this._getUserByToken, request),
+
       [MethodsEnum.UsersCreate]: (request: CreateUserRequestDto) =>
         this.execute(this._createUserUseCase, request),
-      [MethodsEnum.UsersGetOneByToken]: (request: GetUserByTokenRequestDto) =>
-        this.execute(this._getUserByToken, request),
-      [MethodsEnum.UsersRemoveOne]: (request: RemoveUserRequestDto) =>
+
+      [MethodsEnum.UsersRemove]: (request: RemoveUserRequestDto) =>
         this.execute(this._removeUserUseCase, request),
+
+      [MethodsEnum.UsersUpdate]: (request: UpdateUserRequestDto) =>
+        this.execute(this._updateUserUseCase, request),
     });
   }
 }

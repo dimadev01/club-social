@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Form, Input, message } from 'antd';
+import { Accounts } from 'meteor/accounts-base';
 import { useTracker } from 'meteor/react-meteor-data';
 import { useNavigate } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
 
-type LoginFormValues = {
+type FormValues = {
   email: string;
   password: string;
 };
@@ -17,19 +18,34 @@ export const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const login = (values: LoginFormValues) => {
-    Meteor.loginWithPassword(values.email, values.password, (error) => {
-      if (error) {
-        message.error(error.message);
-      } else {
-        navigate(AppUrl.Home);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  const login = (values: FormValues) => {
+    setIsSendingEmail(true);
+
+    // @ts-ignore
+    Accounts.requestLoginTokenForUser(
+      { selector: values.email },
+      (error: unknown) => {
+        if (error && error instanceof Error) {
+          message.error(error.message);
+        } else {
+          navigate(AppUrl.LoginPasswordless.replace(':email', values.email));
+        }
       }
-    });
+    );
+    // Meteor.loginWithPassword(values.email, values.password, (error) => {
+    //   if (error) {
+    //     message.error(error.message);
+    //   } else {
+    //     navigate(AppUrl.Home);
+    //   }
+    // });
   };
 
   return (
     <CenteredLayout>
-      <Form<LoginFormValues>
+      <Form<FormValues>
         onFinish={(values) => login(values)}
         layout="vertical"
         requiredMark={false}
@@ -37,6 +53,7 @@ export const LoginPage = () => {
         <Form.Item
           label="Email"
           name="email"
+          className="mb-16"
           rules={[{ required: true }, { type: 'email' }]}
         >
           <Input
@@ -47,7 +64,7 @@ export const LoginPage = () => {
           />
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           className="mb-16"
           label="Clave"
           name="password"
@@ -58,18 +75,19 @@ export const LoginPage = () => {
             className="text-sm"
             placeholder="Ingresa tu clave"
           />
-        </Form.Item>
+        </Form.Item> */}
 
-        <Button
-          block
-          className="rounded-bl-none rounded-tr-none rounded-tl-[10px] rounded-br-[10px]"
-          type="primary"
-          htmlType="submit"
-          disabled={isLoggingIn}
-          loading={isLoggingIn}
-        >
-          Iniciar Sesión
-        </Button>
+        <div className="flex justify-between">
+          <Button
+            className="flex-1 rounded-bl-none rounded-tr-none rounded-tl-[10px] rounded-br-[10px]"
+            type="primary"
+            htmlType="submit"
+            disabled={isLoggingIn || isSendingEmail}
+            loading={isLoggingIn || isSendingEmail}
+          >
+            Iniciar Sesión
+          </Button>
+        </div>
       </Form>
     </CenteredLayout>
   );

@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import '@infra/publications/meteor-publications';
+import '@domain/users/users.collection';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
@@ -42,7 +43,10 @@ export class ServerStartup {
       process.env.MAIL_URL = Meteor.settings.MAIL_URL;
     }
 
-    Accounts.config({ sendVerificationEmail: true });
+    Accounts.config({
+      forbidClientAccountCreation: true,
+      sendVerificationEmail: true,
+    });
 
     Accounts.emailTemplates.siteName = 'Club Social Monte Grande';
 

@@ -32,11 +32,12 @@ const queryClient = new QueryClient({
 });
 
 export const App = () => {
-  useTracker(() => {
-    Meteor.user();
-  });
+  const { isLoggingIn } = useTracker(() => ({
+    isLoggingIn: Meteor.loggingIn(),
+    user: Meteor.user(),
+  }));
 
-  if (Meteor.loggingIn()) {
+  if (isLoggingIn) {
     return <>loggingIn</>;
   }
 

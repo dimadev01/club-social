@@ -6,7 +6,7 @@ import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetUserUseCase
-  extends UseCase
+  extends UseCase<GetUserRequestDto>
   implements IUseCase<GetUserRequestDto, Meteor.User | null>
 {
   public async execute(

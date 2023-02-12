@@ -5,6 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useUsersGrid = (request: GetUsersRequestDto) =>
   useQuery<GetUsersRequestDto, Error, GetUsersResponseDto>(
-    [MethodsEnum.UsersGet, request],
-    () => Meteor.callAsync(MethodsEnum.UsersGet, request)
+    [MethodsEnum.UsersGetGrid, request],
+    () => Meteor.callAsync(MethodsEnum.UsersGetGrid, request)
   );

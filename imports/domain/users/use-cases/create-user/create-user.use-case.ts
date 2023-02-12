@@ -8,7 +8,7 @@ import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class CreateUserUseCase
-  extends UseCase
+  extends UseCase<CreateUserRequestDto>
   implements IUseCase<CreateUserRequestDto, string>
 {
   public async execute(

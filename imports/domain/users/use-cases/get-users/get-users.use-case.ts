@@ -7,7 +7,7 @@ import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetUsersUseCase
-  extends UseCase
+  extends UseCase<GetUsersRequestDto>
   implements IUseCase<GetUsersRequestDto, PaginatedResponse<Meteor.User>>
 {
   public async execute(

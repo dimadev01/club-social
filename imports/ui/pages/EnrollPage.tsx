@@ -3,7 +3,7 @@ import { Button, Form, Input, message, Spin } from 'antd';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
-import { useUserByToken } from '@ui/hooks/useUserByToken';
+import { useUserByToken } from '@ui/hooks/users/useUserByToken';
 
 type LoginFormValues = {
   newPassword: string;

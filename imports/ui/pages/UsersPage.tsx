@@ -17,7 +17,7 @@ import { Button } from '@ui/components/Button';
 import { Grid } from '@ui/components/Grid';
 import { PageHeader } from '@ui/components/PageHeader';
 import { useGrid } from '@ui/hooks/useGrid';
-import { useUsersGrid } from '@ui/hooks/useUsersGrid';
+import { useUsersGrid } from '@ui/hooks/users/useUsersGrid';
 
 export const UsersPage = () => {
   const [gridState, setGridState] = useGrid();
@@ -28,8 +28,8 @@ export const UsersPage = () => {
   });
 
   const removeOne = useMutation<undefined, Error, RemoveUserRequestDto>(
-    [MethodsEnum.UsersRemoveOne],
-    (request) => Meteor.callAsync(MethodsEnum.UsersRemoveOne, request),
+    [MethodsEnum.UsersRemove],
+    (request) => Meteor.callAsync(MethodsEnum.UsersRemove, request),
     {
       onSuccess: refetch,
     }
@@ -89,10 +89,10 @@ export const UsersPage = () => {
               dataIndex: 'emails',
               render: (emails: Meteor.UserEmail[]) =>
                 emails.map((email) => (
-                  <>
+                  <React.Fragment key={email.address}>
                     <span>{email.address} </span>(
                     {email.verified ? <CheckOutlined /> : <CloseOutlined />})
-                  </>
+                  </React.Fragment>
                 )),
               title: 'Emails',
             },

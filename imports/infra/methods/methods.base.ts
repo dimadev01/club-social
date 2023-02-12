@@ -7,13 +7,16 @@ import { IUseCase } from '@kernel/use-case.interface';
 export class BaseMethod {
   protected async execute<TRequest, TResponse>(
     useCase: IUseCase<TRequest, TResponse>,
-    request?: TRequest | undefined
+    request: TRequest
   ): Promise<TResponse> {
     try {
       const result = await useCase.execute(request);
 
       if (result.isErr()) {
-        throw new Meteor.Error('bad-request', result.error.message);
+        throw new Meteor.Error(
+          MeteorErrorCode.BadRequest,
+          result.error.message
+        );
       }
 
       return result.value;
