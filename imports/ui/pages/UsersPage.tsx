@@ -1,7 +1,17 @@
 import React from 'react';
-import { Card } from 'antd';
+import { Breadcrumb, Card } from 'antd';
+import ButtonGroup from 'antd/es/button/button-group';
 import { NavLink } from 'react-router-dom';
-import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
+import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
+import { MethodsEnum } from '@infra/methods/methods.enum';
+import { useMutation } from '@tanstack/react-query';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Grid } from '@ui/components/Grid';
@@ -17,9 +27,22 @@ export const UsersPage = () => {
     pageSize: gridState.pageSize ?? 20,
   });
 
+  const removeOne = useMutation<undefined, Error, RemoveUserRequestDto>(
+    [MethodsEnum.UsersRemoveOne],
+    (request) => Meteor.callAsync(MethodsEnum.UsersRemoveOne, request),
+    {
+      onSuccess: refetch,
+    }
+  );
+
   return (
     <>
       <PageHeader>Usuarios</PageHeader>
+
+      <Breadcrumb className="mb-8">
+        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
+        <Breadcrumb.Item>Usuarios</Breadcrumb.Item>
+      </Breadcrumb>
 
       <Card
         extra={
@@ -62,8 +85,44 @@ export const UsersPage = () => {
               title: 'Nombre',
             },
             {
+              align: 'center',
+              dataIndex: 'emails',
+              render: (emails: Meteor.UserEmail[]) =>
+                emails.map((email) => (
+                  <>
+                    <span>{email.address} </span>(
+                    {email.verified ? <CheckOutlined /> : <CloseOutlined />})
+                  </>
+                )),
+              title: 'Emails',
+            },
+            {
+              align: 'center',
               dataIndex: ['profile', 'role'],
               title: 'Rol',
+            },
+            {
+              align: 'center',
+              render: (_, user: Meteor.User) => (
+                <ButtonGroup size="small">
+                  <Button
+                    type="ghost"
+                    htmlType="button"
+                    tooltip={{ title: 'Eliminar ' }}
+                    icon={<DeleteOutlined />}
+                    loading={removeOne.variables?.id === user._id}
+                    disabled={removeOne.variables?.id === user._id}
+                    onClick={() =>
+                      removeOne.mutate(
+                        { id: user._id },
+                        { onError: () => removeOne.reset() }
+                      )
+                    }
+                  />
+                </ButtonGroup>
+              ),
+              title: 'Actions',
+              width: 100,
             },
           ]}
         />

@@ -23,9 +23,7 @@ export const PrivateRoute: React.FC<Props> = ({
   }
 
   if (!Roles.userIsInRole(user, permission, scope)) {
-    alert('Not authorized');
-
-    return <Navigate to={AppUrl.Logout} />;
+    return <Navigate to={AppUrl.Home} />;
   }
 
   return <AuthRoute>{children}</AuthRoute>;

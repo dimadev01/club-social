@@ -14,3 +14,12 @@ export enum Permission {
   Read = 'read',
   Write = 'write',
 }
+
+export const AdminRole = {
+  [Scope.Users]: [Permission.Read, Permission.Write, Permission.Delete],
+  [Scope.Members]: [Permission.Read, Permission.Write, Permission.Delete],
+};
+
+export const StaffRole = {
+  [Scope.Members]: [Permission.Read, Permission.Write],
+};

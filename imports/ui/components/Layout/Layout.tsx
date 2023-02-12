@@ -12,9 +12,9 @@ type Props = {
 };
 
 export const Layout: React.FC<Props> = ({ children }) => {
-  const user = Meteor.user();
-
   const [menuKey, setMenuKey] = useState<string>(window.location.pathname);
+
+  const user = Meteor.user();
 
   if (!user) {
     return <Navigate to={AppUrl.Login} />;

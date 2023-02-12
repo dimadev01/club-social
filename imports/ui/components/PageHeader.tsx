@@ -6,7 +6,7 @@ type Props = TitleProps;
 
 export const PageHeader: React.FC<Props> = ({ children, ...props }) => (
   <Typography.Title
-    className="!text-4xl text-center sm:text-left !mb-14 !text-black !font-normal"
+    className="!text-3xl text-center sm:text-left !mb-10 !text-black !font-normal"
     {...props}
   >
     {children}

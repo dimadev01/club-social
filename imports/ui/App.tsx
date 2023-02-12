@@ -11,8 +11,8 @@ const queryClient = new QueryClient({
   defaultOptions: {
     mutations: {
       onError: (error: unknown) => {
-        if (error instanceof Error) {
-          message.error(error.message);
+        if (error instanceof Meteor.Error) {
+          message.error(error.reason);
         } else {
           message.error('An unknown error occurred.');
         }
@@ -20,8 +20,8 @@ const queryClient = new QueryClient({
     },
     queries: {
       onError: (error: unknown) => {
-        if (error instanceof Error) {
-          message.error(error.message);
+        if (error instanceof Meteor.Error) {
+          message.error(error.reason);
         } else {
           message.error('An unknown error occurred.');
         }
@@ -32,11 +32,9 @@ const queryClient = new QueryClient({
 });
 
 export const App = () => {
-  const { user } = useTracker(() => ({
-    user: Meteor.user(),
-  }));
-
-  console.log(user);
+  useTracker(() => {
+    Meteor.user();
+  });
 
   if (Meteor.loggingIn()) {
     return <>loggingIn</>;

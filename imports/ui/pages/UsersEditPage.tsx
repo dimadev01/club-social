@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { NotFound } from '@ui/components/NotFound';
+import { PageHeader } from '@ui/components/PageHeader';
 import { useUser } from '@ui/hooks/useUser';
 
 type FormValues = {
@@ -64,6 +65,8 @@ export const UsersDetailPage = () => {
 
   return (
     <>
+      <PageHeader>{data ? 'Editando usuario' : 'Nuevo Usuario'}</PageHeader>
+
       <Breadcrumb className="mb-8">
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>

@@ -18,8 +18,6 @@ interface Props<T> extends TableProps<T> {
   gridState?: GridUrlQueryParams;
   onStateChange?: React.Dispatch<React.SetStateAction<GridUrlQueryParams>>;
   showNew?: boolean;
-  showReload?: boolean;
-  showSearch?: boolean;
   tableTitle?: React.ReactNode;
   total: number;
 }
@@ -30,8 +28,6 @@ export function Grid<T extends object>({
   onStateChange,
   tableTitle,
   total,
-  showReload,
-  showNew,
   ...rest
 }: Props<T>): JSX.Element {
   const [state, setState] = useState<GridState<T> | undefined>(undefined);
@@ -64,6 +60,7 @@ export function Grid<T extends object>({
     <Table<T>
       bordered
       title={tableTitle ? renderTitle : undefined}
+      size="middle"
       onChange={(
         pagination: TablePaginationConfig,
         filters: Record<string, FilterValue | null>,

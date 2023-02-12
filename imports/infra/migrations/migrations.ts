@@ -1,4 +1,4 @@
-import { Permission, Role, Scope } from '@domain/roles/roles.enum';
+import { AdminRole, Permission, Role } from '@domain/roles/roles.enum';
 
 // @ts-ignore
 Migrations.add({
@@ -36,19 +36,17 @@ Migrations.add({
         email: 'info@clubsocialmontegrande.ar',
         password: '3214',
         profile: {
-          firstName: 'Club',
-          lastName: 'Social',
+          firstName: 'Club Social',
+          lastName: 'Administración',
           role: Role.Admin,
         },
       });
 
-      if (userId) {
-        Roles.addUsersToRoles(
-          userId,
-          [Permission.Delete, Permission.Read, Permission.Write],
-          Scope.Users
-        );
-      }
+      Object.entries(AdminRole).forEach(([key, value]) => {
+        if (userId) {
+          Roles.addUsersToRoles(userId, value, key);
+        }
+      });
     } catch (error) {
       if (userId) {
         await Meteor.users.removeAsync(userId);

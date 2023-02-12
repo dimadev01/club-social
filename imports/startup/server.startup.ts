@@ -49,6 +49,16 @@ export class ServerStartup {
     Accounts.emailTemplates.from =
       'Club Social <info@clubsocialmontegrande.ar>';
 
+    Accounts.emailTemplates.verifyEmail.html = (
+      user: Meteor.User,
+      url: string
+    ) => {
+      const urlWithoutHashtag = url.replace('#/', '');
+
+      // @ts-ignore
+      return `Hola ${user.profile?.firstName} ${user.profile?.lastName}, verifica tu cuenta: <a href="${urlWithoutHashtag}">${urlWithoutHashtag}</a>`;
+    };
+
     Accounts.emailTemplates.enrollAccount.html = (
       user: Meteor.User,
       url: string

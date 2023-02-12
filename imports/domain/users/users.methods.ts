@@ -1,10 +1,14 @@
 import { injectable } from 'tsyringe';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
+import { GetUserByTokenRequestDto } from '@domain/users/use-cases/get-user-by-token/get-user-by-token-request.dto';
+import { GetUserByTokenUseCase } from '@domain/users/use-cases/get-user-by-token/get-user-by-token.use-case';
 import { GetUserRequestDto } from '@domain/users/use-cases/get-user/get-user-request.dto';
 import { GetUserUseCase } from '@domain/users/use-cases/get-user/get-user.use-case';
 import { GetUsersRequestDto } from '@domain/users/use-cases/get-users/get-users-request.dto';
 import { GetUsersUseCase } from '@domain/users/use-cases/get-users/get-users.use-case';
+import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
+import { RemoveUserUseCase } from '@domain/users/use-cases/remove-user/remove-user.use-case';
 import { BaseMethod } from '@infra/methods/methods.base';
 import { MethodsEnum } from '@infra/methods/methods.enum';
 
@@ -13,7 +17,9 @@ export class UsersMethods extends BaseMethod {
   public constructor(
     private readonly _getUsersUseCase: GetUsersUseCase,
     private readonly _getUserUseCase: GetUserUseCase,
-    private readonly _createUserUseCase: CreateUserUseCase
+    private readonly _createUserUseCase: CreateUserUseCase,
+    private readonly _getUserByToken: GetUserByTokenUseCase,
+    private readonly _removeUserUseCase: RemoveUserUseCase
   ) {
     super();
   }
@@ -26,6 +32,10 @@ export class UsersMethods extends BaseMethod {
         this.execute(this._getUserUseCase, request),
       [MethodsEnum.UsersCreate]: (request: CreateUserRequestDto) =>
         this.execute(this._createUserUseCase, request),
+      [MethodsEnum.UsersGetOneByToken]: (request: GetUserByTokenRequestDto) =>
+        this.execute(this._getUserByToken, request),
+      [MethodsEnum.UsersRemoveOne]: (request: RemoveUserRequestDto) =>
+        this.execute(this._removeUserUseCase, request),
     });
   }
 }

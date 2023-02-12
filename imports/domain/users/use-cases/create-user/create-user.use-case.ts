@@ -1,6 +1,7 @@
+import { toLower } from 'lodash';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { Permission, Role, Scope } from '@domain/roles/roles.enum';
+import { Role, StaffRole } from '@domain/roles/roles.enum';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
@@ -17,7 +18,7 @@ export class CreateUserUseCase
 
     // @ts-ignore
     const userId = await Accounts.createUserVerifyingEmail({
-      email: request.email,
+      email: toLower(request.email),
       profile: {
         firstName: request.firstName,
         lastName: request.lastName,
@@ -26,11 +27,9 @@ export class CreateUserUseCase
     });
 
     if (request.role === Role.Staff) {
-      Roles.addUsersToRoles(
-        userId,
-        [Permission.Read, Permission.Write],
-        Scope.Members
-      );
+      Object.entries(StaffRole).forEach(([key, value]) => {
+        Roles.addUsersToRoles(userId, value, key);
+      });
     }
 
     return ok(userId);
