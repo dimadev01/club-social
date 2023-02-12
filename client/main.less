@@ -1,0 +1,77 @@
+@color-primary: #06afd6;
+@input-color: #9d9d9d;
+@background-color: #f8f9fd;
+
+div#react-target {
+  min-height: 100%;
+  height: 100%;
+}
+
+.ant-table a {
+  text-decoration: underline dashed @color-primary;
+}
+
+.ant-btn-primary {
+  background-color: @color-primary;
+}
+
+.cs-layout {
+  background-color: #fff;
+}
+
+.cs-layout-content {
+  @media (min-width: '992px') {
+    margin-left: 260px;
+  }
+}
+
+.cs-menu {
+  &.ant-menu-light.ant-menu-root.ant-menu-vertical {
+    border-inline-end: 0;
+  }
+
+  &.ant-menu-light:not(.ant-menu-horizontal)
+    .ant-menu-item:not(.ant-menu-item-selected):hover {
+    color: @color-primary;
+    background-color: transparent;
+  }
+
+  &.ant-menu-light:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    background-color: @background-color;
+    border-left: 0.475rem solid @color-primary;
+    color: @color-primary;
+  }
+
+  .ant-menu-item {
+    padding-left: 1.875rem;
+    height: 3.125rem;
+    line-height: 3.125rem;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    border-left: 0.475rem solid transparent;
+    display: flex;
+    align-items: center;
+
+    .ant-menu-item-icon + span {
+      margin-left: 1.3125rem;
+    }
+  }
+}
+
+.cs-sider.ant-layout-sider {
+  height: 100vh;
+
+  @media (min-width: '992px') {
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    position: fixed;
+    top: 0;
+  }
+
+  .ant-layout-sider-children {
+    display: flex;
+    flex-direction: column;
+  }
+}

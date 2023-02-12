@@ -5,7 +5,7 @@ import { injectable } from 'tsyringe';
 export class MigrationsService {
   public start() {
     // @ts-ignore
-    Migrations.migrateTo(0);
+    // Migrations.migrateTo(0);
 
     // @ts-ignore
     Migrations.migrateTo('latest');

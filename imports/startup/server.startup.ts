@@ -3,8 +3,9 @@ import '@infra/publications/meteor-publications';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
+import { UsersMethods } from '@domain/users/users.methods';
+import { Logger } from '@infra/logger/logger.service';
 import { MigrationsService } from '@infra/migrations/migrations.service';
-import { Logger } from '@kernel/logger/logger.service';
 
 @singleton()
 export class ServerStartup {
@@ -12,7 +13,8 @@ export class ServerStartup {
 
   public constructor(
     private readonly _logger: Logger,
-    private readonly _migrations: MigrationsService
+    private readonly _migrations: MigrationsService,
+    private readonly _usersMethods: UsersMethods
   ) {}
 
   // #endregion Constructors (1)
@@ -23,6 +25,8 @@ export class ServerStartup {
     this._configureEmails();
 
     this._migrate();
+
+    this._registerMethods();
 
     if (Meteor.isProduction) {
       this._logger.info('Server startup completed');
@@ -44,10 +48,24 @@ export class ServerStartup {
 
     Accounts.emailTemplates.from =
       'Club Social <info@clubsocialmontegrande.ar>';
+
+    Accounts.emailTemplates.enrollAccount.html = (
+      user: Meteor.User,
+      url: string
+    ) => {
+      const urlWithoutHashtag = url.replace('#/', '');
+
+      // @ts-ignore
+      return `Hola ${user.profile?.firstName} ${user.profile?.lastName}, activa tu cuenta: <a href="${urlWithoutHashtag}">${urlWithoutHashtag}</a>`;
+    };
   }
 
   private _migrate() {
     this._migrations.start();
+  }
+
+  private _registerMethods() {
+    this._usersMethods.register();
   }
 
   // #endregion Private Methods (4)

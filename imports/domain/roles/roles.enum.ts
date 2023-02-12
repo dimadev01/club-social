@@ -5,7 +5,7 @@ export enum Role {
 }
 
 export enum Scope {
-  Movements = 'movements',
+  Members = 'members',
   Users = 'users',
 }
 

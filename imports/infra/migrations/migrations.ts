@@ -13,17 +13,20 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await Meteor.users.removeAsync({});
+
+    Roles.getAllRoles().forEach((role) => {
+      // @ts-ignore
+      Roles.deleteRole(role._id);
+    });
+
     Roles.createRole(Role.Admin);
-
-    Roles.createRole(Role.Member);
-
-    Roles.createRole(Role.Staff);
 
     Roles.createRole(Permission.Write);
 
-    Roles.createRole(Permission.Delete);
-
     Roles.createRole(Permission.Read);
+
+    Roles.createRole(Permission.Delete);
 
     let userId: string | null = null;
 
@@ -35,6 +38,7 @@ Migrations.add({
         profile: {
           firstName: 'Club',
           lastName: 'Social',
+          role: Role.Admin,
         },
       });
 

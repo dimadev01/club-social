@@ -27,3 +27,4 @@ ostrio:loggermongo
 ostrio:loggerconsole
 alanning:roles
 percolate:migrations
+less

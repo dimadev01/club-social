@@ -1,5 +1,8 @@
 export enum AppUrl {
-  HOME = '/',
-  LOGIN = '/login',
-  LOGOUT = '/logout',
+  Home = '/',
+  Login = '/login',
+  Logout = '/logout',
+  Users = '/users',
+  UsersEdit = '/users/:id',
+  UsersNew = '/users/new',
 }

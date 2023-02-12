@@ -6,7 +6,7 @@ import { LoggerConsole as OstrioLoggerConsole } from 'meteor/ostrio:loggerconsol
 // @ts-ignore
 import { LoggerMongo as OstrioLoggerMongo } from 'meteor/ostrio:loggermongo';
 import { singleton } from 'tsyringe';
-import { ILoggerFormat } from '@kernel/logger/logger.types';
+import { ILoggerFormat } from '@infra/logger/logger.types';
 
 @singleton()
 export class Logger {

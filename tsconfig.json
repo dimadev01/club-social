@@ -14,6 +14,7 @@
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
+    "strictPropertyInitialization": false,
 
     /* Additional Checks */
     "noUnusedLocals": true,
@@ -27,7 +28,8 @@
       "@domain/*": ["./imports/domain/*"],
       "@ui/*": ["./imports/ui/*"],
       "@infra/*": ["./imports/infra/*"],
-      "@kernel/*": ["./imports/kernel/*"]
+      "@kernel/*": ["./imports/kernel/*"],
+      "@shared/*": ["./imports/shared/*"]
     },
     "moduleResolution": "node",
     "resolveJsonModule": true,

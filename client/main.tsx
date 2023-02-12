@@ -1,4 +1,5 @@
 import '../imports/startup/client.startup';
+import 'antd/dist/reset.css';
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { createRoot } from 'react-dom/client';
@@ -11,5 +12,9 @@ Meteor.startup(() => {
     throw new Error('No root element found');
   }
 
-  createRoot(root).render(<App />);
+  createRoot(root).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );
 });

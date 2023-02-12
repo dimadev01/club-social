@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
-import { Layout } from '@ui/Layout';
+import { Layout } from '@ui/components/Layout';
 
 type Props = {
   children: JSX.Element;
@@ -11,7 +11,7 @@ export const AuthRoute: React.FC<Props> = ({ children }) => {
   const user = Meteor.user();
 
   if (!user) {
-    return <Navigate to={AppUrl.LOGIN} />;
+    return <Navigate to={AppUrl.Login} />;
   }
 
   return <Layout>{children}</Layout>;

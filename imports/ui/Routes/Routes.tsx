@@ -2,27 +2,59 @@ import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Permission, Scope } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
-import { Home } from '@ui/Home';
-import { Login } from '@ui/Login';
-import { Logout } from '@ui/Logout';
-import { PrivateRoute } from '@ui/Routes/PrivateRoute';
+import { HomePage } from '@ui/pages/HomePage';
+import { LoginPage } from '@ui/pages/LoginPage';
+import { LogoutPage } from '@ui/pages/LogoutPage';
+import { UsersDetailPage } from '@ui/pages/UsersEditPage';
+import { UsersPage } from '@ui/pages/UsersPage';
+import { AuthRoute } from '@ui/routes/AuthRoute';
+import { PrivateRoute } from '@ui/routes/PrivateRoute';
+import { PublicRoute } from '@ui/routes/PublicRoute';
 
 const router = createBrowserRouter([
   {
     element: (
-      <PrivateRoute scope={Scope.Users} permission={Permission.Read}>
-        <Home />
+      <AuthRoute>
+        <HomePage />
+      </AuthRoute>
+    ),
+    path: AppUrl.Home,
+  },
+  {
+    element: (
+      <PublicRoute>
+        <LoginPage />
+      </PublicRoute>
+    ),
+    path: AppUrl.Login,
+  },
+  {
+    element: <LogoutPage />,
+    path: AppUrl.Logout,
+  },
+  {
+    element: (
+      <PrivateRoute permission={Permission.Read} scope={Scope.Users}>
+        <UsersPage />
       </PrivateRoute>
     ),
-    path: AppUrl.HOME,
+    path: AppUrl.Users,
   },
   {
-    element: <Login />,
-    path: AppUrl.LOGIN,
+    element: (
+      <PrivateRoute permission={Permission.Write} scope={Scope.Users}>
+        <UsersDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.UsersNew,
   },
   {
-    element: <Logout />,
-    path: AppUrl.LOGOUT,
+    element: (
+      <PrivateRoute permission={Permission.Read} scope={Scope.Users}>
+        <UsersDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.UsersEdit,
   },
 ]);
 
