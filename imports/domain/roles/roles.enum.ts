@@ -6,6 +6,7 @@ export enum Role {
 
 export enum Scope {
   Members = 'members',
+  Movements = 'movements',
   Users = 'users',
 }
 
@@ -22,4 +23,8 @@ export const AdminRole = {
 
 export const StaffRole = {
   [Scope.Members]: [Permission.Read, Permission.Write],
+};
+
+export const MemberRole = {
+  [Scope.Movements]: [Permission.Read],
 };

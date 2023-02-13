@@ -1,42 +1,34 @@
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { StaffRole } from '@domain/roles/roles.enum';
-import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
+import { MembersCollection } from '@domain/members/members.collection';
+import { RemoveMemberRequestDto } from '@domain/members/use-cases/remove-member/remove-member-request.dto';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
-export class RemoveUserUseCase
-  extends UseCase<RemoveUserRequestDto>
-  implements IUseCase<RemoveUserRequestDto, undefined>
+export class RemoveMemberUseCase
+  extends UseCase<RemoveMemberRequestDto>
+  implements IUseCase<RemoveMemberRequestDto, undefined>
 {
   public constructor(private readonly _logger: Logger) {
     super();
   }
 
   public async execute(
-    request: RemoveUserRequestDto
+    request: RemoveMemberRequestDto
   ): Promise<Result<undefined, Error>> {
-    await this.validateDto(RemoveUserRequestDto, request);
+    await this.validateDto(RemoveMemberRequestDto, request);
 
-    if (request.id === Meteor.userId()) {
-      return err(new Error('No puedes eliminarte a ti mismo'));
+    const member = await MembersCollection.findOneAsync(request.id);
+
+    if (!member) {
+      return err(new Error('Member not found'));
     }
 
-    const user = await Meteor.users.findOneAsync(request.id);
+    await MembersCollection.removeAsync(request.id);
 
-    if (!user) {
-      return err(new Error('User not found'));
-    }
-
-    Object.entries(StaffRole).forEach(([key, value]) => {
-      Roles.removeUsersFromRoles(request.id, value, key);
-    });
-
-    await Meteor.users.removeAsync(request.id);
-
-    this._logger.info('User updated', { user });
+    this._logger.info('Member removed', { member });
 
     return ok(undefined);
   }

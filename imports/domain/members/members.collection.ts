@@ -10,5 +10,6 @@ MembersCollection.attachSchema(
     createdAt: Date,
     dateOfBirth: Date,
     updatedAt: Date,
+    userId: String,
   })
 );

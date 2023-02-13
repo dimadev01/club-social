@@ -1,19 +1,21 @@
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { GetUserRequestDto } from '@domain/users/use-cases/get-user/get-user-request.dto';
+import { Member } from '@domain/members/member.entity';
+import { MembersCollection } from '@domain/members/members.collection';
+import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
-export class GetUserUseCase
-  extends UseCase<GetUserRequestDto>
-  implements IUseCase<GetUserRequestDto, Meteor.User | null>
+export class GetMemberUseCase
+  extends UseCase<GetMemberRequestDto>
+  implements IUseCase<GetMemberRequestDto, Member | undefined>
 {
   public async execute(
-    request: GetUserRequestDto
-  ): Promise<Result<Meteor.User | null, Error>> {
-    await this.validateDto(GetUserRequestDto, request);
+    request: GetMemberRequestDto
+  ): Promise<Result<Member | undefined, Error>> {
+    await this.validateDto(GetMemberRequestDto, request);
 
-    return ok((await Meteor.users.findOneAsync(request.id)) ?? null);
+    return ok(await MembersCollection.findOneAsync(request.id));
   }
 }

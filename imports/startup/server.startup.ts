@@ -4,6 +4,7 @@ import '@domain/users/users.collection';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
+import { MembersMethods } from '@domain/members/members.methods';
 import { UsersMethods } from '@domain/users/users.methods';
 import { Logger } from '@infra/logger/logger.service';
 import { MigrationsService } from '@infra/migrations/migrations.service';
@@ -15,7 +16,8 @@ export class ServerStartup {
   public constructor(
     private readonly _logger: Logger,
     private readonly _migrations: MigrationsService,
-    private readonly _usersMethods: UsersMethods
+    private readonly _usersMethods: UsersMethods,
+    private readonly _membersMethods: MembersMethods
   ) {}
 
   // #endregion Constructors (1)
@@ -77,6 +79,8 @@ export class ServerStartup {
 
   private async _registerMethods() {
     this._usersMethods.register();
+
+    this._membersMethods.register();
   }
 
   private async _createUsersIndexes() {

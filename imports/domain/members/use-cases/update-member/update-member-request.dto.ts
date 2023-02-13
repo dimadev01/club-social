@@ -1,6 +1,6 @@
 import { IsLowercase, IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateUserRequestDto {
+export class UpdateMemberRequestDto {
   @IsString()
   @IsNotEmpty()
   id: string;

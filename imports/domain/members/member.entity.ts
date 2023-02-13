@@ -1,9 +1,23 @@
-export class Member {
-  _id: string;
+import { ok, Result } from 'neverthrow';
+import { Entity } from '@domain/members/entity.base';
+import { CreateMember } from '@domain/members/members.types';
 
+export class Member extends Entity {
   dateOfBirth: Date;
 
-  createdAt: Date;
+  userId: string;
 
-  updatedAt: Date;
+  private constructor() {
+    super();
+  }
+
+  public static create(props: CreateMember): Result<Member, Error> {
+    const member = new Member();
+
+    member.dateOfBirth = new Date(props.dateOfBirth);
+
+    member.userId = props.userId;
+
+    return ok(member);
+  }
 }

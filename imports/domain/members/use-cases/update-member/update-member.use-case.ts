@@ -1,54 +1,39 @@
-import { toLower } from 'lodash';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { Role } from '@domain/roles/roles.enum';
-import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update-user-request.dto';
+import { MembersCollection } from '@domain/members/members.collection';
+import { UpdateMemberRequestDto } from '@domain/members/use-cases/update-member/update-member-request.dto';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
-export class UpdateUserUseCase
-  extends UseCase<UpdateUserRequestDto>
-  implements IUseCase<UpdateUserRequestDto, undefined>
+export class UpdateMemberUseCase
+  extends UseCase<UpdateMemberRequestDto>
+  implements IUseCase<UpdateMemberRequestDto, undefined>
 {
   public constructor(private readonly _logger: Logger) {
     super();
   }
 
   public async execute(
-    request: UpdateUserRequestDto
+    request: UpdateMemberRequestDto
   ): Promise<Result<undefined, Error>> {
-    await this.validateDto(UpdateUserRequestDto, request);
+    await this.validateDto(UpdateMemberRequestDto, request);
 
-    const user = await Meteor.users.findOneAsync(request.id);
+    const member = await MembersCollection.findOneAsync(request.id);
 
-    if (!user) {
-      return err(new Error('User not found'));
+    if (!member) {
+      return err(new Error('Member not found'));
     }
 
-    if (user.profile?.role === Role.Admin) {
-      return err(new Error('No puedes editar a un administrador'));
-    }
-
-    await Meteor.users.updateAsync(request.id, {
+    await MembersCollection.updateAsync(request.id, {
       $set: {
         'profile.firstName': request.firstName,
         'profile.lastName': request.lastName,
       },
     });
 
-    const email = toLower(request.email);
-
-    if (user.emails && user.emails[0].address !== email) {
-      Accounts.removeEmail(user._id, user.emails[0].address);
-
-      Accounts.addEmail(user._id, email);
-
-      Accounts.sendVerificationEmail(user._id, email);
-    }
-
-    this._logger.info('User updated', { userId: request.id });
+    this._logger.info('Member updated', { memberId: request.id });
 
     return ok(undefined);
   }

@@ -36,7 +36,7 @@ export class RemoveUserUseCase
 
     await Meteor.users.removeAsync(request.id);
 
-    this._logger.info('User updated', { user });
+    this._logger.info('User removed', { user });
 
     return ok(undefined);
   }

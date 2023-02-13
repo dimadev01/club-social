@@ -37,6 +37,14 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Members)) {
+      items.push({
+        icon: <UserOutlined className="!text-lg" />,
+        key: AppUrl.Members,
+        label: <NavLink to={AppUrl.Members}>Socios</NavLink>,
+      });
+    }
+
     return items;
   };
 

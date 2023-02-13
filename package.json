@@ -21,6 +21,7 @@
     "class-transformer": "^0.5.1",
     "class-transformer-validator": "^0.9.1",
     "class-validator": "^0.14.0",
+    "dayjs": "^1.11.7",
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.2.5",
     "neverthrow": "^6.0.0",

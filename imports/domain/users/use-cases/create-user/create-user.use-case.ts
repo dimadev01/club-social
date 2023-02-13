@@ -1,7 +1,7 @@
 import { toLower } from 'lodash';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { Role, StaffRole } from '@domain/roles/roles.enum';
+import { MemberRole, Role, StaffRole } from '@domain/roles/roles.enum';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
@@ -32,6 +32,10 @@ export class CreateUserUseCase
 
     if (request.role === Role.Staff) {
       Object.entries(StaffRole).forEach(([key, value]) => {
+        Roles.addUsersToRoles(userId, value, key);
+      });
+    } else if (request.role === Role.Member) {
+      Object.entries(MemberRole).forEach(([key, value]) => {
         Roles.addUsersToRoles(userId, value, key);
       });
     }
