@@ -24,12 +24,18 @@ jobs:
       - name: Install Dependencies
         run: meteor npm ci
 
-      - name: Create settings.json
-        run: echo ${{ vars.SETTINGS }} > settings.json
+      - name: create-json
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          json: ${{ vars.SETTINGS }}
+          name: settings.json
+
+      # - name: Create settings.json
+      #   run: echo ${{ vars.SETTINGS }} > settings.json
 
       - name: Deploy
         run: |
           export METEOR_ALLOW_SUPERUSER=true
-          export METEOR_SESSION_FILE={{ secrets.METEOR_SESSION_FILE }}
+          export METEOR_SESSION_FILE=${{ secrets.METEOR_SESSION_FILE }}
           export DEPLOY_HOSTNAME="galaxy.meteor.com"
-          meteor deploy --settings settings.json --verbose
+          meteor deploy --free --mongo --settings settings.json --verbose
