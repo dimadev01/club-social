@@ -14,7 +14,6 @@ import { useMutation } from '@tanstack/react-query';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Grid } from '@ui/components/Grid';
-import { PageHeader } from '@ui/components/PageHeader';
 import { useGrid } from '@ui/hooks/useGrid';
 import { useUsersGrid } from '@ui/hooks/users/useUsersGrid';
 
@@ -34,8 +33,6 @@ export const UsersPage = () => {
 
   return (
     <>
-      <PageHeader>Usuarios</PageHeader>
-
       <Breadcrumb className="mb-8">
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>Usuarios</Breadcrumb.Item>

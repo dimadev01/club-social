@@ -41,7 +41,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
   };
 
   return (
-    <AntLayout className="cs-layout">
+    <AntLayout className="cs-layout min-h-full">
       <AntLayout.Sider
         breakpoint="lg"
         collapsedWidth="0"

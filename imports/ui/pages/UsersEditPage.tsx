@@ -1,11 +1,11 @@
 import React from 'react';
 import { Breadcrumb, Card, Form, Input, Select, Spin } from 'antd';
-import { NavLink, useParams } from 'react-router-dom';
+import ButtonGroup from 'antd/es/button/button-group';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { Role } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { NotFound } from '@ui/components/NotFound';
-import { PageHeader } from '@ui/components/PageHeader';
 import { useCreateUser } from '@ui/hooks/users/useCreateUser';
 import { useUpdateUser } from '@ui/hooks/users/useUpdateUser';
 import { useUser } from '@ui/hooks/users/useUser';
@@ -19,6 +19,8 @@ type FormValues = {
 
 export const UsersDetailPage = () => {
   const { id } = useParams<{ id?: string }>();
+
+  const navigate = useNavigate();
 
   const { data, fetchStatus } = useUser(id);
 
@@ -54,8 +56,6 @@ export const UsersDetailPage = () => {
 
   return (
     <>
-      <PageHeader>{data ? 'Editando usuario' : 'Nuevo Usuario'}</PageHeader>
-
       <Breadcrumb className="mb-8">
         <Breadcrumb.Item>Inicio</Breadcrumb.Item>
         <Breadcrumb.Item>
@@ -115,14 +115,19 @@ export const UsersDetailPage = () => {
             </Form.Item>
           )}
 
-          <Button
-            type="primary"
-            disabled={createUser.isLoading || updateUser.isLoading}
-            loading={createUser.isLoading || updateUser.isLoading}
-            htmlType="submit"
-          >
-            Guardar
-          </Button>
+          <ButtonGroup>
+            <Button
+              type="primary"
+              disabled={createUser.isLoading || updateUser.isLoading}
+              loading={createUser.isLoading || updateUser.isLoading}
+              htmlType="submit"
+            >
+              Guardar
+            </Button>
+            <Button type="text" onClick={() => navigate(-1)}>
+              Atrás
+            </Button>
+          </ButtonGroup>
         </Form>
       </Card>
     </>
