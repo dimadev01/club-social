@@ -6,7 +6,7 @@ on:
       - dev
 
 jobs:
-  serverless-deploy:
+  meteor-deploy:
     runs-on: ubuntu-latest
     environment: dev
     steps:
@@ -22,9 +22,9 @@ jobs:
         run: curl https://install.meteor.com/ | sh
 
       - name: Install Dependencies
-        run: meteor npm ci
+        run: NODE_ENV=production meteor npm ci
 
-      - name: create-json
+      - name: Create Settings JSON
         uses: jsdaniell/create-json@v1.2.2
         with:
           json: ${{ vars.SETTINGS }}
@@ -36,6 +36,6 @@ jobs:
       - name: Deploy
         run: |
           export METEOR_ALLOW_SUPERUSER=true
-          export METEOR_SESSION_FILE=${{ secrets.METEOR_SESSION_FILE }}
+          export METEOR_SESSION_FILE=${{ fromJSON(secrets.METEOR_SESSION_FILE) }}
           export DEPLOY_HOSTNAME="galaxy.meteor.com"
           meteor deploy --free --mongo --settings settings.json --verbose
