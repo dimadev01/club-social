@@ -10,7 +10,7 @@ export const useGrid = () => {
     page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
     pageSize: searchParams.get('pageSize')
       ? Number(searchParams.get('pageSize'))
-      : 10,
+      : 25,
     search: searchParams.get('search') ?? '',
     sortField: searchParams.get('sortField') ?? '',
     sortOrder: (searchParams.get('sortField') as SortOrder) ?? 'descend',

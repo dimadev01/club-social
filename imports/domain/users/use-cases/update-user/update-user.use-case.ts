@@ -1,7 +1,9 @@
 import { toLower } from 'lodash';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { Role } from '@domain/roles/roles.enum';
 import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update-user-request.dto';
+import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
 
@@ -10,6 +12,10 @@ export class UpdateUserUseCase
   extends UseCase<UpdateUserRequestDto>
   implements IUseCase<UpdateUserRequestDto, undefined>
 {
+  public constructor(private readonly _logger: Logger) {
+    super();
+  }
+
   public async execute(
     request: UpdateUserRequestDto
   ): Promise<Result<undefined, Error>> {
@@ -19,6 +25,10 @@ export class UpdateUserUseCase
 
     if (!user) {
       return err(new Error('User not found'));
+    }
+
+    if (user.profile?.role === Role.Admin) {
+      return err(new Error('No puedes editar a un administrador'));
     }
 
     await Meteor.users.updateAsync(request.id, {
@@ -37,6 +47,8 @@ export class UpdateUserUseCase
 
       Accounts.sendVerificationEmail(user._id, email);
     }
+
+    this._logger.info('User updated', { userId: request.id });
 
     return ok(undefined);
   }

@@ -30,3 +30,7 @@ Meteor.users.attachSchema(
     },
   })
 );
+
+await Meteor.users.createIndexAsync({ createdAt: -1 });
+
+await Meteor.users.createIndexAsync({ 'profile.firstName': 1 });

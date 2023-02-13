@@ -16,7 +16,7 @@ export interface GridState<T> {
 interface Props<T> extends TableProps<T> {
   fixHeader?: boolean;
   gridState?: GridUrlQueryParams;
-  onStateChange?: React.Dispatch<React.SetStateAction<GridUrlQueryParams>>;
+  onStateChange: React.Dispatch<React.SetStateAction<GridUrlQueryParams>>;
   showNew?: boolean;
   tableTitle?: React.ReactNode;
   total: number;
@@ -69,9 +69,9 @@ export function Grid<T extends object>({
       pagination={{
         current: gridState?.page ?? state?.pagination.current ?? 1,
         hideOnSinglePage: false,
-        pageSize: gridState?.pageSize ?? state?.pagination.pageSize ?? 10,
+        pageSize: gridState?.pageSize ?? state?.pagination.pageSize ?? 25,
         pageSizeOptions: ['10', '25', '50', '100', '250'],
-        showSizeChanger: true,
+        showSizeChanger: false,
         showTotal: (totalCount: number, range: [number, number]) =>
           `${range[0]}-${range[1]} of ${totalCount} items`,
         size: 'small',

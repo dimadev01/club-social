@@ -1,4 +1,12 @@
-import { AdminRole, Permission, Role } from '@domain/roles/roles.enum';
+import { times } from 'lodash';
+import { Accounts } from 'meteor/accounts-base';
+import {
+  AdminRole,
+  Permission,
+  Role,
+  StaffRole,
+} from '@domain/roles/roles.enum';
+import { faker } from '@faker-js/faker';
 
 // @ts-ignore
 Migrations.add({
@@ -31,10 +39,8 @@ Migrations.add({
     let userId: string | null = null;
 
     try {
-      // @ts-ignore
-      userId = await Accounts.createUserVerifyingEmail({
+      userId = Accounts.createUser({
         email: 'info@clubsocialmontegrande.ar',
-        password: '3214',
         profile: {
           firstName: 'Club Social',
           lastName: 'Administración',
@@ -47,6 +53,23 @@ Migrations.add({
           Roles.addUsersToRoles(userId, value, key);
         }
       });
+
+      times(123, () => {
+        const newUserId = Accounts.createUser({
+          email: faker.internet.email(),
+          profile: {
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName(),
+            role: Role.Staff,
+          },
+        });
+
+        Object.entries(StaffRole).forEach(([key, value]) => {
+          if (userId) {
+            Roles.addUsersToRoles(newUserId, value, key);
+          }
+        });
+      });
     } catch (error) {
       if (userId) {
         await Meteor.users.removeAsync(userId);
@@ -55,6 +78,5 @@ Migrations.add({
 
     next();
   }),
-
   version: 1,
 });

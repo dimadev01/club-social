@@ -1,6 +1,5 @@
 import React from 'react';
 import { Breadcrumb, Card } from 'antd';
-import ButtonGroup from 'antd/es/button/button-group';
 import { NavLink } from 'react-router-dom';
 import {
   CheckOutlined,
@@ -30,9 +29,7 @@ export const UsersPage = () => {
   const removeOne = useMutation<undefined, Error, RemoveUserRequestDto>(
     [MethodsEnum.UsersRemove],
     (request) => Meteor.callAsync(MethodsEnum.UsersRemove, request),
-    {
-      onSuccess: refetch,
-    }
+    { onSuccess: refetch }
   );
 
   return (
@@ -104,22 +101,22 @@ export const UsersPage = () => {
             {
               align: 'center',
               render: (_, user: Meteor.User) => (
-                <ButtonGroup size="small">
-                  <Button
-                    type="ghost"
-                    htmlType="button"
-                    tooltip={{ title: 'Eliminar ' }}
-                    icon={<DeleteOutlined />}
-                    loading={removeOne.variables?.id === user._id}
-                    disabled={removeOne.variables?.id === user._id}
-                    onClick={() =>
+                <Button
+                  popConfirm={{
+                    onConfirm: () =>
                       removeOne.mutate(
                         { id: user._id },
                         { onError: () => removeOne.reset() }
-                      )
-                    }
-                  />
-                </ButtonGroup>
+                      ),
+                    title: '¿Está seguro de eliminar este usuario?',
+                  }}
+                  type="ghost"
+                  htmlType="button"
+                  tooltip={{ title: 'Eliminar ' }}
+                  icon={<DeleteOutlined />}
+                  loading={removeOne.variables?.id === user._id}
+                  disabled={removeOne.variables?.id === user._id}
+                />
               ),
               title: 'Actions',
               width: 100,

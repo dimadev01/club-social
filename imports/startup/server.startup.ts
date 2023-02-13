@@ -43,11 +43,6 @@ export class ServerStartup {
       process.env.MAIL_URL = Meteor.settings.MAIL_URL;
     }
 
-    Accounts.config({
-      forbidClientAccountCreation: true,
-      sendVerificationEmail: true,
-    });
-
     Accounts.emailTemplates.siteName = 'Club Social Monte Grande';
 
     Accounts.emailTemplates.from =
