@@ -105,6 +105,7 @@ export const UsersDetailPage = () => {
           {!id && (
             <Form.Item name="role" label="Rol" rules={[{ required: true }]}>
               <Select
+                placeholder="Seleccionar"
                 options={[
                   {
                     label: 'Staff',

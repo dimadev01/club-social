@@ -37,8 +37,6 @@ export function Grid<T extends object>({
     filters: Record<string, FilterValue | null>,
     sorter: SorterResult<T>
   ) => {
-    console.log(sorter);
-
     if (onStateChange) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onStateChange((prevState: any) => ({

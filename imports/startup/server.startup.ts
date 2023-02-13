@@ -29,6 +29,8 @@ export class ServerStartup {
 
     this._registerMethods();
 
+    // await this._createUsersIndexes();
+
     if (Meteor.isProduction) {
       this._logger.info('Server startup completed');
     }
@@ -73,8 +75,16 @@ export class ServerStartup {
     this._migrations.start();
   }
 
-  private _registerMethods() {
+  private async _registerMethods() {
     this._usersMethods.register();
+  }
+
+  private async _createUsersIndexes() {
+    await Meteor.users.createIndexAsync({ createdAt: -1 });
+
+    await Meteor.users.createIndexAsync({ 'profile.firstName': 1 });
+
+    await Meteor.users.createIndexAsync({ 'profile.role': 1 });
   }
 
   // #endregion Private Methods (4)

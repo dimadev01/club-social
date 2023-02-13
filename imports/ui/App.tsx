@@ -48,6 +48,17 @@ export const App = () => {
 
       <ConfigProvider
         locale={esEs}
+        select={{
+          showSearch: true,
+        }}
+        dropdownMatchSelectWidth={false}
+        form={{
+          requiredMark: 'optional',
+          scrollToFirstError: true,
+        }}
+        input={{
+          autoComplete: 'on',
+        }}
         theme={{
           token: {
             borderRadius: 5,

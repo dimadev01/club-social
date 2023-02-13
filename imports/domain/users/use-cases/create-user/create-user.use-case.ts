@@ -21,8 +21,7 @@ export class CreateUserUseCase
   ): Promise<Result<string, Error>> {
     await this.validateDto(CreateUserRequestDto, request);
 
-    // @ts-ignore
-    const userId = await Accounts.createUserVerifyingEmail({
+    const userId = Accounts.createUser({
       email: toLower(request.email),
       profile: {
         firstName: request.firstName,

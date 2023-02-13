@@ -77,6 +77,7 @@ export const UsersPage = () => {
           placeholder="Buscar..."
           allowClear
           className="mb-4"
+          value={search}
           onChange={(e) => setSearch(e.target.value ?? '')}
         />
 
