@@ -31,7 +31,7 @@ jobs:
           name: settings.json
 
       - name: test json
-        run: echo ${{ fromJSON(secrets.METEOR_SESSION_FILE) }}
+        run: echo ${{ toJSON(secrets.METEOR_SESSION_FILE) }}
 
       # - name: Deploy
       #   run: |
