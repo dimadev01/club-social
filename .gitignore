@@ -1,4 +1,5 @@
 node_modules/
 settings.json
 settings.prod.json
+settings.dev.json
 imports/infra/migrations/.js
