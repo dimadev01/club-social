@@ -43,4 +43,4 @@ jobs:
           export METEOR_ALLOW_SUPERUSER=true
           export METEOR_SESSION_FILE=meteor-login.json
           export DEPLOY_HOSTNAME="us-east-1.galaxy-deploy.meteor.com"
-          meteor deploy --free --settings settings.json club-social.meteorapp.com
+          meteor deploy --free --settings settings.json club-social-dev.meteorapp.com

@@ -1,6 +1,7 @@
-import React from 'react';
-import { Breadcrumb, Card } from 'antd';
+import React, { useState } from 'react';
+import { Breadcrumb, Card, Input } from 'antd';
 import { NavLink } from 'react-router-dom';
+import { useDebounce } from 'use-debounce';
 import {
   CheckOutlined,
   CloseOutlined,
@@ -8,28 +9,27 @@ import {
   PlusOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
-import { MethodsEnum } from '@infra/methods/methods.enum';
-import { useMutation } from '@tanstack/react-query';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Grid } from '@ui/components/Grid';
 import { useGrid } from '@ui/hooks/useGrid';
+import { useRemoveUser } from '@ui/hooks/users/useRemoveUser';
 import { useUsersGrid } from '@ui/hooks/users/useUsersGrid';
 
 export const UsersPage = () => {
   const [gridState, setGridState] = useGrid();
 
+  const [search, setSearch] = useState(gridState.search);
+
+  const [searchDebounced] = useDebounce(search, 750);
+
   const { data, isLoading, isRefetching, refetch } = useUsersGrid({
-    page: gridState.page ?? 1,
-    pageSize: gridState.pageSize ?? 20,
+    page: gridState.page,
+    pageSize: gridState.pageSize,
+    search: searchDebounced,
   });
 
-  const removeOne = useMutation<undefined, Error, RemoveUserRequestDto>(
-    [MethodsEnum.UsersRemove],
-    (request) => Meteor.callAsync(MethodsEnum.UsersRemove, request),
-    { onSuccess: refetch }
-  );
+  const removeOne = useRemoveUser(refetch);
 
   return (
     <>
@@ -41,6 +41,13 @@ export const UsersPage = () => {
       <Card
         extra={
           <>
+            <Input.Search
+              placeholder="Buscar..."
+              allowClear
+              onChange={(e) => setSearch(e.target.value ?? '')}
+              className="w-80"
+            />
+
             <Button
               onClick={() => refetch()}
               loading={isRefetching}

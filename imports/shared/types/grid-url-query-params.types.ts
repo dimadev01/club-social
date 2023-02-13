@@ -3,13 +3,13 @@ import { SortOrder } from 'antd/es/table/interface';
 export class GridUrlQueryParams {
   filters?: Partial<Record<string, string[]>>;
 
-  page?: number;
+  page: number;
 
-  pageSize?: number;
+  pageSize: number;
 
   sortField?: string;
 
   sortOrder?: SortOrder;
 
-  search?: string;
+  search: string;
 }

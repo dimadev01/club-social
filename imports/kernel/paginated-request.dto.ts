@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsPositive } from 'class-validator';
+import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
 
 export class PaginatedRequestDto {
   @IsPositive()
@@ -8,4 +8,8 @@ export class PaginatedRequestDto {
   @IsPositive()
   @IsNotEmpty()
   pageSize: number;
+
+  @IsNotEmpty()
+  @IsString()
+  search: string;
 }
