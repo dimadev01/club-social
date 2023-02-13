@@ -37,5 +37,5 @@ jobs:
         run: |
           export METEOR_ALLOW_SUPERUSER=true
           export METEOR_SESSION_FILE=${{ fromJSON(secrets.METEOR_SESSION_FILE) }}
-          export DEPLOY_HOSTNAME="galaxy.meteor.com"
-          meteor deploy --free --mongo --settings settings.json --verbose
+          export DEPLOY_HOSTNAME="us-east-1.galaxy-deploy.meteor.com"
+          meteor deploy --free --mongo --settings settings.json club-social-dev.meteorapp.com
