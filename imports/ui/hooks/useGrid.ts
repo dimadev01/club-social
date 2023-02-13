@@ -1,20 +1,31 @@
 import { useState } from 'react';
 import { SortOrder } from 'antd/es/table/interface';
-import { useSearchParams } from 'react-router-dom';
+import qs from 'qs';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { GridUrlQueryParams } from '@shared/types/grid-url-query-params.types';
 
-export const useGrid = () => {
+interface DefaultParams {
+  sortField: string;
+  sortOrder: SortOrder;
+}
+
+export const useGrid = ({
+  sortField = 'createdAt',
+  sortOrder = 'descend',
+}: DefaultParams) => {
   const [searchParams] = useSearchParams();
 
-  const state: GridUrlQueryParams = {
+  const location = useLocation();
+
+  const parsedQs = qs.parse(location.search, { ignoreQueryPrefix: true });
+
+  return useState<GridUrlQueryParams>({
     page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
     pageSize: searchParams.get('pageSize')
       ? Number(searchParams.get('pageSize'))
       : 25,
     search: searchParams.get('search') ?? '',
-    sortField: searchParams.get('sortField') ?? '',
-    sortOrder: (searchParams.get('sortField') as SortOrder) ?? 'descend',
-  };
-
-  return useState<GridUrlQueryParams>(state);
+    sortField: (parsedQs.sortField as string | string[]) ?? sortField,
+    sortOrder: (searchParams.get('sortOrder') as SortOrder) ?? sortOrder,
+  });
 };

@@ -1,6 +1,8 @@
+import { SortOrder } from 'antd/es/table/interface';
 import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 import { MeteorErrorCode } from '@kernel/errors.enum';
+import { MongoOptions } from '@kernel/use-case.interface';
 
 export abstract class UseCase<T extends object> {
   protected async validateDto(
@@ -29,5 +31,25 @@ export abstract class UseCase<T extends object> {
         )
       );
     }
+  }
+
+  protected getSorterValue(sorter: SortOrder, defaultSortOrder = 1): number {
+    if (sorter === 'ascend') {
+      return 1;
+    }
+
+    if (sorter === 'descend') {
+      return -1;
+    }
+
+    return defaultSortOrder;
+  }
+
+  protected createQueryOptions(page: number, pageSize: number): MongoOptions {
+    return {
+      limit: pageSize,
+      skip: (page - 1) * pageSize,
+      sort: {},
+    };
   }
 }

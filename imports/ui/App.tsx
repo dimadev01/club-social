@@ -26,6 +26,7 @@ const queryClient = new QueryClient({
           message.error('An unknown error occurred.');
         }
       },
+      refetchOnWindowFocus: false,
       retry: 1,
     },
   },

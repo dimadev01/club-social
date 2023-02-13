@@ -1,3 +1,4 @@
+import { SortOrder } from 'antd/es/table/interface';
 import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
 
 export class PaginatedRequestDto {
@@ -9,7 +10,11 @@ export class PaginatedRequestDto {
   @IsNotEmpty()
   pageSize: number;
 
-  @IsNotEmpty()
   @IsString()
   search: string;
+
+  sortField: string | string[];
+
+  @IsString()
+  sortOrder: SortOrder;
 }

@@ -7,9 +7,9 @@ export class GridUrlQueryParams {
 
   pageSize: number;
 
-  sortField?: string;
+  sortField: string | string[];
 
-  sortOrder?: SortOrder;
+  sortOrder: SortOrder;
 
   search: string;
 }

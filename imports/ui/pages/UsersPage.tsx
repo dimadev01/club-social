@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Breadcrumb, Card, Input } from 'antd';
+import { isEqual } from 'lodash';
 import { NavLink } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import {
@@ -17,16 +18,25 @@ import { useRemoveUser } from '@ui/hooks/users/useRemoveUser';
 import { useUsersGrid } from '@ui/hooks/users/useUsersGrid';
 
 export const UsersPage = () => {
-  const [gridState, setGridState] = useGrid();
+  const [gridState, setGridState] = useGrid({
+    sortField: 'profile',
+    sortOrder: 'ascend',
+  });
 
   const [search, setSearch] = useState(gridState.search);
 
   const [searchDebounced] = useDebounce(search, 750);
 
+  useEffect(() => {
+    setGridState((p) => ({ ...p, page: 1, search: searchDebounced }));
+  }, [searchDebounced, setGridState]);
+
   const { data, isLoading, isRefetching, refetch } = useUsersGrid({
     page: gridState.page,
     pageSize: gridState.pageSize,
-    search: searchDebounced,
+    search: gridState.search,
+    sortField: gridState.sortField,
+    sortOrder: gridState.sortOrder,
   });
 
   const removeOne = useRemoveUser(refetch);
@@ -39,15 +49,9 @@ export const UsersPage = () => {
       </Breadcrumb>
 
       <Card
+        title="Usuarios"
         extra={
           <>
-            <Input.Search
-              placeholder="Buscar..."
-              allowClear
-              onChange={(e) => setSearch(e.target.value ?? '')}
-              className="w-80"
-            />
-
             <Button
               onClick={() => refetch()}
               loading={isRefetching}
@@ -69,6 +73,13 @@ export const UsersPage = () => {
           </>
         }
       >
+        <Input.Search
+          placeholder="Buscar..."
+          allowClear
+          className="mb-4"
+          onChange={(e) => setSearch(e.target.value ?? '')}
+        />
+
         <Grid<Meteor.User>
           total={data?.total ?? 0}
           gridState={gridState}
@@ -83,6 +94,11 @@ export const UsersPage = () => {
                   {profile.firstName} {profile.lastName}
                 </NavLink>
               ),
+              sortOrder:
+                gridState.sortField === 'profile'
+                  ? gridState.sortOrder
+                  : undefined,
+              sorter: true,
               title: 'Nombre',
             },
             {
@@ -100,6 +116,10 @@ export const UsersPage = () => {
             {
               align: 'center',
               dataIndex: ['profile', 'role'],
+              sortOrder: isEqual(gridState.sortField, ['profile', 'role'])
+                ? gridState.sortOrder
+                : undefined,
+              sorter: true,
               title: 'Rol',
             },
             {

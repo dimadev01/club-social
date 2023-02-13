@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
@@ -18,16 +19,43 @@ export class GetUsersUseCase
 
     const query: Mongo.Query<Meteor.User> = {};
 
-    return ok({
-      data: await Meteor.users
-        .find(query, {
-          limit: request.pageSize,
-          skip: request.pageSize * request.page - 1,
-          sort: {
-            'profile.firstName': 1,
+    if (request.search) {
+      query.$or = [
+        {
+          'profile.firstName': {
+            $options: 'i',
+            $regex: request.search,
           },
-        })
-        .fetchAsync(),
+        },
+        {
+          'profile.lastName': {
+            $options: 'i',
+            $regex: request.search,
+          },
+        },
+        {
+          'emails.address': {
+            $options: 'i',
+            $regex: request.search,
+          },
+        },
+      ];
+    }
+
+    const options = this.createQueryOptions(request.page, request.pageSize);
+
+    if (request.sortField) {
+      if (request.sortField === 'profile') {
+        options.sort['profile.firstName'] = this.getSorterValue(
+          request.sortOrder
+        );
+      } else if (isEqual(request.sortField, ['profile', 'role'])) {
+        options.sort['profile.role'] = this.getSorterValue(request.sortOrder);
+      }
+    }
+
+    return ok({
+      data: await Meteor.users.find(query, options).fetchAsync(),
       total: await Meteor.users.find(query).countAsync(),
     });
   }

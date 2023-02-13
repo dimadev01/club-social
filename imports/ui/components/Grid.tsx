@@ -35,8 +35,10 @@ export function Grid<T extends object>({
   const handleTableChange = (
     pagination: TablePaginationConfig,
     filters: Record<string, FilterValue | null>,
-    sorter: SorterResult<T> | SorterResult<T>[]
+    sorter: SorterResult<T>
   ) => {
+    console.log(sorter);
+
     if (onStateChange) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onStateChange((prevState: any) => ({
@@ -44,6 +46,8 @@ export function Grid<T extends object>({
         filters,
         page: pagination.current,
         pageSize: pagination.pageSize,
+        sortField: sorter.field,
+        sortOrder: sorter.order,
       }));
     } else {
       setState({ filters, pagination, sorter });
@@ -65,7 +69,7 @@ export function Grid<T extends object>({
         pagination: TablePaginationConfig,
         filters: Record<string, FilterValue | null>,
         sorter: SorterResult<T> | SorterResult<T>[]
-      ) => handleTableChange(pagination, filters, sorter)}
+      ) => handleTableChange(pagination, filters, sorter as SorterResult<T>)}
       pagination={{
         current: gridState?.page ?? state?.pagination.current ?? 1,
         hideOnSinglePage: false,
