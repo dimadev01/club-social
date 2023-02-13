@@ -25,17 +25,22 @@ jobs:
         run: meteor npm ci
 
       - name: Create Settings JSON
+        id: settings
         uses: jsdaniell/create-json@v1.2.2
         with:
           json: ${{ vars.SETTINGS }}
           name: settings.json
 
-      - name: test json
-        run: echo ${{ toJSON(secrets.METEOR_SESSION_FILE) }}
+      - name: Create Meteor Sessions File
+        id: meteor-session
+        uses: jsdaniell/create-json@v1.2.2
+        with:
+          json: ${{ secrets.METEOR_SESSION_FILE }}
+          name: meteor-login.json
 
-      # - name: Deploy
-      #   run: |
-      #     export METEOR_ALLOW_SUPERUSER=true
-      #     export METEOR_SESSION_FILE=${{ fromJSON(secrets.METEOR_SESSION_FILE) }}
-      #     export DEPLOY_HOSTNAME="us-east-1.galaxy-deploy.meteor.com"
-      #     meteor deploy --free --settings settings.json club-social-dev.meteorapp.com
+      - name: Deploy
+        run: |
+          export METEOR_ALLOW_SUPERUSER=true
+          export METEOR_SESSION_FILE=meteor-login.json
+          export DEPLOY_HOSTNAME="us-east-1.galaxy-deploy.meteor.com"
+          meteor deploy --free --mongo --settings settings.json club-social.meteorapp.com
