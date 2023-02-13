@@ -30,12 +30,12 @@ jobs:
           json: ${{ vars.SETTINGS }}
           name: settings.json
 
-      - name: test json
-        run: echo ${{ fromJSON(secrets.METEOR_SESSION_FILE) }}
+      # - name: Create settings.json
+      #   run: echo ${{ vars.SETTINGS }} > settings.json
 
-      # - name: Deploy
-      #   run: |
-      #     export METEOR_ALLOW_SUPERUSER=true
-      #     export METEOR_SESSION_FILE=${{ fromJSON(secrets.METEOR_SESSION_FILE) }}
-      #     export DEPLOY_HOSTNAME="us-east-1.galaxy-deploy.meteor.com"
-      #     meteor deploy --free --settings settings.json club-social-dev.meteorapp.com
+      - name: Deploy
+        run: |
+          export METEOR_ALLOW_SUPERUSER=true
+          export METEOR_SESSION_FILE=${{ fromJSON(secrets.METEOR_SESSION_FILE) }}
+          export DEPLOY_HOSTNAME="us-east-1.galaxy-deploy.meteor.com"
+          meteor deploy --free --mongo --settings settings.json club-social.meteorapp.com

@@ -1,12 +1,5 @@
-import { times } from 'lodash';
 import { Accounts } from 'meteor/accounts-base';
-import {
-  AdminRole,
-  Permission,
-  Role,
-  StaffRole,
-} from '@domain/roles/roles.enum';
-import { faker } from '@faker-js/faker';
+import { AdminRole, Permission, Role } from '@domain/roles/roles.enum';
 
 // @ts-ignore
 Migrations.add({
@@ -27,8 +20,6 @@ Migrations.add({
       // @ts-ignore
       Roles.deleteRole(role._id);
     });
-
-    Roles.createRole(Role.Admin);
 
     Roles.createRole(Permission.Write);
 
@@ -52,23 +43,6 @@ Migrations.add({
         if (userId) {
           Roles.addUsersToRoles(userId, value, key);
         }
-      });
-
-      times(123, () => {
-        const newUserId = Accounts.createUser({
-          email: faker.internet.email(),
-          profile: {
-            firstName: faker.name.firstName(),
-            lastName: faker.name.lastName(),
-            role: Role.Staff,
-          },
-        });
-
-        Object.entries(StaffRole).forEach(([key, value]) => {
-          if (userId) {
-            Roles.addUsersToRoles(newUserId, value, key);
-          }
-        });
       });
     } catch (error) {
       if (userId) {
