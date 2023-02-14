@@ -22,8 +22,6 @@ export class GetMembersUseCase
 
     const options = this.createQueryOptions(request.page, request.pageSize);
 
-    console.log(await MembersCollection.find(query, options).fetchAsync());
-
     return ok({
       data: await MembersCollection.find(query, options).fetchAsync(),
       total: await MembersCollection.find(query).countAsync(),

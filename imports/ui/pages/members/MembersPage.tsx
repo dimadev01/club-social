@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Breadcrumb, Card, Input } from 'antd';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import { NavLink } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Member } from '@domain/members/member.entity';
+import { DateFormats } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Grid } from '@ui/components/Grid';
 import { useMembersGrid } from '@ui/hooks/members/useMembersGrid';
 import { useGrid } from '@ui/hooks/useGrid';
-
-dayjs.extend(utc);
 
 export const MembersPage = () => {
   const [gridState, setGridState] = useGrid({
@@ -85,8 +83,11 @@ export const MembersPage = () => {
           columns={[
             {
               dataIndex: 'dateOfBirth',
-              render: (dateOfBirth: string) =>
-                dayjs.utc(dateOfBirth).format('DD/MM/YYYY'),
+              render: (dateOfBirth: string, member: Member) => (
+                <NavLink to={`${AppUrl.Members}/${member._id}`}>
+                  {dayjs.utc(dateOfBirth).format(DateFormats.DD_MM_YYYY)}
+                </NavLink>
+              ),
               title: 'Fecha de nacimiento',
             },
             {

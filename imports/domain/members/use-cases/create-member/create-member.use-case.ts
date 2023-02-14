@@ -1,10 +1,8 @@
-import { toLower } from 'lodash';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
-import { Role } from '@domain/roles/roles.enum';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
@@ -27,13 +25,11 @@ export class CreateMemberUseCase
   ): Promise<Result<string, Error>> {
     await this.validateDto(CreateMemberRequestDto, request);
 
-    console.log(request);
-
     const createUserResult = await this._createUserUseCase.execute({
-      email: toLower(request.email),
+      email: request.email,
       firstName: request.firstName,
       lastName: request.lastName,
-      role: Role.Member,
+      role: request.role,
     });
 
     if (createUserResult.isErr()) {

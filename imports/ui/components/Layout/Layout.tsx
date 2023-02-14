@@ -12,7 +12,9 @@ type Props = {
 };
 
 export const Layout: React.FC<Props> = ({ children }) => {
-  const [menuKey, setMenuKey] = useState<string>(window.location.pathname);
+  const [menuKey, setMenuKey] = useState<string>(
+    `/${window.location.pathname.split('/')[1]}`
+  );
 
   const user = Meteor.user();
 

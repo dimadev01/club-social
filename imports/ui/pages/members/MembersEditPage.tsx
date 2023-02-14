@@ -1,8 +1,10 @@
 import React from 'react';
-import { Breadcrumb, Card, DatePicker, Form, Input, Spin } from 'antd';
+import { Breadcrumb, Card, DatePicker, Form, Input, message, Spin } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { Role } from '@domain/roles/roles.enum';
+import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { NotFound } from '@ui/components/NotFound';
@@ -22,27 +24,35 @@ export const MembersDetailPage = () => {
 
   const navigate = useNavigate();
 
-  const { data, fetchStatus } = useMember(id);
+  const { data: member, fetchStatus } = useMember(id);
 
   const createMember = useCreateMember();
 
   const updateMember = useUpdateMember();
 
-  const handleSubmit = (values: FormValues) => {
+  const handleSubmit = async (values: FormValues) => {
     if (!id) {
-      createMember.mutate({
-        dateOfBirth: values.dateOfBirth.format('YYYY-MM-DD'),
+      const memberId = await createMember.mutateAsync({
+        dateOfBirth: DateUtils.format(values.dateOfBirth),
         email: values.email,
         firstName: values.firstName,
         lastName: values.lastName,
+        role: Role.Member,
       });
+
+      message.success('Socio creado');
+
+      navigate(`${AppUrl.Members}/${memberId}`);
     } else {
-      updateMember.mutate({
+      await updateMember.mutateAsync({
+        dateOfBirth: DateUtils.format(values.dateOfBirth),
         email: values.email,
         firstName: values.firstName,
         id,
         lastName: values.lastName,
       });
+
+      message.success('Socio actualizado');
     }
   };
 
@@ -50,7 +60,7 @@ export const MembersDetailPage = () => {
     return <Spin spinning />;
   }
 
-  if (id && !data) {
+  if (id && !member) {
     return <NotFound />;
   }
 
@@ -62,8 +72,8 @@ export const MembersDetailPage = () => {
           <NavLink to={AppUrl.Members}>Socios</NavLink>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          {/* {!!data && `${data.profile?.firstName} ${data.profile?.lastName}`} */}
-          {!data && 'Nuevo Socio'}
+          {!!member && `${member.firstName} ${member.lastName}`}
+          {!member && 'Nuevo Socio'}
         </Breadcrumb.Item>
       </Breadcrumb>
 
@@ -71,7 +81,12 @@ export const MembersDetailPage = () => {
         <Form<FormValues>
           layout="vertical"
           onFinish={(values) => handleSubmit(values)}
-          initialValues={{}}
+          initialValues={{
+            dateOfBirth: member ? dayjs.utc(member.dateOfBirth) : undefined,
+            email: member?.email ?? '',
+            firstName: member?.firstName ?? '',
+            lastName: member?.lastName ?? '',
+          }}
         >
           <Form.Item
             name="firstName"
@@ -103,6 +118,7 @@ export const MembersDetailPage = () => {
             rules={[{ required: true }, { type: 'date' }]}
           >
             <DatePicker
+              format={DateFormats.DD_MM_YYYY}
               className="w-full"
               disabledDate={(current: Dayjs) => current.isAfter(dayjs())}
             />

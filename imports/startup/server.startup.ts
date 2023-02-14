@@ -1,6 +1,8 @@
 import 'reflect-metadata';
 import '@infra/publications/meteor-publications';
 import '@domain/users/users.collection';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
@@ -8,6 +10,8 @@ import { MembersMethods } from '@domain/members/members.methods';
 import { UsersMethods } from '@domain/users/users.methods';
 import { Logger } from '@infra/logger/logger.service';
 import { MigrationsService } from '@infra/migrations/migrations.service';
+
+dayjs.extend(utc);
 
 @singleton()
 export class ServerStartup {
@@ -31,7 +35,7 @@ export class ServerStartup {
 
     this._registerMethods();
 
-    // await this._createUsersIndexes();
+    await this._createUsersIndexes();
 
     if (Meteor.isProduction) {
       this._logger.info('Server startup completed');

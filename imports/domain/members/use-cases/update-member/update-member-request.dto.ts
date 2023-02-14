@@ -1,4 +1,9 @@
-import { IsLowercase, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsDateString,
+  IsLowercase,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 
 export class UpdateMemberRequestDto {
   @IsString()
@@ -17,4 +22,7 @@ export class UpdateMemberRequestDto {
   @IsNotEmpty()
   @IsLowercase()
   email: string;
+
+  @IsDateString()
+  dateOfBirth: string;
 }

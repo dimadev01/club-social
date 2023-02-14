@@ -3,6 +3,7 @@ import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 import { MeteorErrorCode } from '@kernel/errors.enum';
 import { MongoOptions } from '@kernel/use-case.interface';
+import { ValidationUtils } from '@shared/utils/validation.utils';
 
 export abstract class UseCase<T extends object> {
   protected async validateDto(
@@ -20,15 +21,7 @@ export abstract class UseCase<T extends object> {
 
       throw new Meteor.Error(
         MeteorErrorCode.BadRequest,
-        JSON.stringify(
-          errors.map((error) => ({
-            errors: error.constraints
-              ? Object.values(error.constraints).map((constraint) => constraint)
-              : [],
-            property: error.property,
-            value: error.value,
-          }))
-        )
+        ValidationUtils.getErrorMessage(errors)
       );
     }
   }

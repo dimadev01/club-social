@@ -1,4 +1,4 @@
-import { toLower } from 'lodash';
+import { Accounts } from 'meteor/accounts-base';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { Role } from '@domain/roles/roles.enum';
@@ -31,22 +31,24 @@ export class UpdateUserUseCase
       return err(new Error('No puedes editar a un administrador'));
     }
 
+    const existingUserByEmail = Accounts.findUserByEmail(request.email);
+
+    if (existingUserByEmail && existingUserByEmail._id !== request.id) {
+      return err(new Error('Ya existe un usuario con este correo electrónico'));
+    }
+
+    if (user.emails && user.emails[0].address !== request.email) {
+      Accounts.removeEmail(user._id, user.emails[0].address);
+
+      Accounts.addEmail(user._id, request.email);
+    }
+
     await Meteor.users.updateAsync(request.id, {
       $set: {
         'profile.firstName': request.firstName,
         'profile.lastName': request.lastName,
       },
     });
-
-    const email = toLower(request.email);
-
-    if (user.emails && user.emails[0].address !== email) {
-      Accounts.removeEmail(user._id, user.emails[0].address);
-
-      Accounts.addEmail(user._id, email);
-
-      Accounts.sendVerificationEmail(user._id, email);
-    }
 
     this._logger.info('User updated', { userId: request.id });
 

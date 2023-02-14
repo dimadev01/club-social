@@ -22,14 +22,14 @@ export const UsersDetailPage = () => {
 
   const navigate = useNavigate();
 
-  const { data, fetchStatus } = useUser(id);
+  const { data: user, fetchStatus } = useUser(id);
 
   const createUser = useCreateUser();
 
   const updateUser = useUpdateUser();
 
   const handleSubmit = (values: FormValues) => {
-    if (!id) {
+    if (!user) {
       createUser.mutate({
         email: values.email,
         firstName: values.firstName,
@@ -40,7 +40,7 @@ export const UsersDetailPage = () => {
       updateUser.mutate({
         email: values.email,
         firstName: values.firstName,
-        id,
+        id: user._id,
         lastName: values.lastName,
       });
     }
@@ -50,7 +50,7 @@ export const UsersDetailPage = () => {
     return <Spin spinning />;
   }
 
-  if (id && !data) {
+  if (id && !user) {
     return <NotFound />;
   }
 
@@ -62,8 +62,8 @@ export const UsersDetailPage = () => {
           <NavLink to={AppUrl.Users}>Usuarios</NavLink>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          {!!data && `${data.profile?.firstName} ${data.profile?.lastName}`}
-          {!data && 'Nuevo Usuario'}
+          {!!user && `${user.profile?.firstName} ${user.profile?.lastName}`}
+          {!user && 'Nuevo Usuario'}
         </Breadcrumb.Item>
       </Breadcrumb>
 
@@ -72,10 +72,10 @@ export const UsersDetailPage = () => {
           layout="vertical"
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
-            email: data?.emails?.[0].address ?? '',
-            firstName: data?.profile?.firstName ?? '',
-            lastName: data?.profile?.lastName ?? '',
-            rol: data?.profile?.role ?? '',
+            email: user?.emails?.[0].address ?? '',
+            firstName: user?.profile?.firstName ?? '',
+            lastName: user?.profile?.lastName ?? '',
+            rol: user?.profile?.role ?? '',
           }}
         >
           <Form.Item
@@ -102,7 +102,7 @@ export const UsersDetailPage = () => {
             <Input type="email" />
           </Form.Item>
 
-          {!id && (
+          {!user && (
             <Form.Item name="role" label="Rol" rules={[{ required: true }]}>
               <Select
                 placeholder="Seleccionar"

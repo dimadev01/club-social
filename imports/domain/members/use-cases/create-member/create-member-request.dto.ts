@@ -1,24 +1,7 @@
-import {
-  IsDateString,
-  IsLowercase,
-  IsNotEmpty,
-  IsString,
-} from 'class-validator';
+import { IsDateString } from 'class-validator';
+import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 
-export class CreateMemberRequestDto {
-  @IsString()
-  @IsNotEmpty()
-  firstName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  lastName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @IsLowercase()
-  email: string;
-
+export class CreateMemberRequestDto extends CreateUserRequestDto {
   @IsDateString()
   dateOfBirth: string;
 }
