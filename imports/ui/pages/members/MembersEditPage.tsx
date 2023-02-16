@@ -34,7 +34,7 @@ export const MembersDetailPage = () => {
     if (!id) {
       const memberId = await createMember.mutateAsync({
         dateOfBirth: DateUtils.format(values.dateOfBirth),
-        email: values.email,
+        emails: values.email,
         firstName: values.firstName,
         lastName: values.lastName,
         role: Role.Member,
@@ -133,7 +133,7 @@ export const MembersDetailPage = () => {
             >
               Guardar
             </Button>
-            <Button type="text" onClick={() => navigate(-1)}>
+            <Button type="text" onClick={() => navigate(AppUrl.Members)}>
               Atrás
             </Button>
           </ButtonGroup>

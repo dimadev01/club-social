@@ -11,7 +11,7 @@ import { useUpdateUser } from '@ui/hooks/users/useUpdateUser';
 import { useUser } from '@ui/hooks/users/useUser';
 
 type FormValues = {
-  email: string;
+  emails: string[];
   firstName: string;
   lastName: string;
   role: string;
@@ -31,14 +31,14 @@ export const UsersDetailPage = () => {
   const handleSubmit = (values: FormValues) => {
     if (!user) {
       createUser.mutate({
-        email: values.email,
+        emails: values.emails[0],
         firstName: values.firstName,
         lastName: values.lastName,
         role: values.role,
       });
     } else {
       updateUser.mutate({
-        email: values.email,
+        email: values.emails[0],
         firstName: values.firstName,
         id: user._id,
         lastName: values.lastName,
@@ -72,7 +72,7 @@ export const UsersDetailPage = () => {
           layout="vertical"
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
-            email: user?.emails?.[0].address ?? '',
+            emails: user?.emails?.map((email) => email.address) ?? [],
             firstName: user?.profile?.firstName ?? '',
             lastName: user?.profile?.lastName ?? '',
             rol: user?.profile?.role ?? '',
@@ -94,13 +94,9 @@ export const UsersDetailPage = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true }, { type: 'email' }]}
-          >
-            <Input type="email" />
-          </Form.Item>
+          {/* <Form.Item name="emails" label="Emails" rules={[{ required: true }]}>
+            <Select mode="tags" />
+          </Form.Item> */}
 
           {!user && (
             <Form.Item name="role" label="Rol" rules={[{ required: true }]}>
@@ -125,7 +121,7 @@ export const UsersDetailPage = () => {
             >
               Guardar
             </Button>
-            <Button type="text" onClick={() => navigate(-1)}>
+            <Button type="text" onClick={() => navigate(AppUrl.Users)}>
               Atrás
             </Button>
           </ButtonGroup>

@@ -26,7 +26,7 @@ export class CreateMemberUseCase
     await this.validateDto(CreateMemberRequestDto, request);
 
     const createUserResult = await this._createUserUseCase.execute({
-      email: request.email,
+      emails: request.emails,
       firstName: request.firstName,
       lastName: request.lastName,
       role: request.role,

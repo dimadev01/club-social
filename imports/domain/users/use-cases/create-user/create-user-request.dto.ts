@@ -10,10 +10,9 @@ export class CreateUserRequestDto {
   @IsNotEmpty()
   lastName: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @IsLowercase()
-  email: string;
+  @IsString({ each: true })
+  @IsLowercase({ each: true })
+  emails: string[];
 
   @IsEnum(Role)
   role: string;

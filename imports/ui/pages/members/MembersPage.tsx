@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Breadcrumb, Card, Input } from 'antd';
-import dayjs from 'dayjs';
 import { NavLink } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Member } from '@domain/members/member.entity';
-import { DateFormats } from '@shared/utils/date.utils';
+import { MemberGridDto } from '@domain/members/use-cases/get-members/member-grid.dto';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Grid } from '@ui/components/Grid';
@@ -14,8 +12,8 @@ import { useGrid } from '@ui/hooks/useGrid';
 
 export const MembersPage = () => {
   const [gridState, setGridState] = useGrid({
-    sortField: 'profile',
-    sortOrder: 'ascend',
+    sortField: 'createdAt',
+    sortOrder: 'descend',
   });
 
   const [search, setSearch] = useState(gridState.search);
@@ -74,7 +72,7 @@ export const MembersPage = () => {
           onChange={(e) => setSearch(e.target.value ?? '')}
         />
 
-        <Grid<Member>
+        <Grid<MemberGridDto>
           total={data?.total ?? 0}
           gridState={gridState}
           onStateChange={setGridState}
@@ -83,15 +81,15 @@ export const MembersPage = () => {
           columns={[
             {
               dataIndex: 'dateOfBirth',
-              render: (dateOfBirth: string, member: Member) => (
+              render: (dateOfBirth: string, member: MemberGridDto) => (
                 <NavLink to={`${AppUrl.Members}/${member._id}`}>
-                  {dayjs.utc(dateOfBirth).format(DateFormats.DD_MM_YYYY)}
+                  {dateOfBirth}
                 </NavLink>
               ),
               title: 'Fecha de nacimiento',
             },
             {
-              dataIndex: 'userId',
+              dataIndex: 'name',
               title: 'Usuario',
             },
           ]}

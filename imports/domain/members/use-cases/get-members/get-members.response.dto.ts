@@ -1,4 +1,4 @@
-import { Member } from '@domain/members/member.entity';
+import { MemberGridDto } from '@domain/members/use-cases/get-members/member-grid.dto';
 import { PaginatedResponse } from '@kernel/paginated-response.dto';
 
-export class GetMembersResponseDto extends PaginatedResponse<Member> {}
+export class GetMembersResponseDto extends PaginatedResponse<MemberGridDto> {}

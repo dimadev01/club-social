@@ -14,4 +14,11 @@ export abstract class DateUtils {
   ): string {
     return dayjs(date).format(format);
   }
+
+  static formatUtc(
+    date: Date | Dayjs,
+    format: DateFormats = DateFormats.Date
+  ): string {
+    return dayjs.utc(date).format(format);
+  }
 }

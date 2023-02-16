@@ -1,5 +1,4 @@
-import { toLower } from 'lodash';
-import { ok, Result } from 'neverthrow';
+import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { MemberRole, Role, StaffRole } from '@domain/roles/roles.enum';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
@@ -21,14 +20,26 @@ export class CreateUserUseCase
   ): Promise<Result<string, Error>> {
     await this.validateDto(CreateUserRequestDto, request);
 
+    if (request.emails.some((email) => Accounts.findUserByEmail(email))) {
+      return err(
+        new Error('Al menos un email ya está en uso por otro usuario')
+      );
+    }
+
     const userId = Accounts.createUser({
-      email: toLower(request.email),
+      email: request.emails[0],
       profile: {
         firstName: request.firstName,
         lastName: request.lastName,
         role: request.role,
       },
     });
+
+    if (request.emails.length > 1) {
+      request.emails.slice(1).forEach((email) => {
+        Accounts.addEmail(userId, email);
+      });
+    }
 
     if (request.role === Role.Staff) {
       Object.entries(StaffRole).forEach(([key, value]) => {
