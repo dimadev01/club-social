@@ -31,7 +31,7 @@ export class UpdateMemberUseCase
     }
 
     const updateUserResult = await this._updateUser.execute({
-      email: request.email,
+      emails: request.email,
       firstName: request.firstName,
       id: member.userId,
       lastName: request.lastName,

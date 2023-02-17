@@ -31,16 +31,33 @@ export class UpdateUserUseCase
       return err(new Error('No puedes editar a un administrador'));
     }
 
-    const existingUserByEmail = Accounts.findUserByEmail(request.email);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const email of request.emails) {
+      const existingUserByEmail = Accounts.findUserByEmail(email);
 
-    if (existingUserByEmail && existingUserByEmail._id !== request.id) {
-      return err(new Error('Ya existe un usuario con este correo electrónico'));
+      if (existingUserByEmail && existingUserByEmail._id !== request.id) {
+        return err(new Error(`Ya existe un usuario con el email ${email}`));
+      }
     }
 
-    if (user.emails && user.emails[0].address !== request.email) {
-      Accounts.removeEmail(user._id, user.emails[0].address);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const email of request.emails) {
+      const userHasEmail = user.emails?.some(
+        (userEmail) => userEmail.address === email
+      );
 
-      Accounts.addEmail(user._id, request.email);
+      if (!userHasEmail) {
+        Accounts.addEmail(user._id, email);
+      }
+    }
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const email of user.emails || []) {
+      const emailIsInRequest = request.emails.includes(email.address);
+
+      if (!emailIsInRequest) {
+        Accounts.removeEmail(user._id, email.address);
+      }
     }
 
     await Meteor.users.updateAsync(request.id, {

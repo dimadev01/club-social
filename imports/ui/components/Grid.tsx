@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Table, TableProps, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Input, Table, TableProps, Typography } from 'antd';
 import {
   FilterValue,
   SorterResult,
   TablePaginationConfig,
 } from 'antd/es/table/interface';
+import { useDebounce } from 'use-debounce';
 import { GridUrlQueryParams } from '@shared/types/grid-url-query-params.types';
 
 export interface GridState<T> {
@@ -14,10 +15,9 @@ export interface GridState<T> {
 }
 
 interface Props<T> extends TableProps<T> {
-  fixHeader?: boolean;
-  gridState?: GridUrlQueryParams;
+  gridState: GridUrlQueryParams;
   onStateChange: React.Dispatch<React.SetStateAction<GridUrlQueryParams>>;
-  showNew?: boolean;
+  showSearch?: boolean;
   tableTitle?: React.ReactNode;
   total: number;
 }
@@ -28,28 +28,35 @@ export function Grid<T extends object>({
   onStateChange,
   tableTitle,
   total,
+  showSearch = false,
   ...rest
 }: Props<T>): JSX.Element {
-  const [state, setState] = useState<GridState<T> | undefined>(undefined);
+  const [search, setSearch] = useState(gridState.search);
+
+  const [searchDebounced] = useDebounce(search, 750);
+
+  useEffect(() => {
+    onStateChange((prevState: GridUrlQueryParams) => ({
+      ...prevState,
+      page: 1,
+      search: searchDebounced,
+    }));
+  }, [searchDebounced, onStateChange]);
 
   const handleTableChange = (
     pagination: TablePaginationConfig,
     filters: Record<string, FilterValue | null>,
     sorter: SorterResult<T>
   ) => {
-    if (onStateChange) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onStateChange((prevState: any) => ({
-        ...prevState,
-        filters,
-        page: pagination.current,
-        pageSize: pagination.pageSize,
-        sortField: sorter.field,
-        sortOrder: sorter.order,
-      }));
-    } else {
-      setState({ filters, pagination, sorter });
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onStateChange((prevState: any) => ({
+      ...prevState,
+      filters,
+      page: pagination.current,
+      pageSize: pagination.pageSize,
+      sortField: sorter.field,
+      sortOrder: sorter.order ?? 'ascend',
+    }));
   };
 
   const renderTitle = () => (
@@ -59,30 +66,41 @@ export function Grid<T extends object>({
   );
 
   return (
-    <Table<T>
-      bordered
-      title={tableTitle ? renderTitle : undefined}
-      size="middle"
-      onChange={(
-        pagination: TablePaginationConfig,
-        filters: Record<string, FilterValue | null>,
-        sorter: SorterResult<T> | SorterResult<T>[]
-      ) => handleTableChange(pagination, filters, sorter as SorterResult<T>)}
-      pagination={{
-        current: gridState?.page ?? state?.pagination.current ?? 1,
-        hideOnSinglePage: false,
-        pageSize: gridState?.pageSize ?? state?.pagination.pageSize ?? 25,
-        pageSizeOptions: ['10', '25', '50', '100', '250'],
-        showSizeChanger: false,
-        showTotal: (totalCount: number, range: [number, number]) =>
-          `${range[0]}-${range[1]} of ${totalCount} items`,
-        size: 'small',
-        total,
-      }}
-      className="rxs-table"
-      rowKey={rowKey}
-      scroll={{ x: true }}
-      {...rest}
-    />
+    <>
+      {showSearch && (
+        <Input.Search
+          placeholder="Buscar..."
+          allowClear
+          className="mb-4"
+          value={search}
+          onChange={(e) => setSearch(e.target.value ?? '')}
+        />
+      )}
+      <Table<T>
+        bordered
+        title={tableTitle ? renderTitle : undefined}
+        size="middle"
+        onChange={(
+          pagination: TablePaginationConfig,
+          filters: Record<string, FilterValue | null>,
+          sorter: SorterResult<T> | SorterResult<T>[]
+        ) => handleTableChange(pagination, filters, sorter as SorterResult<T>)}
+        pagination={{
+          current: gridState.page,
+          hideOnSinglePage: false,
+          pageSize: gridState.pageSize,
+          pageSizeOptions: ['10', '25', '50', '100', '250'],
+          showSizeChanger: false,
+          showTotal: (totalCount: number, range: [number, number]) =>
+            `${range[0]}-${range[1]} of ${totalCount} items`,
+          size: 'small',
+          total,
+        }}
+        className="rxs-table"
+        rowKey={rowKey}
+        scroll={{ x: true }}
+        {...rest}
+      />
+    </>
   );
 }

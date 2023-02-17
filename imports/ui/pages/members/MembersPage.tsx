@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Breadcrumb, Card, Input } from 'antd';
+import React from 'react';
+import { Breadcrumb, Card } from 'antd';
 import { NavLink } from 'react-router-dom';
-import { useDebounce } from 'use-debounce';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { MemberGridDto } from '@domain/members/use-cases/get-members/member-grid.dto';
 import { AppUrl } from '@ui/app.enum';
@@ -15,14 +14,6 @@ export const MembersPage = () => {
     sortField: 'createdAt',
     sortOrder: 'descend',
   });
-
-  const [search, setSearch] = useState(gridState.search);
-
-  const [searchDebounced] = useDebounce(search, 750);
-
-  useEffect(() => {
-    setGridState((p) => ({ ...p, page: 1, search: searchDebounced }));
-  }, [searchDebounced, setGridState]);
 
   const { data, isLoading, isRefetching, refetch } = useMembersGrid({
     page: gridState.page,
@@ -64,16 +55,9 @@ export const MembersPage = () => {
           </>
         }
       >
-        <Input.Search
-          placeholder="Buscar..."
-          allowClear
-          className="mb-4"
-          value={search}
-          onChange={(e) => setSearch(e.target.value ?? '')}
-        />
-
         <Grid<MemberGridDto>
           total={data?.total ?? 0}
+          showSearch
           gridState={gridState}
           onStateChange={setGridState}
           loading={isLoading}

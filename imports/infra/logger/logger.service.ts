@@ -36,14 +36,12 @@ export class Logger {
 
   public error(error: string | unknown, ...meta: unknown[]): void {
     if (error instanceof Error) {
-      this._logger.error(error.message, ...meta);
-    }
-
-    if (typeof error === 'string') {
+      this._logger.error(error.message, { stack: error.stack, ...meta });
+    } else if (typeof error === 'string') {
       this._logger.error(error, ...meta);
+    } else {
+      this._logger.error('Unknown error', ...meta);
     }
-
-    this._logger.error('Unknown error', ...meta);
   }
 
   public debug(message: string, ...meta: unknown[]): void {

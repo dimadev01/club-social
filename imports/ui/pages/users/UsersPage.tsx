@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Breadcrumb, Card, Input } from 'antd';
+import React from 'react';
+import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import { isEqual } from 'lodash';
 import { NavLink } from 'react-router-dom';
-import { useDebounce } from 'use-debounce';
 import {
-  CheckOutlined,
-  CloseOutlined,
   DeleteOutlined,
   PlusOutlined,
   ReloadOutlined,
@@ -22,14 +19,6 @@ export const UsersPage = () => {
     sortField: 'profile',
     sortOrder: 'ascend',
   });
-
-  const [search, setSearch] = useState(gridState.search);
-
-  const [searchDebounced] = useDebounce(search, 750);
-
-  useEffect(() => {
-    setGridState((p) => ({ ...p, page: 1, search: searchDebounced }));
-  }, [searchDebounced, setGridState]);
 
   const { data, isLoading, isRefetching, refetch } = useUsersGrid({
     page: gridState.page,
@@ -73,16 +62,9 @@ export const UsersPage = () => {
           </>
         }
       >
-        <Input.Search
-          placeholder="Buscar..."
-          allowClear
-          className="mb-4"
-          value={search}
-          onChange={(e) => setSearch(e.target.value ?? '')}
-        />
-
         <Grid<Meteor.User>
           total={data?.total ?? 0}
+          showSearch
           gridState={gridState}
           onStateChange={setGridState}
           loading={isLoading}
@@ -105,13 +87,24 @@ export const UsersPage = () => {
             {
               align: 'center',
               dataIndex: 'emails',
-              render: (emails: Meteor.UserEmail[]) =>
-                emails.map((email) => (
-                  <React.Fragment key={email.address}>
-                    <span>{email.address} </span>(
-                    {email.verified ? <CheckOutlined /> : <CloseOutlined />})
-                  </React.Fragment>
-                )),
+              render: (emails: Meteor.UserEmail[]) => (
+                <Space direction="vertical">
+                  {emails.map((email) => (
+                    <Typography.Text key={email.address} copyable>
+                      <Tooltip
+                        title={
+                          email.verified
+                            ? 'Email verificado'
+                            : 'Email no verificado'
+                        }
+                        key={email.address}
+                      >
+                        {email.address}
+                      </Tooltip>
+                    </Typography.Text>
+                  ))}
+                </Space>
+              ),
               title: 'Emails',
             },
             {
