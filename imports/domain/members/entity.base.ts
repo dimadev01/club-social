@@ -1,10 +1,15 @@
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 import { Random } from 'meteor/random';
 
 export class Entity {
+  @IsString()
+  @IsNotEmpty()
   _id: string;
 
+  @IsDate()
   createdAt: Date;
 
+  @IsDate()
   updatedAt: Date;
 
   protected constructor() {

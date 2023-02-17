@@ -2,14 +2,12 @@ import React from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import { isEqual } from 'lodash';
 import { NavLink } from 'react-router-dom';
-import {
-  DeleteOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
-import { Grid } from '@ui/components/Grid';
+import { Table } from '@ui/components/Table/Table';
+import { TableNewButton } from '@ui/components/Table/TableNewButton';
+import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useGrid } from '@ui/hooks/useGrid';
 import { useRemoveUser } from '@ui/hooks/users/useRemoveUser';
 import { useUsersGrid } from '@ui/hooks/users/useUsersGrid';
@@ -41,28 +39,13 @@ export const UsersPage = () => {
         title="Usuarios"
         extra={
           <>
-            <Button
-              onClick={() => refetch()}
-              loading={isRefetching}
-              disabled={isRefetching}
-              tooltip={{ title: 'Recargar' }}
-              htmlType="button"
-              type="ghost"
-              icon={<ReloadOutlined />}
-            />
+            <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
 
-            <NavLink to={AppUrl.UsersNew}>
-              <Button
-                icon={<PlusOutlined />}
-                type="ghost"
-                htmlType="button"
-                tooltip={{ title: 'Nuevo' }}
-              />
-            </NavLink>
+            <TableNewButton to={AppUrl.UsersNew} />
           </>
         }
       >
-        <Grid<Meteor.User>
+        <Table<Meteor.User>
           total={data?.total ?? 0}
           showSearch
           gridState={gridState}
@@ -87,24 +70,25 @@ export const UsersPage = () => {
             {
               align: 'center',
               dataIndex: 'emails',
-              render: (emails: Meteor.UserEmail[]) => (
-                <Space direction="vertical">
-                  {emails.map((email) => (
-                    <Typography.Text key={email.address} copyable>
-                      <Tooltip
-                        title={
-                          email.verified
-                            ? 'Email verificado'
-                            : 'Email no verificado'
-                        }
-                        key={email.address}
-                      >
-                        {email.address}
-                      </Tooltip>
-                    </Typography.Text>
-                  ))}
-                </Space>
-              ),
+              render: (emails: Meteor.UserEmail[] | undefined) =>
+                emails && (
+                  <Space direction="vertical">
+                    {emails.map((email) => (
+                      <Typography.Text key={email.address} copyable>
+                        <Tooltip
+                          title={
+                            email.verified
+                              ? 'Email verificado'
+                              : 'Email no verificado'
+                          }
+                          key={email.address}
+                        >
+                          {email.address}
+                        </Tooltip>
+                      </Typography.Text>
+                    ))}
+                  </Space>
+                ),
               title: 'Emails',
             },
             {

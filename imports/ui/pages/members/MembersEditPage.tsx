@@ -1,20 +1,33 @@
 import React from 'react';
-import { Breadcrumb, Card, DatePicker, Form, Input, message, Spin } from 'antd';
+import {
+  Breadcrumb,
+  Card,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Select,
+  Spin,
+} from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
+import { compact } from 'lodash';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { MemberCategoryOptions } from '@domain/members/members.enum';
 import { Role } from '@domain/roles/roles.enum';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
-import { Button } from '@ui/components/Button';
+import { FormBackButton } from '@ui/components/Form/FormBackButton';
+import { FormListEmails } from '@ui/components/Form/FormListEmails';
+import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 import { NotFound } from '@ui/components/NotFound';
 import { useCreateMember } from '@ui/hooks/members/useCreateMember';
 import { useMember } from '@ui/hooks/members/useMember';
 import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
 
 type FormValues = {
-  dateOfBirth: Dayjs;
-  email: string;
+  dateOfBirth: Dayjs | undefined;
+  emails: string[];
   firstName: string;
   lastName: string;
 };
@@ -33,8 +46,10 @@ export const MembersDetailPage = () => {
   const handleSubmit = async (values: FormValues) => {
     if (!id) {
       const memberId = await createMember.mutateAsync({
-        dateOfBirth: DateUtils.format(values.dateOfBirth),
-        emails: values.email,
+        dateOfBirth: values.dateOfBirth
+          ? DateUtils.format(values.dateOfBirth)
+          : null,
+        emails: compact(values.emails).length > 0 ? values.emails : null,
         firstName: values.firstName,
         lastName: values.lastName,
         role: Role.Member,
@@ -45,8 +60,10 @@ export const MembersDetailPage = () => {
       navigate(`${AppUrl.Members}/${memberId}`);
     } else {
       await updateMember.mutateAsync({
-        dateOfBirth: DateUtils.format(values.dateOfBirth),
-        email: values.email,
+        dateOfBirth: values.dateOfBirth
+          ? DateUtils.format(values.dateOfBirth)
+          : null,
+        emails: values.emails,
         firstName: values.firstName,
         id,
         lastName: values.lastName,
@@ -82,8 +99,10 @@ export const MembersDetailPage = () => {
           layout="vertical"
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
-            dateOfBirth: member ? dayjs.utc(member.dateOfBirth) : undefined,
-            email: member?.email ?? '',
+            dateOfBirth: member?.dateOfBirth
+              ? dayjs.utc(member.dateOfBirth)
+              : undefined,
+            emails: member?.emails ?? [''],
             firstName: member?.firstName ?? '',
             lastName: member?.lastName ?? '',
           }}
@@ -104,18 +123,12 @@ export const MembersDetailPage = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true }, { type: 'email' }]}
-          >
-            <Input type="email" />
-          </Form.Item>
+          <FormListEmails />
 
           <Form.Item
             name="dateOfBirth"
             label="Fecha de Nacimiento"
-            rules={[{ required: true }, { type: 'date' }]}
+            rules={[{ type: 'date' }]}
           >
             <DatePicker
               format={DateFormats.DD_MM_YYYY}
@@ -124,18 +137,14 @@ export const MembersDetailPage = () => {
             />
           </Form.Item>
 
+          <Form.Item label="Categoría" name="category">
+            <Select options={MemberCategoryOptions()} />
+          </Form.Item>
+
           <ButtonGroup>
-            <Button
-              type="primary"
-              disabled={createMember.isLoading || updateMember.isLoading}
-              loading={createMember.isLoading || updateMember.isLoading}
-              htmlType="submit"
-            >
-              Guardar
-            </Button>
-            <Button type="text" onClick={() => navigate(AppUrl.Members)}>
-              Atrás
-            </Button>
+            <FormSaveButton />
+
+            <FormBackButton to={AppUrl.Members} />
           </ButtonGroup>
         </Form>
       </Card>

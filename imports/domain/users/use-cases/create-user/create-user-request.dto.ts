@@ -1,4 +1,11 @@
-import { IsEnum, IsLowercase, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsLowercase,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Role } from '@domain/roles/roles.enum';
 
 export class CreateUserRequestDto {
@@ -12,7 +19,9 @@ export class CreateUserRequestDto {
 
   @IsString({ each: true })
   @IsLowercase({ each: true })
-  emails: string[];
+  @IsOptional()
+  @IsArray()
+  emails: string[] | null;
 
   @IsEnum(Role)
   role: string;

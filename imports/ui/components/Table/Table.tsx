@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Table, TableProps, Typography } from 'antd';
+import { Input, Table as AntTable, TableProps, Typography } from 'antd';
 import {
   FilterValue,
   SorterResult,
@@ -22,7 +22,7 @@ interface Props<T> extends TableProps<T> {
   total: number;
 }
 
-export function Grid<T extends object>({
+export function Table<T extends object>({
   rowKey = '_id',
   gridState,
   onStateChange,
@@ -76,7 +76,7 @@ export function Grid<T extends object>({
           onChange={(e) => setSearch(e.target.value ?? '')}
         />
       )}
-      <Table<T>
+      <AntTable<T>
         bordered
         title={tableTitle ? renderTitle : undefined}
         size="middle"

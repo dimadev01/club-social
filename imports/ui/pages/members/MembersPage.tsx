@@ -1,11 +1,11 @@
 import React from 'react';
 import { Breadcrumb, Card } from 'antd';
 import { NavLink } from 'react-router-dom';
-import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { MemberGridDto } from '@domain/members/use-cases/get-members/member-grid.dto';
 import { AppUrl } from '@ui/app.enum';
-import { Button } from '@ui/components/Button';
-import { Grid } from '@ui/components/Grid';
+import { Table } from '@ui/components/Table/Table';
+import { TableNewButton } from '@ui/components/Table/TableNewButton';
+import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useMembersGrid } from '@ui/hooks/members/useMembersGrid';
 import { useGrid } from '@ui/hooks/useGrid';
 
@@ -34,28 +34,13 @@ export const MembersPage = () => {
         title="Socios"
         extra={
           <>
-            <Button
-              onClick={() => refetch()}
-              loading={isRefetching}
-              disabled={isRefetching}
-              tooltip={{ title: 'Recargar' }}
-              htmlType="button"
-              type="ghost"
-              icon={<ReloadOutlined />}
-            />
+            <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
 
-            <NavLink to={AppUrl.MembersNew}>
-              <Button
-                icon={<PlusOutlined />}
-                type="ghost"
-                htmlType="button"
-                tooltip={{ title: 'Nuevo' }}
-              />
-            </NavLink>
+            <TableNewButton to={AppUrl.MembersNew} />
           </>
         }
       >
-        <Grid<MemberGridDto>
+        <Table<MemberGridDto>
           total={data?.total ?? 0}
           showSearch
           gridState={gridState}

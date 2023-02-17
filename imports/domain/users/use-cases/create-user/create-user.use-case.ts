@@ -1,3 +1,4 @@
+import { Random } from 'meteor/random';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { MemberRole, Role, StaffRole } from '@domain/roles/roles.enum';
@@ -20,22 +21,23 @@ export class CreateUserUseCase
   ): Promise<Result<string, Error>> {
     await this.validateDto(CreateUserRequestDto, request);
 
-    if (request.emails.some((email) => Accounts.findUserByEmail(email))) {
+    if (request.emails?.some((email) => Accounts.findUserByEmail(email))) {
       return err(
         new Error('Al menos un email ya está en uso por otro usuario')
       );
     }
 
     const userId = Accounts.createUser({
-      email: request.emails[0],
+      email: request.emails?.[0] ?? '',
       profile: {
         firstName: request.firstName,
         lastName: request.lastName,
         role: request.role,
       },
+      username: request.emails === null ? Random.secret() : undefined,
     });
 
-    if (request.emails.length > 1) {
+    if (request.emails && request.emails.length > 1) {
       request.emails.slice(1).forEach((email) => {
         Accounts.addEmail(userId, email);
       });

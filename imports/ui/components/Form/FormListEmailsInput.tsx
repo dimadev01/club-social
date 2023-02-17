@@ -12,7 +12,7 @@ type Props = {
   value?: string;
 };
 
-export const InputEmailList: React.FC<Props> = ({
+export const FormListEmailsInput: React.FC<Props> = ({
   value,
   onChange,
   index,

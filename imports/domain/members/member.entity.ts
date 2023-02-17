@@ -1,9 +1,24 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsOptional, IsString, validateSync } from 'class-validator';
+import {
+  IsArray,
+  IsDate,
+  IsEnum,
+  IsLowercase,
+  IsOptional,
+  IsString,
+  validateSync,
+} from 'class-validator';
 import { Meteor } from 'meteor/meteor';
 import { err, ok, Result } from 'neverthrow';
 import { Entity } from '@domain/members/entity.base';
 import { MemberAddress } from '@domain/members/member-address.entity';
+import {
+  MemberCategory,
+  MemberMaritalStatus,
+  MemberNationality,
+  MemberSex,
+  MemberStatus,
+} from '@domain/members/members.enum';
 import { CreateMember } from '@domain/members/members.types';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
@@ -15,9 +30,9 @@ export class Member extends Entity {
   @Type(() => MemberAddress)
   public address: MemberAddress | null;
 
-  @IsString()
+  @IsEnum(MemberCategory)
   @IsOptional()
-  public category: string | null;
+  public category: MemberCategory | null;
 
   @IsDate()
   @IsOptional()
@@ -28,32 +43,34 @@ export class Member extends Entity {
   public documentID: string | null;
 
   @IsString({ each: true })
+  @IsLowercase({ each: true })
   @IsOptional()
+  @IsArray()
   public emails: string[] | null;
 
   @IsString()
   @IsOptional()
   public fileStatus: string | null;
 
-  @IsString()
+  @IsEnum(MemberMaritalStatus)
   @IsOptional()
   public maritalStatus: string | null;
 
-  @IsString()
+  @IsEnum(MemberNationality)
   @IsOptional()
-  public nationality: string | null;
+  public nationality: MemberNationality | null;
 
   @IsString({ each: true })
   @IsOptional()
+  @IsArray()
   public phones: string[] | null;
 
-  @IsString()
+  @IsEnum(MemberSex)
   @IsOptional()
-  public sex: string | null;
+  public sex: MemberSex | null;
 
-  @IsString()
-  @IsOptional()
-  public status: string | null;
+  @IsEnum(MemberStatus)
+  public status: string;
 
   public user: Meteor.User | null;
 
@@ -67,6 +84,28 @@ export class Member extends Entity {
 
   public constructor() {
     super();
+
+    this.address = null;
+
+    this.category = null;
+
+    this.dateOfBirth = null;
+
+    this.documentID = null;
+
+    this.emails = null;
+
+    this.fileStatus = null;
+
+    this.maritalStatus = null;
+
+    this.nationality = null;
+
+    this.phones = null;
+
+    this.sex = null;
+
+    this.status = MemberStatus.Active;
   }
 
   // #endregion Constructors (1)
@@ -88,7 +127,9 @@ export class Member extends Entity {
   public static create(props: CreateMember): Result<Member, Error> {
     const member = new Member();
 
-    member.dateOfBirth = new Date(props.dateOfBirth);
+    if (props.dateOfBirth) {
+      member.dateOfBirth = new Date(props.dateOfBirth);
+    }
 
     member.userId = props.userId;
 

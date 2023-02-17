@@ -1,4 +1,4 @@
 export interface CreateMember {
-  dateOfBirth: string;
+  dateOfBirth: string | null;
   userId: string;
 }

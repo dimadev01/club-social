@@ -5,7 +5,7 @@ export class GetMemberResponseDto {
 
   lastName: string;
 
-  email: string;
+  emails: string[];
 
   dateOfBirth: Date;
 }

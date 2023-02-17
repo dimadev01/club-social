@@ -1,7 +1,9 @@
 import {
+  IsArray,
   IsDateString,
   IsLowercase,
   IsNotEmpty,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -18,11 +20,13 @@ export class UpdateMemberRequestDto {
   @IsNotEmpty()
   lastName: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @IsLowercase()
-  email: string;
+  @IsString({ each: true })
+  @IsOptional()
+  @IsLowercase({ each: true })
+  @IsArray()
+  emails: string[] | null;
 
   @IsDateString()
-  dateOfBirth: string;
+  @IsOptional()
+  dateOfBirth: string | null;
 }
