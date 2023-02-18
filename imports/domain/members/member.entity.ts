@@ -3,7 +3,6 @@ import {
   IsArray,
   IsDate,
   IsEnum,
-  IsLowercase,
   IsOptional,
   IsString,
   validateSync,
@@ -43,12 +42,6 @@ export class Member extends Entity {
   @IsOptional()
   public documentID: string | null;
 
-  @IsString({ each: true })
-  @IsLowercase({ each: true })
-  @IsOptional()
-  @IsArray()
-  public emails: string[] | null;
-
   @IsEnum(MemberFileStatus)
   @IsOptional()
   public fileStatus: MemberFileStatus | null;
@@ -76,8 +69,7 @@ export class Member extends Entity {
   public user: Meteor.User | null;
 
   @IsString()
-  @IsOptional()
-  public userId: string | null;
+  public userId: string;
 
   // #endregion Properties (13)
 
@@ -93,8 +85,6 @@ export class Member extends Entity {
     this.dateOfBirth = null;
 
     this.documentID = null;
-
-    this.emails = null;
 
     this.fileStatus = null;
 
@@ -136,8 +126,6 @@ export class Member extends Entity {
 
     member.documentID = props.documentID;
 
-    member.emails = props.emails;
-
     member.fileStatus = props.fileStatus;
 
     member.maritalStatus = props.maritalStatus;
@@ -163,11 +151,13 @@ export class Member extends Entity {
 
   // #region Public Methods (1)
 
-  public updateDateOfBirth(value: string | Date): void {
+  public updateDateOfBirth(value: string | Date | undefined | null): void {
     if (typeof value === 'string') {
       this.dateOfBirth = new Date(value);
-    } else {
+    } else if (value instanceof Date) {
       this.dateOfBirth = value;
+    } else if (value === undefined || value === null) {
+      this.dateOfBirth = null;
     }
   }
 

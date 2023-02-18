@@ -45,7 +45,7 @@ export const UsersDetailPage = () => {
       navigate(`${AppUrl.Users}/${userId}`);
     } else {
       await updateUser.mutateAsync({
-        emails: values.emails,
+        emails: compact(values.emails).length > 0 ? values.emails : null,
         firstName: values.firstName,
         id: user._id,
         lastName: values.lastName,

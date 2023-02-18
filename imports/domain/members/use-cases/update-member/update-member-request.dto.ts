@@ -1,32 +1,12 @@
-import {
-  IsArray,
-  IsDateString,
-  IsLowercase,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { MemberStatus } from '@domain/members/members.enum';
+import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
 
-export class UpdateMemberRequestDto {
+export class UpdateMemberRequestDto extends CreateMemberRequestDto {
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   id: string;
 
-  @IsString()
-  @IsNotEmpty()
-  firstName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  lastName: string;
-
-  @IsString({ each: true })
-  @IsOptional()
-  @IsLowercase({ each: true })
-  @IsArray()
-  emails: string[] | null;
-
-  @IsDateString()
-  @IsOptional()
-  dateOfBirth: string | null;
+  @IsEnum(MemberStatus)
+  status: MemberStatus;
 }

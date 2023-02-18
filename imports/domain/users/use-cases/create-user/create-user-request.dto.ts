@@ -19,6 +19,7 @@ export class CreateUserRequestDto {
 
   @IsString({ each: true })
   @IsLowercase({ each: true })
+  @IsNotEmpty({ each: true })
   @IsOptional()
   @IsArray()
   emails: string[] | null;

@@ -1,4 +1,10 @@
-import { IsArray, IsLowercase, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsLowercase,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class UpdateUserRequestDto {
   @IsString()
@@ -16,5 +22,7 @@ export class UpdateUserRequestDto {
   @IsArray()
   @IsString({ each: true })
   @IsLowercase({ each: true })
-  emails: string[];
+  @IsOptional()
+  @IsNotEmpty({ each: true })
+  emails: string[] | null;
 }

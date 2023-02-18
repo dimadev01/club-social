@@ -3,6 +3,7 @@ import { injectable } from 'tsyringe';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
+import { Role } from '@domain/roles/roles.enum';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
@@ -29,7 +30,7 @@ export class CreateMemberUseCase
       emails: request.emails,
       firstName: request.firstName,
       lastName: request.lastName,
-      role: request.role,
+      role: Role.Member,
     });
 
     if (createUserResult.isErr()) {
@@ -40,7 +41,6 @@ export class CreateMemberUseCase
       category: request.category,
       dateOfBirth: request.dateOfBirth,
       documentID: request.documentID,
-      emails: request.emails,
       fileStatus: request.fileStatus,
       maritalStatus: request.maritalStatus,
       nationality: request.nationality,
@@ -53,10 +53,10 @@ export class CreateMemberUseCase
       return err(member.error);
     }
 
-    const memberId = await MembersCollection.insertAsync(member.value);
+    await MembersCollection.insertAsync(member.value);
 
-    this._logger.info('Member created', { memberId: member.value });
+    this._logger.info('Member created', { member });
 
-    return ok(memberId);
+    return ok(member.value._id);
   }
 }

@@ -21,10 +21,12 @@ import {
   MemberFileStatus,
   MemberFileStatusOptions,
   MemberMaritalStatus,
+  MemberMaritalStatusOptions,
   MemberNationality,
   MemberNationalityOptions,
   MemberSex,
   MemberSexOptions,
+  MemberStatus,
   MemberStatusOptions,
 } from '@domain/members/members.enum';
 import { Role } from '@domain/roles/roles.enum';
@@ -51,6 +53,7 @@ type FormValues = {
   nationality: MemberNationality | undefined;
   phones: string[];
   sex: MemberSex | undefined;
+  status: MemberStatus;
 };
 
 export const MembersDetailPage = () => {
@@ -65,15 +68,22 @@ export const MembersDetailPage = () => {
   const updateMember = useUpdateMember();
 
   const handleSubmit = async (values: FormValues) => {
-    if (!id) {
+    if (!member) {
       const memberId = await createMember.mutateAsync({
+        category: values.category ?? null,
         dateOfBirth: values.dateOfBirth
           ? DateUtils.format(values.dateOfBirth)
           : null,
+        documentID: values.documentID ?? null,
         emails: compact(values.emails).length > 0 ? values.emails : null,
+        fileStatus: values.fileStatus ?? null,
         firstName: values.firstName,
         lastName: values.lastName,
+        maritalStatus: values.maritalStatus ?? null,
+        nationality: values.nationality ?? null,
+        phones: values.phones,
         role: Role.Member,
+        sex: values.sex ?? null,
       });
 
       message.success('Socio creado');
@@ -81,13 +91,22 @@ export const MembersDetailPage = () => {
       navigate(`${AppUrl.Members}/${memberId}`);
     } else {
       await updateMember.mutateAsync({
+        category: values.category ?? null,
         dateOfBirth: values.dateOfBirth
           ? DateUtils.format(values.dateOfBirth)
           : null,
-        emails: values.emails,
+        documentID: values.documentID ?? null,
+        emails: compact(values.emails).length > 0 ? values.emails : null,
+        fileStatus: values.fileStatus ?? null,
         firstName: values.firstName,
-        id,
+        id: member._id,
         lastName: values.lastName,
+        maritalStatus: values.maritalStatus ?? null,
+        nationality: values.nationality ?? null,
+        phones: values.phones,
+        role: Role.Member,
+        sex: values.sex ?? null,
+        status: values.status,
       });
 
       message.success('Socio actualizado');
@@ -175,13 +194,15 @@ export const MembersDetailPage = () => {
 
               <FormListEmails />
 
-              <Form.Item label="Estado" name="status">
-                <Select
-                  placeholder="Seleccionar"
-                  allowClear
-                  options={MemberStatusOptions()}
-                />
-              </Form.Item>
+              {member && (
+                <Form.Item label="Estado" name="status">
+                  <Select
+                    placeholder="Seleccionar"
+                    allowClear
+                    options={MemberStatusOptions()}
+                  />
+                </Form.Item>
+              )}
             </Col>
             <Col xs={24} sm={12}>
               <Form.Item label="DNI" name="documentID">
@@ -209,6 +230,14 @@ export const MembersDetailPage = () => {
                   placeholder="Seleccionar"
                   allowClear
                   options={MemberSexOptions()}
+                />
+              </Form.Item>
+
+              <Form.Item label="Estado civil" name="maritalStatus">
+                <Select
+                  placeholder="Seleccionar"
+                  allowClear
+                  options={MemberMaritalStatusOptions()}
                 />
               </Form.Item>
 
@@ -245,7 +274,6 @@ export const MembersDetailPage = () => {
                           label={`Teléfono ${index + 1}`}
                           rules={[
                             { required: fields.length > 1 },
-                            { type: 'email' },
                             { whitespace: true },
                           ]}
                           noStyle

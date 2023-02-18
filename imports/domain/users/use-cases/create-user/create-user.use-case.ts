@@ -28,17 +28,16 @@ export class CreateUserUseCase
     }
 
     const userId = Accounts.createUser({
-      email: request.emails?.[0] ?? '',
       profile: {
         firstName: request.firstName,
         lastName: request.lastName,
         role: request.role,
       },
-      username: request.emails === null ? Random.secret() : undefined,
+      username: Random.secret(),
     });
 
-    if (request.emails && request.emails.length > 1) {
-      request.emails.slice(1).forEach((email) => {
+    if (request.emails && request.emails.length > 0) {
+      request.emails.forEach((email) => {
         Accounts.addEmail(userId, email);
       });
     }

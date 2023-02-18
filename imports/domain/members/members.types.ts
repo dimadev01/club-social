@@ -10,7 +10,6 @@ export interface CreateMember {
   category: MemberCategory | null;
   dateOfBirth: string | null;
   documentID: string | null;
-  emails: string[] | null;
   fileStatus: MemberFileStatus | null;
   maritalStatus: MemberMaritalStatus | null;
   nationality: MemberNationality | null;

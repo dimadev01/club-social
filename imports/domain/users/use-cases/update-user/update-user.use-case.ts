@@ -32,28 +32,25 @@ export class UpdateUserUseCase
     }
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const email of request.emails) {
-      const existingUserByEmail = Accounts.findUserByEmail(email);
-
-      if (existingUserByEmail && existingUserByEmail._id !== request.id) {
-        return err(new Error(`Ya existe un usuario con el email ${email}`));
-      }
-    }
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const email of request.emails) {
+    for (const email of request.emails ?? []) {
       const userHasEmail = user.emails?.some(
         (userEmail) => userEmail.address === email
       );
 
       if (!userHasEmail) {
+        const existingUserByEmail = Accounts.findUserByEmail(email);
+
+        if (existingUserByEmail && existingUserByEmail._id !== request.id) {
+          return err(new Error(`Ya existe un usuario con el email ${email}`));
+        }
+
         Accounts.addEmail(user._id, email);
       }
     }
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const email of user.emails || []) {
-      const emailIsInRequest = request.emails.includes(email.address);
+    for (const email of user.emails ?? []) {
+      const emailIsInRequest = request.emails?.includes(email.address);
 
       if (!emailIsInRequest) {
         Accounts.removeEmail(user._id, email.address);
