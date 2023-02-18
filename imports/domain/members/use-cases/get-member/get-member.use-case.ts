@@ -29,14 +29,22 @@ export class GetMemberUseCase
       return ok(undefined);
     }
 
-    return ok({
+    return ok<GetMemberResponseDto>({
       _id: member._id,
+      category: member.category,
       dateOfBirth: member.dateOfBirth,
-      email: user.emails?.[0].address ?? '',
+      documentID: member.documentID,
+      emails: user.emails ? user.emails.map((email) => email.address) : null,
+      fileStatus: member.fileStatus,
       // @ts-ignore
       firstName: user.profile?.firstName ?? '',
       // @ts-ignore
       lastName: user.profile?.lastName ?? '',
+      maritalStatus: member.maritalStatus,
+      nationality: member.nationality,
+      phones: member.phones,
+      sex: member.sex,
+      status: member.status,
     });
   }
 }

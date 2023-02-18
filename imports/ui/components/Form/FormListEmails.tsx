@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form } from 'antd';
 import { compact, uniq } from 'lodash';
-import { FormListEmailsInput } from '@ui/components/Form/FormListEmailsInput';
+import { FormListInput } from '@ui/components/Form/FormListInput';
 
 export const FormListEmails: React.FC = () => (
   <Form.List
@@ -38,7 +38,8 @@ export const FormListEmails: React.FC = () => (
               ]}
               noStyle
             >
-              <FormListEmailsInput
+              <FormListInput
+                inputType="email"
                 add={add}
                 remove={remove}
                 fieldName={field.name}

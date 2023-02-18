@@ -14,6 +14,7 @@ import { Entity } from '@domain/members/entity.base';
 import { MemberAddress } from '@domain/members/member-address.entity';
 import {
   MemberCategory,
+  MemberFileStatus,
   MemberMaritalStatus,
   MemberNationality,
   MemberSex,
@@ -48,13 +49,13 @@ export class Member extends Entity {
   @IsArray()
   public emails: string[] | null;
 
-  @IsString()
+  @IsEnum(MemberFileStatus)
   @IsOptional()
-  public fileStatus: string | null;
+  public fileStatus: MemberFileStatus | null;
 
   @IsEnum(MemberMaritalStatus)
   @IsOptional()
-  public maritalStatus: string | null;
+  public maritalStatus: MemberMaritalStatus | null;
 
   @IsEnum(MemberNationality)
   @IsOptional()
@@ -70,7 +71,7 @@ export class Member extends Entity {
   public sex: MemberSex | null;
 
   @IsEnum(MemberStatus)
-  public status: string;
+  public status: MemberStatus;
 
   public user: Meteor.User | null;
 
@@ -127,9 +128,25 @@ export class Member extends Entity {
   public static create(props: CreateMember): Result<Member, Error> {
     const member = new Member();
 
+    member.category = props.category;
+
     if (props.dateOfBirth) {
       member.dateOfBirth = new Date(props.dateOfBirth);
     }
+
+    member.documentID = props.documentID;
+
+    member.emails = props.emails;
+
+    member.fileStatus = props.fileStatus;
+
+    member.maritalStatus = props.maritalStatus;
+
+    member.nationality = props.nationality;
+
+    member.phones = props.phones;
+
+    member.sex = props.sex;
 
     member.userId = props.userId;
 

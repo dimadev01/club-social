@@ -37,7 +37,15 @@ export class CreateMemberUseCase
     }
 
     const member = Member.create({
+      category: request.category,
       dateOfBirth: request.dateOfBirth,
+      documentID: request.documentID,
+      emails: request.emails,
+      fileStatus: request.fileStatus,
+      maritalStatus: request.maritalStatus,
+      nationality: request.nationality,
+      phones: request.phones,
+      sex: request.sex,
       userId: createUserResult.value,
     });
 

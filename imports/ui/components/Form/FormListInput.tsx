@@ -5,20 +5,26 @@ import { Button } from '@ui/components/Button';
 
 type Props = {
   add: () => void;
+  addTooltip?: string;
   fieldName: number;
   index: number;
+  inputType?: string;
   onChange?: (value: string) => void;
   remove: (name: number | number[]) => void;
+  removeTooltip?: string;
   value?: string;
 };
 
-export const FormListEmailsInput: React.FC<Props> = ({
+export const FormListInput: React.FC<Props> = ({
   value,
   onChange,
   index,
   add,
   remove,
   fieldName,
+  addTooltip = 'Agregar',
+  removeTooltip = 'Quitar',
+  inputType,
 }) => (
   <Input.Group compact>
     <Input
@@ -29,19 +35,20 @@ export const FormListEmailsInput: React.FC<Props> = ({
         }
       }}
       style={{ width: `calc(100% - 32px)` }}
-      type="email"
+      type={inputType}
     />
 
     {index === 0 && (
       <Button
-        tooltip={{ title: 'Agregar email' }}
+        tooltip={{ title: addTooltip }}
         icon={<PlusCircleOutlined />}
         onClick={() => add()}
       />
     )}
+
     {index > 0 && (
       <Button
-        tooltip={{ title: 'Quitar email' }}
+        tooltip={{ title: removeTooltip }}
         icon={<MinusCircleOutlined />}
         onClick={() => remove(fieldName)}
       />
