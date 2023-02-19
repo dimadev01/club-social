@@ -66,7 +66,7 @@ export class Member extends Entity {
   @IsEnum(MemberStatus)
   public status: MemberStatus;
 
-  public user: Meteor.User | null;
+  public user: Meteor.User;
 
   @IsString()
   public userId: string;

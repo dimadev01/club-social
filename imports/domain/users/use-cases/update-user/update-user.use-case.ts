@@ -2,6 +2,9 @@ import { Accounts } from 'meteor/accounts-base';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { Role } from '@domain/roles/roles.enum';
+import { EditAdminError } from '@domain/users/errors/edit-admin.error';
+import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
+import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update-user-request.dto';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
@@ -24,11 +27,11 @@ export class UpdateUserUseCase
     const user = await Meteor.users.findOneAsync(request.id);
 
     if (!user) {
-      return err(new Error('User not found'));
+      return err(new UserNotFoundError());
     }
 
     if (user.profile?.role === Role.Admin) {
-      return err(new Error('No puedes editar a un administrador'));
+      return err(new EditAdminError());
     }
 
     // eslint-disable-next-line no-restricted-syntax
@@ -41,7 +44,7 @@ export class UpdateUserUseCase
         const existingUserByEmail = Accounts.findUserByEmail(email);
 
         if (existingUserByEmail && existingUserByEmail._id !== request.id) {
-          return err(new Error(`Ya existe un usuario con el email ${email}`));
+          return err(new ExistingUserByEmailError(email));
         }
 
         Accounts.addEmail(user._id, email);

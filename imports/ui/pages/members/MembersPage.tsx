@@ -1,5 +1,5 @@
 import React from 'react';
-import { Breadcrumb, Card } from 'antd';
+import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import { NavLink } from 'react-router-dom';
 import { MemberGridDto } from '@domain/members/use-cases/get-members/member-grid.dto';
 import { AppUrl } from '@ui/app.enum';
@@ -49,17 +49,39 @@ export const MembersPage = () => {
           dataSource={data?.data}
           columns={[
             {
-              dataIndex: 'dateOfBirth',
-              render: (dateOfBirth: string, member: MemberGridDto) => (
-                <NavLink to={`${AppUrl.Members}/${member._id}`}>
-                  {dateOfBirth}
-                </NavLink>
+              dataIndex: 'name',
+              render: (name: string, member: MemberGridDto) => (
+                <NavLink to={`${AppUrl.Members}/${member._id}`}>{name}</NavLink>
               ),
+              title: 'Socio',
+            },
+            {
+              dataIndex: 'dateOfBirth',
               title: 'Fecha de nacimiento',
             },
             {
-              dataIndex: 'name',
-              title: 'Usuario',
+              align: 'center',
+              dataIndex: 'emails',
+              render: (emails: Meteor.UserEmail[] | null) =>
+                emails && (
+                  <Space direction="vertical">
+                    {emails.map((email) => (
+                      <Typography.Text key={email.address} copyable>
+                        <Tooltip
+                          title={
+                            email.verified
+                              ? 'Email verificado'
+                              : 'Email no verificado'
+                          }
+                          key={email.address}
+                        >
+                          {email.address}
+                        </Tooltip>
+                      </Typography.Text>
+                    ))}
+                  </Space>
+                ),
+              title: 'Emails',
             },
           ]}
         />

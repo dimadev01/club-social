@@ -1,5 +1,6 @@
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { MembersCollection } from '@domain/members/members.collection';
 import { RemoveMemberRequestDto } from '@domain/members/use-cases/remove-member/remove-member-request.dto';
 import { Logger } from '@infra/logger/logger.service';
@@ -23,7 +24,7 @@ export class RemoveMemberUseCase
     const member = await MembersCollection.findOneAsync(request.id);
 
     if (!member) {
-      return err(new Error('Member not found'));
+      return err(new MemberNotFoundError());
     }
 
     await MembersCollection.removeAsync(request.id);

@@ -1,9 +1,11 @@
+import { Meteor } from 'meteor/meteor';
+
 export class MemberGridDto {
   _id: string;
 
-  email: string;
-
-  dateOfBirth: string;
+  dateOfBirth: string | null;
 
   name: string;
+
+  emails: Meteor.UserEmail[] | null;
 }

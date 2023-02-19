@@ -8,7 +8,7 @@ import {
   Input,
   message,
   Row,
-  Select,
+  Space,
   Spin,
 } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
@@ -37,9 +37,11 @@ import { FormListEmails } from '@ui/components/Form/FormListEmails';
 import { FormListInput } from '@ui/components/Form/FormListInput';
 import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 import { NotFound } from '@ui/components/NotFound';
+import { Select } from '@ui/components/Select';
 import { useCreateMember } from '@ui/hooks/members/useCreateMember';
 import { useMember } from '@ui/hooks/members/useMember';
 import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
+import { useProvinces } from '@ui/hooks/useProvinces';
 
 type FormValues = {
   category: MemberCategory | undefined;
@@ -52,6 +54,9 @@ type FormValues = {
   maritalStatus: MemberMaritalStatus | undefined;
   nationality: MemberNationality | undefined;
   phones: string[];
+  province: {
+    label: string;
+  };
   sex: MemberSex | undefined;
   status: MemberStatus;
 };
@@ -61,7 +66,9 @@ export const MembersDetailPage = () => {
 
   const navigate = useNavigate();
 
-  const { data: member, fetchStatus } = useMember(id);
+  const { data: member, fetchStatus: memberLoading } = useMember(id);
+
+  const { data: provinces, isLoading: provincesLoading } = useProvinces();
 
   const createMember = useCreateMember();
 
@@ -69,6 +76,8 @@ export const MembersDetailPage = () => {
 
   const handleSubmit = async (values: FormValues) => {
     if (!member) {
+      console.log(values);
+
       const memberId = await createMember.mutateAsync({
         category: values.category ?? null,
         dateOfBirth: values.dateOfBirth
@@ -113,9 +122,11 @@ export const MembersDetailPage = () => {
     }
   };
 
-  if (fetchStatus === 'fetching') {
+  if (memberLoading === 'fetching') {
     return <Spin spinning />;
   }
+
+  console.log(provinces);
 
   if (id && !member) {
     return <NotFound />;
@@ -156,144 +167,155 @@ export const MembersDetailPage = () => {
         >
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12}>
-              <Form.Item
-                name="firstName"
-                label="Nombre"
-                rules={[{ required: true }]}
-              >
-                <Input />
-              </Form.Item>
+              <Card title="Datos" type="inner">
+                <Form.Item
+                  name="firstName"
+                  label="Nombre"
+                  rules={[{ required: true, whitespace: true }]}
+                >
+                  <Input />
+                </Form.Item>
 
-              <Form.Item
-                name="lastName"
-                label="Apellido"
-                rules={[{ required: true }]}
-              >
-                <Input />
-              </Form.Item>
+                <Form.Item
+                  name="lastName"
+                  label="Apellido"
+                  rules={[{ required: true, whitespace: true }]}
+                >
+                  <Input />
+                </Form.Item>
 
-              <Form.Item label="Categoría" name="category">
-                <Select
-                  placeholder="Seleccionar"
-                  allowClear
-                  options={MemberCategoryOptions()}
-                />
-              </Form.Item>
+                <Form.Item label="Categoría" name="category">
+                  <Select options={MemberCategoryOptions()} />
+                </Form.Item>
 
-              <Form.Item
-                name="dateOfBirth"
-                label="Fecha de Nacimiento"
-                rules={[{ type: 'date' }]}
-              >
-                <DatePicker
-                  format={DateFormats.DD_MM_YYYY}
-                  className="w-full"
-                  disabledDate={(current: Dayjs) => current.isAfter(dayjs())}
-                />
-              </Form.Item>
-
-              <FormListEmails />
-
-              {member && (
-                <Form.Item label="Estado" name="status">
-                  <Select
-                    placeholder="Seleccionar"
-                    allowClear
-                    options={MemberStatusOptions()}
+                <Form.Item
+                  name="dateOfBirth"
+                  label="Fecha de Nacimiento"
+                  rules={[{ type: 'date' }]}
+                >
+                  <DatePicker
+                    format={DateFormats.DD_MM_YYYY}
+                    className="w-full"
+                    disabledDate={(current: Dayjs) => current.isAfter(dayjs())}
                   />
                 </Form.Item>
-              )}
+
+                <Form.Item
+                  rules={[{ whitespace: true }]}
+                  label="DNI"
+                  name="documentID"
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item label="Ficha" name="fileStatus">
+                  <Select options={MemberFileStatusOptions()} />
+                </Form.Item>
+
+                <Form.Item label="Nacionalidad" name="nationality">
+                  <Select options={MemberNationalityOptions()} />
+                </Form.Item>
+
+                <Form.Item label="Género" name="sex">
+                  <Select options={MemberSexOptions()} />
+                </Form.Item>
+
+                <Form.Item label="Estado civil" name="maritalStatus">
+                  <Select options={MemberMaritalStatusOptions()} />
+                </Form.Item>
+
+                {member && (
+                  <Form.Item label="Estado" name="status">
+                    <Select options={MemberStatusOptions()} />
+                  </Form.Item>
+                )}
+              </Card>
             </Col>
             <Col xs={24} sm={12}>
-              <Form.Item label="DNI" name="documentID">
-                <Input />
-              </Form.Item>
+              <Space size="middle" direction="vertical" className="flex">
+                <Card title="Emails" type="inner">
+                  <FormListEmails />
+                </Card>
 
-              <Form.Item label="Ficha" name="fileStatus">
-                <Select
-                  placeholder="Seleccionar"
-                  allowClear
-                  options={MemberFileStatusOptions()}
-                />
-              </Form.Item>
+                <Card title="Teléfonos" type="inner">
+                  <Form.List
+                    name="phones"
+                    rules={[
+                      {
+                        validator: async (_, names) => {
+                          if (
+                            compact(uniq(names)).length !==
+                            compact(names).length
+                          ) {
+                            return Promise.reject(
+                              new Error(
+                                'No se pueden ingresar teléfonos duplicados'
+                              )
+                            );
+                          }
 
-              <Form.Item label="Nacionalidad" name="nationality">
-                <Select
-                  placeholder="Seleccionar"
-                  allowClear
-                  options={MemberNationalityOptions()}
-                />
-              </Form.Item>
+                          return Promise.resolve();
+                        },
+                      },
+                    ]}
+                  >
+                    {(fields, { add, remove }, { errors }) => (
+                      <>
+                        {fields.map((field, index) => (
+                          <Form.Item
+                            required={fields.length > 1}
+                            label={`Teléfono ${index + 1}`}
+                            key={field.key}
+                          >
+                            <Form.Item
+                              {...field}
+                              label={`Teléfono ${index + 1}`}
+                              rules={[
+                                { required: fields.length > 1 },
+                                { whitespace: true },
+                              ]}
+                              noStyle
+                            >
+                              <FormListInput
+                                add={add}
+                                remove={remove}
+                                fieldName={field.name}
+                                index={index}
+                              />
+                            </Form.Item>
+                            <Form.ErrorList
+                              className="text-red-500"
+                              errors={errors}
+                            />
+                          </Form.Item>
+                        ))}
+                      </>
+                    )}
+                  </Form.List>
+                </Card>
 
-              <Form.Item label="Género" name="sex">
-                <Select
-                  placeholder="Seleccionar"
-                  allowClear
-                  options={MemberSexOptions()}
-                />
-              </Form.Item>
-
-              <Form.Item label="Estado civil" name="maritalStatus">
-                <Select
-                  placeholder="Seleccionar"
-                  allowClear
-                  options={MemberMaritalStatusOptions()}
-                />
-              </Form.Item>
-
-              <Form.List
-                name="phones"
-                rules={[
-                  {
-                    validator: async (_, names) => {
-                      if (
-                        compact(uniq(names)).length !== compact(names).length
-                      ) {
-                        return Promise.reject(
-                          new Error(
-                            'No se pueden ingresar teléfonos duplicados'
-                          )
-                        );
+                <Card title="Dirección" type="inner">
+                  <Form.Item name="province" label="Provincia">
+                    <Select
+                      labelInValue
+                      loading={provincesLoading}
+                      optionFilterProp="label"
+                      options={
+                        provinces?.provincias
+                          .sort((a, b) => a.nombre.localeCompare(b.nombre))
+                          .map((province) => ({
+                            label: province.nombre,
+                            value: province.id,
+                          })) ?? []
                       }
+                    />
+                  </Form.Item>
 
-                      return Promise.resolve();
-                    },
-                  },
-                ]}
-              >
-                {(fields, { add, remove }, { errors }) => (
-                  <>
-                    {fields.map((field, index) => (
-                      <Form.Item
-                        required={fields.length > 1}
-                        label={`Teléfono ${index + 1}`}
-                        key={field.key}
-                      >
-                        <Form.Item
-                          {...field}
-                          label={`Teléfono ${index + 1}`}
-                          rules={[
-                            { required: fields.length > 1 },
-                            { whitespace: true },
-                          ]}
-                          noStyle
-                        >
-                          <FormListInput
-                            add={add}
-                            remove={remove}
-                            fieldName={field.name}
-                            index={index}
-                          />
-                        </Form.Item>
-                        <Form.ErrorList
-                          className="text-red-500"
-                          errors={errors}
-                        />
-                      </Form.Item>
-                    ))}
-                  </>
-                )}
-              </Form.List>
+                  <Form.Item label="Calle" rules={[{ whitespace: true }]}>
+                    <Input />
+                  </Form.Item>
+                </Card>
+              </Space>
             </Col>
           </Row>
 

@@ -57,7 +57,7 @@ export class GetMembersUseCase
       data: membersAggregate.map((member) => ({
         _id: member._id,
         dateOfBirth: member.dateOfBirthString,
-        email: member.user.emails?.[0].address ?? '',
+        emails: member.user.emails ?? null,
         // @ts-ignore
         name: `${member.user.profile?.firstName ?? ''} ${
           // @ts-ignore

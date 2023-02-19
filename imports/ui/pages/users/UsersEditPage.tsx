@@ -1,5 +1,5 @@
 import React from 'react';
-import { Breadcrumb, Card, Form, Input, message, Select, Spin } from 'antd';
+import { Breadcrumb, Card, Form, Input, message, Spin } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import { compact } from 'lodash';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
 import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 import { NotFound } from '@ui/components/NotFound';
+import { Select } from '@ui/components/Select';
 import { useCreateUser } from '@ui/hooks/users/useCreateUser';
 import { useUpdateUser } from '@ui/hooks/users/useUpdateUser';
 import { useUser } from '@ui/hooks/users/useUser';
@@ -81,7 +82,10 @@ export const UsersDetailPage = () => {
           layout="vertical"
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
-            emails: user?.emails?.map((email) => email.address) ?? [''],
+            emails:
+              user?.emails && user.emails.length > 0
+                ? user.emails.map((email) => email.address)
+                : [''],
             firstName: user?.profile?.firstName ?? '',
             lastName: user?.profile?.lastName ?? '',
             rol: user?.profile?.role ?? '',
@@ -108,7 +112,6 @@ export const UsersDetailPage = () => {
           {!user && (
             <Form.Item name="role" label="Rol" rules={[{ required: true }]}>
               <Select
-                placeholder="Seleccionar"
                 options={[
                   {
                     label: 'Staff',

@@ -1,3 +1,4 @@
+/* eslint-disable typescript-sort-keys/string-enum */
 export enum MemberStatus {
   Active = 'active',
   Inactive = 'inactive',
@@ -15,8 +16,8 @@ export const MemberStatusOptions = () =>
   }));
 
 export enum MemberCategory {
-  Cadet = 'cadet',
   Member = 'member',
+  Cadet = 'cadet',
 }
 
 export const MemberCategoryLabel = {
@@ -31,9 +32,9 @@ export const MemberCategoryOptions = () =>
   }));
 
 export enum MemberMaritalStatus {
-  Divorced = 'divorced',
-  Married = 'married',
   Single = 'single',
+  Married = 'married',
+  Divorced = 'divorced',
   Widowed = 'widowed',
 }
 
@@ -69,8 +70,8 @@ export const MemberNationalityOptions = () =>
   }));
 
 export enum MemberSex {
-  Female = 'female',
   Male = 'male',
+  Female = 'female',
 }
 
 export const MemberSexLabel = {

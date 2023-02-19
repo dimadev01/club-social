@@ -1,6 +1,9 @@
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { StaffRole } from '@domain/roles/roles.enum';
+import { Role, StaffRole } from '@domain/roles/roles.enum';
+import { RemoveAdminError } from '@domain/users/errors/remove-admin.error';
+import { RemoveYourselfError } from '@domain/users/errors/remove-yourself.error';
+import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
@@ -21,13 +24,17 @@ export class RemoveUserUseCase
     await this.validateDto(RemoveUserRequestDto, request);
 
     if (request.id === Meteor.userId()) {
-      return err(new Error('No puedes eliminarte a ti mismo'));
+      return err(new RemoveYourselfError());
     }
 
     const user = await Meteor.users.findOneAsync(request.id);
 
     if (!user) {
-      return err(new Error('User not found'));
+      return err(new UserNotFoundError());
+    }
+
+    if (user.profile?.role === Role.Admin) {
+      return err(new RemoveAdminError());
     }
 
     Object.entries(StaffRole).forEach(([key, value]) => {

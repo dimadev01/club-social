@@ -1,4 +1,5 @@
 import { Accounts } from 'meteor/accounts-base';
+import { MembersCollection } from '@domain/members/members.collection';
 import { AdminRole, Permission, Role } from '@domain/roles/roles.enum';
 
 // @ts-ignore
@@ -10,6 +11,8 @@ Migrations.add({
       // @ts-ignore
       Roles.deleteRole(role._id);
     });
+
+    await MembersCollection.removeAsync({});
 
     next();
   }),

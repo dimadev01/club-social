@@ -2,6 +2,7 @@ import { Random } from 'meteor/random';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { MemberRole, Role, StaffRole } from '@domain/roles/roles.enum';
+import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
@@ -22,9 +23,7 @@ export class CreateUserUseCase
     await this.validateDto(CreateUserRequestDto, request);
 
     if (request.emails?.some((email) => Accounts.findUserByEmail(email))) {
-      return err(
-        new Error('Al menos un email ya está en uso por otro usuario')
-      );
+      return err(new AtLeastOneEmailInUseError());
     }
 
     const userId = Accounts.createUser({
