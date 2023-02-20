@@ -47,4 +47,28 @@ export class CreateMemberRequestDto extends CreateUserRequestDto {
   @IsEnum(MemberSex)
   @IsOptional()
   sex: MemberSex | null;
+
+  @IsString()
+  @IsOptional()
+  addressStateGovId: string | null;
+
+  @IsString()
+  @IsOptional()
+  addressStateName: string | null;
+
+  @IsString()
+  @IsOptional()
+  addressCityGovId: string | null;
+
+  @IsString()
+  @IsOptional()
+  addressCityName: string | null;
+
+  @IsString()
+  @IsOptional()
+  addressStreet: string | null;
+
+  @IsString()
+  @IsOptional()
+  addressZipCode: string | null;
 }

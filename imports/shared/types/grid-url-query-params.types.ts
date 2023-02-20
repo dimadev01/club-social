@@ -1,7 +1,7 @@
 import { SortOrder } from 'antd/es/table/interface';
 
 export class GridUrlQueryParams {
-  filters?: Partial<Record<string, string[]>>;
+  filters?: Record<string, string[]>;
 
   page: number;
 

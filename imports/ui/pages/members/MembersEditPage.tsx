@@ -16,18 +16,18 @@ import dayjs, { Dayjs } from 'dayjs';
 import { compact, uniq } from 'lodash';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import {
+  getMemberCategoryOptions,
+  getMemberFileStatusOptions,
+  getMemberMaritalStatusOptions,
+  getMemberNationalityOptions,
+  getMemberSexOptions,
+  getMemberStatusOptions,
   MemberCategory,
-  MemberCategoryOptions,
   MemberFileStatus,
-  MemberFileStatusOptions,
   MemberMaritalStatus,
-  MemberMaritalStatusOptions,
   MemberNationality,
-  MemberNationalityOptions,
   MemberSex,
-  MemberSexOptions,
   MemberStatus,
-  MemberStatusOptions,
 } from '@domain/members/members.enum';
 import { Role } from '@domain/roles/roles.enum';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
@@ -41,9 +41,16 @@ import { Select } from '@ui/components/Select';
 import { useCreateMember } from '@ui/hooks/members/useCreateMember';
 import { useMember } from '@ui/hooks/members/useMember';
 import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
-import { useProvinces } from '@ui/hooks/useProvinces';
+import { useCities } from '@ui/hooks/useCities';
+import { useStates } from '@ui/hooks/useStates';
 
 type FormValues = {
+  address: {
+    cityGovId: { label: string; value: string } | undefined;
+    stateGovId: { label: string; value: string } | undefined;
+    street: string | undefined;
+    zipCode: string | undefined;
+  };
   category: MemberCategory | undefined;
   dateOfBirth: Dayjs | undefined;
   documentID: string | undefined;
@@ -54,21 +61,26 @@ type FormValues = {
   maritalStatus: MemberMaritalStatus | undefined;
   nationality: MemberNationality | undefined;
   phones: string[];
-  province: {
-    label: string;
-  };
   sex: MemberSex | undefined;
   status: MemberStatus;
 };
 
 export const MembersDetailPage = () => {
+  const [form] = Form.useForm<FormValues>();
+
+  const stateGovId = Form.useWatch(['address', 'stateGovId'], form);
+
   const { id } = useParams<{ id?: string }>();
 
   const navigate = useNavigate();
 
   const { data: member, fetchStatus: memberLoading } = useMember(id);
 
-  const { data: provinces, isLoading: provincesLoading } = useProvinces();
+  const { data: states, isLoading: statesIsLoading } = useStates();
+
+  const { data: cities, fetchStatus: citiesFetchStatus } = useCities(
+    stateGovId?.value
+  );
 
   const createMember = useCreateMember();
 
@@ -76,9 +88,13 @@ export const MembersDetailPage = () => {
 
   const handleSubmit = async (values: FormValues) => {
     if (!member) {
-      console.log(values);
-
       const memberId = await createMember.mutateAsync({
+        addressCityGovId: values.address.cityGovId?.value ?? null,
+        addressCityName: values.address.cityGovId?.label ?? null,
+        addressStateGovId: values.address.stateGovId?.value ?? null,
+        addressStateName: values.address.stateGovId?.label ?? null,
+        addressStreet: values.address.street ?? null,
+        addressZipCode: values.address.zipCode ?? null,
         category: values.category ?? null,
         dateOfBirth: values.dateOfBirth
           ? DateUtils.format(values.dateOfBirth)
@@ -90,7 +106,7 @@ export const MembersDetailPage = () => {
         lastName: values.lastName,
         maritalStatus: values.maritalStatus ?? null,
         nationality: values.nationality ?? null,
-        phones: values.phones,
+        phones: compact(values.phones).length > 0 ? values.phones : null,
         role: Role.Member,
         sex: values.sex ?? null,
       });
@@ -100,6 +116,12 @@ export const MembersDetailPage = () => {
       navigate(`${AppUrl.Members}/${memberId}`);
     } else {
       await updateMember.mutateAsync({
+        addressCityGovId: values.address.cityGovId?.value ?? null,
+        addressCityName: values.address.cityGovId?.label ?? null,
+        addressStateGovId: values.address.stateGovId?.value ?? null,
+        addressStateName: values.address.stateGovId?.label ?? null,
+        addressStreet: values.address.street ?? null,
+        addressZipCode: values.address.zipCode ?? null,
         category: values.category ?? null,
         dateOfBirth: values.dateOfBirth
           ? DateUtils.format(values.dateOfBirth)
@@ -112,7 +134,7 @@ export const MembersDetailPage = () => {
         lastName: values.lastName,
         maritalStatus: values.maritalStatus ?? null,
         nationality: values.nationality ?? null,
-        phones: values.phones,
+        phones: compact(values.phones).length > 0 ? values.phones : null,
         role: Role.Member,
         sex: values.sex ?? null,
         status: values.status,
@@ -125,8 +147,6 @@ export const MembersDetailPage = () => {
   if (memberLoading === 'fetching') {
     return <Spin spinning />;
   }
-
-  console.log(provinces);
 
   if (id && !member) {
     return <NotFound />;
@@ -148,21 +168,39 @@ export const MembersDetailPage = () => {
       <Card>
         <Form<FormValues>
           layout="vertical"
+          form={form}
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
-            category: member?.category ?? undefined,
+            address: {
+              cityGovId: member?.addressCityGovId
+                ? {
+                    label: member.addressCityName,
+                    value: member.addressCityGovId,
+                  }
+                : undefined,
+              stateGovId: member?.addressStateGovId
+                ? {
+                    label: member.addressStateName,
+                    value: member.addressStateGovId,
+                  }
+                : undefined,
+              street: member?.addressStreet,
+              zipCode: member?.addressZipCode,
+            },
+            category: member?.category,
             dateOfBirth: member?.dateOfBirth
               ? dayjs.utc(member.dateOfBirth)
               : undefined,
-            emails: member?.emails ?? [''],
-            fileStatus: member?.fileStatus ?? undefined,
-            firstName: member?.firstName ?? '',
-            lastName: member?.lastName ?? '',
-            maritalStatus: member?.maritalStatus ?? undefined,
-            nationality: member?.nationality ?? undefined,
+            emails:
+              member?.emails && member.emails.length > 0 ? member.emails : [''],
+            fileStatus: member?.fileStatus,
+            firstName: member?.firstName,
+            lastName: member?.lastName,
+            maritalStatus: member?.maritalStatus,
+            nationality: member?.nationality,
             phones: member?.phones ?? [''],
-            sex: member?.sex ?? undefined,
-            status: member?.status ?? undefined,
+            sex: member?.sex,
+            status: member?.status,
           }}
         >
           <Row gutter={[16, 16]}>
@@ -185,7 +223,7 @@ export const MembersDetailPage = () => {
                 </Form.Item>
 
                 <Form.Item label="Categoría" name="category">
-                  <Select options={MemberCategoryOptions()} />
+                  <Select options={getMemberCategoryOptions()} />
                 </Form.Item>
 
                 <Form.Item
@@ -209,24 +247,24 @@ export const MembersDetailPage = () => {
                 </Form.Item>
 
                 <Form.Item label="Ficha" name="fileStatus">
-                  <Select options={MemberFileStatusOptions()} />
+                  <Select options={getMemberFileStatusOptions()} />
                 </Form.Item>
 
                 <Form.Item label="Nacionalidad" name="nationality">
-                  <Select options={MemberNationalityOptions()} />
+                  <Select options={getMemberNationalityOptions()} />
                 </Form.Item>
 
                 <Form.Item label="Género" name="sex">
-                  <Select options={MemberSexOptions()} />
+                  <Select options={getMemberSexOptions()} />
                 </Form.Item>
 
                 <Form.Item label="Estado civil" name="maritalStatus">
-                  <Select options={MemberMaritalStatusOptions()} />
+                  <Select options={getMemberMaritalStatusOptions()} />
                 </Form.Item>
 
                 {member && (
                   <Form.Item label="Estado" name="status">
-                    <Select options={MemberStatusOptions()} />
+                    <Select options={getMemberStatusOptions()} />
                   </Form.Item>
                 )}
               </Card>
@@ -295,23 +333,56 @@ export const MembersDetailPage = () => {
                 </Card>
 
                 <Card title="Dirección" type="inner">
-                  <Form.Item name="province" label="Provincia">
+                  <Form.Item name={['address', 'stateGovId']} label="Provincia">
                     <Select
+                      onChange={() => {
+                        form.setFieldValue('address.cityGovId', undefined);
+                      }}
+                      loading={statesIsLoading}
                       labelInValue
-                      loading={provincesLoading}
-                      optionFilterProp="label"
                       options={
-                        provinces?.provincias
-                          .sort((a, b) => a.nombre.localeCompare(b.nombre))
-                          .map((province) => ({
-                            label: province.nombre,
-                            value: province.id,
-                          })) ?? []
+                        states?.map((state) => ({
+                          label: state.nombre,
+                          value: state.id,
+                        })) ?? []
                       }
                     />
                   </Form.Item>
 
-                  <Form.Item label="Calle" rules={[{ whitespace: true }]}>
+                  <Form.Item
+                    dependencies={['address.stateGovId']}
+                    name={['address', 'cityGovId']}
+                    label="Localidad"
+                    rules={[{ required: !!stateGovId?.value }]}
+                  >
+                    <Select
+                      loading={citiesFetchStatus === 'fetching'}
+                      labelInValue
+                      disabled={!stateGovId}
+                      options={
+                        cities?.map((city) => ({
+                          label: city.nombre,
+                          value: city.id,
+                        })) ?? []
+                      }
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    dependencies={['address', 'cityGovId']}
+                    name={['address', 'street']}
+                    label="Calle"
+                    rules={[{ whitespace: true }]}
+                  >
+                    <Input />
+                  </Form.Item>
+
+                  <Form.Item
+                    dependencies={['address', 'cityGovId']}
+                    name={['address', 'zipCode']}
+                    label="Código Postal"
+                    rules={[{ whitespace: true }]}
+                  >
                     <Input />
                   </Form.Item>
                 </Card>

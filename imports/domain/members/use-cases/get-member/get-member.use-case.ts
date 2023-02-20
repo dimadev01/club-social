@@ -31,6 +31,12 @@ export class GetMemberUseCase
 
     return ok<GetMemberResponseDto>({
       _id: member._id,
+      addressCityGovId: member.address.cityGovId,
+      addressCityName: member.address.cityName,
+      addressStateGovId: member.address.stateGovId,
+      addressStateName: member.address.stateName,
+      addressStreet: member.address.street,
+      addressZipCode: member.address.zipCode,
       category: member.category,
       dateOfBirth: member.dateOfBirth,
       documentID: member.documentID,

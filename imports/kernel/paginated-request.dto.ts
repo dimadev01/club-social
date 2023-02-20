@@ -1,5 +1,5 @@
 import { SortOrder } from 'antd/es/table/interface';
-import { IsNotEmpty, IsPositive, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
 
 export class PaginatedRequestDto {
   @IsPositive()
@@ -17,4 +17,7 @@ export class PaginatedRequestDto {
 
   @IsString()
   sortOrder: SortOrder;
+
+  @IsOptional()
+  filters: Record<string, string[] | null> | undefined;
 }

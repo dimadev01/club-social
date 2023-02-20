@@ -42,9 +42,42 @@ export class UpdateMemberUseCase
       return err(updateUserResult.error);
     }
 
-    member.updateDateOfBirth(request.dateOfBirth);
+    if (request.dateOfBirth) {
+      member.dateOfBirth = new Date(request.dateOfBirth);
+    } else {
+      member.dateOfBirth = null;
+    }
 
-    await MembersCollection.updateAsync(request.id, { $set: member });
+    member.category = request.category;
+
+    member.documentID = request.documentID;
+
+    member.fileStatus = request.fileStatus;
+
+    member.maritalStatus = request.maritalStatus;
+
+    member.nationality = request.nationality;
+
+    member.phones = request.phones;
+
+    member.sex = request.sex;
+
+    member.status = request.status;
+
+    member.firstName = request.firstName;
+
+    member.lastName = request.lastName;
+
+    member.address = {
+      cityGovId: request.addressCityGovId,
+      cityName: request.addressCityName,
+      stateGovId: request.addressStateGovId,
+      stateName: request.addressStateName,
+      street: request.addressStreet,
+      zipCode: request.addressZipCode,
+    };
+
+    await MembersCollection.updateEntity(member);
 
     this._logger.info('Member updated', { memberId: request.id });
 

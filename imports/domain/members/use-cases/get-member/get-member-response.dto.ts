@@ -33,4 +33,16 @@ export class GetMemberResponseDto {
   nationality: MemberNationality | null;
 
   status: MemberStatus;
+
+  addressStateGovId: string | null;
+
+  addressStateName: string | null;
+
+  addressCityGovId: string | null;
+
+  addressCityName: string | null;
+
+  addressStreet: string | null;
+
+  addressZipCode: string | null;
 }

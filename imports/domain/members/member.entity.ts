@@ -1,8 +1,10 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayMinSize,
   IsArray,
   IsDate,
   IsEnum,
+  IsLowercase,
   IsOptional,
   IsString,
   validateSync,
@@ -24,11 +26,10 @@ import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
 export class Member extends Entity {
-  // #region Properties (13)
+  // #region Properties (12)
 
-  @IsOptional()
   @Type(() => MemberAddress)
-  public address: MemberAddress | null;
+  public address: MemberAddress;
 
   @IsEnum(MemberCategory)
   @IsOptional()
@@ -38,9 +39,21 @@ export class Member extends Entity {
   @IsOptional()
   public dateOfBirth: Date | null;
 
+  @IsString({ each: true })
+  @IsArray()
+  @IsOptional()
+  @IsLowercase({ each: true })
+  public emails: Meteor.UserEmail[] | null;
+
   @IsString()
   @IsOptional()
   public documentID: string | null;
+
+  @IsString()
+  public firstName: string;
+
+  @IsString()
+  public lastName: string;
 
   @IsEnum(MemberFileStatus)
   @IsOptional()
@@ -57,6 +70,7 @@ export class Member extends Entity {
   @IsString({ each: true })
   @IsOptional()
   @IsArray()
+  @ArrayMinSize(1)
   public phones: string[] | null;
 
   @IsEnum(MemberSex)
@@ -71,14 +85,14 @@ export class Member extends Entity {
   @IsString()
   public userId: string;
 
-  // #endregion Properties (13)
+  // #endregion Properties (12)
 
   // #region Constructors (1)
 
   public constructor() {
     super();
 
-    this.address = null;
+    this.address = new MemberAddress();
 
     this.category = null;
 
@@ -136,7 +150,25 @@ export class Member extends Entity {
 
     member.sex = props.sex;
 
+    member.firstName = props.firstName;
+
+    member.lastName = props.lastName;
+
+    member.emails = props.emails;
+
     member.userId = props.userId;
+
+    member.address.cityGovId = props.address.cityGovId;
+
+    member.address.cityName = props.address.cityName;
+
+    member.address.stateGovId = props.address.stateGovId;
+
+    member.address.stateName = props.address.stateName;
+
+    member.address.street = props.address.street;
+
+    member.address.zipCode = props.address.zipCode;
 
     const errors = validateSync(member);
 
@@ -148,18 +180,4 @@ export class Member extends Entity {
   }
 
   // #endregion Public Static Methods (1)
-
-  // #region Public Methods (1)
-
-  public updateDateOfBirth(value: string | Date | undefined | null): void {
-    if (typeof value === 'string') {
-      this.dateOfBirth = new Date(value);
-    } else if (value instanceof Date) {
-      this.dateOfBirth = value;
-    } else if (value === undefined || value === null) {
-      this.dateOfBirth = null;
-    }
-  }
-
-  // #endregion Public Methods (1)
 }

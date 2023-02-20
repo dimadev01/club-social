@@ -9,7 +9,12 @@ export const Select: React.FC<Props> = ({
   allowClear = true,
   ...props
 }) => (
-  <AntSelect placeholder={placeholder} allowClear={allowClear} {...props}>
+  <AntSelect
+    optionFilterProp="label"
+    placeholder={placeholder}
+    allowClear={allowClear}
+    {...props}
+  >
     {children}
   </AntSelect>
 );

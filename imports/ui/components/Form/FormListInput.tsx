@@ -29,6 +29,7 @@ export const FormListInput: React.FC<Props> = ({
   <Input.Group compact>
     <Input
       value={value}
+      allowClear
       onChange={(e) => {
         if (onChange) {
           onChange(e.target.value);

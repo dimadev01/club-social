@@ -9,9 +9,15 @@ export const MemberStatusLabel = {
   [MemberStatus.Inactive]: 'Inactivo',
 };
 
-export const MemberStatusOptions = () =>
+export const getMemberStatusOptions = () =>
   Object.values(MemberStatus).map((status) => ({
     label: MemberStatusLabel[status],
+    value: status,
+  }));
+
+export const getMemberStatusFilters = () =>
+  Object.values(MemberStatus).map((status) => ({
+    text: MemberStatusLabel[status],
     value: status,
   }));
 
@@ -25,9 +31,15 @@ export const MemberCategoryLabel = {
   [MemberCategory.Member]: 'Socio',
 };
 
-export const MemberCategoryOptions = () =>
+export const getMemberCategoryOptions = () =>
   Object.values(MemberCategory).map((category) => ({
     label: MemberCategoryLabel[category],
+    value: category,
+  }));
+
+export const getMemberCategoryFilters = () =>
+  Object.values(MemberCategory).map((category) => ({
+    text: MemberCategoryLabel[category],
     value: category,
   }));
 
@@ -45,7 +57,7 @@ export const MemberMaritalStatusLabel = {
   [MemberMaritalStatus.Widowed]: 'Viudo',
 };
 
-export const MemberMaritalStatusOptions = () =>
+export const getMemberMaritalStatusOptions = () =>
   Object.values(MemberMaritalStatus).map((status) => ({
     label: MemberMaritalStatusLabel[status],
     value: status,
@@ -63,7 +75,7 @@ export const MemberNationalityLabel = {
   [MemberNationality.Ukraine]: 'Ucrania',
 };
 
-export const MemberNationalityOptions = () =>
+export const getMemberNationalityOptions = () =>
   Object.values(MemberNationality).map((value) => ({
     label: MemberNationalityLabel[value],
     value,
@@ -79,7 +91,7 @@ export const MemberSexLabel = {
   [MemberSex.Male]: 'Masculino',
 };
 
-export const MemberSexOptions = () =>
+export const getMemberSexOptions = () =>
   Object.values(MemberSex).map((value) => ({
     label: MemberSexLabel[value],
     value,
@@ -95,8 +107,14 @@ export const MemberFileStatusLabel = {
   [MemberFileStatus.Pending]: 'Pendiente',
 };
 
-export const MemberFileStatusOptions = () =>
+export const getMemberFileStatusOptions = () =>
   Object.values(MemberFileStatus).map((value) => ({
     label: MemberFileStatusLabel[value],
+    value,
+  }));
+
+export const getMemberFileStatusFilters = () =>
+  Object.values(MemberFileStatus).map((value) => ({
+    text: MemberFileStatusLabel[value],
     value,
   }));

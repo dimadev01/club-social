@@ -3,11 +3,19 @@ import { IsOptional, IsString } from 'class-validator';
 export class MemberAddress {
   @IsString()
   @IsOptional()
-  public city: string | null;
+  public cityName: string | null;
 
   @IsString()
   @IsOptional()
-  public state: string | null;
+  public cityGovId: string | null;
+
+  @IsString()
+  @IsOptional()
+  public stateName: string | null;
+
+  @IsString()
+  @IsOptional()
+  public stateGovId: string | null;
 
   @IsString()
   @IsOptional()
@@ -16,4 +24,18 @@ export class MemberAddress {
   @IsString()
   @IsOptional()
   public zipCode: string | null;
+
+  public constructor() {
+    this.cityGovId = null;
+
+    this.cityName = null;
+
+    this.stateGovId = null;
+
+    this.stateName = null;
+
+    this.street = null;
+
+    this.zipCode = null;
+  }
 }

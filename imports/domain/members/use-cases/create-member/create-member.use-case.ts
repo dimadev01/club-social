@@ -38,10 +38,21 @@ export class CreateMemberUseCase
     }
 
     const member = Member.create({
+      address: {
+        cityGovId: request.addressCityGovId,
+        cityName: request.addressCityName,
+        stateGovId: request.addressStateGovId,
+        stateName: request.addressStateName,
+        street: request.addressStreet,
+        zipCode: request.addressZipCode,
+      },
       category: request.category,
       dateOfBirth: request.dateOfBirth,
       documentID: request.documentID,
+      emails: request.emails,
       fileStatus: request.fileStatus,
+      firstName: request.firstName,
+      lastName: request.lastName,
       maritalStatus: request.maritalStatus,
       nationality: request.nationality,
       phones: request.phones,
