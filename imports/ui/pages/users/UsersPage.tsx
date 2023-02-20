@@ -3,6 +3,7 @@ import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import { isEqual } from 'lodash';
 import { NavLink } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
+import { Role } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Table } from '@ui/components/Table/Table';
@@ -19,6 +20,7 @@ export const UsersPage = () => {
   });
 
   const { data, isLoading, isRefetching, refetch } = useUsersGrid({
+    filters: gridState.filters,
     page: gridState.page,
     pageSize: gridState.pageSize,
     search: gridState.search,
@@ -102,24 +104,25 @@ export const UsersPage = () => {
             },
             {
               align: 'center',
-              render: (_, user: Meteor.User) => (
-                <Button
-                  popConfirm={{
-                    onConfirm: () =>
-                      removeOne.mutate(
-                        { id: user._id },
-                        { onError: () => removeOne.reset() }
-                      ),
-                    title: '¿Está seguro de eliminar este usuario?',
-                  }}
-                  type="ghost"
-                  htmlType="button"
-                  tooltip={{ title: 'Eliminar ' }}
-                  icon={<DeleteOutlined />}
-                  loading={removeOne.variables?.id === user._id}
-                  disabled={removeOne.variables?.id === user._id}
-                />
-              ),
+              render: (_, user: Meteor.User) =>
+                user.profile?.role === Role.Staff && (
+                  <Button
+                    popConfirm={{
+                      onConfirm: () =>
+                        removeOne.mutate(
+                          { id: user._id },
+                          { onError: () => removeOne.reset() }
+                        ),
+                      title: '¿Está seguro de eliminar este usuario?',
+                    }}
+                    type="ghost"
+                    htmlType="button"
+                    tooltip={{ title: 'Eliminar ' }}
+                    icon={<DeleteOutlined />}
+                    loading={removeOne.variables?.id === user._id}
+                    disabled={removeOne.variables?.id === user._id}
+                  />
+                ),
               title: 'Actions',
               width: 100,
             },

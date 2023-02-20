@@ -17,14 +17,16 @@ MembersCollection.attachSchema(
     'address.zipCode': { optional: true, type: String },
     category: { optional: true, type: String },
     createdAt: Date,
+    createdBy: String,
     dateOfBirth: { optional: true, type: Date },
     documentID: { optional: true, type: String },
     emails: { optional: true, type: Array },
-    'emails.$': String,
-    'emails.address': String,
-    'emails.verified': Boolean,
+    'emails.$': Object,
+    'emails.$.address': String,
+    'emails.$.verified': Boolean,
     fileStatus: { optional: true, type: String },
     firstName: String,
+    isDeleted: Boolean,
     lastName: String,
     maritalStatus: { optional: true, type: String },
     nationality: { optional: true, type: String },
@@ -33,7 +35,7 @@ MembersCollection.attachSchema(
     sex: { optional: true, type: String },
     status: { optional: true, type: String },
     updatedAt: { autoValue: () => new Date(), type: Date },
-    // user: { optional: true, type: Object },
+    updatedBy: String,
     userId: { optional: true, type: String },
   })
 );
@@ -51,3 +53,5 @@ await MembersCollection.createIndexAsync({ category: 1 });
 await MembersCollection.createIndexAsync({ fileStatus: 1 });
 
 await MembersCollection.createIndexAsync({ status: 1 });
+
+await MembersCollection.createIndexAsync({ isDeleted: 1 });

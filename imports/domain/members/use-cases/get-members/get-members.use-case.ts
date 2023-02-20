@@ -25,7 +25,9 @@ export class GetMembersUseCase
   ): Promise<Result<PaginatedResponse<MemberGridDto>, Error>> {
     await this.validateDto(GetMembersRequestDto, request);
 
-    const query: Mongo.Query<Member> = {};
+    const query: Mongo.Query<Member> = {
+      isDeleted: false,
+    };
 
     if (request.filters?.fileStatus?.length) {
       query.fileStatus = {

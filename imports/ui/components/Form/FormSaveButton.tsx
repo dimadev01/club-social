@@ -1,16 +1,20 @@
 import React from 'react';
+import { ButtonProps } from 'antd';
 import { Button } from '@ui/components/Button';
 
-type Props = {
-  isLoading?: boolean;
-};
+type Props = ButtonProps;
 
-export const FormSaveButton: React.FC<Props> = ({ isLoading = false }) => (
+export const FormSaveButton: React.FC<Props> = ({
+  loading,
+  disabled,
+  ...rest
+}) => (
   <Button
     type="primary"
-    disabled={isLoading}
-    loading={isLoading}
+    disabled={disabled}
+    loading={loading}
     htmlType="submit"
+    {...rest}
   >
     Guardar
   </Button>

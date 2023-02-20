@@ -74,7 +74,7 @@ export const MembersDetailPage = () => {
 
   const navigate = useNavigate();
 
-  const { data: member, fetchStatus: memberLoading } = useMember(id);
+  const { data: member, fetchStatus: memberFetchStatus } = useMember(id);
 
   const { data: states, isLoading: statesIsLoading } = useStates();
 
@@ -144,7 +144,7 @@ export const MembersDetailPage = () => {
     }
   };
 
-  if (memberLoading === 'fetching') {
+  if (memberFetchStatus === 'fetching') {
     return <Spin spinning />;
   }
 
@@ -200,7 +200,7 @@ export const MembersDetailPage = () => {
             nationality: member?.nationality,
             phones: member?.phones ?? [''],
             sex: member?.sex,
-            status: member?.status,
+            status: member?.status ?? MemberStatus.Active,
           }}
         >
           <Row gutter={[16, 16]}>
@@ -262,11 +262,13 @@ export const MembersDetailPage = () => {
                   <Select options={getMemberMaritalStatusOptions()} />
                 </Form.Item>
 
-                {member && (
-                  <Form.Item label="Estado" name="status">
-                    <Select options={getMemberStatusOptions()} />
-                  </Form.Item>
-                )}
+                <Form.Item
+                  rules={[{ required: true }]}
+                  label="Estado"
+                  name="status"
+                >
+                  <Select options={getMemberStatusOptions()} />
+                </Form.Item>
               </Card>
             </Col>
             <Col xs={24} sm={12}>
@@ -391,9 +393,15 @@ export const MembersDetailPage = () => {
           </Row>
 
           <ButtonGroup>
-            <FormSaveButton />
+            <FormSaveButton
+              loading={createMember.isLoading || updateMember.isLoading}
+              disabled={createMember.isLoading || updateMember.isLoading}
+            />
 
-            <FormBackButton to={AppUrl.Members} />
+            <FormBackButton
+              disabled={createMember.isLoading || updateMember.isLoading}
+              to={AppUrl.Members}
+            />
           </ButtonGroup>
         </Form>
       </Card>

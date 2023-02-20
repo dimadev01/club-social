@@ -4,14 +4,12 @@ import {
   IsArray,
   IsDate,
   IsEnum,
-  IsLowercase,
   IsOptional,
   IsString,
   validateSync,
 } from 'class-validator';
 import { Meteor } from 'meteor/meteor';
 import { err, ok, Result } from 'neverthrow';
-import { Entity } from '@domain/members/entity.base';
 import { MemberAddress } from '@domain/members/member-address.entity';
 import {
   MemberCategory,
@@ -22,6 +20,7 @@ import {
   MemberStatus,
 } from '@domain/members/members.enum';
 import { CreateMember } from '@domain/members/members.types';
+import { Entity } from '@kernel/entity.base';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
@@ -39,10 +38,8 @@ export class Member extends Entity {
   @IsOptional()
   public dateOfBirth: Date | null;
 
-  @IsString({ each: true })
   @IsArray()
   @IsOptional()
-  @IsLowercase({ each: true })
   public emails: Meteor.UserEmail[] | null;
 
   @IsString()
@@ -154,7 +151,9 @@ export class Member extends Entity {
 
     member.lastName = props.lastName;
 
-    member.emails = props.emails;
+    member.emails =
+      props.emails?.map((email) => ({ address: email, verified: false })) ??
+      null;
 
     member.userId = props.userId;
 

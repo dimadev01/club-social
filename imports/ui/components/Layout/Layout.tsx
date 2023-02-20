@@ -3,7 +3,12 @@ import { Col, Image, Layout as AntLayout, Menu, Row, Typography } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { Roles } from 'meteor/alanning:roles';
 import { Navigate, NavLink } from 'react-router-dom';
-import { HomeOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  BankOutlined,
+  HomeOutlined,
+  LogoutOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
 import { Permission, Scope } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
 
@@ -44,6 +49,14 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Members,
         label: <NavLink to={AppUrl.Members}>Socios</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Movements)) {
+      items.push({
+        icon: <BankOutlined className="!text-lg" />,
+        key: AppUrl.Movements,
+        label: <NavLink to={AppUrl.Movements}>Movimientos</NavLink>,
       });
     }
 

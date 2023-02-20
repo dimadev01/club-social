@@ -19,10 +19,12 @@ export enum Permission {
 export const AdminRole = {
   [Scope.Users]: [Permission.Read, Permission.Write, Permission.Delete],
   [Scope.Members]: [Permission.Read, Permission.Write, Permission.Delete],
+  [Scope.Movements]: [Permission.Read, Permission.Write, Permission.Delete],
 };
 
 export const StaffRole = {
   [Scope.Members]: [Permission.Read, Permission.Write],
+  [Scope.Movements]: [Permission.Read, Permission.Write],
 };
 
 export const MemberRole = {

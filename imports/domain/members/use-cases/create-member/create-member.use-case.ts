@@ -64,7 +64,7 @@ export class CreateMemberUseCase
       return err(member.error);
     }
 
-    await MembersCollection.insertAsync(member.value);
+    await MembersCollection.insertEntity(member.value);
 
     this._logger.info('Member created', { member });
 

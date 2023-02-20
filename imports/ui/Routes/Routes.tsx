@@ -8,9 +8,11 @@ import { LoginPasswordlessPage } from '@ui/pages/auth/LoginPasswordlessPage';
 import { LogoutPage } from '@ui/pages/auth/LogoutPage';
 import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
 import { HomePage } from '@ui/pages/HomePage';
-import { MembersDetailPage } from '@ui/pages/members/MembersEditPage';
+import { MembersDetailPage } from '@ui/pages/members/MembersDetailsPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
-import { UsersDetailPage } from '@ui/pages/users/UsersEditPage';
+import { MovementsDetailPage } from '@ui/pages/movements/MovementsDetailPage';
+import { MovementsPage } from '@ui/pages/movements/MovementsPage';
+import { UsersDetailPage } from '@ui/pages/users/UsersDetailPage';
 import { UsersPage } from '@ui/pages/users/UsersPage';
 import { AuthRoute } from '@ui/routes/AuthRoute';
 import { PrivateRoute } from '@ui/routes/PrivateRoute';
@@ -95,6 +97,24 @@ const router = createBrowserRouter([
     ),
     path: AppUrl.MembersEdit,
   },
+
+  {
+    element: (
+      <PrivateRoute permission={Permission.Read} scope={Scope.Movements}>
+        <MovementsPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.Movements,
+  },
+  {
+    element: (
+      <PrivateRoute permission={Permission.Write} scope={Scope.Movements}>
+        <MovementsDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.MovementsNew,
+  },
+
   {
     element: <EnrollPage />,
     path: AppUrl.Enroll,
