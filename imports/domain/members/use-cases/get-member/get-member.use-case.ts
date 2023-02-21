@@ -1,4 +1,3 @@
-import { Meteor } from 'meteor/meteor';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { MembersCollection } from '@domain/members/members.collection';
@@ -23,12 +22,6 @@ export class GetMemberUseCase
       return ok(undefined);
     }
 
-    const user = await Meteor.users.findOneAsync(member.userId);
-
-    if (!user) {
-      return ok(undefined);
-    }
-
     return ok<GetMemberResponseDto>({
       _id: member._id,
       addressCityGovId: member.address.cityGovId,
@@ -40,12 +33,10 @@ export class GetMemberUseCase
       category: member.category,
       dateOfBirth: member.dateOfBirth,
       documentID: member.documentID,
-      emails: user.emails ? user.emails.map((email) => email.address) : null,
+      emails: member.emails?.map((email) => email.address) ?? null,
       fileStatus: member.fileStatus,
-      // @ts-ignore
-      firstName: user.profile?.firstName ?? '',
-      // @ts-ignore
-      lastName: user.profile?.lastName ?? '',
+      firstName: member.firstName,
+      lastName: member.lastName,
       maritalStatus: member.maritalStatus,
       nationality: member.nationality,
       phones: member.phones,

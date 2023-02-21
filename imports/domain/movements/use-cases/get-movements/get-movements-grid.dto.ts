@@ -8,4 +8,6 @@ export class MovementGridDto {
   amount: string;
 
   category: MovementCategory;
+
+  details: string;
 }

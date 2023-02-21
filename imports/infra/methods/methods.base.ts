@@ -7,7 +7,7 @@ import { IUseCase } from '@kernel/use-case.interface';
 export class BaseMethod {
   protected async execute<TRequest, TResponse>(
     useCase: IUseCase<TRequest, TResponse>,
-    request: TRequest
+    request?: TRequest
   ): Promise<TResponse> {
     try {
       const result = await useCase.execute(request);

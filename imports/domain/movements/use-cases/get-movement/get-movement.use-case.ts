@@ -5,7 +5,6 @@ import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/
 import { GetMovementResponseDto } from '@domain/movements/use-cases/get-movement/get-movement-response.dto';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
-import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 
 @injectable()
 export class GetMovementUseCase
@@ -27,8 +26,9 @@ export class GetMovementUseCase
     return ok<GetMovementResponseDto>({
       _id: movement._id,
       amount: movement.amount,
+      amountFormatted: movement.amountFormatted,
       category: movement.category,
-      date: DateUtils.formatUtc(movement.date, DateFormats.DD_MM_YYYY),
+      date: movement.dateFormatted,
       notes: movement.notes,
     });
   }

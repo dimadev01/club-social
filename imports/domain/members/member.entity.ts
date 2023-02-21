@@ -25,7 +25,7 @@ import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
 export class Member extends Entity {
-  // #region Properties (12)
+  // #region Properties (15)
 
   @Type(() => MemberAddress)
   public address: MemberAddress;
@@ -38,23 +38,23 @@ export class Member extends Entity {
   @IsOptional()
   public dateOfBirth: Date | null;
 
+  @IsString()
+  @IsOptional()
+  public documentID: string | null;
+
   @IsArray()
   @IsOptional()
   public emails: Meteor.UserEmail[] | null;
 
-  @IsString()
+  @IsEnum(MemberFileStatus)
   @IsOptional()
-  public documentID: string | null;
+  public fileStatus: MemberFileStatus | null;
 
   @IsString()
   public firstName: string;
 
   @IsString()
   public lastName: string;
-
-  @IsEnum(MemberFileStatus)
-  @IsOptional()
-  public fileStatus: MemberFileStatus | null;
 
   @IsEnum(MemberMaritalStatus)
   @IsOptional()
@@ -82,7 +82,7 @@ export class Member extends Entity {
   @IsString()
   public userId: string;
 
-  // #endregion Properties (12)
+  // #endregion Properties (15)
 
   // #region Constructors (1)
 
@@ -112,7 +112,7 @@ export class Member extends Entity {
 
   // #endregion Constructors (1)
 
-  // #region Public Accessors (1)
+  // #region Public Accessors (2)
 
   public get dateOfBirthString(): string | null {
     if (this.dateOfBirth) {
@@ -122,7 +122,11 @@ export class Member extends Entity {
     return null;
   }
 
-  // #endregion Public Accessors (1)
+  public get name(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
+  // #endregion Public Accessors (2)
 
   // #region Public Static Methods (1)
 

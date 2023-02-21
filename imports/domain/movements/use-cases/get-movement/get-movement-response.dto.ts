@@ -7,6 +7,8 @@ export class GetMovementResponseDto {
 
   amount: number;
 
+  amountFormatted: string;
+
   category: MovementCategory;
 
   notes: string | null;

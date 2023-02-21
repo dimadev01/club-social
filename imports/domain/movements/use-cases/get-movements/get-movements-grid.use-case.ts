@@ -4,22 +4,21 @@ import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { Movement } from '@domain/movements/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
-import { GetMovementsRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-request.dto';
-import { MovementGridDto } from '@domain/movements/use-cases/get-movements/movement-grid.dto';
+import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
+import { PaginatedRequestDto } from '@kernel/paginated-request.dto';
 import { PaginatedResponse } from '@kernel/paginated-response.dto';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetMovementsUseCase
-  extends UseCase<GetMovementsRequestDto>
-  implements
-    IUseCase<GetMovementsRequestDto, PaginatedResponse<MovementGridDto>>
+  extends UseCase<PaginatedRequestDto>
+  implements IUseCase<PaginatedRequestDto, PaginatedResponse<MovementGridDto>>
 {
   public async execute(
-    request: GetMovementsRequestDto
+    request: PaginatedRequestDto
   ): Promise<Result<PaginatedResponse<MovementGridDto>, Error>> {
-    await this.validateDto(GetMovementsRequestDto, request);
+    await this.validateDto(PaginatedRequestDto, request);
 
     const query: Mongo.Query<Movement> = {
       isDeleted: false,
@@ -70,9 +69,10 @@ export class GetMovementsUseCase
     return ok<PaginatedResponse<MovementGridDto>>({
       data: data.map((movement) => ({
         _id: movement._id,
-        amount: new Intl.NumberFormat('es-AR').format(movement.amount),
+        amount: movement.amountFormatted,
         category: movement.category,
         date: movement.dateFormatted,
+        details: movement.member?.name ?? '',
       })),
       total: totalResult.length > 0 ? totalResult[0].total : 0,
     });

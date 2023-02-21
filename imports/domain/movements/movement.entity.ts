@@ -12,6 +12,7 @@ import { MovementMember } from '@domain/movements/movement-member.entity';
 import { MovementCategory } from '@domain/movements/movements.enum';
 import { CreateMovement } from '@domain/movements/movements.types';
 import { Entity } from '@kernel/entity.base';
+import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
@@ -20,6 +21,10 @@ export class Movement extends Entity {
 
   @IsNumber()
   public amount: number;
+
+  public get amountFormatted(): string {
+    return CurrencyUtils.format(this.amount);
+  }
 
   @IsEnum(MovementCategory)
   public category: MovementCategory;
@@ -64,7 +69,15 @@ export class Movement extends Entity {
 
     movement.date = new Date(props.date);
 
-    movement.member = props.member;
+    if (props.member) {
+      const movementMember = MovementMember.create(props.member);
+
+      if (movementMember.isErr()) {
+        return err(movementMember.error);
+      }
+
+      movement.member = movementMember.value;
+    }
 
     movement.notes = props.notes;
 

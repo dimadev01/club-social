@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsDateString,
   IsEnum,
   IsNumber,
@@ -20,4 +21,9 @@ export class CreateMovementRequestDto {
   @IsString()
   @IsOptional()
   notes: string | null;
+
+  @IsOptional()
+  @IsString({ each: true })
+  @IsArray()
+  memberIds: string[] | null;
 }

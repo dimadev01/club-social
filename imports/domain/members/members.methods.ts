@@ -3,7 +3,7 @@ import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/
 import { CreateMemberUseCase } from '@domain/members/use-cases/create-member/create-member.use-case';
 import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
 import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-member.use-case';
-import { GetMembersRequestDto } from '@domain/members/use-cases/get-members/get-members-request.dto';
+import { GetMembersGridUseCase } from '@domain/members/use-cases/get-members-grid/get-members-grid.use-case';
 import { GetMembersUseCase } from '@domain/members/use-cases/get-members/get-members.use-case';
 import { RemoveMemberRequestDto } from '@domain/members/use-cases/remove-member/remove-member-request.dto';
 import { RemoveMemberUseCase } from '@domain/members/use-cases/remove-member/remove-member.use-case';
@@ -11,10 +11,12 @@ import { UpdateMemberRequestDto } from '@domain/members/use-cases/update-member/
 import { UpdateMemberUseCase } from '@domain/members/use-cases/update-member/update-member.use-case';
 import { BaseMethod } from '@infra/methods/methods.base';
 import { MethodsEnum } from '@infra/methods/methods.enum';
+import { PaginatedRequestDto } from '@kernel/paginated-request.dto';
 
 @injectable()
 export class MembersMethods extends BaseMethod {
   public constructor(
+    private readonly _getMembersGridUseCase: GetMembersGridUseCase,
     private readonly _getMembersUseCase: GetMembersUseCase,
     private readonly _getMemberUseCase: GetMemberUseCase,
     private readonly _createMemberUseCase: CreateMemberUseCase,
@@ -26,8 +28,10 @@ export class MembersMethods extends BaseMethod {
 
   public register() {
     Meteor.methods({
-      [MethodsEnum.MembersGetGrid]: (request: GetMembersRequestDto) =>
-        this.execute(this._getMembersUseCase, request),
+      [MethodsEnum.MembersGetGrid]: (request: PaginatedRequestDto) =>
+        this.execute(this._getMembersGridUseCase, request),
+
+      [MethodsEnum.MembersGetList]: () => this.execute(this._getMembersUseCase),
 
       [MethodsEnum.MembersGet]: (request: GetMemberRequestDto) =>
         this.execute(this._getMemberUseCase, request),

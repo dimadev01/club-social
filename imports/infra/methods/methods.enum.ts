@@ -2,6 +2,7 @@ export enum MethodsEnum {
   MembersCreate = 'members/create',
   MembersGet = 'members/get',
   MembersGetGrid = 'members/getGrid',
+  MembersGetList = 'members/getList',
   MembersRemove = 'members/remove',
   MembersUpdate = 'members/update',
 

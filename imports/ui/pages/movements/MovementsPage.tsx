@@ -5,7 +5,7 @@ import {
   MovementCategory,
   MovementCategoryLabel,
 } from '@domain/movements/movements.enum';
-import { MovementGridDto } from '@domain/movements/use-cases/get-movements/movement-grid.dto';
+import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';

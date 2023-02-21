@@ -9,28 +9,40 @@ import {
   message,
   Spin,
 } from 'antd';
+import ButtonGroup from 'antd/es/button/button-group';
+import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { ARS } from '@dinero.js/currencies';
 import {
   getMovementCategoryOptions,
   MovementCategory,
+  MovementCategoryLabel,
 } from '@domain/movements/movements.enum';
+import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
+import { FormBackButton } from '@ui/components/Form/FormBackButton';
+import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
+import { useMembers } from '@ui/hooks/members/useMembers';
 import { useCreateMovement } from '@ui/hooks/movements/useCreateMovement';
 import { useMovement } from '@ui/hooks/movements/useMovement';
+import { useUpdateMovement } from '@ui/hooks/movements/useUpdateMovement';
 
 type FormValues = {
   amount: number;
   category: MovementCategory;
   date: Dayjs;
+  memberIds: string[];
   notes: string;
 };
 
 export const MovementsDetailPage = () => {
   const [form] = Form.useForm<FormValues>();
+
+  const category = useWatch(['category'], form);
 
   const { id } = useParams<{ id?: string }>();
 
@@ -40,7 +52,9 @@ export const MovementsDetailPage = () => {
 
   const createMovement = useCreateMovement();
 
-  // const updateMember = useUpdateMember();
+  const updateMovement = useUpdateMovement();
+
+  const { data: members, isLoading: membersLoading } = useMembers();
 
   const handleSubmit = async (values: FormValues) => {
     if (!movement) {
@@ -48,38 +62,24 @@ export const MovementsDetailPage = () => {
         amount: values.amount,
         category: values.category,
         date: DateUtils.format(values.date),
+        memberIds: values.memberIds,
         notes: values.notes,
       });
 
-      message.success('Socio creado');
+      message.success('Movimiento creado');
 
-      navigate(`${AppUrl.Members}/${memberId}`);
+      navigate(`${AppUrl.Movements}/${memberId}`);
     } else {
-      // await updateMember.mutateAsync({
-      //   addressCityGovId: values.address.cityGovId?.value ?? null,
-      //   addressCityName: values.address.cityGovId?.label ?? null,
-      //   addressStateGovId: values.address.stateGovId?.value ?? null,
-      //   addressStateName: values.address.stateGovId?.label ?? null,
-      //   addressStreet: values.address.street ?? null,
-      //   addressZipCode: values.address.zipCode ?? null,
-      //   category: values.category ?? null,
-      //   dateOfBirth: values.dateOfBirth
-      //     ? DateUtils.format(values.dateOfBirth)
-      //     : null,
-      //   documentID: values.documentID ?? null,
-      //   emails: compact(values.emails).length > 0 ? values.emails : null,
-      //   fileStatus: values.fileStatus ?? null,
-      //   firstName: values.firstName,
-      //   id: movement._id,
-      //   lastName: values.lastName,
-      //   maritalStatus: values.maritalStatus ?? null,
-      //   nationality: values.nationality ?? null,
-      //   phones: compact(values.phones).length > 0 ? values.phones : null,
-      //   role: Role.Member,
-      //   sex: values.sex ?? null,
-      //   status: values.status,
-      // });
-      // message.success('Socio actualizado');
+      await updateMovement.mutateAsync({
+        amount: values.amount,
+        category: values.category,
+        date: DateUtils.format(values.date),
+        id: movement._id,
+        memberIds: values.memberIds,
+        notes: values.notes,
+      });
+
+      message.success('Movimiento actualizado');
     }
   };
 
@@ -99,7 +99,10 @@ export const MovementsDetailPage = () => {
           <NavLink to={AppUrl.Movements}>Movimientos</NavLink>
         </Breadcrumb.Item>
         <Breadcrumb.Item>
-          {!!movement && movement.date}
+          {!!movement &&
+            `${movement.date} - ${MovementCategoryLabel[movement.category]} - ${
+              movement.amountFormatted
+            }`}
           {!movement && 'Nuevo Movimiento'}
         </Breadcrumb.Item>
       </Breadcrumb>
@@ -110,9 +113,11 @@ export const MovementsDetailPage = () => {
           form={form}
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
-            amount: movement?.amount ?? 0,
+            amount: movement ? CurrencyUtils.formCents(movement.amount) : 0,
             category: movement?.category ?? MovementCategory.Membership,
-            date: movement?.date ? dayjs(movement.date) : dayjs(),
+            date: movement?.date
+              ? dayjs(movement.date, DateFormats.DD_MM_YYYY)
+              : dayjs(),
             notes: movement?.notes,
           }}
         >
@@ -121,11 +126,7 @@ export const MovementsDetailPage = () => {
             label="Fecha"
             rules={[{ required: true }, { type: 'date' }]}
           >
-            <DatePicker
-              autoFocus
-              format={DateFormats.DD_MM_YYYY}
-              className="w-full"
-            />
+            <DatePicker format={DateFormats.DD_MM_YYYY} className="w-full" />
           </Form.Item>
 
           <Form.Item
@@ -136,6 +137,23 @@ export const MovementsDetailPage = () => {
             <Select options={getMovementCategoryOptions()} />
           </Form.Item>
 
+          {category === MovementCategory.Membership && (
+            <Form.Item
+              label="Socio"
+              name="memberIds"
+              rules={[{ required: true }]}
+            >
+              <Select
+                mode="multiple"
+                loading={membersLoading}
+                options={members?.map((member) => ({
+                  label: member.name,
+                  value: member._id,
+                }))}
+              />
+            </Form.Item>
+          )}
+
           <Form.Item
             label="Importe"
             name="amount"
@@ -143,28 +161,28 @@ export const MovementsDetailPage = () => {
           >
             <InputNumber
               className="w-40"
-              prefix="$"
+              prefix={ARS.code}
               precision={2}
               decimalSeparator=","
               step={100}
             />
           </Form.Item>
 
-          <Form.Item label="Notas" name="notes">
+          <Form.Item label="Notas" rules={[{ whitespace: true }]} name="notes">
             <Input.TextArea />
           </Form.Item>
 
-          {/* <ButtonGroup>
+          <ButtonGroup>
             <FormSaveButton
-              loading={createMovement.isLoading || updateMember.isLoading}
-              disabled={createMovement.isLoading || updateMember.isLoading}
+              loading={createMovement.isLoading || updateMovement.isLoading}
+              disabled={createMovement.isLoading || updateMovement.isLoading}
             />
 
             <FormBackButton
-              disabled={createMovement.isLoading || updateMember.isLoading}
+              disabled={createMovement.isLoading || updateMovement.isLoading}
               to={AppUrl.Members}
             />
-          </ButtonGroup> */}
+          </ButtonGroup>
         </Form>
       </Card>
     </>

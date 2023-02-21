@@ -12,7 +12,7 @@ import {
   MemberStatus,
   MemberStatusLabel,
 } from '@domain/members/members.enum';
-import { MemberGridDto } from '@domain/members/use-cases/get-members/member-grid.dto';
+import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
 import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';

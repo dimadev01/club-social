@@ -70,7 +70,7 @@ const router = createBrowserRouter([
         <UsersDetailPage />
       </PrivateRoute>
     ),
-    path: AppUrl.UsersEdit,
+    path: AppUrl.UsersDetail,
   },
 
   {
@@ -95,7 +95,7 @@ const router = createBrowserRouter([
         <MembersDetailPage />
       </PrivateRoute>
     ),
-    path: AppUrl.MembersEdit,
+    path: AppUrl.MembersDetail,
   },
 
   {
@@ -113,6 +113,14 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.MovementsNew,
+  },
+  {
+    element: (
+      <PrivateRoute permission={Permission.Write} scope={Scope.Movements}>
+        <MovementsDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.MovementsDetail,
   },
 
   {
