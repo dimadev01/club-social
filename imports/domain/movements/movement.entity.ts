@@ -2,32 +2,33 @@ import { Type } from 'class-transformer';
 import {
   IsDate,
   IsEnum,
-  IsNumber,
+  IsInt,
   IsOptional,
   IsString,
+  ValidateNested,
   validateSync,
 } from 'class-validator';
 import { err, ok, Result } from 'neverthrow';
+import { CategoryEnum } from '@domain/categories/categories.enum';
 import { MovementMember } from '@domain/movements/movement-member.entity';
-import { MovementCategory } from '@domain/movements/movements.enum';
 import { CreateMovement } from '@domain/movements/movements.types';
-import { Entity } from '@kernel/entity.base';
+import { FullEntity } from '@kernel/full-entity.base';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
-export class Movement extends Entity {
+export class Movement extends FullEntity {
   // #region Properties (5)
 
-  @IsNumber()
+  @IsInt()
   public amount: number;
 
   public get amountFormatted(): string {
     return CurrencyUtils.format(this.amount);
   }
 
-  @IsEnum(MovementCategory)
-  public category: MovementCategory;
+  @IsEnum(CategoryEnum)
+  public category: CategoryEnum;
 
   @IsDate()
   public date: Date;
@@ -36,8 +37,9 @@ export class Movement extends Entity {
     return DateUtils.formatUtc(this.date, DateFormats.DD_MM_YYYY);
   }
 
-  @Type(() => MovementMember)
   @IsOptional()
+  @Type(() => MovementMember)
+  @ValidateNested()
   public member: MovementMember | null;
 
   @IsString()
@@ -51,9 +53,15 @@ export class Movement extends Entity {
   public constructor() {
     super();
 
+    this.amount = 0;
+
+    this.date = new Date();
+
     this.member = null;
 
-    this.category = MovementCategory.Membership;
+    this.category = CategoryEnum.Membership;
+
+    this.notes = null;
   }
 
   // #endregion Constructors (1)

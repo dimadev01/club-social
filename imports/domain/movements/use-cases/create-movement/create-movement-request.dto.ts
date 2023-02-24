@@ -2,20 +2,20 @@ import {
   IsArray,
   IsDateString,
   IsEnum,
-  IsNumber,
+  IsInt,
   IsOptional,
   IsString,
 } from 'class-validator';
-import { MovementCategory } from '@domain/movements/movements.enum';
+import { CategoryEnum } from '@domain/categories/categories.enum';
 
 export class CreateMovementRequestDto {
   @IsDateString()
   date: string;
 
-  @IsEnum(MovementCategory)
-  category: MovementCategory;
+  @IsEnum(CategoryEnum)
+  category: CategoryEnum;
 
-  @IsNumber()
+  @IsInt()
   amount: number;
 
   @IsString()

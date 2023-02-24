@@ -20,11 +20,11 @@ import {
   MemberStatus,
 } from '@domain/members/members.enum';
 import { CreateMember } from '@domain/members/members.types';
-import { Entity } from '@kernel/entity.base';
+import { FullEntity } from '@kernel/full-entity.base';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
-export class Member extends Entity {
+export class Member extends FullEntity {
   // #region Properties (15)
 
   @Type(() => MemberAddress)
@@ -88,6 +88,16 @@ export class Member extends Entity {
 
   public constructor() {
     super();
+
+    this.emails = [];
+
+    this.firstName = '';
+
+    this.lastName = '';
+
+    this.userId = '';
+
+    this.user = {} as Meteor.User;
 
     this.address = new MemberAddress();
 

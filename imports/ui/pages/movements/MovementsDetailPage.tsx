@@ -15,10 +15,10 @@ import dayjs, { Dayjs } from 'dayjs';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import {
-  getMovementCategoryOptions,
-  MovementCategory,
-  MovementCategoryLabel,
-} from '@domain/movements/movements.enum';
+  CategoryEnum,
+  CategoryLabel,
+  getCategoryOptions,
+} from '@domain/categories/categories.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -33,7 +33,7 @@ import { useUpdateMovement } from '@ui/hooks/movements/useUpdateMovement';
 
 type FormValues = {
   amount: number;
-  category: MovementCategory;
+  category: CategoryEnum;
   date: Dayjs;
   memberIds: string[];
   notes: string;
@@ -59,7 +59,7 @@ export const MovementsDetailPage = () => {
   const handleSubmit = async (values: FormValues) => {
     if (!movement) {
       const memberId = await createMovement.mutateAsync({
-        amount: values.amount,
+        amount: CurrencyUtils.toCents(values.amount),
         category: values.category,
         date: DateUtils.format(values.date),
         memberIds: values.memberIds,
@@ -71,7 +71,7 @@ export const MovementsDetailPage = () => {
       navigate(`${AppUrl.Movements}/${memberId}`);
     } else {
       await updateMovement.mutateAsync({
-        amount: values.amount,
+        amount: CurrencyUtils.toCents(values.amount),
         category: values.category,
         date: DateUtils.format(values.date),
         id: movement._id,
@@ -100,7 +100,7 @@ export const MovementsDetailPage = () => {
         </Breadcrumb.Item>
         <Breadcrumb.Item>
           {!!movement &&
-            `${movement.date} - ${MovementCategoryLabel[movement.category]} - ${
+            `${movement.date} - ${CategoryLabel[movement.category]} - ${
               movement.amountFormatted
             }`}
           {!movement && 'Nuevo Movimiento'}
@@ -114,7 +114,7 @@ export const MovementsDetailPage = () => {
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
             amount: movement ? CurrencyUtils.formCents(movement.amount) : 0,
-            category: movement?.category ?? MovementCategory.Membership,
+            category: movement?.category ?? CategoryEnum.Membership,
             date: movement?.date
               ? dayjs(movement.date, DateFormats.DD_MM_YYYY)
               : dayjs(),
@@ -134,10 +134,10 @@ export const MovementsDetailPage = () => {
             name="category"
             rules={[{ required: true }]}
           >
-            <Select options={getMovementCategoryOptions()} />
+            <Select options={getCategoryOptions()} />
           </Form.Item>
 
-          {category === MovementCategory.Membership && (
+          {category === CategoryEnum.Membership && (
             <Form.Item
               label="Socio"
               name="memberIds"

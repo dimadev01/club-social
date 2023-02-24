@@ -1,4 +1,4 @@
-import { MovementCategory } from '@domain/movements/movements.enum';
+import { CategoryEnum } from '@domain/categories/categories.enum';
 
 export class MovementGridDto {
   _id: string;
@@ -7,7 +7,7 @@ export class MovementGridDto {
 
   amount: string;
 
-  category: MovementCategory;
+  category: CategoryEnum;
 
   details: string;
 }

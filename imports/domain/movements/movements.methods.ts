@@ -15,11 +15,11 @@ import { PaginatedRequestDto } from '@kernel/paginated-request.dto';
 @injectable()
 export class MovementsMethods extends BaseMethod {
   public constructor(
-    private readonly _getMovementsUseCase: GetMovementsUseCase,
-    private readonly _getMovementUseCase: GetMovementUseCase,
-    private readonly _createMovementUseCase: CreateMovementUseCase,
-    private readonly _removeMemberUseCase: RemoveMemberUseCase,
-    private readonly _updateMovementUseCase: UpdateMovementUseCase
+    private readonly _getMovements: GetMovementsUseCase,
+    private readonly _getMovement: GetMovementUseCase,
+    private readonly _createMovement: CreateMovementUseCase,
+    private readonly _removeMember: RemoveMemberUseCase,
+    private readonly _updateMovement: UpdateMovementUseCase
   ) {
     super();
   }
@@ -27,19 +27,19 @@ export class MovementsMethods extends BaseMethod {
   public register() {
     Meteor.methods({
       [MethodsEnum.MovementsGetGrid]: (request: PaginatedRequestDto) =>
-        this.execute(this._getMovementsUseCase, request),
+        this.execute(this._getMovements, request),
 
       [MethodsEnum.MovementsGet]: (request: GetMovementRequestDto) =>
-        this.execute(this._getMovementUseCase, request),
+        this.execute(this._getMovement, request),
 
       [MethodsEnum.MovementsCreate]: (request: CreateMovementRequestDto) =>
-        this.execute(this._createMovementUseCase, request),
+        this.execute(this._createMovement, request),
 
       [MethodsEnum.MovementsRemove]: (request: RemoveMemberRequestDto) =>
-        this.execute(this._removeMemberUseCase, request),
+        this.execute(this._removeMember, request),
 
       [MethodsEnum.MovementsUpdate]: (request: UpdateMovementRequestDto) =>
-        this.execute(this._updateMovementUseCase, request),
+        this.execute(this._updateMovement, request),
     });
   }
 }

@@ -2,9 +2,9 @@ import React from 'react';
 import { Breadcrumb, Card } from 'antd';
 import { NavLink } from 'react-router-dom';
 import {
-  MovementCategory,
-  MovementCategoryLabel,
-} from '@domain/movements/movements.enum';
+  CategoryEnum,
+  CategoryLabel,
+} from '@domain/categories/categories.enum';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
@@ -65,9 +65,13 @@ export const MovementsPage = () => {
             {
               align: 'center',
               dataIndex: 'category',
-              render: (category: MovementCategory) =>
-                MovementCategoryLabel[category],
+              render: (category: CategoryEnum) => CategoryLabel[category],
               title: 'Categoría',
+            },
+            {
+              align: 'right',
+              dataIndex: 'amount',
+              title: 'Importe',
             },
           ]}
         />

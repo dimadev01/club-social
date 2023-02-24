@@ -1,13 +1,17 @@
 export enum MethodsEnum {
+  CategoriesGetAll = 'categories/getAll',
+  CategoriesUpdate = 'categories/update',
+
   MembersCreate = 'members/create',
   MembersGet = 'members/get',
+  MembersGetAll = 'members/getAll',
+
   MembersGetGrid = 'members/getGrid',
-  MembersGetList = 'members/getList',
   MembersRemove = 'members/remove',
   MembersUpdate = 'members/update',
-
   MovementsCreate = 'movements/create',
   MovementsGet = 'movements/get',
+
   MovementsGetGrid = 'movements/getGrid',
   MovementsRemove = 'movements/remove',
   MovementsUpdate = 'movements/update',

@@ -1,8 +1,8 @@
-import { MovementCategory } from '@domain/movements/movements.enum';
+import { CategoryEnum } from '@domain/categories/categories.enum';
 
 export interface CreateMovement {
   amount: number;
-  category: MovementCategory;
+  category: CategoryEnum;
   date: string;
   member: CreateMovementMember | null;
   notes: string | null;

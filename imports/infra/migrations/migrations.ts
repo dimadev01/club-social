@@ -1,4 +1,10 @@
 import { Accounts } from 'meteor/accounts-base';
+import { CategoriesCollection } from '@domain/categories/categories.collection';
+import {
+  CategoryEnum,
+  CategoryPrices,
+} from '@domain/categories/categories.enum';
+import { Category } from '@domain/categories/category.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import { AdminRole, Permission, Role } from '@domain/roles/roles.enum';
 
@@ -52,6 +58,14 @@ Migrations.add({
         await Meteor.users.removeAsync(userId);
       }
     }
+
+    await Promise.all(
+      Object.values(CategoryEnum).map(async (category) =>
+        CategoriesCollection.insertEntity(
+          new Category(CategoryPrices[category], category)
+        )
+      )
+    );
 
     next();
   }),

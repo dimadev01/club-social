@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import {
   ClassConstructor,
   instanceToPlain,
@@ -6,7 +5,9 @@ import {
 } from 'class-transformer';
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+/* eslint-disable no-param-reassign */
 import { Entity } from '@kernel/entity.base';
+import { FullEntity } from '@kernel/full-entity.base';
 
 // @ts-ignore
 export class Collection<T extends Entity> extends Mongo.Collection<T> {
@@ -23,7 +24,9 @@ export class Collection<T extends Entity> extends Mongo.Collection<T> {
       // @ts-expect-error
       entity.createdBy = `${user.profile?.firstName} ${user.profile?.lastName}`;
 
-      entity.updatedBy = entity.createdBy;
+      if (entity instanceof FullEntity) {
+        entity.updatedBy = entity.createdBy;
+      }
     }
 
     return this.insertAsync(entity);
@@ -35,11 +38,13 @@ export class Collection<T extends Entity> extends Mongo.Collection<T> {
     if (user) {
       // @ts-expect-error
       entity.updatedBy = `${user.profile?.firstName} ${user.profile?.lastName}`;
-    } else {
+    } else if (entity instanceof FullEntity) {
       entity.updatedBy = 'System';
     }
 
-    entity.updatedAt = new Date();
+    if (entity instanceof FullEntity) {
+      entity.updatedAt = new Date();
+    }
 
     return this.updateAsync(entity._id, {
       $set: instanceToPlain<T>(entity) as object,

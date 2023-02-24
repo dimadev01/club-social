@@ -8,7 +8,7 @@ export const MovementsCollection = new Collection('movements', Movement);
 MovementsCollection.attachSchema(
   new SimpleSchema({
     _id: String,
-    amount: Number,
+    amount: SimpleSchema.Integer,
     category: String,
     createdAt: Date,
     createdBy: String,

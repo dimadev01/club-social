@@ -16,12 +16,12 @@ import { PaginatedRequestDto } from '@kernel/paginated-request.dto';
 @injectable()
 export class MembersMethods extends BaseMethod {
   public constructor(
-    private readonly _getMembersGridUseCase: GetMembersGridUseCase,
-    private readonly _getMembersUseCase: GetMembersUseCase,
-    private readonly _getMemberUseCase: GetMemberUseCase,
-    private readonly _createMemberUseCase: CreateMemberUseCase,
-    private readonly _removeMemberUseCase: RemoveMemberUseCase,
-    private readonly _updateMemberUseCase: UpdateMemberUseCase
+    private readonly _getMembersGrid: GetMembersGridUseCase,
+    private readonly _getMembers: GetMembersUseCase,
+    private readonly _getMember: GetMemberUseCase,
+    private readonly _createMember: CreateMemberUseCase,
+    private readonly _removeMember: RemoveMemberUseCase,
+    private readonly _updateMember: UpdateMemberUseCase
   ) {
     super();
   }
@@ -29,21 +29,21 @@ export class MembersMethods extends BaseMethod {
   public register() {
     Meteor.methods({
       [MethodsEnum.MembersGetGrid]: (request: PaginatedRequestDto) =>
-        this.execute(this._getMembersGridUseCase, request),
+        this.execute(this._getMembersGrid, request),
 
-      [MethodsEnum.MembersGetList]: () => this.execute(this._getMembersUseCase),
+      [MethodsEnum.MembersGetAll]: () => this.execute(this._getMembers),
 
       [MethodsEnum.MembersGet]: (request: GetMemberRequestDto) =>
-        this.execute(this._getMemberUseCase, request),
+        this.execute(this._getMember, request),
 
       [MethodsEnum.MembersCreate]: (request: CreateMemberRequestDto) =>
-        this.execute(this._createMemberUseCase, request),
+        this.execute(this._createMember, request),
 
       [MethodsEnum.MembersRemove]: (request: RemoveMemberRequestDto) =>
-        this.execute(this._removeMemberUseCase, request),
+        this.execute(this._removeMember, request),
 
       [MethodsEnum.MembersUpdate]: (request: UpdateMemberRequestDto) =>
-        this.execute(this._updateMemberUseCase, request),
+        this.execute(this._updateMember, request),
     });
   }
 }
