@@ -5,12 +5,11 @@ import {
   IsInt,
   IsOptional,
   IsString,
-  ValidateNested,
   validateSync,
 } from 'class-validator';
 import { err, ok, Result } from 'neverthrow';
 import { CategoryEnum } from '@domain/categories/categories.enum';
-import { MovementMember } from '@domain/movements/movement-member.entity';
+import { Member } from '@domain/members/member.entity';
 import { CreateMovement } from '@domain/movements/movements.types';
 import { FullEntity } from '@kernel/full-entity.base';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
@@ -18,14 +17,10 @@ import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
 export class Movement extends FullEntity {
-  // #region Properties (5)
+  // #region Properties (6)
 
   @IsInt()
   public amount: number;
-
-  public get amountFormatted(): string {
-    return CurrencyUtils.format(this.amount);
-  }
 
   @IsEnum(CategoryEnum)
   public category: CategoryEnum;
@@ -33,20 +28,19 @@ export class Movement extends FullEntity {
   @IsDate()
   public date: Date;
 
-  public get dateFormatted(): string {
-    return DateUtils.formatUtc(this.date, DateFormats.DD_MM_YYYY);
-  }
-
   @IsOptional()
-  @Type(() => MovementMember)
-  @ValidateNested()
-  public member: MovementMember | null;
+  @Type(() => Member)
+  public member: Member | null;
+
+  @IsString()
+  @IsOptional()
+  public memberId: string | null;
 
   @IsString()
   @IsOptional()
   public notes: string | null;
 
-  // #endregion Properties (5)
+  // #endregion Properties (6)
 
   // #region Constructors (1)
 
@@ -66,6 +60,18 @@ export class Movement extends FullEntity {
 
   // #endregion Constructors (1)
 
+  // #region Public Accessors (2)
+
+  public get amountFormatted(): string {
+    return CurrencyUtils.formatCents(this.amount);
+  }
+
+  public get dateFormatted(): string {
+    return DateUtils.formatUtc(this.date, DateFormats.DD_MM_YYYY);
+  }
+
+  // #endregion Public Accessors (2)
+
   // #region Public Static Methods (1)
 
   public static create(props: CreateMovement): Result<Movement, Error> {
@@ -77,15 +83,7 @@ export class Movement extends FullEntity {
 
     movement.date = new Date(props.date);
 
-    if (props.member) {
-      const movementMember = MovementMember.create(props.member);
-
-      if (movementMember.isErr()) {
-        return err(movementMember.error);
-      }
-
-      movement.member = movementMember.value;
-    }
+    movement.memberId = props.memberId;
 
     movement.notes = props.notes;
 

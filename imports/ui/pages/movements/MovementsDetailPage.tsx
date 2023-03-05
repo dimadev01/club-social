@@ -12,7 +12,7 @@ import {
 import ButtonGroup from 'antd/es/button/button-group';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import {
   CategoryEnum,
@@ -44,9 +44,9 @@ export const MovementsDetailPage = () => {
 
   const category = useWatch(['category'], form);
 
-  const { id } = useParams<{ id?: string }>();
+  const amount = useWatch(['amount'], form);
 
-  const navigate = useNavigate();
+  const { id } = useParams<{ id?: string }>();
 
   const { data: movement, fetchStatus: movementFetchStatus } = useMovement(id);
 
@@ -58,7 +58,7 @@ export const MovementsDetailPage = () => {
 
   const handleSubmit = async (values: FormValues) => {
     if (!movement) {
-      const memberId = await createMovement.mutateAsync({
+      await createMovement.mutateAsync({
         amount: CurrencyUtils.toCents(values.amount),
         category: values.category,
         date: DateUtils.format(values.date),
@@ -68,7 +68,9 @@ export const MovementsDetailPage = () => {
 
       message.success('Movimiento creado');
 
-      navigate(`${AppUrl.Movements}/${memberId}`);
+      // navigate(`${AppUrl.Movements}/${memberId}`);
+
+      form.resetFields();
     } else {
       await updateMovement.mutateAsync({
         amount: CurrencyUtils.toCents(values.amount),
@@ -90,6 +92,30 @@ export const MovementsDetailPage = () => {
   if (id && !movement) {
     return <NotFound />;
   }
+
+  const renderAmountHelp = () => {
+    if (amount > 0) {
+      return 'Ingreso';
+    }
+
+    if (amount < 0) {
+      return 'Egreso';
+    }
+
+    return '';
+  };
+
+  const getAmountClassNameHelp = () => {
+    if (amount > 0) {
+      return 'w-40 text-green-500';
+    }
+
+    if (amount < 0) {
+      return 'w-40 text-red-500';
+    }
+
+    return 'w-40 ';
+  };
 
   return (
     <>
@@ -113,7 +139,9 @@ export const MovementsDetailPage = () => {
           form={form}
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
-            amount: movement ? CurrencyUtils.formCents(movement.amount) : 0,
+            amount: movement
+              ? CurrencyUtils.fromCents(movement.amount)
+              : undefined,
             category: movement?.category ?? CategoryEnum.Membership,
             date: movement?.date
               ? dayjs(movement.date, DateFormats.DD_MM_YYYY)
@@ -158,9 +186,11 @@ export const MovementsDetailPage = () => {
             label="Importe"
             name="amount"
             rules={[{ required: true }, { type: 'number' }]}
+            status="error"
+            help={renderAmountHelp()}
           >
             <InputNumber
-              className="w-40"
+              className={getAmountClassNameHelp()}
               prefix={ARS.code}
               precision={2}
               decimalSeparator=","
@@ -180,7 +210,7 @@ export const MovementsDetailPage = () => {
 
             <FormBackButton
               disabled={createMovement.isLoading || updateMovement.isLoading}
-              to={AppUrl.Members}
+              to={AppUrl.Movements}
             />
           </ButtonGroup>
         </Form>

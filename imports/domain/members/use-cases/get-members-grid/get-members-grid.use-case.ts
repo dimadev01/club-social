@@ -25,81 +25,86 @@ export class GetMembersGridUseCase
   ): Promise<Result<PaginatedResponse<MemberGridDto>, Error>> {
     await this.validateDto(PaginatedRequestDto, request);
 
-    const query: Mongo.Query<Member> = {
+    const $match: Mongo.Query<Member> = {
       isDeleted: false,
     };
 
     if (request.filters?.fileStatus?.length) {
-      query.fileStatus = {
+      $match.fileStatus = {
         $in: request.filters.fileStatus as MemberFileStatus[],
       };
     }
 
     if (request.filters?.status?.length) {
-      query.status = {
-        $in: request.filters.status as MemberStatus[],
-      };
+      $match.status = { $in: request.filters.status as MemberStatus[] };
     }
 
     if (request.filters?.category?.length) {
-      query.category = {
-        $in: request.filters.category as MemberCategory[],
-      };
+      $match.category = { $in: request.filters.category as MemberCategory[] };
     }
 
-    const pipeline = [];
-
-    pipeline.push({ $match: query });
+    const $userLookupPipeline: Mongo.Query<Meteor.User> = [];
 
     if (request.search) {
-      pipeline.push({
+      $userLookupPipeline.push({
         $match: {
-          $expr: {
-            $or: [
-              {
-                $regexMatch: {
-                  input: '$firstName',
-                  options: 'i',
-                  regex: request.search,
-                },
-              },
-              {
-                $regexMatch: {
-                  input: '$lastName',
-                  options: 'i',
-                  regex: request.search,
-                },
-              },
-            ],
-          },
+          $or: [
+            { 'profile.firstName': { $options: 'i', $regex: request.search } },
+            { 'profile.lastName': { $options: 'i', $regex: request.search } },
+            { 'emails.address': { $options: 'i', $regex: request.search } },
+          ],
         },
       });
     }
 
-    const totalResult = await MembersCollection.rawCollection()
-      .aggregate([...pipeline, { $count: 'total' }])
-      .toArray();
-
-    const membersAggregate: Member[] = await MembersCollection.rawCollection()
+    // @ts-expect-error
+    const [{ data, total }] = await MembersCollection.rawCollection()
       .aggregate<Member>([
-        ...pipeline,
-        { $skip: (request.page - 1) * request.pageSize },
-        { $limit: request.pageSize },
+        {
+          $match,
+        },
+        {
+          $lookup: {
+            as: 'user',
+            foreignField: '_id',
+            from: 'users',
+            localField: 'userId',
+            pipeline: $userLookupPipeline,
+          },
+        },
+        {
+          $unwind: '$user',
+        },
+        {
+          $facet: {
+            data: this.getPaginatedPipeline({
+              $sort: { createdAt: -1 },
+              page: request.page,
+              pageSize: request.pageSize,
+            }),
+            total: [{ $count: 'count' }],
+          },
+        },
       ])
-      .map((member: Member) => plainToInstance(Member, member))
       .toArray();
 
     return ok<PaginatedResponse<MemberGridDto>>({
-      data: membersAggregate.map((member) => ({
-        _id: member._id,
-        category: member.category,
-        dateOfBirth: member.dateOfBirthString,
-        emails: member.emails ?? null,
-        fileStatus: member.fileStatus,
-        name: `${member.firstName ?? ''} ${member.lastName ?? ''}`,
-        status: member.status,
-      })),
-      total: totalResult.length > 0 ? totalResult[0].total : 0,
+      count: total.length > 0 ? total[0].count : 0,
+      data: data
+        .map((member: Member) => plainToInstance(Member, member))
+        .map((member: Member) => ({
+          _id: member._id,
+          category: member.category,
+          dateOfBirth: member.dateOfBirthString,
+          emails: member.user.emails,
+          fileStatus: member.fileStatus,
+          // @ts-ignore
+          name: `${member.user.profile?.firstName ?? ''} ${
+            // @ts-ignore
+            member.user.profile?.lastName ?? ''
+          }`,
+          status: member.status,
+        })),
     });
   }
 }

@@ -4,12 +4,6 @@ export interface CreateMovement {
   amount: number;
   category: CategoryEnum;
   date: string;
-  member: CreateMovementMember | null;
+  memberId: string | null;
   notes: string | null;
-}
-
-export interface CreateMovementMember {
-  _id: string;
-  firstName: string;
-  lastName: string;
 }

@@ -10,4 +10,6 @@ export class MovementGridDto {
   category: CategoryEnum;
 
   details: string;
+
+  memberId: string | null;
 }

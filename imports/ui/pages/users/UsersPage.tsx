@@ -48,7 +48,7 @@ export const UsersPage = () => {
         }
       >
         <Table<Meteor.User>
-          total={data?.total ?? 0}
+          total={data?.count ?? 0}
           showSearch
           gridState={gridState}
           onStateChange={setGridState}

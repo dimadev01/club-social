@@ -93,7 +93,7 @@ export class Category extends Entity {
       return null;
     }
 
-    return CurrencyUtils.format(this.amount);
+    return CurrencyUtils.formatCents(this.amount);
   }
 
   // #endregion Public Accessors (1)

@@ -45,4 +45,16 @@ export abstract class UseCase<T extends object> {
       sort: {},
     };
   }
+
+  protected getPaginatedPipeline({
+    $sort,
+    page,
+    pageSize,
+  }: {
+    $sort: object;
+    page: number;
+    pageSize: number;
+  }) {
+    return [{ $sort }, { $skip: (page - 1) * pageSize }, { $limit: pageSize }];
+  }
 }

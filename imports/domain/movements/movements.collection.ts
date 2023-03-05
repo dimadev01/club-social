@@ -14,10 +14,7 @@ MovementsCollection.attachSchema(
     createdBy: String,
     date: Date,
     isDeleted: Boolean,
-    member: { optional: true, type: Object },
-    'member._id': String,
-    'member.firstName': String,
-    'member.lastName': String,
+    memberId: { optional: true, type: String },
     notes: { optional: true, type: String },
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,
@@ -30,8 +27,5 @@ await MovementsCollection.createIndexAsync({ date: -1 });
 
 await MovementsCollection.createIndexAsync({ isDeleted: 1 });
 
-await MovementsCollection.createIndexAsync({ 'member._id': 1 });
-
-await MovementsCollection.createIndexAsync({ 'member.firstName': 1 });
-
-await MovementsCollection.createIndexAsync({ 'member.lastName': 1 });
+// eslint-disable-next-line sort-keys-fix/sort-keys-fix
+await MovementsCollection.createIndexAsync({ memberId: 1, category: 1 });

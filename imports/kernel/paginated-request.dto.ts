@@ -19,5 +19,5 @@ export class PaginatedRequestDto {
   sortOrder: SortOrder;
 
   @IsOptional()
-  filters: Record<string, string[] | null> | undefined;
+  filters: Record<string, string | string[] | null> | undefined;
 }

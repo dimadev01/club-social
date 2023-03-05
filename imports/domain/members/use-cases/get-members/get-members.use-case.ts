@@ -1,3 +1,4 @@
+import { plainToInstance } from 'class-transformer';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
@@ -13,11 +14,24 @@ export class GetMembersUseCase
   implements IUseCase<undefined, GetMembersDto[]>
 {
   public async execute(): Promise<Result<GetMembersDto[], Error>> {
-    const query: Mongo.Query<Member> = { isDeleted: false };
+    const $match: Mongo.Query<Member> = { isDeleted: false };
 
-    const data = await MembersCollection.find(query, {
-      sort: { firstName: 1 },
-    }).fetchAsync();
+    const data = await MembersCollection.rawCollection()
+      .aggregate([
+        { $match },
+        {
+          $lookup: {
+            as: 'user',
+            foreignField: '_id',
+            from: 'users',
+            localField: 'userId',
+          },
+        },
+        { $unwind: '$user' },
+        { $sort: { 'user.profile.firstName': 1 } },
+      ])
+      .map((member) => plainToInstance(Member, member))
+      .toArray();
 
     return ok<GetMembersDto[]>(
       data.map((member) => ({ _id: member._id, name: member.name }))

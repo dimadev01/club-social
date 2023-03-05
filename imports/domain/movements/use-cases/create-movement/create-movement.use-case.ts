@@ -1,6 +1,7 @@
 import { find } from 'lodash';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { CategoryEnum } from '@domain/categories/categories.enum';
 import { MembersCollection } from '@domain/members/members.collection';
 import { Movement } from '@domain/movements/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
@@ -8,7 +9,6 @@ import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-mov
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
 
 @injectable()
 export class CreateMovementUseCase
@@ -24,7 +24,11 @@ export class CreateMovementUseCase
   ): Promise<Result<string, Error>> {
     await this.validateDto(CreateMovementRequestDto, request);
 
-    if (request.memberIds && request.memberIds.length > 0) {
+    if (request.category === CategoryEnum.Membership) {
+      if (!request.memberIds || request.memberIds.length === 0) {
+        return err(new Error('No members selected'));
+      }
+
       const members = await MembersCollection.find({
         _id: { $in: request.memberIds },
       }).fetchAsync();
@@ -38,14 +42,10 @@ export class CreateMovementUseCase
           }
 
           const movement = Movement.create({
-            amount: CurrencyUtils.toCents(request.amount),
+            amount: request.amount,
             category: request.category,
             date: request.date,
-            member: {
-              _id: memberId,
-              firstName: member.firstName,
-              lastName: member.lastName,
-            },
+            memberId: member._id,
             notes: request.notes,
           });
 
@@ -71,10 +71,10 @@ export class CreateMovementUseCase
     }
 
     const movement = Movement.create({
-      amount: CurrencyUtils.toCents(request.amount),
+      amount: request.amount,
       category: request.category,
       date: request.date,
-      member: null,
+      memberId: null,
       notes: request.notes,
     });
 

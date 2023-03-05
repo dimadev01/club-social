@@ -11,9 +11,7 @@ export const useMembersGrid = (request: PaginatedRequestDto) => {
   const [, setSearchParams] = useSearchParams();
 
   useDeepCompareEffect(() => {
-    setSearchParams(
-      qs.stringify(request, { arrayFormat: 'brackets', encode: false })
-    );
+    setSearchParams(qs.stringify(request, { skipNulls: true }));
   }, [request]);
 
   return useQuery<PaginatedRequestDto, Error, PaginatedResponse<MemberGridDto>>(

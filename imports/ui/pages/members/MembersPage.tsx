@@ -53,7 +53,7 @@ export const MembersPage = () => {
         }
       >
         <Table<MemberGridDto>
-          total={data?.total ?? 0}
+          total={data?.count ?? 0}
           showSearch
           gridState={gridState}
           onStateChange={setGridState}
@@ -73,7 +73,10 @@ export const MembersPage = () => {
                 emails && (
                   <Space direction="vertical">
                     {emails.map((email) => (
-                      <Typography.Text key={email.address} copyable>
+                      <Typography.Text
+                        key={email.address}
+                        copyable={{ text: email.address }}
+                      >
                         <Tooltip
                           title={
                             email.verified
@@ -93,7 +96,7 @@ export const MembersPage = () => {
             {
               align: 'center',
               dataIndex: 'category',
-              filteredValue: gridState.filters?.category,
+              filteredValue: gridState.filters?.category ?? [],
               filters: getMemberCategoryFilters(),
               render: (category: MemberCategory | null) =>
                 category && MemberCategoryLabel[category],
@@ -102,7 +105,7 @@ export const MembersPage = () => {
             {
               align: 'center',
               dataIndex: 'fileStatus',
-              filteredValue: gridState.filters?.fileStatus,
+              filteredValue: gridState.filters?.fileStatus ?? [],
               filters: getMemberFileStatusFilters(),
               render: (fileStatus: MemberFileStatus | null) =>
                 fileStatus && MemberFileStatusLabel[fileStatus],
@@ -111,7 +114,7 @@ export const MembersPage = () => {
             {
               align: 'center',
               dataIndex: 'status',
-              filteredValue: gridState.filters?.status,
+              filteredValue: gridState.filters?.status ?? [],
               filters: getMemberStatusFilters(),
               render: (status: MemberStatus) => MemberStatusLabel[status],
               title: 'Estado',

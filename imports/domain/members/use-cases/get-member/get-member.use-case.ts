@@ -22,6 +22,8 @@ export class GetMemberUseCase
       return ok(undefined);
     }
 
+    member.joinUser();
+
     return ok<GetMemberResponseDto>({
       _id: member._id,
       addressCityGovId: member.address.cityGovId,
@@ -33,10 +35,12 @@ export class GetMemberUseCase
       category: member.category,
       dateOfBirth: member.dateOfBirth,
       documentID: member.documentID,
-      emails: member.emails?.map((email) => email.address) ?? null,
+      emails: member.user.emails?.map((email) => email.address) ?? null,
       fileStatus: member.fileStatus,
-      firstName: member.firstName,
-      lastName: member.lastName,
+      // @ts-expect-error
+      firstName: member.user.profile?.firstName,
+      // @ts-expect-error
+      lastName: member.user.profile?.lastName,
       maritalStatus: member.maritalStatus,
       nationality: member.nationality,
       phones: member.phones,

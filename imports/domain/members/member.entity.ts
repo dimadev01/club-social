@@ -42,19 +42,9 @@ export class Member extends FullEntity {
   @IsOptional()
   public documentID: string | null;
 
-  @IsArray()
-  @IsOptional()
-  public emails: Meteor.UserEmail[] | null;
-
   @IsEnum(MemberFileStatus)
   @IsOptional()
   public fileStatus: MemberFileStatus | null;
-
-  @IsString()
-  public firstName: string;
-
-  @IsString()
-  public lastName: string;
 
   @IsEnum(MemberMaritalStatus)
   @IsOptional()
@@ -77,10 +67,10 @@ export class Member extends FullEntity {
   @IsEnum(MemberStatus)
   public status: MemberStatus;
 
-  public user: Meteor.User;
-
   @IsString()
   public userId: string;
+
+  public user: Meteor.User;
 
   // #endregion Properties (15)
 
@@ -88,12 +78,6 @@ export class Member extends FullEntity {
 
   public constructor() {
     super();
-
-    this.emails = [];
-
-    this.firstName = '';
-
-    this.lastName = '';
 
     this.userId = '';
 
@@ -132,8 +116,16 @@ export class Member extends FullEntity {
     return null;
   }
 
+  public joinUser() {
+    this.user = Meteor.users.findOne(this.userId) ?? ({} as Meteor.User);
+  }
+
   public get name(): string {
-    return `${this.firstName} ${this.lastName}`;
+    // @ts-expect-error
+    return `${this.user.profile?.firstName} ${
+      // @ts-expect-error
+      this.user.profile?.lastName
+    }`;
   }
 
   // #endregion Public Accessors (2)
@@ -160,14 +152,6 @@ export class Member extends FullEntity {
     member.phones = props.phones;
 
     member.sex = props.sex;
-
-    member.firstName = props.firstName;
-
-    member.lastName = props.lastName;
-
-    member.emails =
-      props.emails?.map((email) => ({ address: email, verified: false })) ??
-      null;
 
     member.userId = props.userId;
 

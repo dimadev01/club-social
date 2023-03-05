@@ -20,12 +20,7 @@ MembersCollection.attachSchema(
     createdBy: String,
     dateOfBirth: { optional: true, type: Date },
     documentID: { optional: true, type: String },
-    emails: { optional: true, type: Array },
-    'emails.$': Object,
-    'emails.$.address': String,
-    'emails.$.verified': Boolean,
     fileStatus: { optional: true, type: String },
-    firstName: String,
     isDeleted: Boolean,
     lastName: String,
     maritalStatus: { optional: true, type: String },
@@ -36,7 +31,7 @@ MembersCollection.attachSchema(
     status: { optional: true, type: String },
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,
-    userId: { optional: true, type: String },
+    userId: String,
   })
 );
 
