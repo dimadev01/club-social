@@ -32,8 +32,8 @@ export class GetMovementsUseCase
       $match.memberId = request.memberId;
     }
 
-    if (request.category) {
-      $match.category = request.category;
+    if (request.filters?.category?.length) {
+      $match.category = { $in: request.filters.category as CategoryEnum[] };
     }
 
     if (request.amountFilter.some((value) => value !== 0)) {

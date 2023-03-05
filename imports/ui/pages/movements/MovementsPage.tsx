@@ -6,7 +6,7 @@ import { useDebounce } from 'use-debounce';
 import {
   CategoryEnum,
   CategoryLabel,
-  getCategoryOptions,
+  getCategoryFilters,
 } from '@domain/categories/categories.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
@@ -36,9 +36,6 @@ export const MovementsPage = () => {
     (parsedQs.memberId as string) ?? undefined
   );
 
-  const [categoryIdSearchValue, setCategoryIdSearchValue] =
-    useState<CategoryEnum>((parsedQs.category as CategoryEnum) ?? undefined);
-
   const [amountSliderSearchValue, setAmountSliderSearchValue] = useState<
     [number, number]
   >([
@@ -53,7 +50,6 @@ export const MovementsPage = () => {
 
   const { data, isLoading, isRefetching, refetch } = useMovementsGrid({
     amountFilter: debouncedAmountSliderSearchValue,
-    category: categoryIdSearchValue ?? null,
     filters: gridState.filters,
     memberId: memberIdSearchValue ?? null,
     page: gridState.page,
@@ -98,7 +94,7 @@ export const MovementsPage = () => {
       >
         <Space size="middle" direction="vertical" className="flex">
           <Row gutter={[16, 16]}>
-            <Col xs={24} sm={8}>
+            <Col xs={24} sm={6}>
               <Select
                 value={memberIdSearchValue}
                 onChange={(value) => setMemberIdSearchValue(value ?? undefined)}
@@ -114,20 +110,8 @@ export const MovementsPage = () => {
                 }
               />
             </Col>
-            <Col xs={24} sm={8}>
-              <Select
-                value={categoryIdSearchValue}
-                onChange={(value) =>
-                  setCategoryIdSearchValue(value ?? undefined)
-                }
-                className="w-full"
-                disabled={isLoading}
-                placeholder="Buscar por categoría"
-                options={getCategoryOptions()}
-              />
-            </Col>
 
-            <Col xs={24} sm={8}>
+            <Col xs={24} sm={6}>
               <Slider
                 range={{ draggableTrack: true }}
                 min={0}
@@ -164,6 +148,8 @@ export const MovementsPage = () => {
               {
                 align: 'center',
                 dataIndex: 'category',
+                filteredValue: gridState.filters?.category ?? [],
+                filters: getCategoryFilters(),
                 render: (category: CategoryEnum) => CategoryLabel[category],
                 title: 'Categoría',
               },

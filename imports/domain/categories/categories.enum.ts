@@ -60,7 +60,9 @@ export const getCategoryOptions = () =>
   }));
 
 export const getCategoryFilters = () =>
-  Object.values(CategoryEnum).map((category) => ({
-    text: CategoryLabel[category],
-    value: category,
-  }));
+  Object.values(CategoryEnum)
+    .map((category) => ({
+      text: CategoryLabel[category],
+      value: category,
+    }))
+    .sort((a, b) => a.text.localeCompare(b.text));
