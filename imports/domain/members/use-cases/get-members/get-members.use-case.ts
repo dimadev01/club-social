@@ -10,7 +10,7 @@ import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetMembersUseCase
-  extends UseCase<object>
+  extends UseCase
   implements IUseCase<undefined, GetMembersDto[]>
 {
   public async execute(): Promise<Result<GetMembersDto[], Error>> {

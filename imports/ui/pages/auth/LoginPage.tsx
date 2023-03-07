@@ -57,6 +57,7 @@ export const LoginPage = () => {
           rules={[{ required: true }, { type: 'email' }]}
         >
           <Input
+            autoFocus
             size="large"
             className="text-sm"
             type="email"

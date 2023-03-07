@@ -179,7 +179,7 @@ export class GetMovementsUseCase
         .map((movement: Movement) => {
           let details = '';
 
-          if (movement.category === CategoryEnum.Membership) {
+          if (movement.category === CategoryEnum.MembershipIncome) {
             details = movement.member?.name ?? '';
           }
 

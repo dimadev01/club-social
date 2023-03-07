@@ -8,7 +8,7 @@ import {
 import { useDebounce } from 'use-debounce';
 import { GridUrlQueryParams } from '@shared/types/grid-url-query-params.types';
 
-export interface GridState<T> {
+export interface TableState<T> {
   filters: Record<string, FilterValue | null>;
   pagination: TablePaginationConfig;
   sorter: SorterResult<T> | SorterResult<T>[];

@@ -8,7 +8,7 @@ import {
   validateSync,
 } from 'class-validator';
 import { err, ok, Result } from 'neverthrow';
-import { CategoryEnum } from '@domain/categories/categories.enum';
+import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
 import { Member } from '@domain/members/member.entity';
 import { CreateMovement } from '@domain/movements/movements.types';
 import { FullEntity } from '@kernel/full-entity.base';
@@ -24,6 +24,9 @@ export class Movement extends FullEntity {
 
   @IsEnum(CategoryEnum)
   public category: CategoryEnum;
+
+  @IsEnum(CategoryType)
+  public type: CategoryType;
 
   @IsDate()
   public date: Date;
@@ -53,7 +56,7 @@ export class Movement extends FullEntity {
 
     this.member = null;
 
-    this.category = CategoryEnum.Membership;
+    this.category = CategoryEnum.MembershipIncome;
 
     this.notes = null;
   }
@@ -86,6 +89,8 @@ export class Movement extends FullEntity {
     movement.memberId = props.memberId;
 
     movement.notes = props.notes;
+
+    movement.type = props.type;
 
     const errors = validateSync(movement);
 

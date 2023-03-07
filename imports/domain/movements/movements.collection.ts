@@ -16,6 +16,7 @@ MovementsCollection.attachSchema(
     isDeleted: Boolean,
     memberId: { optional: true, type: String },
     notes: { optional: true, type: String },
+    type: String,
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,
   })

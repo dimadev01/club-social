@@ -6,6 +6,7 @@ import utc from 'dayjs/plugin/utc';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
+import { CategoriesMethods } from '@domain/categories/categories.methods';
 import { MembersMethods } from '@domain/members/members.methods';
 import { MovementsMethods } from '@domain/movements/movements.methods';
 import { UsersMethods } from '@domain/users/users.methods';
@@ -23,7 +24,8 @@ export class ServerStartup {
     private readonly _migrations: MigrationsService,
     private readonly _usersMethods: UsersMethods,
     private readonly _membersMethods: MembersMethods,
-    private readonly _movementsMethods: MovementsMethods
+    private readonly _movementsMethods: MovementsMethods,
+    private readonly _categoriesMethods: CategoriesMethods
   ) {}
 
   // #endregion Constructors (1)
@@ -89,6 +91,8 @@ export class ServerStartup {
     this._membersMethods.register();
 
     this._movementsMethods.register();
+
+    this._categoriesMethods.register();
   }
 
   private async _createUsersIndexes() {

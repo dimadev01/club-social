@@ -15,6 +15,7 @@ CategoriesCollection.attachSchema(
     'historical.$.amount': SimpleSchema.Integer,
     'historical.$.date': Date,
     name: String,
+    type: String,
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,
   })

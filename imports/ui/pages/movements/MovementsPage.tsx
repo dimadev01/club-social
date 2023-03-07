@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Breadcrumb, Card, Col, Row, Slider, Space, Typography } from 'antd';
 import qs from 'qs';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import {
   CategoryEnum,
@@ -21,16 +21,14 @@ import { useMovementsGrid } from '@ui/hooks/movements/useMovementsGrid';
 import { useGrid } from '@ui/hooks/useGrid';
 
 export const MovementsPage = () => {
-  const [gridState, setGridState] = useGrid({
-    sortField: 'date',
-    sortOrder: 'descend',
-  });
-
   const location = useLocation();
 
   const parsedQs = qs.parse(location.search, { ignoreQueryPrefix: true });
 
-  const { data: members, isLoading: isLoadingMembers } = useMembers();
+  const [gridState, setGridState] = useGrid({
+    sortField: 'date',
+    sortOrder: 'descend',
+  });
 
   const [memberIdSearchValue, setMemberIdSearchValue] = useState<string>(
     (parsedQs.memberId as string) ?? undefined
@@ -48,6 +46,8 @@ export const MovementsPage = () => {
     1000
   );
 
+  const { data: members, isLoading: isLoadingMembers } = useMembers();
+
   const { data, isLoading, isRefetching, refetch } = useMovementsGrid({
     amountFilter: debouncedAmountSliderSearchValue,
     filters: gridState.filters,
@@ -62,11 +62,11 @@ export const MovementsPage = () => {
   const renderFooter = () => (
     <Space direction="horizontal" className="flex justify-between">
       <Typography.Text>
-        Ingresos: {data ? CurrencyUtils.formatCents(data.income) : ''}
+        Entrada: {data ? CurrencyUtils.formatCents(data.income) : ''}
       </Typography.Text>
 
       <Typography.Text>
-        Egresos: {data ? CurrencyUtils.formatCents(data.outcome) : ''}
+        Salida: {data ? CurrencyUtils.formatCents(data.outcome) : ''}
       </Typography.Text>
 
       <Typography.Text>
@@ -161,11 +161,11 @@ export const MovementsPage = () => {
               {
                 dataIndex: 'details',
                 render: (details: string | null, movement: MovementGridDto) => {
-                  if (movement.category === CategoryEnum.Membership) {
+                  if (movement.category === CategoryEnum.MembershipIncome) {
                     return (
-                      <Link to={`${AppUrl.Members}/${movement.memberId}`}>
+                      <NavLink to={`${AppUrl.Members}/${movement.memberId}`}>
                         {details}
-                      </Link>
+                      </NavLink>
                     );
                   }
 

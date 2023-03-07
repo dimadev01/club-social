@@ -24,7 +24,7 @@ export class CreateMovementUseCase
   ): Promise<Result<string, Error>> {
     await this.validateDto(CreateMovementRequestDto, request);
 
-    if (request.category === CategoryEnum.Membership) {
+    if (request.category === CategoryEnum.MembershipIncome) {
       if (!request.memberIds || request.memberIds.length === 0) {
         return err(new Error('No members selected'));
       }
@@ -47,6 +47,7 @@ export class CreateMovementUseCase
             date: request.date,
             memberId: member._id,
             notes: request.notes,
+            type: request.type,
           });
 
           if (movement.isErr()) {
@@ -76,6 +77,7 @@ export class CreateMovementUseCase
       date: request.date,
       memberId: null,
       notes: request.notes,
+      type: request.type,
     });
 
     if (movement.isErr()) {

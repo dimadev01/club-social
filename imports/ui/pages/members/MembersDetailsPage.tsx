@@ -165,246 +165,245 @@ export const MembersDetailPage = () => {
         </Breadcrumb.Item>
       </Breadcrumb>
 
-      <Card>
-        <Form<FormValues>
-          layout="vertical"
-          form={form}
-          onFinish={(values) => handleSubmit(values)}
-          initialValues={{
-            address: {
-              cityGovId: member?.addressCityGovId
-                ? {
-                    label: member.addressCityName,
-                    value: member.addressCityGovId,
-                  }
-                : undefined,
-              stateGovId: member?.addressStateGovId
-                ? {
-                    label: member.addressStateName,
-                    value: member.addressStateGovId,
-                  }
-                : undefined,
-              street: member?.addressStreet,
-              zipCode: member?.addressZipCode,
-            },
-            category: member?.category,
-            dateOfBirth: member?.dateOfBirth
-              ? dayjs.utc(member.dateOfBirth)
+      <Form<FormValues>
+        layout="vertical"
+        form={form}
+        onFinish={(values) => handleSubmit(values)}
+        initialValues={{
+          address: {
+            cityGovId: member?.addressCityGovId
+              ? {
+                  label: member.addressCityName,
+                  value: member.addressCityGovId,
+                }
               : undefined,
-            emails:
-              member?.emails && member.emails.length > 0 ? member.emails : [''],
-            fileStatus: member?.fileStatus,
-            firstName: member?.firstName,
-            lastName: member?.lastName,
-            maritalStatus: member?.maritalStatus,
-            nationality: member?.nationality,
-            phones: member?.phones ?? [''],
-            sex: member?.sex,
-            status: member?.status ?? MemberStatus.Active,
-          }}
-        >
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12}>
-              <Card title="Datos" type="inner">
-                <Form.Item
-                  name="firstName"
-                  label="Nombre"
-                  rules={[{ required: true, whitespace: true }]}
-                >
-                  <Input />
-                </Form.Item>
+            stateGovId: member?.addressStateGovId
+              ? {
+                  label: member.addressStateName,
+                  value: member.addressStateGovId,
+                }
+              : undefined,
+            street: member?.addressStreet,
+            zipCode: member?.addressZipCode,
+          },
+          category: member?.category,
+          dateOfBirth: member?.dateOfBirth
+            ? dayjs.utc(member.dateOfBirth)
+            : undefined,
+          emails:
+            member?.emails && member.emails.length > 0 ? member.emails : [''],
+          fileStatus: member?.fileStatus,
+          firstName: member?.firstName,
+          lastName: member?.lastName,
+          maritalStatus: member?.maritalStatus,
+          nationality: member?.nationality,
+          phones: member?.phones ?? [''],
+          sex: member?.sex,
+          status: member?.status ?? MemberStatus.Active,
+        }}
+      >
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12}>
+            <Card title="Datos" type="inner">
+              <Form.Item
+                name="firstName"
+                label="Nombre"
+                rules={[{ required: true, whitespace: true }]}
+              >
+                <Input />
+              </Form.Item>
 
-                <Form.Item
-                  name="lastName"
-                  label="Apellido"
-                  rules={[{ required: true, whitespace: true }]}
-                >
-                  <Input />
-                </Form.Item>
+              <Form.Item
+                name="lastName"
+                label="Apellido"
+                rules={[{ required: true, whitespace: true }]}
+              >
+                <Input />
+              </Form.Item>
 
-                <Form.Item label="Categoría" name="category">
-                  <Select options={getMemberCategoryOptions()} />
-                </Form.Item>
+              <Form.Item label="Categoría" name="category">
+                <Select options={getMemberCategoryOptions()} />
+              </Form.Item>
 
-                <Form.Item
-                  name="dateOfBirth"
-                  label="Fecha de Nacimiento"
-                  rules={[{ type: 'date' }]}
+              <Form.Item
+                name="dateOfBirth"
+                label="Fecha de Nacimiento"
+                rules={[{ type: 'date' }]}
+              >
+                <DatePicker
+                  format={DateFormats.DD_MM_YYYY}
+                  className="w-full"
+                  disabledDate={(current: Dayjs) => current.isAfter(dayjs())}
+                />
+              </Form.Item>
+
+              <Form.Item
+                rules={[{ whitespace: true }]}
+                label="DNI"
+                name="documentID"
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item label="Ficha" name="fileStatus">
+                <Select options={getMemberFileStatusOptions()} />
+              </Form.Item>
+
+              <Form.Item label="Nacionalidad" name="nationality">
+                <Select options={getMemberNationalityOptions()} />
+              </Form.Item>
+
+              <Form.Item label="Género" name="sex">
+                <Select options={getMemberSexOptions()} />
+              </Form.Item>
+
+              <Form.Item label="Estado civil" name="maritalStatus">
+                <Select options={getMemberMaritalStatusOptions()} />
+              </Form.Item>
+
+              <Form.Item
+                rules={[{ required: true }]}
+                label="Estado"
+                name="status"
+              >
+                <Select options={getMemberStatusOptions()} />
+              </Form.Item>
+            </Card>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Space size="middle" direction="vertical" className="flex">
+              <Card title="Emails" type="inner">
+                <FormListEmails />
+              </Card>
+
+              <Card title="Teléfonos" type="inner">
+                <Form.List
+                  name="phones"
+                  rules={[
+                    {
+                      validator: async (_, names) => {
+                        if (
+                          compact(uniq(names)).length !== compact(names).length
+                        ) {
+                          return Promise.reject(
+                            new Error(
+                              'No se pueden ingresar teléfonos duplicados'
+                            )
+                          );
+                        }
+
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
                 >
-                  <DatePicker
-                    format={DateFormats.DD_MM_YYYY}
-                    className="w-full"
-                    disabledDate={(current: Dayjs) => current.isAfter(dayjs())}
+                  {(fields, { add, remove }, { errors }) => (
+                    <>
+                      {fields.map((field, index) => (
+                        <Form.Item
+                          required={fields.length > 1}
+                          label={`Teléfono ${index + 1}`}
+                          key={field.key}
+                        >
+                          <Form.Item
+                            {...field}
+                            label={`Teléfono ${index + 1}`}
+                            rules={[
+                              { required: fields.length > 1 },
+                              { whitespace: true },
+                            ]}
+                            noStyle
+                          >
+                            <FormListInput
+                              add={add}
+                              remove={remove}
+                              fieldName={field.name}
+                              index={index}
+                            />
+                          </Form.Item>
+                          <Form.ErrorList
+                            className="text-red-500"
+                            errors={errors}
+                          />
+                        </Form.Item>
+                      ))}
+                    </>
+                  )}
+                </Form.List>
+              </Card>
+
+              <Card title="Dirección" type="inner">
+                <Form.Item name={['address', 'stateGovId']} label="Provincia">
+                  <Select
+                    onChange={() => {
+                      form.setFieldValue('address.cityGovId', undefined);
+                    }}
+                    loading={statesIsLoading}
+                    labelInValue
+                    options={
+                      states?.map((state) => ({
+                        label: state.nombre,
+                        value: state.id,
+                      })) ?? []
+                    }
                   />
                 </Form.Item>
 
                 <Form.Item
+                  dependencies={['address.stateGovId']}
+                  name={['address', 'cityGovId']}
+                  label="Localidad"
+                  rules={[{ required: !!stateGovId?.value }]}
+                >
+                  <Select
+                    loading={citiesFetchStatus === 'fetching'}
+                    labelInValue
+                    disabled={!stateGovId}
+                    options={
+                      cities?.map((city) => ({
+                        label: city.nombre,
+                        value: city.id,
+                      })) ?? []
+                    }
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  dependencies={['address', 'cityGovId']}
+                  name={['address', 'street']}
+                  label="Calle"
                   rules={[{ whitespace: true }]}
-                  label="DNI"
-                  name="documentID"
                 >
                   <Input />
                 </Form.Item>
 
-                <Form.Item label="Ficha" name="fileStatus">
-                  <Select options={getMemberFileStatusOptions()} />
-                </Form.Item>
-
-                <Form.Item label="Nacionalidad" name="nationality">
-                  <Select options={getMemberNationalityOptions()} />
-                </Form.Item>
-
-                <Form.Item label="Género" name="sex">
-                  <Select options={getMemberSexOptions()} />
-                </Form.Item>
-
-                <Form.Item label="Estado civil" name="maritalStatus">
-                  <Select options={getMemberMaritalStatusOptions()} />
-                </Form.Item>
-
                 <Form.Item
-                  rules={[{ required: true }]}
-                  label="Estado"
-                  name="status"
+                  dependencies={['address', 'cityGovId']}
+                  name={['address', 'zipCode']}
+                  label="Código Postal"
+                  rules={[{ whitespace: true }]}
                 >
-                  <Select options={getMemberStatusOptions()} />
+                  <Input />
                 </Form.Item>
               </Card>
-            </Col>
-            <Col xs={24} sm={12}>
-              <Space size="middle" direction="vertical" className="flex">
-                <Card title="Emails" type="inner">
-                  <FormListEmails />
-                </Card>
+            </Space>
+          </Col>
+        </Row>
 
-                <Card title="Teléfonos" type="inner">
-                  <Form.List
-                    name="phones"
-                    rules={[
-                      {
-                        validator: async (_, names) => {
-                          if (
-                            compact(uniq(names)).length !==
-                            compact(names).length
-                          ) {
-                            return Promise.reject(
-                              new Error(
-                                'No se pueden ingresar teléfonos duplicados'
-                              )
-                            );
-                          }
+        <div className="mb-4" />
 
-                          return Promise.resolve();
-                        },
-                      },
-                    ]}
-                  >
-                    {(fields, { add, remove }, { errors }) => (
-                      <>
-                        {fields.map((field, index) => (
-                          <Form.Item
-                            required={fields.length > 1}
-                            label={`Teléfono ${index + 1}`}
-                            key={field.key}
-                          >
-                            <Form.Item
-                              {...field}
-                              label={`Teléfono ${index + 1}`}
-                              rules={[
-                                { required: fields.length > 1 },
-                                { whitespace: true },
-                              ]}
-                              noStyle
-                            >
-                              <FormListInput
-                                add={add}
-                                remove={remove}
-                                fieldName={field.name}
-                                index={index}
-                              />
-                            </Form.Item>
-                            <Form.ErrorList
-                              className="text-red-500"
-                              errors={errors}
-                            />
-                          </Form.Item>
-                        ))}
-                      </>
-                    )}
-                  </Form.List>
-                </Card>
+        <ButtonGroup>
+          <FormSaveButton
+            loading={createMember.isLoading || updateMember.isLoading}
+            disabled={createMember.isLoading || updateMember.isLoading}
+          />
 
-                <Card title="Dirección" type="inner">
-                  <Form.Item name={['address', 'stateGovId']} label="Provincia">
-                    <Select
-                      onChange={() => {
-                        form.setFieldValue('address.cityGovId', undefined);
-                      }}
-                      loading={statesIsLoading}
-                      labelInValue
-                      options={
-                        states?.map((state) => ({
-                          label: state.nombre,
-                          value: state.id,
-                        })) ?? []
-                      }
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    dependencies={['address.stateGovId']}
-                    name={['address', 'cityGovId']}
-                    label="Localidad"
-                    rules={[{ required: !!stateGovId?.value }]}
-                  >
-                    <Select
-                      loading={citiesFetchStatus === 'fetching'}
-                      labelInValue
-                      disabled={!stateGovId}
-                      options={
-                        cities?.map((city) => ({
-                          label: city.nombre,
-                          value: city.id,
-                        })) ?? []
-                      }
-                    />
-                  </Form.Item>
-
-                  <Form.Item
-                    dependencies={['address', 'cityGovId']}
-                    name={['address', 'street']}
-                    label="Calle"
-                    rules={[{ whitespace: true }]}
-                  >
-                    <Input />
-                  </Form.Item>
-
-                  <Form.Item
-                    dependencies={['address', 'cityGovId']}
-                    name={['address', 'zipCode']}
-                    label="Código Postal"
-                    rules={[{ whitespace: true }]}
-                  >
-                    <Input />
-                  </Form.Item>
-                </Card>
-              </Space>
-            </Col>
-          </Row>
-
-          <ButtonGroup>
-            <FormSaveButton
-              loading={createMember.isLoading || updateMember.isLoading}
-              disabled={createMember.isLoading || updateMember.isLoading}
-            />
-
-            <FormBackButton
-              disabled={createMember.isLoading || updateMember.isLoading}
-              to={AppUrl.Members}
-            />
-          </ButtonGroup>
-        </Form>
-      </Card>
+          <FormBackButton
+            disabled={createMember.isLoading || updateMember.isLoading}
+            to={AppUrl.Members}
+          />
+        </ButtonGroup>
+      </Form>
     </>
   );
 };

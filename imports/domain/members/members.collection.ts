@@ -22,7 +22,6 @@ MembersCollection.attachSchema(
     documentID: { optional: true, type: String },
     fileStatus: { optional: true, type: String },
     isDeleted: Boolean,
-    lastName: String,
     maritalStatus: { optional: true, type: String },
     nationality: { optional: true, type: String },
     phones: { optional: true, type: Array },
@@ -38,10 +37,6 @@ MembersCollection.attachSchema(
 await MembersCollection.createIndexAsync({ createdAt: -1 });
 
 await MembersCollection.createIndexAsync({ userId: 1 });
-
-await MembersCollection.createIndexAsync({ firstName: 1 });
-
-await MembersCollection.createIndexAsync({ lastName: 1 });
 
 await MembersCollection.createIndexAsync({ category: 1 });
 

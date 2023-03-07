@@ -5,7 +5,8 @@ import { MeteorErrorCode } from '@kernel/errors.enum';
 import { MongoOptions } from '@kernel/use-case.interface';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
-export abstract class UseCase<T extends object> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export abstract class UseCase<T extends object = any> {
   protected async validateDto(
     classType: ClassType<T>,
     value: T

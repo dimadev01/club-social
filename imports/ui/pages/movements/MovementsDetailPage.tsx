@@ -12,12 +12,15 @@ import {
 import ButtonGroup from 'antd/es/button/button-group';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
+import { find } from 'lodash';
 import { NavLink, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import {
   CategoryEnum,
   CategoryLabel,
-  getCategoryOptions,
+  CategoryType,
+  getCategoryOptions2,
+  getCategoryTypeOptions,
 } from '@domain/categories/categories.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
@@ -26,6 +29,7 @@ import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
+import { useCategories } from '@ui/hooks/categories/useCategories';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useCreateMovement } from '@ui/hooks/movements/useCreateMovement';
 import { useMovement } from '@ui/hooks/movements/useMovement';
@@ -37,6 +41,7 @@ type FormValues = {
   date: Dayjs;
   memberIds: string[];
   notes: string;
+  type: CategoryType;
 };
 
 export const MovementsDetailPage = () => {
@@ -44,7 +49,7 @@ export const MovementsDetailPage = () => {
 
   const category = useWatch(['category'], form);
 
-  const amount = useWatch(['amount'], form);
+  const type = useWatch(['type'], form);
 
   const { id } = useParams<{ id?: string }>();
 
@@ -56,6 +61,10 @@ export const MovementsDetailPage = () => {
 
   const { data: members, isLoading: membersLoading } = useMembers();
 
+  const { data: categories, isLoading: isLoadingCategories } = useCategories();
+
+  console.log({ categories, isLoadingCategories });
+
   const handleSubmit = async (values: FormValues) => {
     if (!movement) {
       await createMovement.mutateAsync({
@@ -64,11 +73,10 @@ export const MovementsDetailPage = () => {
         date: DateUtils.format(values.date),
         memberIds: values.memberIds,
         notes: values.notes,
+        type: values.type,
       });
 
       message.success('Movimiento creado');
-
-      // navigate(`${AppUrl.Movements}/${memberId}`);
 
       form.resetFields();
     } else {
@@ -79,13 +87,14 @@ export const MovementsDetailPage = () => {
         id: movement._id,
         memberIds: values.memberIds,
         notes: values.notes,
+        type: values.type,
       });
 
       message.success('Movimiento actualizado');
     }
   };
 
-  if (movementFetchStatus === 'fetching') {
+  if (movementFetchStatus === 'fetching' || isLoadingCategories) {
     return <Spin spinning />;
   }
 
@@ -93,28 +102,12 @@ export const MovementsDetailPage = () => {
     return <NotFound />;
   }
 
-  const renderAmountHelp = () => {
-    if (amount > 0) {
-      return 'Ingreso';
-    }
+  const getPriceForCategory = (value: CategoryEnum): number => {
+    const foundCategory = find(categories, { code: value });
 
-    if (amount < 0) {
-      return 'Egreso';
-    }
-
-    return '';
-  };
-
-  const getAmountClassNameHelp = () => {
-    if (amount > 0) {
-      return 'w-40 text-green-500';
-    }
-
-    if (amount < 0) {
-      return 'w-40 text-red-500';
-    }
-
-    return 'w-40 ';
+    return foundCategory?.amount
+      ? CurrencyUtils.fromCents(foundCategory.amount)
+      : 0;
   };
 
   return (
@@ -141,12 +134,13 @@ export const MovementsDetailPage = () => {
           initialValues={{
             amount: movement
               ? CurrencyUtils.fromCents(movement.amount)
-              : undefined,
-            category: movement?.category ?? CategoryEnum.Membership,
+              : getPriceForCategory(CategoryEnum.MembershipIncome),
+            category: movement?.category ?? CategoryEnum.MembershipIncome,
             date: movement?.date
               ? dayjs(movement.date, DateFormats.DD_MM_YYYY)
               : dayjs(),
             notes: movement?.notes,
+            type: movement?.type ?? CategoryType.Income,
           }}
         >
           <Form.Item
@@ -157,15 +151,31 @@ export const MovementsDetailPage = () => {
             <DatePicker format={DateFormats.DD_MM_YYYY} className="w-full" />
           </Form.Item>
 
-          <Form.Item
-            label="Categoría"
-            name="category"
-            rules={[{ required: true }]}
-          >
-            <Select options={getCategoryOptions()} />
+          <Form.Item label="Tipo" name="type" rules={[{ required: true }]}>
+            <Select
+              onChange={() => form.setFieldValue('category', undefined)}
+              options={getCategoryTypeOptions()}
+            />
           </Form.Item>
 
-          {category === CategoryEnum.Membership && (
+          {type && (
+            <Form.Item
+              label="Categoría"
+              name="category"
+              rules={[{ required: true }]}
+            >
+              <Select
+                onChange={(value) =>
+                  form.setFieldValue('amount', getPriceForCategory(value))
+                }
+                options={getCategoryOptions2(type)}
+              />
+            </Form.Item>
+          )}
+
+          {(category === CategoryEnum.MembershipIncome ||
+            category === CategoryEnum.LightIncome ||
+            category === CategoryEnum.InviteeIncome) && (
             <Form.Item
               label="Socio"
               name="memberIds"
@@ -187,10 +197,9 @@ export const MovementsDetailPage = () => {
             name="amount"
             rules={[{ required: true }, { type: 'number' }]}
             status="error"
-            help={renderAmountHelp()}
           >
             <InputNumber
-              className={getAmountClassNameHelp()}
+              className="w-40"
               prefix={ARS.code}
               precision={2}
               decimalSeparator=","

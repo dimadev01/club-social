@@ -55,8 +55,8 @@ export class GetUsersUseCase
     }
 
     return ok({
+      count: await Meteor.users.find(query).countAsync(),
       data: await Meteor.users.find(query, options).fetchAsync(),
-      total: await Meteor.users.find(query).countAsync(),
     });
   }
 }

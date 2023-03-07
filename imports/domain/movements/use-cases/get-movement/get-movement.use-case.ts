@@ -30,6 +30,7 @@ export class GetMovementUseCase
       category: movement.category,
       date: movement.dateFormatted,
       notes: movement.notes,
+      type: movement.type,
     });
   }
 }

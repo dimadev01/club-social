@@ -60,6 +60,14 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Categories)) {
+      items.push({
+        icon: <BankOutlined className="!text-lg" />,
+        key: AppUrl.Categories,
+        label: <NavLink to={AppUrl.Categories}>Categorías</NavLink>,
+      });
+    }
+
     return items;
   };
 

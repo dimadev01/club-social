@@ -76,7 +76,10 @@ export const UsersPage = () => {
                 emails && (
                   <Space direction="vertical">
                     {emails.map((email) => (
-                      <Typography.Text key={email.address} copyable>
+                      <Typography.Text
+                        key={email.address}
+                        copyable={{ text: email.address }}
+                      >
                         <Tooltip
                           title={
                             email.verified

@@ -7,6 +7,7 @@ import { LoginPage } from '@ui/pages/auth/LoginPage';
 import { LoginPasswordlessPage } from '@ui/pages/auth/LoginPasswordlessPage';
 import { LogoutPage } from '@ui/pages/auth/LogoutPage';
 import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
+import { CategoriesPage } from '@ui/pages/categories/CategoriesPage';
 import { HomePage } from '@ui/pages/HomePage';
 import { MembersDetailPage } from '@ui/pages/members/MembersDetailsPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
@@ -121,6 +122,15 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.MovementsDetail,
+  },
+
+  {
+    element: (
+      <PrivateRoute permission={Permission.Read} scope={Scope.Categories}>
+        <CategoriesPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.Categories,
   },
 
   {
