@@ -23,7 +23,8 @@ export abstract class CurrencyUtils {
 
     return toUnits(
       dinero({ amount, currency: ARS }),
-      ({ value, currency }) => `${currency.code} ${value[0]}`
+      ({ value, currency }) =>
+        `${currency.code} ${new Intl.NumberFormat('es-AR').format(value[0])}`
     );
   }
 

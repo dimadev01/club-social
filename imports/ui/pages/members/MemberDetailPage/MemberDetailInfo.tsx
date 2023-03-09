@@ -1,20 +1,9 @@
 import React from 'react';
-import {
-  Breadcrumb,
-  Card,
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Row,
-  Space,
-  Spin,
-} from 'antd';
+import { Card, Col, DatePicker, Form, Input, message, Row, Space } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
 import { compact, uniq } from 'lodash';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   getMemberCategoryOptions,
   getMemberFileStatusOptions,
@@ -29,6 +18,7 @@ import {
   MemberSex,
   MemberStatus,
 } from '@domain/members/members.enum';
+import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
 import { Role } from '@domain/roles/roles.enum';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -36,10 +26,8 @@ import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
 import { FormListInput } from '@ui/components/Form/FormListInput';
 import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
-import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
 import { useCreateMember } from '@ui/hooks/members/useCreateMember';
-import { useMember } from '@ui/hooks/members/useMember';
 import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
 import { useCities } from '@ui/hooks/useCities';
 import { useStates } from '@ui/hooks/useStates';
@@ -65,16 +53,16 @@ type FormValues = {
   status: MemberStatus;
 };
 
-export const MembersDetailPage = () => {
+type Props = {
+  member: GetMemberResponseDto;
+};
+
+export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
   const [form] = Form.useForm<FormValues>();
 
   const stateGovId = Form.useWatch(['address', 'stateGovId'], form);
 
-  const { id } = useParams<{ id?: string }>();
-
   const navigate = useNavigate();
-
-  const { data: member, fetchStatus: memberFetchStatus } = useMember(id);
 
   const { data: states, isLoading: statesIsLoading } = useStates();
 
@@ -144,27 +132,8 @@ export const MembersDetailPage = () => {
     }
   };
 
-  if (memberFetchStatus === 'fetching') {
-    return <Spin spinning />;
-  }
-
-  if (id && !member) {
-    return <NotFound />;
-  }
-
   return (
-    <>
-      <Breadcrumb className="mb-8">
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <NavLink to={AppUrl.Members}>Socios</NavLink>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          {!!member && `${member.firstName} ${member.lastName}`}
-          {!member && 'Nuevo Socio'}
-        </Breadcrumb.Item>
-      </Breadcrumb>
-
+    <Card>
       <Form<FormValues>
         layout="vertical"
         form={form}
@@ -404,6 +373,6 @@ export const MembersDetailPage = () => {
           />
         </ButtonGroup>
       </Form>
-    </>
+    </Card>
   );
 };

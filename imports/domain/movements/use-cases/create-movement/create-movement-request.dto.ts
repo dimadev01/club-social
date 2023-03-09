@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsInt,
   IsOptional,
+  IsPositive,
   IsString,
 } from 'class-validator';
 import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
@@ -19,6 +20,7 @@ export class CreateMovementRequestDto {
   type: CategoryType;
 
   @IsInt()
+  @IsPositive()
   amount: number;
 
   @IsString()

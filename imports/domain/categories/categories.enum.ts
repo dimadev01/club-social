@@ -43,11 +43,11 @@ export const CategoryLabel = {
 
 export const CategoryPrices = {
   [CategoryEnum.MembershipIncome]: 4600,
-  [CategoryEnum.MembershipDebt]: -4600,
+  [CategoryEnum.MembershipDebt]: 4600,
   [CategoryEnum.CourtRental]: 1500,
   [CategoryEnum.Expense]: null,
   [CategoryEnum.Fair]: 46000,
-  [CategoryEnum.InviteeDebt]: -2000,
+  [CategoryEnum.InviteeDebt]: 2000,
   [CategoryEnum.InviteeIncome]: 2000,
   [CategoryEnum.LightIncome]: 500,
   [CategoryEnum.LightDebt]: 500,
@@ -151,3 +151,12 @@ export const CategoryTypes = {
   [CategoryEnum.Saving]: CategoryType.Expense,
   [CategoryEnum.Service]: CategoryType.Expense,
 };
+
+export const MemberCategories = [
+  CategoryEnum.MembershipDebt,
+  CategoryEnum.MembershipIncome,
+  CategoryEnum.LightDebt,
+  CategoryEnum.LightIncome,
+  CategoryEnum.InviteeDebt,
+  CategoryEnum.InviteeIncome,
+];

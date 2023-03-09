@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
-import { Breadcrumb, Card, Col, Row, Slider, Space, Typography } from 'antd';
+import {
+  Breadcrumb,
+  Card,
+  Col,
+  DatePicker,
+  Row,
+  Slider,
+  Space,
+  Typography,
+} from 'antd';
+import dayjs, { Dayjs } from 'dayjs';
 import qs from 'qs';
+import { RangeValue } from 'rc-picker/lib/interface';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import {
   CategoryEnum,
   CategoryLabel,
   getCategoryFilters,
+  MemberCategories,
 } from '@domain/categories/categories.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
+import { DateFormats } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Select } from '@ui/components/Select';
 import { Table } from '@ui/components/Table/Table';
@@ -34,6 +47,13 @@ export const MovementsPage = () => {
     (parsedQs.memberId as string) ?? undefined
   );
 
+  const [dateRangeValue, setDateRangeValue] =
+    useState<RangeValue<Dayjs> | null>(
+      parsedQs.from && parsedQs.to
+        ? [dayjs(parsedQs.from as string), dayjs(parsedQs.to as string)]
+        : null
+    );
+
   const [amountSliderSearchValue, setAmountSliderSearchValue] = useState<
     [number, number]
   >([
@@ -51,26 +71,36 @@ export const MovementsPage = () => {
   const { data, isLoading, isRefetching, refetch } = useMovementsGrid({
     amountFilter: debouncedAmountSliderSearchValue,
     filters: gridState.filters,
+    from: dateRangeValue
+      ? dateRangeValue[0]?.format(DateFormats.Date) ?? null
+      : null,
     memberId: memberIdSearchValue ?? null,
     page: gridState.page,
     pageSize: gridState.pageSize,
     search: gridState.search,
     sortField: gridState.sortField,
     sortOrder: gridState.sortOrder,
+    to: dateRangeValue
+      ? dateRangeValue[1]?.format(DateFormats.Date) ?? null
+      : null,
   });
 
   const renderFooter = () => (
     <Space direction="horizontal" className="flex justify-between">
       <Typography.Text>
-        Entrada: {data ? CurrencyUtils.formatCents(data.income) : ''}
+        Deudas: {data ? CurrencyUtils.formatCents(data.debt, false) : ''}
       </Typography.Text>
 
       <Typography.Text>
-        Salida: {data ? CurrencyUtils.formatCents(data.outcome) : ''}
+        Entrada: {data ? CurrencyUtils.formatCents(data.income, false) : ''}
       </Typography.Text>
 
       <Typography.Text>
-        Balance: {data ? CurrencyUtils.formatCents(data.balance) : ''}
+        Salida: {data ? CurrencyUtils.formatCents(data.expense, false) : ''}
+      </Typography.Text>
+
+      <Typography.Text>
+        Balance: {data ? CurrencyUtils.formatCents(data.balance, false) : ''}
       </Typography.Text>
     </Space>
   );
@@ -94,6 +124,16 @@ export const MovementsPage = () => {
       >
         <Space size="middle" direction="vertical" className="flex">
           <Row gutter={[16, 16]}>
+            <Col xs={24} sm={6}>
+              <DatePicker.RangePicker
+                format={DateFormats.DD_MM_YYYY}
+                className="w-full"
+                allowClear
+                value={dateRangeValue}
+                onChange={(value) => setDateRangeValue(value)}
+              />
+            </Col>
+
             <Col xs={24} sm={6}>
               <Select
                 value={memberIdSearchValue}
@@ -138,8 +178,8 @@ export const MovementsPage = () => {
             columns={[
               {
                 dataIndex: 'date',
-                render: (date: string, member: MovementGridDto) => (
-                  <NavLink to={`${AppUrl.Movements}/${member._id}`}>
+                render: (date: string, movement: MovementGridDto) => (
+                  <NavLink to={`${AppUrl.Movements}/${movement._id}`}>
                     {date}
                   </NavLink>
                 ),
@@ -161,7 +201,7 @@ export const MovementsPage = () => {
               {
                 dataIndex: 'details',
                 render: (details: string | null, movement: MovementGridDto) => {
-                  if (movement.category === CategoryEnum.MembershipIncome) {
+                  if (MemberCategories.includes(movement.category)) {
                     return (
                       <NavLink to={`${AppUrl.Members}/${movement.memberId}`}>
                         {details}

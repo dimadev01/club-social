@@ -4,6 +4,7 @@ export enum DateFormats {
   DD_MM_YYYY = 'DD/MM/YYYY',
   Date = 'YYYY-MM-DD',
   DateTime = 'YYYY-MM-DD HH:mm:ss',
+  Iso = 'YYYY-MM-DDTHH:mm:ss.SSSZ',
   Time = 'HH:mm:ss',
 }
 

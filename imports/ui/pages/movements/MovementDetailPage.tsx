@@ -44,7 +44,7 @@ type FormValues = {
   type: CategoryType;
 };
 
-export const MovementsDetailPage = () => {
+export const MovementDetailPage = () => {
   const [form] = Form.useForm<FormValues>();
 
   const category = useWatch(['category'], form);
@@ -53,7 +53,11 @@ export const MovementsDetailPage = () => {
 
   const { id } = useParams<{ id?: string }>();
 
-  const { data: movement, fetchStatus: movementFetchStatus } = useMovement(id);
+  const {
+    data: movement,
+    fetchStatus: movementFetchStatus,
+    refetch,
+  } = useMovement(id);
 
   const createMovement = useCreateMovement();
 
@@ -62,8 +66,6 @@ export const MovementsDetailPage = () => {
   const { data: members, isLoading: membersLoading } = useMembers();
 
   const { data: categories, isLoading: isLoadingCategories } = useCategories();
-
-  console.log({ categories, isLoadingCategories });
 
   const handleSubmit = async (values: FormValues) => {
     if (!movement) {
@@ -91,6 +93,8 @@ export const MovementsDetailPage = () => {
       });
 
       message.success('Movimiento actualizado');
+
+      refetch();
     }
   };
 
@@ -148,12 +152,20 @@ export const MovementsDetailPage = () => {
             label="Fecha"
             rules={[{ required: true }, { type: 'date' }]}
           >
-            <DatePicker format={DateFormats.DD_MM_YYYY} className="w-full" />
+            <DatePicker
+              format={DateFormats.DD_MM_YYYY}
+              className="w-full"
+              disabledDate={(current) => current.isAfter(dayjs())}
+            />
           </Form.Item>
 
           <Form.Item label="Tipo" name="type" rules={[{ required: true }]}>
             <Select
-              onChange={() => form.setFieldValue('category', undefined)}
+              onChange={() => {
+                form.setFieldValue('category', undefined);
+
+                form.setFieldValue('amount', undefined);
+              }}
               options={getCategoryTypeOptions()}
             />
           </Form.Item>
@@ -173,9 +185,14 @@ export const MovementsDetailPage = () => {
             </Form.Item>
           )}
 
-          {(category === CategoryEnum.MembershipIncome ||
-            category === CategoryEnum.LightIncome ||
-            category === CategoryEnum.InviteeIncome) && (
+          {[
+            CategoryEnum.MembershipDebt,
+            CategoryEnum.LightDebt,
+            CategoryEnum.InviteeDebt,
+            CategoryEnum.MembershipIncome,
+            CategoryEnum.LightIncome,
+            CategoryEnum.InviteeIncome,
+          ].includes(category) && (
             <Form.Item
               label="Socio"
               name="memberIds"

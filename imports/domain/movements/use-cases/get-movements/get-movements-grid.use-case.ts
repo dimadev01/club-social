@@ -1,8 +1,13 @@
 import { plainToInstance } from 'class-transformer';
+import dayjs from 'dayjs';
+import { find } from 'lodash';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { CategoryEnum } from '@domain/categories/categories.enum';
+import {
+  CategoryEnum,
+  MemberCategories,
+} from '@domain/categories/categories.enum';
 import { Movement } from '@domain/movements/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
@@ -27,6 +32,13 @@ export class GetMovementsUseCase
     const $match: Mongo.Query<Movement> = {
       isDeleted: false,
     };
+
+    if (request.from && request.to) {
+      $match.date = {
+        $gte: dayjs.utc(request.from).startOf('day').toDate(),
+        $lte: dayjs.utc(request.to).endOf('day').toDate(),
+      };
+    }
 
     if (request.memberId) {
       $match.memberId = request.memberId;
@@ -87,13 +99,9 @@ export class GetMovementsUseCase
             totals: [
               {
                 $group: {
-                  _id: null,
-                  balance: { $sum: '$amount' },
-                  income: {
-                    $sum: { $cond: [{ $gt: ['$amount', 0] }, '$amount', 0] },
-                  },
-                  outcome: {
-                    $sum: { $cond: [{ $lt: ['$amount', 0] }, '$amount', 0] },
+                  _id: '$type',
+                  sum: {
+                    $sum: '$amount',
                   },
                 },
               },
@@ -103,75 +111,17 @@ export class GetMovementsUseCase
       ])
       .toArray();
 
-    const $explain = await MovementsCollection.rawCollection()
-      .aggregate<Movement>([
-        {
-          $match,
-        },
-        {
-          $lookup: {
-            as: 'member',
-            foreignField: '_id',
-            from: 'members',
-            localField: 'memberId',
-            pipeline: [
-              {
-                $lookup: {
-                  as: 'user',
-                  foreignField: '_id',
-                  from: 'users',
-                  localField: 'userId',
-                },
-              },
-              {
-                $unwind: '$user',
-              },
-            ],
-          },
-        },
-        {
-          $unwind: {
-            path: '$member',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $facet: {
-            data: this.getPaginatedPipeline({
-              $sort: { date: -1 },
-              page: request.page,
-              pageSize: request.pageSize,
-            }),
-            total: [{ $count: 'count' }],
-            totals: [
-              {
-                $group: {
-                  _id: null,
-                  balance: { $sum: '$amount' },
-                  income: {
-                    $sum: { $cond: [{ $gt: ['$amount', 0] }, '$amount', 0] },
-                  },
-                  outcome: {
-                    $sum: { $cond: [{ $lt: ['$amount', 0] }, '$amount', 0] },
-                  },
-                },
-              },
-            ],
-          },
-        },
-      ])
-      .explain();
+    const income = find(totals, { _id: 'income' })?.sum ?? 0;
 
-    const balance = totals.length > 0 ? totals[0].balance : 0;
+    const expense = find(totals, { _id: 'expense' })?.sum ?? 0;
 
-    const outcome = totals.length > 0 ? totals[0].outcome : 0;
+    const debt = income - (find(totals, { _id: 'debt' })?.sum ?? 0);
 
-    const income = totals.length > 0 ? totals[0].income : 0;
+    const balance = income - expense;
 
     const count = total.length > 0 ? total[0].count : 0;
 
     return ok<GetMovementsGridResponseDto>({
-      $explain,
       balance,
       count,
       data: data
@@ -179,7 +129,7 @@ export class GetMovementsUseCase
         .map((movement: Movement) => {
           let details = '';
 
-          if (movement.category === CategoryEnum.MembershipIncome) {
+          if (MemberCategories.includes(movement.category)) {
             details = movement.member?.name ?? '';
           }
 
@@ -192,8 +142,9 @@ export class GetMovementsUseCase
             memberId: movement.memberId,
           };
         }),
+      debt,
+      expense,
       income,
-      outcome,
     });
   }
 }

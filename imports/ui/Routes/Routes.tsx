@@ -9,9 +9,9 @@ import { LogoutPage } from '@ui/pages/auth/LogoutPage';
 import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
 import { CategoriesPage } from '@ui/pages/categories/CategoriesPage';
 import { HomePage } from '@ui/pages/HomePage';
-import { MembersDetailPage } from '@ui/pages/members/MembersDetailsPage';
+import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
-import { MovementsDetailPage } from '@ui/pages/movements/MovementsDetailPage';
+import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
 import { MovementsPage } from '@ui/pages/movements/MovementsPage';
 import { UsersDetailPage } from '@ui/pages/users/UsersDetailPage';
 import { UsersPage } from '@ui/pages/users/UsersPage';
@@ -110,7 +110,7 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute permission={Permission.Write} scope={Scope.Movements}>
-        <MovementsDetailPage />
+        <MovementDetailPage />
       </PrivateRoute>
     ),
     path: AppUrl.MovementsNew,
@@ -118,7 +118,7 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute permission={Permission.Write} scope={Scope.Movements}>
-        <MovementsDetailPage />
+        <MovementDetailPage />
       </PrivateRoute>
     ),
     path: AppUrl.MovementsDetail,

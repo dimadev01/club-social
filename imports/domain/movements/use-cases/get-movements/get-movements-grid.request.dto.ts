@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsOptional, IsString } from 'class-validator';
 import { PaginatedRequestDto } from '@kernel/paginated-request.dto';
 
 export class GetMovementsGridRequestDto extends PaginatedRequestDto {
@@ -8,4 +8,12 @@ export class GetMovementsGridRequestDto extends PaginatedRequestDto {
 
   @IsArray()
   public amountFilter: [number, number];
+
+  @IsDateString()
+  @IsOptional()
+  public from: string | null;
+
+  @IsDateString()
+  @IsOptional()
+  public to: string | null;
 }

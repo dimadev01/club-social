@@ -2,11 +2,11 @@ import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-m
 import { PaginatedResponse } from '@kernel/paginated-response.dto';
 
 export class GetMovementsGridResponseDto extends PaginatedResponse<MovementGridDto> {
-  balance: number;
+  expense: number;
 
   income: number;
 
-  outcome: number;
+  debt: number;
 
-  $explain: any;
+  balance: number;
 }

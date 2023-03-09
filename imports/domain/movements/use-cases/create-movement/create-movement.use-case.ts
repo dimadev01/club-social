@@ -1,7 +1,7 @@
 import { find } from 'lodash';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { CategoryEnum } from '@domain/categories/categories.enum';
+import { MemberCategories } from '@domain/categories/categories.enum';
 import { MembersCollection } from '@domain/members/members.collection';
 import { Movement } from '@domain/movements/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
@@ -24,7 +24,7 @@ export class CreateMovementUseCase
   ): Promise<Result<string, Error>> {
     await this.validateDto(CreateMovementRequestDto, request);
 
-    if (request.category === CategoryEnum.MembershipIncome) {
+    if (MemberCategories.includes(request.category)) {
       if (!request.memberIds || request.memberIds.length === 0) {
         return err(new Error('No members selected'));
       }
