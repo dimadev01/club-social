@@ -4,7 +4,7 @@ import { Collection } from '@infra/database/collection.base';
 
 export const ProvincesCollection = new Collection('provinces', Province);
 
-// @ts-ignore
+// @ts-expect-error
 ProvincesCollection.attachSchema(
   new SimpleSchema({
     _id: String,

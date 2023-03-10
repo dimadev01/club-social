@@ -1,11 +1,11 @@
 import SimpleSchema from 'simpl-schema';
-import { Professor } from '@domain/professors/professor.entity';
+import { Employee } from '@domain/employees/employee.entity';
 import { Collection } from '@infra/database/collection.base';
 
-export const ProfessorsCollection = new Collection('professors', Professor);
+export const EmployeesCollection = new Collection('employees', Employee);
 
 // @ts-expect-error
-ProfessorsCollection.attachSchema(
+EmployeesCollection.attachSchema(
   new SimpleSchema({
     _id: String,
     createdAt: Date,
@@ -16,4 +16,4 @@ ProfessorsCollection.attachSchema(
   })
 );
 
-await ProfessorsCollection.createIndexAsync({ userId: 1 });
+await EmployeesCollection.createIndexAsync({ userId: 1 });

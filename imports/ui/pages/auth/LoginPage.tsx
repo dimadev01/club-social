@@ -23,7 +23,7 @@ export const LoginPage = () => {
   const login = (values: FormValues) => {
     setIsSendingEmail(true);
 
-    // @ts-ignore
+    // @ts-expect-error
     Accounts.requestLoginTokenForUser(
       { selector: values.email },
       (error: unknown) => {

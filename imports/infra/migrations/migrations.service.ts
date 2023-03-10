@@ -7,7 +7,7 @@ export class MigrationsService {
   public constructor(private readonly _logger: Logger) {}
 
   public start() {
-    // @ts-ignore
+    // @ts-expect-error
     Migrations.config({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       logger: (params: any) => {
@@ -23,10 +23,10 @@ export class MigrationsService {
       },
     });
 
-    // @ts-ignore
+    // @ts-expect-error
     // Migrations.migrateTo(0);
 
-    // @ts-ignore
+    // @ts-expect-error
     Migrations.migrateTo('latest');
   }
 }

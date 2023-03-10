@@ -76,6 +76,22 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Employees)) {
+      items.push({
+        icon: <UserOutlined className="!text-lg" />,
+        key: AppUrl.Employees,
+        label: <NavLink to={AppUrl.Employees}>Empleados</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Rentals)) {
+      items.push({
+        icon: <UserOutlined className="!text-lg" />,
+        key: AppUrl.Rentals,
+        label: <NavLink to={AppUrl.Rentals}>Alquileres</NavLink>,
+      });
+    }
+
     return items;
   };
 

@@ -5,9 +5,13 @@ import { container } from 'tsyringe';
 import { CategoriesCollection } from '@domain/categories/categories.collection';
 import { CategoryEnum } from '@domain/categories/categories.enum';
 import { Category } from '@domain/categories/category.entity';
+import { Employee } from '@domain/employees/employee.entity';
+import { EmployeesCollection } from '@domain/employees/employees.collection';
 import { MembersCollection } from '@domain/members/members.collection';
 import { Professor } from '@domain/professors/professor.entity';
 import { ProfessorsCollection } from '@domain/professors/professors.collection';
+import { Rental } from '@domain/rentals/rental.entity';
+import { RentalsCollection } from '@domain/rentals/rentals.collection';
 import {
   AdminRole,
   Permission,
@@ -35,7 +39,7 @@ Migrations.add({
     await Meteor.users.removeAsync({});
 
     Roles.getAllRoles().forEach((role) => {
-      // @ts-ignore
+      // @ts-expect-error
       Roles.deleteRole(role._id);
     });
 
@@ -85,49 +89,85 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    // Professors
     await ProfessorsCollection.removeAsync({});
 
     const createUserUseCase = container.resolve(CreateUserUseCase);
 
-    const user1 = await createUserUseCase.execute({
+    const professor1 = await createUserUseCase.execute({
       emails: null,
       firstName: 'Alejandro',
       lastName: 'Cucurullo',
       role: Role.Professor,
     });
 
-    if (user1.isErr()) {
-      throw new Error(user1.error.message);
+    if (professor1.isErr()) {
+      throw new Error(professor1.error.message);
     }
 
-    await ProfessorsCollection.insertEntity(Professor.create(user1.value));
+    await ProfessorsCollection.insertEntity(Professor.create(professor1.value));
 
-    const user2 = await createUserUseCase.execute({
+    const professor2 = await createUserUseCase.execute({
       emails: null,
       firstName: 'Claudio',
       lastName: 'Saade',
       role: Role.Professor,
     });
 
-    if (user2.isErr()) {
-      throw new Error(user2.error.message);
+    if (professor2.isErr()) {
+      throw new Error(professor2.error.message);
     }
 
-    await ProfessorsCollection.insertEntity(Professor.create(user2.value));
+    await ProfessorsCollection.insertEntity(Professor.create(professor2.value));
 
-    const user3 = await createUserUseCase.execute({
+    const professor3 = await createUserUseCase.execute({
       emails: null,
       firstName: 'Sacha',
       lastName: 'Ramirez',
       role: Role.Professor,
     });
 
-    if (user3.isErr()) {
-      throw new Error(user3.error.message);
+    if (professor3.isErr()) {
+      throw new Error(professor3.error.message);
     }
 
-    await ProfessorsCollection.insertEntity(Professor.create(user3.value));
+    // Employees
+    await EmployeesCollection.removeAsync({});
 
+    const employee1 = await createUserUseCase.execute({
+      emails: null,
+      firstName: 'Dario',
+      lastName: 'Ponce',
+      role: Role.Employee,
+    });
+
+    if (employee1.isErr()) {
+      throw new Error(employee1.error.message);
+    }
+
+    await EmployeesCollection.insertEntity(Employee.create(employee1.value));
+
+    const employee2 = await createUserUseCase.execute({
+      emails: null,
+      firstName: 'Lautaro',
+      lastName: 'Baigorria',
+      role: Role.Employee,
+    });
+
+    if (employee2.isErr()) {
+      throw new Error(employee2.error.message);
+    }
+
+    await EmployeesCollection.insertEntity(Employee.create(employee2.value));
+
+    // Rentals
+    await RentalsCollection.insertEntity(Rental.create('Salón', null));
+
+    await RentalsCollection.insertEntity(Rental.create('Buffet', null));
+
+    await RentalsCollection.insertEntity(Rental.create('Ferias', null));
+
+    // Roles attachment
     await Meteor.users
       .find({ 'profile.role': Role.Admin })
       .forEachAsync((admin: Meteor.User) => {
@@ -135,6 +175,18 @@ Migrations.add({
           admin._id,
           AdminRole[Scope.Professors],
           Scope.Professors
+        );
+
+        Roles.addUsersToRoles(
+          admin._id,
+          AdminRole[Scope.Rentals],
+          Scope.Rentals
+        );
+
+        Roles.addUsersToRoles(
+          admin._id,
+          AdminRole[Scope.Employees],
+          Scope.Employees
         );
       });
 
@@ -145,6 +197,18 @@ Migrations.add({
           staff._id,
           StaffRole[Scope.Professors],
           Scope.Professors
+        );
+
+        Roles.addUsersToRoles(
+          staff._id,
+          AdminRole[Scope.Rentals],
+          Scope.Rentals
+        );
+
+        Roles.addUsersToRoles(
+          staff._id,
+          AdminRole[Scope.Employees],
+          Scope.Employees
         );
       });
 

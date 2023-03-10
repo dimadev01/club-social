@@ -1,19 +1,20 @@
 import SimpleSchema from 'simpl-schema';
-import { Professor } from '@domain/professors/professor.entity';
+import { Rental } from '@domain/rentals/rental.entity';
 import { Collection } from '@infra/database/collection.base';
 
-export const ProfessorsCollection = new Collection('professors', Professor);
+export const RentalsCollection = new Collection('rentals', Rental);
 
 // @ts-expect-error
-ProfessorsCollection.attachSchema(
+RentalsCollection.attachSchema(
   new SimpleSchema({
     _id: String,
     createdAt: Date,
     createdBy: String,
+    description: { optional: true, type: String },
+    name: String,
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,
-    userId: String,
   })
 );
 
-await ProfessorsCollection.createIndexAsync({ userId: 1 });
+await RentalsCollection.createIndexAsync({ name: 1 });

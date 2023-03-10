@@ -4,7 +4,7 @@ import { Collection } from '@infra/database/collection.base';
 
 export const CategoriesCollection = new Collection('categories', Category);
 
-// @ts-ignore
+// @ts-expect-error
 CategoriesCollection.attachSchema(
   new SimpleSchema({
     _id: String,

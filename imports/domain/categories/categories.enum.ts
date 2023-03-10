@@ -2,6 +2,7 @@
 export enum CategoryEnum {
   MembershipIncome = 'membership-income',
   MembershipDebt = 'membership-debt',
+  Employee = 'employee',
   CourtRental = 'court-rental',
   Rental = 'rental',
   Saving = 'saving',
@@ -37,6 +38,7 @@ export const CategoryLabel = {
   [CategoryEnum.Professor]: 'Profesores',
   [CategoryEnum.Rental]: 'Alquileres',
   [CategoryEnum.Salary]: 'Honorarios',
+  [CategoryEnum.Employee]: 'Empleados',
   [CategoryEnum.Saving]: 'Atesoramiento',
   [CategoryEnum.Service]: 'Servicios',
 };
@@ -61,12 +63,6 @@ export const CategoryPrices = {
   [CategoryEnum.Saving]: null,
   [CategoryEnum.Service]: null,
 };
-
-export const getCategoryOptions = () =>
-  Object.values(CategoryEnum).map((category) => ({
-    label: CategoryLabel[category],
-    value: category,
-  }));
 
 export const getCategoryFilters = () =>
   Object.values(CategoryEnum)
@@ -120,10 +116,11 @@ export const CategoryTypeFilters = {
     CategoryEnum.Service,
     CategoryEnum.Maintenance,
     CategoryEnum.OtherOutcome,
+    CategoryEnum.Employee,
   ],
 };
 
-export const getCategoryOptions2 = (categoryType: CategoryType) =>
+export const getCategoryOptions = (categoryType: CategoryType) =>
   CategoryTypeFilters[categoryType]
     .map((category) => ({
       label: CategoryLabel[category],
@@ -142,6 +139,7 @@ export const CategoryTypes = {
   [CategoryEnum.LightIncome]: CategoryType.Income,
   [CategoryEnum.LightDebt]: CategoryType.Debt,
   [CategoryEnum.Maintenance]: CategoryType.Expense,
+  [CategoryEnum.Employee]: CategoryType.Expense,
   [CategoryEnum.OtherIncome]: CategoryType.Income,
   [CategoryEnum.OtherOutcome]: CategoryType.Expense,
   [CategoryEnum.Parking]: CategoryType.Income,

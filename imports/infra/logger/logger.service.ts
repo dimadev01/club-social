@@ -1,9 +1,9 @@
 import isEmpty from 'lodash/isEmpty';
-// @ts-ignore
+// @ts-expect-error
 import { Logger as OstrioLogger } from 'meteor/ostrio:logger';
-// @ts-ignore
+// @ts-expect-error
 import { LoggerConsole as OstrioLoggerConsole } from 'meteor/ostrio:loggerconsole';
-// @ts-ignore
+// @ts-expect-error
 import { LoggerMongo as OstrioLoggerMongo } from 'meteor/ostrio:loggermongo';
 import { singleton } from 'tsyringe';
 import { ILoggerFormat } from '@infra/logger/logger.types';

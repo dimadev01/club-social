@@ -27,7 +27,7 @@ export const LoginPasswordlessPage = () => {
   }
 
   const login = (values: FormValues) => {
-    // @ts-ignore
+    // @ts-expect-error
     Meteor.passwordlessLoginWithToken(email, values.token, (error: unknown) => {
       if (error && error instanceof Error) {
         message.error(error.message);
@@ -40,7 +40,7 @@ export const LoginPasswordlessPage = () => {
   const resendEmail = () => {
     setIsSendingEmail(true);
 
-    // @ts-ignore
+    // @ts-expect-error
     Accounts.requestLoginTokenForUser({ selector: email }, (error: unknown) => {
       setIsSendingEmail(false);
 

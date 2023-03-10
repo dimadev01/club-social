@@ -21,6 +21,13 @@ export class GetProfessorsUseCase
             foreignField: '_id',
             from: 'users',
             localField: 'userId',
+            pipeline: [
+              {
+                $sort: {
+                  'profile.firstName': 1,
+                },
+              },
+            ],
           },
         },
         {

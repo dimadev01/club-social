@@ -7,9 +7,11 @@ import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
 import { CategoriesMethods } from '@domain/categories/categories.methods';
+import { EmployeesMethods } from '@domain/employees/employees.methods';
 import { MembersMethods } from '@domain/members/members.methods';
 import { MovementsMethods } from '@domain/movements/movements.methods';
 import { ProfessorsMethods } from '@domain/professors/professors.methods';
+import { RentalsMethods } from '@domain/rentals/rentals.methods';
 import { UsersMethods } from '@domain/users/users.methods';
 import { Logger } from '@infra/logger/logger.service';
 import { MigrationsService } from '@infra/migrations/migrations.service';
@@ -27,7 +29,9 @@ export class ServerStartup {
     private readonly _membersMethods: MembersMethods,
     private readonly _movementsMethods: MovementsMethods,
     private readonly _categoriesMethods: CategoriesMethods,
-    private readonly _professorsMethods: ProfessorsMethods
+    private readonly _professorsMethods: ProfessorsMethods,
+    private readonly _rentalsMethods: RentalsMethods,
+    private readonly _employeesMethods: EmployeesMethods
   ) {}
 
   // #endregion Constructors (1)
@@ -68,7 +72,7 @@ export class ServerStartup {
     ) => {
       const urlWithoutHashtag = url.replace('#/', '');
 
-      // @ts-ignore
+      // @ts-expect-error
       return `Hola ${user.profile?.firstName} ${user.profile?.lastName}, verifica tu cuenta: <a href="${urlWithoutHashtag}">${urlWithoutHashtag}</a>`;
     };
 
@@ -78,7 +82,7 @@ export class ServerStartup {
     ) => {
       const urlWithoutHashtag = url.replace('#/', '');
 
-      // @ts-ignore
+      // @ts-expect-error
       return `Hola ${user.profile?.firstName} ${user.profile?.lastName}, activa tu cuenta: <a href="${urlWithoutHashtag}">${urlWithoutHashtag}</a>`;
     };
   }
@@ -97,6 +101,10 @@ export class ServerStartup {
     this._categoriesMethods.register();
 
     this._professorsMethods.register();
+
+    this._rentalsMethods.register();
+
+    this._employeesMethods.register();
   }
 
   private async _createUsersIndexes() {

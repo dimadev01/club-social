@@ -98,9 +98,9 @@ export class GetMembersGridUseCase
           dateOfBirth: member.dateOfBirthString,
           emails: member.user.emails,
           fileStatus: member.fileStatus,
-          // @ts-ignore
+          // @ts-expect-error
           name: `${member.user.profile?.firstName ?? ''} ${
-            // @ts-ignore
+            // @ts-expect-error
             member.user.profile?.lastName ?? ''
           }`,
           status: member.status,

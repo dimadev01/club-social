@@ -2,6 +2,8 @@ export enum MethodsEnum {
   CategoriesGetAll = 'categories/getAll',
   CategoriesUpdate = 'categories/update',
 
+  EmployeesGetAll = 'employees/getAll',
+
   MembersCreate = 'members/create',
   MembersGet = 'members/get',
   MembersGetAll = 'members/getAll',
@@ -17,6 +19,8 @@ export enum MethodsEnum {
   MovementsUpdate = 'movements/update',
 
   ProfessorsGetAll = 'professors/getAll',
+
+  RentalsGetAll = 'rentals/getAll',
 
   UsersCreate = 'users/create',
   UsersGet = 'users/get',

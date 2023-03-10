@@ -8,12 +8,14 @@ import { LoginPasswordlessPage } from '@ui/pages/auth/LoginPasswordlessPage';
 import { LogoutPage } from '@ui/pages/auth/LogoutPage';
 import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
 import { CategoriesPage } from '@ui/pages/categories/CategoriesPage';
+import { EmployeesPage } from '@ui/pages/employees/EmployeesPage';
 import { HomePage } from '@ui/pages/HomePage';
 import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
 import { MovementsPage } from '@ui/pages/movements/MovementsPage';
 import { ProfessorsPage } from '@ui/pages/professors/ProfessorsPage';
+import { RentalsPage } from '@ui/pages/rentals/RentalsPage';
 import { UsersDetailPage } from '@ui/pages/users/UsersDetailPage';
 import { UsersPage } from '@ui/pages/users/UsersPage';
 import { AuthRoute } from '@ui/routes/AuthRoute';
@@ -132,6 +134,24 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.Professors,
+  },
+
+  {
+    element: (
+      <PrivateRoute permission={Permission.Read} scope={Scope.Employees}>
+        <EmployeesPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.Employees,
+  },
+
+  {
+    element: (
+      <PrivateRoute permission={Permission.Read} scope={Scope.Rentals}>
+        <RentalsPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.Rentals,
   },
 
   {

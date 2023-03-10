@@ -19,7 +19,7 @@ import {
   CategoryEnum,
   CategoryLabel,
   CategoryType,
-  getCategoryOptions2,
+  getCategoryOptions,
   getCategoryTypeOptions,
   MemberCategories,
 } from '@domain/categories/categories.enum';
@@ -31,11 +31,13 @@ import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
 import { useCategories } from '@ui/hooks/categories/useCategories';
+import { useEmployees } from '@ui/hooks/employees/useEmployees';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useCreateMovement } from '@ui/hooks/movements/useCreateMovement';
 import { useMovement } from '@ui/hooks/movements/useMovement';
 import { useUpdateMovement } from '@ui/hooks/movements/useUpdateMovement';
 import { useProfessors } from '@ui/hooks/professors/useProfessors';
+import { useRentals } from '@ui/hooks/rentals/rentals';
 
 type FormValues = {
   amount: number;
@@ -73,6 +75,14 @@ export const MovementDetailPage = () => {
 
   const { data: professors, isLoading: isLoadingProfessors } = useProfessors(
     category === CategoryEnum.Professor
+  );
+
+  const { data: employees, isLoading: isLoadingEmployees } = useEmployees(
+    category === CategoryEnum.Employee
+  );
+
+  const { data: rentals, isLoading: isLoadingRentals } = useRentals(
+    category === CategoryEnum.Rental
   );
 
   const handleSubmit = async (values: FormValues) => {
@@ -158,6 +168,44 @@ export const MovementDetailPage = () => {
       );
     }
 
+    if (category === CategoryEnum.Employee) {
+      return (
+        <Form.Item
+          label="Empleado"
+          name="employeeId"
+          rules={[{ required: true }]}
+        >
+          <Select
+            disabled={isLoadingEmployees}
+            loading={isLoadingEmployees}
+            options={employees?.map((employee) => ({
+              label: employee.name,
+              value: employee._id,
+            }))}
+          />
+        </Form.Item>
+      );
+    }
+
+    if (category === CategoryEnum.Rental) {
+      return (
+        <Form.Item
+          label="Alquiler"
+          name="rentalId"
+          rules={[{ required: true }]}
+        >
+          <Select
+            disabled={isLoadingRentals}
+            loading={isLoadingRentals}
+            options={rentals?.map((rental) => ({
+              label: rental.name,
+              value: rental._id,
+            }))}
+          />
+        </Form.Item>
+      );
+    }
+
     return null;
   };
 
@@ -229,7 +277,7 @@ export const MovementDetailPage = () => {
                 onChange={(value) =>
                   form.setFieldValue('amount', getPriceForCategory(value))
                 }
-                options={getCategoryOptions2(type)}
+                options={getCategoryOptions(type)}
               />
             </Form.Item>
           )}
@@ -239,7 +287,7 @@ export const MovementDetailPage = () => {
           <Form.Item
             label="Importe"
             name="amount"
-            rules={[{ required: true }, { type: 'number' }]}
+            rules={[{ required: true }, { min: 1, type: 'number' }]}
             status="error"
           >
             <InputNumber

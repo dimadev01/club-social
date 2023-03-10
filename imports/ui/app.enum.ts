@@ -18,6 +18,10 @@ export enum AppUrl {
 
   Professors = '/professors',
 
+  Employees = '/employees',
+
+  Rentals = '/rentals',
+
   Users = '/users',
   UsersDetail = '/users/:id',
   UsersNew = '/users/new',
