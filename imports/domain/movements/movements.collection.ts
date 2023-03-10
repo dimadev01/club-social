@@ -13,9 +13,12 @@ MovementsCollection.attachSchema(
     createdAt: Date,
     createdBy: String,
     date: Date,
+    employeeId: { defaultValue: null, optional: true, type: String },
     isDeleted: Boolean,
-    memberId: { optional: true, type: String },
-    notes: { optional: true, type: String },
+    memberId: { defaultValue: null, optional: true, type: String },
+    notes: { defaultValue: null, optional: true, type: String },
+    professorId: { defaultValue: null, optional: true, type: String },
+    rentalId: { defaultValue: null, optional: true, type: String },
     type: String,
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,
@@ -30,3 +33,9 @@ await MovementsCollection.createIndexAsync({ isDeleted: 1 });
 
 // eslint-disable-next-line sort-keys-fix/sort-keys-fix
 await MovementsCollection.createIndexAsync({ memberId: 1, category: 1 });
+
+await MovementsCollection.createIndexAsync({ employeeId: 1 });
+
+await MovementsCollection.createIndexAsync({ rentalId: 1 });
+
+await MovementsCollection.createIndexAsync({ professorId: 1 });

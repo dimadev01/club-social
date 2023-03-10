@@ -4,26 +4,26 @@ import { Entity } from '@kernel/entity.base';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
 export class Employee extends Entity {
-  // #region Properties (2)
-
-  @IsString()
-  public userId: string;
-
-  public user: Meteor.User;
+  // #region Properties (6)
 
   @IsDate()
   public createdAt: Date;
+
+  @IsString()
+  public createdBy: string;
 
   @IsDate()
   public updatedAt: Date;
 
   @IsString()
-  public createdBy: string;
-
-  @IsString()
   public updatedBy: string;
 
-  // #endregion Properties (2)
+  public user: Meteor.User;
+
+  @IsString()
+  public userId: string;
+
+  // #endregion Properties (6)
 
   // #region Constructors (1)
 
@@ -42,6 +42,14 @@ export class Employee extends Entity {
   // #endregion Constructors (1)
 
   // #region Public Accessors (1)
+
+  public get name(): string {
+    // @ts-expect-error
+    return `${this.user.profile?.firstName} ${
+      // @ts-expect-error
+      this.user.profile?.lastName
+    }`;
+  }
 
   // #endregion Public Accessors (1)
 

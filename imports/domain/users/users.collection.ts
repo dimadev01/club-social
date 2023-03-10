@@ -5,6 +5,7 @@ Meteor.users.attachSchema(
   new SimpleSchema({
     createdAt: Date,
     emails: {
+      defaultValue: null,
       optional: true,
       type: Array,
     },
@@ -12,6 +13,7 @@ Meteor.users.attachSchema(
     'emails.$.address': String,
     'emails.$.verified': Boolean,
     heartbeat: {
+      defaultValue: null,
       optional: true,
       type: Date,
     },
@@ -21,10 +23,12 @@ Meteor.users.attachSchema(
     'profile.role': String,
     services: {
       blackbox: true,
+      defaultValue: null,
       optional: true,
       type: Object,
     },
     username: {
+      defaultValue: null,
       optional: true,
       type: String,
     },

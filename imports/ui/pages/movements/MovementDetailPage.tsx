@@ -43,8 +43,11 @@ type FormValues = {
   amount: number;
   category: CategoryEnum;
   date: Dayjs;
+  employeeId: string | undefined;
   memberIds: string[];
   notes: string;
+  professorId: string | undefined;
+  rentalId: string | undefined;
   type: CategoryType;
 };
 
@@ -91,8 +94,11 @@ export const MovementDetailPage = () => {
         amount: CurrencyUtils.toCents(values.amount),
         category: values.category,
         date: DateUtils.format(values.date),
+        employeeId: values.employeeId ?? null,
         memberIds: values.memberIds,
         notes: values.notes,
+        professorId: values.professorId ?? null,
+        rentalId: values.rentalId ?? null,
         type: values.type,
       });
 
@@ -104,9 +110,12 @@ export const MovementDetailPage = () => {
         amount: CurrencyUtils.toCents(values.amount),
         category: values.category,
         date: DateUtils.format(values.date),
+        employeeId: values.employeeId ?? null,
         id: movement._id,
         memberIds: values.memberIds,
         notes: values.notes,
+        professorId: values.professorId ?? null,
+        rentalId: values.rentalId ?? null,
         type: values.type,
       });
 

@@ -8,9 +8,9 @@ export const CategoriesCollection = new Collection('categories', Category);
 CategoriesCollection.attachSchema(
   new SimpleSchema({
     _id: String,
-    amount: { optional: true, type: SimpleSchema.Integer },
+    amount: { defaultValue: null, optional: true, type: SimpleSchema.Integer },
     code: String,
-    historical: { optional: true, type: Array },
+    historical: { defaultValue: null, optional: true, type: Array },
     'historical.$': Object,
     'historical.$.amount': SimpleSchema.Integer,
     'historical.$.date': Date,

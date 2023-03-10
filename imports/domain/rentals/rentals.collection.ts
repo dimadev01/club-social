@@ -10,7 +10,7 @@ RentalsCollection.attachSchema(
     _id: String,
     createdAt: Date,
     createdBy: String,
-    description: { optional: true, type: String },
+    description: { defaultValue: null, optional: true, type: String },
     name: String,
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,

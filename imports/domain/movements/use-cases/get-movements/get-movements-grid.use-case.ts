@@ -47,6 +47,18 @@ export class GetMovementsUseCase
       $match.category = { $in: request.filters.category as CategoryEnum[] };
     }
 
+    if (request.filters?.professorId?.length) {
+      $match.professorId = { $in: request.filters.professorId as string[] };
+    }
+
+    if (request.filters?.employeeId?.length) {
+      $match.employeeId = { $in: request.filters.employeeId as string[] };
+    }
+
+    if (request.filters?.rentalId?.length) {
+      $match.rentalId = { $in: request.filters.rentalId as string[] };
+    }
+
     // @ts-expect-error
     const [{ data, total, totals }] = await MovementsCollection.rawCollection()
       .aggregate<Movement>([
@@ -77,6 +89,74 @@ export class GetMovementsUseCase
         {
           $unwind: {
             path: '$member',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            as: 'professor',
+            foreignField: '_id',
+            from: 'professors',
+            localField: 'professorId',
+            pipeline: [
+              {
+                $lookup: {
+                  as: 'user',
+                  foreignField: '_id',
+                  from: 'users',
+                  localField: 'userId',
+                },
+              },
+              {
+                $unwind: '$user',
+              },
+            ],
+          },
+        },
+        {
+          $unwind: {
+            path: '$professor',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            as: 'employee',
+            foreignField: '_id',
+            from: 'employees',
+            localField: 'employeeId',
+            pipeline: [
+              {
+                $lookup: {
+                  as: 'user',
+                  foreignField: '_id',
+                  from: 'users',
+                  localField: 'userId',
+                },
+              },
+              {
+                $unwind: '$user',
+              },
+            ],
+          },
+        },
+        {
+          $unwind: {
+            path: '$employee',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            as: 'rental',
+            foreignField: '_id',
+            from: 'rentals',
+            localField: 'rentalId',
+          },
+        },
+        {
+          $unwind: {
+            path: '$rental',
             preserveNullAndEmptyArrays: true,
           },
         },
@@ -123,6 +203,12 @@ export class GetMovementsUseCase
 
           if (MemberCategories.includes(movement.category)) {
             details = movement.member?.name ?? '';
+          } else if (movement.category === CategoryEnum.Rental) {
+            details = movement.rental?.name ?? '';
+          } else if (movement.category === CategoryEnum.Employee) {
+            details = movement.employee?.name ?? '';
+          } else if (movement.category === CategoryEnum.Professor) {
+            details = movement.professor?.name ?? '';
           }
 
           return {

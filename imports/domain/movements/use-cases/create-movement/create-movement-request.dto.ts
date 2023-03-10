@@ -31,4 +31,16 @@ export class CreateMovementRequestDto {
   @IsString({ each: true })
   @IsArray()
   memberIds: string[] | null;
+
+  @IsOptional()
+  @IsString()
+  professorId: string | null;
+
+  @IsOptional()
+  @IsString()
+  employeeId: string | null;
+
+  @IsOptional()
+  @IsString()
+  rentalId: string | null;
 }

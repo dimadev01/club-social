@@ -9,7 +9,6 @@ import { Mongo } from 'meteor/mongo';
 import { Entity } from '@kernel/entity.base';
 import { FullEntity } from '@kernel/full-entity.base';
 
-// @ts-expect-error
 export class Collection<T extends Entity> extends Mongo.Collection<T> {
   public constructor(name: string, cls: ClassConstructor<T>) {
     super(name, {

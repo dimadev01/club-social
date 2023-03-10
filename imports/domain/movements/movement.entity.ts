@@ -9,15 +9,18 @@ import {
 } from 'class-validator';
 import { err, ok, Result } from 'neverthrow';
 import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
+import { Employee } from '@domain/employees/employee.entity';
 import { Member } from '@domain/members/member.entity';
 import { CreateMovement } from '@domain/movements/movements.types';
+import { Professor } from '@domain/professors/professor.entity';
+import { Rental } from '@domain/rentals/rental.entity';
 import { FullEntity } from '@kernel/full-entity.base';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
 export class Movement extends FullEntity {
-  // #region Properties (6)
+  // #region Properties (13)
 
   @IsInt()
   public amount: number;
@@ -25,11 +28,16 @@ export class Movement extends FullEntity {
   @IsEnum(CategoryEnum)
   public category: CategoryEnum;
 
-  @IsEnum(CategoryType)
-  public type: CategoryType;
-
   @IsDate()
   public date: Date;
+
+  @IsOptional()
+  @Type(() => Employee)
+  public employee: Employee | null;
+
+  @IsString()
+  @IsOptional()
+  public employeeId: string | null;
 
   @IsOptional()
   @Type(() => Member)
@@ -43,7 +51,26 @@ export class Movement extends FullEntity {
   @IsOptional()
   public notes: string | null;
 
-  // #endregion Properties (6)
+  @IsOptional()
+  @Type(() => Professor)
+  public professor: Professor | null;
+
+  @IsString()
+  @IsOptional()
+  public professorId: string | null;
+
+  @IsOptional()
+  @Type(() => Rental)
+  public rental: Rental | null;
+
+  @IsString()
+  @IsOptional()
+  public rentalId: string | null;
+
+  @IsEnum(CategoryType)
+  public type: CategoryType;
+
+  // #endregion Properties (13)
 
   // #region Constructors (1)
 
@@ -87,6 +114,12 @@ export class Movement extends FullEntity {
     movement.date = new Date(props.date);
 
     movement.memberId = props.memberId;
+
+    movement.employeeId = props.employeeId;
+
+    movement.professorId = props.professorId;
+
+    movement.rentalId = props.rentalId;
 
     movement.notes = props.notes;
 
