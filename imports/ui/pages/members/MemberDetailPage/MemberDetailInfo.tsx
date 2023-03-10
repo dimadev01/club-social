@@ -2,7 +2,8 @@ import React from 'react';
 import { Card, Col, DatePicker, Form, Input, message, Row, Space } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
-import { compact, uniq } from 'lodash';
+import compact from 'lodash/compact';
+import uniq from 'lodash/uniq';
 import { useNavigate } from 'react-router-dom';
 import {
   getMemberCategoryOptions,

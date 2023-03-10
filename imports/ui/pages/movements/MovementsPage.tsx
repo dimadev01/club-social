@@ -5,7 +5,6 @@ import {
   Col,
   DatePicker,
   Row,
-  Slider,
   Space,
   Typography,
 } from 'antd';
@@ -13,7 +12,6 @@ import dayjs, { Dayjs } from 'dayjs';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useDebounce } from 'use-debounce';
 import {
   CategoryEnum,
   CategoryLabel,
@@ -54,22 +52,9 @@ export const MovementsPage = () => {
         : null
     );
 
-  const [amountSliderSearchValue, setAmountSliderSearchValue] = useState<
-    [number, number]
-  >([
-    parsedQs.amountFilter ? Number((parsedQs.amountFilter as string[])[0]) : 0,
-    parsedQs.amountFilter ? Number((parsedQs.amountFilter as string[])[1]) : 0,
-  ]);
-
-  const [debouncedAmountSliderSearchValue] = useDebounce(
-    amountSliderSearchValue,
-    1000
-  );
-
   const { data: members, isLoading: isLoadingMembers } = useMembers();
 
   const { data, isLoading, isRefetching, refetch } = useMovementsGrid({
-    amountFilter: debouncedAmountSliderSearchValue,
     filters: gridState.filters,
     from: dateRangeValue
       ? dateRangeValue[0]?.format(DateFormats.Date) ?? null
@@ -148,23 +133,6 @@ export const MovementsPage = () => {
                     value: member._id,
                   })) ?? []
                 }
-              />
-            </Col>
-
-            <Col xs={24} sm={6}>
-              <Slider
-                range={{ draggableTrack: true }}
-                min={0}
-                max={50000}
-                step={2000}
-                tooltip={{
-                  formatter: (value: number | undefined) =>
-                    CurrencyUtils.format(value ?? 0, false),
-                }}
-                onChange={(value: [number, number]) =>
-                  setAmountSliderSearchValue(value)
-                }
-                value={amountSliderSearchValue}
               />
             </Col>
           </Row>

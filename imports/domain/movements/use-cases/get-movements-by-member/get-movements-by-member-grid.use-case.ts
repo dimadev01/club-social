@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import dayjs from 'dayjs';
-import { find } from 'lodash';
+import find from 'lodash/find';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';

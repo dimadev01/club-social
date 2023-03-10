@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import dayjs from 'dayjs';
-import { find } from 'lodash';
+import find from 'lodash/find';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
@@ -16,7 +16,6 @@ import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-mov
 import { PaginatedResponse } from '@kernel/paginated-response.dto';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
 
 @injectable()
 export class GetMovementsUseCase
@@ -46,13 +45,6 @@ export class GetMovementsUseCase
 
     if (request.filters?.category?.length) {
       $match.category = { $in: request.filters.category as CategoryEnum[] };
-    }
-
-    if (request.amountFilter.some((value) => value !== 0)) {
-      $match.amount = {
-        $gte: CurrencyUtils.toCents(request.amountFilter[0]),
-        $lte: CurrencyUtils.toCents(request.amountFilter[1]),
-      };
     }
 
     // @ts-expect-error

@@ -16,6 +16,8 @@ export enum AppUrl {
   MovementsDetail = '/movements/:id',
   MovementsNew = '/movements/new',
 
+  Professors = '/professors',
+
   Users = '/users',
   UsersDetail = '/users/:id',
   UsersNew = '/users/new',

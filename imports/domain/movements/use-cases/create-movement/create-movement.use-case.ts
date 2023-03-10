@@ -1,4 +1,4 @@
-import { find } from 'lodash';
+import find from 'lodash/find';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { MemberCategories } from '@domain/categories/categories.enum';

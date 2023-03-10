@@ -16,6 +16,8 @@ export enum MethodsEnum {
   MovementsRemove = 'movements/remove',
   MovementsUpdate = 'movements/update',
 
+  ProfessorsGetAll = 'professors/getAll',
+
   UsersCreate = 'users/create',
   UsersGet = 'users/get',
   UsersGetByToken = 'users/getByToken',

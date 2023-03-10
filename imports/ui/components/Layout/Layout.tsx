@@ -68,6 +68,14 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Professors)) {
+      items.push({
+        icon: <UserOutlined className="!text-lg" />,
+        key: AppUrl.Professors,
+        label: <NavLink to={AppUrl.Professors}>Profesores</NavLink>,
+      });
+    }
+
     return items;
   };
 

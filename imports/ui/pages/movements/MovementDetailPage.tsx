@@ -12,7 +12,7 @@ import {
 import ButtonGroup from 'antd/es/button/button-group';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
-import { find } from 'lodash';
+import find from 'lodash/find';
 import { NavLink, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import {
@@ -21,6 +21,7 @@ import {
   CategoryType,
   getCategoryOptions2,
   getCategoryTypeOptions,
+  MemberCategories,
 } from '@domain/categories/categories.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
@@ -34,6 +35,7 @@ import { useMembers } from '@ui/hooks/members/useMembers';
 import { useCreateMovement } from '@ui/hooks/movements/useCreateMovement';
 import { useMovement } from '@ui/hooks/movements/useMovement';
 import { useUpdateMovement } from '@ui/hooks/movements/useUpdateMovement';
+import { useProfessors } from '@ui/hooks/professors/useProfessors';
 
 type FormValues = {
   amount: number;
@@ -63,9 +65,15 @@ export const MovementDetailPage = () => {
 
   const updateMovement = useUpdateMovement();
 
-  const { data: members, isLoading: membersLoading } = useMembers();
+  const { data: members, isLoading: isLoadingMembers } = useMembers(
+    MemberCategories.includes(category)
+  );
 
   const { data: categories, isLoading: isLoadingCategories } = useCategories();
+
+  const { data: professors, isLoading: isLoadingProfessors } = useProfessors(
+    category === CategoryEnum.Professor
+  );
 
   const handleSubmit = async (values: FormValues) => {
     if (!movement) {
@@ -112,6 +120,45 @@ export const MovementDetailPage = () => {
     return foundCategory?.amount
       ? CurrencyUtils.fromCents(foundCategory.amount)
       : 0;
+  };
+
+  const renderDetailsSection = () => {
+    if (MemberCategories.includes(category)) {
+      return (
+        <Form.Item label="Socio" name="memberIds" rules={[{ required: true }]}>
+          <Select
+            mode="multiple"
+            disabled={isLoadingMembers}
+            loading={isLoadingMembers}
+            options={members?.map((member) => ({
+              label: member.name,
+              value: member._id,
+            }))}
+          />
+        </Form.Item>
+      );
+    }
+
+    if (category === CategoryEnum.Professor) {
+      return (
+        <Form.Item
+          label="Profesor"
+          name="professorId"
+          rules={[{ required: true }]}
+        >
+          <Select
+            disabled={isLoadingProfessors}
+            loading={isLoadingProfessors}
+            options={professors?.map((professor) => ({
+              label: professor.name,
+              value: professor._id,
+            }))}
+          />
+        </Form.Item>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -177,6 +224,8 @@ export const MovementDetailPage = () => {
               rules={[{ required: true }]}
             >
               <Select
+                disabled={isLoadingCategories}
+                loading={isLoadingCategories}
                 onChange={(value) =>
                   form.setFieldValue('amount', getPriceForCategory(value))
                 }
@@ -185,29 +234,7 @@ export const MovementDetailPage = () => {
             </Form.Item>
           )}
 
-          {[
-            CategoryEnum.MembershipDebt,
-            CategoryEnum.LightDebt,
-            CategoryEnum.InviteeDebt,
-            CategoryEnum.MembershipIncome,
-            CategoryEnum.LightIncome,
-            CategoryEnum.InviteeIncome,
-          ].includes(category) && (
-            <Form.Item
-              label="Socio"
-              name="memberIds"
-              rules={[{ required: true }]}
-            >
-              <Select
-                mode="multiple"
-                loading={membersLoading}
-                options={members?.map((member) => ({
-                  label: member.name,
-                  value: member._id,
-                }))}
-              />
-            </Form.Item>
-          )}
+          {renderDetailsSection()}
 
           <Form.Item
             label="Importe"
@@ -225,7 +252,7 @@ export const MovementDetailPage = () => {
           </Form.Item>
 
           <Form.Item label="Notas" rules={[{ whitespace: true }]} name="notes">
-            <Input.TextArea />
+            <Input.TextArea rows={1} />
           </Form.Item>
 
           <ButtonGroup>

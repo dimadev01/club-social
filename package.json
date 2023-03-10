@@ -13,7 +13,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@babel/runtime": "^7.20.7",
-    "@dinero.js/currencies": "^2.0.0-alpha.13",
+    "@dinero.js/currencies": "^2.0.0-alpha.14",
     "@faker-js/faker": "^7.6.0",
     "@tanstack/react-query": "^4.24.4",
     "@tanstack/react-query-devtools": "^4.24.4",
@@ -24,7 +24,7 @@
     "class-transformer-validator": "^0.9.1",
     "class-validator": "^0.14.0",
     "dayjs": "^1.11.7",
-    "dinero.js": "^2.0.0-alpha.13",
+    "dinero.js": "^2.0.0-alpha.14",
     "lodash": "^4.17.21",
     "meteor-node-stubs": "^1.2.5",
     "neverthrow": "^6.0.0",

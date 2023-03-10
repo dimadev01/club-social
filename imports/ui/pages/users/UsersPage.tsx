@@ -1,6 +1,6 @@
 import React from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { NavLink } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Role } from '@domain/roles/roles.enum';

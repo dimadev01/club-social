@@ -1,7 +1,7 @@
 import React from 'react';
 import { Breadcrumb, Card, Form, Input, message, Spin } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
-import { compact } from 'lodash';
+import compact from 'lodash/compact';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { Role } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';

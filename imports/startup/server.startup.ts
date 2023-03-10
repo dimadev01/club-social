@@ -9,6 +9,7 @@ import { container, singleton } from 'tsyringe';
 import { CategoriesMethods } from '@domain/categories/categories.methods';
 import { MembersMethods } from '@domain/members/members.methods';
 import { MovementsMethods } from '@domain/movements/movements.methods';
+import { ProfessorsMethods } from '@domain/professors/professors.methods';
 import { UsersMethods } from '@domain/users/users.methods';
 import { Logger } from '@infra/logger/logger.service';
 import { MigrationsService } from '@infra/migrations/migrations.service';
@@ -25,7 +26,8 @@ export class ServerStartup {
     private readonly _usersMethods: UsersMethods,
     private readonly _membersMethods: MembersMethods,
     private readonly _movementsMethods: MovementsMethods,
-    private readonly _categoriesMethods: CategoriesMethods
+    private readonly _categoriesMethods: CategoriesMethods,
+    private readonly _professorsMethods: ProfessorsMethods
   ) {}
 
   // #endregion Constructors (1)
@@ -93,6 +95,8 @@ export class ServerStartup {
     this._movementsMethods.register();
 
     this._categoriesMethods.register();
+
+    this._professorsMethods.register();
   }
 
   private async _createUsersIndexes() {

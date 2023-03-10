@@ -13,6 +13,7 @@ import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDeta
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
 import { MovementsPage } from '@ui/pages/movements/MovementsPage';
+import { ProfessorsPage } from '@ui/pages/professors/ProfessorsPage';
 import { UsersDetailPage } from '@ui/pages/users/UsersDetailPage';
 import { UsersPage } from '@ui/pages/users/UsersPage';
 import { AuthRoute } from '@ui/routes/AuthRoute';
@@ -122,6 +123,15 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.MovementsDetail,
+  },
+
+  {
+    element: (
+      <PrivateRoute permission={Permission.Read} scope={Scope.Professors}>
+        <ProfessorsPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.Professors,
   },
 
   {
