@@ -4,6 +4,7 @@ import {
   MemberMaritalStatus,
   MemberNationality,
   MemberSex,
+  MemberStatus,
 } from '@domain/members/members.enum';
 
 export interface CreateMember {
@@ -19,6 +20,7 @@ export interface CreateMember {
   nationality: MemberNationality | null;
   phones: string[] | null;
   sex: MemberSex | null;
+  status: MemberStatus;
   userId: string;
 }
 

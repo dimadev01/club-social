@@ -12,6 +12,10 @@ import { ILoggerFormat } from '@infra/logger/logger.types';
 export class Logger {
   private readonly _logger;
 
+  public get logger(): OstrioLogger {
+    return this._logger;
+  }
+
   public constructor() {
     this._logger = new OstrioLogger();
 
@@ -27,6 +31,8 @@ export class Logger {
 
     if (Meteor.isServer) {
       ostrioLoggerMongo.collection.createIndex({ date: -1, level: 1 });
+
+      ostrioLoggerMongo.collection.remove({});
     }
   }
 

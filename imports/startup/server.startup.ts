@@ -12,6 +12,7 @@ import { MembersMethods } from '@domain/members/members.methods';
 import { MovementsMethods } from '@domain/movements/movements.methods';
 import { ProfessorsMethods } from '@domain/professors/professors.methods';
 import { RentalsMethods } from '@domain/rentals/rentals.methods';
+import { ServicesMethods } from '@domain/services/services.methods';
 import { UsersMethods } from '@domain/users/users.methods';
 import { Logger } from '@infra/logger/logger.service';
 import { MigrationsService } from '@infra/migrations/migrations.service';
@@ -31,7 +32,8 @@ export class ServerStartup {
     private readonly _categoriesMethods: CategoriesMethods,
     private readonly _professorsMethods: ProfessorsMethods,
     private readonly _rentalsMethods: RentalsMethods,
-    private readonly _employeesMethods: EmployeesMethods
+    private readonly _employeesMethods: EmployeesMethods,
+    private readonly _servicesMethods: ServicesMethods
   ) {}
 
   // #endregion Constructors (1)
@@ -105,6 +107,8 @@ export class ServerStartup {
     this._rentalsMethods.register();
 
     this._employeesMethods.register();
+
+    this._servicesMethods.register();
   }
 
   private async _createUsersIndexes() {

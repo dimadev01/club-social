@@ -17,7 +17,10 @@ export abstract class CurrencyUtils {
     if (decimals) {
       return toDecimal(
         dinero({ amount, currency: ARS }),
-        ({ value, currency }) => `${currency.code} ${value}`
+        ({ value, currency }) =>
+          `${currency.code} ${new Intl.NumberFormat('es-AR').format(
+            Number(value)
+          )}`
       );
     }
 

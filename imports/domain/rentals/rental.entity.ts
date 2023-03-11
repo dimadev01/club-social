@@ -49,19 +49,19 @@ export class Rental extends Entity {
   // #region Public Static Methods (1)
 
   public static create(name: string, description: string | null): Rental {
-    const professor = new Rental();
+    const rental = new Rental();
 
-    professor.name = name;
+    rental.name = name;
 
-    professor.description = description;
+    rental.description = description;
 
-    const errors = validateSync(professor);
+    const errors = validateSync(rental);
 
     if (errors.length > 0) {
       throw new Error(ValidationUtils.getErrorMessage(errors));
     }
 
-    return professor;
+    return rental;
   }
 
   // #endregion Public Static Methods (1)

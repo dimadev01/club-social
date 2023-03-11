@@ -14,4 +14,6 @@ export class GetMovementResponseDto {
   notes: string | null;
 
   type: CategoryType;
+
+  memberId: string | null;
 }

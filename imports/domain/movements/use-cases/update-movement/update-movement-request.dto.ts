@@ -1,8 +1,44 @@
-import { IsOptional, IsString } from 'class-validator';
-import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
+import {
+  IsDateString,
+  IsInt,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 
-export class UpdateMovementRequestDto extends CreateMovementRequestDto {
+export class UpdateMovementRequestDto {
   @IsString()
   @IsOptional()
   id: string;
+
+  @IsDateString()
+  date: string;
+
+  @IsInt()
+  @IsPositive()
+  amount: number;
+
+  @IsString()
+  @IsOptional()
+  notes: string | null;
+
+  @IsOptional()
+  @IsString()
+  memberId: string | null;
+
+  @IsOptional()
+  @IsString()
+  professorId: string | null;
+
+  @IsOptional()
+  @IsString()
+  serviceId: string | null;
+
+  @IsOptional()
+  @IsString()
+  employeeId: string | null;
+
+  @IsOptional()
+  @IsString()
+  rentalId: string | null;
 }

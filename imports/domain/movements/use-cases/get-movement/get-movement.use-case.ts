@@ -29,6 +29,7 @@ export class GetMovementUseCase
       amountFormatted: movement.amountFormatted,
       category: movement.category,
       date: movement.dateFormatted,
+      memberId: movement.memberId,
       notes: movement.notes,
       type: movement.type,
     });

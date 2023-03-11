@@ -55,7 +55,7 @@ type FormValues = {
 };
 
 type Props = {
-  member: GetMemberResponseDto;
+  member?: GetMemberResponseDto;
 };
 
 export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
@@ -98,6 +98,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         phones: compact(values.phones).length > 0 ? values.phones : null,
         role: Role.Member,
         sex: values.sex ?? null,
+        status: MemberStatus.Active,
       });
 
       message.success('Socio creado');
@@ -160,6 +161,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
           dateOfBirth: member?.dateOfBirth
             ? dayjs.utc(member.dateOfBirth)
             : undefined,
+          documentID: member?.documentID,
           emails:
             member?.emails && member.emails.length > 0 ? member.emails : [''],
           fileStatus: member?.fileStatus,
@@ -370,7 +372,6 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
           <FormBackButton
             disabled={createMember.isLoading || updateMember.isLoading}
-            to={AppUrl.Members}
           />
         </ButtonGroup>
       </Form>

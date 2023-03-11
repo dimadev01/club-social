@@ -79,7 +79,7 @@ export function Table<T extends object>({
       <AntTable<T>
         bordered
         title={tableTitle ? renderTitle : undefined}
-        size="middle"
+        size="small"
         onChange={(
           pagination: TablePaginationConfig,
           filters: Record<string, FilterValue | null>,

@@ -5,7 +5,6 @@ Meteor.users.attachSchema(
   new SimpleSchema({
     createdAt: Date,
     emails: {
-      defaultValue: null,
       optional: true,
       type: Array,
     },

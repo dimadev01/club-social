@@ -9,5 +9,6 @@ export interface CreateMovement {
   notes: string | null;
   professorId: string | null;
   rentalId: string | null;
+  serviceId: string | null;
   type: CategoryType;
 }

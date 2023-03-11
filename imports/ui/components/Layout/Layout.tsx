@@ -5,6 +5,7 @@ import { Roles } from 'meteor/alanning:roles';
 import { Navigate, NavLink } from 'react-router-dom';
 import {
   BankOutlined,
+  BulbOutlined,
   HomeOutlined,
   LogoutOutlined,
   UserOutlined,
@@ -89,6 +90,14 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Rentals,
         label: <NavLink to={AppUrl.Rentals}>Alquileres</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Services)) {
+      items.push({
+        icon: <BulbOutlined className="!text-lg" />,
+        key: AppUrl.Services,
+        label: <NavLink to={AppUrl.Services}>Servicios</NavLink>,
       });
     }
 

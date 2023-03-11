@@ -14,13 +14,14 @@ import { Member } from '@domain/members/member.entity';
 import { CreateMovement } from '@domain/movements/movements.types';
 import { Professor } from '@domain/professors/professor.entity';
 import { Rental } from '@domain/rentals/rental.entity';
+import { Service } from '@domain/services/service.entity';
 import { FullEntity } from '@kernel/full-entity.base';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
 export class Movement extends FullEntity {
-  // #region Properties (13)
+  // #region Properties (15)
 
   @IsInt()
   public amount: number;
@@ -67,10 +68,18 @@ export class Movement extends FullEntity {
   @IsOptional()
   public rentalId: string | null;
 
+  @IsOptional()
+  @Type(() => Service)
+  public service: Service | null;
+
+  @IsString()
+  @IsOptional()
+  public serviceId: string | null;
+
   @IsEnum(CategoryType)
   public type: CategoryType;
 
-  // #endregion Properties (13)
+  // #endregion Properties (15)
 
   // #region Constructors (1)
 
@@ -93,7 +102,13 @@ export class Movement extends FullEntity {
   // #region Public Accessors (2)
 
   public get amountFormatted(): string {
-    return CurrencyUtils.formatCents(this.amount);
+    const formatted = CurrencyUtils.formatCents(this.amount);
+
+    // if (this.type === CategoryType.Expense || this.type === CategoryType.Debt) {
+    //   return `(${formatted})`;
+    // }
+
+    return formatted;
   }
 
   public get dateFormatted(): string {
@@ -114,6 +129,8 @@ export class Movement extends FullEntity {
     movement.date = new Date(props.date);
 
     movement.memberId = props.memberId;
+
+    movement.serviceId = props.serviceId;
 
     movement.employeeId = props.employeeId;
 

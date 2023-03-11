@@ -37,10 +37,17 @@ export const MembersPage = () => {
 
   return (
     <>
-      <Breadcrumb className="mb-8">
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Socios</Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumb
+        className="mb-8"
+        items={[
+          {
+            title: 'Inicio',
+          },
+          {
+            title: 'Socios',
+          },
+        ]}
+      />
 
       <Card
         title="Socios"

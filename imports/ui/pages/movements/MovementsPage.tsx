@@ -6,15 +6,18 @@ import {
   DatePicker,
   Row,
   Space,
+  Tag,
   Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { NavLink, useLocation } from 'react-router-dom';
+import { DeleteOutlined } from '@ant-design/icons';
 import {
   CategoryEnum,
   CategoryLabel,
+  CategoryType,
   getCategoryFilters,
   MemberCategories,
 } from '@domain/categories/categories.enum';
@@ -23,11 +26,13 @@ import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-m
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
+import { Button } from '@ui/components/Button';
 import { Select } from '@ui/components/Select';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useMembers } from '@ui/hooks/members/useMembers';
+import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 import { useMovementsGrid } from '@ui/hooks/movements/useMovementsGrid';
 import { useGrid } from '@ui/hooks/useGrid';
 
@@ -70,6 +75,8 @@ export const MovementsPage = () => {
       : null,
   });
 
+  const deleteMovement = useDeleteMovement(refetch);
+
   const renderFooter = () => (
     <Space direction="horizontal" className="flex justify-between">
       <Typography.Text>
@@ -92,10 +99,17 @@ export const MovementsPage = () => {
 
   return (
     <>
-      <Breadcrumb className="mb-8">
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Movimientos</Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumb
+        className="mb-8"
+        items={[
+          {
+            title: 'Inicio',
+          },
+          {
+            title: 'Movimientos',
+          },
+        ]}
+      />
 
       <Card
         title="Movimientos"
@@ -109,20 +123,29 @@ export const MovementsPage = () => {
       >
         <Space size="middle" direction="vertical" className="flex">
           <Row gutter={[16, 16]}>
-            <Col xs={24} sm={6}>
+            <Col xs={24} sm={12} md={8} lg={8} xl={6}>
               <DatePicker.RangePicker
                 format={DateFormats.DD_MM_YYYY}
                 className="w-full"
                 allowClear
                 value={dateRangeValue}
-                onChange={(value) => setDateRangeValue(value)}
+                disabledDate={(current) => current.isAfter(dayjs())}
+                onChange={(value) => {
+                  setDateRangeValue(value);
+
+                  setGridState((prevState) => ({ ...prevState, page: 1 }));
+                }}
               />
             </Col>
 
-            <Col xs={24} sm={6}>
+            <Col xs={24} sm={12} md={8} lg={8} xl={6}>
               <Select
                 value={memberIdSearchValue}
-                onChange={(value) => setMemberIdSearchValue(value ?? undefined)}
+                onChange={(value) => {
+                  setMemberIdSearchValue(value ?? undefined);
+
+                  setGridState((prevState) => ({ ...prevState, page: 1 }));
+                }}
                 className="w-full"
                 disabled={isLoadingMembers || isLoading}
                 loading={isLoadingMembers}
@@ -164,6 +187,17 @@ export const MovementsPage = () => {
               {
                 align: 'right',
                 dataIndex: 'amount',
+                render: (amount: string, movement: MovementGridDto) => {
+                  if (movement.type === CategoryType.Expense) {
+                    return <Tag color="red">{amount}</Tag>;
+                  }
+
+                  if (movement.type === CategoryType.Income) {
+                    return <Tag color="green">{amount}</Tag>;
+                  }
+
+                  return <Tag>{amount}</Tag>;
+                },
                 title: 'Importe',
               },
               {
@@ -180,6 +214,29 @@ export const MovementsPage = () => {
                   return details;
                 },
                 title: 'Detalle',
+              },
+              {
+                align: 'center',
+                render: (_, movement: MovementGridDto) => (
+                  <Button
+                    popConfirm={{
+                      onConfirm: () =>
+                        deleteMovement.mutate(
+                          { id: movement._id },
+                          { onError: () => deleteMovement.reset() }
+                        ),
+                      title: '¿Está seguro de eliminar este movimiento?',
+                    }}
+                    type="ghost"
+                    htmlType="button"
+                    tooltip={{ title: 'Eliminar ' }}
+                    icon={<DeleteOutlined />}
+                    loading={deleteMovement.variables?.id === movement._id}
+                    disabled={deleteMovement.variables?.id === movement._id}
+                  />
+                ),
+                title: 'Actions',
+                width: 100,
               },
             ]}
             footer={renderFooter}

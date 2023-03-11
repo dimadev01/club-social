@@ -38,6 +38,7 @@ export class CreateMovementUseCase
             notes: request.notes,
             professorId: request.professorId,
             rentalId: request.rentalId,
+            serviceId: request.serviceId,
             type: request.type,
           });
 
@@ -71,6 +72,7 @@ export class CreateMovementUseCase
       notes: request.notes,
       professorId: request.professorId,
       rentalId: request.rentalId,
+      serviceId: request.serviceId,
       type: request.type,
     });
 

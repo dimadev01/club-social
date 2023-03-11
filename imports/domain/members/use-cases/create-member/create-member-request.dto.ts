@@ -11,6 +11,7 @@ import {
   MemberMaritalStatus,
   MemberNationality,
   MemberSex,
+  MemberStatus,
 } from '@domain/members/members.enum';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 
@@ -71,4 +72,7 @@ export class CreateMemberRequestDto extends CreateUserRequestDto {
   @IsString()
   @IsOptional()
   addressZipCode: string | null;
+
+  @IsEnum(MemberStatus)
+  status: MemberStatus;
 }

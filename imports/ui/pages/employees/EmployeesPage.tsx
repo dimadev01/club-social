@@ -16,10 +16,17 @@ export const EmployeesPage = () => {
 
   return (
     <>
-      <Breadcrumb className="mb-8">
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Empleados</Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumb
+        className="mb-8"
+        items={[
+          {
+            title: 'Inicio',
+          },
+          {
+            title: 'Empleados',
+          },
+        ]}
+      />
 
       <Card
         title="Empleados"

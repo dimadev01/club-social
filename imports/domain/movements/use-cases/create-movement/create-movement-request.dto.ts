@@ -1,4 +1,5 @@
 import {
+  ArrayMinSize,
   IsArray,
   IsDateString,
   IsEnum,
@@ -29,12 +30,17 @@ export class CreateMovementRequestDto {
 
   @IsOptional()
   @IsString({ each: true })
+  @ArrayMinSize(1)
   @IsArray()
   memberIds: string[] | null;
 
   @IsOptional()
   @IsString()
   professorId: string | null;
+
+  @IsOptional()
+  @IsString()
+  serviceId: string | null;
 
   @IsOptional()
   @IsString()

@@ -1,7 +1,12 @@
 import { Random } from 'meteor/random';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { MemberRole, Role, StaffRole } from '@domain/roles/roles.enum';
+import {
+  AdminRole,
+  MemberRole,
+  Role,
+  StaffRole,
+} from '@domain/roles/roles.enum';
 import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 import { Logger } from '@infra/logger/logger.service';
@@ -41,7 +46,11 @@ export class CreateUserUseCase
       });
     }
 
-    if (request.role === Role.Staff) {
+    if (request.role === Role.Admin) {
+      Object.entries(AdminRole).forEach(([key, value]) => {
+        Roles.addUsersToRoles(userId, value, key);
+      });
+    } else if (request.role === Role.Staff) {
       Object.entries(StaffRole).forEach(([key, value]) => {
         Roles.addUsersToRoles(userId, value, key);
       });

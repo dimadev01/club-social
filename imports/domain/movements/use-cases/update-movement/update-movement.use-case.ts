@@ -31,9 +31,15 @@ export class UpdateMovementUseCase
 
     movement.amount = request.amount;
 
-    movement.category = request.category;
-
     movement.notes = request.notes;
+
+    movement.memberId = request.memberId;
+
+    movement.employeeId = request.employeeId;
+
+    movement.rentalId = request.rentalId;
+
+    movement.professorId = request.professorId;
 
     await MovementsCollection.updateEntity(movement);
 

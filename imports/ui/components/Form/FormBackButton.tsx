@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@ui/components/Button';
 
 type Props = ButtonProps & {
-  to: string;
+  to?: string;
 };
 
 export const FormBackButton: React.FC<Props> = ({
@@ -20,7 +20,7 @@ export const FormBackButton: React.FC<Props> = ({
       disabled={disabled}
       loading={loading}
       type="text"
-      onClick={() => navigate(to)}
+      onClick={() => (to ? navigate(to) : navigate(-1))}
       {...rest}
     >
       Atrás

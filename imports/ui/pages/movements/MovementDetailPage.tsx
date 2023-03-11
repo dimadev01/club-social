@@ -7,7 +7,7 @@ import {
   Input,
   InputNumber,
   message,
-  Spin,
+  Skeleton,
 } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import { useWatch } from 'antd/es/form/Form';
@@ -26,6 +26,7 @@ import {
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
+import { Button } from '@ui/components/Button';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 import { NotFound } from '@ui/components/NotFound';
@@ -37,17 +38,20 @@ import { useCreateMovement } from '@ui/hooks/movements/useCreateMovement';
 import { useMovement } from '@ui/hooks/movements/useMovement';
 import { useUpdateMovement } from '@ui/hooks/movements/useUpdateMovement';
 import { useProfessors } from '@ui/hooks/professors/useProfessors';
-import { useRentals } from '@ui/hooks/rentals/rentals';
+import { useRentals } from '@ui/hooks/rentals/useRentals';
+import { useServices } from '@ui/hooks/services/useServices';
 
 type FormValues = {
   amount: number;
   category: CategoryEnum;
   date: Dayjs;
   employeeId: string | undefined;
-  memberIds: string[];
+  memberId: string | undefined;
+  memberIds: string[] | undefined;
   notes: string;
   professorId: string | undefined;
   rentalId: string | undefined;
+  serviceId: string | undefined;
   type: CategoryType;
 };
 
@@ -88,48 +92,60 @@ export const MovementDetailPage = () => {
     category === CategoryEnum.Rental
   );
 
+  const { data: services, isLoading: isLoadingServices } = useServices(
+    category === CategoryEnum.Service
+  );
+
   const handleSubmit = async (values: FormValues) => {
     if (!movement) {
-      await createMovement.mutateAsync({
-        amount: CurrencyUtils.toCents(values.amount),
-        category: values.category,
-        date: DateUtils.format(values.date),
-        employeeId: values.employeeId ?? null,
-        memberIds: values.memberIds,
-        notes: values.notes,
-        professorId: values.professorId ?? null,
-        rentalId: values.rentalId ?? null,
-        type: values.type,
-      });
+      await createMovement.mutateAsync(
+        {
+          amount: CurrencyUtils.toCents(values.amount),
+          category: values.category,
+          date: DateUtils.format(values.date),
+          employeeId: values.employeeId ?? null,
+          memberIds: values.memberIds ?? null,
+          notes: values.notes,
+          professorId: values.professorId ?? null,
+          rentalId: values.rentalId ?? null,
+          serviceId: values.serviceId ?? null,
+          type: values.type,
+        },
+        {
+          onSuccess: () => {
+            message.success('Movimiento creado');
 
-      message.success('Movimiento creado');
-
-      form.resetFields();
+            form.resetFields();
+          },
+        }
+      );
     } else {
-      await updateMovement.mutateAsync({
-        amount: CurrencyUtils.toCents(values.amount),
-        category: values.category,
-        date: DateUtils.format(values.date),
-        employeeId: values.employeeId ?? null,
-        id: movement._id,
-        memberIds: values.memberIds,
-        notes: values.notes,
-        professorId: values.professorId ?? null,
-        rentalId: values.rentalId ?? null,
-        type: values.type,
-      });
+      await updateMovement.mutateAsync(
+        {
+          amount: CurrencyUtils.toCents(values.amount),
+          date: DateUtils.format(values.date),
+          employeeId: values.employeeId ?? null,
+          id: movement._id,
+          memberId: values.memberId ?? null,
+          notes: values.notes,
+          professorId: values.professorId ?? null,
+          rentalId: values.rentalId ?? null,
+          serviceId: values.serviceId ?? null,
+        },
+        {
+          onSuccess: () => {
+            message.success('Movimiento actualizado');
 
-      message.success('Movimiento actualizado');
-
-      refetch();
+            refetch();
+          },
+        }
+      );
     }
   };
 
-  if (movementFetchStatus === 'fetching' || isLoadingCategories) {
-    return <Spin spinning />;
-  }
+  const isLoading = movementFetchStatus === 'fetching' || isLoadingCategories;
 
-  if (id && !movement) {
+  if (id && !movement && !isLoading) {
     return <NotFound />;
   }
 
@@ -143,8 +159,51 @@ export const MovementDetailPage = () => {
 
   const renderDetailsSection = () => {
     if (MemberCategories.includes(category)) {
+      /**
+       * If we have a movement, we can only update a single member
+       */
+      if (movement) {
+        return (
+          <Form.Item label="Socio" name="memberId" rules={[{ required: true }]}>
+            <Select
+              disabled={isLoadingMembers}
+              loading={isLoadingMembers}
+              options={members?.map((member) => ({
+                label: member.name,
+                value: member._id,
+              }))}
+            />
+          </Form.Item>
+        );
+      }
+
       return (
-        <Form.Item label="Socio" name="memberIds" rules={[{ required: true }]}>
+        <Form.Item
+          className="cs-form-item-extra"
+          label={
+            <div className="flex items-center justify-between">
+              <span>Socio/s</span>
+
+              {category === CategoryEnum.MembershipDebt && (
+                <Button
+                  size="small"
+                  htmlType="button"
+                  type="ghost"
+                  onClick={() => {
+                    form.setFieldValue(
+                      'memberIds',
+                      members?.map((member) => member._id) ?? []
+                    );
+                  }}
+                >
+                  Seleccionar todos
+                </Button>
+              )}
+            </div>
+          }
+          name="memberIds"
+          rules={[{ required: true }, { min: 1, type: 'array' }]}
+        >
           <Select
             mode="multiple"
             disabled={isLoadingMembers}
@@ -215,116 +274,148 @@ export const MovementDetailPage = () => {
       );
     }
 
+    if (category === CategoryEnum.Service) {
+      return (
+        <Form.Item
+          label="Servicio"
+          name="serviceId"
+          rules={[{ required: true }]}
+        >
+          <Select
+            disabled={isLoadingServices}
+            loading={isLoadingServices}
+            options={services?.map((service) => ({
+              label: service.name,
+              value: service._id,
+            }))}
+          />
+        </Form.Item>
+      );
+    }
+
     return null;
   };
 
   return (
     <>
-      <Breadcrumb className="mb-8">
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <NavLink to={AppUrl.Movements}>Movimientos</NavLink>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          {!!movement &&
-            `${movement.date} - ${CategoryLabel[movement.category]} - ${
-              movement.amountFormatted
-            }`}
-          {!movement && 'Nuevo Movimiento'}
-        </Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumb
+        className="mb-8"
+        items={[
+          {
+            title: 'Inicio',
+          },
+          {
+            title: <NavLink to={AppUrl.Movements}>Movimientos</NavLink>,
+          },
+          {
+            title: movement
+              ? `${movement.date} - ${CategoryLabel[movement.category]} - ${
+                  movement.amountFormatted
+                }`
+              : 'Nuevo Movimiento',
+          },
+        ]}
+      />
 
-      <Card>
-        <Form<FormValues>
-          layout="vertical"
-          form={form}
-          onFinish={(values) => handleSubmit(values)}
-          initialValues={{
-            amount: movement
-              ? CurrencyUtils.fromCents(movement.amount)
-              : getPriceForCategory(CategoryEnum.MembershipIncome),
-            category: movement?.category ?? CategoryEnum.MembershipIncome,
-            date: movement?.date
-              ? dayjs(movement.date, DateFormats.DD_MM_YYYY)
-              : dayjs(),
-            notes: movement?.notes,
-            type: movement?.type ?? CategoryType.Income,
-          }}
-        >
-          <Form.Item
-            name="date"
-            label="Fecha"
-            rules={[{ required: true }, { type: 'date' }]}
+      <Skeleton active loading={isLoading}>
+        <Card>
+          <Form<FormValues>
+            layout="vertical"
+            form={form}
+            onFinish={(values) => handleSubmit(values)}
+            initialValues={{
+              amount: movement
+                ? CurrencyUtils.fromCents(movement.amount)
+                : getPriceForCategory(CategoryEnum.MembershipIncome),
+              category: movement?.category ?? CategoryEnum.MembershipIncome,
+              date: movement?.date
+                ? dayjs(movement.date, DateFormats.DD_MM_YYYY)
+                : dayjs(),
+              memberId: movement?.memberId,
+              memberIds: undefined,
+              notes: movement?.notes,
+              type: movement?.type ?? CategoryType.Income,
+            }}
           >
-            <DatePicker
-              format={DateFormats.DD_MM_YYYY}
-              className="w-full"
-              disabledDate={(current) => current.isAfter(dayjs())}
-            />
-          </Form.Item>
-
-          <Form.Item label="Tipo" name="type" rules={[{ required: true }]}>
-            <Select
-              onChange={() => {
-                form.setFieldValue('category', undefined);
-
-                form.setFieldValue('amount', undefined);
-              }}
-              options={getCategoryTypeOptions()}
-            />
-          </Form.Item>
-
-          {type && (
             <Form.Item
-              label="Categoría"
-              name="category"
-              rules={[{ required: true }]}
+              name="date"
+              label="Fecha"
+              rules={[{ required: true }, { type: 'date' }]}
             >
-              <Select
-                disabled={isLoadingCategories}
-                loading={isLoadingCategories}
-                onChange={(value) =>
-                  form.setFieldValue('amount', getPriceForCategory(value))
-                }
-                options={getCategoryOptions(type)}
+              <DatePicker
+                format={DateFormats.DD_MM_YYYY}
+                className="w-full"
+                disabledDate={(current) => current.isAfter(dayjs())}
               />
             </Form.Item>
-          )}
 
-          {renderDetailsSection()}
+            <Form.Item label="Tipo" name="type" rules={[{ required: true }]}>
+              <Select
+                disabled={!!movement}
+                onChange={() => {
+                  form.setFieldValue('category', undefined);
 
-          <Form.Item
-            label="Importe"
-            name="amount"
-            rules={[{ required: true }, { min: 1, type: 'number' }]}
-            status="error"
-          >
-            <InputNumber
-              className="w-40"
-              prefix={ARS.code}
-              precision={2}
-              decimalSeparator=","
-              step={100}
-            />
-          </Form.Item>
+                  form.setFieldValue('amount', undefined);
+                }}
+                options={getCategoryTypeOptions()}
+              />
+            </Form.Item>
 
-          <Form.Item label="Notas" rules={[{ whitespace: true }]} name="notes">
-            <Input.TextArea rows={1} />
-          </Form.Item>
+            {type && (
+              <Form.Item
+                label="Categoría"
+                name="category"
+                rules={[{ required: true }]}
+              >
+                <Select
+                  disabled={isLoadingCategories || !!movement}
+                  loading={isLoadingCategories}
+                  onChange={(value) =>
+                    form.setFieldValue('amount', getPriceForCategory(value))
+                  }
+                  options={getCategoryOptions(type)}
+                />
+              </Form.Item>
+            )}
 
-          <ButtonGroup>
-            <FormSaveButton
-              loading={createMovement.isLoading || updateMovement.isLoading}
-              disabled={createMovement.isLoading || updateMovement.isLoading}
-            />
+            {renderDetailsSection()}
 
-            <FormBackButton
-              disabled={createMovement.isLoading || updateMovement.isLoading}
-              to={AppUrl.Movements}
-            />
-          </ButtonGroup>
-        </Form>
-      </Card>
+            <Form.Item
+              label="Importe"
+              name="amount"
+              rules={[{ required: true }, { min: 1, type: 'number' }]}
+              status="error"
+            >
+              <InputNumber
+                className="w-40"
+                prefix={ARS.code}
+                precision={2}
+                decimalSeparator=","
+                step={100}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Notas"
+              rules={[{ whitespace: true }]}
+              name="notes"
+            >
+              <Input.TextArea rows={1} />
+            </Form.Item>
+
+            <ButtonGroup>
+              <FormSaveButton
+                loading={createMovement.isLoading || updateMovement.isLoading}
+                disabled={createMovement.isLoading || updateMovement.isLoading}
+              />
+
+              <FormBackButton
+                disabled={createMovement.isLoading || updateMovement.isLoading}
+              />
+            </ButtonGroup>
+          </Form>
+        </Card>
+      </Skeleton>
     </>
   );
 };

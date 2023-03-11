@@ -57,6 +57,7 @@ export class CreateMemberUseCase
       nationality: request.nationality,
       phones: request.phones,
       sex: request.sex,
+      status: request.status,
       userId: createUserResult.value,
     });
 

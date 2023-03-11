@@ -1,8 +1,7 @@
-import isEqual from 'lodash/isEqual';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { GetUsersRequestDto } from '@domain/users/use-cases/get-users/get-users-request.dto';
+import { GetUsersRequestDto } from '@domain/users/use-cases/get-users-grid/get-users-grid-request.dto';
 import { PaginatedResponse } from '@kernel/paginated-response.dto';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
@@ -42,6 +41,12 @@ export class GetUsersUseCase
       ];
     }
 
+    if (request.filters?.['profile.role']?.length) {
+      query['profile.role'] = {
+        $in: request.filters['profile.role'] as string[],
+      };
+    }
+
     const options = this.createQueryOptions(request.page, request.pageSize);
 
     if (request.sortField) {
@@ -49,8 +54,6 @@ export class GetUsersUseCase
         options.sort['profile.firstName'] = this.getSorterValue(
           request.sortOrder
         );
-      } else if (isEqual(request.sortField, ['profile', 'role'])) {
-        options.sort['profile.role'] = this.getSorterValue(request.sortOrder);
       }
     }
 

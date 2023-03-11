@@ -161,6 +161,20 @@ export class GetMovementsUseCase
           },
         },
         {
+          $lookup: {
+            as: 'service',
+            foreignField: '_id',
+            from: 'services',
+            localField: 'serviceId',
+          },
+        },
+        {
+          $unwind: {
+            path: '$service',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
           $facet: {
             data: this.getPaginatedPipeline({
               $sort: { date: -1 },
@@ -198,7 +212,7 @@ export class GetMovementsUseCase
       count,
       data: data
         .map((movement: Movement) => plainToInstance(Movement, movement))
-        .map((movement: Movement) => {
+        .map((movement: Movement): MovementGridDto => {
           let details = '';
 
           if (MemberCategories.includes(movement.category)) {
@@ -209,6 +223,10 @@ export class GetMovementsUseCase
             details = movement.employee?.name ?? '';
           } else if (movement.category === CategoryEnum.Professor) {
             details = movement.professor?.name ?? '';
+          } else if (movement.category === CategoryEnum.Service) {
+            details = movement.service?.name ?? '';
+          } else {
+            details = movement.notes ?? '';
           }
 
           return {
@@ -218,6 +236,7 @@ export class GetMovementsUseCase
             date: movement.dateFormatted,
             details,
             memberId: movement.memberId,
+            type: movement.type,
           };
         }),
       debt,

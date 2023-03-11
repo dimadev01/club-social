@@ -19,6 +19,7 @@ MovementsCollection.attachSchema(
     notes: { defaultValue: null, optional: true, type: String },
     professorId: { defaultValue: null, optional: true, type: String },
     rentalId: { defaultValue: null, optional: true, type: String },
+    serviceId: { defaultValue: null, optional: true, type: String },
     type: String,
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,

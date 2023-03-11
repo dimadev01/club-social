@@ -78,7 +78,7 @@ export class GetMembersGridUseCase
         {
           $facet: {
             data: this.getPaginatedPipeline({
-              $sort: { createdAt: -1 },
+              $sort: { 'user.profile.firstName': 1 },
               page: request.page,
               pageSize: request.pageSize,
             }),

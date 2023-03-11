@@ -27,6 +27,8 @@ export const LoginPage = () => {
     Accounts.requestLoginTokenForUser(
       { selector: values.email },
       (error: unknown) => {
+        setIsSendingEmail(false);
+
         if (error && error instanceof Error) {
           message.error(error.message);
         } else {
@@ -34,13 +36,6 @@ export const LoginPage = () => {
         }
       }
     );
-    // Meteor.loginWithPassword(values.email, values.password, (error) => {
-    //   if (error) {
-    //     message.error(error.message);
-    //   } else {
-    //     navigate(AppUrl.Home);
-    //   }
-    // });
   };
 
   return (
@@ -64,19 +59,6 @@ export const LoginPage = () => {
             placeholder="Ingresa tu email"
           />
         </Form.Item>
-
-        {/* <Form.Item
-          className="mb-16"
-          label="Clave"
-          name="password"
-          rules={[{ required: true }]}
-        >
-          <Input.Password
-            size="large"
-            className="text-sm"
-            placeholder="Ingresa tu clave"
-          />
-        </Form.Item> */}
 
         <div className="flex justify-between">
           <Button

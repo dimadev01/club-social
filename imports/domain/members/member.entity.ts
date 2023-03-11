@@ -167,6 +167,8 @@ export class Member extends FullEntity {
 
     member.address.zipCode = props.address.zipCode;
 
+    member.status = props.status;
+
     const errors = validateSync(member);
 
     if (errors.length > 0) {

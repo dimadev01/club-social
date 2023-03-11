@@ -88,13 +88,16 @@ export class GetMovementsByMemberUseCase
       count,
       data: data
         .map((movement: Movement) => plainToInstance(Movement, movement))
-        .map((movement: Movement) => ({
-          _id: movement._id,
-          amount: movement.amountFormatted,
-          category: movement.category,
-          date: movement.dateFormatted,
-          memberId: movement.memberId,
-        })),
+        .map(
+          (movement: Movement): MovementByMemberGridDto => ({
+            _id: movement._id,
+            amount: movement.amountFormatted,
+            category: movement.category,
+            date: movement.dateFormatted,
+            memberId: movement.memberId,
+            type: movement.type,
+          })
+        ),
       debt,
       expense,
       income,

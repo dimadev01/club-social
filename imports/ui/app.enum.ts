@@ -20,6 +20,8 @@ export enum AppUrl {
 
   Employees = '/employees',
 
+  Services = '/services',
+
   Rentals = '/rentals',
 
   Users = '/users',

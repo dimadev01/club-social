@@ -3,6 +3,8 @@ import { RemoveMemberRequestDto } from '@domain/members/use-cases/remove-member/
 import { RemoveMemberUseCase } from '@domain/members/use-cases/remove-member/remove-member.use-case';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
 import { CreateMovementUseCase } from '@domain/movements/use-cases/create-movement/create-movement.use-case';
+import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
+import { DeleteMovementUseCase } from '@domain/movements/use-cases/delete-movement/delete-movement.use-case';
 import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/get-movement-request.dto';
 import { GetMovementUseCase } from '@domain/movements/use-cases/get-movement/get-movement.use-case';
 import { GetMovementsByMemberGridRequestDto } from '@domain/movements/use-cases/get-movements-by-member/get-movements-by-member-grid.request.dto';
@@ -22,7 +24,8 @@ export class MovementsMethods extends BaseMethod {
     private readonly _getMovement: GetMovementUseCase,
     private readonly _createMovement: CreateMovementUseCase,
     private readonly _removeMember: RemoveMemberUseCase,
-    private readonly _updateMovement: UpdateMovementUseCase
+    private readonly _updateMovement: UpdateMovementUseCase,
+    private readonly _deleteMovement: DeleteMovementUseCase
   ) {
     super();
   }
@@ -47,6 +50,9 @@ export class MovementsMethods extends BaseMethod {
 
       [MethodsEnum.MovementsUpdate]: (request: UpdateMovementRequestDto) =>
         this.execute(this._updateMovement, request),
+
+      [MethodsEnum.MovementsDelete]: (request: DeleteMovementRequestDto) =>
+        this.execute(this._deleteMovement, request),
     });
   }
 }

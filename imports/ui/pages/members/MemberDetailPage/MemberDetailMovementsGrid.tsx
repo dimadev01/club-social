@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Col, DatePicker, Row, Space, Typography } from 'antd';
+import { Card, Col, DatePicker, Row, Space, Tag, Typography } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
@@ -7,6 +7,7 @@ import { NavLink, useLocation, useParams } from 'react-router-dom';
 import {
   CategoryEnum,
   CategoryLabel,
+  CategoryType,
   getCategoryFilters,
 } from '@domain/categories/categories.enum';
 import { MovementByMemberGridDto } from '@domain/movements/use-cases/get-movements-by-member/get-movements-by-member-grid.dto';
@@ -114,6 +115,17 @@ export const MemberDetailMovementsGrid = () => {
             {
               align: 'right',
               dataIndex: 'amount',
+              render: (amount: string, movement: MovementByMemberGridDto) => {
+                if (movement.type === CategoryType.Expense) {
+                  return <Tag color="red">{amount}</Tag>;
+                }
+
+                if (movement.type === CategoryType.Income) {
+                  return <Tag color="green">{amount}</Tag>;
+                }
+
+                return <Tag>{amount}</Tag>;
+              },
               title: 'Importe',
             },
           ]}

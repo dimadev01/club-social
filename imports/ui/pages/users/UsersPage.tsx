@@ -1,9 +1,8 @@
 import React from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
-import isEqual from 'lodash/isEqual';
 import { NavLink } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
-import { Role } from '@domain/roles/roles.enum';
+import { getRolesFilters, Role } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Table } from '@ui/components/Table/Table';
@@ -28,14 +27,21 @@ export const UsersPage = () => {
     sortOrder: gridState.sortOrder,
   });
 
-  const removeOne = useRemoveUser(refetch);
+  const removeUser = useRemoveUser(refetch);
 
   return (
     <>
-      <Breadcrumb className="mb-8">
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Usuarios</Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumb
+        className="mb-8"
+        items={[
+          {
+            title: 'Inicio',
+          },
+          {
+            title: 'Usuarios',
+          },
+        ]}
+      />
 
       <Card
         title="Usuarios"
@@ -99,10 +105,8 @@ export const UsersPage = () => {
             {
               align: 'center',
               dataIndex: ['profile', 'role'],
-              sortOrder: isEqual(gridState.sortField, ['profile', 'role'])
-                ? gridState.sortOrder
-                : undefined,
-              sorter: true,
+              filteredValue: gridState.filters?.['profile.role'],
+              filters: getRolesFilters(),
               title: 'Rol',
             },
             {
@@ -112,9 +116,9 @@ export const UsersPage = () => {
                   <Button
                     popConfirm={{
                       onConfirm: () =>
-                        removeOne.mutate(
+                        removeUser.mutate(
                           { id: user._id },
-                          { onError: () => removeOne.reset() }
+                          { onError: () => removeUser.reset() }
                         ),
                       title: '¿Está seguro de eliminar este usuario?',
                     }}
@@ -122,8 +126,8 @@ export const UsersPage = () => {
                     htmlType="button"
                     tooltip={{ title: 'Eliminar ' }}
                     icon={<DeleteOutlined />}
-                    loading={removeOne.variables?.id === user._id}
-                    disabled={removeOne.variables?.id === user._id}
+                    loading={removeUser.variables?.id === user._id}
+                    disabled={removeUser.variables?.id === user._id}
                   />
                 ),
               title: 'Actions',

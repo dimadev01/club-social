@@ -66,6 +66,7 @@ export const getMemberMaritalStatusOptions = () =>
 export enum MemberNationality {
   Argentina = 'argentina',
   Colombia = 'colombia',
+  Bulgaria = 'bulgaria',
   Ukraine = 'ukraine',
 }
 

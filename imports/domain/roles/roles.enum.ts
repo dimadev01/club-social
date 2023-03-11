@@ -6,6 +6,12 @@ export enum Role {
   Staff = 'staff',
 }
 
+export const getRolesFilters = () =>
+  Object.values(Role).map((role) => ({
+    text: role,
+    value: role,
+  }));
+
 export enum Scope {
   Categories = 'categories',
   Employees = 'employees',
@@ -13,6 +19,7 @@ export enum Scope {
   Movements = 'movements',
   Professors = 'professors',
   Rentals = 'rentals',
+  Services = 'services',
   Users = 'users',
 }
 
@@ -25,10 +32,12 @@ export enum Permission {
 export const AdminRole = {
   [Scope.Users]: [Permission.Read, Permission.Write, Permission.Delete],
   [Scope.Members]: [Permission.Read, Permission.Write, Permission.Delete],
+  [Scope.Categories]: [Permission.Read, Permission.Write],
   [Scope.Movements]: [Permission.Read, Permission.Write, Permission.Delete],
   [Scope.Professors]: [Permission.Read, Permission.Write],
   [Scope.Rentals]: [Permission.Read, Permission.Write],
   [Scope.Employees]: [Permission.Read, Permission.Write],
+  [Scope.Services]: [Permission.Read, Permission.Write],
 };
 
 export const StaffRole = {
@@ -38,6 +47,7 @@ export const StaffRole = {
   [Scope.Professors]: [Permission.Read],
   [Scope.Rentals]: [Permission.Read],
   [Scope.Employees]: [Permission.Read],
+  [Scope.Services]: [Permission.Read],
 };
 
 export const MemberRole = {

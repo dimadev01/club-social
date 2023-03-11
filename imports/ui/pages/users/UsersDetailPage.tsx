@@ -1,5 +1,5 @@
 import React from 'react';
-import { Breadcrumb, Card, Form, Input, message, Spin } from 'antd';
+import { Breadcrumb, Card, Form, Input, message, Skeleton } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import compact from 'lodash/compact';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
@@ -56,81 +56,90 @@ export const UsersDetailPage = () => {
     }
   };
 
-  if (fetchStatus === 'fetching') {
-    return <Spin spinning />;
-  }
+  const isLoading = fetchStatus === 'fetching';
 
-  if (id && !user) {
+  if (id && !user && !isLoading) {
     return <NotFound />;
   }
 
   return (
     <>
-      <Breadcrumb className="mb-8">
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>
-          <NavLink to={AppUrl.Users}>Usuarios</NavLink>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item>
-          {!!user && `${user.profile?.firstName} ${user.profile?.lastName}`}
-          {!user && 'Nuevo Usuario'}
-        </Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumb
+        className="mb-8"
+        items={[
+          {
+            title: 'Inicio',
+          },
+          {
+            title: <NavLink to={AppUrl.Users}>Usuarios</NavLink>,
+          },
+          {
+            title: user
+              ? `${user.profile?.firstName} ${user.profile?.lastName}`
+              : 'Nuevo Usuario',
+          },
+        ]}
+      />
 
-      <Card>
-        <Form<FormValues>
-          layout="vertical"
-          onFinish={(values) => handleSubmit(values)}
-          initialValues={{
-            emails:
-              user?.emails && user.emails.length > 0
-                ? user.emails.map((email) => email.address)
-                : [''],
-            firstName: user?.profile?.firstName ?? '',
-            lastName: user?.profile?.lastName ?? '',
-            rol: user?.profile?.role ?? '',
-          }}
-        >
-          <Form.Item
-            name="firstName"
-            label="Nombre"
-            rules={[{ required: true, whitespace: true }]}
+      <Skeleton active loading={isLoading}>
+        <Card>
+          <Form<FormValues>
+            layout="vertical"
+            onFinish={(values) => handleSubmit(values)}
+            initialValues={{
+              emails:
+                user?.emails && user.emails.length > 0
+                  ? user.emails.map((email) => email.address)
+                  : [''],
+              firstName: user?.profile?.firstName ?? '',
+              lastName: user?.profile?.lastName ?? '',
+              rol: user?.profile?.role ?? '',
+            }}
           >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="lastName"
-            label="Apellido"
-            rules={[{ required: true, whitespace: true }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <FormListEmails />
-
-          {!user && (
-            <Form.Item name="role" label="Rol" rules={[{ required: true }]}>
-              <Select
-                options={[
-                  {
-                    label: 'Staff',
-                    value: Role.Staff,
-                  },
-                ]}
-              />
+            <Form.Item
+              name="firstName"
+              label="Nombre"
+              rules={[{ required: true, whitespace: true }]}
+            >
+              <Input />
             </Form.Item>
-          )}
 
-          <ButtonGroup>
+            <Form.Item
+              name="lastName"
+              label="Apellido"
+              rules={[{ required: true, whitespace: true }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <FormListEmails />
+
+            {!user && (
+              <Form.Item name="role" label="Rol" rules={[{ required: true }]}>
+                <Select
+                  options={[
+                    {
+                      label: 'Staff',
+                      value: Role.Staff,
+                    },
+                  ]}
+                />
+              </Form.Item>
+            )}
+
             <ButtonGroup>
-              <FormSaveButton />
+              <FormSaveButton
+                loading={createUser.isLoading || updateUser.isLoading}
+                disabled={createUser.isLoading || updateUser.isLoading}
+              />
 
-              <FormBackButton to={AppUrl.Users} />
+              <FormBackButton
+                disabled={createUser.isLoading || updateUser.isLoading}
+              />
             </ButtonGroup>
-          </ButtonGroup>
-        </Form>
-      </Card>
+          </Form>
+        </Card>
+      </Skeleton>
     </>
   );
 };

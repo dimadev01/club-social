@@ -16,10 +16,17 @@ export const CategoriesPage = () => {
 
   return (
     <>
-      <Breadcrumb className="mb-8">
-        <Breadcrumb.Item>Inicio</Breadcrumb.Item>
-        <Breadcrumb.Item>Categorías</Breadcrumb.Item>
-      </Breadcrumb>
+      <Breadcrumb
+        className="mb-8"
+        items={[
+          {
+            title: 'Inicio',
+          },
+          {
+            title: 'Categorías',
+          },
+        ]}
+      />
 
       <Card
         title="Categorías"
@@ -40,7 +47,7 @@ export const CategoriesPage = () => {
             },
             {
               align: 'right',
-              dataIndex: 'amount',
+              dataIndex: 'amountFormatted',
               title: 'Precio actual',
             },
           ]}
