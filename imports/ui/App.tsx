@@ -5,7 +5,7 @@ import { useTracker } from 'meteor/react-meteor-data';
 import GoogleFontLoader from 'react-google-font';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools/build/lib/devtools';
-import { Routes } from '@ui/routes/Routes';
+import { Routes } from '@ui/Routes/Routes';
 
 const queryClient = new QueryClient({
   defaultOptions: {

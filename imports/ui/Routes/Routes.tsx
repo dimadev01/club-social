@@ -19,9 +19,9 @@ import { RentalsPage } from '@ui/pages/rentals/RentalsPage';
 import { ServicesPage } from '@ui/pages/services/ServicesPage';
 import { UsersDetailPage } from '@ui/pages/users/UsersDetailPage';
 import { UsersPage } from '@ui/pages/users/UsersPage';
-import { AuthRoute } from '@ui/routes/AuthRoute';
-import { PrivateRoute } from '@ui/routes/PrivateRoute';
-import { PublicRoute } from '@ui/routes/PublicRoute';
+import { AuthRoute } from '@ui/Routes/AuthRoute';
+import { PrivateRoute } from '@ui/Routes/PrivateRoute';
+import { PublicRoute } from '@ui/Routes/PublicRoute';
 
 const router = createBrowserRouter([
   {

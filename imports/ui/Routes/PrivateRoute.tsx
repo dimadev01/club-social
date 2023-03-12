@@ -4,7 +4,7 @@ import { useTracker } from 'meteor/react-meteor-data';
 import { Navigate } from 'react-router-dom';
 import { Permission, Scope } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
-import { AuthRoute } from '@ui/routes/AuthRoute';
+import { AuthRoute } from '@ui/Routes/AuthRoute';
 
 type Props = {
   children: JSX.Element;
