@@ -1,12 +1,23 @@
 import 'reflect-metadata';
 import '@infra/publications/meteor-publications';
 import '@domain/users/users.collection';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
+import { CategoriesMethods } from '@domain/categories/categories.methods';
+import { EmployeesMethods } from '@domain/employees/employees.methods';
+import { MembersMethods } from '@domain/members/members.methods';
+import { MovementsMethods } from '@domain/movements/movements.methods';
+import { ProfessorsMethods } from '@domain/professors/professors.methods';
+import { RentalsMethods } from '@domain/rentals/rentals.methods';
+import { ServicesMethods } from '@domain/services/services.methods';
 import { UsersMethods } from '@domain/users/users.methods';
 import { Logger } from '@infra/logger/logger.service';
 import { MigrationsService } from '@infra/migrations/migrations.service';
+
+dayjs.extend(utc);
 
 @singleton()
 export class ServerStartup {
@@ -15,7 +26,14 @@ export class ServerStartup {
   public constructor(
     private readonly _logger: Logger,
     private readonly _migrations: MigrationsService,
-    private readonly _usersMethods: UsersMethods
+    private readonly _usersMethods: UsersMethods,
+    private readonly _membersMethods: MembersMethods,
+    private readonly _movementsMethods: MovementsMethods,
+    private readonly _categoriesMethods: CategoriesMethods,
+    private readonly _professorsMethods: ProfessorsMethods,
+    private readonly _rentalsMethods: RentalsMethods,
+    private readonly _employeesMethods: EmployeesMethods,
+    private readonly _servicesMethods: ServicesMethods
   ) {}
 
   // #endregion Constructors (1)
@@ -28,6 +46,8 @@ export class ServerStartup {
     this._migrate();
 
     this._registerMethods();
+
+    await this._createUsersIndexes();
 
     if (Meteor.isProduction) {
       this._logger.info('Server startup completed');
@@ -43,11 +63,6 @@ export class ServerStartup {
       process.env.MAIL_URL = Meteor.settings.MAIL_URL;
     }
 
-    Accounts.config({
-      forbidClientAccountCreation: true,
-      sendVerificationEmail: true,
-    });
-
     Accounts.emailTemplates.siteName = 'Club Social Monte Grande';
 
     Accounts.emailTemplates.from =
@@ -59,7 +74,7 @@ export class ServerStartup {
     ) => {
       const urlWithoutHashtag = url.replace('#/', '');
 
-      // @ts-ignore
+      // @ts-expect-error
       return `Hola ${user.profile?.firstName} ${user.profile?.lastName}, verifica tu cuenta: <a href="${urlWithoutHashtag}">${urlWithoutHashtag}</a>`;
     };
 
@@ -69,7 +84,7 @@ export class ServerStartup {
     ) => {
       const urlWithoutHashtag = url.replace('#/', '');
 
-      // @ts-ignore
+      // @ts-expect-error
       return `Hola ${user.profile?.firstName} ${user.profile?.lastName}, activa tu cuenta: <a href="${urlWithoutHashtag}">${urlWithoutHashtag}</a>`;
     };
   }
@@ -78,8 +93,30 @@ export class ServerStartup {
     this._migrations.start();
   }
 
-  private _registerMethods() {
+  private async _registerMethods() {
     this._usersMethods.register();
+
+    this._membersMethods.register();
+
+    this._movementsMethods.register();
+
+    this._categoriesMethods.register();
+
+    this._professorsMethods.register();
+
+    this._rentalsMethods.register();
+
+    this._employeesMethods.register();
+
+    this._servicesMethods.register();
+  }
+
+  private async _createUsersIndexes() {
+    await Meteor.users.createIndexAsync({ createdAt: -1 });
+
+    await Meteor.users.createIndexAsync({ 'profile.firstName': 1 });
+
+    await Meteor.users.createIndexAsync({ 'profile.role': 1 });
   }
 
   // #endregion Private Methods (4)

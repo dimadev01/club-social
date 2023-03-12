@@ -5,8 +5,8 @@ import { GetUserByTokenRequestDto } from '@domain/users/use-cases/get-user-by-to
 import { GetUserByTokenUseCase } from '@domain/users/use-cases/get-user-by-token/get-user-by-token.use-case';
 import { GetUserRequestDto } from '@domain/users/use-cases/get-user/get-user-request.dto';
 import { GetUserUseCase } from '@domain/users/use-cases/get-user/get-user.use-case';
-import { GetUsersRequestDto } from '@domain/users/use-cases/get-users/get-users-request.dto';
-import { GetUsersUseCase } from '@domain/users/use-cases/get-users/get-users.use-case';
+import { GetUsersRequestDto } from '@domain/users/use-cases/get-users-grid/get-users-grid-request.dto';
+import { GetUsersUseCase } from '@domain/users/use-cases/get-users-grid/get-users-grid.use-case';
 import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
 import { RemoveUserUseCase } from '@domain/users/use-cases/remove-user/remove-user.use-case';
 import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update-user-request.dto';
@@ -17,12 +17,12 @@ import { MethodsEnum } from '@infra/methods/methods.enum';
 @injectable()
 export class UsersMethods extends BaseMethod {
   public constructor(
-    private readonly _getUsersUseCase: GetUsersUseCase,
-    private readonly _getUserUseCase: GetUserUseCase,
-    private readonly _createUserUseCase: CreateUserUseCase,
+    private readonly _getUsers: GetUsersUseCase,
+    private readonly _getUser: GetUserUseCase,
+    private readonly _createUser: CreateUserUseCase,
     private readonly _getUserByToken: GetUserByTokenUseCase,
-    private readonly _removeUserUseCase: RemoveUserUseCase,
-    private readonly _updateUserUseCase: UpdateUserUseCase
+    private readonly _removeUser: RemoveUserUseCase,
+    private readonly _updateUser: UpdateUserUseCase
   ) {
     super();
   }
@@ -30,22 +30,22 @@ export class UsersMethods extends BaseMethod {
   public register() {
     Meteor.methods({
       [MethodsEnum.UsersGetGrid]: (request: GetUsersRequestDto) =>
-        this.execute(this._getUsersUseCase, request),
+        this.execute(this._getUsers, request),
 
       [MethodsEnum.UsersGet]: (request: GetUserRequestDto) =>
-        this.execute(this._getUserUseCase, request),
+        this.execute(this._getUser, request),
 
       [MethodsEnum.UsersGetByToken]: (request: GetUserByTokenRequestDto) =>
         this.execute(this._getUserByToken, request),
 
       [MethodsEnum.UsersCreate]: (request: CreateUserRequestDto) =>
-        this.execute(this._createUserUseCase, request),
+        this.execute(this._createUser, request),
 
       [MethodsEnum.UsersRemove]: (request: RemoveUserRequestDto) =>
-        this.execute(this._removeUserUseCase, request),
+        this.execute(this._removeUser, request),
 
       [MethodsEnum.UsersUpdate]: (request: UpdateUserRequestDto) =>
-        this.execute(this._updateUserUseCase, request),
+        this.execute(this._updateUser, request),
     });
   }
 }

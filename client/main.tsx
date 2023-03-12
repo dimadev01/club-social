@@ -12,9 +12,5 @@ Meteor.startup(() => {
     throw new Error('No root element found');
   }
 
-  createRoot(root).render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
+  createRoot(root).render(<App />);
 });

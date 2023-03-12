@@ -1,6 +1,6 @@
 import SimpleSchema from 'simpl-schema';
 
-// @ts-ignore
+// @ts-expect-error
 Meteor.users.attachSchema(
   new SimpleSchema({
     createdAt: Date,
@@ -12,6 +12,7 @@ Meteor.users.attachSchema(
     'emails.$.address': String,
     'emails.$.verified': Boolean,
     heartbeat: {
+      defaultValue: null,
       optional: true,
       type: Date,
     },
@@ -21,10 +22,12 @@ Meteor.users.attachSchema(
     'profile.role': String,
     services: {
       blackbox: true,
+      defaultValue: null,
       optional: true,
       type: Object,
     },
     username: {
+      defaultValue: null,
       optional: true,
       type: String,
     },

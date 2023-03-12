@@ -1,0 +1,14 @@
+import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
+
+export interface CreateMovement {
+  amount: number;
+  category: CategoryEnum;
+  date: string;
+  employeeId: string | null;
+  memberId: string | null;
+  notes: string | null;
+  professorId: string | null;
+  rentalId: string | null;
+  serviceId: string | null;
+  type: CategoryType;
+}

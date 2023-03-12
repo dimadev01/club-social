@@ -1,6 +1,8 @@
-@color-primary: #06afd6;
+@color-primary: #22883e;
 @input-color: #9d9d9d;
 @background-color: #f8f9fd;
+@color-success: '#52c41a';
+@color-error: '#f5222d';
 
 div#react-target {
   min-height: 100%;
@@ -15,12 +17,20 @@ div#react-target {
   background-color: @color-primary;
 }
 
+.ant-input-number-affix-wrapper-status-success {
+  border-color: @color-success;
+}
+
+.ant-input-number-affix-wrapper-status-error {
+  border-color: @color-error;
+}
+
 .cs-layout {
   background-color: #fff;
 }
 
 .cs-layout-content {
-  @media (min-width: '992px') {
+  @media (min-width: 992px) {
     margin-left: 260px;
   }
 }
@@ -62,7 +72,7 @@ div#react-target {
 .cs-sider.ant-layout-sider {
   height: 100vh;
 
-  @media (min-width: '992px') {
+  @media (min-width: 992px) {
     bottom: 0;
     left: 0;
     overflow: auto;
@@ -73,5 +83,11 @@ div#react-target {
   .ant-layout-sider-children {
     display: flex;
     flex-direction: column;
+  }
+}
+
+.cs-form-item-extra {
+  label.ant-form-item-required {
+    display: block;
   }
 }

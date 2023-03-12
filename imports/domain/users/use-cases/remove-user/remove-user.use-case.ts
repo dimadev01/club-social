@@ -1,7 +1,11 @@
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { StaffRole } from '@domain/roles/roles.enum';
+import { Permission, Role, Scope, StaffRole } from '@domain/roles/roles.enum';
+import { RemoveAdminError } from '@domain/users/errors/remove-admin.error';
+import { RemoveYourselfError } from '@domain/users/errors/remove-yourself.error';
+import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
+import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
 
@@ -10,13 +14,29 @@ export class RemoveUserUseCase
   extends UseCase<RemoveUserRequestDto>
   implements IUseCase<RemoveUserRequestDto, undefined>
 {
+  public constructor(private readonly _logger: Logger) {
+    super();
+  }
+
   public async execute(
     request: RemoveUserRequestDto
   ): Promise<Result<undefined, Error>> {
+    this.validatePermission(Scope.Members, Permission.Delete);
+
     await this.validateDto(RemoveUserRequestDto, request);
 
     if (request.id === Meteor.userId()) {
-      return err(new Error('No puedes eliminarte a ti mismo'));
+      return err(new RemoveYourselfError());
+    }
+
+    const user = await Meteor.users.findOneAsync(request.id);
+
+    if (!user) {
+      return err(new UserNotFoundError());
+    }
+
+    if (user.profile?.role === Role.Admin) {
+      return err(new RemoveAdminError());
     }
 
     Object.entries(StaffRole).forEach(([key, value]) => {
@@ -24,6 +44,8 @@ export class RemoveUserUseCase
     });
 
     await Meteor.users.removeAsync(request.id);
+
+    this._logger.info('User removed', { user });
 
     return ok(undefined);
   }

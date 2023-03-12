@@ -26,6 +26,7 @@ const queryClient = new QueryClient({
           message.error('An unknown error occurred.');
         }
       },
+      refetchOnWindowFocus: false,
       retry: 1,
     },
   },
@@ -47,10 +48,21 @@ export const App = () => {
 
       <ConfigProvider
         locale={esEs}
+        select={{
+          showSearch: true,
+        }}
+        dropdownMatchSelectWidth={false}
+        form={{
+          requiredMark: 'optional',
+          scrollToFirstError: true,
+        }}
+        input={{
+          autoComplete: 'on',
+        }}
         theme={{
           token: {
             borderRadius: 5,
-            colorPrimary: '#06afd6',
+            colorPrimary: '#22883E',
             colorTextBase: '#505050',
             fontFamily: 'Rubik',
           },

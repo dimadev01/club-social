@@ -3,16 +3,27 @@ import { Col, Image, Layout as AntLayout, Menu, Row, Typography } from 'antd';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { Roles } from 'meteor/alanning:roles';
 import { Navigate, NavLink } from 'react-router-dom';
-import { HomeOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  BankOutlined,
+  BulbOutlined,
+  HomeOutlined,
+  LogoutOutlined,
+  MailOutlined,
+  UserOutlined,
+  WhatsAppOutlined,
+} from '@ant-design/icons';
 import { Permission, Scope } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
+import { Button } from '@ui/components/Button';
 
 type Props = {
   children: JSX.Element;
 };
 
 export const Layout: React.FC<Props> = ({ children }) => {
-  const [menuKey, setMenuKey] = useState<string>(window.location.pathname);
+  const [menuKey, setMenuKey] = useState<string>(
+    `/${window.location.pathname.split('/')[1]}`
+  );
 
   const user = Meteor.user();
 
@@ -37,11 +48,67 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Members)) {
+      items.push({
+        icon: <UserOutlined className="!text-lg" />,
+        key: AppUrl.Members,
+        label: <NavLink to={AppUrl.Members}>Socios</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Movements)) {
+      items.push({
+        icon: <BankOutlined className="!text-lg" />,
+        key: AppUrl.Movements,
+        label: <NavLink to={AppUrl.Movements}>Movimientos</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Categories)) {
+      items.push({
+        icon: <BankOutlined className="!text-lg" />,
+        key: AppUrl.Categories,
+        label: <NavLink to={AppUrl.Categories}>Categorías</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Professors)) {
+      items.push({
+        icon: <UserOutlined className="!text-lg" />,
+        key: AppUrl.Professors,
+        label: <NavLink to={AppUrl.Professors}>Profesores</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Employees)) {
+      items.push({
+        icon: <UserOutlined className="!text-lg" />,
+        key: AppUrl.Employees,
+        label: <NavLink to={AppUrl.Employees}>Empleados</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Rentals)) {
+      items.push({
+        icon: <UserOutlined className="!text-lg" />,
+        key: AppUrl.Rentals,
+        label: <NavLink to={AppUrl.Rentals}>Alquileres</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, Permission.Read, Scope.Services)) {
+      items.push({
+        icon: <BulbOutlined className="!text-lg" />,
+        key: AppUrl.Services,
+        label: <NavLink to={AppUrl.Services}>Servicios</NavLink>,
+      });
+    }
+
     return items;
   };
 
   return (
-    <AntLayout className="cs-layout">
+    <AntLayout className="cs-layout min-h-full">
       <AntLayout.Sider
         breakpoint="lg"
         collapsedWidth="0"
@@ -93,6 +160,28 @@ export const Layout: React.FC<Props> = ({ children }) => {
         <AntLayout.Content className="px-4 py-8 sm:p-14 ">
           {children}
         </AntLayout.Content>
+
+        <AntLayout.Footer className="flex">
+          <Button
+            size="large"
+            tooltip={{ title: 'Enviar Email' }}
+            icon={<MailOutlined />}
+            htmlType="button"
+            type="ghost"
+            className="ml-auto"
+            href="mailto:info@clubsocialmontegrande.ar"
+            target="_blank"
+          />
+          <Button
+            size="large"
+            tooltip={{ title: 'Enviar WhatsApp' }}
+            icon={<WhatsAppOutlined />}
+            htmlType="button"
+            type="ghost"
+            href="https://wa.me/5491158804950"
+            target="_blank"
+          />
+        </AntLayout.Footer>
       </AntLayout>
     </AntLayout>
   );
