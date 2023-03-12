@@ -31,7 +31,21 @@ export abstract class UseCase<T extends object = any> {
   }
 
   protected validatePermission(scope: Scope, permission: Permission): void {
-    const user = Meteor.user();
+    let user: Meteor.User | null;
+
+    let bypass = false;
+
+    try {
+      user = Meteor.user();
+    } catch (error) {
+      user = null;
+
+      bypass = true;
+    }
+
+    if (bypass) {
+      return;
+    }
 
     if (!user) {
       throw new Meteor.Error(
