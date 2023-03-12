@@ -70,6 +70,8 @@
     "maildev": "^2.0.5",
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.21",
+    "postcss-import": "^15.1.0",
+    "postcss-load-config": "^3.1.4",
     "prettier": "^2.8.1",
     "tailwindcss": "^3.2.6",
     "typescript": "^4.7.4"
