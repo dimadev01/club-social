@@ -6,7 +6,6 @@ import { Navigate, NavLink } from 'react-router-dom';
 import {
   BankOutlined,
   BulbOutlined,
-  HomeOutlined,
   LogoutOutlined,
   MailOutlined,
   UserOutlined,
@@ -33,12 +32,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
-
-    items.push({
-      icon: <HomeOutlined className="!text-lg" />,
-      key: AppUrl.Home,
-      label: <NavLink to={AppUrl.Home}>Inicio</NavLink>,
-    });
 
     if (Roles.userIsInRole(user, Permission.Read, Scope.Users)) {
       items.push({

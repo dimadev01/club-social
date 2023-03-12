@@ -1,13 +1,5 @@
 import React from 'react';
-import { PageHeader } from '@ui/components/PageHeader';
+import { Navigate } from 'react-router-dom';
+import { AppUrl } from '@ui/app.enum';
 
-export const HomePage = () => {
-  console.log('inicio');
-
-  return (
-    <>
-      <PageHeader>Inicio</PageHeader>
-      Inicio
-    </>
-  );
-};
+export const HomePage = () => <Navigate to={AppUrl.Movements} />;
