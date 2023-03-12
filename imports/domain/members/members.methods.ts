@@ -1,6 +1,8 @@
 import { injectable } from 'tsyringe';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
 import { CreateMemberUseCase } from '@domain/members/use-cases/create-member/create-member.use-case';
+import { GetMemberMovementsGridRequestDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.request.dto';
+import { GetMemberMovementsUseCase } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.use-case';
 import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
 import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-member.use-case';
 import { GetMembersGridUseCase } from '@domain/members/use-cases/get-members-grid/get-members-grid.use-case';
@@ -21,7 +23,8 @@ export class MembersMethods extends BaseMethod {
     private readonly _getMember: GetMemberUseCase,
     private readonly _createMember: CreateMemberUseCase,
     private readonly _removeMember: RemoveMemberUseCase,
-    private readonly _updateMember: UpdateMemberUseCase
+    private readonly _updateMember: UpdateMemberUseCase,
+    private readonly _getMemberMovements: GetMemberMovementsUseCase
   ) {
     super();
   }
@@ -44,6 +47,10 @@ export class MembersMethods extends BaseMethod {
 
       [MethodsEnum.MembersUpdate]: (request: UpdateMemberRequestDto) =>
         this.execute(this._updateMember, request),
+
+      [MethodsEnum.MembersGetMovementsGrid]: (
+        request: GetMemberMovementsGridRequestDto
+      ) => this.execute(this._getMemberMovements, request),
     });
   }
 }

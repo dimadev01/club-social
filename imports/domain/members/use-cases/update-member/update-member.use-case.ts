@@ -3,6 +3,7 @@ import { injectable } from 'tsyringe';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { MembersCollection } from '@domain/members/members.collection';
 import { UpdateMemberRequestDto } from '@domain/members/use-cases/update-member/update-member-request.dto';
+import { Permission, Scope } from '@domain/roles/roles.enum';
 import { GetUserUseCase } from '@domain/users/use-cases/get-user/get-user.use-case';
 import { UpdateUserUseCase } from '@domain/users/use-cases/update-user/update-user.use-case';
 import { Logger } from '@infra/logger/logger.service';
@@ -25,6 +26,8 @@ export class UpdateMemberUseCase
   public async execute(
     request: UpdateMemberRequestDto
   ): Promise<Result<undefined, Error>> {
+    this.validatePermission(Scope.Members, Permission.Update);
+
     await this.validateDto(UpdateMemberRequestDto, request);
 
     const member = await MembersCollection.findOneAsync(request.id);

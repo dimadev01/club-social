@@ -44,13 +44,13 @@ export const CategoryLabel = {
 };
 
 export const CategoryPrices = {
-  [CategoryEnum.MembershipIncome]: 4600,
-  [CategoryEnum.MembershipDebt]: 4600,
+  [CategoryEnum.MembershipIncome]: 3800,
+  [CategoryEnum.MembershipDebt]: 3800,
   [CategoryEnum.CourtRental]: 1500,
   [CategoryEnum.Expense]: null,
-  [CategoryEnum.Fair]: 46000,
-  [CategoryEnum.GuestDebt]: 2000,
-  [CategoryEnum.GuestIncome]: 2000,
+  [CategoryEnum.Fair]: 37000,
+  [CategoryEnum.GuestDebt]: 1500,
+  [CategoryEnum.GuestIncome]: 1500,
   [CategoryEnum.ElectricityIncome]: 500,
   [CategoryEnum.ElectricityDebt]: 500,
   [CategoryEnum.Maintenance]: null,
@@ -158,3 +158,11 @@ export const MemberCategories = [
   CategoryEnum.GuestDebt,
   CategoryEnum.GuestIncome,
 ];
+
+export const getMemberCategoryFilters = () =>
+  Object.values(MemberCategories)
+    .map((category) => ({
+      text: CategoryLabel[category],
+      value: category,
+    }))
+    .sort((a, b) => a.text.localeCompare(b.text));

@@ -1,3 +1,4 @@
+/* eslint-disable sort-keys-fix/sort-keys-fix */
 import SimpleSchema from 'simpl-schema';
 import { Movement } from '@domain/movements/movement.entity';
 import { Collection } from '@infra/database/collection.base';
@@ -26,14 +27,25 @@ MovementsCollection.attachSchema(
   })
 );
 
+// await MovementsCollection.rawCollection().dropIndexes();
+
 await MovementsCollection.createIndexAsync({ category: 1 });
 
 await MovementsCollection.createIndexAsync({ date: -1 });
 
-await MovementsCollection.createIndexAsync({ isDeleted: 1 });
+await MovementsCollection.createIndexAsync({
+  isDeleted: 1,
+  memberId: 1,
+  category: 1,
+  professor: 1,
+  employeeId: 1,
+  rentalId: 1,
+  date: -1,
+});
 
-// eslint-disable-next-line sort-keys-fix/sort-keys-fix
-await MovementsCollection.createIndexAsync({ memberId: 1, category: 1 });
+await MovementsCollection.createIndexAsync({ type: 1 });
+
+await MovementsCollection.createIndexAsync({ memberId: 1 });
 
 await MovementsCollection.createIndexAsync({ employeeId: 1 });
 

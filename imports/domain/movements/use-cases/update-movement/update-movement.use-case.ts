@@ -3,6 +3,7 @@ import { injectable } from 'tsyringe';
 import { MovementNotFoundError } from '@domain/movements/errors/movement-not-found.error';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
+import { Permission, Scope } from '@domain/roles/roles.enum';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
@@ -19,6 +20,8 @@ export class UpdateMovementUseCase
   public async execute(
     request: UpdateMovementRequestDto
   ): Promise<Result<undefined, Error>> {
+    this.validatePermission(Scope.Movements, Permission.Create);
+
     await this.validateDto(UpdateMovementRequestDto, request);
 
     const movement = await MovementsCollection.findOneAsync(request.id);

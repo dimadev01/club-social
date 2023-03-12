@@ -3,6 +3,7 @@ import { injectable } from 'tsyringe';
 import { MovementNotFoundError } from '@domain/movements/errors/movement-not-found.error';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
+import { Permission, Scope } from '@domain/roles/roles.enum';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
@@ -19,6 +20,8 @@ export class DeleteMovementUseCase
   public async execute(
     request: DeleteMovementRequestDto
   ): Promise<Result<undefined, Error>> {
+    this.validatePermission(Scope.Movements, Permission.Delete);
+
     await this.validateDto(DeleteMovementRequestDto, request);
 
     const movement = await MovementsCollection.findOne(request.id);

@@ -1,6 +1,6 @@
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { Role, StaffRole } from '@domain/roles/roles.enum';
+import { Permission, Role, Scope, StaffRole } from '@domain/roles/roles.enum';
 import { RemoveAdminError } from '@domain/users/errors/remove-admin.error';
 import { RemoveYourselfError } from '@domain/users/errors/remove-yourself.error';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
@@ -21,6 +21,8 @@ export class RemoveUserUseCase
   public async execute(
     request: RemoveUserRequestDto
   ): Promise<Result<undefined, Error>> {
+    this.validatePermission(Scope.Members, Permission.Delete);
+
     await this.validateDto(RemoveUserRequestDto, request);
 
     if (request.id === Meteor.userId()) {

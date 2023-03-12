@@ -112,11 +112,13 @@ Migrations.add({
     /**
      * Create permissions
      */
-    Roles.createRole(Permission.Write);
+    Roles.createRole(Permission.Create);
 
     Roles.createRole(Permission.Read);
 
     Roles.createRole(Permission.Delete);
+
+    Roles.createRole(Permission.Update);
 
     /**
      * Create categories

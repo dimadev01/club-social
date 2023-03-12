@@ -74,6 +74,7 @@ export const MemberNationalityLabel = {
   [MemberNationality.Argentina]: 'Argentina',
   [MemberNationality.Colombia]: 'Colombia',
   [MemberNationality.Ukraine]: 'Ucrania',
+  [MemberNationality.Bulgaria]: 'Bulgaria',
 };
 
 export const getMemberNationalityOptions = () =>

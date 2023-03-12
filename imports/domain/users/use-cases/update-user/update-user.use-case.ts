@@ -1,7 +1,7 @@
 import { Accounts } from 'meteor/accounts-base';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { Role } from '@domain/roles/roles.enum';
+import { Permission, Role, Scope } from '@domain/roles/roles.enum';
 import { EditAdminError } from '@domain/users/errors/edit-admin.error';
 import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
@@ -22,6 +22,8 @@ export class UpdateUserUseCase
   public async execute(
     request: UpdateUserRequestDto
   ): Promise<Result<undefined, Error>> {
+    this.validatePermission(Scope.Users, Permission.Update);
+
     await this.validateDto(UpdateUserRequestDto, request);
 
     const user = await Meteor.users.findOneAsync(request.id);

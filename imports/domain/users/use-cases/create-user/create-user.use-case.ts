@@ -4,7 +4,9 @@ import { injectable } from 'tsyringe';
 import {
   AdminRole,
   MemberRole,
+  Permission,
   Role,
+  Scope,
   StaffRole,
 } from '@domain/roles/roles.enum';
 import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
@@ -25,6 +27,8 @@ export class CreateUserUseCase
   public async execute(
     request: CreateUserRequestDto
   ): Promise<Result<string, Error>> {
+    this.validatePermission(Scope.Users, Permission.Create);
+
     await this.validateDto(CreateUserRequestDto, request);
 
     if (request.emails?.some((email) => Accounts.findUserByEmail(email))) {

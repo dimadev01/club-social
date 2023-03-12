@@ -8,10 +8,13 @@ import {
   BulbOutlined,
   HomeOutlined,
   LogoutOutlined,
+  MailOutlined,
   UserOutlined,
+  WhatsAppOutlined,
 } from '@ant-design/icons';
 import { Permission, Scope } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
+import { Button } from '@ui/components/Button';
 
 type Props = {
   children: JSX.Element;
@@ -157,6 +160,28 @@ export const Layout: React.FC<Props> = ({ children }) => {
         <AntLayout.Content className="px-4 py-8 sm:p-14 ">
           {children}
         </AntLayout.Content>
+
+        <AntLayout.Footer className="flex">
+          <Button
+            size="large"
+            tooltip={{ title: 'Enviar Email' }}
+            icon={<MailOutlined />}
+            htmlType="button"
+            type="ghost"
+            className="ml-auto"
+            href="mailto:info@clubsocialmontegrande.ar"
+            target="_blank"
+          />
+          <Button
+            size="large"
+            tooltip={{ title: 'Enviar WhatsApp' }}
+            icon={<WhatsAppOutlined />}
+            htmlType="button"
+            type="ghost"
+            href="https://wa.me/5491158804950"
+            target="_blank"
+          />
+        </AntLayout.Footer>
       </AntLayout>
     </AntLayout>
   );

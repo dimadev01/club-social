@@ -13,7 +13,7 @@ import { HomePage } from '@ui/pages/HomePage';
 import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
-import { MovementsPage } from '@ui/pages/movements/MovementsPage';
+import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
 import { ProfessorsPage } from '@ui/pages/professors/ProfessorsPage';
 import { RentalsPage } from '@ui/pages/rentals/RentalsPage';
 import { ServicesPage } from '@ui/pages/services/ServicesPage';
@@ -63,7 +63,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Write} scope={Scope.Users}>
+      <PrivateRoute permission={Permission.Read} scope={Scope.Users}>
         <UsersDetailPage />
       </PrivateRoute>
     ),
@@ -88,7 +88,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Write} scope={Scope.Members}>
+      <PrivateRoute permission={Permission.Read} scope={Scope.Members}>
         <MembersDetailPage />
       </PrivateRoute>
     ),
@@ -106,14 +106,14 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute permission={Permission.Read} scope={Scope.Movements}>
-        <MovementsPage />
+        <MovementsRoot />
       </PrivateRoute>
     ),
     path: AppUrl.Movements,
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Write} scope={Scope.Movements}>
+      <PrivateRoute permission={Permission.Read} scope={Scope.Movements}>
         <MovementDetailPage />
       </PrivateRoute>
     ),
@@ -121,7 +121,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Write} scope={Scope.Movements}>
+      <PrivateRoute permission={Permission.Read} scope={Scope.Movements}>
         <MovementDetailPage />
       </PrivateRoute>
     ),

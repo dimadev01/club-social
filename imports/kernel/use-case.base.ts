@@ -1,6 +1,9 @@
 import { SortOrder } from 'antd/es/table/interface';
 import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
+import { Roles } from 'meteor/alanning:roles';
+import { Meteor } from 'meteor/meteor';
+import { Permission, Scope } from '@domain/roles/roles.enum';
 import { MeteorErrorCode } from '@kernel/errors.enum';
 import { MongoOptions } from '@kernel/use-case.interface';
 import { ValidationUtils } from '@shared/utils/validation.utils';
@@ -23,6 +26,24 @@ export abstract class UseCase<T extends object = any> {
       throw new Meteor.Error(
         MeteorErrorCode.BadRequest,
         ValidationUtils.getErrorMessage(errors)
+      );
+    }
+  }
+
+  protected validatePermission(scope: Scope, permission: Permission): void {
+    const user = Meteor.user();
+
+    if (!user) {
+      throw new Meteor.Error(
+        MeteorErrorCode.Unauthorized,
+        'You are not logged in'
+      );
+    }
+
+    if (!Roles.userIsInRole(user, permission, scope)) {
+      throw new Meteor.Error(
+        MeteorErrorCode.Forbidden,
+        'You are not allowed to perform this action'
       );
     }
   }

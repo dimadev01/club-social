@@ -13,19 +13,17 @@ import { MovementsCollection } from '@domain/movements/movements.collection';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
-import { PaginatedResponse } from '@kernel/paginated-response.dto';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetMovementsUseCase
   extends UseCase<GetMovementsGridRequestDto>
-  implements
-    IUseCase<GetMovementsGridRequestDto, PaginatedResponse<MovementGridDto>>
+  implements IUseCase<GetMovementsGridRequestDto, GetMovementsGridResponseDto>
 {
   public async execute(
     request: GetMovementsGridRequestDto
-  ): Promise<Result<PaginatedResponse<MovementGridDto>, Error>> {
+  ): Promise<Result<GetMovementsGridResponseDto, Error>> {
     await this.validateDto(GetMovementsGridRequestDto, request);
 
     const $match: Mongo.Query<Movement> = {
@@ -196,6 +194,145 @@ export class GetMovementsUseCase
         },
       ])
       .toArray();
+
+    console.log(
+      await MovementsCollection.rawCollection()
+        .aggregate<Movement>([
+          {
+            $match,
+          },
+          {
+            $lookup: {
+              as: 'member',
+              foreignField: '_id',
+              from: 'members',
+              localField: 'memberId',
+              pipeline: [
+                {
+                  $lookup: {
+                    as: 'user',
+                    foreignField: '_id',
+                    from: 'users',
+                    localField: 'userId',
+                  },
+                },
+                {
+                  $unwind: '$user',
+                },
+              ],
+            },
+          },
+          {
+            $unwind: {
+              path: '$member',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              as: 'professor',
+              foreignField: '_id',
+              from: 'professors',
+              localField: 'professorId',
+              pipeline: [
+                {
+                  $lookup: {
+                    as: 'user',
+                    foreignField: '_id',
+                    from: 'users',
+                    localField: 'userId',
+                  },
+                },
+                {
+                  $unwind: '$user',
+                },
+              ],
+            },
+          },
+          {
+            $unwind: {
+              path: '$professor',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              as: 'employee',
+              foreignField: '_id',
+              from: 'employees',
+              localField: 'employeeId',
+              pipeline: [
+                {
+                  $lookup: {
+                    as: 'user',
+                    foreignField: '_id',
+                    from: 'users',
+                    localField: 'userId',
+                  },
+                },
+                {
+                  $unwind: '$user',
+                },
+              ],
+            },
+          },
+          {
+            $unwind: {
+              path: '$employee',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              as: 'rental',
+              foreignField: '_id',
+              from: 'rentals',
+              localField: 'rentalId',
+            },
+          },
+          {
+            $unwind: {
+              path: '$rental',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $lookup: {
+              as: 'service',
+              foreignField: '_id',
+              from: 'services',
+              localField: 'serviceId',
+            },
+          },
+          {
+            $unwind: {
+              path: '$service',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $facet: {
+              data: this.getPaginatedPipeline({
+                $sort: { date: -1 },
+                page: request.page,
+                pageSize: request.pageSize,
+              }),
+              total: [{ $count: 'count' }],
+              totals: [
+                {
+                  $group: {
+                    _id: '$type',
+                    sum: {
+                      $sum: '$amount',
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ])
+        .explain()
+    );
 
     const income = find(totals, { _id: 'income' })?.sum ?? 0;
 

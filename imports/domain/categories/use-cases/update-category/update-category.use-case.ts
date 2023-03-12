@@ -1,7 +1,7 @@
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { CategoriesCollection } from '@domain/categories/categories.collection';
-import { PriceNotFoundError } from '@domain/categories/errors/price-not-found.error';
+import { CategoryNotFoundError } from '@domain/categories/errors/category-not-found.error';
 import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
 import { Logger } from '@infra/logger/logger.service';
 import { UseCase } from '@kernel/use-case.base';
@@ -26,7 +26,7 @@ export class UpdateCategoryUseCase
     });
 
     if (!price) {
-      return err(new PriceNotFoundError());
+      return err(new CategoryNotFoundError());
     }
 
     price.amount = request.amount;

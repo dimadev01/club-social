@@ -24,25 +24,41 @@ export enum Scope {
 }
 
 export enum Permission {
+  Create = 'write',
   Delete = 'delete',
   Read = 'read',
-  Write = 'write',
+  Update = 'update',
 }
 
 export const AdminRole = {
-  [Scope.Users]: [Permission.Read, Permission.Write, Permission.Delete],
-  [Scope.Members]: [Permission.Read, Permission.Write, Permission.Delete],
-  [Scope.Categories]: [Permission.Read, Permission.Write],
-  [Scope.Movements]: [Permission.Read, Permission.Write, Permission.Delete],
-  [Scope.Professors]: [Permission.Read, Permission.Write],
-  [Scope.Rentals]: [Permission.Read, Permission.Write],
-  [Scope.Employees]: [Permission.Read, Permission.Write],
-  [Scope.Services]: [Permission.Read, Permission.Write],
+  [Scope.Users]: [
+    Permission.Read,
+    Permission.Create,
+    Permission.Update,
+    Permission.Delete,
+  ],
+  [Scope.Members]: [
+    Permission.Read,
+    Permission.Create,
+    Permission.Update,
+    Permission.Delete,
+  ],
+  [Scope.Categories]: [Permission.Read, Permission.Update],
+  [Scope.Movements]: [
+    Permission.Read,
+    Permission.Create,
+    Permission.Update,
+    Permission.Delete,
+  ],
+  [Scope.Professors]: [Permission.Read, Permission.Update],
+  [Scope.Rentals]: [Permission.Read, Permission.Update],
+  [Scope.Employees]: [Permission.Read, Permission.Update],
+  [Scope.Services]: [Permission.Read, Permission.Update],
 };
 
 export const StaffRole = {
-  [Scope.Members]: [Permission.Read, Permission.Write],
-  [Scope.Movements]: [Permission.Read, Permission.Write],
+  [Scope.Members]: [Permission.Read, Permission.Update],
+  [Scope.Movements]: [Permission.Read, Permission.Create, Permission.Update],
   [Scope.Categories]: [Permission.Read],
   [Scope.Professors]: [Permission.Read],
   [Scope.Rentals]: [Permission.Read],
