@@ -199,7 +199,13 @@ export class GetMovementsUseCase
 
     const expense = find(totals, { _id: 'expense' })?.sum ?? 0;
 
-    const debt = income - (find(totals, { _id: 'debt' })?.sum ?? 0);
+    let debt = find(totals, { _id: 'debt' })?.sum ?? 0;
+
+    if (request.filters?.category?.length) {
+      debt = 0;
+    } else {
+      debt = income - debt;
+    }
 
     const balance = income - expense;
 
