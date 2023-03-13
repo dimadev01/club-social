@@ -2,6 +2,8 @@ import { MemberMovementGridDto } from '@domain/members/use-cases/get-member-move
 import { PaginatedResponse } from '@kernel/paginated-response.dto';
 
 export class GetMemberMovementsGridResponseDto extends PaginatedResponse<MemberMovementGridDto> {
+  income: number;
+
   debt: number;
 
   balance: number;

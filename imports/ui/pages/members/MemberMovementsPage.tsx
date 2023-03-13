@@ -60,6 +60,10 @@ export const MemberMovementsPage = () => {
       </Typography.Text>
 
       <Typography.Text>
+        Pagos: {data ? CurrencyUtils.formatCents(data.income, false) : ''}
+      </Typography.Text>
+
+      <Typography.Text>
         Balance: {data ? CurrencyUtils.formatCents(data.balance, false) : ''}
       </Typography.Text>
     </Space>
@@ -141,8 +145,6 @@ export const MemberMovementsPage = () => {
             ]}
             footer={renderFooter}
           />
-
-          {/* <ReactJson collapsed src={data?.$explain} /> */}
         </Space>
       </Card>
     </>

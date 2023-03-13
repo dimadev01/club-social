@@ -112,11 +112,9 @@ export class GetMemberMovementsUseCase
 
     const income = find(totals, { _id: 'income' })?.sum ?? 0;
 
-    const expense = find(totals, { _id: 'expense' })?.sum ?? 0;
+    const debt = find(totals, { _id: 'debt' })?.sum ?? 0;
 
-    const debt = income - (find(totals, { _id: 'debt' })?.sum ?? 0);
-
-    const balance = income - expense;
+    const balance = income - debt;
 
     const count = total.length > 0 ? total[0].count : 0;
 
@@ -135,7 +133,6 @@ export class GetMemberMovementsUseCase
           })
         ),
       debt,
-      expense,
       income,
     });
   }

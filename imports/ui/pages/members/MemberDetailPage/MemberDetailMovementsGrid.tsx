@@ -60,11 +60,7 @@ export const MemberDetailMovementsGrid = () => {
       </Typography.Text>
 
       <Typography.Text>
-        Entrada: {data ? CurrencyUtils.formatCents(data.income, false) : ''}
-      </Typography.Text>
-
-      <Typography.Text>
-        Salida: {data ? CurrencyUtils.formatCents(data.expense, false) : ''}
+        Pagos: {data ? CurrencyUtils.formatCents(data.income, false) : ''}
       </Typography.Text>
 
       <Typography.Text>
