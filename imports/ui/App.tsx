@@ -71,7 +71,7 @@ export const App = () => {
         <QueryClientProvider client={queryClient}>
           <Routes />
 
-          <ReactQueryDevtools initialIsOpen={false} />
+          {!Meteor.isProduction && <ReactQueryDevtools initialIsOpen={false} />}
         </QueryClientProvider>
       </ConfigProvider>
     </>

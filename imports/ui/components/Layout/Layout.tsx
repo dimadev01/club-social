@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Col, Image, Layout as AntLayout, Menu, Row, Typography } from 'antd';
+import ButtonGroup from 'antd/es/button/button-group';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { Roles } from 'meteor/alanning:roles';
 import { Navigate, NavLink } from 'react-router-dom';
 import {
   BankOutlined,
   BulbOutlined,
+  FilePdfOutlined,
   LogoutOutlined,
   MailOutlined,
   UserOutlined,
@@ -154,26 +156,40 @@ export const Layout: React.FC<Props> = ({ children }) => {
           {children}
         </AntLayout.Content>
 
-        <AntLayout.Footer className="flex">
-          <Button
-            size="large"
-            tooltip={{ title: 'Enviar Email' }}
-            icon={<MailOutlined />}
-            htmlType="button"
-            type="ghost"
-            className="ml-auto"
-            href="mailto:info@clubsocialmontegrande.ar"
-            target="_blank"
-          />
-          <Button
-            size="large"
-            tooltip={{ title: 'Enviar WhatsApp' }}
-            icon={<WhatsAppOutlined />}
-            htmlType="button"
-            type="ghost"
-            href="https://wa.me/5491158804950"
-            target="_blank"
-          />
+        <AntLayout.Footer className="flex justify-between">
+          <ButtonGroup>
+            <Button
+              size="large"
+              tooltip={{ title: 'Descargar Reglamento' }}
+              icon={<FilePdfOutlined />}
+              htmlType="button"
+              type="ghost"
+              className="ml-auto"
+              href="/reglamento-club-social.pdf"
+              target="_blank"
+            />
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button
+              size="large"
+              tooltip={{ title: 'Enviar Email' }}
+              icon={<MailOutlined />}
+              htmlType="button"
+              type="ghost"
+              className="ml-auto"
+              href="mailto:info@clubsocialmontegrande.ar"
+              target="_blank"
+            />
+            <Button
+              size="large"
+              tooltip={{ title: 'Enviar WhatsApp' }}
+              icon={<WhatsAppOutlined />}
+              htmlType="button"
+              type="ghost"
+              href="https://wa.me/5491158804950"
+              target="_blank"
+            />
+          </ButtonGroup>
         </AntLayout.Footer>
       </AntLayout>
     </AntLayout>
