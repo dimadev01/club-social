@@ -114,8 +114,6 @@ export const MovementDetailPage = () => {
         {
           onSuccess: () => {
             message.success('Movimiento creado');
-
-            form.resetFields();
           },
         }
       );
@@ -180,27 +178,24 @@ export const MovementDetailPage = () => {
       return (
         <Form.Item
           className="cs-form-item-extra"
-          label={
-            <div className="flex items-center justify-between">
-              <span>Socio/s</span>
-
-              {category === CategoryEnum.MembershipDebt && (
-                <Button
-                  size="small"
-                  htmlType="button"
-                  type="ghost"
-                  onClick={() => {
-                    form.setFieldValue(
-                      'memberIds',
-                      members?.map((member) => member._id) ?? []
-                    );
-                  }}
-                >
-                  Seleccionar todos
-                </Button>
-              )}
-            </div>
+          help={
+            category === CategoryEnum.MembershipDebt && (
+              <Button
+                size="small"
+                htmlType="button"
+                type="ghost"
+                onClick={() => {
+                  form.setFieldValue(
+                    'memberIds',
+                    members?.map((member) => member._id) ?? []
+                  );
+                }}
+              >
+                Seleccionar todos
+              </Button>
+            )
           }
+          label="Socio/s"
           name="memberIds"
           rules={[{ required: true }, { min: 1, type: 'array' }]}
         >
@@ -329,8 +324,8 @@ export const MovementDetailPage = () => {
                 : getPriceForCategory(CategoryEnum.MembershipIncome),
               category: movement?.category ?? CategoryEnum.MembershipIncome,
               date: movement?.date
-                ? dayjs(movement.date, DateFormats.DD_MM_YYYY)
-                : dayjs(),
+                ? dayjs.utc(movement.date, DateFormats.DD_MM_YYYY)
+                : undefined,
               memberId: movement?.memberId,
               memberIds: undefined,
               notes: movement?.notes,
@@ -345,7 +340,9 @@ export const MovementDetailPage = () => {
               <DatePicker
                 format={DateFormats.DD_MM_YYYY}
                 className="w-full"
-                disabledDate={(current) => current.isAfter(dayjs())}
+                disabledDate={(current) =>
+                  current.isAfter(dayjs().add(1, 'day'))
+                }
               />
             </Form.Item>
 
