@@ -10,6 +10,7 @@ import {
   FilePdfOutlined,
   LogoutOutlined,
   MailOutlined,
+  NotificationOutlined,
   UserOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
@@ -164,8 +165,16 @@ export const Layout: React.FC<Props> = ({ children }) => {
               icon={<FilePdfOutlined />}
               htmlType="button"
               type="ghost"
-              className="ml-auto"
               href="/reglamento-club-social.pdf"
+              target="_blank"
+            />
+            <Button
+              size="large"
+              tooltip={{ title: 'Comunicados' }}
+              icon={<NotificationOutlined />}
+              htmlType="button"
+              type="ghost"
+              href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
               target="_blank"
             />
           </ButtonGroup>
@@ -176,7 +185,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
               icon={<MailOutlined />}
               htmlType="button"
               type="ghost"
-              className="ml-auto"
               href="mailto:info@clubsocialmontegrande.ar"
               target="_blank"
             />
