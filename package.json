@@ -41,6 +41,7 @@
     "read-excel-file": "^5.6.1",
     "reflect-metadata": "^0.1.13",
     "simpl-schema": "^3.4.1",
+    "tailwindcss": "^3.2.7",
     "tsyringe": "^4.7.0",
     "use-debounce": "^9.0.3",
     "use-deep-compare-effect": "^1.8.1"
@@ -72,7 +73,6 @@
     "maildev": "^2.0.5",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.1",
-    "tailwindcss": "^3.2.7",
     "typescript": "^4.7.4"
   },
   "meteor": {
