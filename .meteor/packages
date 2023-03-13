@@ -29,4 +29,4 @@ percolate:migrations
 less
 aldeed:collection2
 accounts-passwordless@2.1.3
-juliancwirko:postcss
+standard-minifier-css
