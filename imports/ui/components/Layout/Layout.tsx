@@ -23,6 +23,11 @@ type Props = {
 };
 
 export const Layout: React.FC<Props> = ({ children }) => {
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(true);
+
+  const [isMenuResponsiveMode, setIsMenuResponsiveMode] =
+    useState<boolean>(false);
+
   const [menuKey, setMenuKey] = useState<string>(
     `/${window.location.pathname.split('/')[1]}`
   );
@@ -41,6 +46,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Users,
         label: <NavLink to={AppUrl.Users}>Usuarios</NavLink>,
+        onClick: () => {
+          if (isMenuResponsiveMode) {
+            setIsMenuCollapsed(true);
+          }
+        },
       });
     }
 
@@ -49,6 +59,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Members,
         label: <NavLink to={AppUrl.Members}>Socios</NavLink>,
+        onClick: () => {
+          if (isMenuResponsiveMode) {
+            setIsMenuCollapsed(true);
+          }
+        },
       });
     }
 
@@ -57,6 +72,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Movements,
         label: <NavLink to={AppUrl.Movements}>Movimientos</NavLink>,
+        onClick: () => {
+          if (isMenuResponsiveMode) {
+            setIsMenuCollapsed(true);
+          }
+        },
       });
     }
 
@@ -65,6 +85,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Categories,
         label: <NavLink to={AppUrl.Categories}>Categorías</NavLink>,
+        onClick: () => {
+          if (isMenuResponsiveMode) {
+            setIsMenuCollapsed(true);
+          }
+        },
       });
     }
 
@@ -73,6 +98,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Professors,
         label: <NavLink to={AppUrl.Professors}>Profesores</NavLink>,
+        onClick: () => {
+          if (isMenuResponsiveMode) {
+            setIsMenuCollapsed(true);
+          }
+        },
       });
     }
 
@@ -81,6 +111,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Employees,
         label: <NavLink to={AppUrl.Employees}>Empleados</NavLink>,
+        onClick: () => {
+          if (isMenuResponsiveMode) {
+            setIsMenuCollapsed(true);
+          }
+        },
       });
     }
 
@@ -89,6 +124,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Rentals,
         label: <NavLink to={AppUrl.Rentals}>Alquileres</NavLink>,
+        onClick: () => {
+          if (isMenuResponsiveMode) {
+            setIsMenuCollapsed(true);
+          }
+        },
       });
     }
 
@@ -97,6 +137,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <BulbOutlined className="!text-lg" />,
         key: AppUrl.Services,
         label: <NavLink to={AppUrl.Services}>Servicios</NavLink>,
+        onClick: () => {
+          if (isMenuResponsiveMode) {
+            setIsMenuCollapsed(true);
+          }
+        },
       });
     }
 
@@ -104,12 +149,15 @@ export const Layout: React.FC<Props> = ({ children }) => {
   };
 
   return (
-    <AntLayout className="cs-layout min-h-full">
+    <AntLayout hasSider className="cs-layout min-h-full">
       <AntLayout.Sider
+        collapsed={isMenuCollapsed}
+        onCollapse={setIsMenuCollapsed}
         breakpoint="lg"
         collapsedWidth="0"
         className="!bg-[#f8f9fd] cs-sider"
         width={260}
+        onBreakpoint={(broken) => setIsMenuResponsiveMode(broken)}
       >
         <NavLink to={AppUrl.Home} onClick={() => setMenuKey(AppUrl.Home)}>
           <Image
@@ -161,7 +209,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
           <ButtonGroup>
             <Button
               size="large"
-              tooltip={{ title: 'Descargar Reglamento' }}
+              tooltip={{ title: 'Reglamento' }}
               icon={<FilePdfOutlined />}
               htmlType="button"
               type="ghost"
