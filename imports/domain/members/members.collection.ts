@@ -1,3 +1,4 @@
+/* eslint-disable sort-keys-fix/sort-keys-fix */
 import SimpleSchema from 'simpl-schema';
 import { Member } from '@domain/members/member.entity';
 import { Collection } from '@infra/database/collection.base';
@@ -44,4 +45,9 @@ await MembersCollection.createIndexAsync({ fileStatus: 1 });
 
 await MembersCollection.createIndexAsync({ status: 1 });
 
-await MembersCollection.createIndexAsync({ isDeleted: 1 });
+await MembersCollection.createIndexAsync({
+  isDeleted: 1,
+  fileStatus: 1,
+  status: 1,
+  category: 1,
+});

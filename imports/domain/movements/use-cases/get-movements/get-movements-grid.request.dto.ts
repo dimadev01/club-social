@@ -1,4 +1,4 @@
-import { IsDateString, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDateString, IsOptional, IsString } from 'class-validator';
 import { PaginatedRequestDto } from '@kernel/paginated-request.dto';
 
 export class GetMovementsGridRequestDto extends PaginatedRequestDto {
@@ -13,4 +13,8 @@ export class GetMovementsGridRequestDto extends PaginatedRequestDto {
   @IsDateString()
   @IsOptional()
   public to: string | null;
+
+  @IsBoolean()
+  @IsOptional()
+  public showDeleted: boolean | null;
 }

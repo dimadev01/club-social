@@ -2,18 +2,20 @@ import React, { useState } from 'react';
 import {
   Breadcrumb,
   Card,
-  Col,
+  Checkbox,
   DatePicker,
-  Row,
+  Form,
   Space,
+  Table as AntTable,
   Tag,
-  Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
+import { Roles } from 'meteor/alanning:roles';
+import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { NavLink, useLocation } from 'react-router-dom';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   CategoryEnum,
   CategoryLabel,
@@ -23,6 +25,7 @@ import {
 } from '@domain/categories/categories.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
+import { Permission, Scope } from '@domain/roles/roles.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -34,6 +37,7 @@ import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 import { useMovementsGrid } from '@ui/hooks/movements/useMovementsGrid';
+import { useRestoreMovement } from '@ui/hooks/movements/useRestoreMovement';
 import { useGrid } from '@ui/hooks/useGrid';
 
 export const MovementsPage = () => {
@@ -49,6 +53,8 @@ export const MovementsPage = () => {
   const [memberIdSearchValue, setMemberIdSearchValue] = useState<string>(
     (parsedQs.memberId as string) ?? undefined
   );
+
+  const [showDeleted, setShowDeleted] = useState<boolean>(false);
 
   const [dateRangeValue, setDateRangeValue] =
     useState<RangeValue<Dayjs> | null>(
@@ -68,6 +74,7 @@ export const MovementsPage = () => {
     page: gridState.page,
     pageSize: gridState.pageSize,
     search: gridState.search,
+    showDeleted,
     sortField: gridState.sortField,
     sortOrder: gridState.sortOrder,
     to: dateRangeValue
@@ -77,25 +84,56 @@ export const MovementsPage = () => {
 
   const deleteMovement = useDeleteMovement(refetch);
 
-  const renderFooter = () => (
-    <Space direction="horizontal" className="flex justify-between">
-      <Typography.Text>
-        Entrada: {data ? CurrencyUtils.formatCents(data.income, false) : ''}
-      </Typography.Text>
+  const restoreMovement = useRestoreMovement(refetch);
 
-      <Typography.Text>
-        Salida: {data ? CurrencyUtils.formatCents(data.expense, false) : ''}
-      </Typography.Text>
+  const renderSummary = () => (
+    <AntTable.Summary>
+      <AntTable.Summary.Row>
+        <AntTable.Summary.Cell index={0} align="right">
+          <div className="flex justify-between">
+            <span>Entrada</span>
+            <span>
+              {data ? CurrencyUtils.formatCents(data.income, false) : ''}
+            </span>
+          </div>
+        </AntTable.Summary.Cell>
 
-      <Typography.Text>
-        Deudas: {data ? CurrencyUtils.formatCents(data.debt, false) : ''}
-      </Typography.Text>
+        <AntTable.Summary.Cell index={1} align="right">
+          <div className="flex justify-between">
+            <span>Salida</span>
+            <span>
+              {data ? CurrencyUtils.formatCents(data.expense, false) : ''}
+            </span>
+          </div>
+        </AntTable.Summary.Cell>
 
-      <Typography.Text>
-        Balance: {data ? CurrencyUtils.formatCents(data.balance, false) : ''}
-      </Typography.Text>
-    </Space>
+        <AntTable.Summary.Cell index={2} align="right">
+          <div className="flex justify-between">
+            <span>Deudas</span>
+            <span>
+              {data ? CurrencyUtils.formatCents(data.debt, false) : ''}
+            </span>
+          </div>
+        </AntTable.Summary.Cell>
+
+        <AntTable.Summary.Cell index={3} align="right">
+          <div className="flex justify-between">
+            <span>Balance</span>
+            <span>
+              {data ? CurrencyUtils.formatCents(data.balance, false) : ''}
+            </span>
+          </div>
+        </AntTable.Summary.Cell>
+        <AntTable.Summary.Cell index={4} />
+      </AntTable.Summary.Row>
+    </AntTable.Summary>
   );
+
+  const userId = Meteor.userId();
+
+  if (!userId) {
+    return null;
+  }
 
   return (
     <>
@@ -122,43 +160,60 @@ export const MovementsPage = () => {
         }
       >
         <Space size="middle" direction="vertical" className="flex">
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} md={8} lg={8} xl={6}>
-              <DatePicker.RangePicker
-                format={DateFormats.DD_MM_YYYY}
-                className="w-full"
-                allowClear
-                value={dateRangeValue}
-                disabledDate={(current) => current.isAfter(dayjs())}
-                onChange={(value) => {
-                  setDateRangeValue(value);
+          <Form layout="inline">
+            <Space wrap>
+              <Form.Item>
+                <DatePicker.RangePicker
+                  format={DateFormats.DD_MM_YYYY}
+                  className="w-full"
+                  allowClear
+                  value={dateRangeValue}
+                  disabledDate={(current) => current.isAfter(dayjs())}
+                  onChange={(value) => {
+                    setDateRangeValue(value);
 
-                  setGridState((prevState) => ({ ...prevState, page: 1 }));
-                }}
-              />
-            </Col>
+                    setGridState((prevState) => ({ ...prevState, page: 1 }));
+                  }}
+                />
+              </Form.Item>
 
-            <Col xs={24} sm={12} md={8} lg={8} xl={6}>
-              <Select
-                value={memberIdSearchValue}
-                onChange={(value) => {
-                  setMemberIdSearchValue(value ?? undefined);
+              <Form.Item>
+                <Select
+                  value={memberIdSearchValue}
+                  onChange={(value) => {
+                    setMemberIdSearchValue(value ?? undefined);
 
-                  setGridState((prevState) => ({ ...prevState, page: 1 }));
-                }}
-                className="w-full"
-                disabled={isLoadingMembers || isLoading}
-                loading={isLoadingMembers}
-                placeholder="Buscar por socios"
-                options={
-                  members?.map((member: GetMembersDto) => ({
-                    label: member.name,
-                    value: member._id,
-                  })) ?? []
-                }
-              />
-            </Col>
-          </Row>
+                    setGridState((prevState) => ({ ...prevState, page: 1 }));
+                  }}
+                  className="w-full"
+                  disabled={isLoadingMembers || isLoading}
+                  loading={isLoadingMembers}
+                  placeholder="Buscar por socios"
+                  options={
+                    members?.map((member: GetMembersDto) => ({
+                      label: member.name,
+                      value: member._id,
+                    })) ?? []
+                  }
+                />
+              </Form.Item>
+
+              {Roles.userIsInRole(
+                userId,
+                Permission.ViewDeleted,
+                Scope.Movements
+              ) && (
+                <Form.Item>
+                  <Checkbox
+                    value={showDeleted}
+                    onChange={(e) => setShowDeleted(e.target.checked)}
+                  >
+                    Ver eliminados
+                  </Checkbox>
+                </Form.Item>
+              )}
+            </Space>
+          </Form>
 
           <Table<MovementGridDto>
             total={data?.count ?? 0}
@@ -218,31 +273,68 @@ export const MovementsPage = () => {
               {
                 align: 'center',
                 render: (_, movement: MovementGridDto) => (
-                  <Button
-                    popConfirm={{
-                      onConfirm: () =>
-                        deleteMovement.mutate(
-                          { id: movement._id },
-                          { onError: () => deleteMovement.reset() }
-                        ),
-                      title: '¿Está seguro de eliminar este movimiento?',
-                    }}
-                    type="ghost"
-                    htmlType="button"
-                    tooltip={{ title: 'Eliminar ' }}
-                    icon={<DeleteOutlined />}
-                    loading={deleteMovement.variables?.id === movement._id}
-                    disabled={deleteMovement.variables?.id === movement._id}
-                  />
+                  <>
+                    {!movement.isDeleted &&
+                      Roles.userIsInRole(
+                        userId,
+                        Permission.Delete,
+                        Scope.Movements
+                      ) && (
+                        <Button
+                          popConfirm={{
+                            onConfirm: () =>
+                              deleteMovement.mutate(
+                                { id: movement._id },
+                                {
+                                  onError: () => deleteMovement.reset(),
+                                  onSuccess: () => deleteMovement.reset(),
+                                }
+                              ),
+                            title: '¿Está seguro de eliminar este movimiento?',
+                          }}
+                          type="ghost"
+                          htmlType="button"
+                          tooltip={{ title: 'Eliminar' }}
+                          icon={<DeleteOutlined />}
+                          loading={
+                            deleteMovement.variables?.id === movement._id
+                          }
+                          disabled={
+                            deleteMovement.variables?.id === movement._id
+                          }
+                        />
+                      )}
+
+                    {movement.isDeleted &&
+                      Roles.userIsInRole(
+                        userId,
+                        Permission.Update,
+                        Scope.Movements
+                      ) && (
+                        <Button
+                          type="ghost"
+                          onClick={() =>
+                            restoreMovement.mutate({ id: movement._id })
+                          }
+                          htmlType="button"
+                          tooltip={{ title: 'Restaurar' }}
+                          icon={<ReloadOutlined />}
+                          loading={
+                            restoreMovement.variables?.id === movement._id
+                          }
+                          disabled={
+                            restoreMovement.variables?.id === movement._id
+                          }
+                        />
+                      )}
+                  </>
                 ),
-                title: 'Actions',
+                title: 'Acciones',
                 width: 100,
               },
             ]}
-            footer={renderFooter}
+            summary={renderSummary}
           />
-
-          {/* <ReactJson collapsed src={data?.$explain} /> */}
         </Space>
       </Card>
     </>

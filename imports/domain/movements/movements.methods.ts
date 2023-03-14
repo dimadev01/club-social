@@ -1,6 +1,4 @@
 import { injectable } from 'tsyringe';
-import { RemoveMemberRequestDto } from '@domain/members/use-cases/remove-member/remove-member-request.dto';
-import { RemoveMemberUseCase } from '@domain/members/use-cases/remove-member/remove-member.use-case';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
 import { CreateMovementUseCase } from '@domain/movements/use-cases/create-movement/create-movement.use-case';
 import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
@@ -11,6 +9,8 @@ import { GetMovementsByMemberGridRequestDto } from '@domain/movements/use-cases/
 import { GetMovementsByMemberUseCase } from '@domain/movements/use-cases/get-movements-by-member/get-movements-by-member-grid.use-case';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsUseCase } from '@domain/movements/use-cases/get-movements/get-movements-grid.use-case';
+import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-movement/restore-movement-request.dto';
+import { RestoreMovementUseCase } from '@domain/movements/use-cases/restore-movement/restore-movement.use-case';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
 import { UpdateMovementUseCase } from '@domain/movements/use-cases/update-movement/update-movement.use-case';
 import { BaseMethod } from '@infra/methods/methods.base';
@@ -23,9 +23,9 @@ export class MovementsMethods extends BaseMethod {
     private readonly _getMovementsByMember: GetMovementsByMemberUseCase,
     private readonly _getMovement: GetMovementUseCase,
     private readonly _createMovement: CreateMovementUseCase,
-    private readonly _removeMember: RemoveMemberUseCase,
     private readonly _updateMovement: UpdateMovementUseCase,
-    private readonly _deleteMovement: DeleteMovementUseCase
+    private readonly _deleteMovement: DeleteMovementUseCase,
+    private readonly _restoreMovement: RestoreMovementUseCase
   ) {
     super();
   }
@@ -45,14 +45,14 @@ export class MovementsMethods extends BaseMethod {
       [MethodsEnum.MovementsCreate]: (request: CreateMovementRequestDto) =>
         this.execute(this._createMovement, request),
 
-      [MethodsEnum.MovementsRemove]: (request: RemoveMemberRequestDto) =>
-        this.execute(this._removeMember, request),
-
       [MethodsEnum.MovementsUpdate]: (request: UpdateMovementRequestDto) =>
         this.execute(this._updateMovement, request),
 
       [MethodsEnum.MovementsDelete]: (request: DeleteMovementRequestDto) =>
         this.execute(this._deleteMovement, request),
+
+      [MethodsEnum.MovementsRestore]: (request: RestoreMovementRequestDto) =>
+        this.execute(this._restoreMovement, request),
     });
   }
 }

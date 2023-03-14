@@ -27,7 +27,7 @@ import { Professor } from '@domain/professors/professor.entity';
 import { ProfessorsCollection } from '@domain/professors/professors.collection';
 import { Rental } from '@domain/rentals/rental.entity';
 import { RentalsCollection } from '@domain/rentals/rentals.collection';
-import { Permission, Role } from '@domain/roles/roles.enum';
+import { Permission, Role, Scope } from '@domain/roles/roles.enum';
 import { Service } from '@domain/services/service.entity';
 import { ServicesCollection } from '@domain/services/services.collection';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
@@ -696,4 +696,27 @@ Migrations.add({
     next();
   }),
   version: 1,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    Roles.createRole(Permission.ViewDeleted);
+
+    const admin = await Meteor.users.findOneAsync({
+      'profile.role': Role.Admin,
+    });
+
+    if (!admin) {
+      throw new Meteor.Error('admin-not-found');
+    }
+
+    Roles.addUsersToRoles(admin, Permission.ViewDeleted, Scope.Movements);
+
+    next();
+  }),
+  version: 2,
 });

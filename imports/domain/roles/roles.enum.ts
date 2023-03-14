@@ -28,6 +28,7 @@ export enum Permission {
   Delete = 'delete',
   Read = 'read',
   Update = 'update',
+  ViewDeleted = 'view-deleted',
 }
 
 export const AdminRole = {
@@ -49,6 +50,7 @@ export const AdminRole = {
     Permission.Create,
     Permission.Update,
     Permission.Delete,
+    Permission.ViewDeleted,
   ],
   [Scope.Professors]: [Permission.Read, Permission.Update],
   [Scope.Rentals]: [Permission.Read, Permission.Update],
