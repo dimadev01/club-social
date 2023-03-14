@@ -1,19 +1,15 @@
 import { plainToInstance } from 'class-transformer';
+import dayjs from 'dayjs';
 import find from 'lodash/find';
-import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { err, ok, Result } from 'neverthrow';
+import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { CategoryEnum } from '@domain/categories/categories.enum';
-import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
-import { MembersCollection } from '@domain/members/members.collection';
+import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
 import { MemberMovementGridDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.dto';
 import { GetMemberMovementsGridRequestDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.request.dto';
 import { GetMemberMovementsGridResponseDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.response.dto';
 import { Movement } from '@domain/movements/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
-import { GetMovementsByMemberGridResponseDto } from '@domain/movements/use-cases/get-movements-by-member/get-movements-by-member-grid.response.dto';
-import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
 
@@ -31,24 +27,17 @@ export class GetMemberMovementsUseCase
   ): Promise<Result<GetMemberMovementsGridResponseDto, Error>> {
     await this.validateDto(GetMemberMovementsGridRequestDto, request);
 
-    const user = await Meteor.userAsync();
-
-    if (!user) {
-      return err(new UserNotFoundError());
-    }
-
-    const memberForUser = await MembersCollection.findOneAsync({
-      userId: user._id,
-    });
-
-    if (!memberForUser) {
-      return err(new MemberNotFoundError());
-    }
-
     const $match: Mongo.Query<Movement> = {
       isDeleted: false,
-      memberId: memberForUser._id,
+      memberId: request.memberId,
     };
+
+    if (request.from && request.to) {
+      $match.date = {
+        $gte: dayjs.utc(request.from).startOf('day').toDate(),
+        $lte: dayjs.utc(request.to).endOf('day').toDate(),
+      };
+    }
 
     if (request.filters?.category?.length) {
       $match.category = { $in: request.filters.category as CategoryEnum[] };
@@ -61,39 +50,41 @@ export class GetMemberMovementsUseCase
           $match,
         },
         {
-          $lookup: {
-            as: 'member',
-            foreignField: '_id',
-            from: 'members',
-            localField: 'memberId',
-            pipeline: [
+          $facet: {
+            data: [
+              ...this.getPaginatedPipeline({
+                $sort: { date: -1 },
+                page: request.page,
+                pageSize: request.pageSize,
+              }),
               {
                 $lookup: {
-                  as: 'user',
+                  as: 'member',
                   foreignField: '_id',
-                  from: 'users',
-                  localField: 'userId',
+                  from: 'members',
+                  localField: 'memberId',
+                  pipeline: [
+                    {
+                      $lookup: {
+                        as: 'user',
+                        foreignField: '_id',
+                        from: 'users',
+                        localField: 'userId',
+                      },
+                    },
+                    {
+                      $unwind: '$user',
+                    },
+                  ],
                 },
               },
               {
-                $unwind: '$user',
+                $unwind: {
+                  path: '$member',
+                  preserveNullAndEmptyArrays: true,
+                },
               },
             ],
-          },
-        },
-        {
-          $unwind: {
-            path: '$member',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $facet: {
-            data: this.getPaginatedPipeline({
-              $sort: { date: -1 },
-              page: request.page,
-              pageSize: request.pageSize,
-            }),
             total: [{ $count: 'count' }],
             totals: [
               {
@@ -110,15 +101,15 @@ export class GetMemberMovementsUseCase
       ])
       .toArray();
 
-    const income = find(totals, { _id: 'income' })?.sum ?? 0;
+    const income = find(totals, { _id: CategoryType.Income })?.sum ?? 0;
 
-    const debt = find(totals, { _id: 'debt' })?.sum ?? 0;
+    const debt = find(totals, { _id: CategoryType.Debt })?.sum ?? 0;
 
     const balance = income - debt;
 
     const count = total.length > 0 ? total[0].count : 0;
 
-    return ok<GetMovementsByMemberGridResponseDto>({
+    return ok<GetMemberMovementsGridResponseDto>({
       balance,
       count,
       data: data

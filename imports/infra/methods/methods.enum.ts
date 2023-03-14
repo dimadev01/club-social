@@ -12,7 +12,6 @@ export enum MethodsEnum {
   MembersRemove = 'members/remove',
   MembersUpdate = 'members/update',
 
-  MovementsByMemberGetGrid = 'movements/byMemberGetGrid',
   MovementsCreate = 'movements/create',
   MovementsDelete = 'movements/delete',
   MovementsGet = 'movements/get',

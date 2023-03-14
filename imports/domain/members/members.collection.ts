@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 import SimpleSchema from 'simpl-schema';
 import { Member } from '@domain/members/member.entity';
@@ -35,19 +36,21 @@ MembersCollection.attachSchema(
   })
 );
 
-await MembersCollection.createIndexAsync({ createdAt: -1 });
+if (Meteor.isServer) {
+  MembersCollection.createIndexAsync({ createdAt: -1 });
 
-await MembersCollection.createIndexAsync({ userId: 1 });
+  MembersCollection.createIndexAsync({ userId: 1 });
 
-await MembersCollection.createIndexAsync({ category: 1 });
+  MembersCollection.createIndexAsync({ category: 1 });
 
-await MembersCollection.createIndexAsync({ fileStatus: 1 });
+  MembersCollection.createIndexAsync({ fileStatus: 1 });
 
-await MembersCollection.createIndexAsync({ status: 1 });
+  MembersCollection.createIndexAsync({ status: 1 });
 
-await MembersCollection.createIndexAsync({
-  isDeleted: 1,
-  fileStatus: 1,
-  status: 1,
-  category: 1,
-});
+  MembersCollection.createIndexAsync({
+    isDeleted: 1,
+    fileStatus: 1,
+    status: 1,
+    category: 1,
+  });
+}

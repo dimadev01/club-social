@@ -6,6 +6,7 @@ import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import {
   CategoryEnum,
+  CategoryType,
   MemberCategories,
 } from '@domain/categories/categories.enum';
 import { Movement } from '@domain/movements/movement.entity';
@@ -58,152 +59,189 @@ export class GetMovementsUseCase
     }
 
     // @ts-expect-error
-    const [{ data, total, totals }] = await MovementsCollection.rawCollection()
-      .aggregate<Movement>([
-        {
-          $match,
-        },
-        {
-          $facet: {
-            data: [
-              ...this.getPaginatedPipeline({
-                $sort: { date: -1 },
-                page: request.page,
-                pageSize: request.pageSize,
-              }),
-              {
-                $lookup: {
-                  as: 'member',
-                  foreignField: '_id',
-                  from: 'members',
-                  localField: 'memberId',
-                  pipeline: [
-                    {
-                      $lookup: {
-                        as: 'user',
-                        foreignField: '_id',
-                        from: 'users',
-                        localField: 'userId',
+    const [{ data, total, totalsByType, debtIncome }] =
+      await MovementsCollection.rawCollection()
+        .aggregate<Movement>([
+          {
+            $match,
+          },
+          {
+            $facet: {
+              data: [
+                ...this.getPaginatedPipeline({
+                  $sort: { date: -1 },
+                  page: request.page,
+                  pageSize: request.pageSize,
+                }),
+                {
+                  $lookup: {
+                    as: 'member',
+                    foreignField: '_id',
+                    from: 'members',
+                    localField: 'memberId',
+                    pipeline: [
+                      {
+                        $lookup: {
+                          as: 'user',
+                          foreignField: '_id',
+                          from: 'users',
+                          localField: 'userId',
+                        },
                       },
-                    },
-                    {
-                      $unwind: '$user',
-                    },
-                  ],
-                },
-              },
-              {
-                $unwind: {
-                  path: '$member',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-              {
-                $lookup: {
-                  as: 'professor',
-                  foreignField: '_id',
-                  from: 'professors',
-                  localField: 'professorId',
-                  pipeline: [
-                    {
-                      $lookup: {
-                        as: 'user',
-                        foreignField: '_id',
-                        from: 'users',
-                        localField: 'userId',
+                      {
+                        $unwind: '$user',
                       },
-                    },
-                    {
-                      $unwind: '$user',
-                    },
-                  ],
-                },
-              },
-              {
-                $unwind: {
-                  path: '$professor',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-              {
-                $lookup: {
-                  as: 'employee',
-                  foreignField: '_id',
-                  from: 'employees',
-                  localField: 'employeeId',
-                  pipeline: [
-                    {
-                      $lookup: {
-                        as: 'user',
-                        foreignField: '_id',
-                        from: 'users',
-                        localField: 'userId',
-                      },
-                    },
-                    {
-                      $unwind: '$user',
-                    },
-                  ],
-                },
-              },
-              {
-                $unwind: {
-                  path: '$employee',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-              {
-                $lookup: {
-                  as: 'rental',
-                  foreignField: '_id',
-                  from: 'rentals',
-                  localField: 'rentalId',
-                },
-              },
-              {
-                $unwind: {
-                  path: '$rental',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-              {
-                $lookup: {
-                  as: 'service',
-                  foreignField: '_id',
-                  from: 'services',
-                  localField: 'serviceId',
-                },
-              },
-              {
-                $unwind: {
-                  path: '$service',
-                  preserveNullAndEmptyArrays: true,
-                },
-              },
-            ],
-            total: [{ $count: 'count' }],
-            totals: [
-              {
-                $group: {
-                  _id: '$type',
-                  sum: {
-                    $sum: '$amount',
+                    ],
                   },
                 },
-              },
-            ],
+                {
+                  $unwind: {
+                    path: '$member',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+                {
+                  $lookup: {
+                    as: 'professor',
+                    foreignField: '_id',
+                    from: 'professors',
+                    localField: 'professorId',
+                    pipeline: [
+                      {
+                        $lookup: {
+                          as: 'user',
+                          foreignField: '_id',
+                          from: 'users',
+                          localField: 'userId',
+                        },
+                      },
+                      {
+                        $unwind: '$user',
+                      },
+                    ],
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$professor',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+                {
+                  $lookup: {
+                    as: 'employee',
+                    foreignField: '_id',
+                    from: 'employees',
+                    localField: 'employeeId',
+                    pipeline: [
+                      {
+                        $lookup: {
+                          as: 'user',
+                          foreignField: '_id',
+                          from: 'users',
+                          localField: 'userId',
+                        },
+                      },
+                      {
+                        $unwind: '$user',
+                      },
+                    ],
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$employee',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+                {
+                  $lookup: {
+                    as: 'rental',
+                    foreignField: '_id',
+                    from: 'rentals',
+                    localField: 'rentalId',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$rental',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+                {
+                  $lookup: {
+                    as: 'service',
+                    foreignField: '_id',
+                    from: 'services',
+                    localField: 'serviceId',
+                  },
+                },
+                {
+                  $unwind: {
+                    path: '$service',
+                    preserveNullAndEmptyArrays: true,
+                  },
+                },
+              ],
+              debtIncome: [
+                {
+                  $match: {
+                    category: {
+                      $in: [
+                        CategoryEnum.MembershipIncome,
+                        CategoryEnum.GuestIncome,
+                        CategoryEnum.ElectricityIncome,
+                      ],
+                    },
+                  },
+                },
+                {
+                  $group: {
+                    _id: null,
+                    amount: {
+                      $sum: '$amount',
+                    },
+                  },
+                },
+              ],
+              total: [{ $count: 'count' }],
+              totalsByCategory: [
+                {
+                  $group: {
+                    _id: '$category',
+                    amount: {
+                      $sum: '$amount',
+                    },
+                  },
+                },
+              ],
+              totalsByType: [
+                {
+                  $group: {
+                    _id: '$type',
+                    amount: {
+                      $sum: '$amount',
+                    },
+                  },
+                },
+              ],
+            },
           },
-        },
-      ])
-      .toArray();
+        ])
+        .toArray();
 
-    const income = find(totals, { _id: 'income' })?.sum ?? 0;
+    const income =
+      find(totalsByType, { _id: CategoryType.Income })?.amount ?? 0;
 
-    const expense = find(totals, { _id: 'expense' })?.sum ?? 0;
+    const expense =
+      find(totalsByType, { _id: CategoryType.Expense })?.amount ?? 0;
 
-    const debt = income - (find(totals, { _id: 'debt' })?.sum ?? 0);
+    const totalDebt =
+      find(totalsByType, { _id: CategoryType.Debt })?.amount ?? 0;
 
     const balance = income - expense;
+
+    const debt = totalDebt - (debtIncome.length > 0 ? debtIncome[0].amount : 0);
 
     const count = total.length > 0 ? total[0].count : 0;
 

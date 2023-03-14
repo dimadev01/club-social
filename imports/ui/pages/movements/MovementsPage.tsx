@@ -89,7 +89,7 @@ export const MovementsPage = () => {
   const renderSummary = () => (
     <AntTable.Summary>
       <AntTable.Summary.Row>
-        <AntTable.Summary.Cell index={0} align="right">
+        <AntTable.Summary.Cell index={0}>
           <div className="flex justify-between">
             <span>Entrada</span>
             <span>
@@ -98,7 +98,7 @@ export const MovementsPage = () => {
           </div>
         </AntTable.Summary.Cell>
 
-        <AntTable.Summary.Cell index={1} align="right">
+        <AntTable.Summary.Cell index={1}>
           <div className="flex justify-between">
             <span>Salida</span>
             <span>
@@ -107,7 +107,7 @@ export const MovementsPage = () => {
           </div>
         </AntTable.Summary.Cell>
 
-        <AntTable.Summary.Cell index={2} align="right">
+        <AntTable.Summary.Cell index={2}>
           <div className="flex justify-between">
             <span>Deudas</span>
             <span>
@@ -116,7 +116,7 @@ export const MovementsPage = () => {
           </div>
         </AntTable.Summary.Cell>
 
-        <AntTable.Summary.Cell index={3} align="right">
+        <AntTable.Summary.Cell index={3}>
           <div className="flex justify-between">
             <span>Balance</span>
             <span>

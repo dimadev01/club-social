@@ -45,4 +45,6 @@ export class GetMemberResponseDto {
   addressStreet: string | null;
 
   addressZipCode: string | null;
+
+  userId: string;
 }
