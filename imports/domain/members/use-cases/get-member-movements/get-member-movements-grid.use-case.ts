@@ -12,7 +12,7 @@ import { GetMemberMovementsGridRequestDto } from '@domain/members/use-cases/get-
 import { GetMemberMovementsGridResponseDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.response.dto';
 import { Movement } from '@domain/movements/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
-import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
+import { GetMovementsByMemberGridResponseDto } from '@domain/movements/use-cases/get-movements-by-member/get-movements-by-member-grid.response.dto';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
@@ -112,15 +112,13 @@ export class GetMemberMovementsUseCase
 
     const income = find(totals, { _id: 'income' })?.sum ?? 0;
 
-    const expense = find(totals, { _id: 'expense' })?.sum ?? 0;
+    const debt = find(totals, { _id: 'debt' })?.sum ?? 0;
 
-    const debt = income - (find(totals, { _id: 'debt' })?.sum ?? 0);
-
-    const balance = income - expense;
+    const balance = income - debt;
 
     const count = total.length > 0 ? total[0].count : 0;
 
-    return ok<GetMovementsGridResponseDto>({
+    return ok<GetMovementsByMemberGridResponseDto>({
       balance,
       count,
       data: data
@@ -135,7 +133,6 @@ export class GetMemberMovementsUseCase
           })
         ),
       debt,
-      expense,
       income,
     });
   }

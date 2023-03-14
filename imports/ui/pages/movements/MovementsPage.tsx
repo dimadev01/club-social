@@ -80,15 +80,15 @@ export const MovementsPage = () => {
   const renderFooter = () => (
     <Space direction="horizontal" className="flex justify-between">
       <Typography.Text>
-        Deudas: {data ? CurrencyUtils.formatCents(data.debt, false) : ''}
-      </Typography.Text>
-
-      <Typography.Text>
         Entrada: {data ? CurrencyUtils.formatCents(data.income, false) : ''}
       </Typography.Text>
 
       <Typography.Text>
         Salida: {data ? CurrencyUtils.formatCents(data.expense, false) : ''}
+      </Typography.Text>
+
+      <Typography.Text>
+        Deudas: {data ? CurrencyUtils.formatCents(data.debt, false) : ''}
       </Typography.Text>
 
       <Typography.Text>
