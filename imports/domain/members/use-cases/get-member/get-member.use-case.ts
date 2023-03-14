@@ -46,6 +46,7 @@ export class GetMemberUseCase
       phones: member.phones,
       sex: member.sex,
       status: member.status,
+      userId: member.userId,
     });
   }
 }

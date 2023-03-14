@@ -67,11 +67,6 @@ export class GetMembersGridUseCase
         {
           $facet: {
             data: [
-              ...this.getPaginatedPipeline({
-                $sort: { 'user.profile.firstName': 1 },
-                page: request.page,
-                pageSize: request.pageSize,
-              }),
               {
                 $lookup: {
                   as: 'user',
@@ -84,6 +79,11 @@ export class GetMembersGridUseCase
               {
                 $unwind: '$user',
               },
+              ...this.getPaginatedPipeline({
+                $sort: { 'user.profile.firstName': 1 },
+                page: request.page,
+                pageSize: request.pageSize,
+              }),
               {
                 $lookup: {
                   as: 'movements',

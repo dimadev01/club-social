@@ -57,7 +57,7 @@ export const MembersDetailPage = () => {
         <Tabs
           activeKey={tabKey}
           onChange={(key) => {
-            navigate(`#${key}`);
+            // navigate(`#${key}`);
 
             setTabKey(key);
           }}

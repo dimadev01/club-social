@@ -5,8 +5,6 @@ import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-mov
 import { DeleteMovementUseCase } from '@domain/movements/use-cases/delete-movement/delete-movement.use-case';
 import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/get-movement-request.dto';
 import { GetMovementUseCase } from '@domain/movements/use-cases/get-movement/get-movement.use-case';
-import { GetMovementsByMemberGridRequestDto } from '@domain/movements/use-cases/get-movements-by-member/get-movements-by-member-grid.request.dto';
-import { GetMovementsByMemberUseCase } from '@domain/movements/use-cases/get-movements-by-member/get-movements-by-member-grid.use-case';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsUseCase } from '@domain/movements/use-cases/get-movements/get-movements-grid.use-case';
 import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-movement/restore-movement-request.dto';
@@ -20,7 +18,6 @@ import { MethodsEnum } from '@infra/methods/methods.enum';
 export class MovementsMethods extends BaseMethod {
   public constructor(
     private readonly _getMovements: GetMovementsUseCase,
-    private readonly _getMovementsByMember: GetMovementsByMemberUseCase,
     private readonly _getMovement: GetMovementUseCase,
     private readonly _createMovement: CreateMovementUseCase,
     private readonly _updateMovement: UpdateMovementUseCase,
@@ -34,10 +31,6 @@ export class MovementsMethods extends BaseMethod {
     Meteor.methods({
       [MethodsEnum.MovementsGetGrid]: (request: GetMovementsGridRequestDto) =>
         this.execute(this._getMovements, request),
-
-      [MethodsEnum.MovementsByMemberGetGrid]: (
-        request: GetMovementsByMemberGridRequestDto
-      ) => this.execute(this._getMovementsByMember, request),
 
       [MethodsEnum.MovementsGet]: (request: GetMovementRequestDto) =>
         this.execute(this._getMovement, request),
