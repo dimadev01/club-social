@@ -27,7 +27,7 @@ export class GetMovementsUseCase
     await this.validateDto(GetMovementsGridRequestDto, request);
 
     const $match: Mongo.Query<Movement> = {
-      isDeleted: false,
+      isDeleted: request.showDeleted ?? false,
     };
 
     if (request.from && request.to) {
@@ -64,121 +64,123 @@ export class GetMovementsUseCase
           $match,
         },
         {
-          $lookup: {
-            as: 'member',
-            foreignField: '_id',
-            from: 'members',
-            localField: 'memberId',
-            pipeline: [
-              {
-                $lookup: {
-                  as: 'user',
-                  foreignField: '_id',
-                  from: 'users',
-                  localField: 'userId',
-                },
-              },
-              {
-                $unwind: '$user',
-              },
-            ],
-          },
-        },
-        {
-          $unwind: {
-            path: '$member',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $lookup: {
-            as: 'professor',
-            foreignField: '_id',
-            from: 'professors',
-            localField: 'professorId',
-            pipeline: [
-              {
-                $lookup: {
-                  as: 'user',
-                  foreignField: '_id',
-                  from: 'users',
-                  localField: 'userId',
-                },
-              },
-              {
-                $unwind: '$user',
-              },
-            ],
-          },
-        },
-        {
-          $unwind: {
-            path: '$professor',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $lookup: {
-            as: 'employee',
-            foreignField: '_id',
-            from: 'employees',
-            localField: 'employeeId',
-            pipeline: [
-              {
-                $lookup: {
-                  as: 'user',
-                  foreignField: '_id',
-                  from: 'users',
-                  localField: 'userId',
-                },
-              },
-              {
-                $unwind: '$user',
-              },
-            ],
-          },
-        },
-        {
-          $unwind: {
-            path: '$employee',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $lookup: {
-            as: 'rental',
-            foreignField: '_id',
-            from: 'rentals',
-            localField: 'rentalId',
-          },
-        },
-        {
-          $unwind: {
-            path: '$rental',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
-          $lookup: {
-            as: 'service',
-            foreignField: '_id',
-            from: 'services',
-            localField: 'serviceId',
-          },
-        },
-        {
-          $unwind: {
-            path: '$service',
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-        {
           $facet: {
-            data: this.getPaginatedPipeline({
-              $sort: { date: -1 },
-              page: request.page,
-              pageSize: request.pageSize,
-            }),
+            data: [
+              ...this.getPaginatedPipeline({
+                $sort: { date: -1 },
+                page: request.page,
+                pageSize: request.pageSize,
+              }),
+              {
+                $lookup: {
+                  as: 'member',
+                  foreignField: '_id',
+                  from: 'members',
+                  localField: 'memberId',
+                  pipeline: [
+                    {
+                      $lookup: {
+                        as: 'user',
+                        foreignField: '_id',
+                        from: 'users',
+                        localField: 'userId',
+                      },
+                    },
+                    {
+                      $unwind: '$user',
+                    },
+                  ],
+                },
+              },
+              {
+                $unwind: {
+                  path: '$member',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  as: 'professor',
+                  foreignField: '_id',
+                  from: 'professors',
+                  localField: 'professorId',
+                  pipeline: [
+                    {
+                      $lookup: {
+                        as: 'user',
+                        foreignField: '_id',
+                        from: 'users',
+                        localField: 'userId',
+                      },
+                    },
+                    {
+                      $unwind: '$user',
+                    },
+                  ],
+                },
+              },
+              {
+                $unwind: {
+                  path: '$professor',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  as: 'employee',
+                  foreignField: '_id',
+                  from: 'employees',
+                  localField: 'employeeId',
+                  pipeline: [
+                    {
+                      $lookup: {
+                        as: 'user',
+                        foreignField: '_id',
+                        from: 'users',
+                        localField: 'userId',
+                      },
+                    },
+                    {
+                      $unwind: '$user',
+                    },
+                  ],
+                },
+              },
+              {
+                $unwind: {
+                  path: '$employee',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  as: 'rental',
+                  foreignField: '_id',
+                  from: 'rentals',
+                  localField: 'rentalId',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$rental',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+              {
+                $lookup: {
+                  as: 'service',
+                  foreignField: '_id',
+                  from: 'services',
+                  localField: 'serviceId',
+                },
+              },
+              {
+                $unwind: {
+                  path: '$service',
+                  preserveNullAndEmptyArrays: true,
+                },
+              },
+            ],
             total: [{ $count: 'count' }],
             totals: [
               {
@@ -199,13 +201,7 @@ export class GetMovementsUseCase
 
     const expense = find(totals, { _id: 'expense' })?.sum ?? 0;
 
-    let debt = find(totals, { _id: 'debt' })?.sum ?? 0;
-
-    if (request.filters?.category?.length) {
-      debt = 0;
-    } else {
-      debt = income - debt;
-    }
+    const debt = income - (find(totals, { _id: 'debt' })?.sum ?? 0);
 
     const balance = income - expense;
 
@@ -239,6 +235,7 @@ export class GetMovementsUseCase
             category: movement.category,
             date: movement.dateFormatted,
             details,
+            isDeleted: movement.isDeleted,
             memberId: movement.memberId,
             type: movement.type,
           };

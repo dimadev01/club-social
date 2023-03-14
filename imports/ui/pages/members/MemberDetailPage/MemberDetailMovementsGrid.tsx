@@ -127,8 +127,6 @@ export const MemberDetailMovementsGrid = () => {
           ]}
           footer={renderFooter}
         />
-
-        {/* <ReactJson collapsed src={data?.$explain} /> */}
       </Space>
     </Card>
   );

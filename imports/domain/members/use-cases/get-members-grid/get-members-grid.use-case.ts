@@ -2,6 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { CategoryEnum } from '@domain/categories/categories.enum';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import {
@@ -64,24 +65,202 @@ export class GetMembersGridUseCase
           $match,
         },
         {
-          $lookup: {
-            as: 'user',
-            foreignField: '_id',
-            from: 'users',
-            localField: 'userId',
-            pipeline: $userLookupPipeline,
-          },
-        },
-        {
-          $unwind: '$user',
-        },
-        {
           $facet: {
-            data: this.getPaginatedPipeline({
-              $sort: { 'user.profile.firstName': 1 },
-              page: request.page,
-              pageSize: request.pageSize,
-            }),
+            data: [
+              ...this.getPaginatedPipeline({
+                $sort: { 'user.profile.firstName': 1 },
+                page: request.page,
+                pageSize: request.pageSize,
+              }),
+              {
+                $lookup: {
+                  as: 'user',
+                  foreignField: '_id',
+                  from: 'users',
+                  localField: 'userId',
+                  pipeline: $userLookupPipeline,
+                },
+              },
+              {
+                $unwind: '$user',
+              },
+              {
+                $lookup: {
+                  as: 'movements',
+                  foreignField: 'memberId',
+                  from: 'movements',
+                  localField: '_id',
+                },
+              },
+              {
+                $addFields: {
+                  electricityBalance: {
+                    $subtract: [
+                      {
+                        $reduce: {
+                          in: {
+                            $add: [
+                              '$$value',
+                              {
+                                $sum: {
+                                  $cond: [
+                                    {
+                                      $eq: [
+                                        '$$this.category',
+                                        CategoryEnum.ElectricityIncome,
+                                      ],
+                                    },
+                                    '$$this.amount',
+                                    0,
+                                  ],
+                                },
+                              },
+                            ],
+                          },
+                          initialValue: 0,
+                          input: '$movements',
+                        },
+                      },
+                      {
+                        $reduce: {
+                          in: {
+                            $add: [
+                              '$$value',
+                              {
+                                $sum: {
+                                  $cond: [
+                                    {
+                                      $eq: [
+                                        '$$this.category',
+                                        CategoryEnum.ElectricityDebt,
+                                      ],
+                                    },
+                                    '$$this.amount',
+                                    0,
+                                  ],
+                                },
+                              },
+                            ],
+                          },
+                          initialValue: 0,
+                          input: '$movements',
+                        },
+                      },
+                    ],
+                  },
+
+                  guestBalance: {
+                    $subtract: [
+                      {
+                        $reduce: {
+                          in: {
+                            $add: [
+                              '$$value',
+                              {
+                                $sum: {
+                                  $cond: [
+                                    {
+                                      $eq: [
+                                        '$$this.category',
+                                        CategoryEnum.GuestIncome,
+                                      ],
+                                    },
+                                    '$$this.amount',
+                                    0,
+                                  ],
+                                },
+                              },
+                            ],
+                          },
+                          initialValue: 0,
+                          input: '$movements',
+                        },
+                      },
+                      {
+                        $reduce: {
+                          in: {
+                            $add: [
+                              '$$value',
+                              {
+                                $sum: {
+                                  $cond: [
+                                    {
+                                      $eq: [
+                                        '$$this.category',
+                                        CategoryEnum.GuestDebt,
+                                      ],
+                                    },
+                                    '$$this.amount',
+                                    0,
+                                  ],
+                                },
+                              },
+                            ],
+                          },
+                          initialValue: 0,
+                          input: '$movements',
+                        },
+                      },
+                    ],
+                  },
+
+                  membershipBalance: {
+                    $subtract: [
+                      {
+                        $reduce: {
+                          in: {
+                            $add: [
+                              '$$value',
+                              {
+                                $sum: {
+                                  $cond: [
+                                    {
+                                      $eq: [
+                                        '$$this.category',
+                                        CategoryEnum.MembershipIncome,
+                                      ],
+                                    },
+                                    '$$this.amount',
+                                    0,
+                                  ],
+                                },
+                              },
+                            ],
+                          },
+                          initialValue: 0,
+                          input: '$movements',
+                        },
+                      },
+                      {
+                        $reduce: {
+                          in: {
+                            $add: [
+                              '$$value',
+                              {
+                                $sum: {
+                                  $cond: [
+                                    {
+                                      $eq: [
+                                        '$$this.category',
+                                        CategoryEnum.MembershipDebt,
+                                      ],
+                                    },
+                                    '$$this.amount',
+                                    0,
+                                  ],
+                                },
+                              },
+                            ],
+                          },
+                          initialValue: 0,
+                          input: '$movements',
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
             total: [{ $count: 'count' }],
           },
         },
@@ -92,19 +271,29 @@ export class GetMembersGridUseCase
       count: total.length > 0 ? total[0].count : 0,
       data: data
         .map((member: Member) => plainToInstance(Member, member))
-        .map((member: Member) => ({
-          _id: member._id,
-          category: member.category,
-          dateOfBirth: member.dateOfBirthString,
-          emails: member.user.emails,
-          fileStatus: member.fileStatus,
-          // @ts-expect-error
-          name: `${member.user.profile?.firstName ?? ''} ${
+        .map(
+          (
+            member: Member & {
+              electricityBalance: number;
+              guestBalance: number;
+              membershipBalance: number;
+            }
+          ): MemberGridDto => ({
+            _id: member._id,
+            category: member.category,
+            electricityBalance: member.electricityBalance,
+            emails: member.user.emails ?? null,
+            fileStatus: member.fileStatus,
+            guestBalance: member.guestBalance,
+            membershipBalance: member.membershipBalance,
             // @ts-expect-error
-            member.user.profile?.lastName ?? ''
-          }`,
-          status: member.status,
-        })),
+            name: `${member.user.profile?.firstName ?? ''} ${
+              // @ts-expect-error
+              member.user.profile?.lastName ?? ''
+            }`,
+            status: member.status,
+          })
+        ),
     });
   }
 }

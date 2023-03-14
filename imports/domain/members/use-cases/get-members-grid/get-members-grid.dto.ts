@@ -17,4 +17,10 @@ export class MemberGridDto {
   fileStatus: MemberFileStatus | null;
 
   status: MemberStatus;
+
+  membershipBalance: number;
+
+  guestBalance: number;
+
+  electricityBalance: number;
 }

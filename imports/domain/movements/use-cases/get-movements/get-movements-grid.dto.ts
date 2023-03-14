@@ -14,4 +14,6 @@ export class MovementGridDto {
   memberId: string | null;
 
   type: CategoryType;
+
+  isDeleted: boolean;
 }

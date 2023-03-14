@@ -17,7 +17,7 @@ export enum MethodsEnum {
   MovementsDelete = 'movements/delete',
   MovementsGet = 'movements/get',
   MovementsGetGrid = 'movements/getGrid',
-  MovementsRemove = 'movements/remove',
+  MovementsRestore = 'movements/restore',
   MovementsUpdate = 'movements/update',
 
   ProfessorsGetAll = 'professors/getAll',

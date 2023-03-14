@@ -130,7 +130,7 @@ export const UsersPage = () => {
                     disabled={removeUser.variables?.id === user._id}
                   />
                 ),
-              title: 'Actions',
+              title: 'Acciones',
               width: 100,
             },
           ]}
