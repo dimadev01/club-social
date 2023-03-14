@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form, Input, message } from 'antd';
 import { Accounts } from 'meteor/accounts-base';
+import { Meteor } from 'meteor/meteor';
 import { useTracker } from 'meteor/react-meteor-data';
 import { useNavigate } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
@@ -25,12 +26,25 @@ export const LoginPage = () => {
 
     // @ts-expect-error
     Accounts.requestLoginTokenForUser(
-      { selector: values.email },
+      {
+        options: {
+          userCreationDisabled: true,
+        },
+        selector: values.email,
+      },
       (error: unknown) => {
         setIsSendingEmail(false);
 
-        if (error && error instanceof Error) {
-          message.error(error.message);
+        if (error) {
+          if (error instanceof Meteor.Error) {
+            if (error.error === 403) {
+              message.error('El email ingresado no existe');
+            } else {
+              message.error(error.message);
+            }
+          } else if (error instanceof Error) {
+            message.error(error.message);
+          }
         } else {
           navigate(AppUrl.LoginPasswordless.replace(':email', values.email));
         }
