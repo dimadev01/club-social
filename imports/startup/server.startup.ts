@@ -116,6 +116,8 @@ export class ServerStartup {
 
     await Meteor.users.createIndexAsync({ 'profile.firstName': 1 });
 
+    await Meteor.users.createIndexAsync({ 'profile.lastName': 1 });
+
     await Meteor.users.createIndexAsync({ 'profile.role': 1 });
   }
 

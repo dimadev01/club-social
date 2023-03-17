@@ -32,7 +32,7 @@ export class GetMembersUseCase
           },
         },
         { $unwind: '$user' },
-        { $sort: { 'user.profile.firstName': 1 } },
+        { $sort: { 'user.profile.lastName': 1 } },
       ])
       .map((member) => plainToInstance(Member, member))
       .toArray();
