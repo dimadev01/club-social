@@ -80,7 +80,7 @@ export class GetMembersGridUseCase
                 $unwind: '$user',
               },
               ...this.getPaginatedPipeline({
-                $sort: { 'user.profile.firstName': 1 },
+                $sort: { 'user.profile.lastName': 1 },
                 page: request.page,
                 pageSize: request.pageSize,
               }),
