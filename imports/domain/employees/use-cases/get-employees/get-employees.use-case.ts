@@ -24,7 +24,7 @@ export class GetEmployeesUseCase
             pipeline: [
               {
                 $sort: {
-                  'profile.firstName': 1,
+                  'profile.lastname': 1,
                 },
               },
             ],

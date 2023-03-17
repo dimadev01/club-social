@@ -24,7 +24,7 @@ export class GetProfessorsUseCase
             pipeline: [
               {
                 $sort: {
-                  'profile.firstName': 1,
+                  'profile.lastName': 1,
                 },
               },
             ],
