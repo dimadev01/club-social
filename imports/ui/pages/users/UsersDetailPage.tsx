@@ -75,7 +75,7 @@ export const UsersDetailPage = () => {
           },
           {
             title: user
-              ? `${user.profile?.firstName} ${user.profile?.lastName}`
+              ? `${user.profile?.lastName} ${user.profile?.firstName}`
               : 'Nuevo Usuario',
           },
         ]}
