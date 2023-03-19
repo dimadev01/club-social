@@ -287,9 +287,9 @@ export class GetMembersGridUseCase
             guestBalance: member.guestBalance,
             membershipBalance: member.membershipBalance,
             // @ts-expect-error
-            name: `${member.user.profile?.firstName ?? ''} ${
+            name: `${member.user.profile?.lastName ?? ''} ${
               // @ts-expect-error
-              member.user.profile?.lastName ?? ''
+              member.user.profile?.firstName ?? ''
             }`,
             status: member.status,
           })
