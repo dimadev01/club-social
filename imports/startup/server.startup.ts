@@ -11,7 +11,6 @@ import { EmployeesMethods } from '@domain/employees/employees.methods';
 import { MembersMethods } from '@domain/members/members.methods';
 import { MovementsMethods } from '@domain/movements/movements.methods';
 import { ProfessorsMethods } from '@domain/professors/professors.methods';
-import { RentalsMethods } from '@domain/rentals/rentals.methods';
 import { ServicesMethods } from '@domain/services/services.methods';
 import { UsersMethods } from '@domain/users/users.methods';
 import { Logger } from '@infra/logger/logger.service';
@@ -31,7 +30,6 @@ export class ServerStartup {
     private readonly _movementsMethods: MovementsMethods,
     private readonly _categoriesMethods: CategoriesMethods,
     private readonly _professorsMethods: ProfessorsMethods,
-    private readonly _rentalsMethods: RentalsMethods,
     private readonly _employeesMethods: EmployeesMethods,
     private readonly _servicesMethods: ServicesMethods
   ) {}
@@ -103,8 +101,6 @@ export class ServerStartup {
     this._categoriesMethods.register();
 
     this._professorsMethods.register();
-
-    this._rentalsMethods.register();
 
     this._employeesMethods.register();
 

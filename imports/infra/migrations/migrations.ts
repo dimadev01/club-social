@@ -25,8 +25,6 @@ import { MovementsCollection } from '@domain/movements/movements.collection';
 import { CreateMovementUseCase } from '@domain/movements/use-cases/create-movement/create-movement.use-case';
 import { Professor } from '@domain/professors/professor.entity';
 import { ProfessorsCollection } from '@domain/professors/professors.collection';
-import { Rental } from '@domain/rentals/rental.entity';
-import { RentalsCollection } from '@domain/rentals/rentals.collection';
 import { Permission, Role, Scope } from '@domain/roles/roles.enum';
 import { Service } from '@domain/services/service.entity';
 import { ServicesCollection } from '@domain/services/services.collection';
@@ -102,8 +100,6 @@ Migrations.add({
     await EmployeesCollection.removeAsync({});
 
     await ProfessorsCollection.removeAsync({});
-
-    await RentalsCollection.removeAsync({});
 
     await ServicesCollection.removeAsync({});
 
@@ -247,19 +243,6 @@ Migrations.add({
     }
 
     await EmployeesCollection.insertEntity(Employee.create(employee3.value));
-
-    /**
-     * Create rentals
-     */
-    await RentalsCollection.insertEntity(Rental.create('Salón', null));
-
-    await RentalsCollection.insertEntity(Rental.create('Buffet', null));
-
-    await RentalsCollection.insertEntity(Rental.create('Ferias', null));
-
-    await RentalsCollection.insertEntity(
-      Rental.create('Estacionamiento', null)
-    );
 
     await ServicesCollection.insertEntity(Service.create('AySA', null));
 
@@ -506,10 +489,6 @@ Migrations.add({
         category = CategoryEnum.Service;
 
         type = CategoryType.Expense;
-      } else if (row.category === 'Alquileres') {
-        category = CategoryEnum.Rental;
-
-        type = CategoryType.Income;
       } else if (row.category === 'Profesores') {
         category = CategoryEnum.Professor;
 
@@ -612,8 +591,6 @@ Migrations.add({
         ])
         .toArray();
 
-      const rentals = await RentalsCollection.find().fetchAsync();
-
       const services = await ServicesCollection.find().fetchAsync();
 
       let memberId: string | null = null;
@@ -622,7 +599,7 @@ Migrations.add({
 
       let employeeId: string | null = null;
 
-      let rentalId: string | null = null;
+      const rentalId: string | null = null;
 
       let serviceId: string | null = null;
 
@@ -658,18 +635,6 @@ Migrations.add({
 
         if (employee) {
           employeeId = employee._id;
-        }
-      } else if (row.fair) {
-        const rental = rentals.find((r) => r.name === 'Ferias');
-
-        if (rental) {
-          rentalId = rental._id;
-        }
-      } else if (row.rental) {
-        const rental = rentals.find((r) => r.name === row.rental);
-
-        if (rental) {
-          rentalId = rental._id;
         }
       } else if (row.service) {
         const service = services.find((s) => s.name === row.service);
@@ -719,4 +684,42 @@ Migrations.add({
     next();
   }),
   version: 2,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const staff = await Meteor.users
+      .find({ 'profile.role': Role.Staff })
+      .fetchAsync();
+
+    staff.forEach((user) => {
+      Roles.removeUsersFromRoles(user, [Permission.Read], Scope.Categories);
+
+      Roles.removeUsersFromRoles(user, [Permission.Read], Scope.Professors);
+
+      Roles.removeUsersFromRoles(user, [Permission.Read], 'rentals');
+
+      Roles.removeUsersFromRoles(user, [Permission.Read], Scope.Employees);
+
+      Roles.removeUsersFromRoles(user, [Permission.Read], Scope.Services);
+    });
+
+    await MovementsCollection.updateAsync(
+      // @ts-expect-error
+      { category: 'rental' },
+      { $set: { category: CategoryEnum.Buffet } },
+      { multi: true }
+    );
+
+    CategoriesCollection.insertEntity(Category.create(CategoryEnum.Buffet));
+
+    CategoriesCollection.insertEntity(Category.create(CategoryEnum.Saloon));
+
+    next();
+  }),
+  version: 3,
 });

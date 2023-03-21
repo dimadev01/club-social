@@ -22,8 +22,6 @@ export enum AppUrl {
 
   Services = '/services',
 
-  Rentals = '/rentals',
-
   Users = '/users',
   UsersDetail = '/users/:id',
   UsersNew = '/users/new',

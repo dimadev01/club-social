@@ -42,7 +42,7 @@ export class GetProfessorsUseCase
         .map((professor) => ({
           _id: professor._id,
           // @ts-expect-error
-          name: `${professor.user.profile?.firstName} ${professor.user.profile?.lastName}`,
+          name: `${professor.user.profile?.lastName} ${professor.user.profile?.firstName}`,
         }))
         .sort((a, b) => a.name.localeCompare(b.name))
     );

@@ -65,17 +65,17 @@ export class GetMembersGridUseCase
           $match,
         },
         {
+          $lookup: {
+            as: 'user',
+            foreignField: '_id',
+            from: 'users',
+            localField: 'userId',
+            pipeline: $userLookupPipeline,
+          },
+        },
+        {
           $facet: {
             data: [
-              {
-                $lookup: {
-                  as: 'user',
-                  foreignField: '_id',
-                  from: 'users',
-                  localField: 'userId',
-                  pipeline: $userLookupPipeline,
-                },
-              },
               {
                 $unwind: '$user',
               },

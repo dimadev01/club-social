@@ -18,7 +18,6 @@ export enum Scope {
   Members = 'members',
   Movements = 'movements',
   Professors = 'professors',
-  Rentals = 'rentals',
   Services = 'services',
   Users = 'users',
 }
@@ -53,7 +52,6 @@ export const AdminRole = {
     Permission.ViewDeleted,
   ],
   [Scope.Professors]: [Permission.Read, Permission.Update],
-  [Scope.Rentals]: [Permission.Read, Permission.Update],
   [Scope.Employees]: [Permission.Read, Permission.Update],
   [Scope.Services]: [Permission.Read, Permission.Update],
 };
@@ -61,11 +59,6 @@ export const AdminRole = {
 export const StaffRole = {
   [Scope.Members]: [Permission.Read, Permission.Update],
   [Scope.Movements]: [Permission.Read, Permission.Create, Permission.Update],
-  [Scope.Categories]: [Permission.Read],
-  [Scope.Professors]: [Permission.Read],
-  [Scope.Rentals]: [Permission.Read],
-  [Scope.Employees]: [Permission.Read],
-  [Scope.Services]: [Permission.Read],
 };
 
 export const MemberRole = {

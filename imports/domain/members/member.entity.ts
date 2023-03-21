@@ -122,9 +122,9 @@ export class Member extends FullEntity {
 
   public get name(): string {
     // @ts-expect-error
-    return `${this.user.profile?.firstName} ${
+    return `${this.user.profile?.lastName} ${
       // @ts-expect-error
-      this.user.profile?.lastName
+      this.user.profile?.firstName
     }`;
   }
 

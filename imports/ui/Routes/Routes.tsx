@@ -15,7 +15,6 @@ import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
 import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
 import { ProfessorsPage } from '@ui/pages/professors/ProfessorsPage';
-import { RentalsPage } from '@ui/pages/rentals/RentalsPage';
 import { ServicesPage } from '@ui/pages/services/ServicesPage';
 import { UsersDetailPage } from '@ui/pages/users/UsersDetailPage';
 import { UsersPage } from '@ui/pages/users/UsersPage';
@@ -153,15 +152,6 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.Services,
-  },
-
-  {
-    element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Rentals}>
-        <RentalsPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.Rentals,
   },
 
   {
