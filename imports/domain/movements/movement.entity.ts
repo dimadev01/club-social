@@ -13,7 +13,6 @@ import { Employee } from '@domain/employees/employee.entity';
 import { Member } from '@domain/members/member.entity';
 import { CreateMovement } from '@domain/movements/movements.types';
 import { Professor } from '@domain/professors/professor.entity';
-import { Rental } from '@domain/rentals/rental.entity';
 import { Service } from '@domain/services/service.entity';
 import { FullEntity } from '@kernel/full-entity.base';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
@@ -59,14 +58,6 @@ export class Movement extends FullEntity {
   @IsString()
   @IsOptional()
   public professorId: string | null;
-
-  @IsOptional()
-  @Type(() => Rental)
-  public rental: Rental | null;
-
-  @IsString()
-  @IsOptional()
-  public rentalId: string | null;
 
   @IsOptional()
   @Type(() => Service)
@@ -135,8 +126,6 @@ export class Movement extends FullEntity {
     movement.employeeId = props.employeeId;
 
     movement.professorId = props.professorId;
-
-    movement.rentalId = props.rentalId;
 
     movement.notes = props.notes;
 

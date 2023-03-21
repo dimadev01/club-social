@@ -29,8 +29,12 @@ export const LoginPasswordlessPage = () => {
   const login = (values: FormValues) => {
     // @ts-expect-error
     Meteor.passwordlessLoginWithToken(email, values.token, (error: unknown) => {
-      if (error && error instanceof Error) {
-        message.error(error.message);
+      if (error) {
+        if (error instanceof Meteor.Error && error.error === 403) {
+          message.error('Clave de acceso incorrecta');
+        } else if (error instanceof Error) {
+          message.error(error.message);
+        }
       } else {
         navigate(AppUrl.Home);
       }

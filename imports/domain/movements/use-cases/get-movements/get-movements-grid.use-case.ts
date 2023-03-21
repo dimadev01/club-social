@@ -155,14 +155,6 @@ export class GetMovementsUseCase
                   },
                 },
                 {
-                  $lookup: {
-                    as: 'rental',
-                    foreignField: '_id',
-                    from: 'rentals',
-                    localField: 'rentalId',
-                  },
-                },
-                {
                   $unwind: {
                     path: '$rental',
                     preserveNullAndEmptyArrays: true,
@@ -255,8 +247,6 @@ export class GetMovementsUseCase
 
           if (MemberCategories.includes(movement.category)) {
             details = movement.member?.name ?? '';
-          } else if (movement.category === CategoryEnum.Rental) {
-            details = movement.rental?.name ?? '';
           } else if (movement.category === CategoryEnum.Employee) {
             details = movement.employee?.name ?? '';
           } else if (movement.category === CategoryEnum.Professor) {

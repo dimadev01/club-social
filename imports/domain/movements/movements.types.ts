@@ -8,7 +8,6 @@ export interface CreateMovement {
   memberId: string | null;
   notes: string | null;
   professorId: string | null;
-  rentalId: string | null;
   serviceId: string | null;
   type: CategoryType;
 }

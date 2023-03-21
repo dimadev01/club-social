@@ -38,7 +38,6 @@ import { useCreateMovement } from '@ui/hooks/movements/useCreateMovement';
 import { useMovement } from '@ui/hooks/movements/useMovement';
 import { useUpdateMovement } from '@ui/hooks/movements/useUpdateMovement';
 import { useProfessors } from '@ui/hooks/professors/useProfessors';
-import { useRentals } from '@ui/hooks/rentals/useRentals';
 import { useServices } from '@ui/hooks/services/useServices';
 
 type FormValues = {
@@ -86,10 +85,6 @@ export const MovementDetailPage = () => {
 
   const { data: employees, isLoading: isLoadingEmployees } = useEmployees(
     category === CategoryEnum.Employee
-  );
-
-  const { data: rentals, isLoading: isLoadingRentals } = useRentals(
-    category === CategoryEnum.Rental
   );
 
   const { data: services, isLoading: isLoadingServices } = useServices(
@@ -244,25 +239,6 @@ export const MovementDetailPage = () => {
             options={employees?.map((employee) => ({
               label: employee.name,
               value: employee._id,
-            }))}
-          />
-        </Form.Item>
-      );
-    }
-
-    if (category === CategoryEnum.Rental) {
-      return (
-        <Form.Item
-          label="Alquiler"
-          name="rentalId"
-          rules={[{ required: true }]}
-        >
-          <Select
-            disabled={isLoadingRentals}
-            loading={isLoadingRentals}
-            options={rentals?.map((rental) => ({
-              label: rental.name,
-              value: rental._id,
             }))}
           />
         </Form.Item>

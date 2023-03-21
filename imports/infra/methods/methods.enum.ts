@@ -21,8 +21,6 @@ export enum MethodsEnum {
 
   ProfessorsGetAll = 'professors/getAll',
 
-  RentalsGetAll = 'rentals/getAll',
-
   ServicesGetAll = 'services/getAll',
 
   UsersCreate = 'users/create',

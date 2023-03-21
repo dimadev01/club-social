@@ -165,7 +165,6 @@ export const MovementsPage = () => {
               <Form.Item>
                 <DatePicker.RangePicker
                   format={DateFormats.DD_MM_YYYY}
-                  className="w-full"
                   allowClear
                   value={dateRangeValue}
                   disabledDate={(current) => current.isAfter(dayjs())}
@@ -185,7 +184,7 @@ export const MovementsPage = () => {
 
                     setGridState((prevState) => ({ ...prevState, page: 1 }));
                   }}
-                  className="w-full"
+                  className="!min-w-[200px]"
                   disabled={isLoadingMembers || isLoading}
                   loading={isLoadingMembers}
                   placeholder="Buscar por socios"
