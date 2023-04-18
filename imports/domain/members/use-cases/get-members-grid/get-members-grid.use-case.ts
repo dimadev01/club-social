@@ -74,11 +74,11 @@ export class GetMembersGridUseCase
           },
         },
         {
+          $unwind: '$user',
+        },
+        {
           $facet: {
             data: [
-              {
-                $unwind: '$user',
-              },
               ...this.getPaginatedPipeline({
                 $sort: { 'user.profile.lastName': 1 },
                 page: request.page,

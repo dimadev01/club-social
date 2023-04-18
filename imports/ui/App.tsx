@@ -61,8 +61,6 @@ export const App = () => {
         }}
         theme={{
           token: {
-            borderRadius: 5,
-            colorPrimary: '#22883E',
             colorTextBase: '#505050',
             fontFamily: 'Rubik',
           },
