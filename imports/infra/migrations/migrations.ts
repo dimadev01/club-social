@@ -723,3 +723,24 @@ Migrations.add({
   }),
   version: 3,
 });
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const staff = await Meteor.users
+      .find({
+        'profile.role': Role.Staff,
+      })
+      .fetchAsync();
+
+    staff.forEach((user) => {
+      Roles.addUsersToRoles(user, Permission.Create, Scope.Members);
+    });
+
+    next();
+  }),
+  version: 4,
+});
