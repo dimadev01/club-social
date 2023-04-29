@@ -32,7 +32,7 @@ export class Member extends FullEntity {
 
   @IsEnum(MemberCategory)
   @IsOptional()
-  public category: MemberCategory | null;
+  public category: MemberCategory;
 
   @IsDate()
   @IsOptional()
@@ -85,7 +85,7 @@ export class Member extends FullEntity {
 
     this.address = new MemberAddress();
 
-    this.category = null;
+    this.category = MemberCategory.Member;
 
     this.dateOfBirth = null;
 

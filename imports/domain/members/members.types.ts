@@ -9,7 +9,7 @@ import {
 
 export interface CreateMember {
   address: CreateMemberAddress;
-  category: MemberCategory | null;
+  category: MemberCategory;
   dateOfBirth: string | null;
   documentID: string | null;
   emails: string[] | null;
