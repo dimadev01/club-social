@@ -38,7 +38,11 @@ export class GetMembersUseCase
       .toArray();
 
     return ok<GetMembersDto[]>(
-      data.map((member) => ({ _id: member._id, name: member.name }))
+      data.map((member) => ({
+        _id: member._id,
+        category: member.category,
+        name: member.name,
+      }))
     );
   }
 }

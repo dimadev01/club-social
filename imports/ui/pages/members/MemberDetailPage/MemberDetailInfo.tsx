@@ -40,7 +40,7 @@ type FormValues = {
     street: string | undefined;
     zipCode: string | undefined;
   };
-  category: MemberCategory | undefined;
+  category: MemberCategory;
   dateOfBirth: Dayjs | undefined;
   documentID: string | undefined;
   emails: string[];
@@ -84,7 +84,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         addressStateName: values.address.stateGovId?.label ?? null,
         addressStreet: values.address.street ?? null,
         addressZipCode: values.address.zipCode ?? null,
-        category: values.category ?? null,
+        category: values.category,
         dateOfBirth: values.dateOfBirth
           ? DateUtils.format(values.dateOfBirth)
           : null,
@@ -193,7 +193,11 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                 <Input />
               </Form.Item>
 
-              <Form.Item label="Categoría" name="category">
+              <Form.Item
+                label="Categoría"
+                name="category"
+                rules={[{ required: true }]}
+              >
                 <Select options={getMemberCategoryOptions()} />
               </Form.Item>
 

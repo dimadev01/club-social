@@ -23,6 +23,7 @@ import {
   getCategoryTypeOptions,
   MemberCategories,
 } from '@domain/categories/categories.enum';
+import { MemberCategory } from '@domain/members/members.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -175,19 +176,42 @@ export const MovementDetailPage = () => {
           className="cs-form-item-extra"
           help={
             category === CategoryEnum.MembershipDebt && (
-              <Button
-                size="small"
-                htmlType="button"
-                type="ghost"
-                onClick={() => {
-                  form.setFieldValue(
-                    'memberIds',
-                    members?.map((member) => member._id) ?? []
-                  );
-                }}
-              >
-                Seleccionar todos
-              </Button>
+              <ButtonGroup>
+                <Button
+                  size="small"
+                  htmlType="button"
+                  type="ghost"
+                  onClick={() => {
+                    form.setFieldValue(
+                      'memberIds',
+                      members
+                        ?.filter(
+                          (member) => member.category === MemberCategory.Member
+                        )
+                        .map((member) => member._id) ?? []
+                    );
+                  }}
+                >
+                  Seleccionar todos los socios
+                </Button>
+                <Button
+                  size="small"
+                  htmlType="button"
+                  type="ghost"
+                  onClick={() => {
+                    form.setFieldValue(
+                      'memberIds',
+                      members
+                        ?.filter(
+                          (member) => member.category === MemberCategory.Cadet
+                        )
+                        .map((member) => member._id) ?? []
+                    );
+                  }}
+                >
+                  Seleccionar todos los cadetes
+                </Button>
+              </ButtonGroup>
             )
           }
           label="Socio/s"
