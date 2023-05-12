@@ -4,7 +4,6 @@ import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
-import { MemberStatus } from '@domain/members/members.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { UseCase } from '@kernel/use-case.base';
 import { IUseCase } from '@kernel/use-case.interface';
@@ -17,7 +16,6 @@ export class GetMembersUseCase
   public async execute(): Promise<Result<GetMembersDto[], Error>> {
     const $match: Mongo.Query<Member> = {
       isDeleted: false,
-      status: MemberStatus.Active,
     };
 
     const data = await MembersCollection.rawCollection()
