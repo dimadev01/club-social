@@ -40,6 +40,7 @@ export class GetMembersUseCase
         _id: member._id,
         category: member.category,
         name: member.name,
+        status: member.status,
       }))
     );
   }
