@@ -45,11 +45,14 @@ export const CategoriesPage = () => {
           columns={[
             {
               dataIndex: 'name',
-              render: (name: string, category: GetCategoriesResponseDto) => (
-                <NavLink to={`${AppUrl.Categories}/${category._id}`}>
-                  {name}
-                </NavLink>
-              ),
+              render: (name: string, category: GetCategoriesResponseDto) =>
+                category.amount ? (
+                  <NavLink to={`${AppUrl.Categories}/${category._id}`}>
+                    {name}
+                  </NavLink>
+                ) : (
+                  name
+                ),
               title: 'Nombre',
             },
             {
