@@ -6,12 +6,14 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
-import { container, singleton } from 'tsyringe';
+import { container, inject, singleton } from 'tsyringe';
+import { ILogger } from '@application/logger/logger.interface';
 import { MembersMethods } from '@domain/members/members.methods';
 import { MovementsMethods } from '@domain/movements/movements.methods';
 import { ProfessorsMethods } from '@domain/professors/professors.methods';
 import { ServicesMethods } from '@domain/services/services.methods';
 import { UsersMethods } from '@domain/users/users.methods';
+import { Tokens } from '@infra/di/di-tokens';
 import { CategoriesMethods } from '@infra/meteor/categories.methods';
 import { EmployeesMethods } from '@infra/meteor/employees.methods';
 import { MigrationsService } from '@infra/migrations/migrations.service';
@@ -23,8 +25,8 @@ export class ServerStartup {
   // #region Constructors (1)
 
   public constructor(
-    // @inject(Tokens.Logger)
-    // private readonly _logger: ILogger,
+    @inject(Tokens.Logger)
+    private readonly _logger: ILogger,
     private readonly _migrations: MigrationsService,
     private readonly _usersMethods: UsersMethods,
     private readonly _membersMethods: MembersMethods,
@@ -48,9 +50,9 @@ export class ServerStartup {
 
     await this._createUsersIndexes();
 
-    // if (Meteor.isProduction) {
-    //   this._logger.info('Server startup completed');
-    // }
+    if (Meteor.isProduction) {
+      this._logger.info('Server startup completed');
+    }
   }
 
   // #endregion Public Methods (1)

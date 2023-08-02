@@ -1,6 +1,8 @@
 import React from 'react';
 import { Breadcrumb, Card } from 'antd';
+import { NavLink } from 'react-router-dom';
 import { GetCategoriesResponseDto } from '@application/use-cases/get-categories/get-categories-response.dto';
+import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useCategories } from '@ui/hooks/categories/useCategories';
@@ -43,6 +45,11 @@ export const CategoriesPage = () => {
           columns={[
             {
               dataIndex: 'name',
+              render: (name: string, category: GetCategoriesResponseDto) => (
+                <NavLink to={`${AppUrl.Categories}/${category._id}`}>
+                  {name}
+                </NavLink>
+              ),
               title: 'Nombre',
             },
             {
