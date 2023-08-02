@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 import { Entity } from '@domain/common/entity.base';
 
 export class FullEntity extends Entity {
@@ -11,10 +11,12 @@ export class FullEntity extends Entity {
   public createdBy: string;
 
   @IsDate()
-  public deletedAt: Date;
+  @IsOptional()
+  public deletedAt: Date | null;
 
   @IsString()
-  public deletedBy: string;
+  @IsOptional()
+  public deletedBy: string | null;
 
   @IsBoolean()
   public isDeleted: boolean;

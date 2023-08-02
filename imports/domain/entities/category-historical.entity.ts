@@ -1,8 +1,9 @@
-import { IsDate, IsInt } from 'class-validator';
+import { IsDate, IsInt, IsOptional } from 'class-validator';
 
 export class CategoryHistorical {
   @IsInt()
-  amount: number;
+  @IsOptional()
+  amount: number | null;
 
   @IsDate()
   date: Date;

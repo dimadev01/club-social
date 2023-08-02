@@ -24,7 +24,9 @@ export class GetCategoriesUseCase
     return ok<GetCategoriesResponseDto[]>(
       data.map((category) => ({
         _id: category._id,
-        amount: category.amountFormatted,
+        amount: category.amount,
+        amountFormatted: category.amountFormatted,
+        code: category.code,
         name: category.name,
       }))
     );

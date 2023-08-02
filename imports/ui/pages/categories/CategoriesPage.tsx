@@ -54,7 +54,7 @@ export const CategoriesPage = () => {
             },
             {
               align: 'right',
-              dataIndex: 'amount',
+              dataIndex: 'amountFormatted',
               title: 'Precio',
             },
           ]}

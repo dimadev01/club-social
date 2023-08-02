@@ -8,22 +8,17 @@ import {
   message,
   Skeleton,
 } from 'antd';
-import ButtonGroup from 'antd/es/button/button-group';
-import compact from 'lodash/compact';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
+import { ARS } from '@dinero.js/currencies';
+import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { AppUrl } from '@ui/app.enum';
-import { FormBackButton } from '@ui/components/Form/FormBackButton';
-import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
+import { FormButtons } from '@ui/components/Form/FormButtons';
 import { NotFound } from '@ui/components/NotFound';
 import { useCategory } from '@ui/hooks/categories/useCategory';
-import { useCreateUser } from '@ui/hooks/users/useCreateUser';
-import { useUpdateUser } from '@ui/hooks/users/useUpdateUser';
+import { useUpdateCategory } from '@ui/hooks/categories/useUpdateCategory';
 
 type FormValues = {
-  emails: string[];
-  firstName: string;
-  lastName: string;
-  role: string;
+  amount: number | undefined;
 };
 
 export const CategoryDetailPage = () => {
@@ -31,39 +26,26 @@ export const CategoryDetailPage = () => {
 
   const { data: category, fetchStatus } = useCategory(id);
 
-  const navigate = useNavigate();
-
-  const createUser = useCreateUser();
-
-  const updateUser = useUpdateUser();
-
-  const handleSubmit = async (values: FormValues) => {
-    if (!category) {
-      const userId = await createUser.mutateAsync({
-        emails: compact(values.emails).length > 0 ? values.emails : null,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        role: values.role,
-      });
-
-      message.success('Usuario creado');
-
-      navigate(`${AppUrl.Users}/${userId}`);
-    } else {
-      await updateUser.mutateAsync({
-        emails: compact(values.emails).length > 0 ? values.emails : null,
-        firstName: values.firstName,
-        id: category._id,
-        lastName: values.lastName,
-      });
-
-      message.success('Usuario actualizado');
-    }
-  };
+  const updateCategory = useUpdateCategory();
 
   const isLoading = fetchStatus === 'fetching';
 
-  if (id && !category && !isLoading) {
+  const handleSubmit = async (values: FormValues) => {
+    if (category) {
+      await updateCategory.mutateAsync({
+        amount: values.amount ?? null,
+        id: category._id,
+      });
+
+      message.success('Categoría actualizada');
+    }
+  };
+
+  if (isLoading) {
+    return <Skeleton active />;
+  }
+
+  if (!category) {
     return <NotFound />;
   }
 
@@ -79,50 +61,44 @@ export const CategoryDetailPage = () => {
             title: <NavLink to={AppUrl.Categories}>Categorías</NavLink>,
           },
           {
-            title: category?.name ?? 'Nueva Categoría',
+            title: category.name,
           },
         ]}
       />
 
-      <Skeleton active loading={isLoading}>
-        <Card>
-          <Form<FormValues>
-            layout="vertical"
-            onFinish={(values) => handleSubmit(values)}
-            initialValues={{
-              amount: category?.amount ?? 0,
-              name: category?.name ?? '',
-            }}
+      <Card>
+        <Form<FormValues>
+          layout="vertical"
+          onFinish={(values) => handleSubmit(values)}
+          requiredMark={false}
+          initialValues={{
+            amount: category.amount
+              ? CurrencyUtils.fromCents(category.amount)
+              : undefined,
+            name: category.name,
+          }}
+        >
+          <Form.Item name="name" label="Nombre">
+            <Input disabled />
+          </Form.Item>
+
+          <Form.Item
+            name="amount"
+            label="Precio"
+            rules={[{ min: 0, type: 'number' }]}
           >
-            <Form.Item
-              name="name"
-              label="Nombre"
-              rules={[{ required: true, whitespace: true }]}
-            >
-              <Input />
-            </Form.Item>
+            <InputNumber
+              className="w-40"
+              prefix={ARS.code}
+              precision={2}
+              decimalSeparator=","
+              step={100}
+            />
+          </Form.Item>
 
-            <Form.Item
-              name="amount"
-              label="Precio"
-              rules={[{ min: 0, type: 'number' }]}
-            >
-              <InputNumber />
-            </Form.Item>
-
-            <ButtonGroup>
-              <FormSaveButton
-                loading={createUser.isLoading || updateUser.isLoading}
-                disabled={createUser.isLoading || updateUser.isLoading}
-              />
-
-              <FormBackButton
-                disabled={createUser.isLoading || updateUser.isLoading}
-              />
-            </ButtonGroup>
-          </Form>
-        </Card>
-      </Skeleton>
+          <FormButtons isLoading={updateCategory.isLoading} />
+        </Form>
+      </Card>
     </>
   );
 };

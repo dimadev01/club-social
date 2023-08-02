@@ -6,6 +6,7 @@ import { ILogger } from '@application/logger/logger.interface';
 import { ICategoryRepository } from '@application/repositories/category-repository.interface';
 import { UpdateCategoryRequestDto } from '@application/use-cases/update-category/update-category-request.dto';
 import { Tokens } from '@infra/di/di-tokens';
+import { CurrencyUtils } from '@shared/utils/currency.utils';
 
 @injectable()
 export class UpdateCategoryUseCase
@@ -29,15 +30,21 @@ export class UpdateCategoryUseCase
   public async execute(
     request: UpdateCategoryRequestDto
   ): Promise<Result<undefined, Error>> {
-    const category = await this._categoryRepository.findByCodeOrThrow(
-      request.category
+    const category = await this._categoryRepository.findOneByIdOrThrow(
+      request.id
     );
 
-    category.updatePrice(request.amount);
+    category.addHistorical();
+
+    if (request.amount) {
+      category.updatePrice(CurrencyUtils.toCents(request.amount));
+    } else {
+      category.updatePrice(null);
+    }
 
     await this._categoryRepository.update(category);
 
-    this._logger.info('Category updated', { category: request.category });
+    this._logger.info('Category updated', { category: category._id });
 
     return ok(undefined);
   }

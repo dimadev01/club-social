@@ -27,15 +27,13 @@ export class Category extends FullEntity {
   @IsOptional()
   public amount: number | null;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsEnum(CategoryEnum)
   public code: CategoryEnum;
 
   @IsArray()
-  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => CategoryHistorical)
-  public historical: CategoryHistorical[] | null;
+  public historical: CategoryHistorical[];
 
   @IsString()
   @IsNotEmpty()
@@ -54,7 +52,7 @@ export class Category extends FullEntity {
 
   // #region Constructors (1)
 
-  private constructor() {
+  public constructor() {
     super();
   }
 
@@ -87,7 +85,7 @@ export class Category extends FullEntity {
 
     category.updatedBy = 'System';
 
-    category.historical = null;
+    category.historical = [];
 
     category.code = code;
 
@@ -108,6 +106,17 @@ export class Category extends FullEntity {
 
   public updatePrice(amount: number | null): void {
     this.amount = amount;
+  }
+
+  public updateName(name: string): void {
+    this.name = name;
+  }
+
+  public addHistorical() {
+    this.historical.push({
+      amount: this.amount,
+      date: this.updatedAt,
+    });
   }
 
   // #endregion Public Methods (1)
