@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import { Meteor } from 'meteor/meteor';
 import { err, ok, Result } from 'neverthrow';
+import { FullEntity } from '@domain/common/full-entity.base';
 import { MemberAddress } from '@domain/members/member-address.entity';
 import {
   MemberCategory,
@@ -20,7 +21,6 @@ import {
   MemberStatus,
 } from '@domain/members/members.enum';
 import { CreateMember } from '@domain/members/members.types';
-import { FullEntity } from '@kernel/full-entity.base';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 

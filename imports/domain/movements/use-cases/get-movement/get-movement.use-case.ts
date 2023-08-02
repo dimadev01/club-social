@@ -1,10 +1,10 @@
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/get-movement-request.dto';
 import { GetMovementResponseDto } from '@domain/movements/use-cases/get-movement/get-movement-response.dto';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetMovementUseCase

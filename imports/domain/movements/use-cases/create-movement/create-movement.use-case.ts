@@ -1,20 +1,20 @@
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { MemberCategories } from '@domain/categories/categories.enum';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
+import { MemberCategories } from '@domain/enums/categories.enum';
 import { Movement } from '@domain/movements/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
 import { Permission, Scope } from '@domain/roles/roles.enum';
-import { Logger } from '@infra/logger/logger.service';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
+import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 
 @injectable()
 export class CreateMovementUseCase
   extends UseCase<CreateMovementRequestDto>
   implements IUseCase<CreateMovementRequestDto, string>
 {
-  public constructor(private readonly _logger: Logger) {
+  public constructor(private readonly _logger: LoggerOstrio) {
     super();
   }
 

@@ -9,7 +9,7 @@ import {
   CategoryLabel,
   CategoryType,
   getMemberCategoryFilters,
-} from '@domain/categories/categories.enum';
+} from '@domain/enums/categories.enum';
 import { MemberMovementGridDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.dto';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats } from '@shared/utils/date.utils';

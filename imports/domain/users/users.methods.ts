@@ -11,8 +11,8 @@ import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove
 import { RemoveUserUseCase } from '@domain/users/use-cases/remove-user/remove-user.use-case';
 import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update-user-request.dto';
 import { UpdateUserUseCase } from '@domain/users/use-cases/update-user/update-user.use-case';
-import { BaseMethod } from '@infra/methods/methods.base';
-import { MethodsEnum } from '@infra/methods/methods.enum';
+import { BaseMethod } from '@infra/meteor/common/meteor-methods.base';
+import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class UsersMethods extends BaseMethod {

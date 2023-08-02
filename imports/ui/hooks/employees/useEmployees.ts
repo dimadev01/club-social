@@ -1,5 +1,5 @@
 import { GetEmployeesResponseDto } from '@domain/employees/use-cases/get-employees/get-employees-response.dto';
-import { MethodsEnum } from '@infra/methods/methods.enum';
+import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQuery } from '@tanstack/react-query';
 
 export const useEmployees = (enabled = true) =>

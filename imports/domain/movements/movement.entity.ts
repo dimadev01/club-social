@@ -8,13 +8,13 @@ import {
   validateSync,
 } from 'class-validator';
 import { err, ok, Result } from 'neverthrow';
-import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
+import { FullEntity } from '@domain/common/full-entity.base';
 import { Employee } from '@domain/employees/employee.entity';
+import { CategoryEnum, CategoryType } from '@domain/enums/categories.enum';
 import { Member } from '@domain/members/member.entity';
 import { CreateMovement } from '@domain/movements/movements.types';
 import { Professor } from '@domain/professors/professor.entity';
 import { Service } from '@domain/services/service.entity';
-import { FullEntity } from '@kernel/full-entity.base';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';

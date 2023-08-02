@@ -1,8 +1,8 @@
 import SimpleSchema from 'simpl-schema';
-import { Category } from '@domain/categories/category.entity';
-import { Collection } from '@infra/database/collection.base';
+import { Category } from '@domain/entities/category.entity';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
-export const CategoriesCollection = new Collection('categories', Category);
+export const CategoriesCollection = new MongoCollection('categories', Category);
 
 // @ts-expect-error
 CategoriesCollection.attachSchema(
@@ -20,5 +20,3 @@ CategoriesCollection.attachSchema(
     updatedBy: String,
   })
 );
-
-await CategoriesCollection.createIndexAsync({ code: 1 });

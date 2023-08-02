@@ -1,18 +1,18 @@
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { CategoriesCollection } from '@domain/categories/categories.collection';
-import { CategoryNotFoundError } from '@domain/categories/errors/category-not-found.error';
-import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
-import { Logger } from '@infra/logger/logger.service';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
+import { CategoryNotFoundError } from '@application/errors/category-not-found.error';
+import { UpdateCategoryRequestDto } from '@application/use-cases/update-category/update-category-request.dto';
+import { LoggerOstrio } from '@infra/logger/logger-ostrio';
+import { CategoriesCollection } from '@infra/mongo/collections/categories.collection';
 
 @injectable()
 export class UpdateCategoryUseCase
   extends UseCase<UpdateCategoryRequestDto>
   implements IUseCase<UpdateCategoryRequestDto, undefined>
 {
-  public constructor(private readonly _logger: Logger) {
+  public constructor(private readonly _logger: LoggerOstrio) {
     super();
   }
 

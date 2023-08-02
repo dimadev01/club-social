@@ -1,8 +1,8 @@
 import SimpleSchema from 'simpl-schema';
 import { Service } from '@domain/services/service.entity';
-import { Collection } from '@infra/database/collection.base';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
-export const ServicesCollection = new Collection('services', Service);
+export const ServicesCollection = new MongoCollection('services', Service);
 
 // @ts-expect-error
 ServicesCollection.attachSchema(

@@ -1,20 +1,22 @@
 import 'reflect-metadata';
-import '@infra/publications/meteor-publications';
+import '@infra/meteor/common/meteor-publications';
 import '@domain/users/users.collection';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
-import { CategoriesMethods } from '@domain/categories/categories.methods';
 import { EmployeesMethods } from '@domain/employees/employees.methods';
 import { MembersMethods } from '@domain/members/members.methods';
 import { MovementsMethods } from '@domain/movements/movements.methods';
 import { ProfessorsMethods } from '@domain/professors/professors.methods';
 import { ServicesMethods } from '@domain/services/services.methods';
 import { UsersMethods } from '@domain/users/users.methods';
-import { Logger } from '@infra/logger/logger.service';
+import { Tokens } from '@infra/di/di-tokens';
+import { LoggerOstrio } from '@infra/logger/logger-ostrio';
+import { CategoriesMethods } from '@infra/meteor/categories.methods';
 import { MigrationsService } from '@infra/migrations/migrations.service';
+import { CategoryRepository } from '@infra/mongo/repositories/category.repository';
 
 dayjs.extend(utc);
 
@@ -23,7 +25,7 @@ export class ServerStartup {
   // #region Constructors (1)
 
   public constructor(
-    private readonly _logger: Logger,
+    private readonly _logger: LoggerOstrio,
     private readonly _migrations: MigrationsService,
     private readonly _usersMethods: UsersMethods,
     private readonly _membersMethods: MembersMethods,
@@ -87,6 +89,16 @@ export class ServerStartup {
     };
   }
 
+  private async _createUsersIndexes() {
+    await Meteor.users.createIndexAsync({ createdAt: -1 });
+
+    await Meteor.users.createIndexAsync({ 'profile.firstName': 1 });
+
+    await Meteor.users.createIndexAsync({ 'profile.lastName': 1 });
+
+    await Meteor.users.createIndexAsync({ 'profile.role': 1 });
+  }
+
   private _migrate() {
     this._migrations.start();
   }
@@ -107,19 +119,17 @@ export class ServerStartup {
     this._servicesMethods.register();
   }
 
-  private async _createUsersIndexes() {
-    await Meteor.users.createIndexAsync({ createdAt: -1 });
-
-    await Meteor.users.createIndexAsync({ 'profile.firstName': 1 });
-
-    await Meteor.users.createIndexAsync({ 'profile.lastName': 1 });
-
-    await Meteor.users.createIndexAsync({ 'profile.role': 1 });
-  }
-
   // #endregion Private Methods (4)
 }
 
+function registerContainers(): void {
+  container.register(Tokens.CategoryRepository, CategoryRepository);
+
+  container.register(Tokens.Logger, LoggerOstrio);
+}
+
 Meteor.startup(async () => {
+  registerContainers();
+
   await container.resolve(ServerStartup).start();
 });

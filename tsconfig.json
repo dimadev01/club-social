@@ -28,8 +28,8 @@
       "@domain/*": ["./imports/domain/*"],
       "@ui/*": ["./imports/ui/*"],
       "@infra/*": ["./imports/infra/*"],
-      "@kernel/*": ["./imports/kernel/*"],
-      "@shared/*": ["./imports/shared/*"]
+      "@shared/*": ["./imports/shared/*"],
+      "@application/*": ["./imports/application/*"]
     },
     "moduleResolution": "node",
     "resolveJsonModule": true,

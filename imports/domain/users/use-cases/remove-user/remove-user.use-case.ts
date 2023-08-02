@@ -1,20 +1,20 @@
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
 import { Permission, Role, Scope, StaffRole } from '@domain/roles/roles.enum';
 import { RemoveAdminError } from '@domain/users/errors/remove-admin.error';
 import { RemoveYourselfError } from '@domain/users/errors/remove-yourself.error';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
-import { Logger } from '@infra/logger/logger.service';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
+import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 
 @injectable()
 export class RemoveUserUseCase
   extends UseCase<RemoveUserRequestDto>
   implements IUseCase<RemoveUserRequestDto, undefined>
 {
-  public constructor(private readonly _logger: Logger) {
+  public constructor(private readonly _logger: LoggerOstrio) {
     super();
   }
 

@@ -9,19 +9,19 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { FullEntity } from '@domain/common/full-entity.base';
+import { CategoryHistorical } from '@domain/entities/category-historical.entity';
 import {
   CategoryEnum,
   CategoryLabel,
   CategoryPrices,
   CategoryType,
   CategoryTypes,
-} from '@domain/categories/categories.enum';
-import { CategoryHistorical } from '@domain/categories/category-historical.entity';
-import { Entity } from '@kernel/entity.base';
+} from '@domain/enums/categories.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 
-export class Category extends Entity {
-  // #region Properties (6)
+export class Category extends FullEntity {
+  // #region Properties (7)
 
   @IsInt()
   @IsOptional()
@@ -50,7 +50,7 @@ export class Category extends Entity {
   @IsString()
   public updatedBy: string;
 
-  // #endregion Properties (6)
+  // #endregion Properties (7)
 
   // #region Constructors (1)
 
@@ -70,6 +70,22 @@ export class Category extends Entity {
     this.historical = null;
   }
 
+  // #endregion Constructors (1)
+
+  // #region Public Accessors (1)
+
+  public get amountFormatted(): string | null {
+    if (!this.amount) {
+      return null;
+    }
+
+    return CurrencyUtils.formatCents(this.amount);
+  }
+
+  // #endregion Public Accessors (1)
+
+  // #region Public Static Methods (1)
+
   public static create(code: CategoryEnum): Category {
     const category = new Category();
 
@@ -86,17 +102,5 @@ export class Category extends Entity {
     return category;
   }
 
-  // #endregion Constructors (1)
-
-  // #region Public Accessors (1)
-
-  public get amountFormatted(): string | null {
-    if (this.amount) {
-      return CurrencyUtils.formatCents(this.amount);
-    }
-
-    return null;
-  }
-
-  // #endregion Public Accessors (1)
+  // #endregion Public Static Methods (1)
 }

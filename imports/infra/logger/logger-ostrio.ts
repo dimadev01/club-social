@@ -6,10 +6,11 @@ import { LoggerConsole as OstrioLoggerConsole } from 'meteor/ostrio:loggerconsol
 // @ts-expect-error
 import { LoggerMongo as OstrioLoggerMongo } from 'meteor/ostrio:loggermongo';
 import { singleton } from 'tsyringe';
-import { ILoggerFormat } from '@infra/logger/logger.types';
+import { ILogger } from '@application/logger/logger.interface';
+import { LoggerOstrioFormat } from '@infra/logger/logger-ostrio-format';
 
 @singleton()
-export class Logger {
+export class LoggerOstrio implements ILogger {
   private readonly _logger;
 
   public get logger(): OstrioLogger {
@@ -23,7 +24,7 @@ export class Logger {
 
     const ostrioLoggerMongo = new OstrioLoggerMongo(this._logger, {
       collectionName: 'logs',
-      format: (params: ILoggerFormat): ILoggerFormat => ({
+      format: (params: LoggerOstrioFormat): LoggerOstrioFormat => ({
         ...params,
         additional: isEmpty(params.additional) ? null : params.additional,
       }),

@@ -1,10 +1,10 @@
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
 import { MembersCollection } from '@domain/members/members.collection';
 import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
 import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetMemberUseCase

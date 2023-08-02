@@ -1,8 +1,8 @@
 import { IsDate, IsOptional, IsString, validateSync } from 'class-validator';
-import { Entity } from '@kernel/entity.base';
+import { FullEntity } from '@domain/common/full-entity.base';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
-export class Service extends Entity {
+export class Service extends FullEntity {
   // #region Properties (2)
 
   @IsString()

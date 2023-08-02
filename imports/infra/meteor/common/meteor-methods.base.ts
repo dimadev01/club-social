@@ -1,7 +1,7 @@
 import { container, injectable } from 'tsyringe';
-import { Logger } from '@infra/logger/logger.service';
-import { MeteorErrorCode } from '@kernel/errors.enum';
-import { IUseCase } from '@kernel/use-case.interface';
+import { IUseCase } from '@application/common/use-case.interfaces';
+import { LoggerOstrio } from '@infra/logger/logger-ostrio';
+import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 
 @injectable()
 export class BaseMethod {
@@ -14,14 +14,14 @@ export class BaseMethod {
 
       if (result.isErr()) {
         throw new Meteor.Error(
-          MeteorErrorCode.BadRequest,
+          MeteorErrorCodeEnum.BadRequest,
           result.error.message
         );
       }
 
       return result.value;
     } catch (error) {
-      container.resolve(Logger).error(error);
+      container.resolve(LoggerOstrio).error(error);
 
       if (error instanceof Meteor.Error) {
         throw error;
@@ -29,13 +29,13 @@ export class BaseMethod {
 
       if (error instanceof Error) {
         throw new Meteor.Error(
-          MeteorErrorCode.InternalServerError,
+          MeteorErrorCodeEnum.InternalServerError,
           error.message
         );
       }
 
       throw new Meteor.Error(
-        MeteorErrorCode.InternalServerError,
+        MeteorErrorCodeEnum.InternalServerError,
         'Unexpected and unhandled server error'
       );
     }

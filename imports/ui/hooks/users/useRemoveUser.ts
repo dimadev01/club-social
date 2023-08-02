@@ -1,5 +1,5 @@
 import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
-import { MethodsEnum } from '@infra/methods/methods.enum';
+import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useMutation } from '@tanstack/react-query';
 
 export const useRemoveUser = (onSuccess: () => void) =>

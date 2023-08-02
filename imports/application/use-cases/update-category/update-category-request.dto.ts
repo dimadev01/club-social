@@ -1,9 +1,9 @@
 import { IsEnum, IsInt } from 'class-validator';
-import { CategoryEnum } from '@domain/categories/categories.enum';
+import { CategoryEnum } from '@domain/enums/categories.enum';
 
 export class UpdateCategoryRequestDto {
   @IsEnum(CategoryEnum)
-  category: string;
+  category: CategoryEnum;
 
   @IsInt()
   amount: number;

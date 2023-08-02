@@ -3,9 +3,9 @@ import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
+import { MongoOptions } from '@application/common/use-case.interfaces';
 import { Permission, Scope } from '@domain/roles/roles.enum';
-import { MeteorErrorCode } from '@kernel/errors.enum';
-import { MongoOptions } from '@kernel/use-case.interface';
+import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,7 +15,10 @@ export abstract class UseCase<T extends object = any> {
     value: T
   ): Promise<void> {
     if (!value) {
-      throw new Meteor.Error(MeteorErrorCode.BadRequest, 'Request is empty');
+      throw new Meteor.Error(
+        MeteorErrorCodeEnum.BadRequest,
+        'Request is empty'
+      );
     }
 
     try {
@@ -24,7 +27,7 @@ export abstract class UseCase<T extends object = any> {
       const errors = err as ValidationError[];
 
       throw new Meteor.Error(
-        MeteorErrorCode.BadRequest,
+        MeteorErrorCodeEnum.BadRequest,
         ValidationUtils.getErrorMessage(errors)
       );
     }
@@ -49,14 +52,14 @@ export abstract class UseCase<T extends object = any> {
 
     if (!user) {
       throw new Meteor.Error(
-        MeteorErrorCode.Unauthorized,
+        MeteorErrorCodeEnum.Unauthorized,
         'You are not logged in'
       );
     }
 
     if (!Roles.userIsInRole(user, permission, scope)) {
       throw new Meteor.Error(
-        MeteorErrorCode.Forbidden,
+        MeteorErrorCodeEnum.Forbidden,
         'You are not allowed to perform this action'
       );
     }

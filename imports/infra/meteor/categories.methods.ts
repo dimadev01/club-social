@@ -1,9 +1,9 @@
 import { injectable } from 'tsyringe';
-import { GetCategoriesUseCase } from '@domain/categories/use-cases/get-categories/get-categories.use-case';
-import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
-import { UpdateCategoryUseCase } from '@domain/categories/use-cases/update-category/update-category.use-case';
-import { BaseMethod } from '@infra/methods/methods.base';
-import { MethodsEnum } from '@infra/methods/methods.enum';
+import { GetCategoriesUseCase } from '@application/use-cases/get-categories/get-categories.use-case';
+import { UpdateCategoryRequestDto } from '@application/use-cases/update-category/update-category-request.dto';
+import { UpdateCategoryUseCase } from '@application/use-cases/update-category/update-category.use-case';
+import { BaseMethod } from '@infra/meteor/common/meteor-methods.base';
+import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class CategoriesMethods extends BaseMethod {

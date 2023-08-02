@@ -8,7 +8,7 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
-import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
+import { CategoryEnum, CategoryType } from '@domain/enums/categories.enum';
 
 export class CreateMovementRequestDto {
   @IsDateString()

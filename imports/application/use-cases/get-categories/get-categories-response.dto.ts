@@ -1,4 +1,4 @@
-import { CategoryEnum } from '@domain/categories/categories.enum';
+import { CategoryEnum } from '@domain/enums/categories.enum';
 
 export class GetCategoriesResponseDto {
   _id: string;

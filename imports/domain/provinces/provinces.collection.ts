@@ -1,8 +1,8 @@
 import SimpleSchema from 'simpl-schema';
 import { Province } from '@domain/provinces/province.entity';
-import { Collection } from '@infra/database/collection.base';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
-export const ProvincesCollection = new Collection('provinces', Province);
+export const ProvincesCollection = new MongoCollection('provinces', Province);
 
 // @ts-expect-error
 ProvincesCollection.attachSchema(

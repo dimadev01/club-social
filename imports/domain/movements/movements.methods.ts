@@ -11,8 +11,8 @@ import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-m
 import { RestoreMovementUseCase } from '@domain/movements/use-cases/restore-movement/restore-movement.use-case';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
 import { UpdateMovementUseCase } from '@domain/movements/use-cases/update-movement/update-movement.use-case';
-import { BaseMethod } from '@infra/methods/methods.base';
-import { MethodsEnum } from '@infra/methods/methods.enum';
+import { BaseMethod } from '@infra/meteor/common/meteor-methods.base';
+import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class MovementsMethods extends BaseMethod {

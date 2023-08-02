@@ -1,10 +1,10 @@
 import './migrations';
 import { injectable } from 'tsyringe';
-import { Logger } from '@infra/logger/logger.service';
+import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 
 @injectable()
 export class MigrationsService {
-  public constructor(private readonly _logger: Logger) {}
+  public constructor(private readonly _logger: LoggerOstrio) {}
 
   public start() {
     // @ts-expect-error

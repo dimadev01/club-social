@@ -1,6 +1,6 @@
 import React from 'react';
 import { Breadcrumb, Card } from 'antd';
-import { GetCategoriesResponseDto } from '@domain/categories/use-cases/get-categories/get-categories-response.dto';
+import { GetCategoriesResponseDto } from '@application/use-cases/get-categories/get-categories-response.dto';
 import { Table } from '@ui/components/Table/Table';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useCategories } from '@ui/hooks/categories/useCategories';

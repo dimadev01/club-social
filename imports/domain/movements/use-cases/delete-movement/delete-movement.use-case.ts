@@ -1,19 +1,19 @@
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
 import { MovementNotFoundError } from '@domain/movements/errors/movement-not-found.error';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
 import { Permission, Scope } from '@domain/roles/roles.enum';
-import { Logger } from '@infra/logger/logger.service';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
+import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 
 @injectable()
 export class DeleteMovementUseCase
   extends UseCase<DeleteMovementRequestDto>
   implements IUseCase<DeleteMovementRequestDto, undefined>
 {
-  public constructor(private readonly _logger: Logger) {
+  public constructor(private readonly _logger: LoggerOstrio) {
     super();
   }
 

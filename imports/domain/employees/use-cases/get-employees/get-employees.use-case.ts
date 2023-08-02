@@ -1,11 +1,11 @@
 import { plainToInstance } from 'class-transformer';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
 import { Employee } from '@domain/employees/employee.entity';
 import { EmployeesCollection } from '@domain/employees/employees.collection';
 import { GetEmployeesResponseDto } from '@domain/employees/use-cases/get-employees/get-employees-response.dto';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetEmployeesUseCase

@@ -5,11 +5,9 @@ import {
 } from 'class-transformer';
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-/* eslint-disable no-param-reassign */
-import { Entity } from '@kernel/entity.base';
-import { FullEntity } from '@kernel/full-entity.base';
+import { FullEntity } from '@domain/common/full-entity.base';
 
-export class Collection<T extends Entity> extends Mongo.Collection<T> {
+export class MongoCollection<T extends FullEntity> extends Mongo.Collection<T> {
   public constructor(name: string, cls: ClassConstructor<T>) {
     super(name, {
       transform: (doc) => plainToInstance(cls, doc),
@@ -21,11 +19,7 @@ export class Collection<T extends Entity> extends Mongo.Collection<T> {
 
     if (user) {
       // @ts-expect-error
-      entity.createdBy = `${user.profile?.firstName} ${user.profile?.lastName}`;
-
-      if (entity instanceof FullEntity) {
-        entity.updatedBy = entity.createdBy;
-      }
+      entity.create(`${user.profile?.firstName} ${user.profile?.lastName}`);
     }
 
     return this.insertAsync(entity);
@@ -34,16 +28,10 @@ export class Collection<T extends Entity> extends Mongo.Collection<T> {
   public updateEntity(entity: T): Promise<number> {
     const user: Meteor.User | null = this._getCurrentUser();
 
-    if (user) {
+    entity.update(
       // @ts-expect-error
-      entity.updatedBy = `${user.profile?.firstName} ${user.profile?.lastName}`;
-    } else if (entity instanceof FullEntity) {
-      entity.updatedBy = 'System';
-    }
-
-    if (entity instanceof FullEntity) {
-      entity.updatedAt = new Date();
-    }
+      user ? `${user.profile?.firstName} ${user.profile?.lastName}` : 'System'
+    );
 
     return this.updateAsync(entity._id, {
       $set: instanceToPlain<T>(entity) as object,

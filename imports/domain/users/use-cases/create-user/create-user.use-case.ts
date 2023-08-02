@@ -1,6 +1,8 @@
 import { Random } from 'meteor/random';
 import { err, ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
 import {
   AdminRole,
   MemberRole,
@@ -11,16 +13,14 @@ import {
 } from '@domain/roles/roles.enum';
 import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
-import { Logger } from '@infra/logger/logger.service';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
+import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 
 @injectable()
 export class CreateUserUseCase
   extends UseCase<CreateUserRequestDto>
   implements IUseCase<CreateUserRequestDto, string>
 {
-  public constructor(private readonly _logger: Logger) {
+  public constructor(private readonly _logger: LoggerOstrio) {
     super();
   }
 

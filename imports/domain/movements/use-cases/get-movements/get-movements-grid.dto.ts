@@ -1,4 +1,4 @@
-import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
+import { CategoryEnum, CategoryType } from '@domain/enums/categories.enum';
 
 export class MovementGridDto {
   _id: string;

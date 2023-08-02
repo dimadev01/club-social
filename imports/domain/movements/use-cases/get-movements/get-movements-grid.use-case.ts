@@ -4,18 +4,18 @@ import find from 'lodash/find';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
 import {
   CategoryEnum,
   CategoryType,
   MemberCategories,
-} from '@domain/categories/categories.enum';
+} from '@domain/enums/categories.enum';
 import { Movement } from '@domain/movements/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetMovementsUseCase

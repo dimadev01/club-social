@@ -5,11 +5,10 @@ import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import readXlsxFile from 'read-excel-file/node';
 import { container } from 'tsyringe';
-import { CategoriesCollection } from '@domain/categories/categories.collection';
-import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
-import { Category } from '@domain/categories/category.entity';
 import { Employee } from '@domain/employees/employee.entity';
 import { EmployeesCollection } from '@domain/employees/employees.collection';
+import { Category } from '@domain/entities/category.entity';
+import { CategoryEnum, CategoryType } from '@domain/enums/categories.enum';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import {
@@ -29,6 +28,7 @@ import { Permission, Role, Scope } from '@domain/roles/roles.enum';
 import { Service } from '@domain/services/service.entity';
 import { ServicesCollection } from '@domain/services/services.collection';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
+import { CategoriesCollection } from '@infra/mongo/collections/categories.collection';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats } from '@shared/utils/date.utils';
 
