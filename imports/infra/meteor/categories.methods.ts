@@ -19,7 +19,7 @@ export class CategoriesMethods extends BaseMethod {
       [MethodsEnum.CategoriesGetAll]: () => this.execute(this._getCategories),
 
       [MethodsEnum.CategoriesUpdate]: (request: UpdateCategoryRequestDto) =>
-        this.execute(this._updatePrice, request),
+        this.execute(this._updatePrice, request, UpdateCategoryRequestDto),
     });
   }
 }

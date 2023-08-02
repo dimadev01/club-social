@@ -1,7 +1,9 @@
 import { inject, injectable } from 'tsyringe';
+import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { ICategoryRepository } from '@application/repositories/category-repository.interface';
 import { Category } from '@domain/entities/category.entity';
+import { CategoryEnum } from '@domain/enums/categories.enum';
 import { Tokens } from '@infra/di/di-tokens';
 import { CategoriesCollection } from '@infra/mongo/collections/categories.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
@@ -26,27 +28,34 @@ export class CategoryRepository
   // #region Public Methods (3)
 
   public async findAll(): Promise<Category[]> {
-    return CategoriesCollection.rawCollection()
-      .aggregate<Category>([
-        {
-          $lookup: {
-            as: 'movements',
-            foreignField: 'category',
-            from: 'movements',
-            localField: 'code',
-          },
-        },
-      ])
-      .toArray();
+    return this.getCollection().find().fetchAsync();
   }
 
-  public getCollection(): MongoCollection<Category> {
-    return CategoriesCollection;
+  public async findByCode(code: CategoryEnum): Promise<Category | undefined> {
+    return this.getCollection().findOneAsync({ code });
   }
 
-  public getLogger(): ILogger {
-    return this._logger;
+  public async findByCodeOrThrow(code: CategoryEnum): Promise<Category> {
+    const category = await this.findByCode(code);
+
+    if (!category) {
+      throw new EntityNotFoundError(Category);
+    }
+
+    return category;
   }
 
   // #endregion Public Methods (3)
+
+  // #region Protected Methods (2)
+
+  protected getCollection(): MongoCollection<Category> {
+    return CategoriesCollection;
+  }
+
+  protected getLogger(): ILogger {
+    return this._logger;
+  }
+
+  // #endregion Protected Methods (2)
 }

@@ -47,8 +47,8 @@ export const CategoriesPage = () => {
             },
             {
               align: 'right',
-              dataIndex: 'amountFormatted',
-              title: 'Precio actual',
+              dataIndex: 'amount',
+              title: 'Precio',
             },
           ]}
         />

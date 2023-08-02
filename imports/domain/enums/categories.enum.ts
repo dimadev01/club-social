@@ -76,20 +76,20 @@ export const getCategoryFilters = () =>
     }))
     .sort((a, b) => a.text.localeCompare(b.text));
 
-export enum CategoryType {
+export enum CategoryTypeEnum {
   Debt = 'debt',
   Income = 'income',
   Expense = 'expense',
 }
 
 export const CategoryTypeLabel = {
-  [CategoryType.Debt]: 'Deuda',
-  [CategoryType.Income]: 'Ingreso',
-  [CategoryType.Expense]: 'Egreso',
+  [CategoryTypeEnum.Debt]: 'Deuda',
+  [CategoryTypeEnum.Income]: 'Ingreso',
+  [CategoryTypeEnum.Expense]: 'Egreso',
 };
 
 export const getCategoryTypeOptions = () =>
-  Object.values(CategoryType)
+  Object.values(CategoryTypeEnum)
     .map((category) => ({
       label: CategoryTypeLabel[category],
       value: category,
@@ -97,12 +97,12 @@ export const getCategoryTypeOptions = () =>
     .sort((a, b) => a.label.localeCompare(b.label));
 
 export const CategoryTypeFilters = {
-  [CategoryType.Debt]: [
+  [CategoryTypeEnum.Debt]: [
     CategoryEnum.ElectricityDebt,
     CategoryEnum.MembershipDebt,
     CategoryEnum.GuestDebt,
   ],
-  [CategoryType.Income]: [
+  [CategoryTypeEnum.Income]: [
     CategoryEnum.ElectricityIncome,
     CategoryEnum.MembershipIncome,
     CategoryEnum.GuestIncome,
@@ -114,7 +114,7 @@ export const CategoryTypeFilters = {
     CategoryEnum.Professor,
     CategoryEnum.OtherIncome,
   ],
-  [CategoryType.Expense]: [
+  [CategoryTypeEnum.Expense]: [
     CategoryEnum.Expense,
     CategoryEnum.Salary,
     CategoryEnum.Saving,
@@ -125,7 +125,7 @@ export const CategoryTypeFilters = {
   ],
 };
 
-export const getCategoryOptions = (categoryType: CategoryType) =>
+export const getCategoryOptions = (categoryType: CategoryTypeEnum) =>
   CategoryTypeFilters[categoryType]
     .map((category) => ({
       label: CategoryLabel[category],
@@ -134,26 +134,26 @@ export const getCategoryOptions = (categoryType: CategoryType) =>
     .sort((a, b) => a.label.localeCompare(b.label));
 
 export const CategoryTypes = {
-  [CategoryEnum.MembershipIncome]: CategoryType.Income,
-  [CategoryEnum.MembershipDebt]: CategoryType.Debt,
-  [CategoryEnum.CourtRental]: CategoryType.Income,
-  [CategoryEnum.Expense]: CategoryType.Expense,
-  [CategoryEnum.Fair]: CategoryType.Income,
-  [CategoryEnum.Saloon]: CategoryType.Income,
-  [CategoryEnum.Buffet]: CategoryType.Income,
-  [CategoryEnum.GuestIncome]: CategoryType.Income,
-  [CategoryEnum.GuestDebt]: CategoryType.Debt,
-  [CategoryEnum.ElectricityIncome]: CategoryType.Income,
-  [CategoryEnum.ElectricityDebt]: CategoryType.Debt,
-  [CategoryEnum.Maintenance]: CategoryType.Expense,
-  [CategoryEnum.Employee]: CategoryType.Expense,
-  [CategoryEnum.OtherIncome]: CategoryType.Income,
-  [CategoryEnum.OtherExpense]: CategoryType.Expense,
-  [CategoryEnum.Parking]: CategoryType.Income,
-  [CategoryEnum.Professor]: CategoryType.Income,
-  [CategoryEnum.Salary]: CategoryType.Expense,
-  [CategoryEnum.Saving]: CategoryType.Expense,
-  [CategoryEnum.Service]: CategoryType.Expense,
+  [CategoryEnum.MembershipIncome]: CategoryTypeEnum.Income,
+  [CategoryEnum.MembershipDebt]: CategoryTypeEnum.Debt,
+  [CategoryEnum.CourtRental]: CategoryTypeEnum.Income,
+  [CategoryEnum.Expense]: CategoryTypeEnum.Expense,
+  [CategoryEnum.Fair]: CategoryTypeEnum.Income,
+  [CategoryEnum.Saloon]: CategoryTypeEnum.Income,
+  [CategoryEnum.Buffet]: CategoryTypeEnum.Income,
+  [CategoryEnum.GuestIncome]: CategoryTypeEnum.Income,
+  [CategoryEnum.GuestDebt]: CategoryTypeEnum.Debt,
+  [CategoryEnum.ElectricityIncome]: CategoryTypeEnum.Income,
+  [CategoryEnum.ElectricityDebt]: CategoryTypeEnum.Debt,
+  [CategoryEnum.Maintenance]: CategoryTypeEnum.Expense,
+  [CategoryEnum.Employee]: CategoryTypeEnum.Expense,
+  [CategoryEnum.OtherIncome]: CategoryTypeEnum.Income,
+  [CategoryEnum.OtherExpense]: CategoryTypeEnum.Expense,
+  [CategoryEnum.Parking]: CategoryTypeEnum.Income,
+  [CategoryEnum.Professor]: CategoryTypeEnum.Income,
+  [CategoryEnum.Salary]: CategoryTypeEnum.Expense,
+  [CategoryEnum.Saving]: CategoryTypeEnum.Expense,
+  [CategoryEnum.Service]: CategoryTypeEnum.Expense,
 };
 
 export const MemberCategories = [

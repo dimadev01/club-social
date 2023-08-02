@@ -1,4 +1,5 @@
 import { instanceToPlain } from 'class-transformer';
+import { validate } from 'class-validator';
 import { ILogger } from '@application/logger/logger.interface';
 import { IRepository } from '@application/repositories/repository.base';
 import { FullEntity } from '@domain/common/full-entity.base';
@@ -21,6 +22,8 @@ export abstract class MongoRepository<T extends FullEntity>
 
   public async create(entity: Mongo.OptionalId<T>): Promise<string> {
     try {
+      await validate(entity);
+
       entity.create(this._getCurrentUserName());
 
       return await this._collection.insertAsync(entity);
@@ -34,6 +37,8 @@ export abstract class MongoRepository<T extends FullEntity>
   public async delete(entity: T): Promise<void> {
     try {
       entity.delete(this._getCurrentUserName());
+
+      await validate(entity);
 
       return await this.update(entity);
     } catch (error) {
@@ -73,6 +78,8 @@ export abstract class MongoRepository<T extends FullEntity>
     try {
       entity.update(this._getCurrentUserName());
 
+      await validate(entity);
+
       await this._collection.updateAsync(entity._id, {
         $set: instanceToPlain<T>(entity) as object,
       });
@@ -87,8 +94,8 @@ export abstract class MongoRepository<T extends FullEntity>
 
   // #region Public Abstract Methods (2)
 
-  public abstract getCollection(): MongoCollection<T>;
-  public abstract getLogger(): ILogger;
+  protected abstract getCollection(): MongoCollection<T>;
+  protected abstract getLogger(): ILogger;
 
   // #endregion Public Abstract Methods (2)
 

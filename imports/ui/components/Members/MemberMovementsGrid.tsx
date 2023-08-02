@@ -7,7 +7,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {
   CategoryEnum,
   CategoryLabel,
-  CategoryType,
+  CategoryTypeEnum,
   getMemberCategoryFilters,
 } from '@domain/enums/categories.enum';
 import { MemberMovementGridDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.dto';
@@ -131,11 +131,11 @@ export const MemberMovementsGrid: React.FC<Props> = ({ memberId }) => {
             align: 'right',
             dataIndex: 'amount',
             render: (amount: string, movement: MemberMovementGridDto) => {
-              if (movement.type === CategoryType.Expense) {
+              if (movement.type === CategoryTypeEnum.Expense) {
                 return <Tag color="red">{amount}</Tag>;
               }
 
-              if (movement.type === CategoryType.Income) {
+              if (movement.type === CategoryTypeEnum.Income) {
                 return <Tag color="green">{amount}</Tag>;
               }
 

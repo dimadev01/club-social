@@ -18,7 +18,7 @@ import { ARS } from '@dinero.js/currencies';
 import {
   CategoryEnum,
   CategoryLabel,
-  CategoryType,
+  CategoryTypeEnum,
   getCategoryOptions,
   getCategoryTypeOptions,
   MemberCategories,
@@ -52,7 +52,7 @@ type FormValues = {
   professorId: string | undefined;
   rentalId: string | undefined;
   serviceId: string | undefined;
-  type: CategoryType;
+  type: CategoryTypeEnum;
 };
 
 export const MovementDetailPage = () => {
@@ -333,7 +333,7 @@ export const MovementDetailPage = () => {
               memberId: movement?.memberId,
               memberIds: undefined,
               notes: movement?.notes,
-              type: movement?.type ?? CategoryType.Income,
+              type: movement?.type ?? CategoryTypeEnum.Income,
             }}
           >
             <Form.Item

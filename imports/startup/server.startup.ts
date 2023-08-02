@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import '@infra/di/di-registration';
 import '@infra/meteor/common/meteor-publications';
 import '@domain/users/users.collection';
 import dayjs from 'dayjs';
@@ -6,17 +7,14 @@ import utc from 'dayjs/plugin/utc';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, singleton } from 'tsyringe';
-import { EmployeesMethods } from '@domain/employees/employees.methods';
 import { MembersMethods } from '@domain/members/members.methods';
 import { MovementsMethods } from '@domain/movements/movements.methods';
 import { ProfessorsMethods } from '@domain/professors/professors.methods';
 import { ServicesMethods } from '@domain/services/services.methods';
 import { UsersMethods } from '@domain/users/users.methods';
-import { Tokens } from '@infra/di/di-tokens';
-import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 import { CategoriesMethods } from '@infra/meteor/categories.methods';
+import { EmployeesMethods } from '@infra/meteor/employees.methods';
 import { MigrationsService } from '@infra/migrations/migrations.service';
-import { CategoryRepository } from '@infra/mongo/repositories/category.repository';
 
 dayjs.extend(utc);
 
@@ -25,7 +23,8 @@ export class ServerStartup {
   // #region Constructors (1)
 
   public constructor(
-    private readonly _logger: LoggerOstrio,
+    // @inject(Tokens.Logger)
+    // private readonly _logger: ILogger,
     private readonly _migrations: MigrationsService,
     private readonly _usersMethods: UsersMethods,
     private readonly _membersMethods: MembersMethods,
@@ -49,9 +48,9 @@ export class ServerStartup {
 
     await this._createUsersIndexes();
 
-    if (Meteor.isProduction) {
-      this._logger.info('Server startup completed');
-    }
+    // if (Meteor.isProduction) {
+    //   this._logger.info('Server startup completed');
+    // }
   }
 
   // #endregion Public Methods (1)
@@ -122,14 +121,13 @@ export class ServerStartup {
   // #endregion Private Methods (4)
 }
 
-function registerContainers(): void {
-  container.register(Tokens.CategoryRepository, CategoryRepository);
-
-  container.register(Tokens.Logger, LoggerOstrio);
-}
-
 Meteor.startup(async () => {
-  registerContainers();
+  try {
+    await container.resolve(ServerStartup).start();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
 
-  await container.resolve(ServerStartup).start();
+    process.exit(1);
+  }
 });

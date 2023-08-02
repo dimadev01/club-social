@@ -1,10 +1,14 @@
 import './migrations';
-import { injectable } from 'tsyringe';
-import { LoggerOstrio } from '@infra/logger/logger-ostrio';
+import { inject, injectable } from 'tsyringe';
+import { ILogger } from '@application/logger/logger.interface';
+import { Tokens } from '@infra/di/di-tokens';
 
 @injectable()
 export class MigrationsService {
-  public constructor(private readonly _logger: LoggerOstrio) {}
+  public constructor(
+    @inject(Tokens.Logger)
+    private readonly _logger: ILogger
+  ) {}
 
   public start() {
     // @ts-expect-error
@@ -23,7 +27,6 @@ export class MigrationsService {
       },
     });
 
-    // @ts-expect-error
     // Migrations.migrateTo(0);
 
     // @ts-expect-error

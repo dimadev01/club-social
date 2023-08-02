@@ -8,7 +8,7 @@ import { UseCase } from '@application/common/use-case.base';
 import { IUseCase } from '@application/common/use-case.interfaces';
 import {
   CategoryEnum,
-  CategoryType,
+  CategoryTypeEnum,
   MemberCategories,
 } from '@domain/enums/categories.enum';
 import { Movement } from '@domain/movements/movement.entity';
@@ -223,13 +223,13 @@ export class GetMovementsUseCase
         .toArray();
 
     const income =
-      find(totalsByType, { _id: CategoryType.Income })?.amount ?? 0;
+      find(totalsByType, { _id: CategoryTypeEnum.Income })?.amount ?? 0;
 
     const expense =
-      find(totalsByType, { _id: CategoryType.Expense })?.amount ?? 0;
+      find(totalsByType, { _id: CategoryTypeEnum.Expense })?.amount ?? 0;
 
     const totalDebt =
-      find(totalsByType, { _id: CategoryType.Debt })?.amount ?? 0;
+      find(totalsByType, { _id: CategoryTypeEnum.Debt })?.amount ?? 0;
 
     const balance = income - expense;
 

@@ -1,40 +1,46 @@
-import { err, ok, Result } from 'neverthrow';
-import { injectable } from 'tsyringe';
+import { ok, Result } from 'neverthrow';
+import { inject, injectable } from 'tsyringe';
 import { UseCase } from '@application/common/use-case.base';
 import { IUseCase } from '@application/common/use-case.interfaces';
-import { CategoryNotFoundError } from '@application/errors/category-not-found.error';
+import { ILogger } from '@application/logger/logger.interface';
+import { ICategoryRepository } from '@application/repositories/category-repository.interface';
 import { UpdateCategoryRequestDto } from '@application/use-cases/update-category/update-category-request.dto';
-import { LoggerOstrio } from '@infra/logger/logger-ostrio';
-import { CategoriesCollection } from '@infra/mongo/collections/categories.collection';
+import { Tokens } from '@infra/di/di-tokens';
 
 @injectable()
 export class UpdateCategoryUseCase
   extends UseCase<UpdateCategoryRequestDto>
   implements IUseCase<UpdateCategoryRequestDto, undefined>
 {
-  public constructor(private readonly _logger: LoggerOstrio) {
+  // #region Constructors (1)
+
+  public constructor(
+    @inject(Tokens.Logger) private readonly _logger: ILogger,
+    @inject(Tokens.CategoryRepository)
+    private readonly _categoryRepository: ICategoryRepository
+  ) {
     super();
   }
+
+  // #endregion Constructors (1)
+
+  // #region Public Methods (1)
 
   public async execute(
     request: UpdateCategoryRequestDto
   ): Promise<Result<undefined, Error>> {
-    await this.validateDto(UpdateCategoryRequestDto, request);
+    const category = await this._categoryRepository.findByCodeOrThrow(
+      request.category
+    );
 
-    const price = await CategoriesCollection.findOneAsync({
-      code: request.category,
-    });
+    category.updatePrice(request.amount);
 
-    if (!price) {
-      return err(new CategoryNotFoundError());
-    }
+    await this._categoryRepository.update(category);
 
-    price.amount = request.amount;
-
-    await CategoriesCollection.updateEntity(price);
-
-    this._logger.info('Price updated', { category: request.category });
+    this._logger.info('Category updated', { category: request.category });
 
     return ok(undefined);
   }
+
+  // #endregion Public Methods (1)
 }

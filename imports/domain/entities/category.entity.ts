@@ -15,7 +15,7 @@ import {
   CategoryEnum,
   CategoryLabel,
   CategoryPrices,
-  CategoryType,
+  CategoryTypeEnum,
   CategoryTypes,
 } from '@domain/enums/categories.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
@@ -41,8 +41,8 @@ export class Category extends FullEntity {
   @IsNotEmpty()
   public name: string;
 
-  @IsEnum(CategoryType)
-  public type: CategoryType;
+  @IsEnum(CategoryTypeEnum)
+  public type: CategoryTypeEnum;
 
   @IsDate()
   public updatedAt: Date;
@@ -54,29 +54,17 @@ export class Category extends FullEntity {
 
   // #region Constructors (1)
 
-  public constructor() {
+  private constructor() {
     super();
-
-    this.amount = null;
-
-    this.code = CategoryEnum.CourtRental;
-
-    this.name = CategoryLabel[this.code];
-
-    this.updatedAt = new Date();
-
-    this.updatedBy = 'System';
-
-    this.historical = null;
   }
 
   // #endregion Constructors (1)
 
   // #region Public Accessors (1)
 
-  public get amountFormatted(): string | null {
+  public get amountFormatted(): string {
     if (!this.amount) {
-      return null;
+      return '';
     }
 
     return CurrencyUtils.formatCents(this.amount);
@@ -88,6 +76,18 @@ export class Category extends FullEntity {
 
   public static create(code: CategoryEnum): Category {
     const category = new Category();
+
+    category.amount = null;
+
+    category.code = CategoryEnum.CourtRental;
+
+    category.name = CategoryLabel[category.code];
+
+    category.updatedAt = new Date();
+
+    category.updatedBy = 'System';
+
+    category.historical = null;
 
     category.code = code;
 
@@ -103,4 +103,12 @@ export class Category extends FullEntity {
   }
 
   // #endregion Public Static Methods (1)
+
+  // #region Public Methods (1)
+
+  public updatePrice(amount: number | null): void {
+    this.amount = amount;
+  }
+
+  // #endregion Public Methods (1)
 }

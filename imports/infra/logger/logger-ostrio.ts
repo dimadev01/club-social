@@ -5,17 +5,11 @@ import { Logger as OstrioLogger } from 'meteor/ostrio:logger';
 import { LoggerConsole as OstrioLoggerConsole } from 'meteor/ostrio:loggerconsole';
 // @ts-expect-error
 import { LoggerMongo as OstrioLoggerMongo } from 'meteor/ostrio:loggermongo';
-import { singleton } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { LoggerOstrioFormat } from '@infra/logger/logger-ostrio-format';
 
-@singleton()
 export class LoggerOstrio implements ILogger {
   private readonly _logger;
-
-  public get logger(): OstrioLogger {
-    return this._logger;
-  }
 
   public constructor() {
     this._logger = new OstrioLogger();
@@ -31,7 +25,7 @@ export class LoggerOstrio implements ILogger {
     }).enable();
 
     if (Meteor.isServer) {
-      ostrioLoggerMongo.collection.createIndex({ date: -1, level: 1 });
+      ostrioLoggerMongo.collection.createIndex({ date: -1 });
 
       ostrioLoggerMongo.collection.remove({});
     }

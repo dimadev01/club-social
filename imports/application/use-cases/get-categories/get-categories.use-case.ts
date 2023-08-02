@@ -1,11 +1,9 @@
-import { plainToInstance } from 'class-transformer';
 import { ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { UseCase } from '@application/common/use-case.base';
 import { IUseCase } from '@application/common/use-case.interfaces';
 import { ICategoryRepository } from '@application/repositories/category-repository.interface';
 import { GetCategoriesResponseDto } from '@application/use-cases/get-categories/get-categories-response.dto';
-import { Category } from '@domain/entities/category.entity';
 import { Tokens } from '@infra/di/di-tokens';
 
 @injectable()
@@ -24,15 +22,11 @@ export class GetCategoriesUseCase
     const data = await this._categoryRepository.findAll();
 
     return ok<GetCategoriesResponseDto[]>(
-      data
-        .map((category) => plainToInstance(Category, category))
-        .map((category) => ({
-          _id: category._id,
-          amount: category.amount,
-          amountFormatted: category.amountFormatted,
-          code: category.code,
-          name: category.name,
-        }))
+      data.map((category) => ({
+        _id: category._id,
+        amount: category.amountFormatted,
+        name: category.name,
+      }))
     );
   }
 }
