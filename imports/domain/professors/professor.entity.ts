@@ -1,9 +1,9 @@
 import { IsDate, IsString, validateSync } from 'class-validator';
 import { Meteor } from 'meteor/meteor';
-import { Entity } from '@kernel/entity.base';
+import { FullEntity } from '@domain/common/full-entity.base';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
-export class Professor extends Entity {
+export class Professor extends FullEntity {
   // #region Properties (6)
 
   @IsDate()

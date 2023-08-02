@@ -1,9 +1,9 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 import SimpleSchema from 'simpl-schema';
 import { Movement } from '@domain/movements/movement.entity';
-import { Collection } from '@infra/database/collection.base';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
-export const MovementsCollection = new Collection('movements', Movement);
+export const MovementsCollection = new MongoCollection('movements', Movement);
 
 // @ts-expect-error
 MovementsCollection.attachSchema(

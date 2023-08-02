@@ -1,0 +1,17 @@
+import { injectable } from 'tsyringe';
+import { GetEmployeesUseCase } from '@application/use-cases/get-employees/get-employees.use-case';
+import { BaseMethod } from '@infra/meteor/common/meteor-methods.base';
+import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+
+@injectable()
+export class EmployeesMethods extends BaseMethod {
+  public constructor(private readonly _getEmployees: GetEmployeesUseCase) {
+    super();
+  }
+
+  public register() {
+    Meteor.methods({
+      [MethodsEnum.EmployeesGetAll]: () => this.execute(this._getEmployees),
+    });
+  }
+}

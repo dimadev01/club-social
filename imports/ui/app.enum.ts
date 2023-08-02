@@ -27,4 +27,5 @@ export enum AppUrl {
   UsersNew = '/users/new',
 
   Categories = '/categories',
+  CategoriesDetail = '/categories/:id',
 }

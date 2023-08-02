@@ -5,11 +5,9 @@ import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import readXlsxFile from 'read-excel-file/node';
 import { container } from 'tsyringe';
-import { CategoriesCollection } from '@domain/categories/categories.collection';
-import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
-import { Category } from '@domain/categories/category.entity';
-import { Employee } from '@domain/employees/employee.entity';
-import { EmployeesCollection } from '@domain/employees/employees.collection';
+import { Category } from '@domain/entities/category.entity';
+import { Employee } from '@domain/entities/employee.entity';
+import { CategoryEnum, CategoryTypeEnum } from '@domain/enums/categories.enum';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import {
@@ -29,6 +27,8 @@ import { Permission, Role, Scope } from '@domain/roles/roles.enum';
 import { Service } from '@domain/services/service.entity';
 import { ServicesCollection } from '@domain/services/services.collection';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
+import { CategoriesCollection } from '@infra/mongo/collections/categories.collection';
+import { EmployeesCollection } from '@infra/mongo/collections/employees.collection';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats } from '@shared/utils/date.utils';
 
@@ -465,82 +465,82 @@ Migrations.add({
     for (const row of importedMovements.rows) {
       let category: CategoryEnum;
 
-      let type: CategoryType;
+      let type: CategoryTypeEnum;
 
       if (row.category === 'Alquiler de cancha') {
         category = CategoryEnum.CourtRental;
 
-        type = CategoryType.Income;
+        type = CategoryTypeEnum.Income;
       } else if (row.category === 'Cuota') {
         if (row.amount < 0) {
           category = CategoryEnum.MembershipDebt;
 
-          type = CategoryType.Debt;
+          type = CategoryTypeEnum.Debt;
         } else {
           category = CategoryEnum.MembershipIncome;
 
-          type = CategoryType.Income;
+          type = CategoryTypeEnum.Income;
         }
       } else if (row.category === 'Ferias') {
         category = CategoryEnum.Fair;
 
-        type = CategoryType.Income;
+        type = CategoryTypeEnum.Income;
       } else if (row.category === 'Servicios') {
         category = CategoryEnum.Service;
 
-        type = CategoryType.Expense;
+        type = CategoryTypeEnum.Expense;
       } else if (row.category === 'Profesores') {
         category = CategoryEnum.Professor;
 
-        type = CategoryType.Income;
+        type = CategoryTypeEnum.Income;
       } else if (row.category === 'Atesoramiento') {
         category = CategoryEnum.Saving;
 
-        type = CategoryType.Expense;
+        type = CategoryTypeEnum.Expense;
       } else if (row.category === 'Estacionamiento') {
         category = CategoryEnum.Parking;
 
-        type = CategoryType.Income;
+        type = CategoryTypeEnum.Income;
       } else if (row.category === 'Gastos') {
         category = CategoryEnum.Expense;
 
-        type = CategoryType.Expense;
+        type = CategoryTypeEnum.Expense;
       } else if (row.category === 'Honorarios') {
         category = CategoryEnum.Employee;
 
-        type = CategoryType.Expense;
+        type = CategoryTypeEnum.Expense;
       } else if (row.category === 'Invitado') {
         if (row.amount < 0) {
           category = CategoryEnum.GuestDebt;
 
-          type = CategoryType.Debt;
+          type = CategoryTypeEnum.Debt;
         } else {
           category = CategoryEnum.GuestIncome;
 
-          type = CategoryType.Income;
+          type = CategoryTypeEnum.Income;
         }
       } else if (row.category === 'Luz') {
         if (row.amount < 0) {
           category = CategoryEnum.ElectricityDebt;
 
-          type = CategoryType.Debt;
+          type = CategoryTypeEnum.Debt;
         } else {
           category = CategoryEnum.ElectricityIncome;
 
-          type = CategoryType.Income;
+          type = CategoryTypeEnum.Income;
         }
       } else if (row.category === 'Mantenimiento') {
         category = CategoryEnum.Maintenance;
 
-        type = CategoryType.Expense;
+        type = CategoryTypeEnum.Expense;
       } else if (row.category === 'Otros egresos') {
         category = CategoryEnum.OtherExpense;
 
-        type = CategoryType.Expense;
+        type = CategoryTypeEnum.Expense;
       } else {
         category = CategoryEnum.OtherIncome;
 
-        type = CategoryType.Income;
+        type = CategoryTypeEnum.Income;
       }
 
       const members = await MembersCollection.rawCollection()
@@ -743,4 +743,30 @@ Migrations.add({
     next();
   }),
   version: 4,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await CategoriesCollection.updateAsync(
+      {},
+      {
+        $set: {
+          deletedAt: null,
+          deletedBy: null,
+          historical: [],
+          isDeleted: false,
+        },
+      },
+      {
+        multi: true,
+      }
+    );
+
+    next();
+  }),
+  version: 5,
 });

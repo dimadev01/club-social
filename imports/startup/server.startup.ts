@@ -1,19 +1,21 @@
 import 'reflect-metadata';
-import '@infra/publications/meteor-publications';
+import '@infra/di/di-registration';
+import '@infra/meteor/common/meteor-publications';
 import '@domain/users/users.collection';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
-import { container, singleton } from 'tsyringe';
-import { CategoriesMethods } from '@domain/categories/categories.methods';
-import { EmployeesMethods } from '@domain/employees/employees.methods';
+import { container, inject, singleton } from 'tsyringe';
+import { ILogger } from '@application/logger/logger.interface';
 import { MembersMethods } from '@domain/members/members.methods';
 import { MovementsMethods } from '@domain/movements/movements.methods';
 import { ProfessorsMethods } from '@domain/professors/professors.methods';
 import { ServicesMethods } from '@domain/services/services.methods';
 import { UsersMethods } from '@domain/users/users.methods';
-import { Logger } from '@infra/logger/logger.service';
+import { Tokens } from '@infra/di/di-tokens';
+import { CategoriesMethods } from '@infra/meteor/categories.methods';
+import { EmployeesMethods } from '@infra/meteor/employees.methods';
 import { MigrationsService } from '@infra/migrations/migrations.service';
 
 dayjs.extend(utc);
@@ -23,7 +25,8 @@ export class ServerStartup {
   // #region Constructors (1)
 
   public constructor(
-    private readonly _logger: Logger,
+    @inject(Tokens.Logger)
+    private readonly _logger: ILogger,
     private readonly _migrations: MigrationsService,
     private readonly _usersMethods: UsersMethods,
     private readonly _membersMethods: MembersMethods,
@@ -87,6 +90,16 @@ export class ServerStartup {
     };
   }
 
+  private async _createUsersIndexes() {
+    await Meteor.users.createIndexAsync({ createdAt: -1 });
+
+    await Meteor.users.createIndexAsync({ 'profile.firstName': 1 });
+
+    await Meteor.users.createIndexAsync({ 'profile.lastName': 1 });
+
+    await Meteor.users.createIndexAsync({ 'profile.role': 1 });
+  }
+
   private _migrate() {
     this._migrations.start();
   }
@@ -107,19 +120,16 @@ export class ServerStartup {
     this._servicesMethods.register();
   }
 
-  private async _createUsersIndexes() {
-    await Meteor.users.createIndexAsync({ createdAt: -1 });
-
-    await Meteor.users.createIndexAsync({ 'profile.firstName': 1 });
-
-    await Meteor.users.createIndexAsync({ 'profile.lastName': 1 });
-
-    await Meteor.users.createIndexAsync({ 'profile.role': 1 });
-  }
-
   // #endregion Private Methods (4)
 }
 
 Meteor.startup(async () => {
-  await container.resolve(ServerStartup).start();
+  try {
+    await container.resolve(ServerStartup).start();
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error);
+
+    process.exit(1);
+  }
 });

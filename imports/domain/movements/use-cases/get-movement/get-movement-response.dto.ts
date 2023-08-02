@@ -1,4 +1,4 @@
-import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
+import { CategoryEnum, CategoryTypeEnum } from '@domain/enums/categories.enum';
 
 export class GetMovementResponseDto {
   _id: string;
@@ -13,7 +13,7 @@ export class GetMovementResponseDto {
 
   notes: string | null;
 
-  type: CategoryType;
+  type: CategoryTypeEnum;
 
   memberId: string | null;
 }

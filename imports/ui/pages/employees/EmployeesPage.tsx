@@ -1,6 +1,6 @@
 import React from 'react';
 import { Breadcrumb, Card } from 'antd';
-import { GetEmployeesResponseDto } from '@domain/employees/use-cases/get-employees/get-employees-response.dto';
+import { GetEmployeesResponseDto } from '@application/use-cases/get-employees/get-employees-response.dto';
 import { Table } from '@ui/components/Table/Table';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useEmployees } from '@ui/hooks/employees/useEmployees';

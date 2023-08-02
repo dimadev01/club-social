@@ -1,7 +1,7 @@
 import React from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import { NavLink } from 'react-router-dom';
-import { CategoryEnum } from '@domain/categories/categories.enum';
+import { CategoryEnum } from '@domain/enums/categories.enum';
 import {
   getMemberCategoryFilters,
   getMemberFileStatusFilters,

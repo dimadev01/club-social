@@ -1,5 +1,5 @@
-import { GetCategoriesResponseDto } from '@domain/categories/use-cases/get-categories/get-categories-response.dto';
-import { MethodsEnum } from '@infra/methods/methods.enum';
+import { GetCategoriesResponseDto } from '@application/use-cases/get-categories/get-categories-response.dto';
+import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQuery } from '@tanstack/react-query';
 
 export const useCategories = () =>

@@ -4,14 +4,14 @@ import find from 'lodash/find';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { CategoryEnum, CategoryType } from '@domain/categories/categories.enum';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
+import { CategoryEnum, CategoryTypeEnum } from '@domain/enums/categories.enum';
 import { MemberMovementGridDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.dto';
 import { GetMemberMovementsGridRequestDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.request.dto';
 import { GetMemberMovementsGridResponseDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.response.dto';
 import { Movement } from '@domain/movements/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetMemberMovementsUseCase
@@ -101,9 +101,9 @@ export class GetMemberMovementsUseCase
       ])
       .toArray();
 
-    const income = find(totals, { _id: CategoryType.Income })?.sum ?? 0;
+    const income = find(totals, { _id: CategoryTypeEnum.Income })?.sum ?? 0;
 
-    const debt = find(totals, { _id: CategoryType.Debt })?.sum ?? 0;
+    const debt = find(totals, { _id: CategoryTypeEnum.Debt })?.sum ?? 0;
 
     const balance = income - debt;
 

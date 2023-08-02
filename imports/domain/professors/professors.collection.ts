@@ -1,8 +1,11 @@
 import SimpleSchema from 'simpl-schema';
 import { Professor } from '@domain/professors/professor.entity';
-import { Collection } from '@infra/database/collection.base';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
-export const ProfessorsCollection = new Collection('professors', Professor);
+export const ProfessorsCollection = new MongoCollection(
+  'professors',
+  Professor
+);
 
 // @ts-expect-error
 ProfessorsCollection.attachSchema(

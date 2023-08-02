@@ -8,6 +8,7 @@ import { LoginPasswordlessPage } from '@ui/pages/auth/LoginPasswordlessPage';
 import { LogoutPage } from '@ui/pages/auth/LogoutPage';
 import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
 import { CategoriesPage } from '@ui/pages/categories/CategoriesPage';
+import { CategoryDetailPage } from '@ui/pages/categories/CategoryDetailPage';
 import { EmployeesPage } from '@ui/pages/employees/EmployeesPage';
 import { HomePage } from '@ui/pages/HomePage';
 import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
@@ -161,6 +162,14 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.Categories,
+  },
+  {
+    element: (
+      <PrivateRoute permission={Permission.Read} scope={Scope.Categories}>
+        <CategoryDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.CategoriesDetail,
   },
 
   {

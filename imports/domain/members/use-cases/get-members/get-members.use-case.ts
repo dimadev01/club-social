@@ -2,11 +2,11 @@ import { plainToInstance } from 'class-transformer';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
 
 @injectable()
 export class GetMembersUseCase
@@ -40,6 +40,7 @@ export class GetMembersUseCase
         _id: member._id,
         category: member.category,
         name: member.name,
+        status: member.status,
       }))
     );
   }

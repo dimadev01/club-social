@@ -1,14 +1,15 @@
 import { err, ok, Result } from 'neverthrow';
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
+import { UseCase } from '@application/common/use-case.base';
+import { IUseCase } from '@application/common/use-case.interfaces';
+import { ILogger } from '@application/logger/logger.interface';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { MembersCollection } from '@domain/members/members.collection';
 import { UpdateMemberRequestDto } from '@domain/members/use-cases/update-member/update-member-request.dto';
 import { Permission, Scope } from '@domain/roles/roles.enum';
 import { GetUserUseCase } from '@domain/users/use-cases/get-user/get-user.use-case';
 import { UpdateUserUseCase } from '@domain/users/use-cases/update-user/update-user.use-case';
-import { Logger } from '@infra/logger/logger.service';
-import { UseCase } from '@kernel/use-case.base';
-import { IUseCase } from '@kernel/use-case.interface';
+import { Tokens } from '@infra/di/di-tokens';
 
 @injectable()
 export class UpdateMemberUseCase
@@ -18,7 +19,8 @@ export class UpdateMemberUseCase
   public constructor(
     private readonly _updateUser: UpdateUserUseCase,
     private readonly _getUser: GetUserUseCase,
-    private readonly _logger: Logger
+    @inject(Tokens.Logger)
+    private readonly _logger: ILogger
   ) {
     super();
   }

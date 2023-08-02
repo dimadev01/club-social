@@ -19,10 +19,10 @@ import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   CategoryEnum,
   CategoryLabel,
-  CategoryType,
+  CategoryTypeEnum,
   getCategoryFilters,
   MemberCategories,
-} from '@domain/categories/categories.enum';
+} from '@domain/enums/categories.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { Permission, Scope } from '@domain/roles/roles.enum';
@@ -242,11 +242,11 @@ export const MovementsPage = () => {
                 align: 'right',
                 dataIndex: 'amount',
                 render: (amount: string, movement: MovementGridDto) => {
-                  if (movement.type === CategoryType.Expense) {
+                  if (movement.type === CategoryTypeEnum.Expense) {
                     return <Tag color="red">{amount}</Tag>;
                   }
 
-                  if (movement.type === CategoryType.Income) {
+                  if (movement.type === CategoryTypeEnum.Income) {
                     return <Tag color="green">{amount}</Tag>;
                   }
 
