@@ -1,11 +1,11 @@
 import React from 'react';
 import { Breadcrumb, Card } from 'antd';
 import { NavLink } from 'react-router-dom';
-import { GetCategoriesResponseDto } from '@application/use-cases/get-categories/get-categories-response.dto';
+import { CategoryGridDto } from '@domain/categories/use-cases/get-categories-grid/category-grid.dto';
 import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
-import { useCategories } from '@ui/hooks/categories/useCategories';
+import { useCategoriesGrid } from '@ui/hooks/categories/useCategoriesGrid';
 import { useGrid } from '@ui/hooks/useGrid';
 
 export const CategoriesPage = () => {
@@ -14,7 +14,14 @@ export const CategoriesPage = () => {
     sortOrder: 'ascend',
   });
 
-  const { data, isLoading, isRefetching, refetch } = useCategories();
+  const { data, isLoading, isRefetching, refetch } = useCategoriesGrid({
+    filters: gridState.filters,
+    page: gridState.page,
+    pageSize: gridState.pageSize,
+    search: gridState.search,
+    sortField: gridState.sortField,
+    sortOrder: gridState.sortOrder,
+  });
 
   return (
     <>
@@ -36,17 +43,17 @@ export const CategoriesPage = () => {
           <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
         }
       >
-        <Table<GetCategoriesResponseDto>
-          total={data?.length ?? 0}
+        <Table<CategoryGridDto>
+          total={data?.count ?? 0}
           gridState={gridState}
           onStateChange={setGridState}
           loading={isLoading}
-          dataSource={data}
+          dataSource={data?.data ?? []}
           columns={[
             {
               dataIndex: 'name',
-              render: (name: string, category: GetCategoriesResponseDto) =>
-                category.amount ? (
+              render: (name: string, category: CategoryGridDto) =>
+                category.price ? (
                   <NavLink to={`${AppUrl.Categories}/${category._id}`}>
                     {name}
                   </NavLink>
@@ -57,7 +64,7 @@ export const CategoriesPage = () => {
             },
             {
               align: 'right',
-              dataIndex: 'amountFormatted',
+              dataIndex: 'priceFormatted',
               title: 'Precio',
             },
           ]}

@@ -1,4 +1,4 @@
-import { UpdateCategoryRequestDto } from '@application/use-cases/update-category/update-category-request.dto';
+import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useMutation } from '@tanstack/react-query';
 

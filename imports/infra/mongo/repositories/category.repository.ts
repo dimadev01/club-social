@@ -1,9 +1,12 @@
+import { Mongo } from 'meteor/mongo';
 import { inject, injectable } from 'tsyringe';
+import { PaginatedRequestDto } from '@application/common/paginated-request.dto';
+import { PaginatedResponse } from '@application/common/paginated-response.dto';
 import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
 import { ILogger } from '@application/logger/logger.interface';
-import { ICategoryRepository } from '@application/repositories/category-repository.interface';
-import { Category } from '@domain/entities/category.entity';
-import { CategoryEnum } from '@domain/enums/categories.enum';
+import { CategoryEnum } from '@domain/categories/categories.enum';
+import { Category } from '@domain/categories/category.entity';
+import { ICategoryPort } from '@domain/categories/category.port';
 import { Tokens } from '@infra/di/di-tokens';
 import { CategoriesCollection } from '@infra/mongo/collections/categories.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
@@ -12,15 +15,33 @@ import { MongoRepository } from '@infra/mongo/common/mongo.repository';
 @injectable()
 export class CategoryRepository
   extends MongoRepository<Category>
-  implements ICategoryRepository
+  implements ICategoryPort
 {
   // #region Constructors (1)
 
   public constructor(
     @inject(Tokens.Logger)
-    private _logger: ILogger
+    protected readonly _logger: ILogger
   ) {
-    super();
+    super(_logger);
+  }
+
+  async findPaginated(
+    request: PaginatedRequestDto
+  ): Promise<PaginatedResponse<Category>> {
+    const query: Mongo.Query<Category> = {
+      isDeleted: false,
+    };
+
+    const options = this.createPaginatedQueryOptions(
+      request.page,
+      request.pageSize
+    );
+
+    return {
+      count: await this.getCollection().find(query).countAsync(),
+      data: await this.getCollection().find(query, options).fetchAsync(),
+    };
   }
 
   // #endregion Constructors (1)

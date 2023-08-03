@@ -3,8 +3,8 @@ import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { UseCase } from '@application/common/use-case.base';
 import { IUseCase } from '@application/common/use-case.interfaces';
-import { GetEmployeesResponseDto } from '@application/use-cases/get-employees/get-employees-response.dto';
-import { Employee } from '@domain/entities/employee.entity';
+import { Employee } from '@domain/employees/employee.entity';
+import { GetEmployeesResponseDto } from '@domain/employees/use-cases/get-employees/get-employees-response.dto';
 import { EmployeesCollection } from '@infra/mongo/collections/employees.collection';
 
 @injectable()

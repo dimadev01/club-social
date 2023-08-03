@@ -10,7 +10,7 @@ import {
   CategoryEnum,
   CategoryTypeEnum,
   MemberCategories,
-} from '@domain/enums/categories.enum';
+} from '@domain/categories/categories.enum';
 import { Movement } from '@domain/movements/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';

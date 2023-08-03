@@ -1,23 +1,17 @@
 import { Type } from 'class-transformer';
+import { IsDate, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import {
-  IsDate,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  validateSync,
-} from 'class-validator';
-import { err, ok, Result } from 'neverthrow';
+  CategoryEnum,
+  CategoryTypeEnum,
+} from '@domain/categories/categories.enum';
 import { FullEntity } from '@domain/common/full-entity.base';
-import { Employee } from '@domain/entities/employee.entity';
-import { CategoryEnum, CategoryTypeEnum } from '@domain/enums/categories.enum';
+import { Employee } from '@domain/employees/employee.entity';
 import { Member } from '@domain/members/member.entity';
 import { CreateMovement } from '@domain/movements/movements.types';
 import { Professor } from '@domain/professors/professor.entity';
 import { Service } from '@domain/services/service.entity';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';
-import { ValidationUtils } from '@shared/utils/validation.utils';
 
 export class Movement extends FullEntity {
   // #region Properties (15)
@@ -110,7 +104,7 @@ export class Movement extends FullEntity {
 
   // #region Public Static Methods (1)
 
-  public static create(props: CreateMovement): Result<Movement, Error> {
+  public static create(props: CreateMovement): Movement {
     const movement = new Movement();
 
     movement.category = props.category;
@@ -131,13 +125,7 @@ export class Movement extends FullEntity {
 
     movement.type = props.type;
 
-    const errors = validateSync(movement);
-
-    if (errors.length > 0) {
-      return err(ValidationUtils.getError(errors));
-    }
-
-    return ok(movement);
+    return movement;
   }
 
   // #endregion Public Static Methods (1)

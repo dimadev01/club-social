@@ -22,7 +22,7 @@ import {
   CategoryTypeEnum,
   getCategoryFilters,
   MemberCategories,
-} from '@domain/enums/categories.enum';
+} from '@domain/categories/categories.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { Permission, Scope } from '@domain/roles/roles.enum';

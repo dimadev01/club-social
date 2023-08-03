@@ -1,4 +1,4 @@
-import { GetEmployeesResponseDto } from '@application/use-cases/get-employees/get-employees-response.dto';
+import { GetEmployeesResponseDto } from '@domain/employees/use-cases/get-employees/get-employees-response.dto';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQuery } from '@tanstack/react-query';
 

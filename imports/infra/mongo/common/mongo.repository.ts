@@ -1,5 +1,6 @@
 import { instanceToPlain } from 'class-transformer';
 import { validate } from 'class-validator';
+import { MongoOptions } from '@application/common/use-case.interfaces';
 import { ILogger } from '@application/logger/logger.interface';
 import { IRepository } from '@application/repositories/repository.base';
 import { FullEntity } from '@domain/common/full-entity.base';
@@ -12,7 +13,7 @@ export abstract class MongoRepository<T extends FullEntity>
 
   private readonly _collection: MongoCollection<T>;
 
-  public constructor() {
+  public constructor(protected readonly _logger: ILogger) {
     this._collection = this.getCollection();
   }
 
@@ -28,7 +29,7 @@ export abstract class MongoRepository<T extends FullEntity>
 
       return await this._collection.insertAsync(entity);
     } catch (error) {
-      this.getLogger().error(error);
+      this._logger.error(error);
 
       throw error;
     }
@@ -42,7 +43,7 @@ export abstract class MongoRepository<T extends FullEntity>
 
       return await this.update(entity);
     } catch (error) {
-      this.getLogger().error(error);
+      this._logger.error(error);
 
       throw error;
     }
@@ -52,7 +53,7 @@ export abstract class MongoRepository<T extends FullEntity>
     try {
       return this._collection.findOneAsync(id);
     } catch (error) {
-      this.getLogger().error(error);
+      this._logger.error(error);
 
       throw error;
     }
@@ -68,7 +69,7 @@ export abstract class MongoRepository<T extends FullEntity>
 
       return entity;
     } catch (error) {
-      this.getLogger().error(error);
+      this._logger.error(error);
 
       throw error;
     }
@@ -84,7 +85,7 @@ export abstract class MongoRepository<T extends FullEntity>
         $set: instanceToPlain<T>(entity) as object,
       });
     } catch (error) {
-      this.getLogger().error(error);
+      this._logger.error(error);
 
       throw error;
     }
@@ -95,7 +96,32 @@ export abstract class MongoRepository<T extends FullEntity>
   // #region Public Abstract Methods (2)
 
   protected abstract getCollection(): MongoCollection<T>;
-  protected abstract getLogger(): ILogger;
+
+  protected getSorterValue(
+    sorter: 'descend' | 'ascend' | null,
+    defaultSortOrder = 1
+  ): number {
+    if (sorter === 'ascend') {
+      return 1;
+    }
+
+    if (sorter === 'descend') {
+      return -1;
+    }
+
+    return defaultSortOrder;
+  }
+
+  protected createPaginatedQueryOptions(
+    page: number,
+    pageSize: number
+  ): MongoOptions {
+    return {
+      limit: pageSize,
+      skip: (page - 1) * pageSize,
+      sort: {},
+    };
+  }
 
   // #endregion Public Abstract Methods (2)
 

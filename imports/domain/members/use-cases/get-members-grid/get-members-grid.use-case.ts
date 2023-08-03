@@ -6,7 +6,7 @@ import { PaginatedRequestDto } from '@application/common/paginated-request.dto';
 import { PaginatedResponse } from '@application/common/paginated-response.dto';
 import { UseCase } from '@application/common/use-case.base';
 import { IUseCase } from '@application/common/use-case.interfaces';
-import { CategoryEnum } from '@domain/enums/categories.enum';
+import { CategoryEnum } from '@domain/categories/categories.enum';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import {

@@ -5,9 +5,12 @@ import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import readXlsxFile from 'read-excel-file/node';
 import { container } from 'tsyringe';
-import { Category } from '@domain/entities/category.entity';
-import { Employee } from '@domain/entities/employee.entity';
-import { CategoryEnum, CategoryTypeEnum } from '@domain/enums/categories.enum';
+import {
+  CategoryEnum,
+  CategoryTypeEnum,
+} from '@domain/categories/categories.enum';
+import { Category } from '@domain/categories/category.entity';
+import { Employee } from '@domain/employees/employee.entity';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import {

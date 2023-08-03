@@ -22,7 +22,7 @@ import {
   getCategoryOptions,
   getCategoryTypeOptions,
   MemberCategories,
-} from '@domain/enums/categories.enum';
+} from '@domain/categories/categories.enum';
 import { MemberCategory, MemberStatus } from '@domain/members/members.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormats, DateUtils } from '@shared/utils/date.utils';

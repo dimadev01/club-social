@@ -3,8 +3,8 @@ import { inject, injectable } from 'tsyringe';
 import { UseCase } from '@application/common/use-case.base';
 import { IUseCase } from '@application/common/use-case.interfaces';
 import { ILogger } from '@application/logger/logger.interface';
-import { ICategoryRepository } from '@application/repositories/category-repository.interface';
-import { UpdateCategoryRequestDto } from '@application/use-cases/update-category/update-category-request.dto';
+import { ICategoryPort } from '@domain/categories/category.port';
+import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
 import { Tokens } from '@infra/di/di-tokens';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 
@@ -18,7 +18,7 @@ export class UpdateCategoryUseCase
   public constructor(
     @inject(Tokens.Logger) private readonly _logger: ILogger,
     @inject(Tokens.CategoryRepository)
-    private readonly _categoryRepository: ICategoryRepository
+    private readonly _categoryRepository: ICategoryPort
   ) {
     super();
   }

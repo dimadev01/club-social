@@ -9,15 +9,15 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { FullEntity } from '@domain/common/full-entity.base';
-import { CategoryHistorical } from '@domain/entities/category-historical.entity';
 import {
   CategoryEnum,
   CategoryLabel,
   CategoryPrices,
   CategoryTypeEnum,
   CategoryTypes,
-} from '@domain/enums/categories.enum';
+} from '@domain/categories/categories.enum';
+import { CategoryHistorical } from '@domain/categories/category-historical.entity';
+import { FullEntity } from '@domain/common/full-entity.base';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 
 export class Category extends FullEntity {

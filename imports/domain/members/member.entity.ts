@@ -31,7 +31,6 @@ export class Member extends FullEntity {
   public address: MemberAddress;
 
   @IsEnum(MemberCategory)
-  @IsOptional()
   public category: MemberCategory;
 
   @IsDate()
