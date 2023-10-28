@@ -1,13 +1,10 @@
-import { Type } from 'class-transformer';
 import {
-  IsArray,
   IsDate,
   IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
-  ValidateNested,
 } from 'class-validator';
 import {
   CategoryEnum,
@@ -16,22 +13,16 @@ import {
   CategoryTypeEnum,
   CategoryTypes,
 } from '@domain/categories/category.enum';
-import { CategoryHistorical } from '@domain/categories/entities/category-historical.entity';
-import { FullEntity } from '@domain/common/full-entity.base';
+import { Entity } from '@domain/common/entity';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 
-export class Category extends FullEntity {
+export class Category extends Entity {
   @IsInt()
   @IsOptional()
   public amount: number | null;
 
   @IsEnum(CategoryEnum)
   public code: CategoryEnum;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CategoryHistorical)
-  public historical: CategoryHistorical[];
 
   @IsString()
   @IsNotEmpty()
@@ -67,12 +58,6 @@ export class Category extends FullEntity {
 
     category.name = CategoryLabel[category.code];
 
-    category.updatedAt = new Date();
-
-    category.updatedBy = 'System';
-
-    category.historical = [];
-
     category.code = code;
 
     const price: number | null = CategoryPrices[category.code];
@@ -86,12 +71,7 @@ export class Category extends FullEntity {
     return category;
   }
 
-  public addHistorical() {
-    this.historical.push({
-      amount: this.amount,
-      date: this.updatedAt,
-    });
-  }
+  public addHistorical() {}
 
   public updateName(name: string): void {
     this.name = name;

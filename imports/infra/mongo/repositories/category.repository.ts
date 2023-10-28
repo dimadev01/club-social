@@ -6,15 +6,15 @@ import { CategoryEnum } from '@domain/categories/category.enum';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { Category } from '@domain/categories/entities/category.entity';
 import { DIToken } from '@infra/di/di-tokens';
-import { CategoriesCollection } from '@infra/mongo/collections/categories.collection';
+import { CategoryCollection } from '@infra/mongo/collections/category.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
-import { MongoRepository } from '@infra/mongo/common/mongo.repository';
+import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 
 @injectable()
 export class CategoryRepository
-  extends MongoRepository<Category>
+  extends MongoCrudRepository<Category>
   implements ICategoryPort
 {
   public constructor(
@@ -61,7 +61,7 @@ export class CategoryRepository
   }
 
   protected getCollection(): MongoCollection<Category> {
-    return CategoriesCollection;
+    return CategoryCollection;
   }
 
   protected getLogger(): ILogger {

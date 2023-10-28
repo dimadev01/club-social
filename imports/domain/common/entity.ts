@@ -1,7 +1,7 @@
 import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
-import { Entity } from '@domain/common/entity.base';
+import { UniqueID } from '@domain/common/unique-id';
 
-export class FullEntity extends Entity {
+export class Entity extends UniqueID {
   @IsDate()
   public createdAt: Date;
 

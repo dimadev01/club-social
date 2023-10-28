@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { Meteor } from 'meteor/meteor';
 import { err, ok, Result } from 'neverthrow';
-import { FullEntity } from '@domain/common/full-entity.base';
+import { Entity } from '@domain/common/entity';
 import { MemberAddress } from '@domain/members/member-address.entity';
 import {
   MemberCategory,
@@ -24,7 +24,7 @@ import { CreateMember } from '@domain/members/members.types';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
-export class Member extends FullEntity {
+export class Member extends Entity {
   @Type(() => MemberAddress)
   public address: MemberAddress;
 

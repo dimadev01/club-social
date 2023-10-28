@@ -1,8 +1,8 @@
 import { IsDate, IsOptional, IsString, validateSync } from 'class-validator';
-import { FullEntity } from '@domain/common/full-entity.base';
+import { Entity } from '@domain/common/entity';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
-export class Service extends FullEntity {
+export class Service extends Entity {
   @IsDate()
   public createdAt: Date;
 

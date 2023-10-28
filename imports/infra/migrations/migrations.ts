@@ -30,7 +30,7 @@ import { Permission, Role, Scope } from '@domain/roles/roles.enum';
 import { Service } from '@domain/services/service.entity';
 import { ServicesCollection } from '@domain/services/services.collection';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
-import { CategoriesCollection } from '@infra/mongo/collections/categories.collection';
+import { CategoryCollection } from '@infra/mongo/collections/category.collection';
 import { EmployeesCollection } from '@infra/mongo/collections/employees.collection';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
@@ -96,7 +96,7 @@ Migrations.add({
 
     await Meteor.users.removeAsync({});
 
-    await CategoriesCollection.removeAsync({});
+    await CategoryCollection.removeAsync({});
 
     await MembersCollection.removeAsync({});
 
@@ -124,7 +124,7 @@ Migrations.add({
      */
     await Promise.all(
       Object.values(CategoryEnum).map(async (category) =>
-        CategoriesCollection.insertEntity(Category.create(category))
+        CategoryCollection.insertEntity(Category.create(category))
       )
     );
 
@@ -718,9 +718,9 @@ Migrations.add({
       { multi: true }
     );
 
-    CategoriesCollection.insertEntity(Category.create(CategoryEnum.Buffet));
+    CategoryCollection.insertEntity(Category.create(CategoryEnum.Buffet));
 
-    CategoriesCollection.insertEntity(Category.create(CategoryEnum.Saloon));
+    CategoryCollection.insertEntity(Category.create(CategoryEnum.Saloon));
 
     next();
   }),
@@ -754,7 +754,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await CategoriesCollection.updateAsync(
+    await CategoryCollection.updateAsync(
       {},
       {
         $set: {

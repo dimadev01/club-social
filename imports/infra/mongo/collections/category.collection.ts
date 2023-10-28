@@ -2,10 +2,10 @@ import SimpleSchema from 'simpl-schema';
 import { Category } from '@domain/categories/entities/category.entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
-export const CategoriesCollection = new MongoCollection('categories', Category);
+export const CategoryCollection = new MongoCollection('categories', Category);
 
 // @ts-expect-error
-CategoriesCollection.attachSchema(
+CategoryCollection.attachSchema(
   new SimpleSchema({
     _id: String,
     amount: { defaultValue: null, optional: true, type: SimpleSchema.Integer },

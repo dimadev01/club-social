@@ -6,13 +6,13 @@ import { IMovementPort } from '@domain/movements/movement.port';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { DIToken } from '@infra/di/di-tokens';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
-import { MongoRepository } from '@infra/mongo/common/mongo.repository';
+import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 
 @injectable()
 export class MovementRepository
-  extends MongoRepository<Movement>
+  extends MongoCrudRepository<Movement>
   implements IMovementPort
 {
   public constructor(

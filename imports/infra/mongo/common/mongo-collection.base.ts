@@ -5,9 +5,9 @@ import {
 } from 'class-transformer';
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { FullEntity } from '@domain/common/full-entity.base';
+import { Entity } from '@domain/common/entity';
 
-export class MongoCollection<T extends FullEntity> extends Mongo.Collection<T> {
+export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
   public constructor(name: string, cls: ClassConstructor<T>) {
     super(name, {
       transform: (doc) => plainToInstance(cls, doc),
@@ -25,7 +25,7 @@ export class MongoCollection<T extends FullEntity> extends Mongo.Collection<T> {
     return this.insertAsync(entity);
   }
 
-  public updateEntity(entity: T): Promise<number> {
+  public async updateEntity(entity: T): Promise<number> {
     const user: Meteor.User | null = this._getCurrentUser();
 
     entity.update(

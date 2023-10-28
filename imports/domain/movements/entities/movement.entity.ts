@@ -4,7 +4,7 @@ import {
   CategoryEnum,
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
-import { FullEntity } from '@domain/common/full-entity.base';
+import { Entity } from '@domain/common/entity';
 import { Employee } from '@domain/employees/employee.entity';
 import { Member } from '@domain/members/member.entity';
 import { CreateMovement } from '@domain/movements/movements.types';
@@ -13,7 +13,7 @@ import { Service } from '@domain/services/service.entity';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
-export class Movement extends FullEntity {
+export class Movement extends Entity {
   @IsInt()
   public amount: number;
 

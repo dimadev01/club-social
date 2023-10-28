@@ -1,13 +1,13 @@
 import { instanceToPlain } from 'class-transformer';
 import { validate } from 'class-validator';
 import { ILogger } from '@application/logger/logger.interface';
-import { IRepository } from '@application/repositories/repository.interface';
+import { ICrudPort } from '@application/repositories/crud.port';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
-import { FullEntity } from '@domain/common/full-entity.base';
+import { Entity } from '@domain/common/entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
-export abstract class MongoRepository<T extends FullEntity>
-  implements IRepository<T>
+export abstract class MongoCrudRepository<T extends Entity>
+  implements ICrudPort<T>
 {
   private readonly _collection: MongoCollection<T>;
 
@@ -19,7 +19,7 @@ export abstract class MongoRepository<T extends FullEntity>
     try {
       await validate(entity);
 
-      entity.create(this._getCurrentUserName());
+      entity.create(this._getLoggedInUserName());
 
       return await this._collection.insertAsync(entity);
     } catch (error) {
@@ -31,7 +31,7 @@ export abstract class MongoRepository<T extends FullEntity>
 
   public async delete(entity: T): Promise<void> {
     try {
-      entity.delete(this._getCurrentUserName());
+      entity.delete(this._getLoggedInUserName());
 
       await validate(entity);
 
@@ -69,9 +69,20 @@ export abstract class MongoRepository<T extends FullEntity>
     }
   }
 
+  public async removeById(id: string): Promise<void> {
+    try {
+      // @ts-ignore
+      await this._collection.removeAsync({ _id: id });
+    } catch (error) {
+      this._logger.error(error);
+
+      throw error;
+    }
+  }
+
   public async update(entity: T): Promise<void> {
     try {
-      entity.update(this._getCurrentUserName());
+      entity.update(this._getLoggedInUserName());
 
       await validate(entity);
 
@@ -113,7 +124,7 @@ export abstract class MongoRepository<T extends FullEntity>
 
   protected abstract getCollection(): MongoCollection<T>;
 
-  private _getCurrentUserName(): string {
+  private _getLoggedInUserName(): string {
     try {
       const currentUser = Meteor.user();
 
