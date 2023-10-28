@@ -22,12 +22,12 @@ import {
   CategoryTypeEnum,
   getCategoryFilters,
   MemberCategories,
-} from '@domain/categories/categories.enum';
+} from '@domain/categories/category.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { Permission, Scope } from '@domain/roles/roles.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
-import { DateFormats } from '@shared/utils/date.utils';
+import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Select } from '@ui/components/Select';
@@ -68,7 +68,7 @@ export const MovementsPage = () => {
   const { data, isLoading, isRefetching, refetch } = useMovementsGrid({
     filters: gridState.filters,
     from: dateRangeValue
-      ? dateRangeValue[0]?.format(DateFormats.Date) ?? null
+      ? dateRangeValue[0]?.format(DateFormatEnum.Date) ?? null
       : null,
     memberId: memberIdSearchValue ?? null,
     page: gridState.page,
@@ -78,7 +78,7 @@ export const MovementsPage = () => {
     sortField: gridState.sortField,
     sortOrder: gridState.sortOrder,
     to: dateRangeValue
-      ? dateRangeValue[1]?.format(DateFormats.Date) ?? null
+      ? dateRangeValue[1]?.format(DateFormatEnum.Date) ?? null
       : null,
   });
 
@@ -164,7 +164,7 @@ export const MovementsPage = () => {
             <Space wrap>
               <Form.Item>
                 <DatePicker.RangePicker
-                  format={DateFormats.DD_MM_YYYY}
+                  format={DateFormatEnum.DD_MM_YYYY}
                   allowClear
                   value={dateRangeValue}
                   disabledDate={(current) => current.isAfter(dayjs())}

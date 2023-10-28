@@ -6,11 +6,11 @@ import { GetCategoryRequestDto } from '@domain/categories/use-cases/get-category
 import { GetCategoryUseCase } from '@domain/categories/use-cases/get-category/get-category.use-case';
 import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
 import { UpdateCategoryUseCase } from '@domain/categories/use-cases/update-category/update-category.use-case';
-import { BaseMethod } from '@infra/meteor/common/meteor-methods.base';
+import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
-export class CategoriesMethods extends BaseMethod {
+export class CategoryMethod extends MeteorMethod {
   public constructor(
     private readonly _getCategory: GetCategoryUseCase,
     private readonly _getCategories: GetCategoriesUseCase,

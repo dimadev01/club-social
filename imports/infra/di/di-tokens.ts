@@ -1,4 +1,4 @@
-export const Tokens = Object.freeze({
+export const DIToken = Object.freeze({
   CategoryRepository: Symbol('CategoryRepository'),
   Logger: Symbol('Logger'),
   MovementRepository: Symbol('MovementRepository'),

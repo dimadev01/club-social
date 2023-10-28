@@ -21,7 +21,7 @@ import {
 } from '@domain/members/members.enum';
 import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
 import { Role } from '@domain/roles/roles.enum';
-import { DateFormats, DateUtils } from '@shared/utils/date.utils';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
@@ -207,7 +207,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                 rules={[{ type: 'date' }]}
               >
                 <DatePicker
-                  format={DateFormats.DD_MM_YYYY}
+                  format={DateFormatEnum.DD_MM_YYYY}
                   className="w-full"
                   disabledDate={(current: Dayjs) => current.isAfter(dayjs())}
                 />

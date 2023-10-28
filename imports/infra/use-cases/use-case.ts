@@ -3,13 +3,16 @@ import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
-import { MongoOptions } from '@application/common/use-case.interfaces';
+import { MongoOptions } from '@application/use-cases/use-case.interface';
 import { Permission, Scope } from '@domain/roles/roles.enum';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export abstract class UseCase<T extends object = any> {
+  /**
+   * @deprecated Use validateDto from MeteorMethod instead
+   */
   protected async validateDto(
     classType: ClassType<T>,
     value: T
@@ -36,17 +39,9 @@ export abstract class UseCase<T extends object = any> {
   protected validatePermission(scope: Scope, permission: Permission): void {
     let user: Meteor.User | null;
 
-    let bypass = false;
-
     try {
       user = Meteor.user();
     } catch (error) {
-      user = null;
-
-      bypass = true;
-    }
-
-    if (bypass) {
       return;
     }
 

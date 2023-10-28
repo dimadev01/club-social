@@ -1,10 +1,10 @@
 import { ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
-import { UseCase } from '@application/common/use-case.base';
-import { IUseCase } from '@application/common/use-case.interfaces';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { GetCategoriesResponseDto } from '@domain/categories/use-cases/get-categories/get-categories-response.dto';
-import { Tokens } from '@infra/di/di-tokens';
+import { DIToken } from '@infra/di/di-tokens';
+import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetCategoriesUseCase
@@ -12,14 +12,14 @@ export class GetCategoriesUseCase
   implements IUseCase<undefined, GetCategoriesResponseDto[]>
 {
   public constructor(
-    @inject(Tokens.CategoryRepository)
-    private readonly _categoryRepository: ICategoryPort
+    @inject(DIToken.CategoryRepository)
+    private readonly _categoryPort: ICategoryPort
   ) {
     super();
   }
 
   public async execute(): Promise<Result<GetCategoriesResponseDto[], Error>> {
-    const data = await this._categoryRepository.findAll();
+    const data = await this._categoryPort.findAll();
 
     return ok<GetCategoriesResponseDto[]>(
       data.map((category) => ({

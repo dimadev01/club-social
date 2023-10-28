@@ -3,7 +3,7 @@ import { IsDate, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import {
   CategoryEnum,
   CategoryTypeEnum,
-} from '@domain/categories/categories.enum';
+} from '@domain/categories/category.enum';
 import { FullEntity } from '@domain/common/full-entity.base';
 import { Employee } from '@domain/employees/employee.entity';
 import { Member } from '@domain/members/member.entity';
@@ -11,11 +11,9 @@ import { CreateMovement } from '@domain/movements/movements.types';
 import { Professor } from '@domain/professors/professor.entity';
 import { Service } from '@domain/services/service.entity';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
-import { DateFormats, DateUtils } from '@shared/utils/date.utils';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 export class Movement extends FullEntity {
-  // #region Properties (15)
-
   @IsInt()
   public amount: number;
 
@@ -64,10 +62,6 @@ export class Movement extends FullEntity {
   @IsEnum(CategoryTypeEnum)
   public type: CategoryTypeEnum;
 
-  // #endregion Properties (15)
-
-  // #region Constructors (1)
-
   public constructor() {
     super();
 
@@ -82,10 +76,6 @@ export class Movement extends FullEntity {
     this.notes = null;
   }
 
-  // #endregion Constructors (1)
-
-  // #region Public Accessors (2)
-
   public get amountFormatted(): string {
     const formatted = CurrencyUtils.formatCents(this.amount);
 
@@ -97,12 +87,8 @@ export class Movement extends FullEntity {
   }
 
   public get dateFormatted(): string {
-    return DateUtils.formatUtc(this.date, DateFormats.DD_MM_YYYY);
+    return DateUtils.formatUtc(this.date, DateFormatEnum.DD_MM_YYYY);
   }
-
-  // #endregion Public Accessors (2)
-
-  // #region Public Static Methods (1)
 
   public static create(props: CreateMovement): Movement {
     const movement = new Movement();
@@ -127,6 +113,4 @@ export class Movement extends FullEntity {
 
     return movement;
   }
-
-  // #endregion Public Static Methods (1)
 }

@@ -15,14 +15,12 @@ import {
   CategoryPrices,
   CategoryTypeEnum,
   CategoryTypes,
-} from '@domain/categories/categories.enum';
-import { CategoryHistorical } from '@domain/categories/category-historical.entity';
+} from '@domain/categories/category.enum';
+import { CategoryHistorical } from '@domain/categories/entities/category-historical.entity';
 import { FullEntity } from '@domain/common/full-entity.base';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 
 export class Category extends FullEntity {
-  // #region Properties (7)
-
   @IsInt()
   @IsOptional()
   public amount: number | null;
@@ -48,17 +46,9 @@ export class Category extends FullEntity {
   @IsString()
   public updatedBy: string;
 
-  // #endregion Properties (7)
-
-  // #region Constructors (1)
-
   public constructor() {
     super();
   }
-
-  // #endregion Constructors (1)
-
-  // #region Public Accessors (1)
 
   public get amountFormatted(): string {
     if (!this.amount) {
@@ -67,10 +57,6 @@ export class Category extends FullEntity {
 
     return CurrencyUtils.formatCents(this.amount);
   }
-
-  // #endregion Public Accessors (1)
-
-  // #region Public Static Methods (1)
 
   public static create(code: CategoryEnum): Category {
     const category = new Category();
@@ -100,18 +86,6 @@ export class Category extends FullEntity {
     return category;
   }
 
-  // #endregion Public Static Methods (1)
-
-  // #region Public Methods (1)
-
-  public updatePrice(amount: number | null): void {
-    this.amount = amount;
-  }
-
-  public updateName(name: string): void {
-    this.name = name;
-  }
-
   public addHistorical() {
     this.historical.push({
       amount: this.amount,
@@ -119,5 +93,11 @@ export class Category extends FullEntity {
     });
   }
 
-  // #endregion Public Methods (1)
+  public updateName(name: string): void {
+    this.name = name;
+  }
+
+  public updatePrice(amount: number | null): void {
+    this.amount = amount;
+  }
 }

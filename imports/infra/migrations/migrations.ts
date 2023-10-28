@@ -8,8 +8,8 @@ import { container } from 'tsyringe';
 import {
   CategoryEnum,
   CategoryTypeEnum,
-} from '@domain/categories/categories.enum';
-import { Category } from '@domain/categories/category.entity';
+} from '@domain/categories/category.enum';
+import { Category } from '@domain/categories/entities/category.entity';
 import { Employee } from '@domain/employees/employee.entity';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
@@ -33,7 +33,7 @@ import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-us
 import { CategoriesCollection } from '@infra/mongo/collections/categories.collection';
 import { EmployeesCollection } from '@infra/mongo/collections/employees.collection';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
-import { DateFormats } from '@shared/utils/date.utils';
+import { DateFormatEnum } from '@shared/utils/date.utils';
 
 interface MemberRow {
   address?: string;
@@ -395,7 +395,7 @@ Migrations.add({
         addressZipCode: null,
         category,
         dateOfBirth: row.dateOfBirth
-          ? dayjs.utc(row.dateOfBirth).format(DateFormats.Date)
+          ? dayjs.utc(row.dateOfBirth).format(DateFormatEnum.Date)
           : null,
         documentID: row.documentID ?? null,
         emails: email ? [email] : null,
@@ -650,7 +650,7 @@ Migrations.add({
       await createMovementUseCase.execute({
         amount: CurrencyUtils.toCents(Math.abs(row.amount)),
         category,
-        date: dayjs.utc(row.date).format(DateFormats.Date),
+        date: dayjs.utc(row.date).format(DateFormatEnum.Date),
         employeeId,
         memberIds: memberId ? [memberId] : null,
         notes: row.notes ?? null,

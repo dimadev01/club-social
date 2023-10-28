@@ -1,14 +1,13 @@
 import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
-import { container, injectable } from 'tsyringe';
-import { IUseCase } from '@application/common/use-case.interfaces';
+import { container } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
-import { Tokens } from '@infra/di/di-tokens';
+import { IUseCase } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@infra/di/di-tokens';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
-@injectable()
-export class BaseMethod {
+export abstract class MeteorMethod {
   protected async execute<TRequest extends object, TResponse>(
     useCase: IUseCase<TRequest, TResponse>,
     request?: TRequest,
@@ -30,7 +29,7 @@ export class BaseMethod {
 
       return result.value;
     } catch (error) {
-      container.resolve<ILogger>(Tokens.Logger).error(error);
+      container.resolve<ILogger>(DIToken.Logger).error(error);
 
       if (error instanceof Meteor.Error) {
         throw error;

@@ -1,5 +1,5 @@
 import SimpleSchema from 'simpl-schema';
-import { Category } from '@domain/categories/category.entity';
+import { Category } from '@domain/categories/entities/category.entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
 export const CategoriesCollection = new MongoCollection('categories', Category);

@@ -1,3 +1,3 @@
-import { PaginatedResponse } from '@application/common/paginated-response.dto';
+import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 
 export class GetUsersResponseDto extends PaginatedResponse<Meteor.User> {}

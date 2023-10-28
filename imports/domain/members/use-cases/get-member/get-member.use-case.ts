@@ -1,25 +1,25 @@
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { UseCase } from '@application/common/use-case.base';
-import { IUseCase } from '@application/common/use-case.interfaces';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { MembersCollection } from '@domain/members/members.collection';
 import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
 import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
+import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetMemberUseCase
   extends UseCase<GetMemberRequestDto>
-  implements IUseCase<GetMemberRequestDto, GetMemberResponseDto | undefined>
+  implements IUseCase<GetMemberRequestDto, GetMemberResponseDto | null>
 {
   public async execute(
     request: GetMemberRequestDto
-  ): Promise<Result<GetMemberResponseDto | undefined, Error>> {
+  ): Promise<Result<GetMemberResponseDto | null, Error>> {
     await this.validateDto(GetMemberRequestDto, request);
 
     const member = await MembersCollection.findOneAsync(request.id);
 
     if (!member) {
-      return ok(undefined);
+      return ok(null);
     }
 
     member.joinUser();

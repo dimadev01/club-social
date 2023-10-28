@@ -1,15 +1,15 @@
 import { Accounts } from 'meteor/accounts-base';
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
-import { UseCase } from '@application/common/use-case.base';
-import { IUseCase } from '@application/common/use-case.interfaces';
 import { ILogger } from '@application/logger/logger.interface';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Permission, Role, Scope } from '@domain/roles/roles.enum';
 import { EditAdminError } from '@domain/users/errors/edit-admin.error';
 import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update-user-request.dto';
-import { Tokens } from '@infra/di/di-tokens';
+import { DIToken } from '@infra/di/di-tokens';
+import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class UpdateUserUseCase
@@ -17,7 +17,7 @@ export class UpdateUserUseCase
   implements IUseCase<UpdateUserRequestDto, undefined>
 {
   public constructor(
-    @inject(Tokens.Logger)
+    @inject(DIToken.Logger)
     private readonly _logger: ILogger
   ) {
     super();

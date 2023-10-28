@@ -2,8 +2,6 @@ import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 import { Entity } from '@domain/common/entity.base';
 
 export class FullEntity extends Entity {
-  // #region Properties (7)
-
   @IsDate()
   public createdAt: Date;
 
@@ -27,10 +25,6 @@ export class FullEntity extends Entity {
   @IsString()
   public updatedBy: string;
 
-  // #endregion Properties (7)
-
-  // #region Constructors (1)
-
   protected constructor() {
     super();
 
@@ -44,10 +38,6 @@ export class FullEntity extends Entity {
 
     this.updatedBy = 'System';
   }
-
-  // #endregion Constructors (1)
-
-  // #region Public Methods (3)
 
   public create(createdBy: string): void {
     this.createdAt = new Date();
@@ -70,6 +60,4 @@ export class FullEntity extends Entity {
 
     this.updatedBy = updatedBy;
   }
-
-  // #endregion Public Methods (3)
 }

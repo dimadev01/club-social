@@ -2,11 +2,8 @@ import { plainToInstance } from 'class-transformer';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { PaginatedRequestDto } from '@application/common/paginated-request.dto';
-import { PaginatedResponse } from '@application/common/paginated-response.dto';
-import { UseCase } from '@application/common/use-case.base';
-import { IUseCase } from '@application/common/use-case.interfaces';
-import { CategoryEnum } from '@domain/categories/categories.enum';
+import { IUseCase } from '@application/use-cases/use-case.interface';
+import { CategoryEnum } from '@domain/categories/category.enum';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import {
@@ -15,6 +12,9 @@ import {
   MemberStatus,
 } from '@domain/members/members.enum';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
+import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
+import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
+import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetMembersGridUseCase

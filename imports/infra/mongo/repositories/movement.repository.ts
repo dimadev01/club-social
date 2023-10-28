@@ -1,32 +1,26 @@
 import { Mongo } from 'meteor/mongo';
 import { inject, injectable } from 'tsyringe';
-import { PaginatedRequestDto } from '@application/common/paginated-request.dto';
-import { PaginatedResponse } from '@application/common/paginated-response.dto';
 import { ILogger } from '@application/logger/logger.interface';
-import { Movement } from '@domain/movements/movement.entity';
+import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { MovementsCollection } from '@domain/movements/movements.collection';
-import { Tokens } from '@infra/di/di-tokens';
+import { DIToken } from '@infra/di/di-tokens';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoRepository } from '@infra/mongo/common/mongo.repository';
+import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
+import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 
 @injectable()
 export class MovementRepository
   extends MongoRepository<Movement>
   implements IMovementPort
 {
-  // #region Constructors (1)
-
   public constructor(
-    @inject(Tokens.Logger)
+    @inject(DIToken.Logger)
     protected readonly _logger: ILogger
   ) {
     super(_logger);
   }
-
-  // #endregion Constructors (1)
-
-  // #region Public Methods (2)
 
   public async findAll(): Promise<Movement[]> {
     return this.getCollection().find().fetchAsync();
@@ -50,13 +44,7 @@ export class MovementRepository
     };
   }
 
-  // #endregion Public Methods (2)
-
-  // #region Protected Methods (2)
-
   protected getCollection(): MongoCollection<Movement> {
     return MovementsCollection;
   }
-
-  // #endregion Protected Methods (2)
 }

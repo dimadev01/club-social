@@ -2,11 +2,11 @@ import { plainToInstance } from 'class-transformer';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { UseCase } from '@application/common/use-case.base';
-import { IUseCase } from '@application/common/use-case.interfaces';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
+import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetMembersUseCase

@@ -4,8 +4,6 @@ import { FullEntity } from '@domain/common/full-entity.base';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
 export class Employee extends FullEntity {
-  // #region Properties (6)
-
   @IsDate()
   public createdAt: Date;
 
@@ -23,10 +21,6 @@ export class Employee extends FullEntity {
   @IsString()
   public userId: string;
 
-  // #endregion Properties (6)
-
-  // #region Constructors (1)
-
   public constructor() {
     super();
 
@@ -39,10 +33,6 @@ export class Employee extends FullEntity {
     this.updatedBy = 'System';
   }
 
-  // #endregion Constructors (1)
-
-  // #region Public Accessors (1)
-
   public get name(): string {
     // @ts-expect-error
     return `${this.user.profile?.lastName} ${
@@ -50,10 +40,6 @@ export class Employee extends FullEntity {
       this.user.profile?.firstName
     }`;
   }
-
-  // #endregion Public Accessors (1)
-
-  // #region Public Static Methods (1)
 
   public static create(userId: string): Employee {
     const professor = new Employee();
@@ -68,6 +54,4 @@ export class Employee extends FullEntity {
 
     return professor;
   }
-
-  // #endregion Public Static Methods (1)
 }

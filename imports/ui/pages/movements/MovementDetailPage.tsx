@@ -22,10 +22,10 @@ import {
   getCategoryOptions,
   getCategoryTypeOptions,
   MemberCategories,
-} from '@domain/categories/categories.enum';
+} from '@domain/categories/category.enum';
 import { MemberCategory, MemberStatus } from '@domain/members/members.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
-import { DateFormats, DateUtils } from '@shared/utils/date.utils';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
@@ -328,7 +328,7 @@ export const MovementDetailPage = () => {
                 : getPriceForCategory(CategoryEnum.MembershipIncome),
               category: movement?.category ?? CategoryEnum.MembershipIncome,
               date: movement?.date
-                ? dayjs.utc(movement.date, DateFormats.DD_MM_YYYY)
+                ? dayjs.utc(movement.date, DateFormatEnum.DD_MM_YYYY)
                 : undefined,
               memberId: movement?.memberId,
               memberIds: undefined,
@@ -342,7 +342,7 @@ export const MovementDetailPage = () => {
               rules={[{ required: true }, { type: 'date' }]}
             >
               <DatePicker
-                format={DateFormats.DD_MM_YYYY}
+                format={DateFormatEnum.DD_MM_YYYY}
                 className="w-full"
                 disabledDate={(current) =>
                   current.isAfter(dayjs().add(1, 'day'))

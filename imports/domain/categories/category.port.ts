@@ -1,7 +1,7 @@
-import { IPaginatedRepository } from '@application/repositories/repository-paginated.base';
-import { IRepository } from '@application/repositories/repository.base';
-import { CategoryEnum } from '@domain/categories/categories.enum';
-import { Category } from '@domain/categories/category.entity';
+import { IPaginatedRepository } from '@application/repositories/repository-paginated.interface';
+import { IRepository } from '@application/repositories/repository.interface';
+import { CategoryEnum } from '@domain/categories/category.enum';
+import { Category } from '@domain/categories/entities/category.entity';
 
 export interface ICategoryPort
   extends IRepository<Category>,

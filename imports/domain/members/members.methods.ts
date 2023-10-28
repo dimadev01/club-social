@@ -1,5 +1,4 @@
 import { injectable } from 'tsyringe';
-import { PaginatedRequestDto } from '@application/common/paginated-request.dto';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
 import { CreateMemberUseCase } from '@domain/members/use-cases/create-member/create-member.use-case';
 import { GetMemberMovementsGridRequestDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.request.dto';
@@ -12,11 +11,12 @@ import { RemoveMemberRequestDto } from '@domain/members/use-cases/remove-member/
 import { RemoveMemberUseCase } from '@domain/members/use-cases/remove-member/remove-member.use-case';
 import { UpdateMemberRequestDto } from '@domain/members/use-cases/update-member/update-member-request.dto';
 import { UpdateMemberUseCase } from '@domain/members/use-cases/update-member/update-member.use-case';
-import { BaseMethod } from '@infra/meteor/common/meteor-methods.base';
+import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 
 @injectable()
-export class MembersMethods extends BaseMethod {
+export class MemberMethod extends MeteorMethod {
   public constructor(
     private readonly _getMembersGrid: GetMembersGridUseCase,
     private readonly _getMembers: GetMembersUseCase,

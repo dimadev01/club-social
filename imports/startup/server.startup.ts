@@ -2,44 +2,37 @@ import 'reflect-metadata';
 import '@infra/di/di-registration';
 import '@infra/meteor/common/meteor-publications';
 import '@domain/users/users.collection';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, inject, singleton } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
-import { MembersMethods } from '@domain/members/members.methods';
-import { MovementsMethods } from '@domain/movements/movements.methods';
-import { ProfessorsMethods } from '@domain/professors/professors.methods';
-import { ServicesMethods } from '@domain/services/services.methods';
-import { UsersMethods } from '@domain/users/users.methods';
-import { Tokens } from '@infra/di/di-tokens';
-import { CategoriesMethods } from '@infra/meteor/categories.methods';
-import { EmployeesMethods } from '@infra/meteor/employees.methods';
-import { MigrationsService } from '@infra/migrations/migrations.service';
+import { MemberMethod } from '@domain/members/members.methods';
+import { MovementMethod } from '@domain/movements/movements.methods';
+import { ProfessorMethod } from '@domain/professors/professors.methods';
+import { ServiceMethod } from '@domain/services/services.methods';
+import { UserMethod } from '@domain/users/users.methods';
+import { DIToken } from '@infra/di/di-tokens';
+import { CategoryMethod } from '@infra/meteor/categories.methods';
+import { EmployeeMethod } from '@infra/meteor/employees.methods';
+import { MigrationService } from '@infra/migrations/migrations.service';
+import { DateUtils } from '@shared/utils/date.utils';
 
-dayjs.extend(utc);
+DateUtils.extend();
 
 @singleton()
 export class ServerStartup {
-  // #region Constructors (1)
-
   public constructor(
-    @inject(Tokens.Logger)
+    @inject(DIToken.Logger)
     private readonly _logger: ILogger,
-    private readonly _migrations: MigrationsService,
-    private readonly _usersMethods: UsersMethods,
-    private readonly _membersMethods: MembersMethods,
-    private readonly _movementsMethods: MovementsMethods,
-    private readonly _categoriesMethods: CategoriesMethods,
-    private readonly _professorsMethods: ProfessorsMethods,
-    private readonly _employeesMethods: EmployeesMethods,
-    private readonly _servicesMethods: ServicesMethods
+    private readonly _migrationService: MigrationService,
+    private readonly _userMethod: UserMethod,
+    private readonly _memberMethod: MemberMethod,
+    private readonly _movementMethod: MovementMethod,
+    private readonly _categoryMethod: CategoryMethod,
+    private readonly _professorMethod: ProfessorMethod,
+    private readonly _employeeMethod: EmployeeMethod,
+    private readonly _serviceMethod: ServiceMethod
   ) {}
-
-  // #endregion Constructors (1)
-
-  // #region Public Methods (1)
 
   public async start() {
     this._configureEmails();
@@ -54,10 +47,6 @@ export class ServerStartup {
       this._logger.info('Server startup completed');
     }
   }
-
-  // #endregion Public Methods (1)
-
-  // #region Private Methods (4)
 
   private _configureEmails() {
     if (Meteor.isDevelopment) {
@@ -101,26 +90,24 @@ export class ServerStartup {
   }
 
   private _migrate() {
-    this._migrations.start();
+    this._migrationService.start();
   }
 
   private async _registerMethods() {
-    this._usersMethods.register();
+    this._userMethod.register();
 
-    this._membersMethods.register();
+    this._memberMethod.register();
 
-    this._movementsMethods.register();
+    this._movementMethod.register();
 
-    this._categoriesMethods.register();
+    this._categoryMethod.register();
 
-    this._professorsMethods.register();
+    this._professorMethod.register();
 
-    this._employeesMethods.register();
+    this._employeeMethod.register();
 
-    this._servicesMethods.register();
+    this._serviceMethod.register();
   }
-
-  // #endregion Private Methods (4)
 }
 
 Meteor.startup(async () => {

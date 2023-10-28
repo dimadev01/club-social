@@ -1,25 +1,19 @@
 import { instanceToPlain } from 'class-transformer';
 import { validate } from 'class-validator';
-import { MongoOptions } from '@application/common/use-case.interfaces';
 import { ILogger } from '@application/logger/logger.interface';
-import { IRepository } from '@application/repositories/repository.base';
+import { IRepository } from '@application/repositories/repository.interface';
+import { MongoOptions } from '@application/use-cases/use-case.interface';
 import { FullEntity } from '@domain/common/full-entity.base';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
 export abstract class MongoRepository<T extends FullEntity>
   implements IRepository<T>
 {
-  // #region Constructors (1)
-
   private readonly _collection: MongoCollection<T>;
 
   public constructor(protected readonly _logger: ILogger) {
     this._collection = this.getCollection();
   }
-
-  // #endregion Constructors (1)
-
-  // #region Public Methods (5)
 
   public async create(entity: Mongo.OptionalId<T>): Promise<string> {
     try {
@@ -91,11 +85,16 @@ export abstract class MongoRepository<T extends FullEntity>
     }
   }
 
-  // #endregion Public Methods (5)
-
-  // #region Public Abstract Methods (2)
-
-  protected abstract getCollection(): MongoCollection<T>;
+  protected createPaginatedQueryOptions(
+    page: number,
+    pageSize: number
+  ): MongoOptions {
+    return {
+      limit: pageSize,
+      skip: (page - 1) * pageSize,
+      sort: {},
+    };
+  }
 
   protected getSorterValue(
     sorter: 'descend' | 'ascend' | null,
@@ -112,20 +111,7 @@ export abstract class MongoRepository<T extends FullEntity>
     return defaultSortOrder;
   }
 
-  protected createPaginatedQueryOptions(
-    page: number,
-    pageSize: number
-  ): MongoOptions {
-    return {
-      limit: pageSize,
-      skip: (page - 1) * pageSize,
-      sort: {},
-    };
-  }
-
-  // #endregion Public Abstract Methods (2)
-
-  // #region Private Methods (1)
+  protected abstract getCollection(): MongoCollection<T>;
 
   private _getCurrentUserName(): string {
     try {
@@ -136,6 +122,4 @@ export abstract class MongoRepository<T extends FullEntity>
       return 'System';
     }
   }
-
-  // #endregion Private Methods (1)
 }
