@@ -54,10 +54,6 @@ export class GetMovementsUseCase
       $match.employeeId = { $in: request.filters.employeeId as string[] };
     }
 
-    if (request.filters?.rentalId?.length) {
-      $match.rentalId = { $in: request.filters.rentalId as string[] };
-    }
-
     // @ts-expect-error
     const [{ data, total, totalsByType, debtIncome }] =
       await MovementsCollection.rawCollection()
@@ -155,12 +151,6 @@ export class GetMovementsUseCase
                   },
                 },
                 {
-                  $unwind: {
-                    path: '$rental',
-                    preserveNullAndEmptyArrays: true,
-                  },
-                },
-                {
                   $lookup: {
                     as: 'service',
                     foreignField: '_id',
@@ -197,25 +187,8 @@ export class GetMovementsUseCase
                 },
               ],
               total: [{ $count: 'count' }],
-              totalsByCategory: [
-                {
-                  $group: {
-                    _id: '$category',
-                    amount: {
-                      $sum: '$amount',
-                    },
-                  },
-                },
-              ],
               totalsByType: [
-                {
-                  $group: {
-                    _id: '$type',
-                    amount: {
-                      $sum: '$amount',
-                    },
-                  },
-                },
+                { $group: { _id: '$type', amount: { $sum: '$amount' } } },
               ],
             },
           },

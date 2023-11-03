@@ -29,7 +29,7 @@ export class Member extends Entity {
   public address: MemberAddress;
 
   @IsEnum(MemberCategory)
-  public category: MemberCategory | null;
+  public category: MemberCategory;
 
   @IsDate()
   @IsOptional()
@@ -71,30 +71,6 @@ export class Member extends Entity {
 
   public constructor() {
     super();
-
-    this.userId = '';
-
-    this.user = {} as Meteor.User;
-
-    this.address = new MemberAddress();
-
-    this.category = MemberCategory.Member;
-
-    this.dateOfBirth = null;
-
-    this.documentID = null;
-
-    this.fileStatus = null;
-
-    this.maritalStatus = null;
-
-    this.nationality = null;
-
-    this.phones = null;
-
-    this.sex = null;
-
-    this.status = MemberStatus.Active;
   }
 
   public get dateOfBirthString(): string | null {
@@ -121,6 +97,30 @@ export class Member extends Entity {
     if (props.dateOfBirth) {
       member.dateOfBirth = new Date(props.dateOfBirth);
     }
+
+    member.userId = '';
+
+    member.user = {} as Meteor.User;
+
+    member.address = new MemberAddress();
+
+    member.category = MemberCategory.Member;
+
+    member.dateOfBirth = null;
+
+    member.documentID = null;
+
+    member.fileStatus = null;
+
+    member.maritalStatus = null;
+
+    member.nationality = null;
+
+    member.phones = null;
+
+    member.sex = null;
+
+    member.status = MemberStatus.Active;
 
     member.documentID = props.documentID;
 
@@ -157,6 +157,10 @@ export class Member extends Entity {
     }
 
     return ok(member);
+  }
+
+  public getEmail(): string {
+    return this.user.emails?.[0].address ?? '';
   }
 
   public joinUser() {

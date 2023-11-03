@@ -1,6 +1,7 @@
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
+import { IEmailService } from '@application/notifications/email.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { MembersCollection } from '@domain/members/members.collection';
@@ -20,7 +21,9 @@ export class UpdateMemberUseCase
     private readonly _updateUser: UpdateUserUseCase,
     private readonly _getUser: GetUserUseCase,
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
+    @inject(DIToken.EmailService)
+    private readonly _emailService: IEmailService
   ) {
     super();
   }
@@ -91,6 +94,12 @@ export class UpdateMemberUseCase
     };
 
     await MembersCollection.updateEntity(member);
+
+    member.joinUser();
+
+    await this._emailService.send({
+      to: member.getEmail(),
+    });
 
     this._logger.info('Member updated', { memberId: request.id });
 
