@@ -25,5 +25,5 @@ export class CreateUserRequestDto {
   emails: string[] | null;
 
   @IsEnum(Role)
-  role: string;
+  role: Role;
 }

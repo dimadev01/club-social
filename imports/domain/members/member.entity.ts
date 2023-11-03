@@ -29,7 +29,7 @@ export class Member extends Entity {
   public address: MemberAddress;
 
   @IsEnum(MemberCategory)
-  public category: MemberCategory;
+  public category: MemberCategory | null;
 
   @IsDate()
   @IsOptional()

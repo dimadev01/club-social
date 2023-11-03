@@ -5,7 +5,6 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
 import { DIToken } from '@infra/di/di-tokens';
-import { CategoryHistoricalCollection } from '@infra/mongo/collections/category-historical.collection';
 import { UseCase } from '@infra/use-cases/use-case';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 
@@ -26,12 +25,6 @@ export class UpdateCategoryUseCase
     request: UpdateCategoryRequestDto
   ): Promise<Result<undefined, Error>> {
     const category = await this._categoryPort.findOneByIdOrThrow(request.id);
-
-    console.log(category);
-
-    await CategoryHistoricalCollection.audit(category);
-
-    category.addHistorical();
 
     if (request.amount) {
       category.updatePrice(CurrencyUtils.toCents(request.amount));

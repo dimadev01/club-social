@@ -71,8 +71,6 @@ export class Category extends Entity {
     return category;
   }
 
-  public addHistorical() {}
-
   public updateName(name: string): void {
     this.name = name;
   }

@@ -81,12 +81,6 @@ export class UpdateMemberUseCase
 
     member.status = request.status;
 
-    member.firstName = request.firstName;
-
-    member.lastName = request.lastName;
-
-    member.emails = user.value.emails ?? null;
-
     member.address = {
       cityGovId: request.addressCityGovId,
       cityName: request.addressCityName,

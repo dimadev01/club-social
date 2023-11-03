@@ -59,8 +59,17 @@ export const AdminRole = {
 export const StaffRole = {
   [Scope.Members]: [Permission.Read, Permission.Update],
   [Scope.Movements]: [Permission.Read, Permission.Create, Permission.Update],
+  [Scope.Users]: [Permission.Create, Permission.Update],
 };
 
 export const MemberRole = {
   [Scope.Movements]: [Permission.Read],
+};
+
+export const RolePermissionAssignment = {
+  [Role.Admin]: AdminRole,
+  [Role.Staff]: StaffRole,
+  [Role.Member]: MemberRole,
+  [Role.Employee]: {},
+  [Role.Professor]: {},
 };

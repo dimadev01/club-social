@@ -26,7 +26,12 @@ import { MovementsCollection } from '@domain/movements/movements.collection';
 import { CreateMovementUseCase } from '@domain/movements/use-cases/create-movement/create-movement.use-case';
 import { Professor } from '@domain/professors/professor.entity';
 import { ProfessorsCollection } from '@domain/professors/professors.collection';
-import { Permission, Role, Scope } from '@domain/roles/roles.enum';
+import {
+  Permission,
+  Role,
+  RolePermissionAssignment,
+  Scope,
+} from '@domain/roles/roles.enum';
 import { Service } from '@domain/services/service.entity';
 import { ServicesCollection } from '@domain/services/services.collection';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
@@ -393,6 +398,7 @@ Migrations.add({
         addressStateName: null,
         addressStreet: row.address ?? null,
         addressZipCode: null,
+        // @ts-expect-error
         category,
         dateOfBirth: row.dateOfBirth
           ? dayjs.utc(row.dateOfBirth).format(DateFormatEnum.Date)
@@ -772,4 +778,39 @@ Migrations.add({
     next();
   }),
   version: 5,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const staff = await Meteor.users
+      .find({ 'profile.role': Role.Staff })
+      .fetchAsync();
+
+    staff.forEach((user) => {
+      Object.entries(RolePermissionAssignment[Role.Staff]).forEach(
+        ([key, value]) => {
+          Roles.addUsersToRoles(user, value, key);
+        }
+      );
+    });
+
+    await CategoryCollection.updateAsync(
+      {},
+      {
+        $unset: {
+          historical: 1,
+        },
+      },
+      {
+        multi: true,
+      }
+    );
+
+    next();
+  }),
+  version: 6,
 });

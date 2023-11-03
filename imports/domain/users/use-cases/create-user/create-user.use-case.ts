@@ -4,12 +4,9 @@ import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import {
-  AdminRole,
-  MemberRole,
   Permission,
-  Role,
+  RolePermissionAssignment,
   Scope,
-  StaffRole,
 } from '@domain/roles/roles.enum';
 import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
@@ -54,19 +51,11 @@ export class CreateUserUseCase
       });
     }
 
-    if (request.role === Role.Admin) {
-      Object.entries(AdminRole).forEach(([key, value]) => {
-        Roles.addUsersToRoles(userId, value, key);
-      });
-    } else if (request.role === Role.Staff) {
-      Object.entries(StaffRole).forEach(([key, value]) => {
-        Roles.addUsersToRoles(userId, value, key);
-      });
-    } else if (request.role === Role.Member) {
-      Object.entries(MemberRole).forEach(([key, value]) => {
-        Roles.addUsersToRoles(userId, value, key);
-      });
-    }
+    const role = RolePermissionAssignment[request.role];
+
+    Object.entries(role).forEach(([key, value]) => {
+      Roles.addUsersToRoles(userId, value, key);
+    });
 
     this._logger.info('User created', { userId });
 
