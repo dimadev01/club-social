@@ -1,5 +1,5 @@
 import SimpleSchema from 'simpl-schema';
-import { Employee } from '@domain/entities/employee.entity';
+import { Employee } from '@domain/employees/employee.entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
 export const EmployeesCollection = new MongoCollection('employees', Employee);

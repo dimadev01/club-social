@@ -11,11 +11,11 @@ import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-m
 import { RestoreMovementUseCase } from '@domain/movements/use-cases/restore-movement/restore-movement.use-case';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
 import { UpdateMovementUseCase } from '@domain/movements/use-cases/update-movement/update-movement.use-case';
-import { BaseMethod } from '@infra/meteor/common/meteor-methods.base';
+import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
-export class MovementsMethods extends BaseMethod {
+export class MovementMethod extends MeteorMethod {
   public constructor(
     private readonly _getMovements: GetMovementsUseCase,
     private readonly _getMovement: GetMovementUseCase,

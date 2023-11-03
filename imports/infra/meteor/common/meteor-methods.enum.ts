@@ -1,5 +1,6 @@
 export enum MethodsEnum {
   CategoriesGetAll = 'categories/getAll',
+  CategoriesGetGrid = 'categories/getGrid',
   CategoriesGetOne = 'categories/getOne',
   CategoriesUpdate = 'categories/update',
 

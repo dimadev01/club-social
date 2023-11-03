@@ -11,11 +11,11 @@ import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove
 import { RemoveUserUseCase } from '@domain/users/use-cases/remove-user/remove-user.use-case';
 import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update-user-request.dto';
 import { UpdateUserUseCase } from '@domain/users/use-cases/update-user/update-user.use-case';
-import { BaseMethod } from '@infra/meteor/common/meteor-methods.base';
+import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
-export class UsersMethods extends BaseMethod {
+export class UserMethod extends MeteorMethod {
   public constructor(
     private readonly _getUsers: GetUsersUseCase,
     private readonly _getUser: GetUserUseCase,

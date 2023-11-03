@@ -1,32 +1,26 @@
 import { IsDate, IsOptional, IsString, validateSync } from 'class-validator';
-import { FullEntity } from '@domain/common/full-entity.base';
+import { Entity } from '@domain/common/entity';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
-export class Service extends FullEntity {
-  // #region Properties (2)
-
-  @IsString()
-  public name: string;
-
-  @IsString()
-  @IsOptional()
-  public description: string | null;
-
+export class Service extends Entity {
   @IsDate()
   public createdAt: Date;
-
-  @IsDate()
-  public updatedAt: Date;
 
   @IsString()
   public createdBy: string;
 
   @IsString()
+  @IsOptional()
+  public description: string | null;
+
+  @IsString()
+  public name: string;
+
+  @IsDate()
+  public updatedAt: Date;
+
+  @IsString()
   public updatedBy: string;
-
-  // #endregion Properties (2)
-
-  // #region Constructors (1)
 
   public constructor() {
     super();
@@ -39,14 +33,6 @@ export class Service extends FullEntity {
 
     this.updatedBy = 'System';
   }
-
-  // #endregion Constructors (1)
-
-  // #region Public Accessors (1)
-
-  // #endregion Public Accessors (1)
-
-  // #region Public Static Methods (1)
 
   public static create(name: string, description: string | null): Service {
     const service = new Service();
@@ -63,6 +49,4 @@ export class Service extends FullEntity {
 
     return service;
   }
-
-  // #endregion Public Static Methods (1)
 }

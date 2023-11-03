@@ -1,14 +1,14 @@
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
-import { UseCase } from '@application/common/use-case.base';
-import { IUseCase } from '@application/common/use-case.interfaces';
 import { ILogger } from '@application/logger/logger.interface';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
 import { Permission, Role, Scope } from '@domain/roles/roles.enum';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
-import { Tokens } from '@infra/di/di-tokens';
+import { DIToken } from '@infra/di/di-tokens';
+import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class CreateMemberUseCase
@@ -17,7 +17,7 @@ export class CreateMemberUseCase
 {
   public constructor(
     private readonly _createUserUseCase: CreateUserUseCase,
-    @inject(Tokens.Logger)
+    @inject(DIToken.Logger)
     private readonly _logger: ILogger
   ) {
     super();

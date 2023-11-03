@@ -1,10 +1,10 @@
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
-import { PaginatedResponse } from '@application/common/paginated-response.dto';
-import { UseCase } from '@application/common/use-case.base';
-import { IUseCase } from '@application/common/use-case.interfaces';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { GetUsersRequestDto } from '@domain/users/use-cases/get-users-grid/get-users-grid-request.dto';
+import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
+import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetUsersUseCase

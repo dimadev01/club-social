@@ -1,4 +1,7 @@
-import { CategoryEnum, CategoryTypeEnum } from '@domain/enums/categories.enum';
+import {
+  CategoryEnum,
+  CategoryTypeEnum,
+} from '@domain/categories/category.enum';
 
 export interface CreateMovement {
   amount: number;
@@ -10,4 +13,10 @@ export interface CreateMovement {
   professorId: string | null;
   serviceId: string | null;
   type: CategoryTypeEnum;
+}
+
+export interface CreateMovementMember {
+  _id: string;
+  firstName: string;
+  lastName: string;
 }

@@ -5,9 +5,12 @@ import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import readXlsxFile from 'read-excel-file/node';
 import { container } from 'tsyringe';
-import { Category } from '@domain/entities/category.entity';
-import { Employee } from '@domain/entities/employee.entity';
-import { CategoryEnum, CategoryTypeEnum } from '@domain/enums/categories.enum';
+import {
+  CategoryEnum,
+  CategoryTypeEnum,
+} from '@domain/categories/category.enum';
+import { Category } from '@domain/categories/entities/category.entity';
+import { Employee } from '@domain/employees/employee.entity';
 import { Member } from '@domain/members/member.entity';
 import { MembersCollection } from '@domain/members/members.collection';
 import {
@@ -23,14 +26,19 @@ import { MovementsCollection } from '@domain/movements/movements.collection';
 import { CreateMovementUseCase } from '@domain/movements/use-cases/create-movement/create-movement.use-case';
 import { Professor } from '@domain/professors/professor.entity';
 import { ProfessorsCollection } from '@domain/professors/professors.collection';
-import { Permission, Role, Scope } from '@domain/roles/roles.enum';
+import {
+  Permission,
+  Role,
+  RolePermissionAssignment,
+  Scope,
+} from '@domain/roles/roles.enum';
 import { Service } from '@domain/services/service.entity';
 import { ServicesCollection } from '@domain/services/services.collection';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
-import { CategoriesCollection } from '@infra/mongo/collections/categories.collection';
+import { CategoryCollection } from '@infra/mongo/collections/category.collection';
 import { EmployeesCollection } from '@infra/mongo/collections/employees.collection';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
-import { DateFormats } from '@shared/utils/date.utils';
+import { DateFormatEnum } from '@shared/utils/date.utils';
 
 interface MemberRow {
   address?: string;
@@ -93,7 +101,7 @@ Migrations.add({
 
     await Meteor.users.removeAsync({});
 
-    await CategoriesCollection.removeAsync({});
+    await CategoryCollection.removeAsync({});
 
     await MembersCollection.removeAsync({});
 
@@ -121,7 +129,7 @@ Migrations.add({
      */
     await Promise.all(
       Object.values(CategoryEnum).map(async (category) =>
-        CategoriesCollection.insertEntity(Category.create(category))
+        CategoryCollection.insertEntity(Category.create(category))
       )
     );
 
@@ -390,9 +398,10 @@ Migrations.add({
         addressStateName: null,
         addressStreet: row.address ?? null,
         addressZipCode: null,
+        // @ts-expect-error
         category,
         dateOfBirth: row.dateOfBirth
-          ? dayjs.utc(row.dateOfBirth).format(DateFormats.Date)
+          ? dayjs.utc(row.dateOfBirth).format(DateFormatEnum.Date)
           : null,
         documentID: row.documentID ?? null,
         emails: email ? [email] : null,
@@ -647,7 +656,7 @@ Migrations.add({
       await createMovementUseCase.execute({
         amount: CurrencyUtils.toCents(Math.abs(row.amount)),
         category,
-        date: dayjs.utc(row.date).format(DateFormats.Date),
+        date: dayjs.utc(row.date).format(DateFormatEnum.Date),
         employeeId,
         memberIds: memberId ? [memberId] : null,
         notes: row.notes ?? null,
@@ -715,9 +724,9 @@ Migrations.add({
       { multi: true }
     );
 
-    CategoriesCollection.insertEntity(Category.create(CategoryEnum.Buffet));
+    CategoryCollection.insertEntity(Category.create(CategoryEnum.Buffet));
 
-    CategoriesCollection.insertEntity(Category.create(CategoryEnum.Saloon));
+    CategoryCollection.insertEntity(Category.create(CategoryEnum.Saloon));
 
     next();
   }),
@@ -751,7 +760,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await CategoriesCollection.updateAsync(
+    await CategoryCollection.updateAsync(
       {},
       {
         $set: {
@@ -769,4 +778,39 @@ Migrations.add({
     next();
   }),
   version: 5,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const staff = await Meteor.users
+      .find({ 'profile.role': Role.Staff })
+      .fetchAsync();
+
+    staff.forEach((user) => {
+      Object.entries(RolePermissionAssignment[Role.Staff]).forEach(
+        ([key, value]) => {
+          Roles.addUsersToRoles(user, value, key);
+        }
+      );
+    });
+
+    await CategoryCollection.updateAsync(
+      {},
+      {
+        $unset: {
+          historical: 1,
+        },
+      },
+      {
+        multi: true,
+      }
+    );
+
+    next();
+  }),
+  version: 6,
 });

@@ -9,10 +9,10 @@ import {
   CategoryLabel,
   CategoryTypeEnum,
   getMemberCategoryFilters,
-} from '@domain/enums/categories.enum';
+} from '@domain/categories/category.enum';
 import { MemberMovementGridDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.dto';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
-import { DateFormats } from '@shared/utils/date.utils';
+import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
 import { useMemberMovementsGrid } from '@ui/hooks/members/useMemberMovements';
@@ -42,7 +42,7 @@ export const MemberMovementsGrid: React.FC<Props> = ({ memberId }) => {
   const { data, isLoading } = useMemberMovementsGrid({
     filters: gridState.filters,
     from: dateRangeValue
-      ? dateRangeValue[0]?.format(DateFormats.Date) ?? null
+      ? dateRangeValue[0]?.format(DateFormatEnum.Date) ?? null
       : null,
     memberId,
     page: gridState.page,
@@ -51,7 +51,7 @@ export const MemberMovementsGrid: React.FC<Props> = ({ memberId }) => {
     sortField: gridState.sortField,
     sortOrder: gridState.sortOrder,
     to: dateRangeValue
-      ? dateRangeValue[1]?.format(DateFormats.Date) ?? null
+      ? dateRangeValue[1]?.format(DateFormatEnum.Date) ?? null
       : null,
   });
 
@@ -89,7 +89,7 @@ export const MemberMovementsGrid: React.FC<Props> = ({ memberId }) => {
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} md={10} lg={10} xl={8} xxl={6}>
           <DatePicker.RangePicker
-            format={DateFormats.DD_MM_YYYY}
+            format={DateFormatEnum.DD_MM_YYYY}
             className="w-full"
             allowClear
             value={dateRangeValue}

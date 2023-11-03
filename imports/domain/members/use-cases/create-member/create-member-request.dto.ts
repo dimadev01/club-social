@@ -22,7 +22,7 @@ export class CreateMemberRequestDto extends CreateUserRequestDto {
 
   @IsEnum(MemberCategory)
   @IsOptional()
-  category: MemberCategory | null;
+  category: MemberCategory;
 
   @IsString()
   @IsOptional()

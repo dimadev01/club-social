@@ -26,8 +26,6 @@ export class LoggerOstrio implements ILogger {
 
     if (Meteor.isServer) {
       ostrioLoggerMongo.collection.createIndex({ date: -1 });
-
-      ostrioLoggerMongo.collection.remove({});
     }
   }
 
