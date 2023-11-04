@@ -1,4 +1,5 @@
 export type SendEmailRequest = {
+  message: string;
   to: string;
 };
 

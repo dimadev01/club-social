@@ -29,3 +29,7 @@ export enum AppUrl {
   Categories = '/categories',
   CategoriesDetail = '/categories/:id',
 }
+
+export enum AppConstants {
+  EmailFrom = 'Club Social <info@clubsocialmontegrande.ar>',
+}
