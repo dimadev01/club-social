@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from 'antd';
+import { Input, Space } from 'antd';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Button } from '@ui/components/Button';
 
@@ -26,7 +26,7 @@ export const FormListInput: React.FC<Props> = ({
   removeTooltip = 'Quitar',
   inputType,
 }) => (
-  <Input.Group compact>
+  <Space.Compact block>
     <Input
       value={value}
       allowClear
@@ -35,7 +35,6 @@ export const FormListInput: React.FC<Props> = ({
           onChange(e.target.value);
         }
       }}
-      style={{ width: `calc(100% - 32px)` }}
       type={inputType}
     />
 
@@ -54,5 +53,5 @@ export const FormListInput: React.FC<Props> = ({
         onClick={() => remove(fieldName)}
       />
     )}
-  </Input.Group>
+  </Space.Compact>
 );

@@ -1,23 +1,26 @@
 import { SortOrder } from 'antd/es/table/interface';
-import { IsNotEmpty, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsNotEmpty, IsObject, IsPositive, IsString } from 'class-validator';
 
 export class PaginatedRequestDto {
-  @IsPositive()
-  @IsNotEmpty()
-  page: number;
+  @IsObject()
+  public filters: Record<string, string[] | null>;
 
   @IsPositive()
   @IsNotEmpty()
-  pageSize: number;
+  public page: number;
+
+  @IsPositive()
+  @IsNotEmpty()
+  public pageSize: number;
 
   @IsString()
-  search: string;
-
-  sortField: string | string[];
+  public search: string;
 
   @IsString()
-  sortOrder: SortOrder;
+  @IsNotEmpty()
+  public sortField: string;
 
-  @IsOptional()
-  filters: Record<string, string | string[] | null> | undefined;
+  @IsString()
+  @IsNotEmpty()
+  public sortOrder: SortOrder;
 }

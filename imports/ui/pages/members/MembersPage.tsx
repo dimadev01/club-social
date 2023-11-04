@@ -4,12 +4,9 @@ import { NavLink } from 'react-router-dom';
 import { CategoryEnum } from '@domain/categories/category.enum';
 import {
   getMemberCategoryFilters,
-  getMemberFileStatusFilters,
   getMemberStatusFilters,
   MemberCategoryEnum,
   MemberCategoryLabel,
-  MemberFileStatusEnum,
-  MemberFileStatusLabel,
   MemberStatusEnum,
   MemberStatusLabel,
 } from '@domain/members/member.enum';
@@ -25,8 +22,8 @@ import { useGrid } from '@ui/hooks/useGrid';
 
 export const MembersPage = () => {
   const [gridState, setGridState] = useGrid({
-    sortField: 'createdAt',
-    sortOrder: 'descend',
+    sortField: 'user.profile.lastName',
+    sortOrder: 'ascend',
   });
 
   const { data: categories, isLoading: isLoadingCategories } = useCategories();
@@ -49,14 +46,7 @@ export const MembersPage = () => {
     <>
       <Breadcrumb
         className="mb-8"
-        items={[
-          {
-            title: 'Inicio',
-          },
-          {
-            title: 'Socios',
-          },
-        ]}
+        items={[{ title: 'Inicio' }, { title: 'Socios' }]}
       />
 
       <Card
@@ -132,15 +122,6 @@ export const MembersPage = () => {
             },
             {
               align: 'center',
-              dataIndex: 'fileStatus',
-              filteredValue: gridState.filters?.fileStatus ?? [],
-              filters: getMemberFileStatusFilters(),
-              render: (fileStatus: MemberFileStatusEnum | null) =>
-                fileStatus && MemberFileStatusLabel[fileStatus],
-              title: 'Ficha',
-            },
-            {
-              align: 'center',
               dataIndex: 'status',
               filteredValue: gridState.filters?.status ?? [],
               filters: getMemberStatusFilters(),
@@ -152,6 +133,7 @@ export const MembersPage = () => {
               dataIndex: 'electricityBalance',
               render: (electricityBalance) =>
                 CurrencyUtils.formatCents(electricityBalance),
+              // sorter: true,
               title: 'Saldo luz',
             },
             {
