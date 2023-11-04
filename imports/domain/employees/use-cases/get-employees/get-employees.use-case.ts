@@ -10,7 +10,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetEmployeesUseCase
   extends UseCase
-  implements IUseCase<undefined, GetEmployeesResponseDto[]>
+  implements IUseCase<null, GetEmployeesResponseDto[]>
 {
   public async execute(): Promise<Result<GetEmployeesResponseDto[], Error>> {
     const data = await EmployeesCollection.rawCollection()

@@ -23,7 +23,7 @@ import {
   getCategoryTypeOptions,
   MemberCategories,
 } from '@domain/categories/category.enum';
-import { MemberCategory, MemberStatus } from '@domain/members/members.enum';
+import { MemberCategory, MemberStatus } from '@domain/members/member.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -351,9 +351,9 @@ export const MovementDetailPage = () => {
               <Select
                 disabled={!!movement}
                 onChange={() => {
-                  form.setFieldValue('category', undefined);
+                  form.setFieldValue('category', null);
 
-                  form.setFieldValue('amount', undefined);
+                  form.setFieldValue('amount', null);
                 }}
                 options={getCategoryTypeOptions()}
               />

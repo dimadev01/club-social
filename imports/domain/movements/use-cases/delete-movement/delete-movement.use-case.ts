@@ -12,7 +12,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class DeleteMovementUseCase
   extends UseCase<DeleteMovementRequestDto>
-  implements IUseCase<DeleteMovementRequestDto, undefined>
+  implements IUseCase<DeleteMovementRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)
@@ -23,7 +23,7 @@ export class DeleteMovementUseCase
 
   public async execute(
     request: DeleteMovementRequestDto
-  ): Promise<Result<undefined, Error>> {
+  ): Promise<Result<null, Error>> {
     this.validatePermission(Scope.Movements, Permission.Delete);
 
     await this.validateDto(DeleteMovementRequestDto, request);
@@ -40,6 +40,6 @@ export class DeleteMovementUseCase
 
     this._logger.info('Movement deleted', { movement: movement._id });
 
-    return ok(undefined);
+    return ok(null);
   }
 }

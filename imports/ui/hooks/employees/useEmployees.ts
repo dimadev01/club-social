@@ -3,7 +3,7 @@ import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQuery } from '@tanstack/react-query';
 
 export const useEmployees = (enabled = true) =>
-  useQuery<undefined, Error, GetEmployeesResponseDto[]>(
+  useQuery<null, Error, GetEmployeesResponseDto[]>(
     [MethodsEnum.EmployeesGetAll],
     () => Meteor.callAsync(MethodsEnum.EmployeesGetAll),
     { enabled }

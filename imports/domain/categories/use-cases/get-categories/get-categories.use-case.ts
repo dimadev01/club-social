@@ -9,7 +9,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetCategoriesUseCase
   extends UseCase
-  implements IUseCase<undefined, GetCategoriesResponseDto[]>
+  implements IUseCase<null, GetCategoriesResponseDto[]>
 {
   public constructor(
     @inject(DIToken.CategoryRepository)

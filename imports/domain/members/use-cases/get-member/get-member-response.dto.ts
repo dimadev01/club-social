@@ -5,7 +5,7 @@ import {
   MemberNationality,
   MemberSex,
   MemberStatus,
-} from '@domain/members/members.enum';
+} from '@domain/members/member.enum';
 
 export class GetMemberResponseDto {
   _id: string;

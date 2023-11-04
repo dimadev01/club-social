@@ -8,8 +8,8 @@ import {
   CategoryLabel,
   MemberCategories,
 } from '@domain/categories/category.enum';
-import { Member } from '@domain/members/member.entity';
-import { MembersCollection } from '@domain/members/members.collection';
+import { Member } from '@domain/members/entities/member.entity';
+import { MembersCollection } from '@domain/members/member.collection';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';

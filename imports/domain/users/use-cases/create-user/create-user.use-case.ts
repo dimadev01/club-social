@@ -30,8 +30,6 @@ export class CreateUserUseCase
   ): Promise<Result<string, Error>> {
     this.validatePermission(Scope.Users, Permission.Create);
 
-    await this.validateDto(CreateUserRequestDto, request);
-
     if (request.emails?.some((email) => Accounts.findUserByEmail(email))) {
       return err(new AtLeastOneEmailInUseError());
     }

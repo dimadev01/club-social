@@ -12,7 +12,7 @@ import {
   MemberFileStatusLabel,
   MemberStatus,
   MemberStatusLabel,
-} from '@domain/members/members.enum';
+} from '@domain/members/member.enum';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { AppUrl } from '@ui/app.enum';

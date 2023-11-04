@@ -4,13 +4,13 @@ import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { CategoryEnum } from '@domain/categories/category.enum';
-import { Member } from '@domain/members/member.entity';
-import { MembersCollection } from '@domain/members/members.collection';
+import { Member } from '@domain/members/entities/member.entity';
+import { MembersCollection } from '@domain/members/member.collection';
 import {
   MemberCategory,
   MemberFileStatus,
   MemberStatus,
-} from '@domain/members/members.enum';
+} from '@domain/members/member.enum';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';

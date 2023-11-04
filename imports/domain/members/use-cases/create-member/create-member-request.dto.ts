@@ -12,7 +12,7 @@ import {
   MemberNationality,
   MemberSex,
   MemberStatus,
-} from '@domain/members/members.enum';
+} from '@domain/members/member.enum';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 
 export class CreateMemberRequestDto extends CreateUserRequestDto {

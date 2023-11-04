@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { MemberStatus } from '@domain/members/members.enum';
+import { MemberStatus } from '@domain/members/member.enum';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
 
 export class UpdateMemberRequestDto extends CreateMemberRequestDto {

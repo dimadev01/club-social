@@ -1,5 +1,5 @@
 import { instanceToPlain } from 'class-transformer';
-import type { ClientSession, OptionalUnlessRequiredId } from 'mongodb';
+import type { ClientSession, Filter, OptionalUnlessRequiredId } from 'mongodb';
 import { ILogger } from '@application/logger/logger.interface';
 import { ICrudPort } from '@application/repositories/crud.port';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
@@ -82,6 +82,27 @@ export abstract class MongoCrudRepository<T extends Entity>
     }
   }
 
+  public async findOneByIdOrThrowWithSession(
+    id: string,
+    session: ClientSession
+  ): Promise<T> {
+    try {
+      const entity = await this._collection
+        .rawCollection()
+        .findOne({ _id: id } as Filter<T>, { session });
+
+      if (!entity) {
+        throw new Error(`Entity with id ${id} not found`);
+      }
+
+      return entity as T;
+    } catch (error) {
+      this._logger.error(error);
+
+      throw error;
+    }
+  }
+
   public async removeById(id: string): Promise<void> {
     try {
       // @ts-ignore
@@ -100,6 +121,19 @@ export abstract class MongoCrudRepository<T extends Entity>
       await this._collection.updateAsync(entity._id, {
         $set: instanceToPlain<T>(entity) as object,
       });
+    } catch (error) {
+      this._logger.error(error);
+
+      throw error;
+    }
+  }
+
+  public async updateWithSession(
+    entity: T,
+    session: ClientSession
+  ): Promise<void> {
+    try {
+      await this._collection.rawCollection().updateOne(entity, { session });
     } catch (error) {
       this._logger.error(error);
 

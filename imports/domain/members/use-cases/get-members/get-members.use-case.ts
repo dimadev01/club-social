@@ -3,15 +3,15 @@ import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { Member } from '@domain/members/member.entity';
-import { MembersCollection } from '@domain/members/members.collection';
+import { Member } from '@domain/members/entities/member.entity';
+import { MembersCollection } from '@domain/members/member.collection';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetMembersUseCase
   extends UseCase
-  implements IUseCase<undefined, GetMembersDto[]>
+  implements IUseCase<null, GetMembersDto[]>
 {
   public async execute(): Promise<Result<GetMembersDto[], Error>> {
     const $match: Mongo.Query<Member> = {

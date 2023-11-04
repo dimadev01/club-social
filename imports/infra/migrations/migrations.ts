@@ -11,8 +11,8 @@ import {
 } from '@domain/categories/category.enum';
 import { Category } from '@domain/categories/entities/category.entity';
 import { Employee } from '@domain/employees/employee.entity';
-import { Member } from '@domain/members/member.entity';
-import { MembersCollection } from '@domain/members/members.collection';
+import { Member } from '@domain/members/entities/member.entity';
+import { MembersCollection } from '@domain/members/member.collection';
 import {
   MemberCategory,
   MemberFileStatus,
@@ -20,7 +20,7 @@ import {
   MemberNationality,
   MemberSex,
   MemberStatus,
-} from '@domain/members/members.enum';
+} from '@domain/members/member.enum';
 import { CreateMemberUseCase } from '@domain/members/use-cases/create-member/create-member.use-case';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { CreateMovementUseCase } from '@domain/movements/use-cases/create-movement/create-movement.use-case';

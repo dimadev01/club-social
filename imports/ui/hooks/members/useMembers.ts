@@ -3,7 +3,7 @@ import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQuery } from '@tanstack/react-query';
 
 export const useMembers = (enabled = true) =>
-  useQuery<undefined, Error, GetMembersDto[]>(
+  useQuery<null, Error, GetMembersDto[]>(
     [MethodsEnum.MembersGetAll],
     () => Meteor.callAsync(MethodsEnum.MembersGetAll),
     { enabled }

@@ -3,7 +3,7 @@ import {
   MemberCategory,
   MemberFileStatus,
   MemberStatus,
-} from '@domain/members/members.enum';
+} from '@domain/members/member.enum';
 
 export class MemberGridDto {
   _id: string;

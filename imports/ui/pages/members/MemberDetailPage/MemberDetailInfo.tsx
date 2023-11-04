@@ -18,7 +18,7 @@ import {
   MemberNationality,
   MemberSex,
   MemberStatus,
-} from '@domain/members/members.enum';
+} from '@domain/members/member.enum';
 import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
 import { Role } from '@domain/roles/roles.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
@@ -312,7 +312,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                 <Form.Item name={['address', 'stateGovId']} label="Provincia">
                   <Select
                     onChange={() => {
-                      form.setFieldValue('address.cityGovId', undefined);
+                      form.setFieldValue('address.cityGovId', null);
                     }}
                     loading={statesIsLoading}
                     labelInValue
