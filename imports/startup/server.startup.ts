@@ -16,6 +16,7 @@ import { CategoryMethod } from '@infra/meteor/categories.methods';
 import { EmployeeMethod } from '@infra/meteor/employees.methods';
 import { MigrationService } from '@infra/migrations/migrations.service';
 import { DateUtils } from '@shared/utils/date.utils';
+import { AppConstants } from '@ui/app.enum';
 
 DateUtils.extend();
 
@@ -55,8 +56,7 @@ export class ServerStartup {
 
     Accounts.emailTemplates.siteName = 'Club Social Monte Grande';
 
-    Accounts.emailTemplates.from =
-      'Club Social <info@clubsocialmontegrande.ar>';
+    Accounts.emailTemplates.from = AppConstants.EmailFrom;
 
     Accounts.emailTemplates.verifyEmail.html = (
       user: Meteor.User,

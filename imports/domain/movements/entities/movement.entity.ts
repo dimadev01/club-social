@@ -77,13 +77,7 @@ export class Movement extends Entity {
   }
 
   public get amountFormatted(): string {
-    const formatted = CurrencyUtils.formatCents(this.amount);
-
-    // if (this.type === CategoryType.Expense || this.type === CategoryType.Debt) {
-    //   return `(${formatted})`;
-    // }
-
-    return formatted;
+    return CurrencyUtils.formatCents(this.amount);
   }
 
   public get dateFormatted(): string {

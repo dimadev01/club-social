@@ -1,8 +1,9 @@
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { MovementNotFoundError } from '@domain/movements/errors/movement-not-found.error';
+import { Movement } from '@domain/movements/entities/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
 import { Permission, Scope } from '@domain/roles/roles.enum';
@@ -31,7 +32,7 @@ export class UpdateMovementUseCase
     const movement = await MovementsCollection.findOneAsync(request.id);
 
     if (!movement) {
-      return err(new MovementNotFoundError());
+      return err(new EntityNotFoundError(Movement));
     }
 
     movement.date = new Date(request.date);
@@ -43,8 +44,6 @@ export class UpdateMovementUseCase
     movement.memberId = request.memberId;
 
     movement.employeeId = request.employeeId;
-
-    movement.rentalId = request.rentalId;
 
     movement.professorId = request.professorId;
 

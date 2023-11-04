@@ -90,8 +90,6 @@ export class UpdateMemberUseCase
       zipCode: request.addressZipCode,
     };
 
-    await MembersCollection.updateEntity(member);
-
     this._logger.info('Member updated', { memberId: request.id });
 
     return ok(undefined);

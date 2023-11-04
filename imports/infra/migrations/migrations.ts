@@ -608,8 +608,6 @@ Migrations.add({
 
       let employeeId: string | null = null;
 
-      const rentalId: string | null = null;
-
       let serviceId: string | null = null;
 
       if (row.member) {
@@ -661,7 +659,6 @@ Migrations.add({
         memberIds: memberId ? [memberId] : null,
         notes: row.notes ?? null,
         professorId,
-        rentalId,
         serviceId,
         type,
       });
@@ -813,4 +810,21 @@ Migrations.add({
     next();
   }),
   version: 6,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await MovementsCollection.updateAsync(
+      {},
+      { $unset: { rentalId: 1 } },
+      { multi: true }
+    );
+
+    next();
+  }),
+  version: 7,
 });

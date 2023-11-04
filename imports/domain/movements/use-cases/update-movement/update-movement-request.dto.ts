@@ -37,8 +37,4 @@ export class UpdateMovementRequestDto {
   @IsOptional()
   @IsString()
   employeeId: string | null;
-
-  @IsOptional()
-  @IsString()
-  rentalId: string | null;
 }

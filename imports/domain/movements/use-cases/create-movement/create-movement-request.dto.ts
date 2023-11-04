@@ -48,8 +48,4 @@ export class CreateMovementRequestDto {
   @IsOptional()
   @IsString()
   employeeId: string | null;
-
-  @IsOptional()
-  @IsString()
-  rentalId: string | null;
 }

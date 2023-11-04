@@ -1,8 +1,15 @@
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
 import { ILogger } from '@application/logger/logger.interface';
+import { IEmailService } from '@application/notifications/email.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { MemberCategories } from '@domain/categories/category.enum';
+import {
+  CategoryLabel,
+  MemberCategories,
+} from '@domain/categories/category.enum';
+import { Member } from '@domain/members/member.entity';
+import { MembersCollection } from '@domain/members/members.collection';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
@@ -19,7 +26,9 @@ export class CreateMovementUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.MovementRepository)
-    private readonly _movementPort: IMovementPort
+    private readonly _movementPort: IMovementPort,
+    @inject(DIToken.EmailService)
+    private readonly _emailService: IEmailService
   ) {
     super();
   }
@@ -79,7 +88,26 @@ export class CreateMovementUseCase
           type: request.type,
         });
 
+        const member = await MembersCollection.findOneAsync(memberId);
+
+        if (!member) {
+          throw new EntityNotFoundError(Member);
+        }
+
+        member.joinUser();
+
         await this._movementPort.create(movement);
+
+        await this._emailService.send({
+          message: `Hola ${
+            member.name
+          }, te queremos informar desde el Club Social Monte Grande que se ha registrado un nuevo movimiento por ${
+            movement.amountFormatted
+          } en tu cuenta en concepto de ${
+            CategoryLabel[movement.category]
+          } con fecha de ${movement.dateFormatted}. Administración`,
+          to: member.getEmail(),
+        });
       })
     );
 

@@ -50,7 +50,6 @@ type FormValues = {
   memberIds: string[] | undefined;
   notes: string;
   professorId: string | undefined;
-  rentalId: string | undefined;
   serviceId: string | undefined;
   type: CategoryTypeEnum;
 };
@@ -103,7 +102,6 @@ export const MovementDetailPage = () => {
           memberIds: values.memberIds ?? null,
           notes: values.notes,
           professorId: values.professorId ?? null,
-          rentalId: values.rentalId ?? null,
           serviceId: values.serviceId ?? null,
           type: values.type,
         },
@@ -123,7 +121,6 @@ export const MovementDetailPage = () => {
           memberId: values.memberId ?? null,
           notes: values.notes,
           professorId: values.professorId ?? null,
-          rentalId: values.rentalId ?? null,
           serviceId: values.serviceId ?? null,
         },
         {

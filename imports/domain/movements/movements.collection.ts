@@ -38,7 +38,6 @@ await MovementsCollection.createIndexAsync({
   category: 1,
   professor: 1,
   employeeId: 1,
-  rentalId: 1,
   date: -1,
 });
 
@@ -47,7 +46,5 @@ await MovementsCollection.createIndexAsync({ type: 1 });
 await MovementsCollection.createIndexAsync({ memberId: 1 });
 
 await MovementsCollection.createIndexAsync({ employeeId: 1 });
-
-await MovementsCollection.createIndexAsync({ rentalId: 1 });
 
 await MovementsCollection.createIndexAsync({ professorId: 1 });
