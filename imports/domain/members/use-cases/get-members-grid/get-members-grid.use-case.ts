@@ -7,9 +7,9 @@ import { CategoryEnum } from '@domain/categories/category.enum';
 import { Member } from '@domain/members/entities/member.entity';
 import { MembersCollection } from '@domain/members/member.collection';
 import {
-  MemberCategory,
-  MemberFileStatus,
-  MemberStatus,
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
@@ -24,24 +24,24 @@ export class GetMembersGridUseCase
   public async execute(
     request: PaginatedRequestDto
   ): Promise<Result<PaginatedResponse<MemberGridDto>, Error>> {
-    await this.validateDto(PaginatedRequestDto, request);
-
     const $match: Mongo.Query<Member> = {
       isDeleted: false,
     };
 
     if (request.filters?.fileStatus?.length) {
       $match.fileStatus = {
-        $in: request.filters.fileStatus as MemberFileStatus[],
+        $in: request.filters.fileStatus as MemberFileStatusEnum[],
       };
     }
 
     if (request.filters?.status?.length) {
-      $match.status = { $in: request.filters.status as MemberStatus[] };
+      $match.status = { $in: request.filters.status as MemberStatusEnum[] };
     }
 
     if (request.filters?.category?.length) {
-      $match.category = { $in: request.filters.category as MemberCategory[] };
+      $match.category = {
+        $in: request.filters.category as MemberCategoryEnum[],
+      };
     }
 
     const $userLookupPipeline: Mongo.Query<Meteor.User> = [];
@@ -90,6 +90,15 @@ export class GetMembersGridUseCase
                   foreignField: 'memberId',
                   from: 'movements',
                   localField: '_id',
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $eq: ['$isDeleted', false],
+                        },
+                      },
+                    },
+                  ],
                 },
               },
               {

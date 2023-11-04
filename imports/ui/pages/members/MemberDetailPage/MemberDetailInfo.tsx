@@ -12,12 +12,12 @@ import {
   getMemberNationalityOptions,
   getMemberSexOptions,
   getMemberStatusOptions,
-  MemberCategory,
-  MemberFileStatus,
-  MemberMaritalStatus,
-  MemberNationality,
-  MemberSex,
-  MemberStatus,
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberMaritalStatusEnum,
+  MemberNationalityEnum,
+  MemberSexEnum,
+  MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
 import { Role } from '@domain/roles/roles.enum';
@@ -40,18 +40,18 @@ type FormValues = {
     street: string | undefined;
     zipCode: string | undefined;
   };
-  category: MemberCategory;
+  category: MemberCategoryEnum;
   dateOfBirth: Dayjs | undefined;
   documentID: string | undefined;
   emails: string[];
-  fileStatus: MemberFileStatus | undefined;
+  fileStatus: MemberFileStatusEnum | undefined;
   firstName: string;
   lastName: string;
-  maritalStatus: MemberMaritalStatus | undefined;
-  nationality: MemberNationality | undefined;
+  maritalStatus: MemberMaritalStatusEnum | undefined;
+  nationality: MemberNationalityEnum | undefined;
   phones: string[];
-  sex: MemberSex | undefined;
-  status: MemberStatus;
+  sex: MemberSexEnum | undefined;
+  status: MemberStatusEnum;
 };
 
 type Props = {
@@ -98,7 +98,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         phones: compact(values.phones).length > 0 ? values.phones : null,
         role: Role.Member,
         sex: values.sex ?? null,
-        status: MemberStatus.Active,
+        status: MemberStatusEnum.Active,
       });
 
       message.success('Socio creado');
@@ -171,7 +171,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
           nationality: member?.nationality,
           phones: member?.phones ?? [''],
           sex: member?.sex,
-          status: member?.status ?? MemberStatus.Active,
+          status: member?.status ?? MemberStatusEnum.Active,
         }}
       >
         <Row gutter={[16, 16]}>

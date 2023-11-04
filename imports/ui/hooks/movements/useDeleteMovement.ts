@@ -6,5 +6,5 @@ export const useDeleteMovement = (onSuccess: () => void) =>
   useMutation<null, Error, DeleteMovementRequestDto>(
     [MethodsEnum.MovementsDelete],
     (request) => Meteor.callAsync(MethodsEnum.MovementsDelete, request),
-    { onSuccess }
+    { onSuccess: () => onSuccess() }
   );

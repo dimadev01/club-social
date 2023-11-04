@@ -1,26 +1,26 @@
 import {
-  MemberCategory,
-  MemberFileStatus,
-  MemberMaritalStatus,
-  MemberNationality,
-  MemberSex,
-  MemberStatus,
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberMaritalStatusEnum,
+  MemberNationalityEnum,
+  MemberSexEnum,
+  MemberStatusEnum,
 } from '@domain/members/member.enum';
 
 export interface CreateMember {
   address: CreateMemberAddress;
-  category: MemberCategory;
+  category: MemberCategoryEnum;
   dateOfBirth: string | null;
   documentID: string | null;
   emails: string[] | null;
-  fileStatus: MemberFileStatus | null;
+  fileStatus: MemberFileStatusEnum | null;
   firstName: string;
   lastName: string;
-  maritalStatus: MemberMaritalStatus | null;
-  nationality: MemberNationality | null;
+  maritalStatus: MemberMaritalStatusEnum | null;
+  nationality: MemberNationalityEnum | null;
   phones: string[] | null;
-  sex: MemberSex | null;
-  status: MemberStatus;
+  sex: MemberSexEnum | null;
+  status: MemberStatusEnum;
   userId: string;
 }
 

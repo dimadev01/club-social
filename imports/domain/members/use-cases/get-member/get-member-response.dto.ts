@@ -1,10 +1,10 @@
 import {
-  MemberCategory,
-  MemberFileStatus,
-  MemberMaritalStatus,
-  MemberNationality,
-  MemberSex,
-  MemberStatus,
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberMaritalStatusEnum,
+  MemberNationalityEnum,
+  MemberSexEnum,
+  MemberStatusEnum,
 } from '@domain/members/member.enum';
 
 export class GetMemberResponseDto {
@@ -18,21 +18,21 @@ export class GetMemberResponseDto {
 
   dateOfBirth: Date | null;
 
-  category: MemberCategory | null;
+  category: MemberCategoryEnum | null;
 
   documentID: string | null;
 
-  maritalStatus: MemberMaritalStatus | null;
+  maritalStatus: MemberMaritalStatusEnum | null;
 
-  fileStatus: MemberFileStatus | null;
+  fileStatus: MemberFileStatusEnum | null;
 
   phones: string[] | null;
 
-  sex: MemberSex | null;
+  sex: MemberSexEnum | null;
 
-  nationality: MemberNationality | null;
+  nationality: MemberNationalityEnum | null;
 
-  status: MemberStatus;
+  status: MemberStatusEnum;
 
   addressStateGovId: string | null;
 

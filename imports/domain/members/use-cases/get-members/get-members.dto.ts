@@ -1,11 +1,14 @@
-import { MemberCategory, MemberStatus } from '@domain/members/member.enum';
+import {
+  MemberCategoryEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 
 export class GetMembersDto {
   _id: string;
 
   name: string;
 
-  category: MemberCategory;
+  category: MemberCategoryEnum;
 
-  status: MemberStatus;
+  status: MemberStatusEnum;
 }

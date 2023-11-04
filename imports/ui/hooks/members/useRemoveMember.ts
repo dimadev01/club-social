@@ -6,5 +6,5 @@ export const useRemoveMember = (onSuccess: () => void) =>
   useMutation<null, Error, RemoveMemberRequestDto>(
     [MethodsEnum.MembersRemove],
     (request) => Meteor.callAsync(MethodsEnum.MembersRemove, request),
-    { onSuccess }
+    { onSuccess: () => onSuccess() }
   );

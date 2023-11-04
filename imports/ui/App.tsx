@@ -13,6 +13,8 @@ const queryClient = new QueryClient({
       onError: (error: unknown) => {
         if (error instanceof Meteor.Error) {
           message.error(error.reason);
+        } else if (error instanceof Error) {
+          message.error(error.message);
         } else {
           message.error('An unknown error occurred.');
         }
@@ -22,6 +24,8 @@ const queryClient = new QueryClient({
       onError: (error: unknown) => {
         if (error instanceof Meteor.Error) {
           message.error(error.reason);
+        } else if (error instanceof Error) {
+          message.error(error.message);
         } else {
           message.error('An unknown error occurred.');
         }

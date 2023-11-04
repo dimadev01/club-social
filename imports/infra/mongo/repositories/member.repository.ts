@@ -3,6 +3,11 @@ import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { Member } from '@domain/members/entities/member.entity';
 import { MembersCollection } from '@domain/members/member.collection';
+import {
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 import { IMemberPort } from '@domain/members/member.port';
 import { DIToken } from '@infra/di/di-tokens';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
@@ -28,6 +33,22 @@ export class MemberRepository
     const query: Mongo.Query<Member> = {
       isDeleted: false,
     };
+
+    if (request.filters?.fileStatus?.length) {
+      query.fileStatus = {
+        $in: request.filters.fileStatus as MemberFileStatusEnum[],
+      };
+    }
+
+    if (request.filters?.status?.length) {
+      query.status = { $in: request.filters.status as MemberStatusEnum[] };
+    }
+
+    if (request.filters?.category?.length) {
+      query.category = {
+        $in: request.filters.category as MemberCategoryEnum[],
+      };
+    }
 
     const options = this.createPaginatedQueryOptions(
       request.page,

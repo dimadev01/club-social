@@ -23,7 +23,10 @@ import {
   getCategoryTypeOptions,
   MemberCategories,
 } from '@domain/categories/category.enum';
-import { MemberCategory, MemberStatus } from '@domain/members/member.enum';
+import {
+  MemberCategoryEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -184,8 +187,8 @@ export const MovementDetailPage = () => {
                       members
                         ?.filter(
                           (member) =>
-                            member.category === MemberCategory.Member &&
-                            member.status === MemberStatus.Active
+                            member.category === MemberCategoryEnum.Member &&
+                            member.status === MemberStatusEnum.Active
                         )
                         .map((member) => member._id) ?? []
                     );
@@ -203,8 +206,8 @@ export const MovementDetailPage = () => {
                       members
                         ?.filter(
                           (member) =>
-                            member.category === MemberCategory.Cadet &&
-                            member.status === MemberStatus.Active
+                            member.category === MemberCategoryEnum.Cadet &&
+                            member.status === MemberStatusEnum.Active
                         )
                         .map((member) => member._id) ?? []
                     );

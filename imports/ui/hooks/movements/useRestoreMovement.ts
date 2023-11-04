@@ -6,5 +6,5 @@ export const useRestoreMovement = (onSuccess: () => void) =>
   useMutation<null, Error, RestoreMovementRequestDto>(
     [MethodsEnum.MovementsRestore],
     (request) => Meteor.callAsync(MethodsEnum.MovementsRestore, request),
-    { onSuccess }
+    { onSuccess: () => onSuccess() }
   );

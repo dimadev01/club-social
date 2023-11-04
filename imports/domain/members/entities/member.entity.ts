@@ -13,12 +13,12 @@ import { err, ok, Result } from 'neverthrow';
 import { Entity } from '@domain/common/entity';
 import { MemberAddress } from '@domain/members/entities/member-address.entity';
 import {
-  MemberCategory,
-  MemberFileStatus,
-  MemberMaritalStatus,
-  MemberNationality,
-  MemberSex,
-  MemberStatus,
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberMaritalStatusEnum,
+  MemberNationalityEnum,
+  MemberSexEnum,
+  MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { CreateMember } from '@domain/members/member.types';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
@@ -28,8 +28,8 @@ export class Member extends Entity {
   @Type(() => MemberAddress)
   public address: MemberAddress;
 
-  @IsEnum(MemberCategory)
-  public category: MemberCategory;
+  @IsEnum(MemberCategoryEnum)
+  public category: MemberCategoryEnum;
 
   @IsDate()
   @IsOptional()
@@ -39,17 +39,17 @@ export class Member extends Entity {
   @IsOptional()
   public documentID: string | null;
 
-  @IsEnum(MemberFileStatus)
+  @IsEnum(MemberFileStatusEnum)
   @IsOptional()
-  public fileStatus: MemberFileStatus | null;
+  public fileStatus: MemberFileStatusEnum | null;
 
-  @IsEnum(MemberMaritalStatus)
+  @IsEnum(MemberMaritalStatusEnum)
   @IsOptional()
-  public maritalStatus: MemberMaritalStatus | null;
+  public maritalStatus: MemberMaritalStatusEnum | null;
 
-  @IsEnum(MemberNationality)
+  @IsEnum(MemberNationalityEnum)
   @IsOptional()
-  public nationality: MemberNationality | null;
+  public nationality: MemberNationalityEnum | null;
 
   @IsString({ each: true })
   @IsOptional()
@@ -57,12 +57,12 @@ export class Member extends Entity {
   @ArrayMinSize(1)
   public phones: string[] | null;
 
-  @IsEnum(MemberSex)
+  @IsEnum(MemberSexEnum)
   @IsOptional()
-  public sex: MemberSex | null;
+  public sex: MemberSexEnum | null;
 
-  @IsEnum(MemberStatus)
-  public status: MemberStatus;
+  @IsEnum(MemberStatusEnum)
+  public status: MemberStatusEnum;
 
   public user: Meteor.User;
 
@@ -100,7 +100,7 @@ export class Member extends Entity {
 
     member.user = {} as Meteor.User;
 
-    member.status = MemberStatus.Active;
+    member.status = MemberStatusEnum.Active;
 
     member.documentID = props.documentID;
 
@@ -155,7 +155,7 @@ export class Member extends Entity {
     return ok(null);
   }
 
-  public setCategory(category: MemberCategory): Result<null, Error> {
+  public setCategory(category: MemberCategoryEnum): Result<null, Error> {
     this.category = category;
 
     return ok(null);
@@ -174,7 +174,7 @@ export class Member extends Entity {
   }
 
   public setFileStatus(
-    fileStatus: MemberFileStatus | null
+    fileStatus: MemberFileStatusEnum | null
   ): Result<null, Error> {
     this.fileStatus = fileStatus;
 
@@ -182,7 +182,7 @@ export class Member extends Entity {
   }
 
   public setMaritalStatus(
-    maritalStatus: MemberMaritalStatus | null
+    maritalStatus: MemberMaritalStatusEnum | null
   ): Result<null, Error> {
     this.maritalStatus = maritalStatus;
 
@@ -190,7 +190,7 @@ export class Member extends Entity {
   }
 
   public setNationality(
-    nationality: MemberNationality | null
+    nationality: MemberNationalityEnum | null
   ): Result<null, Error> {
     this.nationality = nationality;
 
@@ -203,13 +203,13 @@ export class Member extends Entity {
     return ok(null);
   }
 
-  public setSex(sex: MemberSex | null): Result<null, Error> {
+  public setSex(sex: MemberSexEnum | null): Result<null, Error> {
     this.sex = sex;
 
     return ok(null);
   }
 
-  public setStatus(status: MemberStatus): Result<null, Error> {
+  public setStatus(status: MemberStatusEnum): Result<null, Error> {
     this.status = status;
 
     return ok(null);

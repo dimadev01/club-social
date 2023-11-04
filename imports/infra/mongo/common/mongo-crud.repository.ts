@@ -1,5 +1,10 @@
 import { instanceToPlain } from 'class-transformer';
-import type { ClientSession, Filter, OptionalUnlessRequiredId } from 'mongodb';
+import type {
+  ClientSession,
+  Filter,
+  MatchKeysAndValues,
+  OptionalUnlessRequiredId,
+} from 'mongodb';
 import { ILogger } from '@application/logger/logger.interface';
 import { ICrudPort } from '@application/repositories/crud.port';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
@@ -133,7 +138,13 @@ export abstract class MongoCrudRepository<T extends Entity>
     session: ClientSession
   ): Promise<void> {
     try {
-      await this._collection.rawCollection().updateOne(entity, { session });
+      await this._collection
+        .rawCollection()
+        .updateOne(
+          { _id: entity._id } as Filter<T>,
+          { $set: instanceToPlain<T>(entity) as MatchKeysAndValues<T> },
+          { session }
+        );
     } catch (error) {
       this._logger.error(error);
 
