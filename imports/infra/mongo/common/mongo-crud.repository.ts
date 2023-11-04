@@ -1,5 +1,5 @@
 import { instanceToPlain } from 'class-transformer';
-import { validate } from 'class-validator';
+import type { ClientSession, OptionalUnlessRequiredId } from 'mongodb';
 import { ILogger } from '@application/logger/logger.interface';
 import { ICrudPort } from '@application/repositories/crud.port';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
@@ -17,8 +17,6 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   public async create(entity: Mongo.OptionalId<T>): Promise<string> {
     try {
-      await validate(entity);
-
       entity.create(this._getLoggedInUserName());
 
       return await this._collection.insertAsync(entity);
@@ -29,11 +27,26 @@ export abstract class MongoCrudRepository<T extends Entity>
     }
   }
 
+  public async createWithSession(
+    entity: OptionalUnlessRequiredId<T>,
+    session: ClientSession
+  ): Promise<string> {
+    try {
+      const result = await this._collection
+        .rawCollection()
+        .insertOne(entity, { session });
+
+      return result.insertedId;
+    } catch (error) {
+      this._logger.error(error);
+
+      throw error;
+    }
+  }
+
   public async delete(entity: T): Promise<void> {
     try {
       entity.delete(this._getLoggedInUserName());
-
-      await validate(entity);
 
       return await this.update(entity);
     } catch (error) {
@@ -83,8 +96,6 @@ export abstract class MongoCrudRepository<T extends Entity>
   public async update(entity: T): Promise<void> {
     try {
       entity.update(this._getLoggedInUserName());
-
-      await validate(entity);
 
       await this._collection.updateAsync(entity._id, {
         $set: instanceToPlain<T>(entity) as object,

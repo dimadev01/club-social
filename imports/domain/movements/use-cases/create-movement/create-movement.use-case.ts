@@ -16,6 +16,8 @@ import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-mov
 import { Permission, Scope } from '@domain/roles/roles.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
+import { ErrorUtils } from '@shared/utils/error.utils';
+import { MongoUtils } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class CreateMovementUseCase
@@ -74,43 +76,60 @@ export class CreateMovementUseCase
       return err(new Error('No members selected'));
     }
 
-    await Promise.all(
-      request.memberIds.map(async (memberId: string) => {
-        const movement = Movement.create({
-          amount: request.amount,
-          category: request.category,
-          date: request.date,
-          employeeId: request.employeeId,
-          memberId,
-          notes: request.notes,
-          professorId: request.professorId,
-          serviceId: request.serviceId,
-          type: request.type,
-        });
+    const session = MongoUtils.startSession();
 
-        const member = await MembersCollection.findOneAsync(memberId);
+    try {
+      await Promise.all(
+        request.memberIds.map(async (memberId: string) => {
+          await session.withTransaction(async () => {
+            const movement = Movement.create({
+              amount: request.amount,
+              category: request.category,
+              date: request.date,
+              employeeId: request.employeeId,
+              memberId,
+              notes: request.notes,
+              professorId: request.professorId,
+              serviceId: request.serviceId,
+              type: request.type,
+            });
 
-        if (!member) {
-          throw new EntityNotFoundError(Member);
-        }
+            await this._movementPort.createWithSession(movement, session);
 
-        member.joinUser();
+            const member = await MembersCollection.findOneAsync(memberId);
 
-        await this._movementPort.create(movement);
+            if (!member) {
+              throw new EntityNotFoundError(Member);
+            }
 
-        await this._emailService.send({
-          message: `Hola ${
-            member.name
-          }, te queremos informar desde el Club Social Monte Grande que se ha registrado un nuevo movimiento por ${
-            movement.amountFormatted
-          } en tu cuenta en concepto de ${
-            CategoryLabel[movement.category]
-          } con fecha de ${movement.dateFormatted}. Administración`,
-          to: member.getEmail(),
-        });
-      })
-    );
+            member.joinUser();
 
-    return ok(null);
+            await this._emailService.send({
+              message: `Hola ${
+                member.name
+              }, te queremos informar desde el Club Social Monte Grande que se ha registrado un nuevo movimiento por ${
+                movement.amountFormatted
+              } en tu cuenta en concepto de ${
+                CategoryLabel[movement.category]
+              } con fecha de ${movement.dateFormatted}. Administración`,
+              subject: `Nuevo movimiento en tu cuenta [${
+                CategoryLabel[movement.category]
+              }]`,
+              to: member.getEmail(),
+            });
+
+            await session.commitTransaction();
+          });
+        })
+      );
+
+      return ok(null);
+    } catch (error) {
+      this._logger.error(error);
+
+      return err(ErrorUtils.unknownToError(error));
+    } finally {
+      await session.endSession();
+    }
   }
 }

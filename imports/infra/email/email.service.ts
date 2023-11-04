@@ -7,9 +7,10 @@ import { AppConstants } from '@ui/app.enum';
 
 export class EmailService implements IEmailService {
   public async send(request: SendEmailRequest): Promise<SendEmailResponse> {
-    Email.send({
+    await Email.sendAsync({
       from: AppConstants.EmailFrom,
       html: request.message,
+      subject: request.subject,
       text: request.message,
       to: request.to,
     });

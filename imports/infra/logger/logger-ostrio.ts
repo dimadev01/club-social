@@ -33,7 +33,7 @@ export class LoggerOstrio implements ILogger {
     this._logger.info(message, ...meta);
   }
 
-  public error(error: string | unknown, ...meta: unknown[]): void {
+  public error(error: string | Error | unknown, ...meta: unknown[]): void {
     if (error instanceof Error) {
       this._logger.error(error.message, { stack: error.stack, ...meta });
     } else if (typeof error === 'string') {
