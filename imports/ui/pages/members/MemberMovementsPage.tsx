@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Skeleton } from 'antd';
 import { Meteor } from 'meteor/meteor';
 import { useTracker } from 'meteor/react-meteor-data';
-import { MembersCollection } from '@domain/members/members.collection';
+import { MembersCollection } from '@domain/members/member.collection';
 import { MemberMovementsGrid } from '@ui/components/Members/MemberMovementsGrid';
 
 export const MemberMovementsPage = () => {

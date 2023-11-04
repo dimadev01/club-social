@@ -1,6 +1,7 @@
 import { Accounts } from 'meteor/accounts-base';
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Permission, Role, Scope } from '@domain/roles/roles.enum';
@@ -14,7 +15,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class UpdateUserUseCase
   extends UseCase<UpdateUserRequestDto>
-  implements IUseCase<UpdateUserRequestDto, undefined>
+  implements IUseCase<UpdateUserRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)
@@ -25,15 +26,17 @@ export class UpdateUserUseCase
 
   public async execute(
     request: UpdateUserRequestDto
-  ): Promise<Result<undefined, Error>> {
+  ): Promise<Result<null, Error>> {
     this.validatePermission(Scope.Users, Permission.Update);
-
-    await this.validateDto(UpdateUserRequestDto, request);
 
     const user = await Meteor.users.findOneAsync(request.id);
 
     if (!user) {
-      return err(new UserNotFoundError());
+      throw new UserNotFoundError();
+    }
+
+    if (!user.profile) {
+      throw new InternalServerError();
     }
 
     if (user.profile?.role === Role.Admin) {
@@ -75,6 +78,6 @@ export class UpdateUserUseCase
 
     this._logger.info('User updated', { userId: request.id });
 
-    return ok(undefined);
+    return ok(null);
   }
 }

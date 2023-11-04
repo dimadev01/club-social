@@ -32,7 +32,7 @@ export class MemberMethod extends MeteorMethod {
   public register() {
     Meteor.methods({
       [MethodsEnum.MembersGetGrid]: (request: PaginatedRequestDto) =>
-        this.execute(this._getMembersGrid, request),
+        this.execute(this._getMembersGrid, request, PaginatedRequestDto),
 
       [MethodsEnum.MembersGetAll]: () => this.execute(this._getMembers),
 
@@ -40,13 +40,13 @@ export class MemberMethod extends MeteorMethod {
         this.execute(this._getMember, request),
 
       [MethodsEnum.MembersCreate]: (request: CreateMemberRequestDto) =>
-        this.execute(this._createMember, request),
+        this.execute(this._createMember, request, CreateMemberRequestDto),
 
       [MethodsEnum.MembersRemove]: (request: RemoveMemberRequestDto) =>
         this.execute(this._removeMember, request),
 
       [MethodsEnum.MembersUpdate]: (request: UpdateMemberRequestDto) =>
-        this.execute(this._updateMember, request),
+        this.execute(this._updateMember, request, UpdateMemberRequestDto),
 
       [MethodsEnum.MembersGetMovementsGrid]: (
         request: GetMemberMovementsGridRequestDto

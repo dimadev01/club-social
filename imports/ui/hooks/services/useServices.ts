@@ -3,7 +3,7 @@ import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQuery } from '@tanstack/react-query';
 
 export const useServices = (enabled = true) =>
-  useQuery<undefined, Error, GetServicesResponseDto[]>(
+  useQuery<null, Error, GetServicesResponseDto[]>(
     [MethodsEnum.ServicesGetAll],
     () => Meteor.callAsync(MethodsEnum.ServicesGetAll),
     { enabled }

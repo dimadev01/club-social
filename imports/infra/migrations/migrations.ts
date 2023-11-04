@@ -11,16 +11,16 @@ import {
 } from '@domain/categories/category.enum';
 import { Category } from '@domain/categories/entities/category.entity';
 import { Employee } from '@domain/employees/employee.entity';
-import { Member } from '@domain/members/member.entity';
-import { MembersCollection } from '@domain/members/members.collection';
+import { Member } from '@domain/members/entities/member.entity';
+import { MembersCollection } from '@domain/members/member.collection';
 import {
-  MemberCategory,
-  MemberFileStatus,
-  MemberMaritalStatus,
-  MemberNationality,
-  MemberSex,
-  MemberStatus,
-} from '@domain/members/members.enum';
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberMaritalStatusEnum,
+  MemberNationalityEnum,
+  MemberSexEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 import { CreateMemberUseCase } from '@domain/members/use-cases/create-member/create-member.use-case';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { CreateMovementUseCase } from '@domain/movements/use-cases/create-movement/create-movement.use-case';
@@ -329,52 +329,52 @@ Migrations.add({
     const createMemberUseCase = container.resolve(CreateMemberUseCase);
 
     for (const row of importedMembers.rows) {
-      let category: MemberCategory | null = null;
+      let category: MemberCategoryEnum | null = null;
 
       if (row.category === 'Socio') {
-        category = MemberCategory.Member;
+        category = MemberCategoryEnum.Member;
       } else if (row.category === 'Cadete') {
-        category = MemberCategory.Cadet;
+        category = MemberCategoryEnum.Cadet;
       }
 
-      let fileStatus: MemberFileStatus | null = null;
+      let fileStatus: MemberFileStatusEnum | null = null;
 
       if (row.fileStatus === 'Si') {
-        fileStatus = MemberFileStatus.Completed;
+        fileStatus = MemberFileStatusEnum.Completed;
       } else if (row.fileStatus === 'No') {
-        fileStatus = MemberFileStatus.Pending;
+        fileStatus = MemberFileStatusEnum.Pending;
       }
 
-      let maritalStatus: MemberMaritalStatus | null = null;
+      let maritalStatus: MemberMaritalStatusEnum | null = null;
 
       if (row.maritalStatus === 'Casado') {
-        maritalStatus = MemberMaritalStatus.Married;
+        maritalStatus = MemberMaritalStatusEnum.Married;
       } else if (row.maritalStatus === 'Divorciado') {
-        maritalStatus = MemberMaritalStatus.Divorced;
+        maritalStatus = MemberMaritalStatusEnum.Divorced;
       } else if (row.maritalStatus === 'Soltero') {
-        maritalStatus = MemberMaritalStatus.Single;
+        maritalStatus = MemberMaritalStatusEnum.Single;
       } else if (row.maritalStatus === 'Viudo') {
-        maritalStatus = MemberMaritalStatus.Widowed;
+        maritalStatus = MemberMaritalStatusEnum.Widowed;
       }
 
-      let nationality: MemberNationality | null = null;
+      let nationality: MemberNationalityEnum | null = null;
 
       if (row.nationality === 'Argentino') {
-        nationality = MemberNationality.Argentina;
+        nationality = MemberNationalityEnum.Argentina;
       } else if (row.nationality === 'Colombiano') {
-        nationality = MemberNationality.Colombia;
+        nationality = MemberNationalityEnum.Colombia;
       } else if (row.nationality === 'Bulgaro') {
-        nationality = MemberNationality.Bulgaria;
+        nationality = MemberNationalityEnum.Bulgaria;
       } else if (row.nationality === 'Ucraniano') {
-        nationality = MemberNationality.Ukraine;
+        nationality = MemberNationalityEnum.Ukraine;
       }
 
-      let sex: MemberSex | null = null;
+      let sex: MemberSexEnum | null = null;
 
       if (row.sex === 'Caballero') {
-        sex = MemberSex.Male;
+        sex = MemberSexEnum.Male;
       } else if (row.sex === 'Dama') {
-        sex = MemberSex.Female;
+        sex = MemberSexEnum.Female;
       }
 
       let email: string | null = null;
@@ -383,12 +383,12 @@ Migrations.add({
         email = row.email;
       }
 
-      let status: MemberStatus;
+      let status: MemberStatusEnum;
 
       if (row.status === 'Activo') {
-        status = MemberStatus.Active;
+        status = MemberStatusEnum.Active;
       } else {
-        status = MemberStatus.Inactive;
+        status = MemberStatusEnum.Inactive;
       }
 
       await createMemberUseCase.execute({

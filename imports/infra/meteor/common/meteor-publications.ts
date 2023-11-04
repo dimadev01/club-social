@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { MembersCollection } from '@domain/members/members.collection';
+import { MembersCollection } from '@domain/members/member.collection';
 
 Meteor.publish(null, function meteor(): Mongo.Cursor<unknown> | void {
   if (this.userId) {

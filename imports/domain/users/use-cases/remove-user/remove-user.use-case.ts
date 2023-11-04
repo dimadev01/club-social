@@ -13,7 +13,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class RemoveUserUseCase
   extends UseCase<RemoveUserRequestDto>
-  implements IUseCase<RemoveUserRequestDto, undefined>
+  implements IUseCase<RemoveUserRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)
@@ -24,7 +24,7 @@ export class RemoveUserUseCase
 
   public async execute(
     request: RemoveUserRequestDto
-  ): Promise<Result<undefined, Error>> {
+  ): Promise<Result<null, Error>> {
     this.validatePermission(Scope.Members, Permission.Delete);
 
     await this.validateDto(RemoveUserRequestDto, request);
@@ -51,6 +51,6 @@ export class RemoveUserUseCase
 
     this._logger.info('User removed', { user });
 
-    return ok(undefined);
+    return ok(null);
   }
 }

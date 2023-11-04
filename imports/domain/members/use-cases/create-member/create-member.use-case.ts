@@ -2,8 +2,8 @@ import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { Member } from '@domain/members/member.entity';
-import { MembersCollection } from '@domain/members/members.collection';
+import { Member } from '@domain/members/entities/member.entity';
+import { IMemberPort } from '@domain/members/member.port';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
 import { Permission, Role, Scope } from '@domain/roles/roles.enum';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
@@ -18,7 +18,9 @@ export class CreateMemberUseCase
   public constructor(
     private readonly _createUserUseCase: CreateUserUseCase,
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
+    @inject(DIToken.MemberRepository)
+    private readonly _memberPort: IMemberPort
   ) {
     super();
   }
@@ -27,8 +29,6 @@ export class CreateMemberUseCase
     request: CreateMemberRequestDto
   ): Promise<Result<string, Error>> {
     this.validatePermission(Scope.Members, Permission.Create);
-
-    await this.validateDto(CreateMemberRequestDto, request);
 
     const createUserResult = await this._createUserUseCase.execute({
       emails: request.emails,
@@ -69,7 +69,7 @@ export class CreateMemberUseCase
       return err(member.error);
     }
 
-    await MembersCollection.insertEntity(member.value);
+    await this._memberPort.create(member.value);
 
     this._logger.info('Member created', { member });
 

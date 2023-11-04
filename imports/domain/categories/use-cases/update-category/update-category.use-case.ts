@@ -11,7 +11,7 @@ import { CurrencyUtils } from '@shared/utils/currency.utils';
 @injectable()
 export class UpdateCategoryUseCase
   extends UseCase<UpdateCategoryRequestDto>
-  implements IUseCase<UpdateCategoryRequestDto, undefined>
+  implements IUseCase<UpdateCategoryRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger) private readonly _logger: ILogger,
@@ -23,7 +23,7 @@ export class UpdateCategoryUseCase
 
   public async execute(
     request: UpdateCategoryRequestDto
-  ): Promise<Result<undefined, Error>> {
+  ): Promise<Result<null, Error>> {
     const category = await this._categoryPort.findOneByIdOrThrow(request.id);
 
     if (request.amount) {
@@ -36,6 +36,6 @@ export class UpdateCategoryUseCase
 
     this._logger.info('Category updated', { category: category._id });
 
-    return ok(undefined);
+    return ok(null);
   }
 }

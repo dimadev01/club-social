@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import {
-  MemberCategory,
-  MemberFileStatus,
-  MemberStatus,
-} from '@domain/members/members.enum';
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 
 export class MemberGridDto {
   _id: string;
@@ -12,11 +12,11 @@ export class MemberGridDto {
 
   emails: Meteor.UserEmail[] | null;
 
-  category: MemberCategory | null;
+  category: MemberCategoryEnum | null;
 
-  fileStatus: MemberFileStatus | null;
+  fileStatus: MemberFileStatusEnum | null;
 
-  status: MemberStatus;
+  status: MemberStatusEnum;
 
   membershipBalance: number;
 

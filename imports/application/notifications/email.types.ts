@@ -1,5 +1,6 @@
 export type SendEmailRequest = {
   message: string;
+  subject: string;
   to: string;
 };
 

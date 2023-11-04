@@ -1,49 +1,49 @@
 /* eslint-disable typescript-sort-keys/string-enum */
-export enum MemberStatus {
+export enum MemberStatusEnum {
   Active = 'active',
   Inactive = 'inactive',
 }
 
 export const MemberStatusLabel = {
-  [MemberStatus.Active]: 'Activo',
-  [MemberStatus.Inactive]: 'Inactivo',
+  [MemberStatusEnum.Active]: 'Activo',
+  [MemberStatusEnum.Inactive]: 'Inactivo',
 };
 
 export const getMemberStatusOptions = () =>
-  Object.values(MemberStatus).map((status) => ({
+  Object.values(MemberStatusEnum).map((status) => ({
     label: MemberStatusLabel[status],
     value: status,
   }));
 
 export const getMemberStatusFilters = () =>
-  Object.values(MemberStatus).map((status) => ({
+  Object.values(MemberStatusEnum).map((status) => ({
     text: MemberStatusLabel[status],
     value: status,
   }));
 
-export enum MemberCategory {
+export enum MemberCategoryEnum {
   Member = 'member',
   Cadet = 'cadet',
 }
 
 export const MemberCategoryLabel = {
-  [MemberCategory.Cadet]: 'Cadete',
-  [MemberCategory.Member]: 'Socio',
+  [MemberCategoryEnum.Cadet]: 'Cadete',
+  [MemberCategoryEnum.Member]: 'Socio',
 };
 
 export const getMemberCategoryOptions = () =>
-  Object.values(MemberCategory).map((category) => ({
+  Object.values(MemberCategoryEnum).map((category) => ({
     label: MemberCategoryLabel[category],
     value: category,
   }));
 
 export const getMemberCategoryFilters = () =>
-  Object.values(MemberCategory).map((category) => ({
+  Object.values(MemberCategoryEnum).map((category) => ({
     text: MemberCategoryLabel[category],
     value: category,
   }));
 
-export enum MemberMaritalStatus {
+export enum MemberMaritalStatusEnum {
   Single = 'single',
   Married = 'married',
   Divorced = 'divorced',
@@ -51,19 +51,19 @@ export enum MemberMaritalStatus {
 }
 
 export const MemberMaritalStatusLabel = {
-  [MemberMaritalStatus.Divorced]: 'Divorciado',
-  [MemberMaritalStatus.Married]: 'Casado',
-  [MemberMaritalStatus.Single]: 'Soltero',
-  [MemberMaritalStatus.Widowed]: 'Viudo',
+  [MemberMaritalStatusEnum.Divorced]: 'Divorciado',
+  [MemberMaritalStatusEnum.Married]: 'Casado',
+  [MemberMaritalStatusEnum.Single]: 'Soltero',
+  [MemberMaritalStatusEnum.Widowed]: 'Viudo',
 };
 
 export const getMemberMaritalStatusOptions = () =>
-  Object.values(MemberMaritalStatus).map((status) => ({
+  Object.values(MemberMaritalStatusEnum).map((status) => ({
     label: MemberMaritalStatusLabel[status],
     value: status,
   }));
 
-export enum MemberNationality {
+export enum MemberNationalityEnum {
   Argentina = 'argentina',
   Colombia = 'colombia',
   Bulgaria = 'bulgaria',
@@ -71,52 +71,52 @@ export enum MemberNationality {
 }
 
 export const MemberNationalityLabel = {
-  [MemberNationality.Argentina]: 'Argentina',
-  [MemberNationality.Colombia]: 'Colombia',
-  [MemberNationality.Ukraine]: 'Ucrania',
-  [MemberNationality.Bulgaria]: 'Bulgaria',
+  [MemberNationalityEnum.Argentina]: 'Argentina',
+  [MemberNationalityEnum.Colombia]: 'Colombia',
+  [MemberNationalityEnum.Ukraine]: 'Ucrania',
+  [MemberNationalityEnum.Bulgaria]: 'Bulgaria',
 };
 
 export const getMemberNationalityOptions = () =>
-  Object.values(MemberNationality).map((value) => ({
+  Object.values(MemberNationalityEnum).map((value) => ({
     label: MemberNationalityLabel[value],
     value,
   }));
 
-export enum MemberSex {
+export enum MemberSexEnum {
   Male = 'male',
   Female = 'female',
 }
 
 export const MemberSexLabel = {
-  [MemberSex.Female]: 'Femenino',
-  [MemberSex.Male]: 'Masculino',
+  [MemberSexEnum.Female]: 'Femenino',
+  [MemberSexEnum.Male]: 'Masculino',
 };
 
 export const getMemberSexOptions = () =>
-  Object.values(MemberSex).map((value) => ({
+  Object.values(MemberSexEnum).map((value) => ({
     label: MemberSexLabel[value],
     value,
   }));
 
-export enum MemberFileStatus {
+export enum MemberFileStatusEnum {
   Completed = 'completed',
   Pending = 'pending',
 }
 
 export const MemberFileStatusLabel = {
-  [MemberFileStatus.Completed]: 'Completo',
-  [MemberFileStatus.Pending]: 'Pendiente',
+  [MemberFileStatusEnum.Completed]: 'Completo',
+  [MemberFileStatusEnum.Pending]: 'Pendiente',
 };
 
 export const getMemberFileStatusOptions = () =>
-  Object.values(MemberFileStatus).map((value) => ({
+  Object.values(MemberFileStatusEnum).map((value) => ({
     label: MemberFileStatusLabel[value],
     value,
   }));
 
 export const getMemberFileStatusFilters = () =>
-  Object.values(MemberFileStatus).map((value) => ({
+  Object.values(MemberFileStatusEnum).map((value) => ({
     text: MemberFileStatusLabel[value],
     value,
   }));

@@ -6,7 +6,7 @@ import {
 } from '@domain/categories/category.enum';
 import { Entity } from '@domain/common/entity';
 import { Employee } from '@domain/employees/employee.entity';
-import { Member } from '@domain/members/member.entity';
+import { Member } from '@domain/members/entities/member.entity';
 import { CreateMovement } from '@domain/movements/movements.types';
 import { Professor } from '@domain/professors/professor.entity';
 import { Service } from '@domain/services/service.entity';

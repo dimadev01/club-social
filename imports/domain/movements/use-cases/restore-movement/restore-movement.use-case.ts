@@ -12,7 +12,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class RestoreMovementUseCase
   extends UseCase<RestoreMovementRequestDto>
-  implements IUseCase<RestoreMovementRequestDto, undefined>
+  implements IUseCase<RestoreMovementRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)
@@ -23,7 +23,7 @@ export class RestoreMovementUseCase
 
   public async execute(
     request: RestoreMovementRequestDto
-  ): Promise<Result<undefined, Error>> {
+  ): Promise<Result<null, Error>> {
     this.validatePermission(Scope.Movements, Permission.Update);
 
     await this.validateDto(RestoreMovementRequestDto, request);
@@ -40,6 +40,6 @@ export class RestoreMovementUseCase
 
     this._logger.info('Movement restored', { movement: movement._id });
 
-    return ok(undefined);
+    return ok(null);
   }
 }

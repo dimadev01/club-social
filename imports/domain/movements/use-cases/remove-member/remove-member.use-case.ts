@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
-import { MembersCollection } from '@domain/members/members.collection';
+import { MembersCollection } from '@domain/members/member.collection';
 import { RemoveMemberRequestDto } from '@domain/members/use-cases/remove-member/remove-member-request.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -11,7 +11,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class RemoveMemberUseCase
   extends UseCase<RemoveMemberRequestDto>
-  implements IUseCase<RemoveMemberRequestDto, undefined>
+  implements IUseCase<RemoveMemberRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)
@@ -22,7 +22,7 @@ export class RemoveMemberUseCase
 
   public async execute(
     request: RemoveMemberRequestDto
-  ): Promise<Result<undefined, Error>> {
+  ): Promise<Result<null, Error>> {
     await this.validateDto(RemoveMemberRequestDto, request);
 
     const member = await MembersCollection.findOneAsync(request.id);
@@ -35,6 +35,6 @@ export class RemoveMemberUseCase
 
     this._logger.info('Member removed', { member });
 
-    return ok(undefined);
+    return ok(null);
   }
 }

@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 import SimpleSchema from 'simpl-schema';
-import { Member } from '@domain/members/member.entity';
+import { Member } from '@domain/members/entities/member.entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
 export const MembersCollection = new MongoCollection('members', Member);

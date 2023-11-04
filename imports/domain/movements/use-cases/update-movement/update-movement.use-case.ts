@@ -13,7 +13,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class UpdateMovementUseCase
   extends UseCase<UpdateMovementRequestDto>
-  implements IUseCase<UpdateMovementRequestDto, undefined>
+  implements IUseCase<UpdateMovementRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)
@@ -24,7 +24,7 @@ export class UpdateMovementUseCase
 
   public async execute(
     request: UpdateMovementRequestDto
-  ): Promise<Result<undefined, Error>> {
+  ): Promise<Result<null, Error>> {
     this.validatePermission(Scope.Movements, Permission.Create);
 
     await this.validateDto(UpdateMovementRequestDto, request);
@@ -51,6 +51,6 @@ export class UpdateMovementUseCase
 
     this._logger.info('Movement updated', { movementId: request.id });
 
-    return ok(undefined);
+    return ok(null);
   }
 }

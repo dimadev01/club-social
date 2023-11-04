@@ -3,8 +3,8 @@ import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useMutation } from '@tanstack/react-query';
 
 export const useRemoveUser = (onSuccess: () => void) =>
-  useMutation<undefined, Error, RemoveUserRequestDto>(
+  useMutation<null, Error, RemoveUserRequestDto>(
     [MethodsEnum.UsersRemove],
     (request) => Meteor.callAsync(MethodsEnum.UsersRemove, request),
-    { onSuccess }
+    { onSuccess: () => onSuccess() }
   );

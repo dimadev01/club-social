@@ -6,13 +6,13 @@ import {
   IsString,
 } from 'class-validator';
 import {
-  MemberCategory,
-  MemberFileStatus,
-  MemberMaritalStatus,
-  MemberNationality,
-  MemberSex,
-  MemberStatus,
-} from '@domain/members/members.enum';
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberMaritalStatusEnum,
+  MemberNationalityEnum,
+  MemberSexEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 
 export class CreateMemberRequestDto extends CreateUserRequestDto {
@@ -20,34 +20,34 @@ export class CreateMemberRequestDto extends CreateUserRequestDto {
   @IsOptional()
   dateOfBirth: string | null;
 
-  @IsEnum(MemberCategory)
+  @IsEnum(MemberCategoryEnum)
   @IsOptional()
-  category: MemberCategory;
+  category: MemberCategoryEnum;
 
   @IsString()
   @IsOptional()
   documentID: string | null;
 
-  @IsEnum(MemberFileStatus)
+  @IsEnum(MemberFileStatusEnum)
   @IsOptional()
-  fileStatus: MemberFileStatus | null;
+  fileStatus: MemberFileStatusEnum | null;
 
-  @IsEnum(MemberMaritalStatus)
+  @IsEnum(MemberMaritalStatusEnum)
   @IsOptional()
-  maritalStatus: MemberMaritalStatus | null;
+  maritalStatus: MemberMaritalStatusEnum | null;
 
-  @IsEnum(MemberNationality)
+  @IsEnum(MemberNationalityEnum)
   @IsOptional()
-  nationality: MemberNationality | null;
+  nationality: MemberNationalityEnum | null;
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   phones: string[] | null;
 
-  @IsEnum(MemberSex)
+  @IsEnum(MemberSexEnum)
   @IsOptional()
-  sex: MemberSex | null;
+  sex: MemberSexEnum | null;
 
   @IsString()
   @IsOptional()
@@ -73,6 +73,6 @@ export class CreateMemberRequestDto extends CreateUserRequestDto {
   @IsOptional()
   addressZipCode: string | null;
 
-  @IsEnum(MemberStatus)
-  status: MemberStatus;
+  @IsEnum(MemberStatusEnum)
+  status: MemberStatusEnum;
 }

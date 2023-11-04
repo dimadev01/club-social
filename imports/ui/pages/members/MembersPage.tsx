@@ -6,13 +6,13 @@ import {
   getMemberCategoryFilters,
   getMemberFileStatusFilters,
   getMemberStatusFilters,
-  MemberCategory,
+  MemberCategoryEnum,
   MemberCategoryLabel,
-  MemberFileStatus,
+  MemberFileStatusEnum,
   MemberFileStatusLabel,
-  MemberStatus,
+  MemberStatusEnum,
   MemberStatusLabel,
-} from '@domain/members/members.enum';
+} from '@domain/members/member.enum';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -126,7 +126,7 @@ export const MembersPage = () => {
               dataIndex: 'category',
               filteredValue: gridState.filters?.category ?? [],
               filters: getMemberCategoryFilters(),
-              render: (category: MemberCategory | null) =>
+              render: (category: MemberCategoryEnum | null) =>
                 category && MemberCategoryLabel[category],
               title: 'Categoría',
             },
@@ -135,7 +135,7 @@ export const MembersPage = () => {
               dataIndex: 'fileStatus',
               filteredValue: gridState.filters?.fileStatus ?? [],
               filters: getMemberFileStatusFilters(),
-              render: (fileStatus: MemberFileStatus | null) =>
+              render: (fileStatus: MemberFileStatusEnum | null) =>
                 fileStatus && MemberFileStatusLabel[fileStatus],
               title: 'Ficha',
             },
@@ -144,7 +144,7 @@ export const MembersPage = () => {
               dataIndex: 'status',
               filteredValue: gridState.filters?.status ?? [],
               filters: getMemberStatusFilters(),
-              render: (status: MemberStatus) => MemberStatusLabel[status],
+              render: (status: MemberStatusEnum) => MemberStatusLabel[status],
               title: 'Estado',
             },
             {

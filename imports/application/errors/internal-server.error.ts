@@ -1,7 +1,7 @@
 import { BaseError } from '@application/errors/error.base';
 
-export class UserNotFoundError extends BaseError {
+export class InternalServerError extends BaseError {
   public constructor() {
-    super('Usuario no encontrado');
+    super('Internal server error');
   }
 }

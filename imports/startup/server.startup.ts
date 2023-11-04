@@ -6,7 +6,7 @@ import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, inject, singleton } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
-import { MemberMethod } from '@domain/members/members.methods';
+import { MemberMethod } from '@domain/members/member.methods';
 import { MovementMethod } from '@domain/movements/movements.methods';
 import { ProfessorMethod } from '@domain/professors/professors.methods';
 import { ServiceMethod } from '@domain/services/services.methods';

@@ -11,16 +11,16 @@ import {
 import { Meteor } from 'meteor/meteor';
 import { err, ok, Result } from 'neverthrow';
 import { Entity } from '@domain/common/entity';
-import { MemberAddress } from '@domain/members/member-address.entity';
+import { MemberAddress } from '@domain/members/entities/member-address.entity';
 import {
-  MemberCategory,
-  MemberFileStatus,
-  MemberMaritalStatus,
-  MemberNationality,
-  MemberSex,
-  MemberStatus,
-} from '@domain/members/members.enum';
-import { CreateMember } from '@domain/members/members.types';
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberMaritalStatusEnum,
+  MemberNationalityEnum,
+  MemberSexEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
+import { CreateMember } from '@domain/members/member.types';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { ValidationUtils } from '@shared/utils/validation.utils';
 
@@ -28,8 +28,8 @@ export class Member extends Entity {
   @Type(() => MemberAddress)
   public address: MemberAddress;
 
-  @IsEnum(MemberCategory)
-  public category: MemberCategory;
+  @IsEnum(MemberCategoryEnum)
+  public category: MemberCategoryEnum;
 
   @IsDate()
   @IsOptional()
@@ -39,17 +39,17 @@ export class Member extends Entity {
   @IsOptional()
   public documentID: string | null;
 
-  @IsEnum(MemberFileStatus)
+  @IsEnum(MemberFileStatusEnum)
   @IsOptional()
-  public fileStatus: MemberFileStatus | null;
+  public fileStatus: MemberFileStatusEnum | null;
 
-  @IsEnum(MemberMaritalStatus)
+  @IsEnum(MemberMaritalStatusEnum)
   @IsOptional()
-  public maritalStatus: MemberMaritalStatus | null;
+  public maritalStatus: MemberMaritalStatusEnum | null;
 
-  @IsEnum(MemberNationality)
+  @IsEnum(MemberNationalityEnum)
   @IsOptional()
-  public nationality: MemberNationality | null;
+  public nationality: MemberNationalityEnum | null;
 
   @IsString({ each: true })
   @IsOptional()
@@ -57,12 +57,12 @@ export class Member extends Entity {
   @ArrayMinSize(1)
   public phones: string[] | null;
 
-  @IsEnum(MemberSex)
+  @IsEnum(MemberSexEnum)
   @IsOptional()
-  public sex: MemberSex | null;
+  public sex: MemberSexEnum | null;
 
-  @IsEnum(MemberStatus)
-  public status: MemberStatus;
+  @IsEnum(MemberStatusEnum)
+  public status: MemberStatusEnum;
 
   public user: Meteor.User;
 
@@ -98,29 +98,9 @@ export class Member extends Entity {
       member.dateOfBirth = new Date(props.dateOfBirth);
     }
 
-    member.userId = '';
-
     member.user = {} as Meteor.User;
 
-    member.address = new MemberAddress();
-
-    member.category = MemberCategory.Member;
-
-    member.dateOfBirth = null;
-
-    member.documentID = null;
-
-    member.fileStatus = null;
-
-    member.maritalStatus = null;
-
-    member.nationality = null;
-
-    member.phones = null;
-
-    member.sex = null;
-
-    member.status = MemberStatus.Active;
+    member.status = MemberStatusEnum.Active;
 
     member.documentID = props.documentID;
 
@@ -135,6 +115,8 @@ export class Member extends Entity {
     member.sex = props.sex;
 
     member.userId = props.userId;
+
+    member.address = new MemberAddress();
 
     member.address.cityGovId = props.address.cityGovId;
 
@@ -165,5 +147,71 @@ export class Member extends Entity {
 
   public joinUser() {
     this.user = Meteor.users.findOne(this.userId) ?? ({} as Meteor.User);
+  }
+
+  public setAddress(address: MemberAddress): Result<null, Error> {
+    this.address = address;
+
+    return ok(null);
+  }
+
+  public setCategory(category: MemberCategoryEnum): Result<null, Error> {
+    this.category = category;
+
+    return ok(null);
+  }
+
+  public setDateOfBirth(dateOfBirth: Date | null): Result<null, Error> {
+    this.dateOfBirth = dateOfBirth;
+
+    return ok(null);
+  }
+
+  public setDocumentID(documentID: string | null): Result<null, Error> {
+    this.documentID = documentID;
+
+    return ok(null);
+  }
+
+  public setFileStatus(
+    fileStatus: MemberFileStatusEnum | null
+  ): Result<null, Error> {
+    this.fileStatus = fileStatus;
+
+    return ok(null);
+  }
+
+  public setMaritalStatus(
+    maritalStatus: MemberMaritalStatusEnum | null
+  ): Result<null, Error> {
+    this.maritalStatus = maritalStatus;
+
+    return ok(null);
+  }
+
+  public setNationality(
+    nationality: MemberNationalityEnum | null
+  ): Result<null, Error> {
+    this.nationality = nationality;
+
+    return ok(null);
+  }
+
+  public setPhones(phones: string[] | null): Result<null, Error> {
+    this.phones = phones;
+
+    return ok(null);
+  }
+
+  public setSex(sex: MemberSexEnum | null): Result<null, Error> {
+    this.sex = sex;
+
+    return ok(null);
+  }
+
+  public setStatus(status: MemberStatusEnum): Result<null, Error> {
+    this.status = status;
+
+    return ok(null);
   }
 }

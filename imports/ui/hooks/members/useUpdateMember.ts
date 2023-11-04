@@ -3,7 +3,7 @@ import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useMutation } from '@tanstack/react-query';
 
 export const useUpdateMember = () =>
-  useMutation<undefined, Error, UpdateMemberRequestDto>(
+  useMutation<null, Error, UpdateMemberRequestDto>(
     [MethodsEnum.MembersUpdate],
     (request) => Meteor.callAsync(MethodsEnum.MembersUpdate, request)
   );

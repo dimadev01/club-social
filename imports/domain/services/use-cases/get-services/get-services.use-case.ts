@@ -10,7 +10,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetServicesUseCase
   extends UseCase
-  implements IUseCase<undefined, GetServicesResponseDto[]>
+  implements IUseCase<null, GetServicesResponseDto[]>
 {
   public async execute(): Promise<Result<GetServicesResponseDto[], Error>> {
     const data = await ServicesCollection.find(
