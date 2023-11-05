@@ -1,17 +1,14 @@
 import {
-  IsDate,
   IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
+import { err, ok, Result } from 'neverthrow';
 import {
   CategoryEnum,
-  CategoryLabel,
-  CategoryPrices,
   CategoryTypeEnum,
-  CategoryTypes,
 } from '@domain/categories/category.enum';
 import { Entity } from '@domain/common/entity';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
@@ -31,12 +28,6 @@ export class Category extends Entity {
   @IsEnum(CategoryTypeEnum)
   public type: CategoryTypeEnum;
 
-  @IsDate()
-  public updatedAt: Date;
-
-  @IsString()
-  public updatedBy: string;
-
   public constructor() {
     super();
   }
@@ -49,33 +40,17 @@ export class Category extends Entity {
     return CurrencyUtils.formatCents(this.amount);
   }
 
-  public static create(code: CategoryEnum): Category {
-    const category = new Category();
+  public updatePrice(amount: number | null): Result<null, Error> {
+    if (amount && amount < 0) {
+      return err(new Error('Amount must be greater than or equal to zero'));
+    }
 
-    category.amount = null;
+    if (amount) {
+      this.amount = CurrencyUtils.toCents(amount);
+    } else {
+      this.amount = amount;
+    }
 
-    category.code = CategoryEnum.CourtRental;
-
-    category.name = CategoryLabel[category.code];
-
-    category.code = code;
-
-    const price: number | null = CategoryPrices[category.code];
-
-    category.amount = price ? CurrencyUtils.toCents(price) : null;
-
-    category.type = CategoryTypes[category.code];
-
-    category.name = CategoryLabel[category.code];
-
-    return category;
-  }
-
-  public updateName(name: string): void {
-    this.name = name;
-  }
-
-  public updatePrice(amount: number | null): void {
-    this.amount = amount;
+    return ok(null);
   }
 }

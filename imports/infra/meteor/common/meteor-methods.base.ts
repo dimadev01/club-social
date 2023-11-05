@@ -5,7 +5,7 @@ import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@infra/di/di-tokens';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
-import { ValidationUtils } from '@shared/utils/validation.utils';
+import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 export abstract class MeteorMethod {
   protected async execute<TRequest extends object, TResponse>(
@@ -67,7 +67,7 @@ export abstract class MeteorMethod {
 
       throw new Meteor.Error(
         MeteorErrorCodeEnum.BadRequest,
-        ValidationUtils.getErrorMessage(errors)
+        ClassValidationUtils.getErrorMessage(errors)
       );
     }
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ConfigProvider, message } from 'antd';
+import { App as AntApp, ConfigProvider, message } from 'antd';
 import esEs from 'antd/es/locale/es_ES';
 import { useTracker } from 'meteor/react-meteor-data';
 import GoogleFontLoader from 'react-google-font';
@@ -50,32 +50,36 @@ export const App = () => {
     <>
       <GoogleFontLoader fonts={[{ font: 'Rubik', weights: [300, 400, 500] }]} />
 
-      <ConfigProvider
-        locale={esEs}
-        select={{
-          showSearch: true,
-        }}
-        dropdownMatchSelectWidth={false}
-        form={{
-          requiredMark: 'optional',
-          scrollToFirstError: true,
-        }}
-        input={{
-          autoComplete: 'on',
-        }}
-        theme={{
-          token: {
-            colorTextBase: '#505050',
-            fontFamily: 'Rubik',
-          },
-        }}
-      >
-        <QueryClientProvider client={queryClient}>
-          <Routes />
+      <AntApp>
+        <ConfigProvider
+          locale={esEs}
+          select={{
+            showSearch: true,
+          }}
+          dropdownMatchSelectWidth={false}
+          form={{
+            requiredMark: 'optional',
+            scrollToFirstError: true,
+          }}
+          input={{
+            autoComplete: 'on',
+          }}
+          theme={{
+            token: {
+              colorTextBase: '#505050',
+              fontFamily: 'Rubik',
+            },
+          }}
+        >
+          <QueryClientProvider client={queryClient}>
+            <Routes />
 
-          {!Meteor.isProduction && <ReactQueryDevtools initialIsOpen={false} />}
-        </QueryClientProvider>
-      </ConfigProvider>
+            {!Meteor.isProduction && (
+              <ReactQueryDevtools initialIsOpen={false} />
+            )}
+          </QueryClientProvider>
+        </ConfigProvider>
+      </AntApp>
     </>
   );
 };

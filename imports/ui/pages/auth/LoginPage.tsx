@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Form, Input, message } from 'antd';
+import { App, Button, Form, Input } from 'antd';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { useTracker } from 'meteor/react-meteor-data';
@@ -16,6 +16,8 @@ export const LoginPage = () => {
   const { isLoggingIn } = useTracker(() => ({
     isLoggingIn: Meteor.loggingIn(),
   }));
+
+  const { message } = App.useApp();
 
   const navigate = useNavigate();
 

@@ -1,11 +1,11 @@
 import React from 'react';
 import {
+  App,
   Breadcrumb,
   Card,
   Form,
   Input,
   InputNumber,
-  message,
   Skeleton,
 } from 'antd';
 import { NavLink, useParams } from 'react-router-dom';
@@ -23,6 +23,8 @@ type FormValues = {
 
 export const CategoryDetailPage = () => {
   const { id } = useParams<{ id?: string }>();
+
+  const { message } = App.useApp();
 
   const { data: category, fetchStatus } = useCategory(id);
 

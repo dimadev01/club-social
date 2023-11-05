@@ -14,11 +14,11 @@ export class GetMemberResponseDto {
 
   lastName: string;
 
-  emails: string[] | null;
+  emails: string[];
 
   dateOfBirth: Date | null;
 
-  category: MemberCategoryEnum | null;
+  category: MemberCategoryEnum;
 
   documentID: string | null;
 

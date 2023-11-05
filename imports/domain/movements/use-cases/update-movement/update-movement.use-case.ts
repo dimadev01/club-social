@@ -6,7 +6,7 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
-import { Permission, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
@@ -25,7 +25,7 @@ export class UpdateMovementUseCase
   public async execute(
     request: UpdateMovementRequestDto
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(Scope.Movements, Permission.Create);
+    await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Create);
 
     await this.validateDto(UpdateMovementRequestDto, request);
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import { NavLink } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
-import { getRolesFilters, Role } from '@domain/roles/roles.enum';
+import { getRolesFilters, RoleEnum } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Table } from '@ui/components/Table/Table';
@@ -112,7 +112,7 @@ export const UsersPage = () => {
             {
               align: 'center',
               render: (_, user: Meteor.User) =>
-                user.profile?.role === Role.Staff && (
+                user.profile?.role === RoleEnum.Staff && (
                   <Button
                     popConfirm={{
                       onConfirm: () =>

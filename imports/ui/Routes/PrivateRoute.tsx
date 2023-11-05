@@ -2,14 +2,14 @@ import React from 'react';
 import { Roles } from 'meteor/alanning:roles';
 import { useTracker } from 'meteor/react-meteor-data';
 import { Navigate } from 'react-router-dom';
-import { Permission, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
 import { AuthRoute } from '@ui/Routes/AuthRoute';
 
 type Props = {
   children: JSX.Element;
-  permission: Permission;
-  scope: Scope;
+  permission: PermissionEnum;
+  scope: ScopeEnum;
 };
 
 export const PrivateRoute: React.FC<Props> = ({

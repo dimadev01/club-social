@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import find from 'lodash/find';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import {
   CategoryEnum,
@@ -11,10 +11,12 @@ import {
   MemberCategories,
 } from '@domain/categories/category.enum';
 import { Movement } from '@domain/movements/entities/movement.entity';
+import { IMovementPort } from '@domain/movements/movement.port';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
+import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
@@ -22,6 +24,13 @@ export class GetMovementsUseCase
   extends UseCase<GetMovementsGridRequestDto>
   implements IUseCase<GetMovementsGridRequestDto, GetMovementsGridResponseDto>
 {
+  public constructor(
+    @inject(DIToken.MovementRepository)
+    private readonly _movementPort: IMovementPort
+  ) {
+    super();
+  }
+
   public async execute(
     request: GetMovementsGridRequestDto
   ): Promise<Result<GetMovementsGridResponseDto, Error>> {
@@ -65,7 +74,9 @@ export class GetMovementsUseCase
             $facet: {
               data: [
                 ...this.getPaginatedPipeline({
-                  $sort: { date: -1 },
+                  $sort: {
+                    [request.sortField]: this.getSorterValue(request.sortOrder),
+                  },
                   page: request.page,
                   pageSize: request.pageSize,
                 }),

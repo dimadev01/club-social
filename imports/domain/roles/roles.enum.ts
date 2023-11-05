@@ -1,4 +1,4 @@
-export enum Role {
+export enum RoleEnum {
   Admin = 'admin',
   Employee = 'employee',
   Member = 'member',
@@ -7,12 +7,12 @@ export enum Role {
 }
 
 export const getRolesFilters = () =>
-  Object.values(Role).map((role) => ({
+  Object.values(RoleEnum).map((role) => ({
     text: role,
     value: role,
   }));
 
-export enum Scope {
+export enum ScopeEnum {
   Categories = 'categories',
   Employees = 'employees',
   Members = 'members',
@@ -22,7 +22,7 @@ export enum Scope {
   Users = 'users',
 }
 
-export enum Permission {
+export enum PermissionEnum {
   Create = 'write',
   Delete = 'delete',
   Read = 'read',
@@ -31,45 +31,49 @@ export enum Permission {
 }
 
 export const AdminRole = {
-  [Scope.Users]: [
-    Permission.Read,
-    Permission.Create,
-    Permission.Update,
-    Permission.Delete,
+  [ScopeEnum.Users]: [
+    PermissionEnum.Read,
+    PermissionEnum.Create,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
   ],
-  [Scope.Members]: [
-    Permission.Read,
-    Permission.Create,
-    Permission.Update,
-    Permission.Delete,
+  [ScopeEnum.Members]: [
+    PermissionEnum.Read,
+    PermissionEnum.Create,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
   ],
-  [Scope.Categories]: [Permission.Read, Permission.Update],
-  [Scope.Movements]: [
-    Permission.Read,
-    Permission.Create,
-    Permission.Update,
-    Permission.Delete,
-    Permission.ViewDeleted,
+  [ScopeEnum.Categories]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.Movements]: [
+    PermissionEnum.Read,
+    PermissionEnum.Create,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
+    PermissionEnum.ViewDeleted,
   ],
-  [Scope.Professors]: [Permission.Read, Permission.Update],
-  [Scope.Employees]: [Permission.Read, Permission.Update],
-  [Scope.Services]: [Permission.Read, Permission.Update],
+  [ScopeEnum.Professors]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.Employees]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.Services]: [PermissionEnum.Read, PermissionEnum.Update],
 };
 
 export const StaffRole = {
-  [Scope.Members]: [Permission.Read, Permission.Update],
-  [Scope.Movements]: [Permission.Read, Permission.Create, Permission.Update],
-  [Scope.Users]: [Permission.Create, Permission.Update],
+  [ScopeEnum.Members]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.Movements]: [
+    PermissionEnum.Read,
+    PermissionEnum.Create,
+    PermissionEnum.Update,
+  ],
+  [ScopeEnum.Users]: [PermissionEnum.Create, PermissionEnum.Update],
 };
 
 export const MemberRole = {
-  [Scope.Movements]: [Permission.Read],
+  [ScopeEnum.Movements]: [PermissionEnum.Read],
 };
 
 export const RolePermissionAssignment = {
-  [Role.Admin]: AdminRole,
-  [Role.Staff]: StaffRole,
-  [Role.Member]: MemberRole,
-  [Role.Employee]: {},
-  [Role.Professor]: {},
+  [RoleEnum.Admin]: AdminRole,
+  [RoleEnum.Staff]: StaffRole,
+  [RoleEnum.Member]: MemberRole,
+  [RoleEnum.Employee]: {},
+  [RoleEnum.Professor]: {},
 };

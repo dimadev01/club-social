@@ -1,4 +1,4 @@
-import { ok, Result } from 'neverthrow';
+import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
@@ -6,7 +6,6 @@ import { ICategoryPort } from '@domain/categories/category.port';
 import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
 
 @injectable()
 export class UpdateCategoryUseCase
@@ -14,7 +13,8 @@ export class UpdateCategoryUseCase
   implements IUseCase<UpdateCategoryRequestDto, null>
 {
   public constructor(
-    @inject(DIToken.Logger) private readonly _logger: ILogger,
+    @inject(DIToken.Logger)
+    private readonly _logger: ILogger,
     @inject(DIToken.CategoryRepository)
     private readonly _categoryPort: ICategoryPort
   ) {
@@ -26,10 +26,10 @@ export class UpdateCategoryUseCase
   ): Promise<Result<null, Error>> {
     const category = await this._categoryPort.findOneByIdOrThrow(request.id);
 
-    if (request.amount) {
-      category.updatePrice(CurrencyUtils.toCents(request.amount));
-    } else {
-      category.updatePrice(null);
+    const updateResult = Result.combine([category.updatePrice(request.amount)]);
+
+    if (updateResult.isErr()) {
+      return err(updateResult.error);
     }
 
     await this._categoryPort.update(category);

@@ -7,7 +7,7 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 
-export interface CreateMember {
+export type CreateMember = {
   address: CreateMemberAddress;
   category: MemberCategoryEnum;
   dateOfBirth: string | null;
@@ -22,13 +22,13 @@ export interface CreateMember {
   sex: MemberSexEnum | null;
   status: MemberStatusEnum;
   userId: string;
-}
+};
 
-export interface CreateMemberAddress {
+export type CreateMemberAddress = {
   cityGovId: string | null;
   cityName: string | null;
   stateGovId: string | null;
   stateName: string | null;
   street: string | null;
   zipCode: string | null;
-}
+};

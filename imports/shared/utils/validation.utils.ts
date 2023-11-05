@@ -1,6 +1,6 @@
 import { ValidationError } from 'class-validator';
 
-export abstract class ValidationUtils {
+export abstract class ClassValidationUtils {
   static getError(errors: ValidationError[]): Error {
     return new Error(this.getErrorMessage(errors));
   }

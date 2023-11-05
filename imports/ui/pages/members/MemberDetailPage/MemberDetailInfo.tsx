@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Col, DatePicker, Form, Input, message, Row, Space } from 'antd';
+import { App, Card, Col, DatePicker, Form, Input, Row, Space } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
 import compact from 'lodash/compact';
@@ -20,7 +20,7 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
-import { Role } from '@domain/roles/roles.enum';
+import { RoleEnum } from '@domain/roles/roles.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
@@ -61,6 +61,8 @@ type Props = {
 export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
   const [form] = Form.useForm<FormValues>();
 
+  const { message } = App.useApp();
+
   const stateGovId = Form.useWatch(['address', 'stateGovId'], form);
 
   const navigate = useNavigate();
@@ -96,7 +98,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         maritalStatus: values.maritalStatus ?? null,
         nationality: values.nationality ?? null,
         phones: compact(values.phones).length > 0 ? values.phones : null,
-        role: Role.Member,
+        role: RoleEnum.Member,
         sex: values.sex ?? null,
         status: MemberStatusEnum.Active,
       });
@@ -125,7 +127,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         maritalStatus: values.maritalStatus ?? null,
         nationality: values.nationality ?? null,
         phones: compact(values.phones).length > 0 ? values.phones : null,
-        role: Role.Member,
+        role: RoleEnum.Member,
         sex: values.sex ?? null,
         status: values.status,
       });

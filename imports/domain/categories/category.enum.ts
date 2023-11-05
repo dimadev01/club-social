@@ -45,29 +45,6 @@ export const CategoryLabel = {
   [CategoryEnum.Service]: 'Servicios',
 };
 
-export const CategoryPrices = {
-  [CategoryEnum.MembershipIncome]: 3800,
-  [CategoryEnum.MembershipDebt]: 3800,
-  [CategoryEnum.CourtRental]: 1500,
-  [CategoryEnum.Expense]: null,
-  [CategoryEnum.Fair]: 37000,
-  [CategoryEnum.Employee]: null,
-  [CategoryEnum.Buffet]: null,
-  [CategoryEnum.Saloon]: null,
-  [CategoryEnum.GuestDebt]: 1500,
-  [CategoryEnum.GuestIncome]: 1500,
-  [CategoryEnum.ElectricityIncome]: 500,
-  [CategoryEnum.ElectricityDebt]: 500,
-  [CategoryEnum.Maintenance]: null,
-  [CategoryEnum.OtherIncome]: null,
-  [CategoryEnum.OtherExpense]: null,
-  [CategoryEnum.Parking]: 4000,
-  [CategoryEnum.Professor]: null,
-  [CategoryEnum.Salary]: null,
-  [CategoryEnum.Saving]: null,
-  [CategoryEnum.Service]: null,
-};
-
 export const getCategoryFilters = () =>
   Object.values(CategoryEnum)
     .map((category) => ({

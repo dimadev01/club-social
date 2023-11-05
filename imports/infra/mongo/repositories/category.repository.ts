@@ -1,8 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { inject, injectable } from 'tsyringe';
-import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
 import { ILogger } from '@application/logger/logger.interface';
-import { CategoryEnum } from '@domain/categories/category.enum';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { Category } from '@domain/categories/entities/category.entity';
 import { DIToken } from '@infra/di/di-tokens';
@@ -28,20 +26,6 @@ export class CategoryRepository
     return this.getCollection().find().fetchAsync();
   }
 
-  public async findByCode(code: CategoryEnum): Promise<Category | undefined> {
-    return this.getCollection().findOneAsync({ code });
-  }
-
-  public async findByCodeOrThrow(code: CategoryEnum): Promise<Category> {
-    const category = await this.findByCode(code);
-
-    if (!category) {
-      throw new EntityNotFoundError(Category);
-    }
-
-    return category;
-  }
-
   public async findPaginated(
     request: PaginatedRequestDto
   ): Promise<PaginatedResponse<Category>> {
@@ -49,10 +33,7 @@ export class CategoryRepository
       isDeleted: false,
     };
 
-    const options = this.createPaginatedQueryOptions(
-      request.page,
-      request.pageSize
-    );
+    const options = this.createPaginatedQueryOptionsNew(request);
 
     return {
       count: await this.getCollection().find(query).countAsync(),

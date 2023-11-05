@@ -5,7 +5,6 @@ import { AppUrl } from '@ui/app.enum';
 import { NotFound } from '@ui/components/NotFound';
 import { useMember } from '@ui/hooks/members/useMember';
 import { MemberDetailInfo } from '@ui/pages/members/MemberDetailPage/MemberDetailInfo';
-import { MemberDetailMovementsGrid } from '@ui/pages/members/MemberDetailPage/MemberDetailMovementsGrid';
 
 export const MembersDetailPage = () => {
   const { id } = useParams<{ id?: string }>();
@@ -57,8 +56,6 @@ export const MembersDetailPage = () => {
         <Tabs
           activeKey={tabKey}
           onChange={(key) => {
-            // navigate(`#${key}`);
-
             setTabKey(key);
           }}
           items={[
@@ -66,11 +63,6 @@ export const MembersDetailPage = () => {
               children: <MemberDetailInfo member={member} />,
               key: 'info',
               label: 'Info',
-            },
-            {
-              children: <MemberDetailMovementsGrid />,
-              key: 'movements',
-              label: 'Movimientos',
             },
           ]}
         />

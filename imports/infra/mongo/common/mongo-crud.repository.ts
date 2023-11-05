@@ -1,4 +1,5 @@
 import { instanceToPlain } from 'class-transformer';
+import { validate } from 'class-validator';
 import type {
   ClientSession,
   Filter,
@@ -11,6 +12,7 @@ import { ICrudPort } from '@application/ports/crud.port';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
 import { Entity } from '@domain/common/entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
+import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 export abstract class MongoCrudRepository<T extends Entity>
   implements ICrudPort<T>
@@ -24,6 +26,12 @@ export abstract class MongoCrudRepository<T extends Entity>
   public async create(entity: Mongo.OptionalId<T>): Promise<string> {
     try {
       entity.create(await this._getLoggedInUserName());
+
+      const errors = await validate(entity);
+
+      if (errors.length > 0) {
+        throw ClassValidationUtils.getError(errors);
+      }
 
       return await this._collection.insertAsync(entity);
     } catch (error) {
@@ -168,14 +176,19 @@ export abstract class MongoCrudRepository<T extends Entity>
     return defaultSortOrder;
   }
 
-  protected createPaginatedQueryOptions(
-    page: number,
-    pageSize: number
+  protected getPaginatedQuery(page: number, pageSize: number): MongoOptions {
+    return { limit: pageSize, skip: (page - 1) * pageSize, sort: {} };
+  }
+
+  protected createPaginatedQueryOptionsNew(
+    request: FindPaginatedRequest
   ): MongoOptions {
     return {
-      limit: pageSize,
-      skip: (page - 1) * pageSize,
-      sort: {},
+      limit: request.pageSize,
+      skip: (request.page - 1) * request.pageSize,
+      sort: {
+        [request.sortField]: this._getSorterValue(request.sortOrder),
+      },
     };
   }
 
@@ -183,7 +196,7 @@ export abstract class MongoCrudRepository<T extends Entity>
     return { [field]: { $options: 'i', $regex: search } };
   }
 
-  protected getPaginatedPipeline(request: FindPaginatedRequest) {
+  protected getPaginatedPipelineQuery(request: FindPaginatedRequest) {
     return [
       {
         $sort: { [request.sortField]: this._getSorterValue(request.sortOrder) },

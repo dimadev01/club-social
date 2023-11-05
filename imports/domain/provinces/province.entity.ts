@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { Mongo } from 'meteor/mongo';
 import { err, ok, Result } from 'neverthrow';
-import { ValidationUtils } from '@shared/utils/validation.utils';
+import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 export class Province {
   @IsString()
@@ -44,7 +44,7 @@ export class Province {
     const errors = validateSync(province);
 
     if (errors.length > 0) {
-      return err(ValidationUtils.getError(errors));
+      return err(ClassValidationUtils.getError(errors));
     }
 
     return ok(province);

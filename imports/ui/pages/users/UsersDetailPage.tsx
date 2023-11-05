@@ -1,9 +1,9 @@
 import React from 'react';
-import { Breadcrumb, Card, Form, Input, message, Skeleton } from 'antd';
+import { App, Breadcrumb, Card, Form, Input, Skeleton } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import compact from 'lodash/compact';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { Role } from '@domain/roles/roles.enum';
+import { RoleEnum } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
@@ -18,13 +18,15 @@ type FormValues = {
   emails: string[];
   firstName: string;
   lastName: string;
-  role: string;
+  role: RoleEnum;
 };
 
 export const UsersDetailPage = () => {
   const { id } = useParams<{ id?: string }>();
 
   const { data: user, fetchStatus } = useUser(id);
+
+  const { message } = App.useApp();
 
   const navigate = useNavigate();
 
@@ -120,7 +122,7 @@ export const UsersDetailPage = () => {
                   options={[
                     {
                       label: 'Staff',
-                      value: Role.Staff,
+                      value: RoleEnum.Staff,
                     },
                   ]}
                 />

@@ -64,7 +64,7 @@ export class MemberRepository
     const facetData: Document[] = [];
 
     if (request.sortField === 'user.profile.lastName') {
-      facetData.push(...this.getPaginatedPipeline(request));
+      facetData.push(...this.getPaginatedPipelineQuery(request));
     }
 
     facetData.push(
@@ -115,7 +115,7 @@ export class MemberRepository
     );
 
     if (request.sortField !== 'user.profile.lastName') {
-      facetData.push(...this.getPaginatedPipeline(request));
+      facetData.push(...this.getPaginatedPipelineQuery(request));
     }
 
     const [{ data, total }] = await this.getCollection()
