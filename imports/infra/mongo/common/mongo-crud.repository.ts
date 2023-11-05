@@ -23,7 +23,7 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   public async create(entity: Mongo.OptionalId<T>): Promise<string> {
     try {
-      entity.create(this._getLoggedInUserName());
+      entity.create(await this._getLoggedInUserName());
 
       return await this._collection.insertAsync(entity);
     } catch (error) {
@@ -52,7 +52,7 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   public async delete(entity: T): Promise<void> {
     try {
-      entity.delete(this._getLoggedInUserName());
+      entity.delete(await this._getLoggedInUserName());
 
       return await this.update(entity);
     } catch (error) {
@@ -122,7 +122,7 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   public async update(entity: T): Promise<void> {
     try {
-      entity.update(this._getLoggedInUserName());
+      entity.update(await this._getLoggedInUserName());
 
       await this._collection.updateAsync(entity._id, {
         $set: instanceToPlain<T>(entity) as object,
@@ -195,9 +195,9 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   protected abstract getCollection(): MongoCollection<T>;
 
-  private _getLoggedInUserName(): string {
+  private async _getLoggedInUserName(): Promise<string> {
     try {
-      const currentUser = Meteor.user();
+      const currentUser = await Meteor.userAsync();
 
       return `${currentUser?.profile?.firstName} ${currentUser?.profile?.lastName}`;
     } catch (error) {

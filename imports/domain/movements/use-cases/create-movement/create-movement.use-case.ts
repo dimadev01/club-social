@@ -38,7 +38,7 @@ export class CreateMovementUseCase
   public async execute(
     request: CreateMovementRequestDto
   ): Promise<Result<null, Error>> {
-    this.validatePermission(Scope.Movements, Permission.Create);
+    await this.validatePermission(Scope.Movements, Permission.Create);
 
     if (MemberCategories.includes(request.category)) {
       const result = await this._createWithMember(request);

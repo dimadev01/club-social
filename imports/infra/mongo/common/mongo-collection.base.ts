@@ -14,8 +14,8 @@ export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
     });
   }
 
-  public insertEntity(entity: Mongo.OptionalId<T>): Promise<string> {
-    const user: Meteor.User | null = this._getCurrentUser();
+  public async insertEntity(entity: Mongo.OptionalId<T>): Promise<string> {
+    const user: Meteor.User | null = await this._getCurrentUser();
 
     if (user) {
       // @ts-expect-error
@@ -26,7 +26,7 @@ export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
   }
 
   public async updateEntity(entity: T): Promise<number> {
-    const user: Meteor.User | null = this._getCurrentUser();
+    const user: Meteor.User | null = await this._getCurrentUser();
 
     entity.update(
       // @ts-expect-error
@@ -38,9 +38,9 @@ export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
     });
   }
 
-  private _getCurrentUser(): Meteor.User | null {
+  private async _getCurrentUser(): Promise<Meteor.User | null> {
     try {
-      return Meteor.user();
+      return await Meteor.userAsync();
     } catch (error) {
       return null;
     }

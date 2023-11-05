@@ -36,11 +36,14 @@ export abstract class UseCase<T extends object = any> {
     }
   }
 
-  protected validatePermission(scope: Scope, permission: Permission): void {
+  protected async validatePermission(
+    scope: Scope,
+    permission: Permission
+  ): Promise<void> {
     let user: Meteor.User | null;
 
     try {
-      user = Meteor.user();
+      user = await Meteor.userAsync();
     } catch (error) {
       return;
     }

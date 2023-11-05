@@ -25,7 +25,7 @@ export class UpdateMovementUseCase
   public async execute(
     request: UpdateMovementRequestDto
   ): Promise<Result<null, Error>> {
-    this.validatePermission(Scope.Movements, Permission.Create);
+    await this.validatePermission(Scope.Movements, Permission.Create);
 
     await this.validateDto(UpdateMovementRequestDto, request);
 

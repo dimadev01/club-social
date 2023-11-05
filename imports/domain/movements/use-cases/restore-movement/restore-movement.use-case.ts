@@ -24,7 +24,7 @@ export class RestoreMovementUseCase
   public async execute(
     request: RestoreMovementRequestDto
   ): Promise<Result<null, Error>> {
-    this.validatePermission(Scope.Movements, Permission.Update);
+    await this.validatePermission(Scope.Movements, Permission.Update);
 
     await this.validateDto(RestoreMovementRequestDto, request);
 

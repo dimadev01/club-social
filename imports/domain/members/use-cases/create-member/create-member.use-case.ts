@@ -28,7 +28,7 @@ export class CreateMemberUseCase
   public async execute(
     request: CreateMemberRequestDto
   ): Promise<Result<string, Error>> {
-    this.validatePermission(Scope.Members, Permission.Create);
+    await this.validatePermission(Scope.Members, Permission.Create);
 
     const createUserResult = await this._createUserUseCase.execute({
       emails: request.emails,

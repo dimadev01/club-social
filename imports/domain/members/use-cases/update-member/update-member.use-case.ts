@@ -33,7 +33,7 @@ export class UpdateMemberUseCase
 
     try {
       await session.withTransaction(async () => {
-        this.validatePermission(Scope.Members, Permission.Update);
+        await this.validatePermission(Scope.Members, Permission.Update);
 
         const member = await this._memberPort.findOneByIdOrThrow(request.id);
 
