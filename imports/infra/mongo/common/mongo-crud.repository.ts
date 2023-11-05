@@ -6,7 +6,8 @@ import type {
   OptionalUnlessRequiredId,
 } from 'mongodb';
 import { ILogger } from '@application/logger/logger.interface';
-import { ICrudPort } from '@application/repositories/crud.port';
+import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
+import { ICrudPort } from '@application/ports/crud.port';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
 import { Entity } from '@domain/common/entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
@@ -152,18 +153,7 @@ export abstract class MongoCrudRepository<T extends Entity>
     }
   }
 
-  protected createPaginatedQueryOptions(
-    page: number,
-    pageSize: number
-  ): MongoOptions {
-    return {
-      limit: pageSize,
-      skip: (page - 1) * pageSize,
-      sort: {},
-    };
-  }
-
-  protected getSorterValue(
+  protected _getSorterValue(
     sorter: 'descend' | 'ascend' | null,
     defaultSortOrder = 1
   ): number {
@@ -176,6 +166,31 @@ export abstract class MongoCrudRepository<T extends Entity>
     }
 
     return defaultSortOrder;
+  }
+
+  protected createPaginatedQueryOptions(
+    page: number,
+    pageSize: number
+  ): MongoOptions {
+    return {
+      limit: pageSize,
+      skip: (page - 1) * pageSize,
+      sort: {},
+    };
+  }
+
+  protected createSearchMatch(field: string, search: string) {
+    return { [field]: { $options: 'i', $regex: search } };
+  }
+
+  protected getPaginatedPipeline(request: FindPaginatedRequest) {
+    return [
+      {
+        $sort: { [request.sortField]: this._getSorterValue(request.sortOrder) },
+      },
+      { $skip: (request.page - 1) * request.pageSize },
+      { $limit: request.pageSize },
+    ];
   }
 
   protected abstract getCollection(): MongoCollection<T>;

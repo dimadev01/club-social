@@ -1,17 +1,9 @@
-import { plainToInstance } from 'class-transformer';
-import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { CategoryEnum } from '@domain/categories/category.enum';
-import { Member } from '@domain/members/entities/member.entity';
-import { MembersCollection } from '@domain/members/member.collection';
-import {
-  MemberCategoryEnum,
-  MemberFileStatusEnum,
-  MemberStatusEnum,
-} from '@domain/members/member.enum';
+import { IMemberPort } from '@domain/members/member.port';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
+import { DIToken } from '@infra/di/di-tokens';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -21,288 +13,36 @@ export class GetMembersGridUseCase
   extends UseCase<PaginatedRequestDto>
   implements IUseCase<PaginatedRequestDto, PaginatedResponse<MemberGridDto>>
 {
+  public constructor(
+    @inject(DIToken.MemberRepository)
+    private readonly _memberPort: IMemberPort
+  ) {
+    super();
+  }
+
   public async execute(
     request: PaginatedRequestDto
   ): Promise<Result<PaginatedResponse<MemberGridDto>, Error>> {
-    const $match: Mongo.Query<Member> = {
-      isDeleted: false,
-    };
-
-    if (request.filters?.fileStatus?.length) {
-      $match.fileStatus = {
-        $in: request.filters.fileStatus as MemberFileStatusEnum[],
-      };
-    }
-
-    if (request.filters?.status?.length) {
-      $match.status = { $in: request.filters.status as MemberStatusEnum[] };
-    }
-
-    if (request.filters?.category?.length) {
-      $match.category = {
-        $in: request.filters.category as MemberCategoryEnum[],
-      };
-    }
-
-    const $userLookupPipeline: Mongo.Query<Meteor.User> = [];
-
-    if (request.search) {
-      $userLookupPipeline.push({
-        $match: {
-          $or: [
-            { 'profile.firstName': { $options: 'i', $regex: request.search } },
-            { 'profile.lastName': { $options: 'i', $regex: request.search } },
-            { 'emails.address': { $options: 'i', $regex: request.search } },
-          ],
-        },
-      });
-    }
-
-    // @ts-expect-error
-    const [{ data, total }] = await MembersCollection.rawCollection()
-      .aggregate<Member>([
-        {
-          $match,
-        },
-        {
-          $lookup: {
-            as: 'user',
-            foreignField: '_id',
-            from: 'users',
-            localField: 'userId',
-            pipeline: $userLookupPipeline,
-          },
-        },
-        {
-          $unwind: '$user',
-        },
-        {
-          $facet: {
-            data: [
-              ...this.getPaginatedPipeline({
-                $sort: { 'user.profile.lastName': 1 },
-                page: request.page,
-                pageSize: request.pageSize,
-              }),
-              {
-                $lookup: {
-                  as: 'movements',
-                  foreignField: 'memberId',
-                  from: 'movements',
-                  localField: '_id',
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: {
-                          $eq: ['$isDeleted', false],
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-              {
-                $addFields: {
-                  electricityBalance: {
-                    $subtract: [
-                      {
-                        $reduce: {
-                          in: {
-                            $add: [
-                              '$$value',
-                              {
-                                $sum: {
-                                  $cond: [
-                                    {
-                                      $eq: [
-                                        '$$this.category',
-                                        CategoryEnum.ElectricityIncome,
-                                      ],
-                                    },
-                                    '$$this.amount',
-                                    0,
-                                  ],
-                                },
-                              },
-                            ],
-                          },
-                          initialValue: 0,
-                          input: '$movements',
-                        },
-                      },
-                      {
-                        $reduce: {
-                          in: {
-                            $add: [
-                              '$$value',
-                              {
-                                $sum: {
-                                  $cond: [
-                                    {
-                                      $eq: [
-                                        '$$this.category',
-                                        CategoryEnum.ElectricityDebt,
-                                      ],
-                                    },
-                                    '$$this.amount',
-                                    0,
-                                  ],
-                                },
-                              },
-                            ],
-                          },
-                          initialValue: 0,
-                          input: '$movements',
-                        },
-                      },
-                    ],
-                  },
-
-                  guestBalance: {
-                    $subtract: [
-                      {
-                        $reduce: {
-                          in: {
-                            $add: [
-                              '$$value',
-                              {
-                                $sum: {
-                                  $cond: [
-                                    {
-                                      $eq: [
-                                        '$$this.category',
-                                        CategoryEnum.GuestIncome,
-                                      ],
-                                    },
-                                    '$$this.amount',
-                                    0,
-                                  ],
-                                },
-                              },
-                            ],
-                          },
-                          initialValue: 0,
-                          input: '$movements',
-                        },
-                      },
-                      {
-                        $reduce: {
-                          in: {
-                            $add: [
-                              '$$value',
-                              {
-                                $sum: {
-                                  $cond: [
-                                    {
-                                      $eq: [
-                                        '$$this.category',
-                                        CategoryEnum.GuestDebt,
-                                      ],
-                                    },
-                                    '$$this.amount',
-                                    0,
-                                  ],
-                                },
-                              },
-                            ],
-                          },
-                          initialValue: 0,
-                          input: '$movements',
-                        },
-                      },
-                    ],
-                  },
-
-                  membershipBalance: {
-                    $subtract: [
-                      {
-                        $reduce: {
-                          in: {
-                            $add: [
-                              '$$value',
-                              {
-                                $sum: {
-                                  $cond: [
-                                    {
-                                      $eq: [
-                                        '$$this.category',
-                                        CategoryEnum.MembershipIncome,
-                                      ],
-                                    },
-                                    '$$this.amount',
-                                    0,
-                                  ],
-                                },
-                              },
-                            ],
-                          },
-                          initialValue: 0,
-                          input: '$movements',
-                        },
-                      },
-                      {
-                        $reduce: {
-                          in: {
-                            $add: [
-                              '$$value',
-                              {
-                                $sum: {
-                                  $cond: [
-                                    {
-                                      $eq: [
-                                        '$$this.category',
-                                        CategoryEnum.MembershipDebt,
-                                      ],
-                                    },
-                                    '$$this.amount',
-                                    0,
-                                  ],
-                                },
-                              },
-                            ],
-                          },
-                          initialValue: 0,
-                          input: '$movements',
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-            total: [{ $count: 'count' }],
-          },
-        },
-      ])
-      .toArray();
+    const { count, data } = await this._memberPort.findPaginated(request);
 
     return ok<PaginatedResponse<MemberGridDto>>({
-      count: total.length > 0 ? total[0].count : 0,
-      data: data
-        .map((member: Member) => plainToInstance(Member, member))
-        .map(
-          (
-            member: Member & {
-              electricityBalance: number;
-              guestBalance: number;
-              membershipBalance: number;
-            }
-          ): MemberGridDto => ({
-            _id: member._id,
-            category: member.category,
-            electricityBalance: member.electricityBalance,
-            emails: member.user.emails ?? null,
-            fileStatus: member.fileStatus,
-            guestBalance: member.guestBalance,
-            membershipBalance: member.membershipBalance,
+      count,
+      data: data.map(
+        (member): MemberGridDto => ({
+          _id: member._id,
+          category: member.category,
+          electricityBalance: member.electricityBalance,
+          emails: member.user.emails ?? null,
+          guestBalance: member.guestBalance,
+          membershipBalance: member.membershipBalance,
+          // @ts-expect-error
+          name: `${member.user.profile?.lastName ?? ''} ${
             // @ts-expect-error
-            name: `${member.user.profile?.lastName ?? ''} ${
-              // @ts-expect-error
-              member.user.profile?.firstName ?? ''
-            }`,
-            status: member.status,
-          })
-        ),
+            member.user.profile?.firstName ?? ''
+          }`,
+          status: member.status,
+        })
+      ),
     });
   }
 }

@@ -20,13 +20,15 @@ export const useGrid = ({
   const parsedQs = qs.parse(location.search, { ignoreQueryPrefix: true });
 
   return useState<GridUrlQueryParams>({
-    filters: parsedQs.filters as Record<string, string[]>,
+    filters: parsedQs.filters
+      ? (parsedQs.filters as Record<string, string[]>)
+      : {},
     page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
     pageSize: searchParams.get('pageSize')
       ? Number(searchParams.get('pageSize'))
       : 25,
     search: searchParams.get('search') ?? '',
-    sortField: (parsedQs.sortField as string | string[]) ?? sortField,
+    sortField: (parsedQs.sortField as string) ?? sortField,
     sortOrder: (searchParams.get('sortOrder') as SortOrder) ?? sortOrder,
   });
 };

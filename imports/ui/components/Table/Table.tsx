@@ -48,6 +48,8 @@ export function Table<T extends object>({
     filters: Record<string, FilterValue | null>,
     sorter: SorterResult<T>
   ) => {
+    console.log({ filters, pagination, sorter });
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onStateChange((prevState: any) => ({
       ...prevState,

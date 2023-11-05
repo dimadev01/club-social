@@ -1,15 +1,11 @@
 import React from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import { NavLink } from 'react-router-dom';
-import { CategoryEnum } from '@domain/categories/category.enum';
 import {
   getMemberCategoryFilters,
-  getMemberFileStatusFilters,
   getMemberStatusFilters,
   MemberCategoryEnum,
   MemberCategoryLabel,
-  MemberFileStatusEnum,
-  MemberFileStatusLabel,
   MemberStatusEnum,
   MemberStatusLabel,
 } from '@domain/members/member.enum';
@@ -19,17 +15,14 @@ import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
-import { useCategories } from '@ui/hooks/categories/useCategories';
 import { useMembersGrid } from '@ui/hooks/members/useMembersGrid';
 import { useGrid } from '@ui/hooks/useGrid';
 
 export const MembersPage = () => {
   const [gridState, setGridState] = useGrid({
-    sortField: 'createdAt',
-    sortOrder: 'descend',
+    sortField: 'name',
+    sortOrder: 'ascend',
   });
-
-  const { data: categories, isLoading: isLoadingCategories } = useCategories();
 
   const { data, isLoading, isRefetching, refetch } = useMembersGrid({
     filters: gridState.filters,
@@ -40,23 +33,11 @@ export const MembersPage = () => {
     sortOrder: gridState.sortOrder,
   });
 
-  const membershipPrice =
-    categories?.find(
-      (category) => category.code === CategoryEnum.MembershipIncome
-    )?.amount ?? 0;
-
   return (
     <>
       <Breadcrumb
         className="mb-8"
-        items={[
-          {
-            title: 'Inicio',
-          },
-          {
-            title: 'Socios',
-          },
-        ]}
+        items={[{ title: 'Inicio' }, { title: 'Socios' }]}
       />
 
       <Card
@@ -77,12 +58,12 @@ export const MembersPage = () => {
           loading={isLoading}
           dataSource={data?.data}
           rowClassName={(member) => {
-            if (isLoadingCategories) {
-              return '';
+            if (member.membershipBalance < 0) {
+              return 'bg-red-50';
             }
 
-            if (member.membershipBalance < membershipPrice * -1) {
-              return 'bg-red-50';
+            if (member.membershipBalance > 0) {
+              return 'bg-green-50';
             }
 
             return '';
@@ -90,9 +71,14 @@ export const MembersPage = () => {
           columns={[
             {
               dataIndex: 'name',
+              defaultSortOrder:
+                gridState.sortField === 'name'
+                  ? gridState.sortOrder
+                  : undefined,
               render: (name: string, member: MemberGridDto) => (
                 <NavLink to={`${AppUrl.Members}/${member._id}`}>{name}</NavLink>
               ),
+              sorter: true,
               title: 'Socio',
             },
             {
@@ -124,25 +110,16 @@ export const MembersPage = () => {
             {
               align: 'center',
               dataIndex: 'category',
-              filteredValue: gridState.filters?.category ?? [],
+              defaultFilteredValue: gridState.filters.category,
               filters: getMemberCategoryFilters(),
-              render: (category: MemberCategoryEnum | null) =>
-                category && MemberCategoryLabel[category],
+              render: (category: MemberCategoryEnum) =>
+                MemberCategoryLabel[category],
               title: 'Categoría',
             },
             {
               align: 'center',
-              dataIndex: 'fileStatus',
-              filteredValue: gridState.filters?.fileStatus ?? [],
-              filters: getMemberFileStatusFilters(),
-              render: (fileStatus: MemberFileStatusEnum | null) =>
-                fileStatus && MemberFileStatusLabel[fileStatus],
-              title: 'Ficha',
-            },
-            {
-              align: 'center',
               dataIndex: 'status',
-              filteredValue: gridState.filters?.status ?? [],
+              defaultFilteredValue: gridState.filters.status,
               filters: getMemberStatusFilters(),
               render: (status: MemberStatusEnum) => MemberStatusLabel[status],
               title: 'Estado',
@@ -150,21 +127,36 @@ export const MembersPage = () => {
             {
               align: 'right',
               dataIndex: 'electricityBalance',
+              defaultSortOrder:
+                gridState.sortField === 'electricityBalance'
+                  ? gridState.sortOrder
+                  : undefined,
               render: (electricityBalance) =>
                 CurrencyUtils.formatCents(electricityBalance),
+              sorter: true,
               title: 'Saldo luz',
             },
             {
               align: 'right',
               dataIndex: 'guestBalance',
+              defaultSortOrder:
+                gridState.sortField === 'guestBalance'
+                  ? gridState.sortOrder
+                  : undefined,
               render: (guestBalance) => CurrencyUtils.formatCents(guestBalance),
+              sorter: true,
               title: 'Saldo invitado',
             },
             {
               align: 'right',
               dataIndex: 'membershipBalance',
+              defaultSortOrder:
+                gridState.sortField === 'membershipBalance'
+                  ? gridState.sortOrder
+                  : undefined,
               render: (membershipBalance) =>
                 CurrencyUtils.formatCents(membershipBalance),
+              sorter: true,
               title: 'Saldo cuota',
             },
           ]}
