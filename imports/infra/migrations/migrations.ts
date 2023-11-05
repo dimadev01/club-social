@@ -828,3 +828,26 @@ Migrations.add({
   }),
   version: 7,
 });
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await CategoryCollection.updateAsync(
+      {},
+      {
+        $set: {
+          deletedAt: null,
+          deletedBy: null,
+          isDeleted: false,
+        },
+      },
+      { multi: true }
+    );
+
+    next();
+  }),
+  version: 8,
+});
