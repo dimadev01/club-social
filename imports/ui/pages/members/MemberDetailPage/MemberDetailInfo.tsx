@@ -1,6 +1,5 @@
 import React from 'react';
 import { App, Card, Col, DatePicker, Form, Input, Row, Space } from 'antd';
-import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
 import compact from 'lodash/compact';
 import uniq from 'lodash/uniq';
@@ -23,12 +22,12 @@ import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-m
 import { RoleEnum } from '@domain/roles/roles.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
-import { FormBackButton } from '@ui/components/Form/FormBackButton';
+import { FormButtons } from '@ui/components/Form/FormButtons';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
 import { FormListInput } from '@ui/components/Form/FormListInput';
-import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 import { Select } from '@ui/components/Select';
 import { useCreateMember } from '@ui/hooks/members/useCreateMember';
+import { useDeleteMember } from '@ui/hooks/members/useDeleteMember';
 import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
 import { useCities } from '@ui/hooks/useCities';
 import { useStates } from '@ui/hooks/useStates';
@@ -76,6 +75,12 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
   const createMember = useCreateMember();
 
   const updateMember = useUpdateMember();
+
+  const deleteMember = useDeleteMember(() => {
+    message.success('Socio eliminado');
+
+    navigate(-1);
+  });
 
   const handleSubmit = async (values: FormValues) => {
     if (!member) {
@@ -370,16 +375,17 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
         <div className="mb-4" />
 
-        <ButtonGroup>
-          <FormSaveButton
-            loading={createMember.isLoading || updateMember.isLoading}
-            disabled={createMember.isLoading || updateMember.isLoading}
-          />
-
-          <FormBackButton
-            disabled={createMember.isLoading || updateMember.isLoading}
-          />
-        </ButtonGroup>
+        <FormButtons
+          isLoading={createMember.isLoading || updateMember.isLoading}
+          isDisabled={createMember.isLoading || updateMember.isLoading}
+          showDeleteButton={!!member}
+          onClickDelete={() =>
+            member &&
+            deleteMember.mutate({
+              id: member._id,
+            })
+          }
+        />
       </Form>
     </Card>
   );

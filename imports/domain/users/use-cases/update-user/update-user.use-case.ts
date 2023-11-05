@@ -71,8 +71,8 @@ export class UpdateUserUseCase
 
     await Meteor.users.updateAsync(request.id, {
       $set: {
-        'profile.firstName': request.firstName,
-        'profile.lastName': request.lastName,
+        'profile.firstName': request.firstName.trim(),
+        'profile.lastName': request.lastName.trim(),
       },
     });
 

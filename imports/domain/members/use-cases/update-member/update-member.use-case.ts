@@ -49,9 +49,7 @@ export class UpdateMemberUseCase
         }
 
         const updateMemberResult: Result<null[], Error> = Result.combine([
-          member.setDateOfBirth(
-            request.dateOfBirth ? new Date(request.dateOfBirth) : null
-          ),
+          member.setDateOfBirth(request.dateOfBirth),
           member.setCategory(request.category),
           member.setDocumentID(request.documentID),
           member.setFileStatus(request.fileStatus),

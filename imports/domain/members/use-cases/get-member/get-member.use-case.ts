@@ -4,6 +4,7 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
 import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
@@ -22,6 +23,8 @@ export class GetMemberUseCase
   public async execute(
     request: GetMemberRequestDto
   ): Promise<Result<GetMemberResponseDto | null, Error>> {
+    await this.validatePermission(ScopeEnum.Members, PermissionEnum.Read);
+
     const member = await this._memberPort.findOneById(request.id);
 
     if (!member) {

@@ -1,4 +1,3 @@
-import { Meteor } from 'meteor/meteor';
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 import SimpleSchema from 'simpl-schema';
 import { Member } from '@domain/members/entities/member.entity';
@@ -30,27 +29,10 @@ MembersCollection.attachSchema(
     'phones.$': String,
     sex: { defaultValue: null, optional: true, type: String },
     status: { defaultValue: null, optional: true, type: String },
+    deletedAt: { defaultValue: null, type: Date, optional: true },
+    deletedBy: { defaultValue: null, type: String, optional: true },
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,
     userId: String,
   })
 );
-
-if (Meteor.isServer) {
-  MembersCollection.createIndexAsync({ createdAt: -1 });
-
-  MembersCollection.createIndexAsync({ userId: 1 });
-
-  MembersCollection.createIndexAsync({ category: 1 });
-
-  MembersCollection.createIndexAsync({ fileStatus: 1 });
-
-  MembersCollection.createIndexAsync({ status: 1 });
-
-  MembersCollection.createIndexAsync({
-    isDeleted: 1,
-    fileStatus: 1,
-    status: 1,
-    category: 1,
-  });
-}

@@ -1,21 +1,22 @@
-import { err, ok, Result } from 'neverthrow';
+import { ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
+import { IMemberPort } from '@domain/members/member.port';
 import { DeleteMemberRequestDto } from '@domain/members/use-cases/delete-member/delete-member-request.dto';
 import { DIToken } from '@infra/di/di-tokens';
-import { MembersCollection } from '@infra/mongo/collections/member.collection';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
-export class RemoveMemberUseCase
+export class DeleteMemberUseCase
   extends UseCase<DeleteMemberRequestDto>
   implements IUseCase<DeleteMemberRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
+    @inject(DIToken.MemberRepository)
+    private readonly _memberPort: IMemberPort
   ) {
     super();
   }
@@ -23,17 +24,11 @@ export class RemoveMemberUseCase
   public async execute(
     request: DeleteMemberRequestDto
   ): Promise<Result<null, Error>> {
-    await this.validateDto(DeleteMemberRequestDto, request);
+    const member = await this._memberPort.findOneByIdOrThrow(request.id);
 
-    const member = await MembersCollection.findOneAsync(request.id);
+    await this._memberPort.delete(member);
 
-    if (!member) {
-      return err(new MemberNotFoundError());
-    }
-
-    await MembersCollection.removeAsync(request.id);
-
-    this._logger.info('Member removed', { member });
+    this._logger.info('Member deleted', { member });
 
     return ok(null);
   }

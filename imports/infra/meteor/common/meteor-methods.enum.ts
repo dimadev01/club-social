@@ -7,10 +7,10 @@ export enum MethodsEnum {
   EmployeesGetAll = 'employees/getAll',
 
   MembersCreate = 'members/create',
+  MembersDelete = 'members/delete',
   MembersGet = 'members/get',
   MembersGetAll = 'members/getAll',
   MembersGetGrid = 'members/getGrid',
-  MembersRemove = 'members/remove',
   MembersUpdate = 'members/update',
 
   MovementsCreate = 'movements/create',

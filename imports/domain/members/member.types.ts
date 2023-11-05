@@ -12,10 +12,7 @@ export type CreateMember = {
   category: MemberCategoryEnum;
   dateOfBirth: string | null;
   documentID: string | null;
-  emails: string[] | null;
   fileStatus: MemberFileStatusEnum | null;
-  firstName: string;
-  lastName: string;
   maritalStatus: MemberMaritalStatusEnum | null;
   nationality: MemberNationalityEnum | null;
   phones: string[] | null;

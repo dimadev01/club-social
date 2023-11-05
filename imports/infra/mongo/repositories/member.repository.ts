@@ -7,9 +7,9 @@ import { FindPaginatedAggregationResult } from '@application/pagination/find-pag
 import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
 import { CategoryEnum } from '@domain/categories/category.enum';
 import { Member } from '@domain/members/entities/member.entity';
-import { MembersCollection } from '@domain/members/member.collection';
 import { IMemberPort } from '@domain/members/member.port';
 import { DIToken } from '@infra/di/di-tokens';
+import { MembersCollection } from '@infra/mongo/collections/member.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
 import {
@@ -27,6 +27,21 @@ export class MemberRepository
     protected readonly _logger: ILogger
   ) {
     super(_logger);
+  }
+
+  public async findAll(): Promise<Member[]> {
+    const query: Mongo.Query<Member> = {
+      isDeleted: false,
+    };
+
+    return this.getCollection()
+      .rawCollection()
+      .aggregate<Member>([
+        { $match: query },
+        ...this._userLookup(),
+        { $sort: { 'user.profile.lastName': 1 } },
+      ])
+      .toArray();
   }
 
   public async findOneById(id: string): Promise<Member | undefined> {
@@ -151,18 +166,7 @@ export class MemberRepository
       .rawCollection()
       .aggregate<FindPaginatedAggregationResult<FindPaginatedMember>>([
         { $match: query },
-        {
-          $lookup: {
-            as: 'user',
-            foreignField: '_id',
-            from: 'users',
-            localField: 'userId',
-            pipeline: $userLookupPipeline,
-          },
-        },
-        {
-          $unwind: '$user',
-        },
+        ...this._userLookup($userLookupPipeline),
         {
           $facet: {
             data: facetData,
@@ -212,5 +216,22 @@ export class MemberRepository
     return {
       $subtract: [createReduce(categoryIncome), createReduce(categoryDebt)],
     };
+  }
+
+  private _userLookup(pipeline?: Mongo.Query<Meteor.User>) {
+    return [
+      {
+        $lookup: {
+          as: 'user',
+          foreignField: '_id',
+          from: 'users',
+          localField: 'userId',
+          pipeline,
+        },
+      },
+      {
+        $unwind: '$user',
+      },
+    ];
   }
 }
