@@ -80,27 +80,17 @@ export class Member extends Entity {
   }
 
   public get firstName(): string {
-    this.joinUser();
-
     // @ts-expect-error
     return this.user.profile?.firstName;
   }
 
   public get lastName(): string {
-    this.joinUser();
-
     // @ts-expect-error
     return this.user.profile?.lastName;
   }
 
   public get name(): string {
-    this.joinUser();
-
-    // @ts-expect-error
-    return `${this.user.profile?.lastName} ${
-      // @ts-expect-error
-      this.user.profile?.firstName
-    }`;
+    return `${this.firstName} ${this.lastName}`;
   }
 
   public static create(props: CreateMember): Result<Member, Error> {
@@ -139,12 +129,6 @@ export class Member extends Entity {
 
   public getEmail(): string | null {
     return this.user.emails?.[0].address ?? null;
-  }
-
-  public joinUser() {
-    if (!this.user) {
-      this.user = Meteor.users.findOne(this.userId) ?? ({} as Meteor.User);
-    }
   }
 
   public setAddress(address: MemberAddress): Result<null, Error> {

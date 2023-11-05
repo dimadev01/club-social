@@ -4,6 +4,7 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
 import { DIToken } from '@infra/di/di-tokens';
+import { FindPaginatedMember } from '@infra/mongo/repositories/member-repository.types';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -28,7 +29,7 @@ export class GetMembersGridUseCase
     return ok<PaginatedResponse<MemberGridDto>>({
       count,
       data: data.map(
-        (member): MemberGridDto => ({
+        (member: FindPaginatedMember): MemberGridDto => ({
           _id: member._id,
           category: member.category,
           electricityBalance: member.electricityBalance,

@@ -28,8 +28,6 @@ export class GetMemberUseCase
       return ok(null);
     }
 
-    member.joinUser();
-
     return ok<GetMemberResponseDto>({
       _id: member._id,
       addressCityGovId: member.address.cityGovId,

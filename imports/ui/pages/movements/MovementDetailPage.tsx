@@ -346,9 +346,7 @@ export const MovementDetailPage = () => {
               <DatePicker
                 format={DateFormatEnum.DD_MM_YYYY}
                 className="w-full"
-                disabledDate={(current) =>
-                  current.isAfter(dayjs().add(1, 'day'))
-                }
+                disabledDate={(current) => current.isAfter(dayjs())}
               />
             </Form.Item>
 
