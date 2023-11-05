@@ -223,11 +223,16 @@ export const MovementsPage = () => {
             columns={[
               {
                 dataIndex: 'date',
+                defaultSortOrder:
+                  gridState.sortField === 'date'
+                    ? gridState.sortOrder
+                    : undefined,
                 render: (date: string, movement: MovementGridDto) => (
                   <NavLink to={`${AppUrl.Movements}/${movement._id}`}>
                     {date}
                   </NavLink>
                 ),
+                sorter: true,
                 title: 'Fecha',
               },
               {
