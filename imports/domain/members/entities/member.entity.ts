@@ -6,7 +6,6 @@ import {
   IsEnum,
   IsOptional,
   IsString,
-  validateSync,
 } from 'class-validator';
 import { Meteor } from 'meteor/meteor';
 import { err, ok, Result } from 'neverthrow';
@@ -22,7 +21,6 @@ import {
 } from '@domain/members/member.enum';
 import { CreateMember } from '@domain/members/member.types';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
-import { ValidationUtils } from '@shared/utils/validation.utils';
 
 export class Member extends Entity {
   @Type(() => MemberAddress)
@@ -81,7 +79,23 @@ export class Member extends Entity {
     return null;
   }
 
+  public get firstName(): string {
+    this.joinUser();
+
+    // @ts-expect-error
+    return this.user.profile?.firstName;
+  }
+
+  public get lastName(): string {
+    this.joinUser();
+
+    // @ts-expect-error
+    return this.user.profile?.lastName;
+  }
+
   public get name(): string {
+    this.joinUser();
+
     // @ts-expect-error
     return `${this.user.profile?.lastName} ${
       // @ts-expect-error
@@ -92,50 +106,32 @@ export class Member extends Entity {
   public static create(props: CreateMember): Result<Member, Error> {
     const member = new Member();
 
-    member.category = props.category;
-
-    if (props.dateOfBirth) {
-      member.dateOfBirth = new Date(props.dateOfBirth);
-    }
-
-    member.user = {} as Meteor.User;
-
-    member.status = MemberStatusEnum.Active;
-
-    member.documentID = props.documentID;
-
-    member.fileStatus = props.fileStatus;
-
-    member.maritalStatus = props.maritalStatus;
-
-    member.nationality = props.nationality;
-
-    member.phones = props.phones;
-
-    member.sex = props.sex;
-
     member.userId = props.userId;
 
-    member.address = new MemberAddress();
+    const updateResult: Result<null[], Error> = Result.combine([
+      member.setDateOfBirth(
+        props.dateOfBirth ? new Date(props.dateOfBirth) : null
+      ),
+      member.setCategory(props.category),
+      member.setStatus(props.status),
+      member.setDocumentID(props.documentID),
+      member.setFileStatus(props.fileStatus),
+      member.setMaritalStatus(props.maritalStatus),
+      member.setNationality(props.nationality),
+      member.setPhones(props.phones),
+      member.setSex(props.sex),
+      member.setAddress({
+        cityGovId: props.address.cityGovId,
+        cityName: props.address.cityName,
+        stateGovId: props.address.stateGovId,
+        stateName: props.address.stateName,
+        street: props.address.street,
+        zipCode: props.address.zipCode,
+      }),
+    ]);
 
-    member.address.cityGovId = props.address.cityGovId;
-
-    member.address.cityName = props.address.cityName;
-
-    member.address.stateGovId = props.address.stateGovId;
-
-    member.address.stateName = props.address.stateName;
-
-    member.address.street = props.address.street;
-
-    member.address.zipCode = props.address.zipCode;
-
-    member.status = props.status;
-
-    const errors = validateSync(member);
-
-    if (errors.length > 0) {
-      return err(ValidationUtils.getError(errors));
+    if (updateResult.isErr()) {
+      return err(updateResult.error);
     }
 
     return ok(member);
@@ -146,7 +142,9 @@ export class Member extends Entity {
   }
 
   public joinUser() {
-    this.user = Meteor.users.findOne(this.userId) ?? ({} as Meteor.User);
+    if (!this.user) {
+      this.user = Meteor.users.findOne(this.userId) ?? ({} as Meteor.User);
+    }
   }
 
   public setAddress(address: MemberAddress): Result<null, Error> {

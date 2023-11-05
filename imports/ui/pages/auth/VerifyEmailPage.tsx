@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import { message } from 'antd';
+import { App } from 'antd';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
 
 export const VerifyEmailPage = () => {
   const navigate = useNavigate();
+
+  const { message } = App.useApp();
 
   const { token } = useParams<{ email?: string; token?: string }>();
 
@@ -28,7 +30,7 @@ export const VerifyEmailPage = () => {
     return () => {
       isVerifying = true;
     };
-  }, [token, navigate]);
+  }, [token, navigate, message]);
 
   if (!token) {
     return <Navigate to={AppUrl.Home} />;

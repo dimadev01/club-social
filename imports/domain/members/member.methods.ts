@@ -1,8 +1,6 @@
 import { injectable } from 'tsyringe';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
 import { CreateMemberUseCase } from '@domain/members/use-cases/create-member/create-member.use-case';
-import { GetMemberMovementsGridRequestDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.request.dto';
-import { GetMemberMovementsUseCase } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.use-case';
 import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
 import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-member.use-case';
 import { GetMembersGridUseCase } from '@domain/members/use-cases/get-members-grid/get-members-grid.use-case';
@@ -23,8 +21,7 @@ export class MemberMethod extends MeteorMethod {
     private readonly _getMember: GetMemberUseCase,
     private readonly _createMember: CreateMemberUseCase,
     private readonly _removeMember: RemoveMemberUseCase,
-    private readonly _updateMember: UpdateMemberUseCase,
-    private readonly _getMemberMovements: GetMemberMovementsUseCase
+    private readonly _updateMember: UpdateMemberUseCase
   ) {
     super();
   }
@@ -34,23 +31,20 @@ export class MemberMethod extends MeteorMethod {
       [MethodsEnum.MembersGetGrid]: (request: PaginatedRequestDto) =>
         this.execute(this._getMembersGrid, request, PaginatedRequestDto),
 
-      [MethodsEnum.MembersGetAll]: () => this.execute(this._getMembers),
+      [MethodsEnum.MembersGetAll]: () =>
+        this.execute(this._getMembers, PaginatedRequestDto),
 
       [MethodsEnum.MembersGet]: (request: GetMemberRequestDto) =>
-        this.execute(this._getMember, request),
+        this.execute(this._getMember, request, GetMemberRequestDto),
 
       [MethodsEnum.MembersCreate]: (request: CreateMemberRequestDto) =>
         this.execute(this._createMember, request, CreateMemberRequestDto),
 
       [MethodsEnum.MembersRemove]: (request: RemoveMemberRequestDto) =>
-        this.execute(this._removeMember, request),
+        this.execute(this._removeMember, request, RemoveMemberRequestDto),
 
       [MethodsEnum.MembersUpdate]: (request: UpdateMemberRequestDto) =>
         this.execute(this._updateMember, request, UpdateMemberRequestDto),
-
-      [MethodsEnum.MembersGetMovementsGrid]: (
-        request: GetMemberMovementsGridRequestDto
-      ) => this.execute(this._getMemberMovements, request),
     });
   }
 }

@@ -19,3 +19,5 @@ CategoryCollection.attachSchema(
     updatedBy: String,
   })
 );
+
+await CategoryCollection.createIndexAsync({ name: 1 }, { name: 'c_n' });

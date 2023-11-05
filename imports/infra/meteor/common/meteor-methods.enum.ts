@@ -10,7 +10,6 @@ export enum MethodsEnum {
   MembersGet = 'members/get',
   MembersGetAll = 'members/getAll',
   MembersGetGrid = 'members/getGrid',
-  MembersGetMovementsGrid = 'members/movementsGrid',
   MembersRemove = 'members/remove',
   MembersUpdate = 'members/update',
 

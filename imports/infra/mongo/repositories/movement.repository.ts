@@ -33,10 +33,7 @@ export class MovementRepository
       isDeleted: false,
     };
 
-    const options = this.createPaginatedQueryOptions(
-      request.page,
-      request.pageSize
-    );
+    const options = this.getPaginatedQuery(request.page, request.pageSize);
 
     return {
       count: await this.getCollection().find(query).countAsync(),

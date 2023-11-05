@@ -19,10 +19,10 @@ export class GetCategoriesUseCase
   }
 
   public async execute(): Promise<Result<GetCategoriesResponseDto[], Error>> {
-    const data = await this._categoryPort.findAll();
+    const categories = await this._categoryPort.findAll();
 
     return ok<GetCategoriesResponseDto[]>(
-      data.map((category) => ({
+      categories.map((category) => ({
         _id: category._id,
         amount: category.amount,
         amountFormatted: category.amountFormatted,

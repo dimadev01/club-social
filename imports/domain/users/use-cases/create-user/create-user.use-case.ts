@@ -4,9 +4,9 @@ import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import {
-  Permission,
+  PermissionEnum,
   RolePermissionAssignment,
-  Scope,
+  ScopeEnum,
 } from '@domain/roles/roles.enum';
 import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
@@ -28,7 +28,7 @@ export class CreateUserUseCase
   public async execute(
     request: CreateUserRequestDto
   ): Promise<Result<string, Error>> {
-    await this.validatePermission(Scope.Users, Permission.Create);
+    await this.validatePermission(ScopeEnum.Users, PermissionEnum.Create);
 
     if (request.emails?.some((email) => Accounts.findUserByEmail(email))) {
       return err(new AtLeastOneEmailInUseError());

@@ -2,7 +2,12 @@ import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { Permission, Role, Scope, StaffRole } from '@domain/roles/roles.enum';
+import {
+  PermissionEnum,
+  RoleEnum,
+  ScopeEnum,
+  StaffRole,
+} from '@domain/roles/roles.enum';
 import { RemoveAdminError } from '@domain/users/errors/remove-admin.error';
 import { RemoveYourselfError } from '@domain/users/errors/remove-yourself.error';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
@@ -25,7 +30,7 @@ export class RemoveUserUseCase
   public async execute(
     request: RemoveUserRequestDto
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(Scope.Members, Permission.Delete);
+    await this.validatePermission(ScopeEnum.Members, PermissionEnum.Delete);
 
     await this.validateDto(RemoveUserRequestDto, request);
 
@@ -39,7 +44,7 @@ export class RemoveUserUseCase
       return err(new UserNotFoundError());
     }
 
-    if (user.profile?.role === Role.Admin) {
+    if (user.profile?.role === RoleEnum.Admin) {
       return err(new RemoveAdminError());
     }
 

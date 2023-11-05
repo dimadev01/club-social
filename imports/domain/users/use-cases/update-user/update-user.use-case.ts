@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { Permission, Role, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { EditAdminError } from '@domain/users/errors/edit-admin.error';
 import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
@@ -27,7 +27,7 @@ export class UpdateUserUseCase
   public async execute(
     request: UpdateUserRequestDto
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(Scope.Users, Permission.Update);
+    await this.validatePermission(ScopeEnum.Users, PermissionEnum.Update);
 
     const user = await Meteor.users.findOneAsync(request.id);
 
@@ -39,7 +39,7 @@ export class UpdateUserUseCase
       throw new InternalServerError();
     }
 
-    if (user.profile?.role === Role.Admin) {
+    if (user.profile?.role === RoleEnum.Admin) {
       return err(new EditAdminError());
     }
 

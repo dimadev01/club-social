@@ -1,6 +1,6 @@
 import { IsDate, IsOptional, IsString, validateSync } from 'class-validator';
 import { Entity } from '@domain/common/entity';
-import { ValidationUtils } from '@shared/utils/validation.utils';
+import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 export class Service extends Entity {
   @IsDate()
@@ -44,7 +44,7 @@ export class Service extends Entity {
     const errors = validateSync(service);
 
     if (errors.length > 0) {
-      throw new Error(ValidationUtils.getErrorMessage(errors));
+      throw new Error(ClassValidationUtils.getErrorMessage(errors));
     }
 
     return service;

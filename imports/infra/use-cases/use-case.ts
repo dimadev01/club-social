@@ -4,9 +4,9 @@ import { ValidationError } from 'class-validator';
 import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
-import { Permission, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
-import { ValidationUtils } from '@shared/utils/validation.utils';
+import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export abstract class UseCase<T extends object = any> {
@@ -31,14 +31,14 @@ export abstract class UseCase<T extends object = any> {
 
       throw new Meteor.Error(
         MeteorErrorCodeEnum.BadRequest,
-        ValidationUtils.getErrorMessage(errors)
+        ClassValidationUtils.getErrorMessage(errors)
       );
     }
   }
 
   protected async validatePermission(
-    scope: Scope,
-    permission: Permission
+    scope: ScopeEnum,
+    permission: PermissionEnum
   ): Promise<void> {
     let user: Meteor.User | null;
 

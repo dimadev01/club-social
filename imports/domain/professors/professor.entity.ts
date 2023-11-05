@@ -1,7 +1,7 @@
 import { IsDate, IsString, validateSync } from 'class-validator';
 import { Meteor } from 'meteor/meteor';
 import { Entity } from '@domain/common/entity';
-import { ValidationUtils } from '@shared/utils/validation.utils';
+import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 export class Professor extends Entity {
   @IsDate()
@@ -49,7 +49,7 @@ export class Professor extends Entity {
     const errors = validateSync(professor);
 
     if (errors.length > 0) {
-      throw new Error(ValidationUtils.getErrorMessage(errors));
+      throw new Error(ClassValidationUtils.getErrorMessage(errors));
     }
 
     return professor;

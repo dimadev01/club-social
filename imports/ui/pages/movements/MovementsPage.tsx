@@ -25,7 +25,7 @@ import {
 } from '@domain/categories/category.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
-import { Permission, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -199,8 +199,8 @@ export const MovementsPage = () => {
 
               {Roles.userIsInRole(
                 userId,
-                Permission.ViewDeleted,
-                Scope.Movements
+                PermissionEnum.ViewDeleted,
+                ScopeEnum.Movements
               ) && (
                 <Form.Item>
                   <Checkbox
@@ -276,8 +276,8 @@ export const MovementsPage = () => {
                     {!movement.isDeleted &&
                       Roles.userIsInRole(
                         userId,
-                        Permission.Delete,
-                        Scope.Movements
+                        PermissionEnum.Delete,
+                        ScopeEnum.Movements
                       ) && (
                         <Button
                           popConfirm={{
@@ -307,8 +307,8 @@ export const MovementsPage = () => {
                     {movement.isDeleted &&
                       Roles.userIsInRole(
                         userId,
-                        Permission.Update,
-                        Scope.Movements
+                        PermissionEnum.Update,
+                        ScopeEnum.Movements
                       ) && (
                         <Button
                           type="ghost"

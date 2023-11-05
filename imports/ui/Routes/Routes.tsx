@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { Permission, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
 import { EnrollPage } from '@ui/pages/auth/EnrollPage';
 import { LoginPage } from '@ui/pages/auth/LoginPage';
@@ -55,7 +55,7 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Users}>
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Users}>
         <UsersPage />
       </PrivateRoute>
     ),
@@ -63,7 +63,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Users}>
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Users}>
         <UsersDetailPage />
       </PrivateRoute>
     ),
@@ -71,7 +71,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Users}>
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Users}>
         <UsersDetailPage />
       </PrivateRoute>
     ),
@@ -80,7 +80,7 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Members}>
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Members}>
         <MembersPage />
       </PrivateRoute>
     ),
@@ -88,7 +88,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Members}>
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Members}>
         <MembersDetailPage />
       </PrivateRoute>
     ),
@@ -96,7 +96,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Members}>
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Members}>
         <MembersDetailPage />
       </PrivateRoute>
     ),
@@ -105,7 +105,10 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Movements}>
+      <PrivateRoute
+        permission={PermissionEnum.Read}
+        scope={ScopeEnum.Movements}
+      >
         <MovementsRoot />
       </PrivateRoute>
     ),
@@ -113,7 +116,10 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Movements}>
+      <PrivateRoute
+        permission={PermissionEnum.Read}
+        scope={ScopeEnum.Movements}
+      >
         <MovementDetailPage />
       </PrivateRoute>
     ),
@@ -121,7 +127,10 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Movements}>
+      <PrivateRoute
+        permission={PermissionEnum.Read}
+        scope={ScopeEnum.Movements}
+      >
         <MovementDetailPage />
       </PrivateRoute>
     ),
@@ -130,7 +139,10 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Professors}>
+      <PrivateRoute
+        permission={PermissionEnum.Read}
+        scope={ScopeEnum.Professors}
+      >
         <ProfessorsPage />
       </PrivateRoute>
     ),
@@ -139,7 +151,10 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Employees}>
+      <PrivateRoute
+        permission={PermissionEnum.Read}
+        scope={ScopeEnum.Employees}
+      >
         <EmployeesPage />
       </PrivateRoute>
     ),
@@ -148,7 +163,7 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Services}>
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Services}>
         <ServicesPage />
       </PrivateRoute>
     ),
@@ -157,7 +172,10 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Categories}>
+      <PrivateRoute
+        permission={PermissionEnum.Read}
+        scope={ScopeEnum.Categories}
+      >
         <CategoriesPage />
       </PrivateRoute>
     ),
@@ -165,7 +183,10 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={Permission.Read} scope={Scope.Categories}>
+      <PrivateRoute
+        permission={PermissionEnum.Read}
+        scope={ScopeEnum.Categories}
+      >
         <CategoryDetailPage />
       </PrivateRoute>
     ),

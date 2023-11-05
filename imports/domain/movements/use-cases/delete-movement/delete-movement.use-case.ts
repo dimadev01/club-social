@@ -5,7 +5,7 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { MovementNotFoundError } from '@domain/movements/errors/movement-not-found.error';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
-import { Permission, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
@@ -24,7 +24,7 @@ export class DeleteMovementUseCase
   public async execute(
     request: DeleteMovementRequestDto
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(Scope.Movements, Permission.Delete);
+    await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Delete);
 
     await this.validateDto(DeleteMovementRequestDto, request);
 

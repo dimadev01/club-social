@@ -13,7 +13,7 @@ import { MembersCollection } from '@domain/members/member.collection';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
-import { Permission, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
@@ -38,7 +38,7 @@ export class CreateMovementUseCase
   public async execute(
     request: CreateMovementRequestDto
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(Scope.Movements, Permission.Create);
+    await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Create);
 
     if (MemberCategories.includes(request.category)) {
       const result = await this._createWithMember(request);

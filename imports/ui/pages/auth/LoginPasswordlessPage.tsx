@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, message, Space } from 'antd';
+import { App, Form, Input, Space } from 'antd';
 import { useTracker } from 'meteor/react-meteor-data';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { ReloadOutlined } from '@ant-design/icons';
@@ -19,6 +19,8 @@ export const LoginPasswordlessPage = () => {
   const { email } = useParams<{ email?: string }>();
 
   const navigate = useNavigate();
+
+  const { message } = App.useApp();
 
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 

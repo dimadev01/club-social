@@ -14,7 +14,7 @@ import {
   UserOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
-import { Permission, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 
@@ -41,7 +41,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
 
-    if (Roles.userIsInRole(user, Permission.Read, Scope.Users)) {
+    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Users)) {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Users,
@@ -54,7 +54,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, Permission.Read, Scope.Members)) {
+    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Members)) {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Members,
@@ -67,7 +67,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, Permission.Read, Scope.Movements)) {
+    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Movements)) {
       items.push({
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Movements,
@@ -80,7 +80,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, Permission.Read, Scope.Categories)) {
+    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Categories)) {
       items.push({
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Categories,
@@ -93,7 +93,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, Permission.Read, Scope.Professors)) {
+    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Professors)) {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Professors,
@@ -106,7 +106,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, Permission.Read, Scope.Employees)) {
+    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Employees)) {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Employees,
@@ -119,7 +119,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, Permission.Read, Scope.Services)) {
+    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Services)) {
       items.push({
         icon: <BulbOutlined className="!text-lg" />,
         key: AppUrl.Services,

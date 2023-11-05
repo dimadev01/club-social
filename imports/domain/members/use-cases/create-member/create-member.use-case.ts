@@ -5,7 +5,7 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Member } from '@domain/members/entities/member.entity';
 import { IMemberPort } from '@domain/members/member.port';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
-import { Permission, Role, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -28,20 +28,20 @@ export class CreateMemberUseCase
   public async execute(
     request: CreateMemberRequestDto
   ): Promise<Result<string, Error>> {
-    await this.validatePermission(Scope.Members, Permission.Create);
+    await this.validatePermission(ScopeEnum.Members, PermissionEnum.Create);
 
     const createUserResult = await this._createUserUseCase.execute({
       emails: request.emails,
       firstName: request.firstName,
       lastName: request.lastName,
-      role: Role.Member,
+      role: RoleEnum.Member,
     });
 
     if (createUserResult.isErr()) {
       return err(createUserResult.error);
     }
 
-    const member = Member.create({
+    const memberResult = Member.create({
       address: {
         cityGovId: request.addressCityGovId,
         cityName: request.addressCityName,
@@ -65,14 +65,14 @@ export class CreateMemberUseCase
       userId: createUserResult.value,
     });
 
-    if (member.isErr()) {
-      return err(member.error);
+    if (memberResult.isErr()) {
+      return err(memberResult.error);
     }
 
-    await this._memberPort.create(member.value);
+    await this._memberPort.create(memberResult.value);
 
-    this._logger.info('Member created', { member });
+    this._logger.info('Member created', { member: memberResult.value });
 
-    return ok(member.value._id);
+    return ok(memberResult.value._id);
   }
 }

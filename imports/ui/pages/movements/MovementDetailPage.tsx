@@ -1,12 +1,12 @@
 import React from 'react';
 import {
+  App,
   Breadcrumb,
   Card,
   DatePicker,
   Form,
   Input,
   InputNumber,
-  message,
   Skeleton,
 } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
@@ -65,6 +65,8 @@ export const MovementDetailPage = () => {
   const type = useWatch(['type'], form);
 
   const { id } = useParams<{ id?: string }>();
+
+  const { message } = App.useApp();
 
   const {
     data: movement,

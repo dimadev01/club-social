@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Form, Input, message, Spin } from 'antd';
+import { App, Button, Form, Input, Spin } from 'antd';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
@@ -15,6 +15,8 @@ export const EnrollPage = () => {
   const { token } = useParams<{ email?: string; token?: string }>();
 
   const { data, isLoading } = useUserByToken(token);
+
+  const { message } = App.useApp();
 
   useEffect(() => {
     if (Meteor.user()) {

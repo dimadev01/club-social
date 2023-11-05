@@ -4,7 +4,7 @@ import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { UpdateMemberRequestDto } from '@domain/members/use-cases/update-member/update-member-request.dto';
-import { Permission, Scope } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
 import { UpdateUserUseCase } from '@domain/users/use-cases/update-user/update-user.use-case';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -33,7 +33,7 @@ export class UpdateMemberUseCase
 
     try {
       await session.withTransaction(async () => {
-        await this.validatePermission(Scope.Members, Permission.Update);
+        await this.validatePermission(ScopeEnum.Members, PermissionEnum.Update);
 
         const member = await this._memberPort.findOneByIdOrThrow(request.id);
 
