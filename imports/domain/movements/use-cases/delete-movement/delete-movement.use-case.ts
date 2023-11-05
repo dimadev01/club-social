@@ -24,7 +24,7 @@ export class DeleteMovementUseCase
   public async execute(
     request: DeleteMovementRequestDto
   ): Promise<Result<null, Error>> {
-    this.validatePermission(Scope.Movements, Permission.Delete);
+    await this.validatePermission(Scope.Movements, Permission.Delete);
 
     await this.validateDto(DeleteMovementRequestDto, request);
 

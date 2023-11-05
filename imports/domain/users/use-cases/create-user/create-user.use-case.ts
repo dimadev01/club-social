@@ -28,7 +28,7 @@ export class CreateUserUseCase
   public async execute(
     request: CreateUserRequestDto
   ): Promise<Result<string, Error>> {
-    this.validatePermission(Scope.Users, Permission.Create);
+    await this.validatePermission(Scope.Users, Permission.Create);
 
     if (request.emails?.some((email) => Accounts.findUserByEmail(email))) {
       return err(new AtLeastOneEmailInUseError());

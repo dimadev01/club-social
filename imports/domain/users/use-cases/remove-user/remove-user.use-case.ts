@@ -25,7 +25,7 @@ export class RemoveUserUseCase
   public async execute(
     request: RemoveUserRequestDto
   ): Promise<Result<null, Error>> {
-    this.validatePermission(Scope.Members, Permission.Delete);
+    await this.validatePermission(Scope.Members, Permission.Delete);
 
     await this.validateDto(RemoveUserRequestDto, request);
 

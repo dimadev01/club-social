@@ -27,7 +27,7 @@ export class UpdateUserUseCase
   public async execute(
     request: UpdateUserRequestDto
   ): Promise<Result<null, Error>> {
-    this.validatePermission(Scope.Users, Permission.Update);
+    await this.validatePermission(Scope.Users, Permission.Update);
 
     const user = await Meteor.users.findOneAsync(request.id);
 
