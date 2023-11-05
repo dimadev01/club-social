@@ -50,7 +50,7 @@ export const App = () => {
     <>
       <GoogleFontLoader fonts={[{ font: 'Rubik', weights: [300, 400, 500] }]} />
 
-      <AntApp>
+      <AntApp rootClassName="cs-ant-app">
         <ConfigProvider
           locale={esEs}
           select={{

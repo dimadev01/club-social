@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
@@ -26,6 +27,34 @@ export class MemberRepository
     protected readonly _logger: ILogger
   ) {
     super(_logger);
+  }
+
+  public async findOneById(id: string): Promise<Member | undefined> {
+    const member = await super.findOneById(id);
+
+    if (!member) {
+      return undefined;
+    }
+
+    const user = await Meteor.users.findOneAsync(member.userId);
+
+    if (!user) {
+      return undefined;
+    }
+
+    member.user = user;
+
+    return member;
+  }
+
+  public async findOneByIdOrThrow(id: string): Promise<Member> {
+    const member = await this.findOneById(id);
+
+    if (!member) {
+      throw new Error(`Member with id ${id} not found`);
+    }
+
+    return member;
   }
 
   public async findPaginated(

@@ -1,6 +1,5 @@
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
-import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IEmailService } from '@application/notifications/email.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
@@ -8,8 +7,7 @@ import {
   CategoryLabel,
   MemberCategories,
 } from '@domain/categories/category.enum';
-import { Member } from '@domain/members/entities/member.entity';
-import { MembersCollection } from '@domain/members/member.collection';
+import { IMemberPort } from '@domain/members/member.port';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
@@ -29,6 +27,8 @@ export class CreateMovementUseCase
     private readonly _logger: ILogger,
     @inject(DIToken.MovementRepository)
     private readonly _movementPort: IMovementPort,
+    @inject(DIToken.MemberRepository)
+    private readonly _memberPort: IMemberPort,
     @inject(DIToken.EmailService)
     private readonly _emailService: IEmailService
   ) {
@@ -96,13 +96,7 @@ export class CreateMovementUseCase
 
             await this._movementPort.createWithSession(movement, session);
 
-            const member = await MembersCollection.findOneAsync(memberId);
-
-            if (!member) {
-              throw new EntityNotFoundError(Member);
-            }
-
-            member.joinUser();
+            const member = await this._memberPort.findOneByIdOrThrow(memberId);
 
             const memberEmail = member.getEmail();
 
