@@ -104,19 +104,23 @@ export class CreateMovementUseCase
 
             member.joinUser();
 
-            await this._emailService.send({
-              message: `Hola ${
-                member.name
-              }, te queremos informar desde el Club Social Monte Grande que se ha registrado un nuevo movimiento por ${
-                movement.amountFormatted
-              } en tu cuenta en concepto de ${
-                CategoryLabel[movement.category]
-              } con fecha de ${movement.dateFormatted}. Administración`,
-              subject: `Nuevo movimiento en tu cuenta [${
-                CategoryLabel[movement.category]
-              }]`,
-              to: member.getEmail(),
-            });
+            const memberEmail = member.getEmail();
+
+            if (memberEmail) {
+              await this._emailService.send({
+                message: `Hola ${
+                  member.name
+                }, te queremos informar desde el Club Social Monte Grande que se ha registrado un nuevo movimiento por ${
+                  movement.amountFormatted
+                } en tu cuenta en concepto de ${
+                  CategoryLabel[movement.category]
+                } con fecha de ${movement.dateFormatted}. Administración`,
+                subject: `Nuevo movimiento en tu cuenta [${
+                  CategoryLabel[movement.category]
+                }]`,
+                to: memberEmail,
+              });
+            }
 
             await session.commitTransaction();
           });

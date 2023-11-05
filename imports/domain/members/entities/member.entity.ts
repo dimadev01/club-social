@@ -141,8 +141,8 @@ export class Member extends Entity {
     return ok(member);
   }
 
-  public getEmail(): string {
-    return this.user.emails?.[0].address ?? '';
+  public getEmail(): string | null {
+    return this.user.emails?.[0].address ?? null;
   }
 
   public joinUser() {

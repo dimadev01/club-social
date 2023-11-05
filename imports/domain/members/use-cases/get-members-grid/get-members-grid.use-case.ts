@@ -23,8 +23,6 @@ export class GetMembersGridUseCase
   public async execute(
     request: PaginatedRequestDto
   ): Promise<Result<PaginatedResponse<MemberGridDto>, Error>> {
-    console.log(request);
-
     const { count, data } = await this._memberPort.findPaginated(request);
 
     return ok<PaginatedResponse<MemberGridDto>>({

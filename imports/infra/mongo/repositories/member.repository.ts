@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
@@ -42,6 +43,10 @@ export class MemberRepository
       query.category = { $in: request.filters.category };
     }
 
+    if (request.sortField === 'name') {
+      request.sortField = 'user.profile.lastName';
+    }
+
     const $userLookupPipeline: Mongo.Query<Meteor.User> = [];
 
     if (request.search) {
@@ -54,6 +59,63 @@ export class MemberRepository
           ],
         },
       });
+    }
+
+    const facetData: Document[] = [];
+
+    if (request.sortField === 'user.profile.lastName') {
+      facetData.push(...this.getPaginatedPipeline(request));
+    }
+
+    facetData.push(
+      {
+        $lookup: {
+          as: 'movements',
+          foreignField: 'memberId',
+          from: 'movements',
+          localField: '_id',
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ['$isDeleted', false],
+                },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          electricityBalance: this._getCategoryBalance(
+            CategoryEnum.ElectricityIncome,
+            CategoryEnum.ElectricityDebt
+          ),
+          guestBalance: this._getCategoryBalance(
+            CategoryEnum.GuestIncome,
+            CategoryEnum.GuestDebt
+          ),
+          membershipBalance: this._getCategoryBalance(
+            CategoryEnum.MembershipIncome,
+            CategoryEnum.MembershipDebt
+          ),
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          category: 1,
+          electricityBalance: 1,
+          guestBalance: 1,
+          membershipBalance: 1,
+          status: 1,
+          user: 1,
+        },
+      }
+    );
+
+    if (request.sortField !== 'user.profile.lastName') {
+      facetData.push(...this.getPaginatedPipeline(request));
     }
 
     const [{ data, total }] = await this.getCollection()
@@ -74,53 +136,7 @@ export class MemberRepository
         },
         {
           $facet: {
-            data: [
-              ...this.getPaginatedPipeline(request),
-              {
-                $lookup: {
-                  as: 'movements',
-                  foreignField: 'memberId',
-                  from: 'movements',
-                  localField: '_id',
-                  pipeline: [
-                    {
-                      $match: {
-                        $expr: {
-                          $eq: ['$isDeleted', false],
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-              {
-                $addFields: {
-                  electricityBalance: this._getCategoryBalance(
-                    CategoryEnum.ElectricityIncome,
-                    CategoryEnum.ElectricityDebt
-                  ),
-                  guestBalance: this._getCategoryBalance(
-                    CategoryEnum.GuestIncome,
-                    CategoryEnum.GuestDebt
-                  ),
-                  membershipBalance: this._getCategoryBalance(
-                    CategoryEnum.MembershipIncome,
-                    CategoryEnum.MembershipDebt
-                  ),
-                },
-              },
-              {
-                $project: {
-                  _id: 1,
-                  category: 1,
-                  electricityBalance: 1,
-                  guestBalance: 1,
-                  membershipBalance: 1,
-                  status: 1,
-                  user: 1,
-                },
-              },
-            ],
+            data: facetData,
             total: [{ $count: 'count' }],
           },
         },

@@ -14,6 +14,12 @@ export type FindPaginatedMembersRequest = FindPaginatedRequest & {
     fileStatus?: MemberFileStatusEnum[];
     status?: MemberStatusEnum[];
   };
+  sortField:
+    | 'name'
+    | 'user.profile.lastName'
+    | 'electricityBalance'
+    | 'guestBalance'
+    | 'membershipBalance';
 };
 
 export type FindPaginatedMember = Pick<

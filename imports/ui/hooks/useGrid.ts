@@ -28,7 +28,7 @@ export const useGrid = ({
       ? Number(searchParams.get('pageSize'))
       : 25,
     search: searchParams.get('search') ?? '',
-    sortField: (parsedQs.sortField as string | string[]) ?? sortField,
+    sortField: (parsedQs.sortField as string) ?? sortField,
     sortOrder: (searchParams.get('sortOrder') as SortOrder) ?? sortOrder,
   });
 };

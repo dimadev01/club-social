@@ -153,6 +153,21 @@ export abstract class MongoCrudRepository<T extends Entity>
     }
   }
 
+  protected _getSorterValue(
+    sorter: 'descend' | 'ascend' | null,
+    defaultSortOrder = 1
+  ): number {
+    if (sorter === 'ascend') {
+      return 1;
+    }
+
+    if (sorter === 'descend') {
+      return -1;
+    }
+
+    return defaultSortOrder;
+  }
+
   protected createPaginatedQueryOptions(
     page: number,
     pageSize: number
@@ -188,20 +203,5 @@ export abstract class MongoCrudRepository<T extends Entity>
     } catch (error) {
       return 'System';
     }
-  }
-
-  private _getSorterValue(
-    sorter: 'descend' | 'ascend' | null,
-    defaultSortOrder = 1
-  ): number {
-    if (sorter === 'ascend') {
-      return 1;
-    }
-
-    if (sorter === 'descend') {
-      return -1;
-    }
-
-    return defaultSortOrder;
   }
 }
