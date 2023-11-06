@@ -69,11 +69,11 @@ export const MembersPage = () => {
           loading={isLoading}
           dataSource={data?.data}
           rowClassName={(member) => {
-            if (member.membershipBalance < 0) {
+            if (member.membershipDebt < 0) {
               return 'bg-red-50';
             }
 
-            if (member.membershipBalance > 0) {
+            if (member.membershipDebt > 0) {
               return 'bg-green-50';
             }
 
@@ -137,48 +137,50 @@ export const MembersPage = () => {
             },
             {
               align: 'right',
-              dataIndex: 'electricityBalance',
+              dataIndex: 'electricityDebt',
               defaultSortOrder:
-                gridState.sortField === 'electricityBalance'
+                gridState.sortField === 'electricityDebt'
                   ? gridState.sortOrder
                   : undefined,
-              render: (electricityBalance) =>
-                CurrencyUtils.formatCents(electricityBalance),
+              render: (electricityDebt: number) =>
+                CurrencyUtils.formatCents(electricityDebt),
               sorter: true,
               title: 'Saldo luz',
             },
             {
               align: 'right',
-              dataIndex: 'guestBalance',
+              dataIndex: 'guestDebt',
               defaultSortOrder:
-                gridState.sortField === 'guestBalance'
+                gridState.sortField === 'guestDebt'
                   ? gridState.sortOrder
                   : undefined,
-              render: (guestBalance) => CurrencyUtils.formatCents(guestBalance),
+              render: (guestDebt: number) =>
+                CurrencyUtils.formatCents(guestDebt),
               sorter: true,
               title: 'Saldo invitado',
             },
             {
               align: 'right',
-              dataIndex: 'membershipBalance',
+              dataIndex: 'membershipDebt',
               defaultSortOrder:
-                gridState.sortField === 'membershipBalance'
+                gridState.sortField === 'membershipDebt'
                   ? gridState.sortOrder
                   : undefined,
-              render: (membershipBalance) =>
-                CurrencyUtils.formatCents(membershipBalance),
+              render: (membershipDebt: number) =>
+                CurrencyUtils.formatCents(membershipDebt),
               sorter: true,
               title: 'Saldo cuota',
             },
             {
               align: 'right',
-              dataIndex: '_id',
-              render: (_id: string, record: MemberGridDto) =>
-                CurrencyUtils.formatCents(
-                  record.electricityBalance +
-                    record.guestBalance +
-                    record.membershipBalance
-                ),
+              dataIndex: 'totalDebt',
+              defaultSortOrder:
+                gridState.sortField === 'totalDebt'
+                  ? gridState.sortOrder
+                  : undefined,
+              render: (totalDebt: number) =>
+                CurrencyUtils.formatCents(totalDebt),
+              sorter: true,
               title: 'Saldo Total',
             },
           ]}

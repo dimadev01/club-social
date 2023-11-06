@@ -135,28 +135,36 @@ export class MemberRepository
       },
       {
         $addFields: {
-          electricityBalance: this._getCategoryBalance(
+          electricityDebt: this._getCategoryBalance(
             CategoryEnum.ElectricityIncome,
             CategoryEnum.ElectricityDebt
           ),
-          guestBalance: this._getCategoryBalance(
+          guestDebt: this._getCategoryBalance(
             CategoryEnum.GuestIncome,
             CategoryEnum.GuestDebt
           ),
-          membershipBalance: this._getCategoryBalance(
+          membershipDebt: this._getCategoryBalance(
             CategoryEnum.MembershipIncome,
             CategoryEnum.MembershipDebt
           ),
         },
       },
       {
+        $addFields: {
+          totalDebt: {
+            $sum: ['$electricityDebt', '$guestDebt', '$membershipDebt'],
+          },
+        },
+      },
+      {
         $project: {
           _id: 1,
           category: 1,
-          electricityBalance: 1,
-          guestBalance: 1,
-          membershipBalance: 1,
+          electricityDebt: 1,
+          guestDebt: 1,
+          membershipDebt: 1,
           status: 1,
+          totalDebt: 1,
           user: 1,
         },
       }

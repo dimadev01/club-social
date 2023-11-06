@@ -17,18 +17,19 @@ export type FindPaginatedMembersRequest = FindPaginatedRequest & {
   sortField:
     | 'name'
     | 'user.profile.lastName'
-    | 'electricityBalance'
-    | 'guestBalance'
-    | 'membershipBalance';
+    | 'electricityDebt'
+    | 'guestDebt'
+    | 'membershipDebt';
 };
 
 export type FindPaginatedMember = Pick<
   Member,
   '_id' | 'category' | 'user' | 'fileStatus' | 'status'
 > & {
-  electricityBalance: number;
-  guestBalance: number;
-  membershipBalance: number;
+  electricityDebt: number;
+  guestDebt: number;
+  membershipDebt: number;
+  totalDebt: number;
 };
 
 export type FindPaginatedMembersResponse =
