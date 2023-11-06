@@ -28,7 +28,11 @@ export const AdminRole = {
 };
 
 export const StaffRole = {
-  [ScopeEnum.Members]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.Members]: [
+    PermissionEnum.Create,
+    PermissionEnum.Read,
+    PermissionEnum.Update,
+  ],
   [ScopeEnum.Movements]: [
     PermissionEnum.Read,
     PermissionEnum.Create,

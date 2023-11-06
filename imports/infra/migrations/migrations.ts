@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { MongoInternals } from 'meteor/mongo';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { RoleService } from '@domain/roles/role.service';
-import { CategoryCollection } from '@infra/mongo/collections/category.collection';
+import { CategoriesCollection } from '@infra/mongo/collections/category.collection';
 import { MembersCollection } from '@infra/mongo/collections/member.collection';
 
 // interface MemberRow {
@@ -822,7 +822,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await CategoryCollection.dropIndexAsync('code_1');
+    await CategoriesCollection.dropIndexAsync('code_1');
 
     next();
   }),
@@ -843,7 +843,7 @@ Migrations.add({
       .mongo.db.collection('members')
       .dropIndexes();
 
-    await CategoryCollection.createIndexAsync({ name: 1 });
+    await CategoriesCollection.createIndexAsync({ name: 1 });
 
     MembersCollection.createIndexAsync({ userId: 1 });
 
