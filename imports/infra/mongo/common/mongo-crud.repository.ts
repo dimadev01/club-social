@@ -6,12 +6,12 @@ import type {
   MatchKeysAndValues,
   OptionalUnlessRequiredId,
 } from 'mongodb';
+import SimpleSchema from 'simpl-schema';
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
 import { ICrudPort } from '@application/ports/crud.port';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
 import { Entity } from '@domain/common/entity';
-import { MovementsSchema } from '@domain/movements/movements.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
@@ -47,8 +47,8 @@ export abstract class MongoCrudRepository<T extends Entity>
     session: ClientSession
   ): Promise<string> {
     try {
-      MovementsSchema.validate(
-        MovementsSchema.clean(
+      this.getSchema().validate(
+        this.getSchema().clean(
           entity as Record<string | number | symbol, unknown>
         )
       );
@@ -154,8 +154,8 @@ export abstract class MongoCrudRepository<T extends Entity>
     session: ClientSession
   ): Promise<void> {
     try {
-      MovementsSchema.validate(
-        MovementsSchema.clean(
+      this.getSchema().validate(
+        this.getSchema().clean(
           entity as Record<string | number | symbol, unknown>
         )
       );
@@ -220,6 +220,7 @@ export abstract class MongoCrudRepository<T extends Entity>
   }
 
   protected abstract getCollection(): MongoCollection<T>;
+  protected abstract getSchema(): SimpleSchema;
 
   private async _getLoggedInUserName(): Promise<string> {
     try {

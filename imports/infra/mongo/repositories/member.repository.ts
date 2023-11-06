@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import type { Document } from 'mongodb';
+import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
@@ -9,7 +10,10 @@ import { CategoryEnum } from '@domain/categories/category.enum';
 import { Member } from '@domain/members/entities/member.entity';
 import { IMemberPort } from '@domain/members/member.port';
 import { DIToken } from '@infra/di/di-tokens';
-import { MembersCollection } from '@infra/mongo/collections/member.collection';
+import {
+  MembersCollection,
+  MembersSchema,
+} from '@infra/mongo/collections/member.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
 import {
@@ -184,6 +188,10 @@ export class MemberRepository
 
   protected getCollection(): MongoCollection<Member> {
     return MembersCollection;
+  }
+
+  protected getSchema(): SimpleSchema {
+    return MembersSchema;
   }
 
   private _getCategoryBalance(

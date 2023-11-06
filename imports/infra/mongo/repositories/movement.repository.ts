@@ -1,9 +1,13 @@
 import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
-import { MovementsCollection } from '@domain/movements/movements.collection';
+import {
+  MovementsCollection,
+  MovementsSchema,
+} from '@domain/movements/movements.collection';
 import { DIToken } from '@infra/di/di-tokens';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
@@ -43,5 +47,9 @@ export class MovementRepository
 
   protected getCollection(): MongoCollection<Movement> {
     return MovementsCollection;
+  }
+
+  protected getSchema(): SimpleSchema {
+    return MovementsSchema;
   }
 }

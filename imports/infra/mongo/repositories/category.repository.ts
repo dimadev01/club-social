@@ -1,10 +1,14 @@
 import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { Category } from '@domain/categories/entities/category.entity';
 import { DIToken } from '@infra/di/di-tokens';
-import { CategoryCollection } from '@infra/mongo/collections/category.collection';
+import {
+  CategoriesCollection,
+  CategoriesSchema,
+} from '@infra/mongo/collections/category.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
@@ -42,10 +46,14 @@ export class CategoryRepository
   }
 
   protected getCollection(): MongoCollection<Category> {
-    return CategoryCollection;
+    return CategoriesCollection;
   }
 
   protected getLogger(): ILogger {
     return this._logger;
+  }
+
+  protected getSchema(): SimpleSchema {
+    return CategoriesSchema;
   }
 }
