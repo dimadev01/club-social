@@ -5,19 +5,21 @@ import {
 } from '@domain/members/member.enum';
 
 export class MemberGridDto {
-  _id: string;
+  public _id: string;
 
-  name: string;
+  public category: MemberCategoryEnum;
 
-  emails: Meteor.UserEmail[] | null;
+  public electricityDebt: number;
 
-  category: MemberCategoryEnum;
+  public emails: Meteor.UserEmail[] | null;
 
-  status: MemberStatusEnum;
+  public guestDebt: number;
 
-  membershipBalance: number;
+  public membershipDebt: number;
 
-  guestBalance: number;
+  public name: string;
 
-  electricityBalance: number;
+  public status: MemberStatusEnum;
+
+  public totalDebt: number;
 }
