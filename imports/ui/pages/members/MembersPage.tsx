@@ -170,6 +170,17 @@ export const MembersPage = () => {
               sorter: true,
               title: 'Saldo cuota',
             },
+            {
+              align: 'right',
+              dataIndex: '_id',
+              render: (_id: string, record: MemberGridDto) =>
+                CurrencyUtils.formatCents(
+                  record.electricityBalance +
+                    record.guestBalance +
+                    record.membershipBalance
+                ),
+              title: 'Saldo Total',
+            },
           ]}
         />
       </Card>
