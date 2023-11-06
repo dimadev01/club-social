@@ -5,28 +5,28 @@ import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
 export const MovementsCollection = new MongoCollection('movements', Movement);
 
-// @ts-expect-error
-MovementsCollection.attachSchema(
-  new SimpleSchema({
-    _id: String,
-    amount: SimpleSchema.Integer,
-    category: String,
-    createdAt: Date,
-    createdBy: String,
-    date: Date,
-    employeeId: { defaultValue: null, optional: true, type: String },
-    isDeleted: Boolean,
-    memberId: { defaultValue: null, optional: true, type: String },
-    notes: { defaultValue: null, optional: true, type: String },
-    professorId: { defaultValue: null, optional: true, type: String },
-    serviceId: { defaultValue: null, optional: true, type: String },
-    type: String,
-    updatedAt: { autoValue: () => new Date(), type: Date },
-    updatedBy: String,
-  })
-);
+export const MovementsSchema = new SimpleSchema({
+  _id: String,
+  amount: SimpleSchema.Integer,
+  category: String,
+  createdAt: Date,
+  createdBy: String,
+  date: Date,
+  employeeId: { defaultValue: null, optional: true, type: String },
+  isDeleted: Boolean,
+  memberId: { defaultValue: null, optional: true, type: String },
+  notes: { defaultValue: null, optional: true, type: String },
+  professorId: { defaultValue: null, optional: true, type: String },
+  serviceId: { defaultValue: null, optional: true, type: String },
+  type: String,
+  deletedAt: { defaultValue: null, type: Date, optional: true },
+  deletedBy: { defaultValue: null, type: String, optional: true },
+  updatedAt: { autoValue: () => new Date(), type: Date },
+  updatedBy: String,
+});
 
-// await MovementsCollection.rawCollection().dropIndexes();
+// @ts-expect-error
+MovementsCollection.attachSchema(MovementsSchema);
 
 await MovementsCollection.createIndexAsync({ category: 1 });
 

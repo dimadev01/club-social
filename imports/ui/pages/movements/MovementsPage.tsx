@@ -14,7 +14,7 @@ import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Navigate, NavLink, useLocation } from 'react-router-dom';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   CategoryEnum,
@@ -25,7 +25,7 @@ import {
 } from '@domain/categories/category.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -85,6 +85,12 @@ export const MovementsPage = () => {
   const deleteMovement = useDeleteMovement(refetch);
 
   const restoreMovement = useRestoreMovement(refetch);
+
+  const user = Meteor.user();
+
+  if (!user) {
+    return <Navigate to={AppUrl.Login} />;
+  }
 
   const renderSummary = () => (
     <AntTable.Summary>
@@ -155,7 +161,11 @@ export const MovementsPage = () => {
           <>
             <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
 
-            <TableNewButton to={AppUrl.MovementsNew} />
+            {Roles.userIsInRole(
+              user,
+              PermissionEnum.Create,
+              ScopeEnum.Movements
+            ) && <TableNewButton to={AppUrl.MovementsNew} />}
           </>
         }
       >
@@ -164,7 +174,7 @@ export const MovementsPage = () => {
             <Space wrap>
               <Form.Item>
                 <DatePicker.RangePicker
-                  format={DateFormatEnum.DD_MM_YYYY}
+                  format={DateFormatEnum.DDMMYYYY}
                   allowClear
                   value={dateRangeValue}
                   disabledDate={(current) => current.isAfter(dayjs())}
@@ -204,7 +214,7 @@ export const MovementsPage = () => {
               ) && (
                 <Form.Item>
                   <Checkbox
-                    value={showDeleted}
+                    checked={showDeleted}
                     onChange={(e) => setShowDeleted(e.target.checked)}
                   >
                     Ver eliminados

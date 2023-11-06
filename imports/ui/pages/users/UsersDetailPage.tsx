@@ -3,7 +3,7 @@ import { App, Breadcrumb, Card, Form, Input, Skeleton } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import compact from 'lodash/compact';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
-import { RoleEnum } from '@domain/roles/roles.enum';
+import { RoleEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
@@ -123,6 +123,10 @@ export const UsersDetailPage = () => {
                     {
                       label: 'Staff',
                       value: RoleEnum.Staff,
+                    },
+                    {
+                      label: 'Viewer',
+                      value: RoleEnum.Viewer,
                     },
                   ]}
                 />

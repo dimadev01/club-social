@@ -28,8 +28,11 @@ export class GetMovementUseCase
       amountFormatted: movement.amountFormatted,
       category: movement.category,
       date: movement.dateFormatted,
+      employeeId: movement.employeeId,
       memberId: movement.memberId,
       notes: movement.notes,
+      professorId: movement.professorId,
+      serviceId: movement.serviceId,
       type: movement.type,
     });
   }

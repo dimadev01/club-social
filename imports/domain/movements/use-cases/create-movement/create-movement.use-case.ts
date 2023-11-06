@@ -1,5 +1,6 @@
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IEmailService } from '@application/notifications/email.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
@@ -11,7 +12,7 @@ import { IMemberPort } from '@domain/members/member.port';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
@@ -41,13 +42,7 @@ export class CreateMovementUseCase
     await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Create);
 
     if (MemberCategories.includes(request.category)) {
-      const result = await this._createWithMember(request);
-
-      if (result.isErr()) {
-        return err(result.error);
-      }
-
-      return ok(null);
+      return this._createWithMember(request);
     }
 
     const movement = Movement.create({
@@ -73,7 +68,7 @@ export class CreateMovementUseCase
     request: CreateMovementRequestDto
   ): Promise<Result<null, Error>> {
     if (!request.memberIds || request.memberIds.length === 0) {
-      return err(new Error('No members selected'));
+      return err(new InternalServerError('No members selected'));
     }
 
     const session = MongoUtils.startSession();

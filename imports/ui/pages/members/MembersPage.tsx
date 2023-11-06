@@ -1,6 +1,6 @@
 import React from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
-import { NavLink } from 'react-router-dom';
+import { Navigate, NavLink } from 'react-router-dom';
 import {
   getMemberCategoryFilters,
   getMemberStatusFilters,
@@ -10,6 +10,7 @@ import {
   MemberStatusLabel,
 } from '@domain/members/member.enum';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
@@ -33,6 +34,12 @@ export const MembersPage = () => {
     sortOrder: gridState.sortOrder,
   });
 
+  const user = Meteor.user();
+
+  if (!user) {
+    return <Navigate to={AppUrl.Login} />;
+  }
+
   return (
     <>
       <Breadcrumb
@@ -46,7 +53,11 @@ export const MembersPage = () => {
           <>
             <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
 
-            <TableNewButton to={AppUrl.MembersNew} />
+            {Roles.userIsInRole(
+              user,
+              PermissionEnum.Create,
+              ScopeEnum.Members
+            ) && <TableNewButton to={AppUrl.MembersNew} />}
           </>
         }
       >

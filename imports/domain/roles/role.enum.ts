@@ -4,13 +4,8 @@ export enum RoleEnum {
   Member = 'member',
   Professor = 'professor',
   Staff = 'staff',
+  Viewer = 'viewer',
 }
-
-export const getRolesFilters = () =>
-  Object.values(RoleEnum).map((role) => ({
-    text: role,
-    value: role,
-  }));
 
 export enum ScopeEnum {
   Categories = 'categories',
@@ -29,6 +24,31 @@ export enum PermissionEnum {
   Update = 'update',
   ViewDeleted = 'view-deleted',
 }
+
+export const ScopePermissionAssignment: Record<ScopeEnum, PermissionEnum[]> = {
+  [ScopeEnum.Categories]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.Employees]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.Services]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.Professors]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.Members]: [
+    PermissionEnum.Create,
+    PermissionEnum.Read,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
+  ],
+  [ScopeEnum.Movements]: [
+    PermissionEnum.Create,
+    PermissionEnum.Read,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
+  ],
+  [ScopeEnum.Users]: [
+    PermissionEnum.Create,
+    PermissionEnum.Read,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
+  ],
+};
 
 export const AdminRole = {
   [ScopeEnum.Users]: [
@@ -70,10 +90,7 @@ export const MemberRole = {
   [ScopeEnum.Movements]: [PermissionEnum.Read],
 };
 
-export const RolePermissionAssignment = {
-  [RoleEnum.Admin]: AdminRole,
-  [RoleEnum.Staff]: StaffRole,
-  [RoleEnum.Member]: MemberRole,
-  [RoleEnum.Employee]: {},
-  [RoleEnum.Professor]: {},
+export const ViewerRole = {
+  [ScopeEnum.Members]: [PermissionEnum.Read],
+  [ScopeEnum.Movements]: [PermissionEnum.Read],
 };

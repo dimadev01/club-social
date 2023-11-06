@@ -6,7 +6,7 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Member } from '@domain/members/entities/member.entity';
 import { IMemberPort } from '@domain/members/member.port';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
-import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';

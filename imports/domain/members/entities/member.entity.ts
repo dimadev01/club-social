@@ -73,7 +73,7 @@ export class Member extends Entity {
 
   public get dateOfBirthString(): string | null {
     if (this.dateOfBirth) {
-      return DateUtils.formatUtc(this.dateOfBirth, DateFormatEnum.DD_MM_YYYY);
+      return DateUtils.formatUtc(this.dateOfBirth, DateFormatEnum.DDMMYYYY);
     }
 
     return null;

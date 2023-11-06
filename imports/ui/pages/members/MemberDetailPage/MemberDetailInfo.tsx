@@ -3,7 +3,8 @@ import { App, Card, Col, DatePicker, Form, Input, Row, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import compact from 'lodash/compact';
 import uniq from 'lodash/uniq';
-import { useNavigate } from 'react-router-dom';
+import { Roles } from 'meteor/alanning:roles';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   getMemberCategoryOptions,
   getMemberFileStatusOptions,
@@ -19,7 +20,7 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
-import { RoleEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
@@ -81,6 +82,12 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
     navigate(-1);
   });
+
+  const user = Meteor.user();
+
+  if (!user) {
+    return <Navigate to={AppUrl.Login} />;
+  }
 
   const handleSubmit = async (values: FormValues) => {
     if (!member) {
@@ -145,6 +152,10 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
     <Card>
       <Form<FormValues>
         layout="vertical"
+        disabled={
+          !Roles.userIsInRole(user, PermissionEnum.Create, ScopeEnum.Members) ||
+          !Roles.userIsInRole(user, PermissionEnum.Update, ScopeEnum.Members)
+        }
         form={form}
         onFinish={(values) => handleSubmit(values)}
         initialValues={{
@@ -214,7 +225,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                 rules={[{ type: 'date' }]}
               >
                 <DatePicker
-                  format={DateFormatEnum.DD_MM_YYYY}
+                  format={DateFormatEnum.DDMMYYYY}
                   className="w-full"
                   disabledDate={(current: Dayjs) => current.isAfter(dayjs())}
                 />
@@ -376,14 +387,14 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         <div className="mb-4" />
 
         <FormButtons
+          deleteScope={ScopeEnum.Members}
+          createScope={ScopeEnum.Members}
+          updateScope={ScopeEnum.Members}
           isLoading={createMember.isLoading || updateMember.isLoading}
           isDisabled={createMember.isLoading || updateMember.isLoading}
           showDeleteButton={!!member}
           onClickDelete={() =>
-            member &&
-            deleteMember.mutate({
-              id: member._id,
-            })
+            member && deleteMember.mutate({ id: member._id })
           }
         />
       </Form>

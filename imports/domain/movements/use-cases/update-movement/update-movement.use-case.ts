@@ -6,7 +6,7 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { MovementsCollection } from '@domain/movements/movements.collection';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 

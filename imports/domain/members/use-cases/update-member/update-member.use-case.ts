@@ -4,7 +4,7 @@ import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { UpdateMemberRequestDto } from '@domain/members/use-cases/update-member/update-member-request.dto';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { UpdateUserUseCase } from '@domain/users/use-cases/update-user/update-user.use-case';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';

@@ -3,11 +3,8 @@ import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import {
-  PermissionEnum,
-  RolePermissionAssignment,
-  ScopeEnum,
-} from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { RolePermissionAssignment } from '@domain/roles/roles';
 import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 import { DIToken } from '@infra/di/di-tokens';

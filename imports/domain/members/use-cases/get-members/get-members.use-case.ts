@@ -5,7 +5,7 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Member } from '@domain/members/entities/member.entity';
 import { IMemberPort } from '@domain/members/member.port';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 

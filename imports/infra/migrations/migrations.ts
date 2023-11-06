@@ -1,5 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { MongoInternals } from 'meteor/mongo';
+import { MovementsCollection } from '@domain/movements/movements.collection';
+import { RoleService } from '@domain/roles/role.service';
 import { CategoryCollection } from '@infra/mongo/collections/category.collection';
 import { MembersCollection } from '@infra/mongo/collections/member.collection';
 
@@ -858,7 +860,33 @@ Migrations.add({
       { multi: true }
     );
 
+    await MovementsCollection.updateAsync(
+      {},
+      {
+        $set: {
+          deletedAt: null,
+          deletedBy: null,
+        },
+      },
+      { multi: true }
+    );
+
+    await RoleService.update();
+
     next();
   }),
   version: 10,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await RoleService.update();
+
+    next();
+  }),
+  version: 11,
 });
