@@ -5,6 +5,8 @@ import { DeleteMemberRequestDto } from '@domain/members/use-cases/delete-member/
 import { DeleteMemberUseCase } from '@domain/members/use-cases/delete-member/delete-member.use-case';
 import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
 import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-member.use-case';
+import { GetMembersForCsvRequestDto } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv-request.dto';
+import { GetMembersForCsvUseCase } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv.use-case';
 import { GetMembersGridUseCase } from '@domain/members/use-cases/get-members-grid/get-members-grid.use-case';
 import { GetMembersUseCase } from '@domain/members/use-cases/get-members/get-members.use-case';
 import { UpdateMemberRequestDto } from '@domain/members/use-cases/update-member/update-member-request.dto';
@@ -18,6 +20,7 @@ export class MemberMethod extends MeteorMethod {
   public constructor(
     private readonly _getMembersGrid: GetMembersGridUseCase,
     private readonly _getMembers: GetMembersUseCase,
+    private readonly _getMembersForCsv: GetMembersForCsvUseCase,
     private readonly _getMember: GetMemberUseCase,
     private readonly _createMember: CreateMemberUseCase,
     private readonly _deleteMember: DeleteMemberUseCase,
@@ -45,6 +48,13 @@ export class MemberMethod extends MeteorMethod {
 
       [MethodsEnum.MembersUpdate]: (request: UpdateMemberRequestDto) =>
         this.execute(this._updateMember, request, UpdateMemberRequestDto),
+
+      [MethodsEnum.MembersGetForCsv]: (request: GetMembersForCsvRequestDto) =>
+        this.execute(
+          this._getMembersForCsv,
+          request,
+          GetMembersForCsvRequestDto
+        ),
     });
   }
 }

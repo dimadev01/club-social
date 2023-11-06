@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
+import dayjs from 'dayjs';
+import CsvDownloader from 'react-csv-downloader';
 import { Navigate, NavLink } from 'react-router-dom';
+import { useReactToPrint } from 'react-to-print';
+import { FileExcelOutlined } from '@ant-design/icons';
 import {
   getMemberCategoryFilters,
   getMemberStatusFilters,
@@ -11,10 +15,15 @@ import {
 } from '@domain/members/member.enum';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
+import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
+import { Button } from '@ui/components/Button';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
+import { TablePrintButton } from '@ui/components/Table/TablePrintButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useMembersGrid } from '@ui/hooks/members/useMembersGrid';
 import { useGrid } from '@ui/hooks/useGrid';
@@ -25,14 +34,21 @@ export const MembersPage = () => {
     sortOrder: 'ascend',
   });
 
-  const { data, isLoading, isRefetching, refetch } = useMembersGrid({
+  const gridRequest: PaginatedRequestDto = {
     filters: gridState.filters,
     page: gridState.page,
     pageSize: gridState.pageSize,
     search: gridState.search,
     sortField: gridState.sortField,
     sortOrder: gridState.sortOrder,
-  });
+  };
+
+  const { data, isLoading, isRefetching, refetch } =
+    useMembersGrid(gridRequest);
+
+  const componentRef = useRef(null);
+
+  const handlePrint = useReactToPrint({ content: () => componentRef.current });
 
   const user = Meteor.user();
 
@@ -48,16 +64,79 @@ export const MembersPage = () => {
       />
 
       <Card
+        ref={componentRef}
         title="Socios"
         extra={
           <>
             <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
-
             {Roles.userIsInRole(
               user,
               PermissionEnum.Create,
               ScopeEnum.Members
             ) && <TableNewButton to={AppUrl.MembersNew} />}
+            <TablePrintButton
+              onClick={() => handlePrint()}
+              isDisabled={isRefetching}
+            />
+
+            <CsvDownloader
+              columns={[
+                {
+                  displayName: 'ID',
+                  id: '_id',
+                },
+                {
+                  displayName: 'Nombre',
+                  id: 'name',
+                },
+                {
+                  displayName: 'Categoría',
+                  id: 'category',
+                },
+                {
+                  displayName: 'Estado',
+                  id: 'status',
+                },
+                {
+                  displayName: 'Emails',
+                  id: 'emails',
+                },
+                {
+                  displayName: 'Deuda de luz',
+                  id: 'electricityDebt',
+                },
+                {
+                  displayName: 'Deuda de invitado',
+                  id: 'guestDebt',
+                },
+                {
+                  displayName: 'Deuda de cuota',
+                  id: 'membershipDebt',
+                },
+                {
+                  displayName: 'Deuda total',
+                  id: 'totalDebt',
+                },
+              ]}
+              filename={`${dayjs().format(DateFormatEnum.DateTime)}`}
+              datas={async () => {
+                const response = await Meteor.callAsync(
+                  MethodsEnum.MembersGetForCsv,
+                  gridRequest
+                );
+
+                setDataForCsv(response.data);
+
+                return Promise.resolve(response.data);
+              }}
+            >
+              <Button
+                tooltip={{ title: 'Descargar CSV' }}
+                htmlType="button"
+                type="ghost"
+                icon={<FileExcelOutlined />}
+              />
+            </CsvDownloader>
           </>
         }
       >

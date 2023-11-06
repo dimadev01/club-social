@@ -8,6 +8,10 @@ import { FindPaginatedAggregationResult } from '@application/pagination/find-pag
 import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
 import { CategoryEnum } from '@domain/categories/category.enum';
 import { Member } from '@domain/members/entities/member.entity';
+import {
+  MemberCategoryEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 import { IMemberPort } from '@domain/members/member.port';
 import { DIToken } from '@infra/di/di-tokens';
 import {
@@ -84,11 +88,13 @@ export class MemberRepository
     };
 
     if (request.filters.status?.length) {
-      query.status = { $in: request.filters.status };
+      query.status = { $in: request.filters.status as MemberStatusEnum[] };
     }
 
     if (request.filters.category?.length) {
-      query.category = { $in: request.filters.category };
+      query.category = {
+        $in: request.filters.category as MemberCategoryEnum[],
+      };
     }
 
     if (request.sortField === 'name') {
@@ -112,7 +118,15 @@ export class MemberRepository
     const facetData: Document[] = [];
 
     if (request.sortField === 'user.profile.lastName') {
-      facetData.push(...this.getPaginatedPipelineQuery(request));
+      if (request.findForCsv) {
+        facetData.push({
+          $sort: {
+            [request.sortField]: this._getSorterValue(request.sortOrder),
+          },
+        });
+      } else {
+        facetData.push(...this.getPaginatedPipelineQuery(request));
+      }
     }
 
     facetData.push(
@@ -171,7 +185,15 @@ export class MemberRepository
     );
 
     if (request.sortField !== 'user.profile.lastName') {
-      facetData.push(...this.getPaginatedPipelineQuery(request));
+      if (request.findForCsv) {
+        facetData.push({
+          $sort: {
+            [request.sortField]: this._getSorterValue(request.sortOrder),
+          },
+        });
+      } else {
+        facetData.push(...this.getPaginatedPipelineQuery(request));
+      }
     }
 
     const [{ data, total }] = await this.getCollection()

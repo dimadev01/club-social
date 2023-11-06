@@ -2,17 +2,18 @@ import { ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
+import { GetMembersGridRequestDto } from '@domain/members/use-cases/get-members-grid/get-members-grid-request.dto';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { FindPaginatedMember } from '@infra/mongo/repositories/member-repository.types';
-import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetMembersGridUseCase
-  extends UseCase<PaginatedRequestDto>
-  implements IUseCase<PaginatedRequestDto, PaginatedResponse<MemberGridDto>>
+  extends UseCase<GetMembersGridRequestDto>
+  implements
+    IUseCase<GetMembersGridRequestDto, PaginatedResponse<MemberGridDto>>
 {
   public constructor(
     @inject(DIToken.MemberRepository)
@@ -22,9 +23,12 @@ export class GetMembersGridUseCase
   }
 
   public async execute(
-    request: PaginatedRequestDto
+    request: GetMembersGridRequestDto
   ): Promise<Result<PaginatedResponse<MemberGridDto>, Error>> {
-    const { count, data } = await this._memberPort.findPaginated(request);
+    const { count, data } = await this._memberPort.findPaginated({
+      ...request,
+      findForCsv: false,
+    });
 
     return ok<PaginatedResponse<MemberGridDto>>({
       count,
