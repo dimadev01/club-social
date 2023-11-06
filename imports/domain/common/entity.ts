@@ -34,6 +34,10 @@ export class Entity extends UniqueID {
 
     this.isDeleted = false;
 
+    this.deletedAt = null;
+
+    this.deletedBy = null;
+
     this.createdBy = 'System';
 
     this.updatedBy = 'System';

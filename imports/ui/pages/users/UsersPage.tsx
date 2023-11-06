@@ -2,7 +2,8 @@ import React from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import { NavLink } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
-import { getRolesFilters, RoleEnum } from '@domain/roles/roles.enum';
+import { RoleEnum } from '@domain/roles/role.enum';
+import { RoleService } from '@domain/roles/role.service';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Table } from '@ui/components/Table/Table';
@@ -106,7 +107,7 @@ export const UsersPage = () => {
               align: 'center',
               dataIndex: ['profile', 'role'],
               filteredValue: gridState.filters?.['profile.role'],
-              filters: getRolesFilters(),
+              filters: RoleService.findForSelect(),
               title: 'Rol',
             },
             {
@@ -124,7 +125,7 @@ export const UsersPage = () => {
                     }}
                     type="ghost"
                     htmlType="button"
-                    tooltip={{ title: 'Eliminar ' }}
+                    tooltip={{ title: 'Eliminar' }}
                     icon={<DeleteOutlined />}
                     loading={removeUser.variables?.id === user._id}
                     disabled={removeUser.variables?.id === user._id}

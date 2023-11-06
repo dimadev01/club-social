@@ -14,7 +14,7 @@ import {
   UserOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 
@@ -46,11 +46,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Users,
         label: <NavLink to={AppUrl.Users}>Usuarios</NavLink>,
-        onClick: () => {
-          if (isMenuResponsiveMode) {
-            setIsMenuCollapsed(true);
-          }
-        },
       });
     }
 
@@ -59,11 +54,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Members,
         label: <NavLink to={AppUrl.Members}>Socios</NavLink>,
-        onClick: () => {
-          if (isMenuResponsiveMode) {
-            setIsMenuCollapsed(true);
-          }
-        },
       });
     }
 
@@ -72,11 +62,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Movements,
         label: <NavLink to={AppUrl.Movements}>Movimientos</NavLink>,
-        onClick: () => {
-          if (isMenuResponsiveMode) {
-            setIsMenuCollapsed(true);
-          }
-        },
       });
     }
 
@@ -85,11 +70,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Categories,
         label: <NavLink to={AppUrl.Categories}>Categorías</NavLink>,
-        onClick: () => {
-          if (isMenuResponsiveMode) {
-            setIsMenuCollapsed(true);
-          }
-        },
       });
     }
 
@@ -98,11 +78,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Professors,
         label: <NavLink to={AppUrl.Professors}>Profesores</NavLink>,
-        onClick: () => {
-          if (isMenuResponsiveMode) {
-            setIsMenuCollapsed(true);
-          }
-        },
       });
     }
 
@@ -111,11 +86,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Employees,
         label: <NavLink to={AppUrl.Employees}>Empleados</NavLink>,
-        onClick: () => {
-          if (isMenuResponsiveMode) {
-            setIsMenuCollapsed(true);
-          }
-        },
       });
     }
 
@@ -124,11 +94,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <BulbOutlined className="!text-lg" />,
         key: AppUrl.Services,
         label: <NavLink to={AppUrl.Services}>Servicios</NavLink>,
-        onClick: () => {
-          if (isMenuResponsiveMode) {
-            setIsMenuCollapsed(true);
-          }
-        },
       });
     }
 
@@ -171,7 +136,13 @@ export const Layout: React.FC<Props> = ({ children }) => {
         <Menu
           className="!bg-[#f8f9fd] cs-menu"
           selectedKeys={[menuKey]}
-          onClick={({ key }) => setMenuKey(key)}
+          onClick={({ key }) => {
+            setMenuKey(key);
+
+            if (isMenuResponsiveMode) {
+              setIsMenuCollapsed(true);
+            }
+          }}
           items={getMenuItems()}
         />
 
@@ -200,7 +171,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
               icon={<FilePdfOutlined />}
               htmlType="button"
               type="ghost"
-              href="/reglamento-club-social.pdf"
+              href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
               target="_blank"
             />
             <Button

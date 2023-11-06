@@ -2,7 +2,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 
 export enum DateFormatEnum {
-  DD_MM_YYYY = 'DD/MM/YYYY',
+  DDMMYYYY = 'DD/MM/YYYY',
   Date = 'YYYY-MM-DD',
   DateTime = 'YYYY-MM-DD HH:mm:ss',
   Iso = 'YYYY-MM-DDTHH:mm:ss.SSSZ',

@@ -5,4 +5,6 @@ import { FindPaginatedMember } from '@infra/mongo/repositories/member-repository
 
 export interface IMemberPort
   extends ICrudPort<Member>,
-    IPaginatedPort<FindPaginatedMember> {}
+    IPaginatedPort<FindPaginatedMember> {
+  findAll(): Promise<Member[]>;
+}

@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { RoleEnum } from '@domain/roles/roles.enum';
+import { RoleEnum } from '@domain/roles/role.enum';
 
 export class CreateUserRequestDto {
   @IsString()

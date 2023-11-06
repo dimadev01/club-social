@@ -4,19 +4,25 @@ import {
 } from '@domain/categories/category.enum';
 
 export class GetMovementResponseDto {
-  _id: string;
+  public _id: string;
 
-  date: string;
+  public amount: number;
 
-  amount: number;
+  public amountFormatted: string;
 
-  amountFormatted: string;
+  public category: CategoryEnum;
 
-  category: CategoryEnum;
+  public date: string;
 
-  notes: string | null;
+  public employeeId: string | null;
 
-  type: CategoryTypeEnum;
+  public memberId: string | null;
 
-  memberId: string | null;
+  public notes: string | null;
+
+  public professorId: string | null;
+
+  public serviceId: string | null;
+
+  public type: CategoryTypeEnum;
 }

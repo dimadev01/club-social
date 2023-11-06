@@ -1,10 +1,10 @@
 import React from 'react';
 import { App, Card, Col, DatePicker, Form, Input, Row, Space } from 'antd';
-import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
 import compact from 'lodash/compact';
 import uniq from 'lodash/uniq';
-import { useNavigate } from 'react-router-dom';
+import { Roles } from 'meteor/alanning:roles';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   getMemberCategoryOptions,
   getMemberFileStatusOptions,
@@ -20,15 +20,15 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
-import { RoleEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
-import { FormBackButton } from '@ui/components/Form/FormBackButton';
+import { FormButtons } from '@ui/components/Form/FormButtons';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
 import { FormListInput } from '@ui/components/Form/FormListInput';
-import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 import { Select } from '@ui/components/Select';
 import { useCreateMember } from '@ui/hooks/members/useCreateMember';
+import { useDeleteMember } from '@ui/hooks/members/useDeleteMember';
 import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
 import { useCities } from '@ui/hooks/useCities';
 import { useStates } from '@ui/hooks/useStates';
@@ -76,6 +76,18 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
   const createMember = useCreateMember();
 
   const updateMember = useUpdateMember();
+
+  const deleteMember = useDeleteMember(() => {
+    message.success('Socio eliminado');
+
+    navigate(-1);
+  });
+
+  const user = Meteor.user();
+
+  if (!user) {
+    return <Navigate to={AppUrl.Login} />;
+  }
 
   const handleSubmit = async (values: FormValues) => {
     if (!member) {
@@ -140,6 +152,10 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
     <Card>
       <Form<FormValues>
         layout="vertical"
+        disabled={
+          !Roles.userIsInRole(user, PermissionEnum.Create, ScopeEnum.Members) ||
+          !Roles.userIsInRole(user, PermissionEnum.Update, ScopeEnum.Members)
+        }
         form={form}
         onFinish={(values) => handleSubmit(values)}
         initialValues={{
@@ -209,7 +225,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                 rules={[{ type: 'date' }]}
               >
                 <DatePicker
-                  format={DateFormatEnum.DD_MM_YYYY}
+                  format={DateFormatEnum.DDMMYYYY}
                   className="w-full"
                   disabledDate={(current: Dayjs) => current.isAfter(dayjs())}
                 />
@@ -370,16 +386,17 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
         <div className="mb-4" />
 
-        <ButtonGroup>
-          <FormSaveButton
-            loading={createMember.isLoading || updateMember.isLoading}
-            disabled={createMember.isLoading || updateMember.isLoading}
-          />
-
-          <FormBackButton
-            disabled={createMember.isLoading || updateMember.isLoading}
-          />
-        </ButtonGroup>
+        <FormButtons
+          deleteScope={ScopeEnum.Members}
+          createScope={ScopeEnum.Members}
+          updateScope={ScopeEnum.Members}
+          isLoading={createMember.isLoading || updateMember.isLoading}
+          isDisabled={createMember.isLoading || updateMember.isLoading}
+          showDeleteButton={!!member}
+          onClickDelete={() =>
+            member && deleteMember.mutate({ id: member._id })
+          }
+        />
       </Form>
     </Card>
   );

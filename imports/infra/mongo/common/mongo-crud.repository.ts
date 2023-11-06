@@ -11,6 +11,7 @@ import { FindPaginatedRequest } from '@application/pagination/find-paginated.req
 import { ICrudPort } from '@application/ports/crud.port';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
 import { Entity } from '@domain/common/entity';
+import { MovementsSchema } from '@domain/movements/movements.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
@@ -46,6 +47,12 @@ export abstract class MongoCrudRepository<T extends Entity>
     session: ClientSession
   ): Promise<string> {
     try {
+      MovementsSchema.validate(
+        MovementsSchema.clean(
+          entity as Record<string | number | symbol, unknown>
+        )
+      );
+
       const result = await this._collection
         .rawCollection()
         .insertOne(entity, { session });
@@ -147,6 +154,12 @@ export abstract class MongoCrudRepository<T extends Entity>
     session: ClientSession
   ): Promise<void> {
     try {
+      MovementsSchema.validate(
+        MovementsSchema.clean(
+          entity as Record<string | number | symbol, unknown>
+        )
+      );
+
       await this._collection
         .rawCollection()
         .updateOne(
@@ -176,10 +189,6 @@ export abstract class MongoCrudRepository<T extends Entity>
     return defaultSortOrder;
   }
 
-  protected getPaginatedQuery(page: number, pageSize: number): MongoOptions {
-    return { limit: pageSize, skip: (page - 1) * pageSize, sort: {} };
-  }
-
   protected createPaginatedQueryOptionsNew(
     request: FindPaginatedRequest
   ): MongoOptions {
@@ -204,6 +213,10 @@ export abstract class MongoCrudRepository<T extends Entity>
       { $skip: (request.page - 1) * request.pageSize },
       { $limit: request.pageSize },
     ];
+  }
+
+  protected getPaginatedQuery(page: number, pageSize: number): MongoOptions {
+    return { limit: pageSize, skip: (page - 1) * pageSize, sort: {} };
   }
 
   protected abstract getCollection(): MongoCollection<T>;

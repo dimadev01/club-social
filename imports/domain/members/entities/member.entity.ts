@@ -73,7 +73,7 @@ export class Member extends Entity {
 
   public get dateOfBirthString(): string | null {
     if (this.dateOfBirth) {
-      return DateUtils.formatUtc(this.dateOfBirth, DateFormatEnum.DD_MM_YYYY);
+      return DateUtils.formatUtc(this.dateOfBirth, DateFormatEnum.DDMMYYYY);
     }
 
     return null;
@@ -90,7 +90,7 @@ export class Member extends Entity {
   }
 
   public get name(): string {
-    return `${this.firstName} ${this.lastName}`;
+    return `${this.lastName} ${this.firstName}`;
   }
 
   public static create(props: CreateMember): Result<Member, Error> {
@@ -143,8 +143,16 @@ export class Member extends Entity {
     return ok(null);
   }
 
-  public setDateOfBirth(dateOfBirth: Date | null): Result<null, Error> {
-    this.dateOfBirth = dateOfBirth;
+  public setDateOfBirth(
+    dateOfBirth: Date | null | string
+  ): Result<null, Error> {
+    if (typeof dateOfBirth === 'string') {
+      this.dateOfBirth = new Date(dateOfBirth);
+    } else if (dateOfBirth instanceof Date) {
+      this.dateOfBirth = dateOfBirth;
+    } else {
+      this.dateOfBirth = null;
+    }
 
     return ok(null);
   }

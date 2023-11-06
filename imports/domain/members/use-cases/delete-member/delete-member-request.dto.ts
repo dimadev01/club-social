@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class RemoveMemberRequestDto {
+export class DeleteMemberRequestDto {
   @IsString()
   @IsNotEmpty()
   id: string;

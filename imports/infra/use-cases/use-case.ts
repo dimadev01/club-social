@@ -4,7 +4,7 @@ import { ValidationError } from 'class-validator';
 import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 

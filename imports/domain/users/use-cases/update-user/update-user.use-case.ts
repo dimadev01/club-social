@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/roles.enum';
+import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { EditAdminError } from '@domain/users/errors/edit-admin.error';
 import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
@@ -71,8 +71,8 @@ export class UpdateUserUseCase
 
     await Meteor.users.updateAsync(request.id, {
       $set: {
-        'profile.firstName': request.firstName,
-        'profile.lastName': request.lastName,
+        'profile.firstName': request.firstName.trim(),
+        'profile.lastName': request.lastName.trim(),
       },
     });
 

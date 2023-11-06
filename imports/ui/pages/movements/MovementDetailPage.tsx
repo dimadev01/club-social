@@ -13,7 +13,8 @@ import ButtonGroup from 'antd/es/button/button-group';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
 import find from 'lodash/find';
-import { NavLink, useParams } from 'react-router-dom';
+import { Roles } from 'meteor/alanning:roles';
+import { Navigate, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import {
   CategoryEnum,
@@ -27,18 +28,19 @@ import {
   MemberCategoryEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
-import { FormBackButton } from '@ui/components/Form/FormBackButton';
-import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
+import { FormButtons } from '@ui/components/Form/FormButtons';
 import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
 import { useCategories } from '@ui/hooks/categories/useCategories';
 import { useEmployees } from '@ui/hooks/employees/useEmployees';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useCreateMovement } from '@ui/hooks/movements/useCreateMovement';
+import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 import { useMovement } from '@ui/hooks/movements/useMovement';
 import { useUpdateMovement } from '@ui/hooks/movements/useUpdateMovement';
 import { useProfessors } from '@ui/hooks/professors/useProfessors';
@@ -66,6 +68,8 @@ export const MovementDetailPage = () => {
 
   const { id } = useParams<{ id?: string }>();
 
+  const navigate = useNavigate();
+
   const { message } = App.useApp();
 
   const {
@@ -77,6 +81,12 @@ export const MovementDetailPage = () => {
   const createMovement = useCreateMovement();
 
   const updateMovement = useUpdateMovement();
+
+  const deleteMovement = useDeleteMovement(() => {
+    message.success('Movimiento eliminado');
+
+    navigate(-1);
+  });
 
   const { data: members, isLoading: isLoadingMembers } = useMembers(
     MemberCategories.includes(category)
@@ -95,6 +105,12 @@ export const MovementDetailPage = () => {
   const { data: services, isLoading: isLoadingServices } = useServices(
     category === CategoryEnum.Service
   );
+
+  const user = Meteor.user();
+
+  if (!user) {
+    return <Navigate to={AppUrl.Login} />;
+  }
 
   const handleSubmit = async (values: FormValues) => {
     if (!movement) {
@@ -153,6 +169,10 @@ export const MovementDetailPage = () => {
       : 0;
   };
 
+  const canCreateOrUpdateMovement =
+    Roles.userIsInRole(user, PermissionEnum.Create, ScopeEnum.Movements) ||
+    Roles.userIsInRole(user, PermissionEnum.Update, ScopeEnum.Movements);
+
   const renderDetailsSection = () => {
     if (MemberCategories.includes(category)) {
       /**
@@ -162,7 +182,7 @@ export const MovementDetailPage = () => {
         return (
           <Form.Item label="Socio" name="memberId" rules={[{ required: true }]}>
             <Select
-              disabled={isLoadingMembers}
+              disabled={isLoadingMembers || !canCreateOrUpdateMovement}
               loading={isLoadingMembers}
               options={members?.map((member) => ({
                 label: member.name,
@@ -226,7 +246,7 @@ export const MovementDetailPage = () => {
         >
           <Select
             mode="multiple"
-            disabled={isLoadingMembers}
+            disabled={isLoadingMembers || !canCreateOrUpdateMovement}
             loading={isLoadingMembers}
             options={members?.map((member) => ({
               label: member.name,
@@ -245,7 +265,7 @@ export const MovementDetailPage = () => {
           rules={[{ required: true }]}
         >
           <Select
-            disabled={isLoadingProfessors}
+            disabled={isLoadingProfessors || !canCreateOrUpdateMovement}
             loading={isLoadingProfessors}
             options={professors?.map((professor) => ({
               label: professor.name,
@@ -264,7 +284,7 @@ export const MovementDetailPage = () => {
           rules={[{ required: true }]}
         >
           <Select
-            disabled={isLoadingEmployees}
+            disabled={isLoadingEmployees || !canCreateOrUpdateMovement}
             loading={isLoadingEmployees}
             options={employees?.map((employee) => ({
               label: employee.name,
@@ -283,7 +303,7 @@ export const MovementDetailPage = () => {
           rules={[{ required: true }]}
         >
           <Select
-            disabled={isLoadingServices}
+            disabled={isLoadingServices || !canCreateOrUpdateMovement}
             loading={isLoadingServices}
             options={services?.map((service) => ({
               label: service.name,
@@ -296,6 +316,10 @@ export const MovementDetailPage = () => {
 
     return null;
   };
+
+  /**
+   * Renders component
+   */
 
   return (
     <>
@@ -322,6 +346,7 @@ export const MovementDetailPage = () => {
         <Card>
           <Form<FormValues>
             layout="vertical"
+            disabled={!canCreateOrUpdateMovement}
             form={form}
             onFinish={(values) => handleSubmit(values)}
             initialValues={{
@@ -330,11 +355,14 @@ export const MovementDetailPage = () => {
                 : getPriceForCategory(CategoryEnum.MembershipIncome),
               category: movement?.category ?? CategoryEnum.MembershipIncome,
               date: movement?.date
-                ? dayjs.utc(movement.date, DateFormatEnum.DD_MM_YYYY)
+                ? dayjs.utc(movement.date, DateFormatEnum.DDMMYYYY)
                 : undefined,
+              employeeId: movement?.employeeId,
               memberId: movement?.memberId,
               memberIds: undefined,
               notes: movement?.notes,
+              professorId: movement?.professorId,
+              serviceId: movement?.serviceId,
               type: movement?.type ?? CategoryTypeEnum.Income,
             }}
           >
@@ -344,7 +372,7 @@ export const MovementDetailPage = () => {
               rules={[{ required: true }, { type: 'date' }]}
             >
               <DatePicker
-                format={DateFormatEnum.DD_MM_YYYY}
+                format={DateFormatEnum.DDMMYYYY}
                 className="w-full"
                 disabledDate={(current) => current.isAfter(dayjs())}
               />
@@ -404,16 +432,17 @@ export const MovementDetailPage = () => {
               <Input.TextArea rows={1} />
             </Form.Item>
 
-            <ButtonGroup>
-              <FormSaveButton
-                loading={createMovement.isLoading || updateMovement.isLoading}
-                disabled={createMovement.isLoading || updateMovement.isLoading}
-              />
-
-              <FormBackButton
-                disabled={createMovement.isLoading || updateMovement.isLoading}
-              />
-            </ButtonGroup>
+            <FormButtons
+              deleteScope={ScopeEnum.Members}
+              createScope={ScopeEnum.Members}
+              updateScope={ScopeEnum.Members}
+              isLoading={createMovement.isLoading || updateMovement.isLoading}
+              isDisabled={createMovement.isLoading || updateMovement.isLoading}
+              showDeleteButton={!!movement}
+              onClickDelete={() =>
+                movement && deleteMovement.mutate({ id: movement._id })
+              }
+            />
           </Form>
         </Card>
       </Skeleton>

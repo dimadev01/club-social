@@ -64,16 +64,6 @@ export class Movement extends Entity {
 
   public constructor() {
     super();
-
-    this.amount = 0;
-
-    this.date = new Date();
-
-    this.member = null;
-
-    this.category = CategoryEnum.MembershipIncome;
-
-    this.notes = null;
   }
 
   public get amountFormatted(): string {
@@ -81,7 +71,7 @@ export class Movement extends Entity {
   }
 
   public get dateFormatted(): string {
-    return DateUtils.formatUtc(this.date, DateFormatEnum.DD_MM_YYYY);
+    return DateUtils.formatUtc(this.date, DateFormatEnum.DDMMYYYY);
   }
 
   public static create(props: CreateMovement): Movement {
