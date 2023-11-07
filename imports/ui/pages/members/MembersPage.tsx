@@ -1,5 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
+import ButtonGroup from 'antd/es/button/button-group';
 import dayjs from 'dayjs';
 import CsvDownloader from 'react-csv-downloader';
 import { Navigate, NavLink } from 'react-router-dom';
@@ -34,6 +35,8 @@ export const MembersPage = () => {
     sortOrder: 'ascend',
   });
 
+  const [isExportingToCsv, setIsExportingToCsv] = useState(false);
+
   const gridRequest: PaginatedRequestDto = {
     filters: gridState.filters,
     page: gridState.page,
@@ -67,13 +70,9 @@ export const MembersPage = () => {
         ref={componentRef}
         title="Socios"
         extra={
-          <>
+          <ButtonGroup>
             <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
-            {Roles.userIsInRole(
-              user,
-              PermissionEnum.Create,
-              ScopeEnum.Members
-            ) && <TableNewButton to={AppUrl.MembersNew} />}
+
             <TablePrintButton
               onClick={() => handlePrint()}
               isDisabled={isRefetching}
@@ -120,24 +119,34 @@ export const MembersPage = () => {
               ]}
               filename={`${dayjs().format(DateFormatEnum.DateTime)}`}
               datas={async () => {
+                setIsExportingToCsv(true);
+
                 const response = await Meteor.callAsync(
                   MethodsEnum.MembersGetForCsv,
                   gridRequest
                 );
 
-                setDataForCsv(response.data);
+                setIsExportingToCsv(false);
 
                 return Promise.resolve(response.data);
               }}
             >
               <Button
+                loading={isExportingToCsv}
+                disabled={isExportingToCsv}
                 tooltip={{ title: 'Descargar CSV' }}
                 htmlType="button"
                 type="ghost"
                 icon={<FileExcelOutlined />}
               />
             </CsvDownloader>
-          </>
+
+            {Roles.userIsInRole(
+              user,
+              PermissionEnum.Create,
+              ScopeEnum.Members
+            ) && <TableNewButton to={AppUrl.MembersNew} />}
+          </ButtonGroup>
         }
       >
         <Table<MemberGridDto>
