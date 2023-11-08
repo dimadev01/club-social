@@ -10,6 +10,7 @@ import {
 } from 'antd';
 import { NavLink, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { CurrencyUtils } from '@shared/utils/currency.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
@@ -98,7 +99,10 @@ export const CategoryDetailPage = () => {
             />
           </Form.Item>
 
-          <FormButtons isLoading={updateCategory.isLoading} />
+          <FormButtons
+            scope={ScopeEnum.Categories}
+            isLoading={updateCategory.isLoading}
+          />
         </Form>
       </Card>
     </>

@@ -433,9 +433,7 @@ export const MovementDetailPage = () => {
             </Form.Item>
 
             <FormButtons
-              deleteScope={ScopeEnum.Members}
-              createScope={ScopeEnum.Members}
-              updateScope={ScopeEnum.Members}
+              scope={ScopeEnum.Movements}
               isLoading={createMovement.isLoading || updateMovement.isLoading}
               isDisabled={createMovement.isLoading || updateMovement.isLoading}
               showDeleteButton={!!movement}

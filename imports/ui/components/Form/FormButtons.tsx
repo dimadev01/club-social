@@ -6,13 +6,11 @@ import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
 import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 
 type Props = {
-  createScope?: ScopeEnum;
-  deleteScope?: ScopeEnum;
   isDisabled?: boolean;
   isLoading?: boolean;
   onClickDelete?: () => void;
+  scope: ScopeEnum;
   showDeleteButton?: boolean;
-  updateScope?: ScopeEnum;
 };
 
 export const FormButtons: React.FC<Props> = ({
@@ -20,9 +18,7 @@ export const FormButtons: React.FC<Props> = ({
   showDeleteButton = false,
   isDisabled = false,
   onClickDelete,
-  deleteScope,
-  createScope,
-  updateScope,
+  scope,
 }) => {
   const renderDeleteButton = () => {
     if (!showDeleteButton) {
@@ -35,10 +31,7 @@ export const FormButtons: React.FC<Props> = ({
       return null;
     }
 
-    if (
-      deleteScope &&
-      !Roles.userIsInRole(user, PermissionEnum.Delete, deleteScope)
-    ) {
+    if (!Roles.userIsInRole(user, PermissionEnum.Delete, scope)) {
       return false;
     }
 
@@ -62,15 +55,8 @@ export const FormButtons: React.FC<Props> = ({
     }
 
     if (
-      createScope &&
-      !Roles.userIsInRole(user, PermissionEnum.Create, createScope)
-    ) {
-      return false;
-    }
-
-    if (
-      updateScope &&
-      !Roles.userIsInRole(user, PermissionEnum.Create, updateScope)
+      !Roles.userIsInRole(user, PermissionEnum.Create, scope) &&
+      !Roles.userIsInRole(user, PermissionEnum.Update, scope)
     ) {
       return false;
     }
