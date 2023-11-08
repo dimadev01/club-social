@@ -387,9 +387,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         <div className="mb-4" />
 
         <FormButtons
-          deleteScope={ScopeEnum.Members}
-          createScope={ScopeEnum.Members}
-          updateScope={ScopeEnum.Members}
+          scope={ScopeEnum.Members}
           isLoading={createMember.isLoading || updateMember.isLoading}
           isDisabled={createMember.isLoading || updateMember.isLoading}
           showDeleteButton={!!member}

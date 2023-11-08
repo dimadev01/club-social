@@ -67,16 +67,16 @@ export class CreateMovementUseCase
   private async _createWithMember(
     request: CreateMovementRequestDto
   ): Promise<Result<null, Error>> {
-    if (!request.memberIds || request.memberIds.length === 0) {
-      return err(new InternalServerError('No members selected'));
-    }
-
     const session = MongoUtils.startSession();
 
     try {
-      await Promise.all(
-        request.memberIds.map(async (memberId: string) => {
-          await session.withTransaction(async () => {
+      await session.withTransaction(async () => {
+        if (!request.memberIds || request.memberIds.length === 0) {
+          throw new InternalServerError('No members selected');
+        }
+
+        await Promise.all(
+          request.memberIds.map(async (memberId: string) => {
             const movement = Movement.create({
               amount: request.amount,
               category: request.category,
@@ -110,9 +110,9 @@ export class CreateMovementUseCase
                 to: memberEmail,
               });
             }
-          });
-        })
-      );
+          })
+        );
+      });
 
       return ok(null);
     } catch (error) {
