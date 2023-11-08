@@ -157,11 +157,11 @@ export const MembersPage = () => {
           loading={isLoading}
           dataSource={data?.data}
           rowClassName={(member) => {
-            if (member.membershipDebt < 0) {
+            if (member.totalDebt < 0) {
               return 'bg-red-50';
             }
 
-            if (member.membershipDebt > 0) {
+            if (member.totalDebt > 0) {
               return 'bg-green-50';
             }
 
