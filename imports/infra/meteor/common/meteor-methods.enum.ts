@@ -13,9 +13,10 @@ export enum MethodsEnum {
   MembersGetAll = 'members/getAll',
   MembersGetForCsv = 'members/getForCsv',
   MembersGetGrid = 'members/getGrid',
+  MembersGetMovementsGrid = 'movements/getMovementsGrid',
   MembersUpdate = 'members/update',
-  MovementsCreate = 'movements/create',
 
+  MovementsCreate = 'movements/create',
   MovementsDelete = 'movements/delete',
   MovementsGet = 'movements/get',
   MovementsGetGrid = 'movements/getGrid',
