@@ -128,7 +128,7 @@ export class Member extends Entity {
   }
 
   public getEmail(): string | null {
-    return this.user.emails?.[0].address ?? null;
+    return this.user.emails?.[0]?.address ?? null;
   }
 
   public setAddress(address: MemberAddress): Result<null, Error> {
