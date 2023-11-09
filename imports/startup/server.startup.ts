@@ -1,20 +1,20 @@
 import 'reflect-metadata';
 import '@infra/di/di-registration';
 import '@infra/meteor/common/meteor-publications';
-import '@domain/users/users.collection';
+import '@domain/users/user.collection';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, inject, singleton } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
-import { MovementMethod } from '@domain/movements/movements.methods';
-import { ProfessorMethod } from '@domain/professors/professors.methods';
-import { ServiceMethod } from '@domain/services/services.methods';
-import { UserMethod } from '@domain/users/users.methods';
+import { MovementMethod } from '@domain/movements/movement.methods';
+import { ProfessorMethod } from '@domain/professors/professor.methods';
+import { ServiceMethod } from '@domain/services/service.methods';
+import { UserMethod } from '@domain/users/user.methods';
 import { DIToken } from '@infra/di/di-tokens';
 import { CategoryMethod } from '@infra/meteor/category.methods';
 import { EmployeeMethod } from '@infra/meteor/employee.methods';
 import { MemberMethod } from '@infra/meteor/member.methods';
-import { MigrationService } from '@infra/migrations/migrations.service';
+import { MigrationService } from '@infra/migrations/migration.service';
 import { DateUtils } from '@shared/utils/date.utils';
 import { AppConstants } from '@ui/app.enum';
 

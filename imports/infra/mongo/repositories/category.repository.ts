@@ -6,8 +6,8 @@ import { ICategoryPort } from '@domain/categories/category.port';
 import { Category } from '@domain/categories/entities/category.entity';
 import { DIToken } from '@infra/di/di-tokens';
 import {
-  CategoriesCollection,
   CategoriesSchema,
+  CategoryCollection,
 } from '@infra/mongo/collections/category.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
@@ -46,7 +46,7 @@ export class CategoryRepository
   }
 
   protected getCollection(): MongoCollection<Category> {
-    return CategoriesCollection;
+    return CategoryCollection;
   }
 
   protected getLogger(): ILogger {

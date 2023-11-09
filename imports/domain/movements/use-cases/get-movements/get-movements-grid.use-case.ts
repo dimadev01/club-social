@@ -11,8 +11,8 @@ import {
   MemberCategories,
 } from '@domain/categories/category.enum';
 import { Movement } from '@domain/movements/entities/movement.entity';
+import { MovementCollection } from '@domain/movements/movement.collection';
 import { IMovementPort } from '@domain/movements/movement.port';
-import { MovementsCollection } from '@domain/movements/movements.collection';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
@@ -65,7 +65,7 @@ export class GetMovementsUseCase
 
     // @ts-expect-error
     const [{ data, total, totalsByType, debtIncome }] =
-      await MovementsCollection.rawCollection()
+      await MovementCollection.rawCollection()
         .aggregate<Movement>([
           {
             $match,

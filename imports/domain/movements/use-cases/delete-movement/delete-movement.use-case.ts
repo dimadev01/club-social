@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { MovementNotFoundError } from '@domain/movements/errors/movement-not-found.error';
-import { MovementsCollection } from '@domain/movements/movements.collection';
+import { MovementCollection } from '@domain/movements/movement.collection';
 import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
@@ -28,7 +28,7 @@ export class DeleteMovementUseCase
 
     await this.validateDto(DeleteMovementRequestDto, request);
 
-    const movement = await MovementsCollection.findOneAsync(request.id);
+    const movement = await MovementCollection.findOneAsync(request.id);
 
     if (!movement) {
       return err(new MovementNotFoundError());
@@ -36,7 +36,7 @@ export class DeleteMovementUseCase
 
     movement.isDeleted = true;
 
-    await MovementsCollection.updateEntity(movement);
+    await MovementCollection.updateEntity(movement);
 
     this._logger.info('Movement deleted', { movement: movement._id });
 

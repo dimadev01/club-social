@@ -4,7 +4,7 @@ import { EntityNotFoundError } from '@application/errors/entity-not-found.error'
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Movement } from '@domain/movements/entities/movement.entity';
-import { MovementsCollection } from '@domain/movements/movements.collection';
+import { MovementCollection } from '@domain/movements/movement.collection';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
@@ -29,7 +29,7 @@ export class UpdateMovementUseCase
 
     await this.validateDto(UpdateMovementRequestDto, request);
 
-    const movement = await MovementsCollection.findOneAsync(request.id);
+    const movement = await MovementCollection.findOneAsync(request.id);
 
     if (!movement) {
       return err(new EntityNotFoundError(Movement));
@@ -47,7 +47,7 @@ export class UpdateMovementUseCase
 
     movement.professorId = request.professorId;
 
-    await MovementsCollection.updateEntity(movement);
+    await MovementCollection.updateEntity(movement);
 
     this._logger.info('Movement updated', { movementId: request.id });
 
