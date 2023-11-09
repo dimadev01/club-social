@@ -1,7 +1,7 @@
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { MovementsCollection } from '@domain/movements/movements.collection';
+import { MovementCollection } from '@domain/movements/movement.collection';
 import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/get-movement-request.dto';
 import { GetMovementResponseDto } from '@domain/movements/use-cases/get-movement/get-movement-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -16,7 +16,7 @@ export class GetMovementUseCase
   ): Promise<Result<GetMovementResponseDto | null, Error>> {
     await this.validateDto(GetMovementRequestDto, request);
 
-    const movement = await MovementsCollection.findOneAsync(request.id);
+    const movement = await MovementCollection.findOneAsync(request.id);
 
     if (!movement) {
       return ok(null);

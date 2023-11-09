@@ -3,9 +3,9 @@ import SimpleSchema from 'simpl-schema';
 import { Member } from '@domain/members/entities/member.entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
-export const MembersCollection = new MongoCollection('members', Member);
+export const MemberCollection = new MongoCollection('members', Member);
 
-export const MembersSchema = new SimpleSchema({
+export const MemberSchema = new SimpleSchema({
   _id: String,
   address: Object,
   'address.cityGovId': { defaultValue: null, optional: true, type: String },
@@ -35,4 +35,4 @@ export const MembersSchema = new SimpleSchema({
 });
 
 // @ts-expect-error
-MembersCollection.attachSchema(MembersSchema);
+MemberCollection.attachSchema(MemberSchema);

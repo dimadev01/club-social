@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { MembersCollection } from '@infra/mongo/collections/member.collection';
+import { MemberCollection } from '@infra/mongo/collections/member.collection';
 
 Meteor.publish(null, function meteor(): Mongo.Cursor<unknown> | void {
   if (this.userId) {
@@ -26,7 +26,7 @@ Meteor.publish(
 
 Meteor.publish('member', function member(): Mongo.Cursor<Meteor.User> | void {
   if (this.userId) {
-    return MembersCollection.find({ userId: this.userId });
+    return MemberCollection.find({ userId: this.userId });
   }
 
   return this.ready();

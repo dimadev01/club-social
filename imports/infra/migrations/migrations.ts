@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import { MongoInternals } from 'meteor/mongo';
-import { MovementsCollection } from '@domain/movements/movements.collection';
+import { MovementCollection } from '@domain/movements/movement.collection';
 import { RoleService } from '@domain/roles/role.service';
-import { CategoriesCollection } from '@infra/mongo/collections/category.collection';
-import { MembersCollection } from '@infra/mongo/collections/member.collection';
+import { CategoryCollection } from '@infra/mongo/collections/category.collection';
+import { MemberCollection } from '@infra/mongo/collections/member.collection';
 
 // interface MemberRow {
 //   address?: string;
@@ -793,28 +793,28 @@ import { MembersCollection } from '@infra/mongo/collections/member.collection';
 //   version: 7,
 // });
 
-// // @ts-expect-error
-// Migrations.add({
-//   down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-//     next();
-//   }),
-//   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-//     await CategoryCollection.updateAsync(
-//       {},
-//       {
-//         $set: {
-//           deletedAt: null,
-//           deletedBy: null,
-//           isDeleted: false,
-//         },
-//       },
-//       { multi: true }
-//     );
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await CategoryCollection.updateAsync(
+      {},
+      {
+        $set: {
+          deletedAt: null,
+          deletedBy: null,
+          isDeleted: false,
+        },
+      },
+      { multi: true }
+    );
 
-//     next();
-//   }),
-//   version: 8,
-// });
+    next();
+  }),
+  version: 8,
+});
 
 // @ts-expect-error
 Migrations.add({
@@ -822,7 +822,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await CategoriesCollection.dropIndexAsync('code_1');
+    await CategoryCollection.dropIndexAsync('code_1');
 
     next();
   }),
@@ -843,13 +843,13 @@ Migrations.add({
       .mongo.db.collection('members')
       .dropIndexes();
 
-    await CategoriesCollection.createIndexAsync({ name: 1 });
+    await CategoryCollection.createIndexAsync({ name: 1 });
 
-    MembersCollection.createIndexAsync({ userId: 1 });
+    MemberCollection.createIndexAsync({ userId: 1 });
 
-    MembersCollection.createIndexAsync({ createdAt: -1 });
+    MemberCollection.createIndexAsync({ createdAt: -1 });
 
-    await MembersCollection.updateAsync(
+    await MemberCollection.updateAsync(
       {},
       {
         $set: {
@@ -860,7 +860,7 @@ Migrations.add({
       { multi: true }
     );
 
-    await MovementsCollection.updateAsync(
+    await MovementCollection.updateAsync(
       {},
       {
         $set: {

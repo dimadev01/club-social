@@ -3,9 +3,9 @@ import SimpleSchema from 'simpl-schema';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
-export const MovementsCollection = new MongoCollection('movements', Movement);
+export const MovementCollection = new MongoCollection('movements', Movement);
 
-export const MovementsSchema = new SimpleSchema({
+export const MovementSchema = new SimpleSchema({
   _id: String,
   amount: SimpleSchema.Integer,
   category: String,
@@ -26,13 +26,13 @@ export const MovementsSchema = new SimpleSchema({
 });
 
 // @ts-expect-error
-MovementsCollection.attachSchema(MovementsSchema);
+MovementCollection.attachSchema(MovementSchema);
 
-await MovementsCollection.createIndexAsync({ category: 1 });
+await MovementCollection.createIndexAsync({ category: 1 });
 
-await MovementsCollection.createIndexAsync({ date: -1 });
+await MovementCollection.createIndexAsync({ date: -1 });
 
-await MovementsCollection.createIndexAsync({
+await MovementCollection.createIndexAsync({
   isDeleted: 1,
   memberId: 1,
   category: 1,
@@ -41,10 +41,10 @@ await MovementsCollection.createIndexAsync({
   date: -1,
 });
 
-await MovementsCollection.createIndexAsync({ type: 1 });
+await MovementCollection.createIndexAsync({ type: 1 });
 
-await MovementsCollection.createIndexAsync({ memberId: 1 });
+await MovementCollection.createIndexAsync({ memberId: 1 });
 
-await MovementsCollection.createIndexAsync({ employeeId: 1 });
+await MovementCollection.createIndexAsync({ employeeId: 1 });
 
-await MovementsCollection.createIndexAsync({ professorId: 1 });
+await MovementCollection.createIndexAsync({ professorId: 1 });

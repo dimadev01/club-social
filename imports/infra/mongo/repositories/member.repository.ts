@@ -15,8 +15,8 @@ import {
 import { IMemberPort } from '@domain/members/member.port';
 import { DIToken } from '@infra/di/di-tokens';
 import {
-  MembersCollection,
-  MembersSchema,
+  MemberCollection,
+  MemberSchema,
 } from '@infra/mongo/collections/member.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
@@ -217,11 +217,11 @@ export class MemberRepository
   }
 
   protected getCollection(): MongoCollection<Member> {
-    return MembersCollection;
+    return MemberCollection;
   }
 
   protected getSchema(): SimpleSchema {
-    return MembersSchema;
+    return MemberSchema;
   }
 
   private _getCategoryBalance(

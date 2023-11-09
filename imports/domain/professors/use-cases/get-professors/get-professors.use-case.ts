@@ -2,8 +2,8 @@ import { plainToInstance } from 'class-transformer';
 import { ok, Result } from 'neverthrow';
 import { injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
+import { ProfessorsCollection } from '@domain/professors/professor.collection';
 import { Professor } from '@domain/professors/professor.entity';
-import { ProfessorsCollection } from '@domain/professors/professors.collection';
 import { GetProfessorsResponseDto } from '@domain/professors/use-cases/get-professors/get-professors-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
 
