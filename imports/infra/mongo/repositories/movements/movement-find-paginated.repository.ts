@@ -98,27 +98,31 @@ export class MovementFindPaginatedRepository
         ])
         .toArray();
 
-    let totalDebt = 0;
+    let debt = 0;
 
     let balance = 0;
 
     if (request.memberId) {
-      totalDebt = allDebt;
+      debt = allDebt;
 
-      balance = allIncome - totalDebt;
+      balance = allIncome - debt;
+    } else if (allExpenses === 0) {
+      debt = allDebt;
+
+      balance = allIncome - debt;
     } else {
       balance = allIncome - allExpenses;
 
-      totalDebt = allDebt - allDebtIncome;
+      debt = allDebt - allDebtIncome;
     }
 
     return {
-      allDebt,
-      allExpenses,
-      allIncome,
       balance,
       count,
       data,
+      debt,
+      expenses: allExpenses,
+      income: allIncome,
     };
   }
 

@@ -15,10 +15,10 @@ export type FindPaginatedMovement = Movement;
 
 export type FindPaginatedMovementsResponse =
   FindPaginatedResponse<FindPaginatedMovement> & {
-    allDebt: number;
-    allExpenses: number;
-    allIncome: number;
     balance: number;
+    debt: number;
+    expenses: number;
+    income: number;
   };
 
 export type FindPaginatedMovementsAggregationResult =
