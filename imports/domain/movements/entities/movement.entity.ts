@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsDate, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import { err, ok, Result } from 'neverthrow';
 import {
   CategoryEnum,
   CategoryTypeEnum,
@@ -74,27 +75,85 @@ export class Movement extends Entity {
     return DateUtils.formatUtc(this.date, DateFormatEnum.DDMMYYYY);
   }
 
-  public static create(props: CreateMovement): Movement {
+  public static create(props: CreateMovement): Result<Movement, Error> {
     const movement = new Movement();
 
-    movement.category = props.category;
+    const updateResult: Result<null, Error> = Result.combine([
+      movement.setCategory(props.category),
+      movement.setAmount(props.amount),
+      movement.setDate(new Date(props.date)),
+      movement.setEmployeeId(props.employeeId),
+      movement.setMemberId(props.memberId),
+      movement.setNotes(props.notes),
+      movement.setProfessorId(props.professorId),
+      movement.setServiceId(props.serviceId),
+      movement.setType(props.type),
+    ]);
 
-    movement.amount = props.amount;
+    if (updateResult.isErr()) {
+      return err(updateResult.error);
+    }
 
-    movement.date = new Date(props.date);
+    return ok(movement);
+  }
 
-    movement.memberId = props.memberId;
+  public restore(): Result<null, Error> {
+    this.isDeleted = false;
 
-    movement.serviceId = props.serviceId;
+    return ok(null);
+  }
 
-    movement.employeeId = props.employeeId;
+  public setAmount(amount: number): Result<null, Error> {
+    this.amount = amount;
 
-    movement.professorId = props.professorId;
+    return ok(null);
+  }
 
-    movement.notes = props.notes;
+  public setCategory(category: CategoryEnum): Result<null, Error> {
+    this.category = category;
 
-    movement.type = props.type;
+    return ok(null);
+  }
 
-    return movement;
+  public setDate(date: Date): Result<null, Error> {
+    this.date = date;
+
+    return ok(null);
+  }
+
+  public setEmployeeId(employeeId: string | null): Result<null, Error> {
+    this.employeeId = employeeId;
+
+    return ok(null);
+  }
+
+  public setMemberId(memberId: string | null): Result<null, Error> {
+    this.memberId = memberId;
+
+    return ok(null);
+  }
+
+  public setNotes(notes: string | null): Result<null, Error> {
+    this.notes = notes;
+
+    return ok(null);
+  }
+
+  public setProfessorId(professorId: string | null): Result<null, Error> {
+    this.professorId = professorId;
+
+    return ok(null);
+  }
+
+  public setServiceId(serviceId: string | null): Result<null, Error> {
+    this.serviceId = serviceId;
+
+    return ok(null);
+  }
+
+  public setType(type: CategoryTypeEnum): Result<null, Error> {
+    this.type = type;
+
+    return ok(null);
   }
 }

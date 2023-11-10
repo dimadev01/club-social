@@ -20,7 +20,6 @@ import {
   CategoryEnum,
   CategoryLabel,
   CategoryTypeEnum,
-  getCategoryOptions,
   getCategoryTypeOptions,
   MemberCategories,
 } from '@domain/categories/category.enum';
@@ -36,7 +35,7 @@ import { Button } from '@ui/components/Button';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
-import { useCategories } from '@ui/hooks/categories/useCategories';
+import { useCategoriesByType } from '@ui/hooks/categories/useCategoriesByType';
 import { useEmployees } from '@ui/hooks/employees/useEmployees';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useCreateMovement } from '@ui/hooks/movements/useCreateMovement';
@@ -92,7 +91,8 @@ export const MovementDetailPage = () => {
     MemberCategories.includes(category)
   );
 
-  const { data: categories, isLoading: isLoadingCategories } = useCategories();
+  const { data: categoriesByType, isLoading: isLoadingCategoriesByType } =
+    useCategoriesByType(type);
 
   const { data: professors, isLoading: isLoadingProfessors } = useProfessors(
     category === CategoryEnum.Professor
@@ -155,14 +155,14 @@ export const MovementDetailPage = () => {
     }
   };
 
-  const isLoading = movementFetchStatus === 'fetching' || isLoadingCategories;
+  const isLoading = movementFetchStatus === 'fetching';
 
   if (id && !movement && !isLoading) {
     return <NotFound />;
   }
 
   const getPriceForCategory = (value: CategoryEnum): number => {
-    const foundCategory = find(categories, { code: value });
+    const foundCategory = find(categoriesByType, { code: value });
 
     return foundCategory?.amount
       ? CurrencyUtils.fromCents(foundCategory.amount)
@@ -320,7 +320,6 @@ export const MovementDetailPage = () => {
   /**
    * Renders component
    */
-
   return (
     <>
       <Breadcrumb
@@ -397,12 +396,18 @@ export const MovementDetailPage = () => {
                 rules={[{ required: true }]}
               >
                 <Select
-                  disabled={isLoadingCategories || !!movement}
-                  loading={isLoadingCategories}
+                  disabled={isLoadingCategoriesByType || !!movement}
+                  loading={isLoadingCategoriesByType}
                   onChange={(value) =>
                     form.setFieldValue('amount', getPriceForCategory(value))
                   }
-                  options={getCategoryOptions(type)}
+                  // options={getCategoryOptions(type)}
+                  options={
+                    categoriesByType?.map((categoryByType) => ({
+                      label: categoryByType.name,
+                      value: categoryByType.code,
+                    })) ?? []
+                  }
                 />
               </Form.Item>
             )}

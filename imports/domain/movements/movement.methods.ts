@@ -37,19 +37,19 @@ export class MovementMethod extends MeteorMethod {
         ),
 
       [MethodsEnum.MovementsGet]: (request: GetMovementRequestDto) =>
-        this.execute(this._getMovement, request),
+        this.execute(this._getMovement, request, GetMovementRequestDto),
 
       [MethodsEnum.MovementsCreate]: (request: CreateMovementRequestDto) =>
-        this.execute(this._createMovement, request),
+        this.execute(this._createMovement, request, CreateMovementRequestDto),
 
       [MethodsEnum.MovementsUpdate]: (request: UpdateMovementRequestDto) =>
-        this.execute(this._updateMovement, request),
+        this.execute(this._updateMovement, request, UpdateMovementRequestDto),
 
       [MethodsEnum.MovementsDelete]: (request: DeleteMovementRequestDto) =>
-        this.execute(this._deleteMovement, request),
+        this.execute(this._deleteMovement, request, DeleteMovementRequestDto),
 
       [MethodsEnum.MovementsRestore]: (request: RestoreMovementRequestDto) =>
-        this.execute(this._restoreMovement, request),
+        this.execute(this._restoreMovement, request, RestoreMovementRequestDto),
     });
   }
 }

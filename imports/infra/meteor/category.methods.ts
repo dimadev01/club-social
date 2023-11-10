@@ -1,4 +1,6 @@
 import { injectable } from 'tsyringe';
+import { GetCategoriesByTypeRequestDto } from '@domain/categories/use-cases/get-categories-by-type/get-categories-by-type-request.dto';
+import { GetCategoriesByTypeUseCase } from '@domain/categories/use-cases/get-categories-by-type/get-categories-by-type.use-case';
 import { GetCategoriesGridRequestDto } from '@domain/categories/use-cases/get-categories-grid/get-categories-grid-request.dto';
 import { GetCategoriesGridUseCase } from '@domain/categories/use-cases/get-categories-grid/get-categories-grid.use-case';
 import { GetCategoriesUseCase } from '@domain/categories/use-cases/get-categories/get-categories.use-case';
@@ -14,6 +16,7 @@ export class CategoryMethod extends MeteorMethod {
   public constructor(
     private readonly _getCategory: GetCategoryUseCase,
     private readonly _getCategories: GetCategoriesUseCase,
+    private readonly _getCategoriesByType: GetCategoriesByTypeUseCase,
     private readonly _getCategoriesGrid: GetCategoriesGridUseCase,
     private readonly _updatePrice: UpdateCategoryUseCase
   ) {
@@ -36,6 +39,15 @@ export class CategoryMethod extends MeteorMethod {
 
       [MethodsEnum.CategoriesUpdate]: (request: UpdateCategoryRequestDto) =>
         this.execute(this._updatePrice, request, UpdateCategoryRequestDto),
+
+      [MethodsEnum.CategoriesGetAllByType]: (
+        request: GetCategoriesByTypeRequestDto
+      ) =>
+        this.execute(
+          this._getCategoriesByType,
+          request,
+          GetCategoriesByTypeRequestDto
+        ),
     });
   }
 }

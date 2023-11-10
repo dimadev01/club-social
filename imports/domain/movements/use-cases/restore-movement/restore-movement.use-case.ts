@@ -2,8 +2,7 @@ import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { MovementNotFoundError } from '@domain/movements/errors/movement-not-found.error';
-import { MovementCollection } from '@domain/movements/movement.collection';
+import { IMovementPort } from '@domain/movements/movement.port';
 import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-movement/restore-movement-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
@@ -16,7 +15,9 @@ export class RestoreMovementUseCase
 {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
+    @inject(DIToken.MovementRepository)
+    private readonly _movementPort: IMovementPort
   ) {
     super();
   }
@@ -26,17 +27,15 @@ export class RestoreMovementUseCase
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Update);
 
-    await this.validateDto(RestoreMovementRequestDto, request);
+    const movement = await this._movementPort.findOneByIdOrThrow(request.id);
 
-    const movement = await MovementCollection.findOneAsync(request.id);
+    const restoreResult = movement.restore();
 
-    if (!movement) {
-      return err(new MovementNotFoundError());
+    if (restoreResult.isErr()) {
+      return err(restoreResult.error);
     }
 
-    movement.isDeleted = false;
-
-    await MovementCollection.updateEntity(movement);
+    await this._movementPort.update(movement);
 
     this._logger.info('Movement restored', { movement: movement._id });
 

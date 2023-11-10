@@ -1,9 +1,8 @@
-import { err, ok, Result } from 'neverthrow';
+import { ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { MovementNotFoundError } from '@domain/movements/errors/movement-not-found.error';
-import { MovementCollection } from '@domain/movements/movement.collection';
+import { IMovementPort } from '@domain/movements/movement.port';
 import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
@@ -16,7 +15,9 @@ export class DeleteMovementUseCase
 {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
+    @inject(DIToken.MovementRepository)
+    private readonly _movementPort: IMovementPort
   ) {
     super();
   }
@@ -26,17 +27,9 @@ export class DeleteMovementUseCase
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Delete);
 
-    await this.validateDto(DeleteMovementRequestDto, request);
+    const movement = await this._movementPort.findOneByIdOrThrow(request.id);
 
-    const movement = await MovementCollection.findOneAsync(request.id);
-
-    if (!movement) {
-      return err(new MovementNotFoundError());
-    }
-
-    movement.isDeleted = true;
-
-    await MovementCollection.updateEntity(movement);
+    await this._movementPort.delete(movement);
 
     this._logger.info('Movement deleted', { movement: movement._id });
 

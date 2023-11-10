@@ -37,8 +37,7 @@ export class MemberMethod extends MeteorMethod {
       [MethodsEnum.MembersGetGrid]: (request: PaginatedRequestDto) =>
         this.execute(this._getMembersGrid, request, PaginatedRequestDto),
 
-      [MethodsEnum.MembersGetAll]: () =>
-        this.execute(this._getMembers, PaginatedRequestDto),
+      [MethodsEnum.MembersGetAll]: () => this.execute(this._getMembers),
 
       [MethodsEnum.MembersGet]: (request: GetMemberRequestDto) =>
         this.execute(this._getMember, request, GetMemberRequestDto),
