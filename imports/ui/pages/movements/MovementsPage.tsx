@@ -9,13 +9,18 @@ import {
   Table as AntTable,
   Tag,
 } from 'antd';
+import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
 import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Navigate, NavLink, useLocation } from 'react-router-dom';
-import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  FilterOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
 import {
   CategoryEnum,
   CategoryLabel,
@@ -50,8 +55,8 @@ export const MovementsPage = () => {
     sortOrder: 'descend',
   });
 
-  const [memberIdSearchValue, setMemberIdSearchValue] = useState<string>(
-    (parsedQs.memberId as string) ?? undefined
+  const [memberIdSearchValue, setMemberIdSearchValue] = useState<string | null>(
+    (parsedQs.memberId as string) ?? null
   );
 
   const [showDeleted, setShowDeleted] = useState<boolean>(false);
@@ -75,7 +80,7 @@ export const MovementsPage = () => {
     pageSize: gridState.pageSize,
     search: gridState.search,
     showDeleted,
-    sortField: gridState.sortField,
+    sortField: gridState.sortField as 'createdAt',
     sortOrder: gridState.sortOrder,
     to: dateRangeValue
       ? dateRangeValue[1]?.format(DateFormatEnum.Date) ?? null
@@ -190,7 +195,7 @@ export const MovementsPage = () => {
                 <Select
                   value={memberIdSearchValue}
                   onChange={(value) => {
-                    setMemberIdSearchValue(value ?? undefined);
+                    setMemberIdSearchValue(value ?? null);
 
                     setGridState((prevState) => ({ ...prevState, page: 1 }));
                   }}
@@ -287,7 +292,7 @@ export const MovementsPage = () => {
               {
                 align: 'center',
                 render: (_, movement: MovementGridDto) => (
-                  <>
+                  <ButtonGroup size="small">
                     {!movement.isDeleted &&
                       Roles.userIsInRole(
                         userId,
@@ -341,7 +346,19 @@ export const MovementsPage = () => {
                           }
                         />
                       )}
-                  </>
+
+                    {!memberIdSearchValue && movement.memberId && (
+                      <Button
+                        type="ghost"
+                        onClick={() =>
+                          setMemberIdSearchValue(movement.memberId)
+                        }
+                        htmlType="button"
+                        tooltip={{ title: 'Filtrar por este socio' }}
+                        icon={<FilterOutlined />}
+                      />
+                    )}
+                  </ButtonGroup>
                 ),
                 title: 'Acciones',
                 width: 100,
