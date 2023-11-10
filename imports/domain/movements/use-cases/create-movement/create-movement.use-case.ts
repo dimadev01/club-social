@@ -57,9 +57,13 @@ export class CreateMovementUseCase
       type: request.type,
     });
 
-    await this._movementPort.create(movement);
+    if (movement.isErr()) {
+      return err(movement.error);
+    }
 
-    this._logger.info('Movement created', { movement });
+    await this._movementPort.create(movement.value);
+
+    this._logger.info('Movement created', { movement: movement.value });
 
     return ok(null);
   }
@@ -89,7 +93,11 @@ export class CreateMovementUseCase
               type: request.type,
             });
 
-            await this._movementPort.createWithSession(movement, session);
+            if (movement.isErr()) {
+              throw movement.error;
+            }
+
+            await this._movementPort.createWithSession(movement.value, session);
 
             const member = await this._memberPort.findOneByIdOrThrow(memberId);
 
@@ -100,12 +108,12 @@ export class CreateMovementUseCase
                 message: `Hola ${
                   member.name
                 }, te queremos informar desde el Club Social Monte Grande que se ha registrado un nuevo movimiento por ${
-                  movement.amountFormatted
+                  movement.value.amountFormatted
                 } en tu cuenta en concepto de ${
-                  CategoryLabel[movement.category]
-                } con fecha de ${movement.dateFormatted}. Administración`,
+                  CategoryLabel[movement.value.category]
+                } con fecha de ${movement.value.dateFormatted}. Administración`,
                 subject: `Nuevo movimiento en tu cuenta [${
-                  CategoryLabel[movement.category]
+                  CategoryLabel[movement.value.category]
                 }]`,
                 to: memberEmail,
               });

@@ -23,10 +23,6 @@ export class MovementRepository
     super(_logger);
   }
 
-  public async findAll(): Promise<Movement[]> {
-    return this.getCollection().find().fetchAsync();
-  }
-
   protected getCollection(): MongoCollection<Movement> {
     return MovementCollection;
   }

@@ -2,6 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
+import { CategoryTypeEnum } from '@domain/categories/category.enum';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { Category } from '@domain/categories/entities/category.entity';
 import { DIToken } from '@infra/di/di-tokens';
@@ -26,8 +27,16 @@ export class CategoryRepository
     super(_logger);
   }
 
+  findByAllByType(type: CategoryTypeEnum): Promise<Category[]> {
+    return this.getCollection()
+      .find({ type }, { sort: { name: 1 } })
+      .fetchAsync();
+  }
+
   public async findAll(): Promise<Category[]> {
-    return this.getCollection().find().fetchAsync();
+    return this.getCollection()
+      .find({}, { sort: { name: 1 } })
+      .fetchAsync();
   }
 
   public async findPaginated(

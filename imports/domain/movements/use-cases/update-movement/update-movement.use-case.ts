@@ -1,10 +1,8 @@
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
-import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { Movement } from '@domain/movements/entities/movement.entity';
-import { MovementCollection } from '@domain/movements/movement.collection';
+import { IMovementPort } from '@domain/movements/movement.port';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
@@ -17,7 +15,9 @@ export class UpdateMovementUseCase
 {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
+    @inject(DIToken.MovementRepository)
+    private readonly _movementPort: IMovementPort
   ) {
     super();
   }
@@ -25,29 +25,25 @@ export class UpdateMovementUseCase
   public async execute(
     request: UpdateMovementRequestDto
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Create);
+    await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Update);
 
-    await this.validateDto(UpdateMovementRequestDto, request);
+    const movement = await this._movementPort.findOneByIdOrThrow(request.id);
 
-    const movement = await MovementCollection.findOneAsync(request.id);
+    const updateMovementResult: Result<null[], Error> = Result.combine([
+      movement.setDate(new Date(request.date)),
+      movement.setAmount(request.amount),
+      movement.setNotes(request.notes),
+      movement.setMemberId(request.memberId),
+      movement.setEmployeeId(request.employeeId),
+      movement.setProfessorId(request.professorId),
+      movement.setServiceId(request.serviceId),
+    ]);
 
-    if (!movement) {
-      return err(new EntityNotFoundError(Movement));
+    if (updateMovementResult.isErr()) {
+      return err(updateMovementResult.error);
     }
 
-    movement.date = new Date(request.date);
-
-    movement.amount = request.amount;
-
-    movement.notes = request.notes;
-
-    movement.memberId = request.memberId;
-
-    movement.employeeId = request.employeeId;
-
-    movement.professorId = request.professorId;
-
-    await MovementCollection.updateEntity(movement);
+    await this._movementPort.update(movement);
 
     this._logger.info('Movement updated', { movementId: request.id });
 

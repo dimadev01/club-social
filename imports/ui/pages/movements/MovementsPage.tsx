@@ -25,7 +25,6 @@ import {
   CategoryEnum,
   CategoryLabel,
   CategoryTypeEnum,
-  getCategoryFilters,
   MemberCategories,
 } from '@domain/categories/category.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
@@ -39,6 +38,7 @@ import { Select } from '@ui/components/Select';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
+import { useCategories } from '@ui/hooks/categories/useCategories';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 import { useMovementsGrid } from '@ui/hooks/movements/useMovementsGrid';
@@ -90,6 +90,8 @@ export const MovementsPage = () => {
   const deleteMovement = useDeleteMovement(refetch);
 
   const restoreMovement = useRestoreMovement(refetch);
+
+  const { data: categories } = useCategories();
 
   const user = Meteor.user();
 
@@ -254,7 +256,11 @@ export const MovementsPage = () => {
                 align: 'center',
                 dataIndex: 'category',
                 filteredValue: gridState.filters?.category ?? [],
-                filters: getCategoryFilters(),
+                filters:
+                  categories?.map((category) => ({
+                    text: category.name,
+                    value: category.code,
+                  })) ?? [],
                 render: (category: CategoryEnum) => CategoryLabel[category],
                 title: 'Categoría',
               },

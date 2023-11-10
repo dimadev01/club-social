@@ -890,3 +890,29 @@ Migrations.add({
   }),
   version: 11,
 });
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await MongoInternals.defaultRemoteCollectionDriver()
+      .mongo.db.collection('members')
+      .dropIndexes();
+
+    await MongoInternals.defaultRemoteCollectionDriver()
+      .mongo.db.collection('movements')
+      .dropIndexes();
+
+    // eslint-disable-next-line sort-keys-fix/sort-keys-fix
+    await CategoryCollection.createIndexAsync({ type: 1, name: 1 });
+
+    await MovementCollection.createIndexAsync({ date: -1, memberId: 1 });
+
+    await MovementCollection.createIndexAsync({ memberId: 1 });
+
+    next();
+  }),
+  version: 12,
+});
