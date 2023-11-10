@@ -11,7 +11,9 @@ export type FindPaginatedMovementsRequest = FindPaginatedRequest & {
   to: string | null;
 };
 
-export type FindPaginatedMovement = Movement;
+export type FindPaginatedMovement = Movement & {
+  balance: number;
+};
 
 export type FindPaginatedMovementsResponse =
   FindPaginatedResponse<FindPaginatedMovement> & {

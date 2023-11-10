@@ -11,7 +11,7 @@ import {
   getMemberCategoryFilters,
 } from '@domain/categories/category.enum';
 import { MemberMovementGridDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.dto';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
@@ -60,25 +60,21 @@ export const MemberMovementsGrid: React.FC<Props> = ({ memberId }) => {
       <AntTable.Summary.Cell index={0}>
         <div className="flex justify-between">
           <span>Deudas</span>
-          <span>{data ? CurrencyUtils.formatCents(data.debt, false) : ''}</span>
+          <span>{data ? MoneyUtils.formatCents(data.debt, false) : ''}</span>
         </div>
       </AntTable.Summary.Cell>
 
       <AntTable.Summary.Cell index={1}>
         <div className="flex justify-between">
           <span>Pagos</span>
-          <span>
-            {data ? CurrencyUtils.formatCents(data.income, false) : ''}
-          </span>
+          <span>{data ? MoneyUtils.formatCents(data.income, false) : ''}</span>
         </div>
       </AntTable.Summary.Cell>
 
       <AntTable.Summary.Cell index={2}>
         <div className="flex justify-between">
           <span>Balance</span>
-          <span>
-            {data ? CurrencyUtils.formatCents(data.balance, false) : ''}
-          </span>
+          <span>{data ? MoneyUtils.formatCents(data.balance, false) : ''}</span>
         </div>
       </AntTable.Summary.Cell>
     </AntTable.Summary.Row>

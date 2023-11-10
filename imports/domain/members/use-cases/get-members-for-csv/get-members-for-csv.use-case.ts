@@ -9,7 +9,7 @@ import { DIToken } from '@infra/di/di-tokens';
 import { FindPaginatedMember } from '@infra/mongo/repositories/members/member-repository.types';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 
 @injectable()
 export class GetMembersForCsvUseCase
@@ -47,10 +47,10 @@ export class GetMembersForCsvUseCase
           emails: member.user.emails
             ? member.user.emails.map((email) => email.address)
             : null,
-          electricityDebt: CurrencyUtils.formatCents(member.electricityDebt),
-          guestDebt: CurrencyUtils.formatCents(member.guestDebt),
-          membershipDebt: CurrencyUtils.formatCents(member.membershipDebt),
-          totalDebt: CurrencyUtils.formatCents(member.totalDebt),
+          electricityDebt: MoneyUtils.formatCents(member.electricityDebt),
+          guestDebt: MoneyUtils.formatCents(member.guestDebt),
+          membershipDebt: MoneyUtils.formatCents(member.membershipDebt),
+          totalDebt: MoneyUtils.formatCents(member.totalDebt),
         })
       ),
     });

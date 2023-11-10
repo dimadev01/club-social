@@ -1,7 +1,7 @@
 import { dinero, toDecimal, toUnits } from 'dinero.js';
 import { ARS } from '@dinero.js/currencies';
 
-export abstract class CurrencyUtils {
+export abstract class MoneyUtils {
   public static toCents(value: number): number {
     return dinero({
       amount: Math.round(value * 100),
