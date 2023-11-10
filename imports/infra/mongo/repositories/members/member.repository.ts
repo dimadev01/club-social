@@ -23,7 +23,8 @@ import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
 import {
   FindPaginatedMember,
   FindPaginatedMembersRequest,
-} from '@infra/mongo/repositories/member-repository.types';
+} from '@infra/mongo/repositories/members/member-repository.types';
+import { MongoUtils } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class MemberRepository
@@ -196,7 +197,7 @@ export class MemberRepository
       }
     }
 
-    const [{ data, total }] = await this.getCollection()
+    const [{ data, count }] = await this.getCollection()
       .rawCollection()
       .aggregate<FindPaginatedAggregationResult<FindPaginatedMember>>([
         { $match: query },
@@ -207,11 +208,17 @@ export class MemberRepository
             total: [{ $count: 'count' }],
           },
         },
+        {
+          $project: {
+            count: MongoUtils.elementAtArray0('$total.count', 0),
+            data: 1,
+          },
+        },
       ])
       .toArray();
 
     return {
-      count: total.length ? total[0].count : 0,
+      count,
       data,
     };
   }

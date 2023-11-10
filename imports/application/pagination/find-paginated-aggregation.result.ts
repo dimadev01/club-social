@@ -1,5 +1,5 @@
 export class FindPaginatedAggregationResult<T> {
-  public total: Array<{ count: number }>;
+  public count: number;
 
   public data: T[];
 }

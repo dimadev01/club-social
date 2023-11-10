@@ -6,7 +6,7 @@ import { IMemberPort } from '@domain/members/member.port';
 import { GetMembersForCsvRequestDto } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv-request.dto';
 import { MemberForCsvDto } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv.dto';
 import { DIToken } from '@infra/di/di-tokens';
-import { FindPaginatedMember } from '@infra/mongo/repositories/member-repository.types';
+import { FindPaginatedMember } from '@infra/mongo/repositories/members/member-repository.types';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
 import { CurrencyUtils } from '@shared/utils/currency.utils';

@@ -5,7 +5,7 @@ import { IMemberPort } from '@domain/members/member.port';
 import { GetMembersGridRequestDto } from '@domain/members/use-cases/get-members-grid/get-members-grid-request.dto';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
 import { DIToken } from '@infra/di/di-tokens';
-import { FindPaginatedMember } from '@infra/mongo/repositories/member-repository.types';
+import { FindPaginatedMember } from '@infra/mongo/repositories/members/member-repository.types';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
 

@@ -5,7 +5,7 @@ import { Member } from '@domain/members/entities/member.entity';
 import {
   FindPaginatedMember,
   FindPaginatedMembersRequest,
-} from '@infra/mongo/repositories/member-repository.types';
+} from '@infra/mongo/repositories/members/member-repository.types';
 
 export interface IMemberPort
   extends ICrudPort<Member>,
