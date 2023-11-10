@@ -55,7 +55,7 @@ export const MovementsPage = () => {
     sortOrder: 'descend',
   });
 
-  const [memberIdsFilter, setMemberIdsFilter] = useState<string[] | null>(
+  const [memberIdsFilter, setMemberIdsFilter] = useState<string[]>(
     (parsedQs.memberIds as string[]) ?? []
   );
 
@@ -74,7 +74,7 @@ export const MovementsPage = () => {
     from: dateFilter
       ? dateFilter[0]?.format(DateFormatEnum.Date) ?? null
       : null,
-    memberIds: memberIdsFilter ?? null,
+    memberIds: memberIdsFilter ?? [],
     page: gridState.page,
     pageSize: gridState.pageSize,
     search: gridState.search,
