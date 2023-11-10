@@ -3,9 +3,9 @@ import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs from 'dayjs';
 import CsvDownloader from 'react-csv-downloader';
-import { Navigate, NavLink } from 'react-router-dom';
+import { Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
-import { FileExcelOutlined } from '@ant-design/icons';
+import { FileExcelOutlined, FileSearchOutlined } from '@ant-design/icons';
 import {
   getMemberCategoryFilters,
   getMemberStatusFilters,
@@ -34,6 +34,8 @@ export const MembersPage = () => {
     sortField: 'name',
     sortOrder: 'ascend',
   });
+
+  const navigate = useNavigate();
 
   const [isExportingToCsv, setIsExportingToCsv] = useState(false);
 
@@ -270,6 +272,22 @@ export const MembersPage = () => {
                 CurrencyUtils.formatCents(totalDebt),
               sorter: true,
               title: 'Saldo Total',
+            },
+            {
+              align: 'center',
+              render: (_, member: MemberGridDto) => (
+                <ButtonGroup size="small">
+                  <Button
+                    type="ghost"
+                    icon={<FileSearchOutlined />}
+                    onClick={() =>
+                      navigate(`${AppUrl.Movements}?memberId=${member._id}`)
+                    }
+                    tooltip={{ title: 'Ver movimientos' }}
+                  />
+                </ButtonGroup>
+              ),
+              title: 'Acciones',
             },
           ]}
         />

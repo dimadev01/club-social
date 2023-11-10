@@ -49,8 +49,8 @@ export class MovementFindPaginatedRepository
       };
     }
 
-    if (request.memberId) {
-      query.memberId = request.memberId;
+    if (request.memberIds.length > 0) {
+      query.memberId = { $in: request.memberIds };
     }
 
     if (request.filters.category?.length) {
@@ -102,7 +102,7 @@ export class MovementFindPaginatedRepository
 
     let balance = 0;
 
-    if (request.memberId) {
+    if (request.memberIds.length > 0) {
       debt = allDebt;
 
       balance = allIncome - debt;

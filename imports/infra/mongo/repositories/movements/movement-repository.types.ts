@@ -5,7 +5,7 @@ import { Movement } from '@domain/movements/entities/movement.entity';
 
 export type FindPaginatedMovementsRequest = FindPaginatedRequest & {
   from: string | null;
-  memberId: string | null;
+  memberIds: string[];
   showDeleted: boolean | null;
   sortField: 'createdAt';
   to: string | null;

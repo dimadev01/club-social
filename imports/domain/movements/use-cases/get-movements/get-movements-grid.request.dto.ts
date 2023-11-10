@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsNotEmpty,
@@ -8,9 +9,9 @@ import {
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 
 export class GetMovementsGridRequestDto extends PaginatedRequestDto {
-  @IsString()
-  @IsOptional()
-  public memberId: string | null;
+  @IsArray()
+  @IsString({ each: true })
+  public memberIds: string[];
 
   @IsDateString()
   @IsOptional()

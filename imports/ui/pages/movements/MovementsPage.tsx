@@ -55,36 +55,33 @@ export const MovementsPage = () => {
     sortOrder: 'descend',
   });
 
-  const [memberIdSearchValue, setMemberIdSearchValue] = useState<string | null>(
-    (parsedQs.memberId as string) ?? null
+  const [memberIdsFilter, setMemberIdsFilter] = useState<string[] | null>(
+    (parsedQs.memberIds as string[]) ?? []
   );
 
   const [showDeleted, setShowDeleted] = useState<boolean>(false);
 
-  const [dateRangeValue, setDateRangeValue] =
-    useState<RangeValue<Dayjs> | null>(
-      parsedQs.from && parsedQs.to
-        ? [dayjs(parsedQs.from as string), dayjs(parsedQs.to as string)]
-        : null
-    );
+  const [dateFilter, setDateFilter] = useState<RangeValue<Dayjs> | null>(
+    parsedQs.from && parsedQs.to
+      ? [dayjs(parsedQs.from as string), dayjs(parsedQs.to as string)]
+      : null
+  );
 
   const { data: members, isLoading: isLoadingMembers } = useMembers();
 
   const { data, isLoading, isRefetching, refetch } = useMovementsGrid({
     filters: gridState.filters,
-    from: dateRangeValue
-      ? dateRangeValue[0]?.format(DateFormatEnum.Date) ?? null
+    from: dateFilter
+      ? dateFilter[0]?.format(DateFormatEnum.Date) ?? null
       : null,
-    memberId: memberIdSearchValue ?? null,
+    memberIds: memberIdsFilter ?? null,
     page: gridState.page,
     pageSize: gridState.pageSize,
     search: gridState.search,
     showDeleted,
     sortField: gridState.sortField as 'createdAt',
     sortOrder: gridState.sortOrder,
-    to: dateRangeValue
-      ? dateRangeValue[1]?.format(DateFormatEnum.Date) ?? null
-      : null,
+    to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.Date) ?? null : null,
   });
 
   const deleteMovement = useDeleteMovement(refetch);
@@ -183,10 +180,10 @@ export const MovementsPage = () => {
                 <DatePicker.RangePicker
                   format={DateFormatEnum.DDMMYYYY}
                   allowClear
-                  value={dateRangeValue}
+                  value={dateFilter}
                   disabledDate={(current) => current.isAfter(dayjs())}
                   onChange={(value) => {
-                    setDateRangeValue(value);
+                    setDateFilter(value);
 
                     setGridState((prevState) => ({ ...prevState, page: 1 }));
                   }}
@@ -195,13 +192,14 @@ export const MovementsPage = () => {
 
               <Form.Item>
                 <Select
-                  value={memberIdSearchValue}
+                  value={memberIdsFilter}
+                  mode="multiple"
                   onChange={(value) => {
-                    setMemberIdSearchValue(value ?? null);
+                    setMemberIdsFilter(value ?? null);
 
                     setGridState((prevState) => ({ ...prevState, page: 1 }));
                   }}
-                  className="!min-w-[200px]"
+                  className="!min-w-[333px]"
                   disabled={isLoadingMembers || isLoading}
                   loading={isLoadingMembers}
                   placeholder="Buscar por socios"
@@ -353,17 +351,18 @@ export const MovementsPage = () => {
                         />
                       )}
 
-                    {!memberIdSearchValue && movement.memberId && (
-                      <Button
-                        type="ghost"
-                        onClick={() =>
-                          setMemberIdSearchValue(movement.memberId)
+                    <Button
+                      type="ghost"
+                      disabled={!movement.memberId}
+                      onClick={() => {
+                        if (movement.memberId) {
+                          setMemberIdsFilter([movement.memberId]);
                         }
-                        htmlType="button"
-                        tooltip={{ title: 'Filtrar por este socio' }}
-                        icon={<FilterOutlined />}
-                      />
-                    )}
+                      }}
+                      htmlType="button"
+                      tooltip={{ title: 'Filtrar por este socio' }}
+                      icon={<FilterOutlined />}
+                    />
                   </ButtonGroup>
                 ),
                 title: 'Acciones',
