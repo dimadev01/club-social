@@ -12,7 +12,9 @@ import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-m
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
 import { DIToken } from '@infra/di/di-tokens';
+import { FindPaginatedMovement } from '@infra/mongo/repositories/movements/movement-repository.types';
 import { UseCase } from '@infra/use-cases/use-case';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 
 @injectable()
 export class GetMovementsGridUseCase
@@ -35,10 +37,11 @@ export class GetMovementsGridUseCase
     return ok<GetMovementsGridResponseDto>({
       balance,
       count,
-      data: data
-        .map((movement: Movement) => plainToInstance(Movement, movement))
-        .map((movement: Movement): MovementGridDto => {
+      data: data.map(
+        (paginatedMovement: FindPaginatedMovement): MovementGridDto => {
           let details = '';
+
+          const movement = plainToInstance(Movement, paginatedMovement);
 
           if (MemberCategories.includes(movement.category)) {
             details = movement.member?.name ?? '';
@@ -55,6 +58,7 @@ export class GetMovementsGridUseCase
           return {
             _id: movement._id,
             amount: movement.amountFormatted,
+            balance: MoneyUtils.formatCents(paginatedMovement.balance),
             category: movement.category,
             date: movement.dateFormatted,
             details,
@@ -62,7 +66,8 @@ export class GetMovementsGridUseCase
             memberId: movement.memberId,
             type: movement.type,
           };
-        }),
+        }
+      ),
       debt,
       expense: expenses,
       income,

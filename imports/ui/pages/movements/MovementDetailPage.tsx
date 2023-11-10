@@ -28,7 +28,7 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
@@ -116,7 +116,7 @@ export const MovementDetailPage = () => {
     if (!movement) {
       await createMovement.mutateAsync(
         {
-          amount: CurrencyUtils.toCents(values.amount),
+          amount: MoneyUtils.toCents(values.amount),
           category: values.category,
           date: DateUtils.format(values.date),
           employeeId: values.employeeId ?? null,
@@ -135,7 +135,7 @@ export const MovementDetailPage = () => {
     } else {
       await updateMovement.mutateAsync(
         {
-          amount: CurrencyUtils.toCents(values.amount),
+          amount: MoneyUtils.toCents(values.amount),
           date: DateUtils.format(values.date),
           employeeId: values.employeeId ?? null,
           id: movement._id,
@@ -165,7 +165,7 @@ export const MovementDetailPage = () => {
     const foundCategory = find(categoriesByType, { code: value });
 
     return foundCategory?.amount
-      ? CurrencyUtils.fromCents(foundCategory.amount)
+      ? MoneyUtils.fromCents(foundCategory.amount)
       : 0;
   };
 
@@ -350,7 +350,7 @@ export const MovementDetailPage = () => {
             onFinish={(values) => handleSubmit(values)}
             initialValues={{
               amount: movement
-                ? CurrencyUtils.fromCents(movement.amount)
+                ? MoneyUtils.fromCents(movement.amount)
                 : getPriceForCategory(CategoryEnum.MembershipIncome),
               category: movement?.category ?? CategoryEnum.MembershipIncome,
               date: movement?.date

@@ -11,7 +11,7 @@ import {
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
 import { Entity } from '@domain/common/entity';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 
 export class Category extends Entity {
   @IsInt()
@@ -37,7 +37,7 @@ export class Category extends Entity {
       return '';
     }
 
-    return CurrencyUtils.formatCents(this.amount);
+    return MoneyUtils.formatCents(this.amount);
   }
 
   public updatePrice(amount: number | null): Result<null, Error> {
@@ -46,7 +46,7 @@ export class Category extends Entity {
     }
 
     if (amount) {
-      this.amount = CurrencyUtils.toCents(amount);
+      this.amount = MoneyUtils.toCents(amount);
     } else {
       this.amount = amount;
     }

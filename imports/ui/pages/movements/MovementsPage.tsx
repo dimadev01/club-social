@@ -8,6 +8,7 @@ import {
   Space,
   Table as AntTable,
   Tag,
+  Tooltip,
 } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
@@ -19,6 +20,7 @@ import { Navigate, NavLink, useLocation } from 'react-router-dom';
 import {
   DeleteOutlined,
   FilterOutlined,
+  InfoCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
 import {
@@ -30,7 +32,7 @@ import {
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
@@ -103,7 +105,7 @@ export const MovementsPage = () => {
           <div className="flex justify-between">
             <span>Entrada</span>
             <span>
-              {data ? CurrencyUtils.formatCents(data.income, false) : ''}
+              {data ? MoneyUtils.formatCents(data.income, false) : ''}
             </span>
           </div>
         </AntTable.Summary.Cell>
@@ -112,7 +114,7 @@ export const MovementsPage = () => {
           <div className="flex justify-between">
             <span>Salida</span>
             <span>
-              {data ? CurrencyUtils.formatCents(data.expense, false) : ''}
+              {data ? MoneyUtils.formatCents(data.expense, false) : ''}
             </span>
           </div>
         </AntTable.Summary.Cell>
@@ -120,9 +122,7 @@ export const MovementsPage = () => {
         <AntTable.Summary.Cell index={2}>
           <div className="flex justify-between">
             <span>Deudas</span>
-            <span>
-              {data ? CurrencyUtils.formatCents(data.debt, false) : ''}
-            </span>
+            <span>{data ? MoneyUtils.formatCents(data.debt, false) : ''}</span>
           </div>
         </AntTable.Summary.Cell>
 
@@ -130,11 +130,12 @@ export const MovementsPage = () => {
           <div className="flex justify-between">
             <span>Balance</span>
             <span>
-              {data ? CurrencyUtils.formatCents(data.balance, false) : ''}
+              {data ? MoneyUtils.formatCents(data.balance, false) : ''}
             </span>
           </div>
         </AntTable.Summary.Cell>
         <AntTable.Summary.Cell index={4} />
+        <AntTable.Summary.Cell index={5} />
       </AntTable.Summary.Row>
     </AntTable.Summary>
   );
@@ -292,6 +293,20 @@ export const MovementsPage = () => {
                   return details;
                 },
                 title: 'Detalle',
+              },
+              {
+                align: 'right',
+                dataIndex: 'balance',
+                title: (
+                  <>
+                    Balance{' '}
+                    <Tooltip title="Si es positivo es saldo a favor">
+                      <sup>
+                        <InfoCircleOutlined />
+                      </sup>
+                    </Tooltip>
+                  </>
+                ),
               },
               {
                 align: 'center',

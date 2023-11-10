@@ -11,7 +11,7 @@ import { Member } from '@domain/members/entities/member.entity';
 import { CreateMovement } from '@domain/movements/movement.types';
 import { Professor } from '@domain/professors/professor.entity';
 import { Service } from '@domain/services/service.entity';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 export class Movement extends Entity {
@@ -68,7 +68,7 @@ export class Movement extends Entity {
   }
 
   public get amountFormatted(): string {
-    return CurrencyUtils.formatCents(this.amount);
+    return MoneyUtils.formatCents(this.amount);
   }
 
   public get dateFormatted(): string {

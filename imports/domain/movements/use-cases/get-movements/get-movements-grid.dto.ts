@@ -19,4 +19,6 @@ export class MovementGridDto {
   type: CategoryTypeEnum;
 
   isDeleted: boolean;
+
+  balance: string;
 }

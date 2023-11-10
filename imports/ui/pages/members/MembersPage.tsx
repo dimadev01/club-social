@@ -18,7 +18,7 @@ import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-me
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
@@ -233,7 +233,7 @@ export const MembersPage = () => {
                   ? gridState.sortOrder
                   : undefined,
               render: (electricityDebt: number) =>
-                CurrencyUtils.formatCents(electricityDebt),
+                MoneyUtils.formatCents(electricityDebt),
               sorter: true,
               title: 'Saldo luz',
             },
@@ -244,8 +244,7 @@ export const MembersPage = () => {
                 gridState.sortField === 'guestDebt'
                   ? gridState.sortOrder
                   : undefined,
-              render: (guestDebt: number) =>
-                CurrencyUtils.formatCents(guestDebt),
+              render: (guestDebt: number) => MoneyUtils.formatCents(guestDebt),
               sorter: true,
               title: 'Saldo invitado',
             },
@@ -257,7 +256,7 @@ export const MembersPage = () => {
                   ? gridState.sortOrder
                   : undefined,
               render: (membershipDebt: number) =>
-                CurrencyUtils.formatCents(membershipDebt),
+                MoneyUtils.formatCents(membershipDebt),
               sorter: true,
               title: 'Saldo cuota',
             },
@@ -268,8 +267,7 @@ export const MembersPage = () => {
                 gridState.sortField === 'totalDebt'
                   ? gridState.sortOrder
                   : undefined,
-              render: (totalDebt: number) =>
-                CurrencyUtils.formatCents(totalDebt),
+              render: (totalDebt: number) => MoneyUtils.formatCents(totalDebt),
               sorter: true,
               title: 'Saldo Total',
             },

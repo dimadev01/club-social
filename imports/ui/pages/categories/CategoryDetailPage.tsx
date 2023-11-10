@@ -11,7 +11,7 @@ import {
 import { NavLink, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import { ScopeEnum } from '@domain/roles/role.enum';
-import { CurrencyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { NotFound } from '@ui/components/NotFound';
@@ -76,7 +76,7 @@ export const CategoryDetailPage = () => {
           requiredMark={false}
           initialValues={{
             amount: category.amount
-              ? CurrencyUtils.fromCents(category.amount)
+              ? MoneyUtils.fromCents(category.amount)
               : undefined,
             name: category.name,
           }}

@@ -78,6 +78,9 @@ export class MovementFindPaginatedRepository
                 ...this._getProfessorsLookup(),
                 ...this._getEmployeesLookup(),
                 ...this._getServicesLookup(),
+                ...this._getMemberMovementsLookup(),
+                this._addBalanceField(),
+                this._projectMovements(),
               ],
               total: [{ $count: 'count' }],
             },
@@ -134,6 +137,31 @@ export class MovementFindPaginatedRepository
     return MovementSchema;
   }
 
+  private _projectMovements() {
+    return { $project: { movements: 0 } };
+  }
+
+  private _addBalanceField() {
+    return {
+      $addFields: {
+        balance: {
+          $cond: [
+            {
+              $eq: ['$memberId', null],
+            },
+            0,
+            {
+              $subtract: [
+                this._reduceMovementsByCategoryType(CategoryTypeEnum.Income),
+                this._reduceMovementsByCategoryType(CategoryTypeEnum.Debt),
+              ],
+            },
+          ],
+        },
+      },
+    };
+  }
+
   private _getAllDebtIncome() {
     return [
       {
@@ -185,6 +213,19 @@ export class MovementFindPaginatedRepository
 
   private _getGroupedByCategoryType(type: CategoryTypeEnum) {
     return [{ $match: { type } }, MongoUtils.getGroupByAmount()];
+  }
+
+  private _getMemberMovementsLookup() {
+    return [
+      {
+        $lookup: {
+          as: 'movements',
+          foreignField: 'memberId',
+          from: 'movements',
+          localField: 'memberId',
+        },
+      },
+    ];
   }
 
   private _getProfessorsLookup() {
@@ -268,5 +309,30 @@ export class MovementFindPaginatedRepository
         },
       },
     ];
+  }
+
+  private _reduceMovementsByCategoryType(type: CategoryTypeEnum) {
+    return {
+      $reduce: {
+        in: {
+          $add: [
+            '$$value',
+            {
+              $sum: {
+                $cond: [
+                  {
+                    $eq: ['$$this.type', type],
+                  },
+                  '$$this.amount',
+                  0,
+                ],
+              },
+            },
+          ],
+        },
+        initialValue: 0,
+        input: '$movements',
+      },
+    };
   }
 }
