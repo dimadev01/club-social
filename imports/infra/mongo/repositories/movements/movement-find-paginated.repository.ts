@@ -223,6 +223,7 @@ export class MovementFindPaginatedRepository
           foreignField: 'memberId',
           from: 'movements',
           localField: 'memberId',
+          pipeline: [{ $match: { $expr: { $eq: ['$isDeleted', false] } } }],
         },
       },
     ];
