@@ -29,8 +29,14 @@ export class GetMovementsGridUseCase
   public async execute(
     request: GetMovementsGridRequestDto
   ): Promise<Result<GetMovementsGridResponseDto, Error>> {
-    const { data, count, allDebt, allExpenses, allIncome, balance } =
-      await this._movementFindPaginatedPort.findPaginated(request);
+    const {
+      data,
+      count,
+      debt: allDebt,
+      expenses: allExpenses,
+      income: allIncome,
+      balance,
+    } = await this._movementFindPaginatedPort.findPaginated(request);
 
     return ok<GetMovementsGridResponseDto>({
       balance,
