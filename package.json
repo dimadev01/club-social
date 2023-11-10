@@ -90,6 +90,7 @@
   },
   "config": {
     "commitizen": {
+      "maxSubjectLength": 72,
       "path": "./node_modules/cz-conventional-changelog"
     }
   }
