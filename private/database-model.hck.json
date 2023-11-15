@@ -1,0 +1,499 @@
+{
+    "modelName": "ClubSocial",
+    "collections": [
+        {
+            "collectionName": "users",
+            "type": "object",
+            "properties": [
+                {
+                    "GUID": "387c1dfc-ac7c-4c15-a96f-b6860a7e4d99",
+                    "name": "_id",
+                    "type": "reference",
+                    "$ref": "#model/definitions/_id",
+                    "refType": "model",
+                    "ref": "1f37bae5-6c4f-430c-b9ef-d131e321db5d",
+                    "refIdPath": [
+                        "da8181e0-332c-4d67-b8fa-e52ec3738af9",
+                        "debd797f-08ed-41e2-8363-6300af99ded7",
+                        "1f37bae5-6c4f-430c-b9ef-d131e321db5d"
+                    ],
+                    "isActivated": true,
+                    "required": true,
+                    "error": {
+                        "isActivated": false
+                    },
+                    "hackoladeMeta": {}
+                },
+                {
+                    "name": "emails",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "verified",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "boolean",
+                                    "error": {},
+                                    "GUID": "a76d08d4-0914-434c-9d2c-fa2b45d73239"
+                                },
+                                {
+                                    "name": "address",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "e1deae2f-4e46-42b3-b30e-f5a7d3d6197f",
+                                    "error": {}
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "error": {},
+                            "GUID": "514bf7de-b843-4ce1-bb73-0b9a1a60426b",
+                            "arrayItem": true
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "f59118a2-d7c1-42fe-b35a-05d18e3534af",
+                    "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "createdAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "8ff8619a-f547-44b5-b581-bb7a60dba268",
+                    "definitionRefs": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "profile",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "firstName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "de4c40f2-580c-488f-b187-02bc01691a8a",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "lastName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "332dde62-8a95-4d78-9a9c-1a96973d2aff",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "role",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "b28be4f0-d97a-40e7-971a-6e3a33b992ee",
+                            "required": true,
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "fb5482b3-0305-48ca-875c-413c9c751867",
+                    "required": false,
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "15666943-71ea-4420-90be-888990ee8155"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "0ec11f20-feb9-4a65-9f51-ed6cb5e6055c",
+            "bucketId": "23edcae8-abf6-4ade-9e32-5e8249756a3f"
+        },
+        {
+            "collectionName": "members",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "224d5090-0f92-4c2f-a4d3-78d41f2af772",
+                    "definitionRefs": [
+                        [
+                            "0ec11f20-feb9-4a65-9f51-ed6cb5e6055c",
+                            "387c1dfc-ac7c-4c15-a96f-b6860a7e4d99"
+                        ]
+                    ],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "createdAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "24e7889c-d718-4af6-82d6-3c438d81714d",
+                    "definitionRefs": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "431952d4-1488-470f-afa3-0592a9f43738",
+                    "name": "createdBy",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "dcfe63ac-d8b1-4da5-8c0d-fc401703a000",
+                    "definitionRefs": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedBy",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "05b1b755-bb2e-49a7-899b-9f758eb1daf2",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "deletedBy",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "d9916868-d053-444d-9c21-bdb1b6323327",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "deletedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "e38c1e63-6b7d-446a-b9dc-755ef4d1d61b",
+                    "definitionRefs": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "isDeleted",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "boolean",
+                    "GUID": "89b52ead-f5e5-40f6-bda3-ba4e6c815142",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "address",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [],
+                    "additionalProperties": false,
+                    "GUID": "b3d825fc-90ae-4edc-b172-b5bef9fb7813",
+                    "required": true,
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "6e8a3ed8-354e-4aa7-83ca-9979e160f928"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "2acedb10-79eb-4250-a204-9511ec2ff446",
+            "bucketId": "23edcae8-abf6-4ade-9e32-5e8249756a3f"
+        }
+    ],
+    "buckets": [
+        {
+            "name": "ClubSocial",
+            "type": "bucket",
+            "collectionIds": [
+                "0ec11f20-feb9-4a65-9f51-ed6cb5e6055c",
+                "2acedb10-79eb-4250-a204-9511ec2ff446"
+            ],
+            "backgroundColor": {
+                "r": 216,
+                "g": 0,
+                "b": 115,
+                "a": 1
+            },
+            "show": true,
+            "isActivated": true,
+            "GUID": "23edcae8-abf6-4ade-9e32-5e8249756a3f"
+        }
+    ],
+    "views": [],
+    "relationships": [],
+    "users": [],
+    "diagramViews": [],
+    "idToNameHashTable": {
+        "23edcae8-abf6-4ade-9e32-5e8249756a3f": "ClubSocial",
+        "0ec11f20-feb9-4a65-9f51-ed6cb5e6055c": "users",
+        "f59118a2-d7c1-42fe-b35a-05d18e3534af": "emails",
+        "e1deae2f-4e46-42b3-b30e-f5a7d3d6197f": "address",
+        "a76d08d4-0914-434c-9d2c-fa2b45d73239": "verified",
+        "55997089-87d0-4a32-acb9-17b3d02cae82": "createdAt",
+        "62b2f572-8dff-4bcd-8a67-a978be18d816": "updatedAt",
+        "61a85bf0-f864-4bf1-9eae-7e12fe879b4a": "deletedAt",
+        "3016a92d-d715-4b8e-9c2a-5482411af664": "deletedBy",
+        "5d1a8c98-3680-4eeb-9fbf-cd29f766f6fb": "createdBy",
+        "76d5e427-799a-4c44-b7c7-ad1e57b252c7": "updatedBy",
+        "0b858f18-af86-4aac-8147-6c040874fde7": "isDeleted",
+        "8ff8619a-f547-44b5-b581-bb7a60dba268": "createdAt",
+        "fb5482b3-0305-48ca-875c-413c9c751867": "profile",
+        "de4c40f2-580c-488f-b187-02bc01691a8a": "firstName",
+        "332dde62-8a95-4d78-9a9c-1a96973d2aff": "lastName",
+        "b28be4f0-d97a-40e7-971a-6e3a33b992ee": "role",
+        "2acedb10-79eb-4250-a204-9511ec2ff446": "members",
+        "1f37bae5-6c4f-430c-b9ef-d131e321db5d": "_id",
+        "387c1dfc-ac7c-4c15-a96f-b6860a7e4d99": "_id",
+        "224d5090-0f92-4c2f-a4d3-78d41f2af772": "_id",
+        "24e7889c-d718-4af6-82d6-3c438d81714d": "createdAt",
+        "431952d4-1488-470f-afa3-0592a9f43738": "createdBy",
+        "dcfe63ac-d8b1-4da5-8c0d-fc401703a000": "updatedAt",
+        "05b1b755-bb2e-49a7-899b-9f758eb1daf2": "updatedBy",
+        "d9916868-d053-444d-9c21-bdb1b6323327": "deletedBy",
+        "e38c1e63-6b7d-446a-b9dc-755ef4d1d61b": "deletedAt",
+        "89b52ead-f5e5-40f6-bda3-ba4e6c815142": "isDeleted",
+        "b3d825fc-90ae-4edc-b172-b5bef9fb7813": "address"
+    },
+    "definitions": {
+        "type": "definitions",
+        "properties": [
+            {
+                "name": "_id",
+                "hackoladeMeta": {},
+                "isActivated": true,
+                "type": "string",
+                "GUID": "1f37bae5-6c4f-430c-b9ef-d131e321db5d",
+                "definitionRefs": [
+                    [
+                        "0ec11f20-feb9-4a65-9f51-ed6cb5e6055c",
+                        "387c1dfc-ac7c-4c15-a96f-b6860a7e4d99"
+                    ]
+                ],
+                "required": true,
+                "error": {}
+            },
+            {
+                "name": "createdAt",
+                "hackoladeMeta": {},
+                "isActivated": true,
+                "type": "date",
+                "primaryKey": false,
+                "GUID": "55997089-87d0-4a32-acb9-17b3d02cae82",
+                "definitionRefs": [],
+                "required": true,
+                "error": {}
+            },
+            {
+                "hackoladeMeta": {},
+                "isActivated": true,
+                "type": "string",
+                "GUID": "5d1a8c98-3680-4eeb-9fbf-cd29f766f6fb",
+                "name": "createdBy",
+                "required": true,
+                "error": {}
+            },
+            {
+                "name": "updatedAt",
+                "hackoladeMeta": {},
+                "isActivated": true,
+                "type": "date",
+                "primaryKey": false,
+                "GUID": "62b2f572-8dff-4bcd-8a67-a978be18d816",
+                "definitionRefs": [],
+                "required": true,
+                "error": {}
+            },
+            {
+                "name": "updatedBy",
+                "hackoladeMeta": {},
+                "isActivated": true,
+                "type": "string",
+                "GUID": "76d5e427-799a-4c44-b7c7-ad1e57b252c7",
+                "required": true,
+                "error": {}
+            },
+            {
+                "name": "deletedBy",
+                "hackoladeMeta": {},
+                "isActivated": true,
+                "type": "string",
+                "GUID": "3016a92d-d715-4b8e-9c2a-5482411af664",
+                "required": true,
+                "error": {}
+            },
+            {
+                "name": "deletedAt",
+                "hackoladeMeta": {},
+                "isActivated": true,
+                "type": "date",
+                "primaryKey": false,
+                "GUID": "61a85bf0-f864-4bf1-9eae-7e12fe879b4a",
+                "definitionRefs": [],
+                "required": true,
+                "error": {}
+            },
+            {
+                "name": "isDeleted",
+                "hackoladeMeta": {},
+                "isActivated": true,
+                "type": "boolean",
+                "GUID": "0b858f18-af86-4aac-8147-6c040874fde7",
+                "required": true,
+                "error": {}
+            }
+        ],
+        "GUID": "debd797f-08ed-41e2-8363-6300af99ded7"
+    },
+    "polyglotDefinitions": {
+        "type": "polyglotDefinitions",
+        "properties": [],
+        "GUID": "f9879704-0912-4848-8f11-d09e327b1cc3"
+    },
+    "externalDefinitions": {
+        "type": "externalDefinitions",
+        "properties": [],
+        "GUID": "c3fe51ac-ecae-4332-8761-83d0d43937ee"
+    },
+    "sources": [],
+    "decorativeSymbols": [],
+    "dbVersion": "v7.x",
+    "dbVendor": "MongoDB",
+    "appTarget": "MONGODB",
+    "creationTS": "2023-11-11T15:47:39.881Z",
+    "GUID": "da8181e0-332c-4d67-b8fa-e52ec3738af9",
+    "isLineageEnabled": false,
+    "hackoladeMeta": {
+        "validationErrors": {
+            "modelName": false
+        }
+    },
+    "lastModifTS": "2023-11-11T15:58:06.117Z",
+    "persistenceSchemaVersion": "6",
+    "isCreatedByPlugin": true,
+    "pluginInformation": {
+        "pluginEngineVersion": "1.0.0"
+    },
+    "applicationInformation": {
+        "version": "6.11.9"
+    },
+    "settings": {
+        "centralPane": {
+            "dbLevel": {
+                "erd": [
+                    {
+                        "GUID": "0ec11f20-feb9-4a65-9f51-ed6cb5e6055c",
+                        "x": 1050,
+                        "y": 1150,
+                        "width": 249,
+                        "height": 173,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "2acedb10-79eb-4250-a204-9511ec2ff446",
+                        "x": 1100,
+                        "y": 1050,
+                        "width": 177,
+                        "height": 30,
+                        "color": {}
+                    }
+                ],
+                "erdDefinitions": {
+                    "erd": [],
+                    "rootPath": [],
+                    "entities": [],
+                    "decorativeSymbols": []
+                },
+                "buckets": [
+                    {
+                        "x": 1000,
+                        "y": 1000,
+                        "GUID": "23edcae8-abf6-4ade-9e32-5e8249756a3f"
+                    }
+                ],
+                "collapsedNodes": [
+                    "0ec11f20-feb9-4a65-9f51-ed6cb5e6055cf59118a2-d7c1-42fe-b35a-05d18e3534af514bf7de-b843-4ce1-bb73-0b9a1a60426b"
+                ],
+                "activeRelationship": "",
+                "activeRelationshipFields": {
+                    "childField": [],
+                    "parentField": []
+                },
+                "selectedCollections": [],
+                "displayColorPicker": false,
+                "graphView": {
+                    "erd": [],
+                    "buckets": [],
+                    "decorativeSymbols": [],
+                    "forceLayout": true,
+                    "defaultLinkLength": 300
+                },
+                "diagramViews": [],
+                "decorativeSymbols": [],
+                "nestedCollectionsLayout": "horizontal",
+                "options": [],
+                "relationshipUpdateDisabled": false
+            },
+            "collectionLevel": {},
+            "changed": false
+        },
+        "dtDiagram": {
+            "collapsedNodes": [],
+            "shouldDistributeCollections": false
+        }
+    }
+}

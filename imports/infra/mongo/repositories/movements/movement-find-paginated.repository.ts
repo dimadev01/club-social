@@ -137,10 +137,6 @@ export class MovementFindPaginatedRepository
     return MovementSchema;
   }
 
-  private _projectMovements() {
-    return { $project: { movements: 0 } };
-  }
-
   private _addBalanceField() {
     return {
       $addFields: {
@@ -310,6 +306,10 @@ export class MovementFindPaginatedRepository
         },
       },
     ];
+  }
+
+  private _projectMovements() {
+    return { $project: { movements: 0 } };
   }
 
   private _reduceMovementsByCategoryType(type: CategoryTypeEnum) {

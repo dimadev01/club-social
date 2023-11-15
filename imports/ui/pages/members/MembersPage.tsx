@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs from 'dayjs';
+import qs from 'qs';
 import CsvDownloader from 'react-csv-downloader';
 import { Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
@@ -279,7 +280,11 @@ export const MembersPage = () => {
                     type="ghost"
                     icon={<FileSearchOutlined />}
                     onClick={() =>
-                      navigate(`${AppUrl.Movements}?memberId=${member._id}`)
+                      navigate(
+                        `${AppUrl.Movements}?${qs.stringify({
+                          memberIds: [member._id],
+                        })}`
+                      )
                     }
                     tooltip={{ title: 'Ver movimientos' }}
                   />
