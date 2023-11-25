@@ -5,10 +5,16 @@ export enum MethodsEnum {
   CategoriesGetOne = 'categories/getOne',
   CategoriesUpdate = 'categories/update',
 
+  DuesCreate = 'dues/create',
+  DuesDelete = 'dues/delete',
+  DuesGet = 'dues/get',
+  DuesGetGrid = 'dues/getGrid',
+  DuesRestore = 'dues/restore',
+  DuesUpdate = 'dues/update',
+
   EmployeesGetAll = 'employees/getAll',
 
   MembersCreate = 'members/create',
-
   MembersDelete = 'members/delete',
   MembersGet = 'members/get',
   MembersGetAll = 'members/getAll',

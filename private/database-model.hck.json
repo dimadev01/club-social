@@ -6,25 +6,6 @@
             "type": "object",
             "properties": [
                 {
-                    "GUID": "387c1dfc-ac7c-4c15-a96f-b6860a7e4d99",
-                    "name": "_id",
-                    "type": "reference",
-                    "$ref": "#model/definitions/_id",
-                    "refType": "model",
-                    "ref": "1f37bae5-6c4f-430c-b9ef-d131e321db5d",
-                    "refIdPath": [
-                        "da8181e0-332c-4d67-b8fa-e52ec3738af9",
-                        "debd797f-08ed-41e2-8363-6300af99ded7",
-                        "1f37bae5-6c4f-430c-b9ef-d131e321db5d"
-                    ],
-                    "isActivated": true,
-                    "required": true,
-                    "error": {
-                        "isActivated": false
-                    },
-                    "hackoladeMeta": {}
-                },
-                {
                     "name": "emails",
                     "hackoladeMeta": {},
                     "isActivated": true,
@@ -64,17 +45,6 @@
                     "error": {}
                 },
                 {
-                    "name": "createdAt",
-                    "hackoladeMeta": {},
-                    "isActivated": true,
-                    "type": "date",
-                    "primaryKey": false,
-                    "GUID": "8ff8619a-f547-44b5-b581-bb7a60dba268",
-                    "definitionRefs": [],
-                    "required": true,
-                    "error": {}
-                },
-                {
                     "name": "profile",
                     "hackoladeMeta": {},
                     "isActivated": true,
@@ -111,6 +81,17 @@
                     "additionalProperties": false,
                     "GUID": "fb5482b3-0305-48ca-875c-413c9c751867",
                     "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "createdAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "8ff8619a-f547-44b5-b581-bb7a60dba268",
+                    "definitionRefs": [],
+                    "required": true,
                     "error": {}
                 }
             ],
@@ -154,12 +135,183 @@
                     "error": {}
                 },
                 {
+                    "name": "address",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "cityName",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "f459bf2e-5903-44b6-be36-55edbc1a67aa",
+                            "required": false,
+                            "error": {}
+                        },
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "69998e45-6930-44e1-bc23-9933a0f579ef",
+                            "required": false,
+                            "name": "cityGovId",
+                            "error": {}
+                        },
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "a092240a-9a8f-443d-b820-79c3fb0ffccc",
+                            "required": false,
+                            "name": "stateName",
+                            "error": {}
+                        },
+                        {
+                            "name": "stateGovId",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "0f65b82b-a0dd-496c-8819-119917b9d58e",
+                            "required": false,
+                            "error": {}
+                        },
+                        {
+                            "name": "street",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "da9fc2fe-045d-4ecd-a917-87c811c0052e",
+                            "required": false,
+                            "error": {}
+                        },
+                        {
+                            "name": "zipCode",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "906a7e71-4968-4120-bfec-cc8f381cb7d9",
+                            "required": false,
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "b3d825fc-90ae-4edc-b172-b5bef9fb7813",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "category",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "4da8656b-72e9-4946-bb5e-a35f552672f5",
+                    "required": true,
+                    "error": {
+                        "enum": false,
+                        "enums": [],
+                        "exampleItems": []
+                    }
+                },
+                {
+                    "name": "dateOfBirth",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "error": {},
+                    "required": false,
+                    "GUID": "536e0765-ecda-4560-9064-23c86e0f6790"
+                },
+                {
+                    "name": "documentID",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "48ac3811-7feb-406f-938c-1e98fa179fba",
+                    "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "fileStatus",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "b64320fa-fa9e-437d-a556-b0289fcbfa30",
+                    "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "maritalStatus",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "6523ab7d-cbba-4a9f-9bf6-047678d38557",
+                    "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "nationality",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "64a95876-8740-48e4-84b7-a3fda7db0ebb",
+                    "required": false,
+                    "error": {}
+                },
+                {
+                    "name": "phones",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "f0a39ae6-d824-499f-9765-4c83b2f98fe1",
+                            "arrayItem": true
+                        }
+                    ],
+                    "additionalItems": true,
+                    "error": {},
+                    "required": false,
+                    "GUID": "281fe6a0-d533-47f5-a9f8-d4ea64a18ee4"
+                },
+                {
+                    "name": "sex",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "required": false,
+                    "GUID": "f4f68c63-8bfc-462f-9601-bf3a14f7ec1e",
+                    "error": {}
+                },
+                {
+                    "name": "status",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "required": true,
+                    "GUID": "5c4a0d11-dd67-4393-9d63-251b5cb7fb04",
+                    "error": {}
+                },
+                {
+                    "name": "userId",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "required": true,
+                    "GUID": "f017e6a8-83ea-48f0-b0d1-b3c30db356ad",
+                    "error": {}
+                },
+                {
                     "name": "createdAt",
                     "hackoladeMeta": {},
                     "isActivated": true,
                     "type": "date",
                     "primaryKey": false,
-                    "GUID": "24e7889c-d718-4af6-82d6-3c438d81714d",
+                    "GUID": "ce06f581-c431-42e5-a2c5-9179a27ae4b1",
                     "definitionRefs": [],
                     "required": true,
                     "error": {}
@@ -168,7 +320,7 @@
                     "hackoladeMeta": {},
                     "isActivated": true,
                     "type": "string",
-                    "GUID": "431952d4-1488-470f-afa3-0592a9f43738",
+                    "GUID": "d0ca90e5-a0dc-468e-8edb-ce66c5645398",
                     "name": "createdBy",
                     "required": true,
                     "error": {}
@@ -179,7 +331,7 @@
                     "isActivated": true,
                     "type": "date",
                     "primaryKey": false,
-                    "GUID": "dcfe63ac-d8b1-4da5-8c0d-fc401703a000",
+                    "GUID": "edef17bd-66cd-4454-9121-9265bb09c09a",
                     "definitionRefs": [],
                     "required": true,
                     "error": {}
@@ -189,7 +341,7 @@
                     "hackoladeMeta": {},
                     "isActivated": true,
                     "type": "string",
-                    "GUID": "05b1b755-bb2e-49a7-899b-9f758eb1daf2",
+                    "GUID": "192b63dd-f308-47f1-8168-f7c43dec3679",
                     "required": true,
                     "error": {}
                 },
@@ -198,7 +350,7 @@
                     "hackoladeMeta": {},
                     "isActivated": true,
                     "type": "string",
-                    "GUID": "d9916868-d053-444d-9c21-bdb1b6323327",
+                    "GUID": "8b0e334a-0b45-49ec-bfe9-7addbf6e7588",
                     "required": true,
                     "error": {}
                 },
@@ -208,7 +360,7 @@
                     "isActivated": true,
                     "type": "date",
                     "primaryKey": false,
-                    "GUID": "e38c1e63-6b7d-446a-b9dc-755ef4d1d61b",
+                    "GUID": "e8b21716-70de-430a-acee-fd45010c552e",
                     "definitionRefs": [],
                     "required": true,
                     "error": {}
@@ -218,18 +370,7 @@
                     "hackoladeMeta": {},
                     "isActivated": true,
                     "type": "boolean",
-                    "GUID": "89b52ead-f5e5-40f6-bda3-ba4e6c815142",
-                    "required": true,
-                    "error": {}
-                },
-                {
-                    "name": "address",
-                    "hackoladeMeta": {},
-                    "isActivated": true,
-                    "type": "document",
-                    "properties": [],
-                    "additionalProperties": false,
-                    "GUID": "b3d825fc-90ae-4edc-b172-b5bef9fb7813",
+                    "GUID": "2e0bb350-7ee6-48e5-9b9c-e6709586eb4e",
                     "required": true,
                     "error": {}
                 }
@@ -253,6 +394,269 @@
             },
             "GUID": "2acedb10-79eb-4250-a204-9511ec2ff446",
             "bucketId": "23edcae8-abf6-4ade-9e32-5e8249756a3f"
+        },
+        {
+            "collectionName": "payments",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "af279890-3009-423d-b2c7-27d50f2610e0",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "due",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "_id",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "3f1504d4-404e-4f34-acb4-c04d61a3d43a",
+                            "required": true,
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "GUID": "44376862-1e7b-45cd-973d-61dfb6e442aa",
+                    "error": {}
+                },
+                {
+                    "name": "amount",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "numeric",
+                    "GUID": "a5918500-49c2-468f-a63b-9ab3b2ec855b",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "date",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "error": {},
+                    "GUID": "1321b9b9-ed1a-4024-9a03-811938175ab2"
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "88a4d062-1d25-46df-8a2d-b53c97e4fc7b"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "d9e9dd86-d0df-48d2-ab8c-b1a232c81369",
+            "bucketId": "23edcae8-abf6-4ade-9e32-5e8249756a3f"
+        },
+        {
+            "collectionName": "dues",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "04506be2-3e10-4a25-a048-e4f6298c3db0",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "date",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "bca28ece-7854-4b28-9c0c-b20f28b611b0",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "amount",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "numeric",
+                    "required": true,
+                    "GUID": "775be457-baa5-466c-93ad-d9864901f0b3",
+                    "error": {}
+                },
+                {
+                    "name": "category",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "cd141f19-c546-4c6a-a8cd-2794221d5966",
+                    "required": true,
+                    "enum": [
+                        "membership",
+                        "electricity",
+                        "guest"
+                    ],
+                    "error": {}
+                },
+                {
+                    "name": "member",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "_id",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "19273131-f99c-4961-becf-abf8b4f80f0f",
+                            "required": true,
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "error": {},
+                    "required": true,
+                    "GUID": "58dbf064-2209-4ce8-a1e7-8f73e20702e7"
+                },
+                {
+                    "name": "status",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "21a58e9d-8292-4a3d-81c0-a59403a8569a",
+                    "required": true,
+                    "error": {
+                        "enum": false,
+                        "enums": [
+                            false,
+                            false,
+                            false
+                        ],
+                        "exampleItems": [
+                            false,
+                            false,
+                            false
+                        ]
+                    },
+                    "enum": [
+                        "pending",
+                        "paid",
+                        "canceled"
+                    ]
+                },
+                {
+                    "name": "createdAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "397f04b7-7b9e-4200-b0e3-c06c1a62ddf1",
+                    "definitionRefs": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "81a180c6-6d3c-4424-8100-afd08f9dfdae",
+                    "name": "createdBy",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "438154d8-e9e4-4f52-bdf4-23a9620539b8",
+                    "definitionRefs": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedBy",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "f92628ab-3ff2-40e1-b2c1-2e8a601f8e59",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "deletedBy",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "b6abf522-f4eb-4112-9b73-3ab521c0e056",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "deletedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "ef27eb79-5c27-452d-b639-7897fc27382e",
+                    "definitionRefs": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "isDeleted",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "boolean",
+                    "GUID": "9a4416ec-73e0-4dad-b110-a8dc9f33094e",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "notes",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "bd06e28f-fb3e-4c97-8653-01c6d3d96337",
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "0773f8db-a90b-4cd2-8b0a-30b49a689277"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
+            "bucketId": "23edcae8-abf6-4ade-9e32-5e8249756a3f"
         }
     ],
     "buckets": [
@@ -261,7 +665,9 @@
             "type": "bucket",
             "collectionIds": [
                 "0ec11f20-feb9-4a65-9f51-ed6cb5e6055c",
-                "2acedb10-79eb-4250-a204-9511ec2ff446"
+                "2acedb10-79eb-4250-a204-9511ec2ff446",
+                "d9e9dd86-d0df-48d2-ab8c-b1a232c81369",
+                "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94"
             ],
             "backgroundColor": {
                 "r": 216,
@@ -291,23 +697,59 @@
         "5d1a8c98-3680-4eeb-9fbf-cd29f766f6fb": "createdBy",
         "76d5e427-799a-4c44-b7c7-ad1e57b252c7": "updatedBy",
         "0b858f18-af86-4aac-8147-6c040874fde7": "isDeleted",
-        "8ff8619a-f547-44b5-b581-bb7a60dba268": "createdAt",
         "fb5482b3-0305-48ca-875c-413c9c751867": "profile",
         "de4c40f2-580c-488f-b187-02bc01691a8a": "firstName",
         "332dde62-8a95-4d78-9a9c-1a96973d2aff": "lastName",
         "b28be4f0-d97a-40e7-971a-6e3a33b992ee": "role",
         "2acedb10-79eb-4250-a204-9511ec2ff446": "members",
         "1f37bae5-6c4f-430c-b9ef-d131e321db5d": "_id",
-        "387c1dfc-ac7c-4c15-a96f-b6860a7e4d99": "_id",
         "224d5090-0f92-4c2f-a4d3-78d41f2af772": "_id",
-        "24e7889c-d718-4af6-82d6-3c438d81714d": "createdAt",
-        "431952d4-1488-470f-afa3-0592a9f43738": "createdBy",
-        "dcfe63ac-d8b1-4da5-8c0d-fc401703a000": "updatedAt",
-        "05b1b755-bb2e-49a7-899b-9f758eb1daf2": "updatedBy",
-        "d9916868-d053-444d-9c21-bdb1b6323327": "deletedBy",
-        "e38c1e63-6b7d-446a-b9dc-755ef4d1d61b": "deletedAt",
-        "89b52ead-f5e5-40f6-bda3-ba4e6c815142": "isDeleted",
-        "b3d825fc-90ae-4edc-b172-b5bef9fb7813": "address"
+        "b3d825fc-90ae-4edc-b172-b5bef9fb7813": "address",
+        "f459bf2e-5903-44b6-be36-55edbc1a67aa": "cityName",
+        "69998e45-6930-44e1-bc23-9933a0f579ef": "cityGovId",
+        "a092240a-9a8f-443d-b820-79c3fb0ffccc": "stateName",
+        "0f65b82b-a0dd-496c-8819-119917b9d58e": "stateGovId",
+        "da9fc2fe-045d-4ecd-a917-87c811c0052e": "street",
+        "906a7e71-4968-4120-bfec-cc8f381cb7d9": "zipCode",
+        "4da8656b-72e9-4946-bb5e-a35f552672f5": "category",
+        "536e0765-ecda-4560-9064-23c86e0f6790": "dateOfBirth",
+        "48ac3811-7feb-406f-938c-1e98fa179fba": "documentID",
+        "b64320fa-fa9e-437d-a556-b0289fcbfa30": "fileStatus",
+        "6523ab7d-cbba-4a9f-9bf6-047678d38557": "maritalStatus",
+        "64a95876-8740-48e4-84b7-a3fda7db0ebb": "nationality",
+        "281fe6a0-d533-47f5-a9f8-d4ea64a18ee4": "phones",
+        "f4f68c63-8bfc-462f-9601-bf3a14f7ec1e": "sex",
+        "5c4a0d11-dd67-4393-9d63-251b5cb7fb04": "status",
+        "f017e6a8-83ea-48f0-b0d1-b3c30db356ad": "userId",
+        "8ff8619a-f547-44b5-b581-bb7a60dba268": "createdAt",
+        "ce06f581-c431-42e5-a2c5-9179a27ae4b1": "createdAt",
+        "d0ca90e5-a0dc-468e-8edb-ce66c5645398": "createdBy",
+        "edef17bd-66cd-4454-9121-9265bb09c09a": "updatedAt",
+        "192b63dd-f308-47f1-8168-f7c43dec3679": "updatedBy",
+        "8b0e334a-0b45-49ec-bfe9-7addbf6e7588": "deletedBy",
+        "e8b21716-70de-430a-acee-fd45010c552e": "deletedAt",
+        "2e0bb350-7ee6-48e5-9b9c-e6709586eb4e": "isDeleted",
+        "d9e9dd86-d0df-48d2-ab8c-b1a232c81369": "payments",
+        "af279890-3009-423d-b2c7-27d50f2610e0": "_id",
+        "a5918500-49c2-468f-a63b-9ab3b2ec855b": "amount",
+        "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94": "dues",
+        "04506be2-3e10-4a25-a048-e4f6298c3db0": "_id",
+        "58dbf064-2209-4ce8-a1e7-8f73e20702e7": "member",
+        "19273131-f99c-4961-becf-abf8b4f80f0f": "_id",
+        "21a58e9d-8292-4a3d-81c0-a59403a8569a": "status",
+        "1321b9b9-ed1a-4024-9a03-811938175ab2": "date",
+        "bca28ece-7854-4b28-9c0c-b20f28b611b0": "date",
+        "775be457-baa5-466c-93ad-d9864901f0b3": "amount",
+        "cd141f19-c546-4c6a-a8cd-2794221d5966": "category",
+        "397f04b7-7b9e-4200-b0e3-c06c1a62ddf1": "createdAt",
+        "81a180c6-6d3c-4424-8100-afd08f9dfdae": "createdBy",
+        "438154d8-e9e4-4f52-bdf4-23a9620539b8": "updatedAt",
+        "f92628ab-3ff2-40e1-b2c1-2e8a601f8e59": "updatedBy",
+        "b6abf522-f4eb-4112-9b73-3ab521c0e056": "deletedBy",
+        "ef27eb79-5c27-452d-b639-7897fc27382e": "deletedAt",
+        "9a4416ec-73e0-4dad-b110-a8dc9f33094e": "isDeleted",
+        "44376862-1e7b-45cd-973d-61dfb6e442aa": "due",
+        "bd06e28f-fb3e-4c97-8653-01c6d3d96337": "notes"
     },
     "definitions": {
         "type": "definitions",
@@ -318,12 +760,7 @@
                 "isActivated": true,
                 "type": "string",
                 "GUID": "1f37bae5-6c4f-430c-b9ef-d131e321db5d",
-                "definitionRefs": [
-                    [
-                        "0ec11f20-feb9-4a65-9f51-ed6cb5e6055c",
-                        "387c1dfc-ac7c-4c15-a96f-b6860a7e4d99"
-                    ]
-                ],
+                "definitionRefs": [],
                 "required": true,
                 "error": {}
             },
@@ -422,7 +859,7 @@
             "modelName": false
         }
     },
-    "lastModifTS": "2023-11-11T15:58:06.117Z",
+    "lastModifTS": "2023-11-25T14:59:55.195Z",
     "persistenceSchemaVersion": "6",
     "isCreatedByPlugin": true,
     "pluginInformation": {
@@ -437,18 +874,34 @@
                 "erd": [
                     {
                         "GUID": "0ec11f20-feb9-4a65-9f51-ed6cb5e6055c",
-                        "x": 1050,
-                        "y": 1150,
-                        "width": 249,
-                        "height": 173,
+                        "x": 1302.004016064257,
+                        "y": 1250,
+                        "width": 206,
+                        "height": 87,
                         "color": {}
                     },
                     {
                         "GUID": "2acedb10-79eb-4250-a204-9511ec2ff446",
-                        "x": 1100,
-                        "y": 1050,
-                        "width": 177,
-                        "height": 30,
+                        "x": 1591.004016064257,
+                        "y": 1250,
+                        "width": 226,
+                        "height": 375,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "d9e9dd86-d0df-48d2-ab8c-b1a232c81369",
+                        "x": 1359.8192771084337,
+                        "y": 1054.008032128514,
+                        "width": 217,
+                        "height": 120,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
+                        "x": 1046.9939759036145,
+                        "y": 1060.6204819277107,
+                        "width": 212,
+                        "height": 285,
                         "color": {}
                     }
                 ],
@@ -460,13 +913,19 @@
                 },
                 "buckets": [
                     {
-                        "x": 1000,
-                        "y": 1000,
+                        "x": 1006.9939759036145,
+                        "y": 1014.0080321285141,
                         "GUID": "23edcae8-abf6-4ade-9e32-5e8249756a3f"
                     }
                 ],
                 "collapsedNodes": [
-                    "0ec11f20-feb9-4a65-9f51-ed6cb5e6055cf59118a2-d7c1-42fe-b35a-05d18e3534af514bf7de-b843-4ce1-bb73-0b9a1a60426b"
+                    "0ec11f20-feb9-4a65-9f51-ed6cb5e6055cf59118a2-d7c1-42fe-b35a-05d18e3534af514bf7de-b843-4ce1-bb73-0b9a1a60426b",
+                    "2acedb10-79eb-4250-a204-9511ec2ff446b3d825fc-90ae-4edc-b172-b5bef9fb7813",
+                    "0ec11f20-feb9-4a65-9f51-ed6cb5e6055cfb5482b3-0305-48ca-875c-413c9c751867",
+                    "0ec11f20-feb9-4a65-9f51-ed6cb5e6055cf59118a2-d7c1-42fe-b35a-05d18e3534af",
+                    "2acedb10-79eb-4250-a204-9511ec2ff446281fe6a0-d533-47f5-a9f8-d4ea64a18ee4",
+                    "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f9458dbf064-2209-4ce8-a1e7-8f73e20702e7",
+                    "d9e9dd86-d0df-48d2-ab8c-b1a232c8136944376862-1e7b-45cd-973d-61dfb6e442aa"
                 ],
                 "activeRelationship": "",
                 "activeRelationshipFields": {
@@ -485,14 +944,25 @@
                 "diagramViews": [],
                 "decorativeSymbols": [],
                 "nestedCollectionsLayout": "horizontal",
-                "options": [],
+                "options": [
+                    {
+                        "autoWidth": false,
+                        "autoHeight": false,
+                        "GUID": "d9e9dd86-d0df-48d2-ab8c-b1a232c81369"
+                    }
+                ],
                 "relationshipUpdateDisabled": false
             },
             "collectionLevel": {},
             "changed": false
         },
         "dtDiagram": {
-            "collapsedNodes": [],
+            "collapsedNodes": [
+                [
+                    "2acedb10-79eb-4250-a204-9511ec2ff446",
+                    "b3d825fc-90ae-4edc-b172-b5bef9fb7813"
+                ]
+            ],
             "shouldDistributeCollections": false
         }
     }

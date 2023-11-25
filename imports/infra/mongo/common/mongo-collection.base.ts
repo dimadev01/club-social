@@ -5,6 +5,7 @@ import {
 } from 'class-transformer';
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
 import { Entity } from '@domain/common/entity';
 
 export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
@@ -12,6 +13,11 @@ export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
     super(name, {
       transform: (doc) => plainToInstance(cls, doc),
     });
+  }
+
+  public attachSchema(schema: SimpleSchema): void {
+    // @ts-expect-error
+    super.attachSchema(schema);
   }
 
   public async insertEntity(entity: Mongo.OptionalId<T>): Promise<string> {
