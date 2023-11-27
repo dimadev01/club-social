@@ -1,4 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs';
+import localeData from 'dayjs/plugin/localeData';
 import utc from 'dayjs/plugin/utc';
 
 export enum DateFormatEnum {
@@ -20,6 +21,12 @@ export abstract class DateUtils {
 
   public static extend(): void {
     dayjs.extend(utc);
+
+    dayjs.extend(localeData);
+  }
+
+  public static months() {
+    return dayjs.months();
   }
 
   public static format(

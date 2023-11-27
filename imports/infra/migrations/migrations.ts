@@ -3,7 +3,6 @@ import { MongoInternals } from 'meteor/mongo';
 import { MovementCollection } from '@domain/movements/movement.collection';
 import { RoleService } from '@domain/roles/role.service';
 import { CategoryCollection } from '@infra/mongo/collections/category.collection';
-import { MemberCollection } from '@infra/mongo/collections/member.collection';
 
 // interface MemberRow {
 //   address?: string;
@@ -793,103 +792,103 @@ import { MemberCollection } from '@infra/mongo/collections/member.collection';
 //   version: 7,
 // });
 
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await CategoryCollection.updateAsync(
-      {},
-      {
-        $set: {
-          deletedAt: null,
-          deletedBy: null,
-          isDeleted: false,
-        },
-      },
-      { multi: true }
-    );
+// // @ts-expect-error
+// Migrations.add({
+//   down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+//     next();
+//   }),
+//   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+//     await CategoryCollection.updateAsync(
+//       {},
+//       {
+//         $set: {
+//           deletedAt: null,
+//           deletedBy: null,
+//           isDeleted: false,
+//         },
+//       },
+//       { multi: true }
+//     );
 
-    next();
-  }),
-  version: 8,
-});
+//     next();
+//   }),
+//   version: 8,
+// });
 
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await CategoryCollection.dropIndexAsync('code_1');
+// // @ts-expect-error
+// Migrations.add({
+//   down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+//     next();
+//   }),
+//   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+//     await CategoryCollection.dropIndexAsync('code_1');
 
-    next();
-  }),
-  version: 9,
-});
+//     next();
+//   }),
+//   version: 9,
+// });
 
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await MongoInternals.defaultRemoteCollectionDriver()
-      .mongo.db.collection('categories')
-      .dropIndexes();
+// // @ts-expect-error
+// Migrations.add({
+//   down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+//     next();
+//   }),
+//   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+//     await MongoInternals.defaultRemoteCollectionDriver()
+//       .mongo.db.collection('categories')
+//       .dropIndexes();
 
-    await MongoInternals.defaultRemoteCollectionDriver()
-      .mongo.db.collection('members')
-      .dropIndexes();
+//     await MongoInternals.defaultRemoteCollectionDriver()
+//       .mongo.db.collection('members')
+//       .dropIndexes();
 
-    await CategoryCollection.createIndexAsync({ name: 1 });
+//     await CategoryCollection.createIndexAsync({ name: 1 });
 
-    MemberCollection.createIndexAsync({ userId: 1 });
+//     MemberCollection.createIndexAsync({ userId: 1 });
 
-    MemberCollection.createIndexAsync({ createdAt: -1 });
+//     MemberCollection.createIndexAsync({ createdAt: -1 });
 
-    await MemberCollection.updateAsync(
-      {},
-      {
-        $set: {
-          deletedAt: null,
-          deletedBy: null,
-        },
-      },
-      { multi: true }
-    );
+//     await MemberCollection.updateAsync(
+//       {},
+//       {
+//         $set: {
+//           deletedAt: null,
+//           deletedBy: null,
+//         },
+//       },
+//       { multi: true }
+//     );
 
-    await MovementCollection.updateAsync(
-      {},
-      {
-        $set: {
-          deletedAt: null,
-          deletedBy: null,
-        },
-      },
-      { multi: true }
-    );
+//     await MovementCollection.updateAsync(
+//       {},
+//       {
+//         $set: {
+//           deletedAt: null,
+//           deletedBy: null,
+//         },
+//       },
+//       { multi: true }
+//     );
 
-    await RoleService.update();
+//     await RoleService.update();
 
-    next();
-  }),
-  version: 10,
-});
+//     next();
+//   }),
+//   version: 10,
+// });
 
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await RoleService.update();
+// // @ts-expect-error
+// Migrations.add({
+//   down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+//     next();
+//   }),
+//   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+//     await RoleService.update();
 
-    next();
-  }),
-  version: 11,
-});
+//     next();
+//   }),
+//   version: 11,
+// });
 
 // @ts-expect-error
 Migrations.add({

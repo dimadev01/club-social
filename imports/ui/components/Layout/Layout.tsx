@@ -65,6 +65,14 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
+    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Dues)) {
+      items.push({
+        icon: <BankOutlined className="!text-lg" />,
+        key: AppUrl.Dues,
+        label: <NavLink to={AppUrl.Dues}>Cobros</NavLink>,
+      });
+    }
+
     if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Categories)) {
       items.push({
         icon: <BankOutlined className="!text-lg" />,

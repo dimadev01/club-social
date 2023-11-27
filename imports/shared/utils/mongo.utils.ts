@@ -9,6 +9,10 @@ export abstract class MongoUtils {
     return { $ifNull: [{ $arrayElemAt: [path, 0] }, defaultValue] };
   }
 
+  public static first(path: string, defaultValue: string | number | boolean) {
+    return { $ifNull: [{ $first: path }, defaultValue] };
+  }
+
   public static getGroupByAmount() {
     return { $group: { _id: null, amount: { $sum: '$amount' } } };
   }

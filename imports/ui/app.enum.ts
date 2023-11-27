@@ -2,6 +2,10 @@
 export enum AppUrl {
   Home = '/',
 
+  Dues = '/dues',
+  DuesDetail = '/dues/:id',
+  DuesNew = '/dues/new',
+
   Enroll = '/enroll-account/:token',
   Login = '/login',
   LoginPasswordless = '/login/passwordless/:email',

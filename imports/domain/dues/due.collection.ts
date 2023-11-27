@@ -10,7 +10,9 @@ export const DueSchema = new SimpleSchema({
   amount: SchemaBuilder.c().integer().b(),
   category: String,
   date: Date,
-  member: SchemaBuilder.c().schema({ _id: String }).b(),
+  member: SchemaBuilder.c()
+    .schema({ _id: String, firstName: String, lastName: String })
+    .b(),
   notes: SchemaBuilder.c().string().optional().b(),
 }).extend(EntitySchema);
 

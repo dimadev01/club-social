@@ -1,10 +1,13 @@
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IDuePort } from '@domain/dues/due.port';
+import { DueMember } from '@domain/dues/entities/due-member';
 import { Due } from '@domain/dues/entities/due.entity';
 import { CreateDueRequestDto } from '@domain/dues/use-cases/create-due/create-due-request.dto';
+import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-member.use-case';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -20,7 +23,9 @@ export class CreateDueUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort
+    private readonly _duePort: IDuePort,
+    @inject(GetMemberUseCase)
+    private readonly _getMemberUseCase: GetMemberUseCase
   ) {
     super();
   }
@@ -36,11 +41,33 @@ export class CreateDueUseCase
       await session.withTransaction(async () => {
         await Promise.all(
           request.memberIds.map(async (memberId: string) => {
+            const member = await this._getMemberUseCase.execute({
+              id: memberId,
+            });
+
+            if (member.isErr()) {
+              throw member.error;
+            }
+
+            if (!member.value) {
+              throw new InternalServerError();
+            }
+
+            const dueMember = DueMember.create({
+              _id: memberId,
+              firstName: member.value.firstName,
+              lastName: member.value.lastName,
+            });
+
+            if (dueMember.isErr()) {
+              throw dueMember.error;
+            }
+
             const due = Due.create({
               amount: request.amount,
               category: request.category,
               date: request.date,
-              memberId,
+              member: dueMember.value,
               notes: request.notes,
             });
 

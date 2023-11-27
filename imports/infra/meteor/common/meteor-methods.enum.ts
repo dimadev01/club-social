@@ -9,6 +9,7 @@ export enum MethodsEnum {
   DuesDelete = 'dues/delete',
   DuesGet = 'dues/get',
   DuesGetGrid = 'dues/getGrid',
+  DuesGetPaid = 'dues/getPaid',
   DuesRestore = 'dues/restore',
   DuesUpdate = 'dues/update',
 

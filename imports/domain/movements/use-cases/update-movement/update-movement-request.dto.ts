@@ -1,40 +1,41 @@
 import {
   IsDateString,
   IsInt,
+  IsNotEmpty,
   IsOptional,
   IsPositive,
   IsString,
 } from 'class-validator';
 
 export class UpdateMovementRequestDto {
-  @IsString()
-  @IsOptional()
-  id: string;
-
-  @IsDateString()
-  date: string;
-
   @IsInt()
   @IsPositive()
-  amount: number;
+  public amount: number;
+
+  @IsDateString()
+  public date: string;
 
   @IsString()
   @IsOptional()
-  notes: string | null;
+  public employeeId: string | null;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  memberId: string | null;
+  public id: string;
 
-  @IsOptional()
   @IsString()
-  professorId: string | null;
+  @IsOptional()
+  public memberId: string | null;
 
-  @IsOptional()
   @IsString()
-  serviceId: string | null;
+  @IsOptional()
+  public notes: string | null;
 
-  @IsOptional()
   @IsString()
-  employeeId: string | null;
+  @IsOptional()
+  public professorId: string | null;
+
+  @IsString()
+  @IsOptional()
+  public serviceId: string | null;
 }

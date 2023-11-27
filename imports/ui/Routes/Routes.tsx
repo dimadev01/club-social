@@ -9,6 +9,8 @@ import { LogoutPage } from '@ui/pages/auth/LogoutPage';
 import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
 import { CategoriesPage } from '@ui/pages/categories/CategoriesPage';
 import { CategoryDetailPage } from '@ui/pages/categories/CategoryDetailPage';
+import { DueDetailPage } from '@ui/pages/dues/DueDetailPage';
+import { DuesPage } from '@ui/pages/dues/DuesPage';
 import { EmployeesPage } from '@ui/pages/employees/EmployeesPage';
 import { HomePage } from '@ui/pages/HomePage';
 import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
@@ -135,6 +137,31 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.MovementsDetail,
+  },
+
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+        <DuesPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.Dues,
+  },
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+        <DueDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.DuesNew,
+  },
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+        <DueDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.DuesDetail,
   },
 
   {

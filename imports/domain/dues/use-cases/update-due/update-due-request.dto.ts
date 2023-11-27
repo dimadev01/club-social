@@ -1,16 +1,15 @@
 import {
-  ArrayMinSize,
-  IsArray,
   IsDateString,
   IsEnum,
   IsInt,
+  IsNotEmpty,
   IsPositive,
   IsString,
 } from 'class-validator';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
-export class CreateDueRequestDto {
+export class UpdateDueRequestDto {
   @IsInt()
   @IsPositive()
   public amount: number;
@@ -21,10 +20,13 @@ export class CreateDueRequestDto {
   @IsDateString()
   public date: string;
 
-  @IsString({ each: true })
-  @ArrayMinSize(1)
-  @IsArray()
-  public memberIds: string[];
+  @IsNotEmpty()
+  @IsString()
+  public id: string;
+
+  @IsNotEmpty()
+  @IsString()
+  public memberId: string;
 
   @IsString()
   @IsNullable()
