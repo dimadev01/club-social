@@ -8,17 +8,17 @@ export class MemberForCsvDto {
 
   public category: MemberCategoryEnum;
 
-  public electricityDebt: string;
+  public electricityDebt: number;
 
   public emails: string[] | null;
 
-  public guestDebt: string;
+  public guestDebt: number;
 
-  public membershipDebt: string;
+  public membershipDebt: number;
 
   public name: string;
 
   public status: MemberStatusEnum;
 
-  public totalDebt: string;
+  public totalDebt: number;
 }
