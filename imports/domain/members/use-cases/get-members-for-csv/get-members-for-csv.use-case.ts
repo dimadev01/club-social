@@ -44,6 +44,7 @@ export class GetMembersForCsvUseCase
           }`,
           category: member.category,
           status: member.status,
+          phone: member.phones?.[0] ?? null,
           emails: member.user.emails
             ? member.user.emails.map((email) => email.address)
             : null,

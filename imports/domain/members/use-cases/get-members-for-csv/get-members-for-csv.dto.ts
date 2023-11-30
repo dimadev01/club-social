@@ -10,6 +10,8 @@ export class MemberForCsvDto {
 
   public electricityDebt: number;
 
+  public phone: string | null;
+
   public emails: string[] | null;
 
   public guestDebt: number;
