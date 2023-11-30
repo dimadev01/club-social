@@ -104,6 +104,10 @@ export const MembersPage = () => {
                   id: 'emails',
                 },
                 {
+                  displayName: 'Teléfono',
+                  id: 'phone',
+                },
+                {
                   displayName: 'Deuda de luz',
                   id: 'electricityDebt',
                 },
