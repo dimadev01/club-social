@@ -15,7 +15,7 @@ export type FindPaginatedMembersRequest = FindPaginatedRequest & {
 
 export type FindPaginatedMember = Pick<
   Member,
-  '_id' | 'category' | 'user' | 'fileStatus' | 'status'
+  '_id' | 'category' | 'user' | 'fileStatus' | 'status' | 'phones'
 > & {
   electricityDebt: number;
   guestDebt: number;

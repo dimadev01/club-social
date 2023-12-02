@@ -44,13 +44,14 @@ export class GetMembersForCsvUseCase
           }`,
           category: member.category,
           status: member.status,
+          phone: member.phones?.[0] ?? null,
           emails: member.user.emails
             ? member.user.emails.map((email) => email.address)
             : null,
-          electricityDebt: MoneyUtils.formatCents(member.electricityDebt),
-          guestDebt: MoneyUtils.formatCents(member.guestDebt),
-          membershipDebt: MoneyUtils.formatCents(member.membershipDebt),
-          totalDebt: MoneyUtils.formatCents(member.totalDebt),
+          electricityDebt: MoneyUtils.fromCents(member.electricityDebt),
+          guestDebt: MoneyUtils.fromCents(member.guestDebt),
+          membershipDebt: MoneyUtils.fromCents(member.membershipDebt),
+          totalDebt: MoneyUtils.fromCents(member.totalDebt),
         })
       ),
     });

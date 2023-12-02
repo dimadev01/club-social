@@ -178,6 +178,7 @@ export class MemberRepository
           electricityDebt: 1,
           guestDebt: 1,
           membershipDebt: 1,
+          phones: 1,
           status: 1,
           totalDebt: 1,
           user: 1,
