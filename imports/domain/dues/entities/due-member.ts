@@ -9,24 +9,14 @@ export class DueMember {
 
   @IsNotEmpty()
   @IsString()
-  public firstName: string;
-
-  @IsNotEmpty()
-  @IsString()
-  public lastName: string;
-
-  public get name(): string {
-    return `${this.firstName} ${this.lastName}`;
-  }
+  public name: string;
 
   public static create(props: CreateDueMember): Result<DueMember, Error> {
     const dueMember = new DueMember();
 
     dueMember._id = props._id;
 
-    dueMember.firstName = props.firstName;
-
-    dueMember.lastName = props.lastName;
+    dueMember.name = props.name;
 
     return ok(dueMember);
   }

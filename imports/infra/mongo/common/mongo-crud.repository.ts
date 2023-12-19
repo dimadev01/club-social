@@ -59,6 +59,8 @@ export abstract class MongoCrudRepository<T extends Entity>
 
       return result.insertedId;
     } catch (error) {
+      this._logger.info('createWithSession');
+
       this._logger.error(error);
 
       throw error;
@@ -154,11 +156,7 @@ export abstract class MongoCrudRepository<T extends Entity>
     session: ClientSession
   ): Promise<void> {
     try {
-      this.getSchema().validate(
-        this.getSchema().clean(
-          entity as Record<string | number | symbol, unknown>
-        )
-      );
+      this.getSchema().validate(entity);
 
       await this._collection
         .rawCollection()

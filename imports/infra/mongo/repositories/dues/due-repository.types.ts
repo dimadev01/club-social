@@ -11,3 +11,11 @@ export type FindPaginatedDuesRequest = FindPaginatedRequest & {
 export type FindPaidRequest = {
   memberId?: string;
 };
+
+export type FindPendingRequest = {
+  memberIds: string[];
+};
+
+export type FindByIdsRequest = {
+  dueIds: string[];
+};

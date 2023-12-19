@@ -53,23 +53,11 @@ export const App = () => {
       <AntApp rootClassName="cs-ant-app">
         <ConfigProvider
           locale={esEs}
-          select={{
-            showSearch: true,
-          }}
+          select={{ showSearch: true }}
           dropdownMatchSelectWidth={false}
-          form={{
-            requiredMark: 'optional',
-            scrollToFirstError: true,
-          }}
-          input={{
-            autoComplete: 'on',
-          }}
-          theme={{
-            token: {
-              colorTextBase: '#505050',
-              fontFamily: 'Rubik',
-            },
-          }}
+          form={{ requiredMark: 'optional', scrollToFirstError: true }}
+          input={{ autoComplete: 'on' }}
+          theme={{ token: { colorTextBase: '#505050', fontFamily: 'Rubik' } }}
         >
           <QueryClientProvider client={queryClient}>
             <Routes />

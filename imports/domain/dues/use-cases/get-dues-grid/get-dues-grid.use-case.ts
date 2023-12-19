@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
@@ -10,6 +9,7 @@ import { GetDuesGridRequestDto } from '@domain/dues/use-cases/get-dues-grid/get-
 import { GetDuesGridResponseDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.response.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
+import { DateUtils } from '@shared/utils/date.utils';
 
 @injectable()
 export class GetDuesGridUseCase
@@ -41,8 +41,10 @@ export class GetDuesGridUseCase
           memberName: due.member.name,
           membershipMonth:
             due.category === DueCategoryEnum.Membership
-              ? dayjs.utc(due.date).format('MMMM')
+              ? DateUtils.utc(due.date).format('MMMM')
               : '-',
+          paidAmount: due.payment?.amountFormatted ?? '-',
+          paidAt: due.payment?.dateFormatted ?? '-',
           status: due.status,
         })
       ),

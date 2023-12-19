@@ -11,17 +11,17 @@ import {
 } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
-import { Roles } from 'meteor/alanning:roles';
 import { Navigate, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import {
   DueCategoryEnum,
   DueCategoryLabel,
+  DueStatusEnum,
   getDueCategoryOptions,
 } from '@domain/dues/due.enum';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MoneyUtils } from '@shared/utils/currency.utils';
-import { DateFormatEnum } from '@shared/utils/date.utils';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { NotFound } from '@ui/components/NotFound';
@@ -65,9 +65,6 @@ export const DueDetailPage = () => {
 
   const { data: members, isLoading: isLoadingMembers } = useMembers();
 
-  // const { data: categoriesByType, isLoading: isLoadingCategoriesByType } =
-  //   useCategoriesByType(type);
-
   const user = Meteor.user();
 
   if (!user) {
@@ -84,7 +81,7 @@ export const DueDetailPage = () => {
     }
 
     if (!due) {
-      await createDue.mutateAsync(
+      createDue.mutate(
         {
           amount: MoneyUtils.toCents(values.amount),
           category: values.category,
@@ -101,7 +98,7 @@ export const DueDetailPage = () => {
         }
       );
     } else {
-      await updateDue.mutateAsync(
+      updateDue.mutate(
         {
           amount: MoneyUtils.toCents(values.amount),
           category: values.category,
@@ -127,17 +124,21 @@ export const DueDetailPage = () => {
     return <NotFound />;
   }
 
-  // const getPriceForCategory = (value: CategoryEnum): number => {
-  //   const foundCategory = find(categoriesByType, { code: value });
+  const isFormDisabled = () => {
+    if (!Roles.userIsInRole(user, PermissionEnum.Create, ScopeEnum.Dues)) {
+      return false;
+    }
 
-  //   return foundCategory?.amount
-  //     ? MoneyUtils.fromCents(foundCategory.amount)
-  //     : 0;
-  // };
+    if (!Roles.userIsInRole(user, PermissionEnum.Update, ScopeEnum.Dues)) {
+      return false;
+    }
 
-  const canCreateOrUpdateMovement =
-    Roles.userIsInRole(user, PermissionEnum.Create, ScopeEnum.Movements) ||
-    Roles.userIsInRole(user, PermissionEnum.Update, ScopeEnum.Movements);
+    if (due?.status === DueStatusEnum.Paid) {
+      return true;
+    }
+
+    return false;
+  };
 
   /**
    * Renders component
@@ -147,12 +148,8 @@ export const DueDetailPage = () => {
       <Breadcrumb
         className="mb-8"
         items={[
-          {
-            title: 'Inicio',
-          },
-          {
-            title: <NavLink to={AppUrl.Dues}>Cobros</NavLink>,
-          },
+          { title: 'Inicio' },
+          { title: <NavLink to={AppUrl.Dues}>Cobros</NavLink> },
           {
             title: due
               ? `${due.date} - ${DueCategoryLabel[due.category]} - ${
@@ -167,14 +164,14 @@ export const DueDetailPage = () => {
         <Card>
           <Form<FormValues>
             layout="vertical"
-            disabled={!canCreateOrUpdateMovement}
+            disabled={isFormDisabled()}
             form={form}
             onFinish={(values) => handleSubmit(values)}
             initialValues={{
               amount: due?.amount ? MoneyUtils.fromCents(due.amount) : 0,
               category: due?.category ?? DueCategoryEnum.Membership,
               date: due?.date
-                ? dayjs.utc(due.date, DateFormatEnum.DDMMYYYY)
+                ? DateUtils.utc(due.date, DateFormatEnum.DDMMYYYY)
                 : undefined,
               memberIds: due?.memberId ? [due.memberId] : [],
               notes: due?.notes,
@@ -246,9 +243,7 @@ export const DueDetailPage = () => {
             >
               <Select
                 mode="multiple"
-                disabled={
-                  isLoadingMembers || !canCreateOrUpdateMovement || !!due
-                }
+                disabled={isLoadingMembers || !isFormDisabled || !!due}
                 loading={isLoadingMembers}
                 options={members?.map((member) => ({
                   label: member.name,
@@ -281,7 +276,7 @@ export const DueDetailPage = () => {
               <InputNumber
                 className="w-40"
                 prefix={ARS.code}
-                precision={2}
+                precision={0}
                 decimalSeparator=","
                 step={100}
               />
@@ -298,7 +293,13 @@ export const DueDetailPage = () => {
             <FormButtons
               scope={ScopeEnum.Movements}
               isLoading={createDue.isLoading || updateDue.isLoading}
-              isDisabled={createDue.isLoading || updateDue.isLoading}
+              isSaveDisabled={
+                createDue.isLoading ||
+                updateDue.isLoading ||
+                due?.status === DueStatusEnum.Paid
+              }
+              isBackDisabled={createDue.isLoading || updateDue.isLoading}
+              isDeleteDisabled={createDue.isLoading || updateDue.isLoading}
               showDeleteButton={!!due}
               onClickDelete={() =>
                 due && deleteMovement.mutate({ id: due._id })

@@ -364,7 +364,7 @@ import { CategoryCollection } from '@infra/mongo/collections/category.collection
 //         // @ts-expect-error
 //         category,
 //         dateOfBirth: row.dateOfBirth
-//           ? dayjs.utc(row.dateOfBirth).format(DateFormatEnum.Date)
+//           ? DateUtils.utc(row.dateOfBirth).format(DateFormatEnum.Date)
 //           : null,
 //         documentID: row.documentID ?? null,
 //         emails: email ? [email] : null,
@@ -617,7 +617,7 @@ import { CategoryCollection } from '@infra/mongo/collections/category.collection
 //       await createMovementUseCase.execute({
 //         amount: CurrencyUtils.toCents(Math.abs(row.amount)),
 //         category,
-//         date: dayjs.utc(row.date).format(DateFormatEnum.Date),
+//         date: DateUtils.utc(row.date).format(DateFormatEnum.Date),
 //         employeeId,
 //         memberIds: memberId ? [memberId] : null,
 //         notes: row.notes ?? null,

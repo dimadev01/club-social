@@ -6,4 +6,5 @@ export const DIToken = Object.freeze({
   MemberRepository: Symbol('MemberRepository'),
   MovementFindPaginatedRepository: Symbol('MovementFindPaginatedRepository'),
   MovementRepository: Symbol('MovementRepository'),
+  PaymentRepository: Symbol('PaymentRepository'),
 });

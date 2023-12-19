@@ -37,7 +37,7 @@ export abstract class DateUtils {
   }
 
   public static formatUtc(
-    date: Date | Dayjs,
+    date: Date | Dayjs | string,
     format: DateFormatEnum = DateFormatEnum.Date
   ): string {
     return this.utc(date).format(format);
@@ -49,5 +49,14 @@ export abstract class DateUtils {
     strict?: boolean | undefined
   ): Dayjs {
     return dayjs.utc(config, format, strict);
+  }
+
+  public static now(
+    date?: dayjs.ConfigType,
+    format?: dayjs.OptionType,
+    locale?: string,
+    strict?: boolean
+  ): Dayjs {
+    return dayjs(date, format, locale, strict);
   }
 }

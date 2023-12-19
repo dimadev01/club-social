@@ -10,8 +10,9 @@ import {
 import { err, ok, Result } from 'neverthrow';
 import { Entity } from '@domain/common/entity';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
-import { CreateDue } from '@domain/dues/due.types';
+import { CreateDue, CreateDuePayment } from '@domain/dues/due.types';
 import { DueMember } from '@domain/dues/entities/due-member';
+import { DuePayment } from '@domain/dues/entities/due-payment';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
@@ -34,6 +35,11 @@ export class Due extends Entity {
   @IsNotEmpty()
   @IsNullable()
   public notes: string | null;
+
+  @ValidateNested()
+  @Type(() => DuePayment)
+  @IsNullable()
+  public payment: DuePayment | null;
 
   @IsEnum(DueStatusEnum)
   public status: DueStatusEnum;
@@ -67,9 +73,33 @@ export class Due extends Entity {
 
     due.member = props.member;
 
+    due.payment = null;
+
     due.status = DueStatusEnum.Pending;
 
     return ok(due);
+  }
+
+  public isCanceled() {
+    return this.status === DueStatusEnum.Canceled;
+  }
+
+  public isPaid() {
+    return this.status === DueStatusEnum.Paid;
+  }
+
+  public paid(props: CreateDuePayment): Result<null, Error> {
+    const payment = DuePayment.create(props);
+
+    if (payment.isErr()) {
+      return err(payment.error);
+    }
+
+    this.payment = payment.value;
+
+    this.status = DueStatusEnum.Paid;
+
+    return ok(null);
   }
 
   public setAmount(amount: number): Result<null, Error> {

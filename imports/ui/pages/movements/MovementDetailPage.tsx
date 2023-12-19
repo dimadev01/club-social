@@ -354,7 +354,7 @@ export const MovementDetailPage = () => {
                 : getPriceForCategory(CategoryEnum.MembershipIncome),
               category: movement?.category ?? CategoryEnum.MembershipIncome,
               date: movement?.date
-                ? dayjs.utc(movement.date, DateFormatEnum.DDMMYYYY)
+                ? DateUtils.utc(movement.date, DateFormatEnum.DDMMYYYY)
                 : undefined,
               employeeId: movement?.employeeId,
               memberId: movement?.memberId,
@@ -421,9 +421,9 @@ export const MovementDetailPage = () => {
               status="error"
             >
               <InputNumber
-                className="w-40"
+                className="w-32"
                 prefix={ARS.code}
-                precision={2}
+                precision={0}
                 decimalSeparator=","
                 step={100}
               />
@@ -440,7 +440,15 @@ export const MovementDetailPage = () => {
             <FormButtons
               scope={ScopeEnum.Movements}
               isLoading={createMovement.isLoading || updateMovement.isLoading}
-              isDisabled={createMovement.isLoading || updateMovement.isLoading}
+              isSaveDisabled={
+                createMovement.isLoading || updateMovement.isLoading
+              }
+              isBackDisabled={
+                createMovement.isLoading || updateMovement.isLoading
+              }
+              isDeleteDisabled={
+                createMovement.isLoading || updateMovement.isLoading
+              }
               showDeleteButton={!!movement}
               onClickDelete={() =>
                 movement && deleteMovement.mutate({ id: movement._id })

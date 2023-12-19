@@ -93,7 +93,7 @@ export const CategoryDetailPage = () => {
             <InputNumber
               className="w-40"
               prefix={ARS.code}
-              precision={2}
+              precision={0}
               decimalSeparator=","
               step={100}
             />

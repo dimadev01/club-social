@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Breadcrumb, Card, Checkbox, DatePicker, Form, Space } from 'antd';
+import {
+  Breadcrumb,
+  Card,
+  Checkbox,
+  DatePicker,
+  Form,
+  Space,
+  Tooltip,
+} from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
 import { Roles } from 'meteor/alanning:roles';
@@ -223,7 +231,17 @@ export const DuesPage = () => {
                 dataIndex: 'status',
                 filteredValue: gridState.filters?.status ?? [],
                 filters: getDueStatusColumnFilters(),
-                render: (status: DueStatusEnum) => DueStatusLabel[status],
+                render: (status: DueStatusEnum, due: DueGridDto) => {
+                  if (status === DueStatusEnum.Paid) {
+                    return (
+                      <Tooltip title={`${due.paidAt} - ${due.paidAmount}`}>
+                        {DueStatusLabel[status]}
+                      </Tooltip>
+                    );
+                  }
+
+                  return DueStatusLabel[status];
+                },
                 title: 'Estado',
               },
               {

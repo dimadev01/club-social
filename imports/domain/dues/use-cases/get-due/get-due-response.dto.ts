@@ -1,4 +1,4 @@
-import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 
 export class GetDueResponseDto {
   public _id: string;
@@ -14,4 +14,6 @@ export class GetDueResponseDto {
   public memberId: string;
 
   public notes: string | null;
+
+  public status: DueStatusEnum;
 }

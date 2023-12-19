@@ -11,6 +11,11 @@ export interface CreateDue {
 
 export interface CreateDueMember {
   _id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
+}
+
+export interface CreateDuePayment {
+  _id: string;
+  amount: number;
+  date: Date;
 }

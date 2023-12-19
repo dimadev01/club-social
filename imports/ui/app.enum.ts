@@ -20,6 +20,10 @@ export enum AppUrl {
   MovementsDetail = '/movements/:id',
   MovementsNew = '/movements/new',
 
+  Payments = '/payments',
+  PaymentsDetail = '/payments/:id',
+  PaymentsNew = '/payments/new',
+
   Professors = '/professors',
 
   Employees = '/employees',

@@ -13,14 +13,16 @@ import { DIToken } from '@infra/di/di-tokens';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
 import {
+  FindByIdsRequest,
   FindPaginatedDuesRequest,
   FindPaidRequest,
+  FindPendingRequest,
 } from '@infra/mongo/repositories/dues/due-repository.types';
 import { DateUtils } from '@shared/utils/date.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
 
 @injectable()
-export class DuetRepository
+export class DueRepository
   extends MongoCrudRepository<Due>
   implements IDuePort
 {
@@ -29,6 +31,14 @@ export class DuetRepository
     protected readonly _logger: ILogger
   ) {
     super(_logger);
+  }
+
+  public async findByIds(request: FindByIdsRequest): Promise<Due[]> {
+    const query: Mongo.Query<Due> = {
+      _id: { $in: request.dueIds },
+    };
+
+    return this.getCollection().find(query).fetchAsync();
   }
 
   public async findPaginated(
@@ -93,6 +103,19 @@ export class DuetRepository
 
     const options: Mongo.Options<Due> = {
       sort: { date: -1 },
+    };
+
+    return this.getCollection().find(query, options).fetchAsync();
+  }
+
+  public findPending(request: FindPendingRequest): Promise<Due[]> {
+    const query: Mongo.Query<Due> = {
+      'member._id': { $in: request.memberIds },
+      status: DueStatusEnum.Pending,
+    };
+
+    const options: Mongo.Options<Due> = {
+      sort: { date: 1 },
     };
 
     return this.getCollection().find(query, options).fetchAsync();

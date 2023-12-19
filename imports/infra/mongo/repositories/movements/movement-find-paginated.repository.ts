@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
@@ -21,6 +20,7 @@ import {
   FindPaginatedMovementsRequest,
   FindPaginatedMovementsResponse,
 } from '@infra/mongo/repositories/movements/movement-repository.types';
+import { DateUtils } from '@shared/utils/date.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
 
 @injectable()
@@ -44,8 +44,8 @@ export class MovementFindPaginatedRepository
 
     if (request.from && request.to) {
       query.date = {
-        $gte: dayjs.utc(request.from).startOf('day').toDate(),
-        $lte: dayjs.utc(request.to).endOf('day').toDate(),
+        $gte: DateUtils.utc(request.from).startOf('day').toDate(),
+        $lte: DateUtils.utc(request.to).endOf('day').toDate(),
       };
     }
 

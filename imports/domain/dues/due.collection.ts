@@ -7,13 +7,16 @@ import { SchemaBuilder } from '@infra/mongo/schemas/schema-builder';
 export const DueCollection = new MongoCollection('dues', Due);
 
 export const DueSchema = new SimpleSchema({
-  amount: SchemaBuilder.c().integer().b(),
+  amount: SimpleSchema.Integer,
   category: String,
   date: Date,
-  member: SchemaBuilder.c()
-    .schema({ _id: String, firstName: String, lastName: String })
-    .b(),
+  member: SchemaBuilder.c().schema({ _id: String, name: String }).b(),
   notes: SchemaBuilder.c().string().optional().b(),
+  payment: SchemaBuilder.c().object().optional().b(),
+  'payment._id': String,
+  'payment.amount': SimpleSchema.Integer,
+  'payment.date': Date,
+  status: String,
 }).extend(EntitySchema);
 
 DueCollection.attachSchema(DueSchema);

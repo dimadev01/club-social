@@ -6,8 +6,10 @@ import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
 import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 
 type Props = {
-  isDisabled?: boolean;
+  isBackDisabled?: boolean;
+  isDeleteDisabled?: boolean;
   isLoading?: boolean;
+  isSaveDisabled?: boolean;
   onClickDelete?: () => void;
   scope: ScopeEnum;
   showDeleteButton?: boolean;
@@ -16,8 +18,10 @@ type Props = {
 export const FormButtons: React.FC<Props> = ({
   isLoading = false,
   showDeleteButton = false,
-  isDisabled = false,
   onClickDelete,
+  isBackDisabled,
+  isDeleteDisabled,
+  isSaveDisabled,
   scope,
 }) => {
   const renderDeleteButton = () => {
@@ -42,7 +46,7 @@ export const FormButtons: React.FC<Props> = ({
             onClickDelete();
           }
         }}
-        disabled={isLoading || isDisabled}
+        disabled={isLoading || isDeleteDisabled}
       />
     );
   };
@@ -61,7 +65,7 @@ export const FormButtons: React.FC<Props> = ({
       return false;
     }
 
-    return <FormSaveButton loading={isLoading} disabled={isDisabled} />;
+    return <FormSaveButton loading={isLoading} disabled={isSaveDisabled} />;
   };
 
   return (
@@ -69,7 +73,7 @@ export const FormButtons: React.FC<Props> = ({
       <Button.Group>
         {renderSaveButton()}
 
-        <FormBackButton disabled={isLoading || isDisabled} />
+        <FormBackButton disabled={isLoading || isBackDisabled} />
       </Button.Group>
 
       {renderDeleteButton()}

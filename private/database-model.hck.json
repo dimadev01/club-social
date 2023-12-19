@@ -145,10 +145,7 @@
                         ]
                     ],
                     "required": true,
-                    "error": {},
-                    "childRelationships": [
-                        "ac2efac5-a54a-4414-be81-2eec7d6f119e"
-                    ]
+                    "error": {}
                 },
                 {
                     "name": "address",
@@ -432,6 +429,25 @@
                     "error": {}
                 },
                 {
+                    "name": "amount",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "numeric",
+                    "GUID": "a5918500-49c2-468f-a63b-9ab3b2ec855b",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "date",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "1321b9b9-ed1a-4024-9a03-811938175ab2",
+                    "required": true,
+                    "error": {}
+                },
+                {
                     "name": "due",
                     "hackoladeMeta": {},
                     "isActivated": true,
@@ -452,29 +468,130 @@
                                 "04506be2-3e10-4a25-a048-e4f6298c3db0"
                             ],
                             "parentRelationship": "2665a4a9-5ab6-4919-a552-6d0ceecde9d6"
+                        },
+                        {
+                            "name": "amount",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "numeric",
+                            "GUID": "2cf81fed-a0d5-4ae4-88c3-5252860c04fd",
+                            "required": true,
+                            "error": {}
                         }
                     ],
                     "additionalProperties": false,
                     "GUID": "44376862-1e7b-45cd-973d-61dfb6e442aa",
-                    "error": {}
-                },
-                {
-                    "name": "amount",
-                    "hackoladeMeta": {},
-                    "isActivated": true,
-                    "type": "numeric",
-                    "GUID": "a5918500-49c2-468f-a63b-9ab3b2ec855b",
                     "required": true,
                     "error": {}
                 },
                 {
-                    "name": "date",
+                    "name": "notes",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "4ce95029-cc5d-4ab3-bd56-8c91733deb93",
+                    "error": {
+                        "name": false,
+                        "code": false
+                    },
+                    "foreignCollection": "",
+                    "foreignField": []
+                },
+                {
+                    "name": "status",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "7ccfe2df-ad99-471a-8367-49a10987f755",
+                    "required": true,
+                    "error": {
+                        "enum": false,
+                        "enums": [
+                            false,
+                            false
+                        ],
+                        "exampleItems": [
+                            false,
+                            false
+                        ],
+                        "name": false,
+                        "code": false
+                    },
+                    "enum": [
+                        "paid",
+                        "canceled"
+                    ],
+                    "foreignCollection": "",
+                    "foreignField": []
+                },
+                {
+                    "name": "createdAt",
                     "hackoladeMeta": {},
                     "isActivated": true,
                     "type": "date",
                     "primaryKey": false,
-                    "error": {},
-                    "GUID": "1321b9b9-ed1a-4024-9a03-811938175ab2"
+                    "GUID": "3a3d6e1b-83eb-41b7-9444-3ee9fa1d7e91",
+                    "definitionRefs": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "e9ce86d1-f952-4b8b-b1a7-e20116479913",
+                    "name": "createdBy",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "edaa7c98-012d-4974-b778-1c0eae7d6476",
+                    "definitionRefs": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "updatedBy",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "b148b993-84c3-4d6d-9fe0-dfd7c9d5fb16",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "deletedBy",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "e898b4a6-2d73-4916-b56e-e066157f35dc",
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "deletedAt",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "c0f14e2e-97d1-4966-a42c-d67a54912f51",
+                    "definitionRefs": [],
+                    "required": true,
+                    "error": {}
+                },
+                {
+                    "name": "isDeleted",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "boolean",
+                    "GUID": "47fde834-bb5d-4cad-a2a3-1101522ed83d",
+                    "required": true,
+                    "error": {}
                 }
             ],
             "definitions": {
@@ -514,16 +631,6 @@
                     ]
                 },
                 {
-                    "name": "date",
-                    "hackoladeMeta": {},
-                    "isActivated": true,
-                    "type": "date",
-                    "primaryKey": false,
-                    "GUID": "bca28ece-7854-4b28-9c0c-b20f28b611b0",
-                    "required": true,
-                    "error": {}
-                },
-                {
                     "name": "amount",
                     "hackoladeMeta": {},
                     "isActivated": true,
@@ -544,6 +651,16 @@
                         "electricity",
                         "guest"
                     ],
+                    "error": {}
+                },
+                {
+                    "name": "date",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "GUID": "bca28ece-7854-4b28-9c0c-b20f28b611b0",
+                    "required": true,
                     "error": {}
                 },
                 {
@@ -593,6 +710,14 @@
                     "GUID": "58dbf064-2209-4ce8-a1e7-8f73e20702e7"
                 },
                 {
+                    "name": "notes",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "bd06e28f-fb3e-4c97-8653-01c6d3d96337",
+                    "error": {}
+                },
+                {
                     "name": "status",
                     "hackoladeMeta": {},
                     "isActivated": true,
@@ -617,14 +742,6 @@
                         "paid",
                         "canceled"
                     ]
-                },
-                {
-                    "name": "notes",
-                    "hackoladeMeta": {},
-                    "isActivated": true,
-                    "type": "string",
-                    "GUID": "bd06e28f-fb3e-4c97-8653-01c6d3d96337",
-                    "error": {}
                 },
                 {
                     "name": "createdAt",
@@ -741,59 +858,6 @@
     "views": [],
     "relationships": [
         {
-            "name": "fk dues.member._id to members._id",
-            "relationshipType": "Foreign Key",
-            "parentField": [
-                [
-                    "2acedb10-79eb-4250-a204-9511ec2ff446",
-                    "224d5090-0f92-4c2f-a4d3-78d41f2af772"
-                ]
-            ],
-            "parentCardinality": "1",
-            "childField": [
-                [
-                    "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
-                    "58dbf064-2209-4ce8-a1e7-8f73e20702e7",
-                    "19273131-f99c-4961-becf-abf8b4f80f0f"
-                ]
-            ],
-            "isActivated": true,
-            "childCardinality": "0..n",
-            "parentCollection": "2acedb10-79eb-4250-a204-9511ec2ff446",
-            "childCollection": "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
-            "GUID": "ac2efac5-a54a-4414-be81-2eec7d6f119e",
-            "hackoladeStyles": {
-                "GUID": "e8199306-390a-4211-aee0-3b0bfe04af76",
-                "autoPositioning": false,
-                "type": "Orthogonal",
-                "thickness": 2,
-                "color": "#79c4ff",
-                "dataType": "",
-                "shape": [
-                    {
-                        "x": 1270,
-                        "y": 1713.6666666666667
-                    },
-                    {
-                        "x": 1305.0806270996643,
-                        "y": 1713.6666666666667
-                    },
-                    {
-                        "x": 1305.0806270996643,
-                        "y": 1438.3333333333333
-                    },
-                    {
-                        "x": 1269.5,
-                        "y": 1438.3333333333333
-                    }
-                ],
-                "sides": [
-                    "right",
-                    "right"
-                ]
-            }
-        },
-        {
             "name": "fk members.userId to users._id",
             "relationshipType": "Foreign Key",
             "parentField": [
@@ -824,11 +888,11 @@
                 "shape": [
                     {
                         "x": 1269.5,
-                        "y": 1314.6666666666667
+                        "y": 1376.5
                     },
                     {
                         "x": 1294.5,
-                        "y": 1314.6666666666667
+                        "y": 1376.5
                     },
                     {
                         "x": 1294.5,
@@ -880,15 +944,15 @@
                         "y": 2036.5
                     },
                     {
-                        "x": 1295,
+                        "x": 1302,
                         "y": 2036.5
                     },
                     {
-                        "x": 1295,
+                        "x": 1302,
                         "y": 1769.5
                     },
                     {
-                        "x": 1270,
+                        "x": 1277,
                         "y": 1769.5
                     }
                 ],
@@ -948,16 +1012,10 @@
         "2e0bb350-7ee6-48e5-9b9c-e6709586eb4e": "isDeleted",
         "d9e9dd86-d0df-48d2-ab8c-b1a232c81369": "payments",
         "af279890-3009-423d-b2c7-27d50f2610e0": "_id",
-        "a5918500-49c2-468f-a63b-9ab3b2ec855b": "amount",
         "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94": "dues",
         "04506be2-3e10-4a25-a048-e4f6298c3db0": "_id",
-        "58dbf064-2209-4ce8-a1e7-8f73e20702e7": "member",
-        "19273131-f99c-4961-becf-abf8b4f80f0f": "_id",
         "21a58e9d-8292-4a3d-81c0-a59403a8569a": "status",
-        "1321b9b9-ed1a-4024-9a03-811938175ab2": "date",
         "bca28ece-7854-4b28-9c0c-b20f28b611b0": "date",
-        "775be457-baa5-466c-93ad-d9864901f0b3": "amount",
-        "cd141f19-c546-4c6a-a8cd-2794221d5966": "category",
         "397f04b7-7b9e-4200-b0e3-c06c1a62ddf1": "createdAt",
         "81a180c6-6d3c-4424-8100-afd08f9dfdae": "createdBy",
         "438154d8-e9e4-4f52-bdf4-23a9620539b8": "updatedAt",
@@ -965,14 +1023,26 @@
         "b6abf522-f4eb-4112-9b73-3ab521c0e056": "deletedBy",
         "ef27eb79-5c27-452d-b639-7897fc27382e": "deletedAt",
         "9a4416ec-73e0-4dad-b110-a8dc9f33094e": "isDeleted",
-        "44376862-1e7b-45cd-973d-61dfb6e442aa": "due",
-        "38e6e687-494c-44e5-ad6e-b5d253b6fd4e": "firstName",
-        "8953ddb4-dfa0-4f93-8ad5-db1393b7963c": "lastName",
-        "bd06e28f-fb3e-4c97-8653-01c6d3d96337": "notes",
-        "ac2efac5-a54a-4414-be81-2eec7d6f119e": "fk dues.member._id to members._id",
         "bbfd94e5-2dd9-4351-a669-7aa1a1733dff": "_id",
         "4d9437ee-f401-45a1-9d98-409ee105df35": "fk members.userId to users._id",
-        "2665a4a9-5ab6-4919-a552-6d0ceecde9d6": "fk payments.due._id to dues._id"
+        "2665a4a9-5ab6-4919-a552-6d0ceecde9d6": "fk payments.due._id to dues._id",
+        "775be457-baa5-466c-93ad-d9864901f0b3": "amount",
+        "cd141f19-c546-4c6a-a8cd-2794221d5966": "category",
+        "58dbf064-2209-4ce8-a1e7-8f73e20702e7": "member",
+        "44376862-1e7b-45cd-973d-61dfb6e442aa": "due",
+        "2cf81fed-a0d5-4ae4-88c3-5252860c04fd": "amount",
+        "7ccfe2df-ad99-471a-8367-49a10987f755": "status",
+        "bd06e28f-fb3e-4c97-8653-01c6d3d96337": "notes",
+        "3a3d6e1b-83eb-41b7-9444-3ee9fa1d7e91": "createdAt",
+        "e9ce86d1-f952-4b8b-b1a7-e20116479913": "createdBy",
+        "edaa7c98-012d-4974-b778-1c0eae7d6476": "updatedAt",
+        "b148b993-84c3-4d6d-9fe0-dfd7c9d5fb16": "updatedBy",
+        "e898b4a6-2d73-4916-b56e-e066157f35dc": "deletedBy",
+        "c0f14e2e-97d1-4966-a42c-d67a54912f51": "deletedAt",
+        "47fde834-bb5d-4cad-a2a3-1101522ed83d": "isDeleted",
+        "a5918500-49c2-468f-a63b-9ab3b2ec855b": "amount",
+        "1321b9b9-ed1a-4024-9a03-811938175ab2": "date",
+        "4ce95029-cc5d-4ab3-bd56-8c91733deb93": "notes"
     },
     "definitions": {
         "type": "definitions",
@@ -1082,14 +1152,14 @@
             "modelName": false
         }
     },
-    "lastModifTS": "2023-11-27T23:15:26.812Z",
-    "persistenceSchemaVersion": "6",
+    "lastModifTS": "2023-12-02T13:43:50.428Z",
+    "persistenceSchemaVersion": "7",
     "isCreatedByPlugin": true,
     "pluginInformation": {
         "pluginEngineVersion": "1.0.0"
     },
     "applicationInformation": {
-        "version": "6.11.9"
+        "version": "7.0.1"
     },
     "settings": {
         "centralPane": {
@@ -1123,7 +1193,7 @@
                         "GUID": "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
                         "x": 1050,
                         "y": 1602,
-                        "width": 220,
+                        "width": 227,
                         "height": 335,
                         "color": {}
                     }

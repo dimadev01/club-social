@@ -14,6 +14,12 @@ export const AdminRole = {
     PermissionEnum.Update,
     PermissionEnum.Delete,
   ],
+  [ScopeEnum.Payments]: [
+    PermissionEnum.Read,
+    PermissionEnum.Create,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
+  ],
   [ScopeEnum.Members]: [
     PermissionEnum.Read,
     PermissionEnum.Create,

@@ -10,6 +10,7 @@ export enum MethodsEnum {
   DuesGet = 'dues/get',
   DuesGetGrid = 'dues/getGrid',
   DuesGetPaid = 'dues/getPaid',
+  DuesGetPending = 'dues/getPending',
   DuesRestore = 'dues/restore',
   DuesUpdate = 'dues/update',
 
@@ -30,6 +31,14 @@ export enum MethodsEnum {
   MovementsGetGrid = 'movements/getGrid',
   MovementsRestore = 'movements/restore',
   MovementsUpdate = 'movements/update',
+
+  PaymentsCreate = 'payments/create',
+  PaymentsDelete = 'payments/delete',
+  PaymentsGet = 'payments/get',
+  PaymentsGetGrid = 'payments/getGrid',
+  PaymentsGetPaid = 'payments/getPaid',
+  PaymentsRestore = 'payments/restore',
+  PaymentsUpdate = 'payment/update',
 
   ProfessorsGetAll = 'professors/getAll',
 

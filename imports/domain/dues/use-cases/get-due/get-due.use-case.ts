@@ -36,6 +36,7 @@ export class GetDueUseCase
       date: due.dateFormatted,
       memberId: due.member._id,
       notes: due.notes,
+      status: due.status,
     });
   }
 }

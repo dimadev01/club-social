@@ -1,4 +1,4 @@
 import React from 'react';
-import { MovementsPage } from '@ui/pages/movements/MovementsPage';
+import { DuesPage } from '@ui/pages/dues/DuesPage';
 
-export const DuesRoot = () => <MovementsPage />;
+export const DuesRoot = () => <DuesPage />;

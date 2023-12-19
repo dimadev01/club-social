@@ -18,4 +18,8 @@ export class DueGridDto {
   status: DueStatusEnum;
 
   isDeleted: boolean;
+
+  paidAt: string;
+
+  paidAmount: string;
 }

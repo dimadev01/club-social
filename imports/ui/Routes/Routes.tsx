@@ -10,13 +10,15 @@ import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
 import { CategoriesPage } from '@ui/pages/categories/CategoriesPage';
 import { CategoryDetailPage } from '@ui/pages/categories/CategoryDetailPage';
 import { DueDetailPage } from '@ui/pages/dues/DueDetailPage';
-import { DuesPage } from '@ui/pages/dues/DuesPage';
+import { DuesRoot } from '@ui/pages/dues/DuesRoot';
 import { EmployeesPage } from '@ui/pages/employees/EmployeesPage';
 import { HomePage } from '@ui/pages/HomePage';
 import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
 import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
+import { PaymentsNewPage } from '@ui/pages/payments/PaymentsNewPage';
+import { PaymentsRoot } from '@ui/pages/payments/PaymentsRoot';
 import { ProfessorsPage } from '@ui/pages/professors/ProfessorsPage';
 import { ServicesPage } from '@ui/pages/services/ServicesPage';
 import { UsersDetailPage } from '@ui/pages/users/UsersDetailPage';
@@ -142,7 +144,7 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
-        <DuesPage />
+        <DuesRoot />
       </PrivateRoute>
     ),
     path: AppUrl.Dues,
@@ -162,6 +164,31 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.DuesDetail,
+  },
+
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+        <PaymentsRoot />
+      </PrivateRoute>
+    ),
+    path: AppUrl.Payments,
+  },
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
+        <PaymentsNewPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.PaymentsNew,
+  },
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
+        <PaymentsNewPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.PaymentsDetail,
   },
 
   {

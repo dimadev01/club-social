@@ -13,6 +13,7 @@ export enum ScopeEnum {
   Employees = 'employees',
   Members = 'members',
   Movements = 'movements',
+  Payments = 'payments',
   Professors = 'professors',
   Services = 'services',
   Users = 'users',
@@ -44,6 +45,12 @@ export const ScopePermissionAssignment: Record<ScopeEnum, PermissionEnum[]> = {
     PermissionEnum.Delete,
   ],
   [ScopeEnum.Dues]: [
+    PermissionEnum.Create,
+    PermissionEnum.Read,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
+  ],
+  [ScopeEnum.Payments]: [
     PermissionEnum.Create,
     PermissionEnum.Read,
     PermissionEnum.Update,

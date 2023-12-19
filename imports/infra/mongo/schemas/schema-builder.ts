@@ -40,6 +40,12 @@ export class SchemaBuilder {
     return this;
   }
 
+  public object() {
+    this._schema.type = Object;
+
+    return this;
+  }
+
   public optional() {
     this._schema.optional = true;
 

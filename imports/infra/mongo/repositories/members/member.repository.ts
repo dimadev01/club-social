@@ -81,6 +81,16 @@ export class MemberRepository
     return member;
   }
 
+  public async findOneByIdOrThrowWithSession(id: string): Promise<Member> {
+    const member = await this.findOneById(id);
+
+    if (!member) {
+      throw new Error(`Member with id ${id} not found`);
+    }
+
+    return member;
+  }
+
   public async findPaginated(
     request: FindPaginatedMembersRequest
   ): Promise<FindPaginatedResponse<FindPaginatedMember>> {
