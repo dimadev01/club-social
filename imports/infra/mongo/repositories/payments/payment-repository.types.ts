@@ -1,6 +1,6 @@
 import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
 
-export type FindPaginatedDuesRequest = FindPaginatedRequest & {
+export type FindPaginatedPaymentsRequest = FindPaginatedRequest & {
   from: string | null;
   memberIds: string[];
   showDeleted: boolean | null;

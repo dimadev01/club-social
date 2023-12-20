@@ -51,7 +51,7 @@ export abstract class DateUtils {
     return dayjs.utc(config, format, strict);
   }
 
-  public static now(
+  public static c(
     date?: dayjs.ConfigType,
     format?: dayjs.OptionType,
     locale?: string,

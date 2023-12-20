@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 
-export class GetDuesGridRequestDto extends PaginatedRequestDto {
+export class GetPaymentsGridRequestDto extends PaginatedRequestDto {
   @IsArray()
   @IsString({ each: true })
   public memberIds: string[];

@@ -168,7 +168,7 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
         <PaymentsRoot />
       </PrivateRoute>
     ),

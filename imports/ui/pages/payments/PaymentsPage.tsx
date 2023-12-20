@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Breadcrumb, Card, Checkbox, DatePicker, Form, Space } from 'antd';
+import {
+  Breadcrumb,
+  Card,
+  Checkbox,
+  DatePicker,
+  Form,
+  Space,
+  Table as AntTable,
+} from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
 import { Roles } from 'meteor/alanning:roles';
@@ -7,20 +15,10 @@ import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Navigate, NavLink, useLocation } from 'react-router-dom';
-import {
-  DeleteOutlined,
-  FilterOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
-import {
-  DueCategoryEnum,
-  DueCategoryLabel,
-  DueStatusEnum,
-  DueStatusLabel,
-  getDueStatusColumnFilters,
-} from '@domain/dues/due.enum';
-import { DueGridDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.dto';
+import { FilterOutlined } from '@ant-design/icons';
+import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
+import { PaymentGridDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -29,11 +27,8 @@ import { Select } from '@ui/components/Select';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
-import { useCategories } from '@ui/hooks/categories/useCategories';
-import { useDuesGrid } from '@ui/hooks/dues/useDuesGrid';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
-import { useRestoreMovement } from '@ui/hooks/movements/useRestoreMovement';
+import { usePaymentGrid } from '@ui/hooks/payments/usePaymentsGrid';
 import { useGrid } from '@ui/hooks/useGrid';
 
 DateUtils.extend();
@@ -62,7 +57,7 @@ export const PaymentsPage = () => {
 
   const { data: members, isLoading: isLoadingMembers } = useMembers();
 
-  const { data, isLoading, isRefetching, refetch } = useDuesGrid({
+  const { data, isLoading, isRefetching, refetch } = usePaymentGrid({
     filters: gridState.filters,
     from: dateFilter
       ? dateFilter[0]?.format(DateFormatEnum.Date) ?? null
@@ -77,11 +72,11 @@ export const PaymentsPage = () => {
     to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.Date) ?? null : null,
   });
 
-  const deleteMovement = useDeleteMovement(refetch);
+  // const deleteMovement = useDeleteMovement(refetch);
 
-  const restoreMovement = useRestoreMovement(refetch);
+  // const restoreMovement = useRestoreMovement(refetch);
 
-  const { data: categories } = useCategories();
+  // const { data: categories } = useCategories();
 
   const user = Meteor.user();
 
@@ -95,15 +90,53 @@ export const PaymentsPage = () => {
     return null;
   }
 
+  const expandedRowRender = (payment: PaymentGridDto) => (
+    <AntTable
+      rowKey="dueId"
+      pagination={false}
+      bordered
+      columns={[
+        {
+          dataIndex: 'dueDate',
+          title: 'Fecha',
+          width: 150,
+        },
+        {
+          align: 'center',
+          dataIndex: 'dueCategory',
+          render: (dueCategory: DueCategoryEnum) =>
+            DueCategoryLabel[dueCategory],
+          title: 'Categoría',
+        },
+        {
+          align: 'center',
+          dataIndex: 'membershipMonth',
+          title: 'Mes de cuota',
+        },
+        {
+          align: 'right',
+          dataIndex: 'dueAmount',
+          title: 'Deuda',
+        },
+        {
+          align: 'right',
+          dataIndex: 'paymentAmount',
+          title: 'Pagado',
+        },
+      ]}
+      dataSource={payment.dues}
+    />
+  );
+
   return (
     <>
       <Breadcrumb
         className="mb-8"
-        items={[{ title: 'Inicio' }, { title: 'Cobros' }]}
+        items={[{ title: 'Inicio' }, { title: 'Pagos' }]}
       />
 
       <Card
-        title="Cobros"
+        title="Pagos"
         extra={
           <>
             <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
@@ -111,8 +144,8 @@ export const PaymentsPage = () => {
             {Roles.userIsInRole(
               user,
               PermissionEnum.Create,
-              ScopeEnum.Dues
-            ) && <TableNewButton to={AppUrl.DuesNew} />}
+              ScopeEnum.Payments
+            ) && <TableNewButton to={AppUrl.PaymentsNew} />}
           </>
         }
       >
@@ -172,12 +205,13 @@ export const PaymentsPage = () => {
             </Space>
           </Form>
 
-          <Table<DueGridDto>
+          <Table<PaymentGridDto>
             total={data?.count ?? 0}
             gridState={gridState}
             onStateChange={setGridState}
             loading={isLoading}
             dataSource={data?.data}
+            expandable={{ expandedRowRender }}
             columns={[
               {
                 dataIndex: 'date',
@@ -185,52 +219,65 @@ export const PaymentsPage = () => {
                   gridState.sortField === 'date'
                     ? gridState.sortOrder
                     : undefined,
-                render: (date: string, due: DueGridDto) => (
-                  <NavLink to={`${AppUrl.Dues}/${due._id}`}>{date}</NavLink>
+                render: (date: string, payment: PaymentGridDto) => (
+                  <NavLink to={`${AppUrl.Payments}/${payment._id}`}>
+                    {date}
+                  </NavLink>
                 ),
                 sorter: true,
                 title: 'Fecha',
+                width: 150,
               },
               {
                 dataIndex: 'memberName',
                 title: 'Socio',
               },
               {
-                align: 'center',
-                dataIndex: 'category',
-                filteredValue: gridState.filters?.category ?? [],
-                filters:
-                  categories?.map((category) => ({
-                    text: category.name,
-                    value: category.code,
-                  })) ?? [],
-                render: (category: DueCategoryEnum) =>
-                  DueCategoryLabel[category],
-                title: 'Categoría',
-              },
-              {
-                align: 'center',
-                dataIndex: 'membershipMonth',
-                title: 'Mes de cuota',
+                align: 'right',
+                dataIndex: 'duesCount',
+                title: 'Nro. de Pagos',
               },
               {
                 align: 'right',
-                dataIndex: 'amount',
-                title: 'Importe',
+                dataIndex: 'duesTotalAmount',
+                title: 'Total Pagos',
               },
+              // {
+              //   align: 'center',
+              //   dataIndex: 'category',
+              //   filteredValue: gridState.filters?.category ?? [],
+              //   filters:
+              //     categories?.map((category) => ({
+              //       text: category.name,
+              //       value: category.code,
+              //     })) ?? [],
+              //   render: (category: DueCategoryEnum) =>
+              //     DueCategoryLabel[category],
+              //   title: 'Categoría',
+              // },
+              // {
+              //   align: 'center',
+              //   dataIndex: 'membershipMonth',
+              //   title: 'Mes de cuota',
+              // },
+              // {
+              //   align: 'right',
+              //   dataIndex: 'amount',
+              //   title: 'Importe',
+              // },
+              // {
+              //   align: 'center',
+              //   dataIndex: 'status',
+              //   filteredValue: gridState.filters?.status ?? [],
+              //   filters: getDueStatusColumnFilters(),
+              //   render: (status: DueStatusEnum) => DueStatusLabel[status],
+              //   title: 'Estado',
+              // },
               {
                 align: 'center',
-                dataIndex: 'status',
-                filteredValue: gridState.filters?.status ?? [],
-                filters: getDueStatusColumnFilters(),
-                render: (status: DueStatusEnum) => DueStatusLabel[status],
-                title: 'Estado',
-              },
-              {
-                align: 'center',
-                render: (_, due: DueGridDto) => (
+                render: (_, payment: PaymentGridDto) => (
                   <ButtonGroup size="small">
-                    {!due.isDeleted &&
+                    {/* {!due.isDeleted &&
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Delete,
@@ -255,9 +302,9 @@ export const PaymentsPage = () => {
                           loading={deleteMovement.variables?.id === due._id}
                           disabled={deleteMovement.variables?.id === due._id}
                         />
-                      )}
+                      )} */}
 
-                    {due.isDeleted &&
+                    {/* {due.isDeleted &&
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Update,
@@ -274,14 +321,14 @@ export const PaymentsPage = () => {
                           loading={restoreMovement.variables?.id === due._id}
                           disabled={restoreMovement.variables?.id === due._id}
                         />
-                      )}
+                      )} */}
 
                     <Button
                       type="ghost"
-                      disabled={!due.memberId}
+                      disabled={!payment.memberId}
                       onClick={() => {
-                        if (due.memberId) {
-                          setMemberIdsFilter([due.memberId]);
+                        if (payment.memberId) {
+                          setMemberIdsFilter([payment.memberId]);
                         }
                       }}
                       htmlType="button"

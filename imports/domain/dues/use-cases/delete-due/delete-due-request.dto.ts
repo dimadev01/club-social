@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class DeleteMovementRequestDto {
+export class DeleteDueRequestDto {
   @IsString()
   @IsNotEmpty()
   id: string;

@@ -11,10 +11,15 @@ export const PaymentSchema = new SimpleSchema({
   dues: Array,
   'dues.$': SchemaBuilder.c()
     .schema({
-      _id: String,
       amount: SimpleSchema.Integer,
-      category: String,
-      date: Date,
+      due: SchemaBuilder.c()
+        .schema({
+          _id: String,
+          amount: SimpleSchema.Integer,
+          category: String,
+          date: Date,
+        })
+        .b(),
     })
     .b(),
   member: SchemaBuilder.c().schema({ _id: String, name: String }).b(),

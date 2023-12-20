@@ -16,7 +16,7 @@ export class PaymentMember {
   ): Result<PaymentMember, Error> {
     const paymentMember = new PaymentMember();
 
-    paymentMember._id = props._id;
+    paymentMember._id = props.memberId;
 
     paymentMember.name = props.name;
 

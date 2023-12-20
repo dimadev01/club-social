@@ -44,6 +44,14 @@ export class Due extends Entity {
   @IsEnum(DueStatusEnum)
   public status: DueStatusEnum;
 
+  public get membershipMonth(): string {
+    if (this.category === DueCategoryEnum.Membership) {
+      return DateUtils.utc(this.date).format('MMMM');
+    }
+
+    return '-';
+  }
+
   public constructor() {
     super();
   }

@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import { CreateDueRequestDto } from '@domain/dues/use-cases/create-due/create-due-request.dto';
 import { CreateDueUseCase } from '@domain/dues/use-cases/create-due/create-due.use-case';
+import { DeleteDueUseCase } from '@domain/dues/use-cases/delete-due/delete-due.use-case';
 import { GetDueRequestDto } from '@domain/dues/use-cases/get-due/get-due-request.dto';
 import { GetDueUseCase } from '@domain/dues/use-cases/get-due/get-due.use-case';
 import { GetDuesGridRequestDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.request.dto';
@@ -12,7 +13,6 @@ import { GetPendingDuesUseCase } from '@domain/dues/use-cases/get-pending-dues/g
 import { UpdateDueRequestDto } from '@domain/dues/use-cases/update-due/update-due-request.dto';
 import { UpdateDueUseCase } from '@domain/dues/use-cases/update-due/update-due.use-case';
 import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
-import { DeleteMovementUseCase } from '@domain/movements/use-cases/delete-movement/delete-movement.use-case';
 import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-movement/restore-movement-request.dto';
 import { RestoreMovementUseCase } from '@domain/movements/use-cases/restore-movement/restore-movement.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
@@ -27,7 +27,7 @@ export class DueMethod extends MeteorMethod {
     private readonly _getDue: GetDueUseCase,
     private readonly _createDue: CreateDueUseCase,
     private readonly _updateDue: UpdateDueUseCase,
-    private readonly _deleteMovement: DeleteMovementUseCase,
+    private readonly _deleteDue: DeleteDueUseCase,
     private readonly _restoreMovement: RestoreMovementUseCase
   ) {
     super();
@@ -54,7 +54,7 @@ export class DueMethod extends MeteorMethod {
         this.execute(this._updateDue, request, UpdateDueRequestDto),
 
       [MethodsEnum.DuesDelete]: (request: DeleteMovementRequestDto) =>
-        this.execute(this._deleteMovement, request, DeleteMovementRequestDto),
+        this.execute(this._deleteDue, request, DeleteMovementRequestDto),
 
       [MethodsEnum.DuesRestore]: (request: RestoreMovementRequestDto) =>
         this.execute(this._restoreMovement, request, RestoreMovementRequestDto),

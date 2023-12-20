@@ -15,6 +15,7 @@ import { PaymentMember } from '@domain/payments/entities/payment-member';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { CreatePayment } from '@domain/payments/payment.types';
 import { IsNullable } from '@shared/class-validator/is-nullable';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 export class Payment extends Entity {
@@ -45,6 +46,16 @@ export class Payment extends Entity {
 
   public get dateFormatted(): string {
     return DateUtils.formatUtc(this.date, DateFormatEnum.DDMMYYYY);
+  }
+
+  public get duesCount(): number {
+    return this.dues.length;
+  }
+
+  public get totalDuesAmount(): string {
+    return MoneyUtils.formatCents(
+      this.dues.reduce((acc, due) => acc + due.amount, 0)
+    );
   }
 
   public static create(props: CreatePayment): Result<Payment, Error> {

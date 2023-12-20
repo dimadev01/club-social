@@ -6,6 +6,7 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IDuePort } from '@domain/dues/due.port';
 import { IMemberPort } from '@domain/members/member.port';
 import { PaymentDue } from '@domain/payments/entities/payment-due';
+import { PaymentDueDue } from '@domain/payments/entities/payment-due-due';
 import { PaymentMember } from '@domain/payments/entities/payment-member';
 import { Payment } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
@@ -66,7 +67,7 @@ export class CreatePaymentUseCase
             );
 
             const paymentMember = PaymentMember.create({
-              _id: memberDue.memberId,
+              memberId: memberDue.memberId,
               name: member.name,
             });
 
@@ -79,11 +80,20 @@ export class CreatePaymentUseCase
 
               invariant(due);
 
-              return PaymentDue.create({
-                _id: dueRequest.dueId,
-                amount: dueRequest.amount,
+              const paymentDueDue = PaymentDueDue.create({
+                amount: due.amount,
                 category: due.category,
                 date: due.date,
+                dueId: due._id,
+              });
+
+              if (paymentDueDue.isErr()) {
+                throw paymentDueDue.error;
+              }
+
+              return PaymentDue.create({
+                amount: dueRequest.amount,
+                due: paymentDueDue.value,
               });
             });
 

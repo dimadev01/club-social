@@ -8,7 +8,7 @@ import { Navigate, NavLink } from 'react-router-dom';
 import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MoneyUtils } from '@shared/utils/currency.utils';
-import { DateUtils } from '@shared/utils/date.utils';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { Select } from '@ui/components/Select';
@@ -80,10 +80,8 @@ export const PaymentsNewPage = () => {
   }
 
   const handleSubmit = async (values: FormValues) => {
-    const date = values.date.utc().startOf('day').toISOString();
-
     const request: CreatePaymentRequestDto = {
-      date,
+      date: values.date.format(DateFormatEnum.Date),
       memberDues: values.dues.map((formDuesValue) => ({
         dues: formDuesValue.dues
           .filter((d) => d.isSelected)
@@ -131,7 +129,7 @@ export const PaymentsNewPage = () => {
           form={form}
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
-            date: DateUtils.now(),
+            date: DateUtils.c(),
             dues: [],
           }}
         >

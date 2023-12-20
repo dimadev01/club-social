@@ -1,5 +1,6 @@
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { PaymentDue } from '@domain/payments/entities/payment-due';
+import { PaymentDueDue } from '@domain/payments/entities/payment-due-due';
 import { PaymentMember } from '@domain/payments/entities/payment-member';
 
 export interface CreatePayment {
@@ -10,13 +11,18 @@ export interface CreatePayment {
 }
 
 export interface CreatePaymentDue {
-  _id: string;
+  amount: number;
+  due: PaymentDueDue;
+}
+
+export interface CreatePaymentDueDue {
   amount: number;
   category: DueCategoryEnum;
   date: Date;
+  dueId: string;
 }
 
 export interface CreatePaymentMember {
-  _id: string;
+  memberId: string;
   name: string;
 }

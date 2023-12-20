@@ -1,40 +1,29 @@
-import {
-  IsDate,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsPositive,
-  IsString,
-} from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNumber, IsPositive, ValidateNested } from 'class-validator';
 import { ok, Result } from 'neverthrow';
-import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { PaymentDueDue } from '@domain/payments/entities/payment-due-due';
 import { CreatePaymentDue } from '@domain/payments/payment.types';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 
 export class PaymentDue {
-  @IsNotEmpty()
-  @IsString()
-  public _id: string;
+  @ValidateNested()
+  @Type(() => PaymentDueDue)
+  public due: PaymentDueDue;
 
   @IsNumber()
   @IsPositive()
   public amount: number;
 
-  @IsEnum(DueCategoryEnum)
-  public category: DueCategoryEnum;
-
-  @IsDate()
-  public date: Date;
+  public get amountFormatted() {
+    return MoneyUtils.formatCents(this.amount);
+  }
 
   public static create(props: CreatePaymentDue): Result<PaymentDue, Error> {
     const paymentDue = new PaymentDue();
 
-    paymentDue._id = props._id;
-
     paymentDue.amount = props.amount;
 
-    paymentDue.category = props.category;
-
-    paymentDue.date = props.date;
+    paymentDue.due = props.due;
 
     return ok(paymentDue);
   }

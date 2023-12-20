@@ -1,7 +1,6 @@
 import { ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { DueGridDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.dto';
@@ -9,7 +8,6 @@ import { GetDuesGridRequestDto } from '@domain/dues/use-cases/get-dues-grid/get-
 import { GetDuesGridResponseDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.response.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
-import { DateUtils } from '@shared/utils/date.utils';
 
 @injectable()
 export class GetDuesGridUseCase
@@ -39,10 +37,7 @@ export class GetDuesGridUseCase
           isDeleted: due.isDeleted,
           memberId: due.member._id,
           memberName: due.member.name,
-          membershipMonth:
-            due.category === DueCategoryEnum.Membership
-              ? DateUtils.utc(due.date).format('MMMM')
-              : '-',
+          membershipMonth: due.membershipMonth,
           paidAmount: due.payment?.amountFormatted ?? '-',
           paidAt: due.payment?.dateFormatted ?? '-',
           status: due.status,

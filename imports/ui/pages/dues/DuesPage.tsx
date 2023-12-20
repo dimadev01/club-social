@@ -15,11 +15,7 @@ import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Navigate, NavLink, useLocation } from 'react-router-dom';
-import {
-  DeleteOutlined,
-  FilterOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, FilterOutlined } from '@ant-design/icons';
 import {
   DueCategoryEnum,
   DueCategoryLabel,
@@ -30,7 +26,7 @@ import {
 import { DueGridDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.dto';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Select } from '@ui/components/Select';
@@ -38,13 +34,10 @@ import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useCategories } from '@ui/hooks/categories/useCategories';
+import { useDeleteDue } from '@ui/hooks/dues/useDeleteDue';
 import { useDuesGrid } from '@ui/hooks/dues/useDuesGrid';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
-import { useRestoreMovement } from '@ui/hooks/movements/useRestoreMovement';
 import { useGrid } from '@ui/hooks/useGrid';
-
-DateUtils.extend();
 
 export const DuesPage = () => {
   const location = useLocation();
@@ -85,9 +78,7 @@ export const DuesPage = () => {
     to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.Date) ?? null : null,
   });
 
-  const deleteMovement = useDeleteMovement(refetch);
-
-  const restoreMovement = useRestoreMovement(refetch);
+  const deleteDue = useDeleteDue(refetch);
 
   const { data: categories } = useCategories();
 
@@ -257,11 +248,11 @@ export const DuesPage = () => {
                         <Button
                           popConfirm={{
                             onConfirm: () =>
-                              deleteMovement.mutate(
+                              deleteDue.mutate(
                                 { id: due._id },
                                 {
-                                  onError: () => deleteMovement.reset(),
-                                  onSuccess: () => deleteMovement.reset(),
+                                  onError: () => deleteDue.reset(),
+                                  onSuccess: () => deleteDue.reset(),
                                 }
                               ),
                             title: '¿Está seguro de eliminar este movimiento?',
@@ -270,16 +261,16 @@ export const DuesPage = () => {
                           htmlType="button"
                           tooltip={{ title: 'Eliminar' }}
                           icon={<DeleteOutlined />}
-                          loading={deleteMovement.variables?.id === due._id}
-                          disabled={deleteMovement.variables?.id === due._id}
+                          loading={deleteDue.variables?.id === due._id}
+                          disabled={deleteDue.variables?.id === due._id}
                         />
                       )}
 
-                    {due.isDeleted &&
+                    {/* {due.isDeleted &&
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Update,
-                        ScopeEnum.Movements
+                        ScopeEnum.Dues
                       ) && (
                         <Button
                           type="ghost"
@@ -292,7 +283,7 @@ export const DuesPage = () => {
                           loading={restoreMovement.variables?.id === due._id}
                           disabled={restoreMovement.variables?.id === due._id}
                         />
-                      )}
+                      )} */}
 
                     <Button
                       type="ghost"
