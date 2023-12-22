@@ -34,7 +34,9 @@ export class GetDueUseCase
       amountFormatted: due.amountFormatted,
       category: due.category,
       date: due.dateFormatted,
+      isPaid: due.isPaid(),
       memberId: due.member._id,
+      memberName: due.member.name,
       notes: due.notes,
       status: due.status,
     });

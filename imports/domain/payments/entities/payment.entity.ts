@@ -45,7 +45,7 @@ export class Payment extends Entity {
   }
 
   public get dateFormatted(): string {
-    return DateUtils.formatUtc(this.date, DateFormatEnum.DDMMYYYY);
+    return DateUtils.formatUtc(this.date, DateFormatEnum.Date);
   }
 
   public get duesCount(): number {
@@ -61,16 +61,15 @@ export class Payment extends Entity {
   public static create(props: CreatePayment): Result<Payment, Error> {
     const payment = new Payment();
 
-    const updateResult: Result<[null, null], Error> = Result.combine([
+    const updateResult: Result<[null, null, null], Error> = Result.combine([
       payment.setDate(DateUtils.utc(props.date).toDate()),
       payment.setNotes(props.notes),
+      payment.setDues(props.dues),
     ]);
 
     if (updateResult.isErr()) {
       return err(updateResult.error);
     }
-
-    payment.dues = props.dues;
 
     payment.member = props.member;
 
@@ -79,14 +78,14 @@ export class Payment extends Entity {
     return ok(payment);
   }
 
-  public cancel(): Result<null, Error> {
-    this.status = PaymentStatusEnum.Canceled;
+  public setDate(date: Date): Result<null, Error> {
+    this.date = date;
 
     return ok(null);
   }
 
-  public setDate(date: Date): Result<null, Error> {
-    this.date = date;
+  public setDues(value: PaymentDue[]): Result<null, Error> {
+    this.dues = value;
 
     return ok(null);
   }

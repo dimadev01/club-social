@@ -15,9 +15,14 @@ import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Navigate, NavLink, useLocation } from 'react-router-dom';
-import { FilterOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  FilterOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
+import { PaymentDueGridDto } from '@domain/payments/use-cases/get-payments-grid/payment-due-grid.dto';
 import { PaymentGridDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
@@ -28,7 +33,9 @@ import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useMembers } from '@ui/hooks/members/useMembers';
+import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { usePaymentGrid } from '@ui/hooks/payments/usePaymentsGrid';
+import { useRestorePayment } from '@ui/hooks/payments/useRestorePayment';
 import { useGrid } from '@ui/hooks/useGrid';
 
 DateUtils.extend();
@@ -72,9 +79,9 @@ export const PaymentsPage = () => {
     to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.Date) ?? null : null,
   });
 
-  // const deleteMovement = useDeleteMovement(refetch);
+  const deletePayment = useDeletePayment(refetch);
 
-  // const restoreMovement = useRestoreMovement(refetch);
+  const restorePayment = useRestorePayment(refetch);
 
   // const { data: categories } = useCategories();
 
@@ -98,6 +105,9 @@ export const PaymentsPage = () => {
       columns={[
         {
           dataIndex: 'dueDate',
+          render: (dueDate: string, due: PaymentDueGridDto) => (
+            <NavLink to={`${AppUrl.Dues}/${due.dueId}`}>{dueDate}</NavLink>
+          ),
           title: 'Fecha',
           width: 150,
         },
@@ -234,13 +244,13 @@ export const PaymentsPage = () => {
               },
               {
                 align: 'right',
-                dataIndex: 'duesCount',
-                title: 'Nro. de Pagos',
+                dataIndex: 'count',
+                title: '#',
               },
               {
                 align: 'right',
-                dataIndex: 'duesTotalAmount',
-                title: 'Total Pagos',
+                dataIndex: 'totalAmount',
+                title: 'Total',
               },
               // {
               //   align: 'center',
@@ -277,51 +287,59 @@ export const PaymentsPage = () => {
                 align: 'center',
                 render: (_, payment: PaymentGridDto) => (
                   <ButtonGroup size="small">
-                    {/* {!due.isDeleted &&
+                    {!payment.isDeleted &&
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Delete,
-                        ScopeEnum.Movements
+                        ScopeEnum.Payments
                       ) && (
                         <Button
                           popConfirm={{
                             onConfirm: () =>
-                              deleteMovement.mutate(
-                                { id: due._id },
+                              deletePayment.mutate(
+                                { id: payment._id },
                                 {
-                                  onError: () => deleteMovement.reset(),
-                                  onSuccess: () => deleteMovement.reset(),
+                                  onError: () => deletePayment.reset(),
+                                  onSuccess: () => deletePayment.reset(),
                                 }
                               ),
-                            title: '¿Está seguro de eliminar este movimiento?',
+                            title: '¿Está seguro de eliminar este pago?',
                           }}
                           type="ghost"
                           htmlType="button"
                           tooltip={{ title: 'Eliminar' }}
                           icon={<DeleteOutlined />}
-                          loading={deleteMovement.variables?.id === due._id}
-                          disabled={deleteMovement.variables?.id === due._id}
+                          loading={deletePayment.variables?.id === payment._id}
+                          disabled={deletePayment.variables?.id === payment._id}
                         />
-                      )} */}
+                      )}
 
-                    {/* {due.isDeleted &&
+                    {payment.isDeleted &&
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Update,
-                        ScopeEnum.Movements
+                        ScopeEnum.Payments
                       ) && (
                         <Button
                           type="ghost"
                           onClick={() =>
-                            restoreMovement.mutate({ id: due._id })
+                            restorePayment.mutate(
+                              { id: payment._id },
+                              {
+                                onError: () => restorePayment.reset(),
+                                onSuccess: () => restorePayment.reset(),
+                              }
+                            )
                           }
                           htmlType="button"
                           tooltip={{ title: 'Restaurar' }}
                           icon={<ReloadOutlined />}
-                          loading={restoreMovement.variables?.id === due._id}
-                          disabled={restoreMovement.variables?.id === due._id}
+                          loading={restorePayment.variables?.id === payment._id}
+                          disabled={
+                            restorePayment.variables?.id === payment._id
+                          }
                         />
-                      )} */}
+                      )}
 
                     <Button
                       type="ghost"

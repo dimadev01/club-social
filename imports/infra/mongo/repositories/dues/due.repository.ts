@@ -6,7 +6,7 @@ import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
 import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
 import { DueCollection, DueSchema } from '@domain/dues/due.collection';
-import { DueStatusEnum } from '@domain/dues/due.enum';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { DIToken } from '@infra/di/di-tokens';
@@ -74,6 +74,10 @@ export class DueRepository
       const dates: number[] = request.filters.membershipMonth.map(
         (month) => DateUtils.utc(month, 'MMMM').month() + 1
       );
+
+      $expr.$and.push({
+        $eq: ['$category', DueCategoryEnum.Membership],
+      });
 
       $expr.$and.push({
         $or: dates.map((date) => ({

@@ -13,6 +13,10 @@ import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 export class PaymentDueDue {
+  @IsNotEmpty()
+  @IsString()
+  public _id: string;
+
   @IsNumber()
   @IsPositive()
   public amount: number;
@@ -23,9 +27,13 @@ export class PaymentDueDue {
   @IsDate()
   public date: Date;
 
-  @IsNotEmpty()
-  @IsString()
-  public _id: string;
+  public get amountFormatted() {
+    return MoneyUtils.formatCents(this.amount);
+  }
+
+  public get dateFormatted(): string {
+    return DateUtils.formatUtc(this.date, DateFormatEnum.Date);
+  }
 
   public get membershipMonth(): string {
     if (this.category === DueCategoryEnum.Membership) {
@@ -33,14 +41,6 @@ export class PaymentDueDue {
     }
 
     return '-';
-  }
-
-  public get amountFormatted() {
-    return MoneyUtils.formatCents(this.amount);
-  }
-
-  public get dateFormatted(): string {
-    return DateUtils.formatUtc(this.date, DateFormatEnum.DDMMYYYY);
   }
 
   public static create(

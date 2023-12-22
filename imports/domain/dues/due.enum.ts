@@ -1,13 +1,16 @@
 export enum DueStatusEnum {
-  Canceled = 'canceled',
   Paid = 'paid',
   Pending = 'pending',
 }
 
 export const DueStatusLabel = {
-  [DueStatusEnum.Canceled]: 'Cancelado',
   [DueStatusEnum.Paid]: 'Pagado',
   [DueStatusEnum.Pending]: 'Pendiente',
+};
+
+export const DueStatusColor = {
+  [DueStatusEnum.Paid]: 'green',
+  [DueStatusEnum.Pending]: '',
 };
 
 export const getDueStatusColumnFilters = () =>

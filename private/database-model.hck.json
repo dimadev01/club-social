@@ -145,7 +145,11 @@
                         ]
                     ],
                     "required": true,
-                    "error": {}
+                    "error": {},
+                    "childRelationships": [
+                        "1e408ccd-6434-4866-9044-c52ab42619c5",
+                        "c121f622-f80e-4ba1-ae92-d939644d39d8"
+                    ]
                 },
                 {
                     "name": "address",
@@ -429,15 +433,6 @@
                     "error": {}
                 },
                 {
-                    "name": "amount",
-                    "hackoladeMeta": {},
-                    "isActivated": true,
-                    "type": "numeric",
-                    "GUID": "a5918500-49c2-468f-a63b-9ab3b2ec855b",
-                    "required": true,
-                    "error": {}
-                },
-                {
                     "name": "date",
                     "hackoladeMeta": {},
                     "isActivated": true,
@@ -448,39 +443,91 @@
                     "error": {}
                 },
                 {
-                    "name": "due",
+                    "name": "dues",
                     "hackoladeMeta": {},
                     "isActivated": true,
-                    "type": "document",
+                    "type": "array",
                     "properties": [
                         {
-                            "name": "_id",
                             "hackoladeMeta": {},
                             "isActivated": true,
-                            "type": "string",
-                            "GUID": "3f1504d4-404e-4f34-acb4-c04d61a3d43a",
-                            "required": true,
-                            "error": {},
-                            "relationshipType": "Foreign Key",
-                            "foreignCollection": "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
-                            "foreignField": [
-                                "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
-                                "04506be2-3e10-4a25-a048-e4f6298c3db0"
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "amount",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "numeric",
+                                    "error": {},
+                                    "required": true,
+                                    "GUID": "e5e4a580-cc3f-4c80-a4d5-cb87eae41a58"
+                                },
+                                {
+                                    "name": "due",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "document",
+                                    "properties": [
+                                        {
+                                            "name": "_id",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "string",
+                                            "GUID": "741c3f7e-b831-44d5-b1f1-41d751512662",
+                                            "required": true,
+                                            "foreignCollection": "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
+                                            "foreignField": [
+                                                "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
+                                                "04506be2-3e10-4a25-a048-e4f6298c3db0"
+                                            ],
+                                            "relationshipType": "Foreign Key",
+                                            "parentRelationship": "cf700eee-b81f-4a8e-b497-b13befbe8c53",
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "amount",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "numeric",
+                                            "error": {},
+                                            "required": true,
+                                            "GUID": "b560a275-2347-483f-897e-2301dc05e5ba"
+                                        },
+                                        {
+                                            "name": "category",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "string",
+                                            "error": {},
+                                            "primaryKey": false,
+                                            "required": true,
+                                            "GUID": "a1b6c683-296c-441c-a749-598034474bc7"
+                                        },
+                                        {
+                                            "name": "date",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "date",
+                                            "primaryKey": false,
+                                            "error": {},
+                                            "required": true,
+                                            "GUID": "bceea45c-5362-431c-9a17-a3fc89b920ff"
+                                        }
+                                    ],
+                                    "additionalProperties": false,
+                                    "GUID": "b1e39b89-cab0-4bb3-9d22-a78e0ec46380",
+                                    "required": true,
+                                    "error": {}
+                                }
                             ],
-                            "parentRelationship": "2665a4a9-5ab6-4919-a552-6d0ceecde9d6"
-                        },
-                        {
-                            "name": "amount",
-                            "hackoladeMeta": {},
-                            "isActivated": true,
-                            "type": "numeric",
-                            "GUID": "2cf81fed-a0d5-4ae4-88c3-5252860c04fd",
-                            "required": true,
-                            "error": {}
+                            "additionalProperties": false,
+                            "error": {},
+                            "GUID": "08aba7dd-d459-4360-9cc4-9ea3742bebb3",
+                            "arrayItem": true
                         }
                     ],
-                    "additionalProperties": false,
-                    "GUID": "44376862-1e7b-45cd-973d-61dfb6e442aa",
+                    "additionalItems": true,
+                    "GUID": "02d6d495-3fe5-4545-9cbb-1eb4247ddddd",
                     "required": true,
                     "error": {}
                 },
@@ -518,11 +565,47 @@
                         "code": false
                     },
                     "enum": [
-                        "paid",
-                        "canceled"
+                        "paid"
                     ],
                     "foreignCollection": "",
                     "foreignField": []
+                },
+                {
+                    "name": "member",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "_id",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "a9ea3a4e-f4ef-4bc4-a372-e4ebd2eb655c",
+                            "required": true,
+                            "foreignCollection": "2acedb10-79eb-4250-a204-9511ec2ff446",
+                            "foreignField": [
+                                "2acedb10-79eb-4250-a204-9511ec2ff446",
+                                "224d5090-0f92-4c2f-a4d3-78d41f2af772"
+                            ],
+                            "relationshipType": "Foreign Key",
+                            "parentRelationship": "1e408ccd-6434-4866-9044-c52ab42619c5",
+                            "error": {}
+                        },
+                        {
+                            "name": "name",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "52d1db87-025f-4797-a256-b576e9a82ef3",
+                            "required": true,
+                            "error": {}
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "error": {},
+                    "required": true,
+                    "GUID": "342780f1-5395-491d-80e0-38e9d3b9e1ab"
                 },
                 {
                     "name": "createdAt",
@@ -627,7 +710,7 @@
                     "required": true,
                     "error": {},
                     "childRelationships": [
-                        "2665a4a9-5ab6-4919-a552-6d0ceecde9d6"
+                        "cf700eee-b81f-4a8e-b497-b13befbe8c53"
                     ]
                 },
                 {
@@ -676,30 +759,21 @@
                             "type": "string",
                             "GUID": "19273131-f99c-4961-becf-abf8b4f80f0f",
                             "required": true,
-                            "error": {},
-                            "relationshipType": "Foreign Key",
                             "foreignCollection": "2acedb10-79eb-4250-a204-9511ec2ff446",
                             "foreignField": [
                                 "2acedb10-79eb-4250-a204-9511ec2ff446",
                                 "224d5090-0f92-4c2f-a4d3-78d41f2af772"
                             ],
-                            "parentRelationship": "ac2efac5-a54a-4414-be81-2eec7d6f119e"
+                            "relationshipType": "Foreign Key",
+                            "parentRelationship": "c121f622-f80e-4ba1-ae92-d939644d39d8",
+                            "error": {}
                         },
                         {
-                            "name": "firstName",
+                            "name": "name",
                             "hackoladeMeta": {},
                             "isActivated": true,
                             "type": "string",
                             "GUID": "38e6e687-494c-44e5-ad6e-b5d253b6fd4e",
-                            "required": true,
-                            "error": {}
-                        },
-                        {
-                            "name": "lastName",
-                            "hackoladeMeta": {},
-                            "isActivated": true,
-                            "type": "string",
-                            "GUID": "8953ddb4-dfa0-4f93-8ad5-db1393b7963c",
                             "required": true,
                             "error": {}
                         }
@@ -716,6 +790,36 @@
                     "type": "string",
                     "GUID": "bd06e28f-fb3e-4c97-8653-01c6d3d96337",
                     "error": {}
+                },
+                {
+                    "name": "payment",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "name": "_id",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "707e9092-36a1-4b61-a57b-c985cc7e3e17",
+                            "required": true,
+                            "error": {}
+                        },
+                        {
+                            "name": "date",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "date",
+                            "primaryKey": false,
+                            "error": {},
+                            "required": true,
+                            "GUID": "3709bae3-47f9-4d7b-9e9e-370693aa2539"
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "error": {},
+                    "GUID": "1edb2aea-aa5c-4a34-820f-8fd83b8287fe"
                 },
                 {
                     "name": "status",
@@ -739,8 +843,7 @@
                     },
                     "enum": [
                         "pending",
-                        "paid",
-                        "canceled"
+                        "paid"
                     ]
                 },
                 {
@@ -887,19 +990,19 @@
                 "dataType": "",
                 "shape": [
                     {
-                        "x": 1269.5,
+                        "x": 1521,
                         "y": 1376.5
                     },
                     {
-                        "x": 1294.5,
+                        "x": 1546,
                         "y": 1376.5
                     },
                     {
-                        "x": 1294.5,
+                        "x": 1546,
                         "y": 1100.5
                     },
                     {
-                        "x": 1259,
+                        "x": 1503.5,
                         "y": 1100.5
                     }
                 ],
@@ -910,7 +1013,7 @@
             }
         },
         {
-            "name": "fk payments.due._id to dues._id",
+            "name": "fk payments.dues.[0].due._id to dues._id",
             "relationshipType": "Foreign Key",
             "parentField": [
                 [
@@ -922,17 +1025,19 @@
             "childField": [
                 [
                     "d9e9dd86-d0df-48d2-ab8c-b1a232c81369",
-                    "44376862-1e7b-45cd-973d-61dfb6e442aa",
-                    "3f1504d4-404e-4f34-acb4-c04d61a3d43a"
+                    "02d6d495-3fe5-4545-9cbb-1eb4247ddddd",
+                    "08aba7dd-d459-4360-9cc4-9ea3742bebb3",
+                    "b1e39b89-cab0-4bb3-9d22-a78e0ec46380",
+                    "741c3f7e-b831-44d5-b1f1-41d751512662"
                 ]
             ],
             "isActivated": true,
-            "childCardinality": "0..1",
+            "childCardinality": "1",
+            "GUID": "cf700eee-b81f-4a8e-b497-b13befbe8c53",
             "parentCollection": "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
             "childCollection": "d9e9dd86-d0df-48d2-ab8c-b1a232c81369",
-            "GUID": "2665a4a9-5ab6-4919-a552-6d0ceecde9d6",
             "hackoladeStyles": {
-                "GUID": "b2942651-d50c-4535-a92b-1019e22c38ae",
+                "GUID": "b1c2b8e0-513b-4c2a-bf14-7c600199fad9",
                 "autoPositioning": true,
                 "type": "Orthogonal",
                 "thickness": 2,
@@ -940,25 +1045,131 @@
                 "dataType": "",
                 "shape": [
                     {
-                        "x": 1255.5,
-                        "y": 2036.5
+                        "x": 1152.5,
+                        "y": 1617.9999990463257
                     },
                     {
-                        "x": 1302,
-                        "y": 2036.5
+                        "x": 1152.5,
+                        "y": 1589.9999995231628
                     },
                     {
-                        "x": 1302,
-                        "y": 1769.5
+                        "x": 1156,
+                        "y": 1589.9999995231628
                     },
                     {
-                        "x": 1277,
-                        "y": 1769.5
+                        "x": 1156,
+                        "y": 1562
                     }
                 ],
                 "sides": [
-                    "right",
-                    "right"
+                    "top",
+                    "bottom"
+                ]
+            }
+        },
+        {
+            "name": "fk payments.member._id to members._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "2acedb10-79eb-4250-a204-9511ec2ff446",
+                    "224d5090-0f92-4c2f-a4d3-78d41f2af772"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "d9e9dd86-d0df-48d2-ab8c-b1a232c81369",
+                    "342780f1-5395-491d-80e0-38e9d3b9e1ab",
+                    "a9ea3a4e-f4ef-4bc4-a372-e4ebd2eb655c"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "0..1",
+            "GUID": "1e408ccd-6434-4866-9044-c52ab42619c5",
+            "parentCollection": "2acedb10-79eb-4250-a204-9511ec2ff446",
+            "childCollection": "d9e9dd86-d0df-48d2-ab8c-b1a232c81369",
+            "hackoladeStyles": {
+                "GUID": "739e98b5-0993-4771-bc59-2d9d78df921d",
+                "autoPositioning": true,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1236.5,
+                        "y": 1617.9999990463257
+                    },
+                    {
+                        "x": 1236.5,
+                        "y": 1589.9999995231628
+                    },
+                    {
+                        "x": 1408,
+                        "y": 1589.9999995231628
+                    },
+                    {
+                        "x": 1408,
+                        "y": 1562
+                    }
+                ],
+                "sides": [
+                    "top",
+                    "bottom"
+                ]
+            }
+        },
+        {
+            "name": "fk dues.member._id to members._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "2acedb10-79eb-4250-a204-9511ec2ff446",
+                    "224d5090-0f92-4c2f-a4d3-78d41f2af772"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
+                    "58dbf064-2209-4ce8-a1e7-8f73e20702e7",
+                    "19273131-f99c-4961-becf-abf8b4f80f0f"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "0..1",
+            "GUID": "c121f622-f80e-4ba1-ae92-d939644d39d8",
+            "parentCollection": "2acedb10-79eb-4250-a204-9511ec2ff446",
+            "childCollection": "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
+            "hackoladeStyles": {
+                "GUID": "fb25f5ff-c5c0-41e6-9e09-eb910fd839bf",
+                "autoPositioning": true,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 1156,
+                        "y": 1191
+                    },
+                    {
+                        "x": 1156,
+                        "y": 1166
+                    },
+                    {
+                        "x": 1408,
+                        "y": 1166
+                    },
+                    {
+                        "x": 1408,
+                        "y": 1191
+                    }
+                ],
+                "sides": [
+                    "top",
+                    "top"
                 ]
             }
         }
@@ -1016,7 +1227,6 @@
         "04506be2-3e10-4a25-a048-e4f6298c3db0": "_id",
         "21a58e9d-8292-4a3d-81c0-a59403a8569a": "status",
         "bca28ece-7854-4b28-9c0c-b20f28b611b0": "date",
-        "397f04b7-7b9e-4200-b0e3-c06c1a62ddf1": "createdAt",
         "81a180c6-6d3c-4424-8100-afd08f9dfdae": "createdBy",
         "438154d8-e9e4-4f52-bdf4-23a9620539b8": "updatedAt",
         "f92628ab-3ff2-40e1-b2c1-2e8a601f8e59": "updatedBy",
@@ -1025,12 +1235,9 @@
         "9a4416ec-73e0-4dad-b110-a8dc9f33094e": "isDeleted",
         "bbfd94e5-2dd9-4351-a669-7aa1a1733dff": "_id",
         "4d9437ee-f401-45a1-9d98-409ee105df35": "fk members.userId to users._id",
-        "2665a4a9-5ab6-4919-a552-6d0ceecde9d6": "fk payments.due._id to dues._id",
         "775be457-baa5-466c-93ad-d9864901f0b3": "amount",
         "cd141f19-c546-4c6a-a8cd-2794221d5966": "category",
         "58dbf064-2209-4ce8-a1e7-8f73e20702e7": "member",
-        "44376862-1e7b-45cd-973d-61dfb6e442aa": "due",
-        "2cf81fed-a0d5-4ae4-88c3-5252860c04fd": "amount",
         "7ccfe2df-ad99-471a-8367-49a10987f755": "status",
         "bd06e28f-fb3e-4c97-8653-01c6d3d96337": "notes",
         "3a3d6e1b-83eb-41b7-9444-3ee9fa1d7e91": "createdAt",
@@ -1040,9 +1247,26 @@
         "e898b4a6-2d73-4916-b56e-e066157f35dc": "deletedBy",
         "c0f14e2e-97d1-4966-a42c-d67a54912f51": "deletedAt",
         "47fde834-bb5d-4cad-a2a3-1101522ed83d": "isDeleted",
-        "a5918500-49c2-468f-a63b-9ab3b2ec855b": "amount",
+        "4ce95029-cc5d-4ab3-bd56-8c91733deb93": "notes",
+        "38e6e687-494c-44e5-ad6e-b5d253b6fd4e": "name",
+        "397f04b7-7b9e-4200-b0e3-c06c1a62ddf1": "createdAt",
+        "1edb2aea-aa5c-4a34-820f-8fd83b8287fe": "payment",
+        "707e9092-36a1-4b61-a57b-c985cc7e3e17": "_id",
+        "3709bae3-47f9-4d7b-9e9e-370693aa2539": "date",
         "1321b9b9-ed1a-4024-9a03-811938175ab2": "date",
-        "4ce95029-cc5d-4ab3-bd56-8c91733deb93": "notes"
+        "02d6d495-3fe5-4545-9cbb-1eb4247ddddd": "dues",
+        "b1e39b89-cab0-4bb3-9d22-a78e0ec46380": "due",
+        "741c3f7e-b831-44d5-b1f1-41d751512662": "_id",
+        "b560a275-2347-483f-897e-2301dc05e5ba": "amount",
+        "a1b6c683-296c-441c-a749-598034474bc7": "category",
+        "bceea45c-5362-431c-9a17-a3fc89b920ff": "date",
+        "e5e4a580-cc3f-4c80-a4d5-cb87eae41a58": "amount",
+        "cf700eee-b81f-4a8e-b497-b13befbe8c53": "fk payments.dues.[0].due._id to dues._id",
+        "342780f1-5395-491d-80e0-38e9d3b9e1ab": "member",
+        "a9ea3a4e-f4ef-4bc4-a372-e4ebd2eb655c": "_id",
+        "52d1db87-025f-4797-a256-b576e9a82ef3": "name",
+        "1e408ccd-6434-4866-9044-c52ab42619c5": "fk payments.member._id to members._id",
+        "c121f622-f80e-4ba1-ae92-d939644d39d8": "fk dues.member._id to members._id"
     },
     "definitions": {
         "type": "definitions",
@@ -1152,14 +1376,14 @@
             "modelName": false
         }
     },
-    "lastModifTS": "2023-12-02T13:43:50.428Z",
+    "lastModifTS": "2023-12-22T19:38:34.637Z",
     "persistenceSchemaVersion": "7",
     "isCreatedByPlugin": true,
     "pluginInformation": {
         "pluginEngineVersion": "1.0.0"
     },
     "applicationInformation": {
-        "version": "7.0.1"
+        "version": "7.0.4"
     },
     "settings": {
         "centralPane": {
@@ -1167,7 +1391,7 @@
                 "erd": [
                     {
                         "GUID": "0ec11f20-feb9-4a65-9f51-ed6cb5e6055c",
-                        "x": 1061,
+                        "x": 1305.5,
                         "y": 1050,
                         "width": 198,
                         "height": 101,
@@ -1175,26 +1399,26 @@
                     },
                     {
                         "GUID": "2acedb10-79eb-4250-a204-9511ec2ff446",
-                        "x": 1050.5,
+                        "x": 1295,
                         "y": 1191,
-                        "width": 219,
+                        "width": 226,
                         "height": 371,
                         "color": {}
                     },
                     {
                         "GUID": "d9e9dd86-d0df-48d2-ab8c-b1a232c81369",
-                        "x": 1064.5,
-                        "y": 1977,
-                        "width": 191,
-                        "height": 119,
+                        "x": 1068.5,
+                        "y": 1617.9999990463257,
+                        "width": 252,
+                        "height": 425,
                         "color": {}
                     },
                     {
                         "GUID": "2b9af3d2-1f3b-4e67-85f5-13ff9ce75f94",
                         "x": 1050,
-                        "y": 1602,
-                        "width": 227,
-                        "height": 335,
+                        "y": 1191,
+                        "width": 212,
+                        "height": 371,
                         "color": {}
                     }
                 ],
@@ -1216,8 +1440,7 @@
                     "2acedb10-79eb-4250-a204-9511ec2ff446b3d825fc-90ae-4edc-b172-b5bef9fb7813",
                     "0ec11f20-feb9-4a65-9f51-ed6cb5e6055cfb5482b3-0305-48ca-875c-413c9c751867",
                     "0ec11f20-feb9-4a65-9f51-ed6cb5e6055cf59118a2-d7c1-42fe-b35a-05d18e3534af",
-                    "2acedb10-79eb-4250-a204-9511ec2ff446281fe6a0-d533-47f5-a9f8-d4ea64a18ee4",
-                    "d9e9dd86-d0df-48d2-ab8c-b1a232c8136944376862-1e7b-45cd-973d-61dfb6e442aa"
+                    "2acedb10-79eb-4250-a204-9511ec2ff446281fe6a0-d533-47f5-a9f8-d4ea64a18ee4"
                 ],
                 "activeRelationship": "",
                 "activeRelationshipFields": {

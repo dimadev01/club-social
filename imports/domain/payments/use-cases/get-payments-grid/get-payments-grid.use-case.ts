@@ -31,6 +31,7 @@ export class GetPaymentsGridUseCase
       data: data.map(
         (payment: Payment): PaymentGridDto => ({
           _id: payment._id,
+          count: payment.duesCount,
           date: payment.dateFormatted,
           dues: payment.dues.map((paymentDue) => ({
             dueAmount: paymentDue.due.amountFormatted,
@@ -40,10 +41,10 @@ export class GetPaymentsGridUseCase
             membershipMonth: paymentDue.due.membershipMonth,
             paymentAmount: paymentDue.amountFormatted,
           })),
-          duesCount: payment.duesCount,
-          duesTotalAmount: payment.totalDuesAmount,
+          isDeleted: payment.isDeleted,
           memberId: payment.member._id,
           memberName: payment.member.name,
+          totalAmount: payment.totalDuesAmount,
         })
       ),
     });

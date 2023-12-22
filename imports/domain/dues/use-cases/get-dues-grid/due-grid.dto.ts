@@ -17,6 +17,10 @@ export class DueGridDto {
 
   status: DueStatusEnum;
 
+  isPaid: boolean;
+
+  isPending: boolean;
+
   isDeleted: boolean;
 
   paidAt: string;

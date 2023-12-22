@@ -17,7 +17,7 @@ import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDeta
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
 import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
-import { PaymentsNewPage } from '@ui/pages/payments/PaymentsNewPage';
+import { PaymentDetailPage } from '@ui/pages/payments/PaymentDetailPage';
 import { PaymentsRoot } from '@ui/pages/payments/PaymentsRoot';
 import { ProfessorsPage } from '@ui/pages/professors/ProfessorsPage';
 import { ServicesPage } from '@ui/pages/services/ServicesPage';
@@ -177,7 +177,7 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
-        <PaymentsNewPage />
+        <PaymentDetailPage />
       </PrivateRoute>
     ),
     path: AppUrl.PaymentsNew,
@@ -185,7 +185,7 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
-        <PaymentsNewPage />
+        <PaymentDetailPage />
       </PrivateRoute>
     ),
     path: AppUrl.PaymentsDetail,

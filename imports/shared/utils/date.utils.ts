@@ -34,14 +34,14 @@ export abstract class DateUtils {
 
   public static format(
     date: Date | Dayjs,
-    format: DateFormatEnum = DateFormatEnum.Date
+    format: DateFormatEnum = DateFormatEnum.DDMMYYYY
   ): string {
     return this.create(date).format(format);
   }
 
   public static formatUtc(
     date: Date | Dayjs | string,
-    format: DateFormatEnum = DateFormatEnum.Date
+    format: DateFormatEnum = DateFormatEnum.DDMMYYYY
   ): string {
     return this.utc(date).format(format);
   }

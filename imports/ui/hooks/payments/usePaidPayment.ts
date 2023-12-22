@@ -10,7 +10,7 @@ export const usePaidDues = (request: GetPaidDuesRequestDto) => {
   const [, setSearchParams] = useSearchParams();
 
   useDeepCompareEffect(() => {
-    setSearchParams(UrlUtils.stringify(request));
+    setSearchParams(UrlUtils.stringify(request), { replace: true });
   }, [request]);
 
   return useQuery<GetPaidDuesRequestDto, Error, GetPaidDuesResponseDto>(

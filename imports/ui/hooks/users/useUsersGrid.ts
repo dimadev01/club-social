@@ -10,7 +10,7 @@ export const useUsersGrid = (request: GetUsersRequestDto) => {
   const [, setSearchParams] = useSearchParams();
 
   useDeepCompareEffect(() => {
-    setSearchParams(UrlUtils.stringify(request));
+    setSearchParams(UrlUtils.stringify(request), { replace: true });
   }, [request]);
 
   return useQuery<GetUsersRequestDto, Error, GetUsersResponseDto>(

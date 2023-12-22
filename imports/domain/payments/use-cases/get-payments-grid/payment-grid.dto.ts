@@ -1,17 +1,19 @@
 import { PaymentDueGridDto } from '@domain/payments/use-cases/get-payments-grid/payment-due-grid.dto';
 
 export class PaymentGridDto {
-  _id: string;
+  public _id: string;
 
-  date: string;
+  public date: string;
 
-  dues: PaymentDueGridDto[];
+  public dues: PaymentDueGridDto[];
 
-  duesCount: number;
+  public count: number;
 
-  duesTotalAmount: string;
+  public totalAmount: string;
 
-  memberId: string;
+  public isDeleted: boolean;
 
-  memberName: string;
+  public memberId: string;
+
+  public memberName: string;
 }

@@ -44,14 +44,6 @@ export class Due extends Entity {
   @IsEnum(DueStatusEnum)
   public status: DueStatusEnum;
 
-  public get membershipMonth(): string {
-    if (this.category === DueCategoryEnum.Membership) {
-      return DateUtils.utc(this.date).format('MMMM');
-    }
-
-    return '-';
-  }
-
   public constructor() {
     super();
   }
@@ -62,6 +54,14 @@ export class Due extends Entity {
 
   public get dateFormatted(): string {
     return DateUtils.formatUtc(this.date, DateFormatEnum.DDMMYYYY);
+  }
+
+  public get membershipMonth(): string {
+    if (this.category === DueCategoryEnum.Membership) {
+      return DateUtils.utc(this.date).format('MMMM');
+    }
+
+    return '-';
   }
 
   public static create(props: CreateDue): Result<Due, Error> {
@@ -88,12 +88,12 @@ export class Due extends Entity {
     return ok(due);
   }
 
-  public isCanceled() {
-    return this.status === DueStatusEnum.Canceled;
-  }
-
   public isPaid() {
     return this.status === DueStatusEnum.Paid;
+  }
+
+  public isPending() {
+    return this.status === DueStatusEnum.Pending;
   }
 
   public paid(props: CreateDuePayment): Result<null, Error> {
@@ -110,8 +110,20 @@ export class Due extends Entity {
     return ok(null);
   }
 
+  public removePayment() {
+    this.payment = null;
+
+    this.status = DueStatusEnum.Pending;
+  }
+
   public setAmount(amount: number): Result<null, Error> {
     this.amount = amount;
+
+    return ok(null);
+  }
+
+  public setCategory(category: DueCategoryEnum): Result<null, Error> {
+    this.category = category;
 
     return ok(null);
   }
@@ -122,14 +134,14 @@ export class Due extends Entity {
     return ok(null);
   }
 
-  public setNotes(notes: string | null): Result<null, Error> {
-    this.notes = notes;
+  public setMember(member: DueMember): Result<null, Error> {
+    this.member = member;
 
     return ok(null);
   }
 
-  public setCategory(category: DueCategoryEnum): Result<null, Error> {
-    this.category = category;
+  public setNotes(notes: string | null): Result<null, Error> {
+    this.notes = notes;
 
     return ok(null);
   }

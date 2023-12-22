@@ -1,19 +1,33 @@
 import React from 'react';
-import { Card, Checkbox, Form, Input, InputNumber, Table } from 'antd';
+import { Checkbox, Form, Input, InputNumber, Table } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import TextArea from 'antd/es/input/TextArea';
 import { Dayjs } from 'dayjs';
 import { ARS } from '@dinero.js/currencies';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { PendingDueDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
-import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateUtils } from '@shared/utils/date.utils';
 
-type Props = {
+type Due = {
+  _id: string;
+
+  amount: number;
+
+  category: DueCategoryEnum;
+
+  date: string;
+
   memberId: string;
-  members: GetMembersDto[] | undefined;
-  pendingDues: PendingDueDto[] | undefined;
+
+  memberName: string;
+
+  membershipMonth: string;
+};
+
+type Props = {
+  dues: Due[] | undefined;
+  memberId: string;
 };
 
 type FormDueValue = {
@@ -33,11 +47,7 @@ type FormValues = {
   dues: FormDuesValue[];
 };
 
-export const PaymentMemberDuesCard: React.FC<Props> = ({
-  memberId,
-  members,
-  pendingDues,
-}) => {
+export const PaymentMemberDuesCard: React.FC<Props> = ({ memberId, dues }) => {
   const form = Form.useFormInstance<FormValues>();
 
   const formDues = useWatch('dues', { form, preserve: true });
@@ -46,31 +56,20 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({
     return null;
   }
 
-  if (!pendingDues) {
+  if (!dues) {
     return null;
   }
 
-  const pendingDuesByMember = pendingDues.filter(
-    (d) => d.memberId === memberId
-  );
+  const pendingDuesByMember = dues.filter((d) => d.memberId === memberId);
 
-  const totalPendingDuesByMember = pendingDues.reduce(
-    (acc, d) => acc + d.amount,
-    0
-  );
+  const totalPendingDuesByMember = dues.reduce((acc, d) => acc + d.amount, 0);
 
   const formDuesByMember = formDues.find((d) => d.memberId === memberId);
 
-  if (!formDuesByMember) {
-    return null;
-  }
+  const totalDuesToPay =
+    formDuesByMember?.dues.reduce((acc, d) => acc + d.amount, 0) ?? 0;
 
-  const totalDuesToPay = formDuesByMember.dues.reduce(
-    (acc, d) => acc + d.amount,
-    0
-  );
-
-  const selectedRowKeys = formDuesByMember.dues
+  const selectedRowKeys = formDuesByMember?.dues
     .filter((d) => d.isSelected)
     .map((d) => d.dueId);
 
@@ -90,29 +89,20 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({
     </Table.Summary>
   );
 
-  if (!members) {
-    return null;
-  }
-
-  const member = members.find((m) => m._id === memberId);
-
-  if (!member) {
-    return null;
-  }
-
-  const memberIndex = formDues.indexOf(formDuesByMember);
+  const memberIndex = formDuesByMember ? formDues.indexOf(formDuesByMember) : 0;
 
   return (
-    <Card title={member.name}>
+    <>
       <Table
         rowSelection={{
+          getCheckboxProps: () => ({ disabled: dues.length === 1 }),
           onChange: (rowKeys) => {
             form.setFieldValue(
               ['dues', memberIndex, 'dues'],
-              formDuesByMember.dues.map((d) => ({
+              formDuesByMember?.dues.map((d) => ({
                 ...d,
                 isSelected: rowKeys.includes(d.dueId),
-              }))
+              })) ?? 0
             );
           },
           selectedRowKeys,
@@ -151,7 +141,7 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({
           {
             align: 'right',
             render: (_, due: PendingDueDto) => {
-              const dueInForm = formDuesByMember.dues.find(
+              const dueInForm = formDuesByMember?.dues.find(
                 (d) => d.dueId === due._id
               );
 
@@ -159,7 +149,7 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({
                 return null;
               }
 
-              const dueIndex = formDuesByMember.dues.indexOf(dueInForm);
+              const dueIndex = formDuesByMember?.dues.indexOf(dueInForm) ?? 0;
 
               const fieldName = ['dues', memberIndex, 'dues', dueIndex];
 
@@ -230,6 +220,6 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({
       >
         <TextArea />
       </Form.Item>
-    </Card>
+    </>
   );
 };

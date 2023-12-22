@@ -1,4 +1,5 @@
 import { plainToInstance } from 'class-transformer';
+import { orderBy } from 'lodash';
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
@@ -78,7 +79,12 @@ export class PaymentRepository
 
     return {
       count: result.count,
-      data: result.data.map((item) => plainToInstance(Payment, item)),
+      data: result.data.map((item) =>
+        plainToInstance(Payment, {
+          ...item,
+          dues: orderBy(item.dues, 'due.date', 'asc'),
+        })
+      ),
     };
   }
 

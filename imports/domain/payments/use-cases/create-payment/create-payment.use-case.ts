@@ -11,7 +11,6 @@ import { PaymentMember } from '@domain/payments/entities/payment-member';
 import { Payment } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
-import { DueCanceledError } from '@domain/payments/use-cases/create-payment/errors/due-canceled.error';
 import { DuePaidError } from '@domain/payments/use-cases/create-payment/errors/due-paid.error';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
@@ -55,10 +54,6 @@ export class CreatePaymentUseCase
             dues.forEach((due) => {
               if (due.isPaid()) {
                 throw new DuePaidError(due._id);
-              }
-
-              if (due.isCanceled()) {
-                throw new DueCanceledError(due._id);
               }
             });
 

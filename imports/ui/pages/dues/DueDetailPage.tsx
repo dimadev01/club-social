@@ -2,22 +2,33 @@ import React from 'react';
 import {
   App,
   Breadcrumb,
+  Button,
   Card,
   DatePicker,
   Form,
   Input,
   InputNumber,
   Skeleton,
+  Space,
+  Tag,
 } from 'antd';
+import { Rule } from 'antd/es/form';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
+import { isString } from 'lodash';
 import { Navigate, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import {
   DueCategoryEnum,
   DueCategoryLabel,
+  DueStatusColor,
+  DueStatusLabel,
   getDueCategoryOptions,
 } from '@domain/dues/due.enum';
+import {
+  MemberCategoryEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
@@ -35,7 +46,7 @@ type FormValues = {
   amount: number;
   category: DueCategoryEnum;
   date: Dayjs;
-  memberIds: string[] | undefined;
+  memberIds: string | string[] | undefined;
   notes: string | undefined;
 };
 
@@ -85,7 +96,7 @@ export const DueDetailPage = () => {
           amount: MoneyUtils.toCents(values.amount),
           category: values.category,
           date,
-          memberIds: values.memberIds ?? [],
+          memberIds: Array.isArray(values.memberIds) ? values.memberIds : [],
           notes: values.notes ?? null,
         },
         {
@@ -103,7 +114,7 @@ export const DueDetailPage = () => {
           category: values.category,
           date,
           id: due._id,
-          memberId: values.memberIds ? values.memberIds[0] : '',
+          memberId: isString(values.memberIds) ? values.memberIds : '',
           notes: values.notes ?? null,
         },
         {
@@ -132,8 +143,74 @@ export const DueDetailPage = () => {
       return false;
     }
 
+    if (due && due.isPaid) {
+      return true;
+    }
+
     return false;
   };
+
+  const getRulesForMemberIds = () => {
+    const rules: Rule[] = [
+      {
+        required: true,
+      },
+    ];
+
+    if (!due) {
+      rules.push({ min: 1, type: 'array' });
+    }
+
+    return rules;
+  };
+
+  const renderMemberDropdown = (menu: React.ReactElement) => (
+    <>
+      {menu}
+
+      {category === DueCategoryEnum.Membership && (
+        <Space className="flex justify-center my-1">
+          <Button
+            htmlType="button"
+            size="small"
+            onClick={() => {
+              form.setFieldValue(
+                'memberIds',
+                members
+                  ?.filter(
+                    (member) =>
+                      member.category === MemberCategoryEnum.Member &&
+                      member.status === MemberStatusEnum.Active
+                  )
+                  .map((member) => member._id) ?? []
+              );
+            }}
+          >
+            Seleccionar todos los socios
+          </Button>
+
+          <Button
+            htmlType="button"
+            size="small"
+            onClick={() => {
+              form.setFieldValue(
+                'memberIds',
+                members
+                  ?.filter(
+                    (member) =>
+                      member.category === MemberCategoryEnum.Cadet &&
+                      member.status === MemberStatusEnum.Active
+                  )
+                  .map((member) => member._id) ?? []
+              );
+            }}
+          >
+            Seleccionar todos los cadetes
+          </Button>
+        </Space>
+      )}
+    </>
+  );
 
   /**
    * Renders component
@@ -156,7 +233,16 @@ export const DueDetailPage = () => {
       />
 
       <Skeleton active loading={isLoading}>
-        <Card>
+        <Card
+          title={due ? due.memberName : 'Nuevo Cobro'}
+          extra={
+            due && (
+              <Tag color={DueStatusColor[due.status]}>
+                {DueStatusLabel[due.status]}
+              </Tag>
+            )
+          }
+        >
           <Form<FormValues>
             layout="vertical"
             disabled={isFormDisabled()}
@@ -174,57 +260,14 @@ export const DueDetailPage = () => {
           >
             <Form.Item
               className="cs-form-item-extra"
-              // help={
-              //   category === CategoryEnum.MembershipDebt && (
-              //     <ButtonGroup>
-              //       <Button
-              //         size="small"
-              //         htmlType="button"
-              //         type="ghost"
-              //         onClick={() => {
-              //           form.setFieldValue(
-              //             'memberIds',
-              //             members
-              //               ?.filter(
-              //                 (member) =>
-              //                   member.category === MemberCategoryEnum.Member &&
-              //                   member.status === MemberStatusEnum.Active
-              //               )
-              //               .map((member) => member._id) ?? []
-              //           );
-              //         }}
-              //       >
-              //         Seleccionar todos los socios
-              //       </Button>
-              //       <Button
-              //         size="small"
-              //         htmlType="button"
-              //         type="ghost"
-              //         onClick={() => {
-              //           form.setFieldValue(
-              //             'memberIds',
-              //             members
-              //               ?.filter(
-              //                 (member) =>
-              //                   member.category === MemberCategoryEnum.Cadet &&
-              //                   member.status === MemberStatusEnum.Active
-              //               )
-              //               .map((member) => member._id) ?? []
-              //           );
-              //         }}
-              //       >
-              //         Seleccionar todos los cadetes
-              //       </Button>
-              //     </ButtonGroup>
-              //   )
-              // }
               label="Socio/s"
               name="memberIds"
-              rules={[{ required: true }, { min: 1, type: 'array' }]}
+              rules={getRulesForMemberIds()}
             >
               <Select
+                dropdownRender={renderMemberDropdown}
                 mode={due ? undefined : 'multiple'}
-                disabled={isLoadingMembers || !isFormDisabled || !!due}
+                disabled={isLoadingMembers}
                 loading={isLoadingMembers}
                 options={members?.map((member) => ({
                   label: member.name,
@@ -281,7 +324,6 @@ export const DueDetailPage = () => {
               label="Importe"
               name="amount"
               rules={[{ required: true }, { min: 1, type: 'number' }]}
-              status="error"
             >
               <InputNumber
                 className="w-40"

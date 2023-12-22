@@ -19,7 +19,7 @@ export class DuePayment {
   public date: Date;
 
   public get dateFormatted(): string {
-    return DateUtils.utc(this.date).format(DateFormatEnum.DDMMYYYY);
+    return DateUtils.utc(this.date).format(DateFormatEnum.Date);
   }
 
   @IsPositive()

@@ -6,6 +6,7 @@ import {
   DatePicker,
   Form,
   Space,
+  Tag,
   Tooltip,
 } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
@@ -14,8 +15,9 @@ import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
-import { Navigate, NavLink, useLocation } from 'react-router-dom';
+import { Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
+  CheckOutlined,
   DeleteOutlined,
   FilterOutlined,
   ReloadOutlined,
@@ -23,11 +25,12 @@ import {
 import {
   DueCategoryEnum,
   DueCategoryLabel,
+  DueStatusColor,
   DueStatusEnum,
   DueStatusLabel,
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
-import { DueGridDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.dto';
+import { DueGridDto } from '@domain/dues/use-cases/get-dues-grid/due-grid.dto';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
@@ -46,6 +49,8 @@ import { useGrid } from '@ui/hooks/useGrid';
 
 export const DuesPage = () => {
   const location = useLocation();
+
+  const navigate = useNavigate();
 
   const parsedQs = qs.parse(location.search, { ignoreQueryPrefix: true });
 
@@ -85,11 +90,7 @@ export const DuesPage = () => {
 
   const deleteDue = useDeleteDue(refetch);
 
-  const restoreDue = useRestoreDue(() => {
-    restoreDue.reset();
-
-    refetch();
-  });
+  const restoreDue = useRestoreDue(refetch);
 
   const { data: categories } = useCategories();
 
@@ -239,15 +240,21 @@ export const DuesPage = () => {
                 filteredValue: gridState.filters?.status ?? [],
                 filters: getDueStatusColumnFilters(),
                 render: (status: DueStatusEnum, due: DueGridDto) => {
-                  if (status === DueStatusEnum.Paid) {
+                  if (due.isPaid) {
                     return (
                       <Tooltip title={`${due.paidAt} - ${due.paidAmount}`}>
-                        {DueStatusLabel[status]}
+                        <Tag color={DueStatusColor[status]}>
+                          {DueStatusLabel[status]}
+                        </Tag>
                       </Tooltip>
                     );
                   }
 
-                  return DueStatusLabel[status];
+                  return (
+                    <Tag color={DueStatusColor[status]}>
+                      {DueStatusLabel[status]}
+                    </Tag>
+                  );
                 },
                 title: 'Estado',
               },
@@ -290,7 +297,15 @@ export const DuesPage = () => {
                       ) && (
                         <Button
                           type="ghost"
-                          onClick={() => restoreDue.mutate({ id: due._id })}
+                          onClick={() =>
+                            restoreDue.mutate(
+                              { id: due._id },
+                              {
+                                onError: () => restoreDue.reset(),
+                                onSuccess: () => restoreDue.reset(),
+                              }
+                            )
+                          }
                           htmlType="button"
                           tooltip={{ title: 'Restaurar' }}
                           icon={<ReloadOutlined />}
@@ -311,6 +326,22 @@ export const DuesPage = () => {
                       tooltip={{ title: 'Filtrar por este socio' }}
                       icon={<FilterOutlined />}
                     />
+
+                    {due.isPending && (
+                      <Button
+                        type="ghost"
+                        onClick={() => {
+                          navigate(
+                            `${AppUrl.PaymentsNew}?${qs.stringify({
+                              memberIds: [due.memberId],
+                            })}`
+                          );
+                        }}
+                        htmlType="button"
+                        tooltip={{ title: 'Cobrar' }}
+                        icon={<CheckOutlined />}
+                      />
+                    )}
                   </ButtonGroup>
                 ),
                 title: 'Acciones',

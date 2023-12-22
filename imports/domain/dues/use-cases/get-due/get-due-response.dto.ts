@@ -13,7 +13,11 @@ export class GetDueResponseDto {
 
   public memberId: string;
 
+  public memberName: string;
+
   public notes: string | null;
 
   public status: DueStatusEnum;
+
+  public isPaid: boolean;
 }

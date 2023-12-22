@@ -6,13 +6,13 @@ import { CreatePaymentDue } from '@domain/payments/payment.types';
 import { MoneyUtils } from '@shared/utils/currency.utils';
 
 export class PaymentDue {
-  @ValidateNested()
-  @Type(() => PaymentDueDue)
-  public due: PaymentDueDue;
-
   @IsNumber()
   @IsPositive()
   public amount: number;
+
+  @ValidateNested()
+  @Type(() => PaymentDueDue)
+  public due: PaymentDueDue;
 
   public get amountFormatted() {
     return MoneyUtils.formatCents(this.amount);
@@ -26,5 +26,9 @@ export class PaymentDue {
     paymentDue.due = props.due;
 
     return ok(paymentDue);
+  }
+
+  public removePayment() {
+    throw new Error('Method not implemented.');
   }
 }
