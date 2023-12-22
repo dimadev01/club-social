@@ -32,8 +32,8 @@ export class Payment extends Entity {
   @Type(() => PaymentMember)
   public member: PaymentMember;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   @IsNullable()
   public notes: string | null;
 

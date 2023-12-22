@@ -15,7 +15,7 @@ export class GetMemberMovementsGridRequestDto extends PaginatedRequestDto {
   @IsOptional()
   public to: string | null;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   public memberId: string;
 }

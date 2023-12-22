@@ -1,4 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import localeData from 'dayjs/plugin/localeData';
 import utc from 'dayjs/plugin/utc';
 
@@ -23,6 +24,8 @@ export abstract class DateUtils {
     dayjs.extend(utc);
 
     dayjs.extend(localeData);
+
+    dayjs.extend(customParseFormat);
   }
 
   public static months() {

@@ -16,7 +16,6 @@ import { ARS } from '@dinero.js/currencies';
 import {
   DueCategoryEnum,
   DueCategoryLabel,
-  DueStatusEnum,
   getDueCategoryOptions,
 } from '@domain/dues/due.enum';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
@@ -27,10 +26,10 @@ import { FormButtons } from '@ui/components/Form/FormButtons';
 import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
 import { useCreateDue } from '@ui/hooks/dues/useCreateDue';
+import { useDeleteDue } from '@ui/hooks/dues/useDeleteDue';
 import { useDue } from '@ui/hooks/dues/useDue';
 import { useUpdateDue } from '@ui/hooks/dues/useUpdateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 
 type FormValues = {
   amount: number;
@@ -57,8 +56,8 @@ export const DueDetailPage = () => {
 
   const updateDue = useUpdateDue();
 
-  const deleteMovement = useDeleteMovement(() => {
-    message.success('Movimiento eliminado');
+  const deleteDue = useDeleteDue(() => {
+    message.success('Cobro eliminado');
 
     navigate(-1);
   });
@@ -133,10 +132,6 @@ export const DueDetailPage = () => {
       return false;
     }
 
-    if (due?.status === DueStatusEnum.Paid) {
-      return true;
-    }
-
     return false;
   };
 
@@ -177,20 +172,6 @@ export const DueDetailPage = () => {
               notes: due?.notes,
             }}
           >
-            <Form.Item
-              label="Categoría"
-              name="category"
-              rules={[{ required: true }]}
-            >
-              <Select
-                disabled={!!due}
-                onChange={() => {
-                  form.setFieldValue('amount', null);
-                }}
-                options={getDueCategoryOptions()}
-              />
-            </Form.Item>
-
             <Form.Item
               className="cs-form-item-extra"
               // help={
@@ -242,7 +223,7 @@ export const DueDetailPage = () => {
               rules={[{ required: true }, { min: 1, type: 'array' }]}
             >
               <Select
-                mode="multiple"
+                mode={due ? undefined : 'multiple'}
                 disabled={isLoadingMembers || !isFormDisabled || !!due}
                 loading={isLoadingMembers}
                 options={members?.map((member) => ({
@@ -253,14 +234,43 @@ export const DueDetailPage = () => {
             </Form.Item>
 
             <Form.Item
+              label="Categoría"
+              name="category"
+              rules={[{ required: true }]}
+            >
+              <Select
+                onChange={(value) => {
+                  if (due) {
+                    if (value === DueCategoryEnum.Membership) {
+                      form.setFieldValue(
+                        'date',
+                        DateUtils.utc(
+                          due.date,
+                          DateFormatEnum.DDMMYYYY
+                        ).startOf('month')
+                      );
+                    }
+                  } else {
+                    form.setFieldValue('amount', null);
+                  }
+                }}
+                options={getDueCategoryOptions()}
+              />
+            </Form.Item>
+
+            <Form.Item
               name="date"
               label="Fecha"
               rules={[{ required: true }, { type: 'date' }]}
             >
               <DatePicker
-                disabled={!!due}
                 picker={
                   category === DueCategoryEnum.Membership ? 'month' : 'date'
+                }
+                format={
+                  category === DueCategoryEnum.Membership
+                    ? 'MMMM'
+                    : DateFormatEnum.DDMMYYYY
                 }
                 className="w-full"
                 disabledDate={(current) => current.isAfter(dayjs())}
@@ -293,17 +303,11 @@ export const DueDetailPage = () => {
             <FormButtons
               scope={ScopeEnum.Movements}
               isLoading={createDue.isLoading || updateDue.isLoading}
-              isSaveDisabled={
-                createDue.isLoading ||
-                updateDue.isLoading ||
-                due?.status === DueStatusEnum.Paid
-              }
+              isSaveDisabled={createDue.isLoading || updateDue.isLoading}
               isBackDisabled={createDue.isLoading || updateDue.isLoading}
               isDeleteDisabled={createDue.isLoading || updateDue.isLoading}
               showDeleteButton={!!due}
-              onClickDelete={() =>
-                due && deleteMovement.mutate({ id: due._id })
-              }
+              onClickDelete={() => due && deleteDue.mutate({ id: due._id })}
             />
           </Form>
         </Card>

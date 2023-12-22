@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { MongoInternals } from 'meteor/mongo';
+import { DueCollection } from '@domain/dues/due.collection';
 import { MovementCollection } from '@domain/movements/movement.collection';
 import { RoleService } from '@domain/roles/role.service';
 import { CategoryCollection } from '@infra/mongo/collections/category.collection';
@@ -927,4 +928,30 @@ Migrations.add({
     next();
   }),
   version: 13,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await DueCollection.createIndexAsync({
+      date: -1,
+      'member._id': 1,
+      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
+      category: 1,
+    });
+
+    await DueCollection.createIndexAsync({
+      'member._id': 1,
+      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
+      date: -1,
+      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
+      category: 1,
+    });
+
+    next();
+  }),
+  version: 14,
 });

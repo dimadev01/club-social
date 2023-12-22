@@ -97,12 +97,6 @@ export class Movement extends Entity {
     return ok(movement);
   }
 
-  public restore(): Result<null, Error> {
-    this.isDeleted = false;
-
-    return ok(null);
-  }
-
   public setAmount(amount: number): Result<null, Error> {
     this.amount = amount;
 

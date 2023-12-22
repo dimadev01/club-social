@@ -7,6 +7,7 @@ import { UpdateDueRequestDto } from '@domain/dues/use-cases/update-due/update-du
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
+import { DateUtils } from '@shared/utils/date.utils';
 
 @injectable()
 export class UpdateDueUseCase
@@ -32,7 +33,8 @@ export class UpdateDueUseCase
     const updateDueResult: Result<null[], Error> = Result.combine([
       due.setAmount(request.amount),
       due.setNotes(request.notes),
-      due.setDate(new Date(request.date)),
+      due.setCategory(request.category),
+      due.setDate(DateUtils.utc(request.date).toDate()),
     ]);
 
     if (updateDueResult.isErr()) {

@@ -15,7 +15,11 @@ import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Navigate, NavLink, useLocation } from 'react-router-dom';
-import { DeleteOutlined, FilterOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  FilterOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
 import {
   DueCategoryEnum,
   DueCategoryLabel,
@@ -26,7 +30,7 @@ import {
 import { DueGridDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.dto';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { DateFormatEnum } from '@shared/utils/date.utils';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Select } from '@ui/components/Select';
@@ -36,6 +40,7 @@ import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useCategories } from '@ui/hooks/categories/useCategories';
 import { useDeleteDue } from '@ui/hooks/dues/useDeleteDue';
 import { useDuesGrid } from '@ui/hooks/dues/useDuesGrid';
+import { useRestoreDue } from '@ui/hooks/dues/useRestoreDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useGrid } from '@ui/hooks/useGrid';
 
@@ -79,6 +84,12 @@ export const DuesPage = () => {
   });
 
   const deleteDue = useDeleteDue(refetch);
+
+  const restoreDue = useRestoreDue(() => {
+    restoreDue.reset();
+
+    refetch();
+  });
 
   const { data: categories } = useCategories();
 
@@ -210,6 +221,11 @@ export const DuesPage = () => {
               {
                 align: 'center',
                 dataIndex: 'membershipMonth',
+                filteredValue: gridState.filters?.membershipMonth ?? [],
+                filters: DateUtils.months().map((month) => ({
+                  text: month,
+                  value: month,
+                })),
                 title: 'Mes de cuota',
               },
               {
@@ -243,7 +259,7 @@ export const DuesPage = () => {
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Delete,
-                        ScopeEnum.Movements
+                        ScopeEnum.Dues
                       ) && (
                         <Button
                           popConfirm={{
@@ -255,7 +271,7 @@ export const DuesPage = () => {
                                   onSuccess: () => deleteDue.reset(),
                                 }
                               ),
-                            title: '¿Está seguro de eliminar este movimiento?',
+                            title: '¿Está seguro de eliminar este cobro?',
                           }}
                           type="ghost"
                           htmlType="button"
@@ -266,7 +282,7 @@ export const DuesPage = () => {
                         />
                       )}
 
-                    {/* {due.isDeleted &&
+                    {due.isDeleted &&
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Update,
@@ -274,16 +290,14 @@ export const DuesPage = () => {
                       ) && (
                         <Button
                           type="ghost"
-                          onClick={() =>
-                            restoreMovement.mutate({ id: due._id })
-                          }
+                          onClick={() => restoreDue.mutate({ id: due._id })}
                           htmlType="button"
                           tooltip={{ title: 'Restaurar' }}
                           icon={<ReloadOutlined />}
-                          loading={restoreMovement.variables?.id === due._id}
-                          disabled={restoreMovement.variables?.id === due._id}
+                          loading={restoreDue.variables?.id === due._id}
+                          disabled={restoreDue.variables?.id === due._id}
                         />
-                      )} */}
+                      )}
 
                     <Button
                       type="ghost"

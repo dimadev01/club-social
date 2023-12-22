@@ -16,11 +16,11 @@ export class PaginatedRequestDto {
   @IsString()
   public search: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   public sortField: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   public sortOrder: SortOrder;
 }

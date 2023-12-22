@@ -31,8 +31,8 @@ export class Due extends Entity {
   @Type(() => DueMember)
   public member: DueMember;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   @IsNullable()
   public notes: string | null;
 
@@ -124,6 +124,12 @@ export class Due extends Entity {
 
   public setNotes(notes: string | null): Result<null, Error> {
     this.notes = notes;
+
+    return ok(null);
+  }
+
+  public setCategory(category: DueCategoryEnum): Result<null, Error> {
+    this.category = category;
 
     return ok(null);
   }

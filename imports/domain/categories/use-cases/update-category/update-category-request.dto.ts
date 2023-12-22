@@ -1,8 +1,8 @@
 import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdateCategoryRequestDto {
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   id: string;
 
   @IsInt()

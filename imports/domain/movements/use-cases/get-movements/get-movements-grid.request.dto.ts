@@ -25,7 +25,7 @@ export class GetMovementsGridRequestDto extends PaginatedRequestDto {
   @IsOptional()
   public showDeleted: boolean | null;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   public sortField: 'createdAt';
 }

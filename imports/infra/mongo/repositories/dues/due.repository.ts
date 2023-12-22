@@ -6,7 +6,7 @@ import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
 import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
 import { DueCollection, DueSchema } from '@domain/dues/due.collection';
-import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
+import { DueStatusEnum } from '@domain/dues/due.enum';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { DIToken } from '@infra/di/di-tokens';
@@ -44,33 +44,48 @@ export class DueRepository
   public async findPaginated(
     request: FindPaginatedDuesRequest
   ): Promise<FindPaginatedResponse<Due>> {
-    const query: Mongo.Query<Due> = {
-      isDeleted: request.showDeleted ?? false,
+    const $expr: { $and: Mongo.Query<Due> } = {
+      $and: [{ $eq: ['$isDeleted', request.showDeleted ?? false] }],
     };
 
     if (request.from && request.to) {
-      query.date = {
-        $gte: DateUtils.utc(request.from).startOf('day').toDate(),
-        $lte: DateUtils.utc(request.to).endOf('day').toDate(),
-      };
+      $expr.$and.push({
+        $gte: ['$date', DateUtils.utc(request.from).startOf('day').toDate()],
+      });
+
+      $expr.$and.push({
+        $lte: ['$date', DateUtils.utc(request.to).startOf('day').toDate()],
+      });
     }
 
     if (request.memberIds.length > 0) {
-      query['member._id'] = { $in: request.memberIds };
+      $expr.$and.push({ $in: ['$member._id', request.memberIds] });
     }
 
     if (request.filters.category?.length) {
-      query.category = { $in: request.filters.category as DueCategoryEnum[] };
+      $expr.$and.push({ $in: ['$category', request.filters.category] });
     }
 
     if (request.filters.status?.length) {
-      query.status = { $in: request.filters.status as DueStatusEnum[] };
+      $expr.$and.push({ $in: ['$status', request.filters.status] });
+    }
+
+    if (request.filters.membershipMonth?.length) {
+      const dates: number[] = request.filters.membershipMonth.map(
+        (month) => DateUtils.utc(month, 'MMMM').month() + 1
+      );
+
+      $expr.$and.push({
+        $or: dates.map((date) => ({
+          $eq: [{ $month: '$date' }, date],
+        })),
+      });
     }
 
     const [result] = await this.getCollection()
       .rawCollection()
       .aggregate<FindPaginatedAggregationResult<Due>>([
-        { $match: query },
+        { $match: { $expr } },
         {
           $facet: {
             data: [...this.getPaginatedPipelineQuery(request)],

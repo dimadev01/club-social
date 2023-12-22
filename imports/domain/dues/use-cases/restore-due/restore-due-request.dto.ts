@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class RestoreMovementRequestDto {
-  @IsString()
+export class RestoreDueRequestDto {
   @IsNotEmpty()
+  @IsString()
   id: string;
 }

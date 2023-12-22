@@ -59,6 +59,10 @@ export class Entity extends UniqueID {
     this.deletedBy = deletedBy;
   }
 
+  public restore(): void {
+    this.isDeleted = false;
+  }
+
   public update(updatedBy: string): void {
     this.updatedAt = new Date();
 

@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import { CreateDueRequestDto } from '@domain/dues/use-cases/create-due/create-due-request.dto';
 import { CreateDueUseCase } from '@domain/dues/use-cases/create-due/create-due.use-case';
+import { DeleteDueRequestDto } from '@domain/dues/use-cases/delete-due/delete-due-request.dto';
 import { DeleteDueUseCase } from '@domain/dues/use-cases/delete-due/delete-due.use-case';
 import { GetDueRequestDto } from '@domain/dues/use-cases/get-due/get-due-request.dto';
 import { GetDueUseCase } from '@domain/dues/use-cases/get-due/get-due.use-case';
@@ -10,11 +11,10 @@ import { GetPaidDuesRequestDto } from '@domain/dues/use-cases/get-paid-dues/get-
 import { GetPaidDuesUseCase } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.use-case';
 import { GetPendingDuesRequestDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-dues.request.dto';
 import { GetPendingDuesUseCase } from '@domain/dues/use-cases/get-pending-dues/get-pending-dues.use-case';
+import { RestoreDueRequestDto } from '@domain/dues/use-cases/restore-due/restore-due-request.dto';
+import { RestoreDueUseCase } from '@domain/dues/use-cases/restore-due/restore-due.use-case';
 import { UpdateDueRequestDto } from '@domain/dues/use-cases/update-due/update-due-request.dto';
 import { UpdateDueUseCase } from '@domain/dues/use-cases/update-due/update-due.use-case';
-import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
-import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-movement/restore-movement-request.dto';
-import { RestoreMovementUseCase } from '@domain/movements/use-cases/restore-movement/restore-movement.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 
@@ -28,7 +28,7 @@ export class DueMethod extends MeteorMethod {
     private readonly _createDue: CreateDueUseCase,
     private readonly _updateDue: UpdateDueUseCase,
     private readonly _deleteDue: DeleteDueUseCase,
-    private readonly _restoreMovement: RestoreMovementUseCase
+    private readonly _restoreDue: RestoreDueUseCase
   ) {
     super();
   }
@@ -53,11 +53,11 @@ export class DueMethod extends MeteorMethod {
       [MethodsEnum.DuesUpdate]: (request: UpdateDueRequestDto) =>
         this.execute(this._updateDue, request, UpdateDueRequestDto),
 
-      [MethodsEnum.DuesDelete]: (request: DeleteMovementRequestDto) =>
-        this.execute(this._deleteDue, request, DeleteMovementRequestDto),
+      [MethodsEnum.DuesDelete]: (request: DeleteDueRequestDto) =>
+        this.execute(this._deleteDue, request, DeleteDueRequestDto),
 
-      [MethodsEnum.DuesRestore]: (request: RestoreMovementRequestDto) =>
-        this.execute(this._restoreMovement, request, RestoreMovementRequestDto),
+      [MethodsEnum.DuesRestore]: (request: RestoreDueRequestDto) =>
+        this.execute(this._restoreDue, request, RestoreDueRequestDto),
     });
   }
 }
