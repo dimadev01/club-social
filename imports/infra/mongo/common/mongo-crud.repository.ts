@@ -213,6 +213,17 @@ export abstract class MongoCrudRepository<T extends Entity>
     ];
   }
 
+  protected async getAggregationCount(
+    condition: boolean,
+    count: number
+  ): Promise<number> {
+    if (condition) {
+      return count;
+    }
+
+    return this.getCollection().rawCollection().estimatedDocumentCount();
+  }
+
   protected getPaginatedQuery(page: number, pageSize: number): MongoOptions {
     return { limit: pageSize, skip: (page - 1) * pageSize, sort: {} };
   }

@@ -6,6 +6,7 @@ import {
   DatePicker,
   Form,
   Space,
+  Table as AntTable,
   Tag,
   Tooltip,
 } from 'antd';
@@ -106,6 +107,25 @@ export const DuesPage = () => {
     return null;
   }
 
+  const renderSummary = () => (
+    <AntTable.Summary>
+      <AntTable.Summary.Row>
+        <AntTable.Summary.Cell index={0} />
+        <AntTable.Summary.Cell index={1} />
+        <AntTable.Summary.Cell index={2} />
+        <AntTable.Summary.Cell index={3} />
+        <AntTable.Summary.Cell index={4}>
+          <div className="flex justify-between">
+            <span>Total</span>
+            <span>{data?.totalAmount ?? '-'}</span>
+          </div>
+        </AntTable.Summary.Cell>
+        <AntTable.Summary.Cell index={5} />
+        <AntTable.Summary.Cell index={6} />
+      </AntTable.Summary.Row>
+    </AntTable.Summary>
+  );
+
   return (
     <>
       <Breadcrumb
@@ -185,6 +205,7 @@ export const DuesPage = () => {
 
           <Table<DueGridDto>
             total={data?.count ?? 0}
+            summary={renderSummary}
             gridState={gridState}
             onStateChange={setGridState}
             loading={isLoading}
@@ -203,7 +224,12 @@ export const DuesPage = () => {
                 title: 'Fecha',
               },
               {
-                dataIndex: 'memberName',
+                dataIndex: 'memberId',
+                render: (memberId: string, dto: DueGridDto) => (
+                  <NavLink to={`${AppUrl.Members}/${memberId}`}>
+                    {dto.memberName}
+                  </NavLink>
+                ),
                 title: 'Socio',
               },
               {

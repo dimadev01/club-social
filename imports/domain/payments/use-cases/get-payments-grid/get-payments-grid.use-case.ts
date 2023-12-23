@@ -8,6 +8,7 @@ import { GetPaymentsGridResponseDto } from '@domain/payments/use-cases/get-payme
 import { PaymentGridDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 
 @injectable()
 export class GetPaymentsGridUseCase
@@ -24,7 +25,9 @@ export class GetPaymentsGridUseCase
   public async execute(
     request: GetPaymentsGridRequestDto
   ): Promise<Result<GetPaymentsGridResponseDto, Error>> {
-    const { data, count } = await this._paymentPort.findPaginated(request);
+    const { data, count, totalAmount } = await this._paymentPort.findPaginated(
+      request
+    );
 
     return ok<GetPaymentsGridResponseDto>({
       count,
@@ -47,6 +50,7 @@ export class GetPaymentsGridUseCase
           totalAmount: payment.totalDuesAmount,
         })
       ),
+      totalAmount: MoneyUtils.formatCents(totalAmount),
     });
   }
 }

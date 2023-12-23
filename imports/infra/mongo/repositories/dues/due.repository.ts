@@ -3,8 +3,6 @@ import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
-import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
-import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
 import { DueCollection, DueSchema } from '@domain/dues/due.collection';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { IDuePort } from '@domain/dues/due.port';
@@ -14,7 +12,9 @@ import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
 import {
   FindByIdsRequest,
+  FindPaginatedDuesAggregationResult,
   FindPaginatedDuesRequest,
+  FindPaginatedDuesResponse,
   FindPaidRequest,
   FindPendingRequest,
 } from '@infra/mongo/repositories/dues/due-repository.types';
@@ -43,31 +43,31 @@ export class DueRepository
 
   public async findPaginated(
     request: FindPaginatedDuesRequest
-  ): Promise<FindPaginatedResponse<Due>> {
-    const $expr: { $and: Mongo.Query<Due> } = {
-      $and: [{ $eq: ['$isDeleted', request.showDeleted ?? false] }],
+  ): Promise<FindPaginatedDuesResponse> {
+    const query: Mongo.Query<Due> = {
+      $expr: { $and: [{ $eq: ['$isDeleted', request.showDeleted ?? false] }] },
     };
 
     if (request.from && request.to) {
-      $expr.$and.push({
+      query.$expr.$and.push({
         $gte: ['$date', DateUtils.utc(request.from).startOf('day').toDate()],
       });
 
-      $expr.$and.push({
+      query.$expr.$and.push({
         $lte: ['$date', DateUtils.utc(request.to).startOf('day').toDate()],
       });
     }
 
     if (request.memberIds.length > 0) {
-      $expr.$and.push({ $in: ['$member._id', request.memberIds] });
+      query.$expr.$and.push({ $in: ['$member._id', request.memberIds] });
     }
 
     if (request.filters.category?.length) {
-      $expr.$and.push({ $in: ['$category', request.filters.category] });
+      query.$expr.$and.push({ $in: ['$category', request.filters.category] });
     }
 
     if (request.filters.status?.length) {
-      $expr.$and.push({ $in: ['$status', request.filters.status] });
+      query.$expr.$and.push({ $in: ['$status', request.filters.status] });
     }
 
     if (request.filters.membershipMonth?.length) {
@@ -75,39 +75,48 @@ export class DueRepository
         (month) => DateUtils.utc(month, 'MMMM').month() + 1
       );
 
-      $expr.$and.push({
+      query.$expr.$and.push({
         $eq: ['$category', DueCategoryEnum.Membership],
       });
 
-      $expr.$and.push({
+      query.$expr.$and.push({
         $or: dates.map((date) => ({
           $eq: [{ $month: '$date' }, date],
         })),
       });
     }
 
+    const $facet: Record<string, unknown> = {
+      data: [...this.getPaginatedPipelineQuery(request)],
+      totalAmount: [{ $group: { _id: null, sum: { $sum: '$amount' } } }],
+    };
+
+    const $project: Record<string, number | object> = {
+      data: 1,
+      totalAmount: MongoUtils.first('$totalAmount.sum', 0),
+    };
+
+    const hasFilters = query.$expr.$and.length > 1;
+
+    if (hasFilters) {
+      $facet.total = [{ $count: 'count' }];
+
+      $project.count = MongoUtils.first('$total.count', 0);
+    }
+
     const [result] = await this.getCollection()
       .rawCollection()
-      .aggregate<FindPaginatedAggregationResult<Due>>([
-        { $match: { $expr } },
-        {
-          $facet: {
-            data: [...this.getPaginatedPipelineQuery(request)],
-            total: [{ $count: 'count' }],
-          },
-        },
-        {
-          $project: {
-            count: MongoUtils.first('$total.count', 0),
-            data: 1,
-          },
-        },
+      .aggregate<FindPaginatedDuesAggregationResult>([
+        { $match: query },
+        { $facet },
+        { $project },
       ])
       .toArray();
 
     return {
-      count: result.count,
+      count: await this.getAggregationCount(hasFilters, result.count),
       data: result.data.map((item) => plainToInstance(Due, item)),
+      totalAmount: result.totalAmount,
     };
   }
 

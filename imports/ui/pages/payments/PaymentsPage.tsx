@@ -138,6 +138,25 @@ export const PaymentsPage = () => {
     />
   );
 
+  const renderSummary = () => (
+    <AntTable.Summary>
+      <AntTable.Summary.Row>
+        <AntTable.Summary.Cell index={0} />
+        <AntTable.Summary.Cell index={1} />
+        <AntTable.Summary.Cell index={2} />
+        <AntTable.Summary.Cell index={3} />
+        <AntTable.Summary.Cell index={4}>
+          <div className="flex justify-between">
+            <span>Total</span>
+            <span>{data?.totalAmount ?? '-'}</span>
+          </div>
+        </AntTable.Summary.Cell>
+        <AntTable.Summary.Cell index={5} />
+        <AntTable.Summary.Cell index={6} />
+      </AntTable.Summary.Row>
+    </AntTable.Summary>
+  );
+
   return (
     <>
       <Breadcrumb
@@ -218,6 +237,7 @@ export const PaymentsPage = () => {
           <Table<PaymentGridDto>
             total={data?.count ?? 0}
             gridState={gridState}
+            summary={renderSummary}
             onStateChange={setGridState}
             loading={isLoading}
             dataSource={data?.data}
@@ -239,7 +259,12 @@ export const PaymentsPage = () => {
                 width: 150,
               },
               {
-                dataIndex: 'memberName',
+                dataIndex: 'memberId',
+                render: (memberId: string, dto: PaymentGridDto) => (
+                  <NavLink to={`${AppUrl.Members}/${memberId}`}>
+                    {dto.memberName}
+                  </NavLink>
+                ),
                 title: 'Socio',
               },
               {
@@ -252,37 +277,6 @@ export const PaymentsPage = () => {
                 dataIndex: 'totalAmount',
                 title: 'Total',
               },
-              // {
-              //   align: 'center',
-              //   dataIndex: 'category',
-              //   filteredValue: gridState.filters?.category ?? [],
-              //   filters:
-              //     categories?.map((category) => ({
-              //       text: category.name,
-              //       value: category.code,
-              //     })) ?? [],
-              //   render: (category: DueCategoryEnum) =>
-              //     DueCategoryLabel[category],
-              //   title: 'Categoría',
-              // },
-              // {
-              //   align: 'center',
-              //   dataIndex: 'membershipMonth',
-              //   title: 'Mes de cuota',
-              // },
-              // {
-              //   align: 'right',
-              //   dataIndex: 'amount',
-              //   title: 'Importe',
-              // },
-              // {
-              //   align: 'center',
-              //   dataIndex: 'status',
-              //   filteredValue: gridState.filters?.status ?? [],
-              //   filters: getDueStatusColumnFilters(),
-              //   render: (status: DueStatusEnum) => DueStatusLabel[status],
-              //   title: 'Estado',
-              // },
               {
                 align: 'center',
                 render: (_, payment: PaymentGridDto) => (

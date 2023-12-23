@@ -8,6 +8,7 @@ import { GetDuesGridRequestDto } from '@domain/dues/use-cases/get-dues-grid/get-
 import { GetDuesGridResponseDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.response.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
+import { MoneyUtils } from '@shared/utils/currency.utils';
 
 @injectable()
 export class GetDuesGridUseCase
@@ -24,7 +25,9 @@ export class GetDuesGridUseCase
   public async execute(
     request: GetDuesGridRequestDto
   ): Promise<Result<GetDuesGridResponseDto, Error>> {
-    const { data, count } = await this._duePort.findPaginated(request);
+    const { data, count, totalAmount } = await this._duePort.findPaginated(
+      request
+    );
 
     return ok<GetDuesGridResponseDto>({
       count,
@@ -45,6 +48,7 @@ export class GetDuesGridUseCase
           status: due.status,
         })
       ),
+      totalAmount: MoneyUtils.formatCents(totalAmount),
     });
   }
 }
