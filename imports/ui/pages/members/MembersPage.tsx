@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
-import dayjs from 'dayjs';
 import qs from 'qs';
 import CsvDownloader from 'react-csv-downloader';
 import { Navigate, NavLink, useNavigate } from 'react-router-dom';
@@ -20,7 +19,7 @@ import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { MoneyUtils } from '@shared/utils/currency.utils';
-import { DateFormatEnum } from '@shared/utils/date.utils';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Table } from '@ui/components/Table/Table';
@@ -124,7 +123,7 @@ export const MembersPage = () => {
                   id: 'totalDebt',
                 },
               ]}
-              filename={`${dayjs().format(DateFormatEnum.DateTime)}`}
+              filename={DateUtils.c().format(DateFormatEnum.DateTime)}
               datas={async () => {
                 setIsExportingToCsv(true);
 
@@ -143,7 +142,7 @@ export const MembersPage = () => {
                 disabled={isExportingToCsv}
                 tooltip={{ title: 'Descargar CSV' }}
                 htmlType="button"
-                type="ghost"
+                type="text"
                 icon={<FileExcelOutlined />}
               />
             </CsvDownloader>
@@ -281,7 +280,7 @@ export const MembersPage = () => {
               render: (_, member: MemberGridDto) => (
                 <ButtonGroup size="small">
                   <Button
-                    type="ghost"
+                    type="text"
                     icon={<FileSearchOutlined />}
                     onClick={() =>
                       navigate(

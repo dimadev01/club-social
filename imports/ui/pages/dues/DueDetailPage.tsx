@@ -251,9 +251,7 @@ export const DueDetailPage = () => {
             initialValues={{
               amount: due?.amount ? MoneyUtils.fromCents(due.amount) : 0,
               category: due?.category ?? DueCategoryEnum.Membership,
-              date: due?.date
-                ? DateUtils.utc(due.date, DateFormatEnum.DDMMYYYY)
-                : undefined,
+              date: due?.date ? DateUtils.utc(due.date) : undefined,
               memberIds: due?.memberId ? [due.memberId] : [],
               notes: due?.notes,
             }}

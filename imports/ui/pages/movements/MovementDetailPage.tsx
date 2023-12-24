@@ -202,7 +202,7 @@ export const MovementDetailPage = () => {
                 <Button
                   size="small"
                   htmlType="button"
-                  type="ghost"
+                  type="text"
                   onClick={() => {
                     form.setFieldValue(
                       'memberIds',
@@ -221,7 +221,7 @@ export const MovementDetailPage = () => {
                 <Button
                   size="small"
                   htmlType="button"
-                  type="ghost"
+                  type="text"
                   onClick={() => {
                     form.setFieldValue(
                       'memberIds',
@@ -317,6 +317,17 @@ export const MovementDetailPage = () => {
     return null;
   };
 
+  if (
+    movement &&
+    [
+      CategoryEnum.MembershipIncome,
+      CategoryEnum.GuestIncome,
+      CategoryEnum.ElectricityIncome,
+    ].includes(movement.category)
+  ) {
+    return <Navigate to={`${AppUrl.Movements}/${movement._id}/migrate`} />;
+  }
+
   /**
    * Renders component
    */
@@ -401,7 +412,6 @@ export const MovementDetailPage = () => {
                   onChange={(value) =>
                     form.setFieldValue('amount', getPriceForCategory(value))
                   }
-                  // options={getCategoryOptions(type)}
                   options={
                     categoriesByType?.map((categoryByType) => ({
                       label: categoryByType.name,
@@ -418,7 +428,6 @@ export const MovementDetailPage = () => {
               label="Importe"
               name="amount"
               rules={[{ required: true }, { min: 1, type: 'number' }]}
-              status="error"
             >
               <InputNumber
                 className="w-32"

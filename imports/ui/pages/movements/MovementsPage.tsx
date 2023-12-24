@@ -330,7 +330,7 @@ export const MovementsPage = () => {
                               ),
                             title: '¿Está seguro de eliminar este movimiento?',
                           }}
-                          type="ghost"
+                          type="text"
                           htmlType="button"
                           tooltip={{ title: 'Eliminar' }}
                           icon={<DeleteOutlined />}
@@ -350,7 +350,7 @@ export const MovementsPage = () => {
                         ScopeEnum.Movements
                       ) && (
                         <Button
-                          type="ghost"
+                          type="text"
                           onClick={() =>
                             restoreMovement.mutate({ id: movement._id })
                           }
@@ -367,7 +367,7 @@ export const MovementsPage = () => {
                       )}
 
                     <Button
-                      type="ghost"
+                      type="text"
                       disabled={!movement.memberId}
                       onClick={() => {
                         if (movement.memberId) {

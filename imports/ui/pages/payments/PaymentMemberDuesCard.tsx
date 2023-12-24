@@ -7,7 +7,6 @@ import { ARS } from '@dinero.js/currencies';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { PendingDueDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
 import { MoneyUtils } from '@shared/utils/currency.utils';
-import { DateUtils } from '@shared/utils/date.utils';
 
 type Due = {
   _id: string;
@@ -28,6 +27,7 @@ type Due = {
 type Props = {
   dues: Due[] | undefined;
   memberId: string;
+  showNotes?: boolean;
 };
 
 type FormDueValue = {
@@ -47,7 +47,11 @@ type FormValues = {
   dues: FormDuesValue[];
 };
 
-export const PaymentMemberDuesCard: React.FC<Props> = ({ memberId, dues }) => {
+export const PaymentMemberDuesCard: React.FC<Props> = ({
+  memberId,
+  dues,
+  showNotes = true,
+}) => {
   const form = Form.useFormInstance<FormValues>();
 
   const formDues = useWatch('dues', { form, preserve: true });
@@ -67,7 +71,9 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({ memberId, dues }) => {
   const formDuesByMember = formDues.find((d) => d.memberId === memberId);
 
   const totalDuesToPay =
-    formDuesByMember?.dues.reduce((acc, d) => acc + d.amount, 0) ?? 0;
+    formDuesByMember?.dues
+      .filter((d) => d.isSelected)
+      .reduce((acc, d) => acc + d.amount, 0) ?? 0;
 
   const selectedRowKeys = formDuesByMember?.dues
     .filter((d) => d.isSelected)
@@ -118,7 +124,7 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({ memberId, dues }) => {
         columns={[
           {
             dataIndex: 'date',
-            render: (date: string) => DateUtils.formatUtc(date),
+            render: (date: string) => date,
             title: 'Fecha',
           },
           {
@@ -213,13 +219,15 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({ memberId, dues }) => {
         ]}
       />
 
-      <Form.Item
-        label="Notas"
-        rules={[{ whitespace: true }]}
-        name={['dues', memberIndex, 'notes']}
-      >
-        <TextArea />
-      </Form.Item>
+      {showNotes && (
+        <Form.Item
+          label="Notas"
+          rules={[{ whitespace: true }]}
+          name={['dues', memberIndex, 'notes']}
+        >
+          <TextArea />
+        </Form.Item>
+      )}
     </>
   );
 };

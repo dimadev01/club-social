@@ -8,16 +8,18 @@ export enum DateFormatEnum {
   Date = 'YYYY-MM-DD',
   DateTime = 'YYYY-MM-DD HH:mm:ss',
   Iso = 'YYYY-MM-DDTHH:mm:ss.SSSZ',
+  MMMM = 'MMMM',
   Time = 'HH:mm:ss',
 }
 
 export abstract class DateUtils {
-  public static create(
-    date?: string | number | Date | dayjs.Dayjs | null | undefined,
-    format?: dayjs.OptionType | undefined,
-    strict?: boolean | undefined
+  public static c(
+    date?: dayjs.ConfigType,
+    format?: dayjs.OptionType,
+    locale?: string,
+    strict?: boolean
   ): Dayjs {
-    return dayjs(date, format, strict);
+    return dayjs(date, format, locale, strict);
   }
 
   public static extend(): void {
@@ -28,15 +30,11 @@ export abstract class DateUtils {
     dayjs.extend(customParseFormat);
   }
 
-  public static months() {
-    return dayjs.months();
-  }
-
   public static format(
     date: Date | Dayjs,
     format: DateFormatEnum = DateFormatEnum.DDMMYYYY
   ): string {
-    return this.create(date).format(format);
+    return this.c(date).format(format);
   }
 
   public static formatUtc(
@@ -46,20 +44,15 @@ export abstract class DateUtils {
     return this.utc(date).format(format);
   }
 
+  public static months() {
+    return dayjs.months();
+  }
+
   public static utc(
     config?: string | number | Date | dayjs.Dayjs | null | undefined,
     format?: string | undefined,
     strict?: boolean | undefined
   ): Dayjs {
     return dayjs.utc(config, format, strict);
-  }
-
-  public static c(
-    date?: dayjs.ConfigType,
-    format?: dayjs.OptionType,
-    locale?: string,
-    strict?: boolean
-  ): Dayjs {
-    return dayjs(date, format, locale, strict);
   }
 }

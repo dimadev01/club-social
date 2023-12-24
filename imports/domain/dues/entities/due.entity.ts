@@ -53,12 +53,12 @@ export class Due extends Entity {
   }
 
   public get dateFormatted(): string {
-    return DateUtils.formatUtc(this.date, DateFormatEnum.DDMMYYYY);
+    return DateUtils.formatUtc(this.date);
   }
 
   public get membershipMonth(): string {
     if (this.category === DueCategoryEnum.Membership) {
-      return DateUtils.utc(this.date).format('MMMM');
+      return DateUtils.formatUtc(this.date, DateFormatEnum.MMMM);
     }
 
     return '-';

@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { err, ok, Result } from 'neverthrow';
 import {
   CategoryEnum,
@@ -62,6 +69,9 @@ export class Movement extends Entity {
 
   @IsEnum(CategoryTypeEnum)
   public type: CategoryTypeEnum;
+
+  @IsBoolean()
+  public isMigrated: boolean;
 
   public constructor() {
     super();

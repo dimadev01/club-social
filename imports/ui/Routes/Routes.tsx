@@ -16,6 +16,7 @@ import { HomePage } from '@ui/pages/HomePage';
 import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
+import { MovementMigratePage } from '@ui/pages/movements/MovementMigratePage';
 import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
 import { PaymentDetailPage } from '@ui/pages/payments/PaymentDetailPage';
 import { PaymentsRoot } from '@ui/pages/payments/PaymentsRoot';
@@ -139,6 +140,17 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.MovementsDetail,
+  },
+  {
+    element: (
+      <PrivateRoute
+        permission={PermissionEnum.Read}
+        scope={ScopeEnum.Movements}
+      >
+        <MovementMigratePage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.MovementsMigrate,
   },
 
   {

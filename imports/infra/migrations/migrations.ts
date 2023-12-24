@@ -1,9 +1,21 @@
+import { plainToInstance } from 'class-transformer';
 import { Meteor } from 'meteor/meteor';
 import { MongoInternals } from 'meteor/mongo';
+import invariant from 'ts-invariant';
+import {
+  CategoryEnum,
+  CategoryTypeEnum,
+} from '@domain/categories/category.enum';
 import { DueCollection } from '@domain/dues/due.collection';
+import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { DueMember } from '@domain/dues/entities/due-member';
+import { Due } from '@domain/dues/entities/due.entity';
+import { Member } from '@domain/members/entities/member.entity';
 import { MovementCollection } from '@domain/movements/movement.collection';
 import { RoleService } from '@domain/roles/role.service';
 import { CategoryCollection } from '@infra/mongo/collections/category.collection';
+import { MemberCollection } from '@infra/mongo/collections/member.collection';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 // interface MemberRow {
 //   address?: string;
@@ -954,4 +966,99 @@ Migrations.add({
     next();
   }),
   version: 14,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const members = (
+      await MemberCollection.rawCollection()
+        .aggregate()
+        .lookup({
+          as: 'user',
+          foreignField: '_id',
+          from: 'users',
+          localField: 'userId',
+        })
+        .unwind('$user')
+        .toArray()
+    ).map((member) => plainToInstance(Member, member));
+
+    await MovementCollection.find({ type: CategoryTypeEnum.Debt }).forEachAsync(
+      async (movement) => {
+        try {
+          const getCategory = (movementCategory: CategoryEnum) => {
+            switch (movementCategory) {
+              case CategoryEnum.MembershipDebt:
+                return DueCategoryEnum.Membership;
+
+              case CategoryEnum.GuestDebt:
+                return DueCategoryEnum.Guest;
+
+              case CategoryEnum.ElectricityDebt:
+                return DueCategoryEnum.Electricity;
+
+              default:
+                throw new Error('invalid-category');
+            }
+          };
+
+          const member = members.find((m) => m._id === movement.memberId);
+
+          invariant(member);
+
+          invariant(movement.memberId);
+
+          const dueMember = DueMember.create({
+            _id: movement.memberId,
+            name: member.name,
+          });
+
+          if (dueMember.isErr()) {
+            throw dueMember.error;
+          }
+
+          const due = Due.create({
+            amount: movement.amount,
+            category: getCategory(movement.category),
+            date: DateUtils.utc(movement.date).format(DateFormatEnum.Date),
+            member: dueMember.value,
+            notes: movement.notes,
+          });
+
+          if (due.isErr()) {
+            throw due.error;
+          }
+
+          due.value.createdAt = movement.createdAt;
+
+          due.value.createdBy = movement.createdBy;
+
+          due.value.updatedAt = movement.updatedAt;
+
+          due.value.updatedBy = movement.updatedBy;
+
+          due.value.isDeleted = movement.isDeleted;
+
+          await DueCollection.insertAsync(due.value);
+
+          await MovementCollection.updateAsync(movement._id, {
+            $set: { isMigrated: true },
+          });
+        } catch (error) {
+          console.log(error);
+
+          await MovementCollection.updateAsync(movement._id, {
+            $set: { isMigrated: false },
+          });
+        }
+      }
+    );
+
+    next();
+  }),
+  version: 15,
 });

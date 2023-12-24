@@ -16,7 +16,7 @@ import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { CreatePayment } from '@domain/payments/payment.types';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 import { MoneyUtils } from '@shared/utils/currency.utils';
-import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { DateUtils } from '@shared/utils/date.utils';
 
 export class Payment extends Entity {
   @IsDate()
@@ -45,7 +45,7 @@ export class Payment extends Entity {
   }
 
   public get dateFormatted(): string {
-    return DateUtils.formatUtc(this.date, DateFormatEnum.Date);
+    return DateUtils.formatUtc(this.date);
   }
 
   public get duesCount(): number {

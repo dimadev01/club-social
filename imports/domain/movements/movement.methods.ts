@@ -7,6 +7,8 @@ import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/
 import { GetMovementUseCase } from '@domain/movements/use-cases/get-movement/get-movement.use-case';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridUseCase } from '@domain/movements/use-cases/get-movements/get-movements-grid.use-case';
+import { MigrateMovementRequestDto } from '@domain/movements/use-cases/migrate-movement/migrate-movement-request.dto';
+import { MigrateMovementUseCase } from '@domain/movements/use-cases/migrate-movement/migrate-movement.use-case';
 import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-movement/restore-movement-request.dto';
 import { RestoreMovementUseCase } from '@domain/movements/use-cases/restore-movement/restore-movement.use-case';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
@@ -22,7 +24,8 @@ export class MovementMethod extends MeteorMethod {
     private readonly _createMovement: CreateMovementUseCase,
     private readonly _updateMovement: UpdateMovementUseCase,
     private readonly _deleteMovement: DeleteMovementUseCase,
-    private readonly _restoreMovement: RestoreMovementUseCase
+    private readonly _restoreMovement: RestoreMovementUseCase,
+    private readonly _migrateMovement: MigrateMovementUseCase
   ) {
     super();
   }
@@ -50,6 +53,9 @@ export class MovementMethod extends MeteorMethod {
 
       [MethodsEnum.MovementsRestore]: (request: RestoreMovementRequestDto) =>
         this.execute(this._restoreMovement, request, RestoreMovementRequestDto),
+
+      [MethodsEnum.MovementsMigrate]: (request: MigrateMovementRequestDto) =>
+        this.execute(this._migrateMovement, request, MigrateMovementRequestDto),
     });
   }
 }

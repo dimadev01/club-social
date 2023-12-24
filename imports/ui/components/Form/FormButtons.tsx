@@ -12,6 +12,7 @@ type Props = {
   isSaveDisabled?: boolean;
   onClickDelete?: () => void;
   scope: ScopeEnum;
+  showBackButton?: boolean;
   showDeleteButton?: boolean;
 };
 
@@ -22,6 +23,7 @@ export const FormButtons: React.FC<Props> = ({
   isBackDisabled,
   isDeleteDisabled,
   isSaveDisabled,
+  showBackButton = true,
   scope,
 }) => {
   const renderDeleteButton = () => {
@@ -68,12 +70,19 @@ export const FormButtons: React.FC<Props> = ({
     return <FormSaveButton loading={isLoading} disabled={isSaveDisabled} />;
   };
 
+  const renderBackButton = () => {
+    if (!showBackButton) {
+      return false;
+    }
+
+    return <FormBackButton disabled={isLoading || isBackDisabled} />;
+  };
+
   return (
     <div className="flex justify-between">
       <Button.Group>
         {renderSaveButton()}
-
-        <FormBackButton disabled={isLoading || isBackDisabled} />
+        {renderBackButton()}
       </Button.Group>
 
       {renderDeleteButton()}

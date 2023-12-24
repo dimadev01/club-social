@@ -7,7 +7,6 @@ import { DueMember } from '@domain/dues/entities/due-member';
 import { Due } from '@domain/dues/entities/due.entity';
 import { CreateDueRequestDto } from '@domain/dues/use-cases/create-due/create-due-request.dto';
 import { IMemberPort } from '@domain/members/member.port';
-import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-member.use-case';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -25,9 +24,7 @@ export class CreateDueUseCase
     @inject(DIToken.DueRepository)
     private readonly _duePort: IDuePort,
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort,
-    @inject(GetMemberUseCase)
-    private readonly _getMemberUseCase: GetMemberUseCase
+    private readonly _memberPort: IMemberPort
   ) {
     super();
   }

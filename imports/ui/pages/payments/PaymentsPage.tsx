@@ -299,7 +299,7 @@ export const PaymentsPage = () => {
                               ),
                             title: '¿Está seguro de eliminar este pago?',
                           }}
-                          type="ghost"
+                          type="text"
                           htmlType="button"
                           tooltip={{ title: 'Eliminar' }}
                           icon={<DeleteOutlined />}
@@ -315,7 +315,7 @@ export const PaymentsPage = () => {
                         ScopeEnum.Payments
                       ) && (
                         <Button
-                          type="ghost"
+                          type="text"
                           onClick={() =>
                             restorePayment.mutate(
                               { id: payment._id },
@@ -336,7 +336,7 @@ export const PaymentsPage = () => {
                       )}
 
                     <Button
-                      type="ghost"
+                      type="text"
                       disabled={!payment.memberId}
                       onClick={() => {
                         if (payment.memberId) {

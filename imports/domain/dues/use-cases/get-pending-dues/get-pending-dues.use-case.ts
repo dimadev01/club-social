@@ -8,7 +8,7 @@ import { PendingDueDto } from '@domain/dues/use-cases/get-pending-dues/get-pendi
 import { GetPendingDuesRequestDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-dues.request.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
-import { DateUtils } from '@shared/utils/date.utils';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 @injectable()
 export class GetPendingDuesUseCase
@@ -34,12 +34,12 @@ export class GetPendingDuesUseCase
         _id: due._id,
         amount: due.amount,
         category: due.category,
-        date: due.date.toISOString(),
+        date: DateUtils.formatUtc(due.date),
         memberId: due.member._id,
         memberName: due.member.name,
         membershipMonth:
           due.category === DueCategoryEnum.Membership
-            ? DateUtils.utc(due.date).format('MMMM')
+            ? DateUtils.formatUtc(due.date, DateFormatEnum.MMMM)
             : '',
       }))
     );

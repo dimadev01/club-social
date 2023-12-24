@@ -8,7 +8,7 @@ import {
 import { ok, Result } from 'neverthrow';
 import { CreateDuePayment } from '@domain/dues/due.types';
 import { MoneyUtils } from '@shared/utils/currency.utils';
-import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { DateUtils } from '@shared/utils/date.utils';
 
 export class DuePayment {
   @IsNotEmpty()
@@ -19,7 +19,7 @@ export class DuePayment {
   public date: Date;
 
   public get dateFormatted(): string {
-    return DateUtils.utc(this.date).format(DateFormatEnum.Date);
+    return DateUtils.formatUtc(this.date);
   }
 
   @IsPositive()

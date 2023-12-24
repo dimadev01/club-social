@@ -17,7 +17,7 @@ export const TableReloadButton: React.FC<Props> = ({
     disabled={isRefetching}
     tooltip={{ title: 'Recargar' }}
     htmlType="button"
-    type="ghost"
+    type="text"
     icon={<ReloadOutlined />}
   />
 );

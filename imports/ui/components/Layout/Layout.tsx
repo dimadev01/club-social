@@ -186,7 +186,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
               tooltip={{ title: 'Reglamento' }}
               icon={<FilePdfOutlined />}
               htmlType="button"
-              type="ghost"
+              type="text"
               href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
               target="_blank"
             />
@@ -195,7 +195,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
               tooltip={{ title: 'Comunicados' }}
               icon={<NotificationOutlined />}
               htmlType="button"
-              type="ghost"
+              type="text"
               href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
               target="_blank"
             />
@@ -206,7 +206,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
               tooltip={{ title: 'Enviar Email' }}
               icon={<MailOutlined />}
               htmlType="button"
-              type="ghost"
+              type="text"
               href="mailto:info@clubsocialmontegrande.ar"
               target="_blank"
             />
@@ -215,7 +215,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
               tooltip={{ title: 'Enviar WhatsApp' }}
               icon={<WhatsAppOutlined />}
               htmlType="button"
-              type="ghost"
+              type="text"
               href="https://wa.me/5491158804950"
               target="_blank"
             />

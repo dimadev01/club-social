@@ -306,7 +306,7 @@ export const DuesPage = () => {
                               ),
                             title: '¿Está seguro de eliminar este cobro?',
                           }}
-                          type="ghost"
+                          type="text"
                           htmlType="button"
                           tooltip={{ title: 'Eliminar' }}
                           icon={<DeleteOutlined />}
@@ -322,7 +322,7 @@ export const DuesPage = () => {
                         ScopeEnum.Dues
                       ) && (
                         <Button
-                          type="ghost"
+                          type="text"
                           onClick={() =>
                             restoreDue.mutate(
                               { id: due._id },
@@ -341,7 +341,7 @@ export const DuesPage = () => {
                       )}
 
                     <Button
-                      type="ghost"
+                      type="text"
                       disabled={!due.memberId}
                       onClick={() => {
                         if (due.memberId) {
@@ -355,7 +355,7 @@ export const DuesPage = () => {
 
                     {due.isPending && (
                       <Button
-                        type="ghost"
+                        type="text"
                         onClick={() => {
                           navigate(
                             `${AppUrl.PaymentsNew}?${qs.stringify({
