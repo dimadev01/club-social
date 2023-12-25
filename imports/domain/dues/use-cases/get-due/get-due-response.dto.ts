@@ -20,4 +20,6 @@ export class GetDueResponseDto {
   public status: DueStatusEnum;
 
   public isPaid: boolean;
+
+  public isPending: boolean;
 }

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import {
   App,
   Breadcrumb,
+  Button,
   Card,
   DatePicker,
   Form,
@@ -9,10 +10,11 @@ import {
   InputNumber,
   Skeleton,
 } from 'antd';
+import ButtonGroup from 'antd/es/button/button-group';
 import dayjs from 'dayjs';
 import { groupBy } from 'lodash';
 import { Roles } from 'meteor/alanning:roles';
-import { Navigate, NavLink, useParams } from 'react-router-dom';
+import { Navigate, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import {
   CategoryTypeEnum,
@@ -23,7 +25,6 @@ import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
-import { FormButtons } from '@ui/components/Form/FormButtons';
 import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
 import { useCategoriesByType } from '@ui/hooks/categories/useCategoriesByType';
@@ -31,6 +32,7 @@ import { usePendingDues } from '@ui/hooks/dues/usePendingDues';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useMigrateMovement } from '@ui/hooks/movements/useMigrateMovement';
 import { useMovement } from '@ui/hooks/movements/useMovement';
+import { useNextMovementToMigrate } from '@ui/hooks/movements/useNextMovementToMigrate';
 import { PaymentMemberDuesCard } from '@ui/pages/payments/PaymentMemberDuesCard';
 
 type FormDueValue = {
@@ -50,11 +52,13 @@ type FormValues = {
 export const MovementMigratePage = () => {
   const [form] = Form.useForm<FormValues>();
 
+  const navigate = useNavigate();
+
   const { id } = useParams<{ id?: string }>();
 
   const { data: movement, fetchStatus: movementFetchStatus } = useMovement(id);
 
-  // const navigate = useNavigate();
+  const { data: nextMovementId } = useNextMovementToMigrate(id);
 
   const { message } = App.useApp();
 
@@ -67,8 +71,6 @@ export const MovementMigratePage = () => {
   const { data: pendingDues } = usePendingDues({
     memberIds: movement?.memberId ? [movement.memberId] : [],
   });
-
-  console.log(movement);
 
   const { data: categoriesByType, isLoading: isLoadingCategoriesByType } =
     useCategoriesByType(CategoryTypeEnum.Income);
@@ -100,7 +102,13 @@ export const MovementMigratePage = () => {
   }
 
   const handleSubmit = async (values: FormValues) => {
-    console.log(values);
+    if (
+      values.dues.some((d) => d.dues.filter((dd) => dd.isSelected).length === 0)
+    ) {
+      message.error('Debe seleccionar al menos una cuota');
+
+      return;
+    }
 
     if (movement) {
       const request: MigrateMovementRequestDto = {
@@ -113,11 +121,13 @@ export const MovementMigratePage = () => {
         id: movement._id,
       };
 
-      console.log(request);
-
       migrateMovement.mutate(request, {
         onSuccess: () => {
           message.success('Movimiento migrado');
+
+          if (nextMovementId) {
+            navigate(`${AppUrl.Movements}/${nextMovementId}/migrate`);
+          }
         },
       });
     }
@@ -216,14 +226,25 @@ export const MovementMigratePage = () => {
                 <Input.TextArea value={movement.notes ?? undefined} rows={1} />
               </Form.Item>
 
-              <FormButtons
-                scope={ScopeEnum.Movements}
-                isLoading={migrateMovement.isLoading}
-                isSaveDisabled={migrateMovement.isLoading}
-                isBackDisabled={migrateMovement.isLoading}
-                showDeleteButton={false}
-                showBackButton={false}
-              />
+              <ButtonGroup>
+                <Button type="primary" htmlType="submit">
+                  {nextMovementId && 'Migrar e ir al siguiente'}
+
+                  {!nextMovementId && 'Migrar y terminar'}
+                </Button>
+
+                {nextMovementId && (
+                  <Button
+                    type="text"
+                    onClick={() =>
+                      navigate(`${AppUrl.Movements}/${nextMovementId}/migrate`)
+                    }
+                    htmlType="button"
+                  >
+                    Ir al siguiente
+                  </Button>
+                )}
+              </ButtonGroup>
             </Form>
           </Card>
         )}

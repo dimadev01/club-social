@@ -27,8 +27,4 @@ export class PaymentDue {
 
     return ok(paymentDue);
   }
-
-  public removePayment() {
-    throw new Error('Method not implemented.');
-  }
 }

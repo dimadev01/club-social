@@ -58,6 +58,8 @@ export class MigrateMovementUseCase
 
     await this._movementPort.update(movement);
 
+    await this._movementPort.delete(movement);
+
     this._logger.info('Movement migrated', { movement: movement._id });
 
     return ok(null);

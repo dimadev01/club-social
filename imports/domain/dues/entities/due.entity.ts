@@ -122,6 +122,14 @@ export class Due extends Entity {
     return ok(null);
   }
 
+  public pending(): Result<null, Error> {
+    this.payment = null;
+
+    this.status = DueStatusEnum.Pending;
+
+    return ok(null);
+  }
+
   public setCategory(category: DueCategoryEnum): Result<null, Error> {
     this.category = category;
 

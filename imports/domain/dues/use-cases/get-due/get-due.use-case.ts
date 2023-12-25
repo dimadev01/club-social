@@ -24,7 +24,7 @@ export class GetDueUseCase
   ): Promise<Result<GetDueResponseDto | null, Error>> {
     const due = await this._duePort.findOneById(request.id);
 
-    if (!due) {
+    if (!due || due.isDeleted) {
       return ok(null);
     }
 

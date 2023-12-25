@@ -3,10 +3,12 @@ import { Checkbox, Form, Input, InputNumber, Table } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import TextArea from 'antd/es/input/TextArea';
 import { Dayjs } from 'dayjs';
+import { NavLink } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { PendingDueDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
 import { MoneyUtils } from '@shared/utils/currency.utils';
+import { AppUrl } from '@ui/app.enum';
 
 type Due = {
   _id: string;
@@ -124,7 +126,9 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({
         columns={[
           {
             dataIndex: 'date',
-            render: (date: string) => date,
+            render: (date: string, pendingDue: PendingDueDto) => (
+              <NavLink to={`${AppUrl.Dues}/${pendingDue._id}`}>{date}</NavLink>
+            ),
             title: 'Fecha',
           },
           {

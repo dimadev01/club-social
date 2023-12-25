@@ -353,21 +353,20 @@ export const DuesPage = () => {
                       icon={<FilterOutlined />}
                     />
 
-                    {due.isPending && (
-                      <Button
-                        type="text"
-                        onClick={() => {
-                          navigate(
-                            `${AppUrl.PaymentsNew}?${qs.stringify({
-                              memberIds: [due.memberId],
-                            })}`
-                          );
-                        }}
-                        htmlType="button"
-                        tooltip={{ title: 'Cobrar' }}
-                        icon={<CheckOutlined />}
-                      />
-                    )}
+                    <Button
+                      type="text"
+                      onClick={() => {
+                        navigate(
+                          `${AppUrl.PaymentsNew}?${qs.stringify({
+                            memberIds: [due.memberId],
+                          })}`
+                        );
+                      }}
+                      htmlType="button"
+                      disabled={due.isPaid}
+                      tooltip={{ title: 'Cobrar' }}
+                      icon={<CheckOutlined />}
+                    />
                   </ButtonGroup>
                 ),
                 title: 'Acciones',

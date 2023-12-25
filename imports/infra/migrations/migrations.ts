@@ -1006,6 +1006,16 @@ Migrations.add({
             }
           };
 
+          const getDate = () => {
+            if (movement.category === CategoryEnum.MembershipDebt) {
+              return DateUtils.utc(movement.date)
+                .startOf('month')
+                .format(DateFormatEnum.Date);
+            }
+
+            return DateUtils.utc(movement.date).format(DateFormatEnum.Date);
+          };
+
           const member = members.find((m) => m._id === movement.memberId);
 
           invariant(member);
@@ -1024,7 +1034,7 @@ Migrations.add({
           const due = Due.create({
             amount: movement.amount,
             category: getCategory(movement.category),
-            date: DateUtils.utc(movement.date).format(DateFormatEnum.Date),
+            date: getDate(),
             member: dueMember.value,
             notes: movement.notes,
           });
@@ -1046,7 +1056,7 @@ Migrations.add({
           await DueCollection.insertAsync(due.value);
 
           await MovementCollection.updateAsync(movement._id, {
-            $set: { isMigrated: true },
+            $set: { isDeleted: true, isMigrated: true },
           });
         } catch (error) {
           console.log(error);

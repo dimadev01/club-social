@@ -245,13 +245,14 @@ export const DueDetailPage = () => {
         >
           <Form<FormValues>
             layout="vertical"
-            disabled={isFormDisabled()}
             form={form}
             onFinish={(values) => handleSubmit(values)}
             initialValues={{
               amount: due?.amount ? MoneyUtils.fromCents(due.amount) : 0,
               category: due?.category ?? DueCategoryEnum.Membership,
-              date: due?.date ? DateUtils.utc(due.date) : undefined,
+              date: due?.date
+                ? DateUtils.utc(due.date, DateFormatEnum.DDMMYYYY)
+                : undefined,
               memberIds: due?.memberId ? [due.memberId] : [],
               notes: due?.notes,
             }}
@@ -265,8 +266,8 @@ export const DueDetailPage = () => {
               <Select
                 dropdownRender={renderMemberDropdown}
                 mode={due ? undefined : 'multiple'}
-                disabled={isLoadingMembers}
                 loading={isLoadingMembers}
+                disabled={isFormDisabled()}
                 options={members?.map((member) => ({
                   label: member.name,
                   value: member._id,
@@ -280,6 +281,7 @@ export const DueDetailPage = () => {
               rules={[{ required: true }]}
             >
               <Select
+                disabled={isFormDisabled()}
                 onChange={(value) => {
                   if (due) {
                     if (value === DueCategoryEnum.Membership) {
@@ -308,9 +310,10 @@ export const DueDetailPage = () => {
                 picker={
                   category === DueCategoryEnum.Membership ? 'month' : 'date'
                 }
+                disabled={isFormDisabled()}
                 format={
                   category === DueCategoryEnum.Membership
-                    ? 'MMMM'
+                    ? DateFormatEnum.MMMM
                     : DateFormatEnum.DDMMYYYY
                 }
                 className="w-full"
@@ -324,6 +327,7 @@ export const DueDetailPage = () => {
               rules={[{ required: true }, { min: 1, type: 'number' }]}
             >
               <InputNumber
+                disabled={isFormDisabled()}
                 className="w-40"
                 prefix={ARS.code}
                 precision={0}
@@ -337,16 +341,18 @@ export const DueDetailPage = () => {
               rules={[{ whitespace: true }]}
               name="notes"
             >
-              <Input.TextArea rows={1} />
+              <Input.TextArea disabled={isFormDisabled()} rows={1} />
             </Form.Item>
 
             <FormButtons
               scope={ScopeEnum.Movements}
               isLoading={createDue.isLoading || updateDue.isLoading}
-              isSaveDisabled={createDue.isLoading || updateDue.isLoading}
+              isSaveDisabled={
+                createDue.isLoading || updateDue.isLoading || isFormDisabled()
+              }
               isBackDisabled={createDue.isLoading || updateDue.isLoading}
               isDeleteDisabled={createDue.isLoading || updateDue.isLoading}
-              showDeleteButton={!!due}
+              showDeleteButton={due?.isPending}
               onClickDelete={() => due && deleteDue.mutate({ id: due._id })}
             />
           </Form>

@@ -25,7 +25,7 @@ export class GetPaymentUseCase
   ): Promise<Result<GetPaymentResponseDto | null, Error>> {
     const payment = await this._paymentPort.findOneById(request.id);
 
-    if (!payment) {
+    if (!payment || payment.isDeleted) {
       return ok(null);
     }
 

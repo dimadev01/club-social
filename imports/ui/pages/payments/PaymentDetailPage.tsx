@@ -123,7 +123,7 @@ export const PaymentDetailPage = () => {
   useEffect(() => {
     if (payment) {
       form.setFieldsValue({
-        date: DateUtils.utc(payment.date),
+        date: DateUtils.utc(payment.date, DateFormatEnum.DDMMYYYY),
         dues: [
           {
             dues: payment.dues.map((paymentDue) => ({
@@ -245,7 +245,7 @@ export const PaymentDetailPage = () => {
         items={[
           { title: 'Inicio' },
           { title: <NavLink to={AppUrl.Payments}>Pagos</NavLink> },
-          { title: 'Nuevo Pago' },
+          { title: payment ? payment.date : 'Nuevo Pago' },
         ]}
       />
 

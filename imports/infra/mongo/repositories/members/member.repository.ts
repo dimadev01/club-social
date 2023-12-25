@@ -118,9 +118,9 @@ export class MemberRepository
       $userLookupPipeline.push({
         $match: {
           $or: [
-            this.createSearchMatch('profile.firstName', request.search),
-            this.createSearchMatch('profile.lastName', request.search),
-            this.createSearchMatch('emails.address', request.search),
+            this.createSearchMatch('profile.firstName', request.search.trim()),
+            this.createSearchMatch('profile.lastName', request.search.trim()),
+            this.createSearchMatch('emails.address', request.search.trim()),
           ],
         },
       });
