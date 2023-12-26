@@ -47,7 +47,7 @@ export class GetPaymentsGridUseCase
           isDeleted: payment.isDeleted,
           memberId: payment.member._id,
           memberName: payment.member.name,
-          totalAmount: payment.totalDuesAmount,
+          totalAmount: payment.totalDuesPaidAmountFormatted,
         })
       ),
       totalAmount: MoneyUtils.formatCents(totalAmount),

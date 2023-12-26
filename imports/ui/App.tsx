@@ -53,7 +53,7 @@ export const App = () => {
         <ConfigProvider
           // locale={esEs}
           select={{ showSearch: true }}
-          dropdownMatchSelectWidth={false}
+          popupMatchSelectWidth={false}
           form={{ requiredMark: 'optional', scrollToFirstError: true }}
           input={{ autoComplete: 'on' }}
           theme={{ token: { colorTextBase: '#505050', fontFamily: 'Rubik' } }}

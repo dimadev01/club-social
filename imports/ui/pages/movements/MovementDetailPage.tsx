@@ -363,7 +363,7 @@ export const MovementDetailPage = () => {
               amount: movement
                 ? MoneyUtils.fromCents(movement.amount)
                 : getPriceForCategory(CategoryEnum.MembershipIncome),
-              category: movement?.category ?? CategoryEnum.MembershipIncome,
+              category: movement?.category,
               date: movement?.date
                 ? DateUtils.utc(movement.date, DateFormatEnum.DDMMYYYY)
                 : undefined,

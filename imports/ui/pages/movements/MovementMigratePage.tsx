@@ -121,6 +121,19 @@ export const MovementMigratePage = () => {
         id: movement._id,
       };
 
+      const totalAmountToMigrate = request.dues.reduce(
+        (total, due) => total + due.amount,
+        0
+      );
+
+      if (movement.amount !== totalAmountToMigrate) {
+        message.error(
+          'El importe a migrar debe ser igual al importe del movimiento'
+        );
+
+        return;
+      }
+
       migrateMovement.mutate(request, {
         onSuccess: () => {
           message.success('Movimiento migrado');

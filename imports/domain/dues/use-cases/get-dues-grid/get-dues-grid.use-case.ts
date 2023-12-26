@@ -25,11 +25,11 @@ export class GetDuesGridUseCase
   public async execute(
     request: GetDuesGridRequestDto
   ): Promise<Result<GetDuesGridResponseDto, Error>> {
-    const { data, count, totalAmount } = await this._duePort.findPaginated(
-      request
-    );
+    const { data, count, totalDues, totalPayments, balance } =
+      await this._duePort.findPaginated(request);
 
     return ok<GetDuesGridResponseDto>({
+      balance: MoneyUtils.formatCents(balance),
       count,
       data: data.map(
         (due: Due): DueGridDto => ({
@@ -39,6 +39,7 @@ export class GetDuesGridUseCase
           date: due.dateFormatted,
           isDeleted: due.isDeleted,
           isPaid: due.isPaid(),
+          isPartiallyPaid: due.isPartiallyPaid(),
           isPending: due.isPending(),
           memberId: due.member._id,
           memberName: due.member.name,
@@ -48,7 +49,8 @@ export class GetDuesGridUseCase
           status: due.status,
         })
       ),
-      totalAmount: MoneyUtils.formatCents(totalAmount),
+      totalDues: MoneyUtils.formatCents(totalDues),
+      totalPayments: MoneyUtils.formatCents(totalPayments),
     });
   }
 }

@@ -4,9 +4,9 @@ import {
   Card,
   Checkbox,
   DatePicker,
+  Descriptions,
   Form,
   Space,
-  Table as AntTable,
   Tag,
   Tooltip,
 } from 'antd';
@@ -29,6 +29,7 @@ import {
   DueStatusColor,
   DueStatusEnum,
   DueStatusLabel,
+  getDueCategoryOptions,
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
 import { DueGridDto } from '@domain/dues/use-cases/get-dues-grid/due-grid.dto';
@@ -41,7 +42,6 @@ import { Select } from '@ui/components/Select';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
-import { useCategories } from '@ui/hooks/categories/useCategories';
 import { useDeleteDue } from '@ui/hooks/dues/useDeleteDue';
 import { useDuesGrid } from '@ui/hooks/dues/useDuesGrid';
 import { useRestoreDue } from '@ui/hooks/dues/useRestoreDue';
@@ -93,7 +93,7 @@ export const DuesPage = () => {
 
   const restoreDue = useRestoreDue(refetch);
 
-  const { data: categories } = useCategories();
+  // const { data: categories } = useCategories();
 
   const user = Meteor.user();
 
@@ -107,23 +107,16 @@ export const DuesPage = () => {
     return null;
   }
 
-  const renderSummary = () => (
-    <AntTable.Summary>
-      <AntTable.Summary.Row>
-        <AntTable.Summary.Cell index={0} />
-        <AntTable.Summary.Cell index={1} />
-        <AntTable.Summary.Cell index={2} />
-        <AntTable.Summary.Cell index={3} />
-        <AntTable.Summary.Cell index={4}>
-          <div className="flex justify-between">
-            <span>Total</span>
-            <span>{data?.totalAmount ?? '-'}</span>
-          </div>
-        </AntTable.Summary.Cell>
-        <AntTable.Summary.Cell index={5} />
-        <AntTable.Summary.Cell index={6} />
-      </AntTable.Summary.Row>
-    </AntTable.Summary>
+  const renderFooter = () => (
+    <Descriptions>
+      <Descriptions.Item label="Total deudas">
+        {data?.totalDues}
+      </Descriptions.Item>
+      <Descriptions.Item label="Total pagos">
+        {data?.totalPayments}
+      </Descriptions.Item>
+      <Descriptions.Item label="Balance">{data?.balance}</Descriptions.Item>
+    </Descriptions>
   );
 
   return (
@@ -205,10 +198,10 @@ export const DuesPage = () => {
 
           <Table<DueGridDto>
             total={data?.count ?? 0}
-            summary={renderSummary}
             gridState={gridState}
             onStateChange={setGridState}
             loading={isLoading}
+            footer={renderFooter}
             dataSource={data?.data}
             columns={[
               {
@@ -236,11 +229,10 @@ export const DuesPage = () => {
                 align: 'center',
                 dataIndex: 'category',
                 filteredValue: gridState.filters?.category ?? [],
-                filters:
-                  categories?.map((category) => ({
-                    text: category.name,
-                    value: category.code,
-                  })) ?? [],
+                filters: getDueCategoryOptions().map((category) => ({
+                  text: category.label,
+                  value: category.value,
+                })),
                 render: (category: DueCategoryEnum) =>
                   DueCategoryLabel[category],
                 title: 'Categoría',
@@ -266,11 +258,11 @@ export const DuesPage = () => {
                 filteredValue: gridState.filters?.status ?? [],
                 filters: getDueStatusColumnFilters(),
                 render: (status: DueStatusEnum, due: DueGridDto) => {
-                  if (due.isPaid) {
+                  if (due.isPaid || due.isPartiallyPaid) {
                     return (
-                      <Tooltip title={`${due.paidAt} - ${due.paidAmount}`}>
+                      <Tooltip title={due.paidAt}>
                         <Tag color={DueStatusColor[status]}>
-                          {DueStatusLabel[status]}
+                          {DueStatusLabel[status]} ({due.paidAmount})
                         </Tag>
                       </Tooltip>
                     );

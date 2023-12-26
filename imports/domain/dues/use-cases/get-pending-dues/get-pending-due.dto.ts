@@ -1,4 +1,4 @@
-import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 
 export class PendingDueDto {
   public _id: string;
@@ -14,4 +14,6 @@ export class PendingDueDto {
   public memberName: string;
 
   public membershipMonth: string;
+
+  public status: DueStatusEnum;
 }

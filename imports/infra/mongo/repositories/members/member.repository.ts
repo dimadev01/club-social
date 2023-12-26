@@ -7,6 +7,7 @@ import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
 import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
 import { CategoryEnum } from '@domain/categories/category.enum';
+import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { Member } from '@domain/members/entities/member.entity';
 import {
   MemberCategoryEnum,
@@ -91,7 +92,7 @@ export class MemberRepository
     return member;
   }
 
-  public async findPaginated(
+  public async findPaginatedOld(
     request: FindPaginatedMembersRequest
   ): Promise<FindPaginatedResponse<FindPaginatedMember>> {
     const query: Mongo.Query<Member> = {
@@ -234,6 +235,138 @@ export class MemberRepository
     };
   }
 
+  public async findPaginated(
+    request: FindPaginatedMembersRequest
+  ): Promise<FindPaginatedResponse<FindPaginatedMember>> {
+    const query: Mongo.Query<Member> = {
+      isDeleted: false,
+    };
+
+    if (request.filters.status?.length) {
+      query.status = { $in: request.filters.status as MemberStatusEnum[] };
+    }
+
+    if (request.filters.category?.length) {
+      query.category = {
+        $in: request.filters.category as MemberCategoryEnum[],
+      };
+    }
+
+    if (request.sortField === 'name') {
+      request.sortField = 'user.profile.lastName';
+    }
+
+    const $userLookupPipeline: Mongo.Query<Meteor.User> = [];
+
+    if (request.search) {
+      $userLookupPipeline.push({
+        $match: {
+          $or: [
+            this.createSearchMatch('profile.firstName', request.search.trim()),
+            this.createSearchMatch('profile.lastName', request.search.trim()),
+            this.createSearchMatch('emails.address', request.search.trim()),
+          ],
+        },
+      });
+    }
+
+    const facetData: Document[] = [];
+
+    if (request.sortField === 'user.profile.lastName') {
+      if (request.findForCsv) {
+        facetData.push({
+          $sort: {
+            [request.sortField]: this._getSorterValue(request.sortOrder),
+          },
+        });
+      } else {
+        facetData.push(...this.getPaginatedPipelineQuery(request));
+      }
+    }
+
+    facetData.push(
+      {
+        $lookup: {
+          as: 'dues',
+          foreignField: 'member._id',
+          from: 'dues',
+          localField: '_id',
+          pipeline: [
+            { $match: { $expr: { $eq: ['$isDeleted', false] } } },
+            { $project: { amount: 1, category: 1, 'payment.amount': 1 } },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          electricityBalance: this._getTotalBalanceByCategory(
+            DueCategoryEnum.Electricity
+          ),
+          guestBalance: this._getTotalBalanceByCategory(DueCategoryEnum.Guest),
+          membershipBalance: this._getTotalBalanceByCategory(
+            DueCategoryEnum.Membership
+          ),
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          category: 1,
+          electricityBalance: 1,
+          guestBalance: 1,
+          membershipBalance: 1,
+          phones: 1,
+          status: 1,
+          totalBalance: {
+            $sum: [
+              '$electricityBalance',
+              '$guestBalance',
+              '$membershipBalance',
+            ],
+          },
+          user: 1,
+        },
+      }
+    );
+
+    if (request.sortField !== 'user.profile.lastName') {
+      if (request.findForCsv) {
+        facetData.push({
+          $sort: {
+            [request.sortField]: this._getSorterValue(request.sortOrder),
+          },
+        });
+      } else {
+        facetData.push(...this.getPaginatedPipelineQuery(request));
+      }
+    }
+
+    const [{ data, count }] = await this.getCollection()
+      .rawCollection()
+      .aggregate<FindPaginatedAggregationResult<FindPaginatedMember>>([
+        { $match: query },
+        ...this._userLookup($userLookupPipeline),
+        {
+          $facet: {
+            data: facetData,
+            total: [{ $count: 'count' }],
+          },
+        },
+        {
+          $project: {
+            count: MongoUtils.elementAtArray0('$total.count', 0),
+            data: 1,
+          },
+        },
+      ])
+      .toArray();
+
+    return {
+      count,
+      data,
+    };
+  }
+
   protected getCollection(): MongoCollection<Member> {
     return MemberCollection;
   }
@@ -271,6 +404,35 @@ export class MemberRepository
 
     return {
       $subtract: [createReduce(categoryIncome), createReduce(categoryDebt)],
+    };
+  }
+
+  private _getTotalBalanceByCategory(category: DueCategoryEnum) {
+    return {
+      $reduce: {
+        in: { $add: ['$$value', '$$this'] },
+        initialValue: 0,
+        input: {
+          $map: {
+            as: 'due',
+            in: {
+              $subtract: [
+                { $ifNull: ['$$due.payment.amount', 0] },
+                '$$due.amount',
+              ],
+            },
+            input: {
+              $filter: {
+                as: 'due',
+                cond: {
+                  $eq: ['$$due.category', category],
+                },
+                input: '$dues',
+              },
+            },
+          },
+        },
+      },
     };
   }
 

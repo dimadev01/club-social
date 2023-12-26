@@ -143,8 +143,14 @@ export const DueDetailPage = () => {
       return false;
     }
 
-    if (due && due.isPaid) {
-      return true;
+    if (due) {
+      if (due.isPaid) {
+        return true;
+      }
+
+      if (due.isPartiallyPaid) {
+        return true;
+      }
     }
 
     return false;

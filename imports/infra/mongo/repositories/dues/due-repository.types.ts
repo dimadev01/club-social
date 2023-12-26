@@ -12,12 +12,16 @@ export type FindPaginatedDuesRequest = FindPaginatedRequest & {
 };
 
 export type FindPaginatedDuesResponse = FindPaginatedResponse<Due> & {
-  totalAmount: number;
+  balance: number;
+  totalDues: number;
+  totalPayments: number;
 };
 
 export type FindPaginatedDuesAggregationResult =
   FindPaginatedAggregationResult<Due> & {
-    totalAmount: number;
+    balance: number;
+    totalDues: number;
+    totalPayments: number;
   };
 
 export type FindPaidRequest = {

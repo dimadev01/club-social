@@ -8,6 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { err, ok, Result } from 'neverthrow';
+import invariant from 'ts-invariant';
 import { Entity } from '@domain/common/entity';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { CreateDue, CreateDuePayment } from '@domain/dues/due.types';
@@ -88,8 +89,26 @@ export class Due extends Entity {
     return ok(due);
   }
 
+  public getPendingAmount(): number {
+    if (this.isPaid()) {
+      return 0;
+    }
+
+    if (this.isPending()) {
+      return this.amount;
+    }
+
+    invariant(this.payment);
+
+    return this.amount - this.payment.amount;
+  }
+
   public isPaid() {
     return this.status === DueStatusEnum.Paid;
+  }
+
+  public isPartiallyPaid() {
+    return this.status === DueStatusEnum.PartiallyPaid;
   }
 
   public isPending() {
@@ -105,7 +124,19 @@ export class Due extends Entity {
 
     this.payment = payment.value;
 
-    this.status = DueStatusEnum.Paid;
+    if (props.amount >= this.amount) {
+      this.status = DueStatusEnum.Paid;
+    } else {
+      this.status = DueStatusEnum.PartiallyPaid;
+    }
+
+    return ok(null);
+  }
+
+  public pending(): Result<null, Error> {
+    this.payment = null;
+
+    this.status = DueStatusEnum.Pending;
 
     return ok(null);
   }
@@ -118,14 +149,6 @@ export class Due extends Entity {
 
   public setAmount(amount: number): Result<null, Error> {
     this.amount = amount;
-
-    return ok(null);
-  }
-
-  public pending(): Result<null, Error> {
-    this.payment = null;
-
-    this.status = DueStatusEnum.Pending;
 
     return ok(null);
   }

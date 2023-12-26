@@ -32,7 +32,7 @@ export class GetPendingDuesUseCase
     return ok<PendingDueDto[]>(
       dues.map((due: Due) => ({
         _id: due._id,
-        amount: due.amount,
+        amount: due.getPendingAmount(),
         category: due.category,
         date: DateUtils.formatUtc(due.date),
         memberId: due.member._id,
@@ -41,6 +41,7 @@ export class GetPendingDuesUseCase
           due.category === DueCategoryEnum.Membership
             ? DateUtils.formatUtc(due.date, DateFormatEnum.MMMM)
             : '',
+        status: due.status,
       }))
     );
   }

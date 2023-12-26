@@ -21,6 +21,8 @@ export class DueGridDto {
 
   isPending: boolean;
 
+  isPartiallyPaid: boolean;
+
   isDeleted: boolean;
 
   paidAt: string;

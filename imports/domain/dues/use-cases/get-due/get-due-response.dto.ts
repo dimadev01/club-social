@@ -21,5 +21,7 @@ export class GetDueResponseDto {
 
   public isPaid: boolean;
 
+  public isPartiallyPaid: boolean;
+
   public isPending: boolean;
 }

@@ -52,10 +52,16 @@ export class Payment extends Entity {
     return this.dues.length;
   }
 
-  public get totalDuesAmount(): string {
-    return MoneyUtils.formatCents(
-      this.dues.reduce((acc, due) => acc + due.amount, 0)
-    );
+  public get totalDuesAmount(): number {
+    return this.dues.reduce((acc, due) => acc + due.due.amount, 0);
+  }
+
+  public get totalDuesPaidAmount(): number {
+    return this.dues.reduce((acc, due) => acc + due.amount, 0);
+  }
+
+  public get totalDuesPaidAmountFormatted(): string {
+    return MoneyUtils.formatCents(this.totalDuesPaidAmount);
   }
 
   public static create(props: CreatePayment): Result<Payment, Error> {

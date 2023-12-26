@@ -35,6 +35,7 @@ export class GetDueUseCase
       category: due.category,
       date: due.dateFormatted,
       isPaid: due.isPaid(),
+      isPartiallyPaid: due.isPartiallyPaid(),
       isPending: due.isPending(),
       memberId: due.member._id,
       memberName: due.member.name,

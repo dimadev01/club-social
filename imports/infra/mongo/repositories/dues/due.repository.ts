@@ -88,12 +88,27 @@ export class DueRepository
 
     const $facet: Record<string, unknown> = {
       data: [...this.getPaginatedPipelineQuery(request)],
-      totalAmount: [{ $group: { _id: null, sum: { $sum: '$amount' } } }],
+      totals: [
+        {
+          $group: {
+            _id: null,
+            dues: { $sum: '$amount' },
+            payments: { $sum: { $ifNull: ['$payment.amount', 0] } },
+          },
+        },
+        {
+          $addFields: {
+            balance: { $subtract: ['$payments', '$dues'] },
+          },
+        },
+      ],
     };
 
     const $project: Record<string, number | object> = {
+      balance: MongoUtils.first('$totals.balance', 0),
       data: 1,
-      totalAmount: MongoUtils.first('$totalAmount.sum', 0),
+      totalDues: MongoUtils.first('$totals.dues', 0),
+      totalPayments: MongoUtils.first('$totals.payments', 0),
     };
 
     const hasFilters = query.$expr.$and.length > 1;
@@ -114,9 +129,11 @@ export class DueRepository
       .toArray();
 
     return {
+      balance: result.balance,
       count: await this.getAggregationCount(hasFilters, result.count),
       data: result.data.map((item) => plainToInstance(Due, item)),
-      totalAmount: result.totalAmount,
+      totalDues: result.totalDues,
+      totalPayments: result.totalPayments,
     };
   }
 
@@ -139,7 +156,7 @@ export class DueRepository
   public findPending(request: FindPendingRequest): Promise<Due[]> {
     const query: Mongo.Query<Due> = {
       'member._id': { $in: request.memberIds },
-      status: DueStatusEnum.Pending,
+      status: { $in: [DueStatusEnum.Pending, DueStatusEnum.PartiallyPaid] },
     };
 
     const options: Mongo.Options<Due> = {

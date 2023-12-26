@@ -36,17 +36,17 @@ export class GetMembersGridUseCase
         (member: FindPaginatedMember): MemberGridDto => ({
           _id: member._id,
           category: member.category,
-          electricityDebt: member.electricityDebt,
+          electricityBalance: member.electricityBalance,
           emails: member.user.emails ?? null,
-          guestDebt: member.guestDebt,
-          membershipDebt: member.membershipDebt,
+          guestBalance: member.guestBalance,
+          membershipBalance: member.membershipBalance,
           // @ts-expect-error
           name: `${member.user.profile?.lastName ?? ''} ${
             // @ts-expect-error
             member.user.profile?.firstName ?? ''
           }`,
           status: member.status,
-          totalDebt: member.totalDebt,
+          totalBalance: member.totalBalance,
         })
       ),
     });

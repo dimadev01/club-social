@@ -17,10 +17,10 @@ export type FindPaginatedMember = Pick<
   Member,
   '_id' | 'category' | 'user' | 'fileStatus' | 'status' | 'phones'
 > & {
-  electricityDebt: number;
-  guestDebt: number;
-  membershipDebt: number;
-  totalDebt: number;
+  electricityBalance: number;
+  guestBalance: number;
+  membershipBalance: number;
+  totalBalance: number;
 };
 
 export type FindPaginatedMembersResponse =

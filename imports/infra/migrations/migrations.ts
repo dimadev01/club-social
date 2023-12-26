@@ -7,11 +7,17 @@ import {
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
 import { DueCollection } from '@domain/dues/due.collection';
-import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { DueMember } from '@domain/dues/entities/due-member';
+import { DuePayment } from '@domain/dues/entities/due-payment';
 import { Due } from '@domain/dues/entities/due.entity';
 import { Member } from '@domain/members/entities/member.entity';
 import { MovementCollection } from '@domain/movements/movement.collection';
+import { PaymentDue } from '@domain/payments/entities/payment-due';
+import { PaymentDueDue } from '@domain/payments/entities/payment-due-due';
+import { PaymentMember } from '@domain/payments/entities/payment-member';
+import { Payment } from '@domain/payments/entities/payment.entity';
+import { PaymentCollection } from '@domain/payments/payment.collection';
 import { RoleService } from '@domain/roles/role.service';
 import { CategoryCollection } from '@infra/mongo/collections/category.collection';
 import { MemberCollection } from '@infra/mongo/collections/member.collection';
@@ -987,86 +993,185 @@ Migrations.add({
         .toArray()
     ).map((member) => plainToInstance(Member, member));
 
-    await MovementCollection.find({ type: CategoryTypeEnum.Debt }).forEachAsync(
-      async (movement) => {
-        try {
-          const getCategory = (movementCategory: CategoryEnum) => {
-            switch (movementCategory) {
-              case CategoryEnum.MembershipDebt:
-                return DueCategoryEnum.Membership;
+    await MovementCollection.find({
+      isDeleted: false,
+      type: CategoryTypeEnum.Debt,
+    }).forEachAsync(async (movement) => {
+      try {
+        const getCategory = (movementCategory: CategoryEnum) => {
+          switch (movementCategory) {
+            case CategoryEnum.MembershipDebt:
+              return DueCategoryEnum.Membership;
 
-              case CategoryEnum.GuestDebt:
-                return DueCategoryEnum.Guest;
+            case CategoryEnum.GuestDebt:
+              return DueCategoryEnum.Guest;
 
-              case CategoryEnum.ElectricityDebt:
-                return DueCategoryEnum.Electricity;
+            case CategoryEnum.ElectricityDebt:
+              return DueCategoryEnum.Electricity;
 
-              default:
-                throw new Error('invalid-category');
-            }
-          };
+            default:
+              throw new Error('invalid-category');
+          }
+        };
 
-          const getDate = () => {
-            if (movement.category === CategoryEnum.MembershipDebt) {
-              return DateUtils.utc(movement.date)
-                .startOf('month')
-                .format(DateFormatEnum.Date);
-            }
+        const getDate = () => {
+          if (movement.category === CategoryEnum.MembershipDebt) {
+            return DateUtils.utc(movement.date)
+              .startOf('month')
+              .format(DateFormatEnum.Date);
+          }
 
-            return DateUtils.utc(movement.date).format(DateFormatEnum.Date);
-          };
+          return DateUtils.utc(movement.date).format(DateFormatEnum.Date);
+        };
 
+        const member = members.find((m) => m._id === movement.memberId);
+
+        invariant(member);
+
+        invariant(movement.memberId);
+
+        const dueMember = DueMember.create({
+          _id: movement.memberId,
+          name: member.name,
+        });
+
+        if (dueMember.isErr()) {
+          throw dueMember.error;
+        }
+
+        const due = Due.create({
+          amount: movement.amount,
+          category: getCategory(movement.category),
+          date: getDate(),
+          member: dueMember.value,
+          notes: movement.notes,
+        });
+
+        if (due.isErr()) {
+          throw due.error;
+        }
+
+        due.value.createdAt = movement.createdAt;
+
+        due.value.createdBy = movement.createdBy;
+
+        due.value.updatedAt = movement.updatedAt;
+
+        due.value.updatedBy = movement.updatedBy;
+
+        due.value.isDeleted = movement.isDeleted;
+
+        await DueCollection.insertAsync(due.value);
+
+        await MovementCollection.updateAsync(movement._id, {
+          $set: { isDeleted: true, isMigrated: true },
+        });
+      } catch (error) {
+        await MovementCollection.updateAsync(movement._id, {
+          $set: { isMigrated: false },
+        });
+      }
+    });
+
+    await MovementCollection.find({
+      category: CategoryEnum.MembershipIncome,
+      isDeleted: false,
+      type: CategoryTypeEnum.Income,
+    }).forEachAsync(async (movement) => {
+      try {
+        const movementDate = DateUtils.utc(movement.date.toISOString());
+
+        const pendingDue = await DueCollection.findOneAsync({
+          amount: movement.amount,
+          date: movementDate.startOf('month').toDate(),
+          isDeleted: false,
+          'member._id': movement.memberId,
+          status: DueStatusEnum.Pending,
+        });
+
+        if (pendingDue) {
           const member = members.find((m) => m._id === movement.memberId);
 
           invariant(member);
 
           invariant(movement.memberId);
 
-          const dueMember = DueMember.create({
-            _id: movement.memberId,
+          const paymentMember = PaymentMember.create({
+            memberId: movement.memberId,
             name: member.name,
           });
 
-          if (dueMember.isErr()) {
-            throw dueMember.error;
+          if (paymentMember.isErr()) {
+            throw paymentMember.error;
           }
 
-          const due = Due.create({
+          const paymentDueDue = PaymentDueDue.create({
             amount: movement.amount,
-            category: getCategory(movement.category),
-            date: getDate(),
-            member: dueMember.value,
+            category: DueCategoryEnum.Membership,
+            date: pendingDue.date,
+            dueId: pendingDue._id,
+          });
+
+          if (paymentDueDue.isErr()) {
+            throw paymentDueDue.error;
+          }
+
+          const paymentDue = PaymentDue.create({
+            amount: movement.amount,
+            due: paymentDueDue.value,
+          });
+
+          if (paymentDue.isErr()) {
+            throw paymentDue.error;
+          }
+
+          const payment = Payment.create({
+            date: movementDate.format(DateFormatEnum.Date),
+            dues: [paymentDue.value],
+            member: paymentMember.value,
             notes: movement.notes,
           });
 
-          if (due.isErr()) {
-            throw due.error;
+          if (payment.isErr()) {
+            throw payment.error;
           }
 
-          due.value.createdAt = movement.createdAt;
+          payment.value.createdAt = movement.createdAt;
 
-          due.value.createdBy = movement.createdBy;
+          payment.value.createdBy = movement.createdBy;
 
-          due.value.updatedAt = movement.updatedAt;
+          payment.value.updatedAt = movement.updatedAt;
 
-          due.value.updatedBy = movement.updatedBy;
+          payment.value.updatedBy = movement.updatedBy;
 
-          due.value.isDeleted = movement.isDeleted;
+          payment.value.isDeleted = movement.isDeleted;
 
-          await DueCollection.insertAsync(due.value);
+          const duePayment = DuePayment.create({
+            _id: payment.value._id,
+            amount: paymentDue.value.amount,
+            date: payment.value.date,
+          });
+
+          if (duePayment.isErr()) {
+            throw duePayment.error;
+          }
+
+          pendingDue.paid(duePayment.value);
+
+          await DueCollection.updateAsync(pendingDue._id, { $set: pendingDue });
+
+          await PaymentCollection.insertAsync(payment.value);
 
           await MovementCollection.updateAsync(movement._id, {
             $set: { isDeleted: true, isMigrated: true },
           });
-        } catch (error) {
-          console.log(error);
-
-          await MovementCollection.updateAsync(movement._id, {
-            $set: { isMigrated: false },
-          });
         }
+      } catch (error) {
+        await MovementCollection.updateAsync(movement._id, {
+          $set: { isMigrated: false },
+        });
       }
-    );
+    });
 
     next();
   }),

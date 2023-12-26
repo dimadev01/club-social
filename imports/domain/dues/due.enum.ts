@@ -1,15 +1,18 @@
 export enum DueStatusEnum {
   Paid = 'paid',
+  PartiallyPaid = 'partially-paid',
   Pending = 'pending',
 }
 
 export const DueStatusLabel = {
   [DueStatusEnum.Paid]: 'Pagado',
+  [DueStatusEnum.PartiallyPaid]: 'Parcialmente pago',
   [DueStatusEnum.Pending]: 'Pendiente',
 };
 
 export const DueStatusColor = {
   [DueStatusEnum.Paid]: 'green',
+  [DueStatusEnum.PartiallyPaid]: '',
   [DueStatusEnum.Pending]: '',
 };
 
