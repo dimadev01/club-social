@@ -16,6 +16,12 @@ export class SchemaBuilder {
     return new SchemaBuilder();
   }
 
+  public array() {
+    this._schema.type = Array;
+
+    return this;
+  }
+
   public autoValue(value: unknown): this {
     this._schema.autoValue = function autoValue(): unknown {
       return value;

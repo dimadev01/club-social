@@ -1,7 +1,6 @@
 import { ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { CategoryEnum } from '@domain/categories/category.enum';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { GetCategoriesByTypeRequestDto } from '@domain/categories/use-cases/get-categories-by-type/get-categories-by-type-request.dto';
 import { GetCategoriesByTypeResponseDto } from '@domain/categories/use-cases/get-categories-by-type/get-categories-by-type-response.dto';
@@ -27,21 +26,12 @@ export class GetCategoriesByTypeUseCase
     const categories = await this._categoryPort.findByAllByType(request.type);
 
     return ok<GetCategoriesByTypeResponseDto[]>(
-      categories
-        .filter(
-          (category) =>
-            ![
-              CategoryEnum.MembershipIncome,
-              CategoryEnum.GuestIncome,
-              CategoryEnum.ElectricityIncome,
-            ].includes(category.code)
-        )
-        .map((category) => ({
-          _id: category._id,
-          amount: category.amount,
-          code: category.code,
-          name: category.name,
-        }))
+      categories.map((category) => ({
+        _id: category._id,
+        amount: category.amount,
+        code: category.code,
+        name: category.name,
+      }))
     );
   }
 }

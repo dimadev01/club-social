@@ -1,11 +1,14 @@
 import React, { useRef, useState } from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
-import qs from 'qs';
 import CsvDownloader from 'react-csv-downloader';
 import { Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
-import { FileExcelOutlined, FileSearchOutlined } from '@ant-design/icons';
+import {
+  CreditCardOutlined,
+  FileExcelOutlined,
+  FileSearchOutlined,
+} from '@ant-design/icons';
 import {
   getMemberCategoryFilters,
   getMemberStatusFilters,
@@ -20,6 +23,7 @@ import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Table } from '@ui/components/Table/Table';
@@ -286,21 +290,21 @@ export const MembersPage = () => {
                     icon={<FileSearchOutlined />}
                     onClick={() =>
                       navigate(
-                        `${AppUrl.Dues}?${qs.stringify({
+                        UrlUtils.navigate(AppUrl.Dues, {
                           memberIds: [member._id],
-                        })}`
+                        })
                       )
                     }
                     tooltip={{ title: 'Ver cobros' }}
                   />
                   <Button
                     type="text"
-                    icon={<FileSearchOutlined />}
+                    icon={<CreditCardOutlined />}
                     onClick={() =>
                       navigate(
-                        `${AppUrl.Payments}?${qs.stringify({
+                        UrlUtils.navigate(AppUrl.Payments, {
                           memberIds: [member._id],
-                        })}`
+                        })
                       )
                     }
                     tooltip={{ title: 'Ver Pagos' }}

@@ -14,7 +14,6 @@ import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-mov
 import { DIToken } from '@infra/di/di-tokens';
 import { FindPaginatedMovement } from '@infra/mongo/repositories/movements/movement-repository.types';
 import { UseCase } from '@infra/use-cases/use-case';
-import { MoneyUtils } from '@shared/utils/currency.utils';
 
 @injectable()
 export class GetMovementsGridUseCase
@@ -58,7 +57,6 @@ export class GetMovementsGridUseCase
           return {
             _id: movement._id,
             amount: movement.amountFormatted,
-            balance: MoneyUtils.formatCents(paginatedMovement.balance),
             category: movement.category,
             date: movement.dateFormatted,
             details,

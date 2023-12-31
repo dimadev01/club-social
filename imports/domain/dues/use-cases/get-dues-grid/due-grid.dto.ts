@@ -1,31 +1,34 @@
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
+import { DuePaymentGridDto } from './due-payment-grid.dto';
 
 export class DueGridDto {
-  _id: string;
+  public _id: string;
 
-  date: string;
+  public amount: string;
 
-  amount: string;
+  public category: DueCategoryEnum;
 
-  category: DueCategoryEnum;
+  public date: string;
 
-  memberId: string;
+  public debtAmount: string;
 
-  memberName: string;
+  public isDeleted: boolean;
 
-  membershipMonth: string;
+  public isPaid: boolean;
 
-  status: DueStatusEnum;
+  public isPartiallyPaid: boolean;
 
-  isPaid: boolean;
+  public isPending: boolean;
 
-  isPending: boolean;
+  public memberId: string;
 
-  isPartiallyPaid: boolean;
+  public memberName: string;
 
-  isDeleted: boolean;
+  public membershipMonth: string;
 
-  paidAt: string;
+  public paidAmount: string;
 
-  paidAmount: string;
+  public payments: DuePaymentGridDto[] | null;
+
+  public status: DueStatusEnum;
 }

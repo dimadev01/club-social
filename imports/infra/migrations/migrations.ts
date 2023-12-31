@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { Meteor } from 'meteor/meteor';
-import { MongoInternals } from 'meteor/mongo';
+import { Mongo, MongoInternals } from 'meteor/mongo';
 import invariant from 'ts-invariant';
 import {
   CategoryEnum,
@@ -1073,20 +1073,48 @@ Migrations.add({
       }
     });
 
-    await MovementCollection.find({
-      category: CategoryEnum.MembershipIncome,
-      isDeleted: false,
-      type: CategoryTypeEnum.Income,
-    }).forEachAsync(async (movement) => {
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const movement of MovementCollection.find(
+      {
+        category: {
+          $in: [
+            CategoryEnum.MembershipIncome,
+            CategoryEnum.GuestIncome,
+            CategoryEnum.ElectricityIncome,
+          ],
+        },
+        isDeleted: false,
+      },
+      {
+        sort: { date: 1 },
+      }
+    )) {
       try {
         const movementDate = DateUtils.utc(movement.date.toISOString());
 
-        const pendingDue = await DueCollection.findOneAsync({
+        const pendingDueQuery: Mongo.Selector<Due> = {
           amount: movement.amount,
-          date: movementDate.startOf('month').toDate(),
           isDeleted: false,
           'member._id': movement.memberId,
           status: DueStatusEnum.Pending,
+        };
+
+        if (movement.category === CategoryEnum.MembershipIncome) {
+          pendingDueQuery.date = movementDate.startOf('month').toDate();
+        } else if (movement.category === CategoryEnum.GuestIncome) {
+          pendingDueQuery.category = DueCategoryEnum.Guest;
+
+          pendingDueQuery.date = { $lte: movementDate.toDate() };
+        } else if (movement.category === CategoryEnum.ElectricityIncome) {
+          pendingDueQuery.category = DueCategoryEnum.Electricity;
+
+          pendingDueQuery.date = { $lte: movementDate.toDate() };
+        } else {
+          throw new Error('invalid-category');
+        }
+
+        const pendingDue = await DueCollection.findOneAsync(pendingDueQuery, {
+          sort: { date: 1 },
         });
 
         if (pendingDue) {
@@ -1105,9 +1133,21 @@ Migrations.add({
             throw paymentMember.error;
           }
 
+          let category: DueCategoryEnum;
+
+          if (movement.category === CategoryEnum.MembershipIncome) {
+            category = DueCategoryEnum.Membership;
+          } else if (movement.category === CategoryEnum.GuestIncome) {
+            category = DueCategoryEnum.Guest;
+          } else if (movement.category === CategoryEnum.ElectricityIncome) {
+            category = DueCategoryEnum.Electricity;
+          } else {
+            throw new Error('invalid-category');
+          }
+
           const paymentDueDue = PaymentDueDue.create({
             amount: movement.amount,
-            category: DueCategoryEnum.Membership,
+            category,
             date: pendingDue.date,
             dueId: pendingDue._id,
           });
@@ -1156,7 +1196,7 @@ Migrations.add({
             throw duePayment.error;
           }
 
-          pendingDue.paid(duePayment.value);
+          pendingDue.pay(duePayment.value);
 
           await DueCollection.updateAsync(pendingDue._id, { $set: pendingDue });
 
@@ -1171,9 +1211,11 @@ Migrations.add({
           $set: { isMigrated: false },
         });
       }
-    });
+    }
 
     next();
+
+    console.log('done');
   }),
   version: 15,
 });

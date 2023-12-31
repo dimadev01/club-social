@@ -36,13 +36,14 @@ export class MovementRepository
           CategoryEnum.ElectricityIncome,
         ],
       },
-      createdAt: { $gt: movement.createdAt },
+      date: { $gt: movement.date },
       isDeleted: false,
+      memberId: movement.memberId,
     };
 
     return (
       (await this.getCollection().findOneAsync(query, {
-        sort: { createdAt: 1 },
+        sort: { date: 1 },
       })) ?? null
     );
   }

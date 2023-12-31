@@ -102,22 +102,20 @@ export const MovementMigratePage = () => {
   }
 
   const handleSubmit = async (values: FormValues) => {
-    if (
-      values.dues.some((d) => d.dues.filter((dd) => dd.isSelected).length === 0)
-    ) {
-      message.error('Debe seleccionar al menos una cuota');
+    const selectedDues = values.dues[0].dues.filter((d) => d && d.isSelected);
+
+    if (selectedDues.length === 0) {
+      message.error('Debe seleccionar al menos un cobro');
 
       return;
     }
 
     if (movement) {
       const request: MigrateMovementRequestDto = {
-        dues: values.dues[0].dues
-          .filter((d) => d.isSelected)
-          .map((due) => ({
-            amount: MoneyUtils.toCents(due.amount),
-            dueId: due.dueId,
-          })),
+        dues: selectedDues.map((due) => ({
+          amount: MoneyUtils.toCents(due.amount),
+          dueId: due.dueId,
+        })),
         id: movement._id,
       };
 
@@ -140,6 +138,8 @@ export const MovementMigratePage = () => {
 
           if (nextMovementId) {
             navigate(`${AppUrl.Movements}/${nextMovementId}/migrate`);
+          } else {
+            navigate(AppUrl.Movements);
           }
         },
       });

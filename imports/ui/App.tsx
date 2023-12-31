@@ -1,5 +1,6 @@
 import React from 'react';
 import { App as AntApp, ConfigProvider, message } from 'antd';
+import esEs from 'antd/es/locale/es_ES';
 import { useTracker } from 'meteor/react-meteor-data';
 import GoogleFontLoader from 'react-google-font';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -51,7 +52,7 @@ export const App = () => {
 
       <AntApp rootClassName="cs-ant-app">
         <ConfigProvider
-          // locale={esEs}
+          locale={esEs}
           select={{ showSearch: true }}
           popupMatchSelectWidth={false}
           form={{ requiredMark: 'optional', scrollToFirstError: true }}

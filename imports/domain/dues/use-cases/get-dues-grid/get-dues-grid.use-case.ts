@@ -37,6 +37,7 @@ export class GetDuesGridUseCase
           amount: due.amountFormatted,
           category: due.category,
           date: due.dateFormatted,
+          debtAmount: due.getPendingAmountFormatted(),
           isDeleted: due.isDeleted,
           isPaid: due.isPaid(),
           isPartiallyPaid: due.isPartiallyPaid(),
@@ -44,8 +45,12 @@ export class GetDuesGridUseCase
           memberId: due.member._id,
           memberName: due.member.name,
           membershipMonth: due.membershipMonth,
-          paidAmount: due.payment?.amountFormatted ?? '-',
-          paidAt: due.payment?.dateFormatted ?? '-',
+          paidAmount: due.paidAmountFormatted,
+          payments:
+            due.payments?.map((duePayment) => ({
+              amount: duePayment.amountFormatted,
+              paidAt: duePayment.dateFormatted,
+            })) ?? null,
           status: due.status,
         })
       ),

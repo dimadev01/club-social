@@ -17,6 +17,7 @@ import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import invariant from 'ts-invariant';
 import {
   CheckOutlined,
   DeleteOutlined,
@@ -36,6 +37,7 @@ import { DueGridDto } from '@domain/dues/use-cases/get-dues-grid/due-grid.dto';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Select } from '@ui/components/Select';
@@ -258,9 +260,33 @@ export const DuesPage = () => {
                 filteredValue: gridState.filters?.status ?? [],
                 filters: getDueStatusColumnFilters(),
                 render: (status: DueStatusEnum, due: DueGridDto) => {
-                  if (due.isPaid || due.isPartiallyPaid) {
+                  if (due.isPaid) {
+                    invariant(due.payments);
+
                     return (
-                      <Tooltip title={due.paidAt}>
+                      <Tooltip
+                        title={due.payments.map((d) => (
+                          <span className="block">
+                            {d.paidAt} {d.amount}
+                          </span>
+                        ))}
+                      >
+                        <Tag color={DueStatusColor[status]}>
+                          {DueStatusLabel[status]} ({due.paidAmount})
+                        </Tag>
+                      </Tooltip>
+                    );
+                  }
+
+                  if (due.isPartiallyPaid) {
+                    invariant(due.payments);
+
+                    return (
+                      <Tooltip
+                        title={due.payments.map(
+                          (d) => `${d.paidAt} ${d.amount}`
+                        )}
+                      >
                         <Tag color={DueStatusColor[status]}>
                           {DueStatusLabel[status]} ({due.paidAmount})
                         </Tag>
@@ -349,9 +375,9 @@ export const DuesPage = () => {
                       type="text"
                       onClick={() => {
                         navigate(
-                          `${AppUrl.PaymentsNew}?${qs.stringify({
+                          UrlUtils.navigate(AppUrl.PaymentsNew, {
                             memberIds: [due.memberId],
-                          })}`
+                          })
                         );
                       }}
                       htmlType="button"

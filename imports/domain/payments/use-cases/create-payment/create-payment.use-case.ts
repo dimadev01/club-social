@@ -17,11 +17,12 @@ import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
+import { CreatePaymentResponseDto } from './create-payment-response.dto';
 
 @injectable()
 export class CreatePaymentUseCase
   extends UseCase<CreatePaymentRequestDto>
-  implements IUseCase<CreatePaymentRequestDto, null>
+  implements IUseCase<CreatePaymentRequestDto, CreatePaymentResponseDto>
 {
   public constructor(
     @inject(DIToken.Logger)
@@ -38,12 +39,14 @@ export class CreatePaymentUseCase
 
   public async execute(
     request: CreatePaymentRequestDto
-  ): Promise<Result<null, Error>> {
+  ): Promise<Result<CreatePaymentResponseDto, Error>> {
     await this.validatePermission(ScopeEnum.Payments, PermissionEnum.Create);
 
     const session = MongoUtils.startSession();
 
     try {
+      let payment: Payment | null = null;
+
       await session.withTransaction(async () => {
         await Promise.all(
           request.memberDues.map(async (memberDue) => {
@@ -98,16 +101,18 @@ export class CreatePaymentUseCase
               throw paymentDues.error;
             }
 
-            const payment = Payment.create({
+            const paymentResult = Payment.create({
               date: request.date,
               dues: paymentDues.value,
               member: paymentMember.value,
               notes: memberDue.notes,
             });
 
-            if (payment.isErr()) {
-              throw payment.error;
+            if (paymentResult.isErr()) {
+              throw paymentResult.error;
             }
+
+            payment = paymentResult.value;
 
             await Promise.all(
               dues.map(async (due) => {
@@ -117,10 +122,10 @@ export class CreatePaymentUseCase
 
                 invariant(dueRequest);
 
-                const result = due.paid({
-                  _id: payment.value._id,
+                const result = due.pay({
+                  _id: paymentResult.value._id,
                   amount: dueRequest.amount,
-                  date: payment.value.date,
+                  date: paymentResult.value.date,
                 });
 
                 if (result.isErr()) {
@@ -131,12 +136,20 @@ export class CreatePaymentUseCase
               })
             );
 
-            await this._paymentPort.createWithSession(payment.value, session);
+            await this._paymentPort.createWithSession(
+              paymentResult.value,
+              session
+            );
           })
         );
       });
 
-      return ok(null);
+      if (!payment) {
+        return err(new Error('Payment not created'));
+      }
+
+      // @ts-expect-error
+      return ok({ id: payment._id });
     } catch (error) {
       this._logger.error(error);
 

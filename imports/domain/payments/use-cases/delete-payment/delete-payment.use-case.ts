@@ -36,7 +36,7 @@ export class DeletePaymentUseCase
       payment.dues.map(async (paymentDue) => {
         const due = await this._duePort.findOneByIdOrThrow(paymentDue.due._id);
 
-        due.pending();
+        due.removePayment(payment._id);
 
         await this._duePort.update(due);
       })

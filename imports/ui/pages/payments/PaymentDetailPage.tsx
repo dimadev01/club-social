@@ -10,6 +10,7 @@ import {
   Navigate,
   NavLink,
   useLocation,
+  useNavigate,
   useParams,
   useSearchParams,
 } from 'react-router-dom';
@@ -25,6 +26,7 @@ import { usePendingDues } from '@ui/hooks/dues/usePendingDues';
 import { useUpdateDue } from '@ui/hooks/dues/useUpdateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
+import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { usePayment } from '@ui/hooks/payments/usePayment';
 import { useUpdatePayment } from '@ui/hooks/payments/useUpdatePayment';
 import { PaymentMemberDuesCard } from '@ui/pages/payments/PaymentMemberDuesCard';
@@ -51,6 +53,8 @@ export const PaymentDetailPage = () => {
   const { message } = App.useApp();
 
   const { id } = useParams<{ id?: string }>();
+
+  const navigate = useNavigate();
 
   const location = useLocation();
 
@@ -87,6 +91,12 @@ export const PaymentDetailPage = () => {
   const createPayment = useCreatePayment();
 
   const updatePayment = useUpdatePayment();
+
+  const deletePayment = useDeletePayment(() => {
+    message.success('Pago eliminado');
+
+    navigate(AppUrl.Payments);
+  });
 
   const updateDue = useUpdateDue();
 
@@ -331,10 +341,32 @@ export const PaymentDetailPage = () => {
 
             <FormButtons
               scope={ScopeEnum.Payments}
-              isLoading={createPayment.isLoading || updateDue.isLoading}
-              isSaveDisabled={createPayment.isLoading || updateDue.isLoading}
-              isBackDisabled={createPayment.isLoading || updateDue.isLoading}
-              showDeleteButton={false}
+              isLoading={
+                createPayment.isLoading ||
+                updateDue.isLoading ||
+                deletePayment.isLoading
+              }
+              isSaveDisabled={
+                createPayment.isLoading ||
+                updateDue.isLoading ||
+                deletePayment.isLoading
+              }
+              isBackDisabled={
+                createPayment.isLoading ||
+                updateDue.isLoading ||
+                deletePayment.isLoading
+              }
+              showDeleteButton
+              onClickDelete={() => {
+                if (payment) {
+                  deletePayment.mutate({ id: payment._id });
+                }
+              }}
+              isDeleteDisabled={
+                createPayment.isLoading ||
+                updateDue.isLoading ||
+                deletePayment.isLoading
+              }
             />
           </Form>
         </Card>

@@ -1,5 +1,7 @@
 import { Type } from 'class-transformer';
 import {
+  ArrayMinSize,
+  IsArray,
   IsDate,
   IsEnum,
   IsInt,
@@ -37,10 +39,12 @@ export class Due extends Entity {
   @IsNullable()
   public notes: string | null;
 
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => DuePayment)
+  @ArrayMinSize(1)
+  @IsArray()
   @IsNullable()
-  public payment: DuePayment | null;
+  public payments: DuePayment[] | null;
 
   @IsEnum(DueStatusEnum)
   public status: DueStatusEnum;
@@ -65,6 +69,21 @@ export class Due extends Entity {
     return '-';
   }
 
+  public get paidAmount(): number {
+    if (!this.payments) {
+      return 0;
+    }
+
+    return this.payments.reduce(
+      (acc: number, payment: DuePayment) => acc + payment.amount,
+      0
+    );
+  }
+
+  public get paidAmountFormatted(): string {
+    return MoneyUtils.formatCents(this.paidAmount);
+  }
+
   public static create(props: CreateDue): Result<Due, Error> {
     const due = new Due();
 
@@ -82,7 +101,7 @@ export class Due extends Entity {
 
     due.member = props.member;
 
-    due.payment = null;
+    due.payments = null;
 
     due.status = DueStatusEnum.Pending;
 
@@ -90,17 +109,26 @@ export class Due extends Entity {
   }
 
   public getPendingAmount(): number {
-    if (this.isPaid()) {
-      return 0;
-    }
-
     if (this.isPending()) {
       return this.amount;
     }
 
-    invariant(this.payment);
+    if (this.isPaid()) {
+      return 0;
+    }
 
-    return this.amount - this.payment.amount;
+    invariant(this.payments);
+
+    const paymentsAmount = this.payments.reduce(
+      (acc: number, payment: DuePayment) => acc + payment.amount,
+      0
+    );
+
+    return this.amount - paymentsAmount;
+  }
+
+  public getPendingAmountFormatted(): string {
+    return MoneyUtils.formatCents(this.getPendingAmount());
   }
 
   public isPaid() {
@@ -115,16 +143,28 @@ export class Due extends Entity {
     return this.status === DueStatusEnum.Pending;
   }
 
-  public paid(props: CreateDuePayment): Result<null, Error> {
-    const payment = DuePayment.create(props);
+  public partiallyPaid(): Result<null, Error> {
+    this.status = DueStatusEnum.PartiallyPaid;
 
-    if (payment.isErr()) {
-      return err(payment.error);
+    return ok(null);
+  }
+
+  public pay(props: CreateDuePayment): Result<null, Error> {
+    const duePayment = DuePayment.create(props);
+
+    if (duePayment.isErr()) {
+      return err(duePayment.error);
     }
 
-    this.payment = payment.value;
+    if (this.isPending()) {
+      this.payments = [duePayment.value];
+    } else if (this.isPartiallyPaid()) {
+      invariant(this.payments);
 
-    if (props.amount >= this.amount) {
+      this.payments.push(duePayment.value);
+    }
+
+    if (props.amount >= this.getPendingAmount()) {
       this.status = DueStatusEnum.Paid;
     } else {
       this.status = DueStatusEnum.PartiallyPaid;
@@ -134,17 +174,25 @@ export class Due extends Entity {
   }
 
   public pending(): Result<null, Error> {
-    this.payment = null;
+    this.payments = null;
 
     this.status = DueStatusEnum.Pending;
 
     return ok(null);
   }
 
-  public removePayment() {
-    this.payment = null;
+  public removePayment(paymentId: string): Result<null, Error> {
+    invariant(this.payments);
 
-    this.status = DueStatusEnum.Pending;
+    this.payments = this.payments.filter(
+      (payment) => payment._id !== paymentId
+    );
+
+    if (this.payments.length === 0) {
+      return this.pending();
+    }
+
+    return this.partiallyPaid();
   }
 
   public setAmount(amount: number): Result<null, Error> {

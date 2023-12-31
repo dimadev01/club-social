@@ -413,10 +413,19 @@ export const MovementDetailPage = () => {
                     form.setFieldValue('amount', getPriceForCategory(value))
                   }
                   options={
-                    categoriesByType?.map((categoryByType) => ({
-                      label: categoryByType.name,
-                      value: categoryByType.code,
-                    })) ?? []
+                    categoriesByType
+                      ?.filter(
+                        (categoryByType) =>
+                          ![
+                            CategoryEnum.GuestIncome,
+                            CategoryEnum.MembershipIncome,
+                            CategoryEnum.ElectricityIncome,
+                          ].includes(categoryByType.code)
+                      )
+                      .map((categoryByType) => ({
+                        label: categoryByType.name,
+                        value: categoryByType.code,
+                      })) ?? []
                   }
                 />
               </Form.Item>

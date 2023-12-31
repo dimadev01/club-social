@@ -8,7 +8,6 @@ import {
   Space,
   Table as AntTable,
   Tag,
-  Tooltip,
 } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
@@ -20,7 +19,6 @@ import { Navigate, NavLink, useLocation } from 'react-router-dom';
 import {
   DeleteOutlined,
   FilterOutlined,
-  InfoCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
 import {
@@ -295,20 +293,6 @@ export const MovementsPage = () => {
                 title: 'Detalle',
               },
               {
-                align: 'right',
-                dataIndex: 'balance',
-                title: (
-                  <>
-                    Balance{' '}
-                    <Tooltip title="Si es positivo es saldo a favor">
-                      <sup>
-                        <InfoCircleOutlined />
-                      </sup>
-                    </Tooltip>
-                  </>
-                ),
-              },
-              {
                 align: 'center',
                 render: (_, movement: MovementGridDto) => (
                   <ButtonGroup size="small">
@@ -372,6 +356,11 @@ export const MovementsPage = () => {
                       onClick={() => {
                         if (movement.memberId) {
                           setMemberIdsFilter([movement.memberId]);
+
+                          setGridState((prevState) => ({
+                            ...prevState,
+                            page: 1,
+                          }));
                         }
                       }}
                       htmlType="button"

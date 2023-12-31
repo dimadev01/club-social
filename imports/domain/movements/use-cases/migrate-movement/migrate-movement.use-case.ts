@@ -56,6 +56,8 @@ export class MigrateMovementUseCase
 
     movement.isMigrated = true;
 
+    movement.paymentId = result.value.id;
+
     await this._movementPort.update(movement);
 
     await this._movementPort.delete(movement);

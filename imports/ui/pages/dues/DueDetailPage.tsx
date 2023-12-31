@@ -85,9 +85,9 @@ export const DueDetailPage = () => {
     let date: string;
 
     if (values.category === DueCategoryEnum.Membership) {
-      date = values.date.utc().startOf('month').toISOString();
+      date = values.date.utc().startOf('month').format(DateFormatEnum.Date);
     } else {
-      date = values.date.utc().startOf('day').toISOString();
+      date = values.date.utc().startOf('day').format(DateFormatEnum.Date);
     }
 
     if (!due) {
@@ -255,11 +255,11 @@ export const DueDetailPage = () => {
             onFinish={(values) => handleSubmit(values)}
             initialValues={{
               amount: due?.amount ? MoneyUtils.fromCents(due.amount) : 0,
-              category: due?.category ?? DueCategoryEnum.Membership,
+              category: due?.category ?? DueCategoryEnum.Electricity,
               date: due?.date
                 ? DateUtils.utc(due.date, DateFormatEnum.DDMMYYYY)
                 : undefined,
-              memberIds: due?.memberId ? [due.memberId] : [],
+              memberIds: due?.memberId ?? [],
               notes: due?.notes,
             }}
           >

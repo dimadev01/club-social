@@ -23,6 +23,7 @@ export const MovementSchema = new SimpleSchema({
   deletedBy: { defaultValue: null, type: String, optional: true },
   updatedAt: { autoValue: () => new Date(), type: Date },
   isMigrated: { defaultValue: null, type: Boolean, optional: true },
+  paymentId: { defaultValue: null, type: String, optional: true },
   updatedBy: String,
 });
 

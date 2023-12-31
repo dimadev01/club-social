@@ -45,7 +45,7 @@ export class UpdatePaymentUseCase
         duesToVoid.map(async (d) => {
           const due = await this._duePort.findOneByIdOrThrow(d.due._id);
 
-          due.removePayment();
+          due.pending();
 
           await this._duePort.update(due);
         })

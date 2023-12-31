@@ -79,7 +79,6 @@ export class MovementFindPaginatedRepository
                 ...this._getEmployeesLookup(),
                 ...this._getServicesLookup(),
                 ...this._getMemberMovementsLookup(),
-                this._addBalanceField(),
                 this._projectMovements(),
               ],
               total: [{ $count: 'count' }],
@@ -135,27 +134,6 @@ export class MovementFindPaginatedRepository
 
   protected getSchema(): SimpleSchema {
     return MovementSchema;
-  }
-
-  private _addBalanceField() {
-    return {
-      $addFields: {
-        balance: {
-          $cond: [
-            {
-              $eq: ['$memberId', null],
-            },
-            0,
-            {
-              $subtract: [
-                this._reduceMovementsByCategoryType(CategoryTypeEnum.Income),
-                this._reduceMovementsByCategoryType(CategoryTypeEnum.Debt),
-              ],
-            },
-          ],
-        },
-      },
-    };
   }
 
   private _getAllDebtIncome() {

@@ -15,19 +15,19 @@ export class DuePayment {
   @IsString()
   public _id: string;
 
-  @IsDate()
-  public date: Date;
-
-  public get dateFormatted(): string {
-    return DateUtils.formatUtc(this.date);
-  }
-
   @IsPositive()
   @IsNumber()
   public amount: number;
 
+  @IsDate()
+  public date: Date;
+
   public get amountFormatted(): string {
     return MoneyUtils.formatCents(this.amount);
+  }
+
+  public get dateFormatted(): string {
+    return DateUtils.formatUtc(this.date);
   }
 
   public static create(props: CreateDuePayment): Result<DuePayment, Error> {
