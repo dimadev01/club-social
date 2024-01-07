@@ -1,4 +1,4 @@
-import { err, ok, Result } from 'neverthrow';
+import { ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
@@ -29,11 +29,7 @@ export class RestoreMovementUseCase
 
     const movement = await this._movementPort.findOneByIdOrThrow(request.id);
 
-    const restoreResult = movement.restore();
-
-    if (restoreResult.isErr()) {
-      return err(restoreResult.error);
-    }
+    movement.restore();
 
     await this._movementPort.update(movement);
 

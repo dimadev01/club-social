@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col, Image, Layout as AntLayout, Menu, Row, Typography } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import { ItemType } from 'antd/es/menu/hooks/useItems';
@@ -28,9 +28,13 @@ export const Layout: React.FC<Props> = ({ children }) => {
   const [isMenuResponsiveMode, setIsMenuResponsiveMode] =
     useState<boolean>(false);
 
-  const [menuKey, setMenuKey] = useState<string>(
-    `/${window.location.pathname.split('/')[1]}`
-  );
+  const pathnameKey = `/${window.location.pathname.split('/')[1]}`;
+
+  const [menuKey, setMenuKey] = useState<string>(pathnameKey);
+
+  useEffect(() => {
+    setMenuKey(pathnameKey);
+  }, [pathnameKey]);
 
   const user = Meteor.user();
 
@@ -62,6 +66,22 @@ export const Layout: React.FC<Props> = ({ children }) => {
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Movements,
         label: <NavLink to={AppUrl.Movements}>Movimientos</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Dues)) {
+      items.push({
+        icon: <BankOutlined className="!text-lg" />,
+        key: AppUrl.Dues,
+        label: <NavLink to={AppUrl.Dues}>Cobros</NavLink>,
+      });
+    }
+
+    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Payments)) {
+      items.push({
+        icon: <BankOutlined className="!text-lg" />,
+        key: AppUrl.Payments,
+        label: <NavLink to={AppUrl.Payments}>Pagos</NavLink>,
       });
     }
 
@@ -170,7 +190,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
               tooltip={{ title: 'Reglamento' }}
               icon={<FilePdfOutlined />}
               htmlType="button"
-              type="ghost"
+              type="text"
               href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
               target="_blank"
             />
@@ -179,7 +199,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
               tooltip={{ title: 'Comunicados' }}
               icon={<NotificationOutlined />}
               htmlType="button"
-              type="ghost"
+              type="text"
               href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
               target="_blank"
             />
@@ -190,7 +210,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
               tooltip={{ title: 'Enviar Email' }}
               icon={<MailOutlined />}
               htmlType="button"
-              type="ghost"
+              type="text"
               href="mailto:info@clubsocialmontegrande.ar"
               target="_blank"
             />
@@ -199,7 +219,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
               tooltip={{ title: 'Enviar WhatsApp' }}
               icon={<WhatsAppOutlined />}
               htmlType="button"
-              type="ghost"
+              type="text"
               href="https://wa.me/5491158804950"
               target="_blank"
             />

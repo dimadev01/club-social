@@ -9,12 +9,17 @@ import { LogoutPage } from '@ui/pages/auth/LogoutPage';
 import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
 import { CategoriesPage } from '@ui/pages/categories/CategoriesPage';
 import { CategoryDetailPage } from '@ui/pages/categories/CategoryDetailPage';
+import { DueDetailPage } from '@ui/pages/dues/DueDetailPage';
+import { DuesRoot } from '@ui/pages/dues/DuesRoot';
 import { EmployeesPage } from '@ui/pages/employees/EmployeesPage';
 import { HomePage } from '@ui/pages/HomePage';
 import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
+import { MovementMigratePage } from '@ui/pages/movements/MovementMigratePage';
 import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
+import { PaymentDetailPage } from '@ui/pages/payments/PaymentDetailPage';
+import { PaymentsRoot } from '@ui/pages/payments/PaymentsRoot';
 import { ProfessorsPage } from '@ui/pages/professors/ProfessorsPage';
 import { ServicesPage } from '@ui/pages/services/ServicesPage';
 import { UsersDetailPage } from '@ui/pages/users/UsersDetailPage';
@@ -135,6 +140,67 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.MovementsDetail,
+  },
+  {
+    element: (
+      <PrivateRoute
+        permission={PermissionEnum.Read}
+        scope={ScopeEnum.Movements}
+      >
+        <MovementMigratePage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.MovementsMigrate,
+  },
+
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+        <DuesRoot />
+      </PrivateRoute>
+    ),
+    path: AppUrl.Dues,
+  },
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+        <DueDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.DuesNew,
+  },
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+        <DueDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.DuesDetail,
+  },
+
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
+        <PaymentsRoot />
+      </PrivateRoute>
+    ),
+    path: AppUrl.Payments,
+  },
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
+        <PaymentDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.PaymentsNew,
+  },
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
+        <PaymentDetailPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.PaymentsDetail,
   },
 
   {

@@ -11,7 +11,7 @@ export const TableNewButton: React.FC<Props> = ({ to }) => (
   <NavLink to={to}>
     <Button
       icon={<PlusOutlined />}
-      type="ghost"
+      type="text"
       htmlType="button"
       tooltip={{ title: 'Nuevo' }}
     />

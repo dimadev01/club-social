@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
@@ -21,6 +20,7 @@ import {
   FindPaginatedMovementsRequest,
   FindPaginatedMovementsResponse,
 } from '@infra/mongo/repositories/movements/movement-repository.types';
+import { DateUtils } from '@shared/utils/date.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
 
 @injectable()
@@ -44,8 +44,8 @@ export class MovementFindPaginatedRepository
 
     if (request.from && request.to) {
       query.date = {
-        $gte: dayjs.utc(request.from).startOf('day').toDate(),
-        $lte: dayjs.utc(request.to).endOf('day').toDate(),
+        $gte: DateUtils.utc(request.from).startOf('day').toDate(),
+        $lte: DateUtils.utc(request.to).endOf('day').toDate(),
       };
     }
 
@@ -79,7 +79,6 @@ export class MovementFindPaginatedRepository
                 ...this._getEmployeesLookup(),
                 ...this._getServicesLookup(),
                 ...this._getMemberMovementsLookup(),
-                this._addBalanceField(),
                 this._projectMovements(),
               ],
               total: [{ $count: 'count' }],
@@ -135,27 +134,6 @@ export class MovementFindPaginatedRepository
 
   protected getSchema(): SimpleSchema {
     return MovementSchema;
-  }
-
-  private _addBalanceField() {
-    return {
-      $addFields: {
-        balance: {
-          $cond: [
-            {
-              $eq: ['$memberId', null],
-            },
-            0,
-            {
-              $subtract: [
-                this._reduceMovementsByCategoryType(CategoryTypeEnum.Income),
-                this._reduceMovementsByCategoryType(CategoryTypeEnum.Debt),
-              ],
-            },
-          ],
-        },
-      },
-    };
   }
 
   private _getAllDebtIncome() {

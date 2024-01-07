@@ -123,7 +123,7 @@ export const UsersPage = () => {
                         ),
                       title: '¿Está seguro de eliminar este usuario?',
                     }}
-                    type="ghost"
+                    type="text"
                     htmlType="button"
                     tooltip={{ title: 'Eliminar' }}
                     icon={<DeleteOutlined />}

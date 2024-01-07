@@ -8,7 +8,6 @@ import {
   Space,
   Table as AntTable,
   Tag,
-  Tooltip,
 } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
@@ -20,7 +19,6 @@ import { Navigate, NavLink, useLocation } from 'react-router-dom';
 import {
   DeleteOutlined,
   FilterOutlined,
-  InfoCircleOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
 import {
@@ -135,7 +133,6 @@ export const MovementsPage = () => {
           </div>
         </AntTable.Summary.Cell>
         <AntTable.Summary.Cell index={4} />
-        <AntTable.Summary.Cell index={5} />
       </AntTable.Summary.Row>
     </AntTable.Summary>
   );
@@ -295,20 +292,6 @@ export const MovementsPage = () => {
                 title: 'Detalle',
               },
               {
-                align: 'right',
-                dataIndex: 'balance',
-                title: (
-                  <>
-                    Balance{' '}
-                    <Tooltip title="Si es positivo es saldo a favor">
-                      <sup>
-                        <InfoCircleOutlined />
-                      </sup>
-                    </Tooltip>
-                  </>
-                ),
-              },
-              {
                 align: 'center',
                 render: (_, movement: MovementGridDto) => (
                   <ButtonGroup size="small">
@@ -330,7 +313,7 @@ export const MovementsPage = () => {
                               ),
                             title: '¿Está seguro de eliminar este movimiento?',
                           }}
-                          type="ghost"
+                          type="text"
                           htmlType="button"
                           tooltip={{ title: 'Eliminar' }}
                           icon={<DeleteOutlined />}
@@ -350,7 +333,7 @@ export const MovementsPage = () => {
                         ScopeEnum.Movements
                       ) && (
                         <Button
-                          type="ghost"
+                          type="text"
                           onClick={() =>
                             restoreMovement.mutate({ id: movement._id })
                           }
@@ -367,11 +350,16 @@ export const MovementsPage = () => {
                       )}
 
                     <Button
-                      type="ghost"
+                      type="text"
                       disabled={!movement.memberId}
                       onClick={() => {
                         if (movement.memberId) {
                           setMemberIdsFilter([movement.memberId]);
+
+                          setGridState((prevState) => ({
+                            ...prevState,
+                            page: 1,
+                          }));
                         }
                       }}
                       htmlType="button"

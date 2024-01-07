@@ -3,8 +3,12 @@ import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/
 import { CreateMemberUseCase } from '@domain/members/use-cases/create-member/create-member.use-case';
 import { DeleteMemberRequestDto } from '@domain/members/use-cases/delete-member/delete-member-request.dto';
 import { DeleteMemberUseCase } from '@domain/members/use-cases/delete-member/delete-member.use-case';
+import { GetMemberDuesGridRequestDto } from '@domain/members/use-cases/get-member-dues-grid/get-member-dues-grid.request.dto';
+import { GetMemberDuesGridUseCase } from '@domain/members/use-cases/get-member-dues-grid/get-member-dues-grid.use-case';
 import { GetMemberMovementsGridRequestDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.request.dto';
 import { GetMemberMovementsUseCase } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.use-case';
+import { GetMemberPaymentsGridRequestDto } from '@domain/members/use-cases/get-member-payments-grid/get-member-payments-grid.request.dto';
+import { GetMemberPaymentsGridUseCase } from '@domain/members/use-cases/get-member-payments-grid/get-member-payments-grid.use-case';
 import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
 import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-member.use-case';
 import { GetMembersForCsvRequestDto } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv-request.dto';
@@ -27,7 +31,9 @@ export class MemberMethod extends MeteorMethod {
     private readonly _createMember: CreateMemberUseCase,
     private readonly _deleteMember: DeleteMemberUseCase,
     private readonly _updateMember: UpdateMemberUseCase,
-    private readonly _getMemberMovements: GetMemberMovementsUseCase
+    private readonly _getMemberMovements: GetMemberMovementsUseCase,
+    private readonly _getMemberDuesGrid: GetMemberDuesGridUseCase,
+    private readonly _getMemberPaymentsGrid: GetMemberPaymentsGridUseCase
   ) {
     super();
   }
@@ -65,6 +71,24 @@ export class MemberMethod extends MeteorMethod {
           this._getMemberMovements,
           request,
           GetMemberMovementsGridRequestDto
+        ),
+
+      [MethodsEnum.MembersGetDuesGrid]: (
+        request: GetMemberDuesGridRequestDto
+      ) =>
+        this.execute(
+          this._getMemberDuesGrid,
+          request,
+          GetMemberDuesGridRequestDto
+        ),
+
+      [MethodsEnum.MembersGetPaymentsGrid]: (
+        request: GetMemberPaymentsGridRequestDto
+      ) =>
+        this.execute(
+          this._getMemberPaymentsGrid,
+          request,
+          GetMemberPaymentsGridRequestDto
         ),
     });
   }

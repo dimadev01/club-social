@@ -202,7 +202,7 @@ export const MovementDetailPage = () => {
                 <Button
                   size="small"
                   htmlType="button"
-                  type="ghost"
+                  type="text"
                   onClick={() => {
                     form.setFieldValue(
                       'memberIds',
@@ -221,7 +221,7 @@ export const MovementDetailPage = () => {
                 <Button
                   size="small"
                   htmlType="button"
-                  type="ghost"
+                  type="text"
                   onClick={() => {
                     form.setFieldValue(
                       'memberIds',
@@ -317,6 +317,17 @@ export const MovementDetailPage = () => {
     return null;
   };
 
+  if (
+    movement &&
+    [
+      CategoryEnum.MembershipIncome,
+      CategoryEnum.GuestIncome,
+      CategoryEnum.ElectricityIncome,
+    ].includes(movement.category)
+  ) {
+    return <Navigate to={`${AppUrl.Movements}/${movement._id}/migrate`} />;
+  }
+
   /**
    * Renders component
    */
@@ -352,9 +363,9 @@ export const MovementDetailPage = () => {
               amount: movement
                 ? MoneyUtils.fromCents(movement.amount)
                 : getPriceForCategory(CategoryEnum.MembershipIncome),
-              category: movement?.category ?? CategoryEnum.MembershipIncome,
+              category: movement?.category,
               date: movement?.date
-                ? dayjs.utc(movement.date, DateFormatEnum.DDMMYYYY)
+                ? DateUtils.utc(movement.date, DateFormatEnum.DDMMYYYY)
                 : undefined,
               employeeId: movement?.employeeId,
               memberId: movement?.memberId,
@@ -401,12 +412,20 @@ export const MovementDetailPage = () => {
                   onChange={(value) =>
                     form.setFieldValue('amount', getPriceForCategory(value))
                   }
-                  // options={getCategoryOptions(type)}
                   options={
-                    categoriesByType?.map((categoryByType) => ({
-                      label: categoryByType.name,
-                      value: categoryByType.code,
-                    })) ?? []
+                    categoriesByType
+                      ?.filter(
+                        (categoryByType) =>
+                          ![
+                            CategoryEnum.GuestIncome,
+                            CategoryEnum.MembershipIncome,
+                            CategoryEnum.ElectricityIncome,
+                          ].includes(categoryByType.code)
+                      )
+                      .map((categoryByType) => ({
+                        label: categoryByType.name,
+                        value: categoryByType.code,
+                      })) ?? []
                   }
                 />
               </Form.Item>
@@ -418,12 +437,11 @@ export const MovementDetailPage = () => {
               label="Importe"
               name="amount"
               rules={[{ required: true }, { min: 1, type: 'number' }]}
-              status="error"
             >
               <InputNumber
-                className="w-40"
+                className="w-32"
                 prefix={ARS.code}
-                precision={2}
+                precision={0}
                 decimalSeparator=","
                 step={100}
               />
@@ -440,7 +458,15 @@ export const MovementDetailPage = () => {
             <FormButtons
               scope={ScopeEnum.Movements}
               isLoading={createMovement.isLoading || updateMovement.isLoading}
-              isDisabled={createMovement.isLoading || updateMovement.isLoading}
+              isSaveDisabled={
+                createMovement.isLoading || updateMovement.isLoading
+              }
+              isBackDisabled={
+                createMovement.isLoading || updateMovement.isLoading
+              }
+              isDeleteDisabled={
+                createMovement.isLoading || updateMovement.isLoading
+              }
               showDeleteButton={!!movement}
               onClickDelete={() =>
                 movement && deleteMovement.mutate({ id: movement._id })

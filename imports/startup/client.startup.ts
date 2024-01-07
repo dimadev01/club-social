@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import { DateUtils } from '@shared/utils/date.utils';
 
-dayjs.extend(utc);
+DateUtils.extend();

@@ -11,7 +11,10 @@ export interface IMemberPort
   extends ICrudPort<Member>,
     IPaginatedPort<FindPaginatedMember> {
   findAll(): Promise<Member[]>;
+  findOneByUserId(userId: string): Promise<Member | null>;
+  findOneByUserIdOrThrow(userId: string): Promise<Member>;
   findPaginated(
     request: FindPaginatedMembersRequest
   ): Promise<FindPaginatedResponse<FindPaginatedMember>>;
+  getLoggedInOrThrow(): Promise<Member>;
 }

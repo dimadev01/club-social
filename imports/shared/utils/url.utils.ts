@@ -2,12 +2,28 @@ import qs from 'qs';
 import { URLSearchParamsInit } from 'react-router-dom';
 
 export abstract class UrlUtils {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public static stringify(obj: any): URLSearchParamsInit {
+  public static navigate(
+    url: string,
+    obj?: unknown,
+    options?: qs.IStringifyOptions
+  ): string {
+    if (!obj) {
+      return url;
+    }
+
+    return `${url}${this.stringify(obj, options)}`;
+  }
+
+  public static stringify(
+    obj: unknown,
+    options?: qs.IStringifyOptions
+  ): URLSearchParamsInit {
     return qs.stringify(obj, {
+      addQueryPrefix: true,
       arrayFormat: 'brackets',
       encode: false,
       skipNulls: true,
+      ...options,
     });
   }
 }

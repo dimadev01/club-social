@@ -48,10 +48,10 @@ export class GetMembersForCsvUseCase
           emails: member.user.emails
             ? member.user.emails.map((email) => email.address)
             : null,
-          electricityDebt: MoneyUtils.fromCents(member.electricityDebt),
-          guestDebt: MoneyUtils.fromCents(member.guestDebt),
-          membershipDebt: MoneyUtils.fromCents(member.membershipDebt),
-          totalDebt: MoneyUtils.fromCents(member.totalDebt),
+          electricityDebt: MoneyUtils.fromCents(member.electricityBalance),
+          guestDebt: MoneyUtils.fromCents(member.guestBalance),
+          membershipDebt: MoneyUtils.fromCents(member.membershipBalance),
+          totalDebt: MoneyUtils.fromCents(member.totalBalance),
         })
       ),
     });

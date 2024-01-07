@@ -177,7 +177,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
           },
           category: member?.category,
           dateOfBirth: member?.dateOfBirth
-            ? dayjs.utc(member.dateOfBirth)
+            ? DateUtils.utc(member.dateOfBirth)
             : undefined,
           documentID: member?.documentID,
           emails:
@@ -389,7 +389,9 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         <FormButtons
           scope={ScopeEnum.Members}
           isLoading={createMember.isLoading || updateMember.isLoading}
-          isDisabled={createMember.isLoading || updateMember.isLoading}
+          isSaveDisabled={createMember.isLoading || updateMember.isLoading}
+          isBackDisabled={createMember.isLoading || updateMember.isLoading}
+          isDeleteDisabled={createMember.isLoading || updateMember.isLoading}
           showDeleteButton={!!member}
           onClickDelete={() =>
             member && deleteMember.mutate({ id: member._id })

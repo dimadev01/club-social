@@ -9,9 +9,11 @@ export enum RoleEnum {
 
 export enum ScopeEnum {
   Categories = 'categories',
+  Dues = 'dues',
   Employees = 'employees',
   Members = 'members',
   Movements = 'movements',
+  Payments = 'payments',
   Professors = 'professors',
   Services = 'services',
   Users = 'users',
@@ -42,6 +44,18 @@ export const ScopePermissionAssignment: Record<ScopeEnum, PermissionEnum[]> = {
     PermissionEnum.Update,
     PermissionEnum.Delete,
   ],
+  [ScopeEnum.Dues]: [
+    PermissionEnum.Create,
+    PermissionEnum.Read,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
+  ],
+  [ScopeEnum.Payments]: [
+    PermissionEnum.Create,
+    PermissionEnum.Read,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
+  ],
   [ScopeEnum.Users]: [
     PermissionEnum.Create,
     PermissionEnum.Read,
@@ -65,6 +79,13 @@ export const AdminRole = {
   ],
   [ScopeEnum.Categories]: [PermissionEnum.Read, PermissionEnum.Update],
   [ScopeEnum.Movements]: [
+    PermissionEnum.Read,
+    PermissionEnum.Create,
+    PermissionEnum.Update,
+    PermissionEnum.Delete,
+    PermissionEnum.ViewDeleted,
+  ],
+  [ScopeEnum.Dues]: [
     PermissionEnum.Read,
     PermissionEnum.Create,
     PermissionEnum.Update,

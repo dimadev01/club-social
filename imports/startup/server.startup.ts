@@ -6,7 +6,9 @@ import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { container, inject, singleton } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
+import { DueMethod } from '@domain/dues/due.methods';
 import { MovementMethod } from '@domain/movements/movement.methods';
+import { PaymentMethod } from '@domain/payments/payment.methods';
 import { ProfessorMethod } from '@domain/professors/professor.methods';
 import { ServiceMethod } from '@domain/services/service.methods';
 import { UserMethod } from '@domain/users/user.methods';
@@ -29,10 +31,12 @@ export class ServerStartup {
     private readonly _userMethod: UserMethod,
     private readonly _memberMethod: MemberMethod,
     private readonly _movementMethod: MovementMethod,
+    private readonly _dueMethod: DueMethod,
     private readonly _categoryMethod: CategoryMethod,
     private readonly _professorMethod: ProfessorMethod,
     private readonly _employeeMethod: EmployeeMethod,
-    private readonly _serviceMethod: ServiceMethod
+    private readonly _serviceMethod: ServiceMethod,
+    private readonly _paymentMethod: PaymentMethod
   ) {}
 
   public async start() {
@@ -107,6 +111,10 @@ export class ServerStartup {
     this._employeeMethod.register();
 
     this._serviceMethod.register();
+
+    this._dueMethod.register();
+
+    this._paymentMethod.register();
   }
 }
 

@@ -17,17 +17,14 @@ export abstract class MoneyUtils {
     if (decimals) {
       return toDecimal(
         dinero({ amount, currency: ARS }),
-        ({ value, currency }) =>
-          `${currency.code} ${new Intl.NumberFormat('es-AR').format(
-            Number(value)
-          )}`
+        ({ value }) =>
+          `$ ${new Intl.NumberFormat('es-AR').format(Number(value))}`
       );
     }
 
     return toUnits(
       dinero({ amount, currency: ARS }),
-      ({ value, currency }) =>
-        `${currency.code} ${new Intl.NumberFormat('es-AR').format(value[0])}`
+      ({ value }) => `$ ${new Intl.NumberFormat('es-AR').format(value[0])}`
     );
   }
 

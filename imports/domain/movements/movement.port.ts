@@ -6,7 +6,9 @@ import {
   FindPaginatedMovementsResponse,
 } from '@infra/mongo/repositories/movements/movement-repository.types';
 
-export type IMovementPort = ICrudPort<Movement>;
+export interface IMovementPort extends ICrudPort<Movement> {
+  findNextToMigrate(id: string): Promise<Movement | null>;
+}
 
 export interface IMovementPaginatedPort extends IPaginatedPort<Movement> {
   findPaginated(

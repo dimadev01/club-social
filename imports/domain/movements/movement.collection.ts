@@ -22,10 +22,11 @@ export const MovementSchema = new SimpleSchema({
   deletedAt: { defaultValue: null, type: Date, optional: true },
   deletedBy: { defaultValue: null, type: String, optional: true },
   updatedAt: { autoValue: () => new Date(), type: Date },
+  isMigrated: { defaultValue: null, type: Boolean, optional: true },
+  paymentId: { defaultValue: null, type: String, optional: true },
   updatedBy: String,
 });
 
-// @ts-expect-error
 MovementCollection.attachSchema(MovementSchema);
 
 await MovementCollection.createIndexAsync({ category: 1 });
