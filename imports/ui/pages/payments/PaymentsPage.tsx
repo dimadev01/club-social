@@ -146,13 +146,9 @@ export const PaymentsPage = () => {
         <AntTable.Summary.Cell index={2} />
         <AntTable.Summary.Cell index={3} />
         <AntTable.Summary.Cell index={4}>
-          <div className="flex justify-between">
-            <span>Total</span>
-            <span>{data?.totalAmount ?? '-'}</span>
-          </div>
+          <div className="text-right">Total {data?.totalAmount ?? '-'}</div>
         </AntTable.Summary.Cell>
         <AntTable.Summary.Cell index={5} />
-        <AntTable.Summary.Cell index={6} />
       </AntTable.Summary.Row>
     </AntTable.Summary>
   );

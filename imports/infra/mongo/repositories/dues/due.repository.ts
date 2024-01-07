@@ -93,12 +93,22 @@ export class DueRepository
           $group: {
             _id: null,
             dues: { $sum: '$amount' },
-            payments: { $sum: { $ifNull: ['$payment.amount', 0] } },
+            payments: {
+              $sum: {
+                $reduce: {
+                  in: { $add: ['$$value', '$$this.amount'] },
+                  initialValue: 0,
+                  input: '$payments',
+                },
+              },
+            },
           },
         },
         {
           $addFields: {
-            balance: { $subtract: ['$payments', '$dues'] },
+            balance: {
+              $subtract: ['$payments', '$dues'],
+            },
           },
         },
       ],

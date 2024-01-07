@@ -1,7 +1,6 @@
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
-import { CategoryEnum } from '@domain/categories/category.enum';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import {
   MovementCollection,
@@ -29,16 +28,9 @@ export class MovementRepository
 
     const query: Mongo.Query<Movement> = {
       _id: { $ne: id },
-      category: {
-        $in: [
-          CategoryEnum.GuestIncome,
-          CategoryEnum.MembershipIncome,
-          CategoryEnum.ElectricityIncome,
-        ],
-      },
+      category: movement.category,
       date: { $gt: movement.date },
       isDeleted: false,
-      memberId: movement.memberId,
     };
 
     return (

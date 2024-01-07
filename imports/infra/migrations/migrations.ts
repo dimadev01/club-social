@@ -930,48 +930,26 @@ Migrations.add({
 
     await MovementCollection.createIndexAsync({ memberId: 1 });
 
+    await RoleService.update();
+
+    await DueCollection.createIndexAsync({
+      date: -1,
+      'member._id': 1,
+      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
+      category: 1,
+    });
+
+    await DueCollection.createIndexAsync({
+      'member._id': 1,
+      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
+      date: -1,
+      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
+      category: 1,
+    });
+
     next();
   }),
   version: 12,
-});
-
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await RoleService.update();
-
-    next();
-  }),
-  version: 13,
-});
-
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await DueCollection.createIndexAsync({
-      date: -1,
-      'member._id': 1,
-      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
-      category: 1,
-    });
-
-    await DueCollection.createIndexAsync({
-      'member._id': 1,
-      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
-      date: -1,
-      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
-      category: 1,
-    });
-
-    next();
-  }),
-  version: 14,
 });
 
 // @ts-expect-error
@@ -994,7 +972,6 @@ Migrations.add({
     ).map((member) => plainToInstance(Member, member));
 
     await MovementCollection.find({
-      isDeleted: false,
       type: CategoryTypeEnum.Debt,
     }).forEachAsync(async (movement) => {
       try {
@@ -1214,8 +1191,6 @@ Migrations.add({
     }
 
     next();
-
-    console.log('done');
   }),
-  version: 15,
+  version: 13,
 });

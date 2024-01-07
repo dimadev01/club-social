@@ -95,8 +95,6 @@ export const DuesPage = () => {
 
   const restoreDue = useRestoreDue(refetch);
 
-  // const { data: categories } = useCategories();
-
   const user = Meteor.user();
 
   if (!user) {
@@ -266,8 +264,8 @@ export const DuesPage = () => {
                     return (
                       <Tooltip
                         title={due.payments.map((d) => (
-                          <span className="block">
-                            {d.paidAt} {d.amount}
+                          <span key={d.paidAt} className="block">
+                            {d.paidAt}
                           </span>
                         ))}
                       >

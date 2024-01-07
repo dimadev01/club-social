@@ -133,7 +133,6 @@ export const MovementsPage = () => {
           </div>
         </AntTable.Summary.Cell>
         <AntTable.Summary.Cell index={4} />
-        <AntTable.Summary.Cell index={5} />
       </AntTable.Summary.Row>
     </AntTable.Summary>
   );

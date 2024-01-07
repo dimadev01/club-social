@@ -20,9 +20,11 @@ export enum MethodsEnum {
   MembersDelete = 'members/delete',
   MembersGet = 'members/get',
   MembersGetAll = 'members/getAll',
+  MembersGetDuesGrid = 'members/getDuesGrid',
   MembersGetForCsv = 'members/getForCsv',
   MembersGetGrid = 'members/getGrid',
   MembersGetMovementsGrid = 'movements/getMovementsGrid',
+  MembersGetPaymentsGrid = 'members/getPaymentsGrid',
   MembersUpdate = 'members/update',
 
   MovementsCreate = 'movements/create',

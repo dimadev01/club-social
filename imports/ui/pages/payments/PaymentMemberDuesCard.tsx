@@ -157,8 +157,6 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({
                 (d) => d.dueId === due._id
               );
 
-              console.log(dueInForm);
-
               if (!dueInForm) {
                 return null;
               }

@@ -2,7 +2,6 @@ import {
   IsArray,
   IsBoolean,
   IsDateString,
-  IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -24,8 +23,4 @@ export class GetDuesGridRequestDto extends PaginatedRequestDto {
   @IsBoolean()
   @IsOptional()
   public showDeleted: boolean | null;
-
-  @IsNotEmpty()
-  @IsString()
-  public sortField: 'createdAt';
 }

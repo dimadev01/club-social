@@ -7,7 +7,7 @@ export type FindPaginatedDuesRequest = FindPaginatedRequest & {
   from: string | null;
   memberIds: string[];
   showDeleted: boolean | null;
-  sortField: 'createdAt';
+  sortField: string;
   to: string | null;
 };
 

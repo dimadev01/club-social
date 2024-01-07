@@ -50,11 +50,23 @@ export const StaffRole = {
     PermissionEnum.Create,
     PermissionEnum.Update,
   ],
+  [ScopeEnum.Dues]: [
+    PermissionEnum.Read,
+    PermissionEnum.Create,
+    PermissionEnum.Update,
+  ],
+  [ScopeEnum.Payments]: [
+    PermissionEnum.Read,
+    PermissionEnum.Create,
+    PermissionEnum.Update,
+  ],
   [ScopeEnum.Users]: [PermissionEnum.Create, PermissionEnum.Update],
 };
 
 export const MemberRole = {
   [ScopeEnum.Movements]: [PermissionEnum.Read],
+  [ScopeEnum.Dues]: [PermissionEnum.Read],
+  [ScopeEnum.Payments]: [PermissionEnum.Read],
 };
 
 export const ViewerRole = {
