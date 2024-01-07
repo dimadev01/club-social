@@ -7,16 +7,16 @@ import {
 } from 'class-validator';
 
 export class UpdateUserRequestDto {
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   id: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   firstName: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   lastName: string;
 
   @IsArray()

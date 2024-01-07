@@ -7,6 +7,7 @@ import type {
   OptionalUnlessRequiredId,
 } from 'mongodb';
 import SimpleSchema from 'simpl-schema';
+import invariant from 'ts-invariant';
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
 import { ICrudPort } from '@application/ports/crud.port';
@@ -59,6 +60,8 @@ export abstract class MongoCrudRepository<T extends Entity>
 
       return result.insertedId;
     } catch (error) {
+      this._logger.info('createWithSession');
+
       this._logger.error(error);
 
       throw error;
@@ -154,11 +157,7 @@ export abstract class MongoCrudRepository<T extends Entity>
     session: ClientSession
   ): Promise<void> {
     try {
-      this.getSchema().validate(
-        this.getSchema().clean(
-          entity as Record<string | number | symbol, unknown>
-        )
-      );
+      this.getSchema().validate(entity);
 
       await this._collection
         .rawCollection()
@@ -205,6 +204,25 @@ export abstract class MongoCrudRepository<T extends Entity>
     return { [field]: { $options: 'i', $regex: search } };
   }
 
+  protected async getAggregationCount(
+    condition: boolean,
+    count: number
+  ): Promise<number> {
+    if (condition) {
+      return count;
+    }
+
+    return this.getCollection().rawCollection().estimatedDocumentCount();
+  }
+
+  protected async getCurrentUserOrThrow(): Promise<Meteor.User> {
+    const currentUser = await Meteor.userAsync();
+
+    invariant(currentUser, 'User not found');
+
+    return currentUser;
+  }
+
   protected getPaginatedPipelineQuery(request: FindPaginatedRequest) {
     return [
       {
@@ -224,9 +242,9 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   private async _getLoggedInUserName(): Promise<string> {
     try {
-      const currentUser = await Meteor.userAsync();
+      const currentUser = await this.getCurrentUserOrThrow();
 
-      return `${currentUser?.profile?.firstName} ${currentUser?.profile?.lastName}`;
+      return `${currentUser.profile?.firstName} ${currentUser.profile?.lastName}`;
     } catch (error) {
       return 'System';
     }

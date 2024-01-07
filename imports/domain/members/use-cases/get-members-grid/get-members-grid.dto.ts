@@ -9,17 +9,17 @@ export class MemberGridDto {
 
   public category: MemberCategoryEnum;
 
-  public electricityDebt: number;
+  public electricityBalance: number;
 
   public emails: Meteor.UserEmail[] | null;
 
-  public guestDebt: number;
+  public guestBalance: number;
 
-  public membershipDebt: number;
+  public membershipBalance: number;
 
   public name: string;
 
   public status: MemberStatusEnum;
 
-  public totalDebt: number;
+  public totalBalance: number;
 }

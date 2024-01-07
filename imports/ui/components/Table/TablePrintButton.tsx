@@ -19,7 +19,7 @@ export const TablePrintButton: React.FC<Props> = ({
     disabled={isDisabled}
     tooltip={{ title: 'Imprimir' }}
     htmlType="button"
-    type="ghost"
+    type="text"
     icon={<PrinterOutlined />}
   />
 );

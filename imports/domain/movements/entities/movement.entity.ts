@@ -1,5 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { err, ok, Result } from 'neverthrow';
 import {
   CategoryEnum,
@@ -11,6 +19,7 @@ import { Member } from '@domain/members/entities/member.entity';
 import { CreateMovement } from '@domain/movements/movement.types';
 import { Professor } from '@domain/professors/professor.entity';
 import { Service } from '@domain/services/service.entity';
+import { IsNullable } from '@shared/class-validator/is-nullable';
 import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
@@ -63,6 +72,14 @@ export class Movement extends Entity {
   @IsEnum(CategoryTypeEnum)
   public type: CategoryTypeEnum;
 
+  @IsBoolean()
+  public isMigrated: boolean;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsNullable()
+  public paymentId: string | null;
+
   public constructor() {
     super();
   }
@@ -95,12 +112,6 @@ export class Movement extends Entity {
     }
 
     return ok(movement);
-  }
-
-  public restore(): Result<null, Error> {
-    this.isDeleted = false;
-
-    return ok(null);
   }
 
   public setAmount(amount: number): Result<null, Error> {

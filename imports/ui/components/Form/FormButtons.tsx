@@ -6,18 +6,24 @@ import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
 import { FormSaveButton } from '@ui/components/Form/FormSaveButton';
 
 type Props = {
-  isDisabled?: boolean;
+  isBackDisabled?: boolean;
+  isDeleteDisabled?: boolean;
   isLoading?: boolean;
+  isSaveDisabled?: boolean;
   onClickDelete?: () => void;
   scope: ScopeEnum;
+  showBackButton?: boolean;
   showDeleteButton?: boolean;
 };
 
 export const FormButtons: React.FC<Props> = ({
   isLoading = false,
   showDeleteButton = false,
-  isDisabled = false,
   onClickDelete,
+  isBackDisabled,
+  isDeleteDisabled,
+  isSaveDisabled,
+  showBackButton = true,
   scope,
 }) => {
   const renderDeleteButton = () => {
@@ -42,7 +48,7 @@ export const FormButtons: React.FC<Props> = ({
             onClickDelete();
           }
         }}
-        disabled={isLoading || isDisabled}
+        disabled={isLoading || isDeleteDisabled}
       />
     );
   };
@@ -61,15 +67,22 @@ export const FormButtons: React.FC<Props> = ({
       return false;
     }
 
-    return <FormSaveButton loading={isLoading} disabled={isDisabled} />;
+    return <FormSaveButton loading={isLoading} disabled={isSaveDisabled} />;
+  };
+
+  const renderBackButton = () => {
+    if (!showBackButton) {
+      return false;
+    }
+
+    return <FormBackButton disabled={isLoading || isBackDisabled} />;
   };
 
   return (
     <div className="flex justify-between">
       <Button.Group>
         {renderSaveButton()}
-
-        <FormBackButton disabled={isLoading || isDisabled} />
+        {renderBackButton()}
       </Button.Group>
 
       {renderDeleteButton()}

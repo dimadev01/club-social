@@ -5,24 +5,44 @@ export enum MethodsEnum {
   CategoriesGetOne = 'categories/getOne',
   CategoriesUpdate = 'categories/update',
 
+  DuesCreate = 'dues/create',
+  DuesDelete = 'dues/delete',
+  DuesGet = 'dues/get',
+  DuesGetGrid = 'dues/getGrid',
+  DuesGetPaid = 'dues/getPaid',
+  DuesGetPending = 'dues/getPending',
+  DuesRestore = 'dues/restore',
+  DuesUpdate = 'dues/update',
+
   EmployeesGetAll = 'employees/getAll',
 
   MembersCreate = 'members/create',
-
   MembersDelete = 'members/delete',
   MembersGet = 'members/get',
   MembersGetAll = 'members/getAll',
+  MembersGetDuesGrid = 'members/getDuesGrid',
   MembersGetForCsv = 'members/getForCsv',
   MembersGetGrid = 'members/getGrid',
   MembersGetMovementsGrid = 'movements/getMovementsGrid',
+  MembersGetPaymentsGrid = 'members/getPaymentsGrid',
   MembersUpdate = 'members/update',
 
   MovementsCreate = 'movements/create',
   MovementsDelete = 'movements/delete',
   MovementsGet = 'movements/get',
   MovementsGetGrid = 'movements/getGrid',
+  MovementsGetNextToMigrate = 'movements/getNextToMigrate',
+  MovementsMigrate = 'movements/migrate',
   MovementsRestore = 'movements/restore',
   MovementsUpdate = 'movements/update',
+
+  PaymentsCreate = 'payments/create',
+  PaymentsDelete = 'payments/delete',
+  PaymentsGet = 'payments/get',
+  PaymentsGetGrid = 'payments/getGrid',
+  PaymentsGetPaid = 'payments/getPaid',
+  PaymentsRestore = 'payments/restore',
+  PaymentsUpdate = 'payment/update',
 
   ProfessorsGetAll = 'professors/getAll',
 

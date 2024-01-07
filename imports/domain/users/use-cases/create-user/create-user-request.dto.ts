@@ -9,12 +9,12 @@ import {
 import { RoleEnum } from '@domain/roles/role.enum';
 
 export class CreateUserRequestDto {
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   firstName: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   lastName: string;
 
   @IsString({ each: true })

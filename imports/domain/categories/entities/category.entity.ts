@@ -21,8 +21,8 @@ export class Category extends Entity {
   @IsEnum(CategoryEnum)
   public code: CategoryEnum;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   public name: string;
 
   @IsEnum(CategoryTypeEnum)

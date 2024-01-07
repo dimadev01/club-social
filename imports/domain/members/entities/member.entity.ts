@@ -50,9 +50,9 @@ export class Member extends Entity {
   public nationality: MemberNationalityEnum | null;
 
   @IsString({ each: true })
-  @IsOptional()
-  @IsArray()
   @ArrayMinSize(1)
+  @IsArray()
+  @IsOptional()
   public phones: string[] | null;
 
   @IsEnum(MemberSexEnum)

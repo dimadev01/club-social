@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class GetMovementRequestDto {
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   id: string;
 }

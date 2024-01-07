@@ -67,6 +67,9 @@ export const CategoryTypeLabel = {
 
 export const getCategoryTypeOptions = () =>
   Object.values(CategoryTypeEnum)
+    .filter((category) =>
+      [CategoryTypeEnum.Expense, CategoryTypeEnum.Income].includes(category)
+    )
     .map((category) => ({
       label: CategoryTypeLabel[category],
       value: category,
@@ -104,6 +107,14 @@ export const CategoryTypeFilters = {
 
 export const getCategoryOptions = (categoryType: CategoryTypeEnum) =>
   CategoryTypeFilters[categoryType]
+    .filter(
+      (category) =>
+        ![
+          CategoryEnum.MembershipIncome,
+          CategoryEnum.GuestIncome,
+          CategoryEnum.ElectricityIncome,
+        ].includes(category)
+    )
     .map((category) => ({
       label: CategoryLabel[category],
       value: category,

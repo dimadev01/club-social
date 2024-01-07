@@ -1,12 +1,14 @@
 import React, { useRef, useState } from 'react';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
-import dayjs from 'dayjs';
-import qs from 'qs';
 import CsvDownloader from 'react-csv-downloader';
 import { Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
-import { FileExcelOutlined, FileSearchOutlined } from '@ant-design/icons';
+import {
+  CreditCardOutlined,
+  FileExcelOutlined,
+  FileSearchOutlined,
+} from '@ant-design/icons';
 import {
   getMemberCategoryFilters,
   getMemberStatusFilters,
@@ -20,7 +22,8 @@ import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { MoneyUtils } from '@shared/utils/currency.utils';
-import { DateFormatEnum } from '@shared/utils/date.utils';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { Table } from '@ui/components/Table/Table';
@@ -109,22 +112,22 @@ export const MembersPage = () => {
                 },
                 {
                   displayName: 'Deuda de luz',
-                  id: 'electricityDebt',
+                  id: 'electricityBalance',
                 },
                 {
                   displayName: 'Deuda de invitado',
-                  id: 'guestDebt',
+                  id: 'guestBalance',
                 },
                 {
                   displayName: 'Deuda de cuota',
-                  id: 'membershipDebt',
+                  id: 'membershipBalance',
                 },
                 {
                   displayName: 'Deuda total',
-                  id: 'totalDebt',
+                  id: 'totalBalance',
                 },
               ]}
-              filename={`${dayjs().format(DateFormatEnum.DateTime)}`}
+              filename={DateUtils.c().format(DateFormatEnum.DateTime)}
               datas={async () => {
                 setIsExportingToCsv(true);
 
@@ -143,7 +146,7 @@ export const MembersPage = () => {
                 disabled={isExportingToCsv}
                 tooltip={{ title: 'Descargar CSV' }}
                 htmlType="button"
-                type="ghost"
+                type="text"
                 icon={<FileExcelOutlined />}
               />
             </CsvDownloader>
@@ -164,11 +167,11 @@ export const MembersPage = () => {
           loading={isLoading}
           dataSource={data?.data}
           rowClassName={(member) => {
-            if (member.totalDebt < 0) {
+            if (member.totalBalance < 0) {
               return 'bg-red-50';
             }
 
-            if (member.totalDebt > 0) {
+            if (member.totalBalance > 0) {
               return 'bg-green-50';
             }
 
@@ -232,47 +235,49 @@ export const MembersPage = () => {
             },
             {
               align: 'right',
-              dataIndex: 'electricityDebt',
+              dataIndex: 'electricityBalance',
               defaultSortOrder:
-                gridState.sortField === 'electricityDebt'
+                gridState.sortField === 'electricityBalance'
                   ? gridState.sortOrder
                   : undefined,
-              render: (electricityDebt: number) =>
-                MoneyUtils.formatCents(electricityDebt),
+              render: (electricityBalance: number) =>
+                MoneyUtils.formatCents(electricityBalance),
               sorter: true,
               title: 'Saldo luz',
             },
             {
               align: 'right',
-              dataIndex: 'guestDebt',
+              dataIndex: 'guestBalance',
               defaultSortOrder:
-                gridState.sortField === 'guestDebt'
+                gridState.sortField === 'guestBalance'
                   ? gridState.sortOrder
                   : undefined,
-              render: (guestDebt: number) => MoneyUtils.formatCents(guestDebt),
+              render: (guestBalance: number) =>
+                MoneyUtils.formatCents(guestBalance),
               sorter: true,
               title: 'Saldo invitado',
             },
             {
               align: 'right',
-              dataIndex: 'membershipDebt',
+              dataIndex: 'membershipBalance',
               defaultSortOrder:
-                gridState.sortField === 'membershipDebt'
+                gridState.sortField === 'membershipBalance'
                   ? gridState.sortOrder
                   : undefined,
-              render: (membershipDebt: number) =>
-                MoneyUtils.formatCents(membershipDebt),
+              render: (membershipBalance: number) =>
+                MoneyUtils.formatCents(membershipBalance),
               sorter: true,
               title: 'Saldo cuota',
             },
             {
               align: 'right',
-              dataIndex: 'totalDebt',
+              dataIndex: 'totalBalance',
               defaultSortOrder:
-                gridState.sortField === 'totalDebt'
+                gridState.sortField === 'totalBalance'
                   ? gridState.sortOrder
                   : undefined,
-              render: (totalDebt: number) => MoneyUtils.formatCents(totalDebt),
+              render: (totalBalance: number) =>
+                MoneyUtils.formatCents(totalBalance),
               sorter: true,
               title: 'Saldo Total',
             },
@@ -281,16 +286,28 @@ export const MembersPage = () => {
               render: (_, member: MemberGridDto) => (
                 <ButtonGroup size="small">
                   <Button
-                    type="ghost"
+                    type="text"
                     icon={<FileSearchOutlined />}
                     onClick={() =>
                       navigate(
-                        `${AppUrl.Movements}?${qs.stringify({
+                        UrlUtils.navigate(AppUrl.Dues, {
                           memberIds: [member._id],
-                        })}`
+                        })
                       )
                     }
-                    tooltip={{ title: 'Ver movimientos' }}
+                    tooltip={{ title: 'Ver cobros' }}
+                  />
+                  <Button
+                    type="text"
+                    icon={<CreditCardOutlined />}
+                    onClick={() =>
+                      navigate(
+                        UrlUtils.navigate(AppUrl.Payments, {
+                          memberIds: [member._id],
+                        })
+                      )
+                    }
+                    tooltip={{ title: 'Ver Pagos' }}
                   />
                 </ButtonGroup>
               ),

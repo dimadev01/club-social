@@ -2,6 +2,10 @@
 export enum AppUrl {
   Home = '/',
 
+  Dues = '/dues',
+  DuesDetail = '/dues/:id',
+  DuesNew = '/dues/new',
+
   Enroll = '/enroll-account/:token',
   Login = '/login',
   LoginPasswordless = '/login/passwordless/:email',
@@ -14,7 +18,12 @@ export enum AppUrl {
 
   Movements = '/movements',
   MovementsDetail = '/movements/:id',
+  MovementsMigrate = '/movements/:id/migrate',
   MovementsNew = '/movements/new',
+
+  Payments = '/payments',
+  PaymentsDetail = '/payments/:id',
+  PaymentsNew = '/payments/new',
 
   Professors = '/professors',
 

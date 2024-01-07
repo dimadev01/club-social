@@ -1,5 +1,4 @@
 import { plainToInstance } from 'class-transformer';
-import dayjs from 'dayjs';
 import find from 'lodash/find';
 import { Mongo } from 'meteor/mongo';
 import { ok, Result } from 'neverthrow';
@@ -15,6 +14,7 @@ import { GetMemberMovementsGridResponseDto } from '@domain/members/use-cases/get
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { MovementCollection } from '@domain/movements/movement.collection';
 import { UseCase } from '@infra/use-cases/use-case';
+import { DateUtils } from '@shared/utils/date.utils';
 
 @injectable()
 export class GetMemberMovementsUseCase
@@ -35,8 +35,8 @@ export class GetMemberMovementsUseCase
 
     if (request.from && request.to) {
       $match.date = {
-        $gte: dayjs.utc(request.from).startOf('day').toDate(),
-        $lte: dayjs.utc(request.to).endOf('day').toDate(),
+        $gte: DateUtils.utc(request.from).startOf('day').toDate(),
+        $lte: DateUtils.utc(request.to).endOf('day').toDate(),
       };
     }
 
