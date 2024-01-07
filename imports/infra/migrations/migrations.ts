@@ -1194,3 +1194,16 @@ Migrations.add({
   }),
   version: 13,
 });
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await RoleService.update();
+
+    next();
+  }),
+  version: 14,
+});
