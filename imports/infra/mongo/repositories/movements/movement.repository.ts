@@ -29,7 +29,7 @@ export class MovementRepository
     const query: Mongo.Query<Movement> = {
       _id: { $ne: id },
       category: movement.category,
-      date: { $gt: movement.date },
+      date: { $gte: movement.date },
       isDeleted: false,
     };
 
