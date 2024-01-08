@@ -100,7 +100,6 @@ export const PaymentMemberDuesCard: React.FC<Props> = ({
     <>
       <Table
         rowSelection={{
-          getCheckboxProps: () => ({ disabled: dues.length === 1 }),
           onChange: (rowKeys) => {
             form.setFieldValue(
               ['dues', memberIndex, 'dues'],
