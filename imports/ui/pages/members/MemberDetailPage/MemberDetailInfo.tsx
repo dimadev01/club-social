@@ -100,7 +100,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         addressZipCode: values.address.zipCode ?? null,
         category: values.category,
         dateOfBirth: values.dateOfBirth
-          ? DateUtils.format(values.dateOfBirth)
+          ? DateUtils.format(values.dateOfBirth, DateFormatEnum.Date)
           : null,
         documentID: values.documentID ?? null,
         emails: compact(values.emails).length > 0 ? values.emails : null,
