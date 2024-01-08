@@ -319,7 +319,7 @@ export const DueDetailPage = () => {
                 disabled={isFormDisabled()}
                 format={
                   category === DueCategoryEnum.Membership
-                    ? DateFormatEnum.MMMM
+                    ? DateFormatEnum.MMMM_YYYY
                     : DateFormatEnum.DDMMYYYY
                 }
                 className="w-full"

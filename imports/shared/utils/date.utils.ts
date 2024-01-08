@@ -8,7 +8,7 @@ export enum DateFormatEnum {
   Date = 'YYYY-MM-DD',
   DateTime = 'YYYY-MM-DD HH:mm:ss',
   Iso = 'YYYY-MM-DDTHH:mm:ss.SSSZ',
-  MMMM = 'MMMM',
+  MMMM_YYYY = 'MMMM YYYY',
   Time = 'HH:mm:ss',
 }
 

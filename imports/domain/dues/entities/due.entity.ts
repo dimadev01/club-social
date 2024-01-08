@@ -63,7 +63,7 @@ export class Due extends Entity {
 
   public get membershipMonth(): string {
     if (this.category === DueCategoryEnum.Membership) {
-      return DateUtils.formatUtc(this.date, DateFormatEnum.MMMM);
+      return DateUtils.formatUtc(this.date, DateFormatEnum.MMMM_YYYY);
     }
 
     return '-';
