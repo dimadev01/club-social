@@ -157,7 +157,11 @@ export abstract class MongoCrudRepository<T extends Entity>
     session: ClientSession
   ): Promise<void> {
     try {
-      this.getSchema().validate(entity);
+      this.getSchema().validate(
+        this.getSchema().clean(
+          entity as Record<string | number | symbol, unknown>
+        )
+      );
 
       await this._collection
         .rawCollection()

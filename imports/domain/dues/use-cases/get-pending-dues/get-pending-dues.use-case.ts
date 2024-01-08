@@ -39,7 +39,7 @@ export class GetPendingDuesUseCase
         memberName: due.member.name,
         membershipMonth:
           due.category === DueCategoryEnum.Membership
-            ? DateUtils.formatUtc(due.date, DateFormatEnum.MMMM)
+            ? DateUtils.formatUtc(due.date, DateFormatEnum.MMMM_YYYY)
             : '',
         status: due.status,
       }))
