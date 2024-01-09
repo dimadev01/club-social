@@ -7,7 +7,6 @@ import { EntityNotFoundError } from '@application/errors/entity-not-found.error'
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
 import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
-import { CategoryEnum } from '@domain/categories/category.enum';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { Member } from '@domain/members/entities/member.entity';
 import {
@@ -241,149 +240,6 @@ export class MemberRepository
     };
   }
 
-  public async findPaginatedOld(
-    request: FindPaginatedMembersRequest
-  ): Promise<FindPaginatedResponse<FindPaginatedMember>> {
-    const query: Mongo.Query<Member> = {
-      isDeleted: false,
-    };
-
-    if (request.filters.status?.length) {
-      query.status = { $in: request.filters.status as MemberStatusEnum[] };
-    }
-
-    if (request.filters.category?.length) {
-      query.category = {
-        $in: request.filters.category as MemberCategoryEnum[],
-      };
-    }
-
-    if (request.sortField === 'name') {
-      request.sortField = 'user.profile.lastName';
-    }
-
-    const $userLookupPipeline: Mongo.Query<Meteor.User> = [];
-
-    if (request.search) {
-      $userLookupPipeline.push({
-        $match: {
-          $or: [
-            this.createSearchMatch('profile.firstName', request.search.trim()),
-            this.createSearchMatch('profile.lastName', request.search.trim()),
-            this.createSearchMatch('emails.address', request.search.trim()),
-          ],
-        },
-      });
-    }
-
-    const facetData: Document[] = [];
-
-    if (request.sortField === 'user.profile.lastName') {
-      if (request.findForCsv) {
-        facetData.push({
-          $sort: {
-            [request.sortField]: this._getSorterValue(request.sortOrder),
-          },
-        });
-      } else {
-        facetData.push(...this.getPaginatedPipelineQuery(request));
-      }
-    }
-
-    facetData.push(
-      {
-        $lookup: {
-          as: 'movements',
-          foreignField: 'memberId',
-          from: 'movements',
-          localField: '_id',
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $eq: ['$isDeleted', false],
-                },
-              },
-            },
-          ],
-        },
-      },
-      {
-        $addFields: {
-          electricityDebt: this._getCategoryBalance(
-            CategoryEnum.ElectricityIncome,
-            CategoryEnum.ElectricityDebt
-          ),
-          guestDebt: this._getCategoryBalance(
-            CategoryEnum.GuestIncome,
-            CategoryEnum.GuestDebt
-          ),
-          membershipDebt: this._getCategoryBalance(
-            CategoryEnum.MembershipIncome,
-            CategoryEnum.MembershipDebt
-          ),
-        },
-      },
-      {
-        $addFields: {
-          totalDebt: {
-            $sum: ['$electricityDebt', '$guestDebt', '$membershipDebt'],
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          category: 1,
-          electricityDebt: 1,
-          guestDebt: 1,
-          membershipDebt: 1,
-          phones: 1,
-          status: 1,
-          totalDebt: 1,
-          user: 1,
-        },
-      }
-    );
-
-    if (request.sortField !== 'user.profile.lastName') {
-      if (request.findForCsv) {
-        facetData.push({
-          $sort: {
-            [request.sortField]: this._getSorterValue(request.sortOrder),
-          },
-        });
-      } else {
-        facetData.push(...this.getPaginatedPipelineQuery(request));
-      }
-    }
-
-    const [{ data, count }] = await this.getCollection()
-      .rawCollection()
-      .aggregate<FindPaginatedAggregationResult<FindPaginatedMember>>([
-        { $match: query },
-        ...this._userLookup($userLookupPipeline),
-        {
-          $facet: {
-            data: facetData,
-            total: [{ $count: 'count' }],
-          },
-        },
-        {
-          $project: {
-            count: MongoUtils.elementAtArray0('$total.count', 0),
-            data: 1,
-          },
-        },
-      ])
-      .toArray();
-
-    return {
-      count,
-      data,
-    };
-  }
-
   public async getLoggedInOrThrow(): Promise<Member> {
     const currentUser = await this.getCurrentUserOrThrow();
 
@@ -396,38 +252,6 @@ export class MemberRepository
 
   protected getSchema(): SimpleSchema {
     return MemberSchema;
-  }
-
-  private _getCategoryBalance(
-    categoryIncome: CategoryEnum,
-    categoryDebt: CategoryEnum
-  ) {
-    const createReduce = (category: CategoryEnum) => ({
-      $reduce: {
-        in: {
-          $add: [
-            '$$value',
-            {
-              $sum: {
-                $cond: [
-                  {
-                    $eq: ['$$this.category', category],
-                  },
-                  '$$this.amount',
-                  0,
-                ],
-              },
-            },
-          ],
-        },
-        initialValue: 0,
-        input: '$movements',
-      },
-    });
-
-    return {
-      $subtract: [createReduce(categoryIncome), createReduce(categoryDebt)],
-    };
   }
 
   private _getTotalBalanceByCategory(category: DueCategoryEnum) {

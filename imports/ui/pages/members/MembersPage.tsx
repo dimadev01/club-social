@@ -112,19 +112,19 @@ export const MembersPage = () => {
                 },
                 {
                   displayName: 'Deuda de luz',
-                  id: 'electricityBalance',
+                  id: 'electricityDebt',
                 },
                 {
                   displayName: 'Deuda de invitado',
-                  id: 'guestBalance',
+                  id: 'guestDebt',
                 },
                 {
                   displayName: 'Deuda de cuota',
-                  id: 'membershipBalance',
+                  id: 'membershipDebt',
                 },
                 {
                   displayName: 'Deuda total',
-                  id: 'totalBalance',
+                  id: 'totalDebt',
                 },
               ]}
               filename={DateUtils.c().format(DateFormatEnum.DateTime)}
