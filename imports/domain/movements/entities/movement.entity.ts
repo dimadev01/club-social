@@ -73,7 +73,8 @@ export class Movement extends Entity {
   public type: CategoryTypeEnum;
 
   @IsBoolean()
-  public isMigrated: boolean;
+  @IsOptional()
+  public isMigrated: boolean | null;
 
   @IsNotEmpty()
   @IsString()
@@ -106,6 +107,8 @@ export class Movement extends Entity {
       movement.setServiceId(props.serviceId),
       movement.setType(props.type),
     ]);
+
+    movement.isMigrated = null;
 
     if (updateResult.isErr()) {
       return err(updateResult.error);
