@@ -118,7 +118,7 @@ export const MovementDetailPage = () => {
         {
           amount: MoneyUtils.toCents(values.amount),
           category: values.category,
-          date: DateUtils.format(values.date),
+          date: DateUtils.format(values.date, DateFormatEnum.Date),
           employeeId: values.employeeId ?? null,
           memberIds: values.memberIds ?? null,
           notes: values.notes,
@@ -136,7 +136,7 @@ export const MovementDetailPage = () => {
       await updateMovement.mutateAsync(
         {
           amount: MoneyUtils.toCents(values.amount),
-          date: DateUtils.format(values.date),
+          date: DateUtils.format(values.date, DateFormatEnum.Date),
           employeeId: values.employeeId ?? null,
           id: movement._id,
           memberId: values.memberId ?? null,
