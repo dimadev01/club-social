@@ -110,6 +110,8 @@ export class Movement extends Entity {
 
     movement.isMigrated = null;
 
+    movement.paymentId = null;
+
     if (updateResult.isErr()) {
       return err(updateResult.error);
     }
