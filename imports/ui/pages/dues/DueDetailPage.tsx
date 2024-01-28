@@ -85,9 +85,9 @@ export const DueDetailPage = () => {
     let date: string;
 
     if (values.category === DueCategoryEnum.Membership) {
-      date = values.date.utc().startOf('month').format(DateFormatEnum.Date);
+      date = values.date.startOf('month').format(DateFormatEnum.Date);
     } else {
-      date = values.date.utc().startOf('day').format(DateFormatEnum.Date);
+      date = values.date.startOf('day').format(DateFormatEnum.Date);
     }
 
     if (!due) {
