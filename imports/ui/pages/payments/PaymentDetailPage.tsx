@@ -356,7 +356,7 @@ export const PaymentDetailPage = () => {
                 updateDue.isLoading ||
                 deletePayment.isLoading
               }
-              showDeleteButton
+              showDeleteButton={!!payment}
               onClickDelete={() => {
                 if (payment) {
                   deletePayment.mutate({ id: payment._id });
