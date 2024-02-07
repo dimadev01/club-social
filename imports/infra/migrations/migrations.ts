@@ -890,7 +890,7 @@ import { DateUtils } from '@shared/utils/date.utils';
 //   version: 11,
 // });
 
-// @ts-expect-error
+// // @ts-expect-error
 // Migrations.add({
 //   down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
 //     next();
