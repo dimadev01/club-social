@@ -129,6 +129,8 @@ export const MovementDetailPage = () => {
         {
           onSuccess: () => {
             message.success('Movimiento creado');
+
+            navigate(-1);
           },
         }
       );
