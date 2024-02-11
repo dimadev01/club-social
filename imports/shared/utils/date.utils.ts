@@ -1,3 +1,4 @@
+import 'dayjs/locale/es';
 import dayjs, { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import localeData from 'dayjs/plugin/localeData';
