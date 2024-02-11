@@ -28,6 +28,8 @@ export abstract class DateUtils {
     dayjs.extend(localeData);
 
     dayjs.extend(customParseFormat);
+
+    dayjs.locale('es');
   }
 
   public static format(
