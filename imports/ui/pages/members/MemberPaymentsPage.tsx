@@ -11,9 +11,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
-import { Navigate, NavLink, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { MemberPaymentDueGridDto } from '@domain/members/use-cases/get-member-payments-grid/member-payment-due-grid.dto';
 import { MemberPaymentGridDto } from '@domain/members/use-cases/get-member-payments-grid/member-payment-grid.dto';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -72,9 +71,7 @@ export const MemberPaymentsPage = () => {
       columns={[
         {
           dataIndex: 'dueDate',
-          render: (dueDate: string, due: MemberPaymentDueGridDto) => (
-            <NavLink to={`${AppUrl.Dues}/${due.dueId}`}>{dueDate}</NavLink>
-          ),
+          render: (dueDate: string) => dueDate,
           title: 'Fecha',
           width: 150,
         },
@@ -160,11 +157,7 @@ export const MemberPaymentsPage = () => {
                   gridState.sortField === 'date'
                     ? gridState.sortOrder
                     : undefined,
-                render: (date: string, payment: MemberPaymentGridDto) => (
-                  <NavLink to={`${AppUrl.Payments}/${payment._id}`}>
-                    {date}
-                  </NavLink>
-                ),
+                render: (date: string) => date,
                 sorter: true,
                 title: 'Fecha',
                 width: 150,

@@ -11,7 +11,7 @@ import {
 import dayjs, { Dayjs } from 'dayjs';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import invariant from 'ts-invariant';
 import {
   DueCategoryEnum,
@@ -24,7 +24,6 @@ import {
 } from '@domain/dues/due.enum';
 import { MemberDueGridDto } from '@domain/members/use-cases/get-member-dues-grid/member-due-grid.dto';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
-import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
 import { useMemberDuesGrid } from '@ui/hooks/members/useMemberDuesGrid';
 import { useGrid } from '@ui/hooks/useGrid';
@@ -105,9 +104,7 @@ export const MemberDuesPage = () => {
                 gridState.sortField === 'date'
                   ? gridState.sortOrder
                   : undefined,
-              render: (date: string, due: MemberDueGridDto) => (
-                <NavLink to={`${AppUrl.Dues}/${due._id}`}>{date}</NavLink>
-              ),
+              render: (date: string) => date,
               sorter: true,
               title: 'Fecha',
             },
