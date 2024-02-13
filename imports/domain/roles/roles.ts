@@ -64,7 +64,6 @@ export const StaffRole = {
 };
 
 export const MemberRole = {
-  [ScopeEnum.Movements]: [PermissionEnum.Read],
   [ScopeEnum.Dues]: [PermissionEnum.Read],
   [ScopeEnum.Payments]: [PermissionEnum.Read],
 };
