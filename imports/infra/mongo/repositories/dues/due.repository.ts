@@ -165,6 +165,7 @@ export class DueRepository
 
   public findPending(request: FindPendingRequest): Promise<Due[]> {
     const query: Mongo.Query<Due> = {
+      isDeleted: false,
       'member._id': { $in: request.memberIds },
       status: { $in: [DueStatusEnum.Pending, DueStatusEnum.PartiallyPaid] },
     };
