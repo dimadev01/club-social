@@ -54,6 +54,8 @@ export abstract class MongoCrudRepository<T extends Entity>
         )
       );
 
+      entity.create(await this._getLoggedInUserName());
+
       const result = await this._collection
         .rawCollection()
         .insertOne(entity, { session });
@@ -162,6 +164,8 @@ export abstract class MongoCrudRepository<T extends Entity>
           entity as Record<string | number | symbol, unknown>
         )
       );
+
+      entity.update(await this._getLoggedInUserName());
 
       await this._collection
         .rawCollection()
