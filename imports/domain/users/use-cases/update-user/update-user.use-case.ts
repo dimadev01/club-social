@@ -73,6 +73,7 @@ export class UpdateUserUseCase
       $set: {
         'profile.firstName': request.firstName.trim(),
         'profile.lastName': request.lastName.trim(),
+        state: request.state,
       },
     });
 

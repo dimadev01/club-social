@@ -26,6 +26,7 @@ Meteor.users.attachSchema(
       optional: true,
       type: Object,
     },
+    state: String,
     username: {
       defaultValue: null,
       optional: true,
