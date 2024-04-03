@@ -1,9 +1,10 @@
 import React from 'react';
-import { App, Breadcrumb, Card, Form, Input, Skeleton } from 'antd';
+import { App, Breadcrumb, Card, Checkbox, Form, Input, Skeleton } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import compact from 'lodash/compact';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import { RoleEnum } from '@domain/roles/role.enum';
+import { UserStateEnum } from '@domain/users/user.enum';
 import { AppUrl } from '@ui/app.enum';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
@@ -17,6 +18,7 @@ import { useUser } from '@ui/hooks/users/useUser';
 type FormValues = {
   emails: string[];
   firstName: string;
+  isActive: boolean;
   lastName: string;
   role: RoleEnum;
 };
@@ -52,6 +54,7 @@ export const UsersDetailPage = () => {
         firstName: values.firstName,
         id: user._id,
         lastName: values.lastName,
+        state: values.isActive ? UserStateEnum.ACTIVE : UserStateEnum.INACTIVE,
       });
 
       message.success('Usuario actualizado');
@@ -94,6 +97,8 @@ export const UsersDetailPage = () => {
                   ? user.emails.map((email) => email.address)
                   : [''],
               firstName: user?.profile?.firstName ?? '',
+              // @ts-ignore
+              isActive: user?.state === UserStateEnum.ACTIVE ?? true,
               lastName: user?.profile?.lastName ?? '',
               rol: user?.profile?.role ?? '',
             }}
@@ -132,6 +137,10 @@ export const UsersDetailPage = () => {
                 />
               </Form.Item>
             )}
+
+            <Form.Item name="isActive" label="Activo" valuePropName="checked">
+              <Checkbox />
+            </Form.Item>
 
             <ButtonGroup>
               <FormSaveButton
