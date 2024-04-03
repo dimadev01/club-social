@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { DueCollection } from '@domain/dues/due.collection';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { RoleService } from '@domain/roles/role.service';
+import { UserStateEnum } from '@domain/users/user.enum';
 import { DateUtils } from '@shared/utils/date.utils';
 
 // interface MemberRow {
@@ -1229,4 +1230,23 @@ Migrations.add({
     next();
   }),
   version: 16,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await Meteor.users.updateAsync(
+      {},
+      { $set: { state: UserStateEnum.ACTIVE } },
+      { multi: true }
+    );
+
+    console.log('');
+
+    next();
+  }),
+  version: 17,
 });

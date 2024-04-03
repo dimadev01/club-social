@@ -11,6 +11,7 @@ import { MovementMethod } from '@domain/movements/movement.methods';
 import { PaymentMethod } from '@domain/payments/payment.methods';
 import { ProfessorMethod } from '@domain/professors/professor.methods';
 import { ServiceMethod } from '@domain/services/service.methods';
+import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethod } from '@domain/users/user.methods';
 import { DIToken } from '@infra/di/di-tokens';
 import { CategoryMethod } from '@infra/meteor/category.methods';
@@ -48,6 +49,8 @@ export class ServerStartup {
 
     await this._createUsersIndexes();
 
+    this._configureValidateLoginAttempt();
+
     if (Meteor.isProduction) {
       this._logger.info('Server startup completed');
     }
@@ -81,6 +84,19 @@ export class ServerStartup {
       // @ts-expect-error
       return `Hola ${user.profile?.firstName} ${user.profile?.lastName}, activa tu cuenta: <a href="${urlWithoutHashtag}">${urlWithoutHashtag}</a>`;
     };
+  }
+
+  private _configureValidateLoginAttempt() {
+    Accounts.validateLoginAttempt(
+      (attempt: { user: Meteor.User & { isActive: boolean } }) => {
+        // @ts-ignore
+        if (attempt.user?.state === UserStateEnum.INACTIVE) {
+          return false;
+        }
+
+        return true;
+      }
+    );
   }
 
   private async _createUsersIndexes() {
