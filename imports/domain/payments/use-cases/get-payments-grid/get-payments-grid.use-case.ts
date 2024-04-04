@@ -47,6 +47,7 @@ export class GetPaymentsGridUseCase
           isDeleted: payment.isDeleted,
           memberId: payment.member._id,
           memberName: payment.member.name,
+          receiptNumber: payment.receiptNumber,
           totalAmount: payment.totalDuesPaidAmountFormatted,
         })
       ),

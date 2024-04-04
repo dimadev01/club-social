@@ -18,6 +18,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
 import { CreatePaymentResponseDto } from './create-payment-response.dto';
+import { ExistingPaymentError } from './errors/existing-payment.error';
 
 @injectable()
 export class CreatePaymentUseCase
@@ -43,6 +44,19 @@ export class CreatePaymentUseCase
     await this.validatePermission(ScopeEnum.Payments, PermissionEnum.Create);
 
     const session = MongoUtils.startSession();
+
+    const existingPaymentByReceipt =
+      await this._paymentPort.findOneByReceiptNumber({
+        receiptNumber: request.receiptNumber,
+      });
+
+    if (existingPaymentByReceipt) {
+      return err(
+        new ExistingPaymentError(
+          `Ya existe un pago con el comprobante número ${request.receiptNumber}`
+        )
+      );
+    }
 
     try {
       let payment: Payment | null = null;
@@ -106,6 +120,7 @@ export class CreatePaymentUseCase
               dues: paymentDues.value,
               member: paymentMember.value,
               notes: memberDue.notes,
+              receiptNumber: request.receiptNumber,
             });
 
             if (paymentResult.isErr()) {

@@ -15,5 +15,7 @@ export class PaymentGridDto {
 
   public memberId: string;
 
+  public receiptNumber: number | null;
+
   public memberName: string;
 }
