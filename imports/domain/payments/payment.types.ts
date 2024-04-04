@@ -8,6 +8,7 @@ export interface CreatePayment {
   dues: PaymentDue[];
   member: PaymentMember;
   notes: string | null;
+  receiptNumber: number;
 }
 
 export interface CreatePaymentDue {

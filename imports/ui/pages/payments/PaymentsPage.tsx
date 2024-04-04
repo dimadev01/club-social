@@ -274,6 +274,11 @@ export const PaymentsPage = () => {
                 title: 'Total',
               },
               {
+                align: 'right',
+                dataIndex: 'receiptNumber',
+                title: 'Comprobante Nro.',
+              },
+              {
                 align: 'center',
                 render: (_, payment: PaymentGridDto) => (
                   <ButtonGroup size="small">

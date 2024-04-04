@@ -5,6 +5,8 @@ import {
   IsDate,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
+  IsPositive,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -37,6 +39,11 @@ export class Payment extends Entity {
   @IsNullable()
   public notes: string | null;
 
+  @IsPositive()
+  @IsNumber()
+  @IsNullable()
+  public receiptNumber: number | null;
+
   @IsEnum(PaymentStatusEnum)
   public status: PaymentStatusEnum;
 
@@ -67,10 +74,11 @@ export class Payment extends Entity {
   public static create(props: CreatePayment): Result<Payment, Error> {
     const payment = new Payment();
 
-    const updateResult: Result<[null, null, null], Error> = Result.combine([
+    const updateResult = Result.combine([
       payment.setDate(DateUtils.utc(props.date).toDate()),
       payment.setNotes(props.notes),
       payment.setDues(props.dues),
+      payment.setReceiptNumber(props.receiptNumber),
     ]);
 
     if (updateResult.isErr()) {
@@ -98,6 +106,12 @@ export class Payment extends Entity {
 
   public setNotes(notes: string | null): Result<null, Error> {
     this.notes = notes;
+
+    return ok(null);
+  }
+
+  public setReceiptNumber(receiptNumber: number | null): Result<null, Error> {
+    this.receiptNumber = receiptNumber;
 
     return ok(null);
   }

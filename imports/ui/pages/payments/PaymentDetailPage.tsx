@@ -1,5 +1,14 @@
 import React, { useEffect } from 'react';
-import { App, Breadcrumb, Card, DatePicker, Form, List, Skeleton } from 'antd';
+import {
+  App,
+  Breadcrumb,
+  Card,
+  DatePicker,
+  Form,
+  InputNumber,
+  List,
+  Skeleton,
+} from 'antd';
 import { Rule } from 'antd/es/form';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
@@ -14,6 +23,7 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom';
+import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
@@ -47,6 +57,7 @@ type FormValues = {
   date: Dayjs;
   dues: FormDuesValue[];
   memberIds: string | string[];
+  receiptNumber: number;
 };
 
 export const PaymentDetailPage = () => {
@@ -164,7 +175,7 @@ export const PaymentDetailPage = () => {
 
   const handleSubmit = async (values: FormValues) => {
     if (!payment) {
-      const request = {
+      const request: CreatePaymentRequestDto = {
         date: values.date.format(DateFormatEnum.Date),
         memberDues: values.dues.map((formDuesValue) => ({
           dues:
@@ -177,6 +188,7 @@ export const PaymentDetailPage = () => {
           memberId: formDuesValue.memberId,
           notes: formDuesValue.notes,
         })),
+        receiptNumber: values.receiptNumber,
       };
 
       if (request.memberDues.some((d) => d.dues.length === 0)) {
@@ -281,6 +293,14 @@ export const PaymentDetailPage = () => {
                 className="w-full"
                 disabledDate={(current) => current.isAfter(dayjs())}
               />
+            </Form.Item>
+
+            <Form.Item
+              name="receiptNumber"
+              label="Comprobante Nro."
+              rules={[{ required: true }]}
+            >
+              <InputNumber min={1} />
             </Form.Item>
 
             <Form.Item
