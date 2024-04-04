@@ -15,6 +15,7 @@ import { DIToken } from '@infra/di/di-tokens';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
 import {
+  FindByReceiptNumber,
   FindPaginatedPaymentsAggregationResult,
   FindPaginatedPaymentsRequest,
   FindPaginatedPaymentsResponse,
@@ -32,6 +33,16 @@ export class PaymentRepository
     protected readonly _logger: ILogger
   ) {
     super(_logger);
+  }
+
+  public async findOneByReceiptNumber(
+    request: FindByReceiptNumber
+  ): Promise<Payment | null> {
+    return (
+      (await this.getCollection().findOneAsync({
+        receiptNumber: request.receiptNumber,
+      })) ?? null
+    );
   }
 
   public async findPaginated(

@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { DueCollection } from '@domain/dues/due.collection';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { PaymentCollection } from '@domain/payments/payment.collection';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { DateUtils } from '@shared/utils/date.utils';
@@ -1244,9 +1245,24 @@ Migrations.add({
       { multi: true }
     );
 
-    console.log('');
-
     next();
   }),
   version: 17,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await PaymentCollection.updateAsync(
+      {},
+      { $set: { receiptNumber: null } },
+      { multi: true }
+    );
+
+    next();
+  }),
+  version: 18,
 });
