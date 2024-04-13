@@ -209,7 +209,7 @@ export abstract class MongoCrudRepository<T extends Entity>
   }
 
   protected createSearchMatch(field: string, search: string) {
-    return { [field]: { $options: 'i', $regex: search } };
+    return { [field]: { $options: 'i', $regex: search.trim() } };
   }
 
   protected async getAggregationCount(
