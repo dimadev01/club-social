@@ -40,6 +40,7 @@ export class PaymentRepository
   ): Promise<Payment | null> {
     return (
       (await this.getCollection().findOneAsync({
+        isDeleted: false,
         receiptNumber: request.receiptNumber,
       })) ?? null
     );
