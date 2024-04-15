@@ -7,6 +7,7 @@ import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { RolePermissionAssignment } from '@domain/roles/roles';
 import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
+import { UserStateEnum } from '@domain/users/user.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
@@ -36,6 +37,7 @@ export class CreateUserUseCase
         firstName: request.firstName,
         lastName: request.lastName,
         role: request.role,
+        state: UserStateEnum.ACTIVE,
       },
       username: Random.secret(),
     });
