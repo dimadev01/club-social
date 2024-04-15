@@ -4,7 +4,9 @@ import '@infra/meteor/common/meteor-publications';
 import '@domain/users/user.collection';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
+import invariant from 'ts-invariant';
 import { container, inject, singleton } from 'tsyringe';
+import { Meteor as MeteorCustomTypes } from 'types/meteor';
 import { ILogger } from '@application/logger/logger.interface';
 import { DueMethod } from '@domain/dues/due.methods';
 import { MovementMethod } from '@domain/movements/movement.methods';
@@ -51,6 +53,8 @@ export class ServerStartup {
 
     this._configureValidateLoginAttempt();
 
+    this._configureOnCreateUser();
+
     if (Meteor.isProduction) {
       this._logger.info('Server startup completed');
     }
@@ -81,9 +85,28 @@ export class ServerStartup {
     ) => {
       const urlWithoutHashtag = url.replace('#/', '');
 
-      // @ts-expect-error
+      // @ts-ignore
       return `Hola ${user.profile?.firstName} ${user.profile?.lastName}, activa tu cuenta: <a href="${urlWithoutHashtag}">${urlWithoutHashtag}</a>`;
     };
+  }
+
+  private async _configureOnCreateUser() {
+    Accounts.onCreateUser((options, user) => {
+      invariant(options.profile);
+
+      const { firstName, lastName, role, state } =
+        options.profile as MeteorCustomTypes.UserProfile;
+
+      return {
+        ...user,
+        profile: {
+          firstName,
+          lastName,
+          role,
+        },
+        state,
+      };
+    });
   }
 
   private _configureValidateLoginAttempt() {
