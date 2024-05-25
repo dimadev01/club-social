@@ -17,7 +17,7 @@ import { CreateDue, CreateDuePayment } from '@domain/dues/due.types';
 import { DueMember } from '@domain/dues/entities/due-member';
 import { DuePayment } from '@domain/dues/entities/due-payment';
 import { IsNullable } from '@shared/class-validator/is-nullable';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 export class Due extends Entity {

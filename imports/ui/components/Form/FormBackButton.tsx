@@ -3,13 +3,11 @@ import { ButtonProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@ui/components/Button';
 
-type Props = ButtonProps & {
+export type FormBackButtonProps = ButtonProps & {
   to?: string;
 };
 
-export const FormBackButton: React.FC<Props> = ({
-  disabled,
-  loading,
+export const FormBackButton: React.FC<FormBackButtonProps> = ({
   to,
   ...rest
 }) => {
@@ -17,9 +15,8 @@ export const FormBackButton: React.FC<Props> = ({
 
   return (
     <Button
-      disabled={disabled}
-      loading={loading}
-      type="text"
+      // type="text"
+      // ghost
       onClick={() => (to ? navigate(to) : navigate(-1))}
       {...rest}
     >

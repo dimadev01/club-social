@@ -28,7 +28,7 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
@@ -39,7 +39,6 @@ import { useCategoriesByType } from '@ui/hooks/categories/useCategoriesByType';
 import { useEmployees } from '@ui/hooks/employees/useEmployees';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useCreateMovement } from '@ui/hooks/movements/useCreateMovement';
-import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 import { useMovement } from '@ui/hooks/movements/useMovement';
 import { useUpdateMovement } from '@ui/hooks/movements/useUpdateMovement';
 import { useProfessors } from '@ui/hooks/professors/useProfessors';
@@ -80,12 +79,6 @@ export const MovementDetailPage = () => {
   const createMovement = useCreateMovement();
 
   const updateMovement = useUpdateMovement();
-
-  const deleteMovement = useDeleteMovement(() => {
-    message.success('Movimiento eliminado');
-
-    navigate(-1);
-  });
 
   const { data: members, isLoading: isLoadingMembers } = useMembers(
     MemberCategories.includes(category)
@@ -331,7 +324,7 @@ export const MovementDetailPage = () => {
   }
 
   /**
-   * Renders component
+   * Component
    */
   return (
     <>
@@ -457,23 +450,7 @@ export const MovementDetailPage = () => {
               <Input.TextArea rows={1} />
             </Form.Item>
 
-            <FormButtons
-              scope={ScopeEnum.Movements}
-              isLoading={createMovement.isLoading || updateMovement.isLoading}
-              isSaveDisabled={
-                createMovement.isLoading || updateMovement.isLoading
-              }
-              isBackDisabled={
-                createMovement.isLoading || updateMovement.isLoading
-              }
-              isDeleteDisabled={
-                createMovement.isLoading || updateMovement.isLoading
-              }
-              showDeleteButton={!!movement}
-              onClickDelete={() =>
-                movement && deleteMovement.mutate({ id: movement._id })
-              }
-            />
+            <FormButtons scope={ScopeEnum.Movements} />
           </Form>
         </Card>
       </Skeleton>

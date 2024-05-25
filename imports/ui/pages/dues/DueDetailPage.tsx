@@ -16,7 +16,7 @@ import { Rule } from 'antd/es/form';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
 import { isString } from 'lodash';
-import { Navigate, NavLink, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, NavLink, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import {
   DueCategoryEnum,
@@ -30,14 +30,13 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
 import { useCreateDue } from '@ui/hooks/dues/useCreateDue';
-import { useDeleteDue } from '@ui/hooks/dues/useDeleteDue';
 import { useDue } from '@ui/hooks/dues/useDue';
 import { useUpdateDue } from '@ui/hooks/dues/useUpdateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
@@ -57,8 +56,6 @@ export const DueDetailPage = () => {
 
   const { id } = useParams<{ id?: string }>();
 
-  const navigate = useNavigate();
-
   const { message } = App.useApp();
 
   const { data: due, fetchStatus: dueFetchStatus, refetch } = useDue(id);
@@ -66,12 +63,6 @@ export const DueDetailPage = () => {
   const createDue = useCreateDue();
 
   const updateDue = useUpdateDue();
-
-  const deleteDue = useDeleteDue(() => {
-    message.success('Cobro eliminado');
-
-    navigate(-1);
-  });
 
   const { data: members, isLoading: isLoadingMembers } = useMembers();
 
@@ -219,7 +210,7 @@ export const DueDetailPage = () => {
   );
 
   /**
-   * Renders component
+   * Component
    */
   return (
     <>
@@ -350,17 +341,7 @@ export const DueDetailPage = () => {
               <Input.TextArea disabled={isFormDisabled()} rows={1} />
             </Form.Item>
 
-            <FormButtons
-              scope={ScopeEnum.Movements}
-              isLoading={createDue.isLoading || updateDue.isLoading}
-              isSaveDisabled={
-                createDue.isLoading || updateDue.isLoading || isFormDisabled()
-              }
-              isBackDisabled={createDue.isLoading || updateDue.isLoading}
-              isDeleteDisabled={createDue.isLoading || updateDue.isLoading}
-              showDeleteButton={due?.isPending}
-              onClickDelete={() => due && deleteDue.mutate({ id: due._id })}
-            />
+            <FormButtons scope={ScopeEnum.Movements} />
           </Form>
         </Card>
       </Skeleton>

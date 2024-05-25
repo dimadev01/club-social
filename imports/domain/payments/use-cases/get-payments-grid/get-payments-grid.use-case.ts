@@ -8,7 +8,7 @@ import { GetPaymentsGridResponseDto } from '@domain/payments/use-cases/get-payme
 import { PaymentGridDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 
 @injectable()
 export class GetPaymentsGridUseCase

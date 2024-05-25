@@ -1,11 +1,12 @@
 import React from 'react';
-import { Checkbox, Form, Input, InputNumber, Table } from 'antd';
+import { Checkbox, Form, Input, InputNumber, Table, Tooltip } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { NavLink } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
 import { ARS } from '@dinero.js/currencies';
+import { NumberUtils } from '@shared/utils/number.utils';
 
 type Due = {
   _id: string;
@@ -58,12 +59,18 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
             Total: {MoneyUtils.formatCents(totalPending)}
           </Table.Summary.Cell>
           <Table.Summary.Cell align="right" index={4}>
-            Total: {MoneyUtils.format(totalDuesToPay)}
+            Total: {MoneyUtils.formatWithCurrency(totalDuesToPay)}
           </Table.Summary.Cell>
         </Table.Summary.Row>
       </Table.Summary>
     );
   };
+
+  const dueIdFieldName = (index: number) => ['dues', index, 'dueId'];
+
+  const isSelectedFieldName = (index: number) => ['dues', index, 'isSelected'];
+
+  const amountFieldName = (index: number) => ['dues', index, 'amount'];
 
   return (
     <Table
@@ -91,24 +98,27 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
       <Table.Column
         dataIndex="date"
         title="Fecha"
+        width={150}
         render={(date: string, due: Due) => {
           const index = pendingDues?.findIndex((d) => d._id === due._id) ?? 0;
 
           return (
             <>
-              <Form.Item hidden name={['dues', index, 'dueId']}>
+              <Form.Item hidden name={dueIdFieldName(index)}>
                 <Input />
               </Form.Item>
 
               <Form.Item
                 valuePropName="checked"
                 hidden
-                name={['dues', index, 'isSelected']}
+                name={isSelectedFieldName(index)}
               >
                 <Checkbox />
               </Form.Item>
 
-              <NavLink to={`${AppUrl.Dues}/${due._id}`}>{date}</NavLink>
+              <Tooltip title="Ver cobro">
+                <NavLink to={`${AppUrl.Dues}/${due._id}`}>{date}</NavLink>
+              </Tooltip>
             </>
           );
         }}
@@ -129,6 +139,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
 
       <Table.Column
         dataIndex="amount"
+        width={250}
         title="Monto deudor"
         align="right"
         render={(amount: number) => MoneyUtils.formatCents(amount)}
@@ -137,38 +148,36 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
       <Table.Column
         title="Monto a registrar"
         align="right"
+        width={250}
         render={(_, due: Due) => {
           const index = pendingDues?.findIndex((d) => d._id === due._id) ?? 0;
 
-          const name = ['dues', index, 'amount'];
+          const isFieldValid = form.getFieldError(amountFieldName).length === 0;
 
-          const isFieldValid = form.getFieldError(name).length === 0;
-
-          const isSelected = form.getFieldValue(['dues', index, 'isSelected']);
+          const isSelected = form.getFieldValue(isSelectedFieldName(index));
 
           return (
             <Form.Item
-              name={name}
+              name={amountFieldName(index)}
               className={isFieldValid ? 'mb-0' : ''}
               rules={[
                 {
-                  message: 'Requerido',
+                  message: 'Por favor ingrese monto a registrar',
                   required: true,
-                },
-                {
-                  message: 'Requerido',
-                  min: 1,
-                  type: 'number',
                 },
               ]}
             >
               <InputNumber
                 disabled={!isSelected}
-                className="w-32"
+                className="w-36"
                 prefix={ARS.code}
                 precision={0}
                 decimalSeparator=","
-                step={100}
+                step={1000}
+                parser={(value) =>
+                  NumberUtils.parseFromInputNumber(value ?? '')
+                }
+                formatter={(value) => NumberUtils.format(value ?? 0)}
                 min={1}
               />
             </Form.Item>

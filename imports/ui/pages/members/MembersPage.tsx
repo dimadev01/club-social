@@ -21,7 +21,7 @@ import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-me
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';

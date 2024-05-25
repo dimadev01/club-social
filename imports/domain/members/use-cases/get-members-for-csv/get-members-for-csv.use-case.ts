@@ -9,7 +9,7 @@ import { DIToken } from '@infra/di/di-tokens';
 import { FindPaginatedMember } from '@infra/mongo/repositories/members/member-repository.types';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 
 @injectable()
 export class GetMembersForCsvUseCase

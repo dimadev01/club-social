@@ -95,7 +95,16 @@ export class PaymentRepository
     }
 
     const $facet: Record<string, unknown> = {
-      data: [...this.getPaginatedPipelineQuery(request)],
+      data: [
+        {
+          $sort: {
+            [request.sortField]: this._getSorterValue(request.sortOrder),
+            receiptNumber: -1,
+          },
+        },
+        { $skip: (request.page - 1) * request.pageSize },
+        { $limit: request.pageSize },
+      ],
       totalAmount: [
         { $group: { _id: null, sum: { $sum: { $sum: '$dues.amount' } } } },
       ],

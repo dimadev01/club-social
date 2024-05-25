@@ -374,7 +374,8 @@ export const DuesPage = () => {
                       onClick={() => {
                         navigate(
                           UrlUtils.navigate(AppUrl.PaymentsNew, {
-                            memberIds: [due.memberId],
+                            dueIds: [due._id],
+                            memberId: due.memberId,
                           })
                         );
                       }}

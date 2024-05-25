@@ -3,7 +3,7 @@ import { IsNumber, IsPositive, ValidateNested } from 'class-validator';
 import { ok, Result } from 'neverthrow';
 import { PaymentDueDue } from '@domain/payments/entities/payment-due-due';
 import { CreatePaymentDue } from '@domain/payments/payment.types';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 
 export class PaymentDue {
   @IsNumber()

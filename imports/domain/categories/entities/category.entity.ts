@@ -11,7 +11,7 @@ import {
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
 import { Entity } from '@domain/common/entity';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 
 export class Category extends Entity {
   @IsInt()

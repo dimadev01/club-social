@@ -234,7 +234,9 @@ export abstract class MongoCrudRepository<T extends Entity>
   protected getPaginatedPipelineQuery(request: FindPaginatedRequest) {
     return [
       {
-        $sort: { [request.sortField]: this._getSorterValue(request.sortOrder) },
+        $sort: {
+          [request.sortField]: this._getSorterValue(request.sortOrder),
+        },
       },
       { $skip: (request.page - 1) * request.pageSize },
       { $limit: request.pageSize },

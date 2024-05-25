@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useMemo } from 'react';
 import {
   App,
   Breadcrumb,
@@ -26,8 +26,9 @@ import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
 import { useMember } from '@ui/hooks/members/useMember';
 import { UrlUtils } from '@shared/utils/url.utils';
 import TextArea from 'antd/es/input/TextArea';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { Button } from '@ui/components/Button';
+import useDeepCompareEffect from 'use-deep-compare-effect';
 import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
 
 type FormDueValue = {
@@ -45,17 +46,33 @@ type FormValues = {
 };
 
 export const PaymentNewPage = () => {
-  const { message } = App.useApp();
+  const { message, notification } = App.useApp();
 
+  /**
+   * Url params
+   */
   const [, setSearchParams] = useSearchParams();
 
-  const [form] = Form.useForm<FormValues>();
+  const { memberId, date, receiptNumber, dueIds } = UrlUtils.parse();
 
-  const {
-    memberId: urlMemberId,
-    date: urlDate,
-    receiptNumber: urlReceiptNumber,
-  } = UrlUtils.parse();
+  const urlMemberId = memberId ? (memberId as string) : undefined;
+
+  const urlDate = date ? (date as string) : undefined;
+
+  const urlReceiptNumber = receiptNumber ? +receiptNumber : undefined;
+
+  const urlDueIds = useMemo(() => {
+    if (!dueIds) {
+      return [];
+    }
+
+    return Array.isArray(dueIds) ? dueIds : [dueIds];
+  }, [dueIds]);
+
+  /**
+   * Form watches
+   */
+  const [form] = Form.useForm<FormValues>();
 
   const formMemberId: string | undefined = useWatch('memberId', form);
 
@@ -63,40 +80,53 @@ export const PaymentNewPage = () => {
 
   const formReceiptNumber: number | undefined = useWatch('receiptNumber', form);
 
+  const formDues: FormDueValue[] | undefined = useWatch('dues', form);
+
+  const formDuesSelectedIds =
+    formDues?.filter((d) => d.isSelected).map((d) => d.dueId) ?? [];
+
+  /**
+   * Hooks
+   */
   const { data: members, isLoading: isLoadingMembers } = useMembers();
 
   const { data: pendingDues } = usePendingDuesByMember(formMemberId);
 
   const { data: member } = useMember(formMemberId);
 
+  /**
+   * Mutations
+   */
   const createPayment = useCreatePayment();
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setSearchParams(
       UrlUtils.stringify({
         date: formDate
           ? DateUtils.format(formDate, DateFormatEnum.Date)
           : undefined,
+        dueIds: formDuesSelectedIds,
         memberId: formMemberId,
         receiptNumber: formReceiptNumber,
       }),
-      {
-        replace: true,
-      }
+      { replace: true }
     );
-  }, [formMemberId, setSearchParams, formDate, formReceiptNumber]);
+  }, [formDate, formMemberId, formReceiptNumber, formDuesSelectedIds]);
 
-  useEffect(() => {
+  /**
+   * Effects
+   */
+  useDeepCompareEffect(() => {
     if (pendingDues && pendingDues.length > 0) {
       form.setFieldsValue({
         dues: pendingDues.map((due) => ({
           amount: MoneyUtils.fromCents(due.amount),
           dueId: due._id,
-          isSelected: false,
+          isSelected: formDuesSelectedIds.includes(due._id),
         })),
       });
     }
-  }, [pendingDues, form]);
+  }, [pendingDues, form, formDuesSelectedIds]);
 
   const user = Meteor.user();
 
@@ -104,29 +134,28 @@ export const PaymentNewPage = () => {
     return <Navigate to={AppUrl.Login} />;
   }
 
+  /**
+   * Handlers
+   */
   const handleSubmit = async (values: FormValues) => {
-    const request: CreatePaymentRequestDto = {
-      date: values.date.format(DateFormatEnum.Date),
-      memberDues: [],
-      //  values.dues.map((formDuesValue) => ({
-      //   dues:
-      //     formDuesValue.dues
-      //       ?.filter((d) => d.isSelected)
-      //       .map((formDueValue) => ({
-      //         amount: MoneyUtils.toCents(formDueValue.amount),
-      //         dueId: formDueValue.dueId,
-      //       })) ?? [],
-      //   memberId: formDuesValue.memberId,
-      //   notes: formDuesValue.notes,
-      // })),
-      receiptNumber: values.receiptNumber,
-    };
+    const selectedDues = values.dues.filter((due) => due.isSelected);
 
-    if (request.memberDues.some((d) => d.dues.length === 0)) {
-      message.error('Debe seleccionar al menos una cuota');
+    if (selectedDues.length === 0) {
+      notification.error({ message: 'Debe seleccionar al menos una deuda' });
 
       return;
     }
+
+    const request: CreatePaymentRequestDto = {
+      date: values.date.format(DateFormatEnum.Date),
+      dues: selectedDues.map((due) => ({
+        amount: MoneyUtils.toCents(due.amount),
+        dueId: due.dueId,
+      })),
+      memberId: values.memberId,
+      notes: values.notes ?? null,
+      receiptNumber: values.receiptNumber,
+    };
 
     createPayment.mutate(request, {
       onSuccess: () => {
@@ -143,6 +172,9 @@ export const PaymentNewPage = () => {
     ScopeEnum.Payments
   );
 
+  /**
+   * Render helpers
+   */
   const renderCardTitle = () => {
     if (member || formDate) {
       let title = 'Nuevo Pago';
@@ -170,7 +202,7 @@ export const PaymentNewPage = () => {
   };
 
   /**
-   * Renders component
+   * Component
    */
   return (
     <>
@@ -187,12 +219,17 @@ export const PaymentNewPage = () => {
         <Form<FormValues>
           layout="vertical"
           form={form}
+          disabled={createPayment.isLoading}
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
             date: urlDate ? dayjs(urlDate as string) : DateUtils.c(),
-            dues: [],
+            dues: urlDueIds.map((dueId) => ({
+              amount: 0,
+              dueId,
+              isSelected: true,
+            })),
             memberId: urlMemberId,
-            receiptNumber: urlReceiptNumber,
+            receiptNumber: urlReceiptNumber ? +urlReceiptNumber : undefined,
           }}
         >
           <Row gutter={[16, 16]}>
@@ -233,7 +270,7 @@ export const PaymentNewPage = () => {
 
               <Form.Item
                 name="receiptNumber"
-                label="Comprobante Nro."
+                label="Recibo Nro."
                 rules={[{ required: true }, { type: 'number' }]}
               >
                 <InputNumber min={1} />
@@ -249,10 +286,7 @@ export const PaymentNewPage = () => {
 
           <FormButtons
             scope={ScopeEnum.Payments}
-            isLoading={createPayment.isLoading}
-            isSaveDisabled={createPayment.isLoading}
-            isBackDisabled={createPayment.isLoading}
-            isDeleteDisabled={createPayment.isLoading}
+            saveButtonProps={{ text: 'Registrar Pago' }}
           />
         </Form>
       </Card>

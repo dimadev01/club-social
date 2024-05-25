@@ -30,7 +30,7 @@ import {
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
@@ -102,34 +102,28 @@ export const MovementsPage = () => {
         <AntTable.Summary.Cell index={0}>
           <div className="flex justify-between">
             <span>Entrada</span>
-            <span>
-              {data ? MoneyUtils.formatCents(data.income, false) : ''}
-            </span>
+            <span>{data ? MoneyUtils.formatCents(data.income) : ''}</span>
           </div>
         </AntTable.Summary.Cell>
 
         <AntTable.Summary.Cell index={1}>
           <div className="flex justify-between">
             <span>Salida</span>
-            <span>
-              {data ? MoneyUtils.formatCents(data.expense, false) : ''}
-            </span>
+            <span>{data ? MoneyUtils.formatCents(data.expense) : ''}</span>
           </div>
         </AntTable.Summary.Cell>
 
         <AntTable.Summary.Cell index={2}>
           <div className="flex justify-between">
             <span>Deudas</span>
-            <span>{data ? MoneyUtils.formatCents(data.debt, false) : ''}</span>
+            <span>{data ? MoneyUtils.formatCents(data.debt) : ''}</span>
           </div>
         </AntTable.Summary.Cell>
 
         <AntTable.Summary.Cell index={3}>
           <div className="flex justify-between">
             <span>Balance</span>
-            <span>
-              {data ? MoneyUtils.formatCents(data.balance, false) : ''}
-            </span>
+            <span>{data ? MoneyUtils.formatCents(data.balance) : ''}</span>
           </div>
         </AntTable.Summary.Cell>
         <AntTable.Summary.Cell index={4} />

@@ -276,7 +276,7 @@ export const PaymentsPage = () => {
               {
                 align: 'right',
                 dataIndex: 'receiptNumber',
-                title: 'Comprobante Nro.',
+                title: 'Recibo Nro.',
               },
               {
                 align: 'center',

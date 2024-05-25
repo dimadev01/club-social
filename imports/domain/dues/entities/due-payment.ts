@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { ok, Result } from 'neverthrow';
 import { CreateDuePayment } from '@domain/dues/due.types';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateUtils } from '@shared/utils/date.utils';
 
 export class DuePayment {

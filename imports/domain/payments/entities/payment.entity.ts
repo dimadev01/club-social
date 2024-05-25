@@ -17,7 +17,7 @@ import { PaymentMember } from '@domain/payments/entities/payment-member';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { CreatePayment } from '@domain/payments/payment.types';
 import { IsNullable } from '@shared/class-validator/is-nullable';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateUtils } from '@shared/utils/date.utils';
 
 export class Payment extends Entity {

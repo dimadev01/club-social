@@ -9,7 +9,7 @@ import {
 import { ok, Result } from 'neverthrow';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { CreatePaymentDueDue } from '@domain/payments/payment.types';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 export class PaymentDueDue {

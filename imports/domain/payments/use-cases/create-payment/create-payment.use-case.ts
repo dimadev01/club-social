@@ -43,8 +43,6 @@ export class CreatePaymentUseCase
   ): Promise<Result<CreatePaymentResponseDto, Error>> {
     await this.validatePermission(ScopeEnum.Payments, PermissionEnum.Create);
 
-    const session = MongoUtils.startSession();
-
     const existingPaymentByReceipt =
       await this._paymentPort.findOneByReceiptNumber({
         receiptNumber: request.receiptNumber,
@@ -53,117 +51,110 @@ export class CreatePaymentUseCase
     if (existingPaymentByReceipt) {
       return err(
         new ExistingPaymentError(
-          `Ya existe un pago con el comprobante número ${request.receiptNumber}`
+          `Ya existe un pago con el Recibo número ${request.receiptNumber}`
         )
       );
     }
 
+    const session = MongoUtils.startSession();
+
     try {
-      let payment: Payment | null = null;
+      let payment: Payment | undefined;
 
       await session.withTransaction(async () => {
+        const dues = await this._duePort.findByIds({
+          dueIds: request.dues.map((d) => d.dueId),
+        });
+
+        dues.forEach((due) => {
+          if (due.isPaid()) {
+            throw new DuePaidError(due._id);
+          }
+        });
+
+        const member = await this._memberPort.findOneByIdOrThrow(
+          request.memberId
+        );
+
+        const newPaymentMember = PaymentMember.create({
+          memberId: request.memberId,
+          name: member.name,
+        });
+
+        if (newPaymentMember.isErr()) {
+          throw newPaymentMember.error;
+        }
+
+        const paymentDuesResults = request.dues.map((requestDue) => {
+          const due = dues.find((d) => d._id === requestDue.dueId);
+
+          invariant(due);
+
+          const newPaymentDueDue = PaymentDueDue.create({
+            amount: due.amount,
+            category: due.category,
+            date: due.date,
+            dueId: due._id,
+          });
+
+          if (newPaymentDueDue.isErr()) {
+            throw newPaymentDueDue.error;
+          }
+
+          return PaymentDue.create({
+            amount: requestDue.amount,
+            due: newPaymentDueDue.value,
+          });
+        });
+
+        const paymentDues = Result.combine(paymentDuesResults);
+
+        if (paymentDues.isErr()) {
+          throw paymentDues.error;
+        }
+
+        const newPaymentResult = Payment.create({
+          date: request.date,
+          dues: paymentDues.value,
+          member: newPaymentMember.value,
+          notes: request.notes,
+          receiptNumber: request.receiptNumber,
+        });
+
+        if (newPaymentResult.isErr()) {
+          throw newPaymentResult.error;
+        }
+
+        payment = newPaymentResult.value;
+
         await Promise.all(
-          request.memberDues.map(async (memberDue) => {
-            const dues = await this._duePort.findByIds({
-              dueIds: memberDue.dues.map((d) => d.dueId),
+          dues.map(async (due) => {
+            const requestDue = request.dues.find((d) => d.dueId === due._id);
+
+            invariant(requestDue);
+
+            const result = due.pay({
+              _id: newPaymentResult.value._id,
+              amount: requestDue.amount,
+              date: newPaymentResult.value.date,
             });
 
-            dues.forEach((due) => {
-              if (due.isPaid()) {
-                throw new DuePaidError(due._id);
-              }
-            });
-
-            const member = await this._memberPort.findOneByIdOrThrow(
-              memberDue.memberId
-            );
-
-            const paymentMember = PaymentMember.create({
-              memberId: memberDue.memberId,
-              name: member.name,
-            });
-
-            if (paymentMember.isErr()) {
-              throw paymentMember.error;
+            if (result.isErr()) {
+              throw result.error;
             }
 
-            const paymentDuesResults = memberDue.dues.map((dueRequest) => {
-              const due = dues.find((d) => d._id === dueRequest.dueId);
-
-              invariant(due);
-
-              const paymentDueDue = PaymentDueDue.create({
-                amount: due.amount,
-                category: due.category,
-                date: due.date,
-                dueId: due._id,
-              });
-
-              if (paymentDueDue.isErr()) {
-                throw paymentDueDue.error;
-              }
-
-              return PaymentDue.create({
-                amount: dueRequest.amount,
-                due: paymentDueDue.value,
-              });
-            });
-
-            const paymentDues = Result.combine(paymentDuesResults);
-
-            if (paymentDues.isErr()) {
-              throw paymentDues.error;
-            }
-
-            const paymentResult = Payment.create({
-              date: request.date,
-              dues: paymentDues.value,
-              member: paymentMember.value,
-              notes: memberDue.notes,
-              receiptNumber: request.receiptNumber,
-            });
-
-            if (paymentResult.isErr()) {
-              throw paymentResult.error;
-            }
-
-            payment = paymentResult.value;
-
-            await Promise.all(
-              dues.map(async (due) => {
-                const dueRequest = memberDue.dues.find(
-                  (d) => d.dueId === due._id
-                );
-
-                invariant(dueRequest);
-
-                const result = due.pay({
-                  _id: paymentResult.value._id,
-                  amount: dueRequest.amount,
-                  date: paymentResult.value.date,
-                });
-
-                if (result.isErr()) {
-                  throw result.error;
-                }
-
-                await this._duePort.updateWithSession(due, session);
-              })
-            );
-
-            await this._paymentPort.createWithSession(
-              paymentResult.value,
-              session
-            );
+            await this._duePort.updateWithSession(due, session);
           })
+        );
+
+        await this._paymentPort.createWithSession(
+          newPaymentResult.value,
+          session
         );
       });
 
-      if (!payment) {
-        return err(new Error('Payment not created'));
-      }
+      invariant(payment);
 
-      // @ts-expect-error
       return ok({ id: payment._id });
     } catch (error) {
       this._logger.error(error);

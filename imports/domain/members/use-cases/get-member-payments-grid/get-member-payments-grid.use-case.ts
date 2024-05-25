@@ -6,7 +6,7 @@ import { Payment } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { GetMemberPaymentsGridRequestDto } from './get-member-payments-grid.request.dto';
 import { GetMemberPaymentsGridResponseDto } from './get-member-payments-grid.response.dto';
 import { MemberPaymentGridDto } from './member-payment-grid.dto';

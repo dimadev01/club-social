@@ -1,21 +1,36 @@
 import React from 'react';
 import { ButtonProps } from 'antd';
 import { Button } from '@ui/components/Button';
+import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
 
-type Props = ButtonProps;
+export type FormSaveButtonProps = ButtonProps & {
+  scope?: ScopeEnum;
+  text?: string;
+};
 
-export const FormSaveButton: React.FC<Props> = ({
-  loading,
-  disabled,
+export const FormSaveButton: React.FC<FormSaveButtonProps> = ({
+  scope,
+  text,
   ...rest
-}) => (
-  <Button
-    type="primary"
-    disabled={disabled}
-    loading={loading}
-    htmlType="submit"
-    {...rest}
-  >
-    Guardar
-  </Button>
-);
+}) => {
+  const user = Meteor.user();
+
+  if (!user) {
+    return null;
+  }
+
+  if (scope) {
+    if (
+      !Roles.userIsInRole(user, PermissionEnum.Create, scope) &&
+      !Roles.userIsInRole(user, PermissionEnum.Update, scope)
+    ) {
+      return false;
+    }
+  }
+
+  return (
+    <Button type="primary" htmlType="submit" {...rest}>
+      {text ?? 'Guardar'}
+    </Button>
+  );
+};

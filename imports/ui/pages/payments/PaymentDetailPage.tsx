@@ -1,14 +1,14 @@
 import React from 'react';
-import { App, Breadcrumb, Card, Descriptions, Table } from 'antd';
+import { App, Breadcrumb, Card, Descriptions, Flex, Table } from 'antd';
 import { Navigate, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
 import { NotFound } from '@ui/components/NotFound';
 import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { usePayment } from '@ui/hooks/payments/usePayment';
 import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
+import { ScopeEnum } from '@domain/roles/role.enum';
 
 export const PaymentDetailPage = () => {
   const { message } = App.useApp();
@@ -40,7 +40,7 @@ export const PaymentDetailPage = () => {
   }
 
   /**
-   * Renders component
+   * Component
    */
   return (
     <>
@@ -60,13 +60,16 @@ export const PaymentDetailPage = () => {
         <>
           <Descriptions column={1} layout="vertical" colon={false}>
             <Descriptions.Item label="Fecha">{payment.date}</Descriptions.Item>
+
             <Descriptions.Item label="Socio">
               {payment.memberName}
             </Descriptions.Item>
-            <Descriptions.Item label="Comprobante Nro.">
+
+            <Descriptions.Item label="Recibo Nro.">
               {payment.receiptNumber}
             </Descriptions.Item>
-            <Descriptions.Item label="Tabla">
+
+            <Descriptions.Item label="Deudas pagas">
               <Table
                 dataSource={payment.dues}
                 pagination={false}
@@ -102,22 +105,18 @@ export const PaymentDetailPage = () => {
                 ]}
               />
             </Descriptions.Item>
+
             <Descriptions.Item label="Notas">{payment.notes}</Descriptions.Item>
           </Descriptions>
 
-          {Roles.userIsInRole(
-            user,
-            PermissionEnum.Delete,
-            ScopeEnum.Payments
-          ) && (
+          <Flex justify="end">
             <FormDeleteButton
+              scope={ScopeEnum.Payments}
               onClick={() => {
-                if (payment) {
-                  deletePayment.mutate({ id: payment._id });
-                }
+                deletePayment.mutate({ id: payment._id });
               }}
             />
-          )}
+          </Flex>
         </>
       </Card>
     </>

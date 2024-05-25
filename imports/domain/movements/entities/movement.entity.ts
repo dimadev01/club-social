@@ -20,7 +20,7 @@ import { CreateMovement } from '@domain/movements/movement.types';
 import { Professor } from '@domain/professors/professor.entity';
 import { Service } from '@domain/services/service.entity';
 import { IsNullable } from '@shared/class-validator/is-nullable';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 export class Movement extends Entity {

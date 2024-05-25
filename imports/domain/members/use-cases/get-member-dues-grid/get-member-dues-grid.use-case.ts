@@ -6,7 +6,7 @@ import { Due } from '@domain/dues/entities/due.entity';
 import { IMemberPort } from '@domain/members/member.port';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { GetMemberDuesGridRequestDto } from './get-member-dues-grid.request.dto';
 import { GetMemberDuesGridResponseDto } from './get-member-dues-grid.response.dto';
 import { MemberDueGridDto } from './member-due-grid.dto';

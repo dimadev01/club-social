@@ -28,7 +28,6 @@ import { FormListEmails } from '@ui/components/Form/FormListEmails';
 import { FormListInput } from '@ui/components/Form/FormListInput';
 import { Select } from '@ui/components/Select';
 import { useCreateMember } from '@ui/hooks/members/useCreateMember';
-import { useDeleteMember } from '@ui/hooks/members/useDeleteMember';
 import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
 import { useCities } from '@ui/hooks/useCities';
 import { useStates } from '@ui/hooks/useStates';
@@ -76,12 +75,6 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
   const createMember = useCreateMember();
 
   const updateMember = useUpdateMember();
-
-  const deleteMember = useDeleteMember(() => {
-    message.success('Socio eliminado');
-
-    navigate(-1);
-  });
 
   const user = Meteor.user();
 
@@ -386,17 +379,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
         <div className="mb-4" />
 
-        <FormButtons
-          scope={ScopeEnum.Members}
-          isLoading={createMember.isLoading || updateMember.isLoading}
-          isSaveDisabled={createMember.isLoading || updateMember.isLoading}
-          isBackDisabled={createMember.isLoading || updateMember.isLoading}
-          isDeleteDisabled={createMember.isLoading || updateMember.isLoading}
-          showDeleteButton={!!member}
-          onClickDelete={() =>
-            member && deleteMember.mutate({ id: member._id })
-          }
-        />
+        <FormButtons scope={ScopeEnum.Members} />
       </Form>
     </Card>
   );

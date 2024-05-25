@@ -8,7 +8,7 @@ import { GetDuesGridRequestDto } from '@domain/dues/use-cases/get-dues-grid/get-
 import { GetDuesGridResponseDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.response.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 
 @injectable()
 export class GetDuesGridUseCase
