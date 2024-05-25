@@ -1,5 +1,11 @@
-import React, { useMemo, useState } from 'react';
-import { App as AntApp, ConfigProvider, message, theme } from 'antd';
+import { useMediaQuery } from 'react-responsive';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  App as AntApp,
+  ConfigProvider,
+  message,
+  theme as antTheme,
+} from 'antd';
 import esEs from 'antd/es/locale/es_ES';
 import { useTracker } from 'meteor/react-meteor-data';
 import GoogleFontLoader from 'react-google-font';
@@ -7,6 +13,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools/build/lib/devtools';
 import { Routes } from '@ui/Routes/Routes';
 import clsx from 'clsx';
+import { UserThemeEnum } from '@domain/users/user.enum';
+import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { ThemeContext, ThemeContextProps } from './Context';
 
 const queryClient = new QueryClient({
@@ -39,17 +47,33 @@ const queryClient = new QueryClient({
 });
 
 export const App = () => {
-  const [themeMode, setThemeMode] = useState<'dark' | 'light'>('light');
+  const systemPrefersDark = useMediaQuery({
+    query: '(prefers-color-scheme: dark)',
+  });
 
-  const themeContextValue = useMemo<ThemeContextProps>(
-    () => ({ setTheme: setThemeMode, theme: themeMode }),
-    [themeMode],
+  const [theme, setTheme] = useState<UserThemeEnum>(
+    LocalStorageUtils.get('theme') ?? systemPrefersDark
+      ? UserThemeEnum.DARK
+      : UserThemeEnum.LIGHT,
   );
 
-  const { isLoggingIn } = useTracker(() => ({
+  const themeMemoized = useMemo<ThemeContextProps>(
+    () => ({ setTheme, theme }),
+    [theme],
+  );
+
+  const { isLoggingIn, user } = useTracker(() => ({
     isLoggingIn: Meteor.loggingIn(),
     user: Meteor.user(),
   }));
+
+  useEffect(() => {
+    if (user?.profile?.theme === UserThemeEnum.AUTO) {
+      setTheme(systemPrefersDark ? UserThemeEnum.DARK : UserThemeEnum.LIGHT);
+    } else {
+      setTheme(user?.profile?.theme ?? UserThemeEnum.LIGHT);
+    }
+  }, [user?.profile?.theme, systemPrefersDark]);
 
   if (isLoggingIn) {
     return <>loggingIn</>;
@@ -59,9 +83,7 @@ export const App = () => {
     <>
       <GoogleFontLoader fonts={[{ font: 'Rubik', weights: [300, 400, 500] }]} />
 
-      <AntApp
-        rootClassName={clsx('cs-ant-app', { dark: themeMode === 'dark' })}
-      >
+      <AntApp rootClassName={clsx('cs-ant-app')}>
         <ConfigProvider
           locale={esEs}
           select={{ showSearch: true }}
@@ -70,9 +92,9 @@ export const App = () => {
           input={{ autoComplete: 'on' }}
           theme={{
             algorithm:
-              themeMode === 'light'
-                ? theme.defaultAlgorithm
-                : theme.darkAlgorithm,
+              themeMemoized.theme === UserThemeEnum.LIGHT
+                ? antTheme.defaultAlgorithm
+                : antTheme.darkAlgorithm,
             components: {
               Button: {
                 primaryShadow: '0 2px 0 rgba(5, 145, 255, 0.1)',
@@ -96,7 +118,7 @@ export const App = () => {
           }}
         >
           <QueryClientProvider client={queryClient}>
-            <ThemeContext.Provider value={themeContextValue}>
+            <ThemeContext.Provider value={themeMemoized}>
               <Routes />
             </ThemeContext.Provider>
 

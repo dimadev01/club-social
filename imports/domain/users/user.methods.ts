@@ -13,6 +13,8 @@ import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update
 import { UpdateUserUseCase } from '@domain/users/use-cases/update-user/update-user.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { UpdateUserThemeUseCase } from './use-cases/update-user-theme/update-user-theme.use-case';
+import { UpdateUserThemeRequestDto } from './use-cases/update-user-theme/update-user-theme-request.dto';
 
 @injectable()
 export class UserMethod extends MeteorMethod {
@@ -23,6 +25,7 @@ export class UserMethod extends MeteorMethod {
     private readonly _getUserByToken: GetUserByTokenUseCase,
     private readonly _removeUser: RemoveUserUseCase,
     private readonly _updateUser: UpdateUserUseCase,
+    private readonly _updateUserTheme: UpdateUserThemeUseCase,
   ) {
     super();
   }
@@ -46,6 +49,9 @@ export class UserMethod extends MeteorMethod {
 
       [MethodsEnum.UsersUpdate]: (request: UpdateUserRequestDto) =>
         this.execute(this._updateUser, request),
+
+      [MethodsEnum.UsersUpdateTheme]: (request: UpdateUserThemeRequestDto) =>
+        this.execute(this._updateUserTheme, request, UpdateUserThemeRequestDto),
     });
   }
 }

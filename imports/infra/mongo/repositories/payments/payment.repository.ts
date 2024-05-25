@@ -3,13 +3,11 @@ import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
-import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { Payment } from '@domain/payments/entities/payment.entity';
 import {
   PaymentCollection,
   PaymentSchema,
 } from '@domain/payments/payment.collection';
-import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { DIToken } from '@infra/di/di-tokens';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
@@ -76,33 +74,6 @@ export class PaymentRepository
       query.$expr.$and.push({ $in: ['$member._id', request.memberIds] });
     }
 
-    if (request.filters.category?.length) {
-      query.$expr.$and.push({ $in: ['$category', request.filters.category] });
-    }
-
-    if (request.filters.status?.length) {
-      query.$expr.$and.push({ $in: ['$status', request.filters.status] });
-    }
-
-    if (request.from && request.to) {
-      query.date = {
-        $gte: DateUtils.utc(request.from).startOf('day').toDate(),
-        $lte: DateUtils.utc(request.to).endOf('day').toDate(),
-      };
-    }
-
-    if (request.memberIds.length > 0) {
-      query['member._id'] = { $in: request.memberIds };
-    }
-
-    if (request.filters.category?.length) {
-      query.category = { $in: request.filters.category as DueCategoryEnum[] };
-    }
-
-    if (request.filters.status?.length) {
-      query.status = { $in: request.filters.status as PaymentStatusEnum[] };
-    }
-
     const $facet: Record<string, unknown> = {
       data: [
         {
@@ -114,6 +85,7 @@ export class PaymentRepository
         { $skip: (request.page - 1) * request.pageSize },
         { $limit: request.pageSize },
       ],
+      total: [{ $count: 'count' }],
       totalAmount: [
         { $group: { _id: null, sum: { $sum: { $sum: '$dues.amount' } } } },
       ],

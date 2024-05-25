@@ -149,6 +149,7 @@ export const PaymentsPage = () => {
           <div className="text-right">Total {data?.totalAmount ?? '-'}</div>
         </AntTable.Summary.Cell>
         <AntTable.Summary.Cell index={5} />
+        <AntTable.Summary.Cell index={6} />
       </AntTable.Summary.Row>
     </AntTable.Summary>
   );

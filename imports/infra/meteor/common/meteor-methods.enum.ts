@@ -54,4 +54,5 @@ export enum MethodsEnum {
   UsersGetGrid = 'users/getGrid',
   UsersRemove = 'users/remove',
   UsersUpdate = 'users/update',
+  UsersUpdateTheme = 'users/updateTheme',
 }

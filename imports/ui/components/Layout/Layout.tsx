@@ -1,3 +1,4 @@
+import { useMediaQuery } from 'react-responsive';
 import React, { useEffect, useState } from 'react';
 import {
   Col,
@@ -17,7 +18,6 @@ import {
   FilePdfOutlined,
   LogoutOutlined,
   MailOutlined,
-  MoonOutlined,
   NotificationOutlined,
   UserOutlined,
   WhatsAppOutlined,
@@ -27,12 +27,20 @@ import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { ItemType } from 'antd/es/menu/interface';
 import { useThemeContext } from '@ui/Context';
+import { useUpdateUserTheme } from '@ui/hooks/users/useUpdateUserTheme';
+import { UserThemeEnum } from '@domain/users/user.enum';
+import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
+import { Select } from '../Select';
 
 type Props = {
   children: JSX.Element;
 };
 
 export const Layout: React.FC<Props> = ({ children }) => {
+  const systemPrefersDark = useMediaQuery({
+    query: '(prefers-color-scheme: dark)',
+  });
+
   const { setTheme, theme } = useThemeContext();
 
   const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(true);
@@ -43,6 +51,12 @@ export const Layout: React.FC<Props> = ({ children }) => {
   const pathnameKey = `/${window.location.pathname.split('/')[1]}`;
 
   const [menuKey, setMenuKey] = useState<string>(pathnameKey);
+
+  const updateUserTheme = useUpdateUserTheme();
+
+  useEffect(() => {
+    LocalStorageUtils.set('theme', theme);
+  }, [updateUserTheme, theme]);
 
   useEffect(() => {
     setMenuKey(pathnameKey);
@@ -132,7 +146,14 @@ export const Layout: React.FC<Props> = ({ children }) => {
     return items;
   };
 
-  // @ts-expect-error
+  const getSiderTheme = () => {
+    if (theme === UserThemeEnum.AUTO) {
+      return systemPrefersDark ? UserThemeEnum.DARK : UserThemeEnum.LIGHT;
+    }
+
+    return theme;
+  };
+
   const userName = `${user.profile?.firstName} ${user.profile?.lastName}`;
 
   return (
@@ -144,7 +165,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
         collapsedWidth="0"
         className="cs-sider"
         width={260}
-        theme={theme}
+        theme={getSiderTheme()}
         onBreakpoint={(broken) => setIsMenuResponsiveMode(broken)}
       >
         <Image
@@ -222,13 +243,29 @@ export const Layout: React.FC<Props> = ({ children }) => {
             </ButtonGroup>
 
             <ButtonGroup>
-              <Button
-                size="large"
-                tooltip={{ title: 'Cambiar tema' }}
-                icon={<MoonOutlined />}
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                htmlType="button"
-                type="text"
+              <Select
+                allowClear={false}
+                value={theme}
+                showSearch={false}
+                onChange={(value) => {
+                  setTheme(value);
+
+                  updateUserTheme.mutate({ theme: value });
+                }}
+                options={[
+                  {
+                    label: 'Claro',
+                    value: UserThemeEnum.LIGHT,
+                  },
+                  {
+                    label: 'Oscuro',
+                    value: UserThemeEnum.DARK,
+                  },
+                  {
+                    label: 'Automático',
+                    value: UserThemeEnum.AUTO,
+                  },
+                ]}
               />
 
               <Button

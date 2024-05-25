@@ -8,5 +8,6 @@ declare namespace Meteor {
     firstName: string;
     lastName: string;
     role: import('../imports/domain/roles/role.enum').RoleEnum;
+    theme: import('../imports/domain/users/user.enum').UserThemeEnum;
   }
 }
