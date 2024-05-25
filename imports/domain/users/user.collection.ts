@@ -20,6 +20,7 @@ Meteor.users.attachSchema(
     'profile.firstName': String,
     'profile.lastName': String,
     'profile.role': String,
+    'profile.theme': String,
     services: {
       blackbox: true,
       defaultValue: null,

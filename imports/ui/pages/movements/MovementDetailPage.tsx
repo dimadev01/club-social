@@ -190,7 +190,6 @@ export const MovementDetailPage = () => {
 
       return (
         <Form.Item
-          className="cs-form-item-extra"
           help={
             category === CategoryEnum.MembershipDebt && (
               <ButtonGroup>

@@ -12,10 +12,9 @@ import {
 } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
-import { Roles } from 'meteor/alanning:roles';
 import { Navigate, NavLink, useSearchParams } from 'react-router-dom';
 import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
@@ -186,12 +185,6 @@ export const PaymentNewPage = () => {
     });
   };
 
-  const canCreatePayment = Roles.userIsInRole(
-    user,
-    PermissionEnum.Create,
-    ScopeEnum.Payments
-  );
-
   /**
    * Render helpers
    */
@@ -280,7 +273,6 @@ export const PaymentNewPage = () => {
                 }
               >
                 <Select
-                  disabled={isLoadingMembers || !canCreatePayment}
                   loading={isLoadingMembers}
                   options={members?.map((m) => ({
                     label: m.name,

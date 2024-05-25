@@ -20,8 +20,6 @@ export const FormDeleteButton: React.FC<FormDeleteButtonProps> = ({
   }
 
   if (!Roles.userIsInRole(user, PermissionEnum.Delete, scope)) {
-    console.log('No tiene permisos para eliminar');
-
     return false;
   }
 

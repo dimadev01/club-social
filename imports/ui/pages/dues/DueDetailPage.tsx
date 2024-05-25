@@ -255,7 +255,6 @@ export const DueDetailPage = () => {
             }}
           >
             <Form.Item
-              className="cs-form-item-extra"
               label="Socio/s"
               name="memberIds"
               rules={getRulesForMemberIds()}

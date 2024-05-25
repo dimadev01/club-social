@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Image, Layout as AntLayout, Menu, Row, Typography } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
 import { Roles } from 'meteor/alanning:roles';
 import { Navigate, NavLink } from 'react-router-dom';
 import {
@@ -17,12 +16,16 @@ import {
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
+import { ItemType } from 'antd/es/menu/interface';
+import { useThemeContext } from '@ui/Context';
 
 type Props = {
   children: JSX.Element;
 };
 
 export const Layout: React.FC<Props> = ({ children }) => {
+  const themeMode = useThemeContext();
+
   const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(true);
 
   const [isMenuResponsiveMode, setIsMenuResponsiveMode] =
@@ -120,25 +123,27 @@ export const Layout: React.FC<Props> = ({ children }) => {
     return items;
   };
 
+  // @ts-expect-error
+  const userName = `${user.profile?.firstName} ${user.profile?.lastName}`;
+
   return (
-    <AntLayout hasSider className="cs-layout min-h-full">
+    <AntLayout hasSider className="cs-layout">
       <AntLayout.Sider
         collapsed={isMenuCollapsed}
         onCollapse={setIsMenuCollapsed}
         breakpoint="lg"
         collapsedWidth="0"
-        className="!bg-[#f8f9fd] cs-sider"
+        className="cs-sider"
         width={260}
+        theme={themeMode?.theme}
         onBreakpoint={(broken) => setIsMenuResponsiveMode(broken)}
       >
-        <NavLink to={AppUrl.Home} onClick={() => setMenuKey(AppUrl.Home)}>
-          <Image
-            wrapperClassName="py-8 px-20 w-full"
-            preview={false}
-            src="/images/logo.png"
-            alt="Rixsus Logo"
-          />
-        </NavLink>
+        <Image
+          wrapperClassName="py-8 px-16 w-full"
+          preview={false}
+          src="/images/logo.png"
+          alt="Rixsus Logo"
+        />
 
         <div className="mb-20 px-8">
           <Row align="middle" wrap={false}>
@@ -146,15 +151,16 @@ export const Layout: React.FC<Props> = ({ children }) => {
               <Typography.Text className="block font-light text-base">
                 Hola,
               </Typography.Text>
+
               <Typography.Text className="block font-medium text-base">
-                {user.profile?.firstName} {user.profile?.lastName}
+                {userName}
               </Typography.Text>
             </Col>
           </Row>
         </div>
 
         <Menu
-          className="!bg-[#f8f9fd] cs-menu"
+          className="cs-menu"
           selectedKeys={[menuKey]}
           onClick={({ key }) => {
             setMenuKey(key);
@@ -167,7 +173,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
         />
 
         <Menu
-          className="!bg-[#f8f9fd] cs-menu mt-auto !mb-8"
+          className="cs-menu mt-auto !mb-8"
           items={[
             {
               icon: <LogoutOutlined className="!text-lg" />,
