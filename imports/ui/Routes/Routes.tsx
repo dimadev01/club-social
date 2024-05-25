@@ -16,7 +16,6 @@ import { HomePage } from '@ui/pages/HomePage';
 import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
-import { MovementMigratePage } from '@ui/pages/movements/MovementMigratePage';
 import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
 import { PaymentDetailPage } from '@ui/pages/payments/PaymentDetailPage';
 import { PaymentsRoot } from '@ui/pages/payments/PaymentsRoot';
@@ -27,6 +26,7 @@ import { UsersPage } from '@ui/pages/users/UsersPage';
 import { AuthRoute } from '@ui/Routes/AuthRoute';
 import { PrivateRoute } from '@ui/Routes/PrivateRoute';
 import { PublicRoute } from '@ui/Routes/PublicRoute';
+import { PaymentNewPage } from '@ui/pages/payments/PaymentNewPage';
 
 const router = createBrowserRouter([
   {
@@ -141,17 +141,6 @@ const router = createBrowserRouter([
     ),
     path: AppUrl.MovementsDetail,
   },
-  {
-    element: (
-      <PrivateRoute
-        permission={PermissionEnum.Read}
-        scope={ScopeEnum.Movements}
-      >
-        <MovementMigratePage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.MovementsMigrate,
-  },
 
   {
     element: (
@@ -189,11 +178,12 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
-        <PaymentDetailPage />
+        <PaymentNewPage />
       </PrivateRoute>
     ),
     path: AppUrl.PaymentsNew,
   },
+
   {
     element: (
       <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>

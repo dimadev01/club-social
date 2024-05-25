@@ -303,7 +303,7 @@ export const MembersPage = () => {
                     onClick={() =>
                       navigate(
                         UrlUtils.navigate(AppUrl.Payments, {
-                          memberIds: [member._id],
+                          memberId: member._id,
                         })
                       )
                     }

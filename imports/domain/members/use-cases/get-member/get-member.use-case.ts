@@ -47,6 +47,7 @@ export class GetMemberUseCase
       firstName: member.firstName,
       lastName: member.lastName,
       maritalStatus: member.maritalStatus,
+      name: member.name,
       nationality: member.nationality,
       phones: member.phones,
       sex: member.sex,

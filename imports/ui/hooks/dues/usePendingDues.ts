@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export const usePendingDuesByMember = (memberId?: string) =>
   useQuery<GetPendingDuesRequestDto, Error, PendingDueDto[]>(
-    [MethodsEnum.DuesGetPending, memberId],
-    () => Meteor.callAsync(MethodsEnum.DuesGetPending, { memberId }),
+    [MethodsEnum.DuesGetPendingByMember, memberId],
+    () => Meteor.callAsync(MethodsEnum.DuesGetPendingByMember, { memberId }),
     { enabled: !!memberId }
   );

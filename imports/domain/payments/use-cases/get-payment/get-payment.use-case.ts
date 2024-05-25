@@ -1,4 +1,4 @@
-import { ok, Result } from 'neverthrow';
+import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { PaymentDue } from '@domain/payments/entities/payment-due';
@@ -7,6 +7,7 @@ import { GetPaymentRequestDto } from '@domain/payments/use-cases/get-payment/get
 import { GetPaymentResponseDto } from '@domain/payments/use-cases/get-payment/get-payment-response.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
+import { PaymentNotFoundError } from '@domain/payments/errors/payment-not-found.error';
 
 @injectable()
 export class GetPaymentUseCase
@@ -26,7 +27,7 @@ export class GetPaymentUseCase
     const payment = await this._paymentPort.findOneById(request.id);
 
     if (!payment || payment.isDeleted) {
-      return ok(null);
+      return err(new PaymentNotFoundError());
     }
 
     return ok<GetPaymentResponseDto>({
@@ -43,6 +44,7 @@ export class GetPaymentUseCase
       memberId: payment.member._id,
       memberName: payment.member.name,
       notes: payment.notes,
+      receiptNumber: payment.receiptNumber,
     });
   }
 }

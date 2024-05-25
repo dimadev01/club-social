@@ -18,13 +18,11 @@ export enum AppUrl {
 
   Movements = '/movements',
   MovementsDetail = '/movements/:id',
-  MovementsMigrate = '/movements/:id/migrate',
   MovementsNew = '/movements/new',
 
   Payments = '/payments',
   PaymentsDetail = '/payments/:id',
   PaymentsNew = '/payments/new',
-  PaymentsNewMember = '/payments/new/:memberId',
 
   Professors = '/professors',
 

@@ -11,7 +11,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 @injectable()
-export class GetPendingDuesUseCase
+export class GetPendingDuesByMemberUseCase
   extends UseCase<GetPendingDuesRequestDto>
   implements IUseCase<GetPendingDuesRequestDto, PendingDueDto[]>
 {
@@ -25,8 +25,8 @@ export class GetPendingDuesUseCase
   public async execute(
     request: GetPendingDuesRequestDto
   ): Promise<Result<PendingDueDto[], Error>> {
-    const dues = await this._duePort.findPending({
-      memberIds: request.memberId,
+    const dues = await this._duePort.findPendingByMember({
+      memberId: request.memberId,
     });
 
     return ok<PendingDueDto[]>(
