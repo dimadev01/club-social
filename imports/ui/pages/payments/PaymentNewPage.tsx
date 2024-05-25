@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   App,
   Breadcrumb,
@@ -29,6 +29,7 @@ import TextArea from 'antd/es/input/TextArea';
 import { MoneyUtils } from '@shared/utils/money.utils';
 import { Button } from '@ui/components/Button';
 import useDeepCompareEffect from 'use-deep-compare-effect';
+import { useNextPaymentReceiptNumber } from '@ui/hooks/payments/useNextPaymentReceiptNumber';
 import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
 
 type FormDueValue = {
@@ -53,21 +54,26 @@ export const PaymentNewPage = () => {
    */
   const [, setSearchParams] = useSearchParams();
 
-  const { memberId, date, receiptNumber, dueIds } = UrlUtils.parse();
+  const {
+    memberId: queryMemberId,
+    date: queryDate,
+    receiptNumber: queryReceiptNumber,
+    dueIds: queryDueIds,
+  } = UrlUtils.parse();
 
-  const urlMemberId = memberId ? (memberId as string) : undefined;
+  const urlMemberId = queryMemberId ? queryMemberId.toString() : undefined;
 
-  const urlDate = date ? (date as string) : undefined;
+  const urlDate = queryDate ? queryDate.toString() : undefined;
 
-  const urlReceiptNumber = receiptNumber ? +receiptNumber : undefined;
+  const urlReceiptNumber = queryReceiptNumber ? +queryReceiptNumber : undefined;
 
   const urlDueIds = useMemo(() => {
-    if (!dueIds) {
-      return [];
+    if (!queryDueIds) {
+      return undefined;
     }
 
-    return Array.isArray(dueIds) ? dueIds : [dueIds];
-  }, [dueIds]);
+    return Array.isArray(queryDueIds) ? queryDueIds : [queryDueIds];
+  }, [queryDueIds]);
 
   /**
    * Form watches
@@ -94,17 +100,23 @@ export const PaymentNewPage = () => {
 
   const { data: member } = useMember(formMemberId);
 
+  const { data: nextPaymentReceiptNumber } = useNextPaymentReceiptNumber(
+    !urlReceiptNumber && !formReceiptNumber
+  );
+
   /**
    * Mutations
    */
   const createPayment = useCreatePayment();
 
   useDeepCompareEffect(() => {
+    const date = formDate
+      ? DateUtils.format(formDate, DateFormatEnum.Date)
+      : undefined;
+
     setSearchParams(
       UrlUtils.stringify({
-        date: formDate
-          ? DateUtils.format(formDate, DateFormatEnum.Date)
-          : undefined,
+        date,
         dueIds: formDuesSelectedIds,
         memberId: formMemberId,
         receiptNumber: formReceiptNumber,
@@ -122,11 +134,19 @@ export const PaymentNewPage = () => {
         dues: pendingDues.map((due) => ({
           amount: MoneyUtils.fromCents(due.amount),
           dueId: due._id,
-          isSelected: formDuesSelectedIds.includes(due._id),
+          isSelected: formDuesSelectedIds?.includes(due._id),
         })),
       });
     }
   }, [pendingDues, form, formDuesSelectedIds]);
+
+  useEffect(() => {
+    if (nextPaymentReceiptNumber) {
+      form.setFieldsValue({
+        receiptNumber: nextPaymentReceiptNumber.receiptNumber,
+      });
+    }
+  }, [nextPaymentReceiptNumber, form]);
 
   const user = Meteor.user();
 
@@ -223,7 +243,7 @@ export const PaymentNewPage = () => {
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
             date: urlDate ? dayjs(urlDate as string) : DateUtils.c(),
-            dues: urlDueIds.map((dueId) => ({
+            dues: urlDueIds?.map((dueId) => ({
               amount: 0,
               dueId,
               isSelected: true,
@@ -242,6 +262,7 @@ export const PaymentNewPage = () => {
                 <DatePicker
                   format={DateFormatEnum.DDMMYYYY}
                   className="w-full"
+                  allowClear={false}
                   disabledDate={(current) => current.isAfter(dayjs())}
                 />
               </Form.Item>

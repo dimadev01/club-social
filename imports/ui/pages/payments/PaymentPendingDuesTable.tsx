@@ -152,24 +152,27 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
         render={(_, due: Due) => {
           const index = pendingDues?.findIndex((d) => d._id === due._id) ?? 0;
 
-          const isFieldValid = form.getFieldError(amountFieldName).length === 0;
-
           const isSelected = form.getFieldValue(isSelectedFieldName(index));
 
           return (
             <Form.Item
               name={amountFieldName(index)}
-              className={isFieldValid ? 'mb-0' : ''}
+              className="mb-0"
               rules={[
                 {
                   message: 'Por favor ingrese monto a registrar',
                   required: true,
                 },
+                {
+                  message: 'El mínimo es ARS 1',
+                  min: 1,
+                  type: 'number',
+                },
               ]}
             >
               <InputNumber
                 disabled={!isSelected}
-                className="w-36"
+                className="w-32"
                 prefix={ARS.code}
                 precision={0}
                 decimalSeparator=","
@@ -178,7 +181,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
                   NumberUtils.parseFromInputNumber(value ?? '')
                 }
                 formatter={(value) => NumberUtils.format(value ?? 0)}
-                min={1}
+                min={0}
               />
             </Form.Item>
           );

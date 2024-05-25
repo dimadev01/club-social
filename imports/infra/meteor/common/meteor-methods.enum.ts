@@ -40,6 +40,7 @@ export enum MethodsEnum {
   PaymentsDelete = 'payments/delete',
   PaymentsGet = 'payments/get',
   PaymentsGetGrid = 'payments/getGrid',
+  PaymentsGetNextReceiptNumber = 'payments/getNextReceiptNumber',
   PaymentsGetPaid = 'payments/getPaid',
   PaymentsRestore = 'payments/restore',
 

@@ -3,7 +3,7 @@ import { FindPaginatedRequest } from '@application/pagination/find-paginated.req
 import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
 import { Payment } from '@domain/payments/entities/payment.entity';
 
-export type FindByReceiptNumber = {
+export type FindByReceiptNumberRequest = {
   receiptNumber: number;
 };
 

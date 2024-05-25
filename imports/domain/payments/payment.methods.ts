@@ -13,6 +13,7 @@ import { RestorePaymentRequestDto } from '@domain/payments/use-cases/restore-pay
 import { RestorePaymentUseCase } from '@domain/payments/use-cases/restore-payment/restore-payment.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { GetNextPaymentReceiptNumberUseCase } from './use-cases/get-next-payment-receipt-number/get-next-payment-receipt-number.use-case';
 
 @injectable()
 export class PaymentMethod extends MeteorMethod {
@@ -22,7 +23,8 @@ export class PaymentMethod extends MeteorMethod {
     private readonly _getPayment: GetPaymentUseCase,
     private readonly _createPayment: CreatePaymentUseCase,
     private readonly _deletePayment: DeletePaymentUseCase,
-    private readonly _restorePayment: RestorePaymentUseCase
+    private readonly _restorePayment: RestorePaymentUseCase,
+    private readonly _getNextPaymentReceiptNumber: GetNextPaymentReceiptNumberUseCase
   ) {
     super();
   }
@@ -46,6 +48,9 @@ export class PaymentMethod extends MeteorMethod {
 
       [MethodsEnum.PaymentsRestore]: (request: RestorePaymentRequestDto) =>
         this.execute(this._restorePayment, request, RestorePaymentRequestDto),
+
+      [MethodsEnum.PaymentsGetNextReceiptNumber]: () =>
+        this.execute(this._getNextPaymentReceiptNumber),
     });
   }
 }

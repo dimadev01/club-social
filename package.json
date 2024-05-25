@@ -79,7 +79,7 @@
     "eslint-plugin-typescript-sort-keys": "^2.1.0",
     "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "^8.0.3",
-    "lint-staged": "^13.2.0",
+    "lint-staged": "13.2.0",
     "maildev": "^2.0.5",
     "prettier": "^2.8.8",
     "typescript": "^5.0.4"
