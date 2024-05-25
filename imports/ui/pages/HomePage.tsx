@@ -11,7 +11,6 @@ export const HomePage = () => {
     return <Navigate to={AppUrl.Logout} />;
   }
 
-  // @ts-expect-error
   if (user.profile?.role === RoleEnum.Member) {
     return <Navigate to={AppUrl.Dues} />;
   }

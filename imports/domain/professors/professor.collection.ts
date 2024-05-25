@@ -7,7 +7,6 @@ export const ProfessorsCollection = new MongoCollection(
   Professor,
 );
 
-// @ts-expect-error
 ProfessorsCollection.attachSchema(
   new SimpleSchema({
     _id: String,

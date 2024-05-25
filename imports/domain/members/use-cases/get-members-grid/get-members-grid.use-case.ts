@@ -40,9 +40,7 @@ export class GetMembersGridUseCase
           emails: member.user.emails ?? null,
           guestBalance: member.guestBalance,
           membershipBalance: member.membershipBalance,
-          // @ts-expect-error
           name: `${member.user.profile?.lastName ?? ''} ${
-            // @ts-expect-error
             member.user.profile?.firstName ?? ''
           }`,
           status: member.status,

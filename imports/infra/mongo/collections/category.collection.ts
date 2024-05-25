@@ -17,5 +17,4 @@ export const CategoriesSchema = new SimpleSchema({
   updatedBy: String,
 });
 
-// @ts-expect-error
 CategoryCollection.attachSchema(CategoriesSchema);

@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Image, Layout as AntLayout, Menu, Row, Typography } from 'antd';
+import {
+  Col,
+  Image,
+  Layout as AntLayout,
+  Menu,
+  Row,
+  Typography,
+  Flex,
+} from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import { Roles } from 'meteor/alanning:roles';
 import { Navigate, NavLink } from 'react-router-dom';
@@ -9,6 +17,7 @@ import {
   FilePdfOutlined,
   LogoutOutlined,
   MailOutlined,
+  MoonOutlined,
   NotificationOutlined,
   UserOutlined,
   WhatsAppOutlined,
@@ -24,7 +33,7 @@ type Props = {
 };
 
 export const Layout: React.FC<Props> = ({ children }) => {
-  const themeMode = useThemeContext();
+  const { setTheme, theme } = useThemeContext();
 
   const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(true);
 
@@ -135,7 +144,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
         collapsedWidth="0"
         className="cs-sider"
         width={260}
-        theme={themeMode?.theme}
+        theme={theme}
         onBreakpoint={(broken) => setIsMenuResponsiveMode(broken)}
       >
         <Image
@@ -189,47 +198,60 @@ export const Layout: React.FC<Props> = ({ children }) => {
           {children}
         </AntLayout.Content>
 
-        <AntLayout.Footer className="flex justify-between">
-          <ButtonGroup>
-            <Button
-              size="large"
-              tooltip={{ title: 'Reglamento' }}
-              icon={<FilePdfOutlined />}
-              htmlType="button"
-              type="text"
-              href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
-              target="_blank"
-            />
-            <Button
-              size="large"
-              tooltip={{ title: 'Comunicados' }}
-              icon={<NotificationOutlined />}
-              htmlType="button"
-              type="text"
-              href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
-              target="_blank"
-            />
-          </ButtonGroup>
-          <ButtonGroup>
-            <Button
-              size="large"
-              tooltip={{ title: 'Enviar Email' }}
-              icon={<MailOutlined />}
-              htmlType="button"
-              type="text"
-              href="mailto:info@clubsocialmontegrande.ar"
-              target="_blank"
-            />
-            <Button
-              size="large"
-              tooltip={{ title: 'Enviar WhatsApp' }}
-              icon={<WhatsAppOutlined />}
-              htmlType="button"
-              type="text"
-              href="https://wa.me/5491158804950"
-              target="_blank"
-            />
-          </ButtonGroup>
+        <AntLayout.Footer>
+          <Flex justify="space-between">
+            <ButtonGroup>
+              <Button
+                size="large"
+                tooltip={{ title: 'Reglamento' }}
+                icon={<FilePdfOutlined />}
+                htmlType="button"
+                type="text"
+                href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
+                target="_blank"
+              />
+              <Button
+                size="large"
+                tooltip={{ title: 'Comunicados' }}
+                icon={<NotificationOutlined />}
+                htmlType="button"
+                type="text"
+                href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
+                target="_blank"
+              />
+            </ButtonGroup>
+
+            <ButtonGroup>
+              <Button
+                size="large"
+                tooltip={{ title: 'Cambiar tema' }}
+                icon={<MoonOutlined />}
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                htmlType="button"
+                type="text"
+              />
+
+              <Button
+                size="large"
+                tooltip={{ title: 'Enviar Email' }}
+                icon={<MailOutlined />}
+                htmlType="button"
+                type="text"
+                href="mailto:info@clubsocialmontegrande.ar"
+                target="_blank"
+              />
+
+              <Button
+                size="large"
+                tooltip={{ title: 'Enviar WhatsApp' }}
+                icon={<WhatsAppOutlined />}
+                htmlType="button"
+                type="text"
+                href="https://wa.me/5491158804950"
+                target="_blank"
+              />
+            </ButtonGroup>
+          </Flex>
         </AntLayout.Footer>
       </AntLayout>
     </AntLayout>

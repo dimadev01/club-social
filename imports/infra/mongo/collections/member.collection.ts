@@ -34,5 +34,4 @@ export const MemberSchema = new SimpleSchema({
   userId: String,
 });
 
-// @ts-expect-error
 MemberCollection.attachSchema(MemberSchema);

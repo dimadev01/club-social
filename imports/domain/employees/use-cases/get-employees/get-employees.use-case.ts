@@ -41,7 +41,6 @@ export class GetEmployeesUseCase
         .map((employee) => plainToInstance(Employee, employee))
         .map((employee) => ({
           _id: employee._id,
-          // @ts-expect-error
           name: `${employee.user.profile?.lastName} ${employee.user.profile?.firstName}`,
         })),
     );

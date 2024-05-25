@@ -80,13 +80,11 @@ export class Member extends Entity {
   }
 
   public get firstName(): string {
-    // @ts-expect-error
-    return this.user.profile?.firstName;
+    return this.user.profile?.firstName ?? '';
   }
 
   public get lastName(): string {
-    // @ts-expect-error
-    return this.user.profile?.lastName;
+    return this.user.profile?.lastName ?? '';
   }
 
   public get name(): string {

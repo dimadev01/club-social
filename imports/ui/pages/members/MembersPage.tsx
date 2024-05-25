@@ -168,11 +168,11 @@ export const MembersPage = () => {
           dataSource={data?.data}
           rowClassName={(member) => {
             if (member.totalBalance < 0) {
-              return 'bg-red-50';
+              return 'bg-red-50 dark:bg-red-400';
             }
 
             if (member.totalBalance > 0) {
-              return 'bg-green-50';
+              return 'bg-green-50 dark:bg-green-400';
             }
 
             return '';

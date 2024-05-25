@@ -6,6 +6,7 @@ import GoogleFontLoader from 'react-google-font';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools/build/lib/devtools';
 import { Routes } from '@ui/Routes/Routes';
+import clsx from 'clsx';
 import { ThemeContext, ThemeContextProps } from './Context';
 
 const queryClient = new QueryClient({
@@ -58,7 +59,9 @@ export const App = () => {
     <>
       <GoogleFontLoader fonts={[{ font: 'Rubik', weights: [300, 400, 500] }]} />
 
-      <AntApp rootClassName="cs-ant-app">
+      <AntApp
+        rootClassName={clsx('cs-ant-app', { dark: themeMode === 'dark' })}
+      >
         <ConfigProvider
           locale={esEs}
           select={{ showSearch: true }}
@@ -66,7 +69,10 @@ export const App = () => {
           form={{ requiredMark: 'optional' }}
           input={{ autoComplete: 'on' }}
           theme={{
-            algorithm: theme.defaultAlgorithm,
+            algorithm:
+              themeMode === 'light'
+                ? theme.defaultAlgorithm
+                : theme.darkAlgorithm,
             components: {
               Button: {
                 primaryShadow: '0 2px 0 rgba(5, 145, 255, 0.1)',
@@ -78,6 +84,9 @@ export const App = () => {
               Menu: {
                 itemBg: 'transparent',
                 itemSelectedBg: 'transparent',
+              },
+              Table: {
+                bodySortBg: 'transparent',
               },
             },
             token: {

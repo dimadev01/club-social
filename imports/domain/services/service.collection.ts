@@ -4,7 +4,6 @@ import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
 export const ServicesCollection = new MongoCollection('services', Service);
 
-// @ts-expect-error
 ServicesCollection.attachSchema(
   new SimpleSchema({
     _id: String,

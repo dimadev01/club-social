@@ -77,7 +77,6 @@ export const UsersPage = () => {
               title: 'Nombre',
             },
             {
-              align: 'center',
               dataIndex: 'emails',
               render: (emails: Meteor.UserEmail[] | undefined) =>
                 emails && (

@@ -4,7 +4,6 @@ import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
 export const EmployeesCollection = new MongoCollection('employees', Employee);
 
-// @ts-expect-error
 EmployeesCollection.attachSchema(
   new SimpleSchema({
     _id: String,

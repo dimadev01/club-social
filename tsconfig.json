@@ -39,5 +39,11 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "exclude": ["./.meteor/**", "./packages/**"]
+  "exclude": ["./.meteor/**", "./packages/**"],
+  "include": [
+    ".meteor/**/*.ts",
+    "./imports/**/*.ts",
+    "./imports/**/*.tsx",
+    "./types/*.d.ts"
+  ]
 }

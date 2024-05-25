@@ -23,6 +23,7 @@
     "class-transformer": "^0.5.1",
     "class-transformer-validator": "^0.9.1",
     "class-validator": "^0.14.0",
+    "clsx": "^2.1.1",
     "dayjs": "^1.11.7",
     "dinero.js": "^2.0.0-alpha.14",
     "lodash": "^4.17.21",

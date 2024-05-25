@@ -6,7 +6,6 @@ import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import invariant from 'tiny-invariant';
 import { container, inject, singleton } from 'tsyringe';
-import { Meteor as MeteorCustomTypes } from 'types/meteor';
 import { ILogger } from '@application/logger/logger.interface';
 import { DueMethod } from '@domain/dues/due.methods';
 import { MovementMethod } from '@domain/movements/movement.methods';
@@ -75,7 +74,6 @@ export class ServerStartup {
     ) => {
       const urlWithoutHashtag = url.replace('#/', '');
 
-      // @ts-expect-error
       return `Hola ${user.profile?.firstName} ${user.profile?.lastName}, verifica tu cuenta: <a href="${urlWithoutHashtag}">${urlWithoutHashtag}</a>`;
     };
 
@@ -85,7 +83,6 @@ export class ServerStartup {
     ) => {
       const urlWithoutHashtag = url.replace('#/', '');
 
-      // @ts-ignore
       return `Hola ${user.profile?.firstName} ${user.profile?.lastName}, activa tu cuenta: <a href="${urlWithoutHashtag}">${urlWithoutHashtag}</a>`;
     };
   }
@@ -95,7 +92,7 @@ export class ServerStartup {
       invariant(options.profile);
 
       const { firstName, lastName, role, state } =
-        options.profile as MeteorCustomTypes.UserProfile;
+        options.profile as Meteor.UserProfile & { state: UserStateEnum };
 
       return {
         ...user,
@@ -112,7 +109,6 @@ export class ServerStartup {
   private _configureValidateLoginAttempt() {
     Accounts.validateLoginAttempt(
       (attempt: { user: Meteor.User & { isActive: boolean } }) => {
-        // @ts-ignore
         if (attempt.user?.state === UserStateEnum.INACTIVE) {
           return false;
         }

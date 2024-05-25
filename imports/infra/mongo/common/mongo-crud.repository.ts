@@ -254,7 +254,6 @@ export abstract class MongoCrudRepository<T extends Entity>
     try {
       const currentUser = await this.getCurrentUserOrThrow();
 
-      // @ts-expect-error
       return `${currentUser.profile?.firstName} ${currentUser.profile?.lastName}`;
     } catch (error) {
       return 'System';

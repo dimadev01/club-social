@@ -24,7 +24,6 @@ export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
     const user: Meteor.User | null = await this._getCurrentUser();
 
     if (user) {
-      // @ts-expect-error
       entity.create(`${user.profile?.firstName} ${user.profile?.lastName}`);
     }
 
@@ -35,7 +34,6 @@ export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
     const user: Meteor.User | null = await this._getCurrentUser();
 
     entity.update(
-      // @ts-expect-error
       user ? `${user.profile?.firstName} ${user.profile?.lastName}` : 'System',
     );
 

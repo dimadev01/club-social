@@ -37,9 +37,7 @@ export class GetMembersForCsvUseCase
       data: data.map(
         (member: FindPaginatedMember): MemberForCsvDto => ({
           _id: member._id,
-          // @ts-expect-error
           name: `${member.user.profile?.lastName ?? ''} ${
-            // @ts-expect-error
             member.user.profile?.firstName ?? ''
           }`,
           category: member.category,

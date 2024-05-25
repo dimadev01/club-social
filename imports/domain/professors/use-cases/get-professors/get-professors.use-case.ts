@@ -41,7 +41,6 @@ export class GetProfessorsUseCase
         .map((professor) => plainToInstance(Professor, professor))
         .map((professor) => ({
           _id: professor._id,
-          // @ts-expect-error
           name: `${professor.user.profile?.lastName} ${professor.user.profile?.firstName}`,
         }))
         .sort((a, b) => a.name.localeCompare(b.name)),
