@@ -5,5 +5,5 @@ import { useQuery } from '@tanstack/react-query';
 export const useCategories = () =>
   useQuery<null, Error, GetCategoriesResponseDto[]>(
     [MethodsEnum.CategoriesGetAll],
-    () => Meteor.callAsync(MethodsEnum.CategoriesGetAll)
+    () => Meteor.callAsync(MethodsEnum.CategoriesGetAll),
   );

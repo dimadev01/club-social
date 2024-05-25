@@ -33,13 +33,13 @@ export class CreatePaymentUseCase
     @inject(DIToken.MemberRepository)
     private readonly _memberPort: IMemberPort,
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort
+    private readonly _duePort: IDuePort,
   ) {
     super();
   }
 
   public async execute(
-    request: CreatePaymentRequestDto
+    request: CreatePaymentRequestDto,
   ): Promise<Result<CreatePaymentResponseDto, Error>> {
     await this.validatePermission(ScopeEnum.Payments, PermissionEnum.Create);
 
@@ -51,8 +51,8 @@ export class CreatePaymentUseCase
     if (existingPaymentByReceipt) {
       return err(
         new ExistingPaymentError(
-          `Ya existe un pago con el Recibo número ${request.receiptNumber}`
-        )
+          `Ya existe un pago con el Recibo número ${request.receiptNumber}`,
+        ),
       );
     }
 
@@ -73,7 +73,7 @@ export class CreatePaymentUseCase
         });
 
         const member = await this._memberPort.findOneByIdOrThrow(
-          request.memberId
+          request.memberId,
         );
 
         const newPaymentMember = PaymentMember.create({
@@ -144,12 +144,12 @@ export class CreatePaymentUseCase
             }
 
             await this._duePort.updateWithSession(due, session);
-          })
+          }),
         );
 
         await this._paymentPort.createWithSession(
           newPaymentResult.value,
-          session
+          session,
         );
       });
 

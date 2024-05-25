@@ -6,5 +6,5 @@ import { useQuery } from '@tanstack/react-query';
 export const useCategoriesGrid = (request: GetCategoriesGridRequestDto) =>
   useQuery<GetCategoriesGridRequestDto, Error, GetCategoriesGridResponseDto>(
     [MethodsEnum.CategoriesGetGrid, request],
-    () => Meteor.callAsync(MethodsEnum.CategoriesGetGrid, request)
+    () => Meteor.callAsync(MethodsEnum.CategoriesGetGrid, request),
   );

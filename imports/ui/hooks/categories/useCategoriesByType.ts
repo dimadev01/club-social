@@ -12,5 +12,5 @@ export const useCategoriesByType = (type?: CategoryTypeEnum) =>
   >(
     [type, MethodsEnum.CategoriesGetAllByType],
     () => Meteor.callAsync(MethodsEnum.CategoriesGetAllByType, { type }),
-    { enabled: !!type }
+    { enabled: !!type },
   );

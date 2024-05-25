@@ -17,13 +17,13 @@ export class RestoreDueUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort
+    private readonly _duePort: IDuePort,
   ) {
     super();
   }
 
   public async execute(
-    request: RestoreDueRequestDto
+    request: RestoreDueRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Dues, PermissionEnum.Update);
 

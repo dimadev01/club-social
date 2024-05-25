@@ -14,7 +14,7 @@ ServicesCollection.attachSchema(
     name: String,
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,
-  })
+  }),
 );
 
 await ServicesCollection.createIndexAsync({ name: 1 });

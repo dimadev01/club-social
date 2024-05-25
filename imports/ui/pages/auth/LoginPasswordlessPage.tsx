@@ -74,7 +74,7 @@ export const LoginPasswordlessPage = () => {
           <Input className="text-sm" placeholder="Ingresa tu clave de acceso" />
         </Form.Item>
 
-        <div className="text-right mb-16">
+        <div className="mb-16 text-right">
           <Button
             tooltip={{ title: 'Reenviar código' }}
             htmlType="button"
@@ -88,7 +88,7 @@ export const LoginPasswordlessPage = () => {
 
         <Space direction="horizontal" className="flex justify-between">
           <Button
-            className="rounded-bl-none rounded-tr-none rounded-tl-[10px] rounded-br-[10px]"
+            className="rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
             type="primary"
             htmlType="submit"
             disabled={isLoggingIn}
@@ -98,7 +98,7 @@ export const LoginPasswordlessPage = () => {
           </Button>
 
           <Button
-            className="ml-auto rounded-bl-none rounded-tr-none rounded-tl-[10px] rounded-br-[10px]"
+            className="ml-auto rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
             htmlType="button"
             type="text"
             onClick={() => navigate(AppUrl.Login)}

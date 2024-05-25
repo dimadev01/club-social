@@ -100,7 +100,7 @@ export const PaymentNewPage = () => {
   const { data: member } = useMember(formMemberId);
 
   const { data: nextPaymentReceiptNumber } = useNextPaymentReceiptNumber(
-    !urlReceiptNumber && !formReceiptNumber
+    !urlReceiptNumber && !formReceiptNumber,
   );
 
   /**
@@ -120,7 +120,7 @@ export const PaymentNewPage = () => {
         memberId: formMemberId,
         receiptNumber: formReceiptNumber,
       }),
-      { replace: true }
+      { replace: true },
     );
   }, [formDate, formMemberId, formReceiptNumber, formDuesSelectedIds]);
 

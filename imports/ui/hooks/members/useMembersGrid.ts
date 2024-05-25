@@ -16,6 +16,6 @@ export const useMembersGrid = (request: PaginatedRequestDto) => {
 
   return useQuery<PaginatedRequestDto, Error, PaginatedResponse<MemberGridDto>>(
     [MethodsEnum.MembersGetGrid, request],
-    () => Meteor.callAsync(MethodsEnum.MembersGetGrid, request)
+    () => Meteor.callAsync(MethodsEnum.MembersGetGrid, request),
   );
 };

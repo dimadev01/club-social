@@ -34,7 +34,7 @@ export class MemberRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly _logger: ILogger
+    protected readonly _logger: ILogger,
   ) {
     super(_logger);
   }
@@ -109,7 +109,7 @@ export class MemberRepository
   }
 
   public async findPaginated(
-    request: FindPaginatedMembersRequest
+    request: FindPaginatedMembersRequest,
   ): Promise<FindPaginatedResponse<FindPaginatedMember>> {
     const query: Mongo.Query<Member> = {
       isDeleted: false,
@@ -173,11 +173,11 @@ export class MemberRepository
       {
         $addFields: {
           electricityBalance: this._getTotalBalanceByCategory(
-            DueCategoryEnum.Electricity
+            DueCategoryEnum.Electricity,
           ),
           guestBalance: this._getTotalBalanceByCategory(DueCategoryEnum.Guest),
           membershipBalance: this._getTotalBalanceByCategory(
-            DueCategoryEnum.Membership
+            DueCategoryEnum.Membership,
           ),
         },
       },
@@ -199,7 +199,7 @@ export class MemberRepository
           },
           user: 1,
         },
-      }
+      },
     );
 
     if (request.sortField !== 'user.profile.lastName') {

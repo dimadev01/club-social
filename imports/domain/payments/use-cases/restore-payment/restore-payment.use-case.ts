@@ -17,13 +17,13 @@ export class RestorePaymentUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.PaymentRepository)
-    private readonly _paymentPort: IPaymentPort
+    private readonly _paymentPort: IPaymentPort,
   ) {
     super();
   }
 
   public async execute(
-    request: RestorePaymentRequestDto
+    request: RestorePaymentRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Payments, PermissionEnum.Update);
 

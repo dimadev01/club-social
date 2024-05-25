@@ -51,7 +51,7 @@ export const PaymentsPage = () => {
   });
 
   const [memberIdsFilter, setMemberIdsFilter] = useState<string[]>(
-    (parsedQs.memberIds as string[]) ?? []
+    (parsedQs.memberIds as string[]) ?? [],
   );
 
   const [showDeleted, setShowDeleted] = useState<boolean>(false);
@@ -59,7 +59,7 @@ export const PaymentsPage = () => {
   const [dateFilter, setDateFilter] = useState<RangeValue<Dayjs> | null>(
     parsedQs.from && parsedQs.to
       ? [dayjs(parsedQs.from as string), dayjs(parsedQs.to as string)]
-      : null
+      : null,
   );
 
   const { data: members, isLoading: isLoadingMembers } = useMembers();
@@ -169,7 +169,7 @@ export const PaymentsPage = () => {
             {Roles.userIsInRole(
               user,
               PermissionEnum.Create,
-              ScopeEnum.Payments
+              ScopeEnum.Payments,
             ) && <TableNewButton to={AppUrl.PaymentsNew} />}
           </>
         }
@@ -216,7 +216,7 @@ export const PaymentsPage = () => {
               {Roles.userIsInRole(
                 userId,
                 PermissionEnum.ViewDeleted,
-                ScopeEnum.Movements
+                ScopeEnum.Movements,
               ) && (
                 <Form.Item>
                   <Checkbox
@@ -286,7 +286,7 @@ export const PaymentsPage = () => {
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Delete,
-                        ScopeEnum.Payments
+                        ScopeEnum.Payments,
                       ) && (
                         <Button
                           popConfirm={{
@@ -296,7 +296,7 @@ export const PaymentsPage = () => {
                                 {
                                   onError: () => deletePayment.reset(),
                                   onSuccess: () => deletePayment.reset(),
-                                }
+                                },
                               ),
                             title: '¿Está seguro de eliminar este pago?',
                           }}
@@ -313,7 +313,7 @@ export const PaymentsPage = () => {
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Update,
-                        ScopeEnum.Payments
+                        ScopeEnum.Payments,
                       ) && (
                         <Button
                           type="text"
@@ -323,7 +323,7 @@ export const PaymentsPage = () => {
                               {
                                 onError: () => restorePayment.reset(),
                                 onSuccess: () => restorePayment.reset(),
-                              }
+                              },
                             )
                           }
                           htmlType="button"

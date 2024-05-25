@@ -13,7 +13,7 @@ export class GetNextPaymentReceiptNumberUseCase
 {
   public constructor(
     @inject(DIToken.PaymentRepository)
-    private readonly _paymentPort: IPaymentPort
+    private readonly _paymentPort: IPaymentPort,
   ) {
     super();
   }

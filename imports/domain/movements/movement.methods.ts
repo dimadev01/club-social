@@ -28,7 +28,7 @@ export class MovementMethod extends MeteorMethod {
     private readonly _deleteMovement: DeleteMovementUseCase,
     private readonly _restoreMovement: RestoreMovementUseCase,
     private readonly _migrateMovement: MigrateMovementUseCase,
-    private readonly _getNextMovement: GetNextMovementUseCase
+    private readonly _getNextMovement: GetNextMovementUseCase,
   ) {
     super();
   }
@@ -39,7 +39,7 @@ export class MovementMethod extends MeteorMethod {
         this.execute(
           this._getMovementsGrid,
           request,
-          GetMovementsGridRequestDto
+          GetMovementsGridRequestDto,
         ),
 
       [MethodsEnum.MovementsGet]: (request: GetMovementRequestDto) =>
@@ -61,7 +61,7 @@ export class MovementMethod extends MeteorMethod {
         this.execute(this._migrateMovement, request, MigrateMovementRequestDto),
 
       [MethodsEnum.MovementsGetNextToMigrate]: (
-        request: GetNextMovementRequestDto
+        request: GetNextMovementRequestDto,
       ) =>
         this.execute(this._getNextMovement, request, GetNextMovementRequestDto),
     });

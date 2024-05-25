@@ -15,6 +15,6 @@ export const usePaidDues = (request: GetPaidDuesRequestDto) => {
 
   return useQuery<GetPaidDuesRequestDto, Error, GetPaidDuesResponseDto>(
     [MethodsEnum.DuesGetPaid, request],
-    () => Meteor.callAsync(MethodsEnum.DuesGetPaid, request)
+    () => Meteor.callAsync(MethodsEnum.DuesGetPaid, request),
   );
 };

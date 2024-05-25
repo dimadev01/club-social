@@ -43,7 +43,7 @@ export class GetEmployeesUseCase
           _id: employee._id,
           // @ts-expect-error
           name: `${employee.user.profile?.lastName} ${employee.user.profile?.firstName}`,
-        }))
+        })),
     );
   }
 }

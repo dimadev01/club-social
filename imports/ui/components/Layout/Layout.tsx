@@ -148,11 +148,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
         <div className="mb-20 px-8">
           <Row align="middle" wrap={false}>
             <Col flex={1} className="pl-4">
-              <Typography.Text className="block font-light text-base">
+              <Typography.Text className="block text-base font-light">
                 Hola,
               </Typography.Text>
 
-              <Typography.Text className="block font-medium text-base">
+              <Typography.Text className="block text-base font-medium">
                 {userName}
               </Typography.Text>
             </Col>
@@ -173,7 +173,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
         />
 
         <Menu
-          className="cs-menu mt-auto !mb-8"
+          className="cs-menu !mb-8 mt-auto"
           items={[
             {
               icon: <LogoutOutlined className="!text-lg" />,

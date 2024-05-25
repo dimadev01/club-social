@@ -5,5 +5,5 @@ import { useMutation } from '@tanstack/react-query';
 export const useCreateMember = () =>
   useMutation<string, Error, CreateMemberRequestDto>(
     [MethodsEnum.MembersCreate],
-    (request) => Meteor.callAsync(MethodsEnum.MembersCreate, request)
+    (request) => Meteor.callAsync(MethodsEnum.MembersCreate, request),
   );

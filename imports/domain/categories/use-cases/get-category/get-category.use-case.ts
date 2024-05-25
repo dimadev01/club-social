@@ -17,13 +17,13 @@ export class GetCategoryUseCase
 {
   public constructor(
     @inject(DIToken.CategoryRepository)
-    private readonly _categoryPort: ICategoryPort
+    private readonly _categoryPort: ICategoryPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetCategoryRequestDto
+    request: GetCategoryRequestDto,
   ): Promise<Result<GetCategoryResponseDto, Error>> {
     const category = await this._categoryPort.findOneById(request.id);
 

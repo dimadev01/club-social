@@ -44,7 +44,7 @@ export class PaymentDueDue {
   }
 
   public static create(
-    props: CreatePaymentDueDue
+    props: CreatePaymentDueDue,
   ): Result<PaymentDueDue, Error> {
     const paymentDue = new PaymentDueDue();
 

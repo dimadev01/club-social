@@ -15,12 +15,12 @@ export abstract class UseCase<T extends object = any> {
    */
   protected async validateDto(
     classType: ClassType<T>,
-    value: T
+    value: T,
   ): Promise<void> {
     if (!value) {
       throw new Meteor.Error(
         MeteorErrorCodeEnum.BadRequest,
-        'Request is empty'
+        'Request is empty',
       );
     }
 
@@ -31,14 +31,14 @@ export abstract class UseCase<T extends object = any> {
 
       throw new Meteor.Error(
         MeteorErrorCodeEnum.BadRequest,
-        ClassValidationUtils.getErrorMessage(errors)
+        ClassValidationUtils.getErrorMessage(errors),
       );
     }
   }
 
   protected async validatePermission(
     scope: ScopeEnum,
-    permission: PermissionEnum
+    permission: PermissionEnum,
   ): Promise<void> {
     let user: Meteor.User | null;
 
@@ -51,14 +51,14 @@ export abstract class UseCase<T extends object = any> {
     if (!user) {
       throw new Meteor.Error(
         MeteorErrorCodeEnum.Unauthorized,
-        'You are not logged in'
+        'You are not logged in',
       );
     }
 
     if (!Roles.userIsInRole(user, permission, scope)) {
       throw new Meteor.Error(
         MeteorErrorCodeEnum.Forbidden,
-        'You are not allowed to perform this action'
+        'You are not allowed to perform this action',
       );
     }
   }

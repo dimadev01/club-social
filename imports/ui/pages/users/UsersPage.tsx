@@ -119,7 +119,7 @@ export const UsersPage = () => {
                       onConfirm: () =>
                         removeUser.mutate(
                           { id: user._id },
-                          { onError: () => removeUser.reset() }
+                          { onError: () => removeUser.reset() },
                         ),
                       title: '¿Está seguro de eliminar este usuario?',
                     }}

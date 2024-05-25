@@ -16,13 +16,13 @@ export class GetPaidDuesUseCase
 {
   public constructor(
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort
+    private readonly _duePort: IDuePort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetPaidDuesRequestDto
+    request: GetPaidDuesRequestDto,
   ): Promise<Result<GetPaidDuesResponseDto, Error>> {
     const dues = await this._duePort.findPaid({
       memberId: request.memberId,
@@ -33,7 +33,7 @@ export class GetPaidDuesUseCase
         (due: Due): PaidDueDto => ({
           _id: due._id,
           date: due.date,
-        })
+        }),
       ),
     });
   }

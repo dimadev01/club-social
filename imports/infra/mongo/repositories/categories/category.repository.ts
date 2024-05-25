@@ -22,7 +22,7 @@ export class CategoryRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly _logger: ILogger
+    protected readonly _logger: ILogger,
   ) {
     super(_logger);
   }
@@ -40,7 +40,7 @@ export class CategoryRepository
   }
 
   public async findPaginated(
-    request: PaginatedRequestDto
+    request: PaginatedRequestDto,
   ): Promise<PaginatedResponse<Category>> {
     const query: Mongo.Query<Category> = {
       isDeleted: false,

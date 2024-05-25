@@ -12,7 +12,7 @@ export class PaymentMember {
   public name: string;
 
   public static create(
-    props: CreatePaymentMember
+    props: CreatePaymentMember,
   ): Result<PaymentMember, Error> {
     const paymentMember = new PaymentMember();
 

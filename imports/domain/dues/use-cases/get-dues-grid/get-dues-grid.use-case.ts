@@ -17,13 +17,13 @@ export class GetDuesGridUseCase
 {
   public constructor(
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort
+    private readonly _duePort: IDuePort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetDuesGridRequestDto
+    request: GetDuesGridRequestDto,
   ): Promise<Result<GetDuesGridResponseDto, Error>> {
     const { data, count, totalDues, totalPayments, balance } =
       await this._duePort.findPaginated(request);
@@ -52,7 +52,7 @@ export class GetDuesGridUseCase
               paidAt: duePayment.dateFormatted,
             })) ?? null,
           status: due.status,
-        })
+        }),
       ),
       totalDues: MoneyUtils.formatCents(totalDues),
       totalPayments: MoneyUtils.formatCents(totalPayments),

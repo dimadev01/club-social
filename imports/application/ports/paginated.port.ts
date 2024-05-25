@@ -3,6 +3,6 @@ import { FindPaginatedResponse } from '@application/pagination/find-paginated.re
 
 export interface IPaginatedPort<T> {
   findPaginated(
-    request: FindPaginatedRequest
+    request: FindPaginatedRequest,
   ): Promise<FindPaginatedResponse<T>>;
 }

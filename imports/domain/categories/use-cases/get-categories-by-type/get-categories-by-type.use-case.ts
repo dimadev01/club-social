@@ -15,13 +15,13 @@ export class GetCategoriesByTypeUseCase
 {
   public constructor(
     @inject(DIToken.CategoryRepository)
-    private readonly _categoryPort: ICategoryPort
+    private readonly _categoryPort: ICategoryPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetCategoriesByTypeRequestDto
+    request: GetCategoriesByTypeRequestDto,
   ): Promise<Result<GetCategoriesByTypeResponseDto[], Error>> {
     const categories = await this._categoryPort.findByAllByType(request.type);
 
@@ -31,7 +31,7 @@ export class GetCategoriesByTypeUseCase
         amount: category.amount,
         code: category.code,
         name: category.name,
-      }))
+      })),
     );
   }
 }

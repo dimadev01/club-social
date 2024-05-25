@@ -8,5 +8,5 @@ export const useUser = (id?: string) =>
     () => Meteor.callAsync(MethodsEnum.UsersGet, { id }),
     {
       enabled: !!id,
-    }
+    },
   );

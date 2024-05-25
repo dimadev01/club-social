@@ -22,7 +22,7 @@ export class UserMethod extends MeteorMethod {
     private readonly _createUser: CreateUserUseCase,
     private readonly _getUserByToken: GetUserByTokenUseCase,
     private readonly _removeUser: RemoveUserUseCase,
-    private readonly _updateUser: UpdateUserUseCase
+    private readonly _updateUser: UpdateUserUseCase,
   ) {
     super();
   }

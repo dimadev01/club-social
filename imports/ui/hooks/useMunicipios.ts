@@ -8,6 +8,6 @@ export const useMunicipios = (provinciaId?: string) => {
   return useQuery(
     [url],
     () => axios.get<MunicipiosResponse>(url).then((res) => res.data.municipios),
-    { enabled: !!provinciaId }
+    { enabled: !!provinciaId },
   );
 };

@@ -12,7 +12,7 @@ export const FormListEmails: React.FC = () => (
         validator: async (_, names) => {
           if (compact(uniq(names)).length !== compact(names).length) {
             return Promise.reject(
-              new Error('No se pueden ingresar emails duplicados')
+              new Error('No se pueden ingresar emails duplicados'),
             );
           }
 

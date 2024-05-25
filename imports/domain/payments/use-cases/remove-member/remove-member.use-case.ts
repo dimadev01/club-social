@@ -15,13 +15,13 @@ export class RemoveMemberUseCase
 {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
   ) {
     super();
   }
 
   public async execute(
-    request: DeleteMemberRequestDto
+    request: DeleteMemberRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validateDto(DeleteMemberRequestDto, request);
 

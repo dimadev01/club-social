@@ -18,7 +18,7 @@ export class CategoryMethod extends MeteorMethod {
     private readonly _getCategories: GetCategoriesUseCase,
     private readonly _getCategoriesByType: GetCategoriesByTypeUseCase,
     private readonly _getCategoriesGrid: GetCategoriesGridUseCase,
-    private readonly _updatePrice: UpdateCategoryUseCase
+    private readonly _updatePrice: UpdateCategoryUseCase,
   ) {
     super();
   }
@@ -34,19 +34,19 @@ export class CategoryMethod extends MeteorMethod {
         this.execute(
           this._getCategoriesGrid,
           request,
-          GetCategoriesGridRequestDto
+          GetCategoriesGridRequestDto,
         ),
 
       [MethodsEnum.CategoriesUpdate]: (request: UpdateCategoryRequestDto) =>
         this.execute(this._updatePrice, request, UpdateCategoryRequestDto),
 
       [MethodsEnum.CategoriesGetAllByType]: (
-        request: GetCategoriesByTypeRequestDto
+        request: GetCategoriesByTypeRequestDto,
       ) =>
         this.execute(
           this._getCategoriesByType,
           request,
-          GetCategoriesByTypeRequestDto
+          GetCategoriesByTypeRequestDto,
         ),
     });
   }

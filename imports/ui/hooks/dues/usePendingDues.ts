@@ -7,5 +7,5 @@ export const usePendingDuesByMember = (memberId?: string) =>
   useQuery<GetPendingDuesRequestDto, Error, PendingDueDto[]>(
     [MethodsEnum.DuesGetPendingByMember, memberId],
     () => Meteor.callAsync(MethodsEnum.DuesGetPendingByMember, { memberId }),
-    { enabled: !!memberId }
+    { enabled: !!memberId },
   );

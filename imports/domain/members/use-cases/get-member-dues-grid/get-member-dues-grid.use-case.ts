@@ -21,13 +21,13 @@ export class GetMemberDuesGridUseCase
     @inject(DIToken.DueRepository)
     private readonly _duePort: IDuePort,
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort
+    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetMemberDuesGridRequestDto
+    request: GetMemberDuesGridRequestDto,
   ): Promise<Result<GetMemberDuesGridResponseDto, Error>> {
     const loggedInMember = await this._memberPort.getLoggedInOrThrow();
 
@@ -60,7 +60,7 @@ export class GetMemberDuesGridUseCase
               paidAt: duePayment.dateFormatted,
             })) ?? null,
           status: due.status,
-        })
+        }),
       ),
       totalDues: MoneyUtils.formatCents(totalDues),
       totalPayments: MoneyUtils.formatCents(totalPayments),

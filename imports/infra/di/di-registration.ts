@@ -21,7 +21,7 @@ container.register(DIToken.MovementRepository, MovementRepository);
 
 container.register(
   DIToken.MovementFindPaginatedRepository,
-  MovementFindPaginatedRepository
+  MovementFindPaginatedRepository,
 );
 
 container.register(DIToken.MemberRepository, MemberRepository);

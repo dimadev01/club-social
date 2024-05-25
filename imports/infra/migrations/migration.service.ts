@@ -7,7 +7,7 @@ import { DIToken } from '@infra/di/di-tokens';
 export class MigrationService {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
   ) {}
 
   public start() {

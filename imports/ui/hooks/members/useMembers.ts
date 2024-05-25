@@ -6,5 +6,5 @@ export const useMembers = (enabled = true) =>
   useQuery<null, Error, GetMembersDto[]>(
     [MethodsEnum.MembersGetAll],
     () => Meteor.callAsync(MethodsEnum.MembersGetAll),
-    { enabled }
+    { enabled },
   );

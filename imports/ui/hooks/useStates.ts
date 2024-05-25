@@ -7,6 +7,6 @@ export const useStates = () => {
     'https://apis.datos.gob.ar/georef/api/provincias?campos=id,nombre&orden=nombre';
 
   return useQuery([url], () =>
-    axios.get<StatesResponse>(url).then((res) => res.data.provincias)
+    axios.get<StatesResponse>(url).then((res) => res.data.provincias),
   );
 };

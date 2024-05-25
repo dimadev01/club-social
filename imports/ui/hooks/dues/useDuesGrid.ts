@@ -15,6 +15,6 @@ export const useDuesGrid = (request: GetDuesGridRequestDto) => {
 
   return useQuery<GetDuesGridRequestDto, Error, GetDuesGridResponseDto>(
     [MethodsEnum.DuesGetGrid, request],
-    () => Meteor.callAsync(MethodsEnum.DuesGetGrid, request)
+    () => Meteor.callAsync(MethodsEnum.DuesGetGrid, request),
   );
 };

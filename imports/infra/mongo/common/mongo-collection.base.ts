@@ -36,7 +36,7 @@ export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
 
     entity.update(
       // @ts-expect-error
-      user ? `${user.profile?.firstName} ${user.profile?.lastName}` : 'System'
+      user ? `${user.profile?.firstName} ${user.profile?.lastName}` : 'System',
     );
 
     return this.updateAsync(entity._id, {

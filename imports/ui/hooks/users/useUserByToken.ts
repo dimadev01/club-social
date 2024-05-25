@@ -8,5 +8,5 @@ export const useUserByToken = (token?: string) =>
     () => Meteor.callAsync(MethodsEnum.UsersGetByToken, { token }),
     {
       enabled: !!token,
-    }
+    },
   );

@@ -34,11 +34,11 @@ export abstract class RoleService {
                 });
 
                 Roles.addUsersToRoles(users, permissions, scopeKey);
-              }
-            )
+              },
+            ),
           );
-        }
-      )
+        },
+      ),
     );
   }
 }

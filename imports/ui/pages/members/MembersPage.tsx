@@ -133,7 +133,7 @@ export const MembersPage = () => {
 
                 const response = await Meteor.callAsync(
                   MethodsEnum.MembersGetForCsv,
-                  gridRequest
+                  gridRequest,
                 );
 
                 setIsExportingToCsv(false);
@@ -154,7 +154,7 @@ export const MembersPage = () => {
             {Roles.userIsInRole(
               user,
               PermissionEnum.Create,
-              ScopeEnum.Members
+              ScopeEnum.Members,
             ) && <TableNewButton to={AppUrl.MembersNew} />}
           </ButtonGroup>
         }
@@ -292,7 +292,7 @@ export const MembersPage = () => {
                       navigate(
                         UrlUtils.navigate(AppUrl.Dues, {
                           memberIds: [member._id],
-                        })
+                        }),
                       )
                     }
                     tooltip={{ title: 'Ver cobros' }}
@@ -304,7 +304,7 @@ export const MembersPage = () => {
                       navigate(
                         UrlUtils.navigate(AppUrl.Payments, {
                           memberId: member._id,
-                        })
+                        }),
                       )
                     }
                     tooltip={{ title: 'Ver Pagos' }}

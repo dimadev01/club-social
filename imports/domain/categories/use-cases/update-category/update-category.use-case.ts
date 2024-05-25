@@ -16,13 +16,13 @@ export class UpdateCategoryUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.CategoryRepository)
-    private readonly _categoryPort: ICategoryPort
+    private readonly _categoryPort: ICategoryPort,
   ) {
     super();
   }
 
   public async execute(
-    request: UpdateCategoryRequestDto
+    request: UpdateCategoryRequestDto,
   ): Promise<Result<null, Error>> {
     const category = await this._categoryPort.findOneByIdOrThrow(request.id);
 

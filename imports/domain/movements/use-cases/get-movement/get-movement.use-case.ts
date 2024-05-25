@@ -14,13 +14,13 @@ export class GetMovementUseCase
 {
   public constructor(
     @inject(DIToken.MovementRepository)
-    private readonly _movementPort: IMovementPort
+    private readonly _movementPort: IMovementPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetMovementRequestDto
+    request: GetMovementRequestDto,
   ): Promise<Result<GetMovementResponseDto | null, Error>> {
     const movement = await this._movementPort.findOneById(request.id);
 

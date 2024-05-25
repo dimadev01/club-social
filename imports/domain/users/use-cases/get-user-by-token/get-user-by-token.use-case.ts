@@ -10,14 +10,14 @@ export class GetUserByTokenUseCase
   implements IUseCase<GetUserByTokenRequestDto, Meteor.User | null>
 {
   public async execute(
-    request: GetUserByTokenRequestDto
+    request: GetUserByTokenRequestDto,
   ): Promise<Result<Meteor.User | null, Error>> {
     await this.validateDto(GetUserByTokenRequestDto, request);
 
     return ok(
       (await Meteor.users.findOneAsync({
         'services.password.enroll.token': request.token,
-      })) ?? null
+      })) ?? null,
     );
   }
 }

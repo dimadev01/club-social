@@ -5,5 +5,5 @@ import { useMutation } from '@tanstack/react-query';
 export const useUpdateCategory = () =>
   useMutation<null, Error, UpdateCategoryRequestDto>(
     [MethodsEnum.CategoriesUpdate],
-    (request) => Meteor.callAsync(MethodsEnum.CategoriesUpdate, request)
+    (request) => Meteor.callAsync(MethodsEnum.CategoriesUpdate, request),
   );

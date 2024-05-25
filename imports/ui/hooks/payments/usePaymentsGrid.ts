@@ -15,6 +15,6 @@ export const usePaymentGrid = (request: GetPaymentsGridRequestDto) => {
 
   return useQuery<GetPaymentsGridRequestDto, Error, GetPaymentsGridResponseDto>(
     [MethodsEnum.PaymentsGetGrid, request],
-    () => Meteor.callAsync(MethodsEnum.PaymentsGetGrid, request)
+    () => Meteor.callAsync(MethodsEnum.PaymentsGetGrid, request),
   );
 };

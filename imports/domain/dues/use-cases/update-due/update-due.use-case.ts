@@ -22,13 +22,13 @@ export class UpdateDueUseCase
     @inject(DIToken.DueRepository)
     private readonly _duePort: IDuePort,
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort
+    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
 
   public async execute(
-    request: UpdateDueRequestDto
+    request: UpdateDueRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Update);
 
@@ -43,7 +43,7 @@ export class UpdateDueUseCase
 
     if (due.member._id !== request.memberId) {
       const member = await this._memberPort.findOneByIdOrThrow(
-        request.memberId
+        request.memberId,
       );
 
       const dueMember = DueMember.create({

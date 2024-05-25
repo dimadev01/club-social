@@ -11,7 +11,8 @@ export abstract class MoneyUtils {
 
     return toDecimal(
       amountAsDinero,
-      ({ value }) => `$ ${new Intl.NumberFormat('es-AR').format(Number(value))}`
+      ({ value }) =>
+        `$ ${new Intl.NumberFormat('es-AR').format(Number(value))}`,
     );
   }
 

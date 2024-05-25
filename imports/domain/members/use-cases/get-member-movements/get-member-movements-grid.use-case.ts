@@ -26,7 +26,7 @@ export class GetMemberMovementsUseCase
     >
 {
   public async execute(
-    request: GetMemberMovementsGridRequestDto
+    request: GetMemberMovementsGridRequestDto,
   ): Promise<Result<GetMemberMovementsGridResponseDto, Error>> {
     const $match: Mongo.Query<Movement> = {
       isDeleted: false,
@@ -122,7 +122,7 @@ export class GetMemberMovementsUseCase
             category: movement.category,
             date: movement.dateFormatted,
             type: movement.type,
-          })
+          }),
         ),
       debt,
       income,

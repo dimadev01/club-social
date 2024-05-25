@@ -5,5 +5,5 @@ import { useMutation } from '@tanstack/react-query';
 export const useUpdateDue = () =>
   useMutation<null, Error, UpdateDueRequestDto>(
     [MethodsEnum.DuesUpdate],
-    (request) => Meteor.callAsync(MethodsEnum.DuesUpdate, request)
+    (request) => Meteor.callAsync(MethodsEnum.DuesUpdate, request),
   );

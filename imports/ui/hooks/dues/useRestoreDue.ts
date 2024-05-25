@@ -6,5 +6,5 @@ export const useRestoreDue = (onSuccess: () => void) =>
   useMutation<null, Error, RestoreDueRequestDto>(
     [MethodsEnum.DuesRestore],
     (request) => Meteor.callAsync(MethodsEnum.DuesRestore, request),
-    { onSuccess: () => onSuccess() }
+    { onSuccess: () => onSuccess() },
   );

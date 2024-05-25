@@ -104,7 +104,7 @@ export const EnrollPage = () => {
         </Form.Item>
         <Button
           block
-          className="rounded-bl-none rounded-tr-none rounded-tl-[10px] rounded-br-[10px]"
+          className="rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
           type="primary"
           htmlType="submit"
         >

@@ -7,5 +7,5 @@ export const useMovement = (id?: string) =>
   useQuery<GetMovementRequestDto, Error, GetMovementResponseDto | undefined>(
     [MethodsEnum.MovementsGet, id],
     () => Meteor.callAsync(MethodsEnum.MovementsGet, { id }),
-    { enabled: !!id }
+    { enabled: !!id },
   );

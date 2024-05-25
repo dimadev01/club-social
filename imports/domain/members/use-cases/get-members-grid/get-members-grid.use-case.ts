@@ -17,13 +17,13 @@ export class GetMembersGridUseCase
 {
   public constructor(
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort
+    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetMembersGridRequestDto
+    request: GetMembersGridRequestDto,
   ): Promise<Result<PaginatedResponse<MemberGridDto>, Error>> {
     const { count, data } = await this._memberPort.findPaginated({
       ...request,
@@ -47,7 +47,7 @@ export class GetMembersGridUseCase
           }`,
           status: member.status,
           totalBalance: member.totalBalance,
-        })
+        }),
       ),
     });
   }

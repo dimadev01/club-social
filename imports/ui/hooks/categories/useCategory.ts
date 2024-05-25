@@ -9,5 +9,5 @@ export const useCategory = (id?: string) =>
     () => Meteor.callAsync(MethodsEnum.CategoriesGetOne, { id }),
     {
       enabled: !!id,
-    }
+    },
   );

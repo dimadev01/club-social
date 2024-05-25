@@ -69,7 +69,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
   const { data: states, isLoading: statesIsLoading } = useStates();
 
   const { data: cities, fetchStatus: citiesFetchStatus } = useCities(
-    stateGovId?.value
+    stateGovId?.value,
   );
 
   const createMember = useCreateMember();
@@ -274,8 +274,8 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                         ) {
                           return Promise.reject(
                             new Error(
-                              'No se pueden ingresar teléfonos duplicados'
-                            )
+                              'No se pueden ingresar teléfonos duplicados',
+                            ),
                           );
                         }
 

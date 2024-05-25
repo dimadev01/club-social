@@ -24,7 +24,7 @@ export class PaymentMethod extends MeteorMethod {
     private readonly _createPayment: CreatePaymentUseCase,
     private readonly _deletePayment: DeletePaymentUseCase,
     private readonly _restorePayment: RestorePaymentUseCase,
-    private readonly _getNextPaymentReceiptNumber: GetNextPaymentReceiptNumberUseCase
+    private readonly _getNextPaymentReceiptNumber: GetNextPaymentReceiptNumberUseCase,
   ) {
     super();
   }

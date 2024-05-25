@@ -10,7 +10,7 @@ export class GetUserUseCase
   implements IUseCase<GetUserRequestDto, Meteor.User | null>
 {
   public async execute(
-    request: GetUserRequestDto
+    request: GetUserRequestDto,
   ): Promise<Result<Meteor.User | null, Error>> {
     await this.validateDto(GetUserRequestDto, request);
 

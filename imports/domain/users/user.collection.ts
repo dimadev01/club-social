@@ -33,5 +33,5 @@ Meteor.users.attachSchema(
       optional: true,
       type: String,
     },
-  })
+  }),
 );

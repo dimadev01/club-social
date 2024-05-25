@@ -8,6 +8,6 @@ export const useCities = (stateId?: string) => {
   return useQuery(
     [url],
     () => axios.get<CitiesResponse>(url).then((res) => res.data.localidades),
-    { enabled: !!stateId }
+    { enabled: !!stateId },
   );
 };

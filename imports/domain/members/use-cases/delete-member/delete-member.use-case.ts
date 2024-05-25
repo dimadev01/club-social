@@ -16,13 +16,13 @@ export class DeleteMemberUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort
+    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
 
   public async execute(
-    request: DeleteMemberRequestDto
+    request: DeleteMemberRequestDto,
   ): Promise<Result<null, Error>> {
     const member = await this._memberPort.findOneByIdOrThrow(request.id);
 

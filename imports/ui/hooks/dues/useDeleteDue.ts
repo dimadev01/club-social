@@ -6,5 +6,5 @@ export const useDeleteDue = (onSuccess: () => void) =>
   useMutation<null, Error, DeleteDueRequestDto>(
     [MethodsEnum.DuesDelete],
     (request) => Meteor.callAsync(MethodsEnum.DuesDelete, request),
-    { onSuccess: () => onSuccess() }
+    { onSuccess: () => onSuccess() },
   );

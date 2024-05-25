@@ -23,13 +23,13 @@ export class CreateMemberUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort
+    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
 
   public async execute(
-    request: CreateMemberRequestDto
+    request: CreateMemberRequestDto,
   ): Promise<Result<string, Error>> {
     const session = MongoUtils.startSession();
 

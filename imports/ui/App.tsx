@@ -42,7 +42,7 @@ export const App = () => {
 
   const themeContextValue = useMemo<ThemeContextProps>(
     () => ({ setTheme: setThemeMode, theme: themeMode }),
-    [themeMode]
+    [themeMode],
   );
 
   const { isLoggingIn } = useTracker(() => ({

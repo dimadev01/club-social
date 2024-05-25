@@ -33,7 +33,7 @@ export class MemberMethod extends MeteorMethod {
     private readonly _updateMember: UpdateMemberUseCase,
     private readonly _getMemberMovements: GetMemberMovementsUseCase,
     private readonly _getMemberDuesGrid: GetMemberDuesGridUseCase,
-    private readonly _getMemberPaymentsGrid: GetMemberPaymentsGridUseCase
+    private readonly _getMemberPaymentsGrid: GetMemberPaymentsGridUseCase,
   ) {
     super();
   }
@@ -61,34 +61,34 @@ export class MemberMethod extends MeteorMethod {
         this.execute(
           this._getMembersForCsv,
           request,
-          GetMembersForCsvRequestDto
+          GetMembersForCsvRequestDto,
         ),
 
       [MethodsEnum.MembersGetMovementsGrid]: (
-        request: GetMemberMovementsGridRequestDto
+        request: GetMemberMovementsGridRequestDto,
       ) =>
         this.execute(
           this._getMemberMovements,
           request,
-          GetMemberMovementsGridRequestDto
+          GetMemberMovementsGridRequestDto,
         ),
 
       [MethodsEnum.MembersGetDuesGrid]: (
-        request: GetMemberDuesGridRequestDto
+        request: GetMemberDuesGridRequestDto,
       ) =>
         this.execute(
           this._getMemberDuesGrid,
           request,
-          GetMemberDuesGridRequestDto
+          GetMemberDuesGridRequestDto,
         ),
 
       [MethodsEnum.MembersGetPaymentsGrid]: (
-        request: GetMemberPaymentsGridRequestDto
+        request: GetMemberPaymentsGridRequestDto,
       ) =>
         this.execute(
           this._getMemberPaymentsGrid,
           request,
-          GetMemberPaymentsGridRequestDto
+          GetMemberPaymentsGridRequestDto,
         ),
     });
   }

@@ -18,7 +18,7 @@ export abstract class DateUtils {
     date?: dayjs.ConfigType,
     format?: dayjs.OptionType,
     locale?: string,
-    strict?: boolean
+    strict?: boolean,
   ): Dayjs {
     return dayjs(date, format, locale, strict);
   }
@@ -35,14 +35,14 @@ export abstract class DateUtils {
 
   public static format(
     date: Date | Dayjs,
-    format: DateFormatEnum = DateFormatEnum.DDMMYYYY
+    format: DateFormatEnum = DateFormatEnum.DDMMYYYY,
   ): string {
     return this.c(date).format(format);
   }
 
   public static formatUtc(
     date: Date | Dayjs | string,
-    format: DateFormatEnum = DateFormatEnum.DDMMYYYY
+    format: DateFormatEnum = DateFormatEnum.DDMMYYYY,
   ): string {
     return this.utc(date).format(format);
   }
@@ -54,7 +54,7 @@ export abstract class DateUtils {
   public static utc(
     config?: string | number | Date | dayjs.Dayjs | null | undefined,
     format?: string | undefined,
-    strict?: boolean | undefined
+    strict?: boolean | undefined,
   ): Dayjs {
     return dayjs.utc(config, format, strict);
   }

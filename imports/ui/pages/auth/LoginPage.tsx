@@ -50,7 +50,7 @@ export const LoginPage = () => {
         } else {
           navigate(AppUrl.LoginPasswordless.replace(':email', values.email));
         }
-      }
+      },
     );
   };
 
@@ -78,7 +78,7 @@ export const LoginPage = () => {
 
         <div className="flex justify-between">
           <Button
-            className="flex-1 rounded-bl-none rounded-tr-none rounded-tl-[10px] rounded-br-[10px]"
+            className="flex-1 rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
             type="primary"
             htmlType="submit"
             disabled={isLoggingIn || isSendingEmail}

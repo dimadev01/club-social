@@ -6,5 +6,5 @@ export const useProfessors = (enabled = true) =>
   useQuery<null, Error, GetProfessorsResponseDto[]>(
     [MethodsEnum.ProfessorsGetAll],
     () => Meteor.callAsync(MethodsEnum.ProfessorsGetAll),
-    { enabled }
+    { enabled },
   );

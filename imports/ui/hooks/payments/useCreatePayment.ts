@@ -6,5 +6,5 @@ import { useMutation } from '@tanstack/react-query';
 export const useCreatePayment = () =>
   useMutation<CreatePaymentResponseDto, Error, CreatePaymentRequestDto>(
     [MethodsEnum.PaymentsCreate],
-    (request) => Meteor.callAsync(MethodsEnum.PaymentsCreate, request)
+    (request) => Meteor.callAsync(MethodsEnum.PaymentsCreate, request),
   );

@@ -15,13 +15,13 @@ export class GetCategoriesGridUseCase
 {
   public constructor(
     @inject(DIToken.CategoryRepository)
-    private readonly _categoryPort: ICategoryPort
+    private readonly _categoryPort: ICategoryPort,
   ) {
     super();
   }
 
   async execute(
-    request: GetCategoriesGridRequestDto
+    request: GetCategoriesGridRequestDto,
   ): Promise<Result<GetCategoriesGridResponseDto, Error>> {
     const response = await this._categoryPort.findPaginated(request);
 

@@ -96,7 +96,7 @@ export const DueDetailPage = () => {
 
             form.setFieldValue('memberIds', []);
           },
-        }
+        },
       );
     } else {
       updateDue.mutate(
@@ -114,7 +114,7 @@ export const DueDetailPage = () => {
 
             refetch();
           },
-        }
+        },
       );
     }
   };
@@ -166,7 +166,7 @@ export const DueDetailPage = () => {
       {menu}
 
       {category === DueCategoryEnum.Membership && (
-        <Space className="flex justify-center my-1">
+        <Space className="my-1 flex justify-center">
           <Button
             htmlType="button"
             size="small"
@@ -177,9 +177,9 @@ export const DueDetailPage = () => {
                   ?.filter(
                     (member) =>
                       member.category === MemberCategoryEnum.Member &&
-                      member.status === MemberStatusEnum.Active
+                      member.status === MemberStatusEnum.Active,
                   )
-                  .map((member) => member._id) ?? []
+                  .map((member) => member._id) ?? [],
               );
             }}
           >
@@ -196,9 +196,9 @@ export const DueDetailPage = () => {
                   ?.filter(
                     (member) =>
                       member.category === MemberCategoryEnum.Cadet &&
-                      member.status === MemberStatusEnum.Active
+                      member.status === MemberStatusEnum.Active,
                   )
-                  .map((member) => member._id) ?? []
+                  .map((member) => member._id) ?? [],
               );
             }}
           >
@@ -285,8 +285,8 @@ export const DueDetailPage = () => {
                         'date',
                         DateUtils.utc(
                           due.date,
-                          DateFormatEnum.DDMMYYYY
-                        ).startOf('month')
+                          DateFormatEnum.DDMMYYYY,
+                        ).startOf('month'),
                       );
                     }
                   } else {

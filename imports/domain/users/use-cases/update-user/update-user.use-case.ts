@@ -19,13 +19,13 @@ export class UpdateUserUseCase
 {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
   ) {
     super();
   }
 
   public async execute(
-    request: UpdateUserRequestDto
+    request: UpdateUserRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Users, PermissionEnum.Update);
 
@@ -46,7 +46,7 @@ export class UpdateUserUseCase
     // eslint-disable-next-line no-restricted-syntax
     for (const email of request.emails ?? []) {
       const userHasEmail = user.emails?.some(
-        (userEmail) => userEmail.address === email
+        (userEmail) => userEmail.address === email,
       );
 
       if (!userHasEmail) {

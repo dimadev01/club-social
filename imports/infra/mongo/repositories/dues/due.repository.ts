@@ -28,7 +28,7 @@ export class DueRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly _logger: ILogger
+    protected readonly _logger: ILogger,
   ) {
     super(_logger);
   }
@@ -42,7 +42,7 @@ export class DueRepository
   }
 
   public async findPaginated(
-    request: FindPaginatedDuesRequest
+    request: FindPaginatedDuesRequest,
   ): Promise<FindPaginatedDuesResponse> {
     const query: Mongo.Query<Due> = {
       $expr: { $and: [{ $eq: ['$isDeleted', request.showDeleted ?? false] }] },
@@ -72,7 +72,7 @@ export class DueRepository
 
     if (request.filters.membershipMonth?.length) {
       const dates: number[] = request.filters.membershipMonth.map(
-        (month) => DateUtils.utc(month, 'MMMM').month() + 1
+        (month) => DateUtils.utc(month, 'MMMM').month() + 1,
       );
 
       query.$expr.$and.push({
@@ -164,7 +164,7 @@ export class DueRepository
   }
 
   public findPendingByMember(
-    request: FindPendingByMemberRequest
+    request: FindPendingByMemberRequest,
   ): Promise<Due[]> {
     const query: Mongo.Query<Due> = {
       isDeleted: false,

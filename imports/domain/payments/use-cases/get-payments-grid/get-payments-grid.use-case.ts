@@ -17,17 +17,16 @@ export class GetPaymentsGridUseCase
 {
   public constructor(
     @inject(DIToken.PaymentRepository)
-    private readonly _paymentPort: IPaymentPort
+    private readonly _paymentPort: IPaymentPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetPaymentsGridRequestDto
+    request: GetPaymentsGridRequestDto,
   ): Promise<Result<GetPaymentsGridResponseDto, Error>> {
-    const { data, count, totalAmount } = await this._paymentPort.findPaginated(
-      request
-    );
+    const { data, count, totalAmount } =
+      await this._paymentPort.findPaginated(request);
 
     return ok<GetPaymentsGridResponseDto>({
       count,
@@ -49,7 +48,7 @@ export class GetPaymentsGridUseCase
           memberName: payment.member.name,
           receiptNumber: payment.receiptNumber,
           totalAmount: payment.totalDuesPaidAmountFormatted,
-        })
+        }),
       ),
       totalAmount: MoneyUtils.formatCents(totalAmount),
     });

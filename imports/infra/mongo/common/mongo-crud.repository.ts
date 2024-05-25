@@ -45,13 +45,13 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   public async createWithSession(
     entity: OptionalUnlessRequiredId<T>,
-    session: ClientSession
+    session: ClientSession,
   ): Promise<string> {
     try {
       this.getSchema().validate(
         this.getSchema().clean(
-          entity as Record<string | number | symbol, unknown>
-        )
+          entity as Record<string | number | symbol, unknown>,
+        ),
       );
 
       entity.create(await this._getLoggedInUserName());
@@ -110,7 +110,7 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   public async findOneByIdOrThrowWithSession(
     id: string,
-    session: ClientSession
+    session: ClientSession,
   ): Promise<T> {
     try {
       const entity = await this._collection
@@ -156,13 +156,13 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   public async updateWithSession(
     entity: T,
-    session: ClientSession
+    session: ClientSession,
   ): Promise<void> {
     try {
       this.getSchema().validate(
         this.getSchema().clean(
-          entity as Record<string | number | symbol, unknown>
-        )
+          entity as Record<string | number | symbol, unknown>,
+        ),
       );
 
       entity.update(await this._getLoggedInUserName());
@@ -172,7 +172,7 @@ export abstract class MongoCrudRepository<T extends Entity>
         .updateOne(
           { _id: entity._id } as Filter<T>,
           { $set: instanceToPlain<T>(entity) as MatchKeysAndValues<T> },
-          { session }
+          { session },
         );
     } catch (error) {
       this._logger.error(error);
@@ -183,7 +183,7 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   protected _getSorterValue(
     sorter: 'descend' | 'ascend' | null,
-    defaultSortOrder = 1
+    defaultSortOrder = 1,
   ): number {
     if (sorter === 'ascend') {
       return 1;
@@ -197,7 +197,7 @@ export abstract class MongoCrudRepository<T extends Entity>
   }
 
   protected createPaginatedQueryOptionsNew(
-    request: FindPaginatedRequest
+    request: FindPaginatedRequest,
   ): MongoOptions {
     return {
       limit: request.pageSize,
@@ -214,7 +214,7 @@ export abstract class MongoCrudRepository<T extends Entity>
 
   protected async getAggregationCount(
     condition: boolean,
-    count: number
+    count: number,
   ): Promise<number> {
     if (condition) {
       return count;

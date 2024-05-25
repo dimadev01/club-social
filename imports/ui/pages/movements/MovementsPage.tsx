@@ -56,7 +56,7 @@ export const MovementsPage = () => {
   });
 
   const [memberIdsFilter, setMemberIdsFilter] = useState<string[]>(
-    (parsedQs.memberIds as string[]) ?? []
+    (parsedQs.memberIds as string[]) ?? [],
   );
 
   const [showDeleted, setShowDeleted] = useState<boolean>(false);
@@ -64,7 +64,7 @@ export const MovementsPage = () => {
   const [dateFilter, setDateFilter] = useState<RangeValue<Dayjs> | null>(
     parsedQs.from && parsedQs.to
       ? [dayjs(parsedQs.from as string), dayjs(parsedQs.to as string)]
-      : null
+      : null,
   );
 
   const { data: members, isLoading: isLoadingMembers } = useMembers();
@@ -160,7 +160,7 @@ export const MovementsPage = () => {
             {Roles.userIsInRole(
               user,
               PermissionEnum.Create,
-              ScopeEnum.Movements
+              ScopeEnum.Movements,
             ) && <TableNewButton to={AppUrl.MovementsNew} />}
           </>
         }
@@ -207,7 +207,7 @@ export const MovementsPage = () => {
               {Roles.userIsInRole(
                 userId,
                 PermissionEnum.ViewDeleted,
-                ScopeEnum.Movements
+                ScopeEnum.Movements,
               ) && (
                 <Form.Item>
                   <Checkbox
@@ -293,7 +293,7 @@ export const MovementsPage = () => {
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Delete,
-                        ScopeEnum.Movements
+                        ScopeEnum.Movements,
                       ) && (
                         <Button
                           popConfirm={{
@@ -303,7 +303,7 @@ export const MovementsPage = () => {
                                 {
                                   onError: () => deleteMovement.reset(),
                                   onSuccess: () => deleteMovement.reset(),
-                                }
+                                },
                               ),
                             title: '¿Está seguro de eliminar este movimiento?',
                           }}
@@ -324,7 +324,7 @@ export const MovementsPage = () => {
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Update,
-                        ScopeEnum.Movements
+                        ScopeEnum.Movements,
                       ) && (
                         <Button
                           type="text"

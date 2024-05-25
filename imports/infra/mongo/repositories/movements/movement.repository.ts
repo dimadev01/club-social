@@ -18,7 +18,7 @@ export class MovementRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly _logger: ILogger
+    protected readonly _logger: ILogger,
   ) {
     super(_logger);
   }

@@ -30,7 +30,7 @@ export class PaymentRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly _logger: ILogger
+    protected readonly _logger: ILogger,
   ) {
     super(_logger);
   }
@@ -39,13 +39,13 @@ export class PaymentRepository
     return (
       (await this.getCollection().findOneAsync(
         { isDeleted: false },
-        { sort: { createdAt: -1, receiptNumber: -1 } }
+        { sort: { createdAt: -1, receiptNumber: -1 } },
       )) ?? null
     );
   }
 
   public async findOneByReceiptNumber(
-    request: FindByReceiptNumberRequest
+    request: FindByReceiptNumberRequest,
   ): Promise<Payment | null> {
     return (
       (await this.getCollection().findOneAsync({
@@ -56,7 +56,7 @@ export class PaymentRepository
   }
 
   public async findPaginated(
-    request: FindPaginatedPaymentsRequest
+    request: FindPaginatedPaymentsRequest,
   ): Promise<FindPaginatedPaymentsResponse> {
     const query: Mongo.Query<Payment> = {
       $expr: { $and: [{ $eq: ['$isDeleted', request.showDeleted ?? false] }] },

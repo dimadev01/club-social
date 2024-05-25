@@ -18,6 +18,6 @@ export const useMovementsGrid = (request: GetMovementsGridRequestDto) => {
     Error,
     GetMovementsGridResponseDto
   >([MethodsEnum.MovementsGetGrid, request], () =>
-    Meteor.callAsync(MethodsEnum.MovementsGetGrid, request)
+    Meteor.callAsync(MethodsEnum.MovementsGetGrid, request),
   );
 };

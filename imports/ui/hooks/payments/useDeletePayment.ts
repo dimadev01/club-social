@@ -6,5 +6,5 @@ export const useDeletePayment = (onSuccess: () => void) =>
   useMutation<null, Error, DeletePaymentRequestDto>(
     [MethodsEnum.PaymentsDelete],
     (request) => Meteor.callAsync(MethodsEnum.PaymentsDelete, request),
-    { onSuccess: () => onSuccess() }
+    { onSuccess: () => onSuccess() },
   );

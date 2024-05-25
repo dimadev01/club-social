@@ -14,13 +14,13 @@ export class GetDueUseCase
 {
   public constructor(
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort
+    private readonly _duePort: IDuePort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetDueRequestDto
+    request: GetDueRequestDto,
   ): Promise<Result<GetDueResponseDto | null, Error>> {
     const due = await this._duePort.findOneById(request.id);
 

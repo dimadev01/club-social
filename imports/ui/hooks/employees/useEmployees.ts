@@ -6,5 +6,5 @@ export const useEmployees = (enabled = true) =>
   useQuery<null, Error, GetEmployeesResponseDto[]>(
     [MethodsEnum.EmployeesGetAll],
     () => Meteor.callAsync(MethodsEnum.EmployeesGetAll),
-    { enabled }
+    { enabled },
   );

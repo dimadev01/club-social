@@ -13,7 +13,7 @@ export class GetCategoriesUseCase
 {
   public constructor(
     @inject(DIToken.CategoryRepository)
-    private readonly _categoryPort: ICategoryPort
+    private readonly _categoryPort: ICategoryPort,
   ) {
     super();
   }
@@ -28,7 +28,7 @@ export class GetCategoriesUseCase
         amountFormatted: category.amountFormatted,
         code: category.code,
         name: category.name,
-      }))
+      })),
     );
   }
 }

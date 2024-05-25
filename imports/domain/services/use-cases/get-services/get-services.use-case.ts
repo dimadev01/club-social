@@ -15,7 +15,7 @@ export class GetServicesUseCase
   public async execute(): Promise<Result<GetServicesResponseDto[], Error>> {
     const data = await ServicesCollection.find(
       {},
-      { sort: { name: 1 } }
+      { sort: { name: 1 } },
     ).fetchAsync();
 
     return ok<GetServicesResponseDto[]>(
@@ -24,7 +24,7 @@ export class GetServicesUseCase
         .map((service) => ({
           _id: service._id,
           name: service.name,
-        }))
+        })),
     );
   }
 }

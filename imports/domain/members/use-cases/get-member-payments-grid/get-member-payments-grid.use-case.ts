@@ -21,13 +21,13 @@ export class GetMemberPaymentsGridUseCase
     @inject(DIToken.PaymentRepository)
     private readonly _paymentPort: IPaymentPort,
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort
+    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetMemberPaymentsGridRequestDto
+    request: GetMemberPaymentsGridRequestDto,
   ): Promise<Result<GetMemberPaymentsGridResponseDto, Error>> {
     const loggedInMember = await this._memberPort.getLoggedInOrThrow();
 
@@ -54,7 +54,7 @@ export class GetMemberPaymentsGridUseCase
           })),
           isDeleted: payment.isDeleted,
           totalAmount: payment.totalDuesPaidAmountFormatted,
-        })
+        }),
       ),
       totalAmount: MoneyUtils.formatCents(totalAmount),
     });

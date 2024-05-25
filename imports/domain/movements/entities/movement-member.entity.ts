@@ -25,7 +25,7 @@ export class MovementMember {
   }
 
   public static create(
-    props: CreateMovementMember
+    props: CreateMovementMember,
   ): Result<MovementMember, Error> {
     const member = new MovementMember();
 

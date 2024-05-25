@@ -17,13 +17,13 @@ export class UpdateMovementUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.MovementRepository)
-    private readonly _movementPort: IMovementPort
+    private readonly _movementPort: IMovementPort,
   ) {
     super();
   }
 
   public async execute(
-    request: UpdateMovementRequestDto
+    request: UpdateMovementRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Update);
 

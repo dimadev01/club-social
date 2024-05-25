@@ -6,5 +6,5 @@ export const useServices = (enabled = true) =>
   useQuery<null, Error, GetServicesResponseDto[]>(
     [MethodsEnum.ServicesGetAll],
     () => Meteor.callAsync(MethodsEnum.ServicesGetAll),
-    { enabled }
+    { enabled },
   );

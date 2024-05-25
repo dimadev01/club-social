@@ -17,13 +17,13 @@ export class GetPendingDuesByMemberUseCase
 {
   public constructor(
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort
+    private readonly _duePort: IDuePort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetPendingDuesRequestDto
+    request: GetPendingDuesRequestDto,
   ): Promise<Result<PendingDueDto[], Error>> {
     const dues = await this._duePort.findPendingByMember({
       memberId: request.memberId,
@@ -42,7 +42,7 @@ export class GetPendingDuesByMemberUseCase
             ? DateUtils.formatUtc(due.date, DateFormatEnum.MMMM_YYYY)
             : '',
         status: due.status,
-      }))
+      })),
     );
   }
 }

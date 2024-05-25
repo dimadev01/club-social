@@ -18,6 +18,6 @@ export const useMemberDuesGrid = (request: GetMemberDuesGridRequestDto) => {
     Error,
     GetMemberDuesGridResponseDto
   >([MethodsEnum.MembersGetDuesGrid, request], () =>
-    Meteor.callAsync(MethodsEnum.MembersGetDuesGrid, request)
+    Meteor.callAsync(MethodsEnum.MembersGetDuesGrid, request),
   );
 };

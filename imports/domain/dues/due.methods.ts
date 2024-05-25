@@ -28,7 +28,7 @@ export class DueMethod extends MeteorMethod {
     private readonly _createDue: CreateDueUseCase,
     private readonly _updateDue: UpdateDueUseCase,
     private readonly _deleteDue: DeleteDueUseCase,
-    private readonly _restoreDue: RestoreDueUseCase
+    private readonly _restoreDue: RestoreDueUseCase,
   ) {
     super();
   }
@@ -42,12 +42,12 @@ export class DueMethod extends MeteorMethod {
         this.execute(this._getPaidDues, request, GetPaidDuesRequestDto),
 
       [MethodsEnum.DuesGetPendingByMember]: (
-        request: GetPendingDuesRequestDto
+        request: GetPendingDuesRequestDto,
       ) =>
         this.execute(
           this._getPendingDuesByMember,
           request,
-          GetPendingDuesRequestDto
+          GetPendingDuesRequestDto,
         ),
 
       [MethodsEnum.DuesGet]: (request: GetDueRequestDto) =>

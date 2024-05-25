@@ -11,7 +11,7 @@ export abstract class MeteorMethod {
   protected async execute<TRequest extends object, TResponse>(
     useCase: IUseCase<TRequest, TResponse>,
     request?: TRequest,
-    classType?: ClassType<TRequest>
+    classType?: ClassType<TRequest>,
   ): Promise<TResponse> {
     try {
       if (request && classType) {
@@ -23,7 +23,7 @@ export abstract class MeteorMethod {
       if (result.isErr()) {
         throw new Meteor.Error(
           MeteorErrorCodeEnum.BadRequest,
-          result.error.message
+          result.error.message,
         );
       }
 
@@ -38,25 +38,25 @@ export abstract class MeteorMethod {
       if (error instanceof Error) {
         throw new Meteor.Error(
           MeteorErrorCodeEnum.InternalServerError,
-          error.message
+          error.message,
         );
       }
 
       throw new Meteor.Error(
         MeteorErrorCodeEnum.InternalServerError,
-        'Unexpected and unhandled server error'
+        'Unexpected and unhandled server error',
       );
     }
   }
 
   protected async validateDto<T extends object>(
     classType: ClassType<T>,
-    value: T
+    value: T,
   ): Promise<void> {
     if (!value) {
       throw new Meteor.Error(
         MeteorErrorCodeEnum.BadRequest,
-        'Request is empty'
+        'Request is empty',
       );
     }
 
@@ -67,7 +67,7 @@ export abstract class MeteorMethod {
 
       throw new Meteor.Error(
         MeteorErrorCodeEnum.BadRequest,
-        ClassValidationUtils.getErrorMessage(errors)
+        ClassValidationUtils.getErrorMessage(errors),
       );
     }
   }

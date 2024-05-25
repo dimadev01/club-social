@@ -6,5 +6,5 @@ export const useNextPaymentReceiptNumber = (enabled = true) =>
   useQuery<null, Error, GetNextPaymentReceiptNumberResponseDto>(
     [MethodsEnum.PaymentsGetNextReceiptNumber],
     () => Meteor.callAsync(MethodsEnum.PaymentsGetNextReceiptNumber),
-    { enabled }
+    { enabled },
   );

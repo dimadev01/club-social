@@ -7,7 +7,7 @@ type Props = SelectProps;
 export const Select: React.FC<Props> = React.forwardRef(
   (
     { children, placeholder = 'Seleccionar', allowClear = true, ...props },
-    ref
+    ref,
   ) => (
     <AntSelect
       // @ts-expect-error
@@ -19,5 +19,5 @@ export const Select: React.FC<Props> = React.forwardRef(
     >
       {children}
     </AntSelect>
-  )
+  ),
 );

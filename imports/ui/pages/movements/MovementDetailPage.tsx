@@ -81,22 +81,22 @@ export const MovementDetailPage = () => {
   const updateMovement = useUpdateMovement();
 
   const { data: members, isLoading: isLoadingMembers } = useMembers(
-    MemberCategories.includes(category)
+    MemberCategories.includes(category),
   );
 
   const { data: categoriesByType, isLoading: isLoadingCategoriesByType } =
     useCategoriesByType(type);
 
   const { data: professors, isLoading: isLoadingProfessors } = useProfessors(
-    category === CategoryEnum.Professor
+    category === CategoryEnum.Professor,
   );
 
   const { data: employees, isLoading: isLoadingEmployees } = useEmployees(
-    category === CategoryEnum.Employee
+    category === CategoryEnum.Employee,
   );
 
   const { data: services, isLoading: isLoadingServices } = useServices(
-    category === CategoryEnum.Service
+    category === CategoryEnum.Service,
   );
 
   const user = Meteor.user();
@@ -125,7 +125,7 @@ export const MovementDetailPage = () => {
 
             navigate(-1);
           },
-        }
+        },
       );
     } else {
       await updateMovement.mutateAsync(
@@ -145,7 +145,7 @@ export const MovementDetailPage = () => {
 
             refetch();
           },
-        }
+        },
       );
     }
   };
@@ -204,9 +204,9 @@ export const MovementDetailPage = () => {
                         ?.filter(
                           (member) =>
                             member.category === MemberCategoryEnum.Member &&
-                            member.status === MemberStatusEnum.Active
+                            member.status === MemberStatusEnum.Active,
                         )
-                        .map((member) => member._id) ?? []
+                        .map((member) => member._id) ?? [],
                     );
                   }}
                 >
@@ -223,9 +223,9 @@ export const MovementDetailPage = () => {
                         ?.filter(
                           (member) =>
                             member.category === MemberCategoryEnum.Cadet &&
-                            member.status === MemberStatusEnum.Active
+                            member.status === MemberStatusEnum.Active,
                         )
-                        .map((member) => member._id) ?? []
+                        .map((member) => member._id) ?? [],
                     );
                   }}
                 >
@@ -414,7 +414,7 @@ export const MovementDetailPage = () => {
                             CategoryEnum.GuestIncome,
                             CategoryEnum.MembershipIncome,
                             CategoryEnum.ElectricityIncome,
-                          ].includes(categoryByType.code)
+                          ].includes(categoryByType.code),
                       )
                       .map((categoryByType) => ({
                         label: categoryByType.name,

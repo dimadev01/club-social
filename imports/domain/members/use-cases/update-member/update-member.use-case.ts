@@ -21,13 +21,13 @@ export class UpdateMemberUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort
+    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
 
   public async execute(
-    request: UpdateMemberRequestDto
+    request: UpdateMemberRequestDto,
   ): Promise<Result<null, Error>> {
     const session = MongoUtils.startSession();
 

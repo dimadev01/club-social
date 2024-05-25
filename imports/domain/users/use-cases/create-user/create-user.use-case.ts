@@ -18,13 +18,13 @@ export class CreateUserUseCase
 {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
   ) {
     super();
   }
 
   public async execute(
-    request: CreateUserRequestDto
+    request: CreateUserRequestDto,
   ): Promise<Result<string, Error>> {
     await this.validatePermission(ScopeEnum.Users, PermissionEnum.Create);
 

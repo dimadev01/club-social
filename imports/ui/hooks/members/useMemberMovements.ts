@@ -7,7 +7,7 @@ import { UrlUtils } from '@shared/utils/url.utils';
 import { useQuery } from '@tanstack/react-query';
 
 export const useMemberMovementsGrid = (
-  request: GetMemberMovementsGridRequestDto
+  request: GetMemberMovementsGridRequestDto,
 ) => {
   const [, setSearchParams] = useSearchParams();
 
@@ -20,6 +20,6 @@ export const useMemberMovementsGrid = (
     Error,
     GetMemberMovementsGridResponseDto
   >([MethodsEnum.MovementsGetGrid, request], () =>
-    Meteor.callAsync(MethodsEnum.MembersGetMovementsGrid, request)
+    Meteor.callAsync(MethodsEnum.MembersGetMovementsGrid, request),
   );
 };

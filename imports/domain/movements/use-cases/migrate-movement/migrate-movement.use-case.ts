@@ -22,13 +22,13 @@ export class MigrateMovementUseCase
     @inject(DIToken.MovementRepository)
     private readonly _movementPort: IMovementPort,
     @inject(CreatePaymentUseCase)
-    private readonly _createPaymentUseCase: CreatePaymentUseCase
+    private readonly _createPaymentUseCase: CreatePaymentUseCase,
   ) {
     super();
   }
 
   public async execute(
-    request: MigrateMovementRequestDto
+    request: MigrateMovementRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Create);
 

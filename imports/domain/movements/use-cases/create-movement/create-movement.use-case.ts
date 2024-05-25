@@ -31,13 +31,13 @@ export class CreateMovementUseCase
     @inject(DIToken.MemberRepository)
     private readonly _memberPort: IMemberPort,
     @inject(DIToken.EmailService)
-    private readonly _emailService: IEmailService
+    private readonly _emailService: IEmailService,
   ) {
     super();
   }
 
   public async execute(
-    request: CreateMovementRequestDto
+    request: CreateMovementRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Create);
 
@@ -69,7 +69,7 @@ export class CreateMovementUseCase
   }
 
   private async _createWithMember(
-    request: CreateMovementRequestDto
+    request: CreateMovementRequestDto,
   ): Promise<Result<null, Error>> {
     const session = MongoUtils.startSession();
 
@@ -118,7 +118,7 @@ export class CreateMovementUseCase
                 to: memberEmail,
               });
             }
-          })
+          }),
         );
       });
 

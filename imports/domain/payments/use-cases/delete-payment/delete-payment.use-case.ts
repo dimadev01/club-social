@@ -20,13 +20,13 @@ export class DeletePaymentUseCase
     @inject(DIToken.PaymentRepository)
     private readonly _paymentPort: IPaymentPort,
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort
+    private readonly _duePort: IDuePort,
   ) {
     super();
   }
 
   public async execute(
-    request: DeletePaymentRequestDto
+    request: DeletePaymentRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Payments, PermissionEnum.Delete);
 
@@ -39,7 +39,7 @@ export class DeletePaymentUseCase
         due.removePayment(payment._id);
 
         await this._duePort.update(due);
-      })
+      }),
     );
 
     await this._paymentPort.delete(payment);

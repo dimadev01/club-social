@@ -7,5 +7,5 @@ import { useQuery } from '@tanstack/react-query';
 export const useMembersForCsv = (request: PaginatedRequestDto) =>
   useQuery<PaginatedRequestDto, Error, PaginatedResponse<MemberGridDto>>(
     [MethodsEnum.MembersGetForCsv, request],
-    () => Meteor.callAsync(MethodsEnum.MembersGetForCsv, request)
+    () => Meteor.callAsync(MethodsEnum.MembersGetForCsv, request),
   );

@@ -10,12 +10,12 @@ export const CenteredLayout: React.FC<Props> = ({ children }) => (
     <Card
       bordered={false}
       styles={{ body: { padding: 0 } }}
-      className="pt-10 md:pt-20 px-4 md:px-40 pb-8 md:pb-32 w-80 md:w-[670px] mx-auto rounded-bl-none rounded-tr-none rounded-tl-3xl rounded-br-3xl drop-shadow-xl mb-20"
+      className="mx-auto mb-20 w-80 rounded-bl-none rounded-br-3xl rounded-tl-3xl rounded-tr-none px-4 pb-8 pt-10 drop-shadow-xl md:w-[670px] md:px-40 md:pb-32 md:pt-20"
     >
       <Image
         wrapperClassName="w-full mb-16"
         preview={false}
-        className="!w-36 mx-auto block"
+        className="mx-auto block !w-36"
         src="/images/logo.png"
         alt="Club Social logo"
       />

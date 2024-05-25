@@ -12,6 +12,6 @@ export interface IMovementPort extends ICrudPort<Movement> {
 
 export interface IMovementPaginatedPort extends IPaginatedPort<Movement> {
   findPaginated(
-    request: FindPaginatedMovementsRequest
+    request: FindPaginatedMovementsRequest,
   ): Promise<FindPaginatedMovementsResponse>;
 }

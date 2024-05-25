@@ -35,7 +35,7 @@ export const MemberPaymentsPage = () => {
   const [dateFilter, setDateFilter] = useState<RangeValue<Dayjs> | null>(
     parsedQs.from && parsedQs.to
       ? [dayjs(parsedQs.from as string), dayjs(parsedQs.to as string)]
-      : null
+      : null,
   );
 
   const { data, isLoading } = useMemberPaymentsGrid({

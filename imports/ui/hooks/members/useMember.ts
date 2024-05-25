@@ -7,5 +7,5 @@ export const useMember = (id?: string) =>
   useQuery<GetMemberRequestDto, Error, GetMemberResponseDto | undefined>(
     [MethodsEnum.MembersGet, id],
     () => Meteor.callAsync(MethodsEnum.MembersGet, { id }),
-    { enabled: !!id }
+    { enabled: !!id },
   );

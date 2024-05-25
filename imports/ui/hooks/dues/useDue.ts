@@ -7,5 +7,5 @@ export const useDue = (id?: string) =>
   useQuery<GetDueRequestDto, Error, GetDueResponseDto | undefined>(
     [MethodsEnum.DuesGet, id],
     () => Meteor.callAsync(MethodsEnum.DuesGet, { id }),
-    { enabled: !!id }
+    { enabled: !!id },
   );

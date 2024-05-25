@@ -7,7 +7,7 @@ import { UrlUtils } from '@shared/utils/url.utils';
 import { useQuery } from '@tanstack/react-query';
 
 export const useMemberPaymentsGrid = (
-  request: GetMemberPaymentsGridRequestDto
+  request: GetMemberPaymentsGridRequestDto,
 ) => {
   const [, setSearchParams] = useSearchParams();
 
@@ -20,6 +20,6 @@ export const useMemberPaymentsGrid = (
     Error,
     GetMemberPaymentsGridResponseDto
   >([MethodsEnum.MembersGetPaymentsGrid, request], () =>
-    Meteor.callAsync(MethodsEnum.MembersGetPaymentsGrid, request)
+    Meteor.callAsync(MethodsEnum.MembersGetPaymentsGrid, request),
   );
 };

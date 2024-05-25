@@ -17,13 +17,13 @@ export class DeleteMovementUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.MovementRepository)
-    private readonly _movementPort: IMovementPort
+    private readonly _movementPort: IMovementPort,
   ) {
     super();
   }
 
   public async execute(
-    request: DeleteMovementRequestDto
+    request: DeleteMovementRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Delete);
 

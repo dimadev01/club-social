@@ -6,5 +6,5 @@ export const useNextMovementToMigrate = (id?: string) =>
   useQuery<GetNextMovementRequestDto, Error, string | null>(
     [MethodsEnum.MovementsGetNextToMigrate, id],
     () => Meteor.callAsync(MethodsEnum.MovementsGetNextToMigrate, { id }),
-    { enabled: !!id }
+    { enabled: !!id },
   );

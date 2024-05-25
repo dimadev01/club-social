@@ -30,13 +30,13 @@ export class MovementFindPaginatedRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly _logger: ILogger
+    protected readonly _logger: ILogger,
   ) {
     super(_logger);
   }
 
   public async findPaginated(
-    request: FindPaginatedMovementsRequest
+    request: FindPaginatedMovementsRequest,
   ): Promise<FindPaginatedMovementsResponse> {
     const query: Mongo.Query<Movement> = {
       isDeleted: request.showDeleted ?? false,
@@ -67,10 +67,10 @@ export class MovementFindPaginatedRepository
               allDebt: this._getGroupedByCategoryType(CategoryTypeEnum.Debt),
               allDebtIncome: this._getAllDebtIncome(),
               allExpenses: this._getGroupedByCategoryType(
-                CategoryTypeEnum.Expense
+                CategoryTypeEnum.Expense,
               ),
               allIncome: this._getGroupedByCategoryType(
-                CategoryTypeEnum.Income
+                CategoryTypeEnum.Income,
               ),
               data: [
                 ...this.getPaginatedPipelineQuery(request),
@@ -89,7 +89,7 @@ export class MovementFindPaginatedRepository
               allDebt: MongoUtils.elementAtArray0('$allDebt.amount', 0),
               allDebtIncome: MongoUtils.elementAtArray0(
                 '$allDebtIncome.amount',
-                0
+                0,
               ),
               allExpenses: MongoUtils.elementAtArray0('$allExpenses.amount', 0),
               allIncome: MongoUtils.elementAtArray0('$allIncome.amount', 0),

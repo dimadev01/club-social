@@ -12,7 +12,7 @@ export class GetUsersUseCase
   implements IUseCase<GetUsersRequestDto, PaginatedResponse<Meteor.User>>
 {
   public async execute(
-    request: GetUsersRequestDto
+    request: GetUsersRequestDto,
   ): Promise<Result<PaginatedResponse<Meteor.User>, Error>> {
     await this.validateDto(GetUsersRequestDto, request);
 
@@ -52,7 +52,7 @@ export class GetUsersUseCase
     if (request.sortField) {
       if (request.sortField === 'profile') {
         options.sort['profile.firstName'] = this.getSorterValue(
-          request.sortOrder
+          request.sortOrder,
         );
       }
     }

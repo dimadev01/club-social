@@ -63,7 +63,7 @@ export const DuesPage = () => {
   });
 
   const [memberIdsFilter, setMemberIdsFilter] = useState<string[]>(
-    (parsedQs.memberIds as string[]) ?? []
+    (parsedQs.memberIds as string[]) ?? [],
   );
 
   const [showDeleted, setShowDeleted] = useState<boolean>(false);
@@ -71,7 +71,7 @@ export const DuesPage = () => {
   const [dateFilter, setDateFilter] = useState<RangeValue<Dayjs> | null>(
     parsedQs.from && parsedQs.to
       ? [dayjs(parsedQs.from as string), dayjs(parsedQs.to as string)]
-      : null
+      : null,
   );
 
   const { data: members, isLoading: isLoadingMembers } = useMembers();
@@ -135,7 +135,7 @@ export const DuesPage = () => {
             {Roles.userIsInRole(
               user,
               PermissionEnum.Create,
-              ScopeEnum.Dues
+              ScopeEnum.Dues,
             ) && <TableNewButton to={AppUrl.DuesNew} />}
           </>
         }
@@ -182,7 +182,7 @@ export const DuesPage = () => {
               {Roles.userIsInRole(
                 userId,
                 PermissionEnum.ViewDeleted,
-                ScopeEnum.Movements
+                ScopeEnum.Movements,
               ) && (
                 <Form.Item>
                   <Checkbox
@@ -282,7 +282,7 @@ export const DuesPage = () => {
                     return (
                       <Tooltip
                         title={due.payments.map(
-                          (d) => `${d.paidAt} ${d.amount}`
+                          (d) => `${d.paidAt} ${d.amount}`,
                         )}
                       >
                         <Tag color={DueStatusColor[status]}>
@@ -308,7 +308,7 @@ export const DuesPage = () => {
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Delete,
-                        ScopeEnum.Dues
+                        ScopeEnum.Dues,
                       ) && (
                         <Button
                           popConfirm={{
@@ -318,7 +318,7 @@ export const DuesPage = () => {
                                 {
                                   onError: () => deleteDue.reset(),
                                   onSuccess: () => deleteDue.reset(),
-                                }
+                                },
                               ),
                             title: '¿Está seguro de eliminar este cobro?',
                           }}
@@ -335,7 +335,7 @@ export const DuesPage = () => {
                       Roles.userIsInRole(
                         userId,
                         PermissionEnum.Update,
-                        ScopeEnum.Dues
+                        ScopeEnum.Dues,
                       ) && (
                         <Button
                           type="text"
@@ -345,7 +345,7 @@ export const DuesPage = () => {
                               {
                                 onError: () => restoreDue.reset(),
                                 onSuccess: () => restoreDue.reset(),
-                              }
+                              },
                             )
                           }
                           htmlType="button"
@@ -376,7 +376,7 @@ export const DuesPage = () => {
                           UrlUtils.navigate(AppUrl.PaymentsNew, {
                             dueIds: [due._id],
                             memberId: due.memberId,
-                          })
+                          }),
                         );
                       }}
                       htmlType="button"

@@ -13,7 +13,7 @@ EmployeesCollection.attachSchema(
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,
     userId: String,
-  })
+  }),
 );
 
 await EmployeesCollection.createIndexAsync({ userId: 1 });

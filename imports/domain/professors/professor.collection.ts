@@ -4,7 +4,7 @@ import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 
 export const ProfessorsCollection = new MongoCollection(
   'professors',
-  Professor
+  Professor,
 );
 
 // @ts-expect-error
@@ -16,7 +16,7 @@ ProfessorsCollection.attachSchema(
     updatedAt: { autoValue: () => new Date(), type: Date },
     updatedBy: String,
     userId: String,
-  })
+  }),
 );
 
 await ProfessorsCollection.createIndexAsync({ userId: 1 });

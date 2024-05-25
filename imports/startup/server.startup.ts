@@ -39,7 +39,7 @@ export class ServerStartup {
     private readonly _professorMethod: ProfessorMethod,
     private readonly _employeeMethod: EmployeeMethod,
     private readonly _serviceMethod: ServiceMethod,
-    private readonly _paymentMethod: PaymentMethod
+    private readonly _paymentMethod: PaymentMethod,
   ) {}
 
   public async start() {
@@ -71,7 +71,7 @@ export class ServerStartup {
 
     Accounts.emailTemplates.verifyEmail.html = (
       user: Meteor.User,
-      url: string
+      url: string,
     ) => {
       const urlWithoutHashtag = url.replace('#/', '');
 
@@ -81,7 +81,7 @@ export class ServerStartup {
 
     Accounts.emailTemplates.enrollAccount.html = (
       user: Meteor.User,
-      url: string
+      url: string,
     ) => {
       const urlWithoutHashtag = url.replace('#/', '');
 
@@ -118,7 +118,7 @@ export class ServerStartup {
         }
 
         return true;
-      }
+      },
     );
   }
 

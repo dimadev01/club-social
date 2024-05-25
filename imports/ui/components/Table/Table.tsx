@@ -46,7 +46,7 @@ export function Table<T extends object>({
   const handleTableChange = (
     pagination: TablePaginationConfig,
     filters: Record<string, FilterValue | null>,
-    sorter: SorterResult<T>
+    sorter: SorterResult<T>,
   ) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onStateChange((prevState: any) => ({
@@ -60,7 +60,7 @@ export function Table<T extends object>({
   };
 
   const renderTitle = () => (
-    <Typography.Text className="text-black text-base flex justify-between mb-3">
+    <Typography.Text className="mb-3 flex justify-between text-base text-black">
       {tableTitle}
     </Typography.Text>
   );
@@ -83,7 +83,7 @@ export function Table<T extends object>({
         onChange={(
           pagination: TablePaginationConfig,
           filters: Record<string, FilterValue | null>,
-          sorter: SorterResult<T> | SorterResult<T>[]
+          sorter: SorterResult<T> | SorterResult<T>[],
         ) => handleTableChange(pagination, filters, sorter as SorterResult<T>)}
         pagination={{
           current: gridState.page,

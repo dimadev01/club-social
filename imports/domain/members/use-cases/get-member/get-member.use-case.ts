@@ -15,13 +15,13 @@ export class GetMemberUseCase
 {
   public constructor(
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort
+    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetMemberRequestDto
+    request: GetMemberRequestDto,
   ): Promise<Result<GetMemberResponseDto | null, Error>> {
     await this.validatePermission(ScopeEnum.Members, PermissionEnum.Read);
 

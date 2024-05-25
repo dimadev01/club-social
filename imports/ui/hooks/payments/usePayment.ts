@@ -7,5 +7,5 @@ export const usePayment = (id?: string) =>
   useQuery<GetPaymentRequestDto, Error, GetPaymentResponseDto | undefined>(
     [MethodsEnum.PaymentsGet, id],
     () => Meteor.callAsync(MethodsEnum.PaymentsGet, { id }),
-    { enabled: !!id }
+    { enabled: !!id },
   );

@@ -76,7 +76,7 @@ export class Due extends Entity {
 
     return this.payments.reduce(
       (acc: number, payment: DuePayment) => acc + payment.amount,
-      0
+      0,
     );
   }
 
@@ -121,7 +121,7 @@ export class Due extends Entity {
 
     const paymentsAmount = this.payments.reduce(
       (acc: number, payment: DuePayment) => acc + payment.amount,
-      0
+      0,
     );
 
     return this.amount - paymentsAmount;
@@ -185,7 +185,7 @@ export class Due extends Entity {
     invariant(this.payments);
 
     this.payments = this.payments.filter(
-      (payment) => payment._id !== paymentId
+      (payment) => payment._id !== paymentId,
     );
 
     if (this.payments.length === 0) {

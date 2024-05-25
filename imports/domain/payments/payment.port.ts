@@ -12,9 +12,9 @@ export interface IPaymentPort
     IPaginatedPort<Payment> {
   findLastByReceiptNumber(): Promise<Payment | null>;
   findOneByReceiptNumber(
-    request: FindByReceiptNumberRequest
+    request: FindByReceiptNumberRequest,
   ): Promise<Payment | null>;
   findPaginated(
-    request: FindPaginatedPaymentsRequest
+    request: FindPaginatedPaymentsRequest,
   ): Promise<FindPaginatedPaymentsResponse>;
 }

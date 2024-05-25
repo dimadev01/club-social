@@ -16,13 +16,13 @@ export class GetPaymentUseCase
 {
   public constructor(
     @inject(DIToken.PaymentRepository)
-    private readonly _paymentPort: IPaymentPort
+    private readonly _paymentPort: IPaymentPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetPaymentRequestDto
+    request: GetPaymentRequestDto,
   ): Promise<Result<GetPaymentResponseDto | null, Error>> {
     const payment = await this._paymentPort.findOneById(request.id);
 

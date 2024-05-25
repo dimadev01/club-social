@@ -16,7 +16,7 @@ export class GetMembersUseCase
 {
   public constructor(
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort
+    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
@@ -34,7 +34,7 @@ export class GetMembersUseCase
           category: member.category,
           name: member.name,
           status: member.status,
-        }))
+        })),
     );
   }
 }

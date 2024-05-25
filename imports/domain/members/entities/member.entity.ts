@@ -100,7 +100,7 @@ export class Member extends Entity {
 
     const updateResult: Result<null[], Error> = Result.combine([
       member.setDateOfBirth(
-        props.dateOfBirth ? new Date(props.dateOfBirth) : null
+        props.dateOfBirth ? new Date(props.dateOfBirth) : null,
       ),
       member.setCategory(props.category),
       member.setStatus(props.status),
@@ -144,7 +144,7 @@ export class Member extends Entity {
   }
 
   public setDateOfBirth(
-    dateOfBirth: Date | null | string
+    dateOfBirth: Date | null | string,
   ): Result<null, Error> {
     if (typeof dateOfBirth === 'string') {
       this.dateOfBirth = new Date(dateOfBirth);
@@ -164,7 +164,7 @@ export class Member extends Entity {
   }
 
   public setFileStatus(
-    fileStatus: MemberFileStatusEnum | null
+    fileStatus: MemberFileStatusEnum | null,
   ): Result<null, Error> {
     this.fileStatus = fileStatus;
 
@@ -172,7 +172,7 @@ export class Member extends Entity {
   }
 
   public setMaritalStatus(
-    maritalStatus: MemberMaritalStatusEnum | null
+    maritalStatus: MemberMaritalStatusEnum | null,
   ): Result<null, Error> {
     this.maritalStatus = maritalStatus;
 
@@ -180,7 +180,7 @@ export class Member extends Entity {
   }
 
   public setNationality(
-    nationality: MemberNationalityEnum | null
+    nationality: MemberNationalityEnum | null,
   ): Result<null, Error> {
     this.nationality = nationality;
 

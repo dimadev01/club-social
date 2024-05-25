@@ -19,13 +19,13 @@ export class RemoveUserUseCase
 {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
   ) {
     super();
   }
 
   public async execute(
-    request: RemoveUserRequestDto
+    request: RemoveUserRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Members, PermissionEnum.Delete);
 
@@ -54,7 +54,7 @@ export class RemoveUserUseCase
     Object.entries(RolePermissionAssignment[userRole]).forEach(
       ([key, value]) => {
         Roles.removeUsersFromRoles(request.id, value, key);
-      }
+      },
     );
 
     await Meteor.users.removeAsync(request.id);

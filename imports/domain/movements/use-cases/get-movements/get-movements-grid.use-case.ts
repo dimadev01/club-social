@@ -22,13 +22,13 @@ export class GetMovementsGridUseCase
 {
   public constructor(
     @inject(DIToken.MovementFindPaginatedRepository)
-    private readonly _movementFindPaginatedPort: IMovementPaginatedPort
+    private readonly _movementFindPaginatedPort: IMovementPaginatedPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetMovementsGridRequestDto
+    request: GetMovementsGridRequestDto,
   ): Promise<Result<GetMovementsGridResponseDto, Error>> {
     const { data, count, debt, expenses, income, balance } =
       await this._movementFindPaginatedPort.findPaginated(request);
@@ -64,7 +64,7 @@ export class GetMovementsGridUseCase
             memberId: movement.memberId,
             type: movement.type,
           };
-        }
+        },
       ),
       debt,
       expense: expenses,

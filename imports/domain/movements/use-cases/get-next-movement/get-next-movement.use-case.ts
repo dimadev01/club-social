@@ -13,13 +13,13 @@ export class GetNextMovementUseCase
 {
   public constructor(
     @inject(DIToken.MovementRepository)
-    private readonly _movementPort: IMovementPort
+    private readonly _movementPort: IMovementPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetMovementRequestDto
+    request: GetMovementRequestDto,
   ): Promise<Result<string | null, Error>> {
     const movement = await this._movementPort.findNextToMigrate(request.id);
 

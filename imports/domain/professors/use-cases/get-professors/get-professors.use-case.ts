@@ -44,7 +44,7 @@ export class GetProfessorsUseCase
           // @ts-expect-error
           name: `${professor.user.profile?.lastName} ${professor.user.profile?.firstName}`,
         }))
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => a.name.localeCompare(b.name)),
     );
   }
 }

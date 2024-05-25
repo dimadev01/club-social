@@ -24,13 +24,13 @@ export class CreateDueUseCase
     @inject(DIToken.DueRepository)
     private readonly _duePort: IDuePort,
     @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort
+    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
 
   public async execute(
-    request: CreateDueRequestDto
+    request: CreateDueRequestDto,
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.Dues, PermissionEnum.Create);
 
@@ -64,7 +64,7 @@ export class CreateDueUseCase
             }
 
             await this._duePort.create(due.value);
-          })
+          }),
         );
       });
 

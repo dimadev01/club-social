@@ -12,7 +12,7 @@ import {
 export interface IDuePort extends ICrudPort<Due>, IPaginatedPort<Due> {
   findByIds(request: FindByIdsRequest): Promise<Due[]>;
   findPaginated(
-    request: FindPaginatedDuesRequest
+    request: FindPaginatedDuesRequest,
   ): Promise<FindPaginatedDuesResponse>;
   findPaid(request: FindPaidRequest): Promise<Due[]>;
   findPendingByMember(request: FindPendingByMemberRequest): Promise<Due[]>;

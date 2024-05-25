@@ -1212,7 +1212,7 @@ Migrations.add({
             },
           },
         },
-      ]
+      ],
     );
 
     next();
@@ -1242,7 +1242,7 @@ Migrations.add({
     await Meteor.users.updateAsync(
       {},
       { $set: { state: UserStateEnum.ACTIVE } },
-      { multi: true }
+      { multi: true },
     );
 
     next();
@@ -1259,7 +1259,7 @@ Migrations.add({
     await PaymentCollection.updateAsync(
       {},
       { $set: { receiptNumber: null } },
-      { multi: true }
+      { multi: true },
     );
 
     next();

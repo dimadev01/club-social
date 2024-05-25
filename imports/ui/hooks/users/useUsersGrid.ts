@@ -15,6 +15,6 @@ export const useUsersGrid = (request: GetUsersRequestDto) => {
 
   return useQuery<GetUsersRequestDto, Error, GetUsersResponseDto>(
     [MethodsEnum.UsersGetGrid, request],
-    () => Meteor.callAsync(MethodsEnum.UsersGetGrid, request)
+    () => Meteor.callAsync(MethodsEnum.UsersGetGrid, request),
   );
 };

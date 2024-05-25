@@ -14,7 +14,7 @@ export interface IMemberPort
   findOneByUserId(userId: string): Promise<Member | null>;
   findOneByUserIdOrThrow(userId: string): Promise<Member>;
   findPaginated(
-    request: FindPaginatedMembersRequest
+    request: FindPaginatedMembersRequest,
   ): Promise<FindPaginatedResponse<FindPaginatedMember>>;
   getLoggedInOrThrow(): Promise<Member>;
 }
