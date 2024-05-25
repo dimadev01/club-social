@@ -26,7 +26,7 @@ export class GetPendingDuesUseCase
     request: GetPendingDuesRequestDto
   ): Promise<Result<PendingDueDto[], Error>> {
     const dues = await this._duePort.findPending({
-      memberIds: request.memberIds,
+      memberIds: request.memberId,
     });
 
     return ok<PendingDueDto[]>(

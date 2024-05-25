@@ -28,7 +28,7 @@ import { AppUrl } from '@ui/app.enum';
 import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
 import { useCategoriesByType } from '@ui/hooks/categories/useCategoriesByType';
-import { usePendingDues } from '@ui/hooks/dues/usePendingDues';
+import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDues';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useMigrateMovement } from '@ui/hooks/movements/useMigrateMovement';
 import { useMovement } from '@ui/hooks/movements/useMovement';
@@ -68,8 +68,8 @@ export const MovementMigratePage = () => {
     movement ? MemberCategories.includes(movement.category) : false
   );
 
-  const { data: pendingDues } = usePendingDues({
-    memberIds: movement?.memberId ? [movement.memberId] : [],
+  const { data: pendingDues } = usePendingDuesByMember({
+    memberId: movement?.memberId ? [movement.memberId] : [],
   });
 
   const { data: categoriesByType, isLoading: isLoadingCategoriesByType } =

@@ -3,9 +3,9 @@ import { GetPendingDuesRequestDto } from '@domain/dues/use-cases/get-pending-due
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQuery } from '@tanstack/react-query';
 
-export const usePendingDues = (request: GetPendingDuesRequestDto) =>
+export const usePendingDuesByMember = (memberId?: string) =>
   useQuery<GetPendingDuesRequestDto, Error, PendingDueDto[]>(
-    [MethodsEnum.DuesGetPending, request],
-    () => Meteor.callAsync(MethodsEnum.DuesGetPending, request),
-    { enabled: request.memberIds.length > 0 }
+    [MethodsEnum.DuesGetPending, memberId],
+    () => Meteor.callAsync(MethodsEnum.DuesGetPending, { memberId }),
+    { enabled: !!memberId }
   );

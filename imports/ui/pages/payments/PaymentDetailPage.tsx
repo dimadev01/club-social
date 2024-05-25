@@ -3,22 +3,19 @@ import {
   App,
   Breadcrumb,
   Card,
+  Col,
   DatePicker,
   Form,
   InputNumber,
-  List,
+  Row,
   Skeleton,
 } from 'antd';
-import { Rule } from 'antd/es/form';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
-import { groupBy } from 'lodash';
 import { Roles } from 'meteor/alanning:roles';
-import qs from 'qs';
 import {
   Navigate,
   NavLink,
-  useLocation,
   useNavigate,
   useParams,
   useSearchParams,
@@ -32,7 +29,7 @@ import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
-import { usePendingDues } from '@ui/hooks/dues/usePendingDues';
+import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDues';
 import { useUpdateDue } from '@ui/hooks/dues/useUpdateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
@@ -40,6 +37,7 @@ import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { usePayment } from '@ui/hooks/payments/usePayment';
 import { useUpdatePayment } from '@ui/hooks/payments/useUpdatePayment';
 import { PaymentMemberDuesCard } from '@ui/pages/payments/PaymentMemberDuesCard';
+import { useMember } from '@ui/hooks/members/useMember';
 
 type FormDueValue = {
   amount: number;
@@ -56,48 +54,37 @@ type FormDuesValue = {
 type FormValues = {
   date: Dayjs;
   dues: FormDuesValue[];
-  memberIds: string | string[];
+  memberId: string;
   receiptNumber: number;
 };
 
 export const PaymentDetailPage = () => {
   const { message } = App.useApp();
 
-  const { id } = useParams<{ id?: string }>();
+  const { id: paymentId, memberId } = useParams<{
+    id?: string;
+    memberId?: string;
+  }>();
 
   const navigate = useNavigate();
 
-  const location = useLocation();
-
   const [, setSearchParams] = useSearchParams();
+
+  const [form] = Form.useForm<FormValues>();
+
+  const formMemberId = useWatch('memberId', form);
+
+  const { data: members, isLoading: isLoadingMembers } = useMembers();
 
   const {
     data: payment,
     fetchStatus: paymentFetchStatus,
     refetch,
-  } = usePayment(id);
+  } = usePayment(paymentId);
 
-  const parsedQs = qs.parse(location.search, { ignoreQueryPrefix: true });
+  const { data: pendingDues } = usePendingDuesByMember(memberId);
 
-  const [form] = Form.useForm<FormValues>();
-
-  const formMemberIds = useWatch('memberIds', form);
-
-  const getInitialMemberIds = () => {
-    if (payment) {
-      return [payment.memberId];
-    }
-
-    if (parsedQs.memberIds) {
-      return parsedQs.memberIds as string[];
-    }
-
-    return [];
-  };
-
-  const { data: pendingDues } = usePendingDues({
-    memberIds: getInitialMemberIds(),
-  });
+  const { data: member } = useMember(formMemberId);
 
   const createPayment = useCreatePayment();
 
@@ -111,35 +98,33 @@ export const PaymentDetailPage = () => {
 
   const updateDue = useUpdateDue();
 
-  const { data: members, isLoading: isLoadingMembers } = useMembers();
-
   useEffect(() => {
     if (!payment) {
-      setSearchParams(UrlUtils.stringify({ memberIds: formMemberIds }), {
+      setSearchParams(UrlUtils.stringify({ memberIds: formMemberId }), {
         replace: true,
       });
     }
-  }, [formMemberIds, setSearchParams, payment]);
+  }, [formMemberId, setSearchParams, payment]);
 
-  useEffect(() => {
-    if (pendingDues?.length) {
-      const groupedDuesByMember = groupBy(pendingDues, 'memberId');
+  // useEffect(() => {
+  //   if (pendingDues?.length) {
+  //     const groupedDuesByMember = groupBy(pendingDues, 'memberId');
 
-      const formDuesToSet = Object.entries(groupedDuesByMember).map(
-        ([memberId, dues]) => ({
-          dues: dues.map((due) => ({
-            amount: MoneyUtils.fromCents(due.amount),
-            dueId: due._id,
-            isSelected: true,
-          })),
-          memberId,
-          notes: null,
-        })
-      );
+  //     const formDuesToSet = Object.entries(groupedDuesByMember).map(
+  //       ([memberId, dues]) => ({
+  //         dues: dues.map((due) => ({
+  //           amount: MoneyUtils.fromCents(due.amount),
+  //           dueId: due._id,
+  //           isSelected: true,
+  //         })),
+  //         memberId,
+  //         notes: null,
+  //       })
+  //     );
 
-      form.setFieldValue('dues', formDuesToSet);
-    }
-  }, [pendingDues, form]);
+  //     form.setFieldValue('dues', formDuesToSet);
+  //   }
+  // }, [pendingDues, form]);
 
   useEffect(() => {
     if (payment) {
@@ -156,7 +141,7 @@ export const PaymentDetailPage = () => {
             notes: payment.notes,
           },
         ],
-        memberIds: [payment.memberId],
+        memberId: payment.memberId,
       });
     }
   }, [payment, form]);
@@ -169,7 +154,7 @@ export const PaymentDetailPage = () => {
 
   const isLoading = paymentFetchStatus === 'fetching';
 
-  if (id && !payment && !isLoading) {
+  if (paymentId && !payment && !isLoading) {
     return <NotFound />;
   }
 
@@ -229,33 +214,11 @@ export const PaymentDetailPage = () => {
     }
   };
 
-  const getRulesForMemberIds = () => {
-    const rules: Rule[] = [
-      {
-        required: true,
-      },
-    ];
-
-    if (!payment) {
-      rules.push({ min: 1, type: 'array' });
-    }
-
-    return rules;
-  };
-
   const canCreatePayment = Roles.userIsInRole(
     user,
     PermissionEnum.Create,
     ScopeEnum.Payments
   );
-
-  const getListDataSource = (): string[] => {
-    if (formMemberIds) {
-      return Array.isArray(formMemberIds) ? formMemberIds : [formMemberIds];
-    }
-
-    return [];
-  };
 
   /**
    * Renders component
@@ -280,44 +243,49 @@ export const PaymentDetailPage = () => {
             initialValues={{
               date: DateUtils.c(),
               dues: [],
-              memberIds: getInitialMemberIds(),
+              memberId,
             }}
           >
-            <Form.Item
-              name="date"
-              label="Fecha"
-              rules={[{ required: true }, { type: 'date' }]}
-            >
-              <DatePicker
-                format={DateFormatEnum.DDMMYYYY}
-                className="w-full"
-                disabledDate={(current) => current.isAfter(dayjs())}
-              />
-            </Form.Item>
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12} md={12} lg={10} xl={8} xxl={6}>
+                <Form.Item
+                  name="date"
+                  label="Fecha"
+                  rules={[{ required: true }, { type: 'date' }]}
+                >
+                  <DatePicker
+                    format={DateFormatEnum.DDMMYYYY}
+                    className="w-full"
+                    disabledDate={(current) => current.isAfter(dayjs())}
+                  />
+                </Form.Item>
 
-            <Form.Item
-              name="receiptNumber"
-              label="Comprobante Nro."
-              rules={[{ required: true }]}
-            >
-              <InputNumber min={1} />
-            </Form.Item>
+                <Form.Item
+                  label="Socio"
+                  rules={[{ required: true }]}
+                  name="memberId"
+                >
+                  <Select
+                    disabled={
+                      isLoadingMembers || !canCreatePayment || !!payment
+                    }
+                    loading={isLoadingMembers}
+                    options={members?.map((m) => ({
+                      label: m.name,
+                      value: m._id,
+                    }))}
+                  />
+                </Form.Item>
 
-            <Form.Item
-              label="Socio/s"
-              rules={getRulesForMemberIds()}
-              name="memberIds"
-            >
-              <Select
-                mode={payment ? undefined : 'multiple'}
-                disabled={isLoadingMembers || !canCreatePayment || !!payment}
-                loading={isLoadingMembers}
-                options={members?.map((member) => ({
-                  label: member.name,
-                  value: member._id,
-                }))}
-              />
-            </Form.Item>
+                <Form.Item
+                  name="receiptNumber"
+                  label="Comprobante Nro."
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber min={1} />
+                </Form.Item>
+              </Col>
+            </Row>
 
             {payment && (
               <PaymentMemberDuesCard
@@ -334,29 +302,13 @@ export const PaymentDetailPage = () => {
               />
             )}
 
-            {!payment && (
-              <List
-                grid={{ column: 1 }}
-                dataSource={getListDataSource()}
-                renderItem={(memberId) => {
-                  const member = members?.find((m) => m._id === memberId);
-
-                  if (!member) {
-                    return null;
-                  }
-
-                  return (
-                    <List.Item key={memberId}>
-                      <Card title={member.name}>
-                        <PaymentMemberDuesCard
-                          memberId={memberId}
-                          dues={pendingDues}
-                        />
-                      </Card>
-                    </List.Item>
-                  );
-                }}
-              />
+            {!payment && member && (
+              <Card title={`${member.firstName} ${member.lastName}`}>
+                <PaymentMemberDuesCard
+                  memberId={member._id}
+                  dues={pendingDues}
+                />
+              </Card>
             )}
 
             <FormButtons

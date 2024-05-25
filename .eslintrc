@@ -1,6 +1,5 @@
 {
   "extends": [
-    "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
     "plugin:import/typescript",
@@ -14,14 +13,14 @@
     "project": ["./tsconfig.json"]
   },
   "plugins": [
-    "@typescript-eslint",
+    "prettier",
     "sort-keys-fix",
     "typescript-sort-keys",
-    "unused-imports"
+    "unused-imports",
+    "hooks"
   ],
   "root": true,
   "rules": {
-    "react/prop-types": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/padding-line-between-statements": [
@@ -38,6 +37,20 @@
       }
     ],
     "class-methods-use-this": "off",
+    "hooks/sort": [
+      2,
+      {
+        "groups": [
+          "useReducer",
+          "useContext",
+          "useState",
+          "useRef",
+          "useDispatch",
+          "useCallback",
+          "useEffect"
+        ]
+      }
+    ],
     "import/extensions": "off",
     "import/no-absolute-path": "off",
     "import/no-extraneous-dependencies": [
@@ -62,6 +75,7 @@
         "custom": "ignore"
       }
     ],
+    "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/require-default-props": "off",
     "sort-keys-fix/sort-keys-fix": "error",
