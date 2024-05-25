@@ -55,7 +55,7 @@ export const App = () => {
           locale={esEs}
           select={{ showSearch: true }}
           popupMatchSelectWidth={false}
-          form={{ requiredMark: 'optional', scrollToFirstError: true }}
+          form={{ requiredMark: 'optional' }}
           input={{ autoComplete: 'on' }}
           theme={{ token: { colorTextBase: '#505050', fontFamily: 'Rubik' } }}
         >

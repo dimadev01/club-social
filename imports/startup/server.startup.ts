@@ -4,7 +4,7 @@ import '@infra/meteor/common/meteor-publications';
 import '@domain/users/user.collection';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
-import invariant from 'ts-invariant';
+import invariant from 'tiny-invariant';
 import { container, inject, singleton } from 'tsyringe';
 import { Meteor as MeteorCustomTypes } from 'types/meteor';
 import { ILogger } from '@application/logger/logger.interface';

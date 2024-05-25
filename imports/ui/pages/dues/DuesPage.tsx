@@ -17,7 +17,7 @@ import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import invariant from 'ts-invariant';
+import invariant from 'tiny-invariant';
 import {
   CheckOutlined,
   DeleteOutlined,

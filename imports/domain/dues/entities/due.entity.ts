@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { err, ok, Result } from 'neverthrow';
-import invariant from 'ts-invariant';
+import invariant from 'tiny-invariant';
 import { Entity } from '@domain/common/entity';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { CreateDue, CreateDuePayment } from '@domain/dues/due.types';

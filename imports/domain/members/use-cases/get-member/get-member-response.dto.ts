@@ -8,43 +8,45 @@ import {
 } from '@domain/members/member.enum';
 
 export class GetMemberResponseDto {
-  _id: string;
+  public _id: string;
 
-  firstName: string;
+  public addressCityGovId: string | null;
 
-  lastName: string;
+  public addressCityName: string | null;
 
-  emails: string[];
+  public addressStateGovId: string | null;
 
-  dateOfBirth: Date | null;
+  public addressStateName: string | null;
 
-  category: MemberCategoryEnum;
+  public addressStreet: string | null;
 
-  documentID: string | null;
+  public addressZipCode: string | null;
 
-  maritalStatus: MemberMaritalStatusEnum | null;
+  public category: MemberCategoryEnum;
 
-  fileStatus: MemberFileStatusEnum | null;
+  public dateOfBirth: Date | null;
 
-  phones: string[] | null;
+  public documentID: string | null;
 
-  sex: MemberSexEnum | null;
+  public emails: string[];
 
-  nationality: MemberNationalityEnum | null;
+  public fileStatus: MemberFileStatusEnum | null;
 
-  status: MemberStatusEnum;
+  public firstName: string;
 
-  addressStateGovId: string | null;
+  public lastName: string;
 
-  addressStateName: string | null;
+  public maritalStatus: MemberMaritalStatusEnum | null;
 
-  addressCityGovId: string | null;
+  public name: string;
 
-  addressCityName: string | null;
+  public nationality: MemberNationalityEnum | null;
 
-  addressStreet: string | null;
+  public phones: string[] | null;
 
-  addressZipCode: string | null;
+  public sex: MemberSexEnum | null;
 
-  userId: string;
+  public status: MemberStatusEnum;
+
+  public userId: string;
 }

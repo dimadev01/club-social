@@ -10,7 +10,7 @@ import { GetDuesGridUseCase } from '@domain/dues/use-cases/get-dues-grid/get-due
 import { GetPaidDuesRequestDto } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.request.dto';
 import { GetPaidDuesUseCase } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.use-case';
 import { GetPendingDuesRequestDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-dues.request.dto';
-import { GetPendingDuesUseCase } from '@domain/dues/use-cases/get-pending-dues/get-pending-dues.use-case';
+import { GetPendingDuesByMemberUseCase } from '@domain/dues/use-cases/get-pending-dues/get-pending-dues.use-case';
 import { RestoreDueRequestDto } from '@domain/dues/use-cases/restore-due/restore-due-request.dto';
 import { RestoreDueUseCase } from '@domain/dues/use-cases/restore-due/restore-due.use-case';
 import { UpdateDueRequestDto } from '@domain/dues/use-cases/update-due/update-due-request.dto';
@@ -22,7 +22,7 @@ import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 export class DueMethod extends MeteorMethod {
   public constructor(
     private readonly _getDuesGrid: GetDuesGridUseCase,
-    private readonly _getPendingDues: GetPendingDuesUseCase,
+    private readonly _getPendingDuesByMember: GetPendingDuesByMemberUseCase,
     private readonly _getPaidDues: GetPaidDuesUseCase,
     private readonly _getDue: GetDueUseCase,
     private readonly _createDue: CreateDueUseCase,
@@ -41,8 +41,14 @@ export class DueMethod extends MeteorMethod {
       [MethodsEnum.DuesGetPaid]: (request: GetPaidDuesRequestDto) =>
         this.execute(this._getPaidDues, request, GetPaidDuesRequestDto),
 
-      [MethodsEnum.DuesGetPending]: (request: GetPendingDuesRequestDto) =>
-        this.execute(this._getPendingDues, request, GetPendingDuesRequestDto),
+      [MethodsEnum.DuesGetPendingByMember]: (
+        request: GetPendingDuesRequestDto
+      ) =>
+        this.execute(
+          this._getPendingDuesByMember,
+          request,
+          GetPendingDuesRequestDto
+        ),
 
       [MethodsEnum.DuesGet]: (request: GetDueRequestDto) =>
         this.execute(this._getDue, request, GetDueRequestDto),

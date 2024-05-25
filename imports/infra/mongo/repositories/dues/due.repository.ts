@@ -16,7 +16,7 @@ import {
   FindPaginatedDuesRequest,
   FindPaginatedDuesResponse,
   FindPaidRequest,
-  FindPendingRequest,
+  FindPendingByMemberRequest,
 } from '@infra/mongo/repositories/dues/due-repository.types';
 import { DateUtils } from '@shared/utils/date.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
@@ -163,15 +163,18 @@ export class DueRepository
     return this.getCollection().find(query, options).fetchAsync();
   }
 
-  public findPending(request: FindPendingRequest): Promise<Due[]> {
+  public findPendingByMember(
+    request: FindPendingByMemberRequest
+  ): Promise<Due[]> {
     const query: Mongo.Query<Due> = {
       isDeleted: false,
-      'member._id': { $in: request.memberIds },
+      'member._id': request.memberId,
       status: { $in: [DueStatusEnum.Pending, DueStatusEnum.PartiallyPaid] },
     };
 
     const options: Mongo.Options<Due> = {
-      sort: { date: 1 },
+      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
+      sort: { date: 1, category: -1 },
     };
 
     return this.getCollection().find(query, options).fetchAsync();

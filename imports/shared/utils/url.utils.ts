@@ -14,6 +14,10 @@ export abstract class UrlUtils {
     return `${url}${this.stringify(obj, options)}`;
   }
 
+  public static parse(): qs.ParsedQs {
+    return qs.parse(window.location.search, { ignoreQueryPrefix: true });
+  }
+
   public static stringify(
     obj: unknown,
     options?: qs.IStringifyOptions

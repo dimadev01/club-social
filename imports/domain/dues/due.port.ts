@@ -6,7 +6,7 @@ import {
   FindPaginatedDuesRequest,
   FindPaginatedDuesResponse,
   FindPaidRequest,
-  FindPendingRequest,
+  FindPendingByMemberRequest,
 } from '@infra/mongo/repositories/dues/due-repository.types';
 
 export interface IDuePort extends ICrudPort<Due>, IPaginatedPort<Due> {
@@ -15,5 +15,5 @@ export interface IDuePort extends ICrudPort<Due>, IPaginatedPort<Due> {
     request: FindPaginatedDuesRequest
   ): Promise<FindPaginatedDuesResponse>;
   findPaid(request: FindPaidRequest): Promise<Due[]>;
-  findPending(request: FindPendingRequest): Promise<Due[]>;
+  findPendingByMember(request: FindPendingByMemberRequest): Promise<Due[]>;
 }

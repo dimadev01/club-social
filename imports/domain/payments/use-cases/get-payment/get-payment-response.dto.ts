@@ -12,4 +12,6 @@ export class GetPaymentResponseDto {
   public memberName: string;
 
   public notes: string | null;
+
+  public receiptNumber: number | null;
 }
