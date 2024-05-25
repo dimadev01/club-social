@@ -7,7 +7,7 @@ import type {
   OptionalUnlessRequiredId,
 } from 'mongodb';
 import SimpleSchema from 'simpl-schema';
-import invariant from 'ts-invariant';
+import invariant from 'tiny-invariant';
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
 import { ICrudPort } from '@application/ports/crud.port';
@@ -226,7 +226,7 @@ export abstract class MongoCrudRepository<T extends Entity>
   protected async getCurrentUserOrThrow(): Promise<Meteor.User> {
     const currentUser = await Meteor.userAsync();
 
-    invariant(currentUser, 'User not found');
+    invariant(currentUser);
 
     return currentUser;
   }
@@ -252,6 +252,7 @@ export abstract class MongoCrudRepository<T extends Entity>
     try {
       const currentUser = await this.getCurrentUserOrThrow();
 
+      // @ts-expect-error
       return `${currentUser.profile?.firstName} ${currentUser.profile?.lastName}`;
     } catch (error) {
       return 'System';
