@@ -7,6 +7,7 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
+
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 

@@ -1,5 +1,6 @@
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { GetCategoriesGridRequestDto } from '@domain/categories/use-cases/get-categories-grid/get-categories-grid-request.dto';

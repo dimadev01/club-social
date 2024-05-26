@@ -8,7 +8,8 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { err, ok, Result } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
+
 import {
   CategoryEnum,
   CategoryTypeEnum,
@@ -20,8 +21,8 @@ import { CreateMovement } from '@domain/movements/movement.types';
 import { Professor } from '@domain/professors/professor.entity';
 import { Service } from '@domain/services/service.entity';
 import { IsNullable } from '@shared/class-validator/is-nullable';
-import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 
 export class Movement extends Entity {
   @IsInt()

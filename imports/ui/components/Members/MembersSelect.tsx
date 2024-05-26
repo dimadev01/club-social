@@ -1,7 +1,8 @@
+import { SelectProps } from 'antd';
 import React from 'react';
+
 import { Select } from '@ui/components/Select';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import { SelectProps } from 'antd';
 
 type Props = SelectProps;
 

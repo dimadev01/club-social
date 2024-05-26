@@ -1,4 +1,4 @@
-import React from 'react';
+import { ARS } from '@dinero.js/currencies';
 import {
   App,
   Breadcrumb,
@@ -8,8 +8,9 @@ import {
   InputNumber,
   Skeleton,
 } from 'antd';
+import React from 'react';
 import { NavLink, useParams } from 'react-router-dom';
-import { ARS } from '@dinero.js/currencies';
+
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { MoneyUtils } from '@shared/utils/money.utils';
 import { AppUrl } from '@ui/app.enum';

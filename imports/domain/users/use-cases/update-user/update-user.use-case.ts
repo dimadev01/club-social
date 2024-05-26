@@ -1,6 +1,7 @@
 import { Accounts } from 'meteor/accounts-base';
-import { err, ok, Result } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';

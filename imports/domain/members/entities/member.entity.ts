@@ -9,7 +9,8 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Meteor } from 'meteor/meteor';
-import { err, ok, Result } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
+
 import { Entity } from '@domain/common/entity';
 import { MemberAddress } from '@domain/members/entities/member-address.entity';
 import {

@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+
 import { UserStateEnum } from '@domain/users/user.enum';
 
 export class UpdateUserRequestDto {

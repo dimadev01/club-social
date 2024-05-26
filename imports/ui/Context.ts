@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+
 import { AppThemeEnum } from './app.enum';
 
 export interface ThemeContextProps {

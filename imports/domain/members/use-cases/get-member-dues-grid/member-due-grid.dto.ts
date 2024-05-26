@@ -1,5 +1,6 @@
-import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { MemberDuePaymentGridDto } from './member-due-payment-grid.dto';
+
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 
 export class MemberDueGridDto {
   public _id: string;

@@ -1,5 +1,6 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 import SimpleSchema from 'simpl-schema';
+
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 

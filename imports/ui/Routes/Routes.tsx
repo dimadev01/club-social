@@ -1,5 +1,6 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { EnrollPage } from '@ui/pages/auth/EnrollPage';
@@ -18,6 +19,7 @@ import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
 import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
 import { PaymentDetailPage } from '@ui/pages/payments/PaymentDetailPage';
+import { PaymentNewPage } from '@ui/pages/payments/PaymentNewPage';
 import { PaymentsRoot } from '@ui/pages/payments/PaymentsRoot';
 import { ProfessorsPage } from '@ui/pages/professors/ProfessorsPage';
 import { ServicesPage } from '@ui/pages/services/ServicesPage';
@@ -26,7 +28,6 @@ import { UsersPage } from '@ui/pages/users/UsersPage';
 import { AuthRoute } from '@ui/Routes/AuthRoute';
 import { PrivateRoute } from '@ui/Routes/PrivateRoute';
 import { PublicRoute } from '@ui/Routes/PublicRoute';
-import { PaymentNewPage } from '@ui/pages/payments/PaymentNewPage';
 
 const router = createBrowserRouter([
   {

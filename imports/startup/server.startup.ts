@@ -6,6 +6,7 @@ import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import invariant from 'tiny-invariant';
 import { container, inject, singleton } from 'tsyringe';
+
 import { ILogger } from '@application/logger/logger.interface';
 import { DueMethod } from '@domain/dues/due.methods';
 import { MovementMethod } from '@domain/movements/movement.methods';

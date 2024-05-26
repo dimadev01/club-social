@@ -1,22 +1,24 @@
-import { useMediaQuery } from 'react-responsive';
-import React, { useEffect, useMemo, useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools/build/lib/devtools';
 import {
   App as AntApp,
   ConfigProvider,
-  message,
   theme as antTheme,
+  message,
 } from 'antd';
 import esEs from 'antd/es/locale/es_ES';
-import { useTracker } from 'meteor/react-meteor-data';
-import GoogleFontLoader from 'react-google-font';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools/build/lib/devtools';
-import { Routes } from '@ui/Routes/Routes';
 import clsx from 'clsx';
+import { useTracker } from 'meteor/react-meteor-data';
+import React, { useEffect, useMemo, useState } from 'react';
+import GoogleFontLoader from 'react-google-font';
+import { useMediaQuery } from 'react-responsive';
+
+import { AppThemeEnum } from './app.enum';
+import { ThemeContext, ThemeContextProps } from './Context';
+
 import { UserThemeEnum } from '@domain/users/user.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
-import { ThemeContext, ThemeContextProps } from './Context';
-import { AppThemeEnum } from './app.enum';
+import { Routes } from '@ui/Routes/Routes';
 
 const queryClient = new QueryClient({
   defaultOptions: {

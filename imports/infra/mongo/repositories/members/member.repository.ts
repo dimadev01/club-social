@@ -3,6 +3,7 @@ import { Mongo } from 'meteor/mongo';
 import type { Document } from 'mongodb';
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
+
 import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';

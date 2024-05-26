@@ -1,5 +1,5 @@
-import React from 'react';
 import { Card, Image, Layout } from 'antd';
+import React from 'react';
 
 type Props = {
   children: JSX.Element;

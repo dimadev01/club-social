@@ -2,6 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
+
 import { ILogger } from '@application/logger/logger.interface';
 import { DueCollection, DueSchema } from '@domain/dues/due.collection';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';

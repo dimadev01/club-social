@@ -1,5 +1,6 @@
-import React from 'react';
 import { Breadcrumb, Card } from 'antd';
+import React from 'react';
+
 import { GetProfessorsResponseDto } from '@domain/professors/use-cases/get-professors/get-professors-response.dto';
 import { Table } from '@ui/components/Table/Table';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';

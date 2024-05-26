@@ -1,5 +1,5 @@
-import React from 'react';
 import { Select as AntSelect, SelectProps } from 'antd';
+import React from 'react';
 
 type Props = SelectProps;
 

@@ -75,7 +75,7 @@
         "devDependencies": true
       }
     ],
-    "import/no-unresolved": "warn",
+    "import/no-unresolved": "off",
     "import/order": [
       "error",
       {
@@ -126,8 +126,7 @@
     },
     "import/resolver": {
       "typescript": {
-        "alwaysTryTypes": true,
-        "project": "tsconfig.json"
+        "alwaysTryTypes": true
       }
     }
   }

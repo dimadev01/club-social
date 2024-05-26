@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-import { MemberCollection } from '@infra/mongo/collections/member.collection';
+
 import { Member } from '@domain/members/entities/member.entity';
+import { MemberCollection } from '@infra/mongo/collections/member.collection';
 
 Meteor.publish(null, function meteor(): Mongo.Cursor<unknown> | void {
   if (this.userId) {

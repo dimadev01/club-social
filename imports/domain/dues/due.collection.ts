@@ -1,4 +1,5 @@
 import SimpleSchema from 'simpl-schema';
+
 import { Due } from '@domain/dues/entities/due.entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { EntitySchema } from '@infra/mongo/schemas/entity.schema';

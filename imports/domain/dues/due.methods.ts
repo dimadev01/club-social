@@ -1,4 +1,5 @@
 import { injectable } from 'tsyringe';
+
 import { CreateDueRequestDto } from '@domain/dues/use-cases/create-due/create-due-request.dto';
 import { CreateDueUseCase } from '@domain/dues/use-cases/create-due/create-due.use-case';
 import { DeleteDueRequestDto } from '@domain/dues/use-cases/delete-due/delete-due-request.dto';

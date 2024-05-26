@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
 import { App, Button, Form, Input } from 'antd';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { useTracker } from 'meteor/react-meteor-data';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
 

@@ -1,5 +1,6 @@
-import React from 'react';
 import { ReloadOutlined } from '@ant-design/icons';
+import React from 'react';
+
 import { Button } from '@ui/components/Button';
 
 type Props = {

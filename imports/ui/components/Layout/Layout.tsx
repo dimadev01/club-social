@@ -1,16 +1,3 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Col,
-  Image,
-  Layout as AntLayout,
-  Menu,
-  Row,
-  Typography,
-  Flex,
-  Space,
-} from 'antd';
-import { Roles } from 'meteor/alanning:roles';
-import { Navigate, NavLink } from 'react-router-dom';
 import {
   BankOutlined,
   BulbOutlined,
@@ -21,15 +8,30 @@ import {
   UserOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { AppUrl } from '@ui/app.enum';
-import { Button } from '@ui/components/Button';
+import {
+  Layout as AntLayout,
+  Col,
+  Flex,
+  Image,
+  Menu,
+  Row,
+  Space,
+  Typography,
+} from 'antd';
 import { ItemType } from 'antd/es/menu/interface';
-import { useThemeContext } from '@ui/Context';
-import { useUpdateUserTheme } from '@ui/hooks/users/useUpdateUserTheme';
+import { Roles } from 'meteor/alanning:roles';
+import React, { useEffect, useState } from 'react';
+import { NavLink, Navigate } from 'react-router-dom';
+
+import { Select } from '../Select';
+
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { UserThemeEnum } from '@domain/users/user.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
-import { Select } from '../Select';
+import { AppUrl } from '@ui/app.enum';
+import { Button } from '@ui/components/Button';
+import { useThemeContext } from '@ui/Context';
+import { useUpdateUserTheme } from '@ui/hooks/users/useUpdateUserTheme';
 
 type Props = {
   children: JSX.Element;

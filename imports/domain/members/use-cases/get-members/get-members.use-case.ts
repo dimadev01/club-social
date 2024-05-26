@@ -1,6 +1,7 @@
 import { plainToInstance } from 'class-transformer';
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { Member } from '@domain/members/entities/member.entity';
 import { IMemberPort } from '@domain/members/member.port';

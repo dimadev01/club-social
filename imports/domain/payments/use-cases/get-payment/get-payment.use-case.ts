@@ -1,12 +1,13 @@
-import { err, ok, Result } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+
 import { IUseCase } from '@application/use-cases/use-case.interface';
+import { PaymentNotFoundError } from '@domain/payments/errors/payment-not-found.error';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { GetPaymentRequestDto } from '@domain/payments/use-cases/get-payment/get-payment-request.dto';
 import { GetPaymentResponseDto } from '@domain/payments/use-cases/get-payment/get-payment-response.dto';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
-import { PaymentNotFoundError } from '@domain/payments/errors/payment-not-found.error';
 
 @injectable()
 export class GetPaymentUseCase

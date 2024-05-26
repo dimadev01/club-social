@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
+
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 
 export class GetMemberMovementsGridRequestDto extends PaginatedRequestDto {

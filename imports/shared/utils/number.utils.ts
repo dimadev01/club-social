@@ -1,5 +1,6 @@
-import numeral from 'numeral';
 import { toDecimal } from 'dinero.js';
+import numeral from 'numeral';
+
 import { MoneyUtils } from './money.utils';
 import 'numeral/locales';
 

@@ -1,10 +1,12 @@
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+
+import type { GetNextPaymentReceiptNumberResponseDto } from './get-next-payment-receipt-number-response.dto';
+
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
-import type { GetNextPaymentReceiptNumberResponseDto } from './get-next-payment-receipt-number-response.dto';
 
 @injectable()
 export class GetNextPaymentReceiptNumberUseCase

@@ -1,5 +1,10 @@
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+
+import { GetMemberPaymentsGridRequestDto } from './get-member-payments-grid.request.dto';
+import { GetMemberPaymentsGridResponseDto } from './get-member-payments-grid.response.dto';
+import { MemberPaymentGridDto } from './member-payment-grid.dto';
+
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { Payment } from '@domain/payments/entities/payment.entity';
@@ -7,9 +12,6 @@ import { IPaymentPort } from '@domain/payments/payment.port';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { MoneyUtils } from '@shared/utils/money.utils';
-import { GetMemberPaymentsGridRequestDto } from './get-member-payments-grid.request.dto';
-import { GetMemberPaymentsGridResponseDto } from './get-member-payments-grid.response.dto';
-import { MemberPaymentGridDto } from './member-payment-grid.dto';
 
 @injectable()
 export class GetMemberPaymentsGridUseCase

@@ -84,7 +84,6 @@ export class CreatePaymentUseCase
         }
 
         newPayment = newPaymentResult.value;
-
         await Promise.all(
           dues.map(async (due) => {
             const requestDue = request.dues.find((d) => d.dueId === due._id);
@@ -119,13 +118,11 @@ export class CreatePaymentUseCase
             );
           }),
         );
-
         await this._paymentPort.createWithSession(
           newPaymentResult.value,
           session,
         );
       });
-
       invariant(newPayment);
 
       return ok({ id: newPayment._id });

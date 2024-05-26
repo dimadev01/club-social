@@ -1,6 +1,7 @@
+import { PlusOutlined } from '@ant-design/icons';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { PlusOutlined } from '@ant-design/icons';
+
 import { Button } from '@ui/components/Button';
 
 type Props = {

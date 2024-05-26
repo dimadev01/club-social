@@ -1,5 +1,6 @@
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { injectable } from 'tsyringe';
+
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { GetUserRequestDto } from '@domain/users/use-cases/get-user/get-user-request.dto';
 import { UseCase } from '@infra/use-cases/use-case';

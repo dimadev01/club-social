@@ -1,4 +1,5 @@
 import { IsDateString, IsOptional } from 'class-validator';
+
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 
 export class GetMemberPaymentsGridRequestDto extends PaginatedRequestDto {

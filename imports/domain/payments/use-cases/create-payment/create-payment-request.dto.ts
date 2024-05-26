@@ -10,8 +10,10 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { IsNullable } from '@shared/class-validator/is-nullable';
+
 import { CreatePaymentDueRequestDto } from './create-payment-due-request.dto';
+
+import { IsNullable } from '@shared/class-validator/is-nullable';
 
 export class CreatePaymentRequestDto {
   @IsDateString()

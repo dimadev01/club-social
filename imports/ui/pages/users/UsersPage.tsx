@@ -1,7 +1,8 @@
-import React from 'react';
-import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
-import { NavLink } from 'react-router-dom';
 import { DeleteOutlined } from '@ant-design/icons';
+import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+
 import { RoleEnum } from '@domain/roles/role.enum';
 import { RoleService } from '@domain/roles/role.service';
 import { AppUrl } from '@ui/app.enum';

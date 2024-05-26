@@ -1,6 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
+
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
-import { useQuery } from '@tanstack/react-query';
 
 export const useMembers = (enabled = true) =>
   useQuery<null, Error, GetMembersDto[]>(

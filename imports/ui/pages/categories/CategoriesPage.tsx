@@ -1,6 +1,7 @@
-import React from 'react';
 import { Breadcrumb, Card } from 'antd';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
+
 import { CategoryGridDto } from '@domain/categories/use-cases/get-categories-grid/category-grid.dto';
 import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';

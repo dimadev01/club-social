@@ -2,10 +2,15 @@ import { plainToInstance } from 'class-transformer';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
+
 import { ILogger } from '@application/logger/logger.interface';
 import { Payment } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { DIToken } from '@infra/di/di-tokens';
+import {
+  PaymentCollection,
+  PaymentSchema,
+} from '@infra/mongo/collections/payment.collection';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
 import {
@@ -16,10 +21,6 @@ import {
 } from '@infra/mongo/repositories/payments/payment-repository.types';
 import { DateUtils } from '@shared/utils/date.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
-import {
-  PaymentCollection,
-  PaymentSchema,
-} from '@infra/mongo/collections/payment.collection';
 
 @injectable()
 export class PaymentRepository

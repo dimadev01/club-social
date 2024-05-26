@@ -1,10 +1,14 @@
 import { injectable } from 'tsyringe';
+
+import { UpdateUserThemeRequestDto } from './use-cases/update-user-theme/update-user-theme-request.dto';
+import { UpdateUserThemeUseCase } from './use-cases/update-user-theme/update-user-theme.use-case';
+
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
-import { GetUserByTokenRequestDto } from '@domain/users/use-cases/get-user-by-token/get-user-by-token-request.dto';
-import { GetUserByTokenUseCase } from '@domain/users/use-cases/get-user-by-token/get-user-by-token.use-case';
 import { GetUserRequestDto } from '@domain/users/use-cases/get-user/get-user-request.dto';
 import { GetUserUseCase } from '@domain/users/use-cases/get-user/get-user.use-case';
+import { GetUserByTokenRequestDto } from '@domain/users/use-cases/get-user-by-token/get-user-by-token-request.dto';
+import { GetUserByTokenUseCase } from '@domain/users/use-cases/get-user-by-token/get-user-by-token.use-case';
 import { GetUsersRequestDto } from '@domain/users/use-cases/get-users-grid/get-users-grid-request.dto';
 import { GetUsersUseCase } from '@domain/users/use-cases/get-users-grid/get-users-grid.use-case';
 import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
@@ -13,8 +17,6 @@ import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update
 import { UpdateUserUseCase } from '@domain/users/use-cases/update-user/update-user.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
-import { UpdateUserThemeUseCase } from './use-cases/update-user-theme/update-user-theme.use-case';
-import { UpdateUserThemeRequestDto } from './use-cases/update-user-theme/update-user-theme-request.dto';
 
 @injectable()
 export class UserMethod extends MeteorMethod {

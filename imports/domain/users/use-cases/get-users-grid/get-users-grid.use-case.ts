@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { injectable } from 'tsyringe';
+
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { GetUsersRequestDto } from '@domain/users/use-cases/get-users-grid/get-users-grid-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';

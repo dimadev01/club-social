@@ -1,7 +1,8 @@
-import { useState } from 'react';
 import { SortOrder } from 'antd/es/table/interface';
 import qs from 'qs';
+import { useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
+
 import { GridUrlQueryParams } from '@shared/types/grid-url-query-params.types';
 
 interface DefaultParams {

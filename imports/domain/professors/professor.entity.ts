@@ -1,5 +1,6 @@
 import { IsDate, IsString, validateSync } from 'class-validator';
 import { Meteor } from 'meteor/meteor';
+
 import { Entity } from '@domain/common/entity';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 

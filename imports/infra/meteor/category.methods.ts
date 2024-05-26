@@ -1,9 +1,10 @@
 import { injectable } from 'tsyringe';
+
+import { GetCategoriesUseCase } from '@domain/categories/use-cases/get-categories/get-categories.use-case';
 import { GetCategoriesByTypeRequestDto } from '@domain/categories/use-cases/get-categories-by-type/get-categories-by-type-request.dto';
 import { GetCategoriesByTypeUseCase } from '@domain/categories/use-cases/get-categories-by-type/get-categories-by-type.use-case';
 import { GetCategoriesGridRequestDto } from '@domain/categories/use-cases/get-categories-grid/get-categories-grid-request.dto';
 import { GetCategoriesGridUseCase } from '@domain/categories/use-cases/get-categories-grid/get-categories-grid.use-case';
-import { GetCategoriesUseCase } from '@domain/categories/use-cases/get-categories/get-categories.use-case';
 import { GetCategoryRequestDto } from '@domain/categories/use-cases/get-category/get-category-request.dto';
 import { GetCategoryUseCase } from '@domain/categories/use-cases/get-category/get-category.use-case';
 import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';

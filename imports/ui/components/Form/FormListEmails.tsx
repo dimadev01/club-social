@@ -1,7 +1,8 @@
-import React from 'react';
 import { Form } from 'antd';
 import compact from 'lodash/compact';
 import uniq from 'lodash/uniq';
+import React from 'react';
+
 import { FormListInput } from '@ui/components/Form/FormListInput';
 
 export const FormListEmails: React.FC = () => (

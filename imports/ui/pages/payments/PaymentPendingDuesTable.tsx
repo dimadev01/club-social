@@ -1,12 +1,13 @@
-import React from 'react';
+import { ARS } from '@dinero.js/currencies';
 import { Checkbox, Form, Input, InputNumber, Table, Tooltip } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { MoneyUtils } from '@shared/utils/money.utils';
-import { NavLink } from 'react-router-dom';
-import { AppUrl } from '@ui/app.enum';
-import { ARS } from '@dinero.js/currencies';
 import { NumberUtils } from '@shared/utils/number.utils';
+import { AppUrl } from '@ui/app.enum';
 
 type Due = {
   _id: string;

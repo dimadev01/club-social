@@ -1,10 +1,12 @@
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { injectable } from 'tsyringe';
+
+import { UpdateUserThemeRequestDto } from './update-user-theme-request.dto';
+
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { UseCase } from '@infra/use-cases/use-case';
-import { UpdateUserThemeRequestDto } from './update-user-theme-request.dto';
 
 @injectable()
 export class UpdateUserThemeUseCase

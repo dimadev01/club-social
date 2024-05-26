@@ -1,4 +1,5 @@
 import { Meteor } from 'meteor/meteor';
+
 import { RoleEnum } from '@domain/roles/role.enum';
 import { RolePermissionAssignment } from '@domain/roles/roles';
 

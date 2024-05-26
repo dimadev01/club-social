@@ -1,7 +1,8 @@
-import React from 'react';
 import { Roles } from 'meteor/alanning:roles';
 import { useTracker } from 'meteor/react-meteor-data';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
+
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { AuthRoute } from '@ui/Routes/AuthRoute';

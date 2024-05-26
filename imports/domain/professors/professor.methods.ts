@@ -1,4 +1,5 @@
 import { injectable } from 'tsyringe';
+
 import { GetProfessorsUseCase } from '@domain/professors/use-cases/get-professors/get-professors.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';

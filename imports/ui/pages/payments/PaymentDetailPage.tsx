@@ -1,14 +1,15 @@
-import React from 'react';
 import { App, Breadcrumb, Card, Descriptions, Flex, Table } from 'antd';
-import { Navigate, NavLink, useNavigate, useParams } from 'react-router-dom';
+import React from 'react';
+import { NavLink, Navigate, useNavigate, useParams } from 'react-router-dom';
+
+import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
+import { ScopeEnum } from '@domain/roles/role.enum';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { AppUrl } from '@ui/app.enum';
+import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
 import { NotFound } from '@ui/components/NotFound';
 import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { usePayment } from '@ui/hooks/payments/usePayment';
-import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
-import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { MoneyUtils } from '@shared/utils/money.utils';
-import { ScopeEnum } from '@domain/roles/role.enum';
 
 export const PaymentDetailPage = () => {
   const { message } = App.useApp();

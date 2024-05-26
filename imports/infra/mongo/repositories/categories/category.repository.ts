@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
+
 import { ILogger } from '@application/logger/logger.interface';
 import { CategoryTypeEnum } from '@domain/categories/category.enum';
 import { ICategoryPort } from '@domain/categories/category.port';

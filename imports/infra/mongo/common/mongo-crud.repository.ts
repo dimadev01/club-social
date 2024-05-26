@@ -8,6 +8,7 @@ import type {
 } from 'mongodb';
 import SimpleSchema from 'simpl-schema';
 import invariant from 'tiny-invariant';
+
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
 import { ICrudPort } from '@application/ports/crud.port';

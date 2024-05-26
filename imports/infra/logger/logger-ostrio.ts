@@ -5,6 +5,7 @@ import { Logger as OstrioLogger } from 'meteor/ostrio:logger';
 import { LoggerConsole as OstrioLoggerConsole } from 'meteor/ostrio:loggerconsole';
 // @ts-expect-error
 import { LoggerMongo as OstrioLoggerMongo } from 'meteor/ostrio:loggermongo';
+
 import { ILogger } from '@application/logger/logger.interface';
 import { LoggerOstrioFormat } from '@infra/logger/logger-ostrio-format';
 

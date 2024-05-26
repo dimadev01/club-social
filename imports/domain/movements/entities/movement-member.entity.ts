@@ -1,5 +1,6 @@
 import { IsString } from 'class-validator';
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
+
 import { CreateMovementMember } from '@domain/movements/movement.types';
 
 export class MovementMember {

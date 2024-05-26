@@ -1,6 +1,7 @@
 import { Random } from 'meteor/random';
-import { err, ok, Result } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';

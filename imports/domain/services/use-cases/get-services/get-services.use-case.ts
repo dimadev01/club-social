@@ -1,6 +1,7 @@
 import { plainToInstance } from 'class-transformer';
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { injectable } from 'tsyringe';
+
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { ServicesCollection } from '@domain/services/service.collection';
 import { Service } from '@domain/services/service.entity';

@@ -1,4 +1,5 @@
 import SimpleSchema from 'simpl-schema';
+
 import { SchemaBuilder } from '@infra/mongo/schemas/schema-builder';
 import { UniqueIDSchema } from '@infra/mongo/schemas/unique-id.schema';
 

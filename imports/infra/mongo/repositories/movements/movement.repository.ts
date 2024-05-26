@@ -1,5 +1,6 @@
 import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
+
 import { ILogger } from '@application/logger/logger.interface';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import {

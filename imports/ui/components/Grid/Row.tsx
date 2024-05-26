@@ -1,5 +1,5 @@
-import React from 'react';
 import { Row as AntRow, RowProps } from 'antd';
+import React from 'react';
 
 type Props = RowProps;
 

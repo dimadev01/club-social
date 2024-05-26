@@ -6,6 +6,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+
 import { CreatePaymentDueRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-due-request.dto';
 
 export class MigrateMovementRequestDto {

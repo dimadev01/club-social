@@ -1,7 +1,8 @@
-import React from 'react';
 import { ButtonProps } from 'antd';
-import { Button } from '@ui/components/Button';
+import React from 'react';
+
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
+import { Button } from '@ui/components/Button';
 
 export type FormSaveButtonProps = ButtonProps & {
   scope?: ScopeEnum;

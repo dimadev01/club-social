@@ -1,5 +1,5 @@
-import { dinero, toDecimal, type Dinero } from 'dinero.js';
 import { ARS } from '@dinero.js/currencies';
+import { type Dinero, dinero, toDecimal } from 'dinero.js';
 
 export abstract class MoneyUtils {
   public static createDinero(amount: number): Dinero<number> {

@@ -1,7 +1,8 @@
+import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import useDeepCompareEffect from 'use-deep-compare-effect';
+
 import { UrlUtils } from '@shared/utils/url.utils';
-import { useQuery } from '@tanstack/react-query';
 
 export function useQueryGrid<TRequest, TResponse>(
   methodName: string,

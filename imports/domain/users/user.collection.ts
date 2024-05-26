@@ -1,6 +1,5 @@
 import SimpleSchema from 'simpl-schema';
 
-// @ts-expect-error
 Meteor.users.attachSchema(
   new SimpleSchema({
     createdAt: Date,

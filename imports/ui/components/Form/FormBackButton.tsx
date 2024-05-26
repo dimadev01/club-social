@@ -1,6 +1,7 @@
-import React from 'react';
 import { ButtonProps } from 'antd';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { Button } from '@ui/components/Button';
 
 export type FormBackButtonProps = ButtonProps & {

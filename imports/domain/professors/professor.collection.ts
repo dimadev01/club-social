@@ -1,4 +1,5 @@
 import SimpleSchema from 'simpl-schema';
+
 import { Professor } from '@domain/professors/professor.entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 

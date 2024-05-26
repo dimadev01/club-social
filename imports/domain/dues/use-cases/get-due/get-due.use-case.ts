@@ -1,5 +1,6 @@
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IDuePort } from '@domain/dues/due.port';
 import { GetDueRequestDto } from '@domain/dues/use-cases/get-due/get-due-request.dto';

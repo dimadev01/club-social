@@ -1,6 +1,7 @@
-import React from 'react';
 import { useTracker } from 'meteor/react-meteor-data';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
+
 import { AppUrl } from '@ui/app.enum';
 import { Layout } from '@ui/components/Layout/Layout';
 

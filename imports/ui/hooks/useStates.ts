@@ -1,6 +1,7 @@
-import axios from 'axios';
-import { StatesResponse } from '@shared/types/arg-geo.interface';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+import { StatesResponse } from '@shared/types/arg-geo.interface';
 
 export const useStates = () => {
   const url =

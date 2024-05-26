@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { Input, Table as AntTable, TableProps, Typography } from 'antd';
+import { Table as AntTable, Input, TableProps, Typography } from 'antd';
 import {
   FilterValue,
   SorterResult,
   TablePaginationConfig,
 } from 'antd/es/table/interface';
+import React, { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
+
 import { GridUrlQueryParams } from '@shared/types/grid-url-query-params.types';
 
 export interface TableState<T> {
