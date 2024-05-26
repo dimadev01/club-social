@@ -1,11 +1,12 @@
 import { IsDate, IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { err, ok, Result } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
+
 import { Entity } from '@domain/common/entity';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { CreateDue, CreateDuePayment } from '@domain/dues/due.types';
 import { IsNullable } from '@shared/class-validator/is-nullable';
-import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 
 export class Due extends Entity {
   @IsInt()

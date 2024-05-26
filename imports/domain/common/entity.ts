@@ -1,4 +1,5 @@
 import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
+
 import { UniqueID } from '@domain/common/unique-id';
 
 export class Entity extends UniqueID {
@@ -29,17 +30,10 @@ export class Entity extends UniqueID {
     super();
 
     this.createdAt = new Date();
-
     this.updatedAt = new Date();
-
     this.isDeleted = false;
-
     this.deletedAt = null;
-
     this.deletedBy = null;
-
-    this.createdBy = 'System';
-
     this.updatedBy = 'System';
   }
 

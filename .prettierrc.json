@@ -5,7 +5,8 @@
     {
       "files": "*.json",
       "options": {
-        "trailingComma": "es5"
+        "trailingComma": "es5",
+        "singleQuote": true
       }
     }
   ],

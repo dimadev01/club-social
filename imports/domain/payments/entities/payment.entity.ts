@@ -6,7 +6,8 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
-import { err, ok, Result } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
+
 import { Entity } from '@domain/common/entity';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { CreatePayment } from '@domain/payments/payment.types';

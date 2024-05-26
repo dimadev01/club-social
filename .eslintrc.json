@@ -1,12 +1,12 @@
 {
   "extends": [
-    "plugin:@typescript-eslint/recommended",
-    "plugin:import/recommended",
-    "plugin:import/typescript",
     "airbnb",
     "airbnb-typescript",
     "airbnb/hooks",
-    "prettier"
+    "prettier",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -29,13 +29,28 @@
       "error",
       {
         "blankLine": "always",
-        "next": "*",
-        "prev": "*"
+        "prev": "*",
+        "next": "*"
       },
       {
-        "blankLine": "never",
-        "next": "import",
-        "prev": "import"
+        "blankLine": "any",
+        "prev": "import",
+        "next": "import"
+      },
+      {
+        "blankLine": "always",
+        "prev": "import",
+        "next": "class"
+      },
+      {
+        "blankLine": "any",
+        "prev": ["const", "let", "var"],
+        "next": ["const", "let", "var"]
+      },
+      {
+        "blankLine": "any",
+        "prev": "expression",
+        "next": "expression"
       }
     ],
     "class-methods-use-this": "off",
@@ -54,7 +69,6 @@
       }
     ],
     "import/extensions": "off",
-    "import/order": "error",
     "import/no-extraneous-dependencies": [
       "error",
       {
@@ -62,6 +76,16 @@
       }
     ],
     "import/no-unresolved": "warn",
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "caseInsensitive": true,
+          "order": "asc"
+        },
+        "newlines-between": "always"
+      }
+    ],
     "import/prefer-default-export": "off",
     "no-underscore-dangle": [
       "error",
@@ -81,6 +105,16 @@
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/require-default-props": "off",
+    "sort-imports": [
+      "error",
+      {
+        "allowSeparatedGroups": true,
+        "ignoreCase": false,
+        "ignoreDeclarationSort": true,
+        "ignoreMemberSort": false,
+        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+      }
+    ],
     "sort-keys-fix/sort-keys-fix": "error",
     "typescript-sort-keys/interface": "error",
     "typescript-sort-keys/string-enum": "error",

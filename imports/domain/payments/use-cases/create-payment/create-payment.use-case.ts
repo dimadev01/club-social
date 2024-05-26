@@ -1,9 +1,15 @@
-import { err, ok, Result } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
+
+import { CreatePaymentResponseDto } from './create-payment-response.dto';
+import { ExistingPaymentError } from './errors/existing-payment.error';
+
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IDuePort } from '@domain/dues/due.port';
+import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
+import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
 import { Payment } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
@@ -13,10 +19,6 @@ import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
-import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
-import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
-import { CreatePaymentResponseDto } from './create-payment-response.dto';
-import { ExistingPaymentError } from './errors/existing-payment.error';
 
 @injectable()
 export class CreatePaymentUseCase
