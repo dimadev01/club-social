@@ -3,10 +3,8 @@ import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IDuePort } from '@domain/dues/due.port';
-import { DueMember } from '@domain/dues/entities/due-member';
 import { Due } from '@domain/dues/entities/due.entity';
 import { CreateDueRequestDto } from '@domain/dues/use-cases/create-due/create-due-request.dto';
-import { IMemberPort } from '@domain/members/member.port';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -23,8 +21,6 @@ export class CreateDueUseCase
     private readonly _logger: ILogger,
     @inject(DIToken.DueRepository)
     private readonly _duePort: IDuePort,
-    @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort,
   ) {
     super();
   }
@@ -40,22 +36,11 @@ export class CreateDueUseCase
       await session.withTransaction(async () => {
         await Promise.all(
           request.memberIds.map(async (memberId: string) => {
-            const member = await this._memberPort.findOneByIdOrThrow(memberId);
-
-            const dueMember = DueMember.create({
-              _id: memberId,
-              name: member.name,
-            });
-
-            if (dueMember.isErr()) {
-              throw dueMember.error;
-            }
-
             const due = Due.create({
               amount: request.amount,
               category: request.category,
               date: request.date,
-              member: dueMember.value,
+              memberId,
               notes: request.notes,
             });
 

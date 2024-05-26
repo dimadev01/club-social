@@ -15,7 +15,6 @@ import {
 import { Rule } from 'antd/es/form';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
-import { isString } from 'lodash';
 import { Navigate, NavLink, useParams } from 'react-router-dom';
 import { ARS } from '@dinero.js/currencies';
 import {
@@ -38,7 +37,6 @@ import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
 import { useCreateDue } from '@ui/hooks/dues/useCreateDue';
 import { useDue } from '@ui/hooks/dues/useDue';
-import { useUpdateDue } from '@ui/hooks/dues/useUpdateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { MembersSelect } from '@ui/components/Members/MembersSelect';
 
@@ -59,11 +57,9 @@ export const DueDetailPage = () => {
 
   const { message } = App.useApp();
 
-  const { data: due, fetchStatus: dueFetchStatus, refetch } = useDue(id);
+  const { data: due, fetchStatus: dueFetchStatus } = useDue(id);
 
   const createDue = useCreateDue();
-
-  const updateDue = useUpdateDue();
 
   const { data: members } = useMembers();
 
@@ -96,24 +92,6 @@ export const DueDetailPage = () => {
             message.success('Cobro creado');
 
             form.setFieldValue('memberIds', []);
-          },
-        },
-      );
-    } else {
-      updateDue.mutate(
-        {
-          amount: MoneyUtils.toCents(values.amount),
-          category: values.category,
-          date,
-          id: due._id,
-          memberId: isString(values.memberIds) ? values.memberIds : '',
-          notes: values.notes ?? null,
-        },
-        {
-          onSuccess: () => {
-            message.success('Cobro actualizado');
-
-            refetch();
           },
         },
       );

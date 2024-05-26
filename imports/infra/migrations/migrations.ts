@@ -1,10 +1,10 @@
 import { Meteor } from 'meteor/meteor';
 import { DueCollection } from '@domain/dues/due.collection';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
-import { PaymentCollection } from '@domain/payments/payment.collection';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 import { DateUtils } from '@shared/utils/date.utils';
+import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
 
 // interface MemberRow {
 //   address?: string;

@@ -41,8 +41,8 @@ export class GetPaymentUseCase
         dueId: paymentDue.due._id,
         membershipMonth: paymentDue.due.membershipMonth,
       })),
-      memberId: payment.member._id,
-      memberName: payment.member.name,
+      memberId: payment.memberId._id,
+      memberName: payment.memberId.name,
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
     });

@@ -4,10 +4,6 @@ import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { Payment } from '@domain/payments/entities/payment.entity';
-import {
-  PaymentCollection,
-  PaymentSchema,
-} from '@domain/payments/payment.collection';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { DIToken } from '@infra/di/di-tokens';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
@@ -20,6 +16,10 @@ import {
 } from '@infra/mongo/repositories/payments/payment-repository.types';
 import { DateUtils } from '@shared/utils/date.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
+import {
+  PaymentCollection,
+  PaymentSchema,
+} from '@infra/mongo/collections/payment.collection';
 
 @injectable()
 export class PaymentRepository

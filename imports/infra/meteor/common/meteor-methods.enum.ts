@@ -12,7 +12,6 @@ export enum MethodsEnum {
   DuesGetPaid = 'dues/getPaid',
   DuesGetPendingByMember = 'dues/getPendingByMember',
   DuesRestore = 'dues/restore',
-  DuesUpdate = 'dues/update',
 
   EmployeesGetAll = 'employees/getAll',
 

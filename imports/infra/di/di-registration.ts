@@ -8,6 +8,7 @@ import { MemberRepository } from '@infra/mongo/repositories/members/member.repos
 import { MovementFindPaginatedRepository } from '@infra/mongo/repositories/movements/movement-find-paginated.repository';
 import { MovementRepository } from '@infra/mongo/repositories/movements/movement.repository';
 import { PaymentRepository } from '@infra/mongo/repositories/payments/payment.repository';
+import { PaymentDueRepository } from '@infra/mongo/repositories/payment-due/payment-due.repository';
 
 container.register(DIToken.Logger, {
   useFactory: instanceCachingFactory((c) => c.resolve(LoggerOstrio)),
@@ -29,3 +30,5 @@ container.register(DIToken.MemberRepository, MemberRepository);
 container.register(DIToken.DueRepository, DueRepository);
 
 container.register(DIToken.PaymentRepository, PaymentRepository);
+
+container.register(DIToken.PaymentDueRepository, PaymentDueRepository);

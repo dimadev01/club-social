@@ -168,7 +168,7 @@ export class DueRepository
   ): Promise<Due[]> {
     const query: Mongo.Query<Due> = {
       isDeleted: false,
-      'member._id': request.memberId,
+      memberId: request.memberId,
       status: { $in: [DueStatusEnum.Pending, DueStatusEnum.PartiallyPaid] },
     };
 

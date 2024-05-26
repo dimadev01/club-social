@@ -96,7 +96,7 @@ export class Movement extends Entity {
   public static create(props: CreateMovement): Result<Movement, Error> {
     const movement = new Movement();
 
-    const updateResult: Result<null, Error> = Result.combine([
+    const updateResult = Result.combine([
       movement.setCategory(props.category),
       movement.setAmount(props.amount),
       movement.setDate(new Date(props.date)),

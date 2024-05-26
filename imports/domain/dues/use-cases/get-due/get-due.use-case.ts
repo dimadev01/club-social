@@ -37,8 +37,8 @@ export class GetDueUseCase
       isPaid: due.isPaid(),
       isPartiallyPaid: due.isPartiallyPaid(),
       isPending: due.isPending(),
-      memberId: due.member._id,
-      memberName: due.member.name,
+      memberId: due.memberId._id,
+      memberName: due.memberId.name,
       notes: due.notes,
       status: due.status,
     });

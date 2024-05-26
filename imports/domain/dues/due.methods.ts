@@ -13,8 +13,6 @@ import { GetPendingDuesRequestDto } from '@domain/dues/use-cases/get-pending-due
 import { GetPendingDuesByMemberUseCase } from '@domain/dues/use-cases/get-pending-dues/get-pending-dues.use-case';
 import { RestoreDueRequestDto } from '@domain/dues/use-cases/restore-due/restore-due-request.dto';
 import { RestoreDueUseCase } from '@domain/dues/use-cases/restore-due/restore-due.use-case';
-import { UpdateDueRequestDto } from '@domain/dues/use-cases/update-due/update-due-request.dto';
-import { UpdateDueUseCase } from '@domain/dues/use-cases/update-due/update-due.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 
@@ -26,7 +24,6 @@ export class DueMethod extends MeteorMethod {
     private readonly _getPaidDues: GetPaidDuesUseCase,
     private readonly _getDue: GetDueUseCase,
     private readonly _createDue: CreateDueUseCase,
-    private readonly _updateDue: UpdateDueUseCase,
     private readonly _deleteDue: DeleteDueUseCase,
     private readonly _restoreDue: RestoreDueUseCase,
   ) {
@@ -55,9 +52,6 @@ export class DueMethod extends MeteorMethod {
 
       [MethodsEnum.DuesCreate]: (request: CreateDueRequestDto) =>
         this.execute(this._createDue, request, CreateDueRequestDto),
-
-      [MethodsEnum.DuesUpdate]: (request: UpdateDueRequestDto) =>
-        this.execute(this._updateDue, request, UpdateDueRequestDto),
 
       [MethodsEnum.DuesDelete]: (request: DeleteDueRequestDto) =>
         this.execute(this._deleteDue, request, DeleteDueRequestDto),

@@ -4,10 +4,6 @@ import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { IDuePort } from '@domain/dues/due.port';
-import { IMemberPort } from '@domain/members/member.port';
-import { PaymentDue } from '@domain/payments/entities/payment-due';
-import { PaymentDueDue } from '@domain/payments/entities/payment-due-due';
-import { PaymentMember } from '@domain/payments/entities/payment-member';
 import { Payment } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
@@ -17,6 +13,8 @@ import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
+import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
+import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { CreatePaymentResponseDto } from './create-payment-response.dto';
 import { ExistingPaymentError } from './errors/existing-payment.error';
 
@@ -30,8 +28,8 @@ export class CreatePaymentUseCase
     private readonly _logger: ILogger,
     @inject(DIToken.PaymentRepository)
     private readonly _paymentPort: IPaymentPort,
-    @inject(DIToken.MemberRepository)
-    private readonly _memberPort: IMemberPort,
+    @inject(DIToken.PaymentDueRepository)
+    private readonly _paymentDuePort: IPaymentDuePort,
     @inject(DIToken.DueRepository)
     private readonly _duePort: IDuePort,
   ) {
@@ -59,7 +57,7 @@ export class CreatePaymentUseCase
     const session = MongoUtils.startSession();
 
     try {
-      let payment: Payment | undefined;
+      let newPayment: Payment | undefined;
 
       await session.withTransaction(async () => {
         const dues = await this._duePort.findByIds({
@@ -72,51 +70,9 @@ export class CreatePaymentUseCase
           }
         });
 
-        const member = await this._memberPort.findOneByIdOrThrow(
-          request.memberId,
-        );
-
-        const newPaymentMember = PaymentMember.create({
-          memberId: request.memberId,
-          name: member.name,
-        });
-
-        if (newPaymentMember.isErr()) {
-          throw newPaymentMember.error;
-        }
-
-        const paymentDuesResults = request.dues.map((requestDue) => {
-          const due = dues.find((d) => d._id === requestDue.dueId);
-
-          invariant(due);
-
-          const newPaymentDueDue = PaymentDueDue.create({
-            amount: due.amount,
-            category: due.category,
-            date: due.date,
-            dueId: due._id,
-          });
-
-          if (newPaymentDueDue.isErr()) {
-            throw newPaymentDueDue.error;
-          }
-
-          return PaymentDue.create({
-            amount: requestDue.amount,
-            due: newPaymentDueDue.value,
-          });
-        });
-
-        const paymentDues = Result.combine(paymentDuesResults);
-
-        if (paymentDues.isErr()) {
-          throw paymentDues.error;
-        }
-
         const newPaymentResult = Payment.create({
           date: request.date,
-          dues: paymentDues.value,
-          member: newPaymentMember.value,
+          memberId: request.memberId,
           notes: request.notes,
           receiptNumber: request.receiptNumber,
         });
@@ -125,7 +81,7 @@ export class CreatePaymentUseCase
           throw newPaymentResult.error;
         }
 
-        payment = newPaymentResult.value;
+        newPayment = newPaymentResult.value;
 
         await Promise.all(
           dues.map(async (due) => {
@@ -144,6 +100,21 @@ export class CreatePaymentUseCase
             }
 
             await this._duePort.updateWithSession(due, session);
+
+            const newPaymentDue = PaymentDue.createOne({
+              amount: requestDue.amount,
+              dueId: due._id,
+              paymentId: newPaymentResult.value._id,
+            });
+
+            if (newPaymentDue.isErr()) {
+              throw newPaymentDue.error;
+            }
+
+            await this._paymentDuePort.createWithSession(
+              newPaymentDue.value,
+              session,
+            );
           }),
         );
 
@@ -153,9 +124,9 @@ export class CreatePaymentUseCase
         );
       });
 
-      invariant(payment);
+      invariant(newPayment);
 
-      return ok({ id: payment._id });
+      return ok({ id: newPayment._id });
     } catch (error) {
       this._logger.error(error);
 
