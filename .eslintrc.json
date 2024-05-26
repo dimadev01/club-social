@@ -43,12 +43,12 @@
         "next": "class"
       },
       {
-        "blankLine": "any",
+        "blankLine": "always",
         "prev": ["const", "let", "var"],
         "next": ["const", "let", "var"]
       },
       {
-        "blankLine": "any",
+        "blankLine": "always",
         "prev": "expression",
         "next": "expression"
       }

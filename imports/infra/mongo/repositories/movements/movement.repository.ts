@@ -27,7 +27,7 @@ export class MovementRepository
   public async findNextToMigrate(id: string): Promise<Movement | null> {
     const movement = await this.findOneByIdOrThrow(id);
 
-    const query: Mongo.Query<Movement> = {
+    const query: Mongo.Selector<Movement> = {
       _id: { $ne: id },
       category: movement.category,
       date: { $gte: movement.date },

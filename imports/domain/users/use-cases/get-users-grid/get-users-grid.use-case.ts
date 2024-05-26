@@ -17,7 +17,7 @@ export class GetUsersUseCase
   ): Promise<Result<PaginatedResponse<Meteor.User>, Error>> {
     await this.validateDto(GetUsersRequestDto, request);
 
-    const query: Mongo.Query<Meteor.User> = {};
+    const query: Mongo.Selector<Meteor.User> = {};
 
     if (request.search) {
       query.$or = [

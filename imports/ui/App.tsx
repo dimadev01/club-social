@@ -1,11 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools/build/lib/devtools';
-import {
-  App as AntApp,
-  ConfigProvider,
-  theme as antTheme,
-  message,
-} from 'antd';
+import { App as AntApp, ConfigProvider, theme as antTheme } from 'antd';
 import esEs from 'antd/es/locale/es_ES';
 import clsx from 'clsx';
 import { useTracker } from 'meteor/react-meteor-data';
@@ -15,6 +10,7 @@ import { useMediaQuery } from 'react-responsive';
 
 import { AppThemeEnum } from './app.enum';
 import { ThemeContext, ThemeContextProps } from './Context';
+import { UiNotificationUtils } from './utils/messages.utils';
 
 import { UserThemeEnum } from '@domain/users/user.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
@@ -24,23 +20,29 @@ const queryClient = new QueryClient({
   defaultOptions: {
     mutations: {
       onError: (error: unknown) => {
-        if (error instanceof Meteor.Error) {
-          message.error(error.reason);
+        // eslint-disable-next-line no-console
+        console.log('onErrorMutation', error);
+
+        if (error instanceof Meteor.Error && error.reason) {
+          UiNotificationUtils.errorWithNoContext(error.reason);
         } else if (error instanceof Error) {
-          message.error(error.message);
+          UiNotificationUtils.errorWithNoContext(error.message);
         } else {
-          message.error('An unknown error occurred.');
+          UiNotificationUtils.errorWithNoContext('An unknown error occurred.');
         }
       },
     },
     queries: {
       onError: (error: unknown) => {
-        if (error instanceof Meteor.Error) {
-          message.error(error.reason);
+        // eslint-disable-next-line no-console
+        console.log('onErrorQuery', error);
+
+        if (error instanceof Meteor.Error && error.reason) {
+          UiNotificationUtils.errorWithNoContext(error.reason);
         } else if (error instanceof Error) {
-          message.error(error.message);
+          UiNotificationUtils.errorWithNoContext(error.message);
         } else {
-          message.error('An unknown error occurred.');
+          UiNotificationUtils.errorWithNoContext('An unknown error occurred.');
         }
       },
       refetchOnWindowFocus: false,
@@ -86,44 +88,43 @@ export const App = () => {
   return (
     <>
       <GoogleFontLoader fonts={[{ font: 'Rubik', weights: [300, 400, 500] }]} />
-
-      <AntApp
-        rootClassName={clsx('cs-ant-app', {
-          dark: themeMemoized.theme === AppThemeEnum.DARK,
-        })}
+      <ConfigProvider
+        locale={esEs}
+        select={{ showSearch: true }}
+        popupMatchSelectWidth={false}
+        form={{ requiredMark: 'optional' }}
+        input={{ autoComplete: 'on' }}
+        theme={{
+          algorithm:
+            themeMemoized.theme === AppThemeEnum.LIGHT
+              ? antTheme.defaultAlgorithm
+              : antTheme.darkAlgorithm,
+          components: {
+            Button: {
+              primaryShadow: '0 2px 0 rgba(5, 145, 255, 0.1)',
+            },
+            Layout: {
+              lightSiderBg: '#f8f9fd',
+              siderBg: '#111111',
+            },
+            Menu: {
+              itemBg: 'transparent',
+              itemSelectedBg: 'transparent',
+            },
+            Table: {
+              bodySortBg: 'transparent',
+            },
+          },
+          token: {
+            colorPrimary: '#22883e',
+            fontFamily: 'Rubik',
+          },
+        }}
       >
-        <ConfigProvider
-          locale={esEs}
-          select={{ showSearch: true }}
-          popupMatchSelectWidth={false}
-          form={{ requiredMark: 'optional' }}
-          input={{ autoComplete: 'on' }}
-          theme={{
-            algorithm:
-              themeMemoized.theme === AppThemeEnum.LIGHT
-                ? antTheme.defaultAlgorithm
-                : antTheme.darkAlgorithm,
-            components: {
-              Button: {
-                primaryShadow: '0 2px 0 rgba(5, 145, 255, 0.1)',
-              },
-              Layout: {
-                lightSiderBg: '#f8f9fd',
-                siderBg: '#111111',
-              },
-              Menu: {
-                itemBg: 'transparent',
-                itemSelectedBg: 'transparent',
-              },
-              Table: {
-                bodySortBg: 'transparent',
-              },
-            },
-            token: {
-              colorPrimary: '#22883e',
-              fontFamily: 'Rubik',
-            },
-          }}
+        <AntApp
+          rootClassName={clsx('cs-ant-app', {
+            dark: themeMemoized.theme === AppThemeEnum.DARK,
+          })}
         >
           <QueryClientProvider client={queryClient}>
             <ThemeContext.Provider value={themeMemoized}>
@@ -134,8 +135,8 @@ export const App = () => {
               <ReactQueryDevtools initialIsOpen={false} />
             )}
           </QueryClientProvider>
-        </ConfigProvider>
-      </AntApp>
+        </AntApp>
+      </ConfigProvider>
     </>
   );
 };

@@ -30,11 +30,18 @@ export class Entity extends UniqueID {
     super();
 
     this.createdAt = new Date();
+
+    this.createdBy = 'System';
+
     this.updatedAt = new Date();
+
+    this.createdBy = 'System';
+
     this.isDeleted = false;
+
     this.deletedAt = null;
+
     this.deletedBy = null;
-    this.updatedBy = 'System';
   }
 
   public create(createdBy: string): void {

@@ -41,7 +41,7 @@ export class MemberRepository
   }
 
   public async findAll(): Promise<Member[]> {
-    const query: Mongo.Query<Member> = {
+    const query: Mongo.Selector<Member> = {
       isDeleted: false,
     };
 
@@ -94,7 +94,7 @@ export class MemberRepository
   }
 
   public async findOneByUserId(userId: string): Promise<Member | null> {
-    const query: Mongo.Query<Member> = { isDeleted: false, userId };
+    const query: Mongo.Selector<Member> = { isDeleted: false, userId };
 
     return (await this.getCollection().findOneAsync(query)) ?? null;
   }
@@ -112,7 +112,7 @@ export class MemberRepository
   public async findPaginated(
     request: FindPaginatedMembersRequest,
   ): Promise<FindPaginatedResponse<FindPaginatedMember>> {
-    const query: Mongo.Query<Member> = {
+    const query: Mongo.Selector<Member> = {
       isDeleted: false,
     };
 
@@ -130,7 +130,7 @@ export class MemberRepository
       request.sortField = 'user.profile.lastName';
     }
 
-    const $userLookupPipeline: Mongo.Query<Meteor.User> = [];
+    const $userLookupPipeline: Mongo.Selector<Meteor.User> = [];
 
     if (request.search) {
       $userLookupPipeline.push({
@@ -297,7 +297,7 @@ export class MemberRepository
     };
   }
 
-  private _userLookup(pipeline?: Mongo.Query<Meteor.User>) {
+  private _userLookup(pipeline?: Mongo.Selector<Meteor.User>) {
     return [
       {
         $lookup: {

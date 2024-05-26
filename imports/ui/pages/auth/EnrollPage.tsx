@@ -5,12 +5,15 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
 import { useUserByToken } from '@ui/hooks/users/useUserByToken';
+import { UiNotificationUtils } from '@ui/utils/messages.utils';
 
 type LoginFormValues = {
   newPassword: string;
 };
 
 export const EnrollPage = () => {
+  const { notification } = App.useApp();
+
   const navigate = useNavigate();
 
   const { token } = useParams<{ email?: string; token?: string }>();
@@ -37,7 +40,7 @@ export const EnrollPage = () => {
     if (token) {
       Accounts.resetPassword(token, values.newPassword, (error) => {
         if (error) {
-          message.error(error.message);
+          UiNotificationUtils.error(notification, error.message);
         } else {
           message.success('Usuario activado');
 

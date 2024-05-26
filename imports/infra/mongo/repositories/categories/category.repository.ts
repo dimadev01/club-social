@@ -43,7 +43,7 @@ export class CategoryRepository
   public async findPaginated(
     request: PaginatedRequestDto,
   ): Promise<PaginatedResponse<Category>> {
-    const query: Mongo.Query<Category> = {
+    const query: Mongo.Selector<Category> = {
       isDeleted: false,
     };
 

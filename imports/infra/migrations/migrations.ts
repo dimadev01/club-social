@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Meteor } from 'meteor/meteor';
 
 import { DueCollection } from '@domain/dues/due.collection';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
+import { PaymentDueCollection } from '@infra/mongo/collections/payment-due.collection';
 import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
 import { DateUtils } from '@shared/utils/date.utils';
 
@@ -1283,4 +1286,89 @@ Migrations.add({
     next();
   }),
   version: 19,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    /**
+     * Dues
+     */
+    const dues = await DueCollection.rawCollection()
+      // @ts-expect-error
+      .find({ memberId: null })
+      .toArray();
+
+    await Promise.all(
+      dues.map(async (oldDue: any) => {
+        await DueCollection.updateAsync(oldDue._id, {
+          $set: {
+            memberId: oldDue.member._id,
+          },
+          $unset: {
+            member: 1,
+            payments: 1,
+          },
+        });
+      }),
+    );
+
+    /**
+     * Payments
+     */
+    const payments: any = await PaymentCollection.rawCollection()
+      // @ts-expect-error
+      .find({ memberId: null })
+      .toArray();
+
+    await Promise.all(
+      payments.map(async (oldPayment: any) => {
+        await Promise.all(
+          oldPayment.dues.map(async (oldPaymentDue: any) => {
+            const newPaymentDue = PaymentDue.createOne({
+              amount: oldPaymentDue.amount,
+              dueId: oldPaymentDue.due._id,
+              paymentId: oldPayment._id,
+            });
+
+            if (newPaymentDue.isErr()) {
+              throw new Error(newPaymentDue.error.message);
+            }
+
+            newPaymentDue.value.isDeleted = oldPayment.isDeleted;
+
+            newPaymentDue.value.createdAt = oldPayment.createdAt;
+
+            newPaymentDue.value.createdBy = oldPayment.createdBy;
+
+            newPaymentDue.value.updatedAt = oldPayment.updatedAt;
+
+            newPaymentDue.value.updatedBy = oldPayment.updatedBy;
+
+            newPaymentDue.value.deletedAt = oldPayment.deletedAt;
+
+            newPaymentDue.value.deletedBy = oldPayment.deletedBy;
+
+            await PaymentDueCollection.insertAsync(newPaymentDue.value);
+          }),
+        );
+
+        await PaymentCollection.updateAsync(oldPayment._id, {
+          $set: {
+            memberId: oldPayment.member._id,
+          },
+          $unset: {
+            dues: 1,
+            member: 1,
+          },
+        });
+      }),
+    );
+
+    next();
+  }),
+  version: 20,
 });

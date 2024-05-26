@@ -39,7 +39,7 @@ export class MovementFindPaginatedRepository
   public async findPaginated(
     request: FindPaginatedMovementsRequest,
   ): Promise<FindPaginatedMovementsResponse> {
-    const query: Mongo.Query<Movement> = {
+    const query: Mongo.Selector<Movement> = {
       isDeleted: request.showDeleted ?? false,
     };
 

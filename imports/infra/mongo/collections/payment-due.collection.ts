@@ -1,7 +1,6 @@
 import SimpleSchema from 'simpl-schema';
 
-import { PaymentDue } from '../../../domain/payment-dues/entities/payment-due.entity';
-
+import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
 import { EntitySchema } from '@infra/mongo/schemas/entity.schema';
 

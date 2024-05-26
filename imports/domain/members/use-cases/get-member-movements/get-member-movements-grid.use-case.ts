@@ -29,7 +29,7 @@ export class GetMemberMovementsUseCase
   public async execute(
     request: GetMemberMovementsGridRequestDto,
   ): Promise<Result<GetMemberMovementsGridResponseDto, Error>> {
-    const $match: Mongo.Query<Movement> = {
+    const $match: Mongo.Selector<Movement> = {
       isDeleted: false,
       memberId: request.memberId,
     };

@@ -1,14 +1,15 @@
+import 'numeral/locales';
+
 import { toDecimal } from 'dinero.js';
 import numeral from 'numeral';
 
 import { MoneyUtils } from './money.utils';
-import 'numeral/locales';
 
 numeral.locale('es');
 
 export abstract class NumberUtils {
   public static format(amount: number): string {
-    return new Intl.NumberFormat('es-AR', {}).format(Number(amount));
+    return new Intl.NumberFormat('es-AR').format(Number(amount));
   }
 
   public static formatCents(amount: number): string {

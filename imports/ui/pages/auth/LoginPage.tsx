@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
+import { UiNotificationUtils } from '@ui/utils/messages.utils';
 
 type FormValues = {
   email: string;
@@ -18,7 +19,7 @@ export const LoginPage = () => {
     isLoggingIn: Meteor.loggingIn(),
   }));
 
-  const { message } = App.useApp();
+  const { notification } = App.useApp();
 
   const navigate = useNavigate();
 
@@ -41,12 +42,15 @@ export const LoginPage = () => {
         if (error) {
           if (error instanceof Meteor.Error) {
             if (error.error === 403) {
-              message.error('El email ingresado no existe');
+              UiNotificationUtils.error(
+                notification,
+                'El email ingresado no existe',
+              );
             } else {
-              message.error(error.message);
+              UiNotificationUtils.error(notification, error.message);
             }
           } else if (error instanceof Error) {
-            message.error(error.message);
+            UiNotificationUtils.error(notification, error.message);
           }
         } else {
           navigate(AppUrl.LoginPasswordless.replace(':email', values.email));

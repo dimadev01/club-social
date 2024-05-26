@@ -9,11 +9,7 @@ export abstract class MoneyUtils {
   public static formatCents(amount: number): string {
     const amountAsDinero = this.createDinero(amount);
 
-    return toDecimal(
-      amountAsDinero,
-      ({ value }) =>
-        `$ ${new Intl.NumberFormat('es-AR').format(Number(value))}`,
-    );
+    return toDecimal(amountAsDinero, ({ value }) => `$ ${value}`);
   }
 
   public static formatWithCurrency(amount: number): string {

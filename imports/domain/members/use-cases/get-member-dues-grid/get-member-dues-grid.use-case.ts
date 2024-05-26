@@ -49,7 +49,7 @@ export class GetMemberDuesGridUseCase
           amount: due.amountFormatted,
           category: due.category,
           date: due.dateFormatted,
-          debtAmount: due.getPendingAmountFormatted(),
+          debtAmount: due.getAmountFormatted(),
           isDeleted: due.isDeleted,
           isPaid: due.isPaid(),
           isPartiallyPaid: due.isPartiallyPaid(),

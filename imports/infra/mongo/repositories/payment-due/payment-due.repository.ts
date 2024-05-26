@@ -24,6 +24,18 @@ export class PaymentDueRepository
     super(_logger);
   }
 
+  public findByPayment(paymentId: string): Promise<PaymentDue[]> {
+    return this.getCollection()
+      .find({ isDeleted: false, paymentId })
+      .fetchAsync();
+  }
+
+  public findByPayments(paymentIds: string[]): Promise<PaymentDue[]> {
+    return this.getCollection()
+      .find({ _id: { $in: paymentIds }, isDeleted: false })
+      .fetchAsync();
+  }
+
   protected getCollection(): MongoCollection<PaymentDue> {
     return PaymentDueCollection;
   }

@@ -1,5 +1,6 @@
 import { instanceToPlain } from 'class-transformer';
 import { validate } from 'class-validator';
+import { Mongo } from 'meteor/mongo';
 import type {
   ClientSession,
   Filter,
@@ -30,6 +31,12 @@ export abstract class MongoCrudRepository<T extends Entity>
     try {
       entity.create(await this._getLoggedInUserName());
 
+      this.getSchema().validate(
+        this.getSchema().clean(
+          entity as Record<string | number | symbol, unknown>,
+        ),
+      );
+
       const errors = await validate(entity);
 
       if (errors.length > 0) {
@@ -49,13 +56,13 @@ export abstract class MongoCrudRepository<T extends Entity>
     session: ClientSession,
   ): Promise<string> {
     try {
+      entity.create(await this._getLoggedInUserName());
+
       this.getSchema().validate(
         this.getSchema().clean(
           entity as Record<string | number | symbol, unknown>,
         ),
       );
-
-      entity.create(await this._getLoggedInUserName());
 
       const result = await this._collection
         .rawCollection()
@@ -76,6 +83,21 @@ export abstract class MongoCrudRepository<T extends Entity>
       entity.delete(await this._getLoggedInUserName());
 
       return await this.update(entity);
+    } catch (error) {
+      this._logger.error(error);
+
+      throw error;
+    }
+  }
+
+  public async findByIds(ids: string[]): Promise<T[]> {
+    try {
+      // @ts-expect-error
+      const query: Mongo.Selector<T> = {
+        _id: { $in: ids },
+      };
+
+      return await this._collection.find(query).fetchAsync();
     } catch (error) {
       this._logger.error(error);
 
@@ -160,13 +182,13 @@ export abstract class MongoCrudRepository<T extends Entity>
     session: ClientSession,
   ): Promise<void> {
     try {
+      entity.update(await this._getLoggedInUserName());
+
       this.getSchema().validate(
         this.getSchema().clean(
           entity as Record<string | number | symbol, unknown>,
         ),
       );
-
-      entity.update(await this._getLoggedInUserName());
 
       await this._collection
         .rawCollection()

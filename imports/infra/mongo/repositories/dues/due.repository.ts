@@ -34,8 +34,8 @@ export class DueRepository
     super(_logger);
   }
 
-  public async findByIds(request: FindByIdsRequest): Promise<Due[]> {
-    const query: Mongo.Query<Due> = {
+  public async findByIds2(request: FindByIdsRequest): Promise<Due[]> {
+    const query: Mongo.Selector<Due> = {
       _id: { $in: request.dueIds },
     };
 
@@ -45,7 +45,7 @@ export class DueRepository
   public async findPaginated(
     request: FindPaginatedDuesRequest,
   ): Promise<FindPaginatedDuesResponse> {
-    const query: Mongo.Query<Due> = {
+    const query: Mongo.Selector<Due> = {
       $expr: { $and: [{ $eq: ['$isDeleted', request.showDeleted ?? false] }] },
     };
 
@@ -149,7 +149,7 @@ export class DueRepository
   }
 
   public async findPaid(request: FindPaidRequest): Promise<Due[]> {
-    const query: Mongo.Query<Due> = {
+    const query: Mongo.Selector<Due> = {
       status: DueStatusEnum.Paid,
     };
 
@@ -167,7 +167,7 @@ export class DueRepository
   public findPendingByMember(
     request: FindPendingByMemberRequest,
   ): Promise<Due[]> {
-    const query: Mongo.Query<Due> = {
+    const query: Mongo.Selector<Due> = {
       isDeleted: false,
       memberId: request.memberId,
       status: { $in: [DueStatusEnum.Pending, DueStatusEnum.PartiallyPaid] },

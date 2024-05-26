@@ -5,22 +5,13 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
+import { GetPendingDueResponseDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
 import { MoneyUtils } from '@shared/utils/money.utils';
 import { NumberUtils } from '@shared/utils/number.utils';
 import { AppUrl } from '@ui/app.enum';
 
-type Due = {
-  _id: string;
-  amount: number;
-  category: DueCategoryEnum;
-  date: string;
-  memberId: string;
-  memberName: string;
-  membershipMonth: string;
-};
-
 type Props = {
-  pendingDues: Due[] | undefined;
+  pendingDues: GetPendingDueResponseDto[] | undefined;
 };
 
 type FormDueValue = {
@@ -101,7 +92,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
         dataIndex="date"
         title="Fecha"
         width={150}
-        render={(date: string, due: Due) => {
+        render={(date: string, due: GetPendingDueResponseDto) => {
           const index = pendingDues?.findIndex((d) => d._id === due._id) ?? 0;
 
           return (
@@ -130,7 +121,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
         dataIndex="category"
         title="Categoría"
         align="center"
-        render={(category: DueCategoryEnum, due: Due) =>
+        render={(category: DueCategoryEnum, due: GetPendingDueResponseDto) =>
           `${DueCategoryLabel[category]} ${
             due.category === DueCategoryEnum.Membership
               ? `(${due.membershipMonth})`
@@ -140,18 +131,17 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
       />
 
       <Table.Column
-        dataIndex="amount"
+        dataIndex="amountFormatted"
         width={250}
         title="Monto deudor"
         align="right"
-        render={(amount: number) => MoneyUtils.formatCents(amount)}
       />
 
       <Table.Column
         title="Monto a registrar"
         align="right"
         width={250}
-        render={(_, due: Due) => {
+        render={(_, due: GetPendingDueResponseDto) => {
           const index = pendingDues?.findIndex((d) => d._id === due._id) ?? 0;
 
           const isSelected = form.getFieldValue(isSelectedFieldName(index));

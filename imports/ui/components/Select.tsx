@@ -5,7 +5,7 @@ type Props = SelectProps;
 
 export const Select: React.FC<Props> = React.forwardRef(
   (
-    { children, placeholder = 'Seleccionar', allowClear = true, ...props },
+    { children, placeholder = 'Seleccionar', allowClear = false, ...props },
     ref,
   ) => (
     <AntSelect

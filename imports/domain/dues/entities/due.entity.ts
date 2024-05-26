@@ -1,6 +1,7 @@
 import { IsDate, IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { Result, err, ok } from 'neverthrow';
 
+import { Money } from '@application/value-objects/money.value-object';
 import { Entity } from '@domain/common/entity';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { CreateDue, CreateDuePayment } from '@domain/dues/due.types';
@@ -84,8 +85,8 @@ export class Due extends Entity {
     return this.amount;
   }
 
-  public getPendingAmountFormatted(): string {
-    return MoneyUtils.formatCents(this.getPendingAmount());
+  public getAmountFormatted(): string {
+    return new Money(this.amount).formatWithCurrency();
   }
 
   public isPaid() {

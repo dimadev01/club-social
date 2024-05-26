@@ -16,6 +16,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
 
+import { GetPendingDueResponseDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
 import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
@@ -25,10 +26,11 @@ import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { Row } from '@ui/components/Grid/Row';
 import { MembersSelect } from '@ui/components/Members/MembersSelect';
-import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDues';
+import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDuesByMember';
 import { useMember } from '@ui/hooks/members/useMember';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
 import { useNextPaymentReceiptNumber } from '@ui/hooks/payments/useNextPaymentReceiptNumber';
+import { UiNotificationUtils } from '@ui/utils/messages.utils';
 
 type FormDueValue = {
   amount: number;
@@ -38,7 +40,7 @@ type FormDueValue = {
 
 type FormValues = {
   date: Dayjs;
-  dues: FormDueValue[];
+  dues?: FormDueValue[];
   memberId: string;
   notes: string | null;
   receiptNumber: number;
@@ -127,7 +129,7 @@ export const PaymentNewPage = () => {
   useDeepCompareEffect(() => {
     if (pendingDues && pendingDues.length > 0) {
       form.setFieldsValue({
-        dues: pendingDues.map((due) => ({
+        dues: pendingDues.map((due: GetPendingDueResponseDto) => ({
           amount: MoneyUtils.fromCents(due.amount),
           dueId: due._id,
           isSelected: formDuesSelectedIds?.includes(due._id),
@@ -154,10 +156,13 @@ export const PaymentNewPage = () => {
    * Handlers
    */
   const handleSubmit = async (values: FormValues) => {
-    const selectedDues = values.dues.filter((due) => due.isSelected);
+    const selectedDues = values.dues?.filter((due) => due.isSelected) ?? [];
 
     if (selectedDues.length === 0) {
-      notification.error({ message: 'Debe seleccionar al menos una deuda' });
+      UiNotificationUtils.error(
+        notification,
+        'Debe seleccionar al menos una deuda',
+      );
 
       return;
     }
@@ -243,7 +248,7 @@ export const PaymentNewPage = () => {
           }}
         >
           <Row>
-            <Col xs={8} sm={6} md={5} lg={5} xl={4}>
+            <Col xs={8} sm={6} md={5} lg={5}>
               <Form.Item
                 name="date"
                 label="Fecha"
@@ -260,7 +265,7 @@ export const PaymentNewPage = () => {
           </Row>
 
           <Row>
-            <Col xs={10} sm={8} md={7} lg={7} xl={4}>
+            <Col xs={10} sm={8} md={7} lg={7}>
               <Form.Item
                 label="Socio"
                 rules={[{ required: true }]}
@@ -272,7 +277,7 @@ export const PaymentNewPage = () => {
           </Row>
 
           <Row>
-            <Col xs={5} sm={4} md={3} lg={3} xl={2}>
+            <Col xs={5} sm={4} md={3} lg={3}>
               <Form.Item
                 name="receiptNumber"
                 label="Recibo #"

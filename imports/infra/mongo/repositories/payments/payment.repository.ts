@@ -57,7 +57,7 @@ export class PaymentRepository
   public async findPaginated(
     request: FindPaginatedPaymentsRequest,
   ): Promise<FindPaginatedPaymentsResponse> {
-    const query: Mongo.Query<Payment> = {
+    const query: Mongo.Selector<Payment> = {
       $expr: { $and: [{ $eq: ['$isDeleted', request.showDeleted ?? false] }] },
     };
 
