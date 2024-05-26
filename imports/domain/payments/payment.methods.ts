@@ -9,8 +9,6 @@ import { DeletePaymentUseCase } from '@domain/payments/use-cases/delete-payment/
 import { GetPaymentRequestDto } from '@domain/payments/use-cases/get-payment/get-payment-request.dto';
 import { GetPaymentUseCase } from '@domain/payments/use-cases/get-payment/get-payment.use-case';
 import { GetPaymentsGridUseCase } from '@domain/payments/use-cases/get-payments-grid/get-payments-grid.use-case';
-import { RestorePaymentRequestDto } from '@domain/payments/use-cases/restore-payment/restore-payment-request.dto';
-import { RestorePaymentUseCase } from '@domain/payments/use-cases/restore-payment/restore-payment.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { GetNextPaymentReceiptNumberUseCase } from './use-cases/get-next-payment-receipt-number/get-next-payment-receipt-number.use-case';
@@ -23,7 +21,6 @@ export class PaymentMethod extends MeteorMethod {
     private readonly _getPayment: GetPaymentUseCase,
     private readonly _createPayment: CreatePaymentUseCase,
     private readonly _deletePayment: DeletePaymentUseCase,
-    private readonly _restorePayment: RestorePaymentUseCase,
     private readonly _getNextPaymentReceiptNumber: GetNextPaymentReceiptNumberUseCase,
   ) {
     super();
@@ -45,9 +42,6 @@ export class PaymentMethod extends MeteorMethod {
 
       [MethodsEnum.PaymentsDelete]: (request: DeletePaymentRequestDto) =>
         this.execute(this._deletePayment, request, DeletePaymentRequestDto),
-
-      [MethodsEnum.PaymentsRestore]: (request: RestorePaymentRequestDto) =>
-        this.execute(this._restorePayment, request, RestorePaymentRequestDto),
 
       [MethodsEnum.PaymentsGetNextReceiptNumber]: () =>
         this.execute(this._getNextPaymentReceiptNumber),

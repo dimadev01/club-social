@@ -15,28 +15,21 @@ import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import { Navigate, NavLink, useLocation } from 'react-router-dom';
-import {
-  DeleteOutlined,
-  FilterOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, FilterOutlined } from '@ant-design/icons';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { PaymentDueGridDto } from '@domain/payments/use-cases/get-payments-grid/payment-due-grid.dto';
 import { PaymentGridDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
-import { Select } from '@ui/components/Select';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
-import { useMembers } from '@ui/hooks/members/useMembers';
 import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { usePaymentGrid } from '@ui/hooks/payments/usePaymentsGrid';
-import { useRestorePayment } from '@ui/hooks/payments/useRestorePayment';
 import { useGrid } from '@ui/hooks/useGrid';
+import { MembersSelect } from '@ui/components/Members/MembersSelect';
 
 DateUtils.extend();
 
@@ -62,8 +55,6 @@ export const PaymentsPage = () => {
       : null,
   );
 
-  const { data: members, isLoading: isLoadingMembers } = useMembers();
-
   const { data, isLoading, isRefetching, refetch } = usePaymentGrid({
     filters: gridState.filters,
     from: dateFilter
@@ -80,10 +71,6 @@ export const PaymentsPage = () => {
   });
 
   const deletePayment = useDeletePayment(refetch);
-
-  const restorePayment = useRestorePayment(refetch);
-
-  // const { data: categories } = useCategories();
 
   const user = Meteor.user();
 
@@ -193,7 +180,7 @@ export const PaymentsPage = () => {
               </Form.Item>
 
               <Form.Item>
-                <Select
+                <MembersSelect
                   value={memberIdsFilter}
                   mode="multiple"
                   onChange={(value) => {
@@ -202,15 +189,6 @@ export const PaymentsPage = () => {
                     setGridState((prevState) => ({ ...prevState, page: 1 }));
                   }}
                   className="!min-w-[333px]"
-                  disabled={isLoadingMembers || isLoading}
-                  loading={isLoadingMembers}
-                  placeholder="Buscar por socios"
-                  options={
-                    members?.map((member: GetMembersDto) => ({
-                      label: member.name,
-                      value: member._id,
-                    })) ?? []
-                  }
                 />
               </Form.Item>
 
@@ -268,16 +246,19 @@ export const PaymentsPage = () => {
                 align: 'right',
                 dataIndex: 'count',
                 title: '#',
+                width: 50,
               },
               {
                 align: 'right',
                 dataIndex: 'totalAmount',
                 title: 'Total',
+                width: 150,
               },
               {
                 align: 'right',
                 dataIndex: 'receiptNumber',
-                title: 'Recibo Nro.',
+                title: 'Recibo #',
+                width: 100,
               },
               {
                 align: 'center',
@@ -307,33 +288,6 @@ export const PaymentsPage = () => {
                           icon={<DeleteOutlined />}
                           loading={deletePayment.variables?.id === payment._id}
                           disabled={deletePayment.variables?.id === payment._id}
-                        />
-                      )}
-
-                    {payment.isDeleted &&
-                      Roles.userIsInRole(
-                        userId,
-                        PermissionEnum.Update,
-                        ScopeEnum.Payments,
-                      ) && (
-                        <Button
-                          type="text"
-                          onClick={() =>
-                            restorePayment.mutate(
-                              { id: payment._id },
-                              {
-                                onError: () => restorePayment.reset(),
-                                onSuccess: () => restorePayment.reset(),
-                              },
-                            )
-                          }
-                          htmlType="button"
-                          tooltip={{ title: 'Restaurar' }}
-                          icon={<ReloadOutlined />}
-                          loading={restorePayment.variables?.id === payment._id}
-                          disabled={
-                            restorePayment.variables?.id === payment._id
-                          }
                         />
                       )}
 

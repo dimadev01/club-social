@@ -1,5 +1,5 @@
 export abstract class LocalStorageUtils {
-  public static get<T extends object>(key: string): T | undefined {
+  public static get<T>(key: string): T | undefined {
     const value = localStorage.getItem(key);
 
     if (!value) {

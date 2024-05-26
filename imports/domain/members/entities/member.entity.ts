@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { Meteor } from 'meteor/meteor';
 import { err, ok, Result } from 'neverthrow';
@@ -23,6 +24,7 @@ import { CreateMember } from '@domain/members/member.types';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 export class Member extends Entity {
+  @ValidateNested()
   @Type(() => MemberAddress)
   public address: MemberAddress;
 

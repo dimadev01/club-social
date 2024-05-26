@@ -87,7 +87,7 @@ export function Table<T extends object>({
         ) => handleTableChange(pagination, filters, sorter as SorterResult<T>)}
         pagination={{
           current: gridState.page,
-          defaultPageSize: 25,
+          defaultPageSize: 10,
           hideOnSinglePage: false,
           pageSize: gridState.pageSize,
           pageSizeOptions: ['10', '25', '50', '100', '250'],

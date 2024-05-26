@@ -182,7 +182,9 @@ export class Due extends Entity {
   }
 
   public removePayment(paymentId: string): Result<null, Error> {
-    invariant(this.payments);
+    if (!this.payments) {
+      return ok(null);
+    }
 
     this.payments = this.payments.filter(
       (payment) => payment._id !== paymentId,

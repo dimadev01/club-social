@@ -34,21 +34,19 @@ import {
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
 import { DueGridDto } from '@domain/dues/use-cases/get-dues-grid/due-grid.dto';
-import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
-import { Select } from '@ui/components/Select';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useDeleteDue } from '@ui/hooks/dues/useDeleteDue';
 import { useDuesGrid } from '@ui/hooks/dues/useDuesGrid';
 import { useRestoreDue } from '@ui/hooks/dues/useRestoreDue';
-import { useMembers } from '@ui/hooks/members/useMembers';
 import { useGrid } from '@ui/hooks/useGrid';
+import { MembersSelect } from '@ui/components/Members/MembersSelect';
 
 export const DuesPage = () => {
   const location = useLocation();
@@ -73,8 +71,6 @@ export const DuesPage = () => {
       ? [dayjs(parsedQs.from as string), dayjs(parsedQs.to as string)]
       : null,
   );
-
-  const { data: members, isLoading: isLoadingMembers } = useMembers();
 
   const { data, isLoading, isRefetching, refetch } = useDuesGrid({
     filters: gridState.filters,
@@ -158,7 +154,7 @@ export const DuesPage = () => {
               </Form.Item>
 
               <Form.Item>
-                <Select
+                <MembersSelect
                   value={memberIdsFilter}
                   mode="multiple"
                   onChange={(value) => {
@@ -167,15 +163,6 @@ export const DuesPage = () => {
                     setGridState((prevState) => ({ ...prevState, page: 1 }));
                   }}
                   className="!min-w-[333px]"
-                  disabled={isLoadingMembers || isLoading}
-                  loading={isLoadingMembers}
-                  placeholder="Buscar por socios"
-                  options={
-                    members?.map((member: GetMembersDto) => ({
-                      label: member.name,
-                      value: member._id,
-                    })) ?? []
-                  }
                 />
               </Form.Item>
 

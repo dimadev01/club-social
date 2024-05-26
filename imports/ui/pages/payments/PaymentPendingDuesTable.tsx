@@ -74,6 +74,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
 
   return (
     <Table
+      scroll={{ x: true }}
       rowSelection={{
         onChange: (rowKeys) => {
           form.setFieldsValue({

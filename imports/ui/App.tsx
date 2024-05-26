@@ -16,6 +16,7 @@ import clsx from 'clsx';
 import { UserThemeEnum } from '@domain/users/user.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { ThemeContext, ThemeContextProps } from './Context';
+import { AppThemeEnum } from './app.enum';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,10 +52,9 @@ export const App = () => {
     query: '(prefers-color-scheme: dark)',
   });
 
-  const [theme, setTheme] = useState<UserThemeEnum>(
-    LocalStorageUtils.get('theme') ?? systemPrefersDark
-      ? UserThemeEnum.DARK
-      : UserThemeEnum.LIGHT,
+  const [theme, setTheme] = useState<AppThemeEnum>(
+    LocalStorageUtils.get<AppThemeEnum>('theme') ??
+      (systemPrefersDark ? AppThemeEnum.DARK : AppThemeEnum.LIGHT),
   );
 
   const themeMemoized = useMemo<ThemeContextProps>(
@@ -69,9 +69,11 @@ export const App = () => {
 
   useEffect(() => {
     if (user?.profile?.theme === UserThemeEnum.AUTO) {
-      setTheme(systemPrefersDark ? UserThemeEnum.DARK : UserThemeEnum.LIGHT);
-    } else {
-      setTheme(user?.profile?.theme ?? UserThemeEnum.LIGHT);
+      setTheme(systemPrefersDark ? AppThemeEnum.DARK : AppThemeEnum.LIGHT);
+    } else if (user?.profile?.theme === UserThemeEnum.DARK) {
+      setTheme(AppThemeEnum.DARK);
+    } else if (user?.profile?.theme === UserThemeEnum.LIGHT) {
+      setTheme(AppThemeEnum.LIGHT);
     }
   }, [user?.profile?.theme, systemPrefersDark]);
 
@@ -83,7 +85,11 @@ export const App = () => {
     <>
       <GoogleFontLoader fonts={[{ font: 'Rubik', weights: [300, 400, 500] }]} />
 
-      <AntApp rootClassName={clsx('cs-ant-app')}>
+      <AntApp
+        rootClassName={clsx('cs-ant-app', {
+          dark: themeMemoized.theme === AppThemeEnum.DARK,
+        })}
+      >
         <ConfigProvider
           locale={esEs}
           select={{ showSearch: true }}
@@ -92,7 +98,7 @@ export const App = () => {
           input={{ autoComplete: 'on' }}
           theme={{
             algorithm:
-              themeMemoized.theme === UserThemeEnum.LIGHT
+              themeMemoized.theme === AppThemeEnum.LIGHT
                 ? antTheme.defaultAlgorithm
                 : antTheme.darkAlgorithm,
             components: {
@@ -101,7 +107,7 @@ export const App = () => {
               },
               Layout: {
                 lightSiderBg: '#f8f9fd',
-                siderBg: '#000',
+                siderBg: '#111111',
               },
               Menu: {
                 itemBg: 'transparent',

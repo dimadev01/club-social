@@ -55,7 +55,7 @@ export const PaymentDetailPage = () => {
 
       <Card
         title={`Pago a ${payment.memberName} del ${payment.date}`}
-        extra={`Recibo Nro. ${payment.receiptNumber}`}
+        extra={`Recibo #${payment.receiptNumber}`}
       >
         <>
           <Descriptions column={1} layout="vertical" colon={false}>
@@ -65,7 +65,7 @@ export const PaymentDetailPage = () => {
               {payment.memberName}
             </Descriptions.Item>
 
-            <Descriptions.Item label="Recibo Nro.">
+            <Descriptions.Item label="Recibo #">
               {payment.receiptNumber}
             </Descriptions.Item>
 

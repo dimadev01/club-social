@@ -1,3 +1,12 @@
+export enum AppConstants {
+  EmailFrom = 'Club Social <info@clubsocialmontegrande.ar>',
+}
+
+export enum AppThemeEnum {
+  DARK = 'dark',
+  LIGHT = 'light',
+}
+
 /* eslint-disable typescript-sort-keys/string-enum */
 export enum AppUrl {
   Home = '/',
@@ -36,8 +45,4 @@ export enum AppUrl {
 
   Categories = '/categories',
   CategoriesDetail = '/categories/:id',
-}
-
-export enum AppConstants {
-  EmailFrom = 'Club Social <info@clubsocialmontegrande.ar>',
 }

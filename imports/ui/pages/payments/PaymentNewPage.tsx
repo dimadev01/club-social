@@ -5,10 +5,8 @@ import {
   Card,
   Col,
   DatePicker,
-  Flex,
   Form,
   InputNumber,
-  Row,
 } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
@@ -18,17 +16,16 @@ import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
-import { Select } from '@ui/components/Select';
 import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDues';
-import { useMembers } from '@ui/hooks/members/useMembers';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
 import { useMember } from '@ui/hooks/members/useMember';
 import { UrlUtils } from '@shared/utils/url.utils';
 import TextArea from 'antd/es/input/TextArea';
 import { MoneyUtils } from '@shared/utils/money.utils';
-import { Button } from '@ui/components/Button';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 import { useNextPaymentReceiptNumber } from '@ui/hooks/payments/useNextPaymentReceiptNumber';
+import { MembersSelect } from '@ui/components/Members/MembersSelect';
+import { Row } from '@ui/components/Grid/Row';
 import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
 
 type FormDueValue = {
@@ -93,8 +90,6 @@ export const PaymentNewPage = () => {
   /**
    * Hooks
    */
-  const { data: members, isLoading: isLoadingMembers } = useMembers();
-
   const { data: pendingDues } = usePendingDuesByMember(formMemberId);
 
   const { data: member } = useMember(formMemberId);
@@ -208,7 +203,7 @@ export const PaymentNewPage = () => {
 
   const renderCardExtra = () => {
     if (formReceiptNumber) {
-      return `Recibo Nro. ${formReceiptNumber}`;
+      return `Recibo #${formReceiptNumber}`;
     }
 
     return null;
@@ -245,8 +240,8 @@ export const PaymentNewPage = () => {
             receiptNumber: urlReceiptNumber ? +urlReceiptNumber : undefined,
           }}
         >
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} md={12} lg={10} xl={8} xxl={6}>
+          <Row>
+            <Col xs={8} sm={6} md={5} lg={5}>
               <Form.Item
                 name="date"
                 label="Fecha"
@@ -259,43 +254,46 @@ export const PaymentNewPage = () => {
                   disabledDate={(current) => current.isAfter(dayjs())}
                 />
               </Form.Item>
+            </Col>
+          </Row>
 
+          <Row>
+            <Col xs={10} sm={8} md={7} lg={7}>
               <Form.Item
                 label="Socio"
                 rules={[{ required: true }]}
                 name="memberId"
-                extra={
-                  <Flex justify="end">
-                    <Button type="link" size="small">
-                      <NavLink to={AppUrl.DuesNew}>Nuevo cobro</NavLink>
-                    </Button>
-                  </Flex>
-                }
               >
-                <Select
-                  loading={isLoadingMembers}
-                  options={members?.map((m) => ({
-                    label: m.name,
-                    value: m._id,
-                  }))}
-                />
+                <MembersSelect />
               </Form.Item>
+            </Col>
+          </Row>
 
+          <Row>
+            <Col xs={5} sm={4} md={3} lg={3}>
               <Form.Item
                 name="receiptNumber"
-                label="Recibo Nro."
+                label="Recibo #"
                 rules={[{ required: true }, { type: 'number' }]}
               >
-                <InputNumber min={1} />
+                <InputNumber className="w-full" min={1} />
               </Form.Item>
             </Col>
           </Row>
 
           <PaymentPendingDuesTable pendingDues={pendingDues} />
 
-          <Form.Item label="Notas" rules={[{ whitespace: true }]} name="notes">
-            <TextArea />
-          </Form.Item>
+          <Row>
+            <Col xs={12} sm={12} md={10} lg={10}>
+              <Form.Item
+                label="Notas"
+                rules={[{ whitespace: true }]}
+                name="notes"
+              >
+                <TextArea rows={2} />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <FormButtons
             scope={ScopeEnum.Payments}

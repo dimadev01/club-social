@@ -40,6 +40,7 @@ import { useCreateDue } from '@ui/hooks/dues/useCreateDue';
 import { useDue } from '@ui/hooks/dues/useDue';
 import { useUpdateDue } from '@ui/hooks/dues/useUpdateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
+import { MembersSelect } from '@ui/components/Members/MembersSelect';
 
 type FormValues = {
   amount: number;
@@ -64,7 +65,7 @@ export const DueDetailPage = () => {
 
   const updateDue = useUpdateDue();
 
-  const { data: members, isLoading: isLoadingMembers } = useMembers();
+  const { data: members } = useMembers();
 
   const user = Meteor.user();
 
@@ -259,15 +260,10 @@ export const DueDetailPage = () => {
               name="memberIds"
               rules={getRulesForMemberIds()}
             >
-              <Select
+              <MembersSelect
                 dropdownRender={renderMemberDropdown}
                 mode={due ? undefined : 'multiple'}
-                loading={isLoadingMembers}
                 disabled={isFormDisabled()}
-                options={members?.map((member) => ({
-                  label: member.name,
-                  value: member._id,
-                }))}
               />
             </Form.Item>
 

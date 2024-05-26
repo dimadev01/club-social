@@ -27,23 +27,21 @@ import {
   CategoryTypeEnum,
   MemberCategories,
 } from '@domain/categories/category.enum';
-import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MoneyUtils } from '@shared/utils/money.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
-import { Select } from '@ui/components/Select';
 import { Table } from '@ui/components/Table/Table';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useCategories } from '@ui/hooks/categories/useCategories';
-import { useMembers } from '@ui/hooks/members/useMembers';
 import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 import { useMovementsGrid } from '@ui/hooks/movements/useMovementsGrid';
 import { useRestoreMovement } from '@ui/hooks/movements/useRestoreMovement';
 import { useGrid } from '@ui/hooks/useGrid';
+import { MembersSelect } from '@ui/components/Members/MembersSelect';
 
 export const MovementsPage = () => {
   const location = useLocation();
@@ -66,8 +64,6 @@ export const MovementsPage = () => {
       ? [dayjs(parsedQs.from as string), dayjs(parsedQs.to as string)]
       : null,
   );
-
-  const { data: members, isLoading: isLoadingMembers } = useMembers();
 
   const { data, isLoading, isRefetching, refetch } = useMovementsGrid({
     filters: gridState.filters,
@@ -141,14 +137,7 @@ export const MovementsPage = () => {
     <>
       <Breadcrumb
         className="mb-8"
-        items={[
-          {
-            title: 'Inicio',
-          },
-          {
-            title: 'Movimientos',
-          },
-        ]}
+        items={[{ title: 'Inicio' }, { title: 'Movimientos' }]}
       />
 
       <Card
@@ -183,7 +172,7 @@ export const MovementsPage = () => {
               </Form.Item>
 
               <Form.Item>
-                <Select
+                <MembersSelect
                   value={memberIdsFilter}
                   mode="multiple"
                   onChange={(value) => {
@@ -192,15 +181,6 @@ export const MovementsPage = () => {
                     setGridState((prevState) => ({ ...prevState, page: 1 }));
                   }}
                   className="!min-w-[333px]"
-                  disabled={isLoadingMembers || isLoading}
-                  loading={isLoadingMembers}
-                  placeholder="Buscar por socios"
-                  options={
-                    members?.map((member: GetMembersDto) => ({
-                      label: member.name,
-                      value: member._id,
-                    })) ?? []
-                  }
                 />
               </Form.Item>
 

@@ -1,4 +1,3 @@
-import { useMediaQuery } from 'react-responsive';
 import React, { useEffect, useState } from 'react';
 import {
   Col,
@@ -8,8 +7,8 @@ import {
   Row,
   Typography,
   Flex,
+  Space,
 } from 'antd';
-import ButtonGroup from 'antd/es/button/button-group';
 import { Roles } from 'meteor/alanning:roles';
 import { Navigate, NavLink } from 'react-router-dom';
 import {
@@ -37,10 +36,6 @@ type Props = {
 };
 
 export const Layout: React.FC<Props> = ({ children }) => {
-  const systemPrefersDark = useMediaQuery({
-    query: '(prefers-color-scheme: dark)',
-  });
-
   const { setTheme, theme } = useThemeContext();
 
   const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(true);
@@ -146,14 +141,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
     return items;
   };
 
-  const getSiderTheme = () => {
-    if (theme === UserThemeEnum.AUTO) {
-      return systemPrefersDark ? UserThemeEnum.DARK : UserThemeEnum.LIGHT;
-    }
-
-    return theme;
-  };
-
   const userName = `${user.profile?.firstName} ${user.profile?.lastName}`;
 
   return (
@@ -165,7 +152,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
         collapsedWidth="0"
         className="cs-sider"
         width={260}
-        theme={getSiderTheme()}
+        theme={theme}
         onBreakpoint={(broken) => setIsMenuResponsiveMode(broken)}
       >
         <Image
@@ -221,9 +208,8 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
         <AntLayout.Footer>
           <Flex justify="space-between">
-            <ButtonGroup>
+            <Space.Compact>
               <Button
-                size="large"
                 tooltip={{ title: 'Reglamento' }}
                 icon={<FilePdfOutlined />}
                 htmlType="button"
@@ -232,7 +218,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
                 target="_blank"
               />
               <Button
-                size="large"
                 tooltip={{ title: 'Comunicados' }}
                 icon={<NotificationOutlined />}
                 htmlType="button"
@@ -240,12 +225,12 @@ export const Layout: React.FC<Props> = ({ children }) => {
                 href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
                 target="_blank"
               />
-            </ButtonGroup>
+            </Space.Compact>
 
-            <ButtonGroup>
+            <Space>
               <Select
                 allowClear={false}
-                value={theme}
+                value={user?.profile?.theme}
                 showSearch={false}
                 onChange={(value) => {
                   setTheme(value);
@@ -268,26 +253,26 @@ export const Layout: React.FC<Props> = ({ children }) => {
                 ]}
               />
 
-              <Button
-                size="large"
-                tooltip={{ title: 'Enviar Email' }}
-                icon={<MailOutlined />}
-                htmlType="button"
-                type="text"
-                href="mailto:info@clubsocialmontegrande.ar"
-                target="_blank"
-              />
+              <Space.Compact>
+                <Button
+                  tooltip={{ title: 'Enviar Email' }}
+                  icon={<MailOutlined />}
+                  htmlType="button"
+                  type="text"
+                  href="mailto:info@clubsocialmontegrande.ar"
+                  target="_blank"
+                />
 
-              <Button
-                size="large"
-                tooltip={{ title: 'Enviar WhatsApp' }}
-                icon={<WhatsAppOutlined />}
-                htmlType="button"
-                type="text"
-                href="https://wa.me/5491158804950"
-                target="_blank"
-              />
-            </ButtonGroup>
+                <Button
+                  tooltip={{ title: 'Enviar WhatsApp' }}
+                  icon={<WhatsAppOutlined />}
+                  htmlType="button"
+                  type="text"
+                  href="https://wa.me/5491158804950"
+                  target="_blank"
+                />
+              </Space.Compact>
+            </Space>
           </Flex>
         </AntLayout.Footer>
       </AntLayout>
