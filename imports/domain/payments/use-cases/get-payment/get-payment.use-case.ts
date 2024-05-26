@@ -1,7 +1,6 @@
 import { err, ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { PaymentDue } from '@domain/payments/entities/payment-due';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { GetPaymentRequestDto } from '@domain/payments/use-cases/get-payment/get-payment-request.dto';
 import { GetPaymentResponseDto } from '@domain/payments/use-cases/get-payment/get-payment-response.dto';
@@ -33,16 +32,9 @@ export class GetPaymentUseCase
     return ok<GetPaymentResponseDto>({
       _id: payment._id,
       date: payment.dateFormatted,
-      dues: payment.dues.map((paymentDue: PaymentDue) => ({
-        amount: paymentDue.amount,
-        dueAmount: paymentDue.due.amount,
-        dueCategory: paymentDue.due.category,
-        dueDate: paymentDue.due.dateFormatted,
-        dueId: paymentDue.due._id,
-        membershipMonth: paymentDue.due.membershipMonth,
-      })),
-      memberId: payment.memberId._id,
-      memberName: payment.memberId.name,
+      dues: [],
+      memberId: payment.memberId,
+      memberName: '',
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
     });

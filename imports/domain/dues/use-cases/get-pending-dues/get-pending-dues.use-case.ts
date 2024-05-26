@@ -1,13 +1,13 @@
-import { ok, Result } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
+import { DIToken } from '@infra/di/di-tokens';
+import { ok, Result } from 'neverthrow';
 import { IUseCase } from '@application/use-cases/use-case.interface';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { IDuePort } from '@domain/dues/due.port';
+import { UseCase } from '@infra/use-cases/use-case';
 import { Due } from '@domain/dues/entities/due.entity';
 import { PendingDueDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
 import { GetPendingDuesRequestDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-dues.request.dto';
-import { DIToken } from '@infra/di/di-tokens';
-import { UseCase } from '@infra/use-cases/use-case';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 @injectable()

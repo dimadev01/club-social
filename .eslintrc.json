@@ -10,9 +10,11 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": ["./tsconfig.json"]
+    "project": "./tsconfig.json"
   },
   "plugins": [
+    "@typescript-eslint",
+    "import",
     "prettier",
     "sort-keys-fix",
     "typescript-sort-keys",
@@ -52,13 +54,14 @@
       }
     ],
     "import/extensions": "off",
-    "import/no-absolute-path": "off",
+    "import/order": "error",
     "import/no-extraneous-dependencies": [
       "error",
       {
         "devDependencies": true
       }
     ],
+    "import/no-unresolved": "warn",
     "import/prefer-default-export": "off",
     "no-underscore-dangle": [
       "error",
@@ -82,5 +85,16 @@
     "typescript-sort-keys/interface": "error",
     "typescript-sort-keys/string-enum": "error",
     "unused-imports/no-unused-imports": "error"
+  },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "tsconfig.json"
+      }
+    }
   }
 }

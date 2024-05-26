@@ -1,4 +1,16 @@
-import React, { useEffect, useMemo } from 'react';
+import { ScopeEnum } from '@domain/roles/role.enum';
+import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
+import { MoneyUtils } from '@shared/utils/money.utils';
+import { UrlUtils } from '@shared/utils/url.utils';
+import { AppUrl } from '@ui/app.enum';
+import { FormButtons } from '@ui/components/Form/FormButtons';
+import { Row } from '@ui/components/Grid/Row';
+import { MembersSelect } from '@ui/components/Members/MembersSelect';
+import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDues';
+import { useMember } from '@ui/hooks/members/useMember';
+import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
+import { useNextPaymentReceiptNumber } from '@ui/hooks/payments/useNextPaymentReceiptNumber';
 import {
   App,
   Breadcrumb,
@@ -9,23 +21,11 @@ import {
   InputNumber,
 } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
+import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import { Navigate, NavLink, useSearchParams } from 'react-router-dom';
-import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
-import { ScopeEnum } from '@domain/roles/role.enum';
-import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
-import { AppUrl } from '@ui/app.enum';
-import { FormButtons } from '@ui/components/Form/FormButtons';
-import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDues';
-import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
-import { useMember } from '@ui/hooks/members/useMember';
-import { UrlUtils } from '@shared/utils/url.utils';
-import TextArea from 'antd/es/input/TextArea';
-import { MoneyUtils } from '@shared/utils/money.utils';
+import React, { useEffect, useMemo } from 'react';
 import useDeepCompareEffect from 'use-deep-compare-effect';
-import { useNextPaymentReceiptNumber } from '@ui/hooks/payments/useNextPaymentReceiptNumber';
-import { MembersSelect } from '@ui/components/Members/MembersSelect';
-import { Row } from '@ui/components/Grid/Row';
 import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
 
 type FormDueValue = {
@@ -241,7 +241,7 @@ export const PaymentNewPage = () => {
           }}
         >
           <Row>
-            <Col xs={8} sm={6} md={5} lg={5}>
+            <Col xs={8} sm={6} md={5} lg={5} xl={4}>
               <Form.Item
                 name="date"
                 label="Fecha"
@@ -258,7 +258,7 @@ export const PaymentNewPage = () => {
           </Row>
 
           <Row>
-            <Col xs={10} sm={8} md={7} lg={7}>
+            <Col xs={10} sm={8} md={7} lg={7} xl={4}>
               <Form.Item
                 label="Socio"
                 rules={[{ required: true }]}
@@ -270,7 +270,7 @@ export const PaymentNewPage = () => {
           </Row>
 
           <Row>
-            <Col xs={5} sm={4} md={3} lg={3}>
+            <Col xs={5} sm={4} md={3} lg={3} xl={2}>
               <Form.Item
                 name="receiptNumber"
                 label="Recibo #"
