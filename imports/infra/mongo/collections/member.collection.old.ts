@@ -4,7 +4,10 @@ import SimpleSchema from 'simpl-schema';
 import { MemberOld } from '@domain/members/models/member.old';
 import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
 
-export const MemberCollectionOld = new MongoCollectionOld('members', MemberOld);
+export const MemberCollectionOld = new MongoCollectionOld(
+  'members2',
+  MemberOld,
+);
 
 export const MemberSchemaOld = new SimpleSchema({
   _id: String,

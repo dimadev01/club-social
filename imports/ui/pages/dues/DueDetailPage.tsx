@@ -156,8 +156,8 @@ export const DueDetailPage = () => {
                 members
                   ?.filter(
                     (member) =>
-                      member.category === MemberCategoryEnum.Member &&
-                      member.status === MemberStatusEnum.Active,
+                      member.category === MemberCategoryEnum.MEMBER &&
+                      member.status === MemberStatusEnum.ACTIVE,
                   )
                   .map((member) => member._id) ?? [],
               );
@@ -175,8 +175,8 @@ export const DueDetailPage = () => {
                 members
                   ?.filter(
                     (member) =>
-                      member.category === MemberCategoryEnum.Cadet &&
-                      member.status === MemberStatusEnum.Active,
+                      member.category === MemberCategoryEnum.CADET &&
+                      member.status === MemberStatusEnum.ACTIVE,
                   )
                   .map((member) => member._id) ?? [],
               );

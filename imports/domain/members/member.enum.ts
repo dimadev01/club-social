@@ -1,12 +1,12 @@
 /* eslint-disable typescript-sort-keys/string-enum */
 export enum MemberStatusEnum {
-  Active = 'active',
-  Inactive = 'inactive',
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
 }
 
 export const MemberStatusLabel = {
-  [MemberStatusEnum.Active]: 'Activo',
-  [MemberStatusEnum.Inactive]: 'Inactivo',
+  [MemberStatusEnum.ACTIVE]: 'Activo',
+  [MemberStatusEnum.INACTIVE]: 'Inactivo',
 };
 
 export const getMemberStatusOptions = () =>
@@ -22,13 +22,13 @@ export const getMemberStatusFilters = () =>
   }));
 
 export enum MemberCategoryEnum {
-  Member = 'member',
-  Cadet = 'cadet',
+  MEMBER = 'member',
+  CADET = 'cadet',
 }
 
 export const MemberCategoryLabel = {
-  [MemberCategoryEnum.Cadet]: 'Cadete',
-  [MemberCategoryEnum.Member]: 'Socio',
+  [MemberCategoryEnum.CADET]: 'Cadete',
+  [MemberCategoryEnum.MEMBER]: 'Socio',
 };
 
 export const getMemberCategoryOptions = () =>
@@ -44,17 +44,17 @@ export const getMemberCategoryFilters = () =>
   }));
 
 export enum MemberMaritalStatusEnum {
-  Single = 'single',
-  Married = 'married',
-  Divorced = 'divorced',
-  Widowed = 'widowed',
+  SINGLE = 'single',
+  MARRIED = 'married',
+  DIVORCED = 'divorced',
+  WIDOWED = 'widowed',
 }
 
 export const MemberMaritalStatusLabel = {
-  [MemberMaritalStatusEnum.Divorced]: 'Divorciado',
-  [MemberMaritalStatusEnum.Married]: 'Casado',
-  [MemberMaritalStatusEnum.Single]: 'Soltero',
-  [MemberMaritalStatusEnum.Widowed]: 'Viudo',
+  [MemberMaritalStatusEnum.DIVORCED]: 'Divorciado',
+  [MemberMaritalStatusEnum.MARRIED]: 'Casado',
+  [MemberMaritalStatusEnum.SINGLE]: 'Soltero',
+  [MemberMaritalStatusEnum.WIDOWED]: 'Viudo',
 };
 
 export const getMemberMaritalStatusOptions = () =>
@@ -64,17 +64,17 @@ export const getMemberMaritalStatusOptions = () =>
   }));
 
 export enum MemberNationalityEnum {
-  Argentina = 'argentina',
-  Colombia = 'colombia',
-  Bulgaria = 'bulgaria',
-  Ukraine = 'ukraine',
+  ARGENTINA = 'argentina',
+  COLOMBIA = 'colombia',
+  BULGARIA = 'bulgaria',
+  UKRAINE = 'ukraine',
 }
 
 export const MemberNationalityLabel = {
-  [MemberNationalityEnum.Argentina]: 'Argentina',
-  [MemberNationalityEnum.Colombia]: 'Colombia',
-  [MemberNationalityEnum.Ukraine]: 'Ucrania',
-  [MemberNationalityEnum.Bulgaria]: 'Bulgaria',
+  [MemberNationalityEnum.ARGENTINA]: 'Argentina',
+  [MemberNationalityEnum.COLOMBIA]: 'Colombia',
+  [MemberNationalityEnum.UKRAINE]: 'Ucrania',
+  [MemberNationalityEnum.BULGARIA]: 'Bulgaria',
 };
 
 export const getMemberNationalityOptions = () =>
@@ -84,13 +84,13 @@ export const getMemberNationalityOptions = () =>
   }));
 
 export enum MemberSexEnum {
-  Male = 'male',
-  Female = 'female',
+  MALE = 'male',
+  FEMALE = 'female',
 }
 
 export const MemberSexLabel = {
-  [MemberSexEnum.Female]: 'Femenino',
-  [MemberSexEnum.Male]: 'Masculino',
+  [MemberSexEnum.FEMALE]: 'Femenino',
+  [MemberSexEnum.MALE]: 'Masculino',
 };
 
 export const getMemberSexOptions = () =>
@@ -100,13 +100,13 @@ export const getMemberSexOptions = () =>
   }));
 
 export enum MemberFileStatusEnum {
-  Completed = 'completed',
-  Pending = 'pending',
+  COMPLETED = 'completed',
+  PENDING = 'pending',
 }
 
 export const MemberFileStatusLabel = {
-  [MemberFileStatusEnum.Completed]: 'Completo',
-  [MemberFileStatusEnum.Pending]: 'Pendiente',
+  [MemberFileStatusEnum.COMPLETED]: 'Completo',
+  [MemberFileStatusEnum.PENDING]: 'Pendiente',
 };
 
 export const getMemberFileStatusOptions = () =>

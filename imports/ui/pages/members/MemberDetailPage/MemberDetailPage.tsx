@@ -5,7 +5,6 @@ import { NavLink, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
 import { NotFound } from '@ui/components/NotFound';
 import { useMemberNew } from '@ui/hooks/members/useMemberNew';
-import { MemberDetailInfo } from '@ui/pages/members/MemberDetailPage/MemberDetailInfo';
 
 export const MembersDetailPage = () => {
   const { id } = useParams<{ id?: string }>();
@@ -14,7 +13,9 @@ export const MembersDetailPage = () => {
 
   const location = useLocation();
 
-  const { data: member, fetchStatus: memberFetchStatus } = useMemberNew(id);
+  const { data: member, fetchStatus: memberFetchStatus } = useMemberNew(
+    id ? { id } : undefined,
+  );
 
   const [tabKey, setTabKey] = useState<string>();
 
@@ -39,16 +40,10 @@ export const MembersDetailPage = () => {
       <Breadcrumb
         className="mb-8"
         items={[
+          { title: 'Inicio' },
+          { title: <NavLink to={AppUrl.Members}>Socios</NavLink> },
           {
-            title: 'Inicio',
-          },
-          {
-            title: <NavLink to={AppUrl.Members}>Socios</NavLink>,
-          },
-          {
-            title: member
-              ? `${member.firstName} ${member.lastName}`
-              : 'Nuevo Socio',
+            title: member ? `${member.id}}` : 'Nuevo Socio',
           },
         ]}
       />
@@ -59,13 +54,15 @@ export const MembersDetailPage = () => {
           onChange={(key) => {
             setTabKey(key);
           }}
-          items={[
-            {
-              children: <MemberDetailInfo member={member} />,
-              key: 'info',
-              label: 'Info',
-            },
-          ]}
+          items={
+            [
+              // {
+              //   children: <MemberDetailInfo member={member} />,
+              //   key: 'info',
+              //   label: 'Info',
+              // },
+            ]
+          }
         />
       </Skeleton>
     </>

@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import type { Document } from 'mongodb';
 import SimpleSchema from 'simpl-schema';
-import { inject, injectable } from 'tsyringe';
+import { container, inject, injectable } from 'tsyringe';
 
 import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
 import { ILogger } from '@application/logger/logger.interface';
@@ -16,11 +16,9 @@ import {
 import { IMemberPort } from '@domain/members/member.port';
 import { MemberOld } from '@domain/members/models/member.old';
 import { DIToken } from '@infra/di/di-tokens';
-import {
-  MemberCollectionOld,
-  MemberSchemaOld,
-} from '@infra/mongo/collections/member.collection.old';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MemberCollection } from '@infra/mongo/collections/member.collection';
+import { MemberSchemaOld } from '@infra/mongo/collections/member.collection.old';
+import { MongoCollection } from '@infra/mongo/collections/mongo.collection';
 import {
   FindPaginatedMember,
   FindPaginatedMembersRequest,
@@ -247,8 +245,8 @@ export class MemberRepositoryOld
     return this.findOneByUserIdOrThrow(currentUser._id);
   }
 
-  protected getCollection(): MongoCollectionOld<MemberOld> {
-    return MemberCollectionOld;
+  protected getCollection(): MongoCollection<MemberOld> {
+    return container.resolve(MemberCollection);
   }
 
   protected getSchema(): SimpleSchema {

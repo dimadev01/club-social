@@ -106,7 +106,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         phones: compact(values.phones).length > 0 ? values.phones : null,
         role: RoleEnum.Member,
         sex: values.sex ?? null,
-        status: MemberStatusEnum.Active,
+        status: MemberStatusEnum.ACTIVE,
       });
 
       message.success('Socio creado');
@@ -183,7 +183,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
           nationality: member?.nationality,
           phones: member?.phones ?? [''],
           sex: member?.sex,
-          status: member?.status ?? MemberStatusEnum.Active,
+          status: member?.status ?? MemberStatusEnum.ACTIVE,
         }}
       >
         <Row gutter={[16, 16]}>

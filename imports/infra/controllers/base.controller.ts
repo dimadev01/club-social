@@ -7,7 +7,7 @@ import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { MeteorBadRequestError } from '@infra/meteor/errors/meteor-bad-request.error';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
-export interface ExecuteRequest<TRequest, TResponse> {
+export interface ExecuteRequest<TRequest extends object, TResponse> {
   classType?: ClassType<TRequest>;
   request?: TRequest;
   useCase: IUseCase<TRequest, TResponse>;
@@ -34,7 +34,7 @@ export abstract class BaseController {
 
       return result.value;
     } catch (error) {
-      this._logger.error(error);
+      this._logger.error(error, { request });
 
       if (error instanceof Meteor.Error) {
         throw error;

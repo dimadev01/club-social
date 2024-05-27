@@ -6,6 +6,6 @@ import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
 @singleton()
 export class MemberCollection extends MongoCollection<MemberEntity> {
   public constructor() {
-    super('members2');
+    super('members');
   }
 }

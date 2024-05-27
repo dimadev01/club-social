@@ -12,9 +12,9 @@ export function useQuery<TRequest, TResponse>({
   methodName,
   request,
 }: UseQueryProps<TRequest>) {
-  return uq<TRequest, MeteorError, TResponse>({
-    enabled: !!request,
-    queryFn: Meteor.callAsync(methodName, request),
-    queryKey: [methodName, request],
-  });
+  return uq<TRequest, MeteorError, TResponse>(
+    [methodName, request],
+    () => Meteor.callAsync(methodName, request),
+    { enabled: !!request },
+  );
 }

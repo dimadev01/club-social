@@ -1,12 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
-
-import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
-import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
+import { GetMemberResponse } from '@domain/members/use-cases/get-member-new/get-member.response';
+import { GetMemberRequestDto } from '@infra/controllers/types/get-member-request.dto';
 import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { useQuery } from '@ui/hooks/useQuery';
 
-export const useMemberNew = (id?: string) =>
-  useQuery<GetMemberRequestDto, Error, GetMemberResponseDto | undefined>(
-    [MethodsEnum.MembersGetNew, id],
-    () => Meteor.callAsync(MethodsEnum.MembersGetNew, { id }),
-    { enabled: !!id },
-  );
+export const useMemberNew = (request?: GetMemberRequestDto) =>
+  useQuery<GetMemberRequestDto, GetMemberResponse | null>({
+    methodName: MethodsEnum.MembersGetNew,
+    request,
+  });
