@@ -17,7 +17,7 @@ export class GetMembersGridUseCase
     IUseCase<GetMembersGridRequestDto, PaginatedResponse<MemberGridDto>>
 {
   public constructor(
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
   ) {
     super();

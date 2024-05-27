@@ -28,7 +28,7 @@ import { FormButtons } from '@ui/components/Form/FormButtons';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
 import { FormListInput } from '@ui/components/Form/FormListInput';
 import { Select } from '@ui/components/Select';
-import { useCreateMember } from '@ui/hooks/members/useCreateMember';
+import { useCreateMemberNew } from '@ui/hooks/members/useCreateMemberNew';
 import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
 import { useCities } from '@ui/hooks/useCities';
 import { useStates } from '@ui/hooks/useStates';
@@ -73,7 +73,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
     stateGovId?.value,
   );
 
-  const createMember = useCreateMember();
+  const createMemberNew = useCreateMemberNew();
 
   const updateMember = useUpdateMember();
 
@@ -85,7 +85,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
   const handleSubmit = async (values: FormValues) => {
     if (!member) {
-      const memberId = await createMember.mutateAsync({
+      const memberId = await createMemberNew.mutateAsync({
         addressCityGovId: values.address.cityGovId?.value ?? null,
         addressCityName: values.address.cityGovId?.label ?? null,
         addressStateGovId: values.address.stateGovId?.value ?? null,

@@ -33,7 +33,6 @@
     },
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    // "types": ["node", "mocha", "meteor", "meteor-roles"],
     "esModuleInterop": true,
     "preserveSymlinks": true,
     "experimentalDecorators": true,
@@ -44,6 +43,7 @@
     ".meteor/**/*.ts",
     "./imports/**/*.ts",
     "./imports/**/*.tsx",
-    "./types/*.d.ts"
+    "./types/*.d.ts",
+    "imports/infra/mongo/repositories/common/creatable-mongo-repository.interface.2ts"
   ]
 }

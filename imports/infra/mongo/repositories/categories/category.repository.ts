@@ -11,14 +11,14 @@ import {
   CategoriesSchema,
   CategoryCollection,
 } from '@infra/mongo/collections/category.collection';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
-import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
+import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 
 @injectable()
 export class CategoryRepository
-  extends MongoCrudRepository<Category>
+  extends MongoCrudRepositoryOld<Category>
   implements ICategoryPort
 {
   public constructor(
@@ -55,7 +55,7 @@ export class CategoryRepository
     };
   }
 
-  protected getCollection(): MongoCollection<Category> {
+  protected getCollection(): MongoCollectionOld<Category> {
     return CategoryCollection;
   }
 

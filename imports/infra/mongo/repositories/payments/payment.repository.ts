@@ -11,8 +11,8 @@ import {
   PaymentCollection,
   PaymentSchema,
 } from '@infra/mongo/collections/payment.collection';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
-import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
+import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import {
   FindByReceiptNumberRequest,
   FindPaginatedPaymentsAggregationResult,
@@ -24,7 +24,7 @@ import { MongoUtils } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class PaymentRepository
-  extends MongoCrudRepository<Payment>
+  extends MongoCrudRepositoryOld<Payment>
   implements IPaymentPort
 {
   public constructor(
@@ -121,7 +121,7 @@ export class PaymentRepository
     };
   }
 
-  protected getCollection(): MongoCollection<Payment> {
+  protected getCollection(): MongoCollectionOld<Payment> {
     return PaymentCollection;
   }
 

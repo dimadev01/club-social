@@ -15,7 +15,7 @@ export class GetMemberUseCase
   implements IUseCase<GetMemberRequestDto, GetMemberResponseDto | null>
 {
   public constructor(
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
   ) {
     super();

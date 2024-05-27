@@ -22,7 +22,7 @@ export class GetMemberDuesGridUseCase
   public constructor(
     @inject(DIToken.DueRepository)
     private readonly _duePort: IDuePort,
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
   ) {
     super();

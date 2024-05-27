@@ -9,12 +9,12 @@ import {
 } from '@domain/movements/movement.collection';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { DIToken } from '@infra/di/di-tokens';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
-import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
+import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 
 @injectable()
 export class MovementRepository
-  extends MongoCrudRepository<Movement>
+  extends MongoCrudRepositoryOld<Movement>
   implements IMovementPort
 {
   public constructor(
@@ -41,7 +41,7 @@ export class MovementRepository
     );
   }
 
-  protected getCollection(): MongoCollection<Movement> {
+  protected getCollection(): MongoCollectionOld<Movement> {
     return MovementCollection;
   }
 

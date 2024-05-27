@@ -1,8 +1,8 @@
 import type { ClientSession, OptionalUnlessRequiredId } from 'mongodb';
 
-import { Entity } from '@domain/common/entity';
+import { EntityOld } from '@domain/common/entity.old';
 
-export interface ICreatablePort<T extends Entity> {
+export interface ICreatablePort<T extends EntityOld> {
   create(entity: Mongo.OptionalId<T>): Promise<string>;
   createWithSession(
     entity: OptionalUnlessRequiredId<T>,

@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
 import { Result, ok } from 'neverthrow';
 
-import { Entity } from '@domain/common/entity';
+import { EntityOld } from '@domain/common/entity.old';
 
 export interface CreatePaymentDue {
   amount: number;
@@ -9,7 +9,7 @@ export interface CreatePaymentDue {
   paymentId: string;
 }
 
-export class PaymentDue extends Entity {
+export class PaymentDue extends EntityOld {
   @IsPositive()
   @IsNumber()
   public amount: number;

@@ -29,7 +29,7 @@ export class CreateMovementUseCase
     private readonly _logger: ILogger,
     @inject(DIToken.MovementRepository)
     private readonly _movementPort: IMovementPort,
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
     @inject(DIToken.EmailService)
     private readonly _emailService: IEmailService,

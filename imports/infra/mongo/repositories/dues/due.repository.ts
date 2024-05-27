@@ -9,8 +9,7 @@ import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { DIToken } from '@infra/di/di-tokens';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
-import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
+import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
 import {
   FindByIdsRequest,
   FindPaginatedDuesAggregationResult,
@@ -19,12 +18,13 @@ import {
   FindPaidRequest,
   FindPendingByMemberRequest,
 } from '@infra/mongo/repositories/dues/due-repository.types';
+import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import { DateUtils } from '@shared/utils/date.utils';
 import { MongoUtils } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class DueRepository
-  extends MongoCrudRepository<Due>
+  extends MongoCrudRepositoryOld<Due>
   implements IDuePort
 {
   public constructor(
@@ -181,7 +181,7 @@ export class DueRepository
     return this.getCollection().find(query, options).fetchAsync();
   }
 
-  protected getCollection(): MongoCollection<Due> {
+  protected getCollection(): MongoCollectionOld<Due> {
     return DueCollection;
   }
 

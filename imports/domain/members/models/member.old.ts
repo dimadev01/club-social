@@ -11,8 +11,7 @@ import {
 import { Meteor } from 'meteor/meteor';
 import { Result, err, ok } from 'neverthrow';
 
-import { Entity } from '@domain/common/entity';
-import { MemberAddress } from '@domain/members/entities/member-address.entity';
+import { EntityOld } from '@domain/common/entity.old';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -22,9 +21,10 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { CreateMember } from '@domain/members/member.types';
+import { MemberAddress } from '@domain/members/models/member-address.entity';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
-export class Member extends Entity {
+export class MemberOld extends EntityOld {
   @ValidateNested()
   @Type(() => MemberAddress)
   public address: MemberAddress;
@@ -94,8 +94,8 @@ export class Member extends Entity {
     return `${this.lastName} ${this.firstName}`;
   }
 
-  public static create(props: CreateMember): Result<Member, Error> {
-    const member = new Member();
+  public static create(props: CreateMember): Result<MemberOld, Error> {
+    const member = new MemberOld();
 
     member.userId = props.userId;
 

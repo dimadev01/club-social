@@ -4,7 +4,7 @@ import { NavLink, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
 import { NotFound } from '@ui/components/NotFound';
-import { useMember } from '@ui/hooks/members/useMember';
+import { useMemberNew } from '@ui/hooks/members/useMemberNew';
 import { MemberDetailInfo } from '@ui/pages/members/MemberDetailPage/MemberDetailInfo';
 
 export const MembersDetailPage = () => {
@@ -14,7 +14,7 @@ export const MembersDetailPage = () => {
 
   const location = useLocation();
 
-  const { data: member, fetchStatus: memberFetchStatus } = useMember(id);
+  const { data: member, fetchStatus: memberFetchStatus } = useMemberNew(id);
 
   const [tabKey, setTabKey] = useState<string>();
 

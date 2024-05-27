@@ -21,7 +21,7 @@ export class UpdateMemberUseCase
     private readonly _updateUser: UpdateUserUseCase,
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
   ) {
     super();

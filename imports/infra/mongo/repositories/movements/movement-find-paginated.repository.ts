@@ -14,8 +14,8 @@ import {
 } from '@domain/movements/movement.collection';
 import { IMovementPaginatedPort } from '@domain/movements/movement.port';
 import { DIToken } from '@infra/di/di-tokens';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
-import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
+import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import {
   FindPaginatedMovementsAggregationResult,
   FindPaginatedMovementsRequest,
@@ -26,7 +26,7 @@ import { MongoUtils } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class MovementFindPaginatedRepository
-  extends MongoCrudRepository<Movement>
+  extends MongoCrudRepositoryOld<Movement>
   implements IMovementPaginatedPort
 {
   public constructor(
@@ -129,7 +129,7 @@ export class MovementFindPaginatedRepository
     };
   }
 
-  protected getCollection(): MongoCollection<Movement> {
+  protected getCollection(): MongoCollectionOld<Movement> {
     return MovementCollection;
   }
 

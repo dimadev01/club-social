@@ -9,28 +9,28 @@ import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
 import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
-import { Member } from '@domain/members/entities/member.entity';
 import {
   MemberCategoryEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { IMemberPort } from '@domain/members/member.port';
+import { MemberOld } from '@domain/members/models/member.old';
 import { DIToken } from '@infra/di/di-tokens';
 import {
-  MemberCollection,
-  MemberSchema,
-} from '@infra/mongo/collections/member.collection';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
-import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
+  MemberCollectionOld,
+  MemberSchemaOld,
+} from '@infra/mongo/collections/member.collection.old';
+import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
 import {
   FindPaginatedMember,
   FindPaginatedMembersRequest,
 } from '@infra/mongo/repositories/members/member-repository.types';
+import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import { MongoUtils } from '@shared/utils/mongo.utils';
 
 @injectable()
-export class MemberRepository
-  extends MongoCrudRepository<Member>
+export class MemberRepositoryOld
+  extends MongoCrudRepositoryOld<MemberOld>
   implements IMemberPort
 {
   public constructor(
@@ -40,14 +40,14 @@ export class MemberRepository
     super(_logger);
   }
 
-  public async findAll(): Promise<Member[]> {
-    const query: Mongo.Selector<Member> = {
+  public async findAll(): Promise<MemberOld[]> {
+    const query: Mongo.Selector<MemberOld> = {
       isDeleted: false,
     };
 
     return this.getCollection()
       .rawCollection()
-      .aggregate<Member>([
+      .aggregate<MemberOld>([
         { $match: query },
         ...this._userLookup(),
         { $sort: { 'user.profile.lastName': 1 } },
@@ -55,7 +55,7 @@ export class MemberRepository
       .toArray();
   }
 
-  public async findOneById(id: string): Promise<Member | undefined> {
+  public async findOneById(id: string): Promise<MemberOld | undefined> {
     const member = await super.findOneById(id);
 
     if (!member) {
@@ -73,7 +73,7 @@ export class MemberRepository
     return member;
   }
 
-  public async findOneByIdOrThrow(id: string): Promise<Member> {
+  public async findOneByIdOrThrow(id: string): Promise<MemberOld> {
     const member = await this.findOneById(id);
 
     if (!member) {
@@ -83,7 +83,7 @@ export class MemberRepository
     return member;
   }
 
-  public async findOneByIdOrThrowWithSession(id: string): Promise<Member> {
+  public async findOneByIdOrThrowWithSession(id: string): Promise<MemberOld> {
     const member = await this.findOneById(id);
 
     if (!member) {
@@ -93,17 +93,17 @@ export class MemberRepository
     return member;
   }
 
-  public async findOneByUserId(userId: string): Promise<Member | null> {
-    const query: Mongo.Selector<Member> = { isDeleted: false, userId };
+  public async findOneByUserId(userId: string): Promise<MemberOld | null> {
+    const query: Mongo.Selector<MemberOld> = { isDeleted: false, userId };
 
     return (await this.getCollection().findOneAsync(query)) ?? null;
   }
 
-  public async findOneByUserIdOrThrow(userId: string): Promise<Member> {
+  public async findOneByUserIdOrThrow(userId: string): Promise<MemberOld> {
     const member = await this.findOneByUserId(userId);
 
     if (!member) {
-      throw new EntityNotFoundError(Member);
+      throw new EntityNotFoundError(MemberOld);
     }
 
     return member;
@@ -112,7 +112,7 @@ export class MemberRepository
   public async findPaginated(
     request: FindPaginatedMembersRequest,
   ): Promise<FindPaginatedResponse<FindPaginatedMember>> {
-    const query: Mongo.Selector<Member> = {
+    const query: Mongo.Selector<MemberOld> = {
       isDeleted: false,
     };
 
@@ -241,18 +241,18 @@ export class MemberRepository
     };
   }
 
-  public async getLoggedInOrThrow(): Promise<Member> {
+  public async getLoggedInOrThrow(): Promise<MemberOld> {
     const currentUser = await this.getCurrentUserOrThrow();
 
     return this.findOneByUserIdOrThrow(currentUser._id);
   }
 
-  protected getCollection(): MongoCollection<Member> {
-    return MemberCollection;
+  protected getCollection(): MongoCollectionOld<MemberOld> {
+    return MemberCollectionOld;
   }
 
   protected getSchema(): SimpleSchema {
-    return MemberSchema;
+    return MemberSchemaOld;
   }
 
   private _getTotalBalanceByCategory(category: DueCategoryEnum) {

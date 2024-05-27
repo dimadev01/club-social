@@ -9,12 +9,12 @@ import {
   PaymentDueCollection,
   PaymentDueSchema,
 } from '@infra/mongo/collections/payment-due.collection';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
-import { MongoCrudRepository } from '@infra/mongo/common/mongo-crud.repository';
+import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 
 @injectable()
 export class PaymentDueRepository
-  extends MongoCrudRepository<PaymentDue>
+  extends MongoCrudRepositoryOld<PaymentDue>
   implements IPaymentDuePort
 {
   public constructor(
@@ -36,7 +36,7 @@ export class PaymentDueRepository
       .fetchAsync();
   }
 
-  protected getCollection(): MongoCollection<PaymentDue> {
+  protected getCollection(): MongoCollectionOld<PaymentDue> {
     return PaymentDueCollection;
   }
 

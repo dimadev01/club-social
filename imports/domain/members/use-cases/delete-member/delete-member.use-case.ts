@@ -16,7 +16,7 @@ export class DeleteMemberUseCase
   public constructor(
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
   ) {
     super();

@@ -15,6 +15,7 @@ import { ProfessorMethod } from '@domain/professors/professor.methods';
 import { ServiceMethod } from '@domain/services/service.methods';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethod } from '@domain/users/user.methods';
+import { MemberController } from '@infra/controllers/member.controller';
 import { DIToken } from '@infra/di/di-tokens';
 import { CategoryMethod } from '@infra/meteor/category.methods';
 import { EmployeeMethod } from '@infra/meteor/employee.methods';
@@ -40,6 +41,7 @@ export class ServerStartup {
     private readonly _employeeMethod: EmployeeMethod,
     private readonly _serviceMethod: ServiceMethod,
     private readonly _paymentMethod: PaymentMethod,
+    private readonly _memberController: MemberController,
   ) {}
 
   public async start() {
@@ -151,6 +153,8 @@ export class ServerStartup {
     this._dueMethod.register();
 
     this._paymentMethod.register();
+
+    this._memberController.register();
   }
 }
 

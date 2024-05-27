@@ -3,8 +3,8 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { Member } from '@domain/members/entities/member.entity';
 import { IMemberPort } from '@domain/members/member.port';
+import { MemberOld } from '@domain/members/models/member.old';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DIToken } from '@infra/di/di-tokens';
@@ -16,7 +16,7 @@ export class GetMembersUseCase
   implements IUseCase<null, GetMembersDto[]>
 {
   public constructor(
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
   ) {
     super();
@@ -29,7 +29,7 @@ export class GetMembersUseCase
 
     return ok<GetMembersDto[]>(
       data
-        .map((member) => plainToInstance(Member, member))
+        .map((member) => plainToInstance(MemberOld, member))
         .map((member) => ({
           _id: member._id,
           category: member.category,

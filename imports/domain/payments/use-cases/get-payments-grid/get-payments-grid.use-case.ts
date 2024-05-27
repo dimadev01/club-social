@@ -24,7 +24,7 @@ export class GetPaymentsGridUseCase
     private readonly _paymentPort: IPaymentPort,
     @inject(DIToken.PaymentDueRepository)
     private readonly _paymentDuePort: IPaymentDuePort,
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
   ) {
     super();

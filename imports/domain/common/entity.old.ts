@@ -1,8 +1,8 @@
 import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 
-import { UniqueID } from '@domain/common/unique-id';
+import { UniqueIDOld } from './unique-id.old';
 
-export class Entity extends UniqueID {
+export class EntityOld extends UniqueIDOld {
   @IsDate()
   public createdAt: Date;
 
@@ -31,17 +31,17 @@ export class Entity extends UniqueID {
 
     this.createdAt = new Date();
 
-    this.createdBy = 'System';
-
     this.updatedAt = new Date();
-
-    this.createdBy = 'System';
 
     this.isDeleted = false;
 
     this.deletedAt = null;
 
     this.deletedBy = null;
+
+    this.createdBy = 'System';
+
+    this.updatedBy = 'System';
   }
 
   public create(createdBy: string): void {

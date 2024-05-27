@@ -1,9 +1,12 @@
 import SimpleSchema from 'simpl-schema';
 
 import { Category } from '@domain/categories/entities/category.entity';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
+import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
 
-export const CategoryCollection = new MongoCollection('categories', Category);
+export const CategoryCollection = new MongoCollectionOld(
+  'categories',
+  Category,
+);
 
 export const CategoriesSchema = new SimpleSchema({
   _id: String,

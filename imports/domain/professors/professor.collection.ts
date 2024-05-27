@@ -1,9 +1,9 @@
 import SimpleSchema from 'simpl-schema';
 
 import { Professor } from '@domain/professors/professor.entity';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
+import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
 
-export const ProfessorsCollection = new MongoCollection(
+export const ProfessorsCollection = new MongoCollectionOld(
   'professors',
   Professor,
 );

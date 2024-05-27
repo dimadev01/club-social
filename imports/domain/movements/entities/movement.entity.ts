@@ -14,9 +14,9 @@ import {
   CategoryEnum,
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
-import { Entity } from '@domain/common/entity';
+import { EntityOld } from '@domain/common/entity.old';
 import { Employee } from '@domain/employees/employee.entity';
-import { Member } from '@domain/members/entities/member.entity';
+import { MemberOld } from '@domain/members/models/member.old';
 import { CreateMovement } from '@domain/movements/movement.types';
 import { Professor } from '@domain/professors/professor.entity';
 import { Service } from '@domain/services/service.entity';
@@ -24,7 +24,7 @@ import { IsNullable } from '@shared/class-validator/is-nullable';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { MoneyUtils } from '@shared/utils/money.utils';
 
-export class Movement extends Entity {
+export class Movement extends EntityOld {
   @IsInt()
   public amount: number;
 
@@ -43,8 +43,8 @@ export class Movement extends Entity {
   public employeeId: string | null;
 
   @IsOptional()
-  @Type(() => Member)
-  public member: Member | null;
+  @Type(() => MemberOld)
+  public member: MemberOld | null;
 
   @IsString()
   @IsOptional()

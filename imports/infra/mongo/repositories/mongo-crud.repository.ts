@@ -14,14 +14,14 @@ import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
 import { ICrudPort } from '@application/ports/crud.port';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
-import { Entity } from '@domain/common/entity';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.base';
+import { EntityOld } from '@domain/common/entity.old';
+import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
-export abstract class MongoCrudRepository<T extends Entity>
+export abstract class MongoCrudRepositoryOld<T extends EntityOld>
   implements ICrudPort<T>
 {
-  private readonly _collection: MongoCollection<T>;
+  private readonly _collection: MongoCollectionOld<T>;
 
   public constructor(protected readonly _logger: ILogger) {
     this._collection = this.getCollection();
@@ -270,7 +270,7 @@ export abstract class MongoCrudRepository<T extends Entity>
     return { limit: pageSize, skip: (page - 1) * pageSize, sort: {} };
   }
 
-  protected abstract getCollection(): MongoCollection<T>;
+  protected abstract getCollection(): MongoCollectionOld<T>;
   protected abstract getSchema(): SimpleSchema;
 
   private async _getLoggedInUserName(): Promise<string> {

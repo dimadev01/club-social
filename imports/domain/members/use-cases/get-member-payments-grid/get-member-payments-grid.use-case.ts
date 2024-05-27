@@ -22,7 +22,7 @@ export class GetMemberPaymentsGridUseCase
   public constructor(
     @inject(DIToken.PaymentRepository)
     private readonly _paymentPort: IPaymentPort,
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
   ) {
     super();

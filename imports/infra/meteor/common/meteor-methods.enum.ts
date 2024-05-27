@@ -16,6 +16,7 @@ export enum MethodsEnum {
   EmployeesGetAll = 'employees/getAll',
 
   MembersCreate = 'members/create',
+  MembersCreateNew = 'members/createNew',
   MembersDelete = 'members/delete',
   MembersGet = 'members/get',
   MembersGetAll = 'members/getAll',
@@ -23,6 +24,7 @@ export enum MethodsEnum {
   MembersGetForCsv = 'members/getForCsv',
   MembersGetGrid = 'members/getGrid',
   MembersGetMovementsGrid = 'movements/getMovementsGrid',
+  MembersGetNew = 'members/getNew',
   MembersGetPaymentsGrid = 'members/getPaymentsGrid',
   MembersUpdate = 'members/update',
 

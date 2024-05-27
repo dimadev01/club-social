@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 import { Random } from 'meteor/random';
 
-export class UniqueID {
+export class UniqueIDOld {
   @IsNotEmpty()
   @IsString()
   public _id: string;

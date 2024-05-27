@@ -30,22 +30,24 @@ export class LoggerOstrio implements ILogger {
     }
   }
 
-  public info(message: string, ...meta: unknown[]): void {
-    this._logger.info(message, ...meta);
+  public debug(message: string, ...meta: unknown[]): void {
+    this._logger.debug(message, ...meta);
   }
 
-  public error(error: string | Error | unknown, ...meta: unknown[]): void {
+  public error(error: string | Error | unknown, meta: object): void {
     if (error instanceof Error) {
+      console.log(meta);
+
       this._logger.error(error.message, { stack: error.stack, ...meta });
     } else if (typeof error === 'string') {
-      this._logger.error(error, ...meta);
+      this._logger.error(error, { ...meta });
     } else {
-      this._logger.error('Unknown error', ...meta);
+      this._logger.error('Unknown error', { ...meta });
     }
   }
 
-  public debug(message: string, ...meta: unknown[]): void {
-    this._logger.debug(message, ...meta);
+  public info(message: string, ...meta: unknown[]): void {
+    this._logger.info(message, ...meta);
   }
 
   public warn(message: string, ...meta: unknown[]): void {

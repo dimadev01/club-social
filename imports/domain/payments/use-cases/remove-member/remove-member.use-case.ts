@@ -6,7 +6,7 @@ import { IUseCase } from '@application/use-cases/use-case.interface';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { DeleteMemberRequestDto } from '@domain/members/use-cases/delete-member/delete-member-request.dto';
 import { DIToken } from '@infra/di/di-tokens';
-import { MemberCollection } from '@infra/mongo/collections/member.collection';
+import { MemberCollectionOld } from '@infra/mongo/collections/member.collection.old';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
@@ -26,13 +26,13 @@ export class RemoveMemberUseCase
   ): Promise<Result<null, Error>> {
     await this.validateDto(DeleteMemberRequestDto, request);
 
-    const member = await MemberCollection.findOneAsync(request.id);
+    const member = await MemberCollectionOld.findOneAsync(request.id);
 
     if (!member) {
       return err(new MemberNotFoundError());
     }
 
-    await MemberCollection.removeAsync(request.id);
+    await MemberCollectionOld.removeAsync(request.id);
 
     this._logger.info('Member removed', { member });
 

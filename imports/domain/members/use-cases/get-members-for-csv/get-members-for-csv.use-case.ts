@@ -19,7 +19,7 @@ export class GetMembersForCsvUseCase
     IUseCase<GetMembersForCsvRequestDto, PaginatedResponse<MemberForCsvDto>>
 {
   public constructor(
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
   ) {
     super();

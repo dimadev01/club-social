@@ -4,8 +4,8 @@ import { inject, injectable } from 'tsyringe';
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@application/use-cases/use-case.interface';
-import { Member } from '@domain/members/entities/member.entity';
 import { IMemberPort } from '@domain/members/member.port';
+import { MemberOld } from '@domain/members/models/member.old';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
 import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
@@ -23,7 +23,7 @@ export class CreateMemberUseCase
     private readonly _createUserUseCase: CreateUserUseCase,
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
-    @inject(DIToken.MemberRepository)
+    @inject(DIToken.MemberRepositoryOld)
     private readonly _memberPort: IMemberPort,
   ) {
     super();
@@ -51,7 +51,7 @@ export class CreateMemberUseCase
           throw createUserResult.error;
         }
 
-        const memberResult = Member.create({
+        const memberResult = MemberOld.create({
           address: {
             cityGovId: request.addressCityGovId,
             cityName: request.addressCityName,
