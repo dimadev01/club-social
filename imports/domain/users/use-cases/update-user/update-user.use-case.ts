@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { EditAdminError } from '@domain/users/errors/edit-admin.error';
 import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
@@ -16,7 +16,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class UpdateUserUseCase
   extends UseCase<UpdateUserRequestDto>
-  implements IUseCase<UpdateUserRequestDto, null>
+  implements IUseCaseOld<UpdateUserRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)

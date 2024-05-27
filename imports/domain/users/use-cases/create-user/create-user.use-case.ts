@@ -3,7 +3,7 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { RolePermissionAssignment } from '@domain/roles/roles';
 import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
@@ -15,7 +15,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class CreateUserUseCase
   extends UseCase<CreateUserRequestDto>
-  implements IUseCase<CreateUserRequestDto, string>
+  implements IUseCaseOld<CreateUserRequestDto, string>
 {
   public constructor(
     @inject(DIToken.Logger)

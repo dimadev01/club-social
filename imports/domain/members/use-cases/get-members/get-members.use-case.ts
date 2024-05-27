@@ -2,7 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { MemberOld } from '@domain/members/models/member.old';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
@@ -13,7 +13,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetMembersUseCase
   extends UseCase
-  implements IUseCase<null, GetMembersDto[]>
+  implements IUseCaseOld<null, GetMembersDto[]>
 {
   public constructor(
     @inject(DIToken.MemberRepositoryOld)

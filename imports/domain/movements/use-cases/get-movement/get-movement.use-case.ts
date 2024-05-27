@@ -1,7 +1,7 @@
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/get-movement-request.dto';
 import { GetMovementResponseDto } from '@domain/movements/use-cases/get-movement/get-movement-response.dto';
@@ -11,7 +11,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetMovementUseCase
   extends UseCase<GetMovementRequestDto>
-  implements IUseCase<GetMovementRequestDto, GetMovementResponseDto | null>
+  implements IUseCaseOld<GetMovementRequestDto, GetMovementResponseDto | null>
 {
   public constructor(
     @inject(DIToken.MovementRepository)

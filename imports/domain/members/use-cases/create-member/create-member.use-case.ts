@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { MemberOld } from '@domain/members/models/member.old';
 import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
@@ -17,7 +17,7 @@ import { MongoUtils } from '@shared/utils/mongo.utils';
 @injectable()
 export class CreateMemberUseCase
   extends UseCase<CreateMemberRequestDto>
-  implements IUseCase<CreateMemberRequestDto, string>
+  implements IUseCaseOld<CreateMemberRequestDto, string>
 {
   public constructor(
     private readonly _createUserUseCase: CreateUserUseCase,

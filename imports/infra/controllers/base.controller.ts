@@ -4,6 +4,7 @@ import { ValidationError } from 'class-validator';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
+import { MeteorBadRequestError } from '@infra/meteor/errors/meteor-bad-request.error';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 export interface ExecuteRequest<TRequest, TResponse> {
@@ -28,10 +29,7 @@ export abstract class BaseController {
       const result = await useCase.execute(request);
 
       if (result.isErr()) {
-        throw new Meteor.Error(
-          MeteorErrorCodeEnum.BadRequest,
-          result.error.message,
-        );
+        throw new MeteorBadRequestError(result.error.message);
       }
 
       return result.value;
@@ -44,13 +42,13 @@ export abstract class BaseController {
 
       if (error instanceof Error) {
         throw new Meteor.Error(
-          MeteorErrorCodeEnum.InternalServerError,
+          MeteorErrorCodeEnum.INTERNAL_SERVER_ERROR,
           error.message,
         );
       }
 
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.InternalServerError,
+        MeteorErrorCodeEnum.INTERNAL_SERVER_ERROR,
         'Unexpected and unhandled server error',
       );
     }
@@ -61,10 +59,7 @@ export abstract class BaseController {
     value: T,
   ): Promise<void> {
     if (!value) {
-      throw new Meteor.Error(
-        MeteorErrorCodeEnum.BadRequest,
-        'Request is empty',
-      );
+      throw new MeteorBadRequestError('Request is empty');
     }
 
     try {
@@ -72,8 +67,7 @@ export abstract class BaseController {
     } catch (err) {
       const errors = err as ValidationError[];
 
-      throw new Meteor.Error(
-        MeteorErrorCodeEnum.BadRequest,
+      throw new MeteorBadRequestError(
         ClassValidationUtils.getErrorMessage(errors),
       );
     }

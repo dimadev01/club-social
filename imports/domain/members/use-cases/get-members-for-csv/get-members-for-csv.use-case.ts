@@ -2,7 +2,7 @@
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { GetMembersForCsvRequestDto } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv-request.dto';
 import { MemberForCsvDto } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv.dto';
@@ -16,7 +16,7 @@ import { MoneyUtils } from '@shared/utils/money.utils';
 export class GetMembersForCsvUseCase
   extends UseCase<GetMembersForCsvRequestDto>
   implements
-    IUseCase<GetMembersForCsvRequestDto, PaginatedResponse<MemberForCsvDto>>
+    IUseCaseOld<GetMembersForCsvRequestDto, PaginatedResponse<MemberForCsvDto>>
 {
   public constructor(
     @inject(DIToken.MemberRepositoryOld)

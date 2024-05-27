@@ -3,14 +3,14 @@ import { ValidationError } from 'class-validator';
 import { container } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@infra/di/di-tokens';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 export abstract class MeteorMethod {
   protected async execute<TRequest extends object, TResponse>(
-    useCase: IUseCase<TRequest, TResponse>,
+    useCase: IUseCaseOld<TRequest, TResponse>,
     request?: TRequest,
     classType?: ClassType<TRequest>,
   ): Promise<TResponse> {
@@ -23,7 +23,7 @@ export abstract class MeteorMethod {
 
       if (result.isErr()) {
         throw new Meteor.Error(
-          MeteorErrorCodeEnum.BadRequest,
+          MeteorErrorCodeEnum.BAD_REQUEST,
           result.error.message,
         );
       }
@@ -38,13 +38,13 @@ export abstract class MeteorMethod {
 
       if (error instanceof Error) {
         throw new Meteor.Error(
-          MeteorErrorCodeEnum.InternalServerError,
+          MeteorErrorCodeEnum.INTERNAL_SERVER_ERROR,
           error.message,
         );
       }
 
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.InternalServerError,
+        MeteorErrorCodeEnum.INTERNAL_SERVER_ERROR,
         'Unexpected and unhandled server error',
       );
     }
@@ -56,7 +56,7 @@ export abstract class MeteorMethod {
   ): Promise<void> {
     if (!value) {
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.BadRequest,
+        MeteorErrorCodeEnum.BAD_REQUEST,
         'Request is empty',
       );
     }
@@ -67,7 +67,7 @@ export abstract class MeteorMethod {
       const errors = err as ValidationError[];
 
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.BadRequest,
+        MeteorErrorCodeEnum.BAD_REQUEST,
         ClassValidationUtils.getErrorMessage(errors),
       );
     }

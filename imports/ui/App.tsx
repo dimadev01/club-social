@@ -16,42 +16,49 @@ import { UserThemeEnum } from '@domain/users/user.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { Routes } from '@ui/Routes/Routes';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    mutations: {
-      onError: (error: unknown) => {
-        // eslint-disable-next-line no-console
-        console.log('onErrorMutation', error);
-
-        if (error instanceof Meteor.Error && error.reason) {
-          UiNotificationUtils.errorWithNoContext(error.reason);
-        } else if (error instanceof Error) {
-          UiNotificationUtils.errorWithNoContext(error.message);
-        } else {
-          UiNotificationUtils.errorWithNoContext('An unknown error occurred.');
-        }
-      },
-    },
-    queries: {
-      onError: (error: unknown) => {
-        // eslint-disable-next-line no-console
-        console.log('onErrorQuery', error);
-
-        if (error instanceof Meteor.Error && error.reason) {
-          UiNotificationUtils.errorWithNoContext(error.reason);
-        } else if (error instanceof Error) {
-          UiNotificationUtils.errorWithNoContext(error.message);
-        } else {
-          UiNotificationUtils.errorWithNoContext('An unknown error occurred.');
-        }
-      },
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
-
 export const App = () => {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          mutations: {
+            onError: (error: unknown) => {
+              // eslint-disable-next-line no-console
+              console.log('onErrorMutation', error);
+
+              if (error instanceof Meteor.Error && error.reason) {
+                UiNotificationUtils.errorWithNoContext(error.reason);
+              } else if (error instanceof Error) {
+                UiNotificationUtils.errorWithNoContext(error.message);
+              } else {
+                UiNotificationUtils.errorWithNoContext(
+                  'An unknown error occurred.',
+                );
+              }
+            },
+          },
+          queries: {
+            onError: (error: unknown) => {
+              // eslint-disable-next-line no-console
+              console.log('onErrorQuery', error);
+
+              if (error instanceof Meteor.Error && error.reason) {
+                UiNotificationUtils.errorWithNoContext(error.reason);
+              } else if (error instanceof Error) {
+                UiNotificationUtils.errorWithNoContext(error.message);
+              } else {
+                UiNotificationUtils.errorWithNoContext(
+                  'An unknown error occurred.',
+                );
+              }
+            },
+            refetchOnWindowFocus: false,
+            retry: 1,
+          },
+        },
+      }),
+  );
+
   const systemPrefersDark = useMediaQuery({
     query: '(prefers-color-scheme: dark)',
   });

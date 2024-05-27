@@ -1,7 +1,7 @@
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
@@ -14,7 +14,7 @@ import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 @injectable()
 export class GetPendingDuesByMemberUseCase
   extends UseCase<GetPendingDuesRequestDto>
-  implements IUseCase<GetPendingDuesRequestDto, GetPendingDueResponseDto[]>
+  implements IUseCaseOld<GetPendingDuesRequestDto, GetPendingDueResponseDto[]>
 {
   public constructor(
     @inject(DIToken.DueRepository)

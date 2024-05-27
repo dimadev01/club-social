@@ -2,7 +2,7 @@ import { Result, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
 import { Payment } from '@domain/payments/entities/payment.entity';
@@ -17,7 +17,7 @@ import { MoneyUtils } from '@shared/utils/money.utils';
 @injectable()
 export class GetPaymentsGridUseCase
   extends UseCase<GetPaymentsGridRequestDto>
-  implements IUseCase<GetPaymentsGridRequestDto, GetPaymentsGridResponseDto>
+  implements IUseCaseOld<GetPaymentsGridRequestDto, GetPaymentsGridResponseDto>
 {
   public constructor(
     @inject(DIToken.PaymentRepository)

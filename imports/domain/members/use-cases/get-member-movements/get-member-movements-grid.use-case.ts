@@ -4,7 +4,7 @@ import { Mongo } from 'meteor/mongo';
 import { Result, ok } from 'neverthrow';
 import { injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import {
   CategoryEnum,
   CategoryTypeEnum,
@@ -21,7 +21,7 @@ import { DateUtils } from '@shared/utils/date.utils';
 export class GetMemberMovementsUseCase
   extends UseCase<GetMemberMovementsGridRequestDto>
   implements
-    IUseCase<
+    IUseCaseOld<
       GetMemberMovementsGridRequestDto,
       GetMemberMovementsGridResponseDto
     >

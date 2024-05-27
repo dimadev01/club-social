@@ -1,10 +1,10 @@
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCase } from '@domain/common/use-case.interface';
+import { IMemberRepository } from '@domain/members/member-repository.interface';
 import { MemberModel } from '@domain/members/models/member.model';
 import { DIToken } from '@infra/di/di-tokens';
-import { IMemberRepository } from '@infra/mongo/repositories/members/member-repository.interface';
 
 @injectable()
 export class CreateMemberNewUseCase implements IUseCase<null, MemberModel> {

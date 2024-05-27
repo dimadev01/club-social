@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IEmailService } from '@application/notifications/email.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import {
   CategoryLabel,
   MemberCategories,
@@ -22,7 +22,7 @@ import { MongoUtils } from '@shared/utils/mongo.utils';
 @injectable()
 export class CreateMovementUseCase
   extends UseCase<CreateMovementRequestDto>
-  implements IUseCase<CreateMovementRequestDto, null>
+  implements IUseCaseOld<CreateMovementRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)

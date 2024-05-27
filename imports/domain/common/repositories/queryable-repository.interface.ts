@@ -1,4 +1,4 @@
-import { Model } from '@domain/common/model';
+import { Model } from '@domain/common/models/model';
 
 export interface IQueryableRepository<TModel extends Model> {
   findByIds(ids: string[]): Promise<TModel[]>;

@@ -2,7 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { Result, ok } from 'neverthrow';
 import { injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { GetUsersRequestDto } from '@domain/users/use-cases/get-users-grid/get-users-grid-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -10,7 +10,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetUsersUseCase
   extends UseCase<GetUsersRequestDto>
-  implements IUseCase<GetUsersRequestDto, PaginatedResponse<Meteor.User>>
+  implements IUseCaseOld<GetUsersRequestDto, PaginatedResponse<Meteor.User>>
 {
   public async execute(
     request: GetUsersRequestDto,

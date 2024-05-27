@@ -2,7 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { DeleteMemberRequestDto } from '@domain/members/use-cases/delete-member/delete-member-request.dto';
 import { DIToken } from '@infra/di/di-tokens';
@@ -12,7 +12,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class RemoveMemberUseCase
   extends UseCase<DeleteMemberRequestDto>
-  implements IUseCase<DeleteMemberRequestDto, null>
+  implements IUseCaseOld<DeleteMemberRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)

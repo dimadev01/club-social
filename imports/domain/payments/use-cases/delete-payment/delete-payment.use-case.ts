@@ -2,7 +2,7 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { DeletePaymentRequestDto } from '@domain/payments/use-cases/delete-payment/delete-payment-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
@@ -12,7 +12,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class DeletePaymentUseCase
   extends UseCase<DeletePaymentRequestDto>
-  implements IUseCase<DeletePaymentRequestDto, null>
+  implements IUseCaseOld<DeletePaymentRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)

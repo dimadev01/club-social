@@ -1,7 +1,7 @@
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { GetMembersGridRequestDto } from '@domain/members/use-cases/get-members-grid/get-members-grid-request.dto';
 import { MemberGridDto } from '@domain/members/use-cases/get-members-grid/get-members-grid.dto';
@@ -14,7 +14,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 export class GetMembersGridUseCase
   extends UseCase<GetMembersGridRequestDto>
   implements
-    IUseCase<GetMembersGridRequestDto, PaginatedResponse<MemberGridDto>>
+    IUseCaseOld<GetMembersGridRequestDto, PaginatedResponse<MemberGridDto>>
 {
   public constructor(
     @inject(DIToken.MemberRepositoryOld)

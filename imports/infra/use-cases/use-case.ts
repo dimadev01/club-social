@@ -20,7 +20,7 @@ export abstract class UseCase<T extends object = any> {
   ): Promise<void> {
     if (!value) {
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.BadRequest,
+        MeteorErrorCodeEnum.BAD_REQUEST,
         'Request is empty',
       );
     }
@@ -31,7 +31,7 @@ export abstract class UseCase<T extends object = any> {
       const errors = err as ValidationError[];
 
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.BadRequest,
+        MeteorErrorCodeEnum.BAD_REQUEST,
         ClassValidationUtils.getErrorMessage(errors),
       );
     }
@@ -51,14 +51,14 @@ export abstract class UseCase<T extends object = any> {
 
     if (!user) {
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.Unauthorized,
+        MeteorErrorCodeEnum.UNAUTHORIZED,
         'You are not logged in',
       );
     }
 
     if (!Roles.userIsInRole(user, permission, scope)) {
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.Forbidden,
+        MeteorErrorCodeEnum.FORBIDDEN,
         'You are not allowed to perform this action',
       );
     }

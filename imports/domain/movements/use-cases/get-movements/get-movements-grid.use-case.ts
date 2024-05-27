@@ -2,7 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import {
   CategoryEnum,
   MemberCategories,
@@ -19,7 +19,8 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetMovementsGridUseCase
   extends UseCase<GetMovementsGridRequestDto>
-  implements IUseCase<GetMovementsGridRequestDto, GetMovementsGridResponseDto>
+  implements
+    IUseCaseOld<GetMovementsGridRequestDto, GetMovementsGridResponseDto>
 {
   public constructor(
     @inject(DIToken.MovementFindPaginatedRepository)

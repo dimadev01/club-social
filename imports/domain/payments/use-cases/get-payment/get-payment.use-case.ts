@@ -1,7 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { PaymentNotFoundError } from '@domain/payments/errors/payment-not-found.error';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { GetPaymentRequestDto } from '@domain/payments/use-cases/get-payment/get-payment-request.dto';
@@ -12,7 +12,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetPaymentUseCase
   extends UseCase<GetPaymentRequestDto>
-  implements IUseCase<GetPaymentRequestDto, GetPaymentResponseDto | null>
+  implements IUseCaseOld<GetPaymentRequestDto, GetPaymentResponseDto | null>
 {
   public constructor(
     @inject(DIToken.PaymentRepository)

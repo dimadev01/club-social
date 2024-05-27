@@ -1,15 +1,15 @@
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 
 export class PaymentDueGridDto {
-  dueId: string;
+  public dueAmount: string;
 
-  paymentAmount: string;
+  public dueCategory: DueCategoryEnum;
 
-  dueAmount: string;
+  public dueDate: string;
 
-  dueDate: string;
+  public dueId: string;
 
-  dueCategory: DueCategoryEnum;
+  public membershipMonth: string;
 
-  membershipMonth: string;
+  public paymentAmount: string;
 }

@@ -6,7 +6,7 @@ import { CreatePaymentResponseDto } from './create-payment-response.dto';
 import { ExistingPaymentError } from './errors/existing-payment.error';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { IDuePort } from '@domain/dues/due.port';
 import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
@@ -23,7 +23,7 @@ import { MongoUtils } from '@shared/utils/mongo.utils';
 @injectable()
 export class CreatePaymentUseCase
   extends UseCase<CreatePaymentRequestDto>
-  implements IUseCase<CreatePaymentRequestDto, CreatePaymentResponseDto>
+  implements IUseCaseOld<CreatePaymentRequestDto, CreatePaymentResponseDto>
 {
   public constructor(
     @inject(DIToken.Logger)

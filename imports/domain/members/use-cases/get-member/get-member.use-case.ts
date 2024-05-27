@@ -1,7 +1,7 @@
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { IMemberPort } from '@domain/members/member.port';
 import { GetMemberRequestDto } from '@domain/members/use-cases/get-member/get-member-request.dto';
 import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
@@ -12,7 +12,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetMemberUseCase
   extends UseCase<GetMemberRequestDto>
-  implements IUseCase<GetMemberRequestDto, GetMemberResponseDto | null>
+  implements IUseCaseOld<GetMemberRequestDto, GetMemberResponseDto | null>
 {
   public constructor(
     @inject(DIToken.MemberRepositoryOld)

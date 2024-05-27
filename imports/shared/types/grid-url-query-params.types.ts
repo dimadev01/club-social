@@ -1,15 +1,15 @@
 import { SortOrder } from 'antd/es/table/interface';
 
 export class GridUrlQueryParams {
-  filters: Record<string, string[]>;
+  public filters: Record<string, string[]>;
 
-  page: number;
+  public page: number;
 
-  pageSize: number;
+  public pageSize: number;
 
-  sortField: string;
+  public search: string;
 
-  sortOrder: SortOrder;
+  public sortField: string;
 
-  search: string;
+  public sortOrder: SortOrder;
 }

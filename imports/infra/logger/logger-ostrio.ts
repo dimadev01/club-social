@@ -36,8 +36,6 @@ export class LoggerOstrio implements ILogger {
 
   public error(error: string | Error | unknown, meta: object): void {
     if (error instanceof Error) {
-      console.log(meta);
-
       this._logger.error(error.message, { stack: error.stack, ...meta });
     } else if (typeof error === 'string') {
       this._logger.error(error, { ...meta });
