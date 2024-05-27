@@ -5,7 +5,7 @@ import {
   CreateMember,
   IMemberModel,
 } from '@domain/members/models/member-model.interface';
-import { UserModel } from '@domain/members/new/user.business';
+import { UserModel } from '@domain/users/models/user.model';
 
 export class MemberModel extends Model implements IMemberModel {
   public user: UserModel | null = null;

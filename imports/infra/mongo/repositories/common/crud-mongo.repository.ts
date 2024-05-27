@@ -4,7 +4,6 @@ import type {
   MatchKeysAndValues,
   OptionalUnlessRequiredId,
 } from 'mongodb';
-import invariant from 'tiny-invariant';
 
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
@@ -53,7 +52,9 @@ export abstract class CrudMongoRepository<
   public async findOneByIdOrThrow(id: string): Promise<TModel> {
     const model = await this.findOneById(id);
 
-    invariant(model, `Entity with id ${id} not found`);
+    if (!model) {
+      throw new InternalServerError(`Entity with id ${id} not found`);
+    }
 
     return model;
   }
@@ -67,7 +68,9 @@ export abstract class CrudMongoRepository<
         .rawCollection()
         .findOne({ _id: id } as Filter<TEntity>, { session });
 
-      invariant(entity, `Entity with id ${id} not found`);
+      if (!entity) {
+        throw new InternalServerError(`Entity with id ${id} not found`);
+      }
 
       return this._mapper.toModel(entity as TEntity);
     } catch (error) {
