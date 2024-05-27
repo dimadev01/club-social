@@ -21,44 +21,52 @@ export class MemberModel extends Model implements IMemberModel {
 
   public category: MemberCategoryEnum;
 
-  public dateOfBirth: Date | null = null;
+  public dateOfBirth: Date | null;
 
-  public documentID: string | null = null;
+  public documentID: string | null;
 
-  public fileStatus: MemberFileStatusEnum | null = null;
+  public fileStatus: MemberFileStatusEnum | null;
 
-  public maritalStatus: MemberMaritalStatusEnum | null = null;
+  public maritalStatus: MemberMaritalStatusEnum | null;
 
-  public nationality: MemberNationalityEnum | null = null;
+  public nationality: MemberNationalityEnum | null;
 
-  public phones: string[] | null = null;
+  public phones: string[] | null;
 
-  public sex: MemberSexEnum | null = null;
+  public sex: MemberSexEnum | null;
 
   public status: MemberStatusEnum;
 
-  public user: UserModel | null = null;
+  public user: UserModel | null;
 
   public userId: string;
 
   public constructor(props?: IMemberModel) {
     super(props);
 
-    if (props) {
-      this.address = new MemberAddressModel(props.address);
+    this.address = new MemberAddressModel(props?.address);
 
-      this.category = props.category;
+    this.category = props?.category ?? MemberCategoryEnum.MEMBER;
 
-      this.dateOfBirth = props.dateOfBirth;
+    this.dateOfBirth = props?.dateOfBirth ?? null;
 
-      this.documentID = props.documentID;
+    this.documentID = props?.documentID ?? null;
 
-      this.fileStatus = props.fileStatus;
+    this.fileStatus = props?.fileStatus ?? null;
 
-      this.maritalStatus = props.maritalStatus;
+    this.maritalStatus = props?.maritalStatus ?? null;
 
-      this.userId = props.userId;
-    }
+    this.nationality = props?.nationality ?? null;
+
+    this.phones = props?.phones ?? null;
+
+    this.sex = props?.sex ?? null;
+
+    this.status = props?.status ?? MemberStatusEnum.ACTIVE;
+
+    this.user = props?.user ?? null;
+
+    this.userId = props?.userId ?? '';
   }
 
   public static createOne(props: CreateMember): Result<MemberModel, Error> {

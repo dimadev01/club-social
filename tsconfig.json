@@ -14,7 +14,6 @@
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "strictPropertyInitialization": false,
 
     /* Additional Checks */
     "noUnusedLocals": true,
