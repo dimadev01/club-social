@@ -20,7 +20,7 @@ import {
   getMemberSexOptions,
   getMemberStatusOptions,
 } from '@domain/members/member.enum';
-import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
+import { GetMemberResponse } from '@domain/members/use-cases/get-member-new/get-member.response';
 import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -29,7 +29,7 @@ import { FormListEmails } from '@ui/components/Form/FormListEmails';
 import { FormListInput } from '@ui/components/Form/FormListInput';
 import { Select } from '@ui/components/Select';
 import { useCreateMemberNew } from '@ui/hooks/members/useCreateMemberNew';
-import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
+import { useUpdateMemberNew } from '@ui/hooks/members/useUpdateMemberNew';
 import { useCities } from '@ui/hooks/useCities';
 import { useStates } from '@ui/hooks/useStates';
 
@@ -55,7 +55,7 @@ type FormValues = {
 };
 
 type Props = {
-  member?: GetMemberResponseDto;
+  member?: GetMemberResponse | null;
 };
 
 export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
@@ -75,7 +75,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
   const createMemberNew = useCreateMemberNew();
 
-  const updateMember = useUpdateMember();
+  const updateMember = useUpdateMemberNew();
 
   const user = Meteor.user();
 
@@ -128,12 +128,11 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         emails: compact(values.emails).length > 0 ? values.emails : null,
         fileStatus: values.fileStatus || null,
         firstName: values.firstName,
-        id: member._id,
+        id: member.id,
         lastName: values.lastName,
         maritalStatus: values.maritalStatus || null,
         nationality: values.nationality || null,
         phones: compact(values.phones).length > 0 ? values.phones : null,
-        role: RoleEnum.MEMBER,
         sex: values.sex || null,
         status: values.status,
       });

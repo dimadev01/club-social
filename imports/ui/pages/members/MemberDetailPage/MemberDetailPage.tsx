@@ -44,7 +44,9 @@ export const MembersDetailPage = () => {
           { title: 'Inicio' },
           { title: <NavLink to={AppUrl.Members}>Socios</NavLink> },
           {
-            title: member ? `${member.id}` : 'Nuevo Socio',
+            title: member
+              ? `${member.firstName} ${member.lastName}`
+              : 'Nuevo Socio',
           },
         ]}
       />

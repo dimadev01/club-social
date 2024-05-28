@@ -27,6 +27,7 @@ export enum MethodsEnum {
   MembersGetNew = 'members/getNew',
   MembersGetPaymentsGrid = 'members/getPaymentsGrid',
   MembersUpdate = 'members/update',
+  MembersUpdateNew = 'members/updateNew',
 
   MovementsCreate = 'movements/create',
   MovementsDelete = 'movements/delete',

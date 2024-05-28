@@ -130,9 +130,9 @@ export abstract class CrudMongoRepository<
 
   public async update(model: TModel): Promise<void> {
     try {
-      const entity = await this._mapper.toEntity(model);
+      model.update(await this._getLoggedInUserName());
 
-      entity.updatedBy = await this._getLoggedInUserName();
+      const entity = await this._mapper.toEntity(model);
 
       await this._collection.updateAsync(entity._id, { $set: entity });
     } catch (error) {
@@ -145,9 +145,9 @@ export abstract class CrudMongoRepository<
     session: ClientSession,
   ): Promise<void> {
     try {
-      const entity = await this._mapper.toEntity(model);
+      model.update(await this._getLoggedInUserName());
 
-      entity.updatedBy = await this._getLoggedInUserName();
+      const entity = await this._mapper.toEntity(model);
 
       await this._collection
         .rawCollection()

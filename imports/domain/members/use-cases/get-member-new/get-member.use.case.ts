@@ -31,6 +31,26 @@ export class GetMemberNewUseCase
 
     member.user = await this._userRepository.findOneByIdOrThrow(member.userId);
 
-    return ok({ id: member._id });
+    return ok({
+      addressCityGovId: member.address.cityGovId,
+      addressCityName: member.address.cityName,
+      addressStateGovId: member.address.stateGovId,
+      addressStateName: member.address.stateName,
+      addressStreet: member.address.street,
+      addressZipCode: member.address.zipCode,
+      category: member.category,
+      dateOfBirth: member.dateOfBirth,
+      documentID: member.documentID,
+      emails: member.user.emails?.map((email) => email.address) ?? [],
+      fileStatus: member.fileStatus,
+      firstName: member.user.firstName,
+      id: member._id,
+      lastName: member.user.lastName,
+      maritalStatus: member.maritalStatus,
+      nationality: member.nationality,
+      phones: member.phones,
+      sex: member.sex,
+      status: member.status,
+    });
   }
 }

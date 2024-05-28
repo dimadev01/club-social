@@ -114,6 +114,10 @@ export class MemberModel extends Model implements IMemberModel {
     return this._user;
   }
 
+  public set user(value: UserModel | null) {
+    this._user = value;
+  }
+
   public get userId(): string {
     return this._userId;
   }
@@ -213,12 +217,6 @@ export class MemberModel extends Model implements IMemberModel {
 
   public setStatus(value: MemberStatusEnum): Result<null, Error> {
     this._status = value;
-
-    return ok(null);
-  }
-
-  public setUser(value: UserModel | null): Result<null, Error> {
-    this._user = value;
 
     return ok(null);
   }

@@ -35,6 +35,12 @@ export class Model extends UniqueIDModel implements IModel {
     this.updatedBy = props?.updatedBy ?? 'System';
   }
 
+  public update(updatedBy: string): void {
+    this.updatedAt = new Date();
+
+    this.updatedBy = updatedBy;
+  }
+
   public delete(deletedBy: string): void {
     this.isDeleted = true;
 
