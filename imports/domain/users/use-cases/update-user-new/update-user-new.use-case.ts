@@ -98,24 +98,26 @@ export class UpdateUserNewUseCase<TSession>
   private async _validate(
     request: UpdateUserRequest<TSession>,
   ): Promise<Result<null, Error>> {
-    if (request.emails) {
-      const result = await Promise.all(
-        request.emails.map(async (email) => {
-          const user = await this._userRepository.findByEmail(email);
+    if (!request.emails) {
+      return ok(null);
+    }
 
-          if (user && user._id !== request.id) {
-            return err(new ExistingUserByEmailError(email));
-          }
+    const result = await Promise.all(
+      request.emails.map(async (email) => {
+        const user = await this._userRepository.findByEmail(email);
 
-          return ok(null);
-        }),
-      );
+        if (user && user._id !== request.id) {
+          return err(new ExistingUserByEmailError(email));
+        }
 
-      const combined = Result.combine(result);
+        return ok(null);
+      }),
+    );
 
-      if (combined.isErr()) {
-        return err(combined.error);
-      }
+    const combined = Result.combine(result);
+
+    if (combined.isErr()) {
+      return err(combined.error);
     }
 
     return ok(null);
