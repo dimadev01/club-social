@@ -24,4 +24,17 @@ export class MemberMongoRepository
   ) {
     super(collection, mapper, logger);
   }
+
+  public async findByDocument(documentID: string): Promise<MemberModel | null> {
+    const entity = await this.collection.findOneAsync({
+      documentID,
+      isDeleted: false,
+    });
+
+    if (!entity) {
+      return null;
+    }
+
+    return this.mapper.toModel(entity);
+  }
 }

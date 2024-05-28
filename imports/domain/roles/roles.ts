@@ -2,83 +2,83 @@ import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { RoleAssignmentType } from '@domain/roles/role.types';
 
 export const AdminRole = {
-  [ScopeEnum.Users]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.USERS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
-  [ScopeEnum.Dues]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.DUES]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
-  [ScopeEnum.Payments]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.PAYMENTS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
-  [ScopeEnum.Members]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.MEMBERS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
-  [ScopeEnum.Categories]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Movements]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
-    PermissionEnum.ViewDeleted,
+  [ScopeEnum.CATEGORIES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.MOVEMENTS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
+    PermissionEnum.VIEW_DELETED,
   ],
-  [ScopeEnum.Professors]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Employees]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Services]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.PROFESSORS]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.EMPLOYEES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.SERVICES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
 };
 
 export const StaffRole = {
-  [ScopeEnum.Members]: [
-    PermissionEnum.Create,
-    PermissionEnum.Read,
-    PermissionEnum.Update,
+  [ScopeEnum.MEMBERS]: [
+    PermissionEnum.CREATE,
+    PermissionEnum.READ,
+    PermissionEnum.UPDATE,
   ],
-  [ScopeEnum.Movements]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
+  [ScopeEnum.MOVEMENTS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
   ],
-  [ScopeEnum.Dues]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
+  [ScopeEnum.DUES]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
   ],
-  [ScopeEnum.Payments]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
+  [ScopeEnum.PAYMENTS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
   ],
-  [ScopeEnum.Users]: [PermissionEnum.Create, PermissionEnum.Update],
+  [ScopeEnum.USERS]: [PermissionEnum.CREATE, PermissionEnum.UPDATE],
 };
 
 export const MemberRole = {
-  [ScopeEnum.Dues]: [PermissionEnum.Read],
-  [ScopeEnum.Payments]: [PermissionEnum.Read],
+  [ScopeEnum.DUES]: [PermissionEnum.READ],
+  [ScopeEnum.PAYMENTS]: [PermissionEnum.READ],
 };
 
 export const ViewerRole = {
-  [ScopeEnum.Members]: [PermissionEnum.Read],
-  [ScopeEnum.Movements]: [PermissionEnum.Read],
-  [ScopeEnum.Users]: [PermissionEnum.Read],
+  [ScopeEnum.MEMBERS]: [PermissionEnum.READ],
+  [ScopeEnum.MOVEMENTS]: [PermissionEnum.READ],
+  [ScopeEnum.USERS]: [PermissionEnum.READ],
 };
 
 export const RolePermissionAssignment: RoleAssignmentType = {
-  [RoleEnum.Admin]: AdminRole,
-  [RoleEnum.Staff]: StaffRole,
-  [RoleEnum.Member]: MemberRole,
-  [RoleEnum.Employee]: {},
-  [RoleEnum.Professor]: {},
-  [RoleEnum.Viewer]: ViewerRole,
+  [RoleEnum.ADMIN]: AdminRole,
+  [RoleEnum.STAFF]: StaffRole,
+  [RoleEnum.MEMBER]: MemberRole,
+  [RoleEnum.EMPLOYEE]: {},
+  [RoleEnum.PROFESSOR]: {},
+  [RoleEnum.VIEWER]: ViewerRole,
 };

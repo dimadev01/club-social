@@ -12,7 +12,7 @@ export const HomePage = () => {
     return <Navigate to={AppUrl.Logout} />;
   }
 
-  if (user.profile?.role === RoleEnum.Member) {
+  if (user.profile?.role === RoleEnum.MEMBER) {
     return <Navigate to={AppUrl.Dues} />;
   }
 

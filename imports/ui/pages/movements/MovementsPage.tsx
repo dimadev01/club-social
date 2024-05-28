@@ -149,8 +149,8 @@ export const MovementsPage = () => {
 
             {Roles.userIsInRole(
               user,
-              PermissionEnum.Create,
-              ScopeEnum.Movements,
+              PermissionEnum.CREATE,
+              ScopeEnum.MOVEMENTS,
             ) && <TableNewButton to={AppUrl.MovementsNew} />}
           </>
         }
@@ -187,8 +187,8 @@ export const MovementsPage = () => {
 
               {Roles.userIsInRole(
                 userId,
-                PermissionEnum.ViewDeleted,
-                ScopeEnum.Movements,
+                PermissionEnum.VIEW_DELETED,
+                ScopeEnum.MOVEMENTS,
               ) && (
                 <Form.Item>
                   <Checkbox
@@ -273,8 +273,8 @@ export const MovementsPage = () => {
                     {!movement.isDeleted &&
                       Roles.userIsInRole(
                         userId,
-                        PermissionEnum.Delete,
-                        ScopeEnum.Movements,
+                        PermissionEnum.DELETE,
+                        ScopeEnum.MOVEMENTS,
                       ) && (
                         <Button
                           popConfirm={{
@@ -304,8 +304,8 @@ export const MovementsPage = () => {
                     {movement.isDeleted &&
                       Roles.userIsInRole(
                         userId,
-                        PermissionEnum.Update,
-                        ScopeEnum.Movements,
+                        PermissionEnum.UPDATE,
+                        ScopeEnum.MOVEMENTS,
                       ) && (
                         <Button
                           type="text"

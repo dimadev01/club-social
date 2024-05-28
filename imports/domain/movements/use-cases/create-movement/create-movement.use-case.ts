@@ -40,7 +40,7 @@ export class CreateMovementUseCase
   public async execute(
     request: CreateMovementRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Create);
+    await this.validatePermission(ScopeEnum.MOVEMENTS, PermissionEnum.CREATE);
 
     if (MemberCategories.includes(request.category)) {
       return this._createWithMember(request);

@@ -28,7 +28,7 @@ export class UpdateUserUseCase
   public async execute(
     request: UpdateUserRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Users, PermissionEnum.Update);
+    await this.validatePermission(ScopeEnum.USERS, PermissionEnum.UPDATE);
 
     const user = await Meteor.users.findOneAsync(request.id);
 
@@ -40,7 +40,7 @@ export class UpdateUserUseCase
       throw new InternalServerError();
     }
 
-    if (user.profile?.role === RoleEnum.Admin) {
+    if (user.profile?.role === RoleEnum.ADMIN) {
       return err(new EditAdminError());
     }
 

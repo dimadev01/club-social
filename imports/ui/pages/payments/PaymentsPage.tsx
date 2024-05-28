@@ -157,8 +157,8 @@ export const PaymentsPage = () => {
 
             {Roles.userIsInRole(
               user,
-              PermissionEnum.Create,
-              ScopeEnum.Payments,
+              PermissionEnum.CREATE,
+              ScopeEnum.PAYMENTS,
             ) && <TableNewButton to={AppUrl.PaymentsNew} />}
           </>
         }
@@ -195,8 +195,8 @@ export const PaymentsPage = () => {
 
               {Roles.userIsInRole(
                 userId,
-                PermissionEnum.ViewDeleted,
-                ScopeEnum.Movements,
+                PermissionEnum.VIEW_DELETED,
+                ScopeEnum.MOVEMENTS,
               ) && (
                 <Form.Item>
                   <Checkbox
@@ -268,8 +268,8 @@ export const PaymentsPage = () => {
                     {!payment.isDeleted &&
                       Roles.userIsInRole(
                         userId,
-                        PermissionEnum.Delete,
-                        ScopeEnum.Payments,
+                        PermissionEnum.DELETE,
+                        ScopeEnum.PAYMENTS,
                       ) && (
                         <Button
                           popConfirm={{

@@ -85,56 +85,56 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
   const handleSubmit = async (values: FormValues) => {
     if (!member) {
-      const memberId = await createMemberNew.mutateAsync({
-        addressCityGovId: values.address.cityGovId?.value ?? null,
-        addressCityName: values.address.cityGovId?.label ?? null,
-        addressStateGovId: values.address.stateGovId?.value ?? null,
-        addressStateName: values.address.stateGovId?.label ?? null,
-        addressStreet: values.address.street ?? null,
-        addressZipCode: values.address.zipCode ?? null,
+      const response = await createMemberNew.mutateAsync({
+        addressCityGovId: values.address.cityGovId?.value || null,
+        addressCityName: values.address.cityGovId?.label || null,
+        addressStateGovId: values.address.stateGovId?.value || null,
+        addressStateName: values.address.stateGovId?.label || null,
+        addressStreet: values.address.street || null,
+        addressZipCode: values.address.zipCode || null,
         category: values.category,
         dateOfBirth: values.dateOfBirth
           ? DateUtils.format(values.dateOfBirth, DateFormatEnum.Date)
           : null,
-        documentID: values.documentID ?? null,
+        documentID: values.documentID || null,
         emails: compact(values.emails).length > 0 ? values.emails : null,
-        fileStatus: values.fileStatus ?? null,
+        fileStatus: values.fileStatus || null,
         firstName: values.firstName,
         lastName: values.lastName,
-        maritalStatus: values.maritalStatus ?? null,
-        nationality: values.nationality ?? null,
+        maritalStatus: values.maritalStatus || null,
+        nationality: values.nationality || null,
         phones: compact(values.phones).length > 0 ? values.phones : null,
-        role: RoleEnum.Member,
-        sex: values.sex ?? null,
+        role: RoleEnum.MEMBER,
+        sex: values.sex || null,
         status: MemberStatusEnum.ACTIVE,
       });
 
       message.success('Socio creado');
 
-      navigate(`${AppUrl.Members}/${memberId}`);
+      navigate(`${AppUrl.Members}/${response.id}`);
     } else {
       await updateMember.mutateAsync({
-        addressCityGovId: values.address.cityGovId?.value ?? null,
-        addressCityName: values.address.cityGovId?.label ?? null,
-        addressStateGovId: values.address.stateGovId?.value ?? null,
-        addressStateName: values.address.stateGovId?.label ?? null,
-        addressStreet: values.address.street ?? null,
-        addressZipCode: values.address.zipCode ?? null,
-        category: values.category ?? null,
+        addressCityGovId: values.address.cityGovId?.value || null,
+        addressCityName: values.address.cityGovId?.label || null,
+        addressStateGovId: values.address.stateGovId?.value || null,
+        addressStateName: values.address.stateGovId?.label || null,
+        addressStreet: values.address.street || null,
+        addressZipCode: values.address.zipCode || null,
+        category: values.category || null,
         dateOfBirth: values.dateOfBirth
           ? DateUtils.format(values.dateOfBirth, DateFormatEnum.Date)
           : null,
-        documentID: values.documentID ?? null,
+        documentID: values.documentID || null,
         emails: compact(values.emails).length > 0 ? values.emails : null,
-        fileStatus: values.fileStatus ?? null,
+        fileStatus: values.fileStatus || null,
         firstName: values.firstName,
         id: member._id,
         lastName: values.lastName,
-        maritalStatus: values.maritalStatus ?? null,
-        nationality: values.nationality ?? null,
+        maritalStatus: values.maritalStatus || null,
+        nationality: values.nationality || null,
         phones: compact(values.phones).length > 0 ? values.phones : null,
-        role: RoleEnum.Member,
-        sex: values.sex ?? null,
+        role: RoleEnum.MEMBER,
+        sex: values.sex || null,
         status: values.status,
       });
 
@@ -147,8 +147,8 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
       <Form<FormValues>
         layout="vertical"
         disabled={
-          !Roles.userIsInRole(user, PermissionEnum.Create, ScopeEnum.Members) ||
-          !Roles.userIsInRole(user, PermissionEnum.Update, ScopeEnum.Members)
+          !Roles.userIsInRole(user, PermissionEnum.CREATE, ScopeEnum.MEMBERS) ||
+          !Roles.userIsInRole(user, PermissionEnum.UPDATE, ScopeEnum.MEMBERS)
         }
         form={form}
         onFinish={(values) => handleSubmit(values)}
@@ -181,9 +181,9 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
           lastName: member?.lastName,
           maritalStatus: member?.maritalStatus,
           nationality: member?.nationality,
-          phones: member?.phones ?? [''],
+          phones: member?.phones || [''],
           sex: member?.sex,
-          status: member?.status ?? MemberStatusEnum.ACTIVE,
+          status: member?.status || MemberStatusEnum.ACTIVE,
         }}
       >
         <Row gutter={[16, 16]}>
@@ -332,7 +332,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                       states?.map((state) => ({
                         label: state.nombre,
                         value: state.id,
-                      })) ?? []
+                      })) || []
                     }
                   />
                 </Form.Item>
@@ -351,7 +351,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                       cities?.map((city) => ({
                         label: city.nombre,
                         value: city.id,
-                      })) ?? []
+                      })) || []
                     }
                   />
                 </Form.Item>
@@ -380,7 +380,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
         <div className="mb-4" />
 
-        <FormButtons scope={ScopeEnum.Members} />
+        <FormButtons scope={ScopeEnum.MEMBERS} />
       </Form>
     </Card>
   );

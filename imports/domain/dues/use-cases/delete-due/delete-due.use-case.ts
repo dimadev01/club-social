@@ -26,7 +26,7 @@ export class DeleteDueUseCase
   public async execute(
     request: DeleteDueRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Dues, PermissionEnum.Delete);
+    await this.validatePermission(ScopeEnum.DUES, PermissionEnum.DELETE);
 
     const due = await this._duePort.findOneByIdOrThrow(request.id);
 

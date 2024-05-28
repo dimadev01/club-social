@@ -4,7 +4,7 @@ import { DIToken } from '@infra/di/di-tokens';
 import { EmailService } from '@infra/email/email.service';
 import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 import { CategoryRepository } from '@infra/mongo/repositories/categories/category.repository';
-import { MontoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-work';
+import { MongoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-work';
 import { DueRepository } from '@infra/mongo/repositories/dues/due.repository';
 import { MemberMongoRepository } from '@infra/mongo/repositories/members/member-mongo.repository';
 import { MemberRepositoryOld } from '@infra/mongo/repositories/members/member.repository.old';
@@ -43,4 +43,8 @@ container.register(DIToken.IMemberRepository, MemberMongoRepository);
 
 container.register(DIToken.IUserRepository, UserMongoRepository);
 
-container.register(DIToken.IUnitOfWork, MontoUnitOfWork);
+container.register(DIToken.IMeteorUsers, {
+  useValue: Meteor.users,
+});
+
+container.register(DIToken.IUnitOfWork, MongoUnitOfWork);

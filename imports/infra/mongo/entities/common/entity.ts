@@ -26,23 +26,21 @@ export class Entity extends UniqueIDEntity {
   @IsString()
   public updatedBy: string;
 
-  protected constructor(props?: Entity) {
+  protected constructor(props: Entity) {
     super(props);
 
-    if (props) {
-      this.createdAt = props.createdAt;
+    this.createdAt = props.createdAt;
 
-      this.createdBy = props.createdBy;
+    this.createdBy = props.createdBy;
 
-      this.deletedAt = props.deletedAt;
+    this.deletedAt = props.deletedAt;
 
-      this.deletedBy = props.deletedBy;
+    this.deletedBy = props.deletedBy;
 
-      this.isDeleted = props.isDeleted;
+    this.isDeleted = props.isDeleted;
 
-      this.updatedAt = props.updatedAt;
+    this.updatedAt = props.updatedAt;
 
-      this.updatedBy = props.updatedBy;
-    }
+    this.updatedBy = props.updatedBy;
   }
 }

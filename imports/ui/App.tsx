@@ -89,11 +89,11 @@ export const App = () => {
             dark: themeMemoized.theme === AppThemeEnum.DARK,
           })}
         >
-          <QueryClientApp>
-            <ThemeContext.Provider value={themeMemoized}>
+          <ThemeContext.Provider value={themeMemoized}>
+            <QueryClientApp>
               <Routes />
-            </ThemeContext.Provider>
-          </QueryClientApp>
+            </QueryClientApp>
+          </ThemeContext.Provider>
         </AntApp>
       </ConfigProvider>
     </>

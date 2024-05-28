@@ -31,7 +31,7 @@ export class MigrateMovementUseCase
   public async execute(
     request: MigrateMovementRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Create);
+    await this.validatePermission(ScopeEnum.MOVEMENTS, PermissionEnum.CREATE);
 
     const movement = await this._movementPort.findOneByIdOrThrow(request.id);
 

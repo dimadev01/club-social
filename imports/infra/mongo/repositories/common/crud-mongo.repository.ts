@@ -9,10 +9,10 @@ import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { Model } from '@domain/common/models/model';
 import { ICrudRepository } from '@domain/common/repositories/crud-repository.interface';
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work.interface';
 import { Mapper } from '@infra/mappers/mapper';
 import { MongoCollection } from '@infra/mongo/collections/mongo.collection';
 import { Entity } from '@infra/mongo/entities/common/entity';
+import { UserEntity } from '@infra/mongo/entities/users/user.entity';
 import { ClassValidationError } from '@infra/mongo/errors/class-validation.error';
 
 export abstract class CrudMongoRepository<
@@ -25,6 +25,21 @@ export abstract class CrudMongoRepository<
     private readonly _mapper: Mapper<TModel, TEntity>,
     private readonly _logger: ILogger,
   ) {}
+
+  public async delete(model: TModel): Promise<void> {
+    model.delete(await this._getLoggedInUserName());
+
+    return this.update(model);
+  }
+
+  public async deleteWithSession(
+    model: TModel,
+    session: ClientSession,
+  ): Promise<void> {
+    model.delete(await this._getLoggedInUserName());
+
+    return this.updateWithSession(model, session);
+  }
 
   public async findByIds(ids: string[]): Promise<TModel[]> {
     try {
@@ -78,11 +93,15 @@ export abstract class CrudMongoRepository<
     }
   }
 
-  public async insertOne(model: TModel): Promise<void> {
+  public async insert(model: TModel): Promise<void> {
     try {
       const entity = (await this._mapper.toEntity(
         model,
       )) as unknown as Mongo.OptionalId<TEntity>;
+
+      entity.createdBy = await this._getLoggedInUserName();
+
+      entity.updatedBy = entity.createdBy;
 
       await this._collection.insertAsync(entity);
     } catch (error) {
@@ -90,17 +109,19 @@ export abstract class CrudMongoRepository<
     }
   }
 
-  public async insertOneWithSession(
+  public async insertWithSession(
     model: TModel,
-    unitOfWork: IUnitOfWork<ClientSession>,
+    session: ClientSession,
   ): Promise<void> {
     try {
       const entity = (await this._mapper.toEntity(
         model,
       )) as unknown as OptionalUnlessRequiredId<TEntity>;
 
+      entity.createdBy = await this._getLoggedInUserName();
+
       await this._collection.rawCollection().insertOne(entity, {
-        session: unitOfWork.get(),
+        session,
       });
     } catch (error) {
       this._handleError(error);
@@ -111,6 +132,8 @@ export abstract class CrudMongoRepository<
     try {
       const entity = await this._mapper.toEntity(model);
 
+      entity.updatedBy = await this._getLoggedInUserName();
+
       await this._collection.updateAsync(entity._id, { $set: entity });
     } catch (error) {
       this._handleError(error);
@@ -119,22 +142,36 @@ export abstract class CrudMongoRepository<
 
   public async updateWithSession(
     model: TModel,
-    unitOfWork: IUnitOfWork<ClientSession>,
+    session: ClientSession,
   ): Promise<void> {
     try {
-      const entity = (await this._mapper.toEntity(
-        model,
-      )) as unknown as MatchKeysAndValues<TEntity>;
+      const entity = await this._mapper.toEntity(model);
+
+      entity.updatedBy = await this._getLoggedInUserName();
 
       await this._collection
         .rawCollection()
         .updateOne(
           { _id: model._id } as Filter<TEntity>,
-          { $set: entity },
-          { session: unitOfWork.get() },
+          { $set: entity as unknown as MatchKeysAndValues<TEntity> },
+          { session },
         );
     } catch (error) {
       this._handleError(error);
+    }
+  }
+
+  private async _getLoggedInUserName(): Promise<string> {
+    try {
+      const user = (await Meteor.userAsync()) as unknown as UserEntity | null;
+
+      if (!user) {
+        return 'System';
+      }
+
+      return `${user.profile.firstName} ${user.profile.lastName}`;
+    } catch (error) {
+      return 'System';
     }
   }
 

@@ -29,7 +29,7 @@ export class CreateDueUseCase
   public async execute(
     request: CreateDueRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Dues, PermissionEnum.Create);
+    await this.validatePermission(ScopeEnum.DUES, PermissionEnum.CREATE);
 
     const session = MongoUtils.startSession();
 

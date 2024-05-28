@@ -154,8 +154,8 @@ export const MembersPage = () => {
 
             {Roles.userIsInRole(
               user,
-              PermissionEnum.Create,
-              ScopeEnum.Members,
+              PermissionEnum.CREATE,
+              ScopeEnum.MEMBERS,
             ) && <TableNewButton to={AppUrl.MembersNew} />}
           </ButtonGroup>
         }

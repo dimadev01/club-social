@@ -30,7 +30,7 @@ import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDuesByMember';
 import { useMember } from '@ui/hooks/members/useMember';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
 import { useNextPaymentReceiptNumber } from '@ui/hooks/payments/useNextPaymentReceiptNumber';
-import { UiNotificationUtils } from '@ui/utils/messages.utils';
+import { useNotificationError } from '@ui/hooks/useNotification';
 
 type FormDueValue = {
   amount: number;
@@ -47,7 +47,9 @@ type FormValues = {
 };
 
 export const PaymentNewPage = () => {
-  const { message, notification } = App.useApp();
+  const { message } = App.useApp();
+
+  const notificationError = useNotificationError();
 
   /**
    * Url params
@@ -159,10 +161,9 @@ export const PaymentNewPage = () => {
     const selectedDues = values.dues?.filter((due) => due.isSelected) ?? [];
 
     if (selectedDues.length === 0) {
-      UiNotificationUtils.error(
-        notification,
-        'Debe seleccionar al menos una deuda',
-      );
+      notificationError({
+        message: 'Debes seleccionar al menos un pago pendiente',
+      });
 
       return;
     }
@@ -303,7 +304,7 @@ export const PaymentNewPage = () => {
           </Row>
 
           <FormButtons
-            scope={ScopeEnum.Payments}
+            scope={ScopeEnum.PAYMENTS}
             saveButtonProps={{ text: 'Registrar Pago' }}
           />
         </Form>

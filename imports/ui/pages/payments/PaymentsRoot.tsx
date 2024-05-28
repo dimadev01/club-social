@@ -1,10 +1,9 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-import { MemberPaymentsPage } from '../members/MemberPaymentsPage';
-
 import { RoleEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
+import { MemberPaymentsPage } from '@ui/pages/members/MemberPaymentsPage';
 import { PaymentsPage } from '@ui/pages/payments/PaymentsPage';
 
 export const PaymentsRoot = () => {
@@ -14,7 +13,7 @@ export const PaymentsRoot = () => {
     return <Navigate to={AppUrl.Home} />;
   }
 
-  if (user.profile?.role === RoleEnum.Member) {
+  if (user.profile?.role === RoleEnum.MEMBER) {
     return <MemberPaymentsPage />;
   }
 

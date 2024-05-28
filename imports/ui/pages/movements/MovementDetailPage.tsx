@@ -166,8 +166,8 @@ export const MovementDetailPage = () => {
   };
 
   const canCreateOrUpdateMovement =
-    Roles.userIsInRole(user, PermissionEnum.Create, ScopeEnum.Movements) ||
-    Roles.userIsInRole(user, PermissionEnum.Update, ScopeEnum.Movements);
+    Roles.userIsInRole(user, PermissionEnum.CREATE, ScopeEnum.MOVEMENTS) ||
+    Roles.userIsInRole(user, PermissionEnum.UPDATE, ScopeEnum.MOVEMENTS);
 
   const renderDetailsSection = () => {
     if (MemberCategories.includes(category)) {
@@ -450,7 +450,7 @@ export const MovementDetailPage = () => {
               <Input.TextArea rows={1} />
             </Form.Item>
 
-            <FormButtons scope={ScopeEnum.Movements} />
+            <FormButtons scope={ScopeEnum.MOVEMENTS} />
           </Form>
         </Card>
       </Skeleton>

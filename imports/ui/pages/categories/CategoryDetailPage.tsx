@@ -100,7 +100,7 @@ export const CategoryDetailPage = () => {
             />
           </Form.Item>
 
-          <FormButtons scope={ScopeEnum.Categories} />
+          <FormButtons scope={ScopeEnum.CATEGORIES} />
         </Form>
       </Card>
     </>

@@ -106,11 +106,11 @@ export const DueDetailPage = () => {
   }
 
   const isFormDisabled = () => {
-    if (!Roles.userIsInRole(user, PermissionEnum.Create, ScopeEnum.Dues)) {
+    if (!Roles.userIsInRole(user, PermissionEnum.CREATE, ScopeEnum.DUES)) {
       return false;
     }
 
-    if (!Roles.userIsInRole(user, PermissionEnum.Update, ScopeEnum.Dues)) {
+    if (!Roles.userIsInRole(user, PermissionEnum.UPDATE, ScopeEnum.DUES)) {
       return false;
     }
 
@@ -315,7 +315,7 @@ export const DueDetailPage = () => {
               <Input.TextArea disabled={isFormDisabled()} rows={1} />
             </Form.Item>
 
-            <FormButtons scope={ScopeEnum.Movements} />
+            <FormButtons scope={ScopeEnum.MOVEMENTS} />
           </Form>
         </Card>
       </Skeleton>

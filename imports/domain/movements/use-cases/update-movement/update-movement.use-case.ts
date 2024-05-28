@@ -26,7 +26,7 @@ export class UpdateMovementUseCase
   public async execute(
     request: UpdateMovementRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Update);
+    await this.validatePermission(ScopeEnum.MOVEMENTS, PermissionEnum.UPDATE);
 
     const movement = await this._movementPort.findOneByIdOrThrow(request.id);
 

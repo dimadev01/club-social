@@ -20,7 +20,7 @@ export class UpdateUserThemeUseCase
   public async execute(
     request: UpdateUserThemeRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Users, PermissionEnum.Update);
+    await this.validatePermission(ScopeEnum.USERS, PermissionEnum.UPDATE);
 
     const user = Meteor.user();
 

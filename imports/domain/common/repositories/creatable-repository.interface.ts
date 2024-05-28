@@ -1,11 +1,6 @@
-import { Model } from '@domain/common/model';
-
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work.interface';
+import { Model } from '@domain/common/models/model';
 
 export interface ICreatableRepository<TModel extends Model, TSession> {
-  insertOne(model: TModel): Promise<void>;
-  insertOneWithSession(
-    model: TModel,
-    unitOfWork: IUnitOfWork<TSession>,
-  ): Promise<void>;
+  insert(model: TModel): Promise<void>;
+  insertWithSession(model: TModel, session: TSession): Promise<void>;
 }

@@ -17,63 +17,63 @@ import {
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 
 export class CreateMemberRequestDto extends CreateUserRequestDto {
-  @IsDateString()
+  @IsString()
   @IsOptional()
-  dateOfBirth: string | null;
-
-  @IsEnum(MemberCategoryEnum)
-  @IsOptional()
-  category: MemberCategoryEnum;
+  public addressCityGovId!: string | null;
 
   @IsString()
   @IsOptional()
-  documentID: string | null;
+  public addressCityName!: string | null;
+
+  @IsString()
+  @IsOptional()
+  public addressStateGovId!: string | null;
+
+  @IsString()
+  @IsOptional()
+  public addressStateName!: string | null;
+
+  @IsString()
+  @IsOptional()
+  public addressStreet!: string | null;
+
+  @IsString()
+  @IsOptional()
+  public addressZipCode!: string | null;
+
+  @IsEnum(MemberCategoryEnum)
+  @IsOptional()
+  public category!: MemberCategoryEnum;
+
+  @IsDateString()
+  @IsOptional()
+  public dateOfBirth!: string | null;
+
+  @IsString()
+  @IsOptional()
+  public documentID!: string | null;
 
   @IsEnum(MemberFileStatusEnum)
   @IsOptional()
-  fileStatus: MemberFileStatusEnum | null;
+  public fileStatus!: MemberFileStatusEnum | null;
 
   @IsEnum(MemberMaritalStatusEnum)
   @IsOptional()
-  maritalStatus: MemberMaritalStatusEnum | null;
+  public maritalStatus!: MemberMaritalStatusEnum | null;
 
   @IsEnum(MemberNationalityEnum)
   @IsOptional()
-  nationality: MemberNationalityEnum | null;
+  public nationality!: MemberNationalityEnum | null;
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
-  phones: string[] | null;
+  public phones!: string[] | null;
 
   @IsEnum(MemberSexEnum)
   @IsOptional()
-  sex: MemberSexEnum | null;
-
-  @IsString()
-  @IsOptional()
-  addressStateGovId: string | null;
-
-  @IsString()
-  @IsOptional()
-  addressStateName: string | null;
-
-  @IsString()
-  @IsOptional()
-  addressCityGovId: string | null;
-
-  @IsString()
-  @IsOptional()
-  addressCityName: string | null;
-
-  @IsString()
-  @IsOptional()
-  addressStreet: string | null;
-
-  @IsString()
-  @IsOptional()
-  addressZipCode: string | null;
+  public sex!: MemberSexEnum | null;
 
   @IsEnum(MemberStatusEnum)
-  status: MemberStatusEnum;
+  public status!: MemberStatusEnum;
 }

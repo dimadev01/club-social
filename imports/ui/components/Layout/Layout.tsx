@@ -23,13 +23,12 @@ import { Roles } from 'meteor/alanning:roles';
 import React, { useEffect, useState } from 'react';
 import { NavLink, Navigate } from 'react-router-dom';
 
-import { Select } from '../Select';
-
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { UserThemeEnum } from '@domain/users/user.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
+import { Select } from '@ui/components/Select';
 import { useThemeContext } from '@ui/Context';
 import { useUpdateUserTheme } from '@ui/hooks/users/useUpdateUserTheme';
 
@@ -68,7 +67,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Users)) {
+    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.USERS)) {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Users,
@@ -76,7 +75,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Members)) {
+    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.MEMBERS)) {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Members,
@@ -84,7 +83,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Movements)) {
+    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.MOVEMENTS)) {
       items.push({
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Movements,
@@ -92,7 +91,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Dues)) {
+    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.DUES)) {
       items.push({
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Dues,
@@ -100,7 +99,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Payments)) {
+    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.PAYMENTS)) {
       items.push({
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Payments,
@@ -108,7 +107,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Categories)) {
+    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.CATEGORIES)) {
       items.push({
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Categories,
@@ -116,7 +115,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Professors)) {
+    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.PROFESSORS)) {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Professors,
@@ -124,7 +123,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Employees)) {
+    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.EMPLOYEES)) {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Employees,
@@ -132,7 +131,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Services)) {
+    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.SERVICES)) {
       items.push({
         icon: <BulbOutlined className="!text-lg" />,
         key: AppUrl.Services,

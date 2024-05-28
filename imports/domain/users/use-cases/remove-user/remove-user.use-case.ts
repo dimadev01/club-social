@@ -28,7 +28,7 @@ export class RemoveUserUseCase
   public async execute(
     request: RemoveUserRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Members, PermissionEnum.Delete);
+    await this.validatePermission(ScopeEnum.MEMBERS, PermissionEnum.DELETE);
 
     await this.validateDto(RemoveUserRequestDto, request);
 
@@ -46,7 +46,7 @@ export class RemoveUserUseCase
       return err(new InternalServerError());
     }
 
-    if (user.profile?.role === RoleEnum.Admin) {
+    if (user.profile?.role === RoleEnum.ADMIN) {
       return err(new RemoveAdminError());
     }
 

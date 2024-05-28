@@ -14,7 +14,7 @@ export const MovementsRoot = () => {
   }
 
   // @ts-expect-error
-  if (user.profile?.role === RoleEnum.Member) {
+  if (user.profile?.role === RoleEnum.MEMBER) {
     return <Navigate to={AppUrl.Home} />;
   }
 

@@ -113,7 +113,7 @@ export const UsersPage = () => {
             {
               align: 'center',
               render: (_, user: Meteor.User) =>
-                user.profile?.role === RoleEnum.Staff && (
+                user.profile?.role === RoleEnum.STAFF && (
                   <Button
                     popConfirm={{
                       onConfirm: () =>

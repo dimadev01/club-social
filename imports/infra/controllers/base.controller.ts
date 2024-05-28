@@ -3,9 +3,9 @@ import { ValidationError } from 'class-validator';
 
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCase } from '@domain/common/use-case.interface';
-import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { MeteorBadRequestError } from '@infra/meteor/errors/meteor-bad-request.error';
-import { ClassValidationUtils } from '@shared/utils/validation.utils';
+import { MeteorInternalServerError } from '@infra/meteor/errors/meteor-internal-server.error';
+import { ClassValidationError } from '@infra/mongo/errors/class-validation.error';
 
 export interface ExecuteRequest<TRequest extends object, TResponse> {
   classType?: ClassType<TRequest>;
@@ -29,6 +29,10 @@ export abstract class BaseController {
       const result = await useCase.execute(request);
 
       if (result.isErr()) {
+        if (result.error instanceof ClassValidationError) {
+          throw result.error;
+        }
+
         throw new MeteorBadRequestError(result.error.message);
       }
 
@@ -36,19 +40,22 @@ export abstract class BaseController {
     } catch (error) {
       this._logger.error(error, { request });
 
+      if (error instanceof ClassValidationError) {
+        throw new MeteorInternalServerError(
+          error.message,
+          JSON.stringify(error.errors, null, 2),
+        );
+      }
+
       if (error instanceof Meteor.Error) {
         throw error;
       }
 
       if (error instanceof Error) {
-        throw new Meteor.Error(
-          MeteorErrorCodeEnum.INTERNAL_SERVER_ERROR,
-          error.message,
-        );
+        throw new MeteorInternalServerError(error.message);
       }
 
-      throw new Meteor.Error(
-        MeteorErrorCodeEnum.INTERNAL_SERVER_ERROR,
+      throw new MeteorInternalServerError(
         'Unexpected and unhandled server error',
       );
     }
@@ -58,18 +65,17 @@ export abstract class BaseController {
     classType: ClassType<T>,
     value: T,
   ): Promise<void> {
-    if (!value) {
-      throw new MeteorBadRequestError('Request is empty');
-    }
-
     try {
       await transformAndValidate(classType, value);
-    } catch (err) {
-      const errors = err as ValidationError[];
+    } catch (error) {
+      if (
+        Array.isArray(error) &&
+        error.every((e) => e instanceof ValidationError)
+      ) {
+        throw new ClassValidationError(error);
+      }
 
-      throw new MeteorBadRequestError(
-        ClassValidationUtils.getErrorMessage(errors),
-      );
+      throw new MeteorInternalServerError();
     }
   }
 }

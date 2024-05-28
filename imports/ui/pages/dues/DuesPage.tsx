@@ -131,8 +131,8 @@ export const DuesPage = () => {
 
             {Roles.userIsInRole(
               user,
-              PermissionEnum.Create,
-              ScopeEnum.Dues,
+              PermissionEnum.CREATE,
+              ScopeEnum.DUES,
             ) && <TableNewButton to={AppUrl.DuesNew} />}
           </>
         }
@@ -169,8 +169,8 @@ export const DuesPage = () => {
 
               {Roles.userIsInRole(
                 userId,
-                PermissionEnum.ViewDeleted,
-                ScopeEnum.Movements,
+                PermissionEnum.VIEW_DELETED,
+                ScopeEnum.MOVEMENTS,
               ) && (
                 <Form.Item>
                   <Checkbox
@@ -295,8 +295,8 @@ export const DuesPage = () => {
                     {!due.isDeleted &&
                       Roles.userIsInRole(
                         userId,
-                        PermissionEnum.Delete,
-                        ScopeEnum.Dues,
+                        PermissionEnum.DELETE,
+                        ScopeEnum.DUES,
                       ) && (
                         <Button
                           popConfirm={{
@@ -322,8 +322,8 @@ export const DuesPage = () => {
                     {due.isDeleted &&
                       Roles.userIsInRole(
                         userId,
-                        PermissionEnum.Update,
-                        ScopeEnum.Dues,
+                        PermissionEnum.UPDATE,
+                        ScopeEnum.DUES,
                       ) && (
                         <Button
                           type="text"

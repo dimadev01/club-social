@@ -26,7 +26,7 @@ export class RestoreDueUseCase
   public async execute(
     request: RestoreDueRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Dues, PermissionEnum.Update);
+    await this.validatePermission(ScopeEnum.DUES, PermissionEnum.UPDATE);
 
     const due = await this._duePort.findOneByIdOrThrow(request.id);
 

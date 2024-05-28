@@ -1,117 +1,117 @@
 export enum RoleEnum {
-  Admin = 'admin',
-  Employee = 'employee',
-  Member = 'member',
-  Professor = 'professor',
-  Staff = 'staff',
-  Viewer = 'viewer',
+  ADMIN = 'admin',
+  EMPLOYEE = 'employee',
+  MEMBER = 'member',
+  PROFESSOR = 'professor',
+  STAFF = 'staff',
+  VIEWER = 'viewer',
 }
 
 export enum ScopeEnum {
-  Categories = 'categories',
-  Dues = 'dues',
-  Employees = 'employees',
-  Members = 'members',
-  Movements = 'movements',
-  Payments = 'payments',
-  Professors = 'professors',
-  Services = 'services',
-  Users = 'users',
+  CATEGORIES = 'categories',
+  DUES = 'dues',
+  EMPLOYEES = 'employees',
+  MEMBERS = 'members',
+  MOVEMENTS = 'movements',
+  PAYMENTS = 'payments',
+  PROFESSORS = 'professors',
+  SERVICES = 'services',
+  USERS = 'users',
 }
 
 export enum PermissionEnum {
-  Create = 'write',
-  Delete = 'delete',
-  Read = 'read',
-  Update = 'update',
-  ViewDeleted = 'view-deleted',
+  CREATE = 'write',
+  DELETE = 'delete',
+  READ = 'read',
+  UPDATE = 'update',
+  VIEW_DELETED = 'view-deleted',
 }
 
 export const ScopePermissionAssignment: Record<ScopeEnum, PermissionEnum[]> = {
-  [ScopeEnum.Categories]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Employees]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Services]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Professors]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Members]: [
-    PermissionEnum.Create,
-    PermissionEnum.Read,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.CATEGORIES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.EMPLOYEES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.SERVICES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.PROFESSORS]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.MEMBERS]: [
+    PermissionEnum.CREATE,
+    PermissionEnum.READ,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
-  [ScopeEnum.Movements]: [
-    PermissionEnum.Create,
-    PermissionEnum.Read,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.MOVEMENTS]: [
+    PermissionEnum.CREATE,
+    PermissionEnum.READ,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
-  [ScopeEnum.Dues]: [
-    PermissionEnum.Create,
-    PermissionEnum.Read,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.DUES]: [
+    PermissionEnum.CREATE,
+    PermissionEnum.READ,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
-  [ScopeEnum.Payments]: [
-    PermissionEnum.Create,
-    PermissionEnum.Read,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.PAYMENTS]: [
+    PermissionEnum.CREATE,
+    PermissionEnum.READ,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
-  [ScopeEnum.Users]: [
-    PermissionEnum.Create,
-    PermissionEnum.Read,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.USERS]: [
+    PermissionEnum.CREATE,
+    PermissionEnum.READ,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
 };
 
 export const AdminRole = {
-  [ScopeEnum.Users]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.USERS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
-  [ScopeEnum.Members]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
+  [ScopeEnum.MEMBERS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
   ],
-  [ScopeEnum.Categories]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Movements]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
-    PermissionEnum.ViewDeleted,
+  [ScopeEnum.CATEGORIES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.MOVEMENTS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
+    PermissionEnum.VIEW_DELETED,
   ],
-  [ScopeEnum.Dues]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
-    PermissionEnum.Delete,
-    PermissionEnum.ViewDeleted,
+  [ScopeEnum.DUES]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
+    PermissionEnum.VIEW_DELETED,
   ],
-  [ScopeEnum.Professors]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Employees]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Services]: [PermissionEnum.Read, PermissionEnum.Update],
+  [ScopeEnum.PROFESSORS]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.EMPLOYEES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.SERVICES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
 };
 
 export const StaffRole = {
-  [ScopeEnum.Members]: [PermissionEnum.Read, PermissionEnum.Update],
-  [ScopeEnum.Movements]: [
-    PermissionEnum.Read,
-    PermissionEnum.Create,
-    PermissionEnum.Update,
+  [ScopeEnum.MEMBERS]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.MOVEMENTS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
   ],
-  [ScopeEnum.Users]: [PermissionEnum.Create, PermissionEnum.Update],
+  [ScopeEnum.USERS]: [PermissionEnum.CREATE, PermissionEnum.UPDATE],
 };
 
 export const MemberRole = {
-  [ScopeEnum.Movements]: [PermissionEnum.Read],
+  [ScopeEnum.MOVEMENTS]: [PermissionEnum.READ],
 };
 
 export const ViewerRole = {
-  [ScopeEnum.Members]: [PermissionEnum.Read],
-  [ScopeEnum.Movements]: [PermissionEnum.Read],
+  [ScopeEnum.MEMBERS]: [PermissionEnum.READ],
+  [ScopeEnum.MOVEMENTS]: [PermissionEnum.READ],
 };

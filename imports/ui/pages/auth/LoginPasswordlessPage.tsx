@@ -7,7 +7,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
-import { UiNotificationUtils } from '@ui/utils/messages.utils';
+import { useNotificationError } from '@ui/hooks/useNotification';
 
 type FormValues = {
   token: string;
@@ -18,11 +18,13 @@ export const LoginPasswordlessPage = () => {
     isLoggingIn: Meteor.loggingIn(),
   }));
 
+  const notificationError = useNotificationError();
+
   const { email } = useParams<{ email?: string }>();
 
   const navigate = useNavigate();
 
-  const { notification, message } = App.useApp();
+  const { message } = App.useApp();
 
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
@@ -35,9 +37,11 @@ export const LoginPasswordlessPage = () => {
     Meteor.passwordlessLoginWithToken(email, values.token, (error: unknown) => {
       if (error) {
         if (error instanceof Meteor.Error && error.error === 403) {
-          UiNotificationUtils.error(notification, 'Clave de acceso incorrecta');
+          notificationError({
+            message: 'El código es incorrecto',
+          });
         } else if (error instanceof Error) {
-          UiNotificationUtils.error(notification, error.message);
+          notificationError({ message: error.message });
         }
       } else {
         navigate(AppUrl.Home);
@@ -53,7 +57,7 @@ export const LoginPasswordlessPage = () => {
       setIsSendingEmail(false);
 
       if (error && error instanceof Error) {
-        UiNotificationUtils.error(notification, error.message);
+        notificationError({ message: error.message });
       } else {
         message.success('El código ha sido enviado nuevamente');
       }

@@ -38,13 +38,13 @@ export class CreateMemberUseCase
       let newMemberId: string | null = null;
 
       await session.withTransaction(async () => {
-        await this.validatePermission(ScopeEnum.Members, PermissionEnum.Create);
+        await this.validatePermission(ScopeEnum.MEMBERS, PermissionEnum.CREATE);
 
         const createUserResult = await this._createUserUseCase.execute({
           emails: request.emails,
           firstName: request.firstName,
           lastName: request.lastName,
-          role: RoleEnum.Member,
+          role: RoleEnum.MEMBER,
         });
 
         if (createUserResult.isErr()) {

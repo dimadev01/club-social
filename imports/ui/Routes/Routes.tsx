@@ -61,7 +61,7 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Users}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.USERS}>
         <UsersPage />
       </PrivateRoute>
     ),
@@ -69,7 +69,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Users}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.USERS}>
         <UsersDetailPage />
       </PrivateRoute>
     ),
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Users}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.USERS}>
         <UsersDetailPage />
       </PrivateRoute>
     ),
@@ -86,7 +86,7 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Members}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.MEMBERS}>
         <MembersPage />
       </PrivateRoute>
     ),
@@ -94,7 +94,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Members}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.MEMBERS}>
         <MembersDetailPage />
       </PrivateRoute>
     ),
@@ -102,7 +102,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Members}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.MEMBERS}>
         <MembersDetailPage />
       </PrivateRoute>
     ),
@@ -112,8 +112,8 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute
-        permission={PermissionEnum.Read}
-        scope={ScopeEnum.Movements}
+        permission={PermissionEnum.READ}
+        scope={ScopeEnum.MOVEMENTS}
       >
         <MovementsRoot />
       </PrivateRoute>
@@ -123,8 +123,8 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute
-        permission={PermissionEnum.Read}
-        scope={ScopeEnum.Movements}
+        permission={PermissionEnum.READ}
+        scope={ScopeEnum.MOVEMENTS}
       >
         <MovementDetailPage />
       </PrivateRoute>
@@ -134,8 +134,8 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute
-        permission={PermissionEnum.Read}
-        scope={ScopeEnum.Movements}
+        permission={PermissionEnum.READ}
+        scope={ScopeEnum.MOVEMENTS}
       >
         <MovementDetailPage />
       </PrivateRoute>
@@ -145,7 +145,7 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.DUES}>
         <DuesRoot />
       </PrivateRoute>
     ),
@@ -153,7 +153,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.DUES}>
         <DueDetailPage />
       </PrivateRoute>
     ),
@@ -161,7 +161,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Dues}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.DUES}>
         <DueDetailPage />
       </PrivateRoute>
     ),
@@ -170,7 +170,7 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.PAYMENTS}>
         <PaymentsRoot />
       </PrivateRoute>
     ),
@@ -178,7 +178,7 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.PAYMENTS}>
         <PaymentNewPage />
       </PrivateRoute>
     ),
@@ -187,7 +187,7 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Payments}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.PAYMENTS}>
         <PaymentDetailPage />
       </PrivateRoute>
     ),
@@ -197,8 +197,8 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute
-        permission={PermissionEnum.Read}
-        scope={ScopeEnum.Professors}
+        permission={PermissionEnum.READ}
+        scope={ScopeEnum.PROFESSORS}
       >
         <ProfessorsPage />
       </PrivateRoute>
@@ -209,8 +209,8 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute
-        permission={PermissionEnum.Read}
-        scope={ScopeEnum.Employees}
+        permission={PermissionEnum.READ}
+        scope={ScopeEnum.EMPLOYEES}
       >
         <EmployeesPage />
       </PrivateRoute>
@@ -220,7 +220,7 @@ const router = createBrowserRouter([
 
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.Read} scope={ScopeEnum.Services}>
+      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.SERVICES}>
         <ServicesPage />
       </PrivateRoute>
     ),
@@ -230,8 +230,8 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute
-        permission={PermissionEnum.Read}
-        scope={ScopeEnum.Categories}
+        permission={PermissionEnum.READ}
+        scope={ScopeEnum.CATEGORIES}
       >
         <CategoriesPage />
       </PrivateRoute>
@@ -241,8 +241,8 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute
-        permission={PermissionEnum.Read}
-        scope={ScopeEnum.Categories}
+        permission={PermissionEnum.READ}
+        scope={ScopeEnum.CATEGORIES}
       >
         <CategoryDetailPage />
       </PrivateRoute>

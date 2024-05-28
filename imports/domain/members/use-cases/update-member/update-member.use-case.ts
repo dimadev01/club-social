@@ -34,7 +34,7 @@ export class UpdateMemberUseCase
 
     try {
       await session.withTransaction(async () => {
-        await this.validatePermission(ScopeEnum.Members, PermissionEnum.Update);
+        await this.validatePermission(ScopeEnum.MEMBERS, PermissionEnum.UPDATE);
 
         const member = await this._memberPort.findOneByIdOrThrow(request.id);
 

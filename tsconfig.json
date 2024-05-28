@@ -42,7 +42,6 @@
     ".meteor/**/*.ts",
     "./imports/**/*.ts",
     "./imports/**/*.tsx",
-    "./types/*.d.ts",
-    "imports/infra/mongo/repositories/common/creatable-mongo-repository.interface.2ts"
+    "./types/*.d.ts"
   ]
 }

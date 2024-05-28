@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import '@infra/di/di-registration';
 import '@infra/meteor/common/meteor-publications';
 import '@domain/users/user.collection';
-import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import invariant from 'tiny-invariant';
 import { container, inject, singleton } from 'tsyringe';
@@ -55,7 +54,7 @@ export class ServerStartup {
 
     this._configureValidateLoginAttempt();
 
-    this._configureOnCreateUser();
+    // this._configureOnCreateUser();
 
     if (Meteor.isProduction) {
       this._logger.info('Server startup completed');
@@ -95,15 +94,11 @@ export class ServerStartup {
       invariant(options.profile);
 
       const { firstName, lastName, role, state } =
-        options.profile as Meteor.UserProfile & { state: UserStateEnum };
+        options.profile as CreateUserProfile;
 
       return {
         ...user,
-        profile: {
-          firstName,
-          lastName,
-          role,
-        },
+        profile: { firstName, lastName, role },
         state,
       };
     });
@@ -112,7 +107,7 @@ export class ServerStartup {
   private _configureValidateLoginAttempt() {
     Accounts.validateLoginAttempt(
       (attempt: { user: Meteor.User & { isActive: boolean } }) => {
-        if (attempt.user?.state === UserStateEnum.INACTIVE) {
+        if (attempt.user?.profile?.state === UserStateEnum.INACTIVE) {
           return false;
         }
 

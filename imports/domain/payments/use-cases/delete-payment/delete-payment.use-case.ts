@@ -26,7 +26,7 @@ export class DeletePaymentUseCase
   public async execute(
     request: DeletePaymentRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Payments, PermissionEnum.Delete);
+    await this.validatePermission(ScopeEnum.PAYMENTS, PermissionEnum.DELETE);
 
     const payment = await this._paymentPort.findOneByIdOrThrow(request.id);
 

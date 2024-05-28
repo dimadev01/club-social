@@ -26,7 +26,7 @@ export class DeleteMovementUseCase
   public async execute(
     request: DeleteMovementRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.Movements, PermissionEnum.Delete);
+    await this.validatePermission(ScopeEnum.MOVEMENTS, PermissionEnum.DELETE);
 
     const movement = await this._movementPort.findOneByIdOrThrow(request.id);
 

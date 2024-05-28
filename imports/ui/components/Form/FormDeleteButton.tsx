@@ -20,7 +20,7 @@ export const FormDeleteButton: React.FC<FormDeleteButtonProps> = ({
     return null;
   }
 
-  if (!Roles.userIsInRole(user, PermissionEnum.Delete, scope)) {
+  if (!Roles.userIsInRole(user, PermissionEnum.DELETE, scope)) {
     return false;
   }
 

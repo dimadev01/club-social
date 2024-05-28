@@ -3,12 +3,14 @@ import React, { useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
-import { UiNotificationUtils } from '@ui/utils/messages.utils';
+import { useNotificationError } from '@ui/hooks/useNotification';
 
 export const VerifyEmailPage = () => {
   const navigate = useNavigate();
 
-  const { message, notification } = App.useApp();
+  const notificationError = useNotificationError();
+
+  const { message } = App.useApp();
 
   const { token } = useParams<{ email?: string; token?: string }>();
 
@@ -19,7 +21,7 @@ export const VerifyEmailPage = () => {
       Accounts.verifyEmail(token, (error) => {
         if (error) {
           if (!isVerifying) {
-            UiNotificationUtils.error(notification, error.message);
+            notificationError({ message: error.message });
           }
         } else {
           message.success('Email verificado');
@@ -32,7 +34,7 @@ export const VerifyEmailPage = () => {
     return () => {
       isVerifying = true;
     };
-  }, [token, navigate, message, notification]);
+  }, [token, navigate, message, notificationError]);
 
   if (!token) {
     return <Navigate to={AppUrl.Home} />;

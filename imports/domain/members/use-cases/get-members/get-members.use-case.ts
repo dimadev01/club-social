@@ -23,7 +23,7 @@ export class GetMembersUseCase
   }
 
   public async execute(): Promise<Result<GetMembersDto[], Error>> {
-    await this.validatePermission(ScopeEnum.Members, PermissionEnum.Read);
+    await this.validatePermission(ScopeEnum.MEMBERS, PermissionEnum.READ);
 
     const data = await this._memberPort.findAll();
 

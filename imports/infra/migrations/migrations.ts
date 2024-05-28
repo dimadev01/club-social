@@ -1372,3 +1372,78 @@ Migrations.add({
   }),
   version: 20,
 });
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const users = await Meteor.users.find().fetchAsync();
+
+    await Promise.all(
+      users.map(async (user) => {
+        await Meteor.users.updateAsync(user._id, {
+          $set: {
+            createdBy: 'System',
+            deletedAt: null,
+            isDeleted: false,
+            updatedAt: user.createdAt,
+            updatedBy: 'System',
+          },
+        });
+      }),
+    );
+
+    next();
+  }),
+  version: 21,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const users = await Meteor.users.find().fetchAsync();
+
+    await Promise.all(
+      users.map(async (user) => {
+        await Meteor.users.updateAsync(user._id, {
+          $set: {
+            // @ts-expect-error
+            'profile.state': user.state,
+          },
+          $unset: {
+            state: 1,
+          },
+        });
+      }),
+    );
+
+    next();
+  }),
+  version: 22,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const users = await Meteor.users.find().fetchAsync();
+
+    await Promise.all(
+      users.map(async (user) => {
+        await Meteor.users.updateAsync(user._id, {
+          $unset: { username: 1 },
+        });
+      }),
+    );
+
+    next();
+  }),
+  version: 23,
+});

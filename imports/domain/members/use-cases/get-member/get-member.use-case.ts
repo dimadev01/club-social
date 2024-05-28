@@ -24,7 +24,7 @@ export class GetMemberUseCase
   public async execute(
     request: GetMemberRequestDto,
   ): Promise<Result<GetMemberResponseDto | null, Error>> {
-    await this.validatePermission(ScopeEnum.Members, PermissionEnum.Read);
+    await this.validatePermission(ScopeEnum.MEMBERS, PermissionEnum.READ);
 
     const member = await this._memberPort.findOneById(request.id);
 

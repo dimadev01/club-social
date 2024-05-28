@@ -99,7 +99,7 @@ export const UsersDetailPage = () => {
                   : [''],
               firstName: user?.profile?.firstName ?? '',
               // @ts-ignore
-              isActive: user?.state === UserStateEnum.ACTIVE ?? true,
+              isActive: user?.profile?.state === UserStateEnum.ACTIVE ?? true,
               lastName: user?.profile?.lastName ?? '',
               rol: user?.profile?.role ?? '',
             }}
@@ -128,11 +128,11 @@ export const UsersDetailPage = () => {
                   options={[
                     {
                       label: 'Staff',
-                      value: RoleEnum.Staff,
+                      value: RoleEnum.STAFF,
                     },
                     {
                       label: 'Viewer',
-                      value: RoleEnum.Viewer,
+                      value: RoleEnum.VIEWER,
                     },
                   ]}
                 />

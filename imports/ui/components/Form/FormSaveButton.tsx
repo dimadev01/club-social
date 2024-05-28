@@ -22,8 +22,8 @@ export const FormSaveButton: React.FC<FormSaveButtonProps> = ({
 
   if (scope) {
     if (
-      !Roles.userIsInRole(user, PermissionEnum.Create, scope) &&
-      !Roles.userIsInRole(user, PermissionEnum.Update, scope)
+      !Roles.userIsInRole(user, PermissionEnum.CREATE, scope) &&
+      !Roles.userIsInRole(user, PermissionEnum.UPDATE, scope)
     ) {
       return false;
     }

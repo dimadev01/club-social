@@ -112,7 +112,7 @@ export const PaymentDetailPage = () => {
 
           <Flex justify="end">
             <FormDeleteButton
-              scope={ScopeEnum.Payments}
+              scope={ScopeEnum.PAYMENTS}
               onClick={() => {
                 deletePayment.mutate({ id: payment._id });
               }}

@@ -8,7 +8,7 @@ import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { RolePermissionAssignment } from '@domain/roles/roles';
 import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
-import { UserStateEnum } from '@domain/users/user.enum';
+import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
@@ -27,7 +27,7 @@ export class CreateUserUseCase
   public async execute(
     request: CreateUserRequestDto,
   ): Promise<Result<string, Error>> {
-    await this.validatePermission(ScopeEnum.Users, PermissionEnum.Create);
+    await this.validatePermission(ScopeEnum.USERS, PermissionEnum.CREATE);
 
     if (request.emails?.some((email) => Accounts.findUserByEmail(email))) {
       return err(new AtLeastOneEmailInUseError());
@@ -39,6 +39,7 @@ export class CreateUserUseCase
         lastName: request.lastName,
         role: request.role,
         state: UserStateEnum.ACTIVE,
+        theme: UserThemeEnum.AUTO,
       },
       username: Random.secret(),
     });

@@ -1,4 +1,4 @@
-import { App, Button, Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { useTracker } from 'meteor/react-meteor-data';
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
-import { UiNotificationUtils } from '@ui/utils/messages.utils';
+import { useNotificationError } from '@ui/hooks/useNotification';
 
 type FormValues = {
   email: string;
@@ -19,7 +19,7 @@ export const LoginPage = () => {
     isLoggingIn: Meteor.loggingIn(),
   }));
 
-  const { notification } = App.useApp();
+  const notificationError = useNotificationError();
 
   const navigate = useNavigate();
 
@@ -42,15 +42,16 @@ export const LoginPage = () => {
         if (error) {
           if (error instanceof Meteor.Error) {
             if (error.error === 403) {
-              UiNotificationUtils.error(
-                notification,
-                'El email ingresado no existe',
-              );
+              notificationError({
+                message: 'El email no está registrado',
+              });
             } else {
-              UiNotificationUtils.error(notification, error.message);
+              notificationError({
+                message: error.message,
+              });
             }
           } else if (error instanceof Error) {
-            UiNotificationUtils.error(notification, error.message);
+            notificationError({ message: error.message });
           }
         } else {
           navigate(AppUrl.LoginPasswordless.replace(':email', values.email));

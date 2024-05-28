@@ -41,7 +41,7 @@ export class CreatePaymentUseCase
   public async execute(
     request: CreatePaymentRequestDto,
   ): Promise<Result<CreatePaymentResponseDto, Error>> {
-    await this.validatePermission(ScopeEnum.Payments, PermissionEnum.Create);
+    await this.validatePermission(ScopeEnum.PAYMENTS, PermissionEnum.CREATE);
 
     const existingPaymentByReceipt =
       await this._paymentPort.findOneByReceiptNumber({

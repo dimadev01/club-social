@@ -1,73 +1,102 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsDate,
+  IsDefined,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
+import {
+  MemberCategoryEnum,
+  MemberFileStatusEnum,
+  MemberMaritalStatusEnum,
+  MemberNationalityEnum,
+  MemberSexEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 import { Entity } from '@infra/mongo/entities/common/entity';
+import { MemberAddressEntity } from '@infra/mongo/entities/members/member-address.entity';
+import { IsNullable } from '@shared/class-validator/is-nullable';
 
 export class MemberEntity extends Entity {
-  // @ValidateNested()
-  // @Type(() => MemberAddress)
-  // public address: MemberAddress;
+  @ValidateNested()
+  @Type(() => MemberAddressEntity)
+  public address: MemberAddressEntity;
 
-  // @IsEnum(MemberCategoryEnum)
-  // public category: MemberCategoryEnum;
+  @IsEnum(MemberCategoryEnum)
+  public category: MemberCategoryEnum;
 
-  // @IsDate()
-  // @IsOptional()
-  // public dateOfBirth: Date | null;
+  @IsDate()
+  @IsNullable()
+  @IsDefined()
+  public dateOfBirth: Date | null;
 
-  // @IsString()
-  // @IsOptional()
-  // public documentID: string | null;
+  @IsString()
+  @IsNullable()
+  @IsDefined()
+  public documentID: string | null;
 
-  // @IsEnum(MemberFileStatusEnum)
-  // @IsOptional()
-  // public fileStatus: MemberFileStatusEnum | null;
+  @IsEnum(MemberFileStatusEnum)
+  @IsNullable()
+  @IsDefined()
+  public fileStatus: MemberFileStatusEnum | null;
 
-  // @IsEnum(MemberMaritalStatusEnum)
-  // @IsOptional()
-  // public maritalStatus: MemberMaritalStatusEnum | null;
+  @IsEnum(MemberMaritalStatusEnum)
+  @IsNullable()
+  @IsDefined()
+  public maritalStatus: MemberMaritalStatusEnum | null;
 
-  // @IsEnum(MemberNationalityEnum)
-  // @IsOptional()
-  // public nationality: MemberNationalityEnum | null;
+  @IsEnum(MemberNationalityEnum)
+  @IsNullable()
+  @IsDefined()
+  public nationality: MemberNationalityEnum | null;
 
-  // @IsString({ each: true })
-  // @ArrayMinSize(1)
-  // @IsArray()
-  // @IsOptional()
-  // public phones: string[] | null;
+  @IsString({ each: true })
+  @ArrayMinSize(1)
+  @IsArray()
+  @IsNullable()
+  @IsDefined()
+  public phones: string[] | null;
 
-  // @IsEnum(MemberSexEnum)
-  // @IsOptional()
-  // public sex: MemberSexEnum | null;
+  @IsEnum(MemberSexEnum)
+  @IsNullable()
+  @IsDefined()
+  public sex: MemberSexEnum | null;
 
-  // @IsEnum(MemberStatusEnum)
-  // public status: MemberStatusEnum;
+  @IsEnum(MemberStatusEnum)
+  public status: MemberStatusEnum;
 
   @IsNotEmpty()
   @IsString()
   public userId: string;
 
-  public constructor(props?: MemberEntity) {
+  public constructor(props: MemberEntity) {
     super(props);
 
-    if (props) {
-      // this.address = props.address;
+    this.address = props.address;
 
-      // this.category = props.category;
+    this.category = props.category;
 
-      // this.dateOfBirth = props.dateOfBirth;
+    this.dateOfBirth = props.dateOfBirth;
 
-      // this.documentID = props.documentID;
+    this.documentID = props.documentID;
 
-      // this.fileStatus = props.fileStatus;
+    this.fileStatus = props.fileStatus;
 
-      // this.maritalStatus = props.maritalStatus;
+    this.maritalStatus = props.maritalStatus;
 
-      // this.nationality = props.nationality;
+    this.nationality = props.nationality;
 
-      // this.phones = props.phones;
+    this.phones = props.phones;
 
-      this.userId = props.userId;
-    }
+    this.sex = props.sex;
+
+    this.status = props.status;
+
+    this.userId = props.userId;
   }
 }
