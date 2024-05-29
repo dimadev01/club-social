@@ -3,11 +3,11 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IMemberPort } from '@domain/members/member.port';
 import { GetMembersForCsvRequestDto } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv-request.dto';
 import { MemberForCsvDto } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv.dto';
-import { DIToken } from '@infra/di/di-tokens';
-import { FindPaginatedMember } from '@infra/mongo/repositories/members/member-repository.types';
+import { FindPaginatedMemberOld } from '@infra/mongo/repositories/members/member-mongo-repository.types';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
 import { MoneyUtils } from '@shared/utils/money.utils';
@@ -36,7 +36,7 @@ export class GetMembersForCsvUseCase
     return ok<PaginatedResponse<MemberForCsvDto>>({
       count,
       data: data.map(
-        (member: FindPaginatedMember): MemberForCsvDto => ({
+        (member: FindPaginatedMemberOld): MemberForCsvDto => ({
           _id: member._id,
           name: `${member.user.profile?.lastName ?? ''} ${
             member.user.profile?.firstName ?? ''

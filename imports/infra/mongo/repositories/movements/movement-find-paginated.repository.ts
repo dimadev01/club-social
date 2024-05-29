@@ -7,13 +7,13 @@ import {
   CategoryEnum,
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
+import { DIToken } from '@domain/common/tokens.di';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import {
   MovementCollection,
   MovementSchema,
 } from '@domain/movements/movement.collection';
 import { IMovementPaginatedPort } from '@domain/movements/movement.port';
-import { DIToken } from '@infra/di/di-tokens';
 import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import {
@@ -22,7 +22,7 @@ import {
   FindPaginatedMovementsResponse,
 } from '@infra/mongo/repositories/movements/movement-repository.types';
 import { DateUtils } from '@shared/utils/date.utils';
-import { MongoUtils } from '@shared/utils/mongo.utils';
+import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class MovementFindPaginatedRepository
@@ -87,14 +87,17 @@ export class MovementFindPaginatedRepository
           },
           {
             $project: {
-              allDebt: MongoUtils.elementAtArray0('$allDebt.amount', 0),
-              allDebtIncome: MongoUtils.elementAtArray0(
+              allDebt: MongoUtilsOld.elementAtArray0('$allDebt.amount', 0),
+              allDebtIncome: MongoUtilsOld.elementAtArray0(
                 '$allDebtIncome.amount',
                 0,
               ),
-              allExpenses: MongoUtils.elementAtArray0('$allExpenses.amount', 0),
-              allIncome: MongoUtils.elementAtArray0('$allIncome.amount', 0),
-              count: MongoUtils.elementAtArray0('$total.count', 0),
+              allExpenses: MongoUtilsOld.elementAtArray0(
+                '$allExpenses.amount',
+                0,
+              ),
+              allIncome: MongoUtilsOld.elementAtArray0('$allIncome.amount', 0),
+              count: MongoUtilsOld.elementAtArray0('$total.count', 0),
               data: 1,
             },
           },
@@ -150,7 +153,7 @@ export class MovementFindPaginatedRepository
           },
         },
       },
-      MongoUtils.getGroupByAmount(),
+      MongoUtilsOld.getGroupByAmount(),
     ];
   }
 
@@ -187,7 +190,7 @@ export class MovementFindPaginatedRepository
   }
 
   private _getGroupedByCategoryType(type: CategoryTypeEnum) {
-    return [{ $match: { type } }, MongoUtils.getGroupByAmount()];
+    return [{ $match: { type } }, MongoUtilsOld.getGroupByAmount()];
   }
 
   private _getMemberMovementsLookup() {

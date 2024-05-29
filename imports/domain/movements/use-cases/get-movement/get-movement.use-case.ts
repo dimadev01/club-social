@@ -2,10 +2,10 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/get-movement-request.dto';
 import { GetMovementResponseDto } from '@domain/movements/use-cases/get-movement/get-movement-response.dto';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()

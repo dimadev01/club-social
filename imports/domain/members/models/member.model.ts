@@ -1,4 +1,5 @@
 import { Result, err, ok } from 'neverthrow';
+import invariant from 'tiny-invariant';
 
 import { Model } from '@domain/common/models/model';
 import {
@@ -92,6 +93,12 @@ export class MemberModel extends Model implements IMemberModel {
 
   public get maritalStatus(): MemberMaritalStatusEnum | null {
     return this._maritalStatus;
+  }
+
+  public get name(): string {
+    invariant(this.user);
+
+    return this.user.name;
   }
 
   public get nationality(): MemberNationalityEnum | null {

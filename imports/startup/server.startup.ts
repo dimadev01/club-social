@@ -7,6 +7,7 @@ import invariant from 'tiny-invariant';
 import { container, inject, singleton } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { DueMethod } from '@domain/dues/due.methods';
 import { MovementMethod } from '@domain/movements/movement.methods';
 import { PaymentMethod } from '@domain/payments/payment.methods';
@@ -15,7 +16,6 @@ import { ServiceMethod } from '@domain/services/service.methods';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethod } from '@domain/users/user.methods';
 import { MemberController } from '@infra/controllers/member.controller';
-import { DIToken } from '@infra/di/di-tokens';
 import { CategoryMethod } from '@infra/meteor/category.methods';
 import { EmployeeMethod } from '@infra/meteor/employee.methods';
 import { MemberMethod } from '@infra/meteor/member.methods';

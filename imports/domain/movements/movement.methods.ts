@@ -17,7 +17,7 @@ import { RestoreMovementUseCase } from '@domain/movements/use-cases/restore-move
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
 import { UpdateMovementUseCase } from '@domain/movements/use-cases/update-movement/update-movement.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class MovementMethod extends MeteorMethod {
@@ -36,32 +36,38 @@ export class MovementMethod extends MeteorMethod {
 
   public register() {
     Meteor.methods({
-      [MethodsEnum.MovementsGetGrid]: (request: GetMovementsGridRequestDto) =>
+      [MeteorMethodEnum.MovementsGetGrid]: (
+        request: GetMovementsGridRequestDto,
+      ) =>
         this.execute(
           this._getMovementsGrid,
           request,
           GetMovementsGridRequestDto,
         ),
 
-      [MethodsEnum.MovementsGet]: (request: GetMovementRequestDto) =>
+      [MeteorMethodEnum.MovementsGet]: (request: GetMovementRequestDto) =>
         this.execute(this._getMovement, request, GetMovementRequestDto),
 
-      [MethodsEnum.MovementsCreate]: (request: CreateMovementRequestDto) =>
+      [MeteorMethodEnum.MovementsCreate]: (request: CreateMovementRequestDto) =>
         this.execute(this._createMovement, request, CreateMovementRequestDto),
 
-      [MethodsEnum.MovementsUpdate]: (request: UpdateMovementRequestDto) =>
+      [MeteorMethodEnum.MovementsUpdate]: (request: UpdateMovementRequestDto) =>
         this.execute(this._updateMovement, request, UpdateMovementRequestDto),
 
-      [MethodsEnum.MovementsDelete]: (request: DeleteMovementRequestDto) =>
+      [MeteorMethodEnum.MovementsDelete]: (request: DeleteMovementRequestDto) =>
         this.execute(this._deleteMovement, request, DeleteMovementRequestDto),
 
-      [MethodsEnum.MovementsRestore]: (request: RestoreMovementRequestDto) =>
+      [MeteorMethodEnum.MovementsRestore]: (
+        request: RestoreMovementRequestDto,
+      ) =>
         this.execute(this._restoreMovement, request, RestoreMovementRequestDto),
 
-      [MethodsEnum.MovementsMigrate]: (request: MigrateMovementRequestDto) =>
+      [MeteorMethodEnum.MovementsMigrate]: (
+        request: MigrateMovementRequestDto,
+      ) =>
         this.execute(this._migrateMovement, request, MigrateMovementRequestDto),
 
-      [MethodsEnum.MovementsGetNextToMigrate]: (
+      [MeteorMethodEnum.MovementsGetNextToMigrate]: (
         request: GetNextMovementRequestDto,
       ) =>
         this.execute(this._getNextMovement, request, GetNextMovementRequestDto),

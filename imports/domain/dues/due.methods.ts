@@ -15,7 +15,7 @@ import { GetPendingDuesByMemberUseCase } from '@domain/dues/use-cases/get-pendin
 import { RestoreDueRequestDto } from '@domain/dues/use-cases/restore-due/restore-due-request.dto';
 import { RestoreDueUseCase } from '@domain/dues/use-cases/restore-due/restore-due.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class DueMethod extends MeteorMethod {
@@ -33,13 +33,13 @@ export class DueMethod extends MeteorMethod {
 
   public register() {
     Meteor.methods({
-      [MethodsEnum.DuesGetGrid]: (request: GetDuesGridRequestDto) =>
+      [MeteorMethodEnum.DuesGetGrid]: (request: GetDuesGridRequestDto) =>
         this.execute(this._getDuesGrid, request, GetDuesGridRequestDto),
 
-      [MethodsEnum.DuesGetPaid]: (request: GetPaidDuesRequestDto) =>
+      [MeteorMethodEnum.DuesGetPaid]: (request: GetPaidDuesRequestDto) =>
         this.execute(this._getPaidDues, request, GetPaidDuesRequestDto),
 
-      [MethodsEnum.DuesGetPendingByMember]: (
+      [MeteorMethodEnum.DuesGetPendingByMember]: (
         request: GetPendingDuesRequestDto,
       ) =>
         this.execute(
@@ -48,16 +48,16 @@ export class DueMethod extends MeteorMethod {
           GetPendingDuesRequestDto,
         ),
 
-      [MethodsEnum.DuesGet]: (request: GetDueRequestDto) =>
+      [MeteorMethodEnum.DuesGet]: (request: GetDueRequestDto) =>
         this.execute(this._getDue, request, GetDueRequestDto),
 
-      [MethodsEnum.DuesCreate]: (request: CreateDueRequestDto) =>
+      [MeteorMethodEnum.DuesCreate]: (request: CreateDueRequestDto) =>
         this.execute(this._createDue, request, CreateDueRequestDto),
 
-      [MethodsEnum.DuesDelete]: (request: DeleteDueRequestDto) =>
+      [MeteorMethodEnum.DuesDelete]: (request: DeleteDueRequestDto) =>
         this.execute(this._deleteDue, request, DeleteDueRequestDto),
 
-      [MethodsEnum.DuesRestore]: (request: RestoreDueRequestDto) =>
+      [MeteorMethodEnum.DuesRestore]: (request: RestoreDueRequestDto) =>
         this.execute(this._restoreDue, request, RestoreDueRequestDto),
     });
   }

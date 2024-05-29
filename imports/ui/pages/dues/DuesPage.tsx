@@ -187,7 +187,7 @@ export const DuesPage = () => {
           <Table<DueGridDto>
             total={data?.count ?? 0}
             gridState={gridState}
-            onStateChange={setGridState}
+            onChange={setGridState}
             loading={isLoading}
             footer={renderFooter}
             dataSource={data?.data}

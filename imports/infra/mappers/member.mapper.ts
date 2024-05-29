@@ -11,7 +11,14 @@ export class MemberMapper extends Mapper<MemberModel, MemberEntity> {
   public toModel(orm: MemberEntity): MemberModel {
     return new MemberModel({
       _id: orm._id,
-      address: new MemberAddressModel(orm.address),
+      address: new MemberAddressModel({
+        cityGovId: orm.address.cityGovId,
+        cityName: orm.address.cityName,
+        stateGovId: orm.address.stateGovId,
+        stateName: orm.address.stateName,
+        street: orm.address.street,
+        zipCode: orm.address.zipCode,
+      }),
       category: orm.category,
       createdAt: orm.createdAt,
       createdBy: orm.createdBy,

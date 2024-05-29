@@ -1,3 +1,3 @@
 export interface CreateMemberResponse {
-  id: string;
+  _id: string;
 }

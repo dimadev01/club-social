@@ -3,14 +3,14 @@ import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { CreateDueRequestDto } from '@domain/dues/use-cases/create-due/create-due-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
-import { MongoUtils } from '@shared/utils/mongo.utils';
+import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class CreateDueUseCase
@@ -31,7 +31,7 @@ export class CreateDueUseCase
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.DUES, PermissionEnum.CREATE);
 
-    const session = MongoUtils.startSession();
+    const session = MongoUtilsOld.startSession();
 
     try {
       await session.withTransaction(async () => {

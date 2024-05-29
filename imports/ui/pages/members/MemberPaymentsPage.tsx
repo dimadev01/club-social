@@ -147,7 +147,7 @@ export const MemberPaymentsPage = () => {
             total={data?.count ?? 0}
             gridState={gridState}
             summary={renderSummary}
-            onStateChange={setGridState}
+            onChange={setGridState}
             loading={isLoading}
             dataSource={data?.data}
             expandable={{ expandedRowRender }}

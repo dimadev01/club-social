@@ -1,13 +1,13 @@
 import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
+import { DIToken } from '@domain/common/tokens.di';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { IMemberRepository } from '@domain/members/member-repository.interface';
-import { GetMemberRequest } from '@domain/members/use-cases/get-member-new/get-member.request';
-import { GetMemberResponse } from '@domain/members/use-cases/get-member-new/get-member.response';
+import { GetMemberRequest } from '@domain/members/use-cases/get-member/get-member.request';
+import { GetMemberResponse } from '@domain/members/use-cases/get-member/get-member.response';
 import { IUserRepository } from '@domain/users/user-repository.interface';
-import { DIToken } from '@infra/di/di-tokens';
 
 @injectable()
 export class GetMemberNewUseCase
@@ -31,7 +31,8 @@ export class GetMemberNewUseCase
 
     member.user = await this._userRepository.findOneByIdOrThrow(member.userId);
 
-    return ok({
+    return ok<GetMemberResponse>({
+      _id: member._id,
       addressCityGovId: member.address.cityGovId,
       addressCityName: member.address.cityName,
       addressStateGovId: member.address.stateGovId,
@@ -44,7 +45,6 @@ export class GetMemberNewUseCase
       emails: member.user.emails?.map((email) => email.address) ?? [],
       fileStatus: member.fileStatus,
       firstName: member.user.firstName,
-      id: member._id,
       lastName: member.user.lastName,
       maritalStatus: member.maritalStatus,
       nationality: member.nationality,

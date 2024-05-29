@@ -1,63 +1,82 @@
-import { Random } from 'meteor/random';
 import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { ILogger } from '@application/logger/logger.interface';
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { RolePermissionAssignment } from '@domain/roles/roles';
-import { AtLeastOneEmailInUseError } from '@domain/users/errors/at-least-one-email-in-use.error';
-import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
-import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
-import { DIToken } from '@infra/di/di-tokens';
-import { UseCase } from '@infra/use-cases/use-case';
+import { DIToken } from '@domain/common/tokens.di';
+import { IUseCase } from '@domain/common/use-case.interface';
+import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
+import { UserModel } from '@domain/users/models/user.model';
+import { CreateUserResponse } from '@domain/users/use-cases/create-user/create-user-response';
+import { CreateUserRequest } from '@domain/users/use-cases/create-user/create-user.request';
+import { IUserRepository } from '@domain/users/user-repository.interface';
 
 @injectable()
-export class CreateUserUseCase
-  extends UseCase<CreateUserRequestDto>
-  implements IUseCaseOld<CreateUserRequestDto, string>
+export class CreateUserNewUseCase<TSession>
+  implements IUseCase<CreateUserRequest<TSession>, CreateUserResponse>
 {
   public constructor(
-    @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
-  ) {
-    super();
-  }
+    @inject(DIToken.IUserRepository)
+    private readonly _userRepository: IUserRepository<TSession>,
+  ) {}
 
   public async execute(
-    request: CreateUserRequestDto,
-  ): Promise<Result<string, Error>> {
-    await this.validatePermission(ScopeEnum.USERS, PermissionEnum.CREATE);
+    request: CreateUserRequest<TSession>,
+  ): Promise<Result<CreateUserResponse, Error>> {
+    const validation = await this._validate(request);
 
-    if (request.emails?.some((email) => Accounts.findUserByEmail(email))) {
-      return err(new AtLeastOneEmailInUseError());
+    if (validation.isErr()) {
+      return err(validation.error);
     }
 
-    const userId = Accounts.createUser({
-      profile: {
-        firstName: request.firstName,
-        lastName: request.lastName,
-        role: request.role,
-        state: UserStateEnum.ACTIVE,
-        theme: UserThemeEnum.AUTO,
-      },
-      username: Random.secret(),
+    const user = UserModel.createOne({
+      emails:
+        request.emails?.map((email) => ({
+          address: email,
+          verified: false,
+        })) ?? null,
+      firstName: request.firstName,
+      lastName: request.lastName,
+      role: request.role,
     });
 
-    if (request.emails && request.emails.length > 0) {
-      request.emails.forEach((email) => {
-        Accounts.addEmail(userId, email);
-      });
+    if (user.isErr()) {
+      return err(user.error);
     }
 
-    const role = RolePermissionAssignment[request.role];
+    if (request.unitOfWork) {
+      await this._userRepository.insertWithSession(
+        user.value,
+        request.unitOfWork.get(),
+      );
+    } else {
+      await this._userRepository.insert(user.value);
+    }
 
-    Object.entries(role).forEach(([key, value]) => {
-      Roles.addUsersToRoles(userId, value, key);
-    });
+    return ok({ id: user.value._id });
+  }
 
-    this._logger.info('User created', { userId });
+  private async _validate(
+    request: CreateUserRequest<TSession>,
+  ): Promise<Result<null, Error>> {
+    if (request.emails) {
+      const result = await Promise.all(
+        request.emails.map(async (email) => {
+          const user = await this._userRepository.findByEmail(email);
 
-    return ok(userId);
+          if (user) {
+            return err(new ExistingUserByEmailError(email));
+          }
+
+          return ok(null);
+        }),
+      );
+
+      const combined = Result.combine(result);
+
+      if (combined.isErr()) {
+        return err(combined.error);
+      }
+    }
+
+    return ok(null);
   }
 }

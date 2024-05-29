@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 
 import type { GetNextPaymentReceiptNumberResponseDto } from '@domain/payments/use-cases/get-next-payment-receipt-number/get-next-payment-receipt-number-response.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 export const useNextPaymentReceiptNumber = (enabled = true) =>
   useQuery<null, Error, GetNextPaymentReceiptNumberResponseDto>(
-    [MethodsEnum.PaymentsGetNextReceiptNumber],
-    () => Meteor.callAsync(MethodsEnum.PaymentsGetNextReceiptNumber),
+    [MeteorMethodEnum.PaymentsGetNextReceiptNumber],
+    () => Meteor.callAsync(MeteorMethodEnum.PaymentsGetNextReceiptNumber),
     { enabled },
   );

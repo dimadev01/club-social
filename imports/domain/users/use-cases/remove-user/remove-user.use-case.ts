@@ -4,13 +4,13 @@ import { inject, injectable } from 'tsyringe';
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { RolePermissionAssignment } from '@domain/roles/roles';
 import { RemoveAdminError } from '@domain/users/errors/remove-admin.error';
 import { RemoveYourselfError } from '@domain/users/errors/remove-yourself.error';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()

@@ -1,6 +1,6 @@
 import { container, instanceCachingFactory } from 'tsyringe';
 
-import { DIToken } from '@infra/di/di-tokens';
+import { DIToken } from '@domain/common/tokens.di';
 import { EmailService } from '@infra/email/email.service';
 import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 import { CategoryRepository } from '@infra/mongo/repositories/categories/category.repository';
@@ -43,8 +43,6 @@ container.register(DIToken.IMemberRepository, MemberMongoRepository);
 
 container.register(DIToken.IUserRepository, UserMongoRepository);
 
-container.register(DIToken.IMeteorUsers, {
-  useValue: Meteor.users,
-});
+container.register(DIToken.IMeteorUsers, { useValue: Meteor.users });
 
 container.register(DIToken.IUnitOfWork, MongoUnitOfWork);

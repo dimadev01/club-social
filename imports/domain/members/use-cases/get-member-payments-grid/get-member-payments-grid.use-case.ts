@@ -6,10 +6,10 @@ import { GetMemberPaymentsGridResponseDto } from './get-member-payments-grid.res
 import { MemberPaymentGridDto } from './member-payment-grid.dto';
 
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IMemberPort } from '@domain/members/member.port';
 import { Payment } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { MoneyUtils } from '@shared/utils/money.utils';
 

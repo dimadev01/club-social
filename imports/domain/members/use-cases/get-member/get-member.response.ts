@@ -8,6 +8,7 @@ import {
 } from '@domain/members/member.enum';
 
 export interface GetMemberResponse {
+  _id: string;
   addressCityGovId: string | null;
   addressCityName: string | null;
   addressStateGovId: string | null;
@@ -20,7 +21,6 @@ export interface GetMemberResponse {
   emails: string[];
   fileStatus: MemberFileStatusEnum | null;
   firstName: string;
-  id: string;
   lastName: string;
   maritalStatus: MemberMaritalStatusEnum | null;
   nationality: MemberNationalityEnum | null;

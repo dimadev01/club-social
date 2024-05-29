@@ -4,7 +4,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 
 export const useMovementsGrid = (request: GetMovementsGridRequestDto) => {
@@ -18,7 +18,7 @@ export const useMovementsGrid = (request: GetMovementsGridRequestDto) => {
     GetMovementsGridRequestDto,
     Error,
     GetMovementsGridResponseDto
-  >([MethodsEnum.MovementsGetGrid, request], () =>
-    Meteor.callAsync(MethodsEnum.MovementsGetGrid, request),
+  >([MeteorMethodEnum.MovementsGetGrid, request], () =>
+    Meteor.callAsync(MeteorMethodEnum.MovementsGetGrid, request),
   );
 };

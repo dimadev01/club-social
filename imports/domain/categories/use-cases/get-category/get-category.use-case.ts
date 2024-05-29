@@ -7,7 +7,7 @@ import { ICategoryPort } from '@domain/categories/category.port';
 import { Category } from '@domain/categories/entities/category.entity';
 import { GetCategoryRequestDto } from '@domain/categories/use-cases/get-category/get-category-request.dto';
 import { GetCategoryResponseDto } from '@domain/categories/use-cases/get-category/get-category-response.dto';
-import { DIToken } from '@infra/di/di-tokens';
+import { DIToken } from '@domain/common/tokens.di';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()

@@ -38,7 +38,7 @@ export const ServicesPage = () => {
         <Table<GetServicesResponseDto>
           total={data?.length ?? 0}
           gridState={gridState}
-          onStateChange={setGridState}
+          onChange={setGridState}
           loading={isLoading}
           dataSource={data}
           columns={[

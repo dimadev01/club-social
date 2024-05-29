@@ -94,7 +94,7 @@ export const MemberDuesPage = () => {
         <Table<MemberDueGridDto>
           total={data?.count ?? 0}
           gridState={gridState}
-          onStateChange={setGridState}
+          onChange={setGridState}
           loading={isLoading}
           footer={renderFooter}
           dataSource={data?.data}

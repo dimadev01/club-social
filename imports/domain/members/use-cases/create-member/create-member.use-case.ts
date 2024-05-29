@@ -1,57 +1,63 @@
 import { Result, err, ok } from 'neverthrow';
+import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { InternalServerError } from '@application/errors/internal-server.error';
-import { ILogger } from '@application/logger/logger.interface';
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
-import { IMemberPort } from '@domain/members/member.port';
-import { MemberOld } from '@domain/members/models/member.old';
-import { CreateMemberRequestDto } from '@domain/members/use-cases/create-member/create-member-request.dto';
-import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { CreateUserUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
-import { DIToken } from '@infra/di/di-tokens';
-import { UseCase } from '@infra/use-cases/use-case';
-import { ErrorUtils } from '@shared/utils/error.utils';
-import { MongoUtils } from '@shared/utils/mongo.utils';
+import { IUnitOfWork } from '@domain/common/repositories/unit-of-work.interface';
+import { DIToken } from '@domain/common/tokens.di';
+import { IUseCase } from '@domain/common/use-case.interface';
+import { ExistingMemberByDocumentError } from '@domain/members/errors/existing-member-by-document.error';
+import { IMemberRepository } from '@domain/members/member-repository.interface';
+import { MemberModel } from '@domain/members/models/member.model';
+import { CreateMemberRequest } from '@domain/members/use-cases/create-member/create-member.request';
+import { CreateMemberResponse } from '@domain/members/use-cases/create-member/create-member.response';
+import { RoleEnum } from '@domain/roles/role.enum';
+import { CreateUserNewUseCase } from '@domain/users/use-cases/create-user/create-user.use-case';
 
 @injectable()
-export class CreateMemberUseCase
-  extends UseCase<CreateMemberRequestDto>
-  implements IUseCaseOld<CreateMemberRequestDto, string>
+export class CreateMemberUseCase<TSession>
+  implements IUseCase<CreateMemberRequest, CreateMemberResponse>
 {
   public constructor(
-    private readonly _createUserUseCase: CreateUserUseCase,
-    @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
-    @inject(DIToken.MemberRepositoryOld)
-    private readonly _memberPort: IMemberPort,
-  ) {
-    super();
-  }
+    @inject(DIToken.IMemberRepository)
+    private readonly _memberRepository: IMemberRepository<TSession>,
+    @inject(DIToken.IUnitOfWork)
+    private readonly _unitOfWork: IUnitOfWork<TSession>,
+    @inject(CreateUserNewUseCase)
+    private readonly _createUserUseCase: CreateUserNewUseCase<TSession>,
+  ) {}
 
   public async execute(
-    request: CreateMemberRequestDto,
-  ): Promise<Result<string, Error>> {
-    const session = MongoUtils.startSession();
+    request: CreateMemberRequest,
+  ): Promise<Result<CreateMemberResponse, Error>> {
+    if (request.documentID) {
+      const existingMemberByDocument =
+        await this._memberRepository.findByDocument(request.documentID);
+
+      if (existingMemberByDocument) {
+        return err(new ExistingMemberByDocumentError(request.documentID));
+      }
+    }
 
     try {
-      let newMemberId: string | null = null;
+      this._unitOfWork.start();
 
-      await session.withTransaction(async () => {
-        await this.validatePermission(ScopeEnum.MEMBERS, PermissionEnum.CREATE);
+      let newMember: MemberModel | undefined;
 
-        const createUserResult = await this._createUserUseCase.execute({
-          emails: request.emails,
+      await this._unitOfWork.withTransaction(async (session) => {
+        const userResult = await this._createUserUseCase.execute({
+          emails: request.emails?.map((email) => email) ?? null,
           firstName: request.firstName,
           lastName: request.lastName,
           role: RoleEnum.MEMBER,
+          unitOfWork: this._unitOfWork,
         });
 
-        if (createUserResult.isErr()) {
-          throw createUserResult.error;
+        if (userResult.isErr()) {
+          throw userResult.error;
         }
 
-        const memberResult = MemberOld.create({
+        const member = MemberModel.createOne({
           address: {
             cityGovId: request.addressCityGovId,
             cityName: request.addressCityName,
@@ -68,32 +74,29 @@ export class CreateMemberUseCase
           nationality: request.nationality,
           phones: request.phones,
           sex: request.sex,
-          status: request.status,
-          userId: createUserResult.value,
+          userId: userResult.value.id,
         });
 
-        if (memberResult.isErr()) {
-          throw memberResult.error;
+        if (member.isErr()) {
+          throw member.error;
         }
 
-        await this._memberPort.createWithSession(memberResult.value, session);
+        newMember = member.value;
 
-        this._logger.info('Member created', { member: memberResult.value });
-
-        newMemberId = memberResult.value._id;
+        await this._memberRepository.insertWithSession(newMember, session);
       });
 
-      if (!newMemberId) {
-        throw new InternalServerError();
+      invariant(newMember);
+
+      return ok<CreateMemberResponse>({ _id: newMember._id });
+    } catch (error) {
+      if (error instanceof Error) {
+        return err(error);
       }
 
-      return ok(newMemberId);
-    } catch (error) {
-      this._logger.error(error);
-
-      return err(ErrorUtils.unknownToError(error));
+      throw new InternalServerError();
     } finally {
-      await session.endSession();
+      await this._unitOfWork.end();
     }
   }
 }

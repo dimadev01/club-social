@@ -2,9 +2,9 @@ import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
-import { DIToken } from '@infra/di/di-tokens';
 import {
   PaymentDueCollection,
   PaymentDueSchema,

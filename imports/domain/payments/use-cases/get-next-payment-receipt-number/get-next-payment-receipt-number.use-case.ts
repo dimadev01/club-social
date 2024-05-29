@@ -4,8 +4,8 @@ import { inject, injectable } from 'tsyringe';
 import type { GetNextPaymentReceiptNumberResponseDto } from './get-next-payment-receipt-number-response.dto';
 
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IPaymentPort } from '@domain/payments/payment.port';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()

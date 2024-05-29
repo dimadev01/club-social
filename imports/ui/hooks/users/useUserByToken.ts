@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { GetUserRequestDto } from '@domain/users/use-cases/get-user/get-user-request.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 export const useUserByToken = (token?: string) =>
   useQuery<GetUserRequestDto, Error, Meteor.User | undefined>(
-    [MethodsEnum.UsersGetByToken, token],
-    () => Meteor.callAsync(MethodsEnum.UsersGetByToken, { token }),
+    [MeteorMethodEnum.UsersGetByToken, token],
+    () => Meteor.callAsync(MeteorMethodEnum.UsersGetByToken, { token }),
     {
       enabled: !!token,
     },

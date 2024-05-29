@@ -4,7 +4,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import { GetMemberPaymentsGridRequestDto } from '@domain/members/use-cases/get-member-payments-grid/get-member-payments-grid.request.dto';
 import { GetMemberPaymentsGridResponseDto } from '@domain/members/use-cases/get-member-payments-grid/get-member-payments-grid.response.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 
 export const useMemberPaymentsGrid = (
@@ -20,7 +20,7 @@ export const useMemberPaymentsGrid = (
     GetMemberPaymentsGridRequestDto,
     Error,
     GetMemberPaymentsGridResponseDto
-  >([MethodsEnum.MembersGetPaymentsGrid, request], () =>
-    Meteor.callAsync(MethodsEnum.MembersGetPaymentsGrid, request),
+  >([MeteorMethodEnum.MembersGetPaymentsGrid, request], () =>
+    Meteor.callAsync(MeteorMethodEnum.MembersGetPaymentsGrid, request),
   );
 };

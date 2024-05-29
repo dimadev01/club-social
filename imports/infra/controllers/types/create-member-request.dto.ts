@@ -16,7 +16,7 @@ import {
   MemberNationalityEnum,
   MemberSexEnum,
 } from '@domain/members/member.enum';
-import { CreateMemberRequest } from '@domain/members/use-cases/create-member-new/create-member.request';
+import { CreateMemberRequest } from '@domain/members/use-cases/create-member/create-member.request';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
 export class CreateMemberRequestDto implements CreateMemberRequest {

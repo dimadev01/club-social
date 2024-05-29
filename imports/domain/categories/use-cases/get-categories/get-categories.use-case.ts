@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { GetCategoriesResponseDto } from '@domain/categories/use-cases/get-categories/get-categories-response.dto';
-import { DIToken } from '@infra/di/di-tokens';
+import { DIToken } from '@domain/common/tokens.di';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()

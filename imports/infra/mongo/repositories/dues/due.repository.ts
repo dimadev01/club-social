@@ -4,11 +4,11 @@ import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { DueCollection, DueSchema } from '@domain/dues/due.collection';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
-import { DIToken } from '@infra/di/di-tokens';
 import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
 import {
   FindByIdsRequest,
@@ -20,7 +20,7 @@ import {
 } from '@infra/mongo/repositories/dues/due-repository.types';
 import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import { DateUtils } from '@shared/utils/date.utils';
-import { MongoUtils } from '@shared/utils/mongo.utils';
+import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class DueRepository
@@ -116,10 +116,10 @@ export class DueRepository
     };
 
     const $project: Record<string, number | object> = {
-      balance: MongoUtils.first('$totals.balance', 0),
+      balance: MongoUtilsOld.first('$totals.balance', 0),
       data: 1,
-      totalDues: MongoUtils.first('$totals.dues', 0),
-      totalPayments: MongoUtils.first('$totals.payments', 0),
+      totalDues: MongoUtilsOld.first('$totals.dues', 0),
+      totalPayments: MongoUtilsOld.first('$totals.payments', 0),
     };
 
     const hasFilters = query.$expr.$and.length > 1;
@@ -127,7 +127,7 @@ export class DueRepository
     if (hasFilters) {
       $facet.total = [{ $count: 'count' }];
 
-      $project.count = MongoUtils.first('$total.count', 0);
+      $project.count = MongoUtilsOld.first('$total.count', 0);
     }
 
     const [result] = await this.getCollection()

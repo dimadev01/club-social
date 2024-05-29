@@ -1,84 +1,124 @@
-import { Accounts } from 'meteor/accounts-base';
 import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { InternalServerError } from '@application/errors/internal-server.error';
-import { ILogger } from '@application/logger/logger.interface';
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
-import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { EditAdminError } from '@domain/users/errors/edit-admin.error';
+import { DIToken } from '@domain/common/tokens.di';
+import { IUseCase } from '@domain/common/use-case.interface';
 import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
-import { UpdateUserRequestDto } from '@domain/users/use-cases/update-user/update-user-request.dto';
-import { DIToken } from '@infra/di/di-tokens';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UserEmailModel } from '@domain/users/models/user-email.model';
+import { UserModel } from '@domain/users/models/user.model';
+import { UpdateUserRequest } from '@domain/users/use-cases/update-user/update-user.request';
+import { IUserRepository } from '@domain/users/user-repository.interface';
 
 @injectable()
-export class UpdateUserUseCase
-  extends UseCase<UpdateUserRequestDto>
-  implements IUseCaseOld<UpdateUserRequestDto, null>
+export class UpdateUserNewUseCase<TSession>
+  implements IUseCase<UpdateUserRequest<TSession>, null>
 {
   public constructor(
-    @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
-  ) {
-    super();
-  }
+    @inject(DIToken.IUserRepository)
+    private readonly _userRepository: IUserRepository<TSession>,
+  ) {}
 
   public async execute(
-    request: UpdateUserRequestDto,
+    request: UpdateUserRequest<TSession>,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.USERS, PermissionEnum.UPDATE);
+    const validation = await this._validate(request);
 
-    const user = await Meteor.users.findOneAsync(request.id);
+    if (validation.isErr()) {
+      return err(validation.error);
+    }
+
+    const user = await this._userRepository.findOneById(request.id);
 
     if (!user) {
-      throw new UserNotFoundError();
+      return err(new UserNotFoundError());
     }
 
-    if (!user.profile) {
-      throw new InternalServerError();
+    const emails = this._getEmails(request, user);
+
+    if (emails.isErr()) {
+      return err(emails.error);
     }
 
-    if (user.profile?.role === RoleEnum.ADMIN) {
-      return err(new EditAdminError());
+    const result = Result.combine([
+      user.setFirstName(request.firstName),
+      user.setLastName(request.lastName),
+      user.setRole(request.role),
+      user.setEmails(emails.value),
+    ]);
+
+    if (result.isErr()) {
+      return err(result.error);
     }
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const email of request.emails ?? []) {
-      const userHasEmail = user.emails?.some(
-        (userEmail) => userEmail.address === email,
+    if (request.unitOfWork) {
+      await this._userRepository.updateWithSession(
+        user,
+        request.unitOfWork.get(),
       );
+    } else {
+      await this._userRepository.update(user);
+    }
 
-      if (!userHasEmail) {
-        const existingUserByEmail = Accounts.findUserByEmail(email);
+    return ok(null);
+  }
 
-        if (existingUserByEmail && existingUserByEmail._id !== request.id) {
+  private _getEmails(
+    request: UpdateUserRequest<TSession>,
+    user: UserModel,
+  ): Result<UserEmailModel[], Error> {
+    if (!request.emails) {
+      return ok([]);
+    }
+
+    const result = request.emails.map((email) => {
+      const userEmail = user.emails?.find((e) => e.address === email);
+
+      if (userEmail) {
+        userEmail.setAddress(email);
+
+        return ok(userEmail);
+      }
+
+      return UserEmailModel.createOne({
+        address: email,
+        verified: false,
+      });
+    });
+
+    const combined = Result.combine(result);
+
+    if (combined.isErr()) {
+      return err(combined.error);
+    }
+
+    return ok(combined.value);
+  }
+
+  private async _validate(
+    request: UpdateUserRequest<TSession>,
+  ): Promise<Result<null, Error>> {
+    if (!request.emails) {
+      return ok(null);
+    }
+
+    const result = await Promise.all(
+      request.emails.map(async (email) => {
+        const user = await this._userRepository.findByEmail(email);
+
+        if (user && user._id !== request.id) {
           return err(new ExistingUserByEmailError(email));
         }
 
-        Accounts.addEmail(user._id, email);
-      }
+        return ok(null);
+      }),
+    );
+
+    const combined = Result.combine(result);
+
+    if (combined.isErr()) {
+      return err(combined.error);
     }
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const email of user.emails ?? []) {
-      const emailIsInRequest = request.emails?.includes(email.address);
-
-      if (!emailIsInRequest) {
-        Accounts.removeEmail(user._id, email.address);
-      }
-    }
-
-    await Meteor.users.updateAsync(request.id, {
-      $set: {
-        'profile.firstName': request.firstName.trim(),
-        'profile.lastName': request.lastName.trim(),
-        state: request.state,
-      },
-    });
-
-    this._logger.info('User updated', { userId: request.id });
 
     return ok(null);
   }

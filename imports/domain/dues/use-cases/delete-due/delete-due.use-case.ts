@@ -3,10 +3,10 @@ import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { DeleteDueRequestDto } from '@domain/dues/use-cases/delete-due/delete-due-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()

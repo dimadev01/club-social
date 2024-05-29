@@ -5,7 +5,7 @@ import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { GetCategoriesByTypeRequestDto } from '@domain/categories/use-cases/get-categories-by-type/get-categories-by-type-request.dto';
 import { GetCategoriesByTypeResponseDto } from '@domain/categories/use-cases/get-categories-by-type/get-categories-by-type-response.dto';
-import { DIToken } from '@infra/di/di-tokens';
+import { DIToken } from '@domain/common/tokens.di';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()

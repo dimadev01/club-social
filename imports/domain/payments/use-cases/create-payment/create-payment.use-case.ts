@@ -7,6 +7,7 @@ import { ExistingPaymentError } from './errors/existing-payment.error';
 
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
@@ -15,10 +16,9 @@ import { IPaymentPort } from '@domain/payments/payment.port';
 import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
 import { DuePaidError } from '@domain/payments/use-cases/create-payment/errors/due-paid.error';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
-import { MongoUtils } from '@shared/utils/mongo.utils';
+import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class CreatePaymentUseCase
@@ -56,7 +56,7 @@ export class CreatePaymentUseCase
       );
     }
 
-    const session = MongoUtils.startSession();
+    const session = MongoUtilsOld.startSession();
 
     try {
       let newPayment: Payment | undefined;

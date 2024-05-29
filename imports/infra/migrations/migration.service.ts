@@ -2,7 +2,7 @@ import './migrations';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { DIToken } from '@infra/di/di-tokens';
+import { DIToken } from '@domain/common/tokens.di';
 
 @injectable()
 export class MigrationService {

@@ -5,7 +5,7 @@ import { ILogger } from '@application/logger/logger.interface';
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
-import { DIToken } from '@infra/di/di-tokens';
+import { DIToken } from '@domain/common/tokens.di';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()

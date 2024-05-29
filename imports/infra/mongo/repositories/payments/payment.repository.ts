@@ -4,9 +4,9 @@ import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { Payment } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
-import { DIToken } from '@infra/di/di-tokens';
 import {
   PaymentCollection,
   PaymentSchema,
@@ -20,7 +20,7 @@ import {
   FindPaginatedPaymentsResponse,
 } from '@infra/mongo/repositories/payments/payment-repository.types';
 import { DateUtils } from '@shared/utils/date.utils';
-import { MongoUtils } from '@shared/utils/mongo.utils';
+import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class PaymentRepository
@@ -94,7 +94,7 @@ export class PaymentRepository
 
     const $project: Record<string, number | object> = {
       data: 1,
-      totalAmount: MongoUtils.first('$totalAmount.sum', 0),
+      totalAmount: MongoUtilsOld.first('$totalAmount.sum', 0),
     };
 
     const hasFilters = query.$expr.$and.length > 1;
@@ -102,7 +102,7 @@ export class PaymentRepository
     if (hasFilters) {
       $facet.total = [{ $count: 'count' }];
 
-      $project.count = MongoUtils.first('$total.count', 0);
+      $project.count = MongoUtilsOld.first('$total.count', 0);
     }
 
     const [result] = await this.getCollection()

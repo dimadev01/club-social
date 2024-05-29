@@ -7,12 +7,12 @@ import {
   CategoryEnum,
   MemberCategories,
 } from '@domain/categories/category.enum';
+import { DIToken } from '@domain/common/tokens.di';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPaginatedPort } from '@domain/movements/movement.port';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
-import { DIToken } from '@infra/di/di-tokens';
 import { FindPaginatedMovement } from '@infra/mongo/repositories/movements/movement-repository.types';
 import { UseCase } from '@infra/use-cases/use-case';
 

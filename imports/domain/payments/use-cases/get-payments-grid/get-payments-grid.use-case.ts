@@ -3,6 +3,7 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IMemberPort } from '@domain/members/member.port';
 import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
 import { Payment } from '@domain/payments/entities/payment.entity';
@@ -10,7 +11,6 @@ import { IPaymentPort } from '@domain/payments/payment.port';
 import { GetPaymentsGridRequestDto } from '@domain/payments/use-cases/get-payments-grid/get-payments-grid.request.dto';
 import { GetPaymentsGridResponseDto } from '@domain/payments/use-cases/get-payments-grid/get-payments-grid.response.dto';
 import { PaymentGridDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid.dto';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { MoneyUtils } from '@shared/utils/money.utils';
 

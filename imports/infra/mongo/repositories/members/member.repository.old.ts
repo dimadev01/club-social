@@ -8,6 +8,7 @@ import { EntityNotFoundError } from '@application/errors/entity-not-found.error'
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
 import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
+import { DIToken } from '@domain/common/tokens.di';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import {
   MemberCategoryEnum,
@@ -15,16 +16,15 @@ import {
 } from '@domain/members/member.enum';
 import { IMemberPort } from '@domain/members/member.port';
 import { MemberOld } from '@domain/members/models/member.old';
-import { DIToken } from '@infra/di/di-tokens';
 import { MemberCollection } from '@infra/mongo/collections/member.collection';
 import { MemberSchemaOld } from '@infra/mongo/collections/member.collection.old';
 import { MongoCollection } from '@infra/mongo/collections/mongo.collection';
 import {
-  FindPaginatedMember,
+  FindPaginatedMemberOld,
   FindPaginatedMembersRequest,
-} from '@infra/mongo/repositories/members/member-repository.types';
+} from '@infra/mongo/repositories/members/member-mongo-repository.types';
 import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
-import { MongoUtils } from '@shared/utils/mongo.utils';
+import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class MemberRepositoryOld
@@ -109,7 +109,7 @@ export class MemberRepositoryOld
 
   public async findPaginated(
     request: FindPaginatedMembersRequest,
-  ): Promise<FindPaginatedResponse<FindPaginatedMember>> {
+  ): Promise<FindPaginatedResponse<FindPaginatedMemberOld>> {
     const query: Mongo.Selector<MemberOld> = {
       isDeleted: false,
     };
@@ -215,7 +215,7 @@ export class MemberRepositoryOld
 
     const [{ data, count }] = await this.getCollection()
       .rawCollection()
-      .aggregate<FindPaginatedAggregationResult<FindPaginatedMember>>([
+      .aggregate<FindPaginatedAggregationResult<FindPaginatedMemberOld>>([
         { $match: query },
         ...this._userLookup($userLookupPipeline),
         {
@@ -226,7 +226,7 @@ export class MemberRepositoryOld
         },
         {
           $project: {
-            count: MongoUtils.elementAtArray0('$total.count', 0),
+            count: MongoUtilsOld.elementAtArray0('$total.count', 0),
             data: 1,
           },
         },

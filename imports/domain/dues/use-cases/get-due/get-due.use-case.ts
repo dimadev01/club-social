@@ -2,10 +2,10 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { GetDueRequestDto } from '@domain/dues/use-cases/get-due/get-due-request.dto';
 import { GetDueResponseDto } from '@domain/dues/use-cases/get-due/get-due-response.dto';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()

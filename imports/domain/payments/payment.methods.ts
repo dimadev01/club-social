@@ -13,7 +13,7 @@ import { GetPaymentRequestDto } from '@domain/payments/use-cases/get-payment/get
 import { GetPaymentUseCase } from '@domain/payments/use-cases/get-payment/get-payment.use-case';
 import { GetPaymentsGridUseCase } from '@domain/payments/use-cases/get-payments-grid/get-payments-grid.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class PaymentMethod extends MeteorMethod {
@@ -30,22 +30,22 @@ export class PaymentMethod extends MeteorMethod {
 
   public register() {
     Meteor.methods({
-      [MethodsEnum.PaymentsGetGrid]: (request: GetDuesGridRequestDto) =>
+      [MeteorMethodEnum.PaymentsGetGrid]: (request: GetDuesGridRequestDto) =>
         this.execute(this._getPaymentsGrid, request, GetDuesGridRequestDto),
 
-      [MethodsEnum.PaymentsGetPaid]: (request: GetPaidDuesRequestDto) =>
+      [MeteorMethodEnum.PaymentsGetPaid]: (request: GetPaidDuesRequestDto) =>
         this.execute(this._getPaidDues, request, GetPaidDuesRequestDto),
 
-      [MethodsEnum.PaymentsGet]: (request: GetPaymentRequestDto) =>
+      [MeteorMethodEnum.PaymentsGet]: (request: GetPaymentRequestDto) =>
         this.execute(this._getPayment, request, GetPaymentRequestDto),
 
-      [MethodsEnum.PaymentsCreate]: (request: CreatePaymentRequestDto) =>
+      [MeteorMethodEnum.PaymentsCreate]: (request: CreatePaymentRequestDto) =>
         this.execute(this._createPayment, request, CreatePaymentRequestDto),
 
-      [MethodsEnum.PaymentsDelete]: (request: DeletePaymentRequestDto) =>
+      [MeteorMethodEnum.PaymentsDelete]: (request: DeletePaymentRequestDto) =>
         this.execute(this._deletePayment, request, DeletePaymentRequestDto),
 
-      [MethodsEnum.PaymentsGetNextReceiptNumber]: () =>
+      [MeteorMethodEnum.PaymentsGetNextReceiptNumber]: () =>
         this.execute(this._getNextPaymentReceiptNumber),
     });
   }

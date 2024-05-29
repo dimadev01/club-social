@@ -4,7 +4,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import { GetMemberDuesGridRequestDto } from '@domain/members/use-cases/get-member-dues-grid/get-member-dues-grid.request.dto';
 import { GetMemberDuesGridResponseDto } from '@domain/members/use-cases/get-member-dues-grid/get-member-dues-grid.response.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 
 export const useMemberDuesGrid = (request: GetMemberDuesGridRequestDto) => {
@@ -18,7 +18,7 @@ export const useMemberDuesGrid = (request: GetMemberDuesGridRequestDto) => {
     GetMemberDuesGridRequestDto,
     Error,
     GetMemberDuesGridResponseDto
-  >([MethodsEnum.MembersGetDuesGrid, request], () =>
-    Meteor.callAsync(MethodsEnum.MembersGetDuesGrid, request),
+  >([MeteorMethodEnum.MembersGetDuesGrid, request], () =>
+    Meteor.callAsync(MeteorMethodEnum.MembersGetDuesGrid, request),
   );
 };

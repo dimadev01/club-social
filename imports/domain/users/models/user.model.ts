@@ -63,6 +63,10 @@ export class UserModel extends Model implements IUserModel {
     return this._lastName;
   }
 
+  public get name(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
   public get role(): RoleEnum {
     return this._role;
   }
@@ -84,7 +88,10 @@ export class UserModel extends Model implements IUserModel {
 
     const emails =
       props.emails?.map((email) =>
-        UserEmailModel.createOne({ address: email.address }),
+        UserEmailModel.createOne({
+          address: email.address,
+          verified: email.verified,
+        }),
       ) ?? null;
 
     const combined = Result.combine(emails ?? []);

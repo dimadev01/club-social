@@ -3,11 +3,11 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IMemberPort } from '@domain/members/member.port';
 import { MemberOld } from '@domain/members/models/member.old';
 import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()

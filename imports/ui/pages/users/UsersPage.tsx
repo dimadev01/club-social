@@ -59,7 +59,7 @@ export const UsersPage = () => {
           total={data?.count ?? 0}
           showSearch
           gridState={gridState}
-          onStateChange={setGridState}
+          onChange={setGridState}
           loading={isLoading}
           dataSource={data?.data}
           columns={[

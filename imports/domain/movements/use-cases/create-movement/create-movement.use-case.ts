@@ -9,15 +9,15 @@ import {
   CategoryLabel,
   MemberCategories,
 } from '@domain/categories/category.enum';
+import { DIToken } from '@domain/common/tokens.di';
 import { IMemberPort } from '@domain/members/member.port';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
-import { MongoUtils } from '@shared/utils/mongo.utils';
+import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class CreateMovementUseCase
@@ -72,7 +72,7 @@ export class CreateMovementUseCase
   private async _createWithMember(
     request: CreateMovementRequestDto,
   ): Promise<Result<null, Error>> {
-    const session = MongoUtils.startSession();
+    const session = MongoUtilsOld.startSession();
 
     try {
       await session.withTransaction(async () => {

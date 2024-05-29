@@ -1,4 +1,4 @@
-export enum MethodsEnum {
+export enum MeteorMethodEnum {
   CategoriesGetAll = 'categories/getAll',
   CategoriesGetAllByType = 'categories/getAllByType',
   CategoriesGetGrid = 'categories/getGrid',
@@ -15,19 +15,15 @@ export enum MethodsEnum {
 
   EmployeesGetAll = 'employees/getAll',
 
-  MembersCreate = 'members/create',
-  MembersCreateNew = 'members/createNew',
-  MembersDelete = 'members/delete',
+  MembersCreate = 'members/createNew',
   MembersGet = 'members/get',
-  MembersGetAll = 'members/getAll',
   MembersGetDuesGrid = 'members/getDuesGrid',
   MembersGetForCsv = 'members/getForCsv',
   MembersGetGrid = 'members/getGrid',
   MembersGetMovementsGrid = 'movements/getMovementsGrid',
   MembersGetNew = 'members/getNew',
   MembersGetPaymentsGrid = 'members/getPaymentsGrid',
-  MembersUpdate = 'members/update',
-  MembersUpdateNew = 'members/updateNew',
+  MembersUpdate = 'members/updateNew',
 
   MovementsCreate = 'movements/create',
   MovementsDelete = 'movements/delete',

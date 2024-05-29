@@ -47,7 +47,7 @@ export const CategoriesPage = () => {
         <Table<CategoryGridDto>
           total={data?.count ?? 0}
           gridState={gridState}
-          onStateChange={setGridState}
+          onChange={setGridState}
           loading={isLoading}
           dataSource={data?.data ?? []}
           columns={[

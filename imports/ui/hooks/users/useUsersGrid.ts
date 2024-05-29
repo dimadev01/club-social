@@ -4,7 +4,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import { GetUsersRequestDto } from '@domain/users/use-cases/get-users-grid/get-users-grid-request.dto';
 import { GetUsersResponseDto } from '@domain/users/use-cases/get-users-grid/get-users-grid.response.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 
 export const useUsersGrid = (request: GetUsersRequestDto) => {
@@ -15,7 +15,7 @@ export const useUsersGrid = (request: GetUsersRequestDto) => {
   }, [request]);
 
   return useQuery<GetUsersRequestDto, Error, GetUsersResponseDto>(
-    [MethodsEnum.UsersGetGrid, request],
-    () => Meteor.callAsync(MethodsEnum.UsersGetGrid, request),
+    [MeteorMethodEnum.UsersGetGrid, request],
+    () => Meteor.callAsync(MeteorMethodEnum.UsersGetGrid, request),
   );
 };

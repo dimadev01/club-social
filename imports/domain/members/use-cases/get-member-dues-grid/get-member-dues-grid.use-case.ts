@@ -6,10 +6,10 @@ import { GetMemberDuesGridResponseDto } from './get-member-dues-grid.response.dt
 import { MemberDueGridDto } from './member-due-grid.dto';
 
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { IMemberPort } from '@domain/members/member.port';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { MoneyUtils } from '@shared/utils/money.utils';
 
@@ -55,12 +55,8 @@ export class GetMemberDuesGridUseCase
           isPartiallyPaid: due.isPartiallyPaid(),
           isPending: due.isPending(),
           membershipMonth: due.membershipMonth,
-          paidAmount: due.paidAmountFormatted,
-          payments:
-            due.payments?.map((duePayment) => ({
-              amount: duePayment.amountFormatted,
-              paidAt: duePayment.dateFormatted,
-            })) ?? null,
+          paidAmount: '',
+          payments: [],
           status: due.status,
         }),
       ),

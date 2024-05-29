@@ -6,7 +6,7 @@ import { ILogger } from '@application/logger/logger.interface';
 import { CategoryTypeEnum } from '@domain/categories/category.enum';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { Category } from '@domain/categories/entities/category.entity';
-import { DIToken } from '@infra/di/di-tokens';
+import { DIToken } from '@domain/common/tokens.di';
 import {
   CategoriesSchema,
   CategoryCollection,

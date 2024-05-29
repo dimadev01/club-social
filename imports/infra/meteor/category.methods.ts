@@ -10,7 +10,7 @@ import { GetCategoryUseCase } from '@domain/categories/use-cases/get-category/ge
 import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
 import { UpdateCategoryUseCase } from '@domain/categories/use-cases/update-category/update-category.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class CategoryMethod extends MeteorMethod {
@@ -26,22 +26,26 @@ export class CategoryMethod extends MeteorMethod {
 
   public register() {
     Meteor.methods({
-      [MethodsEnum.CategoriesGetOne]: (request: GetCategoryRequestDto) =>
+      [MeteorMethodEnum.CategoriesGetOne]: (request: GetCategoryRequestDto) =>
         this.execute(this._getCategory, request, GetCategoryRequestDto),
 
-      [MethodsEnum.CategoriesGetAll]: () => this.execute(this._getCategories),
+      [MeteorMethodEnum.CategoriesGetAll]: () =>
+        this.execute(this._getCategories),
 
-      [MethodsEnum.CategoriesGetGrid]: (request: GetCategoriesGridRequestDto) =>
+      [MeteorMethodEnum.CategoriesGetGrid]: (
+        request: GetCategoriesGridRequestDto,
+      ) =>
         this.execute(
           this._getCategoriesGrid,
           request,
           GetCategoriesGridRequestDto,
         ),
 
-      [MethodsEnum.CategoriesUpdate]: (request: UpdateCategoryRequestDto) =>
-        this.execute(this._updatePrice, request, UpdateCategoryRequestDto),
+      [MeteorMethodEnum.CategoriesUpdate]: (
+        request: UpdateCategoryRequestDto,
+      ) => this.execute(this._updatePrice, request, UpdateCategoryRequestDto),
 
-      [MethodsEnum.CategoriesGetAllByType]: (
+      [MeteorMethodEnum.CategoriesGetAllByType]: (
         request: GetCategoriesByTypeRequestDto,
       ) =>
         this.execute(

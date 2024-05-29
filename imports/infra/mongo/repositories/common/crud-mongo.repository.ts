@@ -1,3 +1,4 @@
+import { Mongo } from 'meteor/mongo';
 import type {
   ClientSession,
   Filter,
@@ -9,6 +10,11 @@ import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { Model } from '@domain/common/models/model';
 import { ICrudRepository } from '@domain/common/repositories/crud-repository.interface';
+import {
+  FindPaginatedRequest,
+  FindPaginatedResponse,
+  PaginatedSorter,
+} from '@domain/common/repositories/queryable-grid-repository.interface';
 import { Mapper } from '@infra/mappers/mapper';
 import { MongoCollection } from '@infra/mongo/collections/mongo.collection';
 import { Entity } from '@infra/mongo/entities/common/entity';
@@ -93,6 +99,29 @@ export abstract class CrudMongoRepository<
     }
   }
 
+  public async findPaginated(
+    request: FindPaginatedRequest<TModel>,
+  ): Promise<FindPaginatedResponse<TModel>> {
+    // @ts-expect-error
+    const query: Mongo.Selector<TEntity> = {
+      isDeleted: false,
+    };
+
+    const totalCount = await this._collection.find(query).countAsync();
+
+    const options: Mongo.Options<TEntity> = {
+      limit: request.limit,
+      skip: request.page,
+      sort: this.getSorter(request.sorter),
+    };
+
+    const entities = await this._collection.find(query, options).fetchAsync();
+
+    const items = entities.map((entity) => this._mapper.toModel(entity));
+
+    return { items, totalCount };
+  }
+
   public async insert(model: TModel): Promise<void> {
     try {
       const entity = (await this._mapper.toEntity(
@@ -159,6 +188,26 @@ export abstract class CrudMongoRepository<
     } catch (error) {
       this._handleError(error);
     }
+  }
+
+  protected getSorter(paginatedSorter: PaginatedSorter): {
+    [key: string]: number;
+  } {
+    const sorter: { [key: string]: 1 | -1 } = {};
+
+    Object.entries(paginatedSorter).forEach(([key, value]) => {
+      if (value === 'ascend') {
+        sorter[key] = 1;
+      } else if (value === 'descend') {
+        sorter[key] = -1;
+      } else if (value === null) {
+        sorter[key] = -1;
+      }
+    });
+
+    console.log(sorter);
+
+    return sorter;
   }
 
   private async _getLoggedInUserName(): Promise<string> {

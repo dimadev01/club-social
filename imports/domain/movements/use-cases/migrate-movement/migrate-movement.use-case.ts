@@ -4,11 +4,11 @@ import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { DIToken } from '@domain/common/tokens.di';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { MigrateMovementRequestDto } from '@domain/movements/use-cases/migrate-movement/migrate-movement-request.dto';
 import { CreatePaymentUseCase } from '@domain/payments/use-cases/create-payment/create-payment.use-case';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { DIToken } from '@infra/di/di-tokens';
 import { UseCase } from '@infra/use-cases/use-case';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
