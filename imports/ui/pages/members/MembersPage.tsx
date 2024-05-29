@@ -24,20 +24,25 @@ import { TableNew } from '@ui/components/Table/TableNew';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TablePrintButton } from '@ui/components/Table/TablePrintButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
+import { useMembers } from '@ui/hooks/members/useMembers';
 import { useGridNew } from '@ui/hooks/useGridNew';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 
 export const MembersPage = () => {
-  const [gridState, setGridState] = useGridNew({
-    defaultFilters: {
-      status: [MemberStatusEnum.ACTIVE],
-    },
-    defaultSort: { name: 'ascend' },
-  });
-
   const navigate = useNavigate();
 
+  const [gridState, setGridState] = useGridNew({
+    defaultFilters: { status: [MemberStatusEnum.ACTIVE] },
+    defaultSort: { _id: 'ascend' },
+  });
+
   const [isExportingToCsv, setIsExportingToCsv] = useState(false);
+
+  const { data: members } = useMembers({
+    status: gridState.filters.status
+      ? (gridState.filters.status as MemberStatusEnum[])
+      : null,
+  });
 
   const { data, isLoading, isRefetching, refetch } =
     useQueryGrid<GetMemberGridResponse>({
@@ -171,11 +176,18 @@ export const MembersPage = () => {
           }}
           columns={[
             {
-              dataIndex: 'name',
-              render: (name: string, member: GetMemberGridResponse) => (
-                <NavLink to={`${AppUrl.Members}/${member._id}`}>{name}</NavLink>
+              dataIndex: '_id',
+              filterSearch: true,
+              filters:
+                members?.map((member) => ({
+                  text: member.name,
+                  value: member._id,
+                })) ?? [],
+              render: (_id: string, member: GetMemberGridResponse) => (
+                <NavLink to={`${AppUrl.Members}/${_id}`}>{member.name}</NavLink>
               ),
-              sortOrder: gridState.sorter.name,
+
+              sortOrder: gridState.sorter._id,
               sorter: true,
               title: 'Socio',
             },

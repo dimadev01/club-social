@@ -23,6 +23,7 @@ export interface GetMemberResponse {
   firstName: string;
   lastName: string;
   maritalStatus: MemberMaritalStatusEnum | null;
+  name: string;
   nationality: MemberNationalityEnum | null;
   phones: string[] | null;
   sex: MemberSexEnum | null;

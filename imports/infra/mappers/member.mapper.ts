@@ -1,13 +1,21 @@
-import { singleton } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 
 import { MemberAddressModel } from '@domain/members/models/member-address.model';
 import { MemberModel } from '@domain/members/models/member.model';
 import { Mapper } from '@infra/mappers/mapper';
+import { UserMapper } from '@infra/mappers/user.mapper';
 import { MemberAddressEntity } from '@infra/mongo/entities/members/member-address.entity';
 import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
 
 @singleton()
 export class MemberMapper extends Mapper<MemberModel, MemberEntity> {
+  public constructor(
+    @inject(UserMapper)
+    private readonly _userMapper: UserMapper,
+  ) {
+    super();
+  }
+
   public toModel(orm: MemberEntity): MemberModel {
     return new MemberModel({
       _id: orm._id,
@@ -35,7 +43,7 @@ export class MemberMapper extends Mapper<MemberModel, MemberEntity> {
       status: orm.status,
       updatedAt: orm.updatedAt,
       updatedBy: orm.updatedBy,
-      user: null,
+      user: orm.user ? this._userMapper.toModel(orm.user) : undefined,
       userId: orm.userId,
     });
   }
@@ -67,6 +75,7 @@ export class MemberMapper extends Mapper<MemberModel, MemberEntity> {
       status: model.status,
       updatedAt: model.updatedAt,
       updatedBy: model.updatedBy,
+      user: undefined,
       userId: model.userId,
     });
   }

@@ -15,7 +15,7 @@ export enum MeteorMethodEnum {
 
   EmployeesGetAll = 'employees/getAll',
 
-  MembersCreate = 'members/createNew',
+  MembersCreate = 'members/create',
   MembersGet = 'members/get',
   MembersGetDuesGrid = 'members/getDuesGrid',
   MembersGetForCsv = 'members/getForCsv',

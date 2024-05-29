@@ -37,6 +37,6 @@ export interface IMemberModel extends IModel {
   phones: string[] | null;
   sex: MemberSexEnum | null;
   status: MemberStatusEnum;
-  user: UserModel | null;
+  user: UserModel | undefined;
   userId: string;
 }

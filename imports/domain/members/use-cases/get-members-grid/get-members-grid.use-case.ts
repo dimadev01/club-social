@@ -6,6 +6,7 @@ import { DIToken } from '@domain/common/tokens.di';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { IMemberRepository } from '@domain/members/member-repository.interface';
 import { GetMemberGridResponse } from '@domain/members/use-cases/get-member/get-member-grid.response';
+import { IUserRepository } from '@domain/users/user-repository.interface';
 import { GetGridRequestDto } from '@infra/controllers/types/get-grid-request.dto';
 import { GetGridResponse } from '@infra/controllers/types/get-grid-response.dto';
 import { UseCase } from '@infra/use-cases/use-case';
@@ -19,6 +20,8 @@ export class GetMembersGridUseCase
   public constructor(
     @inject(DIToken.IMemberRepository)
     private readonly _memberRepository: IMemberRepository,
+    @inject(DIToken.IUserRepository)
+    private readonly _userRepository: IUserRepository,
   ) {
     super();
   }
@@ -43,10 +46,12 @@ export class GetMembersGridUseCase
 
         invariant(balance);
 
+        invariant(item.user);
+
         return {
           _id: item._id,
           category: item.category,
-          name: item.name,
+          name: item.user.name,
           pendingElectricity: balance.electricity,
           pendingGuest: balance.guest,
           pendingMembership: balance.membership,

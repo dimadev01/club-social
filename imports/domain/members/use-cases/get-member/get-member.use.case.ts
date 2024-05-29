@@ -10,7 +10,7 @@ import { GetMemberResponse } from '@domain/members/use-cases/get-member/get-memb
 import { IUserRepository } from '@domain/users/user-repository.interface';
 
 @injectable()
-export class GetMemberNewUseCase
+export class GetMemberUseCase
   implements IUseCase<GetMemberRequest, GetMemberResponse | null>
 {
   public constructor(

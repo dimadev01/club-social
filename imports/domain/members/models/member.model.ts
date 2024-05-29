@@ -39,7 +39,7 @@ export class MemberModel extends Model implements IMemberModel {
 
   private _status: MemberStatusEnum;
 
-  private _user: UserModel | null;
+  private _user: UserModel | undefined;
 
   private _userId: string;
 
@@ -68,7 +68,7 @@ export class MemberModel extends Model implements IMemberModel {
 
     this._userId = props?.userId ?? '';
 
-    this._user = null;
+    this._user = props?.user;
   }
 
   public get address(): MemberAddressModel {
@@ -117,11 +117,11 @@ export class MemberModel extends Model implements IMemberModel {
     return this._status;
   }
 
-  public get user(): UserModel | null {
+  public get user(): UserModel | undefined {
     return this._user;
   }
 
-  public set user(value: UserModel | null) {
+  public set user(value: UserModel | undefined) {
     this._user = value;
   }
 

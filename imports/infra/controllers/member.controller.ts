@@ -7,7 +7,8 @@ import { CreateMemberResponse } from '@domain/members/use-cases/create-member/cr
 import { CreateMemberUseCase } from '@domain/members/use-cases/create-member/create-member.use-case';
 import { GetMemberGridResponse } from '@domain/members/use-cases/get-member/get-member-grid.response';
 import { GetMemberResponse } from '@domain/members/use-cases/get-member/get-member.response';
-import { GetMemberNewUseCase } from '@domain/members/use-cases/get-member/get-member.use.case';
+import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-member.use.case';
+import { GetMembersUseCase } from '@domain/members/use-cases/get-members/get-members.use-case';
 import { GetMembersGridUseCase } from '@domain/members/use-cases/get-members-grid/get-members-grid.use-case';
 import { UpdateMemberNewUseCase } from '@domain/members/use-cases/update-member-new/update-member.use-case';
 import { BaseController } from '@infra/controllers/base.controller';
@@ -15,6 +16,7 @@ import { CreateMemberRequestDto } from '@infra/controllers/types/create-member-r
 import { GetGridRequestDto } from '@infra/controllers/types/get-grid-request.dto';
 import { GetGridResponse } from '@infra/controllers/types/get-grid-response.dto';
 import { GetMemberRequestDto } from '@infra/controllers/types/get-member-request.dto';
+import { GetMembersRequestDto } from '@infra/controllers/types/get-members-request.dto';
 import { UpdateMemberRequestDto } from '@infra/controllers/types/update-member-request.dto';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
@@ -25,8 +27,10 @@ export class MemberController extends BaseController {
     protected readonly logger: ILogger,
     @inject(CreateMemberUseCase)
     private readonly _createMemberUseCase: CreateMemberUseCase<ClientSession>,
-    @inject(GetMemberNewUseCase)
-    private readonly _getMemberUseCase: GetMemberNewUseCase,
+    @inject(GetMemberUseCase)
+    private readonly _getMemberUseCase: GetMemberUseCase,
+    @inject(GetMembersUseCase)
+    private readonly _getMembersUseCase: GetMembersUseCase,
     @inject(GetMembersGridUseCase)
     private readonly _getMembersGridUseCase: GetMembersGridUseCase,
     @inject(UpdateMemberNewUseCase)
@@ -35,23 +39,13 @@ export class MemberController extends BaseController {
     super(logger);
   }
 
-  private _getMember(
-    request: GetMemberRequestDto,
-  ): Promise<GetMemberResponse | null> {
-    return this.execute({
-      classType: GetMemberRequestDto,
-      request,
-      useCase: this._getMemberUseCase,
-    });
-  }
-
-  private _getMembersGrid(
-    request: GetGridRequestDto,
-  ): Promise<GetGridResponse<GetMemberGridResponse>> {
-    return this.execute({
-      classType: GetGridRequestDto,
-      request,
-      useCase: this._getMembersGridUseCase,
+  public register(): void {
+    Meteor.methods({
+      [MeteorMethodEnum.MembersCreate]: this._createMember.bind(this),
+      [MeteorMethodEnum.MembersUpdate]: this._updateMember.bind(this),
+      [MeteorMethodEnum.MembersGetOne]: this._getMember.bind(this),
+      [MeteorMethodEnum.MembersGetGrid]: this._getMembersGrid.bind(this),
+      [MeteorMethodEnum.MembersGet]: this._getMembers.bind(this),
     });
   }
 
@@ -65,20 +59,41 @@ export class MemberController extends BaseController {
     });
   }
 
+  private _getMember(
+    request: GetMemberRequestDto,
+  ): Promise<GetMemberResponse | null> {
+    return this.execute({
+      classType: GetMemberRequestDto,
+      request,
+      useCase: this._getMemberUseCase,
+    });
+  }
+
+  private _getMembers(
+    request: GetMembersRequestDto,
+  ): Promise<GetMemberResponse[]> {
+    return this.execute({
+      classType: GetMembersRequestDto,
+      request,
+      useCase: this._getMembersUseCase,
+    });
+  }
+
+  private _getMembersGrid(
+    request: GetGridRequestDto,
+  ): Promise<GetGridResponse<GetMemberGridResponse>> {
+    return this.execute({
+      classType: GetGridRequestDto,
+      request,
+      useCase: this._getMembersGridUseCase,
+    });
+  }
+
   private _updateMember(request: UpdateMemberRequestDto): Promise<null> {
     return this.execute({
       classType: UpdateMemberRequestDto,
       request,
       useCase: this._updateMemberUseCase,
-    });
-  }
-
-  public register(): void {
-    Meteor.methods({
-      [MeteorMethodEnum.MembersCreate]: this._createMember.bind(this),
-      [MeteorMethodEnum.MembersUpdate]: this._updateMember.bind(this),
-      [MeteorMethodEnum.MembersGetOne]: this._getMember.bind(this),
-      [MeteorMethodEnum.MembersGetGrid]: this._getMembersGrid.bind(this),
     });
   }
 }
