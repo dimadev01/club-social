@@ -1203,7 +1203,7 @@ Migrations.add({
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
     await DueCollection.rawCollection().updateMany(
       {
-        category: DueCategoryEnum.Electricity,
+        category: DueCategoryEnum.ELECTRICITY,
         date: {
           $gte: DateUtils.utc('2024-01-02').toDate(),
         },
@@ -1446,4 +1446,20 @@ Migrations.add({
     next();
   }),
   version: 23,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await DueCollection.rawCollection().createIndex(
+      { memberId: 1 },
+      { name: 'd_mi' },
+    );
+
+    next();
+  }),
+  version: 24,
 });

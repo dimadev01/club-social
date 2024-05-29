@@ -21,10 +21,10 @@ export type FindPaginatedMemberOld = Pick<
   MemberOld,
   '_id' | 'category' | 'user' | 'fileStatus' | 'status' | 'phones'
 > & {
-  electricityBalance: number;
-  guestBalance: number;
-  membershipBalance: number;
-  totalBalance: number;
+  pendingGuest: number;
+  pendingGuest: number;
+  pendingMembership: number;
+  pendingTotal: number;
 };
 
 export type FindPaginatedMembersResponse =

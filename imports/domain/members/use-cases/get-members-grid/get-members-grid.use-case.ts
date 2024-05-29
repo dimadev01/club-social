@@ -1,4 +1,5 @@
 import { Result, ok } from 'neverthrow';
+import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@domain/common/tokens.di';
@@ -32,37 +33,28 @@ export class GetMembersGridUseCase
       sorter: request.sorter,
     });
 
+    const balances = await this._memberRepository.getBalances(
+      items.map((item) => item._id),
+    );
+
     return ok<GetGridResponse<GetMemberGridResponse>>({
-      items: items.map<GetMemberGridResponse>((item) => ({
-        _id: item._id,
-        category: item.category,
-        name: item.name,
-      })),
+      items: items.map<GetMemberGridResponse>((item) => {
+        const balance = balances.find((b) => b._id === item._id);
+
+        invariant(balance);
+
+        return {
+          _id: item._id,
+          category: item.category,
+          name: item.name,
+          pendingElectricity: balance.electricity,
+          pendingGuest: balance.guest,
+          pendingMembership: balance.membership,
+          pendingTotal: balance.total,
+          status: item.status,
+        };
+      }),
       totalCount,
     });
-
-    //   const { count, items: data } = await this._memberRepository.findPaginated({
-    //     ...request,
-    //     findForCsv: false,
-    //   });
-
-    //   return ok<PaginatedResponse<MemberGridDto>>({
-    //     count,
-    //     data: data.map(
-    //       (member: FindPaginatedMember): MemberGridDto => ({
-    //         _id: member._id,
-    //         category: member.category,
-    //         electricityBalance: member.electricityBalance,
-    //         emails: member.user.emails ?? null,
-    //         guestBalance: member.guestBalance,
-    //         membershipBalance: member.membershipBalance,
-    //         name: `${member.user.profile?.lastName ?? ''} ${
-    //           member.user.profile?.firstName ?? ''
-    //         }`,
-    //         status: member.status,
-    //         totalBalance: member.totalBalance,
-    //       }),
-    //     ),
-    //   });
   }
 }

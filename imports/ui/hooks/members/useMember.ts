@@ -3,8 +3,8 @@ import { GetMemberRequestDto } from '@infra/controllers/types/get-member-request
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQuery } from '@ui/hooks/useQuery';
 
-export const useMemberNew = (request?: GetMemberRequestDto) =>
+export const useMember = (request?: GetMemberRequestDto) =>
   useQuery<GetMemberRequestDto, GetMemberResponse | null>({
-    methodName: MeteorMethodEnum.MembersGetNew,
+    methodName: MeteorMethodEnum.MembersGetOne,
     request,
   });

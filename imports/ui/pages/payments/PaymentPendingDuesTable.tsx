@@ -123,7 +123,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
         align="center"
         render={(category: DueCategoryEnum, due: GetPendingDueResponseDto) =>
           `${DueCategoryLabel[category]} ${
-            due.category === DueCategoryEnum.Membership
+            due.category === DueCategoryEnum.MEMBERSHIP
               ? `(${due.membershipMonth})`
               : ''
           }`

@@ -6,15 +6,17 @@ export type PaginatedSorter = Record<
 >;
 
 export interface FindPaginatedRequest {
-  limit: number;
-  page: number;
-  sorter: PaginatedSorter;
+  limit?: number;
+  page?: number;
+  sorter?: PaginatedSorter;
 }
 
 export interface FindPaginatedResponse<TModel extends Model> {
   items: TModel[];
   totalCount: number;
 }
+
+export const DEFAULT_PAGE_SIZE = 25;
 
 export interface IQueryableGridRepository<
   TModel extends Model,

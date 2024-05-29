@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import type {
   ClientSession,
+  Document,
   Filter,
   MatchKeysAndValues,
   OptionalUnlessRequiredId,
@@ -190,6 +191,14 @@ export abstract class CrudMongoRepository<
     }
   }
 
+  protected getPaginatedPipeline(request: FindPaginatedRequest): Document[] {
+    return [
+      { $sort: this.getSorter(request.sorter ?? { createdAt: -1 }) },
+      { $skip: ((request?.page ?? 1) - 1) * (request.limit ?? 10) },
+      { $limit: request.limit },
+    ];
+  }
+
   protected getSorter(paginatedSorter: PaginatedSorter): {
     [key: string]: number;
   } {
@@ -204,8 +213,6 @@ export abstract class CrudMongoRepository<
         sorter[key] = -1;
       }
     });
-
-    console.log(sorter);
 
     return sorter;
   }

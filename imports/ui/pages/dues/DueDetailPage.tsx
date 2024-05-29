@@ -73,7 +73,7 @@ export const DueDetailPage = () => {
   const handleSubmit = async (values: FormValues) => {
     let date: string;
 
-    if (values.category === DueCategoryEnum.Membership) {
+    if (values.category === DueCategoryEnum.MEMBERSHIP) {
       date = values.date.startOf('month').format(DateFormatEnum.Date);
     } else {
       date = values.date.startOf('day').format(DateFormatEnum.Date);
@@ -145,7 +145,7 @@ export const DueDetailPage = () => {
     <>
       {menu}
 
-      {category === DueCategoryEnum.Membership && (
+      {category === DueCategoryEnum.MEMBERSHIP && (
         <Space className="my-1 flex justify-center">
           <Button
             htmlType="button"
@@ -226,7 +226,7 @@ export const DueDetailPage = () => {
             onFinish={(values) => handleSubmit(values)}
             initialValues={{
               amount: due?.amount ? MoneyUtils.fromCents(due.amount) : 0,
-              category: due?.category ?? DueCategoryEnum.Electricity,
+              category: due?.category ?? DueCategoryEnum.ELECTRICITY,
               date: due?.date
                 ? DateUtils.utc(due.date, DateFormatEnum.DDMMYYYY)
                 : undefined,
@@ -255,7 +255,7 @@ export const DueDetailPage = () => {
                 disabled={isFormDisabled()}
                 onChange={(value) => {
                   if (due) {
-                    if (value === DueCategoryEnum.Membership) {
+                    if (value === DueCategoryEnum.MEMBERSHIP) {
                       form.setFieldValue(
                         'date',
                         DateUtils.utc(
@@ -279,11 +279,11 @@ export const DueDetailPage = () => {
             >
               <DatePicker
                 picker={
-                  category === DueCategoryEnum.Membership ? 'month' : 'date'
+                  category === DueCategoryEnum.MEMBERSHIP ? 'month' : 'date'
                 }
                 disabled={isFormDisabled()}
                 format={
-                  category === DueCategoryEnum.Membership
+                  category === DueCategoryEnum.MEMBERSHIP
                     ? DateFormatEnum.MMMM_YYYY
                     : DateFormatEnum.DDMMYYYY
                 }

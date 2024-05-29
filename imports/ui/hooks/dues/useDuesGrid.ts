@@ -4,7 +4,7 @@ import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 
 export const useDuesGrid = (request: GetDuesGridRequestDto) =>
-  useQueryGrid<GetDuesGridRequestDto, GetDuesGridResponseDto>(
-    MeteorMethodEnum.DuesGetGrid,
+  useQueryGrid<GetDuesGridRequestDto, GetDuesGridResponseDto>({
+    methodName: MeteorMethodEnum.DuesGetGrid,
     request,
-  );
+  });

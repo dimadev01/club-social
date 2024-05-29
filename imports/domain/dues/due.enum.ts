@@ -1,19 +1,19 @@
 export enum DueStatusEnum {
-  Paid = 'paid',
-  PartiallyPaid = 'partially-paid',
-  Pending = 'pending',
+  PAID = 'paid',
+  PARTIALLY_PAID = 'partially-paid',
+  PENDING = 'pending',
 }
 
 export const DueStatusLabel = {
-  [DueStatusEnum.Paid]: 'Pagado',
-  [DueStatusEnum.PartiallyPaid]: 'Parcialmente pago',
-  [DueStatusEnum.Pending]: 'Pendiente',
+  [DueStatusEnum.PAID]: 'Pagado',
+  [DueStatusEnum.PARTIALLY_PAID]: 'Parcialmente pago',
+  [DueStatusEnum.PENDING]: 'Pendiente',
 };
 
 export const DueStatusColor = {
-  [DueStatusEnum.Paid]: 'green',
-  [DueStatusEnum.PartiallyPaid]: '',
-  [DueStatusEnum.Pending]: '',
+  [DueStatusEnum.PAID]: 'green',
+  [DueStatusEnum.PARTIALLY_PAID]: '',
+  [DueStatusEnum.PENDING]: '',
 };
 
 export const getDueStatusColumnFilters = () =>
@@ -25,15 +25,15 @@ export const getDueStatusColumnFilters = () =>
     .sort((a, b) => a.text.localeCompare(b.text));
 
 export enum DueCategoryEnum {
-  Electricity = 'electricity',
-  Guest = 'guest',
-  Membership = 'membership',
+  ELECTRICITY = 'electricity',
+  GUEST = 'guest',
+  MEMBERSHIP = 'membership',
 }
 
 export const DueCategoryLabel = {
-  [DueCategoryEnum.Electricity]: 'Luz',
-  [DueCategoryEnum.Guest]: 'Invitado',
-  [DueCategoryEnum.Membership]: 'Cuota',
+  [DueCategoryEnum.ELECTRICITY]: 'Luz',
+  [DueCategoryEnum.GUEST]: 'Invitado',
+  [DueCategoryEnum.MEMBERSHIP]: 'Cuota',
 };
 
 export const getDueCategoryOptions = () =>

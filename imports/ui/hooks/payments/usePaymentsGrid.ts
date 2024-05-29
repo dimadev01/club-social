@@ -4,7 +4,7 @@ import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 
 export const usePaymentGrid = (request: GetPaymentsGridRequestDto) =>
-  useQueryGrid<GetPaymentsGridRequestDto, GetPaymentsGridResponseDto>(
-    MeteorMethodEnum.PaymentsGetGrid,
+  useQueryGrid<GetPaymentsGridRequestDto, GetPaymentsGridResponseDto>({
+    methodName: MeteorMethodEnum.PaymentsGetGrid,
     request,
-  );
+  });

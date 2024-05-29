@@ -86,7 +86,7 @@ export const PaymentDetailPage = () => {
                     dataIndex: 'dueCategory',
                     render: (category: DueCategoryEnum, paymentDue) =>
                       `${DueCategoryLabel[category]} ${
-                        category === DueCategoryEnum.Membership
+                        category === DueCategoryEnum.MEMBERSHIP
                           ? `(${paymentDue.membershipMonth})`
                           : ''
                       }`,

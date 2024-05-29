@@ -1,14 +1,25 @@
+import { CreditCardOutlined, FileSearchOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import React, { useRef, useState } from 'react';
 import { NavLink, Navigate, useNavigate } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 
-import { getMemberCategoryFilters } from '@domain/members/member.enum';
+import { Money } from '@application/value-objects/money.value-object';
+import {
+  MemberCategoryEnum,
+  MemberCategoryLabel,
+  MemberStatusEnum,
+  MemberStatusLabel,
+  getMemberCategoryFilters,
+  getMemberStatusFilters,
+} from '@domain/members/member.enum';
 import { GetMemberGridResponse } from '@domain/members/use-cases/get-member/get-member-grid.response';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
+import { Button } from '@ui/components/Button';
 import { TableNew } from '@ui/components/Table/TableNew';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TablePrintButton } from '@ui/components/Table/TablePrintButton';
@@ -17,9 +28,12 @@ import { useGridNew } from '@ui/hooks/useGridNew';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 
 export const MembersPage = () => {
-  const [gridState, setGridState] = useGridNew();
-
-  console.log(gridState);
+  const [gridState, setGridState] = useGridNew({
+    defaultFilters: {
+      status: [MemberStatusEnum.ACTIVE],
+    },
+    defaultSort: { name: 'ascend' },
+  });
 
   const navigate = useNavigate();
 
@@ -148,17 +162,13 @@ export const MembersPage = () => {
           setGridState={setGridState}
           loading={isLoading}
           dataSource={data?.items}
-          // rowClassName={(member) => {
-          //   if (member.totalBalance < 0) {
-          //     return 'bg-red-50 dark:bg-red-400';
-          //   }
+          rowClassName={(member) => {
+            if (member.pendingTotal > 0) {
+              return 'bg-red-100 dark:bg-red-300';
+            }
 
-          //   if (member.totalBalance > 0) {
-          //     return 'bg-green-50 dark:bg-green-400';
-          //   }
-
-          //   return '';
-          // }}
+            return '';
+          }}
           columns={[
             {
               dataIndex: 'name',
@@ -170,135 +180,97 @@ export const MembersPage = () => {
               title: 'Socio',
             },
             {
+              align: 'center',
               dataIndex: 'category',
+              filteredValue: gridState.filters.category,
               filters: getMemberCategoryFilters(),
-              sortOrder: gridState.sorter.category,
-              title: 'Category',
+              render: (category: MemberCategoryEnum) =>
+                MemberCategoryLabel[category],
+              title: 'Categoría',
+              width: 150,
             },
-
-            // {
-            //   dataIndex: 'emails',
-            //   render: (emails: Meteor.UserEmail[] | null) =>
-            //     emails && (
-            //       <Space direction="vertical">
-            //         {emails.map((email) => (
-            //           <Typography.Text
-            //             key={email.address}
-            //             copyable={{ text: email.address }}
-            //           >
-            //             <Tooltip
-            //               title={
-            //                 email.verified
-            //                   ? 'Email verificado'
-            //                   : 'Email no verificado'
-            //               }
-            //               key={email.address}
-            //             >
-            //               {email.address}
-            //             </Tooltip>
-            //           </Typography.Text>
-            //         ))}
-            //       </Space>
-            //     ),
-            //   title: 'Emails',
-            // },
-            // {
-            //   align: 'center',
-            //   dataIndex: 'category',
-            //   defaultFilteredValue: gridState.filters.category,
-            //   filters: getMemberCategoryFilters(),
-            //   render: (category: MemberCategoryEnum) =>
-            //     MemberCategoryLabel[category],
-            //   title: 'Categoría',
-            // },
-            // {
-            //   align: 'center',
-            //   dataIndex: 'status',
-            //   defaultFilteredValue: gridState.filters.status,
-            //   filters: getMemberStatusFilters(),
-            //   render: (status: MemberStatusEnum) => MemberStatusLabel[status],
-            //   title: 'Estado',
-            // },
-            // {
-            //   align: 'right',
-            //   dataIndex: 'electricityBalance',
-            //   defaultSortOrder:
-            //     gridState.sortField === 'electricityBalance'
-            //       ? gridState.sortOrder
-            //       : undefined,
-            //   render: (electricityBalance: number) =>
-            //     MoneyUtils.formatCents(electricityBalance),
-            //   sorter: true,
-            //   title: 'Saldo luz',
-            // },
-            // {
-            //   align: 'right',
-            //   dataIndex: 'guestBalance',
-            //   defaultSortOrder:
-            //     gridState.sortField === 'guestBalance'
-            //       ? gridState.sortOrder
-            //       : undefined,
-            //   render: (guestBalance: number) =>
-            //     MoneyUtils.formatCents(guestBalance),
-            //   sorter: true,
-            //   title: 'Saldo invitado',
-            // },
-            // {
-            //   align: 'right',
-            //   dataIndex: 'membershipBalance',
-            //   defaultSortOrder:
-            //     gridState.sortField === 'membershipBalance'
-            //       ? gridState.sortOrder
-            //       : undefined,
-            //   render: (membershipBalance: number) =>
-            //     MoneyUtils.formatCents(membershipBalance),
-            //   sorter: true,
-            //   title: 'Saldo cuota',
-            // },
-            // {
-            //   align: 'right',
-            //   dataIndex: 'totalBalance',
-            //   defaultSortOrder:
-            //     gridState.sortField === 'totalBalance'
-            //       ? gridState.sortOrder
-            //       : undefined,
-            //   render: (totalBalance: number) =>
-            //     MoneyUtils.formatCents(totalBalance),
-            //   sorter: true,
-            //   title: 'Saldo Total',
-            // },
-            // {
-            //   align: 'center',
-            //   render: (_, member: MemberGridDto) => (
-            //     <ButtonGroup size="small">
-            //       <Button
-            //         type="text"
-            //         icon={<FileSearchOutlined />}
-            //         onClick={() =>
-            //           navigate(
-            //             UrlUtils.navigate(AppUrl.Dues, {
-            //               memberIds: [member._id],
-            //             }),
-            //           )
-            //         }
-            //         tooltip={{ title: 'Ver cobros' }}
-            //       />
-            //       <Button
-            //         type="text"
-            //         icon={<CreditCardOutlined />}
-            //         onClick={() =>
-            //           navigate(
-            //             UrlUtils.navigate(AppUrl.Payments, {
-            //               memberId: member._id,
-            //             }),
-            //           )
-            //         }
-            //         tooltip={{ title: 'Ver Pagos' }}
-            //       />
-            //     </ButtonGroup>
-            //   ),
-            //   title: 'Acciones',
-            // },
+            {
+              align: 'center',
+              dataIndex: 'status',
+              defaultFilteredValue: gridState.filters.status,
+              filters: getMemberStatusFilters(),
+              render: (status: MemberStatusEnum) => MemberStatusLabel[status],
+              title: 'Estado',
+              width: 150,
+            },
+            {
+              align: 'right',
+              dataIndex: 'pendingMembership',
+              render: (pendingMembership: number) =>
+                new Money(pendingMembership).formatWithCurrency(),
+              sortOrder: gridState.sorter.pendingMembership,
+              sorter: true,
+              title: 'Deuda Cuota',
+              width: 125,
+            },
+            {
+              align: 'right',
+              dataIndex: 'pendingElectricity',
+              render: (pendingElectricity: number) =>
+                new Money(pendingElectricity).formatWithCurrency(),
+              sortOrder: gridState.sorter.pendingElectricity,
+              sorter: true,
+              title: 'Deuda Luz',
+              width: 125,
+            },
+            {
+              align: 'right',
+              dataIndex: 'pendingGuest',
+              render: (pendingGuest: number) =>
+                new Money(pendingGuest).formatWithCurrency(),
+              sortOrder: gridState.sorter.pendingGuest,
+              sorter: true,
+              title: 'Deuda Invitado',
+              width: 125,
+            },
+            {
+              align: 'right',
+              dataIndex: 'pendingTotal',
+              render: (pendingTotal: number) =>
+                new Money(pendingTotal).formatWithCurrency(),
+              sortOrder: gridState.sorter.pendingTotal,
+              sorter: true,
+              title: 'Deuda Total',
+              width: 125,
+            },
+            {
+              align: 'center',
+              render: (_, member: GetMemberGridResponse) => (
+                <ButtonGroup size="small">
+                  <Button
+                    type="text"
+                    icon={<FileSearchOutlined />}
+                    onClick={() =>
+                      navigate(
+                        UrlUtils.navigate(AppUrl.Dues, {
+                          memberIds: [member._id],
+                        }),
+                      )
+                    }
+                    tooltip={{ title: 'Ver cobros' }}
+                  />
+                  <Button
+                    type="text"
+                    icon={<CreditCardOutlined />}
+                    onClick={() =>
+                      navigate(
+                        UrlUtils.navigate(AppUrl.Payments, {
+                          memberId: member._id,
+                        }),
+                      )
+                    }
+                    tooltip={{ title: 'Ver Pagos' }}
+                  />
+                </ButtonGroup>
+              ),
+              title: 'Acciones',
+              width: 150,
+            },
           ]}
         />
       </Card>

@@ -7,7 +7,8 @@ import {
 import React, { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-import { GetGridSorter } from '@infra/controllers/types/get-grid-request.dto';
+import { DEFAULT_PAGE_SIZE } from '@domain/common/repositories/queryable-grid-repository.interface';
+import { GridSorter } from '@infra/controllers/types/get-grid-request.dto';
 
 export interface TableState<T> {
   filters: Record<string, FilterValue | null>;
@@ -28,7 +29,7 @@ export interface GridState {
   page: number;
   pageSize: number;
   search: string | null;
-  sorter: GetGridSorter;
+  sorter: GridSorter;
 }
 
 export function TableNew<T extends object>({
@@ -63,7 +64,7 @@ export function TableNew<T extends object>({
       pagination: antPagination,
     });
 
-    const sorter: GetGridSorter = {};
+    const sorter: GridSorter = {};
 
     const antSorterNormalized = Array.isArray(antSorter)
       ? antSorter
@@ -102,7 +103,7 @@ export function TableNew<T extends object>({
       ...state,
       filters,
       page: antPagination.current ?? 1,
-      pageSize: antPagination.pageSize ?? 10,
+      pageSize: antPagination.pageSize ?? DEFAULT_PAGE_SIZE,
       sorter,
     });
   };
@@ -136,7 +137,6 @@ export function TableNew<T extends object>({
         ) => handleTableChange(pagination, filters, sorter as SorterResult<T>)}
         pagination={{
           current: state.page,
-          defaultPageSize: 10,
           hideOnSinglePage: false,
           pageSize: state.pageSize,
           pageSizeOptions: ['10', '25', '50', '100', '250'],

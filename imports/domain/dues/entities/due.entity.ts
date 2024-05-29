@@ -44,7 +44,7 @@ export class Due extends EntityOld {
   }
 
   public get membershipMonth(): string {
-    if (this.category === DueCategoryEnum.Membership) {
+    if (this.category === DueCategoryEnum.MEMBERSHIP) {
       return DateUtils.formatUtc(this.date, DateFormatEnum.MMMM_YYYY);
     }
 
@@ -68,7 +68,7 @@ export class Due extends EntityOld {
 
     due.memberId = props.memberId;
 
-    due.status = DueStatusEnum.Pending;
+    due.status = DueStatusEnum.PENDING;
 
     return ok(due);
   }
@@ -90,35 +90,35 @@ export class Due extends EntityOld {
   }
 
   public isPaid() {
-    return this.status === DueStatusEnum.Paid;
+    return this.status === DueStatusEnum.PAID;
   }
 
   public isPartiallyPaid() {
-    return this.status === DueStatusEnum.PartiallyPaid;
+    return this.status === DueStatusEnum.PARTIALLY_PAID;
   }
 
   public isPending() {
-    return this.status === DueStatusEnum.Pending;
+    return this.status === DueStatusEnum.PENDING;
   }
 
   public partiallyPaid(): Result<null, Error> {
-    this.status = DueStatusEnum.PartiallyPaid;
+    this.status = DueStatusEnum.PARTIALLY_PAID;
 
     return ok(null);
   }
 
   public pay(props: CreateDuePayment): Result<null, Error> {
     if (props.amount >= this.getPendingAmount()) {
-      this.status = DueStatusEnum.Paid;
+      this.status = DueStatusEnum.PAID;
     } else {
-      this.status = DueStatusEnum.PartiallyPaid;
+      this.status = DueStatusEnum.PARTIALLY_PAID;
     }
 
     return ok(null);
   }
 
   public pending(): Result<null, Error> {
-    this.status = DueStatusEnum.Pending;
+    this.status = DueStatusEnum.PENDING;
 
     return ok(null);
   }

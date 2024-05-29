@@ -21,7 +21,7 @@ export enum MeteorMethodEnum {
   MembersGetForCsv = 'members/getForCsv',
   MembersGetGrid = 'members/getGrid',
   MembersGetMovementsGrid = 'movements/getMovementsGrid',
-  MembersGetNew = 'members/getNew',
+  MembersGetOne = 'members/getOne',
   MembersGetPaymentsGrid = 'members/getPaymentsGrid',
   MembersUpdate = 'members/updateNew',
 

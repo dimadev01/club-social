@@ -73,7 +73,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
     stateGovId?.value,
   );
 
-  const createMemberNew = useCreateMember();
+  const createMember = useCreateMember();
 
   const updateMember = useUpdateMember();
 
@@ -85,7 +85,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
   const handleSubmit = async (values: FormValues) => {
     if (!member) {
-      const response = await createMemberNew.mutateAsync({
+      const response = await createMember.mutateAsync({
         addressCityGovId: values.address.cityGovId?.value || null,
         addressCityName: values.address.cityGovId?.label || null,
         addressStateGovId: values.address.stateGovId?.value || null,
@@ -136,6 +136,8 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
       });
 
       message.success('Socio actualizado');
+
+      navigate(-1);
     }
   };
 
@@ -377,7 +379,10 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
         <div className="mb-4" />
 
-        <FormButtons scope={ScopeEnum.MEMBERS} />
+        <FormButtons
+          saveButtonProps={{ text: 'Guardar socio' }}
+          scope={ScopeEnum.MEMBERS}
+        />
       </Form>
     </Card>
   );

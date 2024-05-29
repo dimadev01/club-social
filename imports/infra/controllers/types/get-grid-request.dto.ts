@@ -1,7 +1,6 @@
 import {
   IsDefined,
   IsNotEmpty,
-  IsNotEmptyObject,
   IsObject,
   IsPositive,
   IsString,
@@ -9,7 +8,7 @@ import {
 
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
-export type GetGridSorter = Record<string, 'ascend' | 'descend' | null>;
+export type GridSorter = Record<string, 'ascend' | 'descend' | null>;
 
 export class GetGridRequestDto {
   @IsPositive()
@@ -25,10 +24,9 @@ export class GetGridRequestDto {
   @IsDefined()
   public search!: string | null;
 
-  @IsNotEmptyObject()
   @IsObject()
   @IsDefined()
-  public sorter!: GetGridSorter;
+  public sorter!: GridSorter;
 
   @IsObject()
   @IsDefined()

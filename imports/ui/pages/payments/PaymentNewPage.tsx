@@ -27,7 +27,7 @@ import { FormButtons } from '@ui/components/Form/FormButtons';
 import { Row } from '@ui/components/Grid/Row';
 import { MembersSelect } from '@ui/components/Members/MembersSelect';
 import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDuesByMember';
-import { useMemberNew } from '@ui/hooks/members/useMemberNew';
+import { useMember } from '@ui/hooks/members/useMember';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
 import { useNextPaymentReceiptNumber } from '@ui/hooks/payments/useNextPaymentReceiptNumber';
 import { useNotificationError } from '@ui/hooks/useNotification';
@@ -98,7 +98,7 @@ export const PaymentNewPage = () => {
    */
   const { data: pendingDues } = usePendingDuesByMember(formMemberId);
 
-  const { data: member } = useMemberNew(
+  const { data: member } = useMember(
     formMemberId ? { id: formMemberId } : undefined,
   );
 

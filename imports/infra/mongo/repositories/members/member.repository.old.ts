@@ -171,12 +171,12 @@ export class MemberRepositoryOld
       },
       {
         $addFields: {
-          electricityBalance: this._getTotalBalanceByCategory(
-            DueCategoryEnum.Electricity,
+          pendingGuest: this._getpendingTotalByCategory(
+            DueCategoryEnum.ELECTRICITY,
           ),
-          guestBalance: this._getTotalBalanceByCategory(DueCategoryEnum.Guest),
-          membershipBalance: this._getTotalBalanceByCategory(
-            DueCategoryEnum.Membership,
+          pendingGuest: this._getpendingTotalByCategory(DueCategoryEnum.GUEST),
+          pendingMembership: this._getpendingTotalByCategory(
+            DueCategoryEnum.MEMBERSHIP,
           ),
         },
       },
@@ -184,18 +184,14 @@ export class MemberRepositoryOld
         $project: {
           _id: 1,
           category: 1,
-          electricityBalance: 1,
-          guestBalance: 1,
-          membershipBalance: 1,
+          pendingGuest: 1,
+          pendingGuest: 1,
+          pendingMembership: 1,
+          pendingTotal: {
+            $sum: ['$pendingGuest', '$pendingGuest', '$pendingMembership'],
+          },
           phones: 1,
           status: 1,
-          totalBalance: {
-            $sum: [
-              '$electricityBalance',
-              '$guestBalance',
-              '$membershipBalance',
-            ],
-          },
           user: 1,
         },
       },
@@ -253,7 +249,7 @@ export class MemberRepositoryOld
     return MemberSchemaOld;
   }
 
-  private _getTotalBalanceByCategory(category: DueCategoryEnum) {
+  private _getpendingTotalByCategory(category: DueCategoryEnum) {
     return {
       $reduce: {
         in: { $add: ['$$value', '$$this'] },

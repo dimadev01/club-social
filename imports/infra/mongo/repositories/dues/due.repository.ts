@@ -77,7 +77,7 @@ export class DueRepository
       );
 
       query.$expr.$and.push({
-        $eq: ['$category', DueCategoryEnum.Membership],
+        $eq: ['$category', DueCategoryEnum.MEMBERSHIP],
       });
 
       query.$expr.$and.push({
@@ -150,7 +150,7 @@ export class DueRepository
 
   public async findPaid(request: FindPaidRequest): Promise<Due[]> {
     const query: Mongo.Selector<Due> = {
-      status: DueStatusEnum.Paid,
+      status: DueStatusEnum.PAID,
     };
 
     if (request.memberId) {
@@ -170,7 +170,7 @@ export class DueRepository
     const query: Mongo.Selector<Due> = {
       isDeleted: false,
       memberId: request.memberId,
-      status: { $in: [DueStatusEnum.Pending, DueStatusEnum.PartiallyPaid] },
+      status: { $in: [DueStatusEnum.PENDING, DueStatusEnum.PARTIALLY_PAID] },
     };
 
     const options: Mongo.Options<Due> = {

@@ -77,7 +77,7 @@ export class MemberController extends BaseController {
     Meteor.methods({
       [MeteorMethodEnum.MembersCreate]: this._createMember.bind(this),
       [MeteorMethodEnum.MembersUpdate]: this._updateMember.bind(this),
-      [MeteorMethodEnum.MembersGetNew]: this._getMember.bind(this),
+      [MeteorMethodEnum.MembersGetOne]: this._getMember.bind(this),
       [MeteorMethodEnum.MembersGetGrid]: this._getMembersGrid.bind(this),
     });
   }

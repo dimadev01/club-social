@@ -36,6 +36,10 @@ export class Money {
     return this.format({ currency: true });
   }
 
+  public formatWithCurrencyAndDecimals(): string {
+    return this.format({ currency: true, decimals: true });
+  }
+
   public formatWithDecimals(): string {
     return this.format({ decimals: true });
   }
