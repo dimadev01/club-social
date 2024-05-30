@@ -7,8 +7,10 @@ import {
 import React, { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-import { DEFAULT_PAGE_SIZE } from '@domain/common/repositories/queryable-grid-repository.interface';
-import { GridSorter } from '@infra/controllers/types/get-grid-request.dto';
+import {
+  GridFilter,
+  GridSorter,
+} from '@infra/controllers/types/get-grid-request.dto';
 
 export interface TableState<T> {
   filters: Record<string, FilterValue | null>;
@@ -17,7 +19,12 @@ export interface TableState<T> {
 }
 
 interface Props<T> extends TableProps<T> {
-  setGridState: (state: GridState) => void;
+  defaultSorter: GridSorter;
+  setGridState: (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<T> | SorterResult<T>[],
+  ) => void;
   showSearch?: boolean;
   state: GridState;
   tableTitle?: React.ReactNode;
@@ -25,7 +32,7 @@ interface Props<T> extends TableProps<T> {
 }
 
 export interface GridState {
-  filters: Record<string, string[] | null>;
+  filters: GridFilter | null;
   page: number;
   pageSize: number;
   search: string | null;
@@ -39,6 +46,7 @@ export function TableNew<T extends object>({
   tableTitle,
   total,
   showSearch = false,
+  defaultSorter,
   ...rest
 }: Props<T>): JSX.Element {
   const [search, setSearch] = useState(state.search);
@@ -53,60 +61,29 @@ export function TableNew<T extends object>({
   //   }));
   // }, [searchDebounced, setState]);
 
-  const handleTableChange = (
-    antPagination: TablePaginationConfig,
-    antFilters: Record<string, FilterValue | null>,
-    antSorter: SorterResult<T> | SorterResult<T>[],
-  ) => {
-    console.log({
-      filters: antFilters,
-      gridSorter: antSorter,
-      pagination: antPagination,
-    });
+  // const handleTableChange = (
+  //   antPagination: TablePaginationConfig,
+  //   antFilters: Record<string, FilterValue | null>,
+  //   antSorter: SorterResult<T> | SorterResult<T>[],
+  // ) => {
+  //   const sorter: GridSorter = {};
 
-    const sorter: GridSorter = {};
+  //   const filters: Record<string, string[] | null> = {};
 
-    const antSorterNormalized = Array.isArray(antSorter)
-      ? antSorter
-      : [antSorter];
+  //   Object.entries(antFilters).forEach(([key, value]) => {
+  //     if (value) {
+  //       filters[key] = value as string[];
+  //     }
+  //   });
 
-    antSorterNormalized.sort((a, b) => {
-      if (
-        typeof a.column?.sorter === 'object' &&
-        typeof b.column?.sorter === 'object'
-      ) {
-        const multipleA = a.column.sorter.multiple ?? 0;
-
-        const multipleB = b.column.sorter.multiple ?? 0;
-
-        return multipleB - multipleA;
-      }
-
-      return 0;
-    });
-
-    antSorterNormalized.forEach((sort) => {
-      if (sort.field && typeof sort.field === 'string') {
-        sorter[sort.field] = sort.order ?? null;
-      }
-    });
-
-    const filters: Record<string, string[] | null> = {};
-
-    Object.entries(antFilters).forEach(([key, value]) => {
-      if (value) {
-        filters[key] = value as string[];
-      }
-    });
-
-    setGridState({
-      ...state,
-      filters,
-      page: antPagination.current ?? 1,
-      pageSize: antPagination.pageSize ?? DEFAULT_PAGE_SIZE,
-      sorter,
-    });
-  };
+  //   setGridState({
+  //     ...state,
+  //     filters,
+  //     page: antPagination.current ?? 1,
+  //     pageSize: antPagination.pageSize ?? DEFAULT_PAGE_SIZE,
+  //     sorter,
+  //   });
+  // };
 
   const renderTitle = () => (
     <Typography.Text className="mb-3 flex justify-between text-base text-black">
@@ -134,7 +111,7 @@ export function TableNew<T extends object>({
           pagination: TablePaginationConfig,
           filters: Record<string, FilterValue | null>,
           sorter: SorterResult<T> | SorterResult<T>[],
-        ) => handleTableChange(pagination, filters, sorter as SorterResult<T>)}
+        ) => setGridState(pagination, filters, sorter)}
         pagination={{
           current: state.page,
           hideOnSinglePage: false,

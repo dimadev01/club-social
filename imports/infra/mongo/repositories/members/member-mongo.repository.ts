@@ -13,26 +13,30 @@ import {
 } from '@domain/members/member-repository.interface';
 import { MemberModel } from '@domain/members/models/member.model';
 import { MemberMapper } from '@infra/mappers/member.mapper';
+import { MemberAuditCollection } from '@infra/mongo/collections/member-audit.collection';
 import { MemberCollection } from '@infra/mongo/collections/member.collection';
 import { PaginatedAggregationResult } from '@infra/mongo/common/paginated-aggregation.interface';
+import { MemberAuditEntity } from '@infra/mongo/entities/members/member-audit.entity';
 import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
 import { MongoUtils } from '@infra/mongo/mongo.utils';
-import { CrudMongoRepository } from '@infra/mongo/repositories/common/crud-mongo.repository';
+import { CrudMongoAuditRepository } from '@infra/mongo/repositories/common/crud-mongo-audit.repository';
 
 @injectable()
 export class MemberMongoRepository
-  extends CrudMongoRepository<MemberModel, MemberEntity>
+  extends CrudMongoAuditRepository<MemberModel, MemberEntity, MemberAuditEntity>
   implements IMemberRepository
 {
   public constructor(
     @inject(MemberCollection)
     protected readonly collection: MemberCollection,
+    @inject(MemberAuditCollection)
+    protected readonly historicalCollection: MemberAuditCollection,
     @inject(MemberMapper)
     protected readonly mapper: MemberMapper,
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
   ) {
-    super(collection, mapper, logger);
+    super(collection, mapper, logger, historicalCollection);
   }
 
   public async find(request: FindRequest): Promise<MemberModel[]> {

@@ -25,30 +25,30 @@ import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TablePrintButton } from '@ui/components/Table/TablePrintButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import { useGridNew } from '@ui/hooks/useGridNew';
+import { useTable } from '@ui/hooks/useGridNew';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 
 export const MembersPage = () => {
   const navigate = useNavigate();
 
-  const [gridState, setGridState] = useGridNew({
+  const { gridState, setGridState } = useTable<GetMemberGridResponse>({
     defaultFilters: { status: [MemberStatusEnum.ACTIVE] },
-    defaultSort: { _id: 'ascend' },
+    defaultSorter: { _id: 'ascend' },
   });
 
   const [isExportingToCsv, setIsExportingToCsv] = useState(false);
 
+  console.log('🚀 ~ MembersPage ~ gridState:', gridState);
+
   const { data: members } = useMembers({
-    status: gridState.filters.status
-      ? (gridState.filters.status as MemberStatusEnum[])
-      : null,
+    status: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
   });
 
   const { data, isLoading, isRefetching, refetch } =
     useQueryGrid<GetMemberGridResponse>({
       methodName: MeteorMethodEnum.MembersGetGrid,
       request: {
-        filters: gridState.filters,
+        filters: gridState.filters ?? null,
         page: gridState.page,
         pageSize: gridState.pageSize,
         search: gridState.search,
@@ -162,14 +162,14 @@ export const MembersPage = () => {
       >
         <TableNew<GetMemberGridResponse>
           total={data?.totalCount ?? 0}
-          showSearch
           state={gridState}
           setGridState={setGridState}
+          defaultSorter={{ _id: 'ascend' }}
           loading={isLoading}
           dataSource={data?.items}
           rowClassName={(member) => {
             if (member.pendingTotal > 0) {
-              return 'bg-red-100 dark:bg-red-300';
+              return 'bg-red-100 dark:bg-red-950';
             }
 
             return '';
@@ -194,7 +194,7 @@ export const MembersPage = () => {
             {
               align: 'center',
               dataIndex: 'category',
-              filteredValue: gridState.filters.category,
+              filteredValue: gridState.filters?.category,
               filters: getMemberCategoryFilters(),
               render: (category: MemberCategoryEnum) =>
                 MemberCategoryLabel[category],
@@ -204,7 +204,7 @@ export const MembersPage = () => {
             {
               align: 'center',
               dataIndex: 'status',
-              defaultFilteredValue: gridState.filters.status,
+              defaultFilteredValue: gridState.filters?.status,
               filters: getMemberStatusFilters(),
               render: (status: MemberStatusEnum) => MemberStatusLabel[status],
               title: 'Estado',
@@ -281,7 +281,7 @@ export const MembersPage = () => {
                 </ButtonGroup>
               ),
               title: 'Acciones',
-              width: 150,
+              width: 100,
             },
           ]}
         />

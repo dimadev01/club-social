@@ -14,7 +14,7 @@ export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
     _id?: string[];
     category?: MemberCategoryEnum[];
     status?: MemberStatusEnum[];
-  };
+  } | null;
 }
 
 export interface MemberBalance {

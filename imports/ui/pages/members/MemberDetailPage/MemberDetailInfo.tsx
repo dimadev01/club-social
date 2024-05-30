@@ -4,7 +4,7 @@ import compact from 'lodash/compact';
 import uniq from 'lodash/uniq';
 import { Roles } from 'meteor/alanning:roles';
 import React from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import {
   MemberCategoryEnum,
@@ -31,6 +31,7 @@ import { Select } from '@ui/components/Select';
 import { useCreateMember } from '@ui/hooks/members/useCreateMember';
 import { useUpdateMember } from '@ui/hooks/members/useUpdateMemberNew';
 import { useCities } from '@ui/hooks/useCities';
+import { useNavigate } from '@ui/hooks/useNavigate';
 import { useStates } from '@ui/hooks/useStates';
 
 type FormValues = {

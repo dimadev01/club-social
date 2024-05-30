@@ -1,51 +1,102 @@
-import qs from 'qs';
+import { TablePaginationConfig } from 'antd';
+import { FilterValue, SorterResult } from 'antd/es/table/interface';
+import { isArray, isEmpty, isObject } from 'lodash';
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { DEFAULT_PAGE_SIZE } from '@domain/common/repositories/queryable-grid-repository.interface';
-import { GridSorter } from '@infra/controllers/types/get-grid-request.dto';
+import {
+  GridFilter,
+  GridSorter,
+} from '@infra/controllers/types/get-grid-request.dto';
 import { GridState } from '@ui/components/Table/TableNew';
+import { useParsedQs } from '@ui/hooks/useParsedQs';
 
 interface UseGridNewProps {
-  defaultFilters?: Record<string, string[] | null>;
-  defaultSort: GridSorter;
+  defaultFilters?: GridFilter;
+  defaultSorter: GridSorter;
 }
 
-export function useGridNew({
-  defaultSort,
-  defaultFilters = {},
-}: UseGridNewProps) {
-  const location = useLocation();
+interface UseTable<T> {
+  gridState: GridState;
+  setGridState: (
+    pagination: TablePaginationConfig,
+    filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<T> | SorterResult<T>[],
+  ) => void;
+}
 
-  const parsedQs = qs.parse(location.search, { ignoreQueryPrefix: true });
+export function useTable<T>({
+  defaultSorter,
+  defaultFilters,
+}: UseGridNewProps): UseTable<T> {
+  const parsedQs = useParsedQs();
 
-  let sorter: GridSorter = {};
+  const getSorter = (obj: unknown): GridSorter => {
+    if (!isObject(obj) || isEmpty(obj) || isArray(obj)) {
+      return defaultSorter;
+    }
 
-  if (parsedQs.sorter) {
-    Object.entries(parsedQs.sorter).forEach(([key, value]) => {
+    /**
+     * This would be the sorter of the Ant Design Table component.
+     */
+    if ('field' in obj && typeof obj.field === 'string' && 'order' in obj) {
+      if (!obj.order) {
+        return defaultSorter;
+      }
+
+      return {
+        [obj.field]: obj.order as 'ascend' | 'descend',
+      };
+    }
+
+    const sorter: GridSorter = {};
+
+    Object.entries(obj).forEach(([key, value]) => {
       if (typeof value === 'string') {
         sorter[key] = value as 'ascend' | 'descend';
       }
     });
-  } else {
-    sorter = defaultSort;
-  }
 
-  const filters: Record<string, string[] | null> = defaultFilters;
+    return sorter;
+  };
 
-  if (parsedQs.filters) {
-    Object.entries(parsedQs.filters).forEach(([key, value]) => {
+  const getFilters = (obj: unknown): GridFilter | null => {
+    if (!isObject(obj) || isEmpty(obj)) {
+      return defaultFilters ?? null;
+    }
+
+    const filters: GridFilter = {};
+
+    Object.entries(obj).forEach(([key, value]) => {
       if (Array.isArray(value)) {
         filters[key] = value as string[];
       }
     });
-  }
 
-  return useState<GridState>({
-    filters,
+    return filters;
+  };
+
+  const [state, setState] = useState<GridState>({
+    filters: getFilters(parsedQs.filters),
     page: parsedQs.page ? Number(parsedQs.page) : 1,
     pageSize: parsedQs.pageSize ? Number(parsedQs.pageSize) : DEFAULT_PAGE_SIZE,
     search: parsedQs.search ? String(parsedQs.search) : null,
-    sorter,
+    sorter: getSorter(parsedQs.sorter),
   });
+
+  const onTableChange = (
+    antPagination: TablePaginationConfig,
+    antFilters: Record<string, FilterValue | null>,
+    antSorter: SorterResult<T> | SorterResult<T>[],
+  ) => {
+    setState({
+      ...state,
+      filters: getFilters(antFilters),
+      page: antPagination.current ?? 1,
+      pageSize: antPagination.pageSize ?? DEFAULT_PAGE_SIZE,
+      sorter: getSorter(antSorter),
+    });
+  };
+
+  return { gridState: state, setGridState: onTableChange };
 }

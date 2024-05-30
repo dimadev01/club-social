@@ -8,7 +8,7 @@ export type PaginatedSorter = Record<
 export interface FindPaginatedRequest {
   limit?: number;
   page?: number;
-  sorter?: PaginatedSorter;
+  sorter: PaginatedSorter;
 }
 
 export interface FindPaginatedResponse<TModel extends Model> {

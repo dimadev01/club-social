@@ -8,7 +8,9 @@ import {
 
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
-export type GridSorter = Record<string, 'ascend' | 'descend' | null>;
+export type GridSorter = Record<string, 'ascend' | 'descend'>;
+
+export type GridFilter = Record<string, string[]>;
 
 export class GetGridRequestDto {
   @IsPositive()
@@ -29,6 +31,7 @@ export class GetGridRequestDto {
   public sorter!: GridSorter;
 
   @IsObject()
+  @IsNullable()
   @IsDefined()
-  public filters!: Record<string, string[] | null>;
+  public filters!: GridFilter | null;
 }

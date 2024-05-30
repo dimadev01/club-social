@@ -57,7 +57,7 @@ export abstract class CrudMongoRepository<
 
       return entities.map((entity) => this._mapper.toModel(entity));
     } catch (error) {
-      return this._handleError(error);
+      return this.handleError(error);
     }
   }
 
@@ -96,12 +96,12 @@ export abstract class CrudMongoRepository<
 
       return this._mapper.toModel(entity as TEntity);
     } catch (error) {
-      return this._handleError(error);
+      return this.handleError(error);
     }
   }
 
   public async findPaginated(
-    request: FindPaginatedRequest<TModel>,
+    request: FindPaginatedRequest,
   ): Promise<FindPaginatedResponse<TModel>> {
     // @ts-expect-error
     const query: Mongo.Selector<TEntity> = {
@@ -125,17 +125,16 @@ export abstract class CrudMongoRepository<
 
   public async insert(model: TModel): Promise<void> {
     try {
-      const entity = (await this._mapper.toEntity(
-        model,
-      )) as unknown as Mongo.OptionalId<TEntity>;
+      const entity = await this._mapper.toEntity(model);
 
       entity.createdBy = await this._getLoggedInUserName();
 
       entity.updatedBy = entity.createdBy;
 
+      // @ts-expect-error
       await this._collection.insertAsync(entity);
     } catch (error) {
-      this._handleError(error);
+      this.handleError(error);
     }
   }
 
@@ -150,11 +149,13 @@ export abstract class CrudMongoRepository<
 
       entity.createdBy = await this._getLoggedInUserName();
 
+      entity.updatedBy = entity.createdBy;
+
       await this._collection.rawCollection().insertOne(entity, {
         session,
       });
     } catch (error) {
-      this._handleError(error);
+      this.handleError(error);
     }
   }
 
@@ -166,7 +167,7 @@ export abstract class CrudMongoRepository<
 
       await this._collection.updateAsync(entity._id, { $set: entity });
     } catch (error) {
-      this._handleError(error);
+      this.handleError(error);
     }
   }
 
@@ -187,7 +188,7 @@ export abstract class CrudMongoRepository<
           { session },
         );
     } catch (error) {
-      this._handleError(error);
+      this.handleError(error);
     }
   }
 
@@ -231,7 +232,7 @@ export abstract class CrudMongoRepository<
     }
   }
 
-  private _handleError(error: unknown): never {
+  protected handleError(error: unknown): never {
     if (error instanceof ClassValidationError) {
       this._logger.error(error, { errors: error.errors });
 
