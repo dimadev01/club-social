@@ -2,7 +2,7 @@ import { CreditCardOutlined, FileSearchOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import React, { useRef, useState } from 'react';
-import { NavLink, Navigate, useNavigate } from 'react-router-dom';
+import { NavLink, Navigate } from 'react-router-dom';
 import { useReactToPrint } from 'react-to-print';
 
 import { Money } from '@application/value-objects/money.value-object';
@@ -16,6 +16,7 @@ import {
 } from '@domain/members/member.enum';
 import { GetMemberGridResponse } from '@domain/members/use-cases/get-member/get-member-grid.response';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { GetMembersGridRequestDto } from '@infra/controllers/types/get-members-grid-request.dto';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -25,8 +26,9 @@ import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TablePrintButton } from '@ui/components/Table/TablePrintButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import { useTable } from '@ui/hooks/useGridNew';
+import { useNavigate } from '@ui/hooks/useNavigate';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
+import { useTable } from '@ui/hooks/useTable';
 
 export const MembersPage = () => {
   const navigate = useNavigate();
@@ -38,23 +40,28 @@ export const MembersPage = () => {
 
   const [isExportingToCsv, setIsExportingToCsv] = useState(false);
 
-  console.log('🚀 ~ MembersPage ~ gridState:', gridState);
-
   const { data: members } = useMembers({
+    category: (gridState.filters?.category as MemberCategoryEnum[]) ?? null,
     status: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
   });
 
-  const { data, isLoading, isRefetching, refetch } =
-    useQueryGrid<GetMemberGridResponse>({
-      methodName: MeteorMethodEnum.MembersGetGrid,
-      request: {
-        filters: gridState.filters ?? null,
-        page: gridState.page,
-        pageSize: gridState.pageSize,
-        search: gridState.search,
-        sorter: gridState.sorter,
-      },
-    });
+  const { data, isLoading, isRefetching, refetch } = useQueryGrid<
+    GetMemberGridResponse,
+    GetMembersGridRequestDto
+  >({
+    methodName: MeteorMethodEnum.MembersGetGrid,
+    request: {
+      categoryFilter:
+        (gridState.filters?.category as MemberCategoryEnum[]) ?? null,
+      debtStatusFilter: gridState.filters?.pendingTotal ?? null,
+      idFilter: gridState.filters?._id ?? null,
+      limit: gridState.pageSize,
+      page: gridState.page,
+      search: gridState.search,
+      sorter: gridState.sorter,
+      statusFilter: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
+    },
+  });
 
   const componentRef = useRef(null);
 
@@ -164,7 +171,6 @@ export const MembersPage = () => {
           total={data?.totalCount ?? 0}
           state={gridState}
           setGridState={setGridState}
-          defaultSorter={{ _id: 'ascend' }}
           loading={isLoading}
           dataSource={data?.items}
           rowClassName={(member) => {
@@ -177,7 +183,9 @@ export const MembersPage = () => {
           columns={[
             {
               dataIndex: '_id',
+              defaultFilteredValue: gridState.filters?._id,
               filterSearch: true,
+              filteredValue: gridState.filters?._id,
               filters:
                 members?.map((member) => ({
                   text: member.name,
@@ -186,7 +194,6 @@ export const MembersPage = () => {
               render: (_id: string, member: GetMemberGridResponse) => (
                 <NavLink to={`${AppUrl.Members}/${_id}`}>{member.name}</NavLink>
               ),
-
               sortOrder: gridState.sorter._id,
               sorter: true,
               title: 'Socio',
@@ -194,6 +201,7 @@ export const MembersPage = () => {
             {
               align: 'center',
               dataIndex: 'category',
+              defaultFilteredValue: gridState.filters?.category,
               filteredValue: gridState.filters?.category,
               filters: getMemberCategoryFilters(),
               render: (category: MemberCategoryEnum) =>
@@ -205,6 +213,8 @@ export const MembersPage = () => {
               align: 'center',
               dataIndex: 'status',
               defaultFilteredValue: gridState.filters?.status,
+              filterResetToDefaultFilteredValue: true,
+              filteredValue: gridState.filters?.status,
               filters: getMemberStatusFilters(),
               render: (status: MemberStatusEnum) => MemberStatusLabel[status],
               title: 'Estado',
@@ -243,6 +253,19 @@ export const MembersPage = () => {
             {
               align: 'right',
               dataIndex: 'pendingTotal',
+              defaultFilteredValue: gridState.filters?.pendingTotal,
+              filterMultiple: false,
+              filteredValue: gridState.filters?.pendingTotal,
+              filters: [
+                {
+                  text: 'Con deuda',
+                  value: 'true',
+                },
+                {
+                  text: 'Sin deuda',
+                  value: 'false',
+                },
+              ],
               render: (pendingTotal: number) =>
                 new Money(pendingTotal).formatWithCurrency(),
               sortOrder: gridState.sorter.pendingTotal,

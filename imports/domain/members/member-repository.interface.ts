@@ -9,12 +9,11 @@ import {
 } from '@domain/members/member.enum';
 import { MemberModel } from '@domain/members/models/member.model';
 
-export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
-  filters: {
-    _id?: string[];
-    category?: MemberCategoryEnum[];
-    status?: MemberStatusEnum[];
-  } | null;
+export interface GetMembersGridRequest extends FindPaginatedRequest {
+  categoryFilter: MemberCategoryEnum[] | null;
+  debtStatusFilter: string[] | null;
+  idFilter: string[] | null;
+  statusFilter: MemberStatusEnum[] | null;
 }
 
 export interface MemberBalance {
@@ -25,14 +24,15 @@ export interface MemberBalance {
   total: number;
 }
 
-export interface FindRequest {
+export interface FindMembersRequest {
+  category: MemberCategoryEnum[] | null;
   status: MemberStatusEnum[] | null;
 }
 
 export interface IMemberRepository<TSession = unknown>
   extends ICrudRepository<MemberModel, TSession>,
-    IQueryableGridRepository<MemberModel, FindPaginatedMembersRequest> {
-  find(request: FindRequest): Promise<MemberModel[]>;
+    IQueryableGridRepository<MemberModel, GetMembersGridRequest> {
+  find(request: FindMembersRequest): Promise<MemberModel[]>;
   findByDocument(documentID: string): Promise<MemberModel | null>;
   getBalances(memberIds: string[]): Promise<MemberBalance[]>;
 }

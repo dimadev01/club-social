@@ -6,8 +6,8 @@ import { FindPaginatedResponse } from '@domain/common/repositories/queryable-gri
 import { DIToken } from '@domain/common/tokens.di';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import {
-  FindPaginatedMembersRequest,
-  FindRequest,
+  FindMembersRequest,
+  GetMembersGridRequest,
   IMemberRepository,
   MemberBalance,
 } from '@domain/members/member-repository.interface';
@@ -39,7 +39,7 @@ export class MemberMongoRepository
     super(collection, mapper, logger, historicalCollection);
   }
 
-  public async find(request: FindRequest): Promise<MemberModel[]> {
+  public async find(request: FindMembersRequest): Promise<MemberModel[]> {
     const pipeline: Document[] = [];
 
     const $match: Document = {
@@ -48,6 +48,10 @@ export class MemberMongoRepository
 
     if (request.status) {
       $match.$expr.$and.push({ $in: ['$status', request.status] });
+    }
+
+    if (request.category) {
+      $match.$expr.$and.push({ $in: ['$category', request.category] });
     }
 
     pipeline.push(
@@ -91,7 +95,7 @@ export class MemberMongoRepository
   }
 
   public async findPaginated(
-    request: FindPaginatedMembersRequest,
+    request: GetMembersGridRequest,
   ): Promise<FindPaginatedResponse<MemberModel>> {
     const pipeline: Document[] = [];
 
@@ -99,16 +103,16 @@ export class MemberMongoRepository
       $expr: { $and: [{ $eq: ['$isDeleted', false] }] },
     };
 
-    if (request.filters?.category) {
-      $match.$expr.$and.push({ $in: ['$category', request.filters.category] });
+    if (request.categoryFilter) {
+      $match.$expr.$and.push({ $in: ['$category', request.categoryFilter] });
     }
 
-    if (request.filters?.status) {
-      $match.$expr.$and.push({ $in: ['$status', request.filters.status] });
+    if (request.statusFilter) {
+      $match.$expr.$and.push({ $in: ['$status', request.statusFilter] });
     }
 
-    if (request.filters?._id) {
-      $match.$expr.$and.push({ $in: ['$_id', request.filters._id] });
+    if (request.idFilter) {
+      $match.$expr.$and.push({ $in: ['$_id', request.idFilter] });
     }
 
     if (request.sorter?._id) {
@@ -141,7 +145,8 @@ export class MemberMongoRepository
       request.sorter?.pendingElectricity ||
       request.sorter?.pendingMembership ||
       request.sorter?.pendingGuest ||
-      request.sorter?.pendingTotal
+      request.sorter?.pendingTotal ||
+      request.debtStatusFilter
     ) {
       pipeline.push({
         $lookup: {
@@ -186,7 +191,7 @@ export class MemberMongoRepository
             pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
           },
         });
-      } else if (request.sorter.pendingTotal) {
+      } else if (request.sorter.pendingTotal || request.debtStatusFilter) {
         pipeline.push(
           {
             $addFields: {
@@ -211,6 +216,24 @@ export class MemberMongoRepository
             },
           },
         );
+
+        if (request.debtStatusFilter?.includes('true')) {
+          pipeline.push({
+            $match: {
+              $expr: {
+                $gt: ['$pendingTotal', 0],
+              },
+            },
+          });
+        } else if (request.debtStatusFilter?.includes('false')) {
+          pipeline.push({
+            $match: {
+              $expr: {
+                $eq: ['$pendingTotal', 0],
+              },
+            },
+          });
+        }
       }
     }
 

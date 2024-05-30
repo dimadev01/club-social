@@ -1,17 +1,19 @@
 import { TablePaginationConfig } from 'antd';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
 import { isArray, isEmpty, isObject } from 'lodash';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { DEFAULT_PAGE_SIZE } from '@domain/common/repositories/queryable-grid-repository.interface';
 import {
   GridFilter,
   GridSorter,
 } from '@infra/controllers/types/get-grid-request.dto';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { GridState } from '@ui/components/Table/TableNew';
 import { useParsedQs } from '@ui/hooks/useParsedQs';
 
-interface UseGridNewProps {
+interface UseTableProps {
   defaultFilters?: GridFilter;
   defaultSorter: GridSorter;
 }
@@ -28,8 +30,10 @@ interface UseTable<T> {
 export function useTable<T>({
   defaultSorter,
   defaultFilters,
-}: UseGridNewProps): UseTable<T> {
+}: UseTableProps): UseTable<T> {
   const parsedQs = useParsedQs();
+
+  const [, setSearchParams] = useSearchParams();
 
   const getSorter = (obj: unknown): GridSorter => {
     if (!isObject(obj) || isEmpty(obj) || isArray(obj)) {
@@ -83,6 +87,10 @@ export function useTable<T>({
     search: parsedQs.search ? String(parsedQs.search) : null,
     sorter: getSorter(parsedQs.sorter),
   });
+
+  useEffect(() => {
+    setSearchParams(UrlUtils.stringify(state), { replace: true });
+  }, [state, setSearchParams]);
 
   const onTableChange = (
     antPagination: TablePaginationConfig,

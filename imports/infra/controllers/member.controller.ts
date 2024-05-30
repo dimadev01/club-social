@@ -5,7 +5,6 @@ import { ILogger } from '@application/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { CreateMemberResponse } from '@domain/members/use-cases/create-member/create-member.response';
 import { CreateMemberUseCase } from '@domain/members/use-cases/create-member/create-member.use-case';
-import { GetMemberGridResponse } from '@domain/members/use-cases/get-member/get-member-grid.response';
 import { GetMemberResponse } from '@domain/members/use-cases/get-member/get-member.response';
 import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-member.use.case';
 import { GetMembersUseCase } from '@domain/members/use-cases/get-members/get-members.use-case';
@@ -13,9 +12,8 @@ import { GetMembersGridUseCase } from '@domain/members/use-cases/get-members-gri
 import { UpdateMemberNewUseCase } from '@domain/members/use-cases/update-member-new/update-member.use-case';
 import { BaseController } from '@infra/controllers/base.controller';
 import { CreateMemberRequestDto } from '@infra/controllers/types/create-member-request.dto';
-import { GetGridRequestDto } from '@infra/controllers/types/get-grid-request.dto';
-import { GetGridResponse } from '@infra/controllers/types/get-grid-response.dto';
 import { GetMemberRequestDto } from '@infra/controllers/types/get-member-request.dto';
+import { GetMembersGridRequestDto } from '@infra/controllers/types/get-members-grid-request.dto';
 import { GetMembersRequestDto } from '@infra/controllers/types/get-members-request.dto';
 import { UpdateMemberRequestDto } from '@infra/controllers/types/update-member-request.dto';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
@@ -79,11 +77,9 @@ export class MemberController extends BaseController {
     });
   }
 
-  private _getMembersGrid(
-    request: GetGridRequestDto,
-  ): Promise<GetGridResponse<GetMemberGridResponse>> {
+  private _getMembersGrid(request: GetMembersGridRequestDto) {
     return this.execute({
-      classType: GetGridRequestDto,
+      classType: GetMembersGridRequestDto,
       request,
       useCase: this._getMembersGridUseCase,
     });

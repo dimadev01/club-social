@@ -17,7 +17,7 @@ export type FindPaginatedMemberOld = Pick<
   MemberOld,
   '_id' | 'category' | 'user' | 'fileStatus' | 'status' | 'phones'
 > & {
-  pendingGuest: number;
+  pendingElectricity: number;
   pendingGuest: number;
   pendingMembership: number;
   pendingTotal: number;

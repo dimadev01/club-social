@@ -1,25 +1,30 @@
 import {
   IsDefined,
+  IsInt,
   IsNotEmpty,
+  IsNumber,
   IsObject,
   IsPositive,
   IsString,
 } from 'class-validator';
 
+import { FindPaginatedRequest } from '@domain/common/repositories/queryable-grid-repository.interface';
 import { IsNullable } from '@shared/class-validator/is-nullable';
-
-export type GridSorter = Record<string, 'ascend' | 'descend'>;
 
 export type GridFilter = Record<string, string[]>;
 
-export class GetGridRequestDto {
+export type GridSorter = Record<string, 'ascend' | 'descend'>;
+
+export class GetGridRequestDto implements FindPaginatedRequest {
+  @IsInt()
+  @IsPositive()
+  @IsNumber()
+  public limit!: number;
+
+  @IsInt()
   @IsPositive()
   @IsNotEmpty()
   public page!: number;
-
-  @IsPositive()
-  @IsNotEmpty()
-  public pageSize!: number;
 
   @IsNullable()
   @IsString()
@@ -29,9 +34,4 @@ export class GetGridRequestDto {
   @IsObject()
   @IsDefined()
   public sorter!: GridSorter;
-
-  @IsObject()
-  @IsNullable()
-  @IsDefined()
-  public filters!: GridFilter | null;
 }

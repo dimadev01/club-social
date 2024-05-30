@@ -7,7 +7,7 @@ import { MeteorBadRequestError } from '@infra/meteor/errors/meteor-bad-request.e
 import { MeteorInternalServerError } from '@infra/meteor/errors/meteor-internal-server.error';
 import { ClassValidationError } from '@infra/mongo/errors/class-validation.error';
 
-export interface ExecuteRequest<TRequest extends object, TResponse> {
+export interface ExecuteRequest<TRequest, TResponse> {
   classType?: ClassType<TRequest>;
   request?: TRequest;
   useCase: IUseCase<TRequest, TResponse>;
@@ -16,13 +16,13 @@ export interface ExecuteRequest<TRequest extends object, TResponse> {
 export abstract class BaseController {
   public constructor(private readonly _logger: ILogger) {}
 
-  protected async execute<TRequest extends object, TResponse>({
+  protected async execute<TRequest, TResponse>({
     useCase,
     classType,
     request,
   }: ExecuteRequest<TRequest, TResponse>): Promise<TResponse> {
     try {
-      if (request && classType) {
+      if (request && classType && typeof classType === 'object') {
         await this._validateDto(classType, request);
       }
 
