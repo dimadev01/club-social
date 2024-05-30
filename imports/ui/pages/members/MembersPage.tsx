@@ -21,10 +21,12 @@ import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
+import { MembersGridCsvDownloaderButton } from '@ui/components/Members/MembersGridCsvDownloader';
 import { TableNew } from '@ui/components/Table/TableNew';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TablePrintButton } from '@ui/components/Table/TablePrintButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
+import { useMembersToExport } from '@ui/hooks/members/useGetMembersToExport';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useNavigate } from '@ui/hooks/useNavigate';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
@@ -45,22 +47,26 @@ export const MembersPage = () => {
     status: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
   });
 
+  const gridRequest: GetMembersGridRequestDto = {
+    categoryFilter:
+      (gridState.filters?.category as MemberCategoryEnum[]) ?? null,
+    debtStatusFilter: gridState.filters?.pendingTotal ?? null,
+    idFilter: gridState.filters?._id ?? null,
+    limit: gridState.pageSize,
+    page: gridState.page,
+    search: gridState.search,
+    sorter: gridState.sorter,
+    statusFilter: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
+  };
+
+  const getMembersToExport = useMembersToExport();
+
   const { data, isLoading, isRefetching, refetch } = useQueryGrid<
     GetMemberGridResponse,
     GetMembersGridRequestDto
   >({
     methodName: MeteorMethodEnum.MembersGetGrid,
-    request: {
-      categoryFilter:
-        (gridState.filters?.category as MemberCategoryEnum[]) ?? null,
-      debtStatusFilter: gridState.filters?.pendingTotal ?? null,
-      idFilter: gridState.filters?._id ?? null,
-      limit: gridState.pageSize,
-      page: gridState.page,
-      search: gridState.search,
-      sorter: gridState.sorter,
-      statusFilter: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
-    },
+    request: gridRequest,
   });
 
   const componentRef = useRef(null);
@@ -92,72 +98,7 @@ export const MembersPage = () => {
               isDisabled={isRefetching}
             />
 
-            {/* <CsvDownloader
-              columns={[
-                {
-                  displayName: 'ID',
-                  id: '_id',
-                },
-                {
-                  displayName: 'Nombre',
-                  id: 'name',
-                },
-                {
-                  displayName: 'Categoría',
-                  id: 'category',
-                },
-                {
-                  displayName: 'Estado',
-                  id: 'status',
-                },
-                {
-                  displayName: 'Emails',
-                  id: 'emails',
-                },
-                {
-                  displayName: 'Teléfono',
-                  id: 'phone',
-                },
-                {
-                  displayName: 'Deuda de luz',
-                  id: 'electricityDebt',
-                },
-                {
-                  displayName: 'Deuda de invitado',
-                  id: 'guestDebt',
-                },
-                {
-                  displayName: 'Deuda de cuota',
-                  id: 'membershipDebt',
-                },
-                {
-                  displayName: 'Deuda total',
-                  id: 'totalDebt',
-                },
-              ]}
-              filename={DateUtils.c().format(DateFormatEnum.DateTime)}
-              datas={async () => {
-                setIsExportingToCsv(true);
-
-                const response = await Meteor.callAsync(
-                  MeteorMethodEnum.MembersGetForCsv,
-                  request,
-                );
-
-                setIsExportingToCsv(false);
-
-                return Promise.resolve(response.data);
-              }}
-            >
-              <Button
-                loading={isExportingToCsv}
-                disabled={isExportingToCsv}
-                tooltip={{ title: 'Descargar CSV' }}
-                htmlType="button"
-                type="text"
-                icon={<FileExcelOutlined />}
-              />
-            </CsvDownloader> */}
+            <MembersGridCsvDownloaderButton request={gridRequest} />
 
             {Roles.userIsInRole(
               user,

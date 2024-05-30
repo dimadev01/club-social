@@ -34,5 +34,6 @@ export interface IMemberRepository<TSession = unknown>
     IQueryableGridRepository<MemberModel, GetMembersGridRequest> {
   find(request: FindMembersRequest): Promise<MemberModel[]>;
   findByDocument(documentID: string): Promise<MemberModel | null>;
+  findToExport(request: GetMembersGridRequest): Promise<MemberModel[]>;
   getBalances(memberIds: string[]): Promise<MemberBalance[]>;
 }

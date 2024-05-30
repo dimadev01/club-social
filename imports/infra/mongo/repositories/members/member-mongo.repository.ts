@@ -97,6 +97,117 @@ export class MemberMongoRepository
   public async findPaginated(
     request: GetMembersGridRequest,
   ): Promise<FindPaginatedResponse<MemberModel>> {
+    const pipeline: Document[] = this._getPipelineToExportOrGrid(
+      request,
+      'paginated',
+    );
+
+    const [{ entities, totalCount }] = await this.collection
+      .rawCollection()
+      .aggregate<PaginatedAggregationResult<MemberEntity>>(pipeline)
+      .toArray();
+
+    const items = entities.map((entity) => this.mapper.toModel(entity));
+
+    return { items, totalCount };
+  }
+
+  public async findToExport(
+    request: GetMembersGridRequest,
+  ): Promise<MemberModel[]> {
+    const pipeline = this._getPipelineToExportOrGrid(request, 'export');
+
+    const entities = await this.collection
+      .rawCollection()
+      .aggregate<MemberEntity>(pipeline)
+      .toArray();
+
+    return entities.map((entity) => this.mapper.toModel(entity));
+  }
+
+  public async getBalances(memberIds: string[]): Promise<MemberBalance[]> {
+    function getGroupByCategoryDocument(category: DueCategoryEnum): Document {
+      return {
+        $sum: {
+          $cond: [{ $eq: ['$due.category', category] }, '$due.amount', 0],
+        },
+      };
+    }
+
+    const pipeline: Document[] = [
+      {
+        $project: {
+          _id: 1,
+        },
+      },
+      {
+        $match: {
+          $expr: {
+            $in: ['$_id', memberIds],
+          },
+        },
+      },
+      {
+        $lookup: {
+          as: 'due',
+          foreignField: 'memberId',
+          from: 'dues',
+          localField: '_id',
+          pipeline: [
+            {
+              $project: {
+                amount: 1,
+                category: 1,
+                isDeleted: 1,
+                status: 1,
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$isDeleted', false] },
+                    { $eq: ['$status', DueStatusEnum.PENDING] },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$due',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          electricity: getGroupByCategoryDocument(DueCategoryEnum.ELECTRICITY),
+          guest: getGroupByCategoryDocument(DueCategoryEnum.GUEST),
+          membership: getGroupByCategoryDocument(DueCategoryEnum.MEMBERSHIP),
+        },
+      },
+      {
+        $addFields: {
+          total: {
+            $add: ['$electricity', '$membership', '$guest'],
+          },
+        },
+      },
+    ];
+
+    return this.collection
+      .rawCollection()
+      .aggregate<MemberBalance>(pipeline)
+      .toArray();
+  }
+
+  private _getPipelineToExportOrGrid(
+    request: GetMembersGridRequest,
+    type: 'export' | 'paginated',
+  ): Document[] {
     const pipeline: Document[] = [];
 
     const $match: Document = {
@@ -237,20 +348,31 @@ export class MemberMongoRepository
       }
     }
 
+    const userLookUpAndSorter = [
+      {
+        $lookup: {
+          as: 'user',
+          foreignField: '_id',
+          from: 'users',
+          localField: 'userId',
+        },
+      },
+      { $unwind: '$user' },
+      this.getPaginatedSorterStage(request.sorter),
+    ];
+
+    if (type === 'export') {
+      pipeline.push(...userLookUpAndSorter);
+
+      return pipeline;
+    }
+
     pipeline.push(
       {
         $facet: {
           entities: [
-            {
-              $lookup: {
-                as: 'user',
-                foreignField: '_id',
-                from: 'users',
-                localField: 'userId',
-              },
-            },
-            { $unwind: '$user' },
-            ...this.getPaginatedPipeline(request),
+            ...userLookUpAndSorter,
+            ...this.getPaginatedStages(request.page, request.limit),
           ],
           totalCount: [{ $count: 'count' }],
         },
@@ -263,92 +385,6 @@ export class MemberMongoRepository
       },
     );
 
-    const [{ entities, totalCount }] = await this.collection
-      .rawCollection()
-      .aggregate<PaginatedAggregationResult<MemberEntity>>(pipeline)
-      .toArray();
-
-    const items = entities.map((entity) => this.mapper.toModel(entity));
-
-    return { items, totalCount };
-  }
-
-  public async getBalances(memberIds: string[]): Promise<MemberBalance[]> {
-    function getGroupByCategoryDocument(category: DueCategoryEnum): Document {
-      return {
-        $sum: {
-          $cond: [{ $eq: ['$due.category', category] }, '$due.amount', 0],
-        },
-      };
-    }
-
-    const pipeline: Document[] = [
-      {
-        $project: {
-          _id: 1,
-        },
-      },
-      {
-        $match: {
-          $expr: {
-            $in: ['$_id', memberIds],
-          },
-        },
-      },
-      {
-        $lookup: {
-          as: 'due',
-          foreignField: 'memberId',
-          from: 'dues',
-          localField: '_id',
-          pipeline: [
-            {
-              $project: {
-                amount: 1,
-                category: 1,
-                isDeleted: 1,
-                status: 1,
-              },
-            },
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ['$isDeleted', false] },
-                    { $eq: ['$status', DueStatusEnum.PENDING] },
-                  ],
-                },
-              },
-            },
-          ],
-        },
-      },
-      {
-        $unwind: {
-          path: '$due',
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $group: {
-          _id: '$_id',
-          electricity: getGroupByCategoryDocument(DueCategoryEnum.ELECTRICITY),
-          guest: getGroupByCategoryDocument(DueCategoryEnum.GUEST),
-          membership: getGroupByCategoryDocument(DueCategoryEnum.MEMBERSHIP),
-        },
-      },
-      {
-        $addFields: {
-          total: {
-            $add: ['$electricity', '$membership', '$guest'],
-          },
-        },
-      },
-    ];
-
-    return this.collection
-      .rawCollection()
-      .aggregate<MemberBalance>(pipeline)
-      .toArray();
+    return pipeline;
   }
 }

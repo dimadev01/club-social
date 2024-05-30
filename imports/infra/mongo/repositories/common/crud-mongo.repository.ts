@@ -113,7 +113,7 @@ export abstract class CrudMongoRepository<
     const options: Mongo.Options<TEntity> = {
       limit: request.limit,
       skip: request.page,
-      sort: this.getSorter(request.sorter),
+      sort: this.getMongoSorter(request.sorter),
     };
 
     const entities = await this._collection.find(query, options).fetchAsync();
@@ -192,15 +192,25 @@ export abstract class CrudMongoRepository<
     }
   }
 
+  protected getPaginatedSorterStage(sorter: PaginatedSorter): Document {
+    return { $sort: this.getMongoSorter(sorter) };
+  }
+
   protected getPaginatedPipeline(request: FindPaginatedRequest): Document[] {
     return [
-      { $sort: this.getSorter(request.sorter ?? { createdAt: -1 }) },
-      { $skip: ((request?.page ?? 1) - 1) * (request.limit ?? 10) },
-      { $limit: request.limit },
+      this.getPaginatedSorterStage(request.sorter),
+      ...this.getPaginatedStages(request.page, request.limit),
     ];
   }
 
-  protected getSorter(paginatedSorter: PaginatedSorter): {
+  protected getPaginatedStages(page?: number, limit?: number): Document[] {
+    return [
+      { $skip: ((page ?? 1) - 1) * (limit ?? 10) },
+      { $limit: limit ?? 10 },
+    ];
+  }
+
+  protected getMongoSorter(paginatedSorter: PaginatedSorter): {
     [key: string]: number;
   } {
     const sorter: { [key: string]: 1 | -1 } = {};

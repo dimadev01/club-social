@@ -6,7 +6,6 @@ import { GetMemberMovementsGridRequestDto } from '@domain/members/use-cases/get-
 import { GetMemberMovementsUseCase } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.use-case';
 import { GetMemberPaymentsGridRequestDto } from '@domain/members/use-cases/get-member-payments-grid/get-member-payments-grid.request.dto';
 import { GetMemberPaymentsGridUseCase } from '@domain/members/use-cases/get-member-payments-grid/get-member-payments-grid.use-case';
-import { GetMembersForCsvRequestDto } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv-request.dto';
 import { GetMembersForCsvUseCase } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
@@ -24,15 +23,6 @@ export class MemberMethod extends MeteorMethod {
 
   public register() {
     Meteor.methods({
-      [MeteorMethodEnum.MembersGetForCsv]: (
-        request: GetMembersForCsvRequestDto,
-      ) =>
-        this.execute(
-          this._getMembersForCsv,
-          request,
-          GetMembersForCsvRequestDto,
-        ),
-
       [MeteorMethodEnum.MembersGetMovementsGrid]: (
         request: GetMemberMovementsGridRequestDto,
       ) =>

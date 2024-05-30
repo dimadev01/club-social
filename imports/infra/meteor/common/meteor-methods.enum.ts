@@ -18,11 +18,11 @@ export enum MeteorMethodEnum {
   MembersCreate = 'members/create',
   MembersGet = 'members/get',
   MembersGetDuesGrid = 'members/getDuesGrid',
-  MembersGetForCsv = 'members/getForCsv',
   MembersGetGrid = 'members/getGrid',
   MembersGetMovementsGrid = 'movements/getMovementsGrid',
   MembersGetOne = 'members/getOne',
   MembersGetPaymentsGrid = 'members/getPaymentsGrid',
+  MembersGetToExport = 'members/getToExport',
   MembersUpdate = 'members/updateNew',
 
   MovementsCreate = 'movements/create',

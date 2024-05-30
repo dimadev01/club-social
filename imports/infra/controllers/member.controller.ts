@@ -9,6 +9,7 @@ import { GetMemberResponse } from '@domain/members/use-cases/get-member/get-memb
 import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-member.use.case';
 import { GetMembersUseCase } from '@domain/members/use-cases/get-members/get-members.use-case';
 import { GetMembersGridUseCase } from '@domain/members/use-cases/get-members-grid/get-members-grid.use-case';
+import { GetMembersToExportUseCase } from '@domain/members/use-cases/get-members-to-export/get-members-to-export.use-case';
 import { UpdateMemberNewUseCase } from '@domain/members/use-cases/update-member-new/update-member.use-case';
 import { BaseController } from '@infra/controllers/base.controller';
 import { CreateMemberRequestDto } from '@infra/controllers/types/create-member-request.dto';
@@ -31,6 +32,8 @@ export class MemberController extends BaseController {
     private readonly _getMembersUseCase: GetMembersUseCase,
     @inject(GetMembersGridUseCase)
     private readonly _getMembersGridUseCase: GetMembersGridUseCase,
+    @inject(GetMembersToExportUseCase)
+    private readonly _getMembersToExportUseCase: GetMembersToExportUseCase,
     @inject(UpdateMemberNewUseCase)
     private readonly _updateMemberUseCase: UpdateMemberNewUseCase<ClientSession>,
   ) {
@@ -44,6 +47,8 @@ export class MemberController extends BaseController {
       [MeteorMethodEnum.MembersGetOne]: this._getMember.bind(this),
       [MeteorMethodEnum.MembersGetGrid]: this._getMembersGrid.bind(this),
       [MeteorMethodEnum.MembersGet]: this._getMembers.bind(this),
+      [MeteorMethodEnum.MembersGetToExport]:
+        this._getMembersToExport.bind(this),
     });
   }
 
@@ -82,6 +87,14 @@ export class MemberController extends BaseController {
       classType: GetMembersGridRequestDto,
       request,
       useCase: this._getMembersGridUseCase,
+    });
+  }
+
+  private _getMembersToExport(request: GetMembersGridRequestDto) {
+    return this.execute({
+      classType: GetMembersGridRequestDto,
+      request,
+      useCase: this._getMembersToExportUseCase,
     });
   }
 
