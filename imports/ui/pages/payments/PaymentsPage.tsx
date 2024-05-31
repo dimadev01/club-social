@@ -16,7 +16,6 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { GetPaymentGridResponse } from '@domain/payments/use-cases/get-payments-grid/get-payment-grid.response';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { GetPaymentsGridRequestDto } from '@infra/controllers/payment/get-payments-grid-request.dto';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { SecurityUtils } from '@infra/security/security.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
@@ -44,7 +43,7 @@ export const PaymentsPage = () => {
     isLoading,
     refetch,
     isRefetching,
-  } = useQueryGrid<GetPaymentGridResponse, GetPaymentsGridRequestDto>({
+  } = useQueryGrid<GetPaymentGridResponse>({
     methodName: MeteorMethodEnum.PaymentsGetGrid,
     request: {
       limit: gridState.pageSize,
