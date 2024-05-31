@@ -1,10 +1,10 @@
 import { ArrayMinSize, IsArray, IsEnum, IsOptional } from 'class-validator';
 
-import { FindMembersRequest } from '@domain/members/member-repository.interface';
 import {
   MemberCategoryEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
+import { FindMembersRequest } from '@domain/members/repositories/member-repository.interface';
 
 export class GetMembersRequestDto implements FindMembersRequest {
   @IsEnum(MemberStatusEnum, { each: true })

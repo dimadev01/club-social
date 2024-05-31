@@ -4,11 +4,11 @@ import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@domain/common/tokens.di';
 import { IGridUseCase } from '@domain/common/use-case.interface';
-import { IMemberRepository } from '@domain/members/member-repository.interface';
 import {
   FindPaginatedMembersRequest,
   FindPaginatedMembersResponse,
 } from '@domain/members/repositories/find-paginated-members.interface';
+import { IMemberRepository } from '@domain/members/repositories/member-repository.interface';
 import { MemberGridModelDto } from '@domain/members/use-cases/get-members-grid/member-grid-model-dto';
 
 @injectable()

@@ -8,7 +8,7 @@ import { GetMemberUseCase } from '@domain/members/use-cases/get-member/get-membe
 import { GetMembersUseCase } from '@domain/members/use-cases/get-members/get-members.use-case';
 import { GetMembersGridUseCase } from '@domain/members/use-cases/get-members-grid/get-members-grid.use-case';
 import { GetMembersToExportUseCase } from '@domain/members/use-cases/get-members-to-export/get-members-to-export.use-case';
-import { UpdateMemberNewUseCase } from '@domain/members/use-cases/update-member-new/update-member.use-case';
+import { UpdateMemberNewUseCase } from '@domain/members/use-cases/update-member/update-member.use-case';
 import { BaseController } from '@infra/controllers/base.controller';
 import { CreateMemberRequestDto } from '@infra/controllers/member/create-member-request.dto';
 import { GetMembersGridRequestDto } from '@infra/controllers/member/get-members-grid-request.dto';

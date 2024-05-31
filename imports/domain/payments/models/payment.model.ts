@@ -2,6 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 
 import { Model } from '@domain/common/models/model';
 import { DayjsDate } from '@domain/common/value-objects/dayjs-date.value-object';
+import { MemberModel } from '@domain/members/models/member.model';
 import {
   CreatePayment,
   IPaymentModel,
@@ -10,6 +11,8 @@ import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export class PaymentModel extends Model implements IPaymentModel {
   private _date: DayjsDate;
+
+  private _member: MemberModel | undefined;
 
   private _memberId: string;
 
@@ -26,11 +29,17 @@ export class PaymentModel extends Model implements IPaymentModel {
 
     this._memberId = props?.memberId ?? '';
 
+    this._member = props?.member;
+
     this._notes = props?.notes ?? null;
 
     this._receiptNumber = props?.receiptNumber ?? null;
 
     this._status = props?.status ?? PaymentStatusEnum.PAID;
+  }
+
+  public get member(): MemberModel | undefined {
+    return this._member;
   }
 
   public get date(): DayjsDate {

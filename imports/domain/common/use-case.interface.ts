@@ -2,8 +2,8 @@ import { Result } from 'neverthrow';
 
 import { GetModelRequest } from '@domain/common/get-model.request';
 import {
-  FindPaginatedRequest,
-  FindPaginatedResponse,
+  FindPaginatedRequestNewV,
+  FindPaginatedResponseNewV,
 } from '@domain/common/repositories/queryable-grid-repository.interface';
 
 export interface IUseCaseNewV<TRequest, TResponse> {
@@ -16,8 +16,8 @@ export type IEntityDtoUseCase<
 > = IUseCaseNewV<TRequest, TResponse>;
 
 export type IGridUseCase<
-  TRequest extends FindPaginatedRequest = FindPaginatedRequest,
+  TRequest extends FindPaginatedRequestNewV = FindPaginatedRequestNewV,
   TModelResponse extends object = object,
   TResponse extends
-    FindPaginatedResponse<TModelResponse> = FindPaginatedResponse<TModelResponse>,
+    FindPaginatedResponseNewV<TModelResponse> = FindPaginatedResponseNewV<TModelResponse>,
 > = IUseCaseNewV<TRequest, TResponse>;

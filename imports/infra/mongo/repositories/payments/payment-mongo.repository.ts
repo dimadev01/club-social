@@ -2,13 +2,11 @@ import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import {
-  FindPaginatedRequest,
-  FindPaginatedResponse,
-} from '@domain/common/repositories/queryable-grid-repository.interface';
+import { FindPaginatedResponseNewV } from '@domain/common/repositories/queryable-grid-repository.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { PaymentModel } from '@domain/payments/models/payment.model';
 import { IPaymentRepository } from '@domain/payments/payment-repository.interface';
+import { FindPaginatedPaymentsRequest } from '@domain/payments/repositories/find-paginated-payments.interface';
 import { PaymentMapper } from '@infra/mappers/payment.mapper';
 import { PaymentAuditableCollection } from '@infra/mongo/collections/payment-auditable.collection';
 import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
@@ -39,8 +37,8 @@ export class PaymentMongoRepository
   }
 
   public async findPaginated(
-    request: FindPaginatedRequest,
-  ): Promise<FindPaginatedResponse<PaymentModel>> {
+    request: FindPaginatedPaymentsRequest,
+  ): Promise<FindPaginatedResponseNewV<PaymentModel>> {
     const pipeline: Document[] = [];
 
     const $match: Document = {
@@ -55,9 +53,41 @@ export class PaymentMongoRepository
 
     pipeline.push({ $match });
 
+    if (request.filterByMember) {
+      $match.$expr.$and.push({
+        $in: ['$memberId', request.filterByMember],
+      });
+    }
+
     const entitiesPipeline: Document[] = [];
 
-    entitiesPipeline.push(...this.getPaginatedPipeline(request));
+    entitiesPipeline.push(
+      ...this.getPaginatedPipeline(request),
+      {
+        $lookup: {
+          as: 'member',
+          foreignField: '_id',
+          from: 'members',
+          localField: 'memberId',
+          pipeline: [
+            {
+              $lookup: {
+                as: 'user',
+                foreignField: '_id',
+                from: 'users',
+                localField: 'userId',
+              },
+            },
+            {
+              $unwind: '$user',
+            },
+          ],
+        },
+      },
+      {
+        $unwind: '$member',
+      },
+    );
 
     return super.findPaginatedPipeline(pipeline, entitiesPipeline);
   }

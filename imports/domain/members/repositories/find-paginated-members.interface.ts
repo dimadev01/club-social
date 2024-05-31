@@ -1,6 +1,6 @@
 import {
-  FindPaginatedRequest,
-  FindPaginatedResponse,
+  FindPaginatedRequestNewV,
+  FindPaginatedResponseNewV,
 } from '@domain/common/repositories/queryable-grid-repository.interface';
 import {
   MemberCategoryEnum,
@@ -9,11 +9,6 @@ import {
 import { PaginatedAggregationResult } from '@infra/mongo/common/paginated-aggregation.interface';
 import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
 
-export interface FindPaginatedMembersResponse<T = unknown>
-  extends FindPaginatedResponse<T> {
-  totals: Totals;
-}
-
 interface Totals {
   electricity: number;
   guest: number;
@@ -21,14 +16,19 @@ interface Totals {
   total: number;
 }
 
-export interface FindPaginatedMembersAggregationResult
-  extends PaginatedAggregationResult<MemberEntity> {
-  totals: Totals;
-}
-
-export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
+export interface FindPaginatedMembersRequest extends FindPaginatedRequestNewV {
   filterByCategory: MemberCategoryEnum[] | null;
   filterByDebtStatus: string[] | null;
   filterById: string[] | null;
   filterByStatus: MemberStatusEnum[] | null;
+}
+
+export interface FindPaginatedMembersResponse<T = unknown>
+  extends FindPaginatedResponseNewV<T> {
+  totals: Totals;
+}
+
+export interface FindPaginatedMembersAggregationResult
+  extends PaginatedAggregationResult<MemberEntity> {
+  totals: Totals;
 }

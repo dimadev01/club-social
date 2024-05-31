@@ -14,8 +14,10 @@ import { RangeValue } from 'rc-picker/lib/interface';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-import { GetPaymentGridResponse } from '@domain/payments/use-cases/get-payments-grid/get-payment-grid.response';
+import { FindPaginatedPaymentsResponse } from '@domain/payments/repositories/find-paginated-payments.interface';
+import { PaymentGridModelDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid-model-dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { GetPaymentsGridRequestDto } from '@infra/controllers/payment/get-payments-grid-request.dto';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { SecurityUtils } from '@infra/security/security.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
@@ -31,7 +33,7 @@ import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 import { useTable } from '@ui/hooks/useTable';
 
 export const PaymentsPage = () => {
-  const { gridState, setGridState } = useTable<GetPaymentGridResponse>({
+  const { gridState, setGridState } = useTable<PaymentGridModelDto>({
     // eslint-disable-next-line sort-keys-fix/sort-keys-fix
     defaultSorter: { date: 'descend' },
   });
@@ -43,9 +45,14 @@ export const PaymentsPage = () => {
     isLoading,
     refetch,
     isRefetching,
-  } = useQueryGrid<GetPaymentGridResponse>({
+  } = useQueryGrid<
+    PaymentGridModelDto,
+    FindPaginatedPaymentsResponse<PaymentGridModelDto>,
+    GetPaymentsGridRequestDto
+  >({
     methodName: MeteorMethodEnum.PaymentsGetGrid,
     request: {
+      filterByMember: gridState.filters?.memberId ?? null,
       limit: gridState.pageSize,
       page: gridState.page,
       sorter: gridState.sorter,
@@ -194,7 +201,7 @@ export const PaymentsPage = () => {
             </Space>
           </Form>
 
-          <TableNewV<GetPaymentGridResponse>
+          <TableNewV<PaymentGridModelDto>
             state={gridState}
             // summary={renderSummary}
             setGridState={setGridState}
@@ -204,7 +211,7 @@ export const PaymentsPage = () => {
             columns={[
               {
                 dataIndex: 'date',
-                render: (date: string, payment: GetPaymentGridResponse) => (
+                render: (date: string, payment: PaymentGridModelDto) => (
                   <Link to={`${AppUrl.Payments}/${payment._id}`}>{date}</Link>
                 ),
                 title: 'Fecha',
@@ -219,6 +226,7 @@ export const PaymentsPage = () => {
                     text: member.name,
                     value: member._id,
                   })) ?? [],
+                render: (_, payment: PaymentGridModelDto) => payment.memberName,
                 title: 'Socio',
               },
               {
@@ -241,7 +249,7 @@ export const PaymentsPage = () => {
               // },
               {
                 align: 'center',
-                render: (_, payment: GetPaymentGridResponse) => (
+                render: (_, payment: PaymentGridModelDto) => (
                   <Space.Compact size="small">
                     {!payment.isDeleted &&
                       SecurityUtils.isInRole(

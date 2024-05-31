@@ -21,13 +21,13 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { CreateMember } from '@domain/members/member.types';
-import { MemberAddressModel } from '@domain/members/models/member-address.entity';
+import { MemberAddress } from '@domain/members/models/member-address.entity';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 export class Member extends Entity {
   @ValidateNested()
-  @Type(() => MemberAddressModel)
-  public address: MemberAddressModel;
+  @Type(() => MemberAddress)
+  public address: MemberAddress;
 
   @IsEnum(MemberCategoryEnum)
   public category: MemberCategoryEnum;
@@ -132,7 +132,7 @@ export class Member extends Entity {
     return this.user.emails?.[0]?.address ?? null;
   }
 
-  public setAddress(address: MemberAddressModel): Result<null, Error> {
+  public setAddress(address: MemberAddress): Result<null, Error> {
     this.address = address;
 
     return ok(null);

@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class MemberAddressModel {
+export class MemberAddress {
   @IsString()
   @IsOptional()
   public cityName: string | null;

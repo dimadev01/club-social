@@ -1,8 +1,8 @@
 import { IsDate, IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { Result, err, ok } from 'neverthrow';
 
-import { Money } from '@application/value-objects/money.value-object';
 import { Entity } from '@domain/common/entity.old';
+import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { CreateDue, CreateDuePayment } from '@domain/dues/due.types';
 import { IsNullable } from '@shared/class-validator/is-nullable';

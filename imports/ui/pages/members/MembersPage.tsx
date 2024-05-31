@@ -4,7 +4,7 @@ import ButtonGroup from 'antd/es/button/button-group';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { Money } from '@application/value-objects/money.value-object';
+import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   MemberCategoryEnum,
   MemberCategoryLabel,
@@ -67,7 +67,8 @@ export const MembersPage = () => {
 
   const { data, isLoading, isRefetching, refetch } = useQueryGrid<
     MemberGridModelDto,
-    FindPaginatedMembersResponse<MemberGridModelDto>
+    FindPaginatedMembersResponse<MemberGridModelDto>,
+    GetMembersGridRequestDto
   >({
     methodName: MeteorMethodEnum.MembersGetGrid,
     request: gridRequest,

@@ -12,8 +12,8 @@ import { ILogger } from '@application/logger/logger.interface';
 import { Model } from '@domain/common/models/model';
 import { ICrudRepository } from '@domain/common/repositories/crud-repository.interface';
 import {
-  FindPaginatedRequest,
-  FindPaginatedResponse,
+  FindPaginatedRequestNewV,
+  FindPaginatedResponseNewV,
   PaginatedSorter,
 } from '@domain/common/repositories/queryable-grid-repository.interface';
 import { Mapper } from '@infra/mappers/mapper';
@@ -103,8 +103,8 @@ export abstract class CrudMongoRepository<
   }
 
   public async findPaginated(
-    request: FindPaginatedRequest,
-  ): Promise<FindPaginatedResponse<TModel>> {
+    request: FindPaginatedRequestNewV,
+  ): Promise<FindPaginatedResponseNewV<TModel>> {
     // @ts-expect-error
     const query: Mongo.Selector<TEntity> = {
       isDeleted: false,
@@ -129,7 +129,7 @@ export abstract class CrudMongoRepository<
   protected async findPaginatedPipeline(
     pipeline: Document[],
     entitiesPipeline: Document[],
-  ): Promise<FindPaginatedResponse<TModel>> {
+  ): Promise<FindPaginatedResponseNewV<TModel>> {
     pipeline.push(
       {
         $facet: {
@@ -229,7 +229,9 @@ export abstract class CrudMongoRepository<
     return { $sort: this.getMongoSorter(sorter) };
   }
 
-  protected getPaginatedPipeline(request: FindPaginatedRequest): Document[] {
+  protected getPaginatedPipeline(
+    request: FindPaginatedRequestNewV,
+  ): Document[] {
     return [
       this.getPaginatedSorterStage(request.sorter),
       ...this.getPaginatedStages(request.page, request.limit),

@@ -4,7 +4,6 @@ import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
-import { IMemberRepository } from '@domain/members/member-repository.interface';
 import { MemberModel } from '@domain/members/models/member.model';
 import { FindMembersRequest } from '@domain/members/repositories/find-members.interface';
 import {
@@ -13,6 +12,7 @@ import {
   FindPaginatedMembersResponse,
 } from '@domain/members/repositories/find-paginated-members.interface';
 import { MemberBalance } from '@domain/members/repositories/get-balances.interface';
+import { IMemberRepository } from '@domain/members/repositories/member-repository.interface';
 import { MemberMapper } from '@infra/mappers/member.mapper';
 import { MemberAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
 import { MemberCollectionNewV } from '@infra/mongo/collections/member.collection';

@@ -5,13 +5,13 @@ import { GetModelRequest } from '@domain/common/get-model.request';
 import { DIToken } from '@domain/common/tokens.di';
 import { IEntityDtoUseCase } from '@domain/common/use-case.interface';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
-import { IMemberRepository } from '@domain/members/member-repository.interface';
-import { GetMemberResponse } from '@domain/members/use-cases/get-member/get-member.response';
+import { IMemberRepository } from '@domain/members/repositories/member-repository.interface';
+import { MemberModelDto } from '@domain/members/use-cases/get-member/member-model-dto';
 import { IUserRepository } from '@domain/users/user-repository.interface';
 
 @injectable()
 export class GetMemberUseCase
-  implements IEntityDtoUseCase<GetMemberResponse | null>
+  implements IEntityDtoUseCase<MemberModelDto | null>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)
@@ -22,7 +22,7 @@ export class GetMemberUseCase
 
   public async execute(
     request: GetModelRequest,
-  ): Promise<Result<GetMemberResponse | null, Error>> {
+  ): Promise<Result<MemberModelDto | null, Error>> {
     const member = await this._memberRepository.findOneById(request.id);
 
     if (!member) {
@@ -31,7 +31,7 @@ export class GetMemberUseCase
 
     member.user = await this._userRepository.findOneByIdOrThrow(member.userId);
 
-    return ok<GetMemberResponse>({
+    return ok<MemberModelDto>({
       _id: member._id,
       addressCityGovId: member.address.cityGovId,
       addressCityName: member.address.cityName,

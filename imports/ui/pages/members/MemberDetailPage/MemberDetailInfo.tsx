@@ -1,3 +1,4 @@
+import { MemberModelDto } from '@domain/members/use-cases/get-member/get-member.response';
 import { App, Card, Col, DatePicker, Form, Input, Row, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import compact from 'lodash/compact';
@@ -20,7 +21,6 @@ import {
   getMemberSexOptions,
   getMemberStatusOptions,
 } from '@domain/members/member.enum';
-import { GetMemberResponse } from '@domain/members/use-cases/get-member/get-member.response';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -56,7 +56,7 @@ type FormValues = {
 };
 
 type Props = {
-  member?: GetMemberResponse | null;
+  member?: MemberModelDto | null;
 };
 
 export const MemberDetailInfo: React.FC<Props> = ({ member }) => {

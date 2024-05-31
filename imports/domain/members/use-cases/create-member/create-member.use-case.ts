@@ -7,8 +7,8 @@ import { IUnitOfWork } from '@domain/common/repositories/unit-of-work.interface'
 import { DIToken } from '@domain/common/tokens.di';
 import { IUseCaseNewV } from '@domain/common/use-case.interface';
 import { ExistingMemberByDocumentError } from '@domain/members/errors/existing-member-by-document.error';
-import { IMemberRepository } from '@domain/members/member-repository.interface';
 import { MemberModel } from '@domain/members/models/member.model';
+import { IMemberRepository } from '@domain/members/repositories/member-repository.interface';
 import { CreateMemberRequest } from '@domain/members/use-cases/create-member/create-member.request';
 import { CreateMemberResponse } from '@domain/members/use-cases/create-member/create-member.response';
 import { RoleEnum } from '@domain/roles/role.enum';

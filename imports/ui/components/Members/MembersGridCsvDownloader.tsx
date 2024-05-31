@@ -3,7 +3,7 @@ import { GetMembersGridRequestDto } from '@infra/controllers/types/get-members-g
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
-import { Money } from '@application/value-objects/money.value-object';
+import { Money } from '@domain/common/value-objects/money.value-object';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { Button } from '@ui/components/Button';
 import { useMembersToExport } from '@ui/hooks/members/useGetMembersToExport';

@@ -7,13 +7,13 @@ import {
   IsPositive,
 } from 'class-validator';
 
-import { FindPaginatedRequest } from '@domain/common/repositories/queryable-grid-repository.interface';
+import { FindPaginatedRequestNewV } from '@domain/common/repositories/queryable-grid-repository.interface';
 
 export type GridFilter = Record<string, string[]>;
 
 export type GridSorter = Record<string, 'ascend' | 'descend'>;
 
-export class GetGridRequestDto implements FindPaginatedRequest {
+export class GetGridRequestDto implements FindPaginatedRequestNewV {
   @IsInt()
   @IsPositive()
   @IsNumber()

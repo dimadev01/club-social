@@ -1,12 +1,20 @@
-import { singleton } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 
 import { DayjsDate } from '@domain/common/value-objects/dayjs-date.value-object';
 import { PaymentModel } from '@domain/payments/models/payment.model';
 import { Mapper } from '@infra/mappers/mapper';
+import { MemberMapper } from '@infra/mappers/member.mapper';
 import { PaymentEntity } from '@infra/mongo/entities/payments/payment.entity';
 
 @singleton()
 export class PaymentMapper extends Mapper<PaymentModel, PaymentEntity> {
+  public constructor(
+    @inject(MemberMapper)
+    private readonly _memberMapper: MemberMapper,
+  ) {
+    super();
+  }
+
   public toModel(orm: PaymentEntity): PaymentModel {
     return new PaymentModel({
       _id: orm._id,
@@ -16,6 +24,7 @@ export class PaymentMapper extends Mapper<PaymentModel, PaymentEntity> {
       deletedAt: orm.deletedAt,
       deletedBy: orm.deletedBy,
       isDeleted: orm.isDeleted,
+      member: orm.member ? this._memberMapper.toModel(orm.member) : undefined,
       memberId: orm.memberId,
       notes: orm.notes,
       receiptNumber: orm.receiptNumber,
@@ -34,6 +43,7 @@ export class PaymentMapper extends Mapper<PaymentModel, PaymentEntity> {
       deletedAt: model.deletedAt,
       deletedBy: model.deletedBy,
       isDeleted: model.isDeleted,
+      member: undefined,
       memberId: model.memberId,
       notes: model.notes,
       receiptNumber: model.receiptNumber,

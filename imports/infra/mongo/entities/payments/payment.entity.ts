@@ -9,11 +9,14 @@ import {
 
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { EntityNewV } from '@infra/mongo/entities/common/entity';
+import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
 export class PaymentEntity extends EntityNewV {
   @IsDate()
   public date: Date;
+
+  public member: MemberEntity | undefined;
 
   @IsNotEmpty()
   @IsString()

@@ -10,12 +10,13 @@ import { MemberBalance } from '@domain/members/repositories/get-balances.interfa
 
 export interface IMemberRepository<TSession = unknown>
   extends ICrudRepository<MemberModel, TSession>,
-    IQueryableGridRepository<MemberModel, FindPaginatedMembersRequest> {
+    IQueryableGridRepository<
+      MemberModel,
+      FindPaginatedMembersRequest,
+      FindPaginatedMembersResponse<MemberModel>
+    > {
   find(request: FindMembersRequest): Promise<MemberModel[]>;
   findByDocument(documentID: string): Promise<MemberModel | null>;
-  findPaginated(
-    request: FindPaginatedMembersRequest,
-  ): Promise<FindPaginatedMembersResponse<MemberModel>>;
   findToExport(request: FindPaginatedMembersRequest): Promise<MemberModel[]>;
   getBalances(memberIds: string[]): Promise<MemberBalance[]>;
 }

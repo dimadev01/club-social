@@ -1,4 +1,4 @@
-export interface GetPaymentGridResponse {
+export interface PaymentGridModelDto {
   _id: string;
   date: string;
   isDeleted: boolean;

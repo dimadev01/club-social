@@ -5,13 +5,13 @@ export type PaginatedSorter = Record<
   'ascend' | 'descend' | 1 | -1 | null
 >;
 
-export interface FindPaginatedRequest {
+export interface FindPaginatedRequestNewV {
   limit: number;
   page: number;
   sorter: PaginatedSorter;
 }
 
-export interface FindPaginatedResponse<T = unknown> {
+export interface FindPaginatedResponseNewV<T = unknown> {
   items: T[];
   totalCount: number;
 }
@@ -20,7 +20,9 @@ export const DEFAULT_PAGE_SIZE = 25;
 
 export interface IQueryableGridRepository<
   TModel extends Model,
-  TRequest extends FindPaginatedRequest,
+  TRequest extends FindPaginatedRequestNewV = FindPaginatedRequestNewV,
+  TResponse extends
+    FindPaginatedResponseNewV<TModel> = FindPaginatedResponseNewV<TModel>,
 > {
-  findPaginated(request: TRequest): Promise<FindPaginatedResponse<TModel>>;
+  findPaginated(request: TRequest): Promise<TResponse>;
 }

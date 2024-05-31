@@ -7,7 +7,7 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 
-export interface GetMemberResponse {
+export interface MemberModelDto {
   _id: string;
   addressCityGovId: string | null;
   addressCityName: string | null;
