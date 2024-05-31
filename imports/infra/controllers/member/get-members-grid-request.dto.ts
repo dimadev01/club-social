@@ -1,8 +1,8 @@
 import {
   ArrayMinSize,
   IsArray,
-  IsDefined,
   IsEnum,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -12,7 +12,6 @@ import {
 } from '@domain/members/member.enum';
 import { FindPaginatedMembersRequest } from '@domain/members/repositories/find-paginated-members.interface';
 import { GetGridRequestDto } from '@infra/controllers/types/get-grid-request.dto';
-import { IsNullable } from '@shared/class-validator/is-nullable';
 
 export class GetMembersGridRequestDto
   extends GetGridRequestDto
@@ -21,28 +20,24 @@ export class GetMembersGridRequestDto
   @IsEnum(MemberCategoryEnum, { each: true })
   @ArrayMinSize(1)
   @IsArray()
-  @IsNullable()
-  @IsDefined()
-  public filterByCategory!: MemberCategoryEnum[] | null;
+  @IsOptional()
+  public filterByCategory?: MemberCategoryEnum[];
 
   @IsString({ each: true })
   @ArrayMinSize(1)
   @IsArray()
-  @IsNullable()
-  @IsDefined()
-  public filterByDebtStatus!: string[] | null;
+  @IsOptional()
+  public filterByDebtStatus?: string[];
 
   @IsString({ each: true })
   @ArrayMinSize(1)
   @IsArray()
-  @IsNullable()
-  @IsDefined()
-  public filterById!: string[] | null;
+  @IsOptional()
+  public filterById?: string[];
 
   @IsEnum(MemberStatusEnum, { each: true })
   @ArrayMinSize(1)
   @IsArray()
-  @IsNullable()
-  @IsDefined()
-  public filterByStatus!: MemberStatusEnum[] | null;
+  @IsOptional()
+  public filterByStatus?: MemberStatusEnum[];
 }

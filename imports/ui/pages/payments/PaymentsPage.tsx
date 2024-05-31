@@ -52,7 +52,7 @@ export const PaymentsPage = () => {
   >({
     methodName: MeteorMethodEnum.PaymentsGetGrid,
     request: {
-      filterByMember: gridState.filters?.memberId ?? null,
+      filterByMember: gridState.filters?.memberId,
       limit: gridState.pageSize,
       page: gridState.page,
       sorter: gridState.sorter,

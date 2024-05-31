@@ -17,10 +17,10 @@ interface Totals {
 }
 
 export interface FindPaginatedMembersRequest extends FindPaginatedRequestNewV {
-  filterByCategory: MemberCategoryEnum[] | null;
-  filterByDebtStatus: string[] | null;
-  filterById: string[] | null;
-  filterByStatus: MemberStatusEnum[] | null;
+  filterByCategory?: MemberCategoryEnum[];
+  filterByDebtStatus?: string[];
+  filterById?: string[];
+  filterByStatus?: MemberStatusEnum[];
 }
 
 export interface FindPaginatedMembersResponse<T = unknown>

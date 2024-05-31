@@ -55,11 +55,10 @@ export const MembersPage = () => {
   }
 
   const gridRequest: GetMembersGridRequestDto = {
-    filterByCategory:
-      (gridState.filters?.category as MemberCategoryEnum[]) ?? null,
-    filterByDebtStatus: gridState.filters?.pendingTotal ?? null,
-    filterById: gridState.filters?._id ?? null,
-    filterByStatus: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
+    filterByCategory: gridState.filters?.category as MemberCategoryEnum[],
+    filterByDebtStatus: gridState.filters?.pendingTotal,
+    filterById: gridState.filters?._id,
+    filterByStatus: gridState.filters?.status as MemberStatusEnum[],
     limit: gridState.pageSize,
     page: gridState.page,
     sorter,

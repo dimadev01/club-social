@@ -4,7 +4,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import localeData from 'dayjs/plugin/localeData';
 import utc from 'dayjs/plugin/utc';
 
-import { DateFormatEnum } from '@shared/utils/date.utils';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 
 dayjs.extend(utc);
 
@@ -14,35 +14,29 @@ dayjs.extend(customParseFormat);
 
 dayjs.locale('es');
 
-export class DayjsDate {
-  private _date: Dayjs;
-
-  public constructor(date?: dayjs.ConfigType) {
-    this._date = dayjs(date);
+export class DayjsDate extends DateVo<Dayjs> {
+  public constructor(value?: dayjs.ConfigType) {
+    super(dayjs(value));
   }
 
-  public static utc(date: dayjs.ConfigType): DayjsDate {
-    return new DayjsDate(date).utc();
+  public static utc(date?: dayjs.ConfigType): DayjsDate {
+    return new this(date).utc();
   }
 
-  public dayjs(): Dayjs {
-    return this._date;
-  }
-
-  public format(format: DateFormatEnum = DateFormatEnum.DDMMYYYY): string {
-    return this._date.format(format);
+  public format(): string {
+    throw new Error('Method not implemented.');
   }
 
   public toDate(): Date {
-    return this._date.toDate();
+    return this.date.toDate();
   }
 
   public toISOString(): string {
-    return this._date.toISOString();
+    throw new Error('Method not implemented.');
   }
 
-  public utc(): DayjsDate {
-    this._date = this._date.utc();
+  public utc(): this {
+    this.date = this.date.utc();
 
     return this;
   }

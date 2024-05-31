@@ -20,6 +20,7 @@ export class PaymentMapper extends Mapper<PaymentModel, PaymentEntity> {
       _id: orm._id,
       createdAt: orm.createdAt,
       createdBy: orm.createdBy,
+      // date: DayjsDate.utc(orm.date),
       date: DayjsDate.utc(orm.date),
       deletedAt: orm.deletedAt,
       deletedBy: orm.deletedBy,
