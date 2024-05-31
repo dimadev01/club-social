@@ -6,17 +6,17 @@ import {
   IsString,
 } from 'class-validator';
 
-import { GetMembersGridRequest } from '@domain/members/member-repository.interface';
 import {
   MemberCategoryEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
+import { FindPaginatedMembersRequest } from '@domain/members/repositories/find-paginated-members.interface';
 import { GetGridRequestDto } from '@infra/controllers/types/get-grid-request.dto';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
 export class GetMembersGridRequestDto
   extends GetGridRequestDto
-  implements GetMembersGridRequest
+  implements FindPaginatedMembersRequest
 {
   @IsEnum(MemberCategoryEnum, { each: true })
   @ArrayMinSize(1)

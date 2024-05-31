@@ -8,10 +8,10 @@ import {
 } from 'class-validator';
 
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
-import { Entity } from '@infra/mongo/entities/common/entity';
+import { EntityNewV } from '@infra/mongo/entities/common/entity';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
-export class PaymentEntity extends Entity {
+export class PaymentEntity extends EntityNewV {
   @IsDate()
   public date: Date;
 

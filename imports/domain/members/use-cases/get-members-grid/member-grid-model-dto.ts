@@ -3,7 +3,7 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 
-export interface GetMemberGridResponse {
+export interface MemberGridModelDto {
   _id: string;
   category: MemberCategoryEnum;
   name: string;

@@ -4,7 +4,7 @@ import { MemberAddressModel } from '@domain/members/models/member-address.model'
 import { MemberModel } from '@domain/members/models/member.model';
 import { Mapper } from '@infra/mappers/mapper';
 import { UserMapper } from '@infra/mappers/user.mapper';
-import { MemberAddressEntity } from '@infra/mongo/entities/members/member-address.entity';
+import { MemberAddressEntityNewV } from '@infra/mongo/entities/members/member-address.entity';
 import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
 
 @singleton()
@@ -51,7 +51,7 @@ export class MemberMapper extends Mapper<MemberModel, MemberEntity> {
   protected getEntity(model: MemberModel): MemberEntity {
     return new MemberEntity({
       _id: model._id,
-      address: new MemberAddressEntity({
+      address: new MemberAddressEntityNewV({
         cityGovId: model.address.cityGovId,
         cityName: model.address.cityName,
         stateGovId: model.address.stateGovId,

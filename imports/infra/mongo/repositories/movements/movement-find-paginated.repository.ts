@@ -14,7 +14,7 @@ import {
   MovementSchema,
 } from '@domain/movements/movement.collection';
 import { IMovementPaginatedPort } from '@domain/movements/movement.port';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import {
   FindPaginatedMovementsAggregationResult,
@@ -132,7 +132,7 @@ export class MovementFindPaginatedRepository
     };
   }
 
-  protected getCollection(): MongoCollectionOld<Movement> {
+  protected getCollection(): MongoCollection<Movement> {
     return MovementCollection;
   }
 

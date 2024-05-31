@@ -1,13 +1,10 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 import SimpleSchema from 'simpl-schema';
 
-import { MemberOld } from '@domain/members/models/member.old';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { Member } from '@domain/members/models/member.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 
-export const MemberCollectionOld = new MongoCollectionOld(
-  'members.old',
-  MemberOld,
-);
+export const MemberCollection = new MongoCollection('members.old', Member);
 
 export const MemberSchemaOld = new SimpleSchema({
   _id: String,
@@ -38,4 +35,4 @@ export const MemberSchemaOld = new SimpleSchema({
   userId: String,
 });
 
-MemberCollectionOld.attachSchema(MemberSchemaOld);
+MemberCollection.attachSchema(MemberSchemaOld);

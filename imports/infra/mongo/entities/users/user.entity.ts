@@ -1,12 +1,12 @@
 import { Type } from 'class-transformer';
 import { IsArray, IsDefined, IsObject, ValidateNested } from 'class-validator';
 
-import { Entity } from '@infra/mongo/entities/common/entity';
+import { EntityNewV } from '@infra/mongo/entities/common/entity';
 import { UserEmailEntity } from '@infra/mongo/entities/users/user-email.entity';
 import { UserProfileEntity } from '@infra/mongo/entities/users/user-profile.entity';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
-export class UserEntity extends Entity {
+export class UserEntity extends EntityNewV {
   @IsNullable()
   @IsDefined()
   public heartbeat: Date | null;

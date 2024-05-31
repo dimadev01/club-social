@@ -1,7 +1,7 @@
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { GetCategoriesGridRequestDto } from '@domain/categories/use-cases/get-categories-grid/get-categories-grid-request.dto';
 import { GetCategoriesGridResponseDto } from '@domain/categories/use-cases/get-categories-grid/get-categories-grid-response.dto';
@@ -12,7 +12,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 export class GetCategoriesGridUseCase
   extends UseCase<GetCategoriesGridRequestDto>
   implements
-    IUseCaseOld<GetCategoriesGridRequestDto, GetCategoriesGridResponseDto>
+    IUseCase<GetCategoriesGridRequestDto, GetCategoriesGridResponseDto>
 {
   public constructor(
     @inject(DIToken.CategoryRepository)

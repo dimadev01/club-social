@@ -13,8 +13,8 @@ import {
   getMemberCategoryFilters,
   getMemberStatusFilters,
 } from '@domain/members/member.enum';
-import { FindPaginatedMembersResponse } from '@domain/members/repositories/find-paginated-members-repository.interface';
-import { GetMemberGridResponse } from '@domain/members/use-cases/get-members-grid/get-member-grid.response';
+import { FindPaginatedMembersResponse } from '@domain/members/repositories/find-paginated-members.interface';
+import { MemberGridModelDto } from '@domain/members/use-cases/get-members-grid/member-grid-model-dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { GetMembersGridRequestDto } from '@infra/controllers/member/get-members-grid-request.dto';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
@@ -23,7 +23,7 @@ import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { MembersGridCsvDownloaderButton } from '@ui/components/Members/MembersGridCsvDownloader';
-import { TableNew } from '@ui/components/Table/TableNew';
+import { TableNewV } from '@ui/components/Table/TableNew';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useMembers } from '@ui/hooks/members/useMembers';
@@ -34,7 +34,7 @@ import { useTable } from '@ui/hooks/useTable';
 export const MembersPage = () => {
   const navigate = useNavigate();
 
-  const { gridState, setGridState } = useTable<GetMemberGridResponse>({
+  const { gridState, setGridState } = useTable<MemberGridModelDto>({
     defaultFilters: { status: [MemberStatusEnum.ACTIVE] },
     defaultSorter: { _id: 'ascend' },
   });
@@ -66,8 +66,8 @@ export const MembersPage = () => {
   };
 
   const { data, isLoading, isRefetching, refetch } = useQueryGrid<
-    GetMemberGridResponse,
-    FindPaginatedMembersResponse<GetMemberGridResponse>
+    MemberGridModelDto,
+    FindPaginatedMembersResponse<MemberGridModelDto>
   >({
     methodName: MeteorMethodEnum.MembersGetGrid,
     request: gridRequest,
@@ -130,7 +130,7 @@ export const MembersPage = () => {
           </Space.Compact>
         }
       >
-        <TableNew<GetMemberGridResponse>
+        <TableNewV<MemberGridModelDto>
           total={data?.totalCount}
           state={gridState}
           setGridState={setGridState}
@@ -154,7 +154,7 @@ export const MembersPage = () => {
                   text: member.name,
                   value: member._id,
                 })) ?? [],
-              render: (_id: string, member: GetMemberGridResponse) => (
+              render: (_id: string, member: MemberGridModelDto) => (
                 <Link to={`${AppUrl.Members}/${_id}`}>{member.name}</Link>
               ),
               sortOrder: gridState.sorter._id,
@@ -237,7 +237,7 @@ export const MembersPage = () => {
             },
             {
               align: 'center',
-              render: (_, member: GetMemberGridResponse) => (
+              render: (_, member: MemberGridModelDto) => (
                 <ButtonGroup size="small">
                   <Button
                     type="text"

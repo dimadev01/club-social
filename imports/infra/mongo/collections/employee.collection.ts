@@ -1,12 +1,9 @@
 import SimpleSchema from 'simpl-schema';
 
 import { Employee } from '@domain/employees/employee.entity';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 
-export const EmployeesCollection = new MongoCollectionOld(
-  'employees',
-  Employee,
-);
+export const EmployeesCollection = new MongoCollection('employees', Employee);
 
 EmployeesCollection.attachSchema(
   new SimpleSchema({

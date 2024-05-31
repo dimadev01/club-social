@@ -2,7 +2,7 @@ import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@domain/common/use-case.interface';
+import { IUseCaseNewV } from '@domain/common/use-case.interface';
 import { MeteorBadRequestError } from '@infra/meteor/errors/meteor-bad-request.error';
 import { MeteorInternalServerError } from '@infra/meteor/errors/meteor-internal-server.error';
 import { ClassValidationError } from '@infra/mongo/errors/class-validation.error';
@@ -10,7 +10,7 @@ import { ClassValidationError } from '@infra/mongo/errors/class-validation.error
 export interface ExecuteRequest<TRequest, TResponse> {
   classType?: ClassType<TRequest>;
   request?: TRequest;
-  useCase: IUseCase<TRequest, TResponse>;
+  useCase: IUseCaseNewV<TRequest, TResponse>;
 }
 
 export abstract class BaseController {

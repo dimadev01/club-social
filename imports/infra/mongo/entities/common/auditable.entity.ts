@@ -1,8 +1,10 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { Entity } from '@infra/mongo/entities/common/entity';
+import { EntityNewV } from '@infra/mongo/entities/common/entity';
 
-export abstract class AuditableEntity<TEntity extends Entity> extends Entity {
+export abstract class AuditableEntity<
+  TEntity extends EntityNewV,
+> extends EntityNewV {
   @IsNotEmpty()
   @IsString()
   public parentId: string;

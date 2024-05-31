@@ -11,7 +11,7 @@ import {
 import { Meteor } from 'meteor/meteor';
 import { Result, err, ok } from 'neverthrow';
 
-import { EntityOld } from '@domain/common/entity.old';
+import { Entity } from '@domain/common/entity.old';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -21,13 +21,13 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { CreateMember } from '@domain/members/member.types';
-import { MemberAddress } from '@domain/members/models/member-address.entity';
+import { MemberAddressModel } from '@domain/members/models/member-address.entity';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
-export class MemberOld extends EntityOld {
+export class Member extends Entity {
   @ValidateNested()
-  @Type(() => MemberAddress)
-  public address: MemberAddress;
+  @Type(() => MemberAddressModel)
+  public address: MemberAddressModel;
 
   @IsEnum(MemberCategoryEnum)
   public category: MemberCategoryEnum;
@@ -94,8 +94,8 @@ export class MemberOld extends EntityOld {
     return `${this.lastName} ${this.firstName}`;
   }
 
-  public static create(props: CreateMember): Result<MemberOld, Error> {
-    const member = new MemberOld();
+  public static create(props: CreateMember): Result<Member, Error> {
+    const member = new Member();
 
     member.userId = props.userId;
 
@@ -132,7 +132,7 @@ export class MemberOld extends EntityOld {
     return this.user.emails?.[0]?.address ?? null;
   }
 
-  public setAddress(address: MemberAddress): Result<null, Error> {
+  public setAddress(address: MemberAddressModel): Result<null, Error> {
     this.address = address;
 
     return ok(null);

@@ -1,8 +1,10 @@
 import { Mongo } from 'meteor/mongo';
 
-import { Entity } from '@infra/mongo/entities/common/entity';
+import { EntityNewV } from '@infra/mongo/entities/common/entity';
 
-export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
+export class MongoCollectionNewV<
+  T extends EntityNewV,
+> extends Mongo.Collection<T> {
   public constructor(name: string) {
     super(name);
   }

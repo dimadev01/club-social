@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
-import { MemberOld } from '@domain/members/models/member.old';
-import { MemberCollectionOld } from '@infra/mongo/collections/member.collection.old';
+import { Member } from '@domain/members/models/member.old';
+import { MemberCollection } from '@infra/mongo/collections/member.collection.old';
 
 Meteor.publish(null, function meteor(): Mongo.Cursor<unknown> | void {
   if (this.userId) {
@@ -26,9 +26,9 @@ Meteor.publish(
   },
 );
 
-Meteor.publish('member', function member(): Mongo.Cursor<MemberOld> | void {
+Meteor.publish('member', function member(): Mongo.Cursor<Member> | void {
   if (this.userId) {
-    return MemberCollectionOld.find({ userId: this.userId });
+    return MemberCollection.find({ userId: this.userId });
   }
 
   return this.ready();

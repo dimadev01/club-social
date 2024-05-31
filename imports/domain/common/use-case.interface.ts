@@ -6,18 +6,18 @@ import {
   FindPaginatedResponse,
 } from '@domain/common/repositories/queryable-grid-repository.interface';
 
-export interface IUseCase<TRequest, TResponse> {
+export interface IUseCaseNewV<TRequest, TResponse> {
   execute(request?: TRequest): Promise<Result<TResponse, Error>>;
 }
 
 export type IEntityDtoUseCase<
   TResponse,
   TRequest extends GetModelRequest = GetModelRequest,
-> = IUseCase<TRequest, TResponse>;
+> = IUseCaseNewV<TRequest, TResponse>;
 
 export type IGridUseCase<
   TRequest extends FindPaginatedRequest = FindPaginatedRequest,
   TModelResponse extends object = object,
   TResponse extends
     FindPaginatedResponse<TModelResponse> = FindPaginatedResponse<TModelResponse>,
-> = IUseCase<TRequest, TResponse>;
+> = IUseCaseNewV<TRequest, TResponse>;

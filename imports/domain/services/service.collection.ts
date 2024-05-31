@@ -1,9 +1,9 @@
 import SimpleSchema from 'simpl-schema';
 
 import { Service } from '@domain/services/service.entity';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 
-export const ServicesCollection = new MongoCollectionOld('services', Service);
+export const ServicesCollection = new MongoCollection('services', Service);
 
 ServicesCollection.attachSchema(
   new SimpleSchema({

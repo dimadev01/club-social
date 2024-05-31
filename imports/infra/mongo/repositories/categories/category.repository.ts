@@ -11,7 +11,7 @@ import {
   CategoriesSchema,
   CategoryCollection,
 } from '@infra/mongo/collections/category.collection';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
@@ -55,7 +55,7 @@ export class CategoryRepository
     };
   }
 
-  protected getCollection(): MongoCollectionOld<Category> {
+  protected getCollection(): MongoCollection<Category> {
     return CategoryCollection;
   }
 

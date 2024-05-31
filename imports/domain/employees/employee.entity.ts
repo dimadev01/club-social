@@ -1,10 +1,10 @@
 import { IsDate, IsString, validateSync } from 'class-validator';
 import { Meteor } from 'meteor/meteor';
 
-import { EntityOld } from '@domain/common/entity.old';
+import { Entity } from '@domain/common/entity.old';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
-export class Employee extends EntityOld {
+export class Employee extends Entity {
   @IsDate()
   public createdAt: Date;
 

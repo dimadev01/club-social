@@ -6,14 +6,12 @@ import { GetMemberMovementsGridRequestDto } from '@domain/members/use-cases/get-
 import { GetMemberMovementsUseCase } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.use-case';
 import { GetMemberPaymentsGridRequestDto } from '@domain/members/use-cases/get-member-payments-grid/get-member-payments-grid.request.dto';
 import { GetMemberPaymentsGridUseCase } from '@domain/members/use-cases/get-member-payments-grid/get-member-payments-grid.use-case';
-import { GetMembersForCsvUseCase } from '@domain/members/use-cases/get-members-for-csv/get-members-for-csv.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class MemberMethod extends MeteorMethod {
   public constructor(
-    private readonly _getMembersForCsv: GetMembersForCsvUseCase,
     private readonly _getMemberMovements: GetMemberMovementsUseCase,
     private readonly _getMemberDuesGrid: GetMemberDuesGridUseCase,
     private readonly _getMemberPaymentsGrid: GetMemberPaymentsGridUseCase,

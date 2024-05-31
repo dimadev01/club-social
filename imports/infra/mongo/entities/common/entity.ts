@@ -1,8 +1,8 @@
 import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 
-import { UniqueIDEntity } from '@infra/mongo/entities/common/unique-id.entity';
+import { UniqueIDEntityNewV } from '@infra/mongo/entities/common/unique-id.entity';
 
-export class Entity extends UniqueIDEntity {
+export class EntityNewV extends UniqueIDEntityNewV {
   @IsDate()
   public createdAt: Date;
 
@@ -26,7 +26,7 @@ export class Entity extends UniqueIDEntity {
   @IsString()
   public updatedBy: string;
 
-  protected constructor(props: Entity) {
+  protected constructor(props: EntityNewV) {
     super(props);
 
     this.createdAt = props.createdAt;

@@ -7,11 +7,9 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
-import { EntityOld } from '@domain/common/entity.old';
+import { Entity } from '@domain/common/entity.old';
 
-export class MongoCollectionOld<
-  T extends EntityOld,
-> extends Mongo.Collection<T> {
+export class MongoCollection<T extends Entity> extends Mongo.Collection<T> {
   public constructor(name: string, cls: ClassConstructor<T>) {
     super(name, {
       transform: (doc) => plainToInstance(cls, doc),

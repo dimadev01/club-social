@@ -9,7 +9,7 @@ import {
   MovementSchema,
 } from '@domain/movements/movement.collection';
 import { IMovementPort } from '@domain/movements/movement.port';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 
 @injectable()
@@ -41,7 +41,7 @@ export class MovementRepository
     );
   }
 
-  protected getCollection(): MongoCollectionOld<Movement> {
+  protected getCollection(): MongoCollection<Movement> {
     return MovementCollection;
   }
 

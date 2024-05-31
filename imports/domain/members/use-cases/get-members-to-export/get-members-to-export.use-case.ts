@@ -3,16 +3,14 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@domain/common/tokens.di';
-import { IUseCase } from '@domain/common/use-case.interface';
-import {
-  GetMembersGridRequest,
-  IMemberRepository,
-} from '@domain/members/member-repository.interface';
-import { GetMemberGridResponse } from '@domain/members/use-cases/get-members-grid/get-member-grid.response';
+import { IUseCaseNewV } from '@domain/common/use-case.interface';
+import { IMemberRepository } from '@domain/members/member-repository.interface';
+import { FindPaginatedMembersRequest } from '@domain/members/repositories/find-paginated-members.interface';
+import { MemberGridModelDto } from '@domain/members/use-cases/get-members-grid/member-grid-model-dto';
 
 @injectable()
 export class GetMembersToExportUseCase
-  implements IUseCase<GetMembersGridRequest, GetMemberGridResponse[]>
+  implements IUseCaseNewV<FindPaginatedMembersRequest, MemberGridModelDto[]>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)
@@ -20,16 +18,16 @@ export class GetMembersToExportUseCase
   ) {}
 
   public async execute(
-    request: GetMembersGridRequest,
-  ): Promise<Result<GetMemberGridResponse[], Error>> {
+    request: FindPaginatedMembersRequest,
+  ): Promise<Result<MemberGridModelDto[], Error>> {
     const items = await this._memberRepository.findToExport(request);
 
     const balances = await this._memberRepository.getBalances(
       items.map((item) => item._id),
     );
 
-    return ok<GetMemberGridResponse[]>(
-      items.map<GetMemberGridResponse>((item) => {
+    return ok<MemberGridModelDto[]>(
+      items.map<MemberGridModelDto>((item) => {
         const balance = balances.find((b) => b._id === item._id);
 
         invariant(balance);

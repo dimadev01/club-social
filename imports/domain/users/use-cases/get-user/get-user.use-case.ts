@@ -1,14 +1,14 @@
 import { Result, ok } from 'neverthrow';
 import { injectable } from 'tsyringe';
 
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { GetUserRequestDto } from '@domain/users/use-cases/get-user/get-user-request.dto';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetUserUseCase
   extends UseCase<GetUserRequestDto>
-  implements IUseCaseOld<GetUserRequestDto, Meteor.User | null>
+  implements IUseCase<GetUserRequestDto, Meteor.User | null>
 {
   public async execute(
     request: GetUserRequestDto,

@@ -17,20 +17,20 @@ import {
   PaginatedSorter,
 } from '@domain/common/repositories/queryable-grid-repository.interface';
 import { Mapper } from '@infra/mappers/mapper';
-import { MongoCollection } from '@infra/mongo/collections/mongo.collection';
+import { MongoCollectionNewV } from '@infra/mongo/collections/mongo.collection';
 import { PaginatedAggregationResult } from '@infra/mongo/common/paginated-aggregation.interface';
-import { Entity } from '@infra/mongo/entities/common/entity';
+import { EntityNewV } from '@infra/mongo/entities/common/entity';
 import { UserEntity } from '@infra/mongo/entities/users/user.entity';
 import { ClassValidationError } from '@infra/mongo/errors/class-validation.error';
 import { MongoUtils } from '@infra/mongo/mongo.utils';
 
 export abstract class CrudMongoRepository<
   TModel extends Model,
-  TEntity extends Entity,
+  TEntity extends EntityNewV,
 > implements ICrudRepository<TModel, ClientSession>
 {
   public constructor(
-    private readonly _collection: MongoCollection<TEntity>,
+    private readonly _collection: MongoCollectionNewV<TEntity>,
     private readonly _mapper: Mapper<TModel, TEntity>,
     private readonly _logger: ILogger,
   ) {}

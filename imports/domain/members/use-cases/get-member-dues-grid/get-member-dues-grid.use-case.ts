@@ -5,7 +5,7 @@ import { GetMemberDuesGridRequestDto } from './get-member-dues-grid.request.dto'
 import { GetMemberDuesGridResponseDto } from './get-member-dues-grid.response.dto';
 import { MemberDueGridDto } from './member-due-grid.dto';
 
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
@@ -17,7 +17,7 @@ import { MoneyUtils } from '@shared/utils/money.utils';
 export class GetMemberDuesGridUseCase
   extends UseCase<GetMemberDuesGridRequestDto>
   implements
-    IUseCaseOld<GetMemberDuesGridRequestDto, GetMemberDuesGridResponseDto>
+    IUseCase<GetMemberDuesGridRequestDto, GetMemberDuesGridResponseDto>
 {
   public constructor(
     @inject(DIToken.DueRepository)

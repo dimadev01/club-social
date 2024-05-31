@@ -4,16 +4,16 @@ import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@domain/common/tokens.di';
 import { IGridUseCase } from '@domain/common/use-case.interface';
+import { IMemberRepository } from '@domain/members/member-repository.interface';
 import {
-  GetMembersGridRequest,
-  IMemberRepository,
-} from '@domain/members/member-repository.interface';
-import { FindPaginatedMembersResponse } from '@domain/members/repositories/find-paginated-members-repository.interface';
-import { GetMemberGridResponse } from '@domain/members/use-cases/get-members-grid/get-member-grid.response';
+  FindPaginatedMembersRequest,
+  FindPaginatedMembersResponse,
+} from '@domain/members/repositories/find-paginated-members.interface';
+import { MemberGridModelDto } from '@domain/members/use-cases/get-members-grid/member-grid-model-dto';
 
 @injectable()
 export class GetMembersGridUseCase
-  implements IGridUseCase<GetMembersGridRequest, GetMemberGridResponse>
+  implements IGridUseCase<FindPaginatedMembersRequest, MemberGridModelDto>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)
@@ -21,10 +21,8 @@ export class GetMembersGridUseCase
   ) {}
 
   public async execute(
-    request: GetMembersGridRequest,
-  ): Promise<
-    Result<FindPaginatedMembersResponse<GetMemberGridResponse>, Error>
-  > {
+    request: FindPaginatedMembersRequest,
+  ): Promise<Result<FindPaginatedMembersResponse<MemberGridModelDto>, Error>> {
     const { items, totalCount, totals } =
       await this._memberRepository.findPaginated(request);
 
@@ -32,8 +30,8 @@ export class GetMembersGridUseCase
       items.map((item) => item._id),
     );
 
-    return ok<FindPaginatedMembersResponse<GetMemberGridResponse>>({
-      items: items.map<GetMemberGridResponse>((item) => {
+    return ok<FindPaginatedMembersResponse<MemberGridModelDto>>({
+      items: items.map<MemberGridModelDto>((item) => {
         const balance = balances.find((b) => b._id === item._id);
 
         invariant(balance);

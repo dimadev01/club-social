@@ -2,9 +2,9 @@
 import SimpleSchema from 'simpl-schema';
 
 import { Movement } from '@domain/movements/entities/movement.entity';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 
-export const MovementCollection = new MongoCollectionOld('movements', Movement);
+export const MovementCollection = new MongoCollection('movements', Movement);
 
 export const MovementSchema = new SimpleSchema({
   _id: String,

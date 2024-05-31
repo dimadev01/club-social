@@ -3,7 +3,7 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@domain/common/tokens.di';
-import { IUseCase } from '@domain/common/use-case.interface';
+import { IUseCaseNewV } from '@domain/common/use-case.interface';
 import {
   FindMembersRequest,
   IMemberRepository,
@@ -12,7 +12,7 @@ import { GetMemberResponse } from '@domain/members/use-cases/get-member/get-memb
 
 @injectable()
 export class GetMembersUseCase
-  implements IUseCase<FindMembersRequest, GetMemberResponse[]>
+  implements IUseCaseNewV<FindMembersRequest, GetMemberResponse[]>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)

@@ -3,7 +3,7 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { MigrateMovementRequestDto } from '@domain/movements/use-cases/migrate-movement/migrate-movement-request.dto';
@@ -15,7 +15,7 @@ import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 @injectable()
 export class MigrateMovementUseCase
   extends UseCase<MigrateMovementRequestDto>
-  implements IUseCaseOld<MigrateMovementRequestDto, null>
+  implements IUseCase<MigrateMovementRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)

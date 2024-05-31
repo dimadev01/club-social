@@ -9,7 +9,7 @@ import { DueCollection, DueSchema } from '@domain/dues/due.collection';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 import {
   FindByIdsRequest,
   FindPaginatedDuesAggregationResult,
@@ -181,7 +181,7 @@ export class DueRepository
     return this.getCollection().find(query, options).fetchAsync();
   }
 
-  protected getCollection(): MongoCollectionOld<Due> {
+  protected getCollection(): MongoCollection<Due> {
     return DueCollection;
   }
 

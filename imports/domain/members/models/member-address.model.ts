@@ -1,7 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
 
 import { CreateMemberAddress } from '@domain/members/member.types';
-import { IMemberAddressModel } from '@domain/members/models/member-address-model.interface';
+import { IMemberAddressModel } from '@domain/members/models/member-model.interface';
 
 export class MemberAddressModel implements IMemberAddressModel {
   private _cityGovId: string | null;

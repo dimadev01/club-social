@@ -15,10 +15,10 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { IMemberPort } from '@domain/members/member.port';
-import { MemberOld } from '@domain/members/models/member.old';
-import { MemberCollection } from '@infra/mongo/collections/member.collection';
+import { Member } from '@domain/members/models/member.old';
+import { MemberCollectionNewV } from '@infra/mongo/collections/member.collection';
 import { MemberSchemaOld } from '@infra/mongo/collections/member.collection.old';
-import { MongoCollection } from '@infra/mongo/collections/mongo.collection';
+import { MongoCollectionNewV } from '@infra/mongo/collections/mongo.collection';
 import {
   FindPaginatedMemberOld,
   FindPaginatedMembersRequest,
@@ -28,7 +28,7 @@ import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class MemberRepositoryOld
-  extends MongoCrudRepositoryOld<MemberOld>
+  extends MongoCrudRepositoryOld<Member>
   implements IMemberPort
 {
   public constructor(
@@ -38,14 +38,14 @@ export class MemberRepositoryOld
     super(_logger);
   }
 
-  public async findAll(): Promise<MemberOld[]> {
-    const query: Mongo.Selector<MemberOld> = {
+  public async findAll(): Promise<Member[]> {
+    const query: Mongo.Selector<Member> = {
       isDeleted: false,
     };
 
     return this.getCollection()
       .rawCollection()
-      .aggregate<MemberOld>([
+      .aggregate<Member>([
         { $match: query },
         ...this._userLookup(),
         { $sort: { 'user.profile.lastName': 1 } },
@@ -53,7 +53,7 @@ export class MemberRepositoryOld
       .toArray();
   }
 
-  public async findOneById(id: string): Promise<MemberOld | undefined> {
+  public async findOneById(id: string): Promise<Member | undefined> {
     const member = await super.findOneById(id);
 
     if (!member) {
@@ -71,7 +71,7 @@ export class MemberRepositoryOld
     return member;
   }
 
-  public async findOneByIdOrThrow(id: string): Promise<MemberOld> {
+  public async findOneByIdOrThrow(id: string): Promise<Member> {
     const member = await this.findOneById(id);
 
     if (!member) {
@@ -81,7 +81,7 @@ export class MemberRepositoryOld
     return member;
   }
 
-  public async findOneByIdOrThrowWithSession(id: string): Promise<MemberOld> {
+  public async findOneByIdOrThrowWithSession(id: string): Promise<Member> {
     const member = await this.findOneById(id);
 
     if (!member) {
@@ -91,17 +91,17 @@ export class MemberRepositoryOld
     return member;
   }
 
-  public async findOneByUserId(userId: string): Promise<MemberOld | null> {
-    const query: Mongo.Selector<MemberOld> = { isDeleted: false, userId };
+  public async findOneByUserId(userId: string): Promise<Member | null> {
+    const query: Mongo.Selector<Member> = { isDeleted: false, userId };
 
     return (await this.getCollection().findOneAsync(query)) ?? null;
   }
 
-  public async findOneByUserIdOrThrow(userId: string): Promise<MemberOld> {
+  public async findOneByUserIdOrThrow(userId: string): Promise<Member> {
     const member = await this.findOneByUserId(userId);
 
     if (!member) {
-      throw new EntityNotFoundError(MemberOld);
+      throw new EntityNotFoundError(Member);
     }
 
     return member;
@@ -110,7 +110,7 @@ export class MemberRepositoryOld
   public async findPaginated(
     request: FindPaginatedMembersRequest,
   ): Promise<FindPaginatedResponseOld<FindPaginatedMemberOld>> {
-    const query: Mongo.Selector<MemberOld> = {
+    const query: Mongo.Selector<Member> = {
       isDeleted: false,
     };
 
@@ -235,14 +235,14 @@ export class MemberRepositoryOld
     };
   }
 
-  public async getLoggedInOrThrow(): Promise<MemberOld> {
+  public async getLoggedInOrThrow(): Promise<Member> {
     const currentUser = await this.getCurrentUserOrThrow();
 
     return this.findOneByUserIdOrThrow(currentUser._id);
   }
 
-  protected getCollection(): MongoCollection<MemberOld> {
-    return container.resolve(MemberCollection);
+  protected getCollection(): MongoCollectionNewV<Member> {
+    return container.resolve(MemberCollectionNewV);
   }
 
   protected getSchema(): SimpleSchema {

@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work.interface';
 import { DIToken } from '@domain/common/tokens.di';
-import { IUseCase } from '@domain/common/use-case.interface';
+import { IUseCaseNewV } from '@domain/common/use-case.interface';
 import { ExistingMemberByDocumentError } from '@domain/members/errors/existing-member-by-document.error';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { IMemberRepository } from '@domain/members/member-repository.interface';
@@ -14,7 +14,7 @@ import { UpdateUserNewUseCase } from '@domain/users/use-cases/update-user/update
 
 @injectable()
 export class UpdateMemberNewUseCase<TSession>
-  implements IUseCase<UpdateMemberRequest, null>
+  implements IUseCaseNewV<UpdateMemberRequest, null>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)

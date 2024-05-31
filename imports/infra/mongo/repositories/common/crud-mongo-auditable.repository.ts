@@ -5,21 +5,21 @@ import { err } from 'neverthrow';
 import { ILogger } from '@application/logger/logger.interface';
 import { Model } from '@domain/common/models/model';
 import { Mapper } from '@infra/mappers/mapper';
-import { MongoCollection } from '@infra/mongo/collections/mongo.collection';
+import { MongoCollectionNewV } from '@infra/mongo/collections/mongo.collection';
 import { AuditableEntity } from '@infra/mongo/entities/common/auditable.entity';
-import { Entity } from '@infra/mongo/entities/common/entity';
+import { EntityNewV } from '@infra/mongo/entities/common/entity';
 import { CrudMongoRepository } from '@infra/mongo/repositories/common/crud-mongo.repository';
 
 export abstract class CrudMongoAuditableRepository<
   TModel extends Model,
-  TEntity extends Entity,
+  TEntity extends EntityNewV,
   TAuditableEntity extends AuditableEntity<TEntity>,
 > extends CrudMongoRepository<TModel, TEntity> {
   public constructor(
-    protected readonly collection: MongoCollection<TEntity>,
+    protected readonly collection: MongoCollectionNewV<TEntity>,
     protected readonly mapper: Mapper<TModel, TEntity>,
     protected readonly logger: ILogger,
-    protected readonly auditableCollection: MongoCollection<TAuditableEntity>,
+    protected readonly auditableCollection: MongoCollectionNewV<TAuditableEntity>,
   ) {
     super(collection, mapper, logger);
   }

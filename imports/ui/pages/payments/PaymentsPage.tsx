@@ -22,7 +22,7 @@ import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { MembersSelect } from '@ui/components/Members/MembersSelect';
-import { TableNew } from '@ui/components/Table/TableNew';
+import { TableNewV } from '@ui/components/Table/TableNew';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useMembers } from '@ui/hooks/members/useMembers';
@@ -194,7 +194,7 @@ export const PaymentsPage = () => {
             </Space>
           </Form>
 
-          <TableNew<GetPaymentGridResponse>
+          <TableNewV<GetPaymentGridResponse>
             state={gridState}
             // summary={renderSummary}
             setGridState={setGridState}

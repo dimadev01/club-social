@@ -2,7 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import { Result, ok } from 'neverthrow';
 import { injectable } from 'tsyringe';
 
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { ProfessorsCollection } from '@domain/professors/professor.collection';
 import { Professor } from '@domain/professors/professor.entity';
 import { GetProfessorsResponseDto } from '@domain/professors/use-cases/get-professors/get-professors-response.dto';
@@ -11,7 +11,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetProfessorsUseCase
   extends UseCase
-  implements IUseCaseOld<null, GetProfessorsResponseDto[]>
+  implements IUseCase<null, GetProfessorsResponseDto[]>
 {
   public async execute(): Promise<Result<GetProfessorsResponseDto[], Error>> {
     const data = await ProfessorsCollection.rawCollection()

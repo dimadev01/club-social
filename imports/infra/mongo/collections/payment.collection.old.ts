@@ -1,14 +1,11 @@
 import SimpleSchema from 'simpl-schema';
 
 import { Payment } from '@domain/payments/entities/payment.entity';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 import { EntitySchema } from '@infra/mongo/schemas/entity.schema';
 import { SchemaBuilder } from '@infra/mongo/schemas/schema-builder';
 
-export const PaymentCollection = new MongoCollectionOld(
-  'payments.old',
-  Payment,
-);
+export const PaymentCollection = new MongoCollection('payments.old', Payment);
 
 export const PaymentSchema = new SimpleSchema({
   date: Date,

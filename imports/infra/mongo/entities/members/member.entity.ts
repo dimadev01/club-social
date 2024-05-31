@@ -18,15 +18,15 @@ import {
   MemberSexEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
-import { Entity } from '@infra/mongo/entities/common/entity';
-import { MemberAddressEntity } from '@infra/mongo/entities/members/member-address.entity';
+import { EntityNewV } from '@infra/mongo/entities/common/entity';
+import { MemberAddressEntityNewV } from '@infra/mongo/entities/members/member-address.entity';
 import { UserEntity } from '@infra/mongo/entities/users/user.entity';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
-export class MemberEntity extends Entity {
+export class MemberEntity extends EntityNewV {
   @ValidateNested()
-  @Type(() => MemberAddressEntity)
-  public address: MemberAddressEntity;
+  @Type(() => MemberAddressEntityNewV)
+  public address: MemberAddressEntityNewV;
 
   @IsEnum(MemberCategoryEnum)
   public category: MemberCategoryEnum;

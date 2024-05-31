@@ -8,13 +8,13 @@ import {
 } from 'class-validator';
 import { Result, err, ok } from 'neverthrow';
 
-import { EntityOld } from '@domain/common/entity.old';
+import { Entity } from '@domain/common/entity.old';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { CreatePayment } from '@domain/payments/payment.types';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 import { DateUtils } from '@shared/utils/date.utils';
 
-export class Payment extends EntityOld {
+export class Payment extends Entity {
   @IsDate()
   public date: Date;
 

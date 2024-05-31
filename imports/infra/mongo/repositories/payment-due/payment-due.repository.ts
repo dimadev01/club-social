@@ -9,7 +9,7 @@ import {
   PaymentDueCollection,
   PaymentDueSchema,
 } from '@infra/mongo/collections/payment-due.collection';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 
 @injectable()
@@ -36,7 +36,7 @@ export class PaymentDueRepository
       .fetchAsync();
   }
 
-  protected getCollection(): MongoCollectionOld<PaymentDue> {
+  protected getCollection(): MongoCollection<PaymentDue> {
     return PaymentDueCollection;
   }
 

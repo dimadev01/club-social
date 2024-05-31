@@ -1,7 +1,7 @@
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
@@ -14,7 +14,7 @@ import { MoneyUtils } from '@shared/utils/money.utils';
 @injectable()
 export class GetDuesGridUseCase
   extends UseCase<GetDuesGridRequestDto>
-  implements IUseCaseOld<GetDuesGridRequestDto, GetDuesGridResponseDto>
+  implements IUseCase<GetDuesGridRequestDto, GetDuesGridResponseDto>
 {
   public constructor(
     @inject(DIToken.DueRepository)

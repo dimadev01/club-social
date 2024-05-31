@@ -11,7 +11,7 @@ import {
   PaymentCollection,
   PaymentSchema,
 } from '@infra/mongo/collections/payment.collection.old';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import {
   FindByReceiptNumberRequest,
@@ -121,7 +121,7 @@ export class PaymentRepository
     };
   }
 
-  protected getCollection(): MongoCollectionOld<Payment> {
+  protected getCollection(): MongoCollection<Payment> {
     return PaymentCollection;
   }
 

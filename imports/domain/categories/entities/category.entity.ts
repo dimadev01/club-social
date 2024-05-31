@@ -11,10 +11,10 @@ import {
   CategoryEnum,
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
-import { EntityOld } from '@domain/common/entity.old';
+import { Entity } from '@domain/common/entity.old';
 import { MoneyUtils } from '@shared/utils/money.utils';
 
-export class Category extends EntityOld {
+export class Category extends Entity {
   @IsInt()
   @IsOptional()
   public amount: number | null;

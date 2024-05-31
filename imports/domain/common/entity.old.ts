@@ -1,8 +1,8 @@
 import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 
-import { UniqueIDOld } from './unique-id.old';
+import { UniqueID } from './unique-id.old';
 
-export class EntityOld extends UniqueIDOld {
+export class Entity extends UniqueID {
   @IsDate()
   public createdAt: Date;
 

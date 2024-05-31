@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class MemberAddressEntity {
+export class MemberAddressEntityNewV {
   @IsString()
   @IsOptional()
   public cityName: string | null;
@@ -25,7 +25,7 @@ export class MemberAddressEntity {
   @IsOptional()
   public zipCode: string | null;
 
-  public constructor(props: MemberAddressEntity) {
+  public constructor(props: MemberAddressEntityNewV) {
     this.cityName = props.cityName;
 
     this.cityGovId = props.cityGovId;

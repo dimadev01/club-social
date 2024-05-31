@@ -5,7 +5,7 @@ import { GetMemberPaymentsGridRequestDto } from './get-member-payments-grid.requ
 import { GetMemberPaymentsGridResponseDto } from './get-member-payments-grid.response.dto';
 import { MemberPaymentGridDto } from './member-payment-grid.dto';
 
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IMemberPort } from '@domain/members/member.port';
 import { Payment } from '@domain/payments/entities/payment.entity';
@@ -17,10 +17,7 @@ import { MoneyUtils } from '@shared/utils/money.utils';
 export class GetMemberPaymentsGridUseCase
   extends UseCase<GetMemberPaymentsGridRequestDto>
   implements
-    IUseCaseOld<
-      GetMemberPaymentsGridRequestDto,
-      GetMemberPaymentsGridResponseDto
-    >
+    IUseCase<GetMemberPaymentsGridRequestDto, GetMemberPaymentsGridResponseDto>
 {
   public constructor(
     @inject(DIToken.PaymentRepository)

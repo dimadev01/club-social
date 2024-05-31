@@ -5,7 +5,7 @@ import { inject, injectable } from 'tsyringe';
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work.interface';
 import { DIToken } from '@domain/common/tokens.di';
-import { IUseCase } from '@domain/common/use-case.interface';
+import { IUseCaseNewV } from '@domain/common/use-case.interface';
 import { ExistingMemberByDocumentError } from '@domain/members/errors/existing-member-by-document.error';
 import { IMemberRepository } from '@domain/members/member-repository.interface';
 import { MemberModel } from '@domain/members/models/member.model';
@@ -16,7 +16,7 @@ import { CreateUserNewUseCase } from '@domain/users/use-cases/create-user/create
 
 @injectable()
 export class CreateMemberUseCase<TSession>
-  implements IUseCase<CreateMemberRequest, CreateMemberResponse>
+  implements IUseCaseNewV<CreateMemberRequest, CreateMemberResponse>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)

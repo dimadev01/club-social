@@ -2,7 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@domain/common/tokens.di';
-import { IUseCase } from '@domain/common/use-case.interface';
+import { IUseCaseNewV } from '@domain/common/use-case.interface';
 import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
 import { UserModel } from '@domain/users/models/user.model';
 import { CreateUserRequest } from '@domain/users/use-cases/create-user/create-user.request';
@@ -11,7 +11,7 @@ import { IUserRepository } from '@domain/users/user-repository.interface';
 
 @injectable()
 export class CreateUserNewUseCase<TSession>
-  implements IUseCase<CreateUserRequest<TSession>, CreateUserResponse>
+  implements IUseCaseNewV<CreateUserRequest<TSession>, CreateUserResponse>
 {
   public constructor(
     @inject(DIToken.IUserRepository)

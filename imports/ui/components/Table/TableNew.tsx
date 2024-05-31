@@ -34,7 +34,7 @@ export interface GridState {
   sorter: GridSorter;
 }
 
-export function TableNew<T extends object>({
+export function TableNewV<T extends object>({
   rowKey = '_id',
   state,
   setGridState,

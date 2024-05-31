@@ -1,10 +1,10 @@
 import SimpleSchema from 'simpl-schema';
 
 import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
-import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
+import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 import { EntitySchema } from '@infra/mongo/schemas/entity.schema';
 
-export const PaymentDueCollection = new MongoCollectionOld(
+export const PaymentDueCollection = new MongoCollection(
   'payment.dues',
   PaymentDue,
 );

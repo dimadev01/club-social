@@ -3,14 +3,14 @@ import { ValidationError } from 'class-validator';
 import { container } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { IUseCase } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 export abstract class MeteorMethod {
   protected async execute<TRequest extends object, TResponse>(
-    useCase: IUseCaseOld<TRequest, TResponse>,
+    useCase: IUseCase<TRequest, TResponse>,
     request?: TRequest,
     classType?: ClassType<TRequest>,
   ): Promise<TResponse> {

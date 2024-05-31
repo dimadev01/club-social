@@ -4,20 +4,18 @@ import { inject, injectable } from 'tsyringe';
 import { ILogger } from '@application/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
-import {
-  FindMembersRequest,
-  GetMembersGridRequest,
-  IMemberRepository,
-} from '@domain/members/member-repository.interface';
+import { IMemberRepository } from '@domain/members/member-repository.interface';
 import { MemberModel } from '@domain/members/models/member.model';
+import { FindMembersRequest } from '@domain/members/repositories/find-members.interface';
 import {
   FindPaginatedMembersAggregationResult,
+  FindPaginatedMembersRequest,
   FindPaginatedMembersResponse,
-} from '@domain/members/repositories/find-paginated-members-repository.interface';
-import { MemberBalance } from '@domain/members/repositories/get-balances-repository.interface';
+} from '@domain/members/repositories/find-paginated-members.interface';
+import { MemberBalance } from '@domain/members/repositories/get-balances.interface';
 import { MemberMapper } from '@infra/mappers/member.mapper';
 import { MemberAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
-import { MemberCollection } from '@infra/mongo/collections/member.collection';
+import { MemberCollectionNewV } from '@infra/mongo/collections/member.collection';
 import { MemberAuditEntity } from '@infra/mongo/entities/members/member-audit.entity';
 import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
 import { MongoUtils } from '@infra/mongo/mongo.utils';
@@ -33,8 +31,8 @@ export class MemberMongoRepository
   implements IMemberRepository
 {
   public constructor(
-    @inject(MemberCollection)
-    protected readonly collection: MemberCollection,
+    @inject(MemberCollectionNewV)
+    protected readonly collection: MemberCollectionNewV,
     @inject(MemberAuditableCollection)
     protected readonly auditableCollection: MemberAuditableCollection,
     @inject(MemberMapper)
@@ -101,7 +99,7 @@ export class MemberMongoRepository
   }
 
   public async findPaginated(
-    request: GetMembersGridRequest,
+    request: FindPaginatedMembersRequest,
   ): Promise<FindPaginatedMembersResponse<MemberModel>> {
     const pipeline = this._getPipelineToExportOrGrid(request);
 
@@ -159,7 +157,7 @@ export class MemberMongoRepository
   }
 
   public async findToExport(
-    request: GetMembersGridRequest,
+    request: FindPaginatedMembersRequest,
   ): Promise<MemberModel[]> {
     const pipeline = this._getPipelineToExportOrGrid(request);
 
@@ -264,7 +262,7 @@ export class MemberMongoRepository
   }
 
   private _getPipelineToExportOrGrid(
-    request: GetMembersGridRequest,
+    request: FindPaginatedMembersRequest,
   ): Document[] {
     const pipeline: Document[] = [];
 

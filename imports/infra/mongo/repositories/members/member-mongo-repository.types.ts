@@ -1,7 +1,7 @@
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
 import { FindPaginatedRequestOld } from '@application/pagination/find-paginated.request';
 import { FindPaginatedResponseOld } from '@application/pagination/find-paginated.response';
-import { MemberOld } from '@domain/members/models/member.old';
+import { Member } from '@domain/members/models/member.old';
 
 export type FindPaginatedMembersRequest = FindPaginatedRequestOld & {
   findForCsv: boolean;
@@ -14,7 +14,7 @@ export type FindPaginatedMembersRequest = FindPaginatedRequestOld & {
 };
 
 export type FindPaginatedMemberOld = Pick<
-  MemberOld,
+  Member,
   '_id' | 'category' | 'user' | 'fileStatus' | 'status' | 'phones'
 > & {
   pendingElectricity: number;
