@@ -16,7 +16,7 @@ import { Rule } from 'antd/es/form';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
 import React from 'react';
-import { NavLink, Navigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 
 import {
   DueCategoryEnum,
@@ -74,9 +74,9 @@ export const DueDetailPage = () => {
     let date: string;
 
     if (values.category === DueCategoryEnum.MEMBERSHIP) {
-      date = values.date.startOf('month').format(DateFormatEnum.Date);
+      date = values.date.startOf('month').format(DateFormatEnum.DATE);
     } else {
-      date = values.date.startOf('day').format(DateFormatEnum.Date);
+      date = values.date.startOf('day').format(DateFormatEnum.DATE);
     }
 
     if (!due) {
@@ -198,7 +198,7 @@ export const DueDetailPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <NavLink to={AppUrl.Dues}>Cobros</NavLink> },
+          { title: <Link to={AppUrl.Dues}>Cobros</Link> },
           {
             title: due
               ? `${due.date} - ${DueCategoryLabel[due.category]} - ${

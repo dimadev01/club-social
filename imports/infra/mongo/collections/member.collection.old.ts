@@ -5,7 +5,7 @@ import { MemberOld } from '@domain/members/models/member.old';
 import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
 
 export const MemberCollectionOld = new MongoCollectionOld(
-  'members2',
+  'members.old',
   MemberOld,
 );
 

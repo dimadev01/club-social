@@ -2,7 +2,7 @@ import { ARS } from '@dinero.js/currencies';
 import { Checkbox, Form, Input, InputNumber, Table, Tooltip } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { GetPendingDueResponseDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
@@ -110,7 +110,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
               </Form.Item>
 
               <Tooltip title="Ver cobro">
-                <NavLink to={`${AppUrl.Dues}/${due._id}`}>{date}</NavLink>
+                <Link to={`${AppUrl.Dues}/${due._id}`}>{date}</Link>
               </Tooltip>
             </>
           );

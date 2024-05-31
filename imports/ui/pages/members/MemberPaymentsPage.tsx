@@ -42,14 +42,14 @@ export const MemberPaymentsPage = () => {
   const { data, isLoading } = useMemberPaymentsGrid({
     filters: gridState.filters,
     from: dateFilter
-      ? dateFilter[0]?.format(DateFormatEnum.Date) ?? null
+      ? dateFilter[0]?.format(DateFormatEnum.DATE) ?? null
       : null,
     page: gridState.page,
     pageSize: gridState.pageSize,
     search: gridState.search,
     sortField: gridState.sortField,
     sortOrder: gridState.sortOrder,
-    to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.Date) ?? null : null,
+    to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.DATE) ?? null : null,
   });
 
   const user = Meteor.user();

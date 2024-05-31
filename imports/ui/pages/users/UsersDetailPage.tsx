@@ -2,7 +2,7 @@ import { App, Breadcrumb, Card, Checkbox, Form, Input, Skeleton } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import compact from 'lodash/compact';
 import React from 'react';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { RoleEnum } from '@domain/roles/role.enum';
 import { UserStateEnum } from '@domain/users/user.enum';
@@ -77,7 +77,7 @@ export const UsersDetailPage = () => {
             title: 'Inicio',
           },
           {
-            title: <NavLink to={AppUrl.Users}>Usuarios</NavLink>,
+            title: <Link to={AppUrl.Users}>Usuarios</Link>,
           },
           {
             title: user

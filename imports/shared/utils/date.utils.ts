@@ -5,10 +5,10 @@ import localeData from 'dayjs/plugin/localeData';
 import utc from 'dayjs/plugin/utc';
 
 export enum DateFormatEnum {
+  DATE = 'YYYY-MM-DD',
+  DATETIME = 'YYYY-MM-DD HH:mm:ss',
   DDMMYYYY = 'DD/MM/YYYY',
-  Date = 'YYYY-MM-DD',
-  DateTime = 'YYYY-MM-DD HH:mm:ss',
-  Iso = 'YYYY-MM-DDTHH:mm:ss.SSSZ',
+  ISO = 'YYYY-MM-DDTHH:mm:ss.SSSZ',
   MMMM_YYYY = 'MMMM YYYY',
   Time = 'HH:mm:ss',
 }

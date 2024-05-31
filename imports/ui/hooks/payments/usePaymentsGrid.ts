@@ -1,5 +1,6 @@
-import { GetPaymentsGridRequestDto } from '@domain/payments/use-cases/get-payments-grid/get-payments-grid.request.dto';
-import { GetPaymentsGridResponseDto } from '@domain/payments/use-cases/get-payments-grid/get-payments-grid.response.dto';
+import { GetPaymentsGridRequestDto } from '@domain/payments/use-cases/get-payments-grid-old/get-payments-grid-old.request.dto';
+import { GetPaymentsGridResponseDto } from '@domain/payments/use-cases/get-payments-grid-old/get-payments-grid-old.response.dto';
+
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 

@@ -1,8 +1,9 @@
 import { FileExcelOutlined } from '@ant-design/icons';
+import { GetMembersGridRequestDto } from '@infra/controllers/types/get-members-grid-request.dto';
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
-import { GetMembersGridRequestDto } from '@infra/controllers/types/get-members-grid-request.dto';
+import { Money } from '@application/value-objects/money.value-object';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { Button } from '@ui/components/Button';
 import { useMembersToExport } from '@ui/hooks/members/useGetMembersToExport';
@@ -27,41 +28,44 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
           displayName: 'Nombre',
           id: 'name',
         },
-        // {
-        //   displayName: 'Categoría',
-        //   id: 'category',
-        // },
-        // {
-        //   displayName: 'Estado',
-        //   id: 'status',
-        // },
-        // {
-        //   displayName: 'Emails',
-        //   id: 'emails',
-        // },
-        // {
-        //   displayName: 'Teléfono',
-        //   id: 'phone',
-        // },
-        // {
-        //   displayName: 'Deuda de luz',
-        //   id: 'electricityDebt',
-        // },
-        // {
-        //   displayName: 'Deuda de invitado',
-        //   id: 'guestDebt',
-        // },
-        // {
-        //   displayName: 'Deuda de cuota',
-        //   id: 'membershipDebt',
-        // },
-        // {
-        //   displayName: 'Deuda total',
-        //   id: 'totalDebt',
-        // },
+        {
+          displayName: 'Categoría',
+          id: 'category',
+        },
+        {
+          displayName: 'Estado',
+          id: 'status',
+        },
+        {
+          displayName: 'Deuda de cuota',
+          id: 'pendingMembership',
+        },
+        {
+          displayName: 'Deuda de invitado',
+          id: 'pendingGuest',
+        },
+        {
+          displayName: 'Deuda de luz',
+          id: 'pendingElectricity',
+        },
+        {
+          displayName: 'Deuda total',
+          id: 'pendingTotal',
+        },
       ]}
-      filename={DateUtils.c().format(DateFormatEnum.DateTime)}
-      datas={() => getMembersToExport.mutateAsync(request)}
+      filename={`club-social-socios-al-${DateUtils.c().format(DateFormatEnum.DATE)}-${DateUtils.c().unix()}.csv`}
+      // @ts-expect-error
+      datas={async () => {
+        const data = await getMembersToExport.mutateAsync(request);
+
+        return data.map((member) => ({
+          ...member,
+          pendingElectricity: new Money(member.pendingElectricity).toInteger(),
+          pendingGuest: new Money(member.pendingGuest).toInteger(),
+          pendingMembership: new Money(member.pendingMembership).toInteger(),
+          pendingTotal: new Money(member.pendingTotal).toInteger(),
+        }));
+      }}
     >
       <Button
         loading={getMembersToExport.isLoading}

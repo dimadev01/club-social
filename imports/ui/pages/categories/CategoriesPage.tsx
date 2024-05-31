@@ -1,6 +1,6 @@
 import { Breadcrumb, Card } from 'antd';
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { CategoryGridDto } from '@domain/categories/use-cases/get-categories-grid/category-grid.dto';
 import { AppUrl } from '@ui/app.enum';
@@ -55,9 +55,9 @@ export const CategoriesPage = () => {
               dataIndex: 'name',
               render: (name: string, category: CategoryGridDto) =>
                 category.price ? (
-                  <NavLink to={`${AppUrl.Categories}/${category._id}`}>
+                  <Link to={`${AppUrl.Categories}/${category._id}`}>
                     {name}
-                  </NavLink>
+                  </Link>
                 ) : (
                   name
                 ),

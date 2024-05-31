@@ -1,8 +1,8 @@
-import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
-import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
+import { FindPaginatedRequestOld } from '@application/pagination/find-paginated.request';
+import { FindPaginatedResponseOld } from '@application/pagination/find-paginated.response';
 
 export interface IPaginatedPort<T> {
   findPaginated(
-    request: FindPaginatedRequest,
-  ): Promise<FindPaginatedResponse<T>>;
+    request: FindPaginatedRequestOld,
+  ): Promise<FindPaginatedResponseOld<T>>;
 }

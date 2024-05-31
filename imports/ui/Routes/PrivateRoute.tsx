@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
-import { AuthRoute } from '@ui/Routes/AuthRoute';
+import { AuthRoute } from '@ui/routes/AuthRoute';
 
 type Props = {
   children: JSX.Element;

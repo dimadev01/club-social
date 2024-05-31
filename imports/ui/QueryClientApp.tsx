@@ -11,7 +11,7 @@ import ReactJson from 'react-json-view';
 
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { AppThemeEnum } from '@ui/app.enum';
-import { useThemeContext } from '@ui/Context';
+import { useThemeContext } from '@ui/AppContext';
 import { useModalError } from '@ui/hooks/useModalError';
 import { useNotificationError } from '@ui/hooks/useNotification';
 

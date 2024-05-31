@@ -9,7 +9,7 @@ import {
   Skeleton,
 } from 'antd';
 import React from 'react';
-import { NavLink, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { MoneyUtils } from '@shared/utils/money.utils';
@@ -62,7 +62,7 @@ export const CategoryDetailPage = () => {
             title: 'Inicio',
           },
           {
-            title: <NavLink to={AppUrl.Categories}>Categorías</NavLink>,
+            title: <Link to={AppUrl.Categories}>Categorías</Link>,
           },
           {
             title: category.name,

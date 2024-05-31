@@ -18,9 +18,11 @@ import {
 } from '@domain/common/repositories/queryable-grid-repository.interface';
 import { Mapper } from '@infra/mappers/mapper';
 import { MongoCollection } from '@infra/mongo/collections/mongo.collection';
+import { PaginatedAggregationResult } from '@infra/mongo/common/paginated-aggregation.interface';
 import { Entity } from '@infra/mongo/entities/common/entity';
 import { UserEntity } from '@infra/mongo/entities/users/user.entity';
 import { ClassValidationError } from '@infra/mongo/errors/class-validation.error';
+import { MongoUtils } from '@infra/mongo/mongo.utils';
 
 export abstract class CrudMongoRepository<
   TModel extends Model,
@@ -111,9 +113,10 @@ export abstract class CrudMongoRepository<
     const totalCount = await this._collection.find(query).countAsync();
 
     const options: Mongo.Options<TEntity> = {
-      limit: request.limit,
-      skip: request.page,
       sort: this.getMongoSorter(request.sorter),
+      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
+      limit: request.limit,
+      skip: (request.page - 1) * request.limit,
     };
 
     const entities = await this._collection.find(query, options).fetchAsync();
@@ -121,6 +124,36 @@ export abstract class CrudMongoRepository<
     const items = entities.map((entity) => this._mapper.toModel(entity));
 
     return { items, totalCount };
+  }
+
+  protected async findPaginatedPipeline(
+    pipeline: Document[],
+    entitiesPipeline: Document[],
+  ): Promise<FindPaginatedResponse<TModel>> {
+    pipeline.push(
+      {
+        $facet: {
+          entities: entitiesPipeline,
+          totalCount: [{ $count: 'count' }],
+        },
+      },
+      {
+        $project: {
+          entities: 1,
+          totalCount: MongoUtils.first('$totalCount.count', 0),
+        },
+      },
+    );
+
+    const [{ entities, totalCount }] = await this._collection
+      .rawCollection()
+      .aggregate<PaginatedAggregationResult<TEntity>>(pipeline)
+      .toArray();
+
+    return {
+      items: entities.map((entity) => this._mapper.toModel(entity)),
+      totalCount,
+    };
   }
 
   public async insert(model: TModel): Promise<void> {
@@ -203,11 +236,8 @@ export abstract class CrudMongoRepository<
     ];
   }
 
-  protected getPaginatedStages(page?: number, limit?: number): Document[] {
-    return [
-      { $skip: ((page ?? 1) - 1) * (limit ?? 10) },
-      { $limit: limit ?? 10 },
-    ];
+  protected getPaginatedStages(page: number, limit: number): Document[] {
+    return [{ $skip: (page - 1) * limit }, { $limit: limit }];
   }
 
   protected getMongoSorter(paginatedSorter: PaginatedSorter): {

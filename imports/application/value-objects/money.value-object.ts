@@ -17,19 +17,21 @@ export class Money {
     currency = false,
     decimals = false,
   }: FormatOptions = {}): string {
-    let amount = toDecimal(this._value);
+    let amount: number;
 
-    if (!decimals) {
-      amount = Number(amount).toFixed(0);
+    if (decimals) {
+      amount = this.toNumber();
+    } else {
+      amount = this.toInteger();
     }
 
-    amount = new Intl.NumberFormat('es-AR').format(Number(amount));
+    const amountFormatted = new Intl.NumberFormat('es-AR').format(amount);
 
     if (currency) {
-      return `${ARS.code} ${amount}`;
+      return `${ARS.code} ${amountFormatted}`;
     }
 
-    return amount;
+    return amountFormatted;
   }
 
   public formatWithCurrency(): string {
@@ -45,6 +47,10 @@ export class Money {
   }
 
   public toNumber(): number {
-    return +this.format({ decimals: true });
+    return +toDecimal(this._value);
+  }
+
+  public toInteger(): number {
+    return +this.toNumber().toFixed(0);
   }
 }

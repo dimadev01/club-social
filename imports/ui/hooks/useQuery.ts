@@ -17,6 +17,6 @@ export function useQuery<TRequest, TResponse>({
   return uq<TRequest, MeteorError, TResponse>(
     [methodName, request],
     () => Meteor.callAsync(methodName, request),
-    { enabled: !!request, keepPreviousData },
+    { keepPreviousData },
   );
 }

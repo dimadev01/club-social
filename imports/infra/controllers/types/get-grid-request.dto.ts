@@ -5,11 +5,9 @@ import {
   IsNumber,
   IsObject,
   IsPositive,
-  IsString,
 } from 'class-validator';
 
 import { FindPaginatedRequest } from '@domain/common/repositories/queryable-grid-repository.interface';
-import { IsNullable } from '@shared/class-validator/is-nullable';
 
 export type GridFilter = Record<string, string[]>;
 
@@ -25,11 +23,6 @@ export class GetGridRequestDto implements FindPaginatedRequest {
   @IsPositive()
   @IsNotEmpty()
   public page!: number;
-
-  @IsNullable()
-  @IsString()
-  @IsDefined()
-  public search!: string | null;
 
   @IsObject()
   @IsDefined()

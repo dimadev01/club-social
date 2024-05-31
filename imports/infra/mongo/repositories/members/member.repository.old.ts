@@ -7,7 +7,7 @@ import { container, inject, injectable } from 'tsyringe';
 import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
-import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
+import { FindPaginatedResponseOld } from '@application/pagination/find-paginated.response';
 import { DIToken } from '@domain/common/tokens.di';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import {
@@ -109,7 +109,7 @@ export class MemberRepositoryOld
 
   public async findPaginated(
     request: FindPaginatedMembersRequest,
-  ): Promise<FindPaginatedResponse<FindPaginatedMemberOld>> {
+  ): Promise<FindPaginatedResponseOld<FindPaginatedMemberOld>> {
     const query: Mongo.Selector<MemberOld> = {
       isDeleted: false,
     };

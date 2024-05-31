@@ -1,5 +1,6 @@
 import { Result } from 'neverthrow';
 
+import { GetModelRequest } from '@domain/common/get-model.request';
 import {
   FindPaginatedRequest,
   FindPaginatedResponse,
@@ -9,7 +10,14 @@ export interface IUseCase<TRequest, TResponse> {
   execute(request?: TRequest): Promise<Result<TResponse, Error>>;
 }
 
+export type IEntityDtoUseCase<
+  TResponse,
+  TRequest extends GetModelRequest = GetModelRequest,
+> = IUseCase<TRequest, TResponse>;
+
 export type IGridUseCase<
   TRequest extends FindPaginatedRequest = FindPaginatedRequest,
-  TResponse extends object = object,
-> = IUseCase<TRequest, FindPaginatedResponse<TResponse>>;
+  TModelResponse extends object = object,
+  TResponse extends
+    FindPaginatedResponse<TModelResponse> = FindPaginatedResponse<TModelResponse>,
+> = IUseCase<TRequest, TResponse>;

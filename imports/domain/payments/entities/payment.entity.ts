@@ -58,7 +58,7 @@ export class Payment extends EntityOld {
 
     payment.memberId = props.memberId;
 
-    payment.status = PaymentStatusEnum.Paid;
+    payment.status = PaymentStatusEnum.PAID;
 
     return ok(payment);
   }

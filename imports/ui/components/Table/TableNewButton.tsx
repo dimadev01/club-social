@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { Button } from '@ui/components/Button';
 
@@ -9,12 +9,12 @@ type Props = {
 };
 
 export const TableNewButton: React.FC<Props> = ({ to }) => (
-  <NavLink to={to}>
+  <Link to={to}>
     <Button
       icon={<PlusOutlined />}
       type="text"
       htmlType="button"
       tooltip={{ title: 'Nuevo' }}
     />
-  </NavLink>
+  </Link>
 );

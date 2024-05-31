@@ -22,9 +22,10 @@ export class GetMembersUseCase
   public async execute(
     request: FindMembersRequest,
   ): Promise<Result<GetMemberResponse[], Error>> {
-    console.log('🚀 ~ request:', request);
-
-    const data = await this._memberRepository.find(request);
+    const data = await this._memberRepository.find({
+      category: request.category,
+      status: request.status,
+    });
 
     return ok<GetMemberResponse[]>(
       data.map<GetMemberResponse>((member) => {

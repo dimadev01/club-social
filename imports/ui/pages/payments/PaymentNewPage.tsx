@@ -11,7 +11,7 @@ import { useWatch } from 'antd/es/form/Form';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
-import { NavLink, Navigate, useSearchParams } from 'react-router-dom';
+import { Link, Navigate, useSearchParams } from 'react-router-dom';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
@@ -113,7 +113,7 @@ export const PaymentNewPage = () => {
 
   useDeepCompareEffect(() => {
     const date = formDate
-      ? DateUtils.format(formDate, DateFormatEnum.Date)
+      ? DateUtils.format(formDate, DateFormatEnum.DATE)
       : undefined;
 
     setSearchParams(
@@ -171,7 +171,7 @@ export const PaymentNewPage = () => {
     }
 
     const request: CreatePaymentRequestDto = {
-      date: values.date.format(DateFormatEnum.Date),
+      date: values.date.format(DateFormatEnum.DATE),
       dues: selectedDues.map((due) => ({
         amount: MoneyUtils.toCents(due.amount),
         dueId: due.dueId,
@@ -228,7 +228,7 @@ export const PaymentNewPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <NavLink to={AppUrl.Payments}>Pagos</NavLink> },
+          { title: <Link to={AppUrl.Payments}>Pagos</Link> },
           { title: renderCardTitle() },
         ]}
       />

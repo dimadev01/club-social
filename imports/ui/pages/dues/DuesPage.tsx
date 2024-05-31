@@ -22,7 +22,7 @@ import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import React, { useState } from 'react';
-import { NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
 import {
@@ -76,7 +76,7 @@ export const DuesPage = () => {
   const { data, isLoading, isRefetching, refetch } = useDuesGrid({
     filters: gridState.filters,
     from: dateFilter
-      ? dateFilter[0]?.format(DateFormatEnum.Date) ?? null
+      ? dateFilter[0]?.format(DateFormatEnum.DATE) ?? null
       : null,
     memberIds: memberIdsFilter ?? [],
     page: gridState.page,
@@ -85,7 +85,7 @@ export const DuesPage = () => {
     showDeleted,
     sortField: gridState.sortField as 'createdAt',
     sortOrder: gridState.sortOrder,
-    to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.Date) ?? null : null,
+    to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.DATE) ?? null : null,
   });
 
   const deleteDue = useDeleteDue(refetch);
@@ -199,7 +199,7 @@ export const DuesPage = () => {
                     ? gridState.sortOrder
                     : undefined,
                 render: (date: string, due: DueGridDto) => (
-                  <NavLink to={`${AppUrl.Dues}/${due._id}`}>{date}</NavLink>
+                  <Link to={`${AppUrl.Dues}/${due._id}`}>{date}</Link>
                 ),
                 sorter: true,
                 title: 'Fecha',
@@ -207,9 +207,9 @@ export const DuesPage = () => {
               {
                 dataIndex: 'memberId',
                 render: (memberId: string, dto: DueGridDto) => (
-                  <NavLink to={`${AppUrl.Members}/${memberId}`}>
+                  <Link to={`${AppUrl.Members}/${memberId}`}>
                     {dto.memberName}
-                  </NavLink>
+                  </Link>
                 ),
                 title: 'Socio',
               },

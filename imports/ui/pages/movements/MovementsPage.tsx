@@ -20,7 +20,7 @@ import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
 import React, { useState } from 'react';
-import { NavLink, Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 
 import {
   CategoryEnum,
@@ -69,7 +69,7 @@ export const MovementsPage = () => {
   const { data, isLoading, isRefetching, refetch } = useMovementsGrid({
     filters: gridState.filters,
     from: dateFilter
-      ? dateFilter[0]?.format(DateFormatEnum.Date) ?? null
+      ? dateFilter[0]?.format(DateFormatEnum.DATE) ?? null
       : null,
     memberIds: memberIdsFilter ?? [],
     page: gridState.page,
@@ -78,7 +78,7 @@ export const MovementsPage = () => {
     showDeleted,
     sortField: gridState.sortField as 'createdAt',
     sortOrder: gridState.sortOrder,
-    to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.Date) ?? null : null,
+    to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.DATE) ?? null : null,
   });
 
   const deleteMovement = useDeleteMovement(refetch);
@@ -216,9 +216,7 @@ export const MovementsPage = () => {
                     ? gridState.sortOrder
                     : undefined,
                 render: (date: string, movement: MovementGridDto) => (
-                  <NavLink to={`${AppUrl.Movements}/${movement._id}`}>
-                    {date}
-                  </NavLink>
+                  <Link to={`${AppUrl.Movements}/${movement._id}`}>{date}</Link>
                 ),
                 sorter: true,
                 title: 'Fecha',
@@ -256,9 +254,9 @@ export const MovementsPage = () => {
                 render: (details: string | null, movement: MovementGridDto) => {
                   if (MemberCategories.includes(movement.category)) {
                     return (
-                      <NavLink to={`${AppUrl.Members}/${movement.memberId}`}>
+                      <Link to={`${AppUrl.Members}/${movement.memberId}`}>
                         {details}
-                      </NavLink>
+                      </Link>
                     );
                   }
 

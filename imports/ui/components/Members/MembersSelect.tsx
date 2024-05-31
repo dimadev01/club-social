@@ -7,7 +7,7 @@ import { useMembers } from '@ui/hooks/members/useMembers';
 type Props = SelectProps;
 
 export const MembersSelect: React.FC<Props> = ({ ...rest }) => {
-  const { data: members, isLoading: isLoadingMembers } = useMembers();
+  const { data: members, isLoading: isLoadingMembers } = useMembers({});
 
   return (
     <Select

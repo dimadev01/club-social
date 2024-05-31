@@ -7,12 +7,12 @@ import GoogleFontLoader from 'react-google-font';
 import { useMediaQuery } from 'react-responsive';
 
 import { AppThemeEnum } from './app.enum';
-import { ThemeContext, ThemeContextProps } from './Context';
+import { ThemeContext, ThemeContextProps } from './AppContext';
 
 import { UserThemeEnum } from '@domain/users/user.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { QueryClientApp } from '@ui/QueryClientApp';
-import { Routes } from '@ui/Routes/Routes';
+import { Routes } from '@ui/routes/Routes';
 
 export const App = () => {
   const systemPrefersDark = useMediaQuery({

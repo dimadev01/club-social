@@ -1,9 +1,9 @@
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
-import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
-import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
+import { FindPaginatedRequestOld } from '@application/pagination/find-paginated.request';
+import { FindPaginatedResponseOld } from '@application/pagination/find-paginated.response';
 import { Due } from '@domain/dues/entities/due.entity';
 
-export type FindPaginatedDuesRequest = FindPaginatedRequest & {
+export type FindPaginatedDuesRequest = FindPaginatedRequestOld & {
   from: string | null;
   memberIds: string[];
   showDeleted: boolean | null;
@@ -11,7 +11,7 @@ export type FindPaginatedDuesRequest = FindPaginatedRequest & {
   to: string | null;
 };
 
-export type FindPaginatedDuesResponse = FindPaginatedResponse<Due> & {
+export type FindPaginatedDuesResponse = FindPaginatedResponseOld<Due> & {
   balance: number;
   totalDues: number;
   totalPayments: number;

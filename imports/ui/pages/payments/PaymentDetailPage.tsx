@@ -1,6 +1,6 @@
 import { App, Breadcrumb, Card, Descriptions, Flex, Table } from 'antd';
 import React from 'react';
-import { NavLink, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
@@ -49,7 +49,7 @@ export const PaymentDetailPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <NavLink to={AppUrl.Payments}>Pagos</NavLink> },
+          { title: <Link to={AppUrl.Payments}>Pagos</Link> },
           { title: `Pago a ${payment.memberName} del ${payment.date}` },
         ]}
       />

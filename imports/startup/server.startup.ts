@@ -15,7 +15,8 @@ import { ProfessorMethod } from '@domain/professors/professor.methods';
 import { ServiceMethod } from '@domain/services/service.methods';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethod } from '@domain/users/user.methods';
-import { MemberController } from '@infra/controllers/member.controller';
+import { MemberController } from '@infra/controllers/member/member.controller';
+import { PaymentController } from '@infra/controllers/payment/payment.controller';
 import { CategoryMethod } from '@infra/meteor/category.methods';
 import { EmployeeMethod } from '@infra/meteor/employee.methods';
 import { MemberMethod } from '@infra/meteor/member.methods';
@@ -41,6 +42,7 @@ export class ServerStartup {
     private readonly _serviceMethod: ServiceMethod,
     private readonly _paymentMethod: PaymentMethod,
     private readonly _memberController: MemberController,
+    private readonly _paymentController: PaymentController,
   ) {}
 
   public async start() {
@@ -150,6 +152,8 @@ export class ServerStartup {
     this._paymentMethod.register();
 
     this._memberController.register();
+
+    this._paymentController.register();
   }
 }
 

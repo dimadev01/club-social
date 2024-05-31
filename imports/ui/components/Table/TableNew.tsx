@@ -24,14 +24,13 @@ interface Props<T> extends TableProps<T> {
     sorter: SorterResult<T> | SorterResult<T>[],
   ) => void;
   state: GridState;
-  total: number;
+  total?: number;
 }
 
 export interface GridState {
   filters: GridFilter | null;
   page: number;
   pageSize: number;
-  search: string | null;
   sorter: GridSorter;
 }
 

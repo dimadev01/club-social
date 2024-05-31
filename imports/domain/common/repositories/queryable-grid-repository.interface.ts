@@ -11,8 +11,8 @@ export interface FindPaginatedRequest {
   sorter: PaginatedSorter;
 }
 
-export interface FindPaginatedResponse<TModel = unknown> {
-  items: TModel[];
+export interface FindPaginatedResponse<T = unknown> {
+  items: T[];
   totalCount: number;
 }
 

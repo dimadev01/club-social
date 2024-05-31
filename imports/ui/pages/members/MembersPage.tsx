@@ -1,9 +1,8 @@
 import { CreditCardOutlined, FileSearchOutlined } from '@ant-design/icons';
-import { Breadcrumb, Card } from 'antd';
+import { Breadcrumb, Card, Flex, Space, Table } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
-import React, { useRef, useState } from 'react';
-import { NavLink, Navigate } from 'react-router-dom';
-import { useReactToPrint } from 'react-to-print';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { Money } from '@application/value-objects/money.value-object';
 import {
@@ -14,19 +13,19 @@ import {
   getMemberCategoryFilters,
   getMemberStatusFilters,
 } from '@domain/members/member.enum';
-import { GetMemberGridResponse } from '@domain/members/use-cases/get-member/get-member-grid.response';
+import { FindPaginatedMembersResponse } from '@domain/members/repositories/find-paginated-members-repository.interface';
+import { GetMemberGridResponse } from '@domain/members/use-cases/get-members-grid/get-member-grid.response';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { GetMembersGridRequestDto } from '@infra/controllers/types/get-members-grid-request.dto';
+import { GetMembersGridRequestDto } from '@infra/controllers/member/get-members-grid-request.dto';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { SecurityUtils } from '@infra/security/security.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { MembersGridCsvDownloaderButton } from '@ui/components/Members/MembersGridCsvDownloader';
 import { TableNew } from '@ui/components/Table/TableNew';
 import { TableNewButton } from '@ui/components/Table/TableNewButton';
-import { TablePrintButton } from '@ui/components/Table/TablePrintButton';
 import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
-import { useMembersToExport } from '@ui/hooks/members/useGetMembersToExport';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useNavigate } from '@ui/hooks/useNavigate';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
@@ -40,44 +39,74 @@ export const MembersPage = () => {
     defaultSorter: { _id: 'ascend' },
   });
 
-  const [isExportingToCsv, setIsExportingToCsv] = useState(false);
-
   const { data: members } = useMembers({
     category: (gridState.filters?.category as MemberCategoryEnum[]) ?? null,
     status: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
   });
 
+  const sorter = { ...gridState.sorter };
+
+  if (sorter._id) {
+    sorter['user.profile.firstName'] = sorter._id;
+
+    sorter['user.profile.lastName'] = sorter._id;
+
+    delete sorter._id;
+  }
+
   const gridRequest: GetMembersGridRequestDto = {
-    categoryFilter:
+    filterByCategory:
       (gridState.filters?.category as MemberCategoryEnum[]) ?? null,
-    debtStatusFilter: gridState.filters?.pendingTotal ?? null,
-    idFilter: gridState.filters?._id ?? null,
+    filterByDebtStatus: gridState.filters?.pendingTotal ?? null,
+    filterById: gridState.filters?._id ?? null,
+    filterByStatus: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
     limit: gridState.pageSize,
     page: gridState.page,
-    search: gridState.search,
-    sorter: gridState.sorter,
-    statusFilter: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
+    sorter,
   };
-
-  const getMembersToExport = useMembersToExport();
 
   const { data, isLoading, isRefetching, refetch } = useQueryGrid<
     GetMemberGridResponse,
-    GetMembersGridRequestDto
+    FindPaginatedMembersResponse<GetMemberGridResponse>
   >({
     methodName: MeteorMethodEnum.MembersGetGrid,
     request: gridRequest,
   });
 
-  const componentRef = useRef(null);
-
-  const handlePrint = useReactToPrint({ content: () => componentRef.current });
-
-  const user = Meteor.user();
-
-  if (!user) {
-    return <Navigate to={AppUrl.Login} />;
-  }
+  const renderSummary = () => (
+    <Table.Summary>
+      <Table.Summary.Row>
+        <Table.Summary.Cell index={0} />
+        <Table.Summary.Cell index={1} />
+        <Table.Summary.Cell index={2} />
+        <Table.Summary.Cell index={3}>
+          <Flex justify="end">
+            {data
+              ? new Money(data.totals.membership).formatWithCurrency()
+              : '-'}
+          </Flex>
+        </Table.Summary.Cell>
+        <Table.Summary.Cell index={4}>
+          <Flex justify="end">
+            {data
+              ? new Money(data.totals.electricity).formatWithCurrency()
+              : '-'}
+          </Flex>
+        </Table.Summary.Cell>
+        <Table.Summary.Cell index={5}>
+          <Flex justify="end">
+            {data ? new Money(data.totals.guest).formatWithCurrency() : '-'}
+          </Flex>
+        </Table.Summary.Cell>
+        <Table.Summary.Cell index={6}>
+          <Flex justify="end">
+            {data ? new Money(data.totals.total).formatWithCurrency() : '-'}
+          </Flex>
+        </Table.Summary.Cell>
+        <Table.Summary.Cell index={7} />
+      </Table.Summary.Row>
+    </Table.Summary>
+  );
 
   return (
     <>
@@ -87,33 +116,27 @@ export const MembersPage = () => {
       />
 
       <Card
-        ref={componentRef}
         title="Socios"
         extra={
-          <ButtonGroup>
+          <Space.Compact>
             <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
-
-            <TablePrintButton
-              onClick={() => handlePrint()}
-              isDisabled={isRefetching}
-            />
 
             <MembersGridCsvDownloaderButton request={gridRequest} />
 
-            {Roles.userIsInRole(
-              user,
+            {SecurityUtils.isInRole(
               PermissionEnum.CREATE,
               ScopeEnum.MEMBERS,
             ) && <TableNewButton to={AppUrl.MembersNew} />}
-          </ButtonGroup>
+          </Space.Compact>
         }
       >
         <TableNew<GetMemberGridResponse>
-          total={data?.totalCount ?? 0}
+          total={data?.totalCount}
           state={gridState}
           setGridState={setGridState}
           loading={isLoading}
           dataSource={data?.items}
+          summary={renderSummary}
           rowClassName={(member) => {
             if (member.pendingTotal > 0) {
               return 'bg-red-100 dark:bg-red-950';
@@ -124,7 +147,6 @@ export const MembersPage = () => {
           columns={[
             {
               dataIndex: '_id',
-              defaultFilteredValue: gridState.filters?._id,
               filterSearch: true,
               filteredValue: gridState.filters?._id,
               filters:
@@ -133,7 +155,7 @@ export const MembersPage = () => {
                   value: member._id,
                 })) ?? [],
               render: (_id: string, member: GetMemberGridResponse) => (
-                <NavLink to={`${AppUrl.Members}/${_id}`}>{member.name}</NavLink>
+                <Link to={`${AppUrl.Members}/${_id}`}>{member.name}</Link>
               ),
               sortOrder: gridState.sorter._id,
               sorter: true,
@@ -142,8 +164,8 @@ export const MembersPage = () => {
             {
               align: 'center',
               dataIndex: 'category',
-              defaultFilteredValue: gridState.filters?.category,
               filteredValue: gridState.filters?.category,
+
               filters: getMemberCategoryFilters(),
               render: (category: MemberCategoryEnum) =>
                 MemberCategoryLabel[category],
@@ -153,7 +175,7 @@ export const MembersPage = () => {
             {
               align: 'center',
               dataIndex: 'status',
-              defaultFilteredValue: gridState.filters?.status,
+              defaultFilteredValue: [MemberStatusEnum.ACTIVE],
               filterResetToDefaultFilteredValue: true,
               filteredValue: gridState.filters?.status,
               filters: getMemberStatusFilters(),
@@ -194,7 +216,6 @@ export const MembersPage = () => {
             {
               align: 'right',
               dataIndex: 'pendingTotal',
-              defaultFilteredValue: gridState.filters?.pendingTotal,
               filterMultiple: false,
               filteredValue: gridState.filters?.pendingTotal,
               filters: [

@@ -2,14 +2,14 @@ import { Result, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
-import { FindPaginatedResponse } from '@domain/common/repositories/queryable-grid-repository.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IGridUseCase } from '@domain/common/use-case.interface';
 import {
   GetMembersGridRequest,
   IMemberRepository,
 } from '@domain/members/member-repository.interface';
-import { GetMemberGridResponse } from '@domain/members/use-cases/get-member/get-member-grid.response';
+import { FindPaginatedMembersResponse } from '@domain/members/repositories/find-paginated-members-repository.interface';
+import { GetMemberGridResponse } from '@domain/members/use-cases/get-members-grid/get-member-grid.response';
 
 @injectable()
 export class GetMembersGridUseCase
@@ -22,15 +22,17 @@ export class GetMembersGridUseCase
 
   public async execute(
     request: GetMembersGridRequest,
-  ): Promise<Result<FindPaginatedResponse<GetMemberGridResponse>, Error>> {
-    const { items, totalCount } =
+  ): Promise<
+    Result<FindPaginatedMembersResponse<GetMemberGridResponse>, Error>
+  > {
+    const { items, totalCount, totals } =
       await this._memberRepository.findPaginated(request);
 
     const balances = await this._memberRepository.getBalances(
       items.map((item) => item._id),
     );
 
-    return ok<FindPaginatedResponse<GetMemberGridResponse>>({
+    return ok<FindPaginatedMembersResponse<GetMemberGridResponse>>({
       items: items.map<GetMemberGridResponse>((item) => {
         const balance = balances.find((b) => b._id === item._id);
 
@@ -50,6 +52,7 @@ export class GetMembersGridUseCase
         };
       }),
       totalCount,
+      totals,
     });
   }
 }

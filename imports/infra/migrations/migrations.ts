@@ -7,7 +7,7 @@ import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 import { PaymentDueCollection } from '@infra/mongo/collections/payment-due.collection';
-import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
+import { PaymentCollection } from '@infra/mongo/collections/payment.collection.old';
 import { DateUtils } from '@shared/utils/date.utils';
 
 // interface MemberRow {

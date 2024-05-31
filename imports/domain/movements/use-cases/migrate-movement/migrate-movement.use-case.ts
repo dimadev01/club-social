@@ -38,7 +38,7 @@ export class MigrateMovementUseCase
     invariant(movement.memberId);
 
     const result = await this._createPaymentUseCase.execute({
-      date: DateUtils.utc(movement.date).format(DateFormatEnum.Date),
+      date: DateUtils.utc(movement.date).format(DateFormatEnum.DATE),
       memberDues: [
         {
           dues: request.dues.map((requestDue) => ({

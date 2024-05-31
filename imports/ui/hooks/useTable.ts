@@ -84,7 +84,6 @@ export function useTable<T>({
     filters: getFilters(parsedQs.filters),
     page: parsedQs.page ? Number(parsedQs.page) : 1,
     pageSize: parsedQs.pageSize ? Number(parsedQs.pageSize) : DEFAULT_PAGE_SIZE,
-    search: parsedQs.search ? String(parsedQs.search) : null,
     sorter: getSorter(parsedQs.sorter),
   });
 

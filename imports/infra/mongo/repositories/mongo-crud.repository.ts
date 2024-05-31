@@ -11,7 +11,7 @@ import SimpleSchema from 'simpl-schema';
 import invariant from 'tiny-invariant';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
+import { FindPaginatedRequestOld } from '@application/pagination/find-paginated.request';
 import { ICrudPort } from '@application/ports/crud.port';
 import { MongoOptions } from '@application/use-cases/use-case.interface';
 import { EntityOld } from '@domain/common/entity.old';
@@ -220,7 +220,7 @@ export abstract class MongoCrudRepositoryOld<T extends EntityOld>
   }
 
   protected createPaginatedQueryOptionsNew(
-    request: FindPaginatedRequest,
+    request: FindPaginatedRequestOld,
   ): MongoOptions {
     return {
       limit: request.pageSize,
@@ -254,7 +254,7 @@ export abstract class MongoCrudRepositoryOld<T extends EntityOld>
     return currentUser;
   }
 
-  protected getPaginatedPipelineQuery(request: FindPaginatedRequest) {
+  protected getPaginatedPipelineQuery(request: FindPaginatedRequestOld) {
     return [
       {
         $sort: {

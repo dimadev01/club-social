@@ -21,15 +21,15 @@ import {
 import { ItemType } from 'antd/es/menu/interface';
 import { Roles } from 'meteor/alanning:roles';
 import React, { useEffect, useState } from 'react';
-import { NavLink, Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { UserThemeEnum } from '@domain/users/user.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl } from '@ui/app.enum';
+import { useThemeContext } from '@ui/AppContext';
 import { Button } from '@ui/components/Button';
 import { Select } from '@ui/components/Select';
-import { useThemeContext } from '@ui/Context';
 import { useUpdateUserTheme } from '@ui/hooks/users/useUpdateUserTheme';
 
 type Props = {
@@ -71,7 +71,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Users,
-        label: <NavLink to={AppUrl.Users}>Usuarios</NavLink>,
+        label: <Link to={AppUrl.Users}>Usuarios</Link>,
       });
     }
 
@@ -79,7 +79,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Members,
-        label: <NavLink to={AppUrl.Members}>Socios</NavLink>,
+        label: <Link to={AppUrl.Members}>Socios</Link>,
       });
     }
 
@@ -87,7 +87,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Movements,
-        label: <NavLink to={AppUrl.Movements}>Movimientos</NavLink>,
+        label: <Link to={AppUrl.Movements}>Movimientos</Link>,
       });
     }
 
@@ -95,7 +95,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Dues,
-        label: <NavLink to={AppUrl.Dues}>Cobros</NavLink>,
+        label: <Link to={AppUrl.Dues}>Cobros</Link>,
       });
     }
 
@@ -103,7 +103,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Payments,
-        label: <NavLink to={AppUrl.Payments}>Pagos</NavLink>,
+        label: <Link to={AppUrl.Payments}>Pagos</Link>,
       });
     }
 
@@ -111,7 +111,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <BankOutlined className="!text-lg" />,
         key: AppUrl.Categories,
-        label: <NavLink to={AppUrl.Categories}>Categorías</NavLink>,
+        label: <Link to={AppUrl.Categories}>Categorías</Link>,
       });
     }
 
@@ -119,7 +119,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Professors,
-        label: <NavLink to={AppUrl.Professors}>Profesores</NavLink>,
+        label: <Link to={AppUrl.Professors}>Profesores</Link>,
       });
     }
 
@@ -127,7 +127,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <UserOutlined className="!text-lg" />,
         key: AppUrl.Employees,
-        label: <NavLink to={AppUrl.Employees}>Empleados</NavLink>,
+        label: <Link to={AppUrl.Employees}>Empleados</Link>,
       });
     }
 
@@ -135,7 +135,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <BulbOutlined className="!text-lg" />,
         key: AppUrl.Services,
-        label: <NavLink to={AppUrl.Services}>Servicios</NavLink>,
+        label: <Link to={AppUrl.Services}>Servicios</Link>,
       });
     }
 
@@ -196,7 +196,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
             {
               icon: <LogoutOutlined className="!text-lg" />,
               key: 'logout',
-              label: <NavLink to={AppUrl.Logout}>Cerrar sesión</NavLink>,
+              label: <Link to={AppUrl.Logout}>Cerrar sesión</Link>,
             },
           ]}
         />

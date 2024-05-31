@@ -1,9 +1,9 @@
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
-import { FindPaginatedRequest } from '@application/pagination/find-paginated.request';
-import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
+import { FindPaginatedRequestOld } from '@application/pagination/find-paginated.request';
+import { FindPaginatedResponseOld } from '@application/pagination/find-paginated.response';
 import { Movement } from '@domain/movements/entities/movement.entity';
 
-export type FindPaginatedMovementsRequest = FindPaginatedRequest & {
+export type FindPaginatedMovementsRequest = FindPaginatedRequestOld & {
   from: string | null;
   memberIds: string[];
   showDeleted: boolean | null;
@@ -16,7 +16,7 @@ export type FindPaginatedMovement = Movement & {
 };
 
 export type FindPaginatedMovementsResponse =
-  FindPaginatedResponse<FindPaginatedMovement> & {
+  FindPaginatedResponseOld<FindPaginatedMovement> & {
     balance: number;
     debt: number;
     expenses: number;

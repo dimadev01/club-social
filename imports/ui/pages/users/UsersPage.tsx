@@ -1,7 +1,7 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { RoleEnum } from '@domain/roles/role.enum';
 import { RoleService } from '@domain/roles/role.service';
@@ -66,9 +66,9 @@ export const UsersPage = () => {
             {
               dataIndex: 'profile',
               render: (profile: Meteor.UserProfile, user: Meteor.User) => (
-                <NavLink to={`${AppUrl.Users}/${user._id}`}>
+                <Link to={`${AppUrl.Users}/${user._id}`}>
                   {profile.firstName} {profile.lastName}
-                </NavLink>
+                </Link>
               ),
               sortOrder:
                 gridState.sortField === 'profile'

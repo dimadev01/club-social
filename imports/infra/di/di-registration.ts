@@ -11,6 +11,7 @@ import { MemberRepositoryOld } from '@infra/mongo/repositories/members/member.re
 import { MovementFindPaginatedRepository } from '@infra/mongo/repositories/movements/movement-find-paginated.repository';
 import { MovementRepository } from '@infra/mongo/repositories/movements/movement.repository';
 import { PaymentDueRepository } from '@infra/mongo/repositories/payment-due/payment-due.repository';
+import { PaymentMongoRepository } from '@infra/mongo/repositories/payments/payment-mongo.repository';
 import { PaymentRepository } from '@infra/mongo/repositories/payments/payment.repository';
 import { UserMongoRepository } from '@infra/mongo/repositories/users/user-mongo.repository';
 
@@ -40,6 +41,8 @@ container.register(DIToken.PaymentDueRepository, PaymentDueRepository);
 container.register(DIToken.PaymentDueRepository, PaymentDueRepository);
 
 container.register(DIToken.IMemberRepository, MemberMongoRepository);
+
+container.register(DIToken.IPaymentRepository, PaymentMongoRepository);
 
 container.register(DIToken.IUserRepository, UserMongoRepository);
 

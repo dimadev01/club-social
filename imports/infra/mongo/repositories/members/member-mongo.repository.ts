@@ -2,41 +2,47 @@ import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { FindPaginatedResponse } from '@domain/common/repositories/queryable-grid-repository.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import {
   FindMembersRequest,
   GetMembersGridRequest,
   IMemberRepository,
-  MemberBalance,
 } from '@domain/members/member-repository.interface';
 import { MemberModel } from '@domain/members/models/member.model';
+import {
+  FindPaginatedMembersAggregationResult,
+  FindPaginatedMembersResponse,
+} from '@domain/members/repositories/find-paginated-members-repository.interface';
+import { MemberBalance } from '@domain/members/repositories/get-balances-repository.interface';
 import { MemberMapper } from '@infra/mappers/member.mapper';
-import { MemberAuditCollection } from '@infra/mongo/collections/member-audit.collection';
+import { MemberAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
 import { MemberCollection } from '@infra/mongo/collections/member.collection';
-import { PaginatedAggregationResult } from '@infra/mongo/common/paginated-aggregation.interface';
 import { MemberAuditEntity } from '@infra/mongo/entities/members/member-audit.entity';
 import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
 import { MongoUtils } from '@infra/mongo/mongo.utils';
-import { CrudMongoAuditRepository } from '@infra/mongo/repositories/common/crud-mongo-audit.repository';
+import { CrudMongoAuditableRepository } from '@infra/mongo/repositories/common/crud-mongo-auditable.repository';
 
 @injectable()
 export class MemberMongoRepository
-  extends CrudMongoAuditRepository<MemberModel, MemberEntity, MemberAuditEntity>
+  extends CrudMongoAuditableRepository<
+    MemberModel,
+    MemberEntity,
+    MemberAuditEntity
+  >
   implements IMemberRepository
 {
   public constructor(
     @inject(MemberCollection)
     protected readonly collection: MemberCollection,
-    @inject(MemberAuditCollection)
-    protected readonly historicalCollection: MemberAuditCollection,
+    @inject(MemberAuditableCollection)
+    protected readonly auditableCollection: MemberAuditableCollection,
     @inject(MemberMapper)
     protected readonly mapper: MemberMapper,
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
   ) {
-    super(collection, mapper, logger, historicalCollection);
+    super(collection, mapper, logger, auditableCollection);
   }
 
   public async find(request: FindMembersRequest): Promise<MemberModel[]> {
@@ -96,26 +102,79 @@ export class MemberMongoRepository
 
   public async findPaginated(
     request: GetMembersGridRequest,
-  ): Promise<FindPaginatedResponse<MemberModel>> {
-    const pipeline: Document[] = this._getPipelineToExportOrGrid(
-      request,
-      'paginated',
+  ): Promise<FindPaginatedMembersResponse<MemberModel>> {
+    const pipeline = this._getPipelineToExportOrGrid(request);
+
+    pipeline.push(
+      {
+        $facet: {
+          entities: [
+            {
+              $lookup: {
+                as: 'user',
+                foreignField: '_id',
+                from: 'users',
+                localField: 'userId',
+              },
+            },
+            { $unwind: '$user' },
+            ...this.getPaginatedPipeline(request),
+          ],
+          totalCount: [{ $count: 'count' }],
+          totals: [
+            {
+              $group: {
+                _id: null,
+                electricity: { $sum: '$pendingElectricity' },
+                guest: { $sum: '$pendingGuest' },
+                membership: { $sum: '$pendingMembership' },
+                total: { $sum: '$pendingTotal' },
+              },
+            },
+            {
+              $project: { _id: 0 },
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          entities: 1,
+          totalCount: MongoUtils.first('$totalCount.count', 0),
+          totals: MongoUtils.first('$totals', undefined),
+        },
+      },
     );
 
-    const [{ entities, totalCount }] = await this.collection
+    const [{ entities, totalCount, totals }] = await this.collection
       .rawCollection()
-      .aggregate<PaginatedAggregationResult<MemberEntity>>(pipeline)
+      .aggregate<FindPaginatedMembersAggregationResult>(pipeline)
       .toArray();
 
-    const items = entities.map((entity) => this.mapper.toModel(entity));
-
-    return { items, totalCount };
+    return {
+      items: entities.map((entity) => this.mapper.toModel(entity)),
+      totalCount,
+      totals,
+    };
   }
 
   public async findToExport(
     request: GetMembersGridRequest,
   ): Promise<MemberModel[]> {
-    const pipeline = this._getPipelineToExportOrGrid(request, 'export');
+    const pipeline = this._getPipelineToExportOrGrid(request);
+
+    pipeline.push(
+      {
+        $lookup: {
+          as: 'user',
+          foreignField: '_id',
+          from: 'users',
+          localField: 'userId',
+        },
+      },
+      { $unwind: '$user' },
+      this.getPaginatedSorterStage(request.sorter),
+    );
 
     const entities = await this.collection
       .rawCollection()
@@ -206,7 +265,6 @@ export class MemberMongoRepository
 
   private _getPipelineToExportOrGrid(
     request: GetMembersGridRequest,
-    type: 'export' | 'paginated',
   ): Document[] {
     const pipeline: Document[] = [];
 
@@ -214,24 +272,16 @@ export class MemberMongoRepository
       $expr: { $and: [{ $eq: ['$isDeleted', false] }] },
     };
 
-    if (request.categoryFilter) {
-      $match.$expr.$and.push({ $in: ['$category', request.categoryFilter] });
+    if (request.filterByCategory) {
+      $match.$expr.$and.push({ $in: ['$category', request.filterByCategory] });
     }
 
-    if (request.statusFilter) {
-      $match.$expr.$and.push({ $in: ['$status', request.statusFilter] });
+    if (request.filterByStatus) {
+      $match.$expr.$and.push({ $in: ['$status', request.filterByStatus] });
     }
 
-    if (request.idFilter) {
-      $match.$expr.$and.push({ $in: ['$_id', request.idFilter] });
-    }
-
-    if (request.sorter?._id) {
-      request.sorter['user.profile.firstName'] = request.sorter._id;
-
-      request.sorter['user.profile.lastName'] = request.sorter._id;
-
-      delete request.sorter._id;
+    if (request.filterById) {
+      $match.$expr.$and.push({ $in: ['$_id', request.filterById] });
     }
 
     pipeline.push({ $match });
@@ -252,138 +302,187 @@ export class MemberMongoRepository
       };
     }
 
-    if (
-      request.sorter?.pendingElectricity ||
-      request.sorter?.pendingMembership ||
-      request.sorter?.pendingGuest ||
-      request.sorter?.pendingTotal ||
-      request.debtStatusFilter
-    ) {
-      pipeline.push({
-        $lookup: {
-          as: 'dues',
-          foreignField: 'memberId',
-          from: 'dues',
-          localField: '_id',
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ['$isDeleted', false] },
-                    { $eq: ['$status', DueStatusEnum.PENDING] },
-                  ],
-                },
-              },
-            },
-          ],
-        },
-      });
+    // if (
+    //   request.sorter?.pendingElectricity ||
+    //   request.sorter?.pendingMembership ||
+    //   request.sorter?.pendingGuest ||
+    //   request.sorter?.pendingTotal ||
+    //   request.filterByDebtStatus
+    // ) {
+    //   pipeline.push({
+    //     $lookup: {
+    //       as: 'dues',
+    //       foreignField: 'memberId',
+    //       from: 'dues',
+    //       localField: '_id',
+    //       pipeline: [
+    //         {
+    //           $match: {
+    //             $expr: {
+    //               $and: [
+    //                 { $eq: ['$isDeleted', false] },
+    //                 { $eq: ['$status', DueStatusEnum.PENDING] },
+    //               ],
+    //             },
+    //           },
+    //         },
+    //       ],
+    //     },
+    //   });
 
-      if (request.sorter.pendingElectricity) {
-        pipeline.push({
-          $addFields: {
-            pendingElectricity: getPendingByCategoryDocument(
-              DueCategoryEnum.ELECTRICITY,
-            ),
-          },
-        });
-      } else if (request.sorter.pendingMembership) {
-        pipeline.push({
-          $addFields: {
-            pendingMembership: getPendingByCategoryDocument(
-              DueCategoryEnum.MEMBERSHIP,
-            ),
-          },
-        });
-      } else if (request.sorter.pendingGuest) {
-        pipeline.push({
-          $addFields: {
-            pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
-          },
-        });
-      } else if (request.sorter.pendingTotal || request.debtStatusFilter) {
-        pipeline.push(
+    //   if (request.sorter.pendingElectricity) {
+    //     pipeline.push({
+    //       $addFields: {
+    //         pendingElectricity: getPendingByCategoryDocument(
+    //           DueCategoryEnum.ELECTRICITY,
+    //         ),
+    //       },
+    //     });
+    //   } else if (request.sorter.pendingMembership) {
+    //     pipeline.push({
+    //       $addFields: {
+    //         pendingMembership: getPendingByCategoryDocument(
+    //           DueCategoryEnum.MEMBERSHIP,
+    //         ),
+    //       },
+    //     });
+    //   } else if (request.sorter.pendingGuest) {
+    //     pipeline.push({
+    //       $addFields: {
+    //         pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
+    //       },
+    //     });
+    //   } else if (request.sorter.pendingTotal || request.filterByDebtStatus) {
+    //     pipeline.push(
+    //       {
+    //         $addFields: {
+    //           pendingElectricity: getPendingByCategoryDocument(
+    //             DueCategoryEnum.ELECTRICITY,
+    //           ),
+    //           pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
+    //           pendingMembership: getPendingByCategoryDocument(
+    //             DueCategoryEnum.MEMBERSHIP,
+    //           ),
+    //         },
+    //       },
+    //       {
+    //         $addFields: {
+    //           pendingTotal: {
+    //             $add: [
+    //               '$pendingElectricity',
+    //               '$pendingGuest',
+    //               '$pendingMembership',
+    //             ],
+    //           },
+    //         },
+    //       },
+    //     );
+
+    //     if (request.filterByDebtStatus?.includes('true')) {
+    //       pipeline.push({
+    //         $match: {
+    //           $expr: {
+    //             $gt: ['$pendingTotal', 0],
+    //           },
+    //         },
+    //       });
+    //     } else if (request.filterByDebtStatus?.includes('false')) {
+    //       pipeline.push({
+    //         $match: {
+    //           $expr: {
+    //             $eq: ['$pendingTotal', 0],
+    //           },
+    //         },
+    //       });
+    //     }
+    //   }
+    // }
+
+    pipeline.push({
+      $lookup: {
+        as: 'dues',
+        foreignField: 'memberId',
+        from: 'dues',
+        localField: '_id',
+        pipeline: [
           {
-            $addFields: {
-              pendingElectricity: getPendingByCategoryDocument(
-                DueCategoryEnum.ELECTRICITY,
-              ),
-              pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
-              pendingMembership: getPendingByCategoryDocument(
-                DueCategoryEnum.MEMBERSHIP,
-              ),
-            },
-          },
-          {
-            $addFields: {
-              pendingTotal: {
-                $add: [
-                  '$pendingElectricity',
-                  '$pendingGuest',
-                  '$pendingMembership',
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$isDeleted', false] },
+                  { $eq: ['$status', DueStatusEnum.PENDING] },
                 ],
               },
             },
           },
-        );
-
-        if (request.debtStatusFilter?.includes('true')) {
-          pipeline.push({
-            $match: {
-              $expr: {
-                $gt: ['$pendingTotal', 0],
-              },
-            },
-          });
-        } else if (request.debtStatusFilter?.includes('false')) {
-          pipeline.push({
-            $match: {
-              $expr: {
-                $eq: ['$pendingTotal', 0],
-              },
-            },
-          });
-        }
-      }
-    }
-
-    const userLookUpAndSorter = [
-      {
-        $lookup: {
-          as: 'user',
-          foreignField: '_id',
-          from: 'users',
-          localField: 'userId',
-        },
+        ],
       },
-      { $unwind: '$user' },
-      this.getPaginatedSorterStage(request.sorter),
-    ];
+    });
 
-    if (type === 'export') {
-      pipeline.push(...userLookUpAndSorter);
+    pipeline.push({
+      $addFields: {
+        pendingElectricity: getPendingByCategoryDocument(
+          DueCategoryEnum.ELECTRICITY,
+        ),
+      },
+    });
 
-      return pipeline;
-    }
+    pipeline.push({
+      $addFields: {
+        pendingMembership: getPendingByCategoryDocument(
+          DueCategoryEnum.MEMBERSHIP,
+        ),
+      },
+    });
+
+    pipeline.push({
+      $addFields: {
+        pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
+      },
+    });
 
     pipeline.push(
       {
-        $facet: {
-          entities: [
-            ...userLookUpAndSorter,
-            ...this.getPaginatedStages(request.page, request.limit),
-          ],
-          totalCount: [{ $count: 'count' }],
+        $addFields: {
+          pendingElectricity: getPendingByCategoryDocument(
+            DueCategoryEnum.ELECTRICITY,
+          ),
+          pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
+          pendingMembership: getPendingByCategoryDocument(
+            DueCategoryEnum.MEMBERSHIP,
+          ),
         },
       },
       {
-        $project: {
-          entities: 1,
-          totalCount: MongoUtils.first('$totalCount.count', 0),
+        $addFields: {
+          pendingTotal: {
+            $add: [
+              '$pendingElectricity',
+              '$pendingGuest',
+              '$pendingMembership',
+            ],
+          },
         },
       },
     );
+
+    if (request.filterByDebtStatus?.includes('true')) {
+      pipeline.push({
+        $match: {
+          $expr: {
+            $gt: ['$pendingTotal', 0],
+          },
+        },
+      });
+    } else if (request.filterByDebtStatus?.includes('false')) {
+      pipeline.push({
+        $match: {
+          $expr: {
+            $eq: ['$pendingTotal', 0],
+          },
+        },
+      });
+    }
 
     return pipeline;
   }

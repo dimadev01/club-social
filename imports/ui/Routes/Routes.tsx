@@ -25,9 +25,9 @@ import { ProfessorsPage } from '@ui/pages/professors/ProfessorsPage';
 import { ServicesPage } from '@ui/pages/services/ServicesPage';
 import { UsersDetailPage } from '@ui/pages/users/UsersDetailPage';
 import { UsersPage } from '@ui/pages/users/UsersPage';
-import { AuthRoute } from '@ui/Routes/AuthRoute';
-import { PrivateRoute } from '@ui/Routes/PrivateRoute';
-import { PublicRoute } from '@ui/Routes/PublicRoute';
+import { AuthRoute } from '@ui/routes/AuthRoute';
+import { PrivateRoute } from '@ui/routes/PrivateRoute';
+import { PublicRoute } from '@ui/routes/PublicRoute';
 
 const router = createBrowserRouter([
   {

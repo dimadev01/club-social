@@ -1,15 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-
+import { AuditableEntity } from '@infra/mongo/entities/common/auditable.entity';
 import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
 
-export class MemberAuditEntity extends MemberEntity {
-  @IsNotEmpty()
-  @IsString()
-  public parentId: string;
-
-  public constructor(props: MemberAuditEntity) {
-    super(props);
-
-    this.parentId = props.parentId;
-  }
-}
+export class MemberAuditEntity extends AuditableEntity<MemberEntity> {}

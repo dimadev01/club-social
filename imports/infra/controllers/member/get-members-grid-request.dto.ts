@@ -23,26 +23,26 @@ export class GetMembersGridRequestDto
   @IsArray()
   @IsNullable()
   @IsDefined()
-  public categoryFilter!: MemberCategoryEnum[] | null;
+  public filterByCategory!: MemberCategoryEnum[] | null;
 
   @IsString({ each: true })
   @ArrayMinSize(1)
   @IsArray()
   @IsNullable()
   @IsDefined()
-  public debtStatusFilter!: string[] | null;
+  public filterByDebtStatus!: string[] | null;
 
   @IsString({ each: true })
   @ArrayMinSize(1)
   @IsArray()
   @IsNullable()
   @IsDefined()
-  public idFilter!: string[] | null;
+  public filterById!: string[] | null;
 
   @IsEnum(MemberStatusEnum, { each: true })
   @ArrayMinSize(1)
   @IsArray()
   @IsNullable()
   @IsDefined()
-  public statusFilter!: MemberStatusEnum[] | null;
+  public filterByStatus!: MemberStatusEnum[] | null;
 }

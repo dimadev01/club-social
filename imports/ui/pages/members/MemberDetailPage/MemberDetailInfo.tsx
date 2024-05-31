@@ -95,7 +95,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         addressZipCode: values.address.zipCode || null,
         category: values.category,
         dateOfBirth: values.dateOfBirth
-          ? DateUtils.format(values.dateOfBirth, DateFormatEnum.Date)
+          ? DateUtils.format(values.dateOfBirth, DateFormatEnum.DATE)
           : null,
         documentID: values.documentID || null,
         emails: compact(values.emails).length > 0 ? values.emails : null,
@@ -121,7 +121,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         addressZipCode: values.address.zipCode || null,
         category: values.category || null,
         dateOfBirth: values.dateOfBirth
-          ? DateUtils.format(values.dateOfBirth, DateFormatEnum.Date)
+          ? DateUtils.format(values.dateOfBirth, DateFormatEnum.DATE)
           : null,
         documentID: values.documentID || null,
         emails: compact(values.emails).length > 0 ? values.emails : null,

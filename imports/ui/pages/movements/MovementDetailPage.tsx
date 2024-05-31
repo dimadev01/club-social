@@ -15,7 +15,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import find from 'lodash/find';
 import { Roles } from 'meteor/alanning:roles';
 import React from 'react';
-import { NavLink, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import {
   CategoryEnum,
@@ -112,7 +112,7 @@ export const MovementDetailPage = () => {
         {
           amount: MoneyUtils.toCents(values.amount),
           category: values.category,
-          date: DateUtils.format(values.date, DateFormatEnum.Date),
+          date: DateUtils.format(values.date, DateFormatEnum.DATE),
           employeeId: values.employeeId ?? null,
           memberIds: values.memberIds ?? null,
           notes: values.notes,
@@ -132,7 +132,7 @@ export const MovementDetailPage = () => {
       await updateMovement.mutateAsync(
         {
           amount: MoneyUtils.toCents(values.amount),
-          date: DateUtils.format(values.date, DateFormatEnum.Date),
+          date: DateUtils.format(values.date, DateFormatEnum.DATE),
           employeeId: values.employeeId ?? null,
           id: movement._id,
           memberId: values.memberId ?? null,
@@ -335,7 +335,7 @@ export const MovementDetailPage = () => {
             title: 'Inicio',
           },
           {
-            title: <NavLink to={AppUrl.Movements}>Movimientos</NavLink>,
+            title: <Link to={AppUrl.Movements}>Movimientos</Link>,
           },
           {
             title: movement

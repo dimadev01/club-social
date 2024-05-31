@@ -10,7 +10,7 @@ import { IPaymentPort } from '@domain/payments/payment.port';
 import {
   PaymentCollection,
   PaymentSchema,
-} from '@infra/mongo/collections/payment.collection';
+} from '@infra/mongo/collections/payment.collection.old';
 import { MongoCollectionOld } from '@infra/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 import {

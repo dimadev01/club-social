@@ -1,4 +1,4 @@
-import { FindPaginatedResponse } from '@application/pagination/find-paginated.response';
+import { FindPaginatedResponseOld } from '@application/pagination/find-paginated.response';
 import { ICrudPort } from '@application/ports/crud.port';
 import { IPaginatedPort } from '@application/ports/paginated.port';
 import { MemberOld } from '@domain/members/models/member.old';
@@ -15,6 +15,6 @@ export interface IMemberPort
   findOneByUserIdOrThrow(userId: string): Promise<MemberOld>;
   findPaginated(
     request: FindPaginatedMembersRequest,
-  ): Promise<FindPaginatedResponse<FindPaginatedMemberOld>>;
+  ): Promise<FindPaginatedResponseOld<FindPaginatedMemberOld>>;
   getLoggedInOrThrow(): Promise<MemberOld>;
 }

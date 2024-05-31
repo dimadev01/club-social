@@ -1,17 +1,17 @@
 import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
+import { GetModelRequest } from '@domain/common/get-model.request';
 import { DIToken } from '@domain/common/tokens.di';
-import { IUseCase } from '@domain/common/use-case.interface';
+import { IEntityDtoUseCase } from '@domain/common/use-case.interface';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { IMemberRepository } from '@domain/members/member-repository.interface';
-import { GetMemberRequest } from '@domain/members/use-cases/get-member/get-member.request';
 import { GetMemberResponse } from '@domain/members/use-cases/get-member/get-member.response';
 import { IUserRepository } from '@domain/users/user-repository.interface';
 
 @injectable()
 export class GetMemberUseCase
-  implements IUseCase<GetMemberRequest, GetMemberResponse | null>
+  implements IEntityDtoUseCase<GetMemberResponse | null>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)
@@ -21,7 +21,7 @@ export class GetMemberUseCase
   ) {}
 
   public async execute(
-    request: GetMemberRequest,
+    request: GetModelRequest,
   ): Promise<Result<GetMemberResponse | null, Error>> {
     const member = await this._memberRepository.findOneById(request.id);
 
@@ -47,6 +47,7 @@ export class GetMemberUseCase
       firstName: member.user.firstName,
       lastName: member.user.lastName,
       maritalStatus: member.maritalStatus,
+      name: member.user.name,
       nationality: member.nationality,
       phones: member.phones,
       sex: member.sex,

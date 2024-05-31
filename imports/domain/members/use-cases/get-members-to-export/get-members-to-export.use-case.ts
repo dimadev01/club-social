@@ -8,7 +8,7 @@ import {
   GetMembersGridRequest,
   IMemberRepository,
 } from '@domain/members/member-repository.interface';
-import { GetMemberGridResponse } from '@domain/members/use-cases/get-member/get-member-grid.response';
+import { GetMemberGridResponse } from '@domain/members/use-cases/get-members-grid/get-member-grid.response';
 
 @injectable()
 export class GetMembersToExportUseCase

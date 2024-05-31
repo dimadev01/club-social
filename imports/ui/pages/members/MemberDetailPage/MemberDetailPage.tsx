@@ -1,6 +1,6 @@
 import { Breadcrumb, Skeleton } from 'antd';
 import React from 'react';
-import { NavLink, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
 import { NotFound } from '@ui/components/NotFound';
@@ -26,7 +26,7 @@ export const MembersDetailPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <NavLink to={AppUrl.Members}>Socios</NavLink> },
+          { title: <Link to={AppUrl.Members}>Socios</Link> },
           {
             title: member
               ? `${member.firstName} ${member.lastName}`

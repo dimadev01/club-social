@@ -1,7 +1,10 @@
 import type { Document } from 'mongodb';
 
 export abstract class MongoUtils {
-  public static first(path: string, defaultValue: string | number | boolean) {
+  public static first(
+    path: string,
+    defaultValue: string | number | boolean | undefined,
+  ) {
     return { $ifNull: [{ $first: path }, defaultValue] };
   }
 

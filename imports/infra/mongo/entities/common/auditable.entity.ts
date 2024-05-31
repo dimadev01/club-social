@@ -2,12 +2,12 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 import { Entity } from '@infra/mongo/entities/common/entity';
 
-export class AuditableEntity extends Entity {
+export abstract class AuditableEntity<TEntity extends Entity> extends Entity {
   @IsNotEmpty()
   @IsString()
   public parentId: string;
 
-  protected constructor(props: AuditableEntity) {
+  public constructor(props: AuditableEntity<TEntity>) {
     super(props);
 
     this.parentId = props.parentId;
