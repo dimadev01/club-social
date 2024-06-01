@@ -1,10 +1,10 @@
+import { GetMemberMovementsGridRequestDto } from '@application/members/use-cases/get-member-movements/get-member-movements-grid.request.dto';
+import { GetMemberMovementsGridResponseDto } from '@application/members/use-cases/get-member-movements/get-member-movements-grid.response.dto';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
-import { GetMemberMovementsGridRequestDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.request.dto';
-import { GetMemberMovementsGridResponseDto } from '@domain/members/use-cases/get-member-movements/get-member-movements-grid.response.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 
 export const useMemberMovementsGrid = (

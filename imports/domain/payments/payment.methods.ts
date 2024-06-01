@@ -2,6 +2,7 @@ import { injectable } from 'tsyringe';
 
 import { GetNextPaymentReceiptNumberUseCase } from './use-cases/get-next-payment-receipt-number/get-next-payment-receipt-number.use-case';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { GetPaidDuesRequestDto } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.request.dto';
 import { GetPaidDuesUseCase } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.use-case';
 import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
@@ -11,7 +12,6 @@ import { DeletePaymentUseCase } from '@domain/payments/use-cases/delete-payment/
 import { GetPaymentRequestDto } from '@domain/payments/use-cases/get-payment/get-payment-request.dto';
 import { GetPaymentUseCase } from '@domain/payments/use-cases/get-payment/get-payment.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class PaymentMethod extends MeteorMethod {

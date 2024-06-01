@@ -1,14 +1,14 @@
+import {
+  GridFilter,
+  GridSorter,
+} from '@infra/controllers/types/get-grid-request.dto';
 import { TablePaginationConfig } from 'antd';
 import { FilterValue, SorterResult } from 'antd/es/table/interface';
 import { isArray, isEmpty, isObject } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { DEFAULT_PAGE_SIZE } from '@domain/common/repositories/queryable-grid-repository.interface';
-import {
-  GridFilter,
-  GridSorter,
-} from '@infra/controllers/types/get-grid-request.dto';
+import { DEFAULT_PAGE_SIZE } from '@domain/common/repositories/grid.repository';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { GridState } from '@ui/components/Table/TableNew';
 import { useParsedQs } from '@ui/hooks/useParsedQs';

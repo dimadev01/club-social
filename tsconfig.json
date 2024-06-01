@@ -27,6 +27,7 @@
       "@domain/*": ["imports/domain/*"],
       "@ui/*": ["imports/ui/*"],
       "@infra/*": ["imports/infra/*"],
+      "@adapters/*": ["imports/adapters/*"],
       "@shared/*": ["imports/shared/*"],
       "@application/*": ["imports/application/*"]
     },

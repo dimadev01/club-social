@@ -1,10 +1,10 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 import SimpleSchema from 'simpl-schema';
 
+import { MongoCollectionOld } from '@adapters/mongo/common/mongo-collection.old';
 import { Movement } from '@domain/movements/entities/movement.entity';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 
-export const MovementCollection = new MongoCollection('movements', Movement);
+export const MovementCollection = new MongoCollectionOld('movements', Movement);
 
 export const MovementSchema = new SimpleSchema({
   _id: String,

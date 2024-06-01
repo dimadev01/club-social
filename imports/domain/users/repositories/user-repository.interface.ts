@@ -1,4 +1,4 @@
-import { ICrudRepository } from '@domain/common/repositories/crud-repository.interface';
+import { ICrudRepository } from '@domain/common/repositories/crud.repository';
 import { UserModel } from '@domain/users/models/user.model';
 
 export interface IUserRepository<TSession = unknown>

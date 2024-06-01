@@ -1,8 +1,8 @@
 import { injectable } from 'tsyringe';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { GetEmployeesUseCase } from '@domain/employees/use-cases/get-employees/get-employees.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class EmployeeMethod extends MeteorMethod {

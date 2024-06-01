@@ -1,8 +1,8 @@
 import { injectable } from 'tsyringe';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { GetProfessorsUseCase } from '@domain/professors/use-cases/get-professors/get-professors.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class ProfessorMethod extends MeteorMethod {

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { GetCategoriesResponseDto } from '@domain/categories/use-cases/get-categories/get-categories-response.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 export const useCategories = () =>
   useQuery<null, Error, GetCategoriesResponseDto[]>(

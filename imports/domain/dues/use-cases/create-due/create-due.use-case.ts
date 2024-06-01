@@ -2,7 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
@@ -15,7 +15,7 @@ import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 @injectable()
 export class CreateDueUseCase
   extends UseCase<CreateDueRequestDto>
-  implements IUseCase<CreateDueRequestDto, null>
+  implements IUseCaseOld<CreateDueRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)

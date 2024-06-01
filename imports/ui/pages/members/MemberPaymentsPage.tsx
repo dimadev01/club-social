@@ -1,3 +1,4 @@
+import { MemberPaymentGridDto } from '@application/members/use-cases/get-member-payments-grid/member-payment-grid.dto';
 import {
   Table as AntTable,
   Breadcrumb,
@@ -14,7 +15,6 @@ import React, { useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { MemberPaymentGridDto } from '@domain/members/use-cases/get-member-payments-grid/member-payment-grid.dto';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';

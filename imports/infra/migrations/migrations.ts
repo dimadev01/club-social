@@ -2,13 +2,13 @@
 import { Meteor } from 'meteor/meteor';
 import { container } from 'tsyringe';
 
+import { PaymentDueCollection } from '@adapters/mongo/collections/payment-due.collection';
+import { PaymentCollection } from '@adapters/mongo/collections/payment.collection';
 import { DueCollection } from '@domain/dues/due.collection';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
-import { PaymentDueCollection } from '@infra/mongo/collections/payment-due.collection';
-import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
 import { DateUtils } from '@shared/utils/date.utils';
 
 // interface MemberRow {

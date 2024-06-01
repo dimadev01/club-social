@@ -11,7 +11,7 @@ import {
 import { Meteor } from 'meteor/meteor';
 import { Result, err, ok } from 'neverthrow';
 
-import { Entity } from '@domain/common/entity.old';
+import { EntityOld } from '@domain/common/entity.old';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -21,54 +21,54 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { CreateMember } from '@domain/members/member.types';
-import { MemberAddress } from '@domain/members/models/member-address.entity';
+import { MemberAddressOld } from '@domain/members/models/member-address.old';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
-export class Member extends Entity {
+export class MemberOld extends EntityOld {
   @ValidateNested()
-  @Type(() => MemberAddress)
-  public address: MemberAddress;
+  @Type(() => MemberAddressOld)
+  public address!: MemberAddressOld;
 
   @IsEnum(MemberCategoryEnum)
-  public category: MemberCategoryEnum;
+  public category!: MemberCategoryEnum;
 
   @IsDate()
   @IsOptional()
-  public dateOfBirth: Date | null;
+  public dateOfBirth!: Date | null;
 
   @IsString()
   @IsOptional()
-  public documentID: string | null;
+  public documentID!: string | null;
 
   @IsEnum(MemberFileStatusEnum)
   @IsOptional()
-  public fileStatus: MemberFileStatusEnum | null;
+  public fileStatus!: MemberFileStatusEnum | null;
 
   @IsEnum(MemberMaritalStatusEnum)
   @IsOptional()
-  public maritalStatus: MemberMaritalStatusEnum | null;
+  public maritalStatus!: MemberMaritalStatusEnum | null;
 
   @IsEnum(MemberNationalityEnum)
   @IsOptional()
-  public nationality: MemberNationalityEnum | null;
+  public nationality!: MemberNationalityEnum | null;
 
   @IsString({ each: true })
   @ArrayMinSize(1)
   @IsArray()
   @IsOptional()
-  public phones: string[] | null;
+  public phones!: string[] | null;
 
   @IsEnum(MemberSexEnum)
   @IsOptional()
-  public sex: MemberSexEnum | null;
+  public sex!: MemberSexEnum | null;
 
   @IsEnum(MemberStatusEnum)
-  public status: MemberStatusEnum;
+  public status!: MemberStatusEnum;
 
-  public user: Meteor.User;
+  public user!: Meteor.User;
 
   @IsString()
-  public userId: string;
+  public userId!: string;
 
   public constructor() {
     super();
@@ -94,8 +94,8 @@ export class Member extends Entity {
     return `${this.lastName} ${this.firstName}`;
   }
 
-  public static create(props: CreateMember): Result<Member, Error> {
-    const member = new Member();
+  public static create(props: CreateMember): Result<MemberOld, Error> {
+    const member = new MemberOld();
 
     member.userId = props.userId;
 
@@ -132,7 +132,7 @@ export class Member extends Entity {
     return this.user.emails?.[0]?.address ?? null;
   }
 
-  public setAddress(address: MemberAddress): Result<null, Error> {
+  public setAddress(address: MemberAddressOld): Result<null, Error> {
     this.address = address;
 
     return ok(null);

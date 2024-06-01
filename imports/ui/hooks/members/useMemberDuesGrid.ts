@@ -1,10 +1,10 @@
+import { GetMemberDuesGridRequestDto } from '@application/members/use-cases/get-member-dues-grid/get-member-dues-grid.request.dto';
+import { GetMemberDuesGridResponseDto } from '@application/members/use-cases/get-member-dues-grid/get-member-dues-grid.response.dto';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
-import { GetMemberDuesGridRequestDto } from '@domain/members/use-cases/get-member-dues-grid/get-member-dues-grid.request.dto';
-import { GetMemberDuesGridResponseDto } from '@domain/members/use-cases/get-member-dues-grid/get-member-dues-grid.response.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 
 export const useMemberDuesGrid = (request: GetMemberDuesGridRequestDto) => {

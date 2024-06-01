@@ -2,7 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
 import { DIToken } from '@domain/common/tokens.di';
@@ -11,7 +11,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class UpdateCategoryUseCase
   extends UseCase<UpdateCategoryRequestDto>
-  implements IUseCase<UpdateCategoryRequestDto, null>
+  implements IUseCaseOld<UpdateCategoryRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)

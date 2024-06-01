@@ -1,4 +1,4 @@
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work.interface';
+import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { RoleEnum } from '@domain/roles/role.enum';
 
 export interface CreateUserRequest<TSession> {

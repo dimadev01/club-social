@@ -1,7 +1,7 @@
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
@@ -13,7 +13,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class GetPaidDuesUseCase
   extends UseCase<GetPaidDuesRequestDto>
-  implements IUseCase<GetPaidDuesRequestDto, GetPaidDuesResponseDto>
+  implements IUseCaseOld<GetPaidDuesRequestDto, GetPaidDuesResponseDto>
 {
   public constructor(
     @inject(DIToken.DueRepository)

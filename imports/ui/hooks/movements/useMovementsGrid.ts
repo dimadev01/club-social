@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 
 export const useMovementsGrid = (request: GetMovementsGridRequestDto) => {

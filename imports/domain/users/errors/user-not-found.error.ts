@@ -1,6 +1,6 @@
-import { BaseError } from '@application/errors/error.base';
+import { BaseErrorOld } from '@application/errors/error.base';
 
-export class UserNotFoundError extends BaseError {
+export class UserNotFoundError extends BaseErrorOld {
   public constructor() {
     super('Usuario no encontrado');
   }

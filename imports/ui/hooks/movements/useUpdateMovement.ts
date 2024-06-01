@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 export const useUpdateMovement = () =>
   useMutation<null, Error, UpdateMovementRequestDto>(

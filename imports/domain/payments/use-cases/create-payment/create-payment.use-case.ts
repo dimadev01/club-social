@@ -6,12 +6,12 @@ import { CreatePaymentResponseDto } from './create-payment-response.dto';
 import { ExistingPaymentError } from './errors/existing-payment.error';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
-import { Payment } from '@domain/payments/entities/payment.entity';
+import { PaymentOld } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
 import { DuePaidError } from '@domain/payments/use-cases/create-payment/errors/due-paid.error';
@@ -23,7 +23,7 @@ import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 @injectable()
 export class CreatePaymentUseCase
   extends UseCase<CreatePaymentRequestDto>
-  implements IUseCase<CreatePaymentRequestDto, CreatePaymentResponseDto>
+  implements IUseCaseOld<CreatePaymentRequestDto, CreatePaymentResponseDto>
 {
   public constructor(
     @inject(DIToken.Logger)
@@ -59,7 +59,7 @@ export class CreatePaymentUseCase
     const session = MongoUtilsOld.startSession();
 
     try {
-      let newPayment: Payment | undefined;
+      let newPayment: PaymentOld | undefined;
 
       await session.withTransaction(async () => {
         const dues = await this._duePort.findByIds(
@@ -72,7 +72,7 @@ export class CreatePaymentUseCase
           }
         });
 
-        const newPaymentResult = Payment.create({
+        const newPaymentResult = PaymentOld.create({
           date: request.date,
           memberId: request.memberId,
           notes: request.notes,

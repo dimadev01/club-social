@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 
 import { InternalServerError } from '@application/errors/internal-server.error';
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { RolePermissionAssignment } from '@domain/roles/roles';
@@ -16,7 +16,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class RemoveUserUseCase
   extends UseCase<RemoveUserRequestDto>
-  implements IUseCase<RemoveUserRequestDto, null>
+  implements IUseCaseOld<RemoveUserRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)

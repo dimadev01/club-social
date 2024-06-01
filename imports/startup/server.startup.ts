@@ -3,9 +3,9 @@ import '@infra/di/di-registration';
 import '@infra/meteor/common/meteor-publications';
 import '@domain/users/user.collection';
 import { Meteor } from 'meteor/meteor';
-import invariant from 'tiny-invariant';
 import { container, inject, singleton } from 'tsyringe';
 
+import { MemberController } from '@adapters/members/controllers/member.controller';
 import { ILogger } from '@application/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { DueMethod } from '@domain/dues/due.methods';
@@ -15,11 +15,9 @@ import { ProfessorMethod } from '@domain/professors/professor.methods';
 import { ServiceMethod } from '@domain/services/service.methods';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethod } from '@domain/users/user.methods';
-import { MemberController } from '@infra/controllers/member/member.controller';
 import { PaymentController } from '@infra/controllers/payment/payment.controller';
 import { CategoryMethod } from '@infra/meteor/category.methods';
 import { EmployeeMethod } from '@infra/meteor/employee.methods';
-import { MemberMethod } from '@infra/meteor/member.methods';
 import { MigrationService } from '@infra/migrations/migration.service';
 import { DateUtils } from '@shared/utils/date.utils';
 import { AppConstants } from '@ui/app.enum';
@@ -33,7 +31,6 @@ export class ServerStartup {
     private readonly _logger: ILogger,
     private readonly _migrationService: MigrationService,
     private readonly _userMethod: UserMethod,
-    private readonly _memberMethod: MemberMethod,
     private readonly _movementMethod: MovementMethod,
     private readonly _dueMethod: DueMethod,
     private readonly _categoryMethod: CategoryMethod,
@@ -91,20 +88,21 @@ export class ServerStartup {
     };
   }
 
-  private async _configureOnCreateUser() {
-    Accounts.onCreateUser((options, user) => {
-      invariant(options.profile);
+  // TODO: Remove
+  // private async _configureOnCreateUser() {
+  //   Accounts.onCreateUser((options, user) => {
+  //     invariant(options.profile);
 
-      const { firstName, lastName, role, state } =
-        options.profile as CreateUserProfile;
+  //     const { firstName, lastName, role, state } =
+  //       options.profile as CreateUserProfile;
 
-      return {
-        ...user,
-        profile: { firstName, lastName, role },
-        state,
-      };
-    });
-  }
+  //     return {
+  //       ...user,
+  //       profile: { firstName, lastName, role },
+  //       state,
+  //     };
+  //   });
+  // }
 
   private _configureValidateLoginAttempt() {
     Accounts.validateLoginAttempt(
@@ -134,8 +132,6 @@ export class ServerStartup {
 
   private async _registerMethods() {
     this._userMethod.register();
-
-    this._memberMethod.register();
 
     this._movementMethod.register();
 

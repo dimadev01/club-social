@@ -3,6 +3,7 @@ import { injectable } from 'tsyringe';
 import { UpdateUserThemeRequestDto } from './use-cases/update-user-theme/update-user-theme-request.dto';
 import { UpdateUserThemeUseCase } from './use-cases/update-user-theme/update-user-theme.use-case';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { GetUserRequestDto } from '@domain/users/use-cases/get-user/get-user-request.dto';
 import { GetUserUseCase } from '@domain/users/use-cases/get-user/get-user.use-case';
 import { GetUserByTokenRequestDto } from '@domain/users/use-cases/get-user-by-token/get-user-by-token-request.dto';
@@ -10,7 +11,6 @@ import { GetUserByTokenUseCase } from '@domain/users/use-cases/get-user-by-token
 import { GetUsersRequestDto } from '@domain/users/use-cases/get-users-grid/get-users-grid-request.dto';
 import { GetUsersUseCase } from '@domain/users/use-cases/get-users-grid/get-users-grid.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class UserMethod extends MeteorMethod {

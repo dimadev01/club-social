@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { GetUserRequestDto } from '@domain/users/use-cases/get-user/get-user-request.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 export const useUser = (id?: string) =>
   useQuery<GetUserRequestDto, Error, Meteor.User | undefined>(

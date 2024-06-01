@@ -1,5 +1,6 @@
 import { injectable } from 'tsyringe';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
 import { CreateMovementUseCase } from '@domain/movements/use-cases/create-movement/create-movement.use-case';
 import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
@@ -17,7 +18,6 @@ import { RestoreMovementUseCase } from '@domain/movements/use-cases/restore-move
 import { UpdateMovementRequestDto } from '@domain/movements/use-cases/update-movement/update-movement-request.dto';
 import { UpdateMovementUseCase } from '@domain/movements/use-cases/update-movement/update-movement.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class MovementMethod extends MeteorMethod {

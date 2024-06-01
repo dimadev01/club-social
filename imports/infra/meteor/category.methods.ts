@@ -1,5 +1,6 @@
 import { injectable } from 'tsyringe';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { GetCategoriesUseCase } from '@domain/categories/use-cases/get-categories/get-categories.use-case';
 import { GetCategoriesByTypeRequestDto } from '@domain/categories/use-cases/get-categories-by-type/get-categories-by-type-request.dto';
 import { GetCategoriesByTypeUseCase } from '@domain/categories/use-cases/get-categories-by-type/get-categories-by-type.use-case';
@@ -10,7 +11,6 @@ import { GetCategoryUseCase } from '@domain/categories/use-cases/get-category/ge
 import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
 import { UpdateCategoryUseCase } from '@domain/categories/use-cases/update-category/update-category.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class CategoryMethod extends MeteorMethod {

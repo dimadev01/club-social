@@ -3,9 +3,9 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import {
-  FindPaginatedRequestNewV,
-  FindPaginatedResponseNewV,
-} from '@domain/common/repositories/queryable-grid-repository.interface';
+  FindPaginatedRequest,
+  FindPaginatedResponse,
+} from '@domain/common/repositories/grid.repository';
 import { DIToken } from '@domain/common/tokens.di';
 import { IGridUseCase } from '@domain/common/use-case.interface';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
@@ -17,7 +17,7 @@ import {
 
 @injectable()
 export class GetPaymentsGridUseCase
-  implements IGridUseCase<FindPaginatedRequestNewV, PaymentGridModelDto>
+  implements IGridUseCase<FindPaginatedRequest, PaymentGridModelDto>
 {
   public constructor(
     @inject(DIToken.IPaymentRepository)
@@ -25,12 +25,12 @@ export class GetPaymentsGridUseCase
   ) {}
 
   public async execute(
-    request: FindPaginatedRequestNewV,
-  ): Promise<Result<FindPaginatedResponseNewV<PaymentGridModelDto>, Error>> {
+    request: FindPaginatedRequest,
+  ): Promise<Result<FindPaginatedResponse<PaymentGridModelDto>, Error>> {
     const { items, totalCount } =
       await this._paymentRepository.findPaginated(request);
 
-    return ok<FindPaginatedResponseNewV<PaymentGridModelDto>>({
+    return ok<FindPaginatedResponse<PaymentGridModelDto>>({
       items: items.map<PaymentGridModelDto>((item) => {
         invariant(item.member);
 
@@ -40,6 +40,7 @@ export class GetPaymentsGridUseCase
           _id: item._id,
           date: item.date.toISOString(),
           dues: item.dues.map<PaymentDueGridModelDto>((paymentDue) => ({
+            _id: paymentDue._id,
             amount: paymentDue.amount,
             dueAmount: 0,
             dueCategory: DueCategoryEnum.ELECTRICITY,

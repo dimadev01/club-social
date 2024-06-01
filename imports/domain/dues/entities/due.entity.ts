@@ -1,7 +1,7 @@
 import { IsDate, IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { Result, err, ok } from 'neverthrow';
 
-import { Entity } from '@domain/common/entity.old';
+import { EntityOld } from '@domain/common/entity.old';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { CreateDue, CreateDuePayment } from '@domain/dues/due.types';
@@ -9,7 +9,7 @@ import { IsNullable } from '@shared/class-validator/is-nullable';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { MoneyUtils } from '@shared/utils/money.utils';
 
-export class Due extends Entity {
+export class Due extends EntityOld {
   @IsInt()
   public amount: number;
 

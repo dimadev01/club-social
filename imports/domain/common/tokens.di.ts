@@ -9,7 +9,7 @@ export const DIToken = Object.freeze({
   IUnitOfWork: Symbol('IUnitOfWork'),
   IUserRepository: Symbol('IUserRepository'),
   Logger: Symbol('Logger'),
-  MemberRepositoryOld: Symbol('MemberRepositoryOld'),
+  MemberMongoCollection: Symbol('MemberMongoCollection'),
   MovementFindPaginatedRepository: Symbol('MovementFindPaginatedRepository'),
   MovementRepository: Symbol('MovementRepository'),
   PaymentDueRepository: Symbol('PaymentDueRepository'),

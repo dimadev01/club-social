@@ -1,5 +1,6 @@
 import { injectable } from 'tsyringe';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { CreateDueRequestDto } from '@domain/dues/use-cases/create-due/create-due-request.dto';
 import { CreateDueUseCase } from '@domain/dues/use-cases/create-due/create-due.use-case';
 import { DeleteDueRequestDto } from '@domain/dues/use-cases/delete-due/delete-due-request.dto';
@@ -15,7 +16,6 @@ import { GetPendingDuesByMemberUseCase } from '@domain/dues/use-cases/get-pendin
 import { RestoreDueRequestDto } from '@domain/dues/use-cases/restore-due/restore-due-request.dto';
 import { RestoreDueUseCase } from '@domain/dues/use-cases/restore-due/restore-due.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class DueMethod extends MeteorMethod {

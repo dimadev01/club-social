@@ -2,7 +2,8 @@ import { plainToInstance } from 'class-transformer';
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { FindPaginatedMovement } from '@adapters/repositories/movements/movement-repository.types';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import {
   CategoryEnum,
   MemberCategories,
@@ -13,13 +14,13 @@ import { IMovementPaginatedPort } from '@domain/movements/movement.port';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
-import { FindPaginatedMovement } from '@infra/mongo/repositories/movements/movement-repository.types';
 import { UseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetMovementsGridUseCase
   extends UseCase<GetMovementsGridRequestDto>
-  implements IUseCase<GetMovementsGridRequestDto, GetMovementsGridResponseDto>
+  implements
+    IUseCaseOld<GetMovementsGridRequestDto, GetMovementsGridResponseDto>
 {
   public constructor(
     @inject(DIToken.MovementFindPaginatedRepository)

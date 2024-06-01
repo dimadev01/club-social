@@ -5,6 +5,7 @@
       {
         "alias": {
           "@domain": "./imports/domain",
+          "@adapters": "./imports/adapters",
           "@application": "./imports/application",
           "@infra": "./imports/infra",
           "@shared": "./imports/shared",

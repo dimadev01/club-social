@@ -13,6 +13,7 @@ export interface PaymentGridModelDto {
 }
 
 export interface PaymentDueGridModelDto {
+  _id: string;
   amount: number;
   dueAmount: number;
   dueCategory: DueCategoryEnum;

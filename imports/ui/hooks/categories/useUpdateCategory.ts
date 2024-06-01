@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { UpdateCategoryRequestDto } from '@domain/categories/use-cases/update-category/update-category-request.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 export const useUpdateCategory = () =>
   useMutation<null, Error, UpdateCategoryRequestDto>(

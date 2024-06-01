@@ -1,6 +1,6 @@
 import { Result } from 'neverthrow';
 
-export interface IUseCase<TRequest, TResponse> {
+export interface IUseCaseOld<TRequest, TResponse> {
   execute(request?: TRequest): Promise<Result<TResponse, Error>>;
 }
 

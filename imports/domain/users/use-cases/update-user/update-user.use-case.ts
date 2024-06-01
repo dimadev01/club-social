@@ -7,8 +7,8 @@ import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { UserEmailModel } from '@domain/users/models/user-email.model';
 import { UserModel } from '@domain/users/models/user.model';
+import { IUserRepository } from '@domain/users/repositories/user-repository.interface';
 import { UpdateUserRequest } from '@domain/users/use-cases/update-user/update-user.request';
-import { IUserRepository } from '@domain/users/user-repository.interface';
 
 @injectable()
 export class UpdateUserNewUseCase<TSession>

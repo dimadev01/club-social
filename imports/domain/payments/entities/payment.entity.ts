@@ -8,32 +8,32 @@ import {
 } from 'class-validator';
 import { Result, err, ok } from 'neverthrow';
 
-import { Entity } from '@domain/common/entity.old';
+import { EntityOld } from '@domain/common/entity.old';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { CreatePayment } from '@domain/payments/payment.types';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 import { DateUtils } from '@shared/utils/date.utils';
 
-export class Payment extends Entity {
+export class PaymentOld extends EntityOld {
   @IsDate()
-  public date: Date;
+  public date!: Date;
 
   @IsNotEmpty()
   @IsString()
-  public memberId: string;
+  public memberId!: string;
 
   @IsNotEmpty()
   @IsString()
   @IsNullable()
-  public notes: string | null;
+  public notes!: string | null;
 
   @IsPositive()
   @IsNumber()
   @IsNullable()
-  public receiptNumber: number | null;
+  public receiptNumber!: number | null;
 
   @IsEnum(PaymentStatusEnum)
-  public status: PaymentStatusEnum;
+  public status!: PaymentStatusEnum;
 
   public constructor() {
     super();
@@ -43,8 +43,8 @@ export class Payment extends Entity {
     return DateUtils.formatUtc(this.date);
   }
 
-  public static create(props: CreatePayment): Result<Payment, Error> {
-    const payment = new Payment();
+  public static create(props: CreatePayment): Result<PaymentOld, Error> {
+    const payment = new PaymentOld();
 
     const updateResult = Result.combine([
       payment.setDate(DateUtils.utc(props.date).toDate()),

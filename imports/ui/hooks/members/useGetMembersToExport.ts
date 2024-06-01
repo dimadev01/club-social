@@ -1,6 +1,6 @@
-import { MemberGridModelDto } from '@domain/members/use-cases/get-members-grid/member-grid-model-dto';
-import { GetMembersGridRequestDto } from '@infra/controllers/member/get-members-grid-request.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { GetMembersGridRequestDto } from '@adapters/members/dtos/get-members-grid-request.dto';
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
+import { MemberGridModelDto } from '@application/members/use-cases/get-members-grid/member-grid-model-dto';
 import { useMutation } from '@ui/hooks/useMutation';
 
 export const useMembersToExport = () =>

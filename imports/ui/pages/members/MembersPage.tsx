@@ -4,6 +4,9 @@ import ButtonGroup from 'antd/es/button/button-group';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { GetMembersGridRequestDto } from '@adapters/members/dtos/get-members-grid-request.dto';
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
+import { MemberGridModelDto } from '@application/members/use-cases/get-members-grid/member-grid-model-dto';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   MemberCategoryEnum,
@@ -13,11 +16,8 @@ import {
   getMemberCategoryFilters,
   getMemberStatusFilters,
 } from '@domain/members/member.enum';
-import { FindPaginatedMembersResponse } from '@domain/members/repositories/find-paginated-members.interface';
-import { MemberGridModelDto } from '@domain/members/use-cases/get-members-grid/member-grid-model-dto';
+import { FindPaginatedMembersResponse } from '@domain/members/repositories/member-repository.types';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { GetMembersGridRequestDto } from '@infra/controllers/member/get-members-grid-request.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { SecurityUtils } from '@infra/security/security.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';

@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { GetPaidDuesRequestDto } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.request.dto';
 import { GetPaidDuesResponseDto } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.response.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 
 export const usePaidDues = (request: GetPaidDuesRequestDto) => {

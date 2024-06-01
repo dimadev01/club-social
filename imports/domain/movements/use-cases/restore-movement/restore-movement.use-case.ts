@@ -2,7 +2,7 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-movement/restore-movement-request.dto';
@@ -12,7 +12,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 @injectable()
 export class RestoreMovementUseCase
   extends UseCase<RestoreMovementRequestDto>
-  implements IUseCase<RestoreMovementRequestDto, null>
+  implements IUseCaseOld<RestoreMovementRequestDto, null>
 {
   public constructor(
     @inject(DIToken.Logger)

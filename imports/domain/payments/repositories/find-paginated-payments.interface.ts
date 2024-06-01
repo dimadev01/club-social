@@ -1,11 +1,11 @@
 import {
-  FindPaginatedRequestNewV,
-  FindPaginatedResponseNewV,
-} from '@domain/common/repositories/queryable-grid-repository.interface';
+  FindPaginatedRequest,
+  FindPaginatedResponse,
+} from '@domain/common/repositories/grid.repository';
 
-export interface FindPaginatedPaymentsRequest extends FindPaginatedRequestNewV {
+export interface FindPaginatedPaymentsRequest extends FindPaginatedRequest {
   filterByMember?: string[];
 }
 
 export type FindPaginatedPaymentsResponse<T = unknown> =
-  FindPaginatedResponseNewV<T>;
+  FindPaginatedResponse<T>;

@@ -1,3 +1,3 @@
-import { BaseError } from '@application/errors/error.base';
+import { BaseErrorOld } from '@application/errors/error.base';
 
-export class ExistingPaymentError extends BaseError {}
+export class ExistingPaymentError extends BaseErrorOld {}

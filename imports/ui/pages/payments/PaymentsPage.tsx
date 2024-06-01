@@ -3,7 +3,6 @@ import {
   Table as AntTable,
   Breadcrumb,
   Card,
-  Checkbox,
   DatePicker,
   Form,
   Space,
@@ -15,6 +14,7 @@ import { RangeValue } from 'rc-picker/lib/interface';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
@@ -22,7 +22,6 @@ import { FindPaginatedPaymentsResponse } from '@domain/payments/repositories/fin
 import { PaymentGridModelDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid-model-dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { GetPaymentsGridRequestDto } from '@infra/controllers/payment/get-payments-grid-request.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { SecurityUtils } from '@infra/security/security.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -38,11 +37,10 @@ import { useTable } from '@ui/hooks/useTable';
 
 export const PaymentsPage = () => {
   const { gridState, setGridState } = useTable<PaymentGridModelDto>({
-    // eslint-disable-next-line sort-keys-fix/sort-keys-fix
     defaultSorter: { date: 'descend' },
   });
 
-  const { data: members } = useMembers();
+  const { data: members } = useMembers({});
 
   const {
     data: payments,
@@ -83,7 +81,7 @@ export const PaymentsPage = () => {
 
   const expandedRowRender = (payment: PaymentGridModelDto) => (
     <AntTable
-      rowKey="dueId"
+      rowKey="_id"
       pagination={false}
       bordered
       columns={[
@@ -186,20 +184,6 @@ export const PaymentsPage = () => {
                   className="!min-w-[333px]"
                 />
               </Form.Item>
-
-              {SecurityUtils.isInRole(
-                PermissionEnum.VIEW_DELETED,
-                ScopeEnum.PAYMENTS,
-              ) && (
-                <Form.Item>
-                  <Checkbox
-                    checked={showDeleted}
-                    onChange={(e) => setShowDeleted(e.target.checked)}
-                  >
-                    Ver eliminados
-                  </Checkbox>
-                </Form.Item>
-              )}
             </Space>
           </Form>
 
@@ -227,12 +211,6 @@ export const PaymentsPage = () => {
                 width: 250,
               },
               {
-                align: 'right',
-                dataIndex: 'receiptNumber',
-                title: 'Recibo #',
-                width: 100,
-              },
-              {
                 dataIndex: 'memberId',
                 filterSearch: true,
                 filteredValue: gridState.filters?.memberId,
@@ -258,7 +236,12 @@ export const PaymentsPage = () => {
                 title: 'Total',
                 width: 150,
               },
-
+              {
+                align: 'right',
+                dataIndex: 'receiptNumber',
+                title: 'Recibo #',
+                width: 100,
+              },
               {
                 align: 'center',
                 render: (_, payment: PaymentGridModelDto) => (

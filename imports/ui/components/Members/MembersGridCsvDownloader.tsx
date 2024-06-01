@@ -1,9 +1,13 @@
 import { FileExcelOutlined } from '@ant-design/icons';
-import { GetMembersGridRequestDto } from '@infra/controllers/types/get-members-grid-request.dto';
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
+import { GetMembersGridRequestDto } from '@adapters/members/dtos/get-members-grid-request.dto';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import {
+  MemberCategoryLabel,
+  MemberStatusLabel,
+} from '@domain/members/member.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { Button } from '@ui/components/Button';
 import { useMembersToExport } from '@ui/hooks/members/useGetMembersToExport';
@@ -59,11 +63,14 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
         const data = await getMembersToExport.mutateAsync(request);
 
         return data.map((member) => ({
-          ...member,
+          _id: member._id,
+          category: MemberCategoryLabel[member.category],
+          name: member.name,
           pendingElectricity: new Money(member.pendingElectricity).toInteger(),
           pendingGuest: new Money(member.pendingGuest).toInteger(),
           pendingMembership: new Money(member.pendingMembership).toInteger(),
           pendingTotal: new Money(member.pendingTotal).toInteger(),
+          status: MemberStatusLabel[member.status],
         }));
       }}
     >

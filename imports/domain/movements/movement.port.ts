@@ -1,10 +1,10 @@
-import { ICrudPort } from '@application/ports/crud.port';
-import { IPaginatedPort } from '@application/ports/paginated.port';
-import { Movement } from '@domain/movements/entities/movement.entity';
 import {
   FindPaginatedMovementsRequest,
   FindPaginatedMovementsResponse,
-} from '@infra/mongo/repositories/movements/movement-repository.types';
+} from '@adapters/repositories/movements/movement-repository.types';
+import { ICrudPort } from '@application/ports/crud.port';
+import { IPaginatedPort } from '@application/ports/paginated.port';
+import { Movement } from '@domain/movements/entities/movement.entity';
 
 export interface IMovementPort extends ICrudPort<Movement> {
   findNextToMigrate(id: string): Promise<Movement | null>;

@@ -1,7 +1,6 @@
-import { MemberModelDto } from '@domain/members/use-cases/get-member/get-member.response';
-
-import { GetMembersRequestDto } from '@infra/controllers/member/get-members-request.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { GetMembersRequestDto } from '@adapters/members/dtos/get-members-request.dto';
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
+import { MemberModelDto } from '@application/members/dtos/member-model-dto';
 import { useQuery } from '@ui/hooks/useQuery';
 
 export const useMembers = (request: GetMembersRequestDto = {}) =>

@@ -1,7 +1,7 @@
 import { CreateUserRequestDto } from '@domain/users/use-cases/create-user/create-user-request.dto';
 import { useMutation } from '@tanstack/react-query';
 
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 
 export const useCreateUser = () =>
   useMutation<string, Error, CreateUserRequestDto>(

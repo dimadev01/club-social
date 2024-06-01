@@ -1,4 +1,4 @@
-import { BaseError } from '@application/errors/error.base';
+import { BaseError } from '@domain/common/errors/base.error';
 
 export class MemberNotFoundError extends BaseError {
   public constructor() {

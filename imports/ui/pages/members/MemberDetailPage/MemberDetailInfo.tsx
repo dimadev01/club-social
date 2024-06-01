@@ -1,4 +1,3 @@
-import { MemberModelDto } from '@domain/members/use-cases/get-member/get-member.response';
 import { App, Card, Col, DatePicker, Form, Input, Row, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import compact from 'lodash/compact';
@@ -7,6 +6,7 @@ import { Roles } from 'meteor/alanning:roles';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
+import { MemberModelDto } from '@application/members/dtos/member-model-dto';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -170,8 +170,8 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
             zipCode: member?.addressZipCode,
           },
           category: member?.category,
-          dateOfBirth: member?.dateOfBirth
-            ? DateUtils.utc(member.dateOfBirth)
+          dateOfBirth: member?.birthDate
+            ? dayjs.utc(member.birthDate)
             : undefined,
           documentID: member?.documentID,
           emails:

@@ -1,6 +1,6 @@
 import { useQuery as uq } from '@tanstack/react-query';
 
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { MeteorError } from '@infra/meteor/errors/meteor-error';
 
 interface UseQueryProps<TRequest> {
@@ -17,6 +17,6 @@ export function useQuery<TRequest, TResponse>({
   return uq<TRequest, MeteorError, TResponse>(
     [methodName, request],
     () => Meteor.callAsync(methodName, request),
-    { keepPreviousData },
+    { enabled: !!request, keepPreviousData },
   );
 }

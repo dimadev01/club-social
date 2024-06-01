@@ -1,3 +1,4 @@
+import { MemberDueGridDto } from '@application/members/use-cases/get-member-dues-grid/member-due-grid.dto';
 import {
   Card,
   DatePicker,
@@ -23,7 +24,6 @@ import {
   getDueCategoryOptions,
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
-import { MemberDueGridDto } from '@domain/members/use-cases/get-member-dues-grid/member-due-grid.dto';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { Table } from '@ui/components/Table/Table';
 import { useMemberDuesGrid } from '@ui/hooks/members/useMemberDuesGrid';

@@ -2,7 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { EntityNotFoundError } from '@application/errors/entity-not-found.error';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { ICategoryPort } from '@domain/categories/category.port';
 import { Category } from '@domain/categories/entities/category.entity';
 import { GetCategoryRequestDto } from '@domain/categories/use-cases/get-category/get-category-request.dto';
@@ -14,7 +14,7 @@ import { UseCase } from '@infra/use-cases/use-case';
 export class GetCategoryUseCase
   extends UseCase
   implements
-    IUseCase<GetCategoryRequestDto, GetCategoryResponseDto | undefined>
+    IUseCaseOld<GetCategoryRequestDto, GetCategoryResponseDto | undefined>
 {
   public constructor(
     @inject(DIToken.CategoryRepository)

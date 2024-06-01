@@ -1,11 +1,11 @@
 import SimpleSchema from 'simpl-schema';
 
+import { MongoCollectionOld } from '@adapters/mongo/common/mongo-collection.old';
+import { EntitySchema } from '@adapters/mongo/schemas/entity.schema';
+import { SchemaBuilder } from '@adapters/mongo/schemas/schema-builder';
 import { Due } from '@domain/dues/entities/due.entity';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
-import { EntitySchema } from '@infra/mongo/schemas/entity.schema';
-import { SchemaBuilder } from '@infra/mongo/schemas/schema-builder';
 
-export const DueCollection = new MongoCollection('dues', Due);
+export const DueCollection = new MongoCollectionOld('dues', Due);
 
 export const DueSchema = new SimpleSchema({
   amount: SimpleSchema.Integer,

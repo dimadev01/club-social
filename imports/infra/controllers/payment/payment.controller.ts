@@ -1,11 +1,11 @@
 import { inject, injectable } from 'tsyringe';
 
+import { BaseController } from '@adapters/common/controllers/base.controller';
+import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { ILogger } from '@application/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { GetPaymentsGridUseCase } from '@domain/payments/use-cases/get-payments-grid/get-payments-grid.use-case';
-import { BaseController } from '@infra/controllers/base.controller';
 import { GetPaymentsGridRequestDto } from '@infra/controllers/payment/get-payments-grid-request.dto';
-import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()
 export class PaymentController extends BaseController {
