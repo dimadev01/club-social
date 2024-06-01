@@ -12,7 +12,6 @@ export class PaymentController extends BaseController {
   public constructor(
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
-    @inject(GetPaymentsGridUseCase)
     private readonly _getPaymentsGridUseCase: GetPaymentsGridUseCase,
   ) {
     super(logger);

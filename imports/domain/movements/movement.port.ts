@@ -6,9 +6,7 @@ import { ICrudPort } from '@application/ports/crud.port';
 import { IPaginatedPort } from '@application/ports/paginated.port';
 import { Movement } from '@domain/movements/entities/movement.entity';
 
-export interface IMovementPort extends ICrudPort<Movement> {
-  findNextToMigrate(id: string): Promise<Movement | null>;
-}
+export type IMovementPort = ICrudPort<Movement>;
 
 export interface IMovementPaginatedPort extends IPaginatedPort<Movement> {
   findPaginated(

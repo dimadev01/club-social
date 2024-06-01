@@ -15,9 +15,10 @@ import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { MemberModel } from '@domain/members/models/member.model';
 import {
   FindMembersRequest,
+  FindMembersToExportRequest,
   FindPaginatedMembersRequest,
   FindPaginatedMembersResponse,
-  MemberBalance,
+  GetBalanceResponse,
 } from '@domain/members/repositories/member-repository.types';
 import { IMemberRepository } from '@domain/members/repositories/member.repository';
 
@@ -155,7 +156,7 @@ export class MemberMongoRepository
   }
 
   public async findToExport(
-    request: FindPaginatedMembersRequest,
+    request: FindMembersToExportRequest,
   ): Promise<MemberModel[]> {
     const pipeline = this._getPipelineToExportOrGrid(request);
 
@@ -180,7 +181,7 @@ export class MemberMongoRepository
     return entities.map((entity) => this.mapper.toModel(entity));
   }
 
-  public async getBalances(memberIds: string[]): Promise<MemberBalance[]> {
+  public async getBalances(memberIds: string[]): Promise<GetBalanceResponse[]> {
     function getGroupByCategoryDocument(category: DueCategoryEnum): Document {
       return {
         $sum: {
@@ -255,7 +256,7 @@ export class MemberMongoRepository
 
     return this.collection
       .rawCollection()
-      .aggregate<MemberBalance>(pipeline)
+      .aggregate<GetBalanceResponse>(pipeline)
       .toArray();
   }
 

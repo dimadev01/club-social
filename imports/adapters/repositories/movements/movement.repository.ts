@@ -24,23 +24,6 @@ export class MovementRepository
     super(_logger);
   }
 
-  public async findNextToMigrate(id: string): Promise<Movement | null> {
-    const movement = await this.findOneByIdOrThrow(id);
-
-    const query: Mongo.Selector<Movement> = {
-      _id: { $ne: id },
-      category: movement.category,
-      date: { $gte: movement.date },
-      isDeleted: false,
-    };
-
-    return (
-      (await this.getCollection().findOneAsync(query, {
-        sort: { date: 1 },
-      })) ?? null
-    );
-  }
-
   protected getCollection(): MongoCollectionOld<Movement> {
     return MovementCollection;
   }

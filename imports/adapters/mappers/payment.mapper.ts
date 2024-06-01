@@ -1,4 +1,4 @@
-import { inject, singleton } from 'tsyringe';
+import { singleton } from 'tsyringe';
 
 import { Mapper } from '@adapters/common/mappers/mapper';
 import { PaymentDueMapper } from '@adapters/mappers/payment-due.mapper';
@@ -10,9 +10,7 @@ import { PaymentModel } from '@domain/payments/models/payment.model';
 @singleton()
 export class PaymentMapper extends Mapper<PaymentModel, PaymentEntity> {
   public constructor(
-    @inject(MemberMapper)
     private readonly _memberMapper: MemberMapper,
-    @inject(PaymentDueMapper)
     private readonly _paymentDueMapper: PaymentDueMapper,
   ) {
     super();

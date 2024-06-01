@@ -12,7 +12,7 @@ export interface FindMembersRequest {
   status?: MemberStatusEnum[];
 }
 
-export interface MemberBalance {
+export interface GetBalanceResponse {
   _id: string;
   electricity: number;
   guest: number;
@@ -41,3 +41,8 @@ export interface FindPaginatedMembersResponse<T = unknown>
   extends FindPaginatedResponse<T> {
   totals: Totals;
 }
+
+/**
+ * FindMembersToExport
+ */
+export type FindMembersToExportRequest = FindPaginatedMembersRequest;

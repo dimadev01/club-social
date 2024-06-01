@@ -3,9 +3,10 @@ import { IGridRepository } from '@domain/common/repositories/grid.repository';
 import { MemberModel } from '@domain/members/models/member.model';
 import {
   FindMembersRequest,
+  FindMembersToExportRequest,
   FindPaginatedMembersRequest,
   FindPaginatedMembersResponse,
-  MemberBalance,
+  GetBalanceResponse,
 } from '@domain/members/repositories/member-repository.types';
 
 export interface IMemberRepository<TSession = unknown>
@@ -17,6 +18,6 @@ export interface IMemberRepository<TSession = unknown>
     > {
   find(request: FindMembersRequest): Promise<MemberModel[]>;
   findByDocument(documentID: string): Promise<MemberModel | null>;
-  findToExport(request: FindPaginatedMembersRequest): Promise<MemberModel[]>;
-  getBalances(memberIds: string[]): Promise<MemberBalance[]>;
+  findToExport(request: FindMembersToExportRequest): Promise<MemberModel[]>;
+  getBalances(memberIds: string[]): Promise<GetBalanceResponse[]>;
 }

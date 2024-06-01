@@ -1,4 +1,4 @@
-import { inject, singleton } from 'tsyringe';
+import { singleton } from 'tsyringe';
 
 import { Mapper } from '@adapters/common/mappers/mapper';
 import { UserMapper } from '@adapters/mappers/user.mapper';
@@ -10,10 +10,7 @@ import { MemberModel } from '@domain/members/models/member.model';
 
 @singleton()
 export class MemberMapper extends Mapper<MemberModel, MemberEntity> {
-  public constructor(
-    @inject(UserMapper)
-    private readonly _userMapper: UserMapper,
-  ) {
+  public constructor(private readonly _userMapper: UserMapper) {
     super();
   }
 

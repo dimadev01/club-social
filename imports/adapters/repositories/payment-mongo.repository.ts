@@ -24,11 +24,8 @@ export class PaymentMongoRepository
   implements IPaymentRepository
 {
   public constructor(
-    @inject(PaymentCollection)
     protected readonly collection: PaymentCollection,
-    @inject(PaymentAuditableCollection)
     protected readonly auditableCollection: PaymentAuditableCollection,
-    @inject(PaymentMapper)
     protected readonly mapper: PaymentMapper,
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
