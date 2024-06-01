@@ -14,7 +14,7 @@ import {
 } from 'antd';
 import { Rule } from 'antd/es/form';
 import { useWatch } from 'antd/es/form/Form';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import React from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 
@@ -288,7 +288,6 @@ export const DueDetailPage = () => {
                     : DateFormatEnum.DDMMYYYY
                 }
                 className="w-full"
-                disabledDate={(current) => current.isAfter(dayjs())}
               />
             </Form.Item>
 
