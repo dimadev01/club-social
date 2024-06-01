@@ -16,10 +16,10 @@ import { IMemberRepository } from '@domain/members/repositories/member-repositor
 import { MemberMapper } from '@infra/mappers/member.mapper';
 import { MemberAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
 import { MemberCollectionNewV } from '@infra/mongo/collections/member.collection';
-import { MemberAuditEntity } from '@infra/mongo/entities/members/member-audit.entity';
-import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
+import { MemberAuditEntity } from '@infra/mongo/entities/member-audit.entity';
+import { MemberEntity } from '@infra/mongo/entities/member.entity';
 import { MongoUtils } from '@infra/mongo/mongo.utils';
-import { CrudMongoAuditableRepository } from '@infra/mongo/repositories/common/crud-mongo-auditable.repository';
+import { CrudMongoAuditableRepository } from '@infra/mongo/repositories/crud-mongo-auditable.repository';
 
 @injectable()
 export class MemberMongoRepository

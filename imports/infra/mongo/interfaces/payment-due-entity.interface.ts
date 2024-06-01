@@ -1,4 +1,4 @@
-import { IEntity } from '@infra/mongo/entities/common/entity.interface';
+import { IEntity } from '@infra/mongo/interfaces/entity.interface';
 
 export interface IPaymentDueEntity extends IEntity {
   amount: number;

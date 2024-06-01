@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-import { IMemberAddressEntity } from '@infra/mongo/entities/members/member-entity.interface';
+import { IMemberAddressEntity } from '@infra/mongo/interfaces/member-entity.interface';
 
 export class MemberAddressEntityNewV implements IMemberAddressEntity {
   @IsString()

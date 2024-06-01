@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { EntityNewV } from '@infra/mongo/entities/common/entity';
+import { EntityNewV } from '@infra/mongo/entities/entity';
 
 export abstract class AuditableEntity<
   TEntity extends EntityNewV,

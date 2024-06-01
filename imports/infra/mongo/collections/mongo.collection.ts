@@ -1,6 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 
-import { EntityNewV } from '@infra/mongo/entities/common/entity';
+import { EntityNewV } from '@infra/mongo/entities/entity';
 
 export class MongoCollectionNewV<
   T extends EntityNewV,

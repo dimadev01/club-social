@@ -19,8 +19,8 @@ import {
 import { Mapper } from '@infra/mappers/mapper';
 import { MongoCollectionNewV } from '@infra/mongo/collections/mongo.collection';
 import { PaginatedAggregationResult } from '@infra/mongo/common/paginated-aggregation.interface';
-import { EntityNewV } from '@infra/mongo/entities/common/entity';
-import { UserEntity } from '@infra/mongo/entities/users/user.entity';
+import { EntityNewV } from '@infra/mongo/entities/entity';
+import { UserEntity } from '@infra/mongo/entities/user.entity';
 import { ClassValidationError } from '@infra/mongo/errors/class-validation.error';
 import { MongoUtils } from '@infra/mongo/mongo.utils';
 

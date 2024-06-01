@@ -7,9 +7,9 @@ import {
 } from 'class-validator';
 
 import { Due } from '@domain/dues/entities/due.entity';
-import { EntityNewV } from '@infra/mongo/entities/common/entity';
-import { IPaymentDueEntity } from '@infra/mongo/entities/payment-due/payment-due-entity.interface';
-import { IPaymentEntity } from '@infra/mongo/entities/payments/payment-entity.interface';
+import { EntityNewV } from '@infra/mongo/entities/entity';
+import { IPaymentDueEntity } from '@infra/mongo/interfaces/payment-due-entity.interface';
+import { IPaymentEntity } from '@infra/mongo/interfaces/payment-entity.interface';
 
 export class PaymentDueEntity extends EntityNewV implements IPaymentDueEntity {
   @IsInt()

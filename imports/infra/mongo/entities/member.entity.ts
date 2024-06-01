@@ -19,9 +19,9 @@ import {
   MemberSexEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
-import { EntityNewV } from '@infra/mongo/entities/common/entity';
-import { MemberAddressEntityNewV } from '@infra/mongo/entities/members/member-address.entity';
-import { IMemberEntity } from '@infra/mongo/entities/members/member-entity.interface';
+import { EntityNewV } from '@infra/mongo/entities/entity';
+import { MemberAddressEntityNewV } from '@infra/mongo/entities/member-address.entity';
+import { IMemberEntity } from '@infra/mongo/interfaces/member-entity.interface';
 import { IUserEntity } from '@infra/mongo/interfaces/user-entity.interface';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 

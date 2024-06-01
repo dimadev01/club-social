@@ -7,8 +7,8 @@ import {
   MemberSexEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
-import { IEntity } from '@infra/mongo/entities/common/entity.interface';
-import { UserEntity } from '@infra/mongo/entities/users/user.entity';
+import { UserEntity } from '@infra/mongo/entities/user.entity';
+import { IEntity } from '@infra/mongo/interfaces/entity.interface';
 
 export interface IMemberEntity extends IEntity {
   address: IMemberAddressEntity;

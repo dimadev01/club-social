@@ -4,9 +4,9 @@ import { Mapper } from './mapper';
 
 import { UserEmailModel } from '@domain/users/models/user-email.model';
 import { UserModel } from '@domain/users/models/user.model';
-import { UserEmailEntity } from '@infra/mongo/entities/users/user-email.entity';
-import { UserProfileEntity } from '@infra/mongo/entities/users/user-profile.entity';
-import { UserEntity } from '@infra/mongo/entities/users/user.entity';
+import { UserEmailEntity } from '@infra/mongo/entities/user-email.entity';
+import { UserProfileEntity } from '@infra/mongo/entities/user-profile.entity';
+import { UserEntity } from '@infra/mongo/entities/user.entity';
 
 @singleton()
 export class UserMapper extends Mapper<UserModel, UserEntity> {

@@ -5,7 +5,7 @@ import { PaymentModel } from '@domain/payments/models/payment.model';
 import { Mapper } from '@infra/mappers/mapper';
 import { MemberMapper } from '@infra/mappers/member.mapper';
 import { PaymentDueMapper } from '@infra/mappers/payment-due.mapper';
-import { PaymentEntity } from '@infra/mongo/entities/payments/payment.entity';
+import { PaymentEntity } from '@infra/mongo/entities/payment.entity';
 
 @singleton()
 export class PaymentMapper extends Mapper<PaymentModel, PaymentEntity> {

@@ -5,8 +5,8 @@ import { MemberAddressModel } from '@domain/members/models/member-address.model'
 import { MemberModel } from '@domain/members/models/member.model';
 import { Mapper } from '@infra/mappers/mapper';
 import { UserMapper } from '@infra/mappers/user.mapper';
-import { MemberAddressEntityNewV } from '@infra/mongo/entities/members/member-address.entity';
-import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
+import { MemberAddressEntityNewV } from '@infra/mongo/entities/member-address.entity';
+import { MemberEntity } from '@infra/mongo/entities/member.entity';
 
 @singleton()
 export class MemberMapper extends Mapper<MemberModel, MemberEntity> {

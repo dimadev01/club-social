@@ -4,17 +4,17 @@ import { DIToken } from '@domain/common/tokens.di';
 import { EmailService } from '@infra/email/email.service';
 import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 import { CategoryRepository } from '@infra/mongo/repositories/categories/category.repository';
-import { MongoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-work';
 import { DueRepository } from '@infra/mongo/repositories/dues/due.repository';
-import { MemberMongoRepository } from '@infra/mongo/repositories/members/member-mongo.repository';
+import { MemberMongoRepository } from '@infra/mongo/repositories/member-mongo.repository';
 import { MemberRepositoryOld } from '@infra/mongo/repositories/members/member.repository.old';
+import { MongoUnitOfWork } from '@infra/mongo/repositories/mongo.unit-of-work';
 import { MovementFindPaginatedRepository } from '@infra/mongo/repositories/movements/movement-find-paginated.repository';
 import { MovementRepository } from '@infra/mongo/repositories/movements/movement.repository';
-import { PaymentDueMongoRepository } from '@infra/mongo/repositories/payment-due/payment-due-mongo.repository';
 import { PaymentDueRepository } from '@infra/mongo/repositories/payment-due/payment-due.repository';
-import { PaymentMongoRepository } from '@infra/mongo/repositories/payments/payment-mongo.repository';
+import { PaymentDueMongoRepository } from '@infra/mongo/repositories/payment-due-mongo.repository';
+import { PaymentMongoRepository } from '@infra/mongo/repositories/payment-mongo.repository';
 import { PaymentRepository } from '@infra/mongo/repositories/payments/payment.repository';
-import { UserMongoRepository } from '@infra/mongo/repositories/users/user-mongo.repository';
+import { UserMongoRepository } from '@infra/mongo/repositories/user-mongo.repository';
 
 container.register(DIToken.Logger, {
   useFactory: instanceCachingFactory((c) => c.resolve(LoggerOstrio)),

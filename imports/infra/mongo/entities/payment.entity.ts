@@ -8,10 +8,10 @@ import {
 } from 'class-validator';
 
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
-import { EntityNewV } from '@infra/mongo/entities/common/entity';
-import { IMemberEntity } from '@infra/mongo/entities/members/member-entity.interface';
-import { PaymentDueEntity } from '@infra/mongo/entities/payment-due/payment-due.entity';
-import { IPaymentEntity } from '@infra/mongo/entities/payments/payment-entity.interface';
+import { EntityNewV } from '@infra/mongo/entities/entity';
+import { PaymentDueEntity } from '@infra/mongo/entities/payment-due.entity';
+import { IMemberEntity } from '@infra/mongo/interfaces/member-entity.interface';
+import { IPaymentEntity } from '@infra/mongo/interfaces/payment-entity.interface';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
 export class PaymentEntity extends EntityNewV implements IPaymentEntity {

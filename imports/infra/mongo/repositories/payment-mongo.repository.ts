@@ -10,9 +10,9 @@ import { IPaymentRepository } from '@domain/payments/repositories/payment-reposi
 import { PaymentMapper } from '@infra/mappers/payment.mapper';
 import { PaymentAuditableCollection } from '@infra/mongo/collections/payment-auditable.collection';
 import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
-import { PaymentAuditEntity } from '@infra/mongo/entities/payments/payment-audit.entity';
-import { PaymentEntity } from '@infra/mongo/entities/payments/payment.entity';
-import { CrudMongoAuditableRepository } from '@infra/mongo/repositories/common/crud-mongo-auditable.repository';
+import { PaymentAuditEntity } from '@infra/mongo/entities/payment-audit.entity';
+import { PaymentEntity } from '@infra/mongo/entities/payment.entity';
+import { CrudMongoAuditableRepository } from '@infra/mongo/repositories/crud-mongo-auditable.repository';
 
 @injectable()
 export class PaymentMongoRepository

@@ -10,11 +10,11 @@ import { GetMembersGridUseCase } from '@domain/members/use-cases/get-members-gri
 import { GetMembersToExportUseCase } from '@domain/members/use-cases/get-members-to-export/get-members-to-export.use-case';
 import { UpdateMemberNewUseCase } from '@domain/members/use-cases/update-member/update-member.use-case';
 import { BaseController } from '@infra/controllers/base.controller';
+import { GetModelRequestDto } from '@infra/controllers/common/get-model-request.dto';
 import { CreateMemberRequestDto } from '@infra/controllers/member/create-member-request.dto';
 import { GetMembersGridRequestDto } from '@infra/controllers/member/get-members-grid-request.dto';
 import { GetMembersRequestDto } from '@infra/controllers/member/get-members-request.dto';
 import { UpdateMemberRequestDto } from '@infra/controllers/member/update-member-request.dto';
-import { GetModelRequestDto } from '@infra/controllers/types/get-model-request.dto';
 import { MeteorMethodEnum } from '@infra/meteor/common/meteor-methods.enum';
 
 @injectable()

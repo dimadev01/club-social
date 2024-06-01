@@ -7,7 +7,7 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { PaginatedAggregationResult } from '@infra/mongo/common/paginated-aggregation.interface';
-import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
+import { MemberEntity } from '@infra/mongo/entities/member.entity';
 
 interface Totals {
   electricity: number;

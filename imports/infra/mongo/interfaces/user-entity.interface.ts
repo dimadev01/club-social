@@ -1,6 +1,6 @@
 import { RoleEnum } from '@domain/roles/role.enum';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
-import { IEntity } from '@infra/mongo/entities/common/entity.interface';
+import { IEntity } from '@infra/mongo/interfaces/entity.interface';
 
 export interface IUserEntity extends IEntity {
   emails: IUserEmailEntity[] | null;

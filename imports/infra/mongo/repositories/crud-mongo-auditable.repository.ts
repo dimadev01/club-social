@@ -6,9 +6,9 @@ import { ILogger } from '@application/logger/logger.interface';
 import { Model } from '@domain/common/models/model';
 import { Mapper } from '@infra/mappers/mapper';
 import { MongoCollectionNewV } from '@infra/mongo/collections/mongo.collection';
-import { AuditableEntity } from '@infra/mongo/entities/common/auditable.entity';
-import { EntityNewV } from '@infra/mongo/entities/common/entity';
-import { CrudMongoRepository } from '@infra/mongo/repositories/common/crud-mongo.repository';
+import { AuditableEntity } from '@infra/mongo/entities/auditable.entity';
+import { EntityNewV } from '@infra/mongo/entities/entity';
+import { CrudMongoRepository } from '@infra/mongo/repositories/crud-mongo.repository';
 
 export abstract class CrudMongoAuditableRepository<
   TModel extends Model,

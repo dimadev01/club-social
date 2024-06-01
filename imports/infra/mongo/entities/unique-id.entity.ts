@@ -1,13 +1,13 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { IUniqueIdEntity } from '@infra/mongo/entities/common/unique-id-entity.interface';
+import { IUniqueIdEntity } from '@infra/mongo/interfaces/unique-id-entity.interface';
 
 export class UniqueIDEntityNewV implements IUniqueIdEntity {
   @IsNotEmpty()
   @IsString()
   public _id: string;
 
-  protected constructor(props: IUniqueIdEntity) {
+  protected constructor(props: UniqueIDEntityNewV) {
     this._id = props._id;
   }
 }
