@@ -25,7 +25,6 @@
     "baseUrl": ".",
     "paths": {
       "@domain/*": ["imports/domain/*"],
-      "@ui/*": ["imports/ui/*"],
       "@infra/*": ["imports/infra/*"],
       "@adapters/*": ["imports/adapters/*"],
       "@shared/*": ["imports/shared/*"],
@@ -43,6 +42,8 @@
     ".meteor/**/*.ts",
     "imports/**/*.ts",
     "imports/**/*.tsx",
+    "client/**/*.tsx",
+    "server/**/*.ts",
     "types/*.d.ts"
   ]
 }

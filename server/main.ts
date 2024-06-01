@@ -1,1 +1,1 @@
-import '../imports/startup/server.startup';
+import '../imports/infra/meteor/main';
