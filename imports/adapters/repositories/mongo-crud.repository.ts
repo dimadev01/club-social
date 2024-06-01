@@ -7,15 +7,14 @@ import type {
   MatchKeysAndValues,
   OptionalUnlessRequiredId,
 } from 'mongodb';
-import SimpleSchema from 'simpl-schema';
 import invariant from 'tiny-invariant';
 
 import { MongoCollection } from '@adapters/mongo/collections/mongo.collection';
-import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedRequestOld } from '@application/pagination/find-paginated.request';
 import { ICrudPort } from '@application/ports/crud.port';
-import { MongoOptionsOld } from '@application/use-cases/use-case.interface';
+import { MongoOptionsOld } from '@application/use-cases-old/use-case.interface';
 import { EntityOld } from '@domain/common/entity.old';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 export abstract class MongoCrudRepositoryOld<T extends EntityOld>
@@ -30,12 +29,6 @@ export abstract class MongoCrudRepositoryOld<T extends EntityOld>
   public async create(entity: Mongo.OptionalId<T>): Promise<string> {
     try {
       entity.create(await this._getLoggedInUserName());
-
-      this.getSchema().validate(
-        this.getSchema().clean(
-          entity as Record<string | number | symbol, unknown>,
-        ),
-      );
 
       const errors = await validate(entity);
 
@@ -57,12 +50,6 @@ export abstract class MongoCrudRepositoryOld<T extends EntityOld>
   ): Promise<string> {
     try {
       entity.create(await this._getLoggedInUserName());
-
-      this.getSchema().validate(
-        this.getSchema().clean(
-          entity as Record<string | number | symbol, unknown>,
-        ),
-      );
 
       const result = await this._collection
         .rawCollection()
@@ -184,12 +171,6 @@ export abstract class MongoCrudRepositoryOld<T extends EntityOld>
     try {
       entity.update(await this._getLoggedInUserName());
 
-      this.getSchema().validate(
-        this.getSchema().clean(
-          entity as Record<string | number | symbol, unknown>,
-        ),
-      );
-
       await this._collection
         .rawCollection()
         .updateOne(
@@ -271,7 +252,6 @@ export abstract class MongoCrudRepositoryOld<T extends EntityOld>
   }
 
   protected abstract getCollection(): MongoCollection<T>;
-  protected abstract getSchema(): SimpleSchema;
 
   private async _getLoggedInUserName(): Promise<string> {
     try {

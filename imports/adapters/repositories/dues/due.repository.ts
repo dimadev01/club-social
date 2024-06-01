@@ -1,6 +1,5 @@
 import { plainToInstance } from 'class-transformer';
 import { Mongo } from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 
 import { MongoCollectionOld } from '@adapters/mongo/common/mongo-collection.old';
@@ -13,9 +12,9 @@ import {
   FindPendingByMemberRequest,
 } from '@adapters/repositories/dues/due-repository.types';
 import { MongoCrudRepositoryOld } from '@adapters/repositories/mongo-crud.repository';
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
-import { DueCollection, DueSchema } from '@domain/dues/due.collection';
+import { DueCollection } from '@domain/dues/due.collection';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
@@ -183,9 +182,5 @@ export class DueRepository
 
   protected getCollection(): MongoCollectionOld<Due> {
     return DueCollection;
-  }
-
-  protected getSchema(): SimpleSchema {
-    return DueSchema;
   }
 }

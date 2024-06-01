@@ -15,72 +15,57 @@ import {
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
 import { EntityOld } from '@domain/common/entity.old';
-import { Employee } from '@domain/employees/employee.entity';
 import { MemberOld } from '@domain/members/models/member.old';
 import { CreateMovement } from '@domain/movements/movement.types';
-import { Professor } from '@domain/professors/professor.entity';
-import { Service } from '@domain/services/service.entity';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { MoneyUtils } from '@shared/utils/money.utils';
 
 export class Movement extends EntityOld {
   @IsInt()
-  public amount: number;
+  public amount!: number;
 
   @IsEnum(CategoryEnum)
-  public category: CategoryEnum;
+  public category!: CategoryEnum;
 
   @IsDate()
-  public date: Date;
-
-  @IsOptional()
-  @Type(() => Employee)
-  public employee: Employee | null;
+  public date!: Date;
 
   @IsString()
   @IsOptional()
-  public employeeId: string | null;
+  public employeeId!: string | null;
 
   @IsOptional()
   @Type(() => MemberOld)
-  public member: MemberOld | null;
+  public member!: MemberOld | null;
 
   @IsString()
   @IsOptional()
-  public memberId: string | null;
+  public memberId!: string | null;
 
   @IsString()
   @IsOptional()
-  public notes: string | null;
-
-  @IsOptional()
-  @Type(() => Professor)
-  public professor: Professor | null;
+  public notes!: string | null;
 
   @IsString()
   @IsOptional()
-  public professorId: string | null;
-
-  @IsOptional()
-  @Type(() => Service)
-  public service: Service | null;
+  public professorId!: string | null;
 
   @IsString()
   @IsOptional()
-  public serviceId: string | null;
+  public serviceId!: string | null;
 
   @IsEnum(CategoryTypeEnum)
-  public type: CategoryTypeEnum;
+  public type!: CategoryTypeEnum;
 
   @IsBoolean()
   @IsOptional()
-  public isMigrated: boolean | null;
+  public isMigrated!: boolean | null;
 
   @IsNotEmpty()
   @IsString()
   @IsNullable()
-  public paymentId: string | null;
+  public paymentId!: string | null;
 
   public constructor() {
     super();

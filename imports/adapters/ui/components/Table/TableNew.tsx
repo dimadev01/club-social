@@ -1,7 +1,3 @@
-import {
-  GridFilter,
-  GridSorter,
-} from '@infra/controllers/types/get-grid-request.dto';
 import { Table as AntTable, TableProps } from 'antd';
 import {
   FilterValue,
@@ -9,6 +5,11 @@ import {
   TablePaginationConfig,
 } from 'antd/es/table/interface';
 import React from 'react';
+
+import {
+  GridFilter,
+  GridSorter,
+} from '@adapters/common/dtos/get-grid-request.dto';
 
 export interface TableState<T> {
   filters: Record<string, FilterValue | null>;
@@ -33,7 +34,7 @@ export interface GridState {
   sorter: GridSorter;
 }
 
-export function TableNewV<T extends object>({
+export function Grid<T extends object>({
   rowKey = '_id',
   state,
   setGridState,

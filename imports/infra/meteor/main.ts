@@ -1,24 +1,19 @@
 import 'reflect-metadata';
 import '@infra/di/di.container';
 import '@infra/meteor/common/meteor-publications';
-import '@domain/users/user.collection';
 import { Meteor } from 'meteor/meteor';
 import { container, inject, singleton } from 'tsyringe';
 
 import { MemberController } from '@adapters/members/controllers/member.controller';
 import { AppConstants } from '@adapters/ui/app.enum';
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { DueMethod } from '@domain/dues/due.methods';
 import { MovementMethod } from '@domain/movements/movement.methods';
 import { PaymentMethod } from '@domain/payments/payment.methods';
-import { ProfessorMethod } from '@domain/professors/professor.methods';
-import { ServiceMethod } from '@domain/services/service.methods';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethod } from '@domain/users/user.methods';
 import { PaymentController } from '@infra/controllers/payment/payment.controller';
-import { CategoryMethod } from '@infra/meteor/category.methods';
-import { EmployeeMethod } from '@infra/meteor/employee.methods';
 import { MigrationService } from '@infra/migrations/migration.service';
 import { DateUtils } from '@shared/utils/date.utils';
 
@@ -33,10 +28,6 @@ export class ServerStartup {
     private readonly _userMethod: UserMethod,
     private readonly _movementMethod: MovementMethod,
     private readonly _dueMethod: DueMethod,
-    private readonly _categoryMethod: CategoryMethod,
-    private readonly _professorMethod: ProfessorMethod,
-    private readonly _employeeMethod: EmployeeMethod,
-    private readonly _serviceMethod: ServiceMethod,
     private readonly _paymentMethod: PaymentMethod,
     private readonly _memberController: MemberController,
     private readonly _paymentController: PaymentController,
@@ -134,14 +125,6 @@ export class ServerStartup {
     this._userMethod.register();
 
     this._movementMethod.register();
-
-    this._categoryMethod.register();
-
-    this._professorMethod.register();
-
-    this._employeeMethod.register();
-
-    this._serviceMethod.register();
 
     this._dueMethod.register();
 

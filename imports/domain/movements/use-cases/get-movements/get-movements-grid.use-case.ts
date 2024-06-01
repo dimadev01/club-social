@@ -3,7 +3,7 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { FindPaginatedMovement } from '@adapters/repositories/movements/movement-repository.types';
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import {
   CategoryEnum,
   MemberCategories,

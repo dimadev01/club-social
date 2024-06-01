@@ -1,7 +1,5 @@
 import { injectable } from 'tsyringe';
 
-import { GetNextPaymentReceiptNumberUseCase } from './use-cases/get-next-payment-receipt-number/get-next-payment-receipt-number.use-case';
-
 import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { GetPaidDuesRequestDto } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.request.dto';
 import { GetPaidDuesUseCase } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.use-case';
@@ -20,7 +18,6 @@ export class PaymentMethod extends MeteorMethod {
     private readonly _getPayment: GetPaymentUseCase,
     private readonly _createPayment: CreatePaymentUseCase,
     private readonly _deletePayment: DeletePaymentUseCase,
-    private readonly _getNextPaymentReceiptNumber: GetNextPaymentReceiptNumberUseCase,
   ) {
     super();
   }
@@ -38,9 +35,6 @@ export class PaymentMethod extends MeteorMethod {
 
       [MeteorMethodEnum.PaymentsDelete]: (request: DeletePaymentRequestDto) =>
         this.execute(this._deletePayment, request, DeletePaymentRequestDto),
-
-      [MeteorMethodEnum.PaymentsGetNextReceiptNumber]: () =>
-        this.execute(this._getNextPaymentReceiptNumber),
     });
   }
 }

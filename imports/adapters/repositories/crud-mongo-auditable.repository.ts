@@ -7,7 +7,7 @@ import { Entity } from '@adapters/common/entities/entity';
 import { Mapper } from '@adapters/common/mappers/mapper';
 import { MongoCollection } from '@adapters/mongo/collections/mongo.collection';
 import { CrudMongoRepository } from '@adapters/repositories/crud-mongo.repository';
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { Model } from '@domain/common/models/model';
 
 export abstract class CrudMongoAuditableRepository<

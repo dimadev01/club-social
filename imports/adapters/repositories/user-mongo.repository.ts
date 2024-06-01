@@ -4,10 +4,10 @@ import { inject, injectable } from 'tsyringe';
 import { UserMapper } from '@adapters/mappers/user.mapper';
 import { UserEntity } from '@adapters/mongo/entities/user.entity';
 import { CrudMongoRepository } from '@adapters/repositories/crud-mongo.repository';
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { UserModel } from '@domain/users/models/user.model';
-import { IUserRepository } from '@domain/users/repositories/user-repository.interface';
+import { IUserRepository } from '@domain/users/repositories/user.repository';
 
 @injectable()
 export class UserMongoRepository

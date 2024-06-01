@@ -15,7 +15,7 @@ import { PaginatedAggregationResult } from '@adapters/mongo/common/paginated-agg
 import { UserEntity } from '@adapters/mongo/entities/user.entity';
 import { MongoUtils } from '@adapters/mongo/mongo.utils';
 import { InternalServerError } from '@application/errors/internal-server.error';
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { Model } from '@domain/common/models/model';
 import { ICrudRepository } from '@domain/common/repositories/crud.repository';
 import {
@@ -23,6 +23,10 @@ import {
   FindPaginatedResponse,
   PaginatedSorter,
 } from '@domain/common/repositories/grid.repository';
+import {
+  FindByIdsModelRequest,
+  FindOneByIdModelRequest,
+} from '@domain/common/repositories/queryable.repository';
 
 export abstract class CrudMongoRepository<
   TModel extends Model,
@@ -50,11 +54,11 @@ export abstract class CrudMongoRepository<
     return this.updateWithSession(model, session);
   }
 
-  public async findByIds(ids: string[]): Promise<TModel[]> {
+  public async findByIds(request: FindByIdsModelRequest): Promise<TModel[]> {
     try {
       const entities = await this._collection
         // @ts-expect-error
-        .find({ _id: { $in: ids } })
+        .find({ _id: { $in: request.ids } })
         .fetchAsync();
 
       return entities.map((entity) => this._mapper.toModel(entity));
@@ -63,8 +67,10 @@ export abstract class CrudMongoRepository<
     }
   }
 
-  public async findOneById(id: string): Promise<TModel | null> {
-    const entity = await this._collection.findOneAsync(id);
+  public async findOneById(
+    request: FindOneByIdModelRequest,
+  ): Promise<TModel | null> {
+    const entity = await this._collection.findOneAsync(request.id);
 
     if (!entity) {
       return null;
@@ -73,11 +79,13 @@ export abstract class CrudMongoRepository<
     return this._mapper.toModel(entity);
   }
 
-  public async findOneByIdOrThrow(id: string): Promise<TModel> {
-    const model = await this.findOneById(id);
+  public async findOneByIdOrThrow(
+    request: FindOneByIdModelRequest,
+  ): Promise<TModel> {
+    const model = await this.findOneById(request);
 
     if (!model) {
-      throw new InternalServerError(`Entity with id ${id} not found`);
+      throw new InternalServerError(`Entity with id ${request.id} not found`);
     }
 
     return model;

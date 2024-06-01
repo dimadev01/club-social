@@ -23,7 +23,7 @@ interface Props<T> extends TableProps<T> {
   total: number;
 }
 
-export function Table<T extends object>({
+export function TableOld<T extends object>({
   rowKey = '_id',
   gridState,
   onStateChange,

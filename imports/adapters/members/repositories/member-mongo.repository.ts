@@ -5,11 +5,10 @@ import { MemberAuditEntity } from '@adapters/members/entities/member-audit.entit
 import { MemberEntity } from '@adapters/members/entities/member.entity';
 import { MemberMapper } from '@adapters/members/mappers/member.mapper';
 import { FindPaginatedMembersAggregationResult } from '@adapters/members/repositories/member-mongo-repository.types';
-import { MemberAuditableCollection } from '@adapters/mongo/collections/member-auditable.collection';
 import { MongoCollection } from '@adapters/mongo/collections/mongo.collection';
 import { MongoUtils } from '@adapters/mongo/mongo.utils';
 import { CrudMongoAuditableRepository } from '@adapters/repositories/crud-mongo-auditable.repository';
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { MemberModel } from '@domain/members/models/member.model';
@@ -32,12 +31,13 @@ export class MemberMongoRepository
   implements IMemberRepository
 {
   public constructor(
-    @inject(DIToken.MemberMongoCollection)
-    protected readonly collection: MongoCollection<MemberEntity>,
-    protected readonly auditableCollection: MemberAuditableCollection,
-    protected readonly mapper: MemberMapper,
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
+    @inject(DIToken.MemberMongoCollection)
+    protected readonly collection: MongoCollection<MemberEntity>,
+    @inject(DIToken.MemberAuditableMongoCollection)
+    protected readonly auditableCollection: MongoCollection<MemberAuditEntity>,
+    protected readonly mapper: MemberMapper,
   ) {
     super(collection, mapper, logger, auditableCollection);
   }

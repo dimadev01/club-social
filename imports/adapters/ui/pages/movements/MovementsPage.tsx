@@ -1,8 +1,4 @@
-import {
-  DeleteOutlined,
-  FilterOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   Table as AntTable,
   Breadcrumb,
@@ -24,11 +20,9 @@ import { Link, Navigate, useLocation } from 'react-router-dom';
 
 import { AppUrl } from '@adapters/ui/app.enum';
 import { Button } from '@adapters/ui/components/Button';
-import { MembersSelect } from '@adapters/ui/components/Members/MembersSelect';
-import { Table } from '@adapters/ui/components/Table/Table';
+import { TableOld } from '@adapters/ui/components/Table/Table';
 import { TableNewButton } from '@adapters/ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@adapters/ui/components/Table/TableReloadButton';
-import { useCategories } from '@adapters/ui/hooks/categories/useCategories';
 import { useDeleteMovement } from '@adapters/ui/hooks/movements/useDeleteMovement';
 import { useMovementsGrid } from '@adapters/ui/hooks/movements/useMovementsGrid';
 import { useRestoreMovement } from '@adapters/ui/hooks/movements/useRestoreMovement';
@@ -54,10 +48,6 @@ export const MovementsPage = () => {
     sortOrder: 'descend',
   });
 
-  const [memberIdsFilter, setMemberIdsFilter] = useState<string[]>(
-    (parsedQs.memberIds as string[]) ?? [],
-  );
-
   const [showDeleted, setShowDeleted] = useState<boolean>(false);
 
   const [dateFilter, setDateFilter] = useState<RangeValue<Dayjs> | null>(
@@ -71,7 +61,7 @@ export const MovementsPage = () => {
     from: dateFilter
       ? dateFilter[0]?.format(DateFormatEnum.DATE) ?? null
       : null,
-    memberIds: memberIdsFilter ?? [],
+    memberIds: [],
     page: gridState.page,
     pageSize: gridState.pageSize,
     search: gridState.search,
@@ -84,8 +74,6 @@ export const MovementsPage = () => {
   const deleteMovement = useDeleteMovement(refetch);
 
   const restoreMovement = useRestoreMovement(refetch);
-
-  const { data: categories } = useCategories();
 
   const user = Meteor.user();
 
@@ -172,19 +160,6 @@ export const MovementsPage = () => {
                 />
               </Form.Item>
 
-              <Form.Item>
-                <MembersSelect
-                  value={memberIdsFilter}
-                  mode="multiple"
-                  onChange={(value) => {
-                    setMemberIdsFilter(value ?? null);
-
-                    setGridState((prevState) => ({ ...prevState, page: 1 }));
-                  }}
-                  className="!min-w-[333px]"
-                />
-              </Form.Item>
-
               {Roles.userIsInRole(
                 userId,
                 PermissionEnum.VIEW_DELETED,
@@ -202,10 +177,10 @@ export const MovementsPage = () => {
             </Space>
           </Form>
 
-          <Table<MovementGridDto>
+          <TableOld<MovementGridDto>
             total={data?.count ?? 0}
             gridState={gridState}
-            onChange={setGridState}
+            onStateChange={setGridState}
             loading={isLoading}
             dataSource={data?.data}
             columns={[
@@ -224,12 +199,6 @@ export const MovementsPage = () => {
               {
                 align: 'center',
                 dataIndex: 'category',
-                filteredValue: gridState.filters?.category ?? [],
-                filters:
-                  categories?.map((category) => ({
-                    text: category.name,
-                    value: category.code,
-                  })) ?? [],
                 render: (category: CategoryEnum) => CategoryLabel[category],
                 title: 'Categoría',
               },
@@ -321,24 +290,6 @@ export const MovementsPage = () => {
                           }
                         />
                       )}
-
-                    <Button
-                      type="text"
-                      disabled={!movement.memberId}
-                      onClick={() => {
-                        if (movement.memberId) {
-                          setMemberIdsFilter([movement.memberId]);
-
-                          setGridState((prevState) => ({
-                            ...prevState,
-                            page: 1,
-                          }));
-                        }
-                      }}
-                      htmlType="button"
-                      tooltip={{ title: 'Filtrar por este socio' }}
-                      icon={<FilterOutlined />}
-                    />
                   </ButtonGroup>
                 ),
                 title: 'Acciones',

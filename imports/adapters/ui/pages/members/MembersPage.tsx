@@ -9,14 +9,14 @@ import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
 import { AppUrl } from '@adapters/ui/app.enum';
 import { Button } from '@adapters/ui/components/Button';
 import { MembersGridCsvDownloaderButton } from '@adapters/ui/components/Members/MembersGridCsvDownloader';
-import { TableNewV } from '@adapters/ui/components/Table/TableNew';
+import { Grid } from '@adapters/ui/components/Table/TableNew';
 import { TableNewButton } from '@adapters/ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@adapters/ui/components/Table/TableReloadButton';
 import { useMembers } from '@adapters/ui/hooks/members/useMembers';
 import { useNavigate } from '@adapters/ui/hooks/useNavigate';
 import { useQueryGrid } from '@adapters/ui/hooks/useQueryGrid';
 import { useTable } from '@adapters/ui/hooks/useTable';
-import { MemberGridModelDto } from '@application/members/dtos/member-grid-model-dto';
+import { MemberGridModelDto } from '@application/members/dtos/member-grid-model.dto';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   MemberCategoryEnum,
@@ -130,7 +130,7 @@ export const MembersPage = () => {
           </Space.Compact>
         }
       >
-        <TableNewV<MemberGridModelDto>
+        <Grid<MemberGridModelDto>
           total={data?.totalCount}
           state={gridState}
           setGridState={setGridState}

@@ -1,7 +1,7 @@
 import './migrations';
 import { inject, injectable } from 'tsyringe';
 
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 
 @injectable()

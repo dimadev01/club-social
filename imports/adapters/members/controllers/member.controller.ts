@@ -8,13 +8,13 @@ import { GetMembersGridRequestDto } from '@adapters/members/dtos/get-members-gri
 import { GetMembersRequestDto } from '@adapters/members/dtos/get-members-request.dto';
 import { UpdateMemberRequestDto } from '@adapters/members/dtos/update-member-request.dto';
 import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
-import { ILogger } from '@application/logger/logger.interface';
-import { CreateMemberUseCase } from '@application/members/use-cases/create-member/create-member.use-case';
-import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
-import { GetMembersUseCase } from '@application/members/use-cases/get-members/get-members.use-case';
-import { GetMembersGridUseCase } from '@application/members/use-cases/get-members-grid/get-members-grid.use-case';
-import { GetMembersToExportUseCase } from '@application/members/use-cases/get-members-to-export/get-members-to-export.use-case';
-import { UpdateMemberNewUseCase } from '@application/members/use-cases/update-member/update-member.use-case';
+import { CreateMemberUseCase } from '@application/members/use-cases/create-member.use-case';
+import { GetMemberUseCase } from '@application/members/use-cases/get-member.use.case';
+import { GetMembersGridUseCase } from '@application/members/use-cases/get-members-grid.use-case';
+import { GetMembersToExportUseCase } from '@application/members/use-cases/get-members-to-export.use-case';
+import { GetMembersUseCase } from '@application/members/use-cases/get-members.use-case';
+import { UpdateMemberUseCase } from '@application/members/use-cases/update-member.use-case';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 
 @injectable()
@@ -27,7 +27,7 @@ export class MemberController extends BaseController {
     private readonly _get: GetMembersUseCase,
     private readonly _getGrid: GetMembersGridUseCase,
     private readonly _getToExport: GetMembersToExportUseCase,
-    private readonly _update: UpdateMemberNewUseCase<ClientSession>,
+    private readonly _update: UpdateMemberUseCase<ClientSession>,
   ) {
     super(logger);
   }

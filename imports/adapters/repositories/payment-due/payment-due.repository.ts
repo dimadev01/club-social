@@ -7,7 +7,7 @@ import {
 } from '@adapters/mongo/collections/payment-due.collection.old';
 import { MongoCollectionOld } from '@adapters/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@adapters/repositories/mongo-crud.repository';
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';

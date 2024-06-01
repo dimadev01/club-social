@@ -1,7 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { IUseCaseOld } from '@application/use-cases/use-case.interface';
+import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { PaymentNotFoundError } from '@domain/payments/errors/payment-not-found.error';
 import { IPaymentPort } from '@domain/payments/payment.port';

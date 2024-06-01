@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 
 import { MongoCollectionOld } from '@adapters/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@adapters/repositories/mongo-crud.repository';
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import {

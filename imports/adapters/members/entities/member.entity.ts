@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 
 import { Entity } from '@adapters/common/entities/entity';
-import { MemberAddressEntityNewV } from '@adapters/members/entities/member-address.entity';
+import { MemberAddressEntity } from '@adapters/members/entities/member-address.entity';
 import { IMemberEntity } from '@adapters/members/entities/member-entity.interface';
 import { UserEntity } from '@adapters/mongo/entities/user.entity';
 import {
@@ -26,8 +26,8 @@ import { IsNullable } from '@shared/class-validator/is-nullable';
 
 export class MemberEntity extends Entity implements IMemberEntity {
   @ValidateNested()
-  @Type(() => MemberAddressEntityNewV)
-  public address: MemberAddressEntityNewV;
+  @Type(() => MemberAddressEntity)
+  public address: MemberAddressEntity;
 
   @IsEnum(MemberCategoryEnum)
   public category: MemberCategoryEnum;

@@ -9,11 +9,11 @@ import {
   FindPaginatedMovementsRequest,
   FindPaginatedMovementsResponse,
 } from '@adapters/repositories/movements/movement-repository.types';
-import { ILogger } from '@application/logger/logger.interface';
 import {
   CategoryEnum,
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import {

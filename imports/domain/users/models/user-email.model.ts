@@ -3,7 +3,7 @@ import { Result, err, ok } from 'neverthrow';
 import {
   CreateUserEmail,
   IUserEmailModel,
-} from '@domain/users/models/user-email-model.interface';
+} from '@domain/users/models/user-model.interface';
 
 export class UserEmailModel implements IUserEmailModel {
   private _address: string;

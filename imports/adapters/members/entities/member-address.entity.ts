@@ -2,7 +2,7 @@ import { IsOptional, IsString } from 'class-validator';
 
 import { IMemberAddressEntity } from '@adapters/members/entities/member-entity.interface';
 
-export class MemberAddressEntityNewV implements IMemberAddressEntity {
+export class MemberAddressEntity implements IMemberAddressEntity {
   @IsString()
   @IsOptional()
   public cityName: string | null;

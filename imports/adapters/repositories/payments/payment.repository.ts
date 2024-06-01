@@ -1,12 +1,8 @@
 import { plainToInstance } from 'class-transformer';
 import { Mongo } from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
 import { inject, injectable } from 'tsyringe';
 
-import {
-  PaymentCollectionOld,
-  PaymentSchema,
-} from '@adapters/mongo/collections/payment.collection.old';
+import { PaymentCollectionOld } from '@adapters/mongo/collections/payment.collection.old';
 import { MongoCollectionOld } from '@adapters/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@adapters/repositories/mongo-crud.repository';
 import {
@@ -15,7 +11,7 @@ import {
   FindPaginatedPaymentsRequest,
   FindPaginatedPaymentsResponse,
 } from '@adapters/repositories/payments/payment-repository.types';
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { PaymentOld } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
@@ -123,9 +119,5 @@ export class PaymentRepository
 
   protected getCollection(): MongoCollectionOld<PaymentOld> {
     return PaymentCollectionOld;
-  }
-
-  protected getSchema(): SimpleSchema {
-    return PaymentSchema;
   }
 }

@@ -16,7 +16,7 @@ import { useUpdateMember } from '@adapters/ui/hooks/members/useUpdateMemberNew';
 import { useCities } from '@adapters/ui/hooks/useCities';
 import { useNavigate } from '@adapters/ui/hooks/useNavigate';
 import { useStates } from '@adapters/ui/hooks/useStates';
-import { MemberModelDto } from '@application/members/dtos/member-model-dto';
+import { MemberModelDto } from '@application/members/dtos/member-model.dto';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,

@@ -9,39 +9,25 @@ import {
   InputNumber,
   Skeleton,
 } from 'antd';
-import ButtonGroup from 'antd/es/button/button-group';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
-import find from 'lodash/find';
-import { Roles } from 'meteor/alanning:roles';
 import React from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { AppUrl } from '@adapters/ui/app.enum';
-import { Button } from '@adapters/ui/components/Button';
 import { FormButtons } from '@adapters/ui/components/Form/FormButtons';
 import { NotFound } from '@adapters/ui/components/NotFound';
 import { Select } from '@adapters/ui/components/Select';
-import { useCategoriesByType } from '@adapters/ui/hooks/categories/useCategoriesByType';
-import { useEmployees } from '@adapters/ui/hooks/employees/useEmployees';
-import { useMembers } from '@adapters/ui/hooks/members/useMembers';
 import { useCreateMovement } from '@adapters/ui/hooks/movements/useCreateMovement';
 import { useMovement } from '@adapters/ui/hooks/movements/useMovement';
-import { useUpdateMovement } from '@adapters/ui/hooks/movements/useUpdateMovement';
-import { useProfessors } from '@adapters/ui/hooks/professors/useProfessors';
-import { useServices } from '@adapters/ui/hooks/services/useServices';
 import {
   CategoryEnum,
   CategoryLabel,
   CategoryTypeEnum,
-  MemberCategories,
+  getCategoryOptions,
   getCategoryTypeOptions,
 } from '@domain/categories/category.enum';
-import {
-  MemberCategoryEnum,
-  MemberStatusEnum,
-} from '@domain/members/member.enum';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { MoneyUtils } from '@shared/utils/money.utils';
 
@@ -61,9 +47,7 @@ type FormValues = {
 export const MovementDetailPage = () => {
   const [form] = Form.useForm<FormValues>();
 
-  const category = useWatch(['category'], form);
-
-  const type = useWatch(['type'], form);
+  const formCategoryType = useWatch(['type'], form);
 
   const { id } = useParams<{ id?: string }>();
 
@@ -71,34 +55,9 @@ export const MovementDetailPage = () => {
 
   const { message } = App.useApp();
 
-  const {
-    data: movement,
-    fetchStatus: movementFetchStatus,
-    refetch,
-  } = useMovement(id);
+  const { data: movement, fetchStatus: movementFetchStatus } = useMovement(id);
 
   const createMovement = useCreateMovement();
-
-  const updateMovement = useUpdateMovement();
-
-  const { data: members, isLoading: isLoadingMembers } = useMembers(
-    MemberCategories.includes(category),
-  );
-
-  const { data: categoriesByType, isLoading: isLoadingCategoriesByType } =
-    useCategoriesByType(type);
-
-  const { data: professors, isLoading: isLoadingProfessors } = useProfessors(
-    category === CategoryEnum.Professor,
-  );
-
-  const { data: employees, isLoading: isLoadingEmployees } = useEmployees(
-    category === CategoryEnum.Employee,
-  );
-
-  const { data: services, isLoading: isLoadingServices } = useServices(
-    category === CategoryEnum.Service,
-  );
 
   const user = Meteor.user();
 
@@ -128,26 +87,6 @@ export const MovementDetailPage = () => {
           },
         },
       );
-    } else {
-      await updateMovement.mutateAsync(
-        {
-          amount: MoneyUtils.toCents(values.amount),
-          date: DateUtils.format(values.date, DateFormatEnum.DATE),
-          employeeId: values.employeeId ?? null,
-          id: movement._id,
-          memberId: values.memberId ?? null,
-          notes: values.notes,
-          professorId: values.professorId ?? null,
-          serviceId: values.serviceId ?? null,
-        },
-        {
-          onSuccess: () => {
-            message.success('Movimiento actualizado');
-
-            refetch();
-          },
-        },
-      );
     }
   };
 
@@ -155,172 +94,6 @@ export const MovementDetailPage = () => {
 
   if (id && !movement && !isLoading) {
     return <NotFound />;
-  }
-
-  const getPriceForCategory = (value: CategoryEnum): number => {
-    const foundCategory = find(categoriesByType, { code: value });
-
-    return foundCategory?.amount
-      ? MoneyUtils.fromCents(foundCategory.amount)
-      : 0;
-  };
-
-  const canCreateOrUpdateMovement =
-    Roles.userIsInRole(user, PermissionEnum.CREATE, ScopeEnum.MOVEMENTS) ||
-    Roles.userIsInRole(user, PermissionEnum.UPDATE, ScopeEnum.MOVEMENTS);
-
-  const renderDetailsSection = () => {
-    if (MemberCategories.includes(category)) {
-      /**
-       * If we have a movement, we can only update a single member
-       */
-      if (movement) {
-        return (
-          <Form.Item label="Socio" name="memberId" rules={[{ required: true }]}>
-            <Select
-              disabled={isLoadingMembers || !canCreateOrUpdateMovement}
-              loading={isLoadingMembers}
-              options={members?.map((member) => ({
-                label: member.name,
-                value: member._id,
-              }))}
-            />
-          </Form.Item>
-        );
-      }
-
-      return (
-        <Form.Item
-          help={
-            category === CategoryEnum.MembershipDebt && (
-              <ButtonGroup>
-                <Button
-                  size="small"
-                  htmlType="button"
-                  type="text"
-                  onClick={() => {
-                    form.setFieldValue(
-                      'memberIds',
-                      members
-                        ?.filter(
-                          (member) =>
-                            member.category === MemberCategoryEnum.MEMBER &&
-                            member.status === MemberStatusEnum.ACTIVE,
-                        )
-                        .map((member) => member._id) ?? [],
-                    );
-                  }}
-                >
-                  Seleccionar todos los socios
-                </Button>
-                <Button
-                  size="small"
-                  htmlType="button"
-                  type="text"
-                  onClick={() => {
-                    form.setFieldValue(
-                      'memberIds',
-                      members
-                        ?.filter(
-                          (member) =>
-                            member.category === MemberCategoryEnum.CADET &&
-                            member.status === MemberStatusEnum.ACTIVE,
-                        )
-                        .map((member) => member._id) ?? [],
-                    );
-                  }}
-                >
-                  Seleccionar todos los cadetes
-                </Button>
-              </ButtonGroup>
-            )
-          }
-          label="Socio/s"
-          name="memberIds"
-          rules={[{ required: true }, { min: 1, type: 'array' }]}
-        >
-          <Select
-            mode="multiple"
-            disabled={isLoadingMembers || !canCreateOrUpdateMovement}
-            loading={isLoadingMembers}
-            options={members?.map((member) => ({
-              label: member.name,
-              value: member._id,
-            }))}
-          />
-        </Form.Item>
-      );
-    }
-
-    if (category === CategoryEnum.Professor) {
-      return (
-        <Form.Item
-          label="Profesor"
-          name="professorId"
-          rules={[{ required: true }]}
-        >
-          <Select
-            disabled={isLoadingProfessors || !canCreateOrUpdateMovement}
-            loading={isLoadingProfessors}
-            options={professors?.map((professor) => ({
-              label: professor.name,
-              value: professor._id,
-            }))}
-          />
-        </Form.Item>
-      );
-    }
-
-    if (category === CategoryEnum.Employee) {
-      return (
-        <Form.Item
-          label="Empleado"
-          name="employeeId"
-          rules={[{ required: true }]}
-        >
-          <Select
-            disabled={isLoadingEmployees || !canCreateOrUpdateMovement}
-            loading={isLoadingEmployees}
-            options={employees?.map((employee) => ({
-              label: employee.name,
-              value: employee._id,
-            }))}
-          />
-        </Form.Item>
-      );
-    }
-
-    if (category === CategoryEnum.Service) {
-      return (
-        <Form.Item
-          label="Servicio"
-          name="serviceId"
-          rules={[{ required: true }]}
-        >
-          <Select
-            disabled={isLoadingServices || !canCreateOrUpdateMovement}
-            loading={isLoadingServices}
-            options={services?.map((service) => ({
-              label: service.name,
-              value: service._id,
-            }))}
-          />
-        </Form.Item>
-      );
-    }
-
-    return null;
-  };
-
-  if (
-    movement &&
-    [
-      CategoryEnum.MembershipIncome,
-      CategoryEnum.GuestIncome,
-      CategoryEnum.ElectricityIncome,
-    ].includes(movement.category)
-  ) {
-    return <Navigate to={`${AppUrl.Movements}/${movement._id}/migrate`} />;
   }
 
   /**
@@ -351,13 +124,11 @@ export const MovementDetailPage = () => {
         <Card>
           <Form<FormValues>
             layout="vertical"
-            disabled={!canCreateOrUpdateMovement}
+            disabled={!!movement}
             form={form}
             onFinish={(values) => handleSubmit(values)}
             initialValues={{
-              amount: movement
-                ? MoneyUtils.fromCents(movement.amount)
-                : getPriceForCategory(CategoryEnum.MembershipIncome),
+              amount: movement ? MoneyUtils.fromCents(movement.amount) : 0,
               category: movement?.category,
               date: movement?.date
                 ? DateUtils.utc(movement.date, DateFormatEnum.DDMMYYYY)
@@ -385,7 +156,6 @@ export const MovementDetailPage = () => {
 
             <Form.Item label="Tipo" name="type" rules={[{ required: true }]}>
               <Select
-                disabled={!!movement}
                 onChange={() => {
                   form.setFieldValue('category', null);
 
@@ -395,38 +165,26 @@ export const MovementDetailPage = () => {
               />
             </Form.Item>
 
-            {type && (
+            {formCategoryType && (
               <Form.Item
                 label="Categoría"
                 name="category"
                 rules={[{ required: true }]}
               >
                 <Select
-                  disabled={isLoadingCategoriesByType || !!movement}
-                  loading={isLoadingCategoriesByType}
-                  onChange={(value) =>
-                    form.setFieldValue('amount', getPriceForCategory(value))
-                  }
                   options={
-                    categoriesByType
-                      ?.filter(
-                        (categoryByType) =>
-                          ![
-                            CategoryEnum.GuestIncome,
-                            CategoryEnum.MembershipIncome,
-                            CategoryEnum.ElectricityIncome,
-                          ].includes(categoryByType.code),
-                      )
-                      .map((categoryByType) => ({
-                        label: categoryByType.name,
-                        value: categoryByType.code,
-                      })) ?? []
+                    getCategoryOptions(formCategoryType)?.filter(
+                      (categoryByType) =>
+                        ![
+                          CategoryEnum.GuestIncome,
+                          CategoryEnum.MembershipIncome,
+                          CategoryEnum.ElectricityIncome,
+                        ].includes(categoryByType.value),
+                    ) ?? []
                   }
                 />
               </Form.Item>
             )}
-
-            {renderDetailsSection()}
 
             <Form.Item
               label="Importe"

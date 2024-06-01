@@ -2,13 +2,11 @@ import { Result, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
-import {
-  FindPaginatedRequest,
-  FindPaginatedResponse,
-} from '@domain/common/repositories/grid.repository';
+import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { DIToken } from '@domain/common/tokens.di';
 import { IGridUseCase } from '@domain/common/use-case.interface';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { FindPaginatedPaymentsRequest } from '@domain/payments/repositories/find-paginated-payments.interface';
 import { IPaymentRepository } from '@domain/payments/repositories/payment-repository.interface';
 import {
   PaymentDueGridModelDto,
@@ -17,7 +15,7 @@ import {
 
 @injectable()
 export class GetPaymentsGridUseCase
-  implements IGridUseCase<FindPaginatedRequest, PaymentGridModelDto>
+  implements IGridUseCase<FindPaginatedPaymentsRequest, PaymentGridModelDto>
 {
   public constructor(
     @inject(DIToken.IPaymentRepository)
@@ -25,7 +23,7 @@ export class GetPaymentsGridUseCase
   ) {}
 
   public async execute(
-    request: FindPaginatedRequest,
+    request: FindPaginatedPaymentsRequest,
   ): Promise<Result<FindPaginatedResponse<PaymentGridModelDto>, Error>> {
     const { items, totalCount } =
       await this._paymentRepository.findPaginated(request);

@@ -1,6 +1,5 @@
 import {
   BankOutlined,
-  BulbOutlined,
   FilePdfOutlined,
   LogoutOutlined,
   MailOutlined,
@@ -67,13 +66,13 @@ export const Layout: React.FC<Props> = ({ children }) => {
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
 
-    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.USERS)) {
-      items.push({
-        icon: <UserOutlined className="!text-lg" />,
-        key: AppUrl.Users,
-        label: <Link to={AppUrl.Users}>Usuarios</Link>,
-      });
-    }
+    // if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.USERS)) {
+    //   items.push({
+    //     icon: <UserOutlined className="!text-lg" />,
+    //     key: AppUrl.Users,
+    //     label: <Link to={AppUrl.Users}>Usuarios</Link>,
+    //   });
+    // }
 
     if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.MEMBERS)) {
       items.push({
@@ -107,37 +106,37 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.CATEGORIES)) {
-      items.push({
-        icon: <BankOutlined className="!text-lg" />,
-        key: AppUrl.Categories,
-        label: <Link to={AppUrl.Categories}>Categorías</Link>,
-      });
-    }
+    // if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.CATEGORIES)) {
+    //   items.push({
+    //     icon: <BankOutlined className="!text-lg" />,
+    //     key: AppUrl.Categories,
+    //     label: <Link to={AppUrl.Categories}>Categorías</Link>,
+    //   });
+    // }
 
-    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.PROFESSORS)) {
-      items.push({
-        icon: <UserOutlined className="!text-lg" />,
-        key: AppUrl.Professors,
-        label: <Link to={AppUrl.Professors}>Profesores</Link>,
-      });
-    }
+    // if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.PROFESSORS)) {
+    //   items.push({
+    //     icon: <UserOutlined className="!text-lg" />,
+    //     key: AppUrl.Professors,
+    //     label: <Link to={AppUrl.Professors}>Profesores</Link>,
+    //   });
+    // }
 
-    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.EMPLOYEES)) {
-      items.push({
-        icon: <UserOutlined className="!text-lg" />,
-        key: AppUrl.Employees,
-        label: <Link to={AppUrl.Employees}>Empleados</Link>,
-      });
-    }
+    // if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.EMPLOYEES)) {
+    //   items.push({
+    //     icon: <UserOutlined className="!text-lg" />,
+    //     key: AppUrl.Employees,
+    //     label: <Link to={AppUrl.Employees}>Empleados</Link>,
+    //   });
+    // }
 
-    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.SERVICES)) {
-      items.push({
-        icon: <BulbOutlined className="!text-lg" />,
-        key: AppUrl.Services,
-        label: <Link to={AppUrl.Services}>Servicios</Link>,
-      });
-    }
+    // if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.SERVICES)) {
+    //   items.push({
+    //     icon: <BulbOutlined className="!text-lg" />,
+    //     key: AppUrl.Services,
+    //     label: <Link to={AppUrl.Services}>Servicios</Link>,
+    //   });
+    // }
 
     return items;
   };

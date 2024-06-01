@@ -9,7 +9,7 @@ import {
 
 import { FindPaginatedRequest } from '@domain/common/repositories/grid.repository';
 
-export type GridFilter = Record<string, string[]>;
+export type GridFilter = Record<string, string[] | undefined>;
 
 export type GridSorter = Record<string, 'ascend' | 'descend'>;
 

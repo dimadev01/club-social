@@ -7,7 +7,7 @@ import { PaymentCollection } from '@adapters/mongo/collections/payment.collectio
 import { PaymentAuditEntity } from '@adapters/mongo/entities/payment-audit.entity';
 import { PaymentEntity } from '@adapters/mongo/entities/payment.entity';
 import { CrudMongoAuditableRepository } from '@adapters/repositories/crud-mongo-auditable.repository';
-import { ILogger } from '@application/logger/logger.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { DIToken } from '@domain/common/tokens.di';
 import { PaymentModel } from '@domain/payments/models/payment.model';

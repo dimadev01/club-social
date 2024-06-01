@@ -4,7 +4,7 @@ import {
   FindPaginatedRequest,
   FindPaginatedResponse,
 } from '@domain/common/repositories/grid.repository';
-import { FindByIdModelRequest } from '@domain/common/repositories/queryable.repository';
+import { FindOneByIdModelRequest } from '@domain/common/repositories/queryable.repository';
 
 export interface IUseCase<TRequest, TResponse> {
   execute(request?: TRequest): Promise<Result<TResponse, Error>>;
@@ -12,7 +12,7 @@ export interface IUseCase<TRequest, TResponse> {
 
 export type IModelUseCase<
   TResponse,
-  TRequest extends FindByIdModelRequest = FindByIdModelRequest,
+  TRequest extends FindOneByIdModelRequest = FindOneByIdModelRequest,
 > = IUseCase<TRequest, TResponse>;
 
 export type IGridUseCase<

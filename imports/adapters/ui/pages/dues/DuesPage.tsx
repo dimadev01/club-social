@@ -28,7 +28,7 @@ import invariant from 'tiny-invariant';
 import { AppUrl } from '@adapters/ui/app.enum';
 import { Button } from '@adapters/ui/components/Button';
 import { MembersSelect } from '@adapters/ui/components/Members/MembersSelect';
-import { Table } from '@adapters/ui/components/Table/Table';
+import { TableOld } from '@adapters/ui/components/Table/Table';
 import { TableNewButton } from '@adapters/ui/components/Table/TableNewButton';
 import { TableReloadButton } from '@adapters/ui/components/Table/TableReloadButton';
 import { useDeleteDue } from '@adapters/ui/hooks/dues/useDeleteDue';
@@ -184,10 +184,10 @@ export const DuesPage = () => {
             </Space>
           </Form>
 
-          <Table<DueGridDto>
+          <TableOld<DueGridDto>
             total={data?.count ?? 0}
             gridState={gridState}
-            onChange={setGridState}
+            onStateChange={setGridState}
             loading={isLoading}
             footer={renderFooter}
             dataSource={data?.data}

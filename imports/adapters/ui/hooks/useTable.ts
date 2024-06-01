@@ -25,6 +25,7 @@ interface UseTable<T> {
     filters: Record<string, FilterValue | null>,
     sorter: SorterResult<T> | SorterResult<T>[],
   ) => void;
+  setState: React.Dispatch<React.SetStateAction<GridState>>;
 }
 
 export function useTable<T>({
@@ -105,5 +106,5 @@ export function useTable<T>({
     });
   };
 
-  return { gridState: state, setGridState: onTableChange };
+  return { gridState: state, setGridState: onTableChange, setState };
 }

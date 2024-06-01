@@ -1,4 +1,4 @@
-import { FindByIdModelRequest } from '@domain/common/repositories/queryable.repository';
+import { FindOneByIdModelRequest } from '@domain/common/repositories/queryable.repository';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -30,7 +30,7 @@ export interface CreateMemberRequest {
 
 export interface UpdateMemberRequest
   extends CreateMemberRequest,
-    FindByIdModelRequest {
+    FindOneByIdModelRequest {
   status: MemberStatusEnum;
 }
 

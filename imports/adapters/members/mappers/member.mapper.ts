@@ -2,7 +2,7 @@ import { singleton } from 'tsyringe';
 
 import { Mapper } from '@adapters/common/mappers/mapper';
 import { UserMapper } from '@adapters/mappers/user.mapper';
-import { MemberAddressEntityNewV } from '@adapters/members/entities/member-address.entity';
+import { MemberAddressEntity } from '@adapters/members/entities/member-address.entity';
 import { MemberEntity } from '@adapters/members/entities/member.entity';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import { MemberAddressModel } from '@domain/members/models/member-address.model';
@@ -49,7 +49,7 @@ export class MemberMapper extends Mapper<MemberModel, MemberEntity> {
   protected getEntity(model: MemberModel): MemberEntity {
     return new MemberEntity({
       _id: model._id,
-      address: new MemberAddressEntityNewV({
+      address: new MemberAddressEntity({
         cityGovId: model.address.cityGovId,
         cityName: model.address.cityName,
         stateGovId: model.address.stateGovId,

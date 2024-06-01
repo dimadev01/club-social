@@ -1,7 +1,6 @@
 import { container, instanceCachingFactory } from 'tsyringe';
 
 import { MemberMongoRepository } from '@adapters/members/repositories/member-mongo.repository';
-import { CategoryRepository } from '@adapters/repositories/categories/category.repository';
 import { DueRepository } from '@adapters/repositories/dues/due.repository';
 import { MongoUnitOfWork } from '@adapters/repositories/mongo.unit-of-work';
 import { MovementFindPaginatedRepository } from '@adapters/repositories/movements/movement-find-paginated.repository';
@@ -14,13 +13,12 @@ import { UserMongoRepository } from '@adapters/repositories/user-mongo.repositor
 import { DIToken } from '@domain/common/tokens.di';
 import { EmailService } from '@infra/email/email.service';
 import { LoggerOstrio } from '@infra/logger/logger-ostrio';
+import { MemberAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
 
 container.register(DIToken.Logger, {
   useFactory: instanceCachingFactory((c) => c.resolve(LoggerOstrio)),
 });
-
-container.register(DIToken.CategoryRepository, CategoryRepository);
 
 container.register(DIToken.EmailService, EmailService);
 
@@ -39,6 +37,12 @@ container.register(DIToken.PaymentDueRepository, PaymentDueRepository);
 
 container.register(DIToken.MemberMongoCollection, {
   useFactory: instanceCachingFactory((c) => c.resolve(MemberMongoCollection)),
+});
+
+container.register(DIToken.MemberAuditableMongoCollection, {
+  useFactory: instanceCachingFactory((c) =>
+    c.resolve(MemberAuditableCollection),
+  ),
 });
 
 container.register(DIToken.IMemberRepository, MemberMongoRepository);

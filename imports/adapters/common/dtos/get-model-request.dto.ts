@@ -1,8 +1,8 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { FindByIdModelRequest } from '@domain/common/repositories/queryable.repository';
+import { FindOneByIdModelRequest } from '@domain/common/repositories/queryable.repository';
 
-export class GetModelRequestDto implements FindByIdModelRequest {
+export class GetModelRequestDto implements FindOneByIdModelRequest {
   @IsNotEmpty()
   @IsString()
   public id!: string;
