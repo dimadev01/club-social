@@ -8,7 +8,7 @@ import { DIToken } from '@domain/common/tokens.di';
 import { Payment } from '@domain/payments/entities/payment.entity';
 import { IPaymentPort } from '@domain/payments/payment.port';
 import {
-  PaymentCollection,
+  PaymentCollectionOld,
   PaymentSchema,
 } from '@infra/mongo/collections/payment.collection.old';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
@@ -122,7 +122,7 @@ export class PaymentRepository
   }
 
   protected getCollection(): MongoCollection<Payment> {
-    return PaymentCollection;
+    return PaymentCollectionOld;
   }
 
   protected getSchema(): SimpleSchema {

@@ -87,6 +87,14 @@ export class PaymentMongoRepository
       {
         $unwind: '$member',
       },
+      {
+        $lookup: {
+          as: 'dues',
+          foreignField: 'paymentId',
+          from: 'payment.dues',
+          localField: '_id',
+        },
+      },
     );
 
     return super.findPaginatedPipeline(pipeline, entitiesPipeline);

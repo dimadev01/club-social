@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Meteor } from 'meteor/meteor';
+import { container } from 'tsyringe';
 
 import { DueCollection } from '@domain/dues/due.collection';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
-import { PaymentDueCollection } from '@infra/mongo/collections/payment-due.collection.old';
-import { PaymentCollection } from '@infra/mongo/collections/payment.collection.old';
+import { PaymentDueCollection } from '@infra/mongo/collections/payment-due.collection';
+import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
 import { DateUtils } from '@shared/utils/date.utils';
 
 // interface MemberRow {
@@ -1260,11 +1261,9 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await PaymentCollection.updateAsync(
-      {},
-      { $set: { receiptNumber: null } },
-      { multi: true },
-    );
+    await container
+      .resolve(PaymentCollection)
+      .updateAsync({}, { $set: { receiptNumber: null } }, { multi: true });
 
     next();
   }),
@@ -1319,7 +1318,9 @@ Migrations.add({
     /**
      * Payments
      */
-    const payments: any = await PaymentCollection.rawCollection()
+    const payments: any = await container
+      .resolve(PaymentCollection)
+      .rawCollection()
       // @ts-expect-error
       .find({ memberId: null })
       .toArray();
@@ -1352,11 +1353,14 @@ Migrations.add({
 
             newPaymentDue.value.deletedBy = oldPayment.deletedBy;
 
-            await PaymentDueCollection.insertAsync(newPaymentDue.value);
+            await container
+              .resolve(PaymentDueCollection)
+              // @ts-expect-error
+              .insertAsync(newPaymentDue.value);
           }),
         );
 
-        await PaymentCollection.updateAsync(oldPayment._id, {
+        await container.resolve(PaymentCollection).updateAsync(oldPayment._id, {
           $set: {
             memberId: oldPayment.member._id,
           },

@@ -6,7 +6,7 @@ import { DIToken } from '@domain/common/tokens.di';
 import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
 import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
 import {
-  PaymentDueCollection,
+  PaymentDueCollectionOld,
   PaymentDueSchema,
 } from '@infra/mongo/collections/payment-due.collection.old';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
@@ -37,7 +37,7 @@ export class PaymentDueRepository
   }
 
   protected getCollection(): MongoCollection<PaymentDue> {
-    return PaymentDueCollection;
+    return PaymentDueCollectionOld;
   }
 
   protected getSchema(): SimpleSchema {

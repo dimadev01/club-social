@@ -8,9 +8,12 @@ import {
 } from '@domain/common/repositories/queryable-grid-repository.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IGridUseCase } from '@domain/common/use-case.interface';
-import { IPaymentDueRepository } from '@domain/payment-dues/repositories/payment-due-repository.interface';
+import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { IPaymentRepository } from '@domain/payments/repositories/payment-repository.interface';
-import { PaymentGridModelDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid-model-dto';
+import {
+  PaymentDueGridModelDto,
+  PaymentGridModelDto,
+} from '@domain/payments/use-cases/get-payments-grid/payment-grid-model-dto';
 
 @injectable()
 export class GetPaymentsGridUseCase
@@ -19,8 +22,6 @@ export class GetPaymentsGridUseCase
   public constructor(
     @inject(DIToken.IPaymentRepository)
     private readonly _paymentRepository: IPaymentRepository,
-    @inject(DIToken.IPaymentDueRepository)
-    private readonly _paymentDueRepository: IPaymentDueRepository,
   ) {}
 
   public async execute(
@@ -29,26 +30,26 @@ export class GetPaymentsGridUseCase
     const { items, totalCount } =
       await this._paymentRepository.findPaginated(request);
 
-    const paymentDues = await this._paymentDueRepository.findByPayments(
-      items.map((item) => item._id),
-    );
-
     return ok<FindPaginatedResponseNewV<PaymentGridModelDto>>({
       items: items.map<PaymentGridModelDto>((item) => {
         invariant(item.member);
 
-        const dues = paymentDues.filter((due) => due.paymentId === item._id);
-
-        const totalAmount = dues.reduce((acc, due) => acc + due.amount, 0);
+        const totalAmount = item.dues.reduce((acc, due) => acc + due.amount, 0);
 
         return {
           _id: item._id,
-          date: item.date.format(),
+          date: item.date.toISOString(),
+          dues: item.dues.map<PaymentDueGridModelDto>((paymentDue) => ({
+            amount: paymentDue.amount,
+            dueAmount: 0,
+            dueCategory: DueCategoryEnum.ELECTRICITY,
+            dueDate: '',
+          })),
           isDeleted: item.isDeleted,
-          isoDate: item.date.toISOString(),
           memberId: item.memberId,
           memberName: item.member.name,
-          paymentDuesCount: dues.length,
+          paymentDuesCount: item.dues.length,
+          receiptNumber: item.receiptNumber,
           totalAmount,
         };
       }),

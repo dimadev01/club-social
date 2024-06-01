@@ -5,7 +5,10 @@ import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 import { EntitySchema } from '@infra/mongo/schemas/entity.schema';
 import { SchemaBuilder } from '@infra/mongo/schemas/schema-builder';
 
-export const PaymentCollection = new MongoCollection('payments.old', Payment);
+export const PaymentCollectionOld = new MongoCollection(
+  'payments.old',
+  Payment,
+);
 
 export const PaymentSchema = new SimpleSchema({
   date: Date,
@@ -15,4 +18,4 @@ export const PaymentSchema = new SimpleSchema({
   status: String,
 }).extend(EntitySchema);
 
-PaymentCollection.attachSchema(PaymentSchema);
+PaymentCollectionOld.attachSchema(PaymentSchema);

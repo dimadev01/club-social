@@ -15,7 +15,9 @@ import { RangeValue } from 'rc-picker/lib/interface';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { FindPaginatedPaymentsResponse } from '@domain/payments/repositories/find-paginated-payments.interface';
 import { PaymentGridModelDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid-model-dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
@@ -79,46 +81,44 @@ export const PaymentsPage = () => {
 
   const deletePayment = useDeletePayment(refetch);
 
-  // const expandedRowRender = (payment: GetPaymentGridResponse) => (
-  //   <AntTable
-  //     rowKey="dueId"
-  //     pagination={false}
-  //     bordered
-  //     columns={[
-  //       {
-  //         dataIndex: 'dueDate',
-  //         render: (dueDate: string, due: PaymentDueGridDto) => (
-  //           <Link to={`${AppUrl.Dues}/${due.dueId}`}>{dueDate}</Link>
-  //         ),
-  //         title: 'Fecha',
-  //         width: 150,
-  //       },
-  //       {
-  //         align: 'center',
-  //         dataIndex: 'dueCategory',
-  //         render: (dueCategory: DueCategoryEnum) =>
-  //           DueCategoryLabel[dueCategory],
-  //         title: 'Categoría',
-  //       },
-  //       {
-  //         align: 'center',
-  //         dataIndex: 'membershipMonth',
-  //         title: 'Mes de cuota',
-  //       },
-  //       {
-  //         align: 'right',
-  //         dataIndex: 'dueAmount',
-  //         title: 'Deuda',
-  //       },
-  //       {
-  //         align: 'right',
-  //         dataIndex: 'paymentAmount',
-  //         title: 'Pagado',
-  //       },
-  //     ]}
-  //     dataSource={payment.dues}
-  //   />
-  // );
+  const expandedRowRender = (payment: PaymentGridModelDto) => (
+    <AntTable
+      rowKey="dueId"
+      pagination={false}
+      bordered
+      columns={[
+        {
+          dataIndex: 'dueDate',
+          render: (dueDate: string) => new DateUtcVo(dueDate).format(),
+          title: 'Fecha',
+          width: 150,
+        },
+        {
+          align: 'center',
+          dataIndex: 'dueCategory',
+          render: (category: DueCategoryEnum) => DueCategoryLabel[category],
+          title: 'Categoría',
+        },
+        {
+          align: 'center',
+          dataIndex: 'membershipMonth',
+          title: 'Mes de cuota',
+        },
+        {
+          align: 'right',
+          dataIndex: 'dueAmount',
+          title: 'Deuda',
+        },
+        {
+          align: 'right',
+          dataIndex: 'amount',
+          render: (amount) => new Money(amount).formatWithCurrency(),
+          title: 'Monto Pago',
+        },
+      ]}
+      dataSource={payment.dues}
+    />
+  );
 
   const renderSummary = () => (
     <AntTable.Summary>
@@ -209,13 +209,15 @@ export const PaymentsPage = () => {
             setGridState={setGridState}
             loading={isLoading}
             dataSource={payments?.items}
-            // expandable={{ expandedRowRender }}
+            expandable={{ expandedRowRender }}
             columns={[
               {
                 dataIndex: 'date',
                 render: (date: string, payment: PaymentGridModelDto) => (
                   <>
-                    <Link to={`${AppUrl.Payments}/${payment._id}`}>{date}</Link>
+                    <Link to={`${AppUrl.Payments}/${payment._id}`}>
+                      {new DateUtcVo(date).format()}
+                    </Link>
                     <Typography.Text className="flex" copyable>
                       {payment._id}
                     </Typography.Text>
@@ -223,6 +225,12 @@ export const PaymentsPage = () => {
                 ),
                 title: 'Fecha',
                 width: 250,
+              },
+              {
+                align: 'right',
+                dataIndex: 'receiptNumber',
+                title: 'Recibo #',
+                width: 100,
               },
               {
                 dataIndex: 'memberId',
@@ -250,12 +258,7 @@ export const PaymentsPage = () => {
                 title: 'Total',
                 width: 150,
               },
-              // {
-              //   align: 'right',
-              //   dataIndex: 'receiptNumber',
-              //   title: 'Recibo #',
-              //   width: 100,
-              // },
+
               {
                 align: 'center',
                 render: (_, payment: PaymentGridModelDto) => (
