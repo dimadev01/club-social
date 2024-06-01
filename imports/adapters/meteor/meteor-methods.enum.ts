@@ -24,7 +24,6 @@ export enum MeteorMethodEnum {
   PaymentsDelete = 'payments/delete',
   PaymentsGet = 'payments/get',
   PaymentsGetGrid = 'payments/getGrid',
-  PaymentsGetPaid = 'payments/getPaid',
 
   UsersGetByToken = 'users/getByToken',
   UsersUpdateTheme = 'users/updateTheme',

@@ -11,31 +11,31 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { CreatePaymentDueRequestDto } from './create-payment-due-request.dto';
-
+import { CreatePaymentDueRequestDto } from '@adapters/payments/dtos/create-payment-due-request.dto';
+import { CreatePaymentRequest } from '@domain/payments/payment.types';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
-export class CreatePaymentRequestDto {
+export class CreatePaymentRequestDto implements CreatePaymentRequest {
   @IsDateString()
-  public date: string;
+  public date!: string;
 
   @ValidateNested({ each: true })
   @Type(() => CreatePaymentDueRequestDto)
   @ArrayMinSize(1)
   @IsArray()
-  public dues: CreatePaymentDueRequestDto[];
+  public dues!: CreatePaymentDueRequestDto[];
 
   @IsNotEmpty()
   @IsString()
-  public memberId: string;
+  public memberId!: string;
 
   @IsNotEmpty()
   @IsString()
   @IsNullable()
   @IsOptional()
-  public notes: string | null;
+  public notes!: string | null;
 
   @IsPositive()
   @IsNumber()
-  public receiptNumber: number;
+  public receiptNumber!: number;
 }

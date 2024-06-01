@@ -2,7 +2,7 @@ import type { ClientSession } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { BaseController } from '@adapters/common/controllers/base.controller';
-import { GetModelRequestDto } from '@adapters/common/dtos/get-model-request.dto';
+import { GetOneModelRequestDto } from '@adapters/common/dtos/get-model-request.dto';
 import { CreateMemberRequestDto } from '@adapters/members/dtos/create-member-request.dto';
 import { GetMembersGridRequestDto } from '@adapters/members/dtos/get-members-grid-request.dto';
 import { GetMembersRequestDto } from '@adapters/members/dtos/get-members-request.dto';
@@ -41,9 +41,9 @@ export class MemberController extends BaseController {
           useCase: this._create,
         }),
 
-      [MeteorMethodEnum.MembersGetOne]: (request: GetModelRequestDto) =>
+      [MeteorMethodEnum.MembersGetOne]: (request: GetOneModelRequestDto) =>
         this.execute({
-          classType: GetModelRequestDto,
+          classType: GetOneModelRequestDto,
           request,
           useCase: this._getOne,
         }),

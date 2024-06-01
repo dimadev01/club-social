@@ -8,7 +8,7 @@ import {
   MemberSexEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
-import { IUserModel } from '@domain/users/models/user-model.interface';
+import { UserModel } from '@domain/users/models/user.model';
 
 export interface IMemberModel extends IModelProps {
   address: IMemberAddressModel;
@@ -21,7 +21,7 @@ export interface IMemberModel extends IModelProps {
   phones: string[] | null;
   sex: MemberSexEnum | null;
   status: MemberStatusEnum;
-  user: IUserModel | undefined;
+  user: UserModel | undefined;
   userId: string;
 }
 
@@ -36,7 +36,7 @@ export interface IMemberAddressModel {
 
 export interface CreateMember {
   address: CreateMemberAddress;
-  birthDate: string | null;
+  birthDate: BirthDate | null;
   category: MemberCategoryEnum;
   documentID: string | null;
   fileStatus: MemberFileStatusEnum | null;

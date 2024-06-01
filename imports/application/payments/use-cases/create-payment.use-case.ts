@@ -3,11 +3,8 @@ import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
-import { CreatePaymentResponseDto } from './create-payment-response.dto';
-import { ExistingPaymentError } from './errors/existing-payment.error';
-
-import { CreatePaymentRequestDto } from '@application/payments/use-cases/create-payment/create-payment-request.dto';
-import { DuePaidError } from '@application/payments/use-cases/create-payment/errors/due-paid.error';
+import { PaymentModelDto } from '@application/payments/dtos/payment-model.dto';
+import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { DIToken } from '@domain/common/tokens.di';
@@ -16,12 +13,15 @@ import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { IDuePortOld } from '@domain/dues/due.port';
 import { PaymentDueModel } from '@domain/payment-dues/models/payment-due.model';
 import { IPaymentDueRepository } from '@domain/payment-dues/repositories/payment-due-repository.interface';
+import { DuePaidError } from '@domain/payments/errors/due-paid.error';
+import { ExistingPaymentError } from '@domain/payments/errors/existing-payment.error';
 import { PaymentModel } from '@domain/payments/models/payment.model';
+import { CreatePaymentRequest } from '@domain/payments/payment.types';
 import { IPaymentRepository } from '@domain/payments/repositories/payment.repository';
 
 @injectable()
 export class CreatePaymentUseCase<TSession>
-  implements IUseCase<CreatePaymentRequestDto, CreatePaymentResponseDto>
+  implements IUseCase<CreatePaymentRequest, PaymentModelDto>
 {
   public constructor(
     @inject(DIToken.IUnitOfWork)
@@ -32,11 +32,12 @@ export class CreatePaymentUseCase<TSession>
     private readonly _paymentDueRepository: IPaymentDueRepository<TSession>,
     @inject(DIToken.DueRepository)
     private readonly _duePort: IDuePortOld,
+    private readonly _getPayment: GetPaymentUseCase,
   ) {}
 
   public async execute(
-    request: CreatePaymentRequestDto,
-  ): Promise<Result<CreatePaymentResponseDto, Error>> {
+    request: CreatePaymentRequest,
+  ): Promise<Result<PaymentModelDto, Error>> {
     const existingPaymentByReceipt =
       await this._paymentRepository.findOneByReceipt(request.receiptNumber);
 
@@ -123,7 +124,15 @@ export class CreatePaymentUseCase<TSession>
 
       invariant(newPaymentId);
 
-      return ok({ id: newPaymentId });
+      const payment = await this._getPayment.execute({ id: newPaymentId });
+
+      if (payment.isErr()) {
+        return err(payment.error);
+      }
+
+      invariant(payment.value);
+
+      return ok(payment.value);
     } catch (error) {
       if (error instanceof Error) {
         return err(error);

@@ -1,9 +1,9 @@
 import { Mongo } from 'meteor/mongo';
 import { inject, injectable } from 'tsyringe';
 
-import { UserMapper } from '@adapters/mappers/user.mapper';
 import { UserEntity } from '@adapters/mongo/entities/user.entity';
 import { CrudMongoRepository } from '@adapters/repositories/crud-mongo.repository';
+import { UserMapper } from '@adapters/users/user.mapper';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { UserModel } from '@domain/users/models/user.model';

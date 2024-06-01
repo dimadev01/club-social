@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 
 import { GetGridRequestDto } from '@adapters/common/dtos/get-grid-request.dto';
-import { FindPaginatedMembersRequest } from '@adapters/members/repositories/member-mongo-repository.types';
+import { FindPaginatedMembersRequest } from '@adapters/members/member-mongo-repository.types';
 import {
   MemberCategoryEnum,
   MemberStatusEnum,

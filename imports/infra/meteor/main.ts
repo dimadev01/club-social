@@ -4,7 +4,7 @@ import '@infra/meteor/common/meteor-publications';
 import { Meteor } from 'meteor/meteor';
 import { container, inject, singleton } from 'tsyringe';
 
-import { MemberController } from '@adapters/members/controllers/member.controller';
+import { MemberController } from '@adapters/members/member.controller';
 import { AppConstants } from '@adapters/ui/app.enum';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';

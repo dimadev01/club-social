@@ -1,6 +1,6 @@
 import { container, instanceCachingFactory } from 'tsyringe';
 
-import { MemberMongoRepository } from '@adapters/members/repositories/member-mongo.repository';
+import { MemberMongoRepository } from '@adapters/members/member-mongo.repository';
 import { DueRepository } from '@adapters/repositories/dues/due.repository';
 import { MongoUnitOfWork } from '@adapters/repositories/mongo.unit-of-work';
 import { MovementFindPaginatedRepository } from '@adapters/repositories/movements/movement-find-paginated.repository';

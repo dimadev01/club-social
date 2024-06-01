@@ -9,6 +9,7 @@ import { InternalServerError } from '@domain/common/errors/internal-server.error
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { DIToken } from '@domain/common/tokens.di';
 import { IUseCase } from '@domain/common/use-case.interface';
+import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import { ExistingMemberByDocumentError } from '@domain/members/errors/existing-member-by-document.error';
 import { CreateMemberRequest } from '@domain/members/member.types';
 import { MemberModel } from '@domain/members/models/member.model';
@@ -67,7 +68,9 @@ export class CreateMemberUseCase<TSession>
             street: request.addressStreet,
             zipCode: request.addressZipCode,
           },
-          birthDate: request.dateOfBirth,
+          birthDate: request.birthDate
+            ? new BirthDate(request.birthDate)
+            : null,
           category: request.category,
           documentID: request.documentID,
           fileStatus: request.fileStatus,

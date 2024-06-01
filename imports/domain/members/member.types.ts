@@ -15,8 +15,8 @@ export interface CreateMemberRequest {
   addressStateName: string | null;
   addressStreet: string | null;
   addressZipCode: string | null;
+  birthDate: string | null;
   category: MemberCategoryEnum;
-  dateOfBirth: string | null;
   documentID: string | null;
   emails: string[] | null;
   fileStatus: MemberFileStatusEnum | null;

@@ -1,9 +1,9 @@
 import { singleton } from 'tsyringe';
 
 import { Mapper } from '@adapters/common/mappers/mapper';
-import { PaymentDueMapper } from '@adapters/mappers/payment-due.mapper';
-import { MemberMapper } from '@adapters/members/mappers/member.mapper';
+import { MemberMapper } from '@adapters/members/member.mapper';
 import { PaymentEntity } from '@adapters/mongo/entities/payment.entity';
+import { PaymentDueMapper } from '@adapters/payment-due/payment-due.mapper';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { PaymentModel } from '@domain/payments/models/payment.model';
 

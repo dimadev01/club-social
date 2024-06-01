@@ -170,12 +170,8 @@ export class MemberModel extends Model implements IMemberModel {
     return ok(null);
   }
 
-  public setDateOfBirth(value: string | null): Result<null, Error> {
-    if (value) {
-      this._birthDate = new BirthDate(value);
-    } else {
-      this._birthDate = null;
-    }
+  public setDateOfBirth(value: BirthDate | null): Result<null, Error> {
+    this._birthDate = value;
 
     return ok(null);
   }

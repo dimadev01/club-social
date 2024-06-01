@@ -62,7 +62,7 @@ export class CreateMemberRequestDto implements CreateMemberRequest {
   @IsDateString()
   @IsNullable()
   @IsDefined()
-  public dateOfBirth!: string | null;
+  public birthDate!: string | null;
 
   @IsNotEmpty()
   @IsString()

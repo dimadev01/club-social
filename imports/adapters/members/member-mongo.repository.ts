@@ -3,8 +3,8 @@ import { inject, injectable } from 'tsyringe';
 
 import { MemberAuditEntity } from '@adapters/members/entities/member-audit.entity';
 import { MemberEntity } from '@adapters/members/entities/member.entity';
-import { MemberMapper } from '@adapters/members/mappers/member.mapper';
-import { FindPaginatedMembersAggregationResult } from '@adapters/members/repositories/member-mongo-repository.types';
+import { FindPaginatedMembersAggregationResult } from '@adapters/members/member-mongo-repository.types';
+import { MemberMapper } from '@adapters/members/member.mapper';
 import { MongoCollection } from '@adapters/mongo/collections/mongo.collection';
 import { MongoUtils } from '@adapters/mongo/mongo.utils';
 import { CrudMongoAuditableRepository } from '@adapters/repositories/crud-mongo-auditable.repository';

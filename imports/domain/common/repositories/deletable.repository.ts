@@ -1,6 +1,9 @@
-import { Model } from '@domain/common/models/model';
+import { FindOneModelByIdRequest } from '@domain/common/repositories/queryable.repository';
 
-export interface IDeletableRepository<TModel extends Model, TSession> {
-  delete(model: TModel): Promise<void>;
-  deleteWithSession(model: TModel, session: TSession): Promise<void>;
+export interface IDeletableRepository<TSession> {
+  delete(request: FindOneModelByIdRequest): Promise<void>;
+  deleteWithSession(
+    request: FindOneModelByIdRequest,
+    session: TSession,
+  ): Promise<void>;
 }

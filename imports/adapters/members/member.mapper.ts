@@ -1,9 +1,9 @@
 import { singleton } from 'tsyringe';
 
 import { Mapper } from '@adapters/common/mappers/mapper';
-import { UserMapper } from '@adapters/mappers/user.mapper';
 import { MemberAddressEntity } from '@adapters/members/entities/member-address.entity';
 import { MemberEntity } from '@adapters/members/entities/member.entity';
+import { UserMapper } from '@adapters/users/user.mapper';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import { MemberAddressModel } from '@domain/members/models/member-address.model';
 import { MemberModel } from '@domain/members/models/member.model';

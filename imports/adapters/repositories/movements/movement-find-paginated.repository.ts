@@ -293,29 +293,4 @@ export class MovementFindPaginatedRepository
   private _projectMovements() {
     return { $project: { movements: 0 } };
   }
-
-  private _reduceMovementsByCategoryType(type: CategoryTypeEnum) {
-    return {
-      $reduce: {
-        in: {
-          $add: [
-            '$$value',
-            {
-              $sum: {
-                $cond: [
-                  {
-                    $eq: ['$$this.type', type],
-                  },
-                  '$$this.amount',
-                  0,
-                ],
-              },
-            },
-          ],
-        },
-        initialValue: 0,
-        input: '$movements',
-      },
-    };
-  }
 }

@@ -8,5 +8,5 @@ import { IDeletableRepository } from '@domain/common/repositories/deletable.repo
 export interface ICrudRepository<TModel extends Model, TSession>
   extends ICreatableRepository<TModel, TSession>,
     IQueryableRepository<TModel>,
-    IDeletableRepository<TModel, TSession>,
+    IDeletableRepository<TSession>,
     IUpdatableRepository<TModel, TSession> {}

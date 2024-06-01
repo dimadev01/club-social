@@ -66,7 +66,7 @@ export class UpdateMemberUseCase<TSession>
           member.address.setZipCode(request.addressZipCode),
           member.setCategory(request.category),
           member.setStatus(request.status),
-          member.setDateOfBirth(request.dateOfBirth),
+          member.setDateOfBirth(request.birthDate),
           member.setDocumentID(request.documentID),
           member.setFileStatus(request.fileStatus),
           member.setMaritalStatus(request.maritalStatus),

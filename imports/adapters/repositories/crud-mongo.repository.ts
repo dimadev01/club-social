@@ -39,16 +39,20 @@ export abstract class CrudMongoRepository<
     private readonly _logger: ILogger,
   ) {}
 
-  public async delete(model: TModel): Promise<void> {
+  public async delete(request: FindOneModelByIdRequest): Promise<void> {
+    const model = await this.findOneByIdOrThrow(request);
+
     model.delete(await this._getLoggedInUserName());
 
     return this.update(model);
   }
 
   public async deleteWithSession(
-    model: TModel,
+    request: FindOneModelByIdRequest,
     session: ClientSession,
   ): Promise<void> {
+    const model = await this.findOneByIdOrThrow(request);
+
     model.delete(await this._getLoggedInUserName());
 
     return this.updateWithSession(model, session);
@@ -134,36 +138,6 @@ export abstract class CrudMongoRepository<
     return { items, totalCount };
   }
 
-  protected async findPaginatedPipeline(
-    pipeline: Document[],
-    entitiesPipeline: Document[],
-  ): Promise<FindPaginatedResponse<TModel>> {
-    pipeline.push(
-      {
-        $facet: {
-          entities: entitiesPipeline,
-          totalCount: [{ $count: 'count' }],
-        },
-      },
-      {
-        $project: {
-          entities: 1,
-          totalCount: MongoUtils.first('$totalCount.count', 0),
-        },
-      },
-    );
-
-    const [{ entities, totalCount }] = await this._collection
-      .rawCollection()
-      .aggregate<PaginatedAggregationResult<TEntity>>(pipeline)
-      .toArray();
-
-    return {
-      items: entities.map((entity) => this._mapper.toModel(entity)),
-      totalCount,
-    };
-  }
-
   public async insert(model: TModel): Promise<void> {
     try {
       const entity = await this._mapper.toEntity(model);
@@ -233,19 +207,34 @@ export abstract class CrudMongoRepository<
     }
   }
 
-  protected getPaginatedSorterStage(sorter: PaginatedSorter): Document {
-    return { $sort: this.getMongoSorter(sorter) };
-  }
+  protected async findPaginatedPipeline(
+    pipeline: Document[],
+    entitiesPipeline: Document[],
+  ): Promise<FindPaginatedResponse<TModel>> {
+    pipeline.push(
+      {
+        $facet: {
+          entities: entitiesPipeline,
+          totalCount: [{ $count: 'count' }],
+        },
+      },
+      {
+        $project: {
+          entities: 1,
+          totalCount: MongoUtils.first('$totalCount.count', 0),
+        },
+      },
+    );
 
-  protected getPaginatedPipeline(request: FindPaginatedRequest): Document[] {
-    return [
-      this.getPaginatedSorterStage(request.sorter),
-      ...this.getPaginatedStages(request.page, request.limit),
-    ];
-  }
+    const [{ entities, totalCount }] = await this._collection
+      .rawCollection()
+      .aggregate<PaginatedAggregationResult<TEntity>>(pipeline)
+      .toArray();
 
-  protected getPaginatedStages(page: number, limit: number): Document[] {
-    return [{ $skip: (page - 1) * limit }, { $limit: limit }];
+    return {
+      items: entities.map((entity) => this._mapper.toModel(entity)),
+      totalCount,
+    };
   }
 
   protected getMongoSorter(paginatedSorter: PaginatedSorter): {
@@ -266,18 +255,19 @@ export abstract class CrudMongoRepository<
     return sorter;
   }
 
-  private async _getLoggedInUserName(): Promise<string> {
-    try {
-      const user = (await Meteor.userAsync()) as unknown as UserEntity | null;
+  protected getPaginatedPipeline(request: FindPaginatedRequest): Document[] {
+    return [
+      this.getPaginatedSorterStage(request.sorter),
+      ...this.getPaginatedStages(request.page, request.limit),
+    ];
+  }
 
-      if (!user) {
-        return 'System';
-      }
+  protected getPaginatedSorterStage(sorter: PaginatedSorter): Document {
+    return { $sort: this.getMongoSorter(sorter) };
+  }
 
-      return `${user.profile.firstName} ${user.profile.lastName}`;
-    } catch (error) {
-      return 'System';
-    }
+  protected getPaginatedStages(page: number, limit: number): Document[] {
+    return [{ $skip: (page - 1) * limit }, { $limit: limit }];
   }
 
   protected handleError(error: unknown): never {
@@ -298,5 +288,19 @@ export abstract class CrudMongoRepository<
     this._logger.error(internalServerError, { error });
 
     throw internalServerError;
+  }
+
+  private async _getLoggedInUserName(): Promise<string> {
+    try {
+      const user = (await Meteor.userAsync()) as unknown as UserEntity | null;
+
+      if (!user) {
+        return 'System';
+      }
+
+      return `${user.profile.firstName} ${user.profile.lastName}`;
+    } catch (error) {
+      return 'System';
+    }
   }
 }

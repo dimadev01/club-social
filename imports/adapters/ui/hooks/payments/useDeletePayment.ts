@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
-import { DeletePaymentRequestDto } from '@application/payments/use-cases/delete-payment/delete-payment-request.dto';
+import { FindOneModelByIdRequest } from '@domain/common/repositories/queryable.repository';
 
 export const useDeletePayment = (onSuccess: () => void) =>
-  useMutation<null, Error, DeletePaymentRequestDto>(
+  useMutation<null, Error, FindOneModelByIdRequest>(
     [MeteorMethodEnum.PaymentsDelete],
     (request) => Meteor.callAsync(MeteorMethodEnum.PaymentsDelete, request),
     { onSuccess: () => onSuccess() },
