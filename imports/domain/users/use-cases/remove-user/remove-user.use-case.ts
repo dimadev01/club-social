@@ -11,11 +11,11 @@ import { RemoveAdminError } from '@domain/users/errors/remove-admin.error';
 import { RemoveYourselfError } from '@domain/users/errors/remove-yourself.error';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
 import { RemoveUserRequestDto } from '@domain/users/use-cases/remove-user/remove-user-request.dto';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class RemoveUserUseCase
-  extends UseCase<RemoveUserRequestDto>
+  extends UseCaseOld<RemoveUserRequestDto>
   implements IUseCaseOld<RemoveUserRequestDto, null>
 {
   public constructor(

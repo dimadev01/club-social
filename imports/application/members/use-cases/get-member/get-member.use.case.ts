@@ -2,17 +2,15 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { MemberModelDto } from '@application/members/dtos/member-model-dto';
-import { GetModelRequest } from '@domain/common/requests/get-model.request';
+import { FindByIdModelRequest } from '@domain/common/repositories/queryable.repository';
 import { DIToken } from '@domain/common/tokens.di';
-import { IEntityDtoUseCase } from '@domain/common/use-case.interface';
+import { IModelUseCase } from '@domain/common/use-case.interface';
 import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { IMemberRepository } from '@domain/members/repositories/member.repository';
 import { IUserRepository } from '@domain/users/repositories/user-repository.interface';
 
 @injectable()
-export class GetMemberUseCase
-  implements IEntityDtoUseCase<MemberModelDto | null>
-{
+export class GetMemberUseCase implements IModelUseCase<MemberModelDto | null> {
   public constructor(
     @inject(DIToken.IMemberRepository)
     private readonly _memberRepository: IMemberRepository,
@@ -21,15 +19,17 @@ export class GetMemberUseCase
   ) {}
 
   public async execute(
-    request: GetModelRequest,
+    request: FindByIdModelRequest,
   ): Promise<Result<MemberModelDto | null, Error>> {
-    const member = await this._memberRepository.findOneById(request.id);
+    const member = await this._memberRepository.findOneById(request);
 
     if (!member) {
       return err(new MemberNotFoundError());
     }
 
-    member.user = await this._userRepository.findOneByIdOrThrow(member.userId);
+    member.user = await this._userRepository.findOneByIdOrThrow({
+      id: member.userId,
+    });
 
     return ok<MemberModelDto>({
       _id: member._id,

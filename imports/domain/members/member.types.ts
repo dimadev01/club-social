@@ -1,3 +1,4 @@
+import { FindByIdModelRequest } from '@domain/common/repositories/queryable.repository';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -7,8 +8,34 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 
-export type CreateMember = {
-  address: CreateMemberAddress;
+export interface CreateMemberRequest {
+  addressCityGovId: string | null;
+  addressCityName: string | null;
+  addressStateGovId: string | null;
+  addressStateName: string | null;
+  addressStreet: string | null;
+  addressZipCode: string | null;
+  category: MemberCategoryEnum;
+  dateOfBirth: string | null;
+  documentID: string | null;
+  emails: string[] | null;
+  fileStatus: MemberFileStatusEnum | null;
+  firstName: string;
+  lastName: string;
+  maritalStatus: MemberMaritalStatusEnum | null;
+  nationality: MemberNationalityEnum | null;
+  phones: string[] | null;
+  sex: MemberSexEnum | null;
+}
+
+export interface UpdateMemberRequest
+  extends CreateMemberRequest,
+    FindByIdModelRequest {
+  status: MemberStatusEnum;
+}
+
+export type CreateMemberOld = {
+  address: CreateMemberAddressOld;
   category: MemberCategoryEnum;
   dateOfBirth: string | null;
   documentID: string | null;
@@ -21,7 +48,7 @@ export type CreateMember = {
   userId: string;
 };
 
-export type CreateMemberAddress = {
+export type CreateMemberAddressOld = {
   cityGovId: string | null;
   cityName: string | null;
   stateGovId: string | null;

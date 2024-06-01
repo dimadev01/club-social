@@ -8,13 +8,13 @@ import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { CreateDueRequestDto } from '@domain/dues/use-cases/create-due/create-due-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
 import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class CreateDueUseCase
-  extends UseCase<CreateDueRequestDto>
+  extends UseCaseOld<CreateDueRequestDto>
   implements IUseCaseOld<CreateDueRequestDto, null>
 {
   public constructor(

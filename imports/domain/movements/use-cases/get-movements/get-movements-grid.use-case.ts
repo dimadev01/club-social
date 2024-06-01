@@ -14,11 +14,11 @@ import { IMovementPaginatedPort } from '@domain/movements/movement.port';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetMovementsGridUseCase
-  extends UseCase<GetMovementsGridRequestDto>
+  extends UseCaseOld<GetMovementsGridRequestDto>
   implements
     IUseCaseOld<GetMovementsGridRequestDto, GetMovementsGridResponseDto>
 {

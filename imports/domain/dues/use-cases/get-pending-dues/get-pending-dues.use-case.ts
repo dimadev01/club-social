@@ -8,12 +8,12 @@ import { IDuePort } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { GetPendingDueResponseDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
 import { GetPendingDuesRequestDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-dues.request.dto';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
 @injectable()
 export class GetPendingDuesByMemberUseCase
-  extends UseCase<GetPendingDuesRequestDto>
+  extends UseCaseOld<GetPendingDuesRequestDto>
   implements IUseCaseOld<GetPendingDuesRequestDto, GetPendingDueResponseDto[]>
 {
   public constructor(

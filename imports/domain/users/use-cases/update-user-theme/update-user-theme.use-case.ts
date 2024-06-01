@@ -6,11 +6,11 @@ import { UpdateUserThemeRequestDto } from './update-user-theme-request.dto';
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { UserNotFoundError } from '@domain/users/errors/user-not-found.error';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class UpdateUserThemeUseCase
-  extends UseCase<UpdateUserThemeRequestDto>
+  extends UseCaseOld<UpdateUserThemeRequestDto>
   implements IUseCaseOld<UpdateUserThemeRequestDto, null>
 {
   public constructor() {

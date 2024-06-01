@@ -14,7 +14,7 @@ import { MongoCollection } from '@adapters/mongo/collections/mongo.collection';
 import { ILogger } from '@application/logger/logger.interface';
 import { FindPaginatedRequestOld } from '@application/pagination/find-paginated.request';
 import { ICrudPort } from '@application/ports/crud.port';
-import { MongoOptions } from '@application/use-cases/use-case.interface';
+import { MongoOptionsOld } from '@application/use-cases/use-case.interface';
 import { EntityOld } from '@domain/common/entity.old';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
@@ -221,7 +221,7 @@ export abstract class MongoCrudRepositoryOld<T extends EntityOld>
 
   protected createPaginatedQueryOptionsNew(
     request: FindPaginatedRequestOld,
-  ): MongoOptions {
+  ): MongoOptionsOld {
     return {
       limit: request.pageSize,
       skip: (request.page - 1) * request.pageSize,
@@ -266,7 +266,7 @@ export abstract class MongoCrudRepositoryOld<T extends EntityOld>
     ];
   }
 
-  protected getPaginatedQuery(page: number, pageSize: number): MongoOptions {
+  protected getPaginatedQuery(page: number, pageSize: number): MongoOptionsOld {
     return { limit: pageSize, skip: (page - 1) * pageSize, sort: {} };
   }
 

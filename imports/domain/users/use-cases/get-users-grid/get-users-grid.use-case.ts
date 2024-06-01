@@ -5,11 +5,11 @@ import { injectable } from 'tsyringe';
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { GetUsersRequestDto } from '@domain/users/use-cases/get-users-grid/get-users-grid-request.dto';
 import { PaginatedResponse } from '@infra/pagination/paginated-response.dto';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetUsersUseCase
-  extends UseCase<GetUsersRequestDto>
+  extends UseCaseOld<GetUsersRequestDto>
   implements IUseCaseOld<GetUsersRequestDto, PaginatedResponse<Meteor.User>>
 {
   public async execute(

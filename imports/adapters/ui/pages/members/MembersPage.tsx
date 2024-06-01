@@ -16,7 +16,7 @@ import { useMembers } from '@adapters/ui/hooks/members/useMembers';
 import { useNavigate } from '@adapters/ui/hooks/useNavigate';
 import { useQueryGrid } from '@adapters/ui/hooks/useQueryGrid';
 import { useTable } from '@adapters/ui/hooks/useTable';
-import { MemberGridModelDto } from '@application/members/use-cases/get-members-grid/member-grid-model-dto';
+import { MemberGridModelDto } from '@application/members/dtos/member-grid-model-dto';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   MemberCategoryEnum,

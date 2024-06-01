@@ -7,11 +7,11 @@ import { DIToken } from '@domain/common/tokens.di';
 import { IDuePort } from '@domain/dues/due.port';
 import { RestoreDueRequestDto } from '@domain/dues/use-cases/restore-due/restore-due-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class RestoreDueUseCase
-  extends UseCase<RestoreDueRequestDto>
+  extends UseCaseOld<RestoreDueRequestDto>
   implements IUseCaseOld<RestoreDueRequestDto, null>
 {
   public constructor(

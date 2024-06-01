@@ -7,11 +7,11 @@ import { PaymentNotFoundError } from '@domain/payments/errors/payment-not-found.
 import { IPaymentPort } from '@domain/payments/payment.port';
 import { GetPaymentRequestDto } from '@domain/payments/use-cases/get-payment/get-payment-request.dto';
 import { GetPaymentResponseDto } from '@domain/payments/use-cases/get-payment/get-payment-response.dto';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetPaymentUseCase
-  extends UseCase<GetPaymentRequestDto>
+  extends UseCaseOld<GetPaymentRequestDto>
   implements IUseCaseOld<GetPaymentRequestDto, GetPaymentResponseDto | null>
 {
   public constructor(

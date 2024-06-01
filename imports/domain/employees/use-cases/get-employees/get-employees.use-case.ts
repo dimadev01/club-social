@@ -6,11 +6,11 @@ import { EmployeesCollection } from '@adapters/mongo/collections/employee.collec
 import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { Employee } from '@domain/employees/employee.entity';
 import { GetEmployeesResponseDto } from '@domain/employees/use-cases/get-employees/get-employees-response.dto';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetEmployeesUseCase
-  extends UseCase
+  extends UseCaseOld
   implements IUseCaseOld<null, GetEmployeesResponseDto[]>
 {
   public async execute(): Promise<Result<GetEmployeesResponseDto[], Error>> {

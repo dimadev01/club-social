@@ -2,7 +2,7 @@ import { Result, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
-import { MemberGridModelDto } from '@application/members/use-cases/get-members-grid/member-grid-model-dto';
+import { MemberGridModelDto } from '@application/members/dtos/member-grid-model-dto';
 import { DIToken } from '@domain/common/tokens.di';
 import { IGridUseCase } from '@domain/common/use-case.interface';
 import {

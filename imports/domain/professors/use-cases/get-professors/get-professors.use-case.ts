@@ -6,11 +6,11 @@ import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { ProfessorsCollection } from '@domain/professors/professor.collection';
 import { Professor } from '@domain/professors/professor.entity';
 import { GetProfessorsResponseDto } from '@domain/professors/use-cases/get-professors/get-professors-response.dto';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetProfessorsUseCase
-  extends UseCase
+  extends UseCaseOld
   implements IUseCaseOld<null, GetProfessorsResponseDto[]>
 {
   public async execute(): Promise<Result<GetProfessorsResponseDto[], Error>> {

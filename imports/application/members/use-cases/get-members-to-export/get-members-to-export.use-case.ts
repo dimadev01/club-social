@@ -2,15 +2,15 @@ import { Result, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
-import { MemberGridModelDto } from '@application/members/use-cases/get-members-grid/member-grid-model-dto';
+import { MemberGridModelDto } from '@application/members/dtos/member-grid-model-dto';
 import { DIToken } from '@domain/common/tokens.di';
-import { IUseCaseNewV } from '@domain/common/use-case.interface';
+import { IUseCase } from '@domain/common/use-case.interface';
 import { FindPaginatedMembersRequest } from '@domain/members/repositories/member-repository.types';
 import { IMemberRepository } from '@domain/members/repositories/member.repository';
 
 @injectable()
 export class GetMembersToExportUseCase
-  implements IUseCaseNewV<FindPaginatedMembersRequest, MemberGridModelDto[]>
+  implements IUseCase<FindPaginatedMembersRequest, MemberGridModelDto[]>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)

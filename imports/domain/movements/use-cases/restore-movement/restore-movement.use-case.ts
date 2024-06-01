@@ -7,11 +7,11 @@ import { DIToken } from '@domain/common/tokens.di';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-movement/restore-movement-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class RestoreMovementUseCase
-  extends UseCase<RestoreMovementRequestDto>
+  extends UseCaseOld<RestoreMovementRequestDto>
   implements IUseCaseOld<RestoreMovementRequestDto, null>
 {
   public constructor(

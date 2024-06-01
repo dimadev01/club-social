@@ -8,11 +8,11 @@ import { Due } from '@domain/dues/entities/due.entity';
 import { PaidDueDto } from '@domain/dues/use-cases/get-paid-dues/get-paid-due.dto';
 import { GetPaidDuesRequestDto } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.request.dto';
 import { GetPaidDuesResponseDto } from '@domain/dues/use-cases/get-paid-dues/get-paid-dues.response.dto';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetPaidDuesUseCase
-  extends UseCase<GetPaidDuesRequestDto>
+  extends UseCaseOld<GetPaidDuesRequestDto>
   implements IUseCaseOld<GetPaidDuesRequestDto, GetPaidDuesResponseDto>
 {
   public constructor(

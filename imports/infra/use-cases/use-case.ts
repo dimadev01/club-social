@@ -4,13 +4,13 @@ import { ValidationError } from 'class-validator';
 import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 
-import { MongoOptions } from '@application/use-cases/use-case.interface';
+import { MongoOptionsOld } from '@application/use-cases/use-case.interface';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export abstract class UseCase<T extends object = any> {
+export abstract class UseCaseOld<T extends object = any> {
   /**
    * @deprecated Use validateDto from MeteorMethod instead
    */
@@ -76,7 +76,10 @@ export abstract class UseCase<T extends object = any> {
     return defaultSortOrder;
   }
 
-  protected createQueryOptions(page: number, pageSize: number): MongoOptions {
+  protected createQueryOptions(
+    page: number,
+    pageSize: number,
+  ): MongoOptionsOld {
     return {
       limit: pageSize,
       skip: (page - 1) * pageSize,

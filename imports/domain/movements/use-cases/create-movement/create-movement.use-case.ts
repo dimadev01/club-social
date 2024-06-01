@@ -8,11 +8,11 @@ import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class CreateMovementUseCase
-  extends UseCase<CreateMovementRequestDto>
+  extends UseCaseOld<CreateMovementRequestDto>
   implements IUseCaseOld<CreateMovementRequestDto, null>
 {
   public constructor(

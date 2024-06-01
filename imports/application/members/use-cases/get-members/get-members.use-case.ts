@@ -4,13 +4,13 @@ import { inject, injectable } from 'tsyringe';
 
 import { MemberModelDto } from '@application/members/dtos/member-model-dto';
 import { DIToken } from '@domain/common/tokens.di';
-import { IUseCaseNewV } from '@domain/common/use-case.interface';
+import { IUseCase } from '@domain/common/use-case.interface';
 import { FindMembersRequest } from '@domain/members/repositories/member-repository.types';
 import { IMemberRepository } from '@domain/members/repositories/member.repository';
 
 @injectable()
 export class GetMembersUseCase
-  implements IUseCaseNewV<FindMembersRequest, MemberModelDto[]>
+  implements IUseCase<FindMembersRequest, MemberModelDto[]>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)

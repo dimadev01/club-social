@@ -16,13 +16,13 @@ import { IPaymentPort } from '@domain/payments/payment.port';
 import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
 import { DuePaidError } from '@domain/payments/use-cases/create-payment/errors/due-paid.error';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 import { ErrorUtils } from '@shared/utils/error.utils';
 import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class CreatePaymentUseCase
-  extends UseCase<CreatePaymentRequestDto>
+  extends UseCaseOld<CreatePaymentRequestDto>
   implements IUseCaseOld<CreatePaymentRequestDto, CreatePaymentResponseDto>
 {
   public constructor(

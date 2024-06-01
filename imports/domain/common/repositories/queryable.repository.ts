@@ -1,7 +1,16 @@
+import { FindByIdsRequest } from '@adapters/repositories/dues/due-repository.types';
 import { Model } from '@domain/common/models/model';
 
+export interface FindByIdModelRequest {
+  id: string;
+}
+
+export interface FindByIdsModelRequest {
+  ids: string[];
+}
+
 export interface IQueryableRepository<TModel extends Model> {
-  findByIds(ids: string[]): Promise<TModel[]>;
-  findOneById(id: string): Promise<TModel | null>;
-  findOneByIdOrThrow(id: string): Promise<TModel>;
+  findByIds(request: FindByIdsRequest): Promise<TModel[]>;
+  findOneById(request: FindByIdModelRequest): Promise<TModel | null>;
+  findOneByIdOrThrow(request: FindByIdModelRequest): Promise<TModel>;
 }

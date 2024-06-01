@@ -3,14 +3,14 @@ import { ValidationError } from 'class-validator';
 
 import { ClassValidationError } from '@adapters/common/errors/class-validation.error';
 import { ILogger } from '@application/logger/logger.interface';
-import { IUseCaseNewV } from '@domain/common/use-case.interface';
+import { IUseCase } from '@domain/common/use-case.interface';
 import { MeteorBadRequestError } from '@infra/meteor/errors/meteor-bad-request.error';
 import { MeteorInternalServerError } from '@infra/meteor/errors/meteor-internal-server.error';
 
 export interface ExecuteRequest<TRequest, TResponse> {
   classType?: ClassType<TRequest>;
   request?: TRequest;
-  useCase: IUseCaseNewV<TRequest, TResponse>;
+  useCase: IUseCase<TRequest, TResponse>;
 }
 
 export abstract class BaseController {

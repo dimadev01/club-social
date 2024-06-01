@@ -8,12 +8,12 @@ import { Due } from '@domain/dues/entities/due.entity';
 import { DueGridDto } from '@domain/dues/use-cases/get-dues-grid/due-grid.dto';
 import { GetDuesGridRequestDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.request.dto';
 import { GetDuesGridResponseDto } from '@domain/dues/use-cases/get-dues-grid/get-dues-grid.response.dto';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 import { MoneyUtils } from '@shared/utils/money.utils';
 
 @injectable()
 export class GetDuesGridUseCase
-  extends UseCase<GetDuesGridRequestDto>
+  extends UseCaseOld<GetDuesGridRequestDto>
   implements IUseCaseOld<GetDuesGridRequestDto, GetDuesGridResponseDto>
 {
   public constructor(

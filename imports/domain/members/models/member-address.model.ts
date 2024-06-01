@@ -1,6 +1,6 @@
 import { Result, err, ok } from 'neverthrow';
 
-import { CreateMemberAddress } from '@domain/members/member.types';
+import { CreateMemberAddressOld } from '@domain/members/member.types';
 import { IMemberAddressModel } from '@domain/members/models/member-model.interface';
 
 export class MemberAddressModel implements IMemberAddressModel {
@@ -55,7 +55,7 @@ export class MemberAddressModel implements IMemberAddressModel {
   }
 
   public static createOne(
-    props: CreateMemberAddress,
+    props: CreateMemberAddressOld,
   ): Result<MemberAddressModel, Error> {
     const address = new MemberAddressModel();
 

@@ -1,33 +1,35 @@
 import { Result, err, ok } from 'neverthrow';
+import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { InternalServerError } from '@application/errors/internal-server.error';
-import { UpdateMemberRequest } from '@application/members/use-cases/update-member/update-member.request';
+import { MemberModelDto } from '@application/members/dtos/member-model-dto';
+import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { DIToken } from '@domain/common/tokens.di';
-import { IUseCaseNewV } from '@domain/common/use-case.interface';
+import { IUseCase } from '@domain/common/use-case.interface';
 import { ExistingMemberByDocumentError } from '@domain/members/errors/existing-member-by-document.error';
-import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
+import { UpdateMemberRequest } from '@domain/members/member.types';
 import { IMemberRepository } from '@domain/members/repositories/member.repository';
 import { RoleEnum } from '@domain/roles/role.enum';
 import { UpdateUserNewUseCase } from '@domain/users/use-cases/update-user/update-user.use-case';
 
 @injectable()
 export class UpdateMemberNewUseCase<TSession>
-  implements IUseCaseNewV<UpdateMemberRequest, null>
+  implements IUseCase<UpdateMemberRequest, MemberModelDto>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)
     private readonly _memberRepository: IMemberRepository<TSession>,
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork<TSession>,
-    @inject(UpdateUserNewUseCase)
     private readonly _updateUserUseCase: UpdateUserNewUseCase<TSession>,
+    private readonly _getMemberUseCase: GetMemberUseCase,
   ) {}
 
   public async execute(
     request: UpdateMemberRequest,
-  ): Promise<Result<null, Error>> {
+  ): Promise<Result<MemberModelDto, Error>> {
     const validation = await this._validate(request);
 
     if (validation.isErr()) {
@@ -38,11 +40,9 @@ export class UpdateMemberNewUseCase<TSession>
       this._unitOfWork.start();
 
       await this._unitOfWork.withTransaction(async (session) => {
-        const member = await this._memberRepository.findOneById(request.id);
-
-        if (!member) {
-          throw new MemberNotFoundError();
-        }
+        const member = await this._memberRepository.findOneByIdOrThrow({
+          id: request.id,
+        });
 
         const userResult = await this._updateUserUseCase.execute({
           emails: request.emails?.map((email) => email) ?? null,
@@ -82,7 +82,15 @@ export class UpdateMemberNewUseCase<TSession>
         await this._memberRepository.updateWithSession(member, session);
       });
 
-      return ok(null);
+      const member = await this._getMemberUseCase.execute({ id: request.id });
+
+      if (member.isErr()) {
+        return err(member.error);
+      }
+
+      invariant(member.value);
+
+      return ok(member.value);
     } catch (error) {
       if (error instanceof Error) {
         return err(error);

@@ -5,11 +5,11 @@ import { IUseCaseOld } from '@application/use-cases/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/get-movement-request.dto';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetNextMovementUseCase
-  extends UseCase<GetMovementRequestDto>
+  extends UseCaseOld<GetMovementRequestDto>
   implements IUseCaseOld<GetMovementRequestDto, string | null>
 {
   public constructor(

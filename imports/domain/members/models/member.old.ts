@@ -20,7 +20,7 @@ import {
   MemberSexEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
-import { CreateMember } from '@domain/members/member.types';
+import { CreateMemberOld } from '@domain/members/member.types';
 import { MemberAddressOld } from '@domain/members/models/member-address.old';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 
@@ -94,7 +94,7 @@ export class MemberOld extends EntityOld {
     return `${this.lastName} ${this.firstName}`;
   }
 
-  public static create(props: CreateMember): Result<MemberOld, Error> {
+  public static create(props: CreateMemberOld): Result<MemberOld, Error> {
     const member = new MemberOld();
 
     member.userId = props.userId;

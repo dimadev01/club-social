@@ -9,7 +9,6 @@ import {
   IsString,
 } from 'class-validator';
 
-import { CreateMemberRequest } from '@application/members/use-cases/create-member/create-member.request';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -17,6 +16,7 @@ import {
   MemberNationalityEnum,
   MemberSexEnum,
 } from '@domain/members/member.enum';
+import { CreateMemberRequest } from '@domain/members/member.types';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
 export class CreateMemberRequestDto implements CreateMemberRequest {
