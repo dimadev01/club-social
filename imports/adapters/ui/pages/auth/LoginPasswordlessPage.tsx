@@ -37,11 +37,9 @@ export const LoginPasswordlessPage = () => {
     Meteor.passwordlessLoginWithToken(email, values.token, (error: unknown) => {
       if (error) {
         if (error instanceof Meteor.Error && error.error === 403) {
-          notificationError({
-            message: 'El código es incorrecto',
-          });
+          notificationError('El código es incorrecto');
         } else if (error instanceof Error) {
-          notificationError({ message: error.message });
+          notificationError(error.message);
         }
       } else {
         navigate(AppUrl.Home);
@@ -57,7 +55,7 @@ export const LoginPasswordlessPage = () => {
       setIsSendingEmail(false);
 
       if (error && error instanceof Error) {
-        notificationError({ message: error.message });
+        notificationError(error.message);
       } else {
         message.success('El código ha sido enviado nuevamente');
       }

@@ -1,4 +1,4 @@
-import { IModel } from '@domain/common/models/model.interface';
+import { IModelProps } from '@domain/common/models/model.interface';
 
 export interface CreatePaymentDue {
   amount: number;
@@ -6,7 +6,7 @@ export interface CreatePaymentDue {
   paymentId: string;
 }
 
-export interface IPaymentDueModel extends IModel {
+export interface IPaymentDueProps extends IModelProps {
   amount: number;
   dueId: string;
   paymentId: string;

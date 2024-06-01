@@ -1,3 +1,4 @@
+import { FindPaginatedPaymentsRequest } from '@domain/payments/repositories/find-paginated-payments.interface';
 import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
@@ -11,8 +12,7 @@ import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { DIToken } from '@domain/common/tokens.di';
 import { PaymentModel } from '@domain/payments/models/payment.model';
-import { FindPaginatedPaymentsRequest } from '@domain/payments/repositories/find-paginated-payments.interface';
-import { IPaymentRepository } from '@domain/payments/repositories/payment-repository.interface';
+import { IPaymentRepository } from '@domain/payments/repositories/payment.repository';
 
 @injectable()
 export class PaymentMongoRepository
@@ -31,6 +31,21 @@ export class PaymentMongoRepository
     protected readonly logger: ILogger,
   ) {
     super(collection, mapper, logger, auditableCollection);
+  }
+
+  public async findOneByReceipt(
+    receiptNumber: number,
+  ): Promise<PaymentModel | null> {
+    const entity = await this.collection.findOneAsync({
+      isDeleted: false,
+      receiptNumber,
+    });
+
+    if (!entity) {
+      return null;
+    }
+
+    return this.mapper.toModel(entity);
   }
 
   public async findPaginated(

@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
-import { IDuePort } from '@domain/dues/due.port';
+import { IDuePortOld } from '@domain/dues/due.port';
 import { GetDueRequestDto } from '@domain/dues/use-cases/get-due/get-due-request.dto';
 import { GetDueResponseDto } from '@domain/dues/use-cases/get-due/get-due-response.dto';
 import { UseCaseOld } from '@infra/use-cases/use-case';
@@ -15,7 +15,7 @@ export class GetDueUseCase
 {
   public constructor(
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort,
+    private readonly _duePort: IDuePortOld,
   ) {
     super();
   }

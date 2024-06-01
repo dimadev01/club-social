@@ -21,7 +21,7 @@ export const VerifyEmailPage = () => {
       Accounts.verifyEmail(token, (error) => {
         if (error) {
           if (!isVerifying) {
-            notificationError({ message: error.message });
+            notificationError(error.message);
           }
         } else {
           message.success('Email verificado');

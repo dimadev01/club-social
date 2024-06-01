@@ -14,7 +14,7 @@ import { MongoCollection } from '@adapters/mongo/collections/mongo.collection';
 import { PaginatedAggregationResult } from '@adapters/mongo/common/paginated-aggregation.interface';
 import { UserEntity } from '@adapters/mongo/entities/user.entity';
 import { MongoUtils } from '@adapters/mongo/mongo.utils';
-import { InternalServerError } from '@application/errors/internal-server.error';
+import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { Model } from '@domain/common/models/model';
 import { ICrudRepository } from '@domain/common/repositories/crud.repository';
@@ -24,8 +24,8 @@ import {
   PaginatedSorter,
 } from '@domain/common/repositories/grid.repository';
 import {
-  FindByIdsModelRequest,
-  FindOneByIdModelRequest,
+  FindModelsByIdsRequest,
+  FindOneModelByIdRequest,
 } from '@domain/common/repositories/queryable.repository';
 
 export abstract class CrudMongoRepository<
@@ -54,7 +54,7 @@ export abstract class CrudMongoRepository<
     return this.updateWithSession(model, session);
   }
 
-  public async findByIds(request: FindByIdsModelRequest): Promise<TModel[]> {
+  public async findByIds(request: FindModelsByIdsRequest): Promise<TModel[]> {
     try {
       const entities = await this._collection
         // @ts-expect-error
@@ -68,7 +68,7 @@ export abstract class CrudMongoRepository<
   }
 
   public async findOneById(
-    request: FindOneByIdModelRequest,
+    request: FindOneModelByIdRequest,
   ): Promise<TModel | null> {
     const entity = await this._collection.findOneAsync(request.id);
 
@@ -80,7 +80,7 @@ export abstract class CrudMongoRepository<
   }
 
   public async findOneByIdOrThrow(
-    request: FindOneByIdModelRequest,
+    request: FindOneModelByIdRequest,
   ): Promise<TModel> {
     const model = await this.findOneById(request);
 

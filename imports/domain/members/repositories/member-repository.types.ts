@@ -37,7 +37,7 @@ export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
   filterByStatus?: MemberStatusEnum[];
 }
 
-export interface FindPaginatedMembersResponse<T = unknown>
+export interface FindPaginatedMembersResponse<T>
   extends FindPaginatedResponse<T> {
   totals: Totals;
 }

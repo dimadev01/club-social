@@ -8,7 +8,6 @@ import { MovementRepository } from '@adapters/repositories/movements/movement.re
 import { PaymentDueRepository } from '@adapters/repositories/payment-due/payment-due.repository';
 import { PaymentDueMongoRepository } from '@adapters/repositories/payment-due-mongo.repository';
 import { PaymentMongoRepository } from '@adapters/repositories/payment-mongo.repository';
-import { PaymentRepository } from '@adapters/repositories/payments/payment.repository';
 import { UserMongoRepository } from '@adapters/repositories/user-mongo.repository';
 import { DIToken } from '@domain/common/tokens.di';
 import { EmailService } from '@infra/email/email.service';
@@ -30,8 +29,6 @@ container.register(
 );
 
 container.register(DIToken.DueRepository, DueRepository);
-
-container.register(DIToken.PaymentRepository, PaymentRepository);
 
 container.register(DIToken.PaymentDueRepository, PaymentDueRepository);
 

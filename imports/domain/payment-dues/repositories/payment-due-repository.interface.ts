@@ -1,4 +1,4 @@
-import { ICrudRepository } from '@domain/common/repositories/crud-repository.interface';
+import { ICrudRepository } from '@domain/common/repositories/crud.repository';
 import { PaymentDueModel } from '@domain/payment-dues/models/payment-due.model';
 
 export interface IPaymentDueRepository<TSession = unknown>

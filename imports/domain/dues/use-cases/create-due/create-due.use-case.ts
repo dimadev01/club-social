@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
-import { IDuePort } from '@domain/dues/due.port';
+import { IDuePortOld } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { CreateDueRequestDto } from '@domain/dues/use-cases/create-due/create-due-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
@@ -21,7 +21,7 @@ export class CreateDueUseCase
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort,
+    private readonly _duePort: IDuePortOld,
   ) {
     super();
   }

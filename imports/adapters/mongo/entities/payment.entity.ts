@@ -18,7 +18,7 @@ export class PaymentEntity extends Entity implements IPaymentEntity {
   @IsDate()
   public date: Date;
 
-  public dues: PaymentDueEntity[];
+  public dues: PaymentDueEntity[] | undefined;
 
   public member: MemberEntity | undefined;
 

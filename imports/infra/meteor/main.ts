@@ -12,7 +12,7 @@ import { DueMethod } from '@domain/dues/due.methods';
 import { MovementMethod } from '@domain/movements/movement.methods';
 import { PaymentMethod } from '@domain/payments/payment.methods';
 import { UserStateEnum } from '@domain/users/user.enum';
-import { UserMethod } from '@domain/users/user.methods';
+import { UserMethodOld } from '@domain/users/user.methods';
 import { PaymentController } from '@infra/controllers/payment/payment.controller';
 import { MigrationService } from '@infra/migrations/migration.service';
 import { DateUtils } from '@shared/utils/date.utils';
@@ -25,7 +25,7 @@ export class ServerStartup {
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
     private readonly _migrationService: MigrationService,
-    private readonly _userMethod: UserMethod,
+    private readonly _userMethod: UserMethodOld,
     private readonly _movementMethod: MovementMethod,
     private readonly _dueMethod: DueMethod,
     private readonly _paymentMethod: PaymentMethod,

@@ -2,10 +2,10 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { MemberModelDto } from '@application/members/dtos/member-model.dto';
-import { FindOneByIdModelRequest } from '@domain/common/repositories/queryable.repository';
+import { ModelNotFoundError } from '@domain/common/errors/model-not-found.error';
+import { FindOneModelByIdRequest } from '@domain/common/repositories/queryable.repository';
 import { DIToken } from '@domain/common/tokens.di';
 import { IModelUseCase } from '@domain/common/use-case.interface';
-import { MemberNotFoundError } from '@domain/members/errors/member-not-found.error';
 import { IMemberRepository } from '@domain/members/repositories/member.repository';
 import { IUserRepository } from '@domain/users/repositories/user.repository';
 
@@ -19,12 +19,12 @@ export class GetMemberUseCase implements IModelUseCase<MemberModelDto | null> {
   ) {}
 
   public async execute(
-    request: FindOneByIdModelRequest,
+    request: FindOneModelByIdRequest,
   ): Promise<Result<MemberModelDto | null, Error>> {
     const member = await this._memberRepository.findOneById(request);
 
     if (!member) {
-      return err(new MemberNotFoundError());
+      return err(new ModelNotFoundError());
     }
 
     member.user = await this._userRepository.findOneByIdOrThrow({

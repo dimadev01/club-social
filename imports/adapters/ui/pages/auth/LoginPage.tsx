@@ -42,16 +42,12 @@ export const LoginPage = () => {
         if (error) {
           if (error instanceof Meteor.Error) {
             if (error.error === 403) {
-              notificationError({
-                message: 'El email no está registrado',
-              });
+              notificationError('El email no está registrado');
             } else {
-              notificationError({
-                message: error.message,
-              });
+              notificationError(error.message);
             }
           } else if (error instanceof Error) {
-            notificationError({ message: error.message });
+            notificationError(error.message);
           }
         } else {
           navigate(AppUrl.LoginPasswordless.replace(':email', values.email));

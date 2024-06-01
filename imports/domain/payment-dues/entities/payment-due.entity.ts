@@ -9,7 +9,7 @@ export interface CreatePaymentDue {
   paymentId: string;
 }
 
-export class PaymentDue extends EntityOld {
+export class PaymentDueOld extends EntityOld {
   @IsPositive()
   @IsNumber()
   public amount!: number;
@@ -26,8 +26,10 @@ export class PaymentDue extends EntityOld {
     super();
   }
 
-  public static createOne(props: CreatePaymentDue): Result<PaymentDue, Error> {
-    const paymentDue = new PaymentDue();
+  public static createOne(
+    props: CreatePaymentDue,
+  ): Result<PaymentDueOld, Error> {
+    const paymentDue = new PaymentDueOld();
 
     paymentDue.amount = props.amount;
 

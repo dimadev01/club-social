@@ -1,16 +1,19 @@
 import { Result, err, ok } from 'neverthrow';
 
 import { Model } from '@domain/common/models/model';
-import { IPaymentDueModel } from '@domain/payment-dues/models/payment-due-model.interface';
+import {
+  CreatePaymentDue,
+  IPaymentDueProps,
+} from '@domain/payment-dues/models/payment-due-model.interface';
 
-export class PaymentDueModel extends Model implements IPaymentDueModel {
+export class PaymentDueModel extends Model implements IPaymentDueProps {
   private _amount: number;
 
   private _dueId: string;
 
   private _paymentId: string;
 
-  public constructor(props?: IPaymentDueModel) {
+  public constructor(props?: IPaymentDueProps) {
     super(props);
 
     this._amount = props?.amount ?? 0;
@@ -33,7 +36,7 @@ export class PaymentDueModel extends Model implements IPaymentDueModel {
   }
 
   public static createOne(
-    props: IPaymentDueModel,
+    props: CreatePaymentDue,
   ): Result<PaymentDueModel, Error> {
     const paymentDue = new PaymentDueModel();
 

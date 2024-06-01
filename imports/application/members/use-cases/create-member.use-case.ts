@@ -2,10 +2,10 @@ import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
-import { InternalServerError } from '@application/errors/internal-server.error';
 import { MemberModelDto } from '@application/members/dtos/member-model.dto';
 import { GetMemberUseCase } from '@application/members/use-cases/get-member.use.case';
-import { CreateUserNewUseCase } from '@application/users/use-cases/create-user/create-user.use-case';
+import { CreateUserNewUseCase } from '@application/users/use-cases/create-user.use-case';
+import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { DIToken } from '@domain/common/tokens.di';
 import { IUseCase } from '@domain/common/use-case.interface';
@@ -20,10 +20,10 @@ export class CreateMemberUseCase<TSession>
   implements IUseCase<CreateMemberRequest, MemberModelDto>
 {
   public constructor(
-    @inject(DIToken.IMemberRepository)
-    private readonly _memberRepository: IMemberRepository<TSession>,
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork<TSession>,
+    @inject(DIToken.IMemberRepository)
+    private readonly _memberRepository: IMemberRepository<TSession>,
     private readonly _createUserUseCase: CreateUserNewUseCase<TSession>,
     private readonly _getMemberUseCase: GetMemberUseCase,
   ) {}

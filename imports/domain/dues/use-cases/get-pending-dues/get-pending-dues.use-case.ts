@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import { DIToken } from '@domain/common/tokens.di';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
-import { IDuePort } from '@domain/dues/due.port';
+import { IDuePortOld } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { GetPendingDueResponseDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
 import { GetPendingDuesRequestDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-dues.request.dto';
@@ -18,7 +18,7 @@ export class GetPendingDuesByMemberUseCase
 {
   public constructor(
     @inject(DIToken.DueRepository)
-    private readonly _duePort: IDuePort,
+    private readonly _duePort: IDuePortOld,
   ) {
     super();
   }

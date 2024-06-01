@@ -14,9 +14,9 @@ import {
 import { MongoCrudRepositoryOld } from '@adapters/repositories/mongo-crud.repository';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
-import { DueCollection } from '@domain/dues/due.collection';
+import { DueCollectionOld } from '@domain/dues/due.collection';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
-import { IDuePort } from '@domain/dues/due.port';
+import { IDuePortOld } from '@domain/dues/due.port';
 import { Due } from '@domain/dues/entities/due.entity';
 import { DateUtils } from '@shared/utils/date.utils';
 import { MongoUtilsOld } from '@shared/utils/mongo.utils';
@@ -24,7 +24,7 @@ import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 @injectable()
 export class DueRepository
   extends MongoCrudRepositoryOld<Due>
-  implements IDuePort
+  implements IDuePortOld
 {
   public constructor(
     @inject(DIToken.Logger)
@@ -181,6 +181,6 @@ export class DueRepository
   }
 
   protected getCollection(): MongoCollectionOld<Due> {
-    return DueCollection;
+    return DueCollectionOld;
   }
 }

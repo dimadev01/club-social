@@ -4,7 +4,7 @@ import { Result, err, ok } from 'neverthrow';
 import { EntityOld } from '@domain/common/entity.old';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
-import { CreateDue, CreateDuePayment } from '@domain/dues/due.types';
+import { CreateDueOld, CreateDuePaymentOld } from '@domain/dues/due.types';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { MoneyUtils } from '@shared/utils/money.utils';
@@ -51,7 +51,7 @@ export class Due extends EntityOld {
     return '-';
   }
 
-  public static create(props: CreateDue): Result<Due, Error> {
+  public static create(props: CreateDueOld): Result<Due, Error> {
     const due = new Due();
 
     const updateResult: Result<[null, null, null], Error> = Result.combine([
@@ -107,7 +107,7 @@ export class Due extends EntityOld {
     return ok(null);
   }
 
-  public pay(props: CreateDuePayment): Result<null, Error> {
+  public pay(props: CreateDuePaymentOld): Result<null, Error> {
     if (props.amount >= this.getPendingAmount()) {
       this.status = DueStatusEnum.PAID;
     } else {

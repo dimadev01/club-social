@@ -8,7 +8,7 @@ import { ICrudPort } from '@application/ports/crud.port';
 import { IPaginatedPort } from '@application/ports/paginated.port';
 import { Due } from '@domain/dues/entities/due.entity';
 
-export interface IDuePort extends ICrudPort<Due>, IPaginatedPort<Due> {
+export interface IDuePortOld extends ICrudPort<Due>, IPaginatedPort<Due> {
   findPaginated(
     request: FindPaginatedDuesRequest,
   ): Promise<FindPaginatedDuesResponse>;

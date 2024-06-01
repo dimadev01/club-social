@@ -3,6 +3,7 @@ import {
   DeleteOutlined,
   FilterOutlined,
 } from '@ant-design/icons';
+import { FindPaginatedPaymentsResponse } from '@domain/payments/repositories/find-paginated-payments.interface';
 import { Table as AntTable, Breadcrumb, Card, Space } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -17,11 +18,10 @@ import { useMembers } from '@adapters/ui/hooks/members/useMembers';
 import { useDeletePayment } from '@adapters/ui/hooks/payments/useDeletePayment';
 import { useQueryGrid } from '@adapters/ui/hooks/useQueryGrid';
 import { useTable } from '@adapters/ui/hooks/useTable';
+import { PaymentGridModelDto } from '@application/payments/dtos/payment-grid-model-dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { FindPaginatedPaymentsResponse } from '@domain/payments/repositories/find-paginated-payments.interface';
-import { PaymentGridModelDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid-model-dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { GetPaymentsGridRequestDto } from '@infra/controllers/payment/get-payments-grid-request.dto';
 import { SecurityUtils } from '@infra/security/security.utils';

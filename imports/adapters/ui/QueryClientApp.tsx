@@ -40,10 +40,10 @@ export const QueryClientApp: React.FC<PropsWithChildren> = ({ children }) => {
           title: 'Internal Server Error',
         });
       } else {
-        notificationError({ message: error.reason });
+        notificationError(error.reason);
       }
     } else {
-      notificationError({ message: 'An unknown error occurred.' });
+      notificationError('An unknown error occurred');
     }
   };
 

@@ -9,12 +9,12 @@ import { MongoCollectionOld } from '@adapters/mongo/common/mongo-collection.old'
 import { MongoCrudRepositoryOld } from '@adapters/repositories/mongo-crud.repository';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { DIToken } from '@domain/common/tokens.di';
-import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
+import { PaymentDueOld } from '@domain/payment-dues/entities/payment-due.entity';
 import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
 
 @injectable()
 export class PaymentDueRepository
-  extends MongoCrudRepositoryOld<PaymentDue>
+  extends MongoCrudRepositoryOld<PaymentDueOld>
   implements IPaymentDuePort
 {
   public constructor(
@@ -24,19 +24,19 @@ export class PaymentDueRepository
     super(_logger);
   }
 
-  public findByPayment(paymentId: string): Promise<PaymentDue[]> {
+  public findByPayment(paymentId: string): Promise<PaymentDueOld[]> {
     return this.getCollection()
       .find({ isDeleted: false, paymentId })
       .fetchAsync();
   }
 
-  public findByPayments(paymentIds: string[]): Promise<PaymentDue[]> {
+  public findByPayments(paymentIds: string[]): Promise<PaymentDueOld[]> {
     return this.getCollection()
       .find({ _id: { $in: paymentIds }, isDeleted: false })
       .fetchAsync();
   }
 
-  protected getCollection(): MongoCollectionOld<PaymentDue> {
+  protected getCollection(): MongoCollectionOld<PaymentDueOld> {
     return PaymentDueCollectionOld;
   }
 

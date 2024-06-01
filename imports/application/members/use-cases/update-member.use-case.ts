@@ -2,10 +2,10 @@ import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
-import { InternalServerError } from '@application/errors/internal-server.error';
 import { MemberModelDto } from '@application/members/dtos/member-model.dto';
 import { GetMemberUseCase } from '@application/members/use-cases/get-member.use.case';
-import { UpdateUserUseCase } from '@application/users/use-cases/update-user/update-user.use-case';
+import { UpdateUserUseCase } from '@application/users/use-cases/update-user.use-case';
+import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { DIToken } from '@domain/common/tokens.di';
 import { IUseCase } from '@domain/common/use-case.interface';

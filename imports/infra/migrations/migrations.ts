@@ -4,9 +4,9 @@ import { container } from 'tsyringe';
 
 import { PaymentDueCollection } from '@adapters/mongo/collections/payment-due.collection';
 import { PaymentCollection } from '@adapters/mongo/collections/payment.collection';
-import { DueCollection } from '@domain/dues/due.collection';
+import { DueCollectionOld } from '@domain/dues/due.collection';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
-import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
+import { PaymentDueOld } from '@domain/payment-dues/entities/payment-due.entity';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 import { DateUtils } from '@shared/utils/date.utils';
@@ -1202,7 +1202,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await DueCollection.rawCollection().updateMany(
+    await DueCollectionOld.rawCollection().updateMany(
       {
         category: DueCategoryEnum.ELECTRICITY,
         date: {
@@ -1296,14 +1296,14 @@ Migrations.add({
     /**
      * Dues
      */
-    const dues = await DueCollection.rawCollection()
+    const dues = await DueCollectionOld.rawCollection()
       // @ts-expect-error
       .find({ memberId: null })
       .toArray();
 
     await Promise.all(
       dues.map(async (oldDue: any) => {
-        await DueCollection.updateAsync(oldDue._id, {
+        await DueCollectionOld.updateAsync(oldDue._id, {
           $set: {
             memberId: oldDue.member._id,
           },
@@ -1329,7 +1329,7 @@ Migrations.add({
       payments.map(async (oldPayment: any) => {
         await Promise.all(
           oldPayment.dues.map(async (oldPaymentDue: any) => {
-            const newPaymentDue = PaymentDue.createOne({
+            const newPaymentDue = PaymentDueOld.createOne({
               amount: oldPaymentDue.amount,
               dueId: oldPaymentDue.due._id,
               paymentId: oldPayment._id,
@@ -1458,7 +1458,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await DueCollection.rawCollection().createIndex(
+    await DueCollectionOld.rawCollection().createIndex(
       { memberId: 1 },
       { name: 'd_mi' },
     );

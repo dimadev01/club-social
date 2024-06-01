@@ -1,4 +1,4 @@
-import { IModel } from '@domain/common/models/model.interface';
+import { IModelProps } from '@domain/common/models/model.interface';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import {
   MemberCategoryEnum,
@@ -8,9 +8,9 @@ import {
   MemberSexEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
-import { UserModel } from '@domain/users/models/user.model';
+import { IUserModel } from '@domain/users/models/user-model.interface';
 
-export interface IMemberModel extends IModel {
+export interface IMemberModel extends IModelProps {
   address: IMemberAddressModel;
   birthDate: BirthDate | null;
   category: MemberCategoryEnum;
@@ -21,7 +21,7 @@ export interface IMemberModel extends IModel {
   phones: string[] | null;
   sex: MemberSexEnum | null;
   status: MemberStatusEnum;
-  user: UserModel | undefined;
+  user: IUserModel | undefined;
   userId: string;
 }
 

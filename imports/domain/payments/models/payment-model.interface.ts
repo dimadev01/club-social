@@ -1,6 +1,7 @@
-import { IModel } from '@domain/common/models/model.interface';
+import { IModelProps } from '@domain/common/models/model.interface';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { MemberModel } from '@domain/members/models/member.model';
+import { PaymentDueModel } from '@domain/payment-dues/models/payment-due.model';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export interface CreatePayment {
@@ -10,10 +11,10 @@ export interface CreatePayment {
   receiptNumber: number;
 }
 
-export interface IPaymentModel extends IModel {
+export interface IPaymentProps extends IModelProps {
   date: DateUtcVo;
-  dues: PaymentDueModel[];
-  member: MemberModel | undefined;
+  dues?: PaymentDueModel[];
+  member?: MemberModel;
   memberId: string;
   notes: string | null;
   receiptNumber: number | null;

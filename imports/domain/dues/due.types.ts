@@ -1,6 +1,6 @@
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 
-export interface CreateDue {
+export interface CreateDueOld {
   amount: number;
   category: DueCategoryEnum;
   date: string;
@@ -8,12 +8,12 @@ export interface CreateDue {
   notes: string | null;
 }
 
-export interface CreateDueMember {
+export interface CreateDueMemberOld {
   _id: string;
   name: string;
 }
 
-export interface CreateDuePayment {
+export interface CreateDuePaymentOld {
   _id: string;
   amount: number;
   date: Date;

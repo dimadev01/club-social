@@ -1,4 +1,5 @@
 import { Result, err, ok } from 'neverthrow';
+import invariant from 'tiny-invariant';
 
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
@@ -6,14 +7,14 @@ import { MemberModel } from '@domain/members/models/member.model';
 import { PaymentDueModel } from '@domain/payment-dues/models/payment-due.model';
 import {
   CreatePayment,
-  IPaymentModel,
+  IPaymentProps,
 } from '@domain/payments/models/payment-model.interface';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
-export class PaymentModel extends Model implements IPaymentModel {
+export class PaymentModel extends Model implements IPaymentProps {
   private _date: DateUtcVo;
 
-  private _dues: PaymentDueModel[];
+  private _dues: PaymentDueModel[] | undefined;
 
   private _member: MemberModel | undefined;
 
@@ -25,7 +26,7 @@ export class PaymentModel extends Model implements IPaymentModel {
 
   private _status: PaymentStatusEnum;
 
-  public constructor(props?: IPaymentModel) {
+  public constructor(props?: IPaymentProps) {
     super(props);
 
     this._date = props?.date ?? new DateUtcVo();
@@ -40,14 +41,20 @@ export class PaymentModel extends Model implements IPaymentModel {
 
     this._status = props?.status ?? PaymentStatusEnum.PAID;
 
-    this._dues = props?.dues ?? [];
+    this._dues = props?.dues;
+  }
+
+  public getTotalAmountOfDues(): number {
+    invariant(this._dues);
+
+    return this._dues.reduce((acc, due) => acc + due.amount, 0);
   }
 
   public get date(): DateUtcVo {
     return this._date;
   }
 
-  public get dues(): PaymentDueModel[] {
+  public get dues(): PaymentDueModel[] | undefined {
     return this._dues;
   }
 

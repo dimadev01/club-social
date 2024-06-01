@@ -40,7 +40,7 @@ export const EnrollPage = () => {
     if (token) {
       Accounts.resetPassword(token, values.newPassword, (error) => {
         if (error) {
-          notificationError({ message: error.message });
+          notificationError(error.message);
         } else {
           message.success('Usuario activado');
 

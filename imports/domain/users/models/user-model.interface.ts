@@ -1,8 +1,8 @@
-import { IModel } from '@domain/common/models/model.interface';
+import { IModelProps } from '@domain/common/models/model.interface';
 import { RoleEnum } from '@domain/roles/role.enum';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 
-export interface IUserModel extends IModel {
+export interface IUserModel extends IModelProps {
   emails: IUserEmailModel[] | null;
   firstName: string;
   heartbeat: Date | null;

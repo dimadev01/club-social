@@ -5,13 +5,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { AppUrl } from '@adapters/ui/app.enum';
+import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { GetPendingDueResponseDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
-import { MoneyUtils } from '@shared/utils/money.utils';
 import { NumberUtils } from '@shared/utils/number.utils';
 
 type Props = {
-  pendingDues: GetPendingDueResponseDto[] | undefined;
+  pendingDues?: GetPendingDueResponseDto[];
 };
 
 type FormDueValue = {
@@ -48,10 +48,10 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
           <Table.Summary.Cell index={1} />
           <Table.Summary.Cell index={2} />
           <Table.Summary.Cell align="right" index={3}>
-            Total: {MoneyUtils.formatCents(totalPending)}
+            Total: {new Money(totalPending).formatWithCurrency()}
           </Table.Summary.Cell>
           <Table.Summary.Cell align="right" index={4}>
-            Total: {MoneyUtils.formatWithCurrency(totalDuesToPay)}
+            Total: {new Money(totalDuesToPay).formatWithCurrency()}
           </Table.Summary.Cell>
         </Table.Summary.Row>
       </Table.Summary>

@@ -23,9 +23,12 @@ import { MembersSelect } from '@adapters/ui/components/Members/MembersSelect';
 import { usePendingDuesByMember } from '@adapters/ui/hooks/dues/usePendingDuesByMember';
 import { useMember } from '@adapters/ui/hooks/members/useMember';
 import { useCreatePayment } from '@adapters/ui/hooks/payments/useCreatePayment';
-import { useNotificationError } from '@adapters/ui/hooks/useNotification';
+import {
+  useNotificationError,
+  useNotificationSuccess,
+} from '@adapters/ui/hooks/useNotification';
+import { CreatePaymentRequestDto } from '@application/payments/use-cases/create-payment/create-payment-request.dto';
 import { GetPendingDueResponseDto } from '@domain/dues/use-cases/get-pending-dues/get-pending-due.dto';
-import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { MoneyUtils } from '@shared/utils/money.utils';
@@ -49,6 +52,8 @@ export const PaymentNewPage = () => {
   const { message } = App.useApp();
 
   const notificationError = useNotificationError();
+
+  const notificationSuccess = useNotificationSuccess();
 
   /**
    * Url params
@@ -147,9 +152,7 @@ export const PaymentNewPage = () => {
     const selectedDues = values.dues?.filter((due) => due.isSelected) ?? [];
 
     if (selectedDues.length === 0) {
-      notificationError({
-        message: 'Debes seleccionar al menos un pago pendiente',
-      });
+      notificationError('Debes seleccionar al menos un pago pendiente');
 
       return;
     }
@@ -167,9 +170,14 @@ export const PaymentNewPage = () => {
 
     createPayment.mutate(request, {
       onSuccess: () => {
-        message.success('Pago creado');
+        notificationSuccess('Pago registrado');
 
-        form.setFieldValue('memberIds', []);
+        form.setFieldsValue({
+          dues: undefined,
+          memberId: undefined,
+          notes: undefined,
+          receiptNumber: undefined,
+        });
       },
     });
   };
