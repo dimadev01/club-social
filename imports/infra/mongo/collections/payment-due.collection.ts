@@ -1,18 +1,11 @@
-import SimpleSchema from 'simpl-schema';
+import { singleton } from 'tsyringe';
 
-import { PaymentDue } from '@domain/payment-dues/entities/payment-due.entity';
-import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
-import { EntitySchema } from '@infra/mongo/schemas/entity.schema';
+import { MongoCollectionNewV } from '@infra/mongo/collections/mongo.collection';
+import { PaymentDueEntity } from '@infra/mongo/entities/payment-due/payment-due.entity';
 
-export const PaymentDueCollection = new MongoCollection(
-  'payment.dues',
-  PaymentDue,
-);
-
-export const PaymentDueSchema = new SimpleSchema({
-  amount: SimpleSchema.Integer,
-  dueId: String,
-  paymentId: String,
-}).extend(EntitySchema);
-
-PaymentDueCollection.attachSchema(PaymentDueSchema);
+@singleton()
+export class PaymentDueCollection extends MongoCollectionNewV<PaymentDueEntity> {
+  public constructor() {
+    super('payment.dues');
+  }
+}

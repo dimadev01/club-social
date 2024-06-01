@@ -1,9 +1,10 @@
+import { IUserProfileEntity } from '@infra/mongo/entities/users/user-entity.interface';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 import { RoleEnum } from '@domain/roles/role.enum';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 
-export class UserProfileEntity {
+export class UserProfileEntity implements IUserProfileEntity {
   @IsNotEmpty()
   @IsString()
   public firstName: string;

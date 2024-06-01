@@ -1,9 +1,10 @@
 import { inject, singleton } from 'tsyringe';
 
-import { DayjsDate } from '@domain/common/value-objects/dayjs-date.value-object';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { PaymentModel } from '@domain/payments/models/payment.model';
 import { Mapper } from '@infra/mappers/mapper';
 import { MemberMapper } from '@infra/mappers/member.mapper';
+import { PaymentDueMapper } from '@infra/mappers/payment-due.mapper';
 import { PaymentEntity } from '@infra/mongo/entities/payments/payment.entity';
 
 @singleton()
@@ -11,6 +12,8 @@ export class PaymentMapper extends Mapper<PaymentModel, PaymentEntity> {
   public constructor(
     @inject(MemberMapper)
     private readonly _memberMapper: MemberMapper,
+    @inject(PaymentDueMapper)
+    private readonly _paymentDueMapper: PaymentDueMapper,
   ) {
     super();
   }
@@ -20,8 +23,7 @@ export class PaymentMapper extends Mapper<PaymentModel, PaymentEntity> {
       _id: orm._id,
       createdAt: orm.createdAt,
       createdBy: orm.createdBy,
-      // date: DayjsDate.utc(orm.date),
-      date: DayjsDate.utc(orm.date),
+      date: new DateUtcVo(orm.date),
       deletedAt: orm.deletedAt,
       deletedBy: orm.deletedBy,
       isDeleted: orm.isDeleted,

@@ -1,4 +1,5 @@
 import { IModel } from '@domain/common/models/model.interface';
+import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -11,8 +12,8 @@ import { UserModel } from '@domain/users/models/user.model';
 
 export interface CreateMember {
   address: CreateMemberAddress;
+  birthDate: string | null;
   category: MemberCategoryEnum;
-  dateOfBirth: string | null;
   documentID: string | null;
   fileStatus: MemberFileStatusEnum | null;
   maritalStatus: MemberMaritalStatusEnum | null;
@@ -24,8 +25,8 @@ export interface CreateMember {
 
 export interface IMemberModel extends IModel {
   address: IMemberAddressModel;
+  birthDate: BirthDate | null;
   category: MemberCategoryEnum;
-  dateOfBirth: Date | null;
   documentID: string | null;
   fileStatus: MemberFileStatusEnum | null;
   maritalStatus: MemberMaritalStatusEnum | null;

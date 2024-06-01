@@ -6,4 +6,5 @@ export interface PaymentGridModelDto {
   memberId: string;
   memberName: string;
   paymentDuesCount: number;
+  totalAmount: number;
 }

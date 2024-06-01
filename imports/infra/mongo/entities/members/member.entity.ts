@@ -10,6 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -20,10 +21,11 @@ import {
 } from '@domain/members/member.enum';
 import { EntityNewV } from '@infra/mongo/entities/common/entity';
 import { MemberAddressEntityNewV } from '@infra/mongo/entities/members/member-address.entity';
-import { UserEntity } from '@infra/mongo/entities/users/user.entity';
+import { IMemberEntity } from '@infra/mongo/entities/members/member-entity.interface';
+import { IUserEntity } from '@infra/mongo/interfaces/user-entity.interface';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
-export class MemberEntity extends EntityNewV {
+export class MemberEntity extends EntityNewV implements IMemberEntity {
   @ValidateNested()
   @Type(() => MemberAddressEntityNewV)
   public address: MemberAddressEntityNewV;
@@ -34,7 +36,7 @@ export class MemberEntity extends EntityNewV {
   @IsDate()
   @IsNullable()
   @IsDefined()
-  public dateOfBirth: Date | null;
+  public birthDate: DateUtcVo | null;
 
   @IsString()
   @IsNullable()
@@ -71,20 +73,20 @@ export class MemberEntity extends EntityNewV {
   @IsEnum(MemberStatusEnum)
   public status: MemberStatusEnum;
 
-  public user: UserEntity | undefined;
+  public user: IUserEntity | undefined;
 
   @IsNotEmpty()
   @IsString()
   public userId: string;
 
-  public constructor(props: MemberEntity) {
+  public constructor(props: IMemberEntity) {
     super(props);
 
     this.address = props.address;
 
     this.category = props.category;
 
-    this.dateOfBirth = props.dateOfBirth;
+    this.birthDate = props.birthDate;
 
     this.documentID = props.documentID;
 

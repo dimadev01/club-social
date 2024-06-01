@@ -1,5 +1,6 @@
 import { inject, singleton } from 'tsyringe';
 
+import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import { MemberAddressModel } from '@domain/members/models/member-address.model';
 import { MemberModel } from '@domain/members/models/member.model';
 import { Mapper } from '@infra/mappers/mapper';
@@ -27,10 +28,10 @@ export class MemberMapper extends Mapper<MemberModel, MemberEntity> {
         street: orm.address.street,
         zipCode: orm.address.zipCode,
       }),
+      birthDate: orm.birthDate ? new BirthDate(orm.birthDate) : null,
       category: orm.category,
       createdAt: orm.createdAt,
       createdBy: orm.createdBy,
-      dateOfBirth: orm.dateOfBirth,
       deletedAt: orm.deletedAt,
       deletedBy: orm.deletedBy,
       documentID: orm.documentID,
@@ -59,10 +60,10 @@ export class MemberMapper extends Mapper<MemberModel, MemberEntity> {
         street: model.address.street,
         zipCode: model.address.zipCode,
       }),
+      birthDate: model.birthDate?.toDate() ?? null,
       category: model.category,
       createdAt: model.createdAt,
       createdBy: model.createdBy,
-      dateOfBirth: model.dateOfBirth,
       deletedAt: model.deletedAt,
       deletedBy: model.deletedBy,
       documentID: model.documentID,

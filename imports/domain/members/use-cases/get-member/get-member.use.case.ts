@@ -40,7 +40,7 @@ export class GetMemberUseCase
       addressStreet: member.address.street,
       addressZipCode: member.address.zipCode,
       category: member.category,
-      dateOfBirth: member.dateOfBirth,
+      dateOfBirth: member.birthDate?.toDate() ?? null,
       documentID: member.documentID,
       emails: member.user.emails?.map((email) => email.address) ?? [],
       fileStatus: member.fileStatus,

@@ -8,7 +8,7 @@ import { IPaymentDuePort } from '@domain/payment-dues/payment-due.port';
 import {
   PaymentDueCollection,
   PaymentDueSchema,
-} from '@infra/mongo/collections/payment-due.collection';
+} from '@infra/mongo/collections/payment-due.collection.old';
 import { MongoCollection } from '@infra/mongo/common/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@infra/mongo/repositories/mongo-crud.repository';
 

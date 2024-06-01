@@ -1,8 +1,9 @@
 import { Result, err, ok } from 'neverthrow';
 
 import { Model } from '@domain/common/models/model';
-import { DayjsDate } from '@domain/common/value-objects/dayjs-date.value-object';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { MemberModel } from '@domain/members/models/member.model';
+import { PaymentDueModel } from '@domain/payment-dues/models/payment-due.model';
 import {
   CreatePayment,
   IPaymentModel,
@@ -10,7 +11,9 @@ import {
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export class PaymentModel extends Model implements IPaymentModel {
-  private _date: DayjsDate;
+  private _date: DateUtcVo;
+
+  private _dues: PaymentDueModel[];
 
   private _member: MemberModel | undefined;
 
@@ -25,7 +28,7 @@ export class PaymentModel extends Model implements IPaymentModel {
   public constructor(props?: IPaymentModel) {
     super(props);
 
-    this._date = props?.date ?? new DayjsDate();
+    this._date = props?.date ?? new DateUtcVo();
 
     this._memberId = props?.memberId ?? '';
 
@@ -36,14 +39,20 @@ export class PaymentModel extends Model implements IPaymentModel {
     this._receiptNumber = props?.receiptNumber ?? null;
 
     this._status = props?.status ?? PaymentStatusEnum.PAID;
+
+    this._dues = props?.dues ?? [];
+  }
+
+  public get date(): DateUtcVo {
+    return this._date;
+  }
+
+  public get dues(): PaymentDueModel[] {
+    return this._dues;
   }
 
   public get member(): MemberModel | undefined {
     return this._member;
-  }
-
-  public get date(): DayjsDate {
-    return this._date;
   }
 
   public get memberId(): string {
@@ -79,7 +88,7 @@ export class PaymentModel extends Model implements IPaymentModel {
     return ok(payment);
   }
 
-  public setDate(value: DayjsDate): Result<null, Error> {
+  public setDate(value: DateUtcVo): Result<null, Error> {
     this._date = value;
 
     return ok(null);

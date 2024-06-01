@@ -41,7 +41,7 @@ export class GetMembersGridUseCase
         return {
           _id: item._id,
           category: item.category,
-          name: item.user.name,
+          name: item.name,
           pendingElectricity: balance.electricity,
           pendingGuest: balance.guest,
           pendingMembership: balance.membership,

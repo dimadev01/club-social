@@ -4,6 +4,7 @@ export const DIToken = Object.freeze({
   EmailService: Symbol('EmailService'),
   IMemberRepository: Symbol('IMemberRepository'),
   IMeteorUsers: Symbol('IMeteorUsers'),
+  IPaymentDueRepository: Symbol('IPaymentDueRepository'),
   IPaymentRepository: Symbol('IPaymentRepository'),
   IUnitOfWork: Symbol('IUnitOfWork'),
   IUserRepository: Symbol('IUserRepository'),

@@ -7,6 +7,7 @@ import {
   DatePicker,
   Form,
   Space,
+  Typography,
 } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import qs from 'qs';
@@ -14,6 +15,7 @@ import { RangeValue } from 'rc-picker/lib/interface';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import { Money } from '@domain/common/value-objects/money.value-object';
 import { FindPaginatedPaymentsResponse } from '@domain/payments/repositories/find-paginated-payments.interface';
 import { PaymentGridModelDto } from '@domain/payments/use-cases/get-payments-grid/payment-grid-model-dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
@@ -212,10 +214,15 @@ export const PaymentsPage = () => {
               {
                 dataIndex: 'date',
                 render: (date: string, payment: PaymentGridModelDto) => (
-                  <Link to={`${AppUrl.Payments}/${payment._id}`}>{date}</Link>
+                  <>
+                    <Link to={`${AppUrl.Payments}/${payment._id}`}>{date}</Link>
+                    <Typography.Text className="flex" copyable>
+                      {payment._id}
+                    </Typography.Text>
+                  </>
                 ),
                 title: 'Fecha',
-                width: 150,
+                width: 250,
               },
               {
                 dataIndex: 'memberId',
@@ -235,12 +242,14 @@ export const PaymentsPage = () => {
                 title: '#',
                 width: 50,
               },
-              // {
-              //   align: 'right',
-              //   dataIndex: 'totalAmount',
-              //   title: 'Total',
-              //   width: 150,
-              // },
+              {
+                align: 'right',
+                dataIndex: 'totalAmount',
+                render: (totalAmount: number) =>
+                  new Money(totalAmount).formatWithCurrency(),
+                title: 'Total',
+                width: 150,
+              },
               // {
               //   align: 'right',
               //   dataIndex: 'receiptNumber',

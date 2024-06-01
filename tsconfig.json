@@ -2,7 +2,7 @@
   "compilerOptions": {
     /* Basic Options */
     "target": "es2018",
-    "module": "esNext",
+    "module": "NodeNext",
     "lib": ["esnext", "dom"],
     "allowJs": true,
     "checkJs": false,
@@ -24,13 +24,13 @@
     /* Module Resolution Options */
     "baseUrl": ".",
     "paths": {
-      "@domain/*": ["./imports/domain/*"],
-      "@ui/*": ["./imports/ui/*"],
-      "@infra/*": ["./imports/infra/*"],
-      "@shared/*": ["./imports/shared/*"],
-      "@application/*": ["./imports/application/*"]
+      "@domain/*": ["imports/domain/*"],
+      "@ui/*": ["imports/ui/*"],
+      "@infra/*": ["imports/infra/*"],
+      "@shared/*": ["imports/shared/*"],
+      "@application/*": ["imports/application/*"]
     },
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "preserveSymlinks": true,
@@ -40,8 +40,8 @@
   "exclude": ["./.meteor/**", "./packages/**"],
   "include": [
     ".meteor/**/*.ts",
-    "./imports/**/*.ts",
-    "./imports/**/*.tsx",
-    "./types/*.d.ts"
+    "imports/**/*.ts",
+    "imports/**/*.tsx",
+    "types/*.d.ts"
   ]
 }

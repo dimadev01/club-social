@@ -1,3 +1,4 @@
+import { IUserEmailEntity } from '@infra/mongo/entities/users/user-entity.interface';
 import {
   IsBoolean,
   IsEmail,
@@ -6,7 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class UserEmailEntity {
+export class UserEmailEntity implements IUserEmailEntity {
   @IsEmail()
   @IsLowercase()
   @IsNotEmpty()

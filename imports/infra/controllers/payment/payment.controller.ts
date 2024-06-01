@@ -18,7 +18,7 @@ export class PaymentController extends BaseController {
     super(logger);
   }
 
-  protected register(): void {
+  public register(): void {
     Meteor.methods({
       [MeteorMethodEnum.PaymentsGetGrid]: (
         request: GetPaymentsGridRequestDto,

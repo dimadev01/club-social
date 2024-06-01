@@ -1,6 +1,8 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class MemberAddressEntityNewV {
+import { IMemberAddressEntity } from '@infra/mongo/entities/members/member-entity.interface';
+
+export class MemberAddressEntityNewV implements IMemberAddressEntity {
   @IsString()
   @IsOptional()
   public cityName: string | null;
@@ -25,7 +27,7 @@ export class MemberAddressEntityNewV {
   @IsOptional()
   public zipCode: string | null;
 
-  public constructor(props: MemberAddressEntityNewV) {
+  public constructor(props: IMemberAddressEntity) {
     this.cityName = props.cityName;
 
     this.cityGovId = props.cityGovId;

@@ -9,14 +9,18 @@ import {
 
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { EntityNewV } from '@infra/mongo/entities/common/entity';
-import { MemberEntity } from '@infra/mongo/entities/members/member.entity';
+import { IMemberEntity } from '@infra/mongo/entities/members/member-entity.interface';
+import { IPaymentDueEntity } from '@infra/mongo/entities/payment-due/payment-due-entity.interface';
+import { IPaymentEntity } from '@infra/mongo/entities/payments/payment-entity.interface';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
-export class PaymentEntity extends EntityNewV {
+export class PaymentEntity extends EntityNewV implements IPaymentEntity {
   @IsDate()
   public date: Date;
 
-  public member: MemberEntity | undefined;
+  public dues: IPaymentDueEntity[];
+
+  public member: IMemberEntity | undefined;
 
   @IsNotEmpty()
   @IsString()
@@ -47,5 +51,7 @@ export class PaymentEntity extends EntityNewV {
     this.receiptNumber = props.receiptNumber;
 
     this.status = props.status;
+
+    this.dues = props.dues;
   }
 }

@@ -12,15 +12,15 @@ export interface CreatePaymentDue {
 export class PaymentDue extends Entity {
   @IsPositive()
   @IsNumber()
-  public amount: number;
+  public amount!: number;
 
   @IsNotEmpty()
   @IsString()
-  public dueId: string;
+  public dueId!: string;
 
   @IsNotEmpty()
   @IsString()
-  public paymentId: string;
+  public paymentId!: string;
 
   public constructor() {
     super();

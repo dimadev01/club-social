@@ -1,3 +1,4 @@
+import { IUserEntity } from '@infra/mongo/errors/user-entity.interface';
 import { Type } from 'class-transformer';
 import { IsArray, IsDefined, IsObject, ValidateNested } from 'class-validator';
 
@@ -6,7 +7,7 @@ import { UserEmailEntity } from '@infra/mongo/entities/users/user-email.entity';
 import { UserProfileEntity } from '@infra/mongo/entities/users/user-profile.entity';
 import { IsNullable } from '@shared/class-validator/is-nullable';
 
-export class UserEntity extends EntityNewV {
+export class UserEntity extends EntityNewV implements IUserEntity {
   @IsNullable()
   @IsDefined()
   public heartbeat: Date | null;

@@ -2,6 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 
 import { Model } from '@domain/common/models/model';
+import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -16,14 +17,13 @@ import {
   IMemberModel,
 } from '@domain/members/models/member-model.interface';
 import { UserModel } from '@domain/users/models/user.model';
-import { DateUtils } from '@shared/utils/date.utils';
 
 export class MemberModel extends Model implements IMemberModel {
   private _address: MemberAddressModel;
 
   private _category: MemberCategoryEnum;
 
-  private _dateOfBirth: Date | null;
+  private _birthDate: BirthDate | null;
 
   private _documentID: string | null;
 
@@ -50,7 +50,7 @@ export class MemberModel extends Model implements IMemberModel {
 
     this._category = props?.category ?? MemberCategoryEnum.MEMBER;
 
-    this._dateOfBirth = props?.dateOfBirth ?? null;
+    this._birthDate = props?.birthDate ?? null;
 
     this._documentID = props?.documentID ?? null;
 
@@ -79,8 +79,8 @@ export class MemberModel extends Model implements IMemberModel {
     return this._category;
   }
 
-  public get dateOfBirth(): Date | null {
-    return this._dateOfBirth;
+  public get birthDate(): BirthDate | null {
+    return this._birthDate;
   }
 
   public get documentID(): string | null {
@@ -141,7 +141,7 @@ export class MemberModel extends Model implements IMemberModel {
     const result = Result.combine([
       member.setAddress(address.value),
       member.setCategory(props.category),
-      member.setDateOfBirth(props.dateOfBirth),
+      member.setDateOfBirth(props.birthDate),
       member.setDocumentID(props.documentID),
       member.setFileStatus(props.fileStatus),
       member.setMaritalStatus(props.maritalStatus),
@@ -172,9 +172,9 @@ export class MemberModel extends Model implements IMemberModel {
 
   public setDateOfBirth(value: string | null): Result<null, Error> {
     if (value) {
-      this._dateOfBirth = DateUtils.utc(value).toDate();
+      this._birthDate = new BirthDate(value);
     } else {
-      this._dateOfBirth = null;
+      this._birthDate = null;
     }
 
     return ok(null);

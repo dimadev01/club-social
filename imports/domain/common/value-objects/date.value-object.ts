@@ -1,20 +1,37 @@
-export abstract class DateVo<T = Date> {
-  private _date: T;
+import 'dayjs/locale/es';
+import dayjs, { Dayjs } from 'dayjs';
+import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat';
+import dayjsDuration from 'dayjs/plugin/duration';
+import dayjsLocaleData from 'dayjs/plugin/localeData';
+import dayjsUtc from 'dayjs/plugin/utc';
 
-  public constructor(date: T) {
-    this._date = date;
+import { ValueObject } from '@domain/common/value-objects/value-object';
+import { DateFormatEnum } from '@shared/utils/date.utils';
+
+dayjs.extend(dayjsUtc);
+
+dayjs.extend(dayjsLocaleData);
+
+dayjs.extend(dayjsCustomParseFormat);
+
+dayjs.extend(dayjsDuration);
+
+dayjs.locale('es');
+
+export class DateVo extends ValueObject<Dayjs> {
+  public constructor(value?: dayjs.ConfigType) {
+    super(dayjs(value));
   }
 
-  public get date(): T {
-    return this._date;
+  public format(format = DateFormatEnum.DDMMYYYY): string {
+    return this.props.format(format);
   }
 
-  public set date(value: T) {
-    this._date = value;
+  public toDate(): Date {
+    return this.props.toDate();
   }
 
-  public abstract format(): string;
-  public abstract utc(): this;
-  public abstract toDate(): Date;
-  public abstract toISOString(): string;
+  public toISOString(): string {
+    return this.props.toISOString();
+  }
 }
