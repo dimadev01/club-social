@@ -78,8 +78,13 @@ export const PaymentDetailPage = () => {
                   },
                   {
                     dataIndex: ['due', 'category'],
-                    render: (category: DueCategoryEnum) =>
-                      `${DueCategoryLabel[category]}`,
+                    render: (category: DueCategoryEnum, paymentDue) => {
+                      if (category === DueCategoryEnum.MEMBERSHIP) {
+                        return `${DueCategoryLabel[category]} (${new DateUtcVo(paymentDue.due.date).monthName()})`;
+                      }
+
+                      return DueCategoryLabel[category];
+                    },
                     title: 'Categoría',
                   },
                   {

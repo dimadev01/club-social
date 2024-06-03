@@ -4,7 +4,7 @@ import {
 } from '@domain/common/repositories/grid.repository';
 
 export interface FindPaginatedPaymentsRequest extends FindPaginatedRequest {
-  filterByMember?: string[];
+  filterByMember: string[] | undefined;
 }
 
 export type FindPaginatedPaymentsResponse<T> = FindPaginatedResponse<T>;

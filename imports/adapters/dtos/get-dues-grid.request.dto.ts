@@ -12,11 +12,11 @@ export class GetDuesGridRequestDto
   @ArrayMinSize(1)
   @IsArray()
   @IsOptional()
-  filterByMember?: string[] | undefined;
+  filterByMember: string[] | undefined;
 
   @IsString({ each: true })
   @ArrayMinSize(1)
   @IsArray()
   @IsOptional()
-  filterByStatus?: DueStatusEnum[] | undefined;
+  filterByStatus: DueStatusEnum[] | undefined;
 }

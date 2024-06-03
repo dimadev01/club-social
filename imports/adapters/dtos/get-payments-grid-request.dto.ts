@@ -11,5 +11,5 @@ export class GetPaymentsGridRequestDto
   @ArrayMinSize(1)
   @IsArray()
   @IsOptional()
-  public filterByMember?: string[];
+  public filterByMember: string[] | undefined;
 }

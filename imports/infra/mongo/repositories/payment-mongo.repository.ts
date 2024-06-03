@@ -107,6 +107,13 @@ export class PaymentMongoRepository
           localField: '_id',
           pipeline: [
             {
+              $match: {
+                $expr: {
+                  $eq: ['$isDeleted', false],
+                },
+              },
+            },
+            {
               $lookup: {
                 as: 'due',
                 foreignField: '_id',

@@ -32,10 +32,10 @@ export interface FindPaginatedMembersResponseTotals {
 }
 
 export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
-  filterByCategory?: MemberCategoryEnum[];
-  filterByDebtStatus?: string[];
-  filterById?: string[];
-  filterByStatus?: MemberStatusEnum[];
+  filterByCategory: MemberCategoryEnum[] | undefined;
+  filterByDebtStatus: string[] | undefined;
+  filterById: string[] | undefined;
+  filterByStatus: MemberStatusEnum[] | undefined;
 }
 
 export interface FindPaginatedMembersResponse<T = Member>
