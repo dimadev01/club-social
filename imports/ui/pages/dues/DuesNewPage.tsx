@@ -1,76 +1,128 @@
-import { ARS } from '@dinero.js/currencies';
 import {
-  App,
   Breadcrumb,
   Button,
   Card,
+  Col,
   DatePicker,
   Form,
   Input,
-  InputNumber,
-  Skeleton,
   Space,
-  Tag,
 } from 'antd';
-import { Rule } from 'antd/es/form';
 import { useWatch } from 'antd/es/form/Form';
-import { Dayjs } from 'dayjs';
-import React from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import dayjs, { Dayjs } from 'dayjs';
+import React, { useEffect, useMemo } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 
-import {
-  DueCategoryEnum,
-  DueCategoryLabel,
-  DueStatusColor,
-  DueStatusLabel,
-  getDueCategoryOptions,
-} from '@domain/dues/due.enum';
+import { DueCategoryEnum, getDueCategoryOptions } from '@domain/dues/due.enum';
 import {
   MemberCategoryEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { MoneyUtils } from '@shared/utils/money.utils';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
+import { FormInputAmount } from '@ui/components/Form/FormInputAmount';
+import { Row } from '@ui/components/Layout/Row';
 import { MembersSelect } from '@ui/components/Members/MembersSelect';
-import { NotFound } from '@ui/components/NotFound';
 import { Select } from '@ui/components/Select';
 import { useCreateDue } from '@ui/hooks/dues/useCreateDue';
-import { useDue } from '@ui/hooks/dues/useDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
+import {
+  useNotificationError,
+  useNotificationSuccess,
+} from '@ui/hooks/useNotification';
 
 type FormValues = {
   amount: number;
   category: DueCategoryEnum;
   date: Dayjs;
-  memberIds: string | string[] | undefined;
+  memberIds: string[] | undefined;
   notes: string | undefined;
 };
 
 export const DuesNewPage = () => {
+  const notificationError = useNotificationError();
+
+  const notificationSuccess = useNotificationSuccess();
+
+  /**
+   * Url params
+   */
+  const [, setSearchParams] = useSearchParams();
+
+  const {
+    memberIds: queryMemberIds,
+    date: queryDate,
+    category: queryCategory,
+    amount: queryAmount,
+  } = UrlUtils.parse();
+
+  const urlDate = queryDate ? queryDate.toString() : undefined;
+
+  const urlCategory = queryCategory ? queryCategory.toString() : undefined;
+
+  const urlAmount = queryAmount ? +queryAmount.toString() : undefined;
+
+  const urlMemberIds = useMemo(() => {
+    if (!queryMemberIds) {
+      return undefined;
+    }
+
+    return Array.isArray(queryMemberIds) ? queryMemberIds : [queryMemberIds];
+  }, [queryMemberIds]);
+
+  /**
+   * Form watches
+   */
   const [form] = Form.useForm<FormValues>();
 
-  const category = useWatch(['category'], form);
+  const formMemberIds: string[] | undefined = useWatch('memberIds', form);
 
-  const { id } = useParams<{ id?: string }>();
+  const formDate: Dayjs | undefined = useWatch('date', form);
 
-  const { message } = App.useApp();
+  const formCategory: DueCategoryEnum | undefined = useWatch('category', form);
 
-  const { data: due, fetchStatus: dueFetchStatus } = useDue(
-    id ? { id } : undefined,
-  );
+  const formAmount: number | undefined = useWatch('amount', form);
 
-  const createDue = useCreateDue();
+  const formSelectedMemberIds = useMemo(() => formMemberIds, [formMemberIds]);
 
+  /**
+   * Hooks
+   */
   const { data: members } = useMembers();
 
-  const user = Meteor.user();
+  /**
+   * Mutations
+   */
+  const createDue = useCreateDue();
 
-  if (!user) {
-    return <Navigate to={AppUrl.Login} />;
-  }
+  /**
+   * Effects
+   */
+  useEffect(() => {
+    const date = formDate
+      ? DateUtils.format(formDate, DateFormatEnum.DATE)
+      : undefined;
+
+    setSearchParams(
+      UrlUtils.stringify({
+        amount: formAmount,
+        category: formCategory,
+        date,
+        memberIds: formSelectedMemberIds,
+      }),
+      { replace: true },
+    );
+  }, [
+    formDate,
+    formAmount,
+    formCategory,
+    formSelectedMemberIds,
+    setSearchParams,
+  ]);
 
   const handleSubmit = async (values: FormValues) => {
     let date: string;
@@ -81,73 +133,42 @@ export const DuesNewPage = () => {
       date = values.date.startOf('day').format(DateFormatEnum.DATE);
     }
 
-    if (!due) {
-      createDue.mutate(
-        {
-          amount: MoneyUtils.toCents(values.amount),
-          category: values.category,
-          date,
-          memberIds: Array.isArray(values.memberIds) ? values.memberIds : [],
-          notes: values.notes ?? null,
-        },
-        {
-          onSuccess: () => {
-            message.success('Cobro creado');
-
-            form.setFieldValue('memberIds', []);
-          },
-        },
-      );
-    }
-  };
-
-  const isLoading = dueFetchStatus === 'fetching';
-
-  if (id && !due && !isLoading) {
-    return <NotFound />;
-  }
-
-  const isFormDisabled = () => {
-    if (!Roles.userIsInRole(user, PermissionEnum.CREATE, ScopeEnum.DUES)) {
-      return false;
-    }
-
-    if (!Roles.userIsInRole(user, PermissionEnum.UPDATE, ScopeEnum.DUES)) {
-      return false;
-    }
-
-    if (due) {
-      if (due.isPaid) {
-        return true;
-      }
-
-      if (due.isPartiallyPaid) {
-        return true;
-      }
-    }
-
-    return false;
-  };
-
-  const getRulesForMemberIds = () => {
-    const rules: Rule[] = [
+    createDue.mutate(
       {
-        required: true,
+        amount: MoneyUtils.toCents(values.amount),
+        category: values.category,
+        date,
+        memberIds: Array.isArray(values.memberIds) ? values.memberIds : [],
+        notes: values.notes ?? null,
       },
-    ];
+      {
+        onSuccess: () => {
+          notificationSuccess('Cobro creado');
 
-    if (!due) {
-      rules.push({ min: 1, type: 'array' });
+          form.setFieldValue('memberIds', []);
+        },
+      },
+    );
+  };
+
+  /**
+   * Render helpers
+   */
+  const renderCardTitle = () => {
+    let title = 'Nuevo Cobro';
+
+    if (formDate) {
+      title += ` del ${formDate.format(DateFormatEnum.DDMMYYYY)}`;
     }
 
-    return rules;
+    return title;
   };
 
   const renderMemberDropdown = (menu: React.ReactElement) => (
     <>
       {menu}
 
-      {category === DueCategoryEnum.MEMBERSHIP && (
+      {formCategory === DueCategoryEnum.MEMBERSHIP && (
         <Space className="my-1 flex justify-center">
           <Button
             htmlType="button"
@@ -201,125 +222,101 @@ export const DuesNewPage = () => {
         items={[
           { title: 'Inicio' },
           { title: <Link to={AppUrl.Dues}>Cobros</Link> },
-          {
-            title: due
-              ? `${due.date} - ${DueCategoryLabel[due.category]} - ${
-                  due.amountFormatted
-                }`
-              : 'Nuevo Cobro',
-          },
+          { title: renderCardTitle() },
         ]}
       />
 
-      <Skeleton active loading={isLoading}>
-        <Card
-          title={due ? due.memberName : 'Nuevo Cobro'}
-          extra={
-            due && (
-              <Tag color={DueStatusColor[due.status]}>
-                {DueStatusLabel[due.status]}
-              </Tag>
-            )
-          }
+      <Card>
+        <Form<FormValues>
+          layout="vertical"
+          disabled={createDue.isLoading}
+          form={form}
+          onFinish={(values) => handleSubmit(values)}
+          initialValues={{
+            amount: urlAmount ?? 0,
+            category: urlCategory ?? DueCategoryEnum.ELECTRICITY,
+            date: urlDate ? dayjs(urlDate) : DateUtils.c(),
+            memberIds: urlMemberIds ?? [],
+            notes: undefined,
+          }}
         >
-          <Form<FormValues>
-            layout="vertical"
-            form={form}
-            onFinish={(values) => handleSubmit(values)}
-            initialValues={{
-              amount: due?.amount ? MoneyUtils.fromCents(due.amount) : 0,
-              category: due?.category ?? DueCategoryEnum.ELECTRICITY,
-              date: due?.date
-                ? DateUtils.utc(due.date, DateFormatEnum.DDMMYYYY)
-                : undefined,
-              memberIds: due?.memberId ?? [],
-              notes: due?.notes,
-            }}
-          >
-            <Form.Item
-              label="Socio/s"
-              name="memberIds"
-              rules={getRulesForMemberIds()}
-            >
-              <MembersSelect
-                dropdownRender={renderMemberDropdown}
-                mode={due ? undefined : 'multiple'}
-                disabled={isFormDisabled()}
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="Categoría"
-              name="category"
-              rules={[{ required: true }]}
-            >
-              <Select
-                disabled={isFormDisabled()}
-                onChange={(value) => {
-                  if (due) {
-                    if (value === DueCategoryEnum.MEMBERSHIP) {
-                      form.setFieldValue(
-                        'date',
-                        DateUtils.utc(
-                          due.date,
-                          DateFormatEnum.DDMMYYYY,
-                        ).startOf('month'),
-                      );
-                    }
-                  } else {
-                    form.setFieldValue('amount', null);
+          <Row>
+            <Col xs={12} sm={8} md={8} lg={6} xl={4}>
+              <Form.Item
+                name="date"
+                label="Fecha"
+                rules={[{ required: true }, { type: 'date' }]}
+              >
+                <DatePicker
+                  picker={
+                    formCategory === DueCategoryEnum.MEMBERSHIP
+                      ? 'month'
+                      : 'date'
                   }
-                }}
-                options={getDueCategoryOptions()}
-              />
-            </Form.Item>
+                  allowClear={false}
+                  format={
+                    formCategory === DueCategoryEnum.MEMBERSHIP
+                      ? DateFormatEnum.MMMM_YYYY
+                      : DateFormatEnum.DDMMYYYY
+                  }
+                  className="w-full"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
-            <Form.Item
-              name="date"
-              label="Fecha"
-              rules={[{ required: true }, { type: 'date' }]}
-            >
-              <DatePicker
-                picker={
-                  category === DueCategoryEnum.MEMBERSHIP ? 'month' : 'date'
-                }
-                disabled={isFormDisabled()}
-                format={
-                  category === DueCategoryEnum.MEMBERSHIP
-                    ? DateFormatEnum.MMMM_YYYY
-                    : DateFormatEnum.DDMMYYYY
-                }
-                className="w-full"
-              />
-            </Form.Item>
+          <Form.Item
+            label="Socio/s"
+            name="memberIds"
+            rules={[{ min: 1, required: true, type: 'array' }]}
+          >
+            <MembersSelect
+              select={{
+                dropdownRender: renderMemberDropdown,
+                mode: 'multiple',
+              }}
+            />
+          </Form.Item>
 
-            <Form.Item
-              label="Importe"
-              name="amount"
-              rules={[{ required: true }, { min: 1, type: 'number' }]}
-            >
-              <InputNumber
-                disabled={isFormDisabled()}
-                className="w-40"
-                prefix={ARS.code}
-                precision={0}
-                decimalSeparator=","
-                step={100}
-              />
-            </Form.Item>
+          <Row>
+            <Col xs={12} sm={8} md={8} lg={6} xl={4}>
+              <Form.Item
+                label="Categoría"
+                name="category"
+                rules={[{ required: true }]}
+              >
+                <Select
+                  onChange={() => {
+                    form.setFieldValue('amount', 0);
+                  }}
+                  options={getDueCategoryOptions()}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
-            <Form.Item
-              label="Notas"
-              rules={[{ whitespace: true }]}
-              name="notes"
-            >
-              <Input.TextArea disabled={isFormDisabled()} rows={1} />
-            </Form.Item>
+          <Row>
+            <Col xs={12} sm={8} md={8} lg={6} xl={4}>
+              <Form.Item
+                label="Importe"
+                name="amount"
+                rules={[{ required: true }, { min: 1, type: 'number' }]}
+              >
+                <FormInputAmount />
+              </Form.Item>
+            </Col>
+          </Row>
 
-            <FormButtons scope={ScopeEnum.MOVEMENTS} />
-          </Form>
-        </Card>
-      </Skeleton>
+          <Form.Item label="Notas" rules={[{ whitespace: true }]} name="notes">
+            <Input.TextArea rows={1} />
+          </Form.Item>
+
+          <FormButtons
+            saveButtonProps={{ text: 'Registrar Cobro' }}
+            scope={ScopeEnum.MOVEMENTS}
+          />
+        </Form>
+      </Card>
     </>
   );
 };

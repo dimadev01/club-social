@@ -100,6 +100,10 @@ export const PaymentNewPage = () => {
    */
   const createPayment = useCreatePayment();
 
+  /**
+   * Effects
+   */
+
   useDeepCompareEffect(() => {
     const date = formDate
       ? DateUtils.format(formDate, DateFormatEnum.DATE)
@@ -116,9 +120,6 @@ export const PaymentNewPage = () => {
     );
   }, [formDate, formMemberId, formReceiptNumber, formDuesSelectedIds]);
 
-  /**
-   * Effects
-   */
   useDeepCompareEffect(() => {
     if (pendingDues && pendingDues.length > 0) {
       form.setFieldsValue({
@@ -218,7 +219,7 @@ export const PaymentNewPage = () => {
           disabled={createPayment.isLoading}
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
-            date: urlDate ? dayjs(urlDate as string) : DateUtils.c(),
+            date: urlDate ? dayjs(urlDate) : DateUtils.c(),
             dues: urlDueIds?.map((dueId) => ({
               amount: 0,
               dueId,
@@ -229,7 +230,7 @@ export const PaymentNewPage = () => {
           }}
         >
           <Row>
-            <Col xs={8} sm={6} md={5} lg={5}>
+            <Col xs={12} sm={12} md={10} lg={8} xl={6}>
               <Form.Item
                 name="date"
                 label="Fecha"
@@ -246,7 +247,7 @@ export const PaymentNewPage = () => {
           </Row>
 
           <Row>
-            <Col xs={10} sm={8} md={7} lg={7}>
+            <Col xs={12} sm={12} md={10} lg={8} xl={6}>
               <Form.Item
                 label="Socio"
                 rules={[{ required: true }]}
@@ -258,7 +259,7 @@ export const PaymentNewPage = () => {
           </Row>
 
           <Row>
-            <Col xs={5} sm={4} md={3} lg={3}>
+            <Col xs={6} sm={6} md={5} lg={4} xl={3}>
               <Form.Item
                 name="receiptNumber"
                 label="Recibo #"
@@ -271,17 +272,9 @@ export const PaymentNewPage = () => {
 
           <PaymentPendingDuesTable pendingDues={pendingDues} />
 
-          <Row>
-            <Col xs={12} sm={12} md={10} lg={10}>
-              <Form.Item
-                label="Notas"
-                rules={[{ whitespace: true }]}
-                name="notes"
-              >
-                <TextArea rows={2} />
-              </Form.Item>
-            </Col>
-          </Row>
+          <Form.Item label="Notas" rules={[{ whitespace: true }]} name="notes">
+            <TextArea rows={2} />
+          </Form.Item>
 
           <FormButtons
             scope={ScopeEnum.PAYMENTS}

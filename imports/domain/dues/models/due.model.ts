@@ -95,6 +95,10 @@ export class Due extends Model implements IDue {
     return this._amount;
   }
 
+  public isDeletable() {
+    return this.isPending();
+  }
+
   public isPaid(): boolean {
     return this._status === DueStatusEnum.PAID;
   }

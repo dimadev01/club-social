@@ -75,7 +75,11 @@ export abstract class CrudMongoRepository<
   public async findOneById(
     request: FindOneModelByIdRequest,
   ): Promise<TDomain | null> {
-    const entity = await this._collection.findOneAsync(request.id);
+    // @ts-expect-error
+    const entity = await this._collection.findOneAsync({
+      _id: request.id,
+      isDeleted: false,
+    });
 
     if (!entity) {
       return null;
@@ -103,7 +107,7 @@ export abstract class CrudMongoRepository<
     try {
       const entity = await this._collection
         .rawCollection()
-        .findOne({ _id: id } as Filter<TEntity>, { session });
+        .findOne({ _id: id, isDeleted: false } as Filter<TEntity>, { session });
 
       if (!entity) {
         throw new InternalServerError(`Entity with id ${id} not found`);

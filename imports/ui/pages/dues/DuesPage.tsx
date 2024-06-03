@@ -29,6 +29,7 @@ import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useDeleteDue } from '@ui/hooks/dues/useDeleteDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
+import { useNotificationSuccess } from '@ui/hooks/useNotification';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 import { useTable } from '@ui/hooks/useTable';
 
@@ -39,6 +40,8 @@ export const DuesPage = () => {
   });
 
   const navigate = useNavigate();
+
+  const notificationSuccess = useNotificationSuccess();
 
   const { data: members } = useMembers({});
 
@@ -151,48 +154,39 @@ export const DuesPage = () => {
                 align: 'center',
                 render: (_, due: DueGridDto) => (
                   <ButtonGroup size="small">
-                    {!due.isDeleted &&
-                      SecurityUtils.isInRole(
-                        PermissionEnum.DELETE,
-                        ScopeEnum.DUES,
-                      ) && (
-                        <Button
-                          popConfirm={{
-                            onConfirm: () =>
-                              deleteDue.mutate(
-                                { id: due.id },
-                                {
-                                  onError: () => deleteDue.reset(),
-                                  onSuccess: () => {
-                                    deleteDue.reset();
+                    {SecurityUtils.isInRole(
+                      PermissionEnum.DELETE,
+                      ScopeEnum.DUES,
+                    ) && (
+                      <Button
+                        popConfirm={{
+                          onConfirm: () =>
+                            deleteDue.mutate(
+                              { id: due.id },
+                              {
+                                onError: () => deleteDue.reset(),
+                                onSuccess: () => {
+                                  deleteDue.reset();
 
-                                    refetch();
-                                  },
+                                  notificationSuccess('Cobro eliminado');
+
+                                  refetch();
                                 },
-                              ),
-                            title: '¿Está seguro de eliminar este cobro?',
-                          }}
-                          type="text"
-                          htmlType="button"
-                          tooltip={{ title: 'Eliminar' }}
-                          icon={<DeleteOutlined />}
-                          loading={deleteDue.variables?.id === due.id}
-                          disabled={deleteDue.variables?.id === due.id}
-                        />
-                      )}
-
-                    {/* <Button
-                      type="text"
-                      disabled={!due.memberId}
-                      onClick={() => {
-                        if (due.memberId) {
-                          setMemberIdsFilter([due.memberId]);
+                              },
+                            ),
+                          title: '¿Está seguro de eliminar este cobro?',
+                        }}
+                        type="text"
+                        htmlType="button"
+                        tooltip={{ title: 'Eliminar' }}
+                        icon={<DeleteOutlined />}
+                        loading={deleteDue.variables?.id === due.id}
+                        disabled={
+                          deleteDue.variables?.id === due.id ||
+                          due.status !== DueStatusEnum.PENDING
                         }
-                      }}
-                      htmlType="button"
-                      tooltip={{ title: 'Filtrar por este socio' }}
-                      icon={<FilterOutlined />}
-                    /> */}
+                      />
+                    )}
 
                     <GridFilterByMemberButton
                       gridState={gridState}

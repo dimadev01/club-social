@@ -23,6 +23,19 @@ export class PaymentDueMongoRepository
     super(collection, mapper, logger);
   }
 
+  public async findOneByDue(dueId: string): Promise<PaymentDue | null> {
+    const entity = await this.collection.findOneAsync({
+      dueId,
+      isDeleted: false,
+    });
+
+    if (!entity) {
+      return null;
+    }
+
+    return this.mapper.toDomain(entity);
+  }
+
   public async findByPayment(paymentId: string): Promise<PaymentDue[]> {
     const entities = await this.collection
       .find({ isDeleted: false, paymentId })

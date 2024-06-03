@@ -9,11 +9,7 @@ export const NotFound = () => {
     <Result
       status="404"
       title="No encontrado"
-      subTitle={
-        <Button type="link" onClick={() => navigate(-1)}>
-          Ir hacia atrás
-        </Button>
-      }
+      subTitle={<Button onClick={() => navigate(-1)}>Ir hacia atrás</Button>}
     />
   );
 };

@@ -1,0 +1,17 @@
+import { Flex, Image, Space, Spin } from 'antd';
+import React from 'react';
+
+export const LoggingIn: React.FC = () => (
+  <Flex justify="center" align="center" className="h-full">
+    <Space direction="vertical" align="center">
+      <Image
+        wrapperClassName="w-40"
+        preview={false}
+        src="/images/logo.png"
+        alt="Rixsus Logo"
+      />
+
+      <Spin spinning />
+    </Space>
+  </Flex>
+);

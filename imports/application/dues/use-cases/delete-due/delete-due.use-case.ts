@@ -1,4 +1,4 @@
-import { Result, ok } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
@@ -22,6 +22,12 @@ export class DeleteDueUseCase
   public async execute(
     request: DeleteDueRequest,
   ): Promise<Result<DeleteDueResponse, Error>> {
+    const due = await this._dueRepository.findOneByIdOrThrow(request);
+
+    if (!due.isDeletable()) {
+      return err(new Error('Due is not deletable'));
+    }
+
     await this._dueRepository.delete(request);
 
     this._logger.info('Due deleted', { due: request.id });

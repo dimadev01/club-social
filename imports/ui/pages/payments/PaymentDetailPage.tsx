@@ -7,13 +7,20 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
+import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
 import { NotFound } from '@ui/components/NotFound';
 import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { usePayment } from '@ui/hooks/payments/usePayment';
+import { useNavigate } from '@ui/hooks/useNavigate';
+import { useNotificationSuccess } from '@ui/hooks/useNotification';
 
 export const PaymentDetailPage = () => {
   const { id: paymentId } = useParams<{ id?: string }>();
+
+  const navigate = useNavigate();
+
+  const notificationSuccess = useNotificationSuccess();
 
   const { data: payment, error } = usePayment(
     paymentId ? { id: paymentId } : undefined,
@@ -63,7 +70,7 @@ export const PaymentDetailPage = () => {
               {payment.receiptNumber}
             </Descriptions.Item>
 
-            <Descriptions.Item label="Deudas pagas">
+            <Descriptions.Item label="Detalle del pago">
               <Table
                 dataSource={payment.dues}
                 pagination={false}
@@ -108,11 +115,22 @@ export const PaymentDetailPage = () => {
             <Descriptions.Item label="Notas">{payment.notes}</Descriptions.Item>
           </Descriptions>
 
-          <Flex justify="end">
+          <Flex justify="space-between">
+            <FormBackButton />
+
             <FormDeleteButton
               scope={ScopeEnum.PAYMENTS}
               onClick={() => {
-                deletePayment.mutate({ id: payment.id });
+                deletePayment.mutate(
+                  { id: payment.id },
+                  {
+                    onSuccess: () => {
+                      notificationSuccess('Pago eliminado');
+
+                      navigate(AppUrl.Payments);
+                    },
+                  },
+                );
               }}
             />
           </Flex>

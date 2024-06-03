@@ -247,7 +247,7 @@ export const MembersPage = () => {
                     onClick={() =>
                       navigate(
                         UrlUtils.navigate(AppUrl.Dues, {
-                          memberIds: [member.id],
+                          filters: { memberId: [member.id] },
                         }),
                       )
                     }
@@ -259,7 +259,7 @@ export const MembersPage = () => {
                     onClick={() =>
                       navigate(
                         UrlUtils.navigate(AppUrl.Payments, {
-                          memberId: member.id,
+                          filters: { memberId: [member.id] },
                         }),
                       )
                     }

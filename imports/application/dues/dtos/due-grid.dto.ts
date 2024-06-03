@@ -5,7 +5,6 @@ export interface DueGridDto {
   category: DueCategoryEnum;
   date: string;
   id: string;
-  isDeleted: boolean;
   memberId: string;
   memberName: string;
   status: DueStatusEnum;

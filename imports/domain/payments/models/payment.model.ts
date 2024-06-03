@@ -62,6 +62,10 @@ export class Payment extends Model implements IPayment {
     return this._member;
   }
 
+  public set member(value: Member | undefined) {
+    this._member = value;
+  }
+
   public get memberId(): string {
     return this._memberId;
   }

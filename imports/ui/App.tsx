@@ -11,6 +11,7 @@ import { ThemeContext, ThemeContextProps } from './AppContext';
 
 import { UserThemeEnum } from '@domain/users/user.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
+import { LoggingIn } from '@ui/components/LoggingIn';
 import { QueryClientApp } from '@ui/QueryClientApp';
 import { Routes } from '@ui/routes/Routes';
 
@@ -45,7 +46,7 @@ export const App = () => {
   }, [user?.profile?.theme, systemPrefersDark]);
 
   if (isLoggingIn) {
-    return <>loggingIn</>;
+    return <LoggingIn />;
   }
 
   return (

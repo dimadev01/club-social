@@ -9,6 +9,7 @@ import { LoginPasswordlessPage } from '@ui/pages/auth/LoginPasswordlessPage';
 import { LogoutPage } from '@ui/pages/auth/LogoutPage';
 import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
 import { DueDetailPage } from '@ui/pages/dues/DueDetailPage';
+import { DuesNewPage } from '@ui/pages/dues/DuesNewPage';
 import { DuesRoot } from '@ui/pages/dues/DuesRoot';
 import { HomePage } from '@ui/pages/HomePage';
 import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
@@ -121,8 +122,8 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.DUES}>
-        <DueDetailPage />
+      <PrivateRoute permission={PermissionEnum.CREATE} scope={ScopeEnum.DUES}>
+        <DuesNewPage />
       </PrivateRoute>
     ),
     path: AppUrl.DuesNew,

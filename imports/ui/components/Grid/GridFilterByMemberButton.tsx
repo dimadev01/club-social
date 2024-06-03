@@ -22,7 +22,10 @@ export const GridFilterByMemberButton: React.FC<Props> = ({
         onClick={() => {
           setState({
             ...gridState,
-            filters: { memberId: [memberId] },
+            filters: {
+              ...gridState.filters,
+              memberId: [memberId],
+            },
           });
         }}
         htmlType="button"
@@ -38,7 +41,10 @@ export const GridFilterByMemberButton: React.FC<Props> = ({
         onClick={() => {
           setState({
             ...gridState,
-            filters: { memberId: undefined },
+            filters: {
+              ...gridState.filters,
+              memberId: undefined,
+            },
           });
         }}
         htmlType="button"

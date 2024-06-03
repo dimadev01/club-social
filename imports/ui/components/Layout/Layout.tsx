@@ -82,15 +82,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <FaUsers className="!text-lg" />,
         key: AppUrl.Members,
-        label: <Link to={AppUrl.Members}>Socios</Link>,
-      });
-    }
-
-    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.MOVEMENTS)) {
-      items.push({
-        icon: <FaExchangeAlt className="!text-lg" />,
-        key: AppUrl.Movements,
-        label: <Link to={AppUrl.Movements}>Movimientos</Link>,
+        label: (
+          <Link className="no-underline" to={AppUrl.Members}>
+            Socios
+          </Link>
+        ),
       });
     }
 
@@ -98,7 +94,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <FaFileInvoiceDollar className="!text-lg" />,
         key: AppUrl.Dues,
-        label: <Link to={AppUrl.Dues}>Cobros</Link>,
+        label: (
+          <Link className="no-underline" to={AppUrl.Dues}>
+            Cobros
+          </Link>
+        ),
       });
     }
 
@@ -106,7 +106,23 @@ export const Layout: React.FC<Props> = ({ children }) => {
       items.push({
         icon: <FaCreditCard className="!text-lg" />,
         key: AppUrl.Payments,
-        label: <Link to={AppUrl.Payments}>Pagos</Link>,
+        label: (
+          <Link className="no-underline" to={AppUrl.Payments}>
+            Pagos
+          </Link>
+        ),
+      });
+    }
+
+    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.MOVEMENTS)) {
+      items.push({
+        icon: <FaExchangeAlt className="!text-lg" />,
+        key: AppUrl.Movements,
+        label: (
+          <Link className="no-underline" to={AppUrl.Movements}>
+            Movimientos
+          </Link>
+        ),
       });
     }
 
