@@ -45,7 +45,7 @@ export class PaymentMongoRepository
       return null;
     }
 
-    return this.mapper.toModel(entity);
+    return this.mapper.toDomain(entity);
   }
 
   public async findPaginated(
@@ -105,6 +105,19 @@ export class PaymentMongoRepository
           foreignField: 'paymentId',
           from: 'payment.dues',
           localField: '_id',
+          pipeline: [
+            {
+              $lookup: {
+                as: 'due',
+                foreignField: '_id',
+                from: 'dues',
+                localField: 'dueId',
+              },
+            },
+            {
+              $unwind: '$due',
+            },
+          ],
         },
       },
     );

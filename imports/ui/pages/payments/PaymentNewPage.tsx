@@ -3,20 +3,20 @@ import { useWatch } from 'antd/es/form/Form';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useMemo } from 'react';
-import { Link, Navigate, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
 
 import { CreatePaymentRequestDto } from '@adapters/dtos/create-payment-request.dto';
+import { DueDto } from '@application/dues/dtos/due.dto';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
-import { MoneyUtils } from '@shared/utils/money.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
-import { Row } from '@ui/components/Grid/Row';
+import { Row } from '@ui/components/Layout/Row';
 import { MembersSelect } from '@ui/components/Members/MembersSelect';
 import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDuesByMember';
 import { useMember } from '@ui/hooks/members/useMember';
@@ -87,7 +87,9 @@ export const PaymentNewPage = () => {
   /**
    * Hooks
    */
-  const { data: pendingDues } = usePendingDuesByMember(formMemberId);
+  const { data: pendingDues } = usePendingDuesByMember(
+    formMemberId ? { memberId: formMemberId } : undefined,
+  );
 
   const { data: member } = useMember(
     formMemberId ? { id: formMemberId } : undefined,
@@ -120,20 +122,14 @@ export const PaymentNewPage = () => {
   useDeepCompareEffect(() => {
     if (pendingDues && pendingDues.length > 0) {
       form.setFieldsValue({
-        dues: pendingDues.map((due: any) => ({
-          amount: Money.fromNumber(due.amount).amount,
-          dueId: due._id,
-          isSelected: formDuesSelectedIds?.includes(due._id),
+        dues: pendingDues.map((due: DueDto) => ({
+          amount: new Money({ amount: due.amount }).toInteger(),
+          dueId: due.id,
+          isSelected: formDuesSelectedIds?.includes(due.id),
         })),
       });
     }
   }, [pendingDues, form, formDuesSelectedIds]);
-
-  const user = Meteor.user();
-
-  if (!user) {
-    return <Navigate to={AppUrl.Login} />;
-  }
 
   /**
    * Handlers
@@ -150,7 +146,7 @@ export const PaymentNewPage = () => {
     const request: CreatePaymentRequestDto = {
       date: values.date.format(DateFormatEnum.DATE),
       dues: selectedDues.map((due) => ({
-        amount: MoneyUtils.toCents(due.amount),
+        amount: Money.fromNumber(due.amount).amount,
         dueId: due.dueId,
       })),
       memberId: values.memberId,

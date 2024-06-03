@@ -17,7 +17,7 @@ export type IModelUseCase<
 
 export type IGridUseCase<
   TRequest extends FindPaginatedRequest = FindPaginatedRequest,
-  TModelResponse extends object = object,
+  TDomainResponse extends object = object,
   TResponse extends
-    FindPaginatedResponse<TModelResponse> = FindPaginatedResponse<TModelResponse>,
+    FindPaginatedResponse<TDomainResponse> = FindPaginatedResponse<TDomainResponse>,
 > = IUseCase<TRequest, TResponse>;

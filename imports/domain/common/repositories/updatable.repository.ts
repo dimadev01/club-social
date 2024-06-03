@@ -1,6 +1,7 @@
 import { Model } from '@domain/common/models/model';
+import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 
-export interface IUpdatableRepository<TModel extends Model, TSession> {
-  update(model: TModel): Promise<void>;
-  updateWithSession(model: TModel, session: TSession): Promise<void>;
+export interface IUpdatableRepository<TDomain extends Model> {
+  update(model: TDomain): Promise<void>;
+  updateWithSession(model: TDomain, unitOfWork: IUnitOfWork): Promise<void>;
 }

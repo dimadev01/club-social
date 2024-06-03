@@ -1,4 +1,3 @@
-import type { ClientSession } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { BaseController } from '@adapters/common/controllers/base.controller';
@@ -20,7 +19,7 @@ export class PaymentController extends BaseController {
     protected readonly logger: ILogger,
     private readonly _getPaymentsGrid: GetPaymentsGridUseCase,
     private readonly _getPayment: GetPaymentUseCase,
-    private readonly _createPayment: CreatePaymentUseCase<ClientSession>,
+    private readonly _createPayment: CreatePaymentUseCase,
     private readonly _deletePayment: DeletePaymentUseCase,
   ) {
     super(logger);

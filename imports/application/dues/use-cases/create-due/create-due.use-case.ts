@@ -14,7 +14,7 @@ import { Due } from '@domain/dues/models/due.model';
 import { ErrorUtils } from '@shared/utils/error.utils';
 
 @injectable()
-export class CreateDueUseCase<TSession>
+export class CreateDueUseCase
   implements IUseCase<CreateDueRequest, CreateDueResponse>
 {
   public constructor(
@@ -23,7 +23,7 @@ export class CreateDueUseCase<TSession>
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
     @inject(DIToken.IUnitOfWork)
-    private readonly _unitOfWork: IUnitOfWork<TSession>,
+    private readonly _unitOfWork: IUnitOfWork,
   ) {}
 
   public async execute(
@@ -32,7 +32,7 @@ export class CreateDueUseCase<TSession>
     try {
       this._unitOfWork.start();
 
-      await this._unitOfWork.withTransaction(async () => {
+      await this._unitOfWork.withTransaction(async (unitOfWork) => {
         await Promise.all(
           request.memberIds.map(async (memberId: string) => {
             const due = Due.createOne({
@@ -47,7 +47,7 @@ export class CreateDueUseCase<TSession>
               throw due.error;
             }
 
-            await this._dueRepository.insert(due.value);
+            await this._dueRepository.insertWithSession(due.value, unitOfWork);
           }),
         );
       });

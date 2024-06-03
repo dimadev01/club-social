@@ -1,12 +1,17 @@
+import { Mongo } from 'meteor/mongo';
 import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
+import { DueStatusEnum } from '@domain/dues/due.enum';
 import { IDueRepository } from '@domain/dues/due.repository';
 import { Due } from '@domain/dues/models/due.model';
-import { FindPaginatedDuesRequest } from '@domain/dues/repositories/due-repository.types';
+import {
+  FindPaginatedDuesRequest,
+  FindPendingDuesRequest,
+} from '@domain/dues/repositories/due-repository.types';
 import { DueCollection } from '@infra/mongo/collections/due.collection';
 import { DueEntity } from '@infra/mongo/entities/due.entity';
 import { DueMapper } from '@infra/mongo/mappers/due.mapper';
@@ -84,5 +89,17 @@ export class DueMongoRepository
     ];
 
     return super.findPaginatedPipeline(pipeline, entitiesPipeline);
+  }
+
+  public async findPending(request: FindPendingDuesRequest): Promise<Due[]> {
+    const query: Mongo.Query<DueEntity> = {
+      isDeleted: false,
+      memberId: request.memberId,
+      status: DueStatusEnum.PENDING,
+    };
+
+    const entities = await this.collection.find(query).fetchAsync();
+
+    return entities.map((entity) => this.mapper.toDomain(entity));
   }
 }

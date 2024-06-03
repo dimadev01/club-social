@@ -1,4 +1,3 @@
-import type { ClientSession } from 'mongodb';
 import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
@@ -21,16 +20,16 @@ import { IPaymentDueRepository } from '@domain/payments/repositories/payment-due
 import { IPaymentRepository } from '@domain/payments/repositories/payment.repository';
 
 @injectable()
-export class CreatePaymentUseCase<TSession>
+export class CreatePaymentUseCase
   implements IUseCase<CreatePaymentRequest, CreatePaymentResponse>
 {
   public constructor(
     @inject(DIToken.IUnitOfWork)
-    private readonly _unitOfWork: IUnitOfWork<TSession>,
+    private readonly _unitOfWork: IUnitOfWork,
     @inject(DIToken.IPaymentRepository)
-    private readonly _paymentRepository: IPaymentRepository<TSession>,
+    private readonly _paymentRepository: IPaymentRepository,
     @inject(DIToken.IPaymentDueRepository)
-    private readonly _paymentDueRepository: IPaymentDueRepository<TSession>,
+    private readonly _paymentDueRepository: IPaymentDueRepository,
     @inject(DIToken.IDueRepository)
     private readonly _duePort: IDueRepository,
     private readonly _getPayment: GetPaymentUseCase,
@@ -55,7 +54,7 @@ export class CreatePaymentUseCase<TSession>
 
       let newPaymentId: string | undefined;
 
-      await this._unitOfWork.withTransaction(async (session) => {
+      await this._unitOfWork.withTransaction(async (unitOfWork) => {
         const dues = await this._duePort.findByIds({
           ids: request.dues.map((d) => d.dueId),
         });
@@ -91,10 +90,7 @@ export class CreatePaymentUseCase<TSession>
               throw result.error;
             }
 
-            await this._duePort.updateWithSession(
-              due,
-              session as ClientSession,
-            );
+            await this._duePort.updateWithSession(due, unitOfWork);
 
             const newPaymentDue = PaymentDue.createOne({
               amount: new Money({ amount: requestDue.amount }),
@@ -108,14 +104,14 @@ export class CreatePaymentUseCase<TSession>
 
             await this._paymentDueRepository.insertWithSession(
               newPaymentDue.value,
-              session,
+              unitOfWork,
             );
           }),
         );
 
         await this._paymentRepository.insertWithSession(
           newPaymentResult.value,
-          session,
+          unitOfWork,
         );
       });
 

@@ -23,10 +23,11 @@ import { SecurityUtils } from '@infra/security/security.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
+import { Grid } from '@ui/components/Grid/Grid';
+import { GridUtils } from '@ui/components/Grid/grid.utils';
+import { GridNewButton } from '@ui/components/Grid/GridNewButton';
+import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { MembersGridCsvDownloaderButton } from '@ui/components/Members/MembersGridCsvDownloader';
-import { Grid } from '@ui/components/Table/TableNew';
-import { TableNewButton } from '@ui/components/Table/TableNewButton';
-import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useNavigate } from '@ui/hooks/useNavigate';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
@@ -40,10 +41,7 @@ export const MembersPage = () => {
     defaultSorter: { _id: 'ascend' },
   });
 
-  const { data: members } = useMembers({
-    category: (gridState.filters?.category as MemberCategoryEnum[]) ?? null,
-    status: (gridState.filters?.status as MemberStatusEnum[]) ?? null,
-  });
+  const { data: members } = useMembers({});
 
   const sorter = { ...gridState.sorter };
 
@@ -127,14 +125,14 @@ export const MembersPage = () => {
         title="Socios"
         extra={
           <Space.Compact>
-            <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
+            <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
 
             <MembersGridCsvDownloaderButton request={gridRequest} />
 
             {SecurityUtils.isInRole(
               PermissionEnum.CREATE,
               ScopeEnum.MEMBERS,
-            ) && <TableNewButton to={AppUrl.MembersNew} />}
+            ) && <GridNewButton to={AppUrl.MembersNew} />}
           </Space.Compact>
         }
       >
@@ -157,11 +155,7 @@ export const MembersPage = () => {
               dataIndex: '_id',
               filterSearch: true,
               filteredValue: gridState.filters?._id,
-              filters:
-                members?.map((member) => ({
-                  text: member.name,
-                  value: member.id,
-                })) ?? [],
+              filters: GridUtils.getMembersForFilter(members),
               render: (_id: string, member: MemberGridDto) => (
                 <Link to={`${AppUrl.Members}/${_id}`}>{member.name}</Link>
               ),

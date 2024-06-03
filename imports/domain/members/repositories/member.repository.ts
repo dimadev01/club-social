@@ -9,8 +9,8 @@ import {
   GetBalanceResponse,
 } from '@domain/members/repositories/member-repository.types';
 
-export interface IMemberRepository<TSession = unknown>
-  extends ICrudRepository<Member, TSession>,
+export interface IMemberRepository
+  extends ICrudRepository<Member>,
     IGridRepository<
       Member,
       FindPaginatedMembersRequest,

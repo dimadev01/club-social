@@ -12,7 +12,7 @@ export class MongoUnitOfWork implements IUnitOfWork<ClientSession> {
     this._value = null;
   }
 
-  public get(): ClientSession {
+  public get value(): ClientSession {
     if (!this._value) {
       throw new Error('Session not started');
     }
@@ -21,7 +21,7 @@ export class MongoUnitOfWork implements IUnitOfWork<ClientSession> {
   }
 
   public async end(): Promise<void> {
-    await this.get().endSession();
+    await this.value.endSession();
 
     this._value = null;
   }
@@ -32,8 +32,12 @@ export class MongoUnitOfWork implements IUnitOfWork<ClientSession> {
   }
 
   public async withTransaction(
-    callback: (session: ClientSession) => Promise<void>,
+    callback: (session: IUnitOfWork) => Promise<void>,
   ): Promise<void> {
-    await this.get().withTransaction(() => callback(this.get()));
+    await this.value.withTransaction((session) => {
+      this._value = session;
+
+      return callback(this);
+    });
   }
 }

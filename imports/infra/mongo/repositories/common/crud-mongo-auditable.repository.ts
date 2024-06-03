@@ -1,5 +1,4 @@
 import { Random } from 'meteor/random';
-import type { ClientSession } from 'mongodb';
 import { err } from 'neverthrow';
 
 import { ILogger } from '@domain/common/logger/logger.interface';
@@ -9,52 +8,53 @@ import { AuditableEntity } from '@infra/mongo/common/entities/auditable.entity';
 import { Entity } from '@infra/mongo/common/entities/entity';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { CrudMongoRepository } from '@infra/mongo/repositories/common/crud-mongo.repository';
+import { MongoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-work';
 
 export abstract class CrudMongoAuditableRepository<
-  TModel extends Model,
+  TDomain extends Model,
   TEntity extends Entity,
   TAuditableEntity extends AuditableEntity<TEntity>,
-> extends CrudMongoRepository<TModel, TEntity> {
+> extends CrudMongoRepository<TDomain, TEntity> {
   public constructor(
     protected readonly collection: MongoCollection<TEntity>,
-    protected readonly mapper: Mapper<TModel, TEntity>,
+    protected readonly mapper: Mapper<TDomain, TEntity>,
     protected readonly logger: ILogger,
     protected readonly auditableCollection: MongoCollection<TAuditableEntity>,
   ) {
     super(collection, mapper, logger);
   }
 
-  public async update(model: TModel): Promise<void> {
+  public async update(model: TDomain): Promise<void> {
     await super.update(model);
 
     await this._save(model);
   }
 
   public async updateWithSession(
-    model: TModel,
-    session: ClientSession,
+    model: TDomain,
+    unitOfWork: MongoUnitOfWork,
   ): Promise<void> {
-    await super.updateWithSession(model, session);
+    await super.updateWithSession(model, unitOfWork);
 
     await this._save(model);
   }
 
-  public async insert(model: TModel): Promise<void> {
+  public async insert(model: TDomain): Promise<void> {
     await super.insert(model);
 
     await this._save(model);
   }
 
   public async insertWithSession(
-    model: TModel,
-    session: ClientSession,
+    model: TDomain,
+    unitOfWork: MongoUnitOfWork,
   ): Promise<void> {
-    await super.insertWithSession(model, session);
+    await super.insertWithSession(model, unitOfWork);
 
     await this._save(model);
   }
 
-  private async _save(model: TModel): Promise<void> {
+  private async _save(model: TDomain): Promise<void> {
     try {
       const entity = await this.mapper.toEntity(model);
 

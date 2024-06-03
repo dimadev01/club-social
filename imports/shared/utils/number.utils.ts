@@ -20,7 +20,13 @@ export abstract class NumberUtils {
     return this.format(+amountAsString);
   }
 
-  public static parseFromInputNumber(value: string): number {
-    return numeral(value).value() ?? 0;
+  public static parseFromInputNumber(value: string, decimals = false): number {
+    const result = numeral(value).value() ?? 0;
+
+    if (decimals) {
+      return result;
+    }
+
+    return Math.round(result);
   }
 }

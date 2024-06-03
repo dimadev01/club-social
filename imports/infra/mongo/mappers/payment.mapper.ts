@@ -16,7 +16,7 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
     super();
   }
 
-  public toModel(orm: PaymentEntity): Payment {
+  public toDomain(orm: PaymentEntity): Payment {
     return new Payment(
       {
         _id: orm._id,
@@ -33,8 +33,8 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
         updatedAt: orm.updatedAt,
         updatedBy: orm.updatedBy,
       },
-      orm.member ? this._memberMapper.toModel(orm.member) : undefined,
-      orm.dues?.map((due) => this._paymentDueMapper.toModel(due)),
+      orm.member ? this._memberMapper.toDomain(orm.member) : undefined,
+      orm.dues?.map((due) => this._paymentDueMapper.toDomain(due)),
     );
   }
 

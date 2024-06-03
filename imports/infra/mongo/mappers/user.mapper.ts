@@ -8,7 +8,7 @@ import { UserEntity } from '@infra/mongo/entities/user.entity';
 
 @singleton()
 export class UserMapper extends Mapper<User, UserEntity> {
-  public toModel(orm: UserEntity): User {
+  public toDomain(orm: UserEntity): User {
     return new User({
       _id: orm._id,
       createdAt: orm.createdAt,

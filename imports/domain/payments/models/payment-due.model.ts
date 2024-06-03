@@ -2,6 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 
 import { Model } from '@domain/common/models/model';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { Due } from '@domain/dues/models/due.model';
 import {
   CreatePaymentDue,
   IPaymentDue,
@@ -14,7 +15,9 @@ export class PaymentDue extends Model implements IPaymentDue {
 
   private _paymentId: string;
 
-  public constructor(props?: IPaymentDue) {
+  public due?: Due;
+
+  public constructor(props?: IPaymentDue, due?: Due) {
     super(props);
 
     this._amount = props?.amount ?? new Money({ amount: 0 });
@@ -22,6 +25,8 @@ export class PaymentDue extends Model implements IPaymentDue {
     this._dueId = props?.dueId ?? '';
 
     this._paymentId = props?.paymentId ?? '';
+
+    this.due = due;
   }
 
   public get amount(): Money {

@@ -1,4 +1,3 @@
-import type { ClientSession } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { BaseController } from '@adapters/common/controllers/base.controller';
@@ -22,12 +21,12 @@ export class MemberController extends BaseController {
   public constructor(
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
-    private readonly _create: CreateMemberUseCase<ClientSession>,
+    private readonly _create: CreateMemberUseCase,
     private readonly _getOne: GetMemberUseCase,
     private readonly _get: GetMembersUseCase,
     private readonly _getGrid: GetMembersGridUseCase,
     private readonly _getToExport: GetMembersToExportUseCase,
-    private readonly _update: UpdateMemberUseCase<ClientSession>,
+    private readonly _update: UpdateMemberUseCase,
   ) {
     super(logger);
   }

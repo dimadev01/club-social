@@ -16,13 +16,13 @@ export interface FindPaginatedResponse<T = unknown> {
   totalCount: number;
 }
 
-export const DEFAULT_PAGE_SIZE = 25;
+export const DEFAULT_PAGE_SIZE = 10;
 
 export interface IGridRepository<
-  TModel extends Model,
+  TDomain extends Model,
   TRequest extends FindPaginatedRequest = FindPaginatedRequest,
   TResponse extends
-    FindPaginatedResponse<TModel> = FindPaginatedResponse<TModel>,
+    FindPaginatedResponse<TDomain> = FindPaginatedResponse<TDomain>,
 > {
   findPaginated(request: TRequest): Promise<TResponse>;
 }

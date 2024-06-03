@@ -2,7 +2,7 @@ import { CloseOutlined, FilterOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Button } from '@ui/components/Button';
-import { GridState } from '@ui/components/Table/TableNew';
+import { GridState } from '@ui/components/Grid/Grid';
 
 interface Props {
   gridState: GridState;
@@ -10,7 +10,7 @@ interface Props {
   setState: React.Dispatch<React.SetStateAction<GridState>>;
 }
 
-export const TableFilterByMemberButton: React.FC<Props> = ({
+export const GridFilterByMemberButton: React.FC<Props> = ({
   gridState,
   memberId,
   setState,

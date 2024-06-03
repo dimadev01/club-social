@@ -16,15 +16,15 @@ import { IMemberRepository } from '@domain/members/repositories/member.repositor
 import { RoleEnum } from '@domain/roles/role.enum';
 
 @injectable()
-export class UpdateMemberUseCase<TSession>
+export class UpdateMemberUseCase
   implements IUseCase<UpdateMemberRequest, UpdateMemberResponse>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)
-    private readonly _memberRepository: IMemberRepository<TSession>,
+    private readonly _memberRepository: IMemberRepository,
     @inject(DIToken.IUnitOfWork)
-    private readonly _unitOfWork: IUnitOfWork<TSession>,
-    private readonly _updateUserUseCase: UpdateUserUseCase<TSession>,
+    private readonly _unitOfWork: IUnitOfWork,
+    private readonly _updateUserUseCase: UpdateUserUseCase,
     private readonly _getMemberUseCase: GetMemberUseCase,
   ) {}
 
@@ -40,7 +40,7 @@ export class UpdateMemberUseCase<TSession>
     try {
       this._unitOfWork.start();
 
-      await this._unitOfWork.withTransaction(async (session) => {
+      await this._unitOfWork.withTransaction(async (unitOfWork) => {
         const member = await this._memberRepository.findOneByIdOrThrow({
           id: request.id,
         });
@@ -82,7 +82,7 @@ export class UpdateMemberUseCase<TSession>
           throw memberUpdate.error;
         }
 
-        await this._memberRepository.updateWithSession(member, session);
+        await this._memberRepository.updateWithSession(member, unitOfWork);
       });
 
       const member = await this._getMemberUseCase.execute({ id: request.id });

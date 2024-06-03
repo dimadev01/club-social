@@ -76,7 +76,7 @@ export class MemberMongoRepository
       .aggregate<MemberEntity>(pipeline)
       .toArray();
 
-    return entities.map((entity) => this.mapper.toModel(entity));
+    return entities.map((entity) => this.mapper.toDomain(entity));
   }
 
   public async findByDocument(documentID: string): Promise<Member | null> {
@@ -89,7 +89,7 @@ export class MemberMongoRepository
       return null;
     }
 
-    return this.mapper.toModel(entity);
+    return this.mapper.toDomain(entity);
   }
 
   public async findPaginated(
@@ -144,7 +144,7 @@ export class MemberMongoRepository
       .toArray();
 
     return {
-      items: entities.map((entity) => this.mapper.toModel(entity)),
+      items: entities.map((entity) => this.mapper.toDomain(entity)),
       totalCount,
       totals,
     };
@@ -173,7 +173,7 @@ export class MemberMongoRepository
       .aggregate<MemberEntity>(pipeline)
       .toArray();
 
-    return entities.map((entity) => this.mapper.toModel(entity));
+    return entities.map((entity) => this.mapper.toDomain(entity));
   }
 
   public async getBalances(memberIds: string[]): Promise<GetBalanceResponse[]> {

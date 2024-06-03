@@ -13,7 +13,7 @@ export class DueMapper extends Mapper<Due, DueEntity> {
     super();
   }
 
-  public toModel(orm: DueEntity): Due {
+  public toDomain(orm: DueEntity): Due {
     return new Due(
       {
         _id: orm._id,
@@ -31,7 +31,7 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         updatedAt: orm.updatedAt,
         updatedBy: orm.updatedBy,
       },
-      orm.member ? this._memberMapper.toModel(orm.member) : undefined,
+      orm.member ? this._memberMapper.toDomain(orm.member) : undefined,
     );
   }
 

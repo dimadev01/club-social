@@ -1,10 +1,11 @@
 import { Breadcrumb, Card, Descriptions, Flex, Table } from 'antd';
 import React from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
-import { MoneyUtils } from '@shared/utils/money.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
 import { NotFound } from '@ui/components/NotFound';
@@ -19,12 +20,6 @@ export const PaymentDetailPage = () => {
   );
 
   const deletePayment = useDeletePayment();
-
-  const user = Meteor.user();
-
-  if (!user) {
-    return <Navigate to={AppUrl.Login} />;
-  }
 
   if (error) {
     return <NotFound />;
@@ -44,20 +39,24 @@ export const PaymentDetailPage = () => {
         items={[
           { title: 'Inicio' },
           { title: <Link to={AppUrl.Payments}>Pagos</Link> },
-          { title: `Pago a ${payment.memberName} del ${payment.date}` },
+          {
+            title: `Pago a ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`,
+          },
         ]}
       />
 
       <Card
-        title={`Pago a ${payment.memberName} del ${payment.date}`}
+        title={`Pago a ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`}
         extra={`Recibo #${payment.receiptNumber}`}
       >
         <>
           <Descriptions column={1} layout="vertical" colon={false}>
-            <Descriptions.Item label="Fecha">{payment.date}</Descriptions.Item>
+            <Descriptions.Item label="Fecha">
+              {new DateUtcVo(payment.date).format()}
+            </Descriptions.Item>
 
             <Descriptions.Item label="Socio">
-              {payment.memberName}
+              {payment.member.name}
             </Descriptions.Item>
 
             <Descriptions.Item label="Recibo #">
@@ -73,24 +72,28 @@ export const PaymentDetailPage = () => {
                 rowKey="dueId"
                 columns={[
                   {
-                    dataIndex: 'dueDate',
+                    dataIndex: ['due', 'date'],
+                    render: (date: string) => new DateUtcVo(date).format(),
                     title: 'Fecha',
                   },
                   {
-                    dataIndex: 'dueCategory',
+                    dataIndex: ['due', 'category'],
                     render: (category: DueCategoryEnum) =>
                       `${DueCategoryLabel[category]}`,
                     title: 'Categoría',
                   },
                   {
-                    dataIndex: 'dueAmount',
-                    render: (dueAmount: number) =>
-                      MoneyUtils.formatCents(dueAmount),
+                    align: 'right',
+                    dataIndex: ['due', 'amount'],
+                    render: (amount: number) =>
+                      new Money({ amount }).formatWithCurrency(),
                     title: 'Monto deudor',
                   },
                   {
-                    dataIndex: 'amount',
-                    render: (amount: number) => MoneyUtils.formatCents(amount),
+                    align: 'right',
+                    dataIndex: ['amount'],
+                    render: (amount: number) =>
+                      new Money({ amount }).formatWithCurrency(),
                     title: 'Monto registrado',
                   },
                 ]}

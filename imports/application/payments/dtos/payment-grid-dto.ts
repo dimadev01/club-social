@@ -1,4 +1,4 @@
-import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { DueDto } from '@application/dues/dtos/due.dto';
 
 export interface PaymentGridDto {
   date: string;
@@ -15,7 +15,5 @@ export interface PaymentGridDto {
 export interface PaymentDueGridDto {
   _id: string;
   amount: number;
-  dueAmount: number;
-  dueCategory: DueCategoryEnum;
-  dueDate: string;
+  due: DueDto;
 }

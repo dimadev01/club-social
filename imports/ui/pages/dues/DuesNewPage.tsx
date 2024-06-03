@@ -49,7 +49,7 @@ type FormValues = {
   notes: string | undefined;
 };
 
-export const DueDetailPage = () => {
+export const DuesNewPage = () => {
   const [form] = Form.useForm<FormValues>();
 
   const category = useWatch(['category'], form);

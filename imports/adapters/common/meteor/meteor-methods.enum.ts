@@ -3,7 +3,7 @@ export enum MeteorMethodEnum {
   DuesDelete = 'dues/delete',
   DuesGet = 'dues/get',
   DuesGetGrid = 'dues/getGrid',
-  DuesGetPendingByMember = 'dues/getPendingByMember',
+  DuesGetPending = 'dues/getPending',
 
   MembersCreate = 'members/create',
   MembersGet = 'members/get',

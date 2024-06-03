@@ -8,8 +8,8 @@ export interface FindModelsByIdsRequest {
   ids: string[];
 }
 
-export interface IQueryableRepository<TModel extends Model> {
-  findByIds(request: FindModelsByIdsRequest): Promise<TModel[]>;
-  findOneById(request: FindOneModelByIdRequest): Promise<TModel | null>;
-  findOneByIdOrThrow(request: FindOneModelByIdRequest): Promise<TModel>;
+export interface IQueryableRepository<TDomain extends Model> {
+  findByIds(request: FindModelsByIdsRequest): Promise<TDomain[]>;
+  findOneById(request: FindOneModelByIdRequest): Promise<TDomain | null>;
+  findOneByIdOrThrow(request: FindOneModelByIdRequest): Promise<TDomain>;
 }

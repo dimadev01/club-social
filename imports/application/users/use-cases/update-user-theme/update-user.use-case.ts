@@ -10,16 +10,14 @@ import { User } from '@domain/users/models/user.model';
 import { IUserRepository } from '@domain/users/repositories/user.repository';
 
 @injectable()
-export class UpdateUserUseCase<TSession>
-  implements IUseCase<UpdateUserRequest<TSession>, null>
-{
+export class UpdateUserUseCase implements IUseCase<UpdateUserRequest, null> {
   public constructor(
     @inject(DIToken.IUserRepository)
-    private readonly _userRepository: IUserRepository<TSession>,
+    private readonly _userRepository: IUserRepository,
   ) {}
 
   public async execute(
-    request: UpdateUserRequest<TSession>,
+    request: UpdateUserRequest,
   ): Promise<Result<null, Error>> {
     const validation = await this._validate(request);
 
@@ -47,10 +45,7 @@ export class UpdateUserUseCase<TSession>
     }
 
     if (request.unitOfWork) {
-      await this._userRepository.updateWithSession(
-        user,
-        request.unitOfWork.get(),
-      );
+      await this._userRepository.updateWithSession(user, request.unitOfWork);
     } else {
       await this._userRepository.update(user);
     }
@@ -59,7 +54,7 @@ export class UpdateUserUseCase<TSession>
   }
 
   private _getEmails(
-    request: UpdateUserRequest<TSession>,
+    request: UpdateUserRequest,
     user: User,
   ): Result<UserEmail[], Error> {
     if (!request.emails) {
@@ -91,7 +86,7 @@ export class UpdateUserUseCase<TSession>
   }
 
   private async _validate(
-    request: UpdateUserRequest<TSession>,
+    request: UpdateUserRequest,
   ): Promise<Result<null, Error>> {
     if (!request.emails) {
       return ok(null);

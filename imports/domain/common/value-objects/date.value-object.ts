@@ -27,6 +27,10 @@ export class DateVo extends ValueObject<Dayjs> {
     return this.props.format(format);
   }
 
+  public monthName(): string {
+    return this.format(DateFormatEnum.MMMM);
+  }
+
   public toDate(): Date {
     return this.props.toDate();
   }

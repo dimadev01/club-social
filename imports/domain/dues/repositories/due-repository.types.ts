@@ -10,3 +10,7 @@ export interface FindPaginatedDuesRequest extends FindPaginatedRequest {
 }
 
 export type FindPaginatedDuesResponse<T> = FindPaginatedResponse<T>;
+
+export interface FindPendingDuesRequest {
+  memberId: string;
+}

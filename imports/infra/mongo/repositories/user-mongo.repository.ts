@@ -32,6 +32,6 @@ export class UserMongoRepository
       return null;
     }
 
-    return this.mapper.toModel(user as UserEntity);
+    return this.mapper.toDomain(user as UserEntity);
   }
 }

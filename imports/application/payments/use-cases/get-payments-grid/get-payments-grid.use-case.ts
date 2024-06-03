@@ -10,7 +10,6 @@ import {
 import { GetPaymentsGridRequest } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.request';
 import { GetPaymentsGridResponse } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.response';
 import { IUseCase } from '@domain/common/use-case.interface';
-import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { IPaymentRepository } from '@domain/payments/repositories/payment.repository';
 
 @injectable()
@@ -32,22 +31,31 @@ export class GetPaymentsGridUseCase
       items: items.map<PaymentGridDto>((payment) => {
         invariant(payment.member);
 
-        invariant(payment.dues);
-
         return {
           date: payment.date.toISOString(),
-          dues: payment.dues.map<PaymentDueGridDto>((paymentDue) => ({
-            _id: paymentDue._id,
-            amount: paymentDue.amount.amount,
-            dueAmount: paymentDue.amount.amount,
-            dueCategory: DueCategoryEnum.ELECTRICITY,
-            dueDate: '',
-          })),
+          dues:
+            payment.dues?.map<PaymentDueGridDto>((paymentDue) => {
+              invariant(paymentDue.due);
+
+              return {
+                _id: paymentDue._id,
+                amount: paymentDue.amount.amount,
+                due: {
+                  amount: paymentDue.due.amount.amount,
+                  category: paymentDue.due.category,
+                  date: paymentDue.due.date.toISOString(),
+                  id: paymentDue.due._id,
+                  memberId: paymentDue.due.memberId,
+                  notes: paymentDue.due.notes,
+                  status: paymentDue.due.status,
+                },
+              };
+            }) ?? [],
           id: payment._id,
           isDeleted: payment.isDeleted,
           memberId: payment.memberId,
           memberName: payment.member.name,
-          paymentDuesCount: payment.dues.length,
+          paymentDuesCount: payment.dues?.length ?? 0,
           receiptNumber: payment.receiptNumber,
           totalAmount: payment.getTotalAmountOfDues(),
         };

@@ -8,7 +8,7 @@ type Props = {
   refetch: () => void;
 };
 
-export const TableReloadButton: React.FC<Props> = ({
+export const GridReloadButton: React.FC<Props> = ({
   refetch,
   isRefetching,
 }) => (

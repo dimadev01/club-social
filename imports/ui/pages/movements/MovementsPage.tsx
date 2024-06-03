@@ -30,9 +30,9 @@ import { DateFormatEnum } from '@shared/utils/date.utils';
 import { MoneyUtils } from '@shared/utils/money.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
-import { TableOld } from '@ui/components/Table/Table';
-import { TableNewButton } from '@ui/components/Table/TableNewButton';
-import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
+import { GridNewButton } from '@ui/components/Grid/GridNewButton';
+import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
+import { TableOld } from '@ui/components/Grid/Table';
 import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 import { useMovementsGrid } from '@ui/hooks/movements/useMovementsGrid';
 import { useRestoreMovement } from '@ui/hooks/movements/useRestoreMovement';
@@ -133,13 +133,13 @@ export const MovementsPage = () => {
         title="Movimientos"
         extra={
           <>
-            <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
+            <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
 
             {Roles.userIsInRole(
               user,
               PermissionEnum.CREATE,
               ScopeEnum.MOVEMENTS,
-            ) && <TableNewButton to={AppUrl.MovementsNew} />}
+            ) && <GridNewButton to={AppUrl.MovementsNew} />}
           </>
         }
       >

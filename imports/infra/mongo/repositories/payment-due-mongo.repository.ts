@@ -28,7 +28,7 @@ export class PaymentDueMongoRepository
       .find({ isDeleted: false, paymentId })
       .fetchAsync();
 
-    return entities.map((entity) => this.mapper.toModel(entity));
+    return entities.map((entity) => this.mapper.toDomain(entity));
   }
 
   public async findByPayments(paymentIds: string[]): Promise<PaymentDue[]> {
@@ -36,6 +36,6 @@ export class PaymentDueMongoRepository
       .find({ isDeleted: false, paymentId: { $in: paymentIds } })
       .fetchAsync();
 
-    return entities.map((entity) => this.mapper.toModel(entity));
+    return entities.map((entity) => this.mapper.toDomain(entity));
   }
 }

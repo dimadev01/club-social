@@ -8,7 +8,7 @@ type Props = {
   to: string;
 };
 
-export const TableNewButton: React.FC<Props> = ({ to }) => (
+export const GridNewButton: React.FC<Props> = ({ to }) => (
   <Link to={to}>
     <Button
       icon={<PlusOutlined />}

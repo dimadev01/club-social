@@ -10,16 +10,16 @@ import { User } from '@domain/users/models/user.model';
 import { IUserRepository } from '@domain/users/repositories/user.repository';
 
 @injectable()
-export class CreateUserUseCase<TSession>
-  implements IUseCase<CreateUserRequest<TSession>, CreateUserResponse>
+export class CreateUserUseCase
+  implements IUseCase<CreateUserRequest, CreateUserResponse>
 {
   public constructor(
     @inject(DIToken.IUserRepository)
-    private readonly _userRepository: IUserRepository<TSession>,
+    private readonly _userRepository: IUserRepository,
   ) {}
 
   public async execute(
-    request: CreateUserRequest<TSession>,
+    request: CreateUserRequest,
   ): Promise<Result<CreateUserResponse, Error>> {
     const validation = await this._validate(request);
 
@@ -41,7 +41,7 @@ export class CreateUserUseCase<TSession>
     if (request.unitOfWork) {
       await this._userRepository.insertWithSession(
         user.value,
-        request.unitOfWork.get(),
+        request.unitOfWork,
       );
     } else {
       await this._userRepository.insert(user.value);
@@ -51,7 +51,7 @@ export class CreateUserUseCase<TSession>
   }
 
   private async _validate(
-    request: CreateUserRequest<TSession>,
+    request: CreateUserRequest,
   ): Promise<Result<null, Error>> {
     if (request.emails) {
       const result = await Promise.all(

@@ -1,18 +1,18 @@
-import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { DueDto } from '@application/dues/dtos/due.dto';
+import { MemberDto } from '@application/members/dtos/member.dto';
 
 export interface PaymentDto {
   date: string;
   dues: PaymentDueDto[];
   id: string;
+  member: MemberDto;
   memberId: string;
-  memberName: string;
   notes: string | null;
   receiptNumber: number | null;
 }
 
 export interface PaymentDueDto {
   amount: number;
-  dueAmount: number;
-  dueCategory: DueCategoryEnum;
-  dueDate: string;
+  due: DueDto;
+  dueId: string;
 }

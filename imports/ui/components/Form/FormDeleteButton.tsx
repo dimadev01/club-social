@@ -2,6 +2,7 @@ import { ButtonProps, Popconfirm } from 'antd';
 import React from 'react';
 
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
+import { SecurityUtils } from '@infra/security/security.utils';
 import { Button } from '@ui/components/Button';
 
 export type FormDeleteButtonProps = ButtonProps & {
@@ -14,13 +15,7 @@ export const FormDeleteButton: React.FC<FormDeleteButtonProps> = ({
   scope,
   ...rest
 }) => {
-  const user = Meteor.user();
-
-  if (!user) {
-    return null;
-  }
-
-  if (!Roles.userIsInRole(user, PermissionEnum.DELETE, scope)) {
+  if (!SecurityUtils.isInRole(PermissionEnum.DELETE, scope)) {
     return false;
   }
 

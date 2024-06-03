@@ -1,6 +1,8 @@
-export interface IUnitOfWork<T> {
+export interface IUnitOfWork<T = unknown> {
   end(): Promise<void>;
-  get(): T;
   start(): void;
-  withTransaction(callback: (session: T) => Promise<void>): Promise<void>;
+  value: T;
+  withTransaction(
+    callback: (session: IUnitOfWork) => Promise<void>,
+  ): Promise<void>;
 }

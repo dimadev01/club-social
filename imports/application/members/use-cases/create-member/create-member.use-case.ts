@@ -1,10 +1,10 @@
-import { CreateMemberResponse } from '@application/members/use-cases/create-member/crate-member.response';
 import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { CreateMemberRequest } from '@application/members/use-cases/create-member/create-member.request';
+import { CreateMemberResponse } from '@application/members/use-cases/create-member/create-member.response';
 import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
 import { CreateUserUseCase } from '@application/users/use-cases/create-user/create-user.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
@@ -17,15 +17,15 @@ import { IMemberRepository } from '@domain/members/repositories/member.repositor
 import { RoleEnum } from '@domain/roles/role.enum';
 
 @injectable()
-export class CreateMemberUseCase<TSession>
+export class CreateMemberUseCase
   implements IUseCase<CreateMemberRequest, CreateMemberResponse>
 {
   public constructor(
     @inject(DIToken.IUnitOfWork)
-    private readonly _unitOfWork: IUnitOfWork<TSession>,
+    private readonly _unitOfWork: IUnitOfWork,
     @inject(DIToken.IMemberRepository)
-    private readonly _memberRepository: IMemberRepository<TSession>,
-    private readonly _createUserUseCase: CreateUserUseCase<TSession>,
+    private readonly _memberRepository: IMemberRepository,
+    private readonly _createUserUseCase: CreateUserUseCase,
     private readonly _getMemberUseCase: GetMemberUseCase,
   ) {}
 
@@ -46,13 +46,13 @@ export class CreateMemberUseCase<TSession>
 
       let newMemberId: string | undefined;
 
-      await this._unitOfWork.withTransaction(async (session) => {
+      await this._unitOfWork.withTransaction(async (unitOfWork) => {
         const userResult = await this._createUserUseCase.execute({
           emails: request.emails?.map((email) => email) ?? null,
           firstName: request.firstName,
           lastName: request.lastName,
           role: RoleEnum.MEMBER,
-          unitOfWork: this._unitOfWork,
+          unitOfWork,
         });
 
         if (userResult.isErr()) {
@@ -85,7 +85,10 @@ export class CreateMemberUseCase<TSession>
           throw member.error;
         }
 
-        await this._memberRepository.insertWithSession(member.value, session);
+        await this._memberRepository.insertWithSession(
+          member.value,
+          unitOfWork,
+        );
 
         newMemberId = member.value._id;
       });

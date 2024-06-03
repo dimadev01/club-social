@@ -13,7 +13,7 @@ export class MemberMapper extends Mapper<Member, MemberEntity> {
     super();
   }
 
-  public toModel(orm: MemberEntity): Member {
+  public toDomain(orm: MemberEntity): Member {
     return new Member(
       {
         _id: orm._id,
@@ -43,7 +43,7 @@ export class MemberMapper extends Mapper<Member, MemberEntity> {
         updatedBy: orm.updatedBy,
         userId: orm.userId,
       },
-      orm.user ? this._userMapper.toModel(orm.user) : undefined,
+      orm.user ? this._userMapper.toDomain(orm.user) : undefined,
     );
   }
 

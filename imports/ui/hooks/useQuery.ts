@@ -12,7 +12,7 @@ interface UseQueryProps<TRequest> {
 export function useQuery<TRequest, TResponse>({
   methodName,
   request,
-  keepPreviousData,
+  keepPreviousData = false,
 }: UseQueryProps<TRequest>) {
   return uq<TRequest, MeteorError, TResponse>(
     [methodName, request],

@@ -4,13 +4,14 @@ import { useWatch } from 'antd/es/form/Form';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { DueDto } from '@application/dues/dtos/due.dto';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { NumberUtils } from '@shared/utils/number.utils';
 import { AppUrl } from '@ui/app.enum';
 
 type Props = {
-  pendingDues?: any[];
+  pendingDues?: DueDto[];
 };
 
 type FormDueValue = {
@@ -84,15 +85,15 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
       pagination={false}
       size="small"
       bordered
-      rowKey="_id"
+      rowKey="id"
       summary={tableSummary}
     >
       <Table.Column
         dataIndex="date"
         title="Fecha"
         width={150}
-        render={(date: string, due: GetPendingDueResponseDto) => {
-          const index = pendingDues?.findIndex((d) => d._id === due._id) ?? 0;
+        render={(date: string, due: DueDto) => {
+          const index = pendingDues?.findIndex((d) => d.id === due.id) ?? 0;
 
           return (
             <>
@@ -109,39 +110,31 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
               </Form.Item>
 
               <Tooltip title="Ver cobro">
-                <Link to={`${AppUrl.Dues}/${due._id}`}>{date}</Link>
+                <Link to={`${AppUrl.Dues}/${due.id}`}>
+                  {new DateUtcVo(date).format()}
+                </Link>
               </Tooltip>
             </>
           );
         }}
       />
 
-      <Table.Column
-        dataIndex="category"
-        title="Categoría"
-        align="center"
-        render={(category: DueCategoryEnum, due: GetPendingDueResponseDto) =>
-          `${DueCategoryLabel[category]} ${
-            due.category === DueCategoryEnum.MEMBERSHIP
-              ? `(${due.membershipMonth})`
-              : ''
-          }`
-        }
-      />
+      <Table.Column dataIndex="category" title="Categoría" align="center" />
 
       <Table.Column
-        dataIndex="amountFormatted"
+        dataIndex="amount"
         width={250}
         title="Monto deudor"
         align="right"
+        render={(amount: number) => new Money({ amount }).formatWithCurrency()}
       />
 
       <Table.Column
         title="Monto a registrar"
         align="right"
         width={250}
-        render={(_, due: GetPendingDueResponseDto) => {
-          const index = pendingDues?.findIndex((d) => d._id === due._id) ?? 0;
+        render={(_, due: DueDto) => {
+          const index = pendingDues?.findIndex((d) => d.id === due.id) ?? 0;
 
           const isSelected = form.getFieldValue(isSelectedFieldName(index));
 
@@ -166,12 +159,13 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
                 className="w-32"
                 prefix={ARS.code}
                 precision={0}
-                decimalSeparator=","
                 step={1000}
                 parser={(value) =>
                   NumberUtils.parseFromInputNumber(value ?? '')
                 }
-                formatter={(value) => NumberUtils.format(value ?? 0)}
+                formatter={(value) =>
+                  value ? Money.fromNumber(Number(value)).format() : ''
+                }
                 min={0}
               />
             </Form.Item>

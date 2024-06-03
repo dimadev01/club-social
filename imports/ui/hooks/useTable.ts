@@ -13,7 +13,7 @@ import {
 } from '@adapters/common/dtos/get-grid-request.dto';
 import { DEFAULT_PAGE_SIZE } from '@domain/common/repositories/grid.repository';
 import { UrlUtils } from '@shared/utils/url.utils';
-import { GridState } from '@ui/components/Table/TableNew';
+import { GridState } from '@ui/components/Grid/Grid';
 import { useParsedQs } from '@ui/hooks/useParsedQs';
 
 interface UseTableProps {

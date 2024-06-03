@@ -3,7 +3,7 @@ import qs from 'qs';
 import { useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
-import { GridUrlQueryParams } from '@ui/components/Table/Table';
+import { GridUrlQueryParams } from '@ui/components/Grid/Table';
 
 interface DefaultParams {
   sortField: string;

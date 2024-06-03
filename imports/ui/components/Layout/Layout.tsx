@@ -1,10 +1,8 @@
 import {
-  BankOutlined,
   FilePdfOutlined,
   LogoutOutlined,
   MailOutlined,
   NotificationOutlined,
-  UserOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
 import {
@@ -20,6 +18,12 @@ import {
 import { ItemType } from 'antd/es/menu/interface';
 import { Roles } from 'meteor/alanning:roles';
 import React, { useEffect, useState } from 'react';
+import {
+  FaCreditCard,
+  FaExchangeAlt,
+  FaFileInvoiceDollar,
+  FaUsers,
+} from 'react-icons/fa';
 import { Link, Navigate } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
@@ -76,7 +80,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
     if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.MEMBERS)) {
       items.push({
-        icon: <UserOutlined className="!text-lg" />,
+        icon: <FaUsers className="!text-lg" />,
         key: AppUrl.Members,
         label: <Link to={AppUrl.Members}>Socios</Link>,
       });
@@ -84,7 +88,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
     if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.MOVEMENTS)) {
       items.push({
-        icon: <BankOutlined className="!text-lg" />,
+        icon: <FaExchangeAlt className="!text-lg" />,
         key: AppUrl.Movements,
         label: <Link to={AppUrl.Movements}>Movimientos</Link>,
       });
@@ -92,7 +96,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
     if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.DUES)) {
       items.push({
-        icon: <BankOutlined className="!text-lg" />,
+        icon: <FaFileInvoiceDollar className="!text-lg" />,
         key: AppUrl.Dues,
         label: <Link to={AppUrl.Dues}>Cobros</Link>,
       });
@@ -100,7 +104,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
     if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.PAYMENTS)) {
       items.push({
-        icon: <BankOutlined className="!text-lg" />,
+        icon: <FaCreditCard className="!text-lg" />,
         key: AppUrl.Payments,
         label: <Link to={AppUrl.Payments}>Pagos</Link>,
       });

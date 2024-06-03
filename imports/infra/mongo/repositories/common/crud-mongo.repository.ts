@@ -26,16 +26,17 @@ import { Entity } from '@infra/mongo/common/entities/entity';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { UserEntity } from '@infra/mongo/entities/user.entity';
 import { MongoUtils } from '@infra/mongo/mongo.utils';
+import { MongoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-work';
 import { PaginatedMongoAggregationResult } from '@infra/mongo/repositories/types/paginated-mongo-aggregation.interface';
 
 export abstract class CrudMongoRepository<
-  TModel extends Model,
+  TDomain extends Model,
   TEntity extends Entity,
-> implements ICrudRepository<TModel, ClientSession>
+> implements ICrudRepository<TDomain>
 {
   public constructor(
     private readonly _collection: MongoCollection<TEntity>,
-    private readonly _mapper: Mapper<TModel, TEntity>,
+    private readonly _mapper: Mapper<TDomain, TEntity>,
     private readonly _logger: ILogger,
   ) {}
 
@@ -49,23 +50,23 @@ export abstract class CrudMongoRepository<
 
   public async deleteWithSession(
     request: FindOneModelByIdRequest,
-    session: ClientSession,
+    unitOfWork: MongoUnitOfWork,
   ): Promise<void> {
     const model = await this.findOneByIdOrThrow(request);
 
     model.delete(await this._getLoggedInUserName());
 
-    return this.updateWithSession(model, session);
+    return this.updateWithSession(model, unitOfWork);
   }
 
-  public async findByIds(request: FindModelsByIdsRequest): Promise<TModel[]> {
+  public async findByIds(request: FindModelsByIdsRequest): Promise<TDomain[]> {
     try {
       const entities = await this._collection
         // @ts-expect-error
         .find({ _id: { $in: request.ids } })
         .fetchAsync();
 
-      return entities.map((entity) => this._mapper.toModel(entity));
+      return entities.map((entity) => this._mapper.toDomain(entity));
     } catch (error) {
       return this.handleError(error);
     }
@@ -73,19 +74,19 @@ export abstract class CrudMongoRepository<
 
   public async findOneById(
     request: FindOneModelByIdRequest,
-  ): Promise<TModel | null> {
+  ): Promise<TDomain | null> {
     const entity = await this._collection.findOneAsync(request.id);
 
     if (!entity) {
       return null;
     }
 
-    return this._mapper.toModel(entity);
+    return this._mapper.toDomain(entity);
   }
 
   public async findOneByIdOrThrow(
     request: FindOneModelByIdRequest,
-  ): Promise<TModel> {
+  ): Promise<TDomain> {
     const model = await this.findOneById(request);
 
     if (!model) {
@@ -98,7 +99,7 @@ export abstract class CrudMongoRepository<
   public async findOneByIdOrThrowWithSession(
     id: string,
     session: ClientSession,
-  ): Promise<TModel> {
+  ): Promise<TDomain> {
     try {
       const entity = await this._collection
         .rawCollection()
@@ -108,7 +109,7 @@ export abstract class CrudMongoRepository<
         throw new InternalServerError(`Entity with id ${id} not found`);
       }
 
-      return this._mapper.toModel(entity as TEntity);
+      return this._mapper.toDomain(entity as TEntity);
     } catch (error) {
       return this.handleError(error);
     }
@@ -116,7 +117,7 @@ export abstract class CrudMongoRepository<
 
   public async findPaginated(
     request: FindPaginatedRequest,
-  ): Promise<FindPaginatedResponse<TModel>> {
+  ): Promise<FindPaginatedResponse<TDomain>> {
     // @ts-expect-error
     const query: Mongo.Selector<TEntity> = {
       isDeleted: false,
@@ -133,12 +134,12 @@ export abstract class CrudMongoRepository<
 
     const entities = await this._collection.find(query, options).fetchAsync();
 
-    const items = entities.map((entity) => this._mapper.toModel(entity));
+    const items = entities.map((entity) => this._mapper.toDomain(entity));
 
     return { items, totalCount };
   }
 
-  public async insert(model: TModel): Promise<void> {
+  public async insert(model: TDomain): Promise<void> {
     try {
       const entity = await this._mapper.toEntity(model);
 
@@ -154,8 +155,8 @@ export abstract class CrudMongoRepository<
   }
 
   public async insertWithSession(
-    model: TModel,
-    session: ClientSession,
+    model: TDomain,
+    unitOfWork: MongoUnitOfWork,
   ): Promise<void> {
     try {
       const entity = (await this._mapper.toEntity(
@@ -167,14 +168,14 @@ export abstract class CrudMongoRepository<
       entity.updatedBy = entity.createdBy;
 
       await this._collection.rawCollection().insertOne(entity, {
-        session,
+        session: unitOfWork.value,
       });
     } catch (error) {
       this.handleError(error);
     }
   }
 
-  public async update(model: TModel): Promise<void> {
+  public async update(model: TDomain): Promise<void> {
     try {
       model.update(await this._getLoggedInUserName());
 
@@ -187,8 +188,8 @@ export abstract class CrudMongoRepository<
   }
 
   public async updateWithSession(
-    model: TModel,
-    session: ClientSession,
+    model: TDomain,
+    unitOfWork: MongoUnitOfWork,
   ): Promise<void> {
     try {
       model.update(await this._getLoggedInUserName());
@@ -200,7 +201,7 @@ export abstract class CrudMongoRepository<
         .updateOne(
           { _id: model._id } as Filter<TEntity>,
           { $set: entity as unknown as MatchKeysAndValues<TEntity> },
-          { session },
+          { session: unitOfWork.value },
         );
     } catch (error) {
       this.handleError(error);
@@ -210,7 +211,7 @@ export abstract class CrudMongoRepository<
   protected async findPaginatedPipeline(
     pipeline: Document[],
     entitiesPipeline: Document[],
-  ): Promise<FindPaginatedResponse<TModel>> {
+  ): Promise<FindPaginatedResponse<TDomain>> {
     pipeline.push(
       {
         $facet: {
@@ -232,7 +233,7 @@ export abstract class CrudMongoRepository<
       .toArray();
 
     return {
-      items: entities.map((entity) => this._mapper.toModel(entity)),
+      items: entities.map((entity) => this._mapper.toDomain(entity)),
       totalCount,
     };
   }

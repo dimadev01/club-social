@@ -22,10 +22,11 @@ import { SecurityUtils } from '@infra/security/security.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
-import { TableFilterByMemberButton } from '@ui/components/Table/TableFilterByMember';
-import { Grid } from '@ui/components/Table/TableNew';
-import { TableNewButton } from '@ui/components/Table/TableNewButton';
-import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
+import { Grid } from '@ui/components/Grid/Grid';
+import { GridUtils } from '@ui/components/Grid/grid.utils';
+import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
+import { GridNewButton } from '@ui/components/Grid/GridNewButton';
+import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useDeleteDue } from '@ui/hooks/dues/useDeleteDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
@@ -68,10 +69,10 @@ export const DuesPage = () => {
         title="Cobros"
         extra={
           <>
-            <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
+            <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
 
             {SecurityUtils.isInRole(PermissionEnum.CREATE, ScopeEnum.DUES) && (
-              <TableNewButton to={AppUrl.DuesNew} />
+              <GridNewButton to={AppUrl.DuesNew} />
             )}
           </>
         }
@@ -116,11 +117,7 @@ export const DuesPage = () => {
                 dataIndex: 'memberId',
                 filterSearch: true,
                 filteredValue: gridState.filters?.memberId,
-                filters:
-                  members?.map((member) => ({
-                    text: member.name,
-                    value: member.id,
-                  })) ?? [],
+                filters: GridUtils.getMembersForFilter(members),
                 render: (_, payment: DueGridDto) => payment.memberName,
                 title: 'Socio',
               },
@@ -197,7 +194,7 @@ export const DuesPage = () => {
                       icon={<FilterOutlined />}
                     /> */}
 
-                    <TableFilterByMemberButton
+                    <GridFilterByMemberButton
                       gridState={gridState}
                       setState={setState}
                       memberId={due.memberId}

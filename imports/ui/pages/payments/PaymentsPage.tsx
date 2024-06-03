@@ -14,10 +14,11 @@ import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { SecurityUtils } from '@infra/security/security.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
-import { TableFilterByMemberButton } from '@ui/components/Table/TableFilterByMember';
-import { Grid } from '@ui/components/Table/TableNew';
-import { TableNewButton } from '@ui/components/Table/TableNewButton';
-import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
+import { Grid } from '@ui/components/Grid/Grid';
+import { GridUtils } from '@ui/components/Grid/grid.utils';
+import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
+import { GridNewButton } from '@ui/components/Grid/GridNewButton';
+import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
@@ -28,7 +29,7 @@ export const PaymentsPage = () => {
     defaultSorter: { date: 'descend' },
   });
 
-  const { data: members } = useMembers({});
+  const { data: members } = useMembers();
 
   const {
     data: payments,
@@ -54,20 +55,26 @@ export const PaymentsPage = () => {
       bordered
       columns={[
         {
-          dataIndex: 'dueDate',
+          dataIndex: ['due', 'date'],
           render: (dueDate: string) => new DateUtcVo(dueDate).format(),
           title: 'Fecha',
           width: 150,
         },
         {
           align: 'center',
-          dataIndex: 'dueCategory',
-          render: (category: DueCategoryEnum) => DueCategoryLabel[category],
+          dataIndex: ['due', 'category'],
+          render: (category: DueCategoryEnum, paymentDue) => {
+            if (category === DueCategoryEnum.MEMBERSHIP) {
+              return `${DueCategoryLabel[category]} (${new DateUtcVo(paymentDue.due.date).monthName()})`;
+            }
+
+            return DueCategoryLabel[category];
+          },
           title: 'Categoría',
         },
         {
           align: 'right',
-          dataIndex: 'dueAmount',
+          dataIndex: ['due', 'amount'],
           render: (amount) => new Money({ amount }).formatWithCurrency(),
           title: 'Deuda',
         },
@@ -75,7 +82,7 @@ export const PaymentsPage = () => {
           align: 'right',
           dataIndex: 'amount',
           render: (amount) => new Money({ amount }).formatWithCurrency(),
-          title: 'Monto Pago',
+          title: 'Monto Registrado',
         },
       ]}
       dataSource={payment.dues}
@@ -93,12 +100,12 @@ export const PaymentsPage = () => {
         title="Pagos"
         extra={
           <>
-            <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
+            <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
 
             {SecurityUtils.isInRole(
               PermissionEnum.CREATE,
               ScopeEnum.PAYMENTS,
-            ) && <TableNewButton to={AppUrl.PaymentsNew} />}
+            ) && <GridNewButton to={AppUrl.PaymentsNew} />}
           </>
         }
       >
@@ -123,11 +130,7 @@ export const PaymentsPage = () => {
               dataIndex: 'memberId',
               filterSearch: true,
               filteredValue: gridState.filters?.memberId,
-              filters:
-                members?.map((member) => ({
-                  text: member.name,
-                  value: member.id,
-                })) ?? [],
+              filters: GridUtils.getMembersForFilter(members),
               render: (_, payment: PaymentGridDto) => payment.memberName,
               title: 'Socio',
             },
@@ -185,7 +188,7 @@ export const PaymentsPage = () => {
                       />
                     )}
 
-                  <TableFilterByMemberButton
+                  <GridFilterByMemberButton
                     gridState={gridState}
                     setState={setState}
                     memberId={payment.memberId}

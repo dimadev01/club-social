@@ -77,22 +77,6 @@ export class ServerStartup {
     };
   }
 
-  // TODO: Remove
-  // private async _configureOnCreateUser() {
-  //   Accounts.onCreateUser((options, user) => {
-  //     invariant(options.profile);
-
-  //     const { firstName, lastName, role, state } =
-  //       options.profile as CreateUserProfile;
-
-  //     return {
-  //       ...user,
-  //       profile: { firstName, lastName, role },
-  //       state,
-  //     };
-  //   });
-  // }
-
   private _configureValidateLoginAttempt() {
     Accounts.validateLoginAttempt(
       (attempt: { user: Meteor.User & { isActive: boolean } }) => {
