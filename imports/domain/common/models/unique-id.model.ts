@@ -1,11 +1,11 @@
 import { Random } from 'meteor/random';
 
-import { IUniqueIDProps } from '@domain/common/models/unique-id-model.interface';
+import { IUniqueID } from '@domain/common/models/unique-id-model.interface';
 
-export class UniqueIDModel implements IUniqueIDProps {
+export class UniqueIDModel implements IUniqueID {
   public _id: string;
 
-  protected constructor(props?: IUniqueIDProps) {
+  protected constructor(props?: IUniqueID) {
     this._id = props?._id ?? Random.id();
   }
 }

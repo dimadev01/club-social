@@ -1,6 +1,9 @@
-import { MemberEntity } from '@adapters/members/entities/member.entity';
-import { MongoCollection } from '@adapters/mongo/collections/mongo.collection';
+import { singleton } from 'tsyringe';
 
+import { MongoCollection } from '@infra/mongo/common/collections/mongo.collection';
+import { MemberEntity } from '@infra/mongo/entities/member.entity';
+
+@singleton()
 export class MemberMongoCollection extends MongoCollection<MemberEntity> {
   public constructor() {
     super('members');

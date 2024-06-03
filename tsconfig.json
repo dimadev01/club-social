@@ -28,7 +28,8 @@
       "@infra/*": ["imports/infra/*"],
       "@adapters/*": ["imports/adapters/*"],
       "@shared/*": ["imports/shared/*"],
-      "@application/*": ["imports/application/*"]
+      "@application/*": ["imports/application/*"],
+      "@ui/*": ["imports/ui/*"]
     },
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
@@ -44,6 +45,7 @@
     "imports/**/*.tsx",
     "client/**/*.tsx",
     "server/**/*.ts",
-    "types/*.d.ts"
+    "types/*.d.ts",
+    "imports/domain/payments/models/payment-due.entity.old.ts"
   ]
 }

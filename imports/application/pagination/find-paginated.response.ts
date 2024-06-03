@@ -1,5 +1,5 @@
 export class FindPaginatedResponseOld<T> {
-  public count: number;
+  public count!: number;
 
-  public data: T[];
+  public data!: T[];
 }

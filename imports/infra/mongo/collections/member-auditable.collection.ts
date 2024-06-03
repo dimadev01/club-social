@@ -1,7 +1,10 @@
-import { MemberAuditEntity } from '@adapters/members/entities/member-audit.entity';
-import { MongoCollection } from '@adapters/mongo/collections/mongo.collection';
+import { singleton } from 'tsyringe';
 
-export class MemberAuditableCollection extends MongoCollection<MemberAuditEntity> {
+import { MongoCollection } from '@infra/mongo/common/collections/mongo.collection';
+import { MemberAuditEntity } from '@infra/mongo/entities/member-audit.entity';
+
+@singleton()
+export class MemberMongoAuditableCollection extends MongoCollection<MemberAuditEntity> {
   public constructor() {
     super('member.audits');
   }

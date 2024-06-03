@@ -4,16 +4,14 @@ import '@infra/meteor/common/meteor-publications';
 import { Meteor } from 'meteor/meteor';
 import { container, inject, singleton } from 'tsyringe';
 
-import { MemberController } from '@adapters/members/member.controller';
-import { AppConstants } from '@adapters/ui/app.enum';
+import { DueController } from '@adapters/controllers/due.controller';
+import { MemberController } from '@adapters/controllers/member.controller';
+import { PaymentController } from '@adapters/controllers/payment.controller';
+import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
-import { DIToken } from '@domain/common/tokens.di';
-import { DueMethod } from '@domain/dues/due.methods';
 import { MovementMethod } from '@domain/movements/movement.methods';
-import { PaymentMethod } from '@domain/payments/payment.methods';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethodOld } from '@domain/users/user.methods';
-import { PaymentController } from '@infra/controllers/payment/payment.controller';
 import { MigrationService } from '@infra/migrations/migration.service';
 import { DateUtils } from '@shared/utils/date.utils';
 
@@ -27,10 +25,9 @@ export class ServerStartup {
     private readonly _migrationService: MigrationService,
     private readonly _userMethod: UserMethodOld,
     private readonly _movementMethod: MovementMethod,
-    private readonly _dueMethod: DueMethod,
-    private readonly _paymentMethod: PaymentMethod,
     private readonly _memberController: MemberController,
     private readonly _paymentController: PaymentController,
+    private readonly _dueController: DueController,
   ) {}
 
   public async start() {
@@ -58,7 +55,8 @@ export class ServerStartup {
 
     Accounts.emailTemplates.siteName = 'Club Social Monte Grande';
 
-    Accounts.emailTemplates.from = AppConstants.EmailFrom;
+    Accounts.emailTemplates.from =
+      'Club Social <info@clubsocialmontegrande.ar>';
 
     Accounts.emailTemplates.verifyEmail.html = (
       user: Meteor.User,
@@ -126,13 +124,11 @@ export class ServerStartup {
 
     this._movementMethod.register();
 
-    this._dueMethod.register();
-
-    this._paymentMethod.register();
-
     this._memberController.register();
 
     this._paymentController.register();
+
+    this._dueController.register();
   }
 }
 

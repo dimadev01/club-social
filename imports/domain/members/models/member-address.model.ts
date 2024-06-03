@@ -1,9 +1,11 @@
 import { Result, err, ok } from 'neverthrow';
 
-import { CreateMemberAddressOld } from '@domain/members/member.types';
-import { IMemberAddressModel } from '@domain/members/models/member-model.interface';
+import {
+  CreateMemberAddress,
+  IMemberAddress,
+} from '@domain/members/member.interface';
 
-export class MemberAddressModel implements IMemberAddressModel {
+export class MemberAddress implements IMemberAddress {
   private _cityGovId: string | null;
 
   private _cityName: string | null;
@@ -16,7 +18,7 @@ export class MemberAddressModel implements IMemberAddressModel {
 
   private _zipCode: string | null;
 
-  public constructor(props?: IMemberAddressModel) {
+  public constructor(props?: IMemberAddress) {
     this._cityGovId = props?.cityGovId ?? null;
 
     this._cityName = props?.cityName ?? null;
@@ -55,9 +57,9 @@ export class MemberAddressModel implements IMemberAddressModel {
   }
 
   public static createOne(
-    props: CreateMemberAddressOld,
-  ): Result<MemberAddressModel, Error> {
-    const address = new MemberAddressModel();
+    props: CreateMemberAddress,
+  ): Result<MemberAddress, Error> {
+    const address = new MemberAddress();
 
     const result = Result.combine([
       address.setCityGovId(props.cityGovId),

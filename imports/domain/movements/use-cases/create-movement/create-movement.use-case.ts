@@ -1,9 +1,9 @@
 import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
+import { DIToken } from '@application/common/di/tokens.di';
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import { ILogger } from '@domain/common/logger/logger.interface';
-import { DIToken } from '@domain/common/tokens.di';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';

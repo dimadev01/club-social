@@ -1,3 +1,3 @@
-export interface IUniqueIDProps {
+export interface IUniqueID {
   _id: string;
 }

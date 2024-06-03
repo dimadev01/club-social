@@ -10,14 +10,14 @@ import {
 } from 'class-validator';
 import { Result, err, ok } from 'neverthrow';
 
-import { MemberEntity } from '@adapters/members/entities/member.entity';
+import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import {
   CategoryEnum,
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
 import { EntityOld } from '@domain/common/entity.old';
 import { CreateMovement } from '@domain/movements/movement.types';
-import { IsNullable } from '@shared/class-validator/is-nullable';
+import { MemberEntity } from '@infra/mongo/entities/member.entity';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { MoneyUtils } from '@shared/utils/money.utils';
 

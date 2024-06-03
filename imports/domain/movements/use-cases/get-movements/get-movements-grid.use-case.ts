@@ -1,14 +1,14 @@
+import { FindPaginatedMovement } from '@adapters/repositories/movements/movement-repository.types';
 import { plainToInstance } from 'class-transformer';
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
-import { FindPaginatedMovement } from '@adapters/repositories/movements/movement-repository.types';
+import { DIToken } from '@application/common/di/tokens.di';
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import {
   CategoryEnum,
   MemberCategories,
 } from '@domain/categories/category.enum';
-import { DIToken } from '@domain/common/tokens.di';
 import { Movement } from '@domain/movements/entities/movement.entity';
 import { IMovementPaginatedPort } from '@domain/movements/movement.port';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';

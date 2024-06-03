@@ -2,9 +2,9 @@ import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 import { container } from 'tsyringe';
 
+import { DIToken } from '@application/common/di/tokens.di';
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import { ILogger } from '@domain/common/logger/logger.interface';
-import { DIToken } from '@domain/common/tokens.di';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 

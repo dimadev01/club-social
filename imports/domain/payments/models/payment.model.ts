@@ -3,20 +3,17 @@ import invariant from 'tiny-invariant';
 
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
-import { MemberModel } from '@domain/members/models/member.model';
-import { PaymentDueModel } from '@domain/payment-dues/models/payment-due.model';
-import {
-  CreatePayment,
-  IPaymentProps,
-} from '@domain/payments/models/payment-model.interface';
+import { Member } from '@domain/members/models/member.model';
+import { PaymentDue } from '@domain/payments/models/payment-due.model';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
+import { CreatePayment, IPayment } from '@domain/payments/payment.interface';
 
-export class PaymentModel extends Model implements IPaymentProps {
+export class Payment extends Model implements IPayment {
   private _date: DateUtcVo;
 
-  private _dues: PaymentDueModel[] | undefined;
+  private _dues?: PaymentDue[];
 
-  private _member: MemberModel | undefined;
+  private _member?: Member;
 
   private _memberId: string;
 
@@ -26,14 +23,12 @@ export class PaymentModel extends Model implements IPaymentProps {
 
   private _status: PaymentStatusEnum;
 
-  public constructor(props?: IPaymentProps) {
+  public constructor(props?: IPayment, member?: Member, dues?: PaymentDue[]) {
     super(props);
 
     this._date = props?.date ?? new DateUtcVo();
 
     this._memberId = props?.memberId ?? '';
-
-    this._member = props?.member;
 
     this._notes = props?.notes ?? null;
 
@@ -41,24 +36,26 @@ export class PaymentModel extends Model implements IPaymentProps {
 
     this._status = props?.status ?? PaymentStatusEnum.PAID;
 
-    this._dues = props?.dues;
+    this._member = member;
+
+    this._dues = dues;
   }
 
   public getTotalAmountOfDues(): number {
     invariant(this._dues);
 
-    return this._dues.reduce((acc, due) => acc + due.amount, 0);
+    return this._dues.reduce((acc, due) => acc + due.amount.amount, 0);
   }
 
   public get date(): DateUtcVo {
     return this._date;
   }
 
-  public get dues(): PaymentDueModel[] | undefined {
+  public get dues(): PaymentDue[] | undefined {
     return this._dues;
   }
 
-  public get member(): MemberModel | undefined {
+  public get member(): Member | undefined {
     return this._member;
   }
 
@@ -78,8 +75,8 @@ export class PaymentModel extends Model implements IPaymentProps {
     return this._status;
   }
 
-  public static createOne(props: CreatePayment): Result<PaymentModel, Error> {
-    const payment = new PaymentModel();
+  public static createOne(props: CreatePayment): Result<Payment, Error> {
+    const payment = new Payment();
 
     const result = Result.combine([
       payment.setDate(props.date),

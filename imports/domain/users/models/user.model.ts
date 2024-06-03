@@ -2,15 +2,12 @@ import { Result, err, ok } from 'neverthrow';
 
 import { Model } from '@domain/common/models/model';
 import { RoleEnum } from '@domain/roles/role.enum';
-import { UserEmailModel } from '@domain/users/models/user-email.model';
-import {
-  CreateUser,
-  IUserModel,
-} from '@domain/users/models/user-model.interface';
+import { UserEmail } from '@domain/users/models/user-email.model';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
+import { CreateUser, IUserModel } from '@domain/users/user.interface';
 
-export class UserModel extends Model implements IUserModel {
-  private _emails: UserEmailModel[] | null;
+export class User extends Model implements IUserModel {
+  private _emails: UserEmail[];
 
   private _firstName: string;
 
@@ -37,8 +34,7 @@ export class UserModel extends Model implements IUserModel {
 
     this._theme = props?.theme ?? UserThemeEnum.AUTO;
 
-    this._emails =
-      props?.emails?.map((email) => new UserEmailModel(email)) ?? null;
+    this._emails = props?.emails?.map((email) => new UserEmail(email)) ?? [];
 
     this._state = props?.state ?? UserStateEnum.ACTIVE;
 
@@ -47,7 +43,7 @@ export class UserModel extends Model implements IUserModel {
     this._services = props?.services ?? {};
   }
 
-  public get emails(): UserEmailModel[] | null {
+  public get emails(): UserEmail[] {
     return this._emails;
   }
 
@@ -83,14 +79,14 @@ export class UserModel extends Model implements IUserModel {
     return this._theme;
   }
 
-  public static createOne(props: CreateUser): Result<UserModel, Error> {
-    const user = new UserModel();
+  public static createOne(props: CreateUser): Result<User, Error> {
+    const user = new User();
 
     const emails =
       props.emails?.map((email) =>
-        UserEmailModel.createOne({
-          address: email.address,
-          verified: email.verified,
+        UserEmail.createOne({
+          address: email,
+          verified: false,
         }),
       ) ?? null;
 
@@ -105,7 +101,7 @@ export class UserModel extends Model implements IUserModel {
       user.setLastName(props.lastName),
       user.setRole(props.role),
       user.setTheme(UserThemeEnum.AUTO),
-      user.setEmails(combined.value.length > 0 ? combined.value : null),
+      user.setEmails(combined.value.length > 0 ? combined.value : []),
       user.setState(UserStateEnum.ACTIVE),
       user.setHeartbeat(null),
       user.setServices({}),
@@ -118,7 +114,7 @@ export class UserModel extends Model implements IUserModel {
     return ok(user);
   }
 
-  public setEmails(value: UserEmailModel[] | null): Result<null, Error> {
+  public setEmails(value: UserEmail[]): Result<null, Error> {
     this._emails = value;
 
     return ok(null);

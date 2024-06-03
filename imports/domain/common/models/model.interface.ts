@@ -1,6 +1,6 @@
-import { IUniqueIDProps } from './unique-id-model.interface';
+import { IUniqueID } from './unique-id-model.interface';
 
-export interface IModelProps extends IUniqueIDProps {
+export interface IModel extends IUniqueID {
   createdAt: Date;
   createdBy: string;
   deletedAt: Date | null;

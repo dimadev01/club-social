@@ -1,8 +1,8 @@
-import { IModelProps } from './model.interface';
+import { IModel } from './model.interface';
 
 import { UniqueIDModel } from '@domain/common/models/unique-id.model';
 
-export class Model extends UniqueIDModel implements IModelProps {
+export class Model extends UniqueIDModel implements IModel {
   public createdAt: Date;
 
   public createdBy: string;
@@ -17,7 +17,7 @@ export class Model extends UniqueIDModel implements IModelProps {
 
   public updatedBy: string;
 
-  protected constructor(props?: IModelProps) {
+  protected constructor(props?: IModel) {
     super(props);
 
     this.createdAt = props?.createdAt ?? new Date();

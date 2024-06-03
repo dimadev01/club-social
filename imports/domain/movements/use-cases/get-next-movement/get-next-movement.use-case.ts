@@ -1,8 +1,8 @@
 import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
+import { DIToken } from '@application/common/di/tokens.di';
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
-import { DIToken } from '@domain/common/tokens.di';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/get-movement-request.dto';
 import { UseCaseOld } from '@infra/use-cases/use-case';

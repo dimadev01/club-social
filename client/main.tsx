@@ -5,8 +5,8 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { App } from '@adapters/ui/App';
 import { DateUtils } from '@shared/utils/date.utils';
+import { App } from '@ui/App';
 
 DateUtils.extend();
 

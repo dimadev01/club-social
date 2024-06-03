@@ -11,15 +11,12 @@ import {
   MemberSexEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
-import { MemberAddressModel } from '@domain/members/models/member-address.model';
-import {
-  CreateMember,
-  IMemberModel,
-} from '@domain/members/models/member-model.interface';
-import { UserModel } from '@domain/users/models/user.model';
+import { CreateMember, IMember } from '@domain/members/member.interface';
+import { MemberAddress } from '@domain/members/models/member-address.model';
+import { User } from '@domain/users/models/user.model';
 
-export class MemberModel extends Model implements IMemberModel {
-  private _address: MemberAddressModel;
+export class Member extends Model implements IMember {
+  private _address: MemberAddress;
 
   private _category: MemberCategoryEnum;
 
@@ -39,14 +36,14 @@ export class MemberModel extends Model implements IMemberModel {
 
   private _status: MemberStatusEnum;
 
-  private _user: UserModel | undefined;
+  private _user?: User;
 
   private _userId: string;
 
-  public constructor(props?: IMemberModel) {
+  public constructor(props?: IMember, user?: User) {
     super(props);
 
-    this._address = new MemberAddressModel(props?.address);
+    this._address = new MemberAddress(props?.address);
 
     this._category = props?.category ?? MemberCategoryEnum.MEMBER;
 
@@ -68,10 +65,10 @@ export class MemberModel extends Model implements IMemberModel {
 
     this._userId = props?.userId ?? '';
 
-    this._user = props?.user;
+    this._user = user;
   }
 
-  public get address(): MemberAddressModel {
+  public get address(): MemberAddress {
     return this._address;
   }
 
@@ -117,11 +114,11 @@ export class MemberModel extends Model implements IMemberModel {
     return this._status;
   }
 
-  public get user(): UserModel | undefined {
+  public get user(): User | undefined {
     return this._user;
   }
 
-  public set user(value: UserModel | undefined) {
+  public set user(value: User | undefined) {
     this._user = value;
   }
 
@@ -129,10 +126,10 @@ export class MemberModel extends Model implements IMemberModel {
     return this._userId;
   }
 
-  public static createOne(props: CreateMember): Result<MemberModel, Error> {
-    const member = new MemberModel();
+  public static createOne(props: CreateMember): Result<Member, Error> {
+    const member = new Member();
 
-    const address = MemberAddressModel.createOne(props.address);
+    const address = MemberAddress.createOne(props.address);
 
     if (address.isErr()) {
       return err(address.error);
@@ -158,7 +155,7 @@ export class MemberModel extends Model implements IMemberModel {
     return ok(member);
   }
 
-  public setAddress(value: MemberAddressModel): Result<null, Error> {
+  public setAddress(value: MemberAddress): Result<null, Error> {
     this._address = value;
 
     return ok(null);

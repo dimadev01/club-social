@@ -6,6 +6,7 @@ import {
   MemberCategoryEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
+import { Member } from '@domain/members/models/member.model';
 
 export interface FindMembersRequest {
   category?: MemberCategoryEnum[];
@@ -23,7 +24,7 @@ export interface GetBalanceResponse {
 /**
  * FindPaginatedMembers
  */
-export interface Totals {
+export interface FindPaginatedMembersResponseTotals {
   electricity: number;
   guest: number;
   membership: number;
@@ -37,9 +38,9 @@ export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
   filterByStatus?: MemberStatusEnum[];
 }
 
-export interface FindPaginatedMembersResponse<T>
+export interface FindPaginatedMembersResponse<T = Member>
   extends FindPaginatedResponse<T> {
-  totals: Totals;
+  totals: FindPaginatedMembersResponseTotals;
 }
 
 /**

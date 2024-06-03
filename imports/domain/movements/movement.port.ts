@@ -2,6 +2,7 @@ import {
   FindPaginatedMovementsRequest,
   FindPaginatedMovementsResponse,
 } from '@adapters/repositories/movements/movement-repository.types';
+
 import { ICrudPort } from '@application/ports/crud.port';
 import { IPaginatedPort } from '@application/ports/paginated.port';
 import { Movement } from '@domain/movements/entities/movement.entity';

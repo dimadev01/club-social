@@ -1,10 +1,10 @@
 import { injectable } from 'tsyringe';
 
-import { MeteorMethodEnum } from '@adapters/meteor/meteor-methods.enum';
+import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { GetUserByTokenRequestDto } from '@application/users/dtos/get-user-by-token-request.dto';
 import { UpdateUserThemeRequestDto } from '@application/users/dtos/update-user-theme-request.dto';
-import { GetUserByTokenUseCase } from '@application/users/use-cases/get-user-by-token.use-case';
-import { UpdateUserThemeUseCase } from '@application/users/use-cases/update-user-theme.use-case';
+import { GetUserByTokenUseCase } from '@application/users/use-cases/get-user-by-token/get-user-by-token.use-case';
+import { UpdateUserThemeUseCase } from '@application/users/use-cases/update-user/update-user-theme.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 
 @injectable()

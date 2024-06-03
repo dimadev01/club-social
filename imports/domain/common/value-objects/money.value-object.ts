@@ -1,35 +1,75 @@
-import { ARS } from '@dinero.js/currencies';
-import { Dinero, dinero, toDecimal } from 'dinero.js';
+import { ARS as dineroARS, USD as dineroUSD } from '@dinero.js/currencies';
+import {
+  Dinero,
+  dinero,
+  greaterThanOrEqual,
+  toDecimal,
+  toSnapshot,
+} from 'dinero.js';
+
+import { CurrencyEnum } from '@domain/common/enums/currency.enum';
+import { ValueObject } from '@domain/common/value-objects/value-object';
 
 interface FormatOptions {
   currency?: boolean;
   decimals?: boolean;
+  minimumFractionDigits?: number;
 }
 
-export class Money {
-  private _value: Dinero<number>;
+interface InternalMoneyProps {
+  currency: CurrencyEnum;
+  dinero: Dinero<number>;
+}
 
-  public constructor(cents: number) {
-    this._value = dinero({ amount: cents, currency: ARS });
+interface MoneyProps {
+  amount: number;
+  currency?: CurrencyEnum;
+}
+
+export class Money extends ValueObject<InternalMoneyProps> {
+  public constructor({ amount, currency = CurrencyEnum.ARS }: MoneyProps) {
+    super({
+      currency,
+      dinero: dinero({
+        amount,
+        currency: Money.getDineroCurrency(currency),
+      }),
+    });
+  }
+
+  public get amount(): number {
+    return toSnapshot(this.props.dinero).amount;
+  }
+
+  public static fromNumber(
+    amount: number,
+    currency: CurrencyEnum = CurrencyEnum.ARS,
+  ): Money {
+    return new Money({ amount: amount * 100, currency });
   }
 
   public format({
     currency = false,
     decimals = false,
+    minimumFractionDigits = 2,
   }: FormatOptions = {}): string {
-    let amount: number;
+    const options: Intl.NumberFormatOptions = {
+      currency: this.props.currency,
+      minimumFractionDigits: decimals ? minimumFractionDigits : 0,
+    };
 
-    if (decimals) {
-      amount = this.toNumber();
-    } else {
-      amount = this.toInteger();
-    }
-
-    const amountFormatted = new Intl.NumberFormat('es-AR').format(amount);
+    const amount = decimals ? this.toNumber() : this.toInteger();
 
     if (currency) {
-      return `${ARS.code} ${amountFormatted}`;
+      options.style = 'currency';
+    } else if (decimals) {
+      options.style = 'decimal';
     }
+
+    const amountFormatted = new Intl.NumberFormat(
+      this._getIntlLocale(),
+      options,
+    ).format(amount);
 
     return amountFormatted;
   }
@@ -46,11 +86,41 @@ export class Money {
     return this.format({ decimals: true });
   }
 
-  public toNumber(): number {
-    return +toDecimal(this._value);
+  public isGreaterThanOrEqual(amount: Money) {
+    return greaterThanOrEqual(this.props.dinero, amount.props.dinero);
   }
 
   public toInteger(): number {
-    return +this.toNumber().toFixed(0);
+    return Math.round(this.toNumber());
+  }
+
+  public toNumber(): number {
+    return +toDecimal(this.props.dinero);
+  }
+
+  private static getDineroCurrency(currency: CurrencyEnum) {
+    switch (currency) {
+      case CurrencyEnum.ARS:
+        return dineroARS;
+
+      case CurrencyEnum.USD:
+        return dineroUSD;
+
+      default:
+        throw new Error('Currency not supported');
+    }
+  }
+
+  private _getIntlLocale(): string {
+    switch (this.props.currency) {
+      case CurrencyEnum.ARS:
+        return 'es-AR';
+
+      case CurrencyEnum.USD:
+        return 'en-US';
+
+      default:
+        throw new Error('Currency not supported');
+    }
   }
 }

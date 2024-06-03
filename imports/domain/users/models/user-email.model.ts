@@ -1,16 +1,13 @@
 import { Result, err, ok } from 'neverthrow';
 
-import {
-  CreateUserEmail,
-  IUserEmailModel,
-} from '@domain/users/models/user-model.interface';
+import { CreateUserEmail, IUserEmail } from '@domain/users/user.interface';
 
-export class UserEmailModel implements IUserEmailModel {
+export class UserEmail implements IUserEmail {
   private _address: string;
 
   private _verified: boolean;
 
-  public constructor(props?: IUserEmailModel) {
+  public constructor(props?: IUserEmail) {
     this._address = props?.address ?? '';
 
     this._verified = props?.verified ?? false;
@@ -24,10 +21,8 @@ export class UserEmailModel implements IUserEmailModel {
     return this._verified;
   }
 
-  public static createOne(
-    props: CreateUserEmail,
-  ): Result<UserEmailModel, Error> {
-    const email = new UserEmailModel();
+  public static createOne(props: CreateUserEmail): Result<UserEmail, Error> {
+    const email = new UserEmail();
 
     const result = Result.combine([
       email.setAddress(props.address),

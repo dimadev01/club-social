@@ -16,7 +16,7 @@ export interface ExecuteRequest<TRequest, TResponse> {
 export abstract class BaseController {
   public constructor(private readonly _logger: ILogger) {}
 
-  protected abstract register(): void;
+  public abstract register(): void;
 
   protected async execute<TRequest, TResponse>({
     useCase,
