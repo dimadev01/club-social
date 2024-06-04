@@ -1,9 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
-import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
 import { UpdateMemberRequest } from '@application/members/use-cases/update-member/update-member.request';
 import { UpdateMemberResponse } from '@application/members/use-cases/update-member/update-member.response';
 import { UpdateUserUseCase } from '@application/users/use-cases/update-user-theme/update-user.use-case';
@@ -25,7 +23,6 @@ export class UpdateMemberUseCase
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork,
     private readonly _updateUserUseCase: UpdateUserUseCase,
-    private readonly _getMemberUseCase: GetMemberUseCase,
   ) {}
 
   public async execute(
@@ -40,11 +37,11 @@ export class UpdateMemberUseCase
     try {
       this._unitOfWork.start();
 
-      await this._unitOfWork.withTransaction(async (unitOfWork) => {
-        const member = await this._memberRepository.findOneByIdOrThrow({
-          id: request.id,
-        });
+      const member = await this._memberRepository.findOneByIdOrThrow({
+        id: request.id,
+      });
 
+      await this._unitOfWork.withTransaction(async (unitOfWork) => {
         const userResult = await this._updateUserUseCase.execute({
           emails: request.emails?.map((email) => email) ?? null,
           firstName: request.firstName,
@@ -85,15 +82,7 @@ export class UpdateMemberUseCase
         await this._memberRepository.updateWithSession(member, unitOfWork);
       });
 
-      const member = await this._getMemberUseCase.execute({ id: request.id });
-
-      if (member.isErr()) {
-        return err(member.error);
-      }
-
-      invariant(member.value);
-
-      return ok(member.value);
+      return ok(member);
     } catch (error) {
       if (error instanceof Error) {
         return err(error);

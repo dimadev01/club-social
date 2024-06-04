@@ -1,10 +1,10 @@
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { GetMemberRequest } from '@application/members/use-cases/get-member/get-member.request';
-import { GetMemberResponse } from '@application/members/use-cases/get-member/get-member.response';
+import { GetOneDtoByIdRequestDto } from '@adapters/dtos/get-one-dto-request.dto';
+import { MemberDto } from '@application/members/dtos/member.dto';
 import { useQuery } from '@ui/hooks/useQuery';
 
-export const useMember = (request?: GetMemberRequest) =>
-  useQuery<GetMemberRequest, GetMemberResponse>({
+export const useMember = (request?: GetOneDtoByIdRequestDto) =>
+  useQuery<GetOneDtoByIdRequestDto, MemberDto>({
     methodName: MeteorMethodEnum.MembersGetOne,
     request,
   });

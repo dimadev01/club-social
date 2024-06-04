@@ -5,7 +5,6 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { CreatePaymentRequest } from '@application/payments/use-cases/create-payment/create-payment.request';
 import { CreatePaymentResponse } from '@application/payments/use-cases/create-payment/create-payment.response';
-import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment/get-payment.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
@@ -32,7 +31,6 @@ export class CreatePaymentUseCase
     private readonly _paymentDueRepository: IPaymentDueRepository,
     @inject(DIToken.IDueRepository)
     private readonly _duePort: IDueRepository,
-    private readonly _getPayment: GetPaymentUseCase,
   ) {}
 
   public async execute(
@@ -52,7 +50,7 @@ export class CreatePaymentUseCase
     try {
       this._unitOfWork.start();
 
-      let newPaymentId: string | undefined;
+      let newPayment: Payment | undefined;
 
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
         const dues = await this._duePort.findByIds({
@@ -76,7 +74,7 @@ export class CreatePaymentUseCase
           throw newPaymentResult.error;
         }
 
-        newPaymentId = newPaymentResult.value._id;
+        newPayment = newPaymentResult.value;
 
         await Promise.all(
           dues.map(async (due) => {
@@ -115,17 +113,9 @@ export class CreatePaymentUseCase
         );
       });
 
-      invariant(newPaymentId);
+      invariant(newPayment);
 
-      const payment = await this._getPayment.execute({ id: newPaymentId });
-
-      if (payment.isErr()) {
-        return err(payment.error);
-      }
-
-      invariant(payment.value);
-
-      return ok(payment.value);
+      return ok(newPayment);
     } catch (error) {
       if (error instanceof Error) {
         return err(error);

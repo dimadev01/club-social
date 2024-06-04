@@ -6,9 +6,8 @@ export interface DueDto {
   category: DueCategoryEnum;
   date: string;
   id: string;
-  member: MemberDto | undefined;
+  member?: MemberDto;
   memberId: string;
   notes: string | null;
-  paymentId: string | undefined;
   status: DueStatusEnum;
 }

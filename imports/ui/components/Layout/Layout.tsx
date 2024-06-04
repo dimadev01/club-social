@@ -215,7 +215,11 @@ export const Layout: React.FC<Props> = ({ children }) => {
             {
               icon: <LogoutOutlined className="!text-lg" />,
               key: 'logout',
-              label: <Link to={AppUrl.Logout}>Cerrar sesión</Link>,
+              label: (
+                <Link className="no-underline" to={AppUrl.Logout}>
+                  Cerrar sesión
+                </Link>
+              ),
             },
           ]}
         />

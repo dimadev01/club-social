@@ -2,7 +2,6 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { DueDto } from '@application/dues/dtos/due.dto';
 import { GetPendingDuesRequest } from '@application/dues/use-cases/get-pending-dues/get-pending-dues.request';
 import { GetPendingDuesResponse } from '@application/dues/use-cases/get-pending-dues/get-pending-dues.response';
 import { IUseCase } from '@domain/common/use-case.interface';
@@ -24,18 +23,6 @@ export class GetPendingDuesUseCase
       memberId: request.memberId,
     });
 
-    return ok(
-      dues.map<DueDto>((due) => ({
-        amount: due.amount.amount,
-        category: due.category,
-        date: due.date.toISOString(),
-        id: due._id,
-        member: undefined,
-        memberId: due.memberId,
-        notes: due.notes,
-        paymentId: undefined,
-        status: due.status,
-      })),
-    );
+    return ok(dues);
   }
 }

@@ -1,3 +1,7 @@
-import { MemberGridDto } from '@application/members/dtos/member-grid.dto';
+import { Member } from '@domain/members/models/member.model';
+import { GetBalanceResponse } from '@domain/members/repositories/member-repository.types';
 
-export type GetMembersExportResponse = MemberGridDto[];
+export interface GetMembersExportResponse<T = Member> {
+  balances: GetBalanceResponse[];
+  items: T[];
+}

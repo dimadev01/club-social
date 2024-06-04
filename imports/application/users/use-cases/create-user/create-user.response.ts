@@ -1,3 +1,3 @@
-import { UserDto } from '@application/users/dtos/user.dto';
+import { User } from '@domain/users/models/user.model';
 
-export type CreateUserResponse = UserDto;
+export type CreateUserResponse = User;

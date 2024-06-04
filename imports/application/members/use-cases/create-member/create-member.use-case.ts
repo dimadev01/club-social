@@ -5,7 +5,6 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { CreateMemberRequest } from '@application/members/use-cases/create-member/create-member.request';
 import { CreateMemberResponse } from '@application/members/use-cases/create-member/create-member.response';
-import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
 import { CreateUserUseCase } from '@application/users/use-cases/create-user/create-user.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
@@ -26,7 +25,6 @@ export class CreateMemberUseCase
     @inject(DIToken.IMemberRepository)
     private readonly _memberRepository: IMemberRepository,
     private readonly _createUserUseCase: CreateUserUseCase,
-    private readonly _getMemberUseCase: GetMemberUseCase,
   ) {}
 
   public async execute(
@@ -44,7 +42,7 @@ export class CreateMemberUseCase
     try {
       this._unitOfWork.start();
 
-      let newMemberId: string | undefined;
+      let newMember: Member | undefined;
 
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
         const userResult = await this._createUserUseCase.execute({
@@ -78,7 +76,7 @@ export class CreateMemberUseCase
           nationality: request.nationality,
           phones: request.phones,
           sex: request.sex,
-          userId: userResult.value.id,
+          userId: userResult.value._id,
         });
 
         if (member.isErr()) {
@@ -90,22 +88,12 @@ export class CreateMemberUseCase
           unitOfWork,
         );
 
-        newMemberId = member.value._id;
+        newMember = member.value;
       });
 
-      invariant(newMemberId);
+      invariant(newMember);
 
-      const member = await this._getMemberUseCase.execute({
-        id: newMemberId,
-      });
-
-      if (member.isErr()) {
-        return err(member.error);
-      }
-
-      invariant(member.value);
-
-      return ok(member.value);
+      return ok(newMember);
     } catch (error) {
       if (error instanceof Error) {
         return err(error);

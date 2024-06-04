@@ -1,3 +1,3 @@
-import { DueDto } from '@application/dues/dtos/due.dto';
+import { Due } from '@domain/dues/models/due.model';
 
-export type GetPendingDuesResponse = DueDto[];
+export type GetPendingDuesResponse = Due[];

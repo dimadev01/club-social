@@ -1,5 +1,4 @@
-import { ARS } from '@dinero.js/currencies';
-import { Checkbox, Form, Input, InputNumber, Table, Tooltip } from 'antd';
+import { Checkbox, Form, Input, Table, Tooltip } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -7,8 +6,9 @@ import { Link } from 'react-router-dom';
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { NumberUtils } from '@shared/utils/number.utils';
+import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { AppUrl } from '@ui/app.enum';
+import { FormInputAmount } from '@ui/components/Form/FormInputAmount';
 
 type Props = {
   pendingDues?: DueDto[];
@@ -51,7 +51,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
             Total: {new Money({ amount: totalPending }).formatWithCurrency()}
           </Table.Summary.Cell>
           <Table.Summary.Cell align="right" index={4}>
-            Total: {new Money({ amount: totalDuesToPay }).formatWithCurrency()}
+            Total: {Money.fromNumber(totalDuesToPay).formatWithCurrency()}
           </Table.Summary.Cell>
         </Table.Summary.Row>
       </Table.Summary>
@@ -65,7 +65,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
   const amountFieldName = (index: number) => ['dues', index, 'amount'];
 
   return (
-    <Table
+    <Table<DueDto>
       scroll={{ x: true }}
       rowSelection={{
         onChange: (rowKeys) => {
@@ -119,7 +119,18 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
         }}
       />
 
-      <Table.Column dataIndex="category" title="Categoría" align="center" />
+      <Table.Column<DueDto>
+        dataIndex="category"
+        title="Categoría"
+        render={(category: DueCategoryEnum, due: DueDto) => {
+          if (category === DueCategoryEnum.MEMBERSHIP) {
+            return `${DueCategoryLabel[category]} (${new DateUtcVo(due.date).monthName()})`;
+          }
+
+          return DueCategoryLabel[category];
+        }}
+        align="center"
+      />
 
       <Table.Column
         dataIndex="amount"
@@ -154,20 +165,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
                 },
               ]}
             >
-              <InputNumber
-                disabled={!isSelected}
-                className="w-32"
-                prefix={ARS.code}
-                precision={0}
-                step={1000}
-                parser={(value) =>
-                  NumberUtils.parseFromInputNumber(value ?? '')
-                }
-                formatter={(value) =>
-                  value ? Money.fromNumber(Number(value)).format() : ''
-                }
-                min={0}
-              />
+              <FormInputAmount className="w-32" disabled={!isSelected} />
             </Form.Item>
           );
         }}

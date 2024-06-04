@@ -17,18 +17,18 @@ import { GridState } from '@ui/components/Grid/Grid';
 import { useParsedQs } from '@ui/hooks/useParsedQs';
 
 interface UseTableProps {
-  defaultFilters?: GridFilter;
+  defaultFilters: GridFilter;
   defaultSorter: GridSorter;
 }
 
 interface UseTable<T> {
-  gridState: GridState;
   onTableChange: (
     pagination: TablePaginationConfig,
     filters: Record<string, FilterValue | null>,
     sorter: SorterResult<T> | SorterResult<T>[],
   ) => void;
   setState: React.Dispatch<React.SetStateAction<GridState>>;
+  state: GridState;
 }
 
 export function useTable<T>({
@@ -68,17 +68,15 @@ export function useTable<T>({
     return sorter;
   };
 
-  const getFilters = (obj: unknown): GridFilter | null => {
+  const getFilters = (obj: unknown): GridFilter => {
     if (!isObject(obj) || isEmpty(obj)) {
-      return defaultFilters ?? null;
+      return defaultFilters ?? {};
     }
 
-    const filters: GridFilter = {};
+    const filters: GridFilter = { ...defaultFilters };
 
     Object.entries(obj).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        filters[key] = value as string[];
-      }
+      filters[key] = value ?? [];
     });
 
     return filters;
@@ -109,5 +107,5 @@ export function useTable<T>({
     });
   };
 
-  return { gridState: state, onTableChange, setState };
+  return { onTableChange, setState, state };
 }

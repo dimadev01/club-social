@@ -1,19 +1,13 @@
-import { DueDto } from '@application/dues/dtos/due.dto';
+import { MemberDto } from '@application/members/dtos/member.dto';
+import { PaymentDueDto } from '@application/payments/dtos/payment.dto';
 
 export interface PaymentGridDto {
   date: string;
-  dues: PaymentDueGridDto[];
   id: string;
-  isDeleted: boolean;
+  member: MemberDto;
   memberId: string;
-  memberName: string;
+  paymentDues: PaymentDueDto[];
   paymentDuesCount: number;
   receiptNumber: number | null;
   totalAmount: number;
-}
-
-export interface PaymentDueGridDto {
-  _id: string;
-  amount: number;
-  due: DueDto;
 }

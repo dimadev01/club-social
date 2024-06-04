@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { GetMembersGridRequestDto } from '@adapters/dtos/get-members-grid-request.dto';
 import { MemberGridDto } from '@application/members/dtos/member-grid.dto';
-import { GetMembersGridRequest } from '@application/members/use-cases/ger-members-grid/get-members-grid.request';
 import { GetMembersGridResponse } from '@application/members/use-cases/ger-members-grid/get-members-grid.response';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
@@ -36,36 +35,41 @@ import { useTable } from '@ui/hooks/useTable';
 export const MembersPage = () => {
   const navigate = useNavigate();
 
-  const { gridState, onTableChange } = useTable<MemberGridDto>({
-    defaultFilters: { status: [MemberStatusEnum.ACTIVE] },
-    defaultSorter: { _id: 'ascend' },
+  const { state: gridState, onTableChange } = useTable<MemberGridDto>({
+    defaultFilters: {
+      category: [],
+      id: [],
+      pendingTotal: [],
+      status: [MemberStatusEnum.ACTIVE],
+    },
+    defaultSorter: { id: 'ascend' },
   });
 
   const { data: members } = useMembers({});
 
   const sorter = { ...gridState.sorter };
 
-  if (sorter._id) {
-    sorter['user.profile.firstName'] = sorter._id;
+  if (sorter.id) {
+    sorter['user.profile.firstName'] = sorter.id;
 
-    sorter['user.profile.lastName'] = sorter._id;
+    sorter['user.profile.lastName'] = sorter.id;
 
-    delete sorter._id;
+    delete sorter.id;
   }
 
   const gridRequest: GetMembersGridRequestDto = {
-    filterByCategory: gridState.filters?.category as MemberCategoryEnum[],
-    filterByDebtStatus: gridState.filters?.pendingTotal,
-    filterById: gridState.filters?._id,
-    filterByStatus: gridState.filters?.status as MemberStatusEnum[],
+    filterByCategory: gridState.filters.category as MemberCategoryEnum[],
+    filterByDebtStatus: gridState.filters.pendingTotal,
+    filterById: gridState.filters.id,
+    filterByStatus: gridState.filters.status as MemberStatusEnum[],
     limit: gridState.pageSize,
     page: gridState.page,
     sorter,
   };
 
   const { data, isLoading, isRefetching, refetch } = useQueryGrid<
-    GetMembersGridRequest,
-    GetMembersGridResponse
+    GetMembersGridRequestDto,
+    GetMembersGridResponse<MemberGridDto>
   >({
     methodName: MeteorMethodEnum.MembersGetGrid,
     request: gridRequest,
@@ -152,21 +156,21 @@ export const MembersPage = () => {
           }}
           columns={[
             {
-              dataIndex: '_id',
+              dataIndex: 'id',
               filterSearch: true,
-              filteredValue: gridState.filters?._id,
+              filteredValue: gridState.filters.id,
               filters: GridUtils.getMembersForFilter(members),
-              render: (_id: string, member: MemberGridDto) => (
-                <Link to={`${AppUrl.Members}/${_id}`}>{member.name}</Link>
+              render: (id: string, member: MemberGridDto) => (
+                <Link to={`${AppUrl.Members}/${id}`}>{member.name}</Link>
               ),
-              sortOrder: gridState.sorter._id,
+              sortOrder: gridState.sorter.id,
               sorter: true,
               title: 'Socio',
             },
             {
               align: 'center',
               dataIndex: 'category',
-              filteredValue: gridState.filters?.category,
+              filteredValue: gridState.filters.category,
 
               filters: getMemberCategoryFilters(),
               render: (category: MemberCategoryEnum) =>
@@ -179,7 +183,7 @@ export const MembersPage = () => {
               dataIndex: 'status',
               defaultFilteredValue: [MemberStatusEnum.ACTIVE],
               filterResetToDefaultFilteredValue: true,
-              filteredValue: gridState.filters?.status,
+              filteredValue: gridState.filters.status,
               filters: getMemberStatusFilters(),
               render: (status: MemberStatusEnum) => MemberStatusLabel[status],
               title: 'Estado',
@@ -219,7 +223,7 @@ export const MembersPage = () => {
               align: 'right',
               dataIndex: 'pendingTotal',
               filterMultiple: false,
-              filteredValue: gridState.filters?.pendingTotal,
+              filteredValue: gridState.filters.pendingTotal,
               filters: [
                 {
                   text: 'Con deuda',

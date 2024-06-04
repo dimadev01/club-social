@@ -47,7 +47,7 @@ export class CreateUserUseCase
       await this._userRepository.insert(user.value);
     }
 
-    return ok({ id: user.value._id });
+    return ok(user.value);
   }
 
   private async _validate(

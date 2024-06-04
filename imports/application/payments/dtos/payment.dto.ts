@@ -3,9 +3,9 @@ import { MemberDto } from '@application/members/dtos/member.dto';
 
 export interface PaymentDto {
   date: string;
-  dues: PaymentDueDto[];
+  dues?: PaymentDueDto[];
   id: string;
-  member: MemberDto;
+  member?: MemberDto;
   memberId: string;
   notes: string | null;
   receiptNumber: number | null;
@@ -13,6 +13,6 @@ export interface PaymentDto {
 
 export interface PaymentDueDto {
   amount: number;
-  due: DueDto;
+  due?: DueDto;
   dueId: string;
 }

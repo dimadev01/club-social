@@ -1,7 +1,8 @@
-import { CheckOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Breadcrumb, Card, Form, Space } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Breadcrumb, Card } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import React from 'react';
+import { FaCreditCard } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -34,8 +35,15 @@ import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 import { useTable } from '@ui/hooks/useTable';
 
 export const DuesPage = () => {
-  const { gridState, onTableChange, setState } = useTable<DueGridDto>({
-    defaultFilters: { status: [DueStatusEnum.PENDING] },
+  const {
+    state: gridState,
+    onTableChange,
+    setState,
+  } = useTable<DueGridDto>({
+    defaultFilters: {
+      memberId: [],
+      status: [DueStatusEnum.PENDING],
+    },
     defaultSorter: { date: 'descend' },
   });
 
@@ -51,8 +59,8 @@ export const DuesPage = () => {
   >({
     methodName: MeteorMethodEnum.DuesGetGrid,
     request: {
-      filterByMember: gridState.filters?.memberId,
-      filterByStatus: gridState.filters?.status as DueStatusEnum[],
+      filterByMember: gridState.filters.memberId,
+      filterByStatus: gridState.filters.status as DueStatusEnum[],
       limit: gridState.pageSize,
       page: gridState.page,
       sorter: gridState.sorter,
@@ -80,143 +88,122 @@ export const DuesPage = () => {
           </>
         }
       >
-        <Space size="middle" direction="vertical" className="flex">
-          <Form layout="inline">
-            <Space wrap>
-              {/* <Form.Item>
-                <DatePicker.RangePicker
-                  format={DateFormatEnum.DDMMYYYY}
-                  allowClear
-                  value={dateFilter}
-                  disabledDate={(current) => current.isAfter(dayjs())}
-                  onChange={(value) => {
-                    setDateFilter(value);
-
-                    setGridState((prevState) => ({ ...prevState, page: 1 }));
-                  }}
-                />
-              </Form.Item> */}
-            </Space>
-          </Form>
-
-          <Grid<DueGridDto>
-            total={data?.totalCount}
-            state={gridState}
-            onTableChange={onTableChange}
-            loading={isLoading}
-            dataSource={data?.items}
-            columns={[
-              {
-                dataIndex: 'date',
-                render: (date: string, due: DueGridDto) => (
-                  <Link to={`${AppUrl.Dues}/${due.id}`}>
-                    {new DateUtcVo(date).format()}
-                  </Link>
-                ),
-                title: 'Fecha',
-                width: 125,
-              },
-              {
-                dataIndex: 'memberId',
-                filterSearch: true,
-                filteredValue: gridState.filters?.memberId,
-                filters: GridUtils.getMembersForFilter(members),
-                render: (_, payment: DueGridDto) => payment.memberName,
-                title: 'Socio',
-              },
-              {
-                align: 'center',
-                dataIndex: 'category',
-                render: (category: DueCategoryEnum) =>
-                  DueCategoryLabel[category],
-                title: 'Categoría',
-                width: 150,
-              },
-              {
-                align: 'right',
-                dataIndex: 'amount',
-                render: (amount) => new Money({ amount }).formatWithCurrency(),
-                title: 'Importe',
-                width: 100,
-              },
-              {
-                align: 'center',
-                dataIndex: 'status',
-                defaultFilteredValue: [DueStatusEnum.PENDING],
-                filterResetToDefaultFilteredValue: true,
-                filteredValue: gridState.filters?.status,
-                filters: getDueStatusColumnFilters(),
-                render: (status: DueStatusEnum) => DueStatusLabel[status],
-                title: 'Estado',
-                width: 150,
-              },
-              {
-                align: 'center',
-                render: (_, due: DueGridDto) => (
-                  <ButtonGroup size="small">
-                    {SecurityUtils.isInRole(
-                      PermissionEnum.DELETE,
-                      ScopeEnum.DUES,
-                    ) && (
-                      <Button
-                        popConfirm={{
-                          onConfirm: () =>
-                            deleteDue.mutate(
-                              { id: due.id },
-                              {
-                                onError: () => deleteDue.reset(),
-                                onSuccess: () => {
-                                  deleteDue.reset();
-
-                                  notificationSuccess('Cobro eliminado');
-
-                                  refetch();
-                                },
-                              },
-                            ),
-                          title: '¿Está seguro de eliminar este cobro?',
-                        }}
-                        type="text"
-                        htmlType="button"
-                        tooltip={{ title: 'Eliminar' }}
-                        icon={<DeleteOutlined />}
-                        loading={deleteDue.variables?.id === due.id}
-                        disabled={
-                          deleteDue.variables?.id === due.id ||
-                          due.status !== DueStatusEnum.PENDING
-                        }
-                      />
-                    )}
-
-                    <GridFilterByMemberButton
-                      gridState={gridState}
-                      setState={setState}
-                      memberId={due.memberId}
-                    />
-
+        <Grid<DueGridDto>
+          total={data?.totalCount}
+          state={gridState}
+          onTableChange={onTableChange}
+          loading={isLoading}
+          dataSource={data?.items}
+          columns={[
+            {
+              dataIndex: 'date',
+              render: (date: string, due: DueGridDto) => (
+                <Link to={`${AppUrl.Dues}/${due.id}`}>
+                  {new DateUtcVo(date).format()}
+                </Link>
+              ),
+              title: 'Fecha',
+              width: 125,
+            },
+            {
+              dataIndex: 'memberId',
+              filterSearch: true,
+              filteredValue: gridState.filters.memberId,
+              filters: GridUtils.getMembersForFilter(members),
+              render: (_, payment: DueGridDto) => payment.memberName,
+              title: 'Socio',
+            },
+            {
+              align: 'center',
+              dataIndex: 'category',
+              render: (category: DueCategoryEnum) => DueCategoryLabel[category],
+              title: 'Categoría',
+              width: 150,
+            },
+            {
+              align: 'right',
+              dataIndex: 'amount',
+              render: (amount) => new Money({ amount }).formatWithCurrency(),
+              title: 'Importe',
+              width: 100,
+            },
+            {
+              align: 'center',
+              dataIndex: 'status',
+              defaultFilteredValue: [DueStatusEnum.PENDING],
+              filterResetToDefaultFilteredValue: true,
+              filteredValue: gridState.filters.status,
+              filters: getDueStatusColumnFilters(),
+              render: (status: DueStatusEnum) => DueStatusLabel[status],
+              title: 'Estado',
+              width: 150,
+            },
+            {
+              align: 'center',
+              render: (_, due: DueGridDto) => (
+                <ButtonGroup size="small">
+                  {SecurityUtils.isInRole(
+                    PermissionEnum.DELETE,
+                    ScopeEnum.DUES,
+                  ) && (
                     <Button
-                      type="text"
-                      onClick={() => {
-                        navigate(
-                          UrlUtils.navigate(AppUrl.PaymentsNew, {
-                            dueIds: [due.id],
-                            memberId: due.memberId,
-                          }),
-                        );
+                      popConfirm={{
+                        onConfirm: () =>
+                          deleteDue.mutate(
+                            { id: due.id },
+                            {
+                              onError: () => deleteDue.reset(),
+                              onSuccess: () => {
+                                deleteDue.reset();
+
+                                notificationSuccess('Cobro eliminado');
+
+                                refetch();
+                              },
+                            },
+                          ),
+                        title: '¿Está seguro de eliminar este cobro?',
                       }}
+                      type="text"
                       htmlType="button"
-                      disabled={due.status === DueStatusEnum.PAID}
-                      tooltip={{ title: 'Cobrar' }}
-                      icon={<CheckOutlined />}
+                      tooltip={{ title: 'Eliminar' }}
+                      icon={<DeleteOutlined />}
+                      loading={deleteDue.variables?.id === due.id}
+                      disabled={
+                        deleteDue.variables?.id === due.id ||
+                        due.status !== DueStatusEnum.PENDING
+                      }
                     />
-                  </ButtonGroup>
-                ),
-                title: 'Acciones',
-                width: 100,
-              },
-            ]}
-          />
-        </Space>
+                  )}
+
+                  <GridFilterByMemberButton
+                    gridState={gridState}
+                    setState={setState}
+                    memberId={due.memberId}
+                  />
+
+                  <Button
+                    type="text"
+                    onClick={() => {
+                      navigate(
+                        UrlUtils.navigate(AppUrl.PaymentsNew, {
+                          dueIds: [due.id],
+                          memberId: due.memberId,
+                        }),
+                      );
+                    }}
+                    htmlType="button"
+                    disabled={due.status === DueStatusEnum.PAID}
+                    tooltip={{ title: 'Cobrar' }}
+                    icon={<FaCreditCard />}
+                  />
+                </ButtonGroup>
+              ),
+              title: 'Acciones',
+              width: 100,
+            },
+          ]}
+        />
       </Card>
     </>
   );

@@ -6,6 +6,7 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { CreateDue, IDue } from '@domain/dues/models/due.interface';
 import { Member } from '@domain/members/models/member.model';
+import { PaymentDue } from '@domain/payments/models/payment-due.model';
 
 export class Due extends Model implements IDue {
   private _amount: Money;
@@ -19,6 +20,8 @@ export class Due extends Model implements IDue {
   private _memberId: string;
 
   private _notes: string | null;
+
+  private _paymentDues: PaymentDue[] | undefined;
 
   private _status: DueStatusEnum;
 
@@ -56,12 +59,24 @@ export class Due extends Model implements IDue {
     return this._member;
   }
 
+  public set member(value: Member | undefined) {
+    this._member = value;
+  }
+
   public get memberId(): string {
     return this._memberId;
   }
 
   public get notes(): string | null {
     return this._notes;
+  }
+
+  public get paymentDues(): PaymentDue[] | undefined {
+    return this._paymentDues;
+  }
+
+  public set paymentDues(value: PaymentDue[] | undefined) {
+    this._paymentDues = value;
   }
 
   public get status(): DueStatusEnum {

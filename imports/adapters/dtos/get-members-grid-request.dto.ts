@@ -21,23 +21,23 @@ export class GetMembersGridRequestDto
   @ArrayMinSize(1)
   @IsArray()
   @IsOptional()
-  public filterByCategory: MemberCategoryEnum[] | undefined;
+  public filterByCategory!: MemberCategoryEnum[];
 
   @IsString({ each: true })
   @ArrayMinSize(1)
   @IsArray()
   @IsOptional()
-  public filterByDebtStatus: string[] | undefined;
+  public filterByDebtStatus!: string[];
 
   @IsString({ each: true })
   @ArrayMinSize(1)
   @IsArray()
   @IsOptional()
-  public filterById: string[] | undefined;
+  public filterById!: string[];
 
   @IsEnum(MemberStatusEnum, { each: true })
   @ArrayMinSize(1)
   @IsArray()
   @IsOptional()
-  public filterByStatus: MemberStatusEnum[] | undefined;
+  public filterByStatus!: MemberStatusEnum[];
 }

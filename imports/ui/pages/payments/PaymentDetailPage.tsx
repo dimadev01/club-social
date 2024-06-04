@@ -1,6 +1,7 @@
 import { Breadcrumb, Card, Descriptions, Flex, Table } from 'antd';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
+import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
@@ -35,6 +36,8 @@ export const PaymentDetailPage = () => {
   if (!payment) {
     return <Card loading />;
   }
+
+  invariant(payment.member);
 
   /**
    * Component
@@ -86,6 +89,8 @@ export const PaymentDetailPage = () => {
                   {
                     dataIndex: ['due', 'category'],
                     render: (category: DueCategoryEnum, paymentDue) => {
+                      invariant(paymentDue.due);
+
                       if (category === DueCategoryEnum.MEMBERSHIP) {
                         return `${DueCategoryLabel[category]} (${new DateUtcVo(paymentDue.due.date).monthName()})`;
                       }

@@ -10,7 +10,7 @@ import { User } from '@domain/users/models/user.model';
 import { IUserRepository } from '@domain/users/repositories/user.repository';
 
 @injectable()
-export class UpdateUserUseCase implements IUseCase<UpdateUserRequest, null> {
+export class UpdateUserUseCase implements IUseCase<UpdateUserRequest, User> {
   public constructor(
     @inject(DIToken.IUserRepository)
     private readonly _userRepository: IUserRepository,
@@ -18,7 +18,7 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserRequest, null> {
 
   public async execute(
     request: UpdateUserRequest,
-  ): Promise<Result<null, Error>> {
+  ): Promise<Result<User, Error>> {
     const validation = await this._validate(request);
 
     if (validation.isErr()) {
@@ -50,7 +50,7 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserRequest, null> {
       await this._userRepository.update(user);
     }
 
-    return ok(null);
+    return ok(user);
   }
 
   private _getEmails(

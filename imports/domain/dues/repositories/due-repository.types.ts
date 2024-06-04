@@ -5,8 +5,8 @@ import {
 import { DueStatusEnum } from '@domain/dues/due.enum';
 
 export interface FindPaginatedDuesRequest extends FindPaginatedRequest {
-  filterByMember: string[] | undefined;
-  filterByStatus: DueStatusEnum[] | undefined;
+  filterByMember: string[];
+  filterByStatus: DueStatusEnum[];
 }
 
 export type FindPaginatedDuesResponse<T> = FindPaginatedResponse<T>;

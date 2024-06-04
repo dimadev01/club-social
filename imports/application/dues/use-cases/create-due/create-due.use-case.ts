@@ -32,6 +32,8 @@ export class CreateDueUseCase
     try {
       this._unitOfWork.start();
 
+      const newDues: Due[] = [];
+
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
         await Promise.all(
           request.memberIds.map(async (memberId: string) => {
@@ -48,11 +50,13 @@ export class CreateDueUseCase
             }
 
             await this._dueRepository.insertWithSession(due.value, unitOfWork);
+
+            newDues.push(due.value);
           }),
         );
       });
 
-      return ok(null);
+      return ok(newDues);
     } catch (error) {
       this._logger.error(error);
 

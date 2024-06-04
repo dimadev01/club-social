@@ -1,3 +1,3 @@
-import { MemberDto } from '@application/members/dtos/member.dto';
+import { Member } from '@domain/members/models/member.model';
 
-export type UpdateMemberResponse = MemberDto;
+export type UpdateMemberResponse = Member;

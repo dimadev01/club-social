@@ -1,3 +1,3 @@
-import { FindOneModelByIdRequest } from '@domain/common/repositories/queryable.repository';
+import { FindOneModelById } from '@domain/common/repositories/queryable.repository';
 
-export type DeleteDueRequest = FindOneModelByIdRequest;
+export type DeleteDueRequest = FindOneModelById;

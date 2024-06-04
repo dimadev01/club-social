@@ -8,7 +8,7 @@ import {
 } from '@domain/members/member.enum';
 import { Member } from '@domain/members/models/member.model';
 
-export interface FindMembersRequest {
+export interface FindMembers {
   category?: MemberCategoryEnum[];
   status?: MemberStatusEnum[];
 }
@@ -32,10 +32,10 @@ export interface FindPaginatedMembersResponseTotals {
 }
 
 export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
-  filterByCategory: MemberCategoryEnum[] | undefined;
-  filterByDebtStatus: string[] | undefined;
-  filterById: string[] | undefined;
-  filterByStatus: MemberStatusEnum[] | undefined;
+  filterByCategory: MemberCategoryEnum[];
+  filterByDebtStatus: string[];
+  filterById: string[];
+  filterByStatus: MemberStatusEnum[];
 }
 
 export interface FindPaginatedMembersResponse<T = Member>
@@ -46,4 +46,4 @@ export interface FindPaginatedMembersResponse<T = Member>
 /**
  * FindMembersToExport
  */
-export type FindMembersToExportRequest = FindPaginatedMembersRequest;
+export type FindMembersToExport = FindPaginatedMembersRequest;

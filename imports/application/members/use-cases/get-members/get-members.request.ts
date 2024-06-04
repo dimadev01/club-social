@@ -1,3 +1,3 @@
-import { FindMembersRequest } from '@domain/members/repositories/member-repository.types';
+import { FindMembers } from '@domain/members/repositories/member-repository.types';
 
-export type GetMembersRequest = FindMembersRequest;
+export type GetMembersRequest = FindMembers;

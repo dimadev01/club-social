@@ -67,15 +67,7 @@ export const DueDetailPage = () => {
             </Descriptions.Item>
 
             <Descriptions.Item label="Estado">
-              <Space>
-                {DueStatusLabel[due.status]}
-
-                {due.paymentId && (
-                  <Link to={`${AppUrl.Payments}/${due.paymentId}`}>
-                    Ver pago
-                  </Link>
-                )}
-              </Space>
+              <Space>{DueStatusLabel[due.status]}</Space>
             </Descriptions.Item>
 
             <Descriptions.Item label="Monto">

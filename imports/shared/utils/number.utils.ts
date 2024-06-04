@@ -27,6 +27,6 @@ export abstract class NumberUtils {
       return result;
     }
 
-    return Math.round(result);
+    return result;
   }
 }

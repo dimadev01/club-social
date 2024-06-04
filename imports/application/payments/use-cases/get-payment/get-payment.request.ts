@@ -1,3 +1,3 @@
-import { FindOneModelByIdRequest } from '@domain/common/repositories/queryable.repository';
+import { FindOneModelById } from '@domain/common/repositories/queryable.repository';
 
-export type GetPaymentRequest = FindOneModelByIdRequest;
+export type GetPaymentRequest = FindOneModelById;

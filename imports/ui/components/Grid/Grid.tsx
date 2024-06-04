@@ -28,7 +28,7 @@ interface Props<T> extends TableProps<T> {
 }
 
 export interface GridState {
-  filters: GridFilter | null;
+  filters: GridFilter;
   page: number;
   pageSize: number;
   sorter: GridSorter;

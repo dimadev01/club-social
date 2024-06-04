@@ -16,7 +16,7 @@ export const GridFilterByMemberButton: React.FC<Props> = ({
   setState,
 }) => (
   <>
-    {!gridState.filters?.memberId && (
+    {gridState.filters.memberId.length === 0 && (
       <Button
         type="text"
         onClick={() => {
@@ -34,7 +34,7 @@ export const GridFilterByMemberButton: React.FC<Props> = ({
       />
     )}
 
-    {gridState.filters?.memberId && (
+    {gridState.filters.memberId.length > 0 && (
       <Button
         type="text"
         disabled={!memberId}
@@ -43,7 +43,7 @@ export const GridFilterByMemberButton: React.FC<Props> = ({
             ...gridState,
             filters: {
               ...gridState.filters,
-              memberId: undefined,
+              memberId: [],
             },
           });
         }}

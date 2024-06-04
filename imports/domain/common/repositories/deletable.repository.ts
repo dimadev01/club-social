@@ -1,10 +1,10 @@
-import { FindOneModelByIdRequest } from '@domain/common/repositories/queryable.repository';
+import { FindOneModelById } from '@domain/common/repositories/queryable.repository';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 
 export interface IDeletableRepository {
-  delete(request: FindOneModelByIdRequest): Promise<void>;
+  delete(request: FindOneModelById): Promise<void>;
   deleteWithSession(
-    request: FindOneModelByIdRequest,
+    request: FindOneModelById,
     unitOfWork: IUnitOfWork,
   ): Promise<void>;
 }

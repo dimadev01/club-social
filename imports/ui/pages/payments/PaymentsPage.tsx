@@ -2,6 +2,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Table as AntTable, Breadcrumb, Card, Space } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import invariant from 'tiny-invariant';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
@@ -25,21 +26,24 @@ import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 import { useTable } from '@ui/hooks/useTable';
 
 export const PaymentsPage = () => {
-  const { gridState, onTableChange, setState } = useTable<PaymentGridDto>({
+  const {
+    state: gridState,
+    onTableChange,
+    setState,
+  } = useTable<PaymentGridDto>({
+    defaultFilters: { memberId: [] },
     defaultSorter: { date: 'descend' },
   });
 
   const { data: members } = useMembers();
 
-  const {
-    data: payments,
-    isLoading,
-    refetch,
-    isRefetching,
-  } = useQueryGrid<GetPaymentsGridRequest, GetPaymentsGridResponse>({
+  const { data, isLoading, refetch, isRefetching } = useQueryGrid<
+    GetPaymentsGridRequest,
+    GetPaymentsGridResponse<PaymentGridDto>
+  >({
     methodName: MeteorMethodEnum.PaymentsGetGrid,
     request: {
-      filterByMember: gridState.filters?.memberId,
+      filterByMember: gridState.filters.memberId,
       limit: gridState.pageSize,
       page: gridState.page,
       sorter: gridState.sorter,
@@ -64,6 +68,8 @@ export const PaymentsPage = () => {
           align: 'center',
           dataIndex: ['due', 'category'],
           render: (category: DueCategoryEnum, paymentDue) => {
+            invariant(paymentDue.due);
+
             if (category === DueCategoryEnum.MEMBERSHIP) {
               return `${DueCategoryLabel[category]} (${new DateUtcVo(paymentDue.due.date).monthName()})`;
             }
@@ -85,7 +91,7 @@ export const PaymentsPage = () => {
           title: 'Monto Registrado',
         },
       ]}
-      dataSource={payment.dues}
+      dataSource={payment.paymentDues}
     />
   );
 
@@ -110,10 +116,11 @@ export const PaymentsPage = () => {
         }
       >
         <Grid<PaymentGridDto>
+          total={data?.totalCount}
           state={gridState}
           onTableChange={onTableChange}
           loading={isLoading}
-          dataSource={payments?.items}
+          dataSource={data?.items}
           expandable={{ expandedRowRender }}
           columns={[
             {
@@ -128,10 +135,12 @@ export const PaymentsPage = () => {
             },
             {
               dataIndex: 'memberId',
+              defaultFilteredValue: undefined,
+              filterResetToDefaultFilteredValue: true,
               filterSearch: true,
-              filteredValue: gridState.filters?.memberId,
+              filteredValue: gridState.filters.memberId,
               filters: GridUtils.getMembersForFilter(members),
-              render: (_, payment: PaymentGridDto) => payment.memberName,
+              render: (_, payment: PaymentGridDto) => payment.member.name,
               title: 'Socio',
             },
             {
@@ -158,35 +167,34 @@ export const PaymentsPage = () => {
               align: 'center',
               render: (_, payment: PaymentGridDto) => (
                 <Space.Compact size="small">
-                  {!payment.isDeleted &&
-                    SecurityUtils.isInRole(
-                      PermissionEnum.DELETE,
-                      ScopeEnum.PAYMENTS,
-                    ) && (
-                      <Button
-                        popConfirm={{
-                          onConfirm: () =>
-                            deletePayment.mutate(
-                              { id: payment.id },
-                              {
-                                onError: () => deletePayment.reset(),
-                                onSuccess: () => {
-                                  deletePayment.reset();
+                  {SecurityUtils.isInRole(
+                    PermissionEnum.DELETE,
+                    ScopeEnum.PAYMENTS,
+                  ) && (
+                    <Button
+                      popConfirm={{
+                        onConfirm: () =>
+                          deletePayment.mutate(
+                            { id: payment.id },
+                            {
+                              onError: () => deletePayment.reset(),
+                              onSuccess: () => {
+                                deletePayment.reset();
 
-                                  refetch();
-                                },
+                                refetch();
                               },
-                            ),
-                          title: '¿Está seguro de eliminar este pago?',
-                        }}
-                        type="text"
-                        htmlType="button"
-                        tooltip={{ title: 'Eliminar' }}
-                        icon={<DeleteOutlined />}
-                        loading={deletePayment.variables?.id === payment.id}
-                        disabled={deletePayment.variables?.id === payment.id}
-                      />
-                    )}
+                            },
+                          ),
+                        title: '¿Está seguro de eliminar este pago?',
+                      }}
+                      type="text"
+                      htmlType="button"
+                      tooltip={{ title: 'Eliminar' }}
+                      icon={<DeleteOutlined />}
+                      loading={deletePayment.variables?.id === payment.id}
+                      disabled={deletePayment.variables?.id === payment.id}
+                    />
+                  )}
 
                   <GridFilterByMemberButton
                     gridState={gridState}

@@ -1,5 +1,5 @@
-import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
-import { FindPaginatedPaymentsResponse } from '@domain/payments/repositories/payment-repository.types';
+import { Payment } from '@domain/payments/models/payment.model';
+import { FindPaginatedPaymentsResponse } from '@domain/payments/repositories/payment.repository';
 
-export type GetPaymentsGridResponse =
-  FindPaginatedPaymentsResponse<PaymentGridDto>;
+export type GetPaymentsGridResponse<T = Payment> =
+  FindPaginatedPaymentsResponse<T>;

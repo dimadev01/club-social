@@ -1,4 +1,3 @@
-import { orderBy } from 'lodash';
 import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 
@@ -12,7 +11,7 @@ import { CreatePayment, IPayment } from '@domain/payments/payment.interface';
 export class Payment extends Model implements IPayment {
   private _date: DateUtcVo;
 
-  private _dues: PaymentDue[] | undefined;
+  private _paymentDues: PaymentDue[] | undefined;
 
   private _member?: Member;
 
@@ -39,23 +38,19 @@ export class Payment extends Model implements IPayment {
 
     this._member = member;
 
-    this.dues = dues;
+    this.paymentDues = dues;
   }
 
   public get date(): DateUtcVo {
     return this._date;
   }
 
-  public get dues(): PaymentDue[] | undefined {
-    return this._dues;
+  public get paymentDues(): PaymentDue[] | undefined {
+    return this._paymentDues;
   }
 
-  public set dues(value: PaymentDue[] | undefined) {
-    this._dues = orderBy(
-      value,
-      (paymentDue) => paymentDue.due?.date.toDate(),
-      'desc',
-    );
+  public set paymentDues(value: PaymentDue[] | undefined) {
+    this._paymentDues = value;
   }
 
   public get member(): Member | undefined {
@@ -100,9 +95,9 @@ export class Payment extends Model implements IPayment {
   }
 
   public getTotalAmountOfDues(): number {
-    invariant(this.dues);
+    invariant(this.paymentDues);
 
-    return this.dues.reduce((acc, due) => acc + due.amount.amount, 0);
+    return this.paymentDues.reduce((acc, due) => acc + due.amount.amount, 0);
   }
 
   public setDate(value: DateUtcVo): Result<null, Error> {
@@ -133,13 +128,5 @@ export class Payment extends Model implements IPayment {
     this._status = value;
 
     return ok(null);
-  }
-
-  public sortDues() {
-    this.dues = orderBy(
-      this.dues,
-      (paymentDue) => paymentDue.due?.date.toDate(),
-      'desc',
-    );
   }
 }

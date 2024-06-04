@@ -34,9 +34,9 @@ export class DeletePaymentUseCase
   public async execute(
     request: DeletePaymentRequest,
   ): Promise<Result<DeletePaymentResponse, Error>> {
-    const paymentDues = await this._paymentDueRepository.findByPayment(
-      request.id,
-    );
+    const paymentDues = await this._paymentDueRepository.findByPayment({
+      paymentId: request.id,
+    });
 
     const dues = await this._dueRepository.findByIds({
       ids: paymentDues.map((paymentDue) => paymentDue.dueId),

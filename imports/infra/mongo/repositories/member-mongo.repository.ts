@@ -6,13 +6,16 @@ import { ILogger } from '@domain/common/logger/logger.interface';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { Member } from '@domain/members/models/member.model';
 import {
-  FindMembersRequest,
-  FindMembersToExportRequest,
+  FindMembers,
+  FindMembersToExport,
   FindPaginatedMembersRequest,
   FindPaginatedMembersResponse,
   GetBalanceResponse,
 } from '@domain/members/repositories/member-repository.types';
-import { IMemberRepository } from '@domain/members/repositories/member.repository';
+import {
+  FindOneMemberById,
+  IMemberRepository,
+} from '@domain/members/repositories/member.repository';
 import { MemberMongoAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
 import { MemberAuditEntity } from '@infra/mongo/entities/member-audit.entity';
@@ -21,6 +24,7 @@ import { MemberMapper } from '@infra/mongo/mappers/member.mapper';
 import { MongoUtils } from '@infra/mongo/mongo.utils';
 import { CrudMongoAuditableRepository } from '@infra/mongo/repositories/common/crud-mongo-auditable.repository';
 import { FindPaginatedMembersAggregationResult } from '@infra/mongo/repositories/types/member-mongo-repository.types';
+import { UserMongoRepository } from '@infra/mongo/repositories/user-mongo.repository';
 
 @injectable()
 export class MemberMongoRepository
@@ -33,22 +37,23 @@ export class MemberMongoRepository
     protected readonly collection: MemberMongoCollection,
     protected readonly auditableCollection: MemberMongoAuditableCollection,
     protected readonly mapper: MemberMapper,
+    private readonly _userRepository: UserMongoRepository,
   ) {
     super(collection, mapper, logger, auditableCollection);
   }
 
-  public async find(request: FindMembersRequest): Promise<Member[]> {
+  public async find(request: FindMembers): Promise<Member[]> {
     const pipeline: Document[] = [];
 
     const $match: Document = {
       $expr: { $and: [{ $eq: ['$isDeleted', false] }] },
     };
 
-    if (request.status) {
+    if (request.status && request.status.length > 0) {
       $match.$expr.$and.push({ $in: ['$status', request.status] });
     }
 
-    if (request.category) {
+    if (request.category && request.category.length > 0) {
       $match.$expr.$and.push({ $in: ['$category', request.category] });
     }
 
@@ -150,9 +155,7 @@ export class MemberMongoRepository
     };
   }
 
-  public async findToExport(
-    request: FindMembersToExportRequest,
-  ): Promise<Member[]> {
+  public async findToExport(request: FindMembersToExport): Promise<Member[]> {
     const pipeline = this._getPipelineToExportOrGrid(request);
 
     pipeline.push(
@@ -264,15 +267,15 @@ export class MemberMongoRepository
       $expr: { $and: [{ $eq: ['$isDeleted', false] }] },
     };
 
-    if (request.filterByCategory) {
+    if (request.filterByCategory.length > 0) {
       $match.$expr.$and.push({ $in: ['$category', request.filterByCategory] });
     }
 
-    if (request.filterByStatus) {
+    if (request.filterByStatus.length > 0) {
       $match.$expr.$and.push({ $in: ['$status', request.filterByStatus] });
     }
 
-    if (request.filterById) {
+    if (request.filterById.length > 0) {
       $match.$expr.$and.push({ $in: ['$_id', request.filterById] });
     }
 
@@ -458,7 +461,7 @@ export class MemberMongoRepository
       },
     );
 
-    if (request.filterByDebtStatus?.includes('true')) {
+    if (request.filterByDebtStatus.includes('true')) {
       pipeline.push({
         $match: {
           $expr: {
@@ -466,7 +469,7 @@ export class MemberMongoRepository
           },
         },
       });
-    } else if (request.filterByDebtStatus?.includes('false')) {
+    } else if (request.filterByDebtStatus.includes('false')) {
       pipeline.push({
         $match: {
           $expr: {
@@ -477,5 +480,21 @@ export class MemberMongoRepository
     }
 
     return pipeline;
+  }
+
+  public async findOneById(request: FindOneMemberById): Promise<Member | null> {
+    const member = await super.findOneById(request);
+
+    if (!member) {
+      return null;
+    }
+
+    if (request.fetchUser ?? true) {
+      member.user = await this._userRepository.findOneByIdOrThrow({
+        id: member.userId,
+      });
+    }
+
+    return member;
   }
 }

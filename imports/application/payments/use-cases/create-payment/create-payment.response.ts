@@ -1,3 +1,3 @@
-import { PaymentDto } from '@application/payments/dtos/payment.dto';
+import { Payment } from '@domain/payments/models/payment.model';
 
-export type CreatePaymentResponse = PaymentDto;
+export type CreatePaymentResponse = Payment;

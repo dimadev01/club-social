@@ -7,20 +7,16 @@ import { NumberUtils } from '@shared/utils/number.utils';
 
 type Props = InputNumberProps;
 
-export const FormInputAmount: React.FC<Props> = ({ ...rest }) => {
-  console.log(1);
-
-  return (
-    <InputNumber
-      className="w-full"
-      prefix={ARS.code}
-      precision={0}
-      step={1000}
-      parser={(value) => NumberUtils.parseFromInputNumber(value ?? '')}
-      formatter={(value) =>
-        value ? Money.fromNumber(Number(value)).format() : ''
-      }
-      {...rest}
-    />
-  );
-};
+export const FormInputAmount: React.FC<Props> = ({ ...rest }) => (
+  <InputNumber
+    className="w-full"
+    prefix={ARS.code}
+    precision={0}
+    step={1000}
+    parser={(value) => NumberUtils.parseFromInputNumber(value ?? '')}
+    formatter={(value) =>
+      value ? Money.fromNumber(Number(value)).format() : ''
+    }
+    {...rest}
+  />
+);

@@ -9,7 +9,7 @@ import {
 
 import { GetGridRequest } from '@application/common/requests/get-grid.request';
 
-export type GridFilter = Record<string, string[] | undefined>;
+export type GridFilter = Record<string, string[]>;
 
 export type GridSorter = Record<string, 'ascend' | 'descend'>;
 

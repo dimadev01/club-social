@@ -1,3 +1,3 @@
-import { MemberDto } from '@application/members/dtos/member.dto';
+import { Member } from '@domain/members/models/member.model';
 
-export type GetMemberResponse = MemberDto | null;
+export type GetMemberResponse = Member | null;
