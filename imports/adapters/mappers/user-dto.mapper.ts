@@ -1,10 +1,10 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { MapperDto } from '@adapters/common/mapper/dto-mapper';
 import { UserDto } from '@application/users/dtos/user.dto';
 import { User } from '@domain/users/models/user.model';
 
-@singleton()
+@injectable()
 export class UserDtoMapper extends MapperDto<User, UserDto> {
   public toDto(user: User): UserDto {
     return {

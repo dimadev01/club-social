@@ -7,12 +7,13 @@ import { InternalServerError } from '@domain/common/errors/internal-server.error
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { DueStatusEnum } from '@domain/dues/due.enum';
-import { FindOneDueById, IDueRepository } from '@domain/dues/due.repository';
-import { Due } from '@domain/dues/models/due.model';
 import {
+  FindOneDueById,
   FindPaginatedDuesRequest,
   FindPendingDuesRequest,
-} from '@domain/dues/repositories/due-repository.types';
+  IDueRepository,
+} from '@domain/dues/due.repository';
+import { Due } from '@domain/dues/models/due.model';
 import { DueCollection } from '@infra/mongo/collections/due.collection';
 import { DueEntity } from '@infra/mongo/entities/due.entity';
 import { DueMapper } from '@infra/mongo/mappers/due.mapper';

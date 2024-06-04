@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
@@ -7,7 +7,7 @@ import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { DueEntity } from '@infra/mongo/entities/due.entity';
 import { MemberMapper } from '@infra/mongo/mappers/member.mapper';
 
-@singleton()
+@injectable()
 export class DueMapper extends Mapper<Due, DueEntity> {
   public constructor(private readonly _memberMapper: MemberMapper) {
     super();

@@ -5,7 +5,7 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { GetMembersExportRequest } from '@application/members/use-cases/get-members-export/get-members-export.request';
 import { GetMembersExportResponse } from '@application/members/use-cases/get-members-export/get-members-export.response';
 import { IUseCase } from '@domain/common/use-case.interface';
-import { IMemberRepository } from '@domain/members/repositories/member.repository';
+import { IMemberRepository } from '@domain/members/member.repository';
 
 @injectable()
 export class GetMembersToExportUseCase

@@ -10,7 +10,7 @@ import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import { ExistingMemberByDocumentError } from '@domain/members/errors/existing-member-by-document.error';
-import { IMemberRepository } from '@domain/members/repositories/member.repository';
+import { IMemberRepository } from '@domain/members/member.repository';
 import { RoleEnum } from '@domain/roles/role.enum';
 
 @injectable()

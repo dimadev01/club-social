@@ -1,11 +1,11 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { MapperDto } from '@adapters/common/mapper/dto-mapper';
 import { MemberDtoMapper } from '@adapters/mappers/member-dto.mapper';
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { Due } from '@domain/dues/models/due.model';
 
-@singleton()
+@injectable()
 export class DueDtoMapper extends MapperDto<Due, DueDto> {
   public constructor(private readonly _memberDtoMapper: MemberDtoMapper) {
     super();

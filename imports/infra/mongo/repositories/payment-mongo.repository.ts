@@ -9,7 +9,7 @@ import {
   FindOnePaymentById,
   FindPaginatedPaymentsRequest,
   IPaymentRepository,
-} from '@domain/payments/repositories/payment.repository';
+} from '@domain/payments/payment.repository';
 import { PaymentAuditableCollection } from '@infra/mongo/collections/payment-auditable.collection';
 import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
 import { PaymentAuditEntity } from '@infra/mongo/entities/payment-audit.entity';

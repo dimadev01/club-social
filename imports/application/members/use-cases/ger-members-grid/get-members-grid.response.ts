@@ -1,9 +1,9 @@
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
-import { Member } from '@domain/members/models/member.model';
 import {
   FindPaginatedMembersResponseTotals,
   GetBalanceResponse,
-} from '@domain/members/repositories/member-repository.types';
+} from '@domain/members/member.repository';
+import { Member } from '@domain/members/models/member.model';
 
 export type GetMembersGridResponse<T = Member> = FindPaginatedResponse<T> & {
   balances: GetBalanceResponse[];

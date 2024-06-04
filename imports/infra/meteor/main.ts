@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import '@infra/di/di.container';
 import '@infra/meteor/common/meteor-publications';
 import { Meteor } from 'meteor/meteor';
-import { container, inject, singleton } from 'tsyringe';
+import { container, inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
@@ -17,7 +17,7 @@ import { DateUtils } from '@shared/utils/date.utils';
 
 DateUtils.extend();
 
-@singleton()
+@injectable()
 export class ServerStartup {
   public constructor(
     @inject(DIToken.Logger)

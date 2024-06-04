@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import { Member } from '@domain/members/models/member.model';
@@ -7,7 +7,7 @@ import { MemberAddressEntity } from '@infra/mongo/entities/member-address.entity
 import { MemberEntity } from '@infra/mongo/entities/member.entity';
 import { UserMapper } from '@infra/mongo/mappers/user.mapper';
 
-@singleton()
+@injectable()
 export class MemberMapper extends Mapper<Member, MemberEntity> {
   public constructor(private readonly _userMapper: UserMapper) {
     super();

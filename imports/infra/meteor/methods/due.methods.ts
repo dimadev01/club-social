@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { DueController } from '@adapters/controllers/due.controller';
@@ -8,7 +8,7 @@ import { GetOneDtoByIdRequestDto } from '@adapters/dtos/get-one-dto-request.dto'
 import { GetPendingDuesRequestDto } from '@adapters/dtos/get-pending-dues-request.dto';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
 
-@singleton()
+@injectable()
 export class DueMethods extends MeteorMethods {
   public constructor(private readonly _controller: DueController) {
     super();

@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { User } from '@domain/users/models/user.model';
-import { IUserRepository } from '@domain/users/repositories/user.repository';
+import { IUserRepository } from '@domain/users/user.repository';
 import { UserEntity } from '@infra/mongo/entities/user.entity';
 import { UserMapper } from '@infra/mongo/mappers/user.mapper';
 import { CrudMongoRepository } from '@infra/mongo/repositories/common/crud-mongo.repository';

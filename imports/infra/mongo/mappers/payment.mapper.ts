@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Payment } from '@domain/payments/models/payment.model';
@@ -7,7 +7,7 @@ import { PaymentEntity } from '@infra/mongo/entities/payment.entity';
 import { MemberMapper } from '@infra/mongo/mappers/member.mapper';
 import { PaymentDueMapper } from '@infra/mongo/mappers/payment-due.mapper';
 
-@singleton()
+@injectable()
 export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
   public constructor(
     private readonly _memberMapper: MemberMapper,

@@ -1,3 +1,3 @@
-import { FindPaginatedDuesRequest } from '@domain/dues/repositories/due-repository.types';
+import { FindPaginatedDuesRequest } from '@domain/dues/due.repository';
 
 export type GetDuesGridRequest = FindPaginatedDuesRequest;

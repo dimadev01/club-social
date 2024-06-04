@@ -6,7 +6,7 @@ import { GetPaymentRequest } from '@application/payments/use-cases/get-payment/g
 import { GetPaymentResponse } from '@application/payments/use-cases/get-payment/get-payment.response';
 import { FindOneModelById } from '@domain/common/repositories/queryable.repository';
 import { IUseCase } from '@domain/common/use-case.interface';
-import { IPaymentRepository } from '@domain/payments/repositories/payment.repository';
+import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
 export class GetPaymentUseCase

@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { User } from '@domain/users/models/user.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
@@ -6,7 +6,7 @@ import { UserEmailEntity } from '@infra/mongo/entities/user-email.entity';
 import { UserProfileEntity } from '@infra/mongo/entities/user-profile.entity';
 import { UserEntity } from '@infra/mongo/entities/user.entity';
 
-@singleton()
+@injectable()
 export class UserMapper extends Mapper<User, UserEntity> {
   public toDomain(orm: UserEntity): User {
     return new User({

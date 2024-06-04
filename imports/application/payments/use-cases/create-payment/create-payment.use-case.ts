@@ -15,8 +15,8 @@ import { DuePaidError } from '@domain/payments/errors/due-paid.error';
 import { ExistingPaymentError } from '@domain/payments/errors/existing-payment.error';
 import { PaymentDue } from '@domain/payments/models/payment-due.model';
 import { Payment } from '@domain/payments/models/payment.model';
-import { IPaymentDueRepository } from '@domain/payments/repositories/payment-due.repository';
-import { IPaymentRepository } from '@domain/payments/repositories/payment.repository';
+import { IPaymentDueRepository } from '@domain/payments/payment-due.repository';
+import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
 export class CreatePaymentUseCase

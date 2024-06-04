@@ -4,18 +4,16 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
-import { Member } from '@domain/members/models/member.model';
 import {
   FindMembers,
   FindMembersToExport,
+  FindOneMemberById,
   FindPaginatedMembersRequest,
   FindPaginatedMembersResponse,
   GetBalanceResponse,
-} from '@domain/members/repositories/member-repository.types';
-import {
-  FindOneMemberById,
   IMemberRepository,
-} from '@domain/members/repositories/member.repository';
+} from '@domain/members/member.repository';
+import { Member } from '@domain/members/models/member.model';
 import { MemberMongoAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
 import { MemberAuditEntity } from '@infra/mongo/entities/member-audit.entity';

@@ -5,7 +5,7 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { GetPaymentsGridRequest } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.request';
 import { GetPaymentsGridResponse } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.response';
 import { IUseCase } from '@domain/common/use-case.interface';
-import { IPaymentRepository } from '@domain/payments/repositories/payment.repository';
+import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
 export class GetPaymentsGridUseCase

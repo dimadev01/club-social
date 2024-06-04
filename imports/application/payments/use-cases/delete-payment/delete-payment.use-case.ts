@@ -11,8 +11,8 @@ import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { DueStatusEnum } from '@domain/dues/due.enum';
 import { IDueRepository } from '@domain/dues/due.repository';
-import { IPaymentDueRepository } from '@domain/payments/repositories/payment-due.repository';
-import { IPaymentRepository } from '@domain/payments/repositories/payment.repository';
+import { IPaymentDueRepository } from '@domain/payments/payment-due.repository';
+import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
 export class DeletePaymentUseCase

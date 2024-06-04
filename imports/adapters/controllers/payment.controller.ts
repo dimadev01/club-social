@@ -124,6 +124,33 @@ export class PaymentController extends BaseController {
       return null;
     }
 
-    return this._paymentDtoMapper.toDto(payment);
+    invariant(payment.paymentDues);
+
+    const dueIds = payment.paymentDues
+      .map((paymentDue) => paymentDue.dueId)
+      .flat();
+
+    const dues = await this.execute({
+      request: { ids: dueIds },
+      useCase: this._getDuesByIdsUseCase,
+    });
+
+    const paymentDto = this._paymentDtoMapper.toDto(payment);
+
+    invariant(paymentDto.dues);
+
+    return {
+      ...paymentDto,
+      dues: paymentDto.dues.map((paymentDue) => {
+        const due = dues.find((d) => d._id === paymentDue.dueId);
+
+        invariant(due);
+
+        return {
+          ...paymentDue,
+          due: this._dueDtoMapper.toDto(due),
+        };
+      }),
+    };
   }
 }

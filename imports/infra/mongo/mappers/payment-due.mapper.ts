@@ -1,11 +1,11 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { PaymentDue } from '@domain/payments/models/payment-due.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { PaymentDueEntity } from '@infra/mongo/entities/payment-due.entity';
 
-@singleton()
+@injectable()
 export class PaymentDueMapper extends Mapper<PaymentDue, PaymentDueEntity> {
   public toDomain(orm: PaymentDueEntity): PaymentDue {
     return new PaymentDue({

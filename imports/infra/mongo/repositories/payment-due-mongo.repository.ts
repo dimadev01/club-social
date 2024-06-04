@@ -7,7 +7,7 @@ import {
   FindPaymentDueByDue,
   FindPaymentDueByPayment,
   IPaymentDueRepository,
-} from '@domain/payments/repositories/payment-due.repository';
+} from '@domain/payments/payment-due.repository';
 import { PaymentDueCollection } from '@infra/mongo/collections/payment-due.collection';
 import { PaymentDueEntity } from '@infra/mongo/entities/payment-due.entity';
 import { PaymentDueMapper } from '@infra/mongo/mappers/payment-due.mapper';

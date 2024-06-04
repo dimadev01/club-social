@@ -7,7 +7,7 @@ import { CreateUserResponse } from '@application/users/use-cases/create-user/cre
 import { IUseCase } from '@domain/common/use-case.interface';
 import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
 import { User } from '@domain/users/models/user.model';
-import { IUserRepository } from '@domain/users/repositories/user.repository';
+import { IUserRepository } from '@domain/users/user.repository';
 
 @injectable()
 export class CreateUserUseCase

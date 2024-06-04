@@ -1,11 +1,11 @@
 import invariant from 'tiny-invariant';
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { MapperDto } from '@adapters/common/mapper/dto-mapper';
 import { MemberDto } from '@application/members/dtos/member.dto';
 import { Member } from '@domain/members/models/member.model';
 
-@singleton()
+@injectable()
 export class MemberDtoMapper extends MapperDto<Member, MemberDto> {
   public toDto(domain: Member): MemberDto {
     invariant(domain.user);
