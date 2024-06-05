@@ -10,8 +10,9 @@ import {
   FindOneMemberById,
   FindPaginatedMembersRequest,
   FindPaginatedMembersResponse,
-  GetBalanceResponse,
   IMemberRepository,
+  MemberTotalDues,
+  PaginatedMember,
 } from '@domain/members/member.repository';
 import { Member } from '@domain/members/models/member.model';
 import { MemberMongoAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
@@ -97,7 +98,7 @@ export class MemberMongoRepository
 
   public async findPaginated(
     request: FindPaginatedMembersRequest,
-  ): Promise<FindPaginatedMembersResponse<Member>> {
+  ): Promise<FindPaginatedMembersResponse> {
     const pipeline = this._getPipelineToExportOrGrid(request);
 
     pipeline.push(
@@ -141,13 +142,26 @@ export class MemberMongoRepository
       },
     );
 
+    console.log(pipeline);
+
     const [{ entities, totalCount, totals }] = await this.collection
       .rawCollection()
       .aggregate<FindPaginatedMembersAggregationResult>(pipeline)
       .toArray();
 
+    console.log('🚀 ~ entities:', entities);
+
     return {
-      items: entities.map((entity) => this.mapper.toDomain(entity)),
+      items: entities.map<PaginatedMember>((entity) => ({
+        dues: entity.dues ?? {
+          _id: '',
+          electricity: 0,
+          guest: 0,
+          membership: 0,
+          total: 0,
+        },
+        member: this.mapper.toDomain(entity),
+      })),
       totalCount,
       totals,
     };
@@ -177,7 +191,7 @@ export class MemberMongoRepository
     return entities.map((entity) => this.mapper.toDomain(entity));
   }
 
-  public async getBalances(memberIds: string[]): Promise<GetBalanceResponse[]> {
+  public async getBalances(memberIds: string[]): Promise<MemberTotalDues[]> {
     function getGroupByCategoryDocument(category: DueCategoryEnum): Document {
       return {
         $sum: {
@@ -261,7 +275,7 @@ export class MemberMongoRepository
 
     const result = await this.collection
       .rawCollection()
-      .aggregate<GetBalanceResponse>(pipeline)
+      .aggregate<MemberTotalDues>(pipeline)
       .toArray();
 
     return result;
@@ -273,7 +287,8 @@ export class MemberMongoRepository
     const pipeline: Document[] = [];
 
     const $match: Document = {
-      $expr: { $and: [{ $eq: ['$isDeleted', false] }] },
+      isDeleted: false,
+      // $expr: { $and: [{ $eq: ['$isDeleted', false] }] },
     };
 
     if (request.filterById.length > 0) {
@@ -286,7 +301,8 @@ export class MemberMongoRepository
       }
 
       if (request.filterByStatus.length > 0) {
-        $match.$expr.$and.push({ $in: ['$status', request.filterByStatus] });
+        $match.status = { $in: request.filterByStatus };
+        // $match.$expr.$and.push({ $in: ['$status', request.filterByStatus] });
       }
     }
 
@@ -308,14 +324,104 @@ export class MemberMongoRepository
       };
     }
 
-    if (
-      request.sorter.pendingElectricity ||
-      request.sorter.pendingMembership ||
-      request.sorter.pendingGuest ||
-      request.sorter.pendingTotal ||
-      request.filterByDebtStatus
-    ) {
-      pipeline.push({
+    // if (
+    //   request.sorter.pendingElectricity ||
+    //   request.sorter.pendingMembership ||
+    //   request.sorter.pendingGuest ||
+    //   request.sorter.pendingTotal ||
+    //   request.filterByDebtStatus
+    // ) {
+    //   pipeline.push({
+    //     $lookup: {
+    //       as: 'dues',
+    //       foreignField: 'memberId',
+    //       from: 'dues',
+    //       localField: '_id',
+    //       pipeline: [
+    //         {
+    //           $match: {
+    //             $expr: {
+    //               $and: [
+    //                 { $eq: ['$isDeleted', false] },
+    //                 { $eq: ['$status', DueStatusEnum.PENDING] },
+    //               ],
+    //             },
+    //           },
+    //         },
+    //       ],
+    //     },
+    //   });
+
+    //   if (request.sorter.pendingElectricity) {
+    //     pipeline.push({
+    //       $addFields: {
+    //         pendingElectricity: getPendingByCategoryDocument(
+    //           DueCategoryEnum.ELECTRICITY,
+    //         ),
+    //       },
+    //     });
+    //   } else if (request.sorter.pendingMembership) {
+    //     pipeline.push({
+    //       $addFields: {
+    //         pendingMembership: getPendingByCategoryDocument(
+    //           DueCategoryEnum.MEMBERSHIP,
+    //         ),
+    //       },
+    //     });
+    //   } else if (request.sorter.pendingGuest) {
+    //     pipeline.push({
+    //       $addFields: {
+    //         pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
+    //       },
+    //     });
+    //   } else if (request.sorter.pendingTotal || request.filterByDebtStatus) {
+    //     pipeline.push(
+    //       {
+    //         $addFields: {
+    //           pendingElectricity: getPendingByCategoryDocument(
+    //             DueCategoryEnum.ELECTRICITY,
+    //           ),
+    //           pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
+    //           pendingMembership: getPendingByCategoryDocument(
+    //             DueCategoryEnum.MEMBERSHIP,
+    //           ),
+    //         },
+    //       },
+    //       {
+    //         $addFields: {
+    //           pendingTotal: {
+    //             $add: [
+    //               '$pendingElectricity',
+    //               '$pendingGuest',
+    //               '$pendingMembership',
+    //             ],
+    //           },
+    //         },
+    //       },
+    //     );
+
+    //     if (request.filterByDebtStatus?.includes('true')) {
+    //       pipeline.push({
+    //         $match: {
+    //           $expr: {
+    //             $gt: ['$pendingTotal', 0],
+    //           },
+    //         },
+    //       });
+    //     } else if (request.filterByDebtStatus?.includes('false')) {
+    //       pipeline.push({
+    //         $match: {
+    //           $expr: {
+    //             $eq: ['$pendingTotal', 0],
+    //           },
+    //         },
+    //       });
+    //     }
+    //   }
+    // }
+
+    pipeline.push(
+      {
         $lookup: {
           as: 'dues',
           foreignField: 'memberId',
@@ -324,153 +430,158 @@ export class MemberMongoRepository
           pipeline: [
             {
               $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ['$isDeleted', false] },
-                    { $eq: ['$status', DueStatusEnum.PENDING] },
+                isDeleted: false,
+                status: {
+                  $in: [DueStatusEnum.PENDING, DueStatusEnum.PARTIALLY_PAID],
+                },
+              },
+            },
+            {
+              $lookup: {
+                as: 'payments',
+                foreignField: 'dueId',
+                from: 'payment.dues',
+                localField: '_id',
+                pipeline: [
+                  {
+                    $match: {
+                      isDeleted: false,
+                    },
+                  },
+                  {
+                    $group: {
+                      _id: null,
+                      totalPaid: {
+                        $sum: '$amount',
+                      },
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 0,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: {
+                path: '$payments',
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $addFields: {
+                amount: {
+                  $subtract: [
+                    '$amount',
+                    {
+                      $ifNull: ['$payments.totalPaid', 0],
+                    },
                   ],
+                },
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                electricity: {
+                  $sum: {
+                    $cond: [
+                      { $eq: ['$category', DueCategoryEnum.ELECTRICITY] },
+                      '$amount',
+                      0,
+                    ],
+                  },
+                },
+                guest: {
+                  $sum: {
+                    $cond: [
+                      { $eq: ['$category', DueCategoryEnum.GUEST] },
+                      '$amount',
+                      0,
+                    ],
+                  },
+                },
+                membership: {
+                  $sum: {
+                    $cond: [
+                      { $eq: ['$category', DueCategoryEnum.MEMBERSHIP] },
+                      '$amount',
+                      0,
+                    ],
+                  },
+                },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                electricity: 1,
+                guest: 1,
+                membership: 1,
+                total: {
+                  $add: ['$membership', '$guest', '$electricity'],
                 },
               },
             },
           ],
         },
-      });
-
-      if (request.sorter.pendingElectricity) {
-        pipeline.push({
-          $addFields: {
-            pendingElectricity: getPendingByCategoryDocument(
-              DueCategoryEnum.ELECTRICITY,
-            ),
-          },
-        });
-      } else if (request.sorter.pendingMembership) {
-        pipeline.push({
-          $addFields: {
-            pendingMembership: getPendingByCategoryDocument(
-              DueCategoryEnum.MEMBERSHIP,
-            ),
-          },
-        });
-      } else if (request.sorter.pendingGuest) {
-        pipeline.push({
-          $addFields: {
-            pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
-          },
-        });
-      } else if (request.sorter.pendingTotal || request.filterByDebtStatus) {
-        pipeline.push(
-          {
-            $addFields: {
-              pendingElectricity: getPendingByCategoryDocument(
-                DueCategoryEnum.ELECTRICITY,
-              ),
-              pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
-              pendingMembership: getPendingByCategoryDocument(
-                DueCategoryEnum.MEMBERSHIP,
-              ),
-            },
-          },
-          {
-            $addFields: {
-              pendingTotal: {
-                $add: [
-                  '$pendingElectricity',
-                  '$pendingGuest',
-                  '$pendingMembership',
-                ],
-              },
-            },
-          },
-        );
-
-        if (request.filterByDebtStatus?.includes('true')) {
-          pipeline.push({
-            $match: {
-              $expr: {
-                $gt: ['$pendingTotal', 0],
-              },
-            },
-          });
-        } else if (request.filterByDebtStatus?.includes('false')) {
-          pipeline.push({
-            $match: {
-              $expr: {
-                $eq: ['$pendingTotal', 0],
-              },
-            },
-          });
-        }
-      }
-    }
-
-    pipeline.push({
-      $lookup: {
-        as: 'dues',
-        foreignField: 'memberId',
-        from: 'dues',
-        localField: '_id',
-        pipeline: [
-          {
-            $match: {
-              $expr: {
-                $and: [
-                  { $eq: ['$isDeleted', false] },
-                  { $eq: ['$status', DueStatusEnum.PENDING] },
-                ],
-              },
-            },
-          },
-        ],
-      },
-    });
-
-    pipeline.push({
-      $addFields: {
-        pendingElectricity: getPendingByCategoryDocument(
-          DueCategoryEnum.ELECTRICITY,
-        ),
-      },
-    });
-
-    pipeline.push({
-      $addFields: {
-        pendingMembership: getPendingByCategoryDocument(
-          DueCategoryEnum.MEMBERSHIP,
-        ),
-      },
-    });
-
-    pipeline.push({
-      $addFields: {
-        pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
-      },
-    });
-
-    pipeline.push(
-      {
-        $addFields: {
-          pendingElectricity: getPendingByCategoryDocument(
-            DueCategoryEnum.ELECTRICITY,
-          ),
-          pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
-          pendingMembership: getPendingByCategoryDocument(
-            DueCategoryEnum.MEMBERSHIP,
-          ),
-        },
       },
       {
-        $addFields: {
-          pendingTotal: {
-            $add: [
-              '$pendingElectricity',
-              '$pendingGuest',
-              '$pendingMembership',
-            ],
-          },
+        $unwind: {
+          path: '$dues',
+          preserveNullAndEmptyArrays: true,
         },
       },
     );
+
+    // pipeline.push({
+    //   $addFields: {
+    //     pendingElectricity: getPendingByCategoryDocument(
+    //       DueCategoryEnum.ELECTRICITY,
+    //     ),
+    //   },
+    // });
+
+    // pipeline.push({
+    //   $addFields: {
+    //     pendingMembership: getPendingByCategoryDocument(
+    //       DueCategoryEnum.MEMBERSHIP,
+    //     ),
+    //   },
+    // });
+
+    // pipeline.push({
+    //   $addFields: {
+    //     pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
+    //   },
+    // });
+
+    // pipeline.push(
+    //   {
+    //     $addFields: {
+    //       pendingElectricity: getPendingByCategoryDocument(
+    //         DueCategoryEnum.ELECTRICITY,
+    //       ),
+    //       pendingGuest: getPendingByCategoryDocument(DueCategoryEnum.GUEST),
+    //       pendingMembership: getPendingByCategoryDocument(
+    //         DueCategoryEnum.MEMBERSHIP,
+    //       ),
+    //     },
+    //   },
+    //   {
+    //     $addFields: {
+    //       pendingTotal: {
+    //         $add: [
+    //           '$pendingElectricity',
+    //           '$pendingGuest',
+    //           '$pendingMembership',
+    //         ],
+    //       },
+    //     },
+    //   },
+    // );
 
     if (request.filterByDebtStatus.includes('true')) {
       pipeline.push({

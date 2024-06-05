@@ -11,18 +11,17 @@ export class DueDtoMapper extends MapperDto<Due, DueDto> {
     super();
   }
 
-  public toDto(domain: Due): DueDto {
+  public toDto(due: Due): DueDto {
     return {
-      amount: domain.amount.amount,
-      category: domain.category,
-      date: domain.date.toISOString(),
-      id: domain._id,
-      member: domain.member
-        ? this._memberDtoMapper.toDto(domain.member)
-        : undefined,
-      memberId: domain.memberId,
-      notes: domain.notes,
-      status: domain.status,
+      amount: due.amount.value,
+      category: due.category,
+      date: due.date.toISOString(),
+      id: due._id,
+      member: due.member ? this._memberDtoMapper.toDto(due.member) : undefined,
+      memberId: due.memberId,
+      notes: due.notes,
+      pendingAmount: due.getPendingAmount().value,
+      status: due.status,
     };
   }
 }

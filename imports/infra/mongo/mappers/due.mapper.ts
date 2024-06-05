@@ -6,10 +6,14 @@ import { Due } from '@domain/dues/models/due.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { DueEntity } from '@infra/mongo/entities/due.entity';
 import { MemberMapper } from '@infra/mongo/mappers/member.mapper';
+import { PaymentDueMapper } from '@infra/mongo/mappers/payment-due.mapper';
 
 @injectable()
 export class DueMapper extends Mapper<Due, DueEntity> {
-  public constructor(private readonly _memberMapper: MemberMapper) {
+  public constructor(
+    private readonly _memberMapper: MemberMapper,
+    private readonly _paymentDueMapper: PaymentDueMapper,
+  ) {
     super();
   }
 
@@ -32,13 +36,18 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         updatedBy: orm.updatedBy,
       },
       orm.member ? this._memberMapper.toDomain(orm.member) : undefined,
+      orm.payments
+        ? orm.payments.map((payment) =>
+            this._paymentDueMapper.toDomain(payment),
+          )
+        : undefined,
     );
   }
 
   protected getEntity(model: Due): DueEntity {
     return new DueEntity({
       _id: model._id,
-      amount: model.amount.amount,
+      amount: model.amount.value,
       category: model.category,
       createdAt: model.createdAt,
       createdBy: model.createdBy,

@@ -1,5 +1,5 @@
-import { DeleteOutlined } from '@ant-design/icons';
-import { Breadcrumb, Card } from 'antd';
+import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Breadcrumb, Card, Space, Tooltip } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import React from 'react';
 import { FaCreditCard } from 'react-icons/fa';
@@ -121,9 +121,30 @@ export const DuesPage = () => {
             },
             {
               align: 'right',
-              dataIndex: 'amount',
-              render: (amount) => new Money({ amount }).formatWithCurrency(),
-              title: 'Importe',
+              dataIndex: 'pendingAmount',
+              render: (pendingAmount: number, due: DueGridDto) => {
+                const pendingAmountFormatted = new Money({
+                  amount: pendingAmount,
+                }).formatWithCurrency();
+
+                if (pendingAmount === due.amount) {
+                  return pendingAmountFormatted;
+                }
+
+                const amountFormatted = new Money({
+                  amount: due.amount,
+                }).formatWithCurrency();
+
+                return (
+                  <Space>
+                    <Tooltip title={`Importe original: ${amountFormatted}`}>
+                      <InfoCircleOutlined />
+                    </Tooltip>
+                    {pendingAmountFormatted}
+                  </Space>
+                );
+              },
+              title: 'Pendiente',
               width: 100,
             },
             {

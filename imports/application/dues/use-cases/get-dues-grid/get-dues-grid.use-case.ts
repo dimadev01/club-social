@@ -28,6 +28,8 @@ export class GetDuesGridUseCase
     const { items, totalCount } =
       await this._dueRepository.findPaginated(request);
 
+    console.log(items);
+
     return ok({
       items: items.map<DueGridDto>((due) => this._dueDtoMapper.toDto(due)),
       totalCount,

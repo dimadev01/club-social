@@ -8,7 +8,7 @@ import { PaymentDue } from '@domain/payments/models/payment-due.model';
 export class PaymentDueDtoMapper extends MapperDto<PaymentDue, PaymentDueDto> {
   public toDto(domain: PaymentDue): PaymentDueDto {
     return {
-      amount: domain.amount.amount,
+      amount: domain.amount.value,
       dueId: domain.dueId,
     };
   }

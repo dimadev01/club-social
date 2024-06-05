@@ -26,7 +26,7 @@ export class PaymentDueMapper extends Mapper<PaymentDue, PaymentDueEntity> {
   protected getEntity(model: PaymentDue): PaymentDueEntity {
     return new PaymentDueEntity({
       _id: model._id,
-      amount: model.amount.amount,
+      amount: model.amount.value,
       createdAt: model.createdAt,
       createdBy: model.createdBy,
       deletedAt: model.deletedAt,

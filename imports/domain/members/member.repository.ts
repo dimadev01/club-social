@@ -14,7 +14,7 @@ import { Member } from '@domain/members/models/member.model';
 export interface IMemberRepository
   extends ICrudRepository<Member>,
     IGridRepository<
-      Member,
+      PaginatedMember,
       FindPaginatedMembersRequest,
       FindPaginatedMembersResponse
     > {
@@ -22,7 +22,7 @@ export interface IMemberRepository
   findByDocument(documentID: string): Promise<Member | null>;
   findOneById(request: FindOneMemberById): Promise<Member | null>;
   findToExport(request: FindMembersToExport): Promise<Member[]>;
-  getBalances(memberIds: string[]): Promise<GetBalanceResponse[]>;
+  getBalances(memberIds: string[]): Promise<MemberTotalDues[]>;
 }
 
 export interface FindOneMemberById extends FindOneById {
@@ -34,7 +34,7 @@ export interface FindMembers {
   status?: MemberStatusEnum[];
 }
 
-export interface GetBalanceResponse {
+export interface MemberTotalDues {
   _id: string;
   electricity: number;
   guest: number;
@@ -59,8 +59,13 @@ export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
   filterByStatus: MemberStatusEnum[];
 }
 
-export interface FindPaginatedMembersResponse<T = Member>
-  extends FindPaginatedResponse<T> {
+export interface PaginatedMember {
+  dues: MemberTotalDues;
+  member: Member;
+}
+
+export interface FindPaginatedMembersResponse
+  extends FindPaginatedResponse<PaginatedMember> {
   totals: FindPaginatedMembersResponseTotals;
 }
 

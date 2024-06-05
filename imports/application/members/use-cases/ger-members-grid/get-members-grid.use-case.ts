@@ -1,5 +1,4 @@
 import { Result, ok } from 'neverthrow';
-import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
@@ -26,27 +25,17 @@ export class GetMembersGridUseCase
     const { items, totalCount, totals } =
       await this._memberRepository.findPaginated(request);
 
-    const balances = await this._memberRepository.getBalances(
-      items.map((item) => item._id),
-    );
-
     return ok({
-      items: items.map<MemberGridDto>((member) => {
-        const balance = balances.find((b) => b._id === member._id);
-
-        invariant(balance);
-
-        return {
-          category: member.category,
-          id: member._id,
-          name: member.name,
-          pendingElectricity: balance.electricity,
-          pendingGuest: balance.guest,
-          pendingMembership: balance.membership,
-          pendingTotal: balance.total,
-          status: member.status,
-        };
-      }),
+      items: items.map<MemberGridDto>((paginatedMember) => ({
+        category: paginatedMember.member.category,
+        id: paginatedMember.member._id,
+        name: paginatedMember.member.name,
+        pendingElectricity: paginatedMember.dues.electricity,
+        pendingGuest: paginatedMember.dues.guest,
+        pendingMembership: paginatedMember.dues.membership,
+        pendingTotal: paginatedMember.dues.total,
+        status: paginatedMember.member.status,
+      })),
       totalCount,
       totals,
     });

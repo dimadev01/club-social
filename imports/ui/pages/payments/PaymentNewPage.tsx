@@ -150,7 +150,7 @@ export const PaymentNewPage = () => {
     const request: CreatePaymentRequestDto = {
       date: values.date.format(DateFormatEnum.DATE),
       dues: selectedDues.map((due) => ({
-        amount: Money.fromNumber(due.amount).amount,
+        amount: Money.fromNumber(due.amount).value,
         dueId: due.dueId,
       })),
       memberId: values.memberId,

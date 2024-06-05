@@ -1,4 +1,5 @@
 import { Result, err, ok } from 'neverthrow';
+import invariant from 'tiny-invariant';
 
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
@@ -25,7 +26,11 @@ export class Due extends Model implements IDue {
 
   private _status: DueStatusEnum;
 
-  public constructor(props?: IDue, member?: Member) {
+  public constructor(
+    props?: IDue,
+    member?: Member,
+    paymentDues?: PaymentDue[],
+  ) {
     super(props);
 
     this._amount = props?.amount ?? new Money({ amount: 0 });
@@ -41,6 +46,8 @@ export class Due extends Model implements IDue {
     this._status = props?.status ?? DueStatusEnum.PENDING;
 
     this._member = member;
+
+    this._paymentDues = paymentDues;
   }
 
   public get amount(): Money {
@@ -103,11 +110,14 @@ export class Due extends Model implements IDue {
   }
 
   public getPendingAmount(): Money {
-    if (this.isPaid()) {
-      return new Money({ amount: 0 });
-    }
+    invariant(this._paymentDues);
 
-    return this._amount;
+    const paidAmount = this._paymentDues.reduce(
+      (acc, paymentDue) => acc + paymentDue.amount.value,
+      0,
+    );
+
+    return this._amount.subtract(new Money({ amount: paidAmount }));
   }
 
   public isDeletable() {

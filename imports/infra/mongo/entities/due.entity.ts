@@ -12,6 +12,7 @@ import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { Entity } from '@infra/mongo/common/entities/entity';
 import { MemberEntity } from '@infra/mongo/entities/member.entity';
+import { PaymentDueEntity } from '@infra/mongo/entities/payment-due.entity';
 
 export class DueEntity extends Entity {
   @IsInt()
@@ -35,6 +36,8 @@ export class DueEntity extends Entity {
   @IsString()
   @IsNullable()
   public notes: string | null;
+
+  public payments?: PaymentDueEntity[];
 
   @IsEnum(DueStatusEnum)
   public status: DueStatusEnum;

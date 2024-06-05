@@ -23,7 +23,11 @@ export class Payment extends Model implements IPayment {
 
   private _status: PaymentStatusEnum;
 
-  public constructor(props?: IPayment, member?: Member, dues?: PaymentDue[]) {
+  public constructor(
+    props?: IPayment,
+    member?: Member,
+    paymentDues?: PaymentDue[],
+  ) {
     super(props);
 
     this._date = props?.date ?? new DateUtcVo();
@@ -38,7 +42,7 @@ export class Payment extends Model implements IPayment {
 
     this._member = member;
 
-    this.paymentDues = dues;
+    this._paymentDues = paymentDues;
   }
 
   public get date(): DateUtcVo {
@@ -97,7 +101,7 @@ export class Payment extends Model implements IPayment {
   public getTotalAmountOfDues(): number {
     invariant(this.paymentDues);
 
-    return this.paymentDues.reduce((acc, due) => acc + due.amount.amount, 0);
+    return this.paymentDues.reduce((acc, due) => acc + due.amount.value, 0);
   }
 
   public setDate(value: DateUtcVo): Result<null, Error> {

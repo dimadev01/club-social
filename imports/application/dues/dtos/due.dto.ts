@@ -9,5 +9,6 @@ export interface DueDto {
   member?: MemberDto;
   memberId: string;
   notes: string | null;
+  pendingAmount: number;
   status: DueStatusEnum;
 }

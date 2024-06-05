@@ -19,7 +19,7 @@ export interface FindPaginatedResponse<T> {
 }
 
 export interface IGridRepository<
-  TDomain extends Model,
+  TDomain = Model,
   TRequest extends FindPaginatedRequest = FindPaginatedRequest,
   TResponse extends
     FindPaginatedResponse<TDomain> = FindPaginatedResponse<TDomain>,

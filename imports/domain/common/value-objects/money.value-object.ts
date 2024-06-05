@@ -3,6 +3,7 @@ import {
   Dinero,
   dinero,
   greaterThanOrEqual,
+  subtract,
   toDecimal,
   toSnapshot,
 } from 'dinero.js';
@@ -37,7 +38,7 @@ export class Money extends ValueObject<InternalMoneyProps> {
     });
   }
 
-  public get amount(): number {
+  public get value(): number {
     return toSnapshot(this.props.dinero).amount;
   }
 
@@ -86,8 +87,17 @@ export class Money extends ValueObject<InternalMoneyProps> {
     return this.format({ decimals: true });
   }
 
-  public isGreaterThanOrEqual(amount: Money) {
-    return greaterThanOrEqual(this.props.dinero, amount.props.dinero);
+  public isGreaterThanOrEqual(value: Money) {
+    return greaterThanOrEqual(this.props.dinero, value.props.dinero);
+  }
+
+  public subtract(value: Money): Money {
+    const result = subtract(this.props.dinero, value.props.dinero);
+
+    return new Money({
+      amount: toSnapshot(result).amount,
+      currency: this.props.currency,
+    });
   }
 
   public toInteger(): number {

@@ -148,6 +148,16 @@ export class DueMongoRepository
       },
     ];
 
+    entitiesPipeline.push({
+      $lookup: {
+        as: 'payments',
+        foreignField: 'dueId',
+        from: 'payment.dues',
+        localField: '_id',
+        pipeline: [{ $match: { isDeleted: false } }],
+      },
+    });
+
     return super.findPaginatedPipeline(pipeline, entitiesPipeline);
   }
 
@@ -155,7 +165,7 @@ export class DueMongoRepository
     const query: Mongo.Query<DueEntity> = {
       isDeleted: false,
       memberId: request.memberId,
-      status: DueStatusEnum.PENDING,
+      status: { $in: [DueStatusEnum.PENDING, DueStatusEnum.PARTIALLY_PAID] },
     };
 
     const entities = await this.collection.find(query).fetchAsync();
