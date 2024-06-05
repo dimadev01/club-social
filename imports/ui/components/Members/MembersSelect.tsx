@@ -9,24 +9,22 @@ import {
 import { Select } from '@ui/components/Select';
 import { useMembers } from '@ui/hooks/members/useMembers';
 
-interface Props {
+type Props = SelectProps & {
   disableInactive?: boolean;
   groupByStatus?: boolean;
   maxCount?: number;
-  onChange?: (value: any) => void;
-  select?: SelectProps;
+  // onChange?: (value: unknown) => void;
+  // select?: SelectProps;
   showInactiveLabel?: boolean;
   status?: MemberStatusEnum[];
-  value?: any | null;
-}
+  // value?: unknown | null;
+};
 
 export const MembersSelect: React.FC<Props> = ({
   disableInactive = true,
-  select,
   showInactiveLabel = true,
   status = [MemberStatusEnum.ACTIVE, MemberStatusEnum.INACTIVE],
-  onChange,
-  value,
+  ...rest
 }) => {
   const { data: members, isLoading: isLoadingMembers } = useMembers({ status });
 
@@ -58,9 +56,7 @@ export const MembersSelect: React.FC<Props> = ({
       disabled={isLoadingMembers}
       options={getOptions()}
       placeholder="Seleccionar socio"
-      onChange={onChange}
-      value={value}
-      {...select}
+      {...rest}
     />
   );
 };

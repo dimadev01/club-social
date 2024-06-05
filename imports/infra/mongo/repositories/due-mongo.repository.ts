@@ -8,9 +8,10 @@ import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { DueStatusEnum } from '@domain/dues/due.enum';
 import {
+  FindDuesByPayment,
   FindOneDueById,
   FindPaginatedDuesRequest,
-  FindPendingDuesRequest,
+  FindPendingDues,
   IDueRepository,
 } from '@domain/dues/due.repository';
 import { Due } from '@domain/dues/models/due.model';
@@ -37,14 +38,20 @@ export class DueMongoRepository
     super(collection, mapper, logger);
   }
 
-  public async findOneByIdOrThrow(request: FindOneDueById): Promise<Due> {
-    const due = await this.findOneById(request);
+  public async findByPayment(request: FindDuesByPayment): Promise<Due[]> {
+    const paymentDues = await this._paymentDueRepository.findByPayment({
+      paymentId: request.paymentId,
+    });
 
-    if (!due) {
-      throw new InternalServerError();
-    }
+    const duesIds = paymentDues.map((paymentDue) => paymentDue.dueId);
 
-    return due;
+    const query: Mongo.Query<DueEntity> = {
+      _id: { $in: duesIds },
+    };
+
+    const entities = await this.collection.find(query).fetchAsync();
+
+    return entities.map((entity) => this.mapper.toDomain(entity));
   }
 
   public async findOneById(request: FindOneDueById): Promise<Due | null> {
@@ -69,6 +76,16 @@ export class DueMongoRepository
       due.paymentDues = await this._paymentDueRepository.findByDue({
         dueId: due._id,
       });
+    }
+
+    return due;
+  }
+
+  public async findOneByIdOrThrow(request: FindOneDueById): Promise<Due> {
+    const due = await this.findOneById(request);
+
+    if (!due) {
+      throw new InternalServerError();
     }
 
     return due;
@@ -134,7 +151,7 @@ export class DueMongoRepository
     return super.findPaginatedPipeline(pipeline, entitiesPipeline);
   }
 
-  public async findPending(request: FindPendingDuesRequest): Promise<Due[]> {
+  public async findPending(request: FindPendingDues): Promise<Due[]> {
     const query: Mongo.Query<DueEntity> = {
       isDeleted: false,
       memberId: request.memberId,

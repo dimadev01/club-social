@@ -1,10 +1,11 @@
 import { injectable } from 'tsyringe';
 
+import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.dto';
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { DueController } from '@adapters/controllers/due.controller';
 import { CreateDueRequestDto } from '@adapters/dtos/create-due-request.dto';
+import { GetDuesByPaymentRequestDto } from '@adapters/dtos/get-dues-by-payment-request.dto';
 import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid.request.dto';
-import { GetOneDtoByIdRequestDto } from '@adapters/dtos/get-one-dto-request.dto';
 import { GetPendingDuesRequestDto } from '@adapters/dtos/get-pending-dues-request.dto';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
 
@@ -16,16 +17,18 @@ export class DueMethods extends MeteorMethods {
 
   public register(): void {
     Meteor.methods({
-      [MeteorMethodEnum.DuesCreate]: (request: CreateDueRequestDto) =>
-        this._controller.create(request),
-      [MeteorMethodEnum.DuesDelete]: (request: GetOneDtoByIdRequestDto) =>
-        this._controller.delete(request),
-      [MeteorMethodEnum.DuesGet]: (request: GetOneDtoByIdRequestDto) =>
-        this._controller.get(request),
-      [MeteorMethodEnum.DuesGetGrid]: (request: GetDuesGridRequestDto) =>
-        this._controller.getGrid(request),
-      [MeteorMethodEnum.DuesGetPending]: (request: GetPendingDuesRequestDto) =>
-        this._controller.getPending(request),
+      [MeteorMethodEnum.DuesCreate]: (req: CreateDueRequestDto) =>
+        this._controller.create(req),
+      [MeteorMethodEnum.DuesDelete]: (req: GetOneByIdRequestDto) =>
+        this._controller.delete(req),
+      [MeteorMethodEnum.DuesGet]: (req: GetOneByIdRequestDto) =>
+        this._controller.get(req),
+      [MeteorMethodEnum.DuesGetGrid]: (req: GetDuesGridRequestDto) =>
+        this._controller.getGrid(req),
+      [MeteorMethodEnum.DuesGetPending]: (req: GetPendingDuesRequestDto) =>
+        this._controller.getPending(req),
+      [MeteorMethodEnum.DuesGetByPayment]: (req: GetDuesByPaymentRequestDto) =>
+        this._controller.getByPayment(req),
     });
   }
 }

@@ -1,5 +1,7 @@
 import { Model } from '@domain/common/models/model';
 
+export const DEFAULT_PAGE_SIZE = 10;
+
 export type PaginatedSorter = Record<
   string,
   'ascend' | 'descend' | 1 | -1 | null
@@ -11,12 +13,10 @@ export interface FindPaginatedRequest {
   sorter: PaginatedSorter;
 }
 
-export interface FindPaginatedResponse<T = unknown> {
+export interface FindPaginatedResponse<T> {
   items: T[];
   totalCount: number;
 }
-
-export const DEFAULT_PAGE_SIZE = 10;
 
 export interface IGridRepository<
   TDomain extends Model,

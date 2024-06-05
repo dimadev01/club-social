@@ -1,5 +1,5 @@
-import { DueDto } from '@application/dues/dtos/due.dto';
 import { MemberDto } from '@application/members/dtos/member.dto';
+import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
 
 export interface PaymentDto {
   date: string;
@@ -9,10 +9,4 @@ export interface PaymentDto {
   memberId: string;
   notes: string | null;
   receiptNumber: number | null;
-}
-
-export interface PaymentDueDto {
-  amount: number;
-  due?: DueDto;
-  dueId: string;
 }

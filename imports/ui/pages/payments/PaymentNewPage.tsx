@@ -21,6 +21,7 @@ import { MembersSelect } from '@ui/components/Members/MembersSelect';
 import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDuesByMember';
 import { useMember } from '@ui/hooks/members/useMember';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
+import { useNavigate } from '@ui/hooks/useNavigate';
 import {
   useNotificationError,
   useNotificationSuccess,
@@ -44,6 +45,8 @@ export const PaymentNewPage = () => {
   const notificationError = useNotificationError();
 
   const notificationSuccess = useNotificationSuccess();
+
+  const navigate = useNavigate();
 
   /**
    * Url params
@@ -254,6 +257,19 @@ export const PaymentNewPage = () => {
                 name="memberId"
               >
                 <MembersSelect />
+                {/* <Space.Compact className="flex">
+                  <Button
+                    icon={<PlusOutlined />}
+                    onClick={() =>
+                      navigate(
+                        UrlUtils.navigate(AppUrl.DuesNew, {
+                          memberIds: [formMemberId],
+                        }),
+                      )
+                    }
+                    tooltip={{ title: 'Agregar cobro' }}
+                  />
+                </Space.Compact> */}
               </Form.Item>
             </Col>
           </Row>

@@ -4,7 +4,7 @@ import {
   FindPaginatedResponse,
   IGridRepository,
 } from '@domain/common/repositories/grid.repository';
-import { FindOneModelById } from '@domain/common/repositories/queryable.repository';
+import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import {
   MemberCategoryEnum,
   MemberStatusEnum,
@@ -25,7 +25,7 @@ export interface IMemberRepository
   getBalances(memberIds: string[]): Promise<GetBalanceResponse[]>;
 }
 
-export interface FindOneMemberById extends FindOneModelById {
+export interface FindOneMemberById extends FindOneById {
   fetchUser?: boolean;
 }
 
@@ -55,7 +55,6 @@ export interface FindPaginatedMembersResponseTotals {
 export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
   filterByCategory: MemberCategoryEnum[];
   filterByDebtStatus: string[];
-  filterByDueId: string[];
   filterById: string[];
   filterByStatus: MemberStatusEnum[];
 }

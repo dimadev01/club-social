@@ -1,16 +1,13 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { Table as AntTable, Breadcrumb, Card, Space } from 'antd';
+import { Breadcrumb, Card, Space } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import invariant from 'tiny-invariant';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
+import { GetPaymentsGridRequestDto } from '@adapters/dtos/get-payments-grid-request.dto';
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
-import { GetPaymentsGridRequest } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.request';
-import { GetPaymentsGridResponse } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.response';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { SecurityUtils } from '@infra/security/security.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -20,6 +17,7 @@ import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
+import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
@@ -38,8 +36,8 @@ export const PaymentsPage = () => {
   const { data: members } = useMembers();
 
   const { data, isLoading, refetch, isRefetching } = useQueryGrid<
-    GetPaymentsGridRequest,
-    GetPaymentsGridResponse<PaymentGridDto>
+    GetPaymentsGridRequestDto,
+    PaymentGridDto
   >({
     methodName: MeteorMethodEnum.PaymentsGetGrid,
     request: {
@@ -53,46 +51,7 @@ export const PaymentsPage = () => {
   const deletePayment = useDeletePayment();
 
   const expandedRowRender = (payment: PaymentGridDto) => (
-    <AntTable
-      rowKey="_id"
-      pagination={false}
-      bordered
-      columns={[
-        {
-          dataIndex: ['due', 'date'],
-          render: (dueDate: string) => new DateUtcVo(dueDate).format(),
-          title: 'Fecha',
-          width: 150,
-        },
-        {
-          align: 'center',
-          dataIndex: ['due', 'category'],
-          render: (category: DueCategoryEnum, paymentDue) => {
-            invariant(paymentDue.due);
-
-            if (category === DueCategoryEnum.MEMBERSHIP) {
-              return `${DueCategoryLabel[category]} (${new DateUtcVo(paymentDue.due.date).monthName()})`;
-            }
-
-            return DueCategoryLabel[category];
-          },
-          title: 'Categoría',
-        },
-        {
-          align: 'right',
-          dataIndex: ['due', 'amount'],
-          render: (amount) => new Money({ amount }).formatWithCurrency(),
-          title: 'Deuda',
-        },
-        {
-          align: 'right',
-          dataIndex: 'amount',
-          render: (amount) => new Money({ amount }).formatWithCurrency(),
-          title: 'Monto Registrado',
-        },
-      ]}
-      dataSource={payment.paymentDues}
-    />
+    <PaymentDuesGrid payment={payment} />
   );
 
   return (

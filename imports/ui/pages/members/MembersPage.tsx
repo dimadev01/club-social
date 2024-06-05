@@ -1,5 +1,5 @@
 import { CreditCardOutlined, FileSearchOutlined } from '@ant-design/icons';
-import { Breadcrumb, Card, Flex, Space, Table } from 'antd';
+import { Breadcrumb, Card, Space } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { GetMembersGridRequestDto } from '@adapters/dtos/get-members-grid-request.dto';
 import { MemberGridDto } from '@application/members/dtos/member-grid.dto';
-import { GetMembersGridResponse } from '@application/members/use-cases/ger-members-grid/get-members-grid.response';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   MemberCategoryEnum,
@@ -69,54 +68,54 @@ export const MembersPage = () => {
 
   const { data, isLoading, isRefetching, refetch } = useQueryGrid<
     GetMembersGridRequestDto,
-    GetMembersGridResponse<MemberGridDto>
+    MemberGridDto
   >({
     methodName: MeteorMethodEnum.MembersGetGrid,
     request: gridRequest,
   });
 
-  const renderSummary = () => (
-    <Table.Summary>
-      <Table.Summary.Row>
-        <Table.Summary.Cell index={0} />
-        <Table.Summary.Cell index={1} />
-        <Table.Summary.Cell index={2} />
-        <Table.Summary.Cell index={3}>
-          <Flex justify="end">
-            {data
-              ? new Money({
-                  amount: data.totals.membership,
-                }).formatWithCurrency()
-              : '-'}
-          </Flex>
-        </Table.Summary.Cell>
-        <Table.Summary.Cell index={4}>
-          <Flex justify="end">
-            {data
-              ? new Money({
-                  amount: data.totals.electricity,
-                }).formatWithCurrency()
-              : '-'}
-          </Flex>
-        </Table.Summary.Cell>
-        <Table.Summary.Cell index={5}>
-          <Flex justify="end">
-            {data
-              ? new Money({ amount: data.totals.guest }).formatWithCurrency()
-              : '-'}
-          </Flex>
-        </Table.Summary.Cell>
-        <Table.Summary.Cell index={6}>
-          <Flex justify="end">
-            {data
-              ? new Money({ amount: data.totals.total }).formatWithCurrency()
-              : '-'}
-          </Flex>
-        </Table.Summary.Cell>
-        <Table.Summary.Cell index={7} />
-      </Table.Summary.Row>
-    </Table.Summary>
-  );
+  // const renderSummary = () => (
+  //   <Table.Summary>
+  //     <Table.Summary.Row>
+  //       <Table.Summary.Cell index={0} />
+  //       <Table.Summary.Cell index={1} />
+  //       <Table.Summary.Cell index={2} />
+  //       <Table.Summary.Cell index={3}>
+  //         <Flex justify="end">
+  //           {data
+  //             ? new Money({
+  //                 amount: data.totals.membership,
+  //               }).formatWithCurrency()
+  //             : '-'}
+  //         </Flex>
+  //       </Table.Summary.Cell>
+  //       <Table.Summary.Cell index={4}>
+  //         <Flex justify="end">
+  //           {data
+  //             ? new Money({
+  //                 amount: data.totals.electricity,
+  //               }).formatWithCurrency()
+  //             : '-'}
+  //         </Flex>
+  //       </Table.Summary.Cell>
+  //       <Table.Summary.Cell index={5}>
+  //         <Flex justify="end">
+  //           {data
+  //             ? new Money({ amount: data.totals.guest }).formatWithCurrency()
+  //             : '-'}
+  //         </Flex>
+  //       </Table.Summary.Cell>
+  //       <Table.Summary.Cell index={6}>
+  //         <Flex justify="end">
+  //           {data
+  //             ? new Money({ amount: data.totals.total }).formatWithCurrency()
+  //             : '-'}
+  //         </Flex>
+  //       </Table.Summary.Cell>
+  //       <Table.Summary.Cell index={7} />
+  //     </Table.Summary.Row>
+  //   </Table.Summary>
+  // );
 
   return (
     <>
@@ -146,7 +145,7 @@ export const MembersPage = () => {
           onTableChange={onTableChange}
           loading={isLoading}
           dataSource={data?.items}
-          summary={renderSummary}
+          // summary={renderSummary}
           rowClassName={(member) => {
             if (member.pendingTotal > 0) {
               return 'bg-red-100 dark:bg-red-950';

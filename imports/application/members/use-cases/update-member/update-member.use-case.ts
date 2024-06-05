@@ -2,8 +2,9 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { MemberDto } from '@application/members/dtos/member.dto';
+import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
 import { UpdateMemberRequest } from '@application/members/use-cases/update-member/update-member.request';
-import { UpdateMemberResponse } from '@application/members/use-cases/update-member/update-member.response';
 import { UpdateUserUseCase } from '@application/users/use-cases/update-user-theme/update-user.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
@@ -15,7 +16,7 @@ import { RoleEnum } from '@domain/roles/role.enum';
 
 @injectable()
 export class UpdateMemberUseCase
-  implements IUseCase<UpdateMemberRequest, UpdateMemberResponse>
+  implements IUseCase<UpdateMemberRequest, MemberDto>
 {
   public constructor(
     @inject(DIToken.IMemberRepository)
@@ -23,11 +24,12 @@ export class UpdateMemberUseCase
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork,
     private readonly _updateUserUseCase: UpdateUserUseCase,
+    private readonly _getMemberUseCase: GetMemberUseCase,
   ) {}
 
   public async execute(
     request: UpdateMemberRequest,
-  ): Promise<Result<UpdateMemberResponse, Error>> {
+  ): Promise<Result<MemberDto, Error>> {
     const validation = await this._validate(request);
 
     if (validation.isErr()) {
@@ -64,7 +66,7 @@ export class UpdateMemberUseCase
           member.address.setZipCode(request.addressZipCode),
           member.setCategory(request.category),
           member.setStatus(request.status),
-          member.setDateOfBirth(
+          member.setBirthDate(
             request.birthDate ? new BirthDate(request.birthDate) : null,
           ),
           member.setDocumentID(request.documentID),
@@ -82,7 +84,7 @@ export class UpdateMemberUseCase
         await this._memberRepository.updateWithSession(member, unitOfWork);
       });
 
-      return ok(member);
+      return await this._getMemberUseCase.execute({ id: request.id });
     } catch (error) {
       if (error instanceof Error) {
         return err(error);

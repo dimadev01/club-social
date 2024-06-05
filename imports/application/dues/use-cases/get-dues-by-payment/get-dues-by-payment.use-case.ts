@@ -4,12 +4,13 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { DueDtoMapper } from '@application/dues/mappers/due-dto.mapper';
-import { FindManyByIds } from '@domain/common/repositories/queryable.repository';
 import { IUseCase } from '@domain/common/use-case.interface';
-import { IDueRepository } from '@domain/dues/due.repository';
+import { FindDuesByPayment, IDueRepository } from '@domain/dues/due.repository';
 
 @injectable()
-export class GetDuesByIdsUseCase implements IUseCase<FindManyByIds, DueDto[]> {
+export class GetDuesByPaymentUseCase
+  implements IUseCase<FindDuesByPayment, DueDto[]>
+{
   public constructor(
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
@@ -17,9 +18,9 @@ export class GetDuesByIdsUseCase implements IUseCase<FindManyByIds, DueDto[]> {
   ) {}
 
   public async execute(
-    request: FindManyByIds,
+    request: FindDuesByPayment,
   ): Promise<Result<DueDto[], Error>> {
-    const dues = await this._dueRepository.findByIds(request);
+    const dues = await this._dueRepository.findByPayment(request);
 
     return ok(dues.map((due) => this._dueDtoMapper.toDto(due)));
   }

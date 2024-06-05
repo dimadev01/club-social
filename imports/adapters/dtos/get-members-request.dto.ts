@@ -1,6 +1,6 @@
+import { GetMembersRequest } from '@application/members/use-cases/get-members/get-members.request';
 import { ArrayMinSize, IsArray, IsEnum, IsOptional } from 'class-validator';
 
-import { GetMembersRequest } from '@application/members/use-cases/get-members/get-members.request';
 import {
   MemberCategoryEnum,
   MemberStatusEnum,

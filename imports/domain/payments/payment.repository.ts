@@ -4,7 +4,7 @@ import {
   FindPaginatedResponse,
   IGridRepository,
 } from '@domain/common/repositories/grid.repository';
-import { FindOneModelById } from '@domain/common/repositories/queryable.repository';
+import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { Payment } from '@domain/payments/models/payment.model';
 
 export interface IPaymentRepository
@@ -14,14 +14,13 @@ export interface IPaymentRepository
   findOneByReceipt(receiptNumber: number): Promise<Payment | null>;
 }
 
-export interface FindOnePaymentById extends FindOneModelById {
+export interface FindOnePaymentById extends FindOneById {
   fetchMember?: boolean;
   fetchPaymentDues?: boolean;
-  fetchPaymentDuesDue?: boolean;
 }
 
 export interface FindPaginatedPaymentsRequest extends FindPaginatedRequest {
   filterByMember: string[];
 }
 
-export type FindPaginatedPaymentsResponse<T> = FindPaginatedResponse<T>;
+export type FindPaginatedPaymentsResponse = FindPaginatedResponse<Payment>;

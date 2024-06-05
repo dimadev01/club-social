@@ -1,18 +1,17 @@
+import { GetGridRequestDto } from '@adapters/common/dtos/get-grid-request.dto';
+import { GetGridResponseDto } from '@adapters/common/dtos/get-grid-response.dto';
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import {
-  FindPaginatedRequest,
-  FindPaginatedResponse,
-} from '@domain/common/repositories/grid.repository';
 import { useQuery } from '@ui/hooks/useQuery';
 
-interface UseQueryGridProps<TRequest extends FindPaginatedRequest> {
+interface UseQueryGridProps<TRequest extends GetGridRequestDto> {
   methodName: MeteorMethodEnum;
   request: TRequest;
 }
 
 export function useQueryGrid<
-  TRequest extends FindPaginatedRequest,
-  TResponse extends FindPaginatedResponse,
+  TRequest extends GetGridRequestDto,
+  TDto,
+  TResponse extends GetGridResponseDto<TDto> = GetGridResponseDto<TDto>,
 >({ methodName, request }: UseQueryGridProps<TRequest>) {
   return useQuery<TRequest, TResponse>({
     keepPreviousData: true,

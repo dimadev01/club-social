@@ -41,8 +41,8 @@ type FormValues = {
     street: string | undefined;
     zipCode: string | undefined;
   };
+  birthDate: Dayjs | undefined;
   category: MemberCategoryEnum;
-  dateOfBirth: Dayjs | undefined;
   documentID: string | undefined;
   emails: string[];
   fileStatus: MemberFileStatusEnum | undefined;
@@ -93,10 +93,10 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         addressStateName: values.address.stateGovId?.label || null,
         addressStreet: values.address.street || null,
         addressZipCode: values.address.zipCode || null,
-        category: values.category,
-        dateOfBirth: values.dateOfBirth
-          ? DateUtils.format(values.dateOfBirth, DateFormatEnum.DATE)
+        birthDate: values.birthDate
+          ? DateUtils.format(values.birthDate, DateFormatEnum.DATE)
           : null,
+        category: values.category,
         documentID: values.documentID || null,
         emails: compact(values.emails).length > 0 ? values.emails : null,
         fileStatus: values.fileStatus || null,
@@ -119,10 +119,10 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         addressStateName: values.address.stateGovId?.label || null,
         addressStreet: values.address.street || null,
         addressZipCode: values.address.zipCode || null,
-        category: values.category || null,
-        dateOfBirth: values.dateOfBirth
-          ? DateUtils.format(values.dateOfBirth, DateFormatEnum.DATE)
+        birthDate: values.birthDate
+          ? DateUtils.format(values.birthDate, DateFormatEnum.DATE)
           : null,
+        category: values.category || null,
         documentID: values.documentID || null,
         emails: compact(values.emails).length > 0 ? values.emails : null,
         fileStatus: values.fileStatus || null,
@@ -169,10 +169,10 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
             street: member?.addressStreet,
             zipCode: member?.addressZipCode,
           },
-          category: member?.category,
-          dateOfBirth: member?.birthDate
+          birthDate: member?.birthDate
             ? dayjs.utc(member.birthDate)
             : undefined,
+          category: member?.category,
           documentID: member?.documentID,
           emails:
             member?.emails && member.emails.length > 0 ? member.emails : [''],
@@ -214,7 +214,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
               </Form.Item>
 
               <Form.Item
-                name="dateOfBirth"
+                name="birthDate"
                 label="Fecha de Nacimiento"
                 rules={[{ type: 'date' }]}
               >

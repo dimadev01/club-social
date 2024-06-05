@@ -1,13 +1,14 @@
 import { Result, err, ok } from 'neverthrow';
 
 import { Model } from '@domain/common/models/model';
+import { IModel } from '@domain/common/models/model.interface';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   CreatePaymentDue,
   IPaymentDue,
 } from '@domain/payments/payment.interface';
 
-export class PaymentDue extends Model implements IPaymentDue {
+export class PaymentDue extends Model implements IModel {
   private _amount: Money;
 
   private _dueId: string;

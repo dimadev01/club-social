@@ -6,9 +6,8 @@ import { FaCreditCard } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
+import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid.request.dto';
 import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
-import { GetDuesGridRequest } from '@application/dues/use-cases/get-dues-grid/get-dues-grid.request';
-import { GetDuesGridResponse } from '@application/dues/use-cases/get-dues-grid/get-dues-grid.response';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
@@ -54,8 +53,8 @@ export const DuesPage = () => {
   const { data: members } = useMembers({});
 
   const { data, isLoading, isRefetching, refetch } = useQueryGrid<
-    GetDuesGridRequest,
-    GetDuesGridResponse
+    GetDuesGridRequestDto,
+    DueGridDto
   >({
     methodName: MeteorMethodEnum.DuesGetGrid,
     request: {
@@ -110,7 +109,7 @@ export const DuesPage = () => {
               filterSearch: true,
               filteredValue: gridState.filters.memberId,
               filters: GridUtils.getMembersForFilter(members),
-              render: (_, payment: DueGridDto) => payment.memberName,
+              render: (_, payment: DueGridDto) => payment.member?.name,
               title: 'Socio',
             },
             {

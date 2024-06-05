@@ -18,8 +18,8 @@ import {
   PaginatedSorter,
 } from '@domain/common/repositories/grid.repository';
 import {
-  FindModelsByIds,
-  FindOneModelById,
+  FindManyByIds,
+  FindOneById,
 } from '@domain/common/repositories/queryable.repository';
 import { MongoCollection } from '@infra/mongo/common/collections/mongo.collection';
 import { Entity } from '@infra/mongo/common/entities/entity';
@@ -40,7 +40,7 @@ export abstract class CrudMongoRepository<
     private readonly _logger: ILogger,
   ) {}
 
-  public async delete(request: FindOneModelById): Promise<void> {
+  public async delete(request: FindOneById): Promise<void> {
     const model = await this.findOneByIdOrThrow(request);
 
     model.delete(await this._getLoggedInUserName());
@@ -49,7 +49,7 @@ export abstract class CrudMongoRepository<
   }
 
   public async deleteWithSession(
-    request: FindOneModelById,
+    request: FindOneById,
     unitOfWork: MongoUnitOfWork,
   ): Promise<void> {
     const model = await this.findOneByIdOrThrow(request);
@@ -59,7 +59,7 @@ export abstract class CrudMongoRepository<
     return this.updateWithSession(model, unitOfWork);
   }
 
-  public async findByIds(request: FindModelsByIds): Promise<TDomain[]> {
+  public async findByIds(request: FindManyByIds): Promise<TDomain[]> {
     try {
       const entities = await this._collection
         // @ts-expect-error
@@ -72,7 +72,7 @@ export abstract class CrudMongoRepository<
     }
   }
 
-  public async findOneById(request: FindOneModelById): Promise<TDomain | null> {
+  public async findOneById(request: FindOneById): Promise<TDomain | null> {
     // @ts-expect-error
     const entity = await this._collection.findOneAsync({
       _id: request.id,
@@ -86,7 +86,7 @@ export abstract class CrudMongoRepository<
     return this._mapper.toDomain(entity);
   }
 
-  public async findOneByIdOrThrow(request: FindOneModelById): Promise<TDomain> {
+  public async findOneByIdOrThrow(request: FindOneById): Promise<TDomain> {
     const model = await this.findOneById(request);
 
     if (!model) {

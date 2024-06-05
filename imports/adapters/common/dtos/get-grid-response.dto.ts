@@ -1,4 +1,3 @@
-export interface GetGridResponseDto<T> {
-  items: T[];
-  totalCount: number;
-}
+import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
+
+export type GetGridResponseDto<T> = FindPaginatedResponse<T>;

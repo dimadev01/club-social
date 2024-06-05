@@ -1,15 +1,15 @@
 import { Model } from '@domain/common/models/model';
 
-export interface FindOneModelById {
+export interface FindOneById {
   id: string;
 }
 
-export interface FindModelsByIds {
+export interface FindManyByIds {
   ids: string[];
 }
 
 export interface IQueryableRepository<TDomain extends Model> {
-  findByIds(request: FindModelsByIds): Promise<TDomain[]>;
-  findOneById(request: FindOneModelById): Promise<TDomain | null>;
-  findOneByIdOrThrow(request: FindOneModelById): Promise<TDomain>;
+  findByIds(request: FindManyByIds): Promise<TDomain[]>;
+  findOneById(request: FindOneById): Promise<TDomain | null>;
+  findOneByIdOrThrow(request: FindOneById): Promise<TDomain>;
 }

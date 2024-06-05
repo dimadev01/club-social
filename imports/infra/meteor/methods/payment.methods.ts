@@ -1,9 +1,9 @@
+import { GetOneDtoByIdRequestDto } from '@adapters/dtos/get-one-dto-request.dto';
 import { injectable } from 'tsyringe';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { PaymentController } from '@adapters/controllers/payment.controller';
 import { CreatePaymentRequestDto } from '@adapters/dtos/create-payment-request.dto';
-import { GetOneDtoByIdRequestDto } from '@adapters/dtos/get-one-dto-request.dto';
 import { GetPaymentsGridRequestDto } from '@adapters/dtos/get-payments-grid-request.dto';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
 

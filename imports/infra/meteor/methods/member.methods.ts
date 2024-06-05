@@ -1,12 +1,12 @@
+import { GetOneDtoByIdRequestDto } from '@adapters/dtos/get-one-dto-request.dto';
+import { GetMembersRequest } from '@application/members/use-cases/get-members/get-members.request';
 import { injectable } from 'tsyringe';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { MemberController } from '@adapters/controllers/member.controller';
 import { CreateMemberRequestDto } from '@adapters/dtos/create-member-request.dto';
 import { GetMembersGridRequestDto } from '@adapters/dtos/get-members-grid-request.dto';
-import { GetOneDtoByIdRequestDto } from '@adapters/dtos/get-one-dto-request.dto';
 import { UpdateMemberRequestDto } from '@adapters/dtos/update-member-request.dto';
-import { GetMembersRequest } from '@application/members/use-cases/get-members/get-members.request';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
 
 @injectable()

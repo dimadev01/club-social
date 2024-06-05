@@ -1,156 +1,65 @@
-import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { BaseController } from '@adapters/common/controllers/base.controller';
+import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.dto';
 import { CreatePaymentRequestDto } from '@adapters/dtos/create-payment-request.dto';
-import { GetOneDtoByIdRequestDto } from '@adapters/dtos/get-one-dto-request.dto';
 import { GetPaymentsGridRequestDto } from '@adapters/dtos/get-payments-grid-request.dto';
-import { DueDtoMapper } from '@adapters/mappers/due-dto.mapper';
-import { MemberDtoMapper } from '@adapters/mappers/member-dto.mapper';
-import { PaymentDtoMapper } from '@adapters/mappers/payment-dto.mapper';
-import { PaymentDueDtoMapper } from '@adapters/mappers/payment-due-dto.mapper';
 import { DIToken } from '@application/common/di/tokens.di';
-import { GetDuesByIdsUseCase } from '@application/dues/use-cases/get-dues-by-ids/get-dues-by-ids.use-case';
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
 import { PaymentDto } from '@application/payments/dtos/payment.dto';
 import { CreatePaymentUseCase } from '@application/payments/use-cases/create-payment/create-payment.use-case';
 import { DeletePaymentUseCase } from '@application/payments/use-cases/delete-payment/delete-payment.use-case';
-import { GetPaymentRequest } from '@application/payments/use-cases/get-payment/get-payment.request';
 import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment/get-payment.use-case';
-import { GetPaymentsGridRequest } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.request';
-import { GetPaymentsGridResponse } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.response';
 import { GetPaymentsGridUseCase } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.use-case';
 import { ILogger } from '@domain/common/logger/logger.interface';
+import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 
 @injectable()
 export class PaymentController extends BaseController {
   public constructor(
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
-    private readonly _getPaymentsGrid: GetPaymentsGridUseCase,
-    private readonly _getPayment: GetPaymentUseCase,
-    private readonly _createPayment: CreatePaymentUseCase,
-    private readonly _deletePayment: DeletePaymentUseCase,
-    private readonly _getDuesByIdsUseCase: GetDuesByIdsUseCase,
-    private readonly _memberDtoMapper: MemberDtoMapper,
-    private readonly _dueDtoMapper: DueDtoMapper,
-    private readonly _paymentDtoMapper: PaymentDtoMapper,
-    private readonly _paymentDueDtoMapper: PaymentDueDtoMapper,
+    private readonly _getGrid: GetPaymentsGridUseCase,
+    private readonly _getOne: GetPaymentUseCase,
+    private readonly _create: CreatePaymentUseCase,
+    private readonly _delete: DeletePaymentUseCase,
   ) {
     super(logger);
   }
 
   public async create(request: CreatePaymentRequestDto): Promise<PaymentDto> {
-    const payment = await this.execute({
+    return this.execute({
       classType: CreatePaymentRequestDto,
       request,
-      useCase: this._createPayment,
+      useCase: this._create,
     });
-
-    return this._paymentDtoMapper.toDto(payment);
   }
 
-  public async delete(request: GetOneDtoByIdRequestDto): Promise<void> {
+  public async delete(request: GetOneByIdRequestDto): Promise<void> {
     await this.execute({
-      classType: GetOneDtoByIdRequestDto,
+      classType: GetOneByIdRequestDto,
       request,
-      useCase: this._deletePayment,
+      useCase: this._delete,
     });
   }
 
   public async getGrid(
-    request: GetPaymentsGridRequest,
-  ): Promise<GetPaymentsGridResponse<PaymentGridDto>> {
-    const { items, totalCount } = await this.execute({
+    request: GetPaymentsGridRequestDto,
+  ): Promise<FindPaginatedResponse<PaymentGridDto>> {
+    return this.execute({
       classType: GetPaymentsGridRequestDto,
       request,
-      useCase: this._getPaymentsGrid,
+      useCase: this._getGrid,
     });
-
-    const dueIds = items
-      .map((item) => {
-        invariant(item.paymentDues);
-
-        return item.paymentDues.map((due) => due.dueId);
-      })
-      .flat();
-
-    const dues = await this.execute({
-      request: { ids: dueIds },
-      useCase: this._getDuesByIdsUseCase,
-    });
-
-    return {
-      items: items.map<PaymentGridDto>((payment) => {
-        invariant(payment.member);
-
-        invariant(payment.paymentDues);
-
-        return {
-          date: payment.date.toISOString(),
-          id: payment._id,
-          isDeleted: payment.isDeleted,
-          member: this._memberDtoMapper.toDto(payment.member),
-          memberId: payment.memberId,
-          paymentDues: payment.paymentDues.map((paymentDue) => {
-            const due = dues.find((d) => d._id === paymentDue.dueId);
-
-            invariant(due);
-
-            const paymentDueDto = this._paymentDueDtoMapper.toDto(paymentDue);
-
-            return {
-              ...paymentDueDto,
-              due: this._dueDtoMapper.toDto(due),
-            };
-          }),
-          paymentDuesCount: payment.paymentDues?.length ?? 0,
-          receiptNumber: payment.receiptNumber,
-          totalAmount: payment.getTotalAmountOfDues(),
-        };
-      }),
-      totalCount,
-    };
   }
 
-  public async getOne(request: GetPaymentRequest): Promise<PaymentDto | null> {
-    const payment = await this.execute({
-      classType: GetOneDtoByIdRequestDto,
+  public async getOne(
+    request: GetOneByIdRequestDto,
+  ): Promise<PaymentDto | null> {
+    return this.execute({
+      classType: GetOneByIdRequestDto,
       request,
-      useCase: this._getPayment,
+      useCase: this._getOne,
     });
-
-    if (!payment) {
-      return null;
-    }
-
-    invariant(payment.paymentDues);
-
-    const dueIds = payment.paymentDues
-      .map((paymentDue) => paymentDue.dueId)
-      .flat();
-
-    const dues = await this.execute({
-      request: { ids: dueIds },
-      useCase: this._getDuesByIdsUseCase,
-    });
-
-    const paymentDto = this._paymentDtoMapper.toDto(payment);
-
-    invariant(paymentDto.dues);
-
-    return {
-      ...paymentDto,
-      dues: paymentDto.dues.map((paymentDue) => {
-        const due = dues.find((d) => d._id === paymentDue.dueId);
-
-        invariant(due);
-
-        return {
-          ...paymentDue,
-          due: this._dueDtoMapper.toDto(due),
-        };
-      }),
-    };
   }
 }

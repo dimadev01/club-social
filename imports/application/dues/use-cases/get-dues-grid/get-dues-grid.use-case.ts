@@ -2,26 +2,35 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { GetDuesGridRequest } from '@application/dues/use-cases/get-dues-grid/get-dues-grid.request';
-import { GetDuesGridResponse } from '@application/dues/use-cases/get-dues-grid/get-dues-grid.response';
+import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
+import { DueDtoMapper } from '@application/dues/mappers/due-dto.mapper';
+import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { IUseCase } from '@domain/common/use-case.interface';
-import { IDueRepository } from '@domain/dues/due.repository';
+import {
+  FindPaginatedDuesRequest,
+  IDueRepository,
+} from '@domain/dues/due.repository';
 
 @injectable()
 export class GetDuesGridUseCase
-  implements IUseCase<GetDuesGridRequest, GetDuesGridResponse>
+  implements
+    IUseCase<FindPaginatedDuesRequest, FindPaginatedResponse<DueGridDto>>
 {
   public constructor(
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
+    private readonly _dueDtoMapper: DueDtoMapper,
   ) {}
 
   public async execute(
-    request: GetDuesGridRequest,
-  ): Promise<Result<GetDuesGridResponse, Error>> {
+    request: FindPaginatedDuesRequest,
+  ): Promise<Result<FindPaginatedResponse<DueGridDto>, Error>> {
     const { items, totalCount } =
       await this._dueRepository.findPaginated(request);
 
-    return ok({ items, totalCount });
+    return ok({
+      items: items.map<DueGridDto>((due) => this._dueDtoMapper.toDto(due)),
+      totalCount,
+    });
   }
 }

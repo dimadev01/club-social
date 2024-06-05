@@ -1,11 +1,5 @@
-import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
-import {
-  FindPaginatedMembersResponseTotals,
-  GetBalanceResponse,
-} from '@domain/members/member.repository';
-import { Member } from '@domain/members/models/member.model';
+import { MemberGridDto } from '@application/members/dtos/member-grid.dto';
+import { FindPaginatedMembersResponse } from '@domain/members/member.repository';
 
-export type GetMembersGridResponse<T = Member> = FindPaginatedResponse<T> & {
-  balances: GetBalanceResponse[];
-  totals: FindPaginatedMembersResponseTotals;
-};
+export type GetMembersGridResponse =
+  FindPaginatedMembersResponse<MemberGridDto>;

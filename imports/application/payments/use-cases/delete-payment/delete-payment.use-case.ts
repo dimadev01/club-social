@@ -2,11 +2,10 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { DeletePaymentRequest } from '@application/payments/use-cases/delete-payment/delete-payment.request';
-import { DeletePaymentResponse } from '@application/payments/use-cases/delete-payment/delete-payment.response';
 import { BaseError } from '@domain/common/errors/base.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { ILogger } from '@domain/common/logger/logger.interface';
+import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { DueStatusEnum } from '@domain/dues/due.enum';
@@ -15,9 +14,7 @@ import { IPaymentDueRepository } from '@domain/payments/payment-due.repository';
 import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
-export class DeletePaymentUseCase
-  implements IUseCase<DeletePaymentRequest, DeletePaymentResponse>
-{
+export class DeletePaymentUseCase implements IUseCase<FindOneById, null> {
   public constructor(
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
@@ -31,9 +28,7 @@ export class DeletePaymentUseCase
     private readonly _unitOfWork: IUnitOfWork,
   ) {}
 
-  public async execute(
-    request: DeletePaymentRequest,
-  ): Promise<Result<DeletePaymentResponse, Error>> {
+  public async execute(request: FindOneById): Promise<Result<null, Error>> {
     const paymentDues = await this._paymentDueRepository.findByPayment({
       paymentId: request.id,
     });

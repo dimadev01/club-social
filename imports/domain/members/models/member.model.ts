@@ -138,7 +138,7 @@ export class Member extends Model implements IMember {
     const result = Result.combine([
       member.setAddress(address.value),
       member.setCategory(props.category),
-      member.setDateOfBirth(props.birthDate),
+      member.setBirthDate(props.birthDate),
       member.setDocumentID(props.documentID),
       member.setFileStatus(props.fileStatus),
       member.setMaritalStatus(props.maritalStatus),
@@ -167,7 +167,7 @@ export class Member extends Model implements IMember {
     return ok(null);
   }
 
-  public setDateOfBirth(value: BirthDate | null): Result<null, Error> {
+  public setBirthDate(value: BirthDate | null): Result<null, Error> {
     this._birthDate = value;
 
     return ok(null);

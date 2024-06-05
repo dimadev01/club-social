@@ -1,13 +1,11 @@
-import { Checkbox, Form, Input, Table, Tooltip } from 'antd';
+import { Checkbox, Form, Input, Table } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { AppUrl } from '@ui/app.enum';
 import { FormInputAmount } from '@ui/components/Form/FormInputAmount';
 
 type Props = {
@@ -109,11 +107,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
                 <Checkbox />
               </Form.Item>
 
-              <Tooltip title="Ver cobro">
-                <Link to={`${AppUrl.Dues}/${due.id}`}>
-                  {new DateUtcVo(date).format()}
-                </Link>
-              </Tooltip>
+              {new DateUtcVo(date).format()}
             </>
           );
         }}

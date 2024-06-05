@@ -30,10 +30,7 @@ import { MembersSelect } from '@ui/components/Members/MembersSelect';
 import { Select } from '@ui/components/Select';
 import { useCreateDue } from '@ui/hooks/dues/useCreateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import {
-  useNotificationError,
-  useNotificationSuccess,
-} from '@ui/hooks/useNotification';
+import { useNotificationSuccess } from '@ui/hooks/useNotification';
 
 type FormValues = {
   amount: number;
@@ -44,8 +41,6 @@ type FormValues = {
 };
 
 export const DuesNewPage = () => {
-  const notificationError = useNotificationError();
-
   const notificationSuccess = useNotificationSuccess();
 
   /**
@@ -271,10 +266,8 @@ export const DuesNewPage = () => {
             rules={[{ min: 1, required: true, type: 'array' }]}
           >
             <MembersSelect
-              select={{
-                dropdownRender: renderMemberDropdown,
-                mode: 'multiple',
-              }}
+              dropdownRender={renderMemberDropdown}
+              mode="multiple"
             />
           </Form.Item>
 

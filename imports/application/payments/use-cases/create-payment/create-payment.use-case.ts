@@ -1,10 +1,11 @@
-import { Result, err, ok } from 'neverthrow';
+import { Result, err } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { PaymentDto } from '@application/payments/dtos/payment.dto';
 import { CreatePaymentRequest } from '@application/payments/use-cases/create-payment/create-payment.request';
-import { CreatePaymentResponse } from '@application/payments/use-cases/create-payment/create-payment.response';
+import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment/get-payment.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
@@ -20,7 +21,7 @@ import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
 export class CreatePaymentUseCase
-  implements IUseCase<CreatePaymentRequest, CreatePaymentResponse>
+  implements IUseCase<CreatePaymentRequest, PaymentDto>
 {
   public constructor(
     @inject(DIToken.IUnitOfWork)
@@ -31,11 +32,12 @@ export class CreatePaymentUseCase
     private readonly _paymentDueRepository: IPaymentDueRepository,
     @inject(DIToken.IDueRepository)
     private readonly _duePort: IDueRepository,
+    private readonly _getPaymentUseCase: GetPaymentUseCase,
   ) {}
 
   public async execute(
     request: CreatePaymentRequest,
-  ): Promise<Result<CreatePaymentResponse, Error>> {
+  ): Promise<Result<PaymentDto, Error>> {
     const existingPaymentByReceipt =
       await this._paymentRepository.findOneByReceipt(request.receiptNumber);
 
@@ -50,7 +52,7 @@ export class CreatePaymentUseCase
     try {
       this._unitOfWork.start();
 
-      let newPayment: Payment | undefined;
+      let newPaymentId: string | undefined;
 
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
         const dues = await this._duePort.findByIds({
@@ -74,7 +76,7 @@ export class CreatePaymentUseCase
           throw newPaymentResult.error;
         }
 
-        newPayment = newPaymentResult.value;
+        newPaymentId = newPaymentResult.value._id;
 
         await Promise.all(
           dues.map(async (due) => {
@@ -113,9 +115,9 @@ export class CreatePaymentUseCase
         );
       });
 
-      invariant(newPayment);
+      invariant(newPaymentId);
 
-      return ok(newPayment);
+      return await this._getPaymentUseCase.execute({ id: newPaymentId });
     } catch (error) {
       if (error instanceof Error) {
         return err(error);

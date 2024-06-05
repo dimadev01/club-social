@@ -1,8 +1,8 @@
 import { injectable } from 'tsyringe';
 
 import { MapperDto } from '@adapters/common/mapper/dto-mapper';
-import { MemberDtoMapper } from '@adapters/mappers/member-dto.mapper';
 import { DueDto } from '@application/dues/dtos/due.dto';
+import { MemberDtoMapper } from '@application/members/mappers/member-dto.mapper';
 import { Due } from '@domain/dues/models/due.model';
 
 @injectable()

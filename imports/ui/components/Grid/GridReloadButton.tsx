@@ -8,17 +8,15 @@ type Props = {
   refetch: () => void;
 };
 
-export const GridReloadButton: React.FC<Props> = ({
-  refetch,
-  isRefetching,
-}) => (
-  <Button
-    onClick={() => refetch()}
-    loading={isRefetching}
-    disabled={isRefetching}
-    tooltip={{ title: 'Recargar' }}
-    htmlType="button"
-    type="text"
-    icon={<ReloadOutlined />}
-  />
-);
+export const GridReloadButton: React.FC<Props> = ({ refetch, isRefetching }) =>
+  Meteor.isDevelopment && (
+    <Button
+      onClick={() => refetch()}
+      loading={isRefetching}
+      disabled={isRefetching}
+      tooltip={{ title: 'Recargar' }}
+      htmlType="button"
+      type="text"
+      icon={<ReloadOutlined />}
+    />
+  );

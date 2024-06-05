@@ -1,11 +1,11 @@
 import { ArrayMinSize, IsArray, IsOptional, IsString } from 'class-validator';
 
 import { GetGridRequestDto } from '@adapters/common/dtos/get-grid-request.dto';
-import { GetPaymentsGridRequest } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.request';
+import { FindPaginatedPaymentsRequest } from '@domain/payments/payment.repository';
 
 export class GetPaymentsGridRequestDto
   extends GetGridRequestDto
-  implements GetPaymentsGridRequest
+  implements FindPaginatedPaymentsRequest
 {
   @IsString({ each: true })
   @ArrayMinSize(1)

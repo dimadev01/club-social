@@ -1,10 +1,11 @@
-import { Result, err, ok } from 'neverthrow';
+import { Result, err } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { MemberDto } from '@application/members/dtos/member.dto';
 import { CreateMemberRequest } from '@application/members/use-cases/create-member/create-member.request';
-import { CreateMemberResponse } from '@application/members/use-cases/create-member/create-member.response';
+import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
 import { CreateUserUseCase } from '@application/users/use-cases/create-user/create-user.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
@@ -17,19 +18,20 @@ import { RoleEnum } from '@domain/roles/role.enum';
 
 @injectable()
 export class CreateMemberUseCase
-  implements IUseCase<CreateMemberRequest, CreateMemberResponse>
+  implements IUseCase<CreateMemberRequest, MemberDto>
 {
   public constructor(
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork,
     @inject(DIToken.IMemberRepository)
     private readonly _memberRepository: IMemberRepository,
+    private readonly _getMemberUseCase: GetMemberUseCase,
     private readonly _createUserUseCase: CreateUserUseCase,
   ) {}
 
   public async execute(
     request: CreateMemberRequest,
-  ): Promise<Result<CreateMemberResponse, Error>> {
+  ): Promise<Result<MemberDto, Error>> {
     if (request.documentID) {
       const existingMemberByDocument =
         await this._memberRepository.findByDocument(request.documentID);
@@ -42,7 +44,7 @@ export class CreateMemberUseCase
     try {
       this._unitOfWork.start();
 
-      let newMember: Member | undefined;
+      let newMemberId: string | undefined;
 
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
         const userResult = await this._createUserUseCase.execute({
@@ -88,12 +90,12 @@ export class CreateMemberUseCase
           unitOfWork,
         );
 
-        newMember = member.value;
+        newMemberId = member.value._id;
       });
 
-      invariant(newMember);
+      invariant(newMemberId);
 
-      return ok(newMember);
+      return await this._getMemberUseCase.execute({ id: newMemberId });
     } catch (error) {
       if (error instanceof Error) {
         return err(error);

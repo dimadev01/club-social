@@ -7,15 +7,15 @@ import {
 } from 'class-validator';
 
 import { GetGridRequestDto } from '@adapters/common/dtos/get-grid-request.dto';
-import { GetMembersGridRequest } from '@application/members/use-cases/ger-members-grid/get-members-grid.request';
 import {
   MemberCategoryEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
+import { FindPaginatedMembersRequest } from '@domain/members/member.repository';
 
 export class GetMembersGridRequestDto
   extends GetGridRequestDto
-  implements GetMembersGridRequest
+  implements FindPaginatedMembersRequest
 {
   @IsEnum(MemberCategoryEnum, { each: true })
   @ArrayMinSize(1)

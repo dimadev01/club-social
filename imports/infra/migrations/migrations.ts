@@ -6,6 +6,7 @@ import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 import { DueCollection } from '@infra/mongo/collections/due.collection';
+import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
 import { PaymentDueCollection } from '@infra/mongo/collections/payment-due.collection';
 import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
 import { DateUtils } from '@shared/utils/date.utils';
@@ -126,8 +127,9 @@ Migrations.add({
     /**
      * Dues
      */
-    const dues = await container
-      .resolve(DueCollection)
+    const dueCollection = container.resolve(DueCollection);
+
+    const dues = await dueCollection
       .rawCollection()
       // @ts-expect-error
       .find({ memberId: null })
@@ -135,10 +137,8 @@ Migrations.add({
 
     await Promise.all(
       dues.map(async (oldDue: any) => {
-        await container.resolve(DueCollection).updateAsync(oldDue._id, {
-          $set: {
-            memberId: oldDue.member._id,
-          },
+        await dueCollection.updateAsync(oldDue._id, {
+          $set: { memberId: oldDue.member._id },
           $unset: {
             member: 1,
             payments: 1,
@@ -150,8 +150,11 @@ Migrations.add({
     /**
      * Payments
      */
-    const payments: any = await container
-      .resolve(PaymentCollection)
+    const paymentsCollection = container.resolve(PaymentCollection);
+
+    const paymentsDuesCollection = container.resolve(PaymentDueCollection);
+
+    const payments: any = await paymentsCollection
       .rawCollection()
       // @ts-expect-error
       .find({ memberId: null })
@@ -181,13 +184,11 @@ Migrations.add({
 
             newPaymentDue.deletedBy = oldPayment.deletedBy;
 
-            await container
-              .resolve(PaymentDueCollection)
-              .insertAsync(newPaymentDue);
+            await paymentsDuesCollection.insertAsync(newPaymentDue);
           }),
         );
 
-        await container.resolve(PaymentCollection).updateAsync(oldPayment._id, {
+        await paymentsCollection.updateAsync(oldPayment._id, {
           $set: {
             memberId: oldPayment.member._id,
           },
@@ -289,6 +290,10 @@ Migrations.add({
       .resolve(DueCollection)
       .rawCollection()
       .createIndex({ memberId: 1 }, { name: 'd_mi' });
+
+    container
+      .resolve(MemberMongoCollection)
+      .update({}, { $unset: { user: 1 } }, { multi: true });
 
     next();
   }),
