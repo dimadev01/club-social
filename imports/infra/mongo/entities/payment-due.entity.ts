@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -6,6 +7,7 @@ import {
   IsString,
 } from 'class-validator';
 
+import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
 import { Entity } from '@infra/mongo/common/entities/entity';
 
 export class PaymentDueEntity extends Entity {
@@ -22,6 +24,9 @@ export class PaymentDueEntity extends Entity {
   @IsString()
   public paymentId: string;
 
+  @IsEnum(PaymentDueSourceEnum)
+  public source: PaymentDueSourceEnum;
+
   public constructor(props: PaymentDueEntity) {
     super(props);
 
@@ -30,5 +35,7 @@ export class PaymentDueEntity extends Entity {
     this.dueId = props.dueId;
 
     this.paymentId = props.paymentId;
+
+    this.source = props.source;
   }
 }

@@ -120,3 +120,8 @@ export const getMemberFileStatusFilters = () =>
     text: MemberFileStatusLabel[value],
     value,
   }));
+
+export enum MemberCreditTypeEnum {
+  CREDIT = 'credit',
+  DEBIT = 'debit',
+}

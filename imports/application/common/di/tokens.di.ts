@@ -1,5 +1,6 @@
 export const DIToken = Object.freeze({
   IDueRepository: Symbol('IDueRepository'),
+  IMemberCreditRepository: Symbol('IMemberCreditRepository'),
   IMemberRepository: Symbol('IMemberRepository'),
   IMeteorUsers: Symbol('IMeteorUsers'),
   IPaymentDueRepository: Symbol('IPaymentDueRepository'),

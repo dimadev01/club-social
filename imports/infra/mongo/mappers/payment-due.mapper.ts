@@ -18,6 +18,7 @@ export class PaymentDueMapper extends Mapper<PaymentDue, PaymentDueEntity> {
       dueId: orm.dueId,
       isDeleted: orm.isDeleted,
       paymentId: orm.paymentId,
+      source: orm.source,
       updatedAt: orm.updatedAt,
       updatedBy: orm.updatedBy,
     });
@@ -34,6 +35,7 @@ export class PaymentDueMapper extends Mapper<PaymentDue, PaymentDueEntity> {
       dueId: model.dueId,
       isDeleted: model.isDeleted,
       paymentId: model.paymentId,
+      source: model.source,
       updatedAt: model.updatedAt,
       updatedBy: model.updatedBy,
     });

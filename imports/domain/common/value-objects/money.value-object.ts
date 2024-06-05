@@ -2,6 +2,7 @@ import { ARS as dineroARS, USD as dineroUSD } from '@dinero.js/currencies';
 import {
   Dinero,
   dinero,
+  greaterThan,
   greaterThanOrEqual,
   subtract,
   toDecimal,
@@ -89,6 +90,10 @@ export class Money extends ValueObject<InternalMoneyProps> {
 
   public isGreaterThanOrEqual(value: Money) {
     return greaterThanOrEqual(this.props.dinero, value.props.dinero);
+  }
+
+  public isGreaterThan(value: Money) {
+    return greaterThan(this.props.dinero, value.props.dinero);
   }
 
   public subtract(value: Money): Money {

@@ -2,6 +2,11 @@ export enum PaymentStatusEnum {
   PAID = 'paid',
 }
 
+export enum PaymentDueSourceEnum {
+  CREDIT = 'credit',
+  DIRECT = 'direct',
+}
+
 export const PaymentStatusLabel = {
   [PaymentStatusEnum.PAID]: 'Pagado',
 };

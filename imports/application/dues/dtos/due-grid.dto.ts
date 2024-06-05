@@ -1,5 +1,4 @@
 import { MemberDto } from '@application/members/dtos/member.dto';
-import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 
 export interface DueGridDto {
@@ -7,8 +6,8 @@ export interface DueGridDto {
   category: DueCategoryEnum;
   date: string;
   id: string;
-  member?: MemberDto;
+  member: MemberDto;
   memberId: string;
-  payments?: PaymentDueDto[];
+  pendingAmount: number;
   status: DueStatusEnum;
 }

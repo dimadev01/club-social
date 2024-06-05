@@ -1,5 +1,4 @@
 import { Result, err, ok } from 'neverthrow';
-import invariant from 'tiny-invariant';
 
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
@@ -110,12 +109,13 @@ export class Due extends Model implements IDue {
   }
 
   public getPendingAmount(): Money {
-    invariant(this._paymentDues);
+    // invariant(this._paymentDues);
 
-    const paidAmount = this._paymentDues.reduce(
-      (acc, paymentDue) => acc + paymentDue.amount.value,
-      0,
-    );
+    const paidAmount =
+      this._paymentDues?.reduce(
+        (acc, paymentDue) => acc + paymentDue.amount.value,
+        0,
+      ) ?? 0;
 
     return this._amount.subtract(new Money({ amount: paidAmount }));
   }
@@ -137,8 +137,6 @@ export class Due extends Model implements IDue {
   }
 
   public pay(amount: Money): Result<null, Error> {
-    this._status = DueStatusEnum.PAID;
-
     if (amount.isGreaterThanOrEqual(this.amount)) {
       this._status = DueStatusEnum.PAID;
     } else {

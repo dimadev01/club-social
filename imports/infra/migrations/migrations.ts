@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { container } from 'tsyringe';
 
 import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 import { DueCollection } from '@infra/mongo/collections/due.collection';
@@ -168,6 +169,7 @@ Migrations.add({
               amount: oldPaymentDue.amount,
               dueId: oldPaymentDue.due._id,
               paymentId: oldPayment._id,
+              source: PaymentDueSourceEnum.DIRECT,
             };
 
             newPaymentDue.isDeleted = oldPayment.isDeleted;

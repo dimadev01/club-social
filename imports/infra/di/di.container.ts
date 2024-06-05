@@ -6,6 +6,7 @@ import { MovementFindPaginatedRepository } from '@infra/mongo/old/movements/move
 import { MovementRepository } from '@infra/mongo/old/movements/movement.repository';
 import { MongoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-work';
 import { DueMongoRepository } from '@infra/mongo/repositories/due-mongo.repository';
+import { MemberCreditMongoRepository } from '@infra/mongo/repositories/member-credit-mongo.repository';
 import { MemberMongoRepository } from '@infra/mongo/repositories/member-mongo.repository';
 import { PaymentDueMongoRepository } from '@infra/mongo/repositories/payment-due-mongo.repository';
 import { PaymentMongoRepository } from '@infra/mongo/repositories/payment-mongo.repository';
@@ -29,6 +30,11 @@ container.register(DIToken.IUnitOfWork, MongoUnitOfWork);
 container.register(DIToken.IDueRepository, DueMongoRepository);
 
 container.register(DIToken.IMemberRepository, MemberMongoRepository);
+
+container.register(
+  DIToken.IMemberCreditRepository,
+  MemberCreditMongoRepository,
+);
 
 container.register(DIToken.IPaymentRepository, PaymentMongoRepository);
 

@@ -41,7 +41,7 @@ export const DuesPage = () => {
   } = useTable<DueGridDto>({
     defaultFilters: {
       memberId: [],
-      status: [DueStatusEnum.PENDING],
+      status: [DueStatusEnum.PENDING, DueStatusEnum.PARTIALLY_PAID],
     },
     defaultSorter: { date: 'descend' },
   });

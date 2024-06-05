@@ -1,7 +1,9 @@
 import { IModel } from '@domain/common/models/model.interface';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
+import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   MemberCategoryEnum,
+  MemberCreditTypeEnum,
   MemberFileStatusEnum,
   MemberMaritalStatusEnum,
   MemberNationalityEnum,
@@ -52,4 +54,18 @@ export interface CreateMemberAddress {
   stateName: string | null;
   street: string | null;
   zipCode: string | null;
+}
+
+export interface IMemberCredit extends IModel {
+  amount: Money;
+  memberId: string;
+  paymentDueId: string;
+  type: MemberCreditTypeEnum;
+}
+
+export interface CreateMemberCredit {
+  amount: Money;
+  memberId: string;
+  paymentDueId: string;
+  type: MemberCreditTypeEnum;
 }

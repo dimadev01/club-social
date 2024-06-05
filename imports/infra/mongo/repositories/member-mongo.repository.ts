@@ -142,14 +142,10 @@ export class MemberMongoRepository
       },
     );
 
-    console.log(pipeline);
-
     const [{ entities, totalCount, totals }] = await this.collection
       .rawCollection()
       .aggregate<FindPaginatedMembersAggregationResult>(pipeline)
       .toArray();
-
-    console.log('🚀 ~ entities:', entities);
 
     return {
       items: entities.map<PaginatedMember>((entity) => ({

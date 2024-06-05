@@ -1,19 +1,21 @@
 import { Result, err, ok } from 'neverthrow';
 
 import { Model } from '@domain/common/models/model';
-import { IModel } from '@domain/common/models/model.interface';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
 import {
   CreatePaymentDue,
   IPaymentDue,
 } from '@domain/payments/payment.interface';
 
-export class PaymentDue extends Model implements IModel {
+export class PaymentDue extends Model implements IPaymentDue {
   private _amount: Money;
 
   private _dueId: string;
 
   private _paymentId: string;
+
+  private _source: PaymentDueSourceEnum;
 
   public constructor(props?: IPaymentDue) {
     super(props);
@@ -23,6 +25,8 @@ export class PaymentDue extends Model implements IModel {
     this._dueId = props?.dueId ?? '';
 
     this._paymentId = props?.paymentId ?? '';
+
+    this._source = props?.source ?? PaymentDueSourceEnum.DIRECT;
   }
 
   public get amount(): Money {
@@ -37,6 +41,16 @@ export class PaymentDue extends Model implements IModel {
     return this._paymentId;
   }
 
+  public get source(): PaymentDueSourceEnum {
+    return this._source;
+  }
+
+  public setSource(value: PaymentDueSourceEnum): Result<null, Error> {
+    this._source = value;
+
+    return ok(null);
+  }
+
   public static createOne(props: CreatePaymentDue): Result<PaymentDue, Error> {
     const paymentDue = new PaymentDue();
 
@@ -44,6 +58,7 @@ export class PaymentDue extends Model implements IModel {
       paymentDue.setAmount(props.amount),
       paymentDue.setDueId(props.dueId),
       paymentDue.setPaymentId(props.paymentId),
+      paymentDue.setSource(props.source),
     ]);
 
     if (result.isErr()) {
