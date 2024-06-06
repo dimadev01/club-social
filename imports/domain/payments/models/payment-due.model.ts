@@ -45,12 +45,6 @@ export class PaymentDue extends Model implements IPaymentDue {
     return this._source;
   }
 
-  public setSource(value: PaymentDueSourceEnum): Result<null, Error> {
-    this._source = value;
-
-    return ok(null);
-  }
-
   public static createOne(props: CreatePaymentDue): Result<PaymentDue, Error> {
     const paymentDue = new PaymentDue();
 
@@ -68,20 +62,26 @@ export class PaymentDue extends Model implements IPaymentDue {
     return ok(paymentDue);
   }
 
-  public setAmount(value: Money): Result<null, Error> {
+  private setAmount(value: Money): Result<null, Error> {
     this._amount = value;
 
     return ok(null);
   }
 
-  public setDueId(value: string): Result<null, Error> {
+  private setDueId(value: string): Result<null, Error> {
     this._dueId = value;
 
     return ok(null);
   }
 
-  public setPaymentId(value: string): Result<null, Error> {
+  private setPaymentId(value: string): Result<null, Error> {
     this._paymentId = value;
+
+    return ok(null);
+  }
+
+  private setSource(value: PaymentDueSourceEnum): Result<null, Error> {
+    this._source = value;
 
     return ok(null);
   }

@@ -257,19 +257,6 @@ export const PaymentNewPage = () => {
                 name="memberId"
               >
                 <MembersSelect />
-                {/* <Space.Compact className="flex">
-                  <Button
-                    icon={<PlusOutlined />}
-                    onClick={() =>
-                      navigate(
-                        UrlUtils.navigate(AppUrl.DuesNew, {
-                          memberIds: [formMemberId],
-                        }),
-                      )
-                    }
-                    tooltip={{ title: 'Agregar cobro' }}
-                  />
-                </Space.Compact> */}
               </Form.Item>
             </Col>
           </Row>

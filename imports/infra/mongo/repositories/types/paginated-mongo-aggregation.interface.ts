@@ -1,4 +1,4 @@
-export interface PaginatedMongoAggregationResult<TEntity> {
-  entities: TEntity[];
+export interface PaginatedMongoAggregationResult<T> {
+  entities: T[];
   totalCount: number;
 }

@@ -80,6 +80,7 @@ export const App = () => {
             },
           },
           token: {
+            borderRadius: 0,
             colorPrimary: '#22883e',
             fontFamily: 'Rubik',
           },

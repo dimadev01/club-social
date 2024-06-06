@@ -72,12 +72,6 @@ export class DueMongoRepository
       });
     }
 
-    if (request.fetchPaymentDues) {
-      due.paymentDues = await this._paymentDueRepository.findByDue({
-        dueId: due._id,
-      });
-    }
-
     return due;
   }
 
@@ -97,28 +91,18 @@ export class DueMongoRepository
     const pipeline: Document[] = [];
 
     const $match: Document = {
-      $expr: {
-        $and: [
-          {
-            $eq: ['$isDeleted', false],
-          },
-        ],
-      },
+      isDeleted: false,
     };
 
-    pipeline.push({ $match });
-
     if (request.filterByMember.length > 0) {
-      $match.$expr.$and.push({
-        $in: ['$memberId', request.filterByMember],
-      });
+      $match.memberId = { $in: request.filterByMember };
     }
 
     if (request.filterByStatus.length > 0) {
-      $match.$expr.$and.push({
-        $in: ['$status', request.filterByStatus],
-      });
+      $match.status = { $in: request.filterByStatus };
     }
+
+    pipeline.push({ $match });
 
     const entitiesPipeline: Document[] = [
       ...this.getPaginatedPipeline(request),

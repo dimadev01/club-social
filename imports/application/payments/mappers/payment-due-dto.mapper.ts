@@ -1,7 +1,7 @@
 import { injectable } from 'tsyringe';
 
 import { MapperDto } from '@adapters/common/mapper/dto-mapper';
-import { PaymentDueDto } from '@application/payments/dtos/payment.dto';
+import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
 import { PaymentDue } from '@domain/payments/models/payment-due.model';
 
 @injectable()

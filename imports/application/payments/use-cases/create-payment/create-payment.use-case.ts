@@ -17,9 +17,7 @@ import { MemberCreditTypeEnum } from '@domain/members/member.enum';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
 import { DuePaidError } from '@domain/payments/errors/due-paid.error';
 import { ExistingPaymentError } from '@domain/payments/errors/existing-payment.error';
-import { PaymentDue } from '@domain/payments/models/payment-due.model';
 import { Payment } from '@domain/payments/models/payment.model';
-import { IPaymentDueRepository } from '@domain/payments/payment-due.repository';
 import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
 import { IPaymentRepository } from '@domain/payments/payment.repository';
 
@@ -32,8 +30,6 @@ export class CreatePaymentUseCase
     private readonly _unitOfWork: IUnitOfWork,
     @inject(DIToken.IPaymentRepository)
     private readonly _paymentRepository: IPaymentRepository,
-    @inject(DIToken.IPaymentDueRepository)
-    private readonly _paymentDueRepository: IPaymentDueRepository,
     @inject(DIToken.IDueRepository)
     private readonly _duePort: IDueRepository,
     @inject(DIToken.IMemberCreditRepository)
@@ -85,25 +81,30 @@ export class CreatePaymentUseCase
         newPaymentId = newPayment.value._id;
 
         await Promise.all(
-          dues.map(async (due) => {
-            const requestDue = request.dues.find((d) => d.dueId === due._id);
+          request.dues.map(async (requestDue) => {
+            const due = dues.find((d) => d._id === requestDue.dueId);
 
-            invariant(requestDue);
+            invariant(due);
 
             const amountToPay = new Money({ amount: requestDue.amount });
 
-            const result = due.pay(amountToPay);
+            const addPaymentResult = due.addPayment({
+              amount: amountToPay,
+              date: new DateUtcVo(request.date),
+              paymentId: newPayment.value._id,
+              receiptNumber: request.receiptNumber,
+            });
 
-            if (result.isErr()) {
-              throw result.error;
+            if (addPaymentResult.isErr()) {
+              throw addPaymentResult.error;
             }
 
-            await this._duePort.updateWithSession(due, unitOfWork);
-
-            const newPaymentDue = PaymentDue.createOne({
+            const newPaymentDue = newPayment.value.addDue({
               amount: amountToPay,
+              dueAmount: due.amount,
+              dueCategory: due.category,
+              dueDate: due.date,
               dueId: due._id,
-              paymentId: newPayment.value._id,
               source: PaymentDueSourceEnum.DIRECT,
             });
 
@@ -115,7 +116,7 @@ export class CreatePaymentUseCase
               const memberCredit = MemberCredit.createOne({
                 amount: newPaymentDue.value.amount.subtract(due.amount),
                 memberId: newPayment.value.memberId,
-                paymentDueId: newPaymentDue.value._id,
+                paymentDueId: newPaymentDue.value.dueId,
                 type: MemberCreditTypeEnum.CREDIT,
               });
 
@@ -129,10 +130,7 @@ export class CreatePaymentUseCase
               );
             }
 
-            await this._paymentDueRepository.insertWithSession(
-              newPaymentDue.value,
-              unitOfWork,
-            );
+            await this._duePort.updateWithSession(due, unitOfWork);
           }),
         );
 

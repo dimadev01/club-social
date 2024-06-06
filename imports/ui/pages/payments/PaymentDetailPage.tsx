@@ -1,16 +1,16 @@
-import { Breadcrumb, Card, Descriptions, Flex, Table } from 'antd';
+import { Breadcrumb, Card, Descriptions, Divider, Flex, Space } from 'antd';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
-import { Money } from '@domain/common/value-objects/money.value-object';
-import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
+import { FormVoidButton } from '@ui/components/Form/FormVoidButton';
 import { NotFound } from '@ui/components/NotFound';
+import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
 import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { usePayment } from '@ui/hooks/payments/usePayment';
 import { useNavigate } from '@ui/hooks/useNavigate';
@@ -39,9 +39,6 @@ export const PaymentDetailPage = () => {
 
   invariant(payment.member);
 
-  /**
-   * Component
-   */
   return (
     <>
       <Breadcrumb
@@ -57,7 +54,6 @@ export const PaymentDetailPage = () => {
 
       <Card
         title={`Pago a ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`}
-        extra={`Recibo #${payment.receiptNumber}`}
       >
         <>
           <Descriptions column={1} layout="vertical" colon={false}>
@@ -73,71 +69,47 @@ export const PaymentDetailPage = () => {
               {payment.receiptNumber}
             </Descriptions.Item>
 
-            <Descriptions.Item label="Detalle del pago">
-              <Table
-                dataSource={payment.dues}
-                pagination={false}
-                size="small"
-                bordered
-                rowKey="dueId"
-                columns={[
-                  {
-                    dataIndex: ['due', 'date'],
-                    render: (date: string) => new DateUtcVo(date).format(),
-                    title: 'Fecha',
-                  },
-                  {
-                    dataIndex: ['due', 'category'],
-                    render: (category: DueCategoryEnum, paymentDue) => {
-                      invariant(paymentDue.due);
-
-                      if (category === DueCategoryEnum.MEMBERSHIP) {
-                        return `${DueCategoryLabel[category]} (${new DateUtcVo(paymentDue.due.date).monthName()})`;
-                      }
-
-                      return DueCategoryLabel[category];
-                    },
-                    title: 'Categoría',
-                  },
-                  {
-                    align: 'right',
-                    dataIndex: ['due', 'amount'],
-                    render: (amount: number) =>
-                      new Money({ amount }).formatWithCurrency(),
-                    title: 'Monto deudor',
-                  },
-                  {
-                    align: 'right',
-                    dataIndex: ['amount'],
-                    render: (amount: number) =>
-                      new Money({ amount }).formatWithCurrency(),
-                    title: 'Monto registrado',
-                  },
-                ]}
-              />
-            </Descriptions.Item>
-
             <Descriptions.Item label="Notas">{payment.notes}</Descriptions.Item>
           </Descriptions>
 
+          <PaymentDuesGrid dues={payment.dues} />
+
+          <Divider />
+
           <Flex justify="space-between">
             <FormBackButton />
+            <Space.Compact>
+              <FormVoidButton
+                scope={ScopeEnum.PAYMENTS}
+                onClick={() => {
+                  deletePayment.mutate(
+                    { id: payment.id },
+                    {
+                      onSuccess: () => {
+                        notificationSuccess('Pago anulado');
 
-            <FormDeleteButton
-              scope={ScopeEnum.PAYMENTS}
-              onClick={() => {
-                deletePayment.mutate(
-                  { id: payment.id },
-                  {
-                    onSuccess: () => {
-                      notificationSuccess('Pago eliminado');
-
-                      navigate(AppUrl.Payments);
+                        navigate(AppUrl.Payments);
+                      },
                     },
-                  },
-                );
-              }}
-            />
+                  );
+                }}
+              />
+              <FormDeleteButton
+                scope={ScopeEnum.PAYMENTS}
+                onClick={() => {
+                  deletePayment.mutate(
+                    { id: payment.id },
+                    {
+                      onSuccess: () => {
+                        notificationSuccess('Pago eliminado');
+
+                        navigate(AppUrl.Payments);
+                      },
+                    },
+                  );
+                }}
+              />
+            </Space.Compact>{' '}
           </Flex>
         </>
       </Card>

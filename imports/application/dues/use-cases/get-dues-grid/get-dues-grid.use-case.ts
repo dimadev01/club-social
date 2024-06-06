@@ -4,8 +4,8 @@ import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
+import { DuePaymentDto } from '@application/dues/dtos/due-payment.dto';
 import { MemberDtoMapper } from '@application/members/mappers/member-dto.mapper';
-import { PaymentDueDtoMapper } from '@application/payments/mappers/payment-due-dto.mapper';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { IUseCase } from '@domain/common/use-case.interface';
 import {
@@ -22,7 +22,6 @@ export class GetDuesGridUseCase
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
     private readonly _memberDtoMapper: MemberDtoMapper,
-    private readonly _paymentDueDtoMapper: PaymentDueDtoMapper,
   ) {}
 
   public async execute(
@@ -30,8 +29,6 @@ export class GetDuesGridUseCase
   ): Promise<Result<FindPaginatedResponse<DueGridDto>, Error>> {
     const { items, totalCount } =
       await this._dueRepository.findPaginated(request);
-
-    console.log(items);
 
     return ok({
       items: items.map<DueGridDto>((due) => {
@@ -44,7 +41,12 @@ export class GetDuesGridUseCase
           id: due._id,
           member: this._memberDtoMapper.toDto(due.member),
           memberId: due.memberId,
-          pendingAmount: due.getPendingAmount().value,
+          payments: due.payments.map<DuePaymentDto>((duePayment) => ({
+            amount: duePayment.amount.value,
+            date: duePayment.date.toISOString(),
+            receiptNumber: duePayment.receiptNumber,
+          })),
+          pendingAmount: due.balanceAmount.value,
           status: due.status,
         };
       }),

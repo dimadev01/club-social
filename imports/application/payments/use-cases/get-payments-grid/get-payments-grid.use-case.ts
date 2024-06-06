@@ -4,8 +4,8 @@ import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { MemberDtoMapper } from '@application/members/mappers/member-dto.mapper';
+import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
-import { PaymentDueDtoMapper } from '@application/payments/mappers/payment-due-dto.mapper';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { IUseCase } from '@domain/common/use-case.interface';
 import {
@@ -25,7 +25,6 @@ export class GetPaymentsGridUseCase
     @inject(DIToken.IPaymentRepository)
     private readonly _paymentRepository: IPaymentRepository,
     private readonly _memberDtoMapper: MemberDtoMapper,
-    private readonly _paymentDueDtoMapper: PaymentDueDtoMapper,
   ) {}
 
   public async execute(
@@ -37,19 +36,21 @@ export class GetPaymentsGridUseCase
     const dtos = items.map<PaymentGridDto>((payment) => {
       invariant(payment.member);
 
-      invariant(payment.paymentDues);
-
       return {
+        amount: payment.amount.value,
         date: payment.date.toISOString(),
+        dues: payment.dues.map<PaymentDueDto>((paymentDue) => ({
+          amount: paymentDue.amount.value,
+          dueAmount: paymentDue.dueAmount.value,
+          dueCategory: paymentDue.dueCategory,
+          dueDate: paymentDue.dueDate.toISOString(),
+          dueId: paymentDue.dueId,
+        })),
+        duesCount: payment.dues.length,
         id: payment._id,
         member: this._memberDtoMapper.toDto(payment.member),
         memberId: payment.memberId,
-        paymentDues: payment.paymentDues.map((pd) =>
-          this._paymentDueDtoMapper.toDto(pd),
-        ),
-        paymentDuesCount: payment.paymentDues?.length,
         receiptNumber: payment.receiptNumber,
-        totalAmount: payment.getTotalAmountOfDues(),
       };
     });
 

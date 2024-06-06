@@ -1,4 +1,4 @@
-import { Breadcrumb, Card, Descriptions, Flex, Space } from 'antd';
+import { Breadcrumb, Card, Descriptions, Divider, Flex, Space } from 'antd';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
@@ -8,6 +8,7 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueStatusLabel } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
+import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
 import { NotFound } from '@ui/components/NotFound';
@@ -76,6 +77,10 @@ export const DueDetailPage = () => {
 
             <Descriptions.Item label="Notas">{due.notes}</Descriptions.Item>
           </Descriptions>
+
+          <DuePaymentsGrid payments={due.payments} />
+
+          <Divider />
 
           <Flex justify="space-between">
             <FormBackButton />

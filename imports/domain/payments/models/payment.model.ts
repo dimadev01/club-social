@@ -1,17 +1,23 @@
 import { Result, err, ok } from 'neverthrow';
-import invariant from 'tiny-invariant';
 
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { Money } from '@domain/common/value-objects/money.value-object';
 import { Member } from '@domain/members/models/member.model';
-import { PaymentDue } from '@domain/payments/models/payment-due.model';
+import { PaymentDueNew } from '@domain/payments/models/payment-due.model-2';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
-import { CreatePayment, IPayment } from '@domain/payments/payment.interface';
+import {
+  CreatePayment,
+  CreatePaymentDueNew,
+  IPayment,
+} from '@domain/payments/payment.interface';
 
 export class Payment extends Model implements IPayment {
+  private _amount: Money;
+
   private _date: DateUtcVo;
 
-  private _paymentDues: PaymentDue[] | undefined;
+  private _dues: PaymentDueNew[];
 
   private _member?: Member;
 
@@ -23,11 +29,7 @@ export class Payment extends Model implements IPayment {
 
   private _status: PaymentStatusEnum;
 
-  public constructor(
-    props?: IPayment,
-    member?: Member,
-    paymentDues?: PaymentDue[],
-  ) {
+  public constructor(props?: IPayment, member?: Member) {
     super(props);
 
     this._date = props?.date ?? new DateUtcVo();
@@ -40,21 +42,23 @@ export class Payment extends Model implements IPayment {
 
     this._status = props?.status ?? PaymentStatusEnum.PAID;
 
-    this._member = member;
+    this._dues = props?.dues.map((due) => new PaymentDueNew(due)) ?? [];
 
-    this._paymentDues = paymentDues;
+    this._amount = props?.amount ?? new Money({ amount: 0 });
+
+    this._member = member;
+  }
+
+  public get amount(): Money {
+    return this._amount;
   }
 
   public get date(): DateUtcVo {
     return this._date;
   }
 
-  public get paymentDues(): PaymentDue[] | undefined {
-    return this._paymentDues;
-  }
-
-  public set paymentDues(value: PaymentDue[] | undefined) {
-    this._paymentDues = value;
+  public get dues(): PaymentDueNew[] {
+    return this._dues;
   }
 
   public get member(): Member | undefined {
@@ -89,6 +93,7 @@ export class Payment extends Model implements IPayment {
       payment.setMemberId(props.memberId),
       payment.setNotes(props.notes),
       payment.setReceiptNumber(props.receiptNumber),
+      payment.setStatus(PaymentStatusEnum.PAID),
     ]);
 
     if (result.isErr()) {
@@ -98,37 +103,49 @@ export class Payment extends Model implements IPayment {
     return ok(payment);
   }
 
-  public getTotalAmountOfDues(): number {
-    invariant(this.paymentDues);
+  public addDue(props: CreatePaymentDueNew): Result<PaymentDueNew, Error> {
+    const paymentDue = PaymentDueNew.createOne(props);
 
-    return this.paymentDues.reduce((acc, due) => acc + due.amount.value, 0);
+    if (paymentDue.isErr()) {
+      return err(paymentDue.error);
+    }
+
+    this._dues.push(paymentDue.value);
+
+    this._amount = this._amount.add(paymentDue.value.amount);
+
+    return ok(paymentDue.value);
   }
 
-  public setDate(value: DateUtcVo): Result<null, Error> {
+  public void(): Result<null, Error> {
+    return this.setStatus(PaymentStatusEnum.VOIDED);
+  }
+
+  private setDate(value: DateUtcVo): Result<null, Error> {
     this._date = value;
 
     return ok(null);
   }
 
-  public setMemberId(value: string): Result<null, Error> {
+  private setMemberId(value: string): Result<null, Error> {
     this._memberId = value;
 
     return ok(null);
   }
 
-  public setNotes(value: string | null): Result<null, Error> {
+  private setNotes(value: string | null): Result<null, Error> {
     this._notes = value;
 
     return ok(null);
   }
 
-  public setReceiptNumber(value: number | null): Result<null, Error> {
+  private setReceiptNumber(value: number | null): Result<null, Error> {
     this._receiptNumber = value;
 
     return ok(null);
   }
 
-  public setStatus(value: PaymentStatusEnum): Result<null, Error> {
+  private setStatus(value: PaymentStatusEnum): Result<null, Error> {
     this._status = value;
 
     return ok(null);

@@ -22,6 +22,7 @@ import { SecurityUtils } from '@infra/security/security.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
+import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
@@ -68,6 +69,10 @@ export const DuesPage = () => {
 
   const deleteDue = useDeleteDue();
 
+  const expandedRowRender = (due: DueGridDto) => (
+    <DuePaymentsGrid payments={due.payments} />
+  );
+
   return (
     <>
       <Breadcrumb
@@ -78,13 +83,10 @@ export const DuesPage = () => {
       <Card
         title="Cobros"
         extra={
-          <>
+          <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-
-            {SecurityUtils.isInRole(PermissionEnum.CREATE, ScopeEnum.DUES) && (
-              <GridNewButton to={AppUrl.DuesNew} />
-            )}
-          </>
+            <GridNewButton scope={ScopeEnum.DUES} to={AppUrl.DuesNew} />
+          </Space.Compact>
         }
       >
         <Grid<DueGridDto>
@@ -93,6 +95,7 @@ export const DuesPage = () => {
           onTableChange={onTableChange}
           loading={isLoading}
           dataSource={data?.items}
+          expandable={{ expandedRowRender }}
           columns={[
             {
               dataIndex: 'date',
@@ -101,6 +104,8 @@ export const DuesPage = () => {
                   {new DateUtcVo(date).format()}
                 </Link>
               ),
+              sortOrder: gridState.sorter.date,
+              sorter: true,
               title: 'Fecha',
               width: 125,
             },
@@ -110,6 +115,8 @@ export const DuesPage = () => {
               filteredValue: gridState.filters.memberId,
               filters: GridUtils.getMembersForFilter(members),
               render: (_, payment: DueGridDto) => payment.member?.name,
+              sortOrder: gridState.sorter.memberId,
+              sorter: true,
               title: 'Socio',
             },
             {
@@ -150,7 +157,10 @@ export const DuesPage = () => {
             {
               align: 'center',
               dataIndex: 'status',
-              defaultFilteredValue: [DueStatusEnum.PENDING],
+              defaultFilteredValue: [
+                DueStatusEnum.PENDING,
+                DueStatusEnum.PARTIALLY_PAID,
+              ],
               filterResetToDefaultFilteredValue: true,
               filteredValue: gridState.filters.status,
               filters: getDueStatusColumnFilters(),

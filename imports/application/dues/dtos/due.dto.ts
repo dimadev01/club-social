@@ -1,3 +1,4 @@
+import { DuePaymentDto } from '@application/dues/dtos/due-payment.dto';
 import { MemberDto } from '@application/members/dtos/member.dto';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 
@@ -9,5 +10,6 @@ export interface DueDto {
   member?: MemberDto;
   memberId: string;
   notes: string | null;
+  payments: DuePaymentDto[];
   status: DueStatusEnum;
 }

@@ -2,18 +2,16 @@ export enum DueStatusEnum {
   PAID = 'paid',
   PARTIALLY_PAID = 'partially-paid',
   PENDING = 'pending',
+  VOIDED = 'voided',
 }
 
-export const DueStatusLabel = {
+export const DueStatusLabel: {
+  [key in DueStatusEnum]: string;
+} = {
   [DueStatusEnum.PAID]: 'Pagado',
   [DueStatusEnum.PARTIALLY_PAID]: 'Parcialmente pago',
   [DueStatusEnum.PENDING]: 'Pendiente',
-};
-
-export const DueStatusColor = {
-  [DueStatusEnum.PAID]: 'green',
-  [DueStatusEnum.PARTIALLY_PAID]: '',
-  [DueStatusEnum.PENDING]: '',
+  [DueStatusEnum.VOIDED]: 'Anulado',
 };
 
 export const getDueStatusColumnFilters = () =>

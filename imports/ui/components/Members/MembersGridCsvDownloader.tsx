@@ -63,7 +63,7 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
         const data = await getMembersToExport.mutateAsync(request);
 
         return data.map((member) => ({
-          _id: member._id,
+          _id: member.id,
           category: MemberCategoryLabel[member.category],
           name: member.name,
           pendingElectricity: new Money({
@@ -83,9 +83,10 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
         disabled={getMembersToExport.isLoading}
         tooltip={{ title: 'Descargar CSV' }}
         htmlType="button"
-        type="text"
         icon={<FileExcelOutlined />}
-      />
+      >
+        Exportar
+      </Button>
     </CsvDownloader>
   );
 };

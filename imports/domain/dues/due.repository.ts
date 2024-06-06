@@ -18,7 +18,6 @@ export interface IDueRepository
 
 export interface FindOneDueById extends FindOneById {
   fetchMember?: boolean;
-  fetchPaymentDues?: boolean;
 }
 
 export interface FindPaginatedDuesRequest extends FindPaginatedRequest {

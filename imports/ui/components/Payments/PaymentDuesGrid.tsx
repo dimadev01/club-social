@@ -1,81 +1,57 @@
 import { Table } from 'antd';
 import React from 'react';
 
-import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
+import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { useDuesByPayment } from '@ui/hooks/dues/useDuesByPayment';
 
 interface PaymentDuesGridProps {
-  payment: PaymentGridDto;
+  dues: PaymentDueDto[];
 }
 
-export const PaymentDuesGrid: React.FC<PaymentDuesGridProps> = ({
-  payment,
-}) => {
-  const { data: dues, isLoading } = useDuesByPayment({ paymentId: payment.id });
+export const PaymentDuesGrid: React.FC<PaymentDuesGridProps> = ({ dues }) => (
+  <Table
+    title={() => 'Deudas pagas'}
+    rowKey="dueId"
+    pagination={false}
+    bordered
+    size="small"
+    columns={[
+      {
+        dataIndex: 'dueDate',
+        render: (dueDate) => new DateUtcVo(dueDate).format(),
+        title: 'Fecha',
+        width: 150,
+      },
+      {
+        align: 'center',
+        dataIndex: 'dueCategory',
+        render: (dueCategory: DueCategoryEnum, paymentDue) => {
+          if (dueCategory === DueCategoryEnum.MEMBERSHIP) {
+            return `${DueCategoryLabel[dueCategory]} (${new DateUtcVo(paymentDue.dueDate).monthName()})`;
+          }
 
-  return (
-    <Table
-      rowKey="dueId"
-      pagination={false}
-      loading={isLoading}
-      bordered
-      columns={[
-        {
-          render: (_, paymentDue) => {
-            const due = dues?.find((d) => d.id === paymentDue.dueId);
-
-            if (!due) {
-              return null;
-            }
-
-            return new DateUtcVo(due.date).format();
-          },
-          title: 'Fecha',
-          width: 150,
+          return DueCategoryLabel[dueCategory];
         },
-        {
-          align: 'center',
-          dataIndex: 'category',
-          render: (_, paymentDue) => {
-            const due = dues?.find((d) => d.id === paymentDue.dueId);
-
-            if (!due) {
-              return null;
-            }
-
-            if (due.category === DueCategoryEnum.MEMBERSHIP) {
-              return `${DueCategoryLabel[due.category]} (${new DateUtcVo(due.date).monthName()})`;
-            }
-
-            return DueCategoryLabel[due.category];
-          },
-          title: 'Categoría',
-        },
-        {
-          align: 'right',
-          dataIndex: 'amount',
-          render: (_, paymentDue) => {
-            const due = dues?.find((d) => d.id === paymentDue.dueId);
-
-            if (!due) {
-              return null;
-            }
-
-            return new Money({ amount: due.amount }).formatWithCurrency();
-          },
-          title: 'Deuda',
-        },
-        {
-          align: 'right',
-          dataIndex: 'amount',
-          render: (amount) => new Money({ amount }).formatWithCurrency(),
-          title: 'Monto Registrado',
-        },
-      ]}
-      dataSource={payment.paymentDues}
-    />
-  );
-};
+        title: 'Categoría',
+        width: 150,
+      },
+      {
+        align: 'right',
+        dataIndex: 'dueAmount',
+        render: (dueAmount) =>
+          new Money({ amount: dueAmount }).formatWithCurrency(),
+        title: 'Deuda',
+      },
+      {
+        align: 'right',
+        dataIndex: 'amount',
+        render: (amount) => new Money({ amount }).formatWithCurrency(),
+        title: 'Monto Registrado',
+        width: 150,
+      },
+    ]}
+    dataSource={dues}
+  />
+);

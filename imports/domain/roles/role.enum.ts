@@ -25,6 +25,7 @@ export enum PermissionEnum {
   READ = 'read',
   UPDATE = 'update',
   VIEW_DELETED = 'view-deleted',
+  VOID = 'void',
 }
 
 export const ScopePermissionAssignment: Record<ScopeEnum, PermissionEnum[]> = {
@@ -48,11 +49,13 @@ export const ScopePermissionAssignment: Record<ScopeEnum, PermissionEnum[]> = {
     PermissionEnum.CREATE,
     PermissionEnum.READ,
     PermissionEnum.UPDATE,
+    PermissionEnum.VOID,
     PermissionEnum.DELETE,
   ],
   [ScopeEnum.PAYMENTS]: [
     PermissionEnum.CREATE,
     PermissionEnum.READ,
+    PermissionEnum.VOID,
     PermissionEnum.UPDATE,
     PermissionEnum.DELETE,
   ],
@@ -91,6 +94,15 @@ export const AdminRole = {
     PermissionEnum.UPDATE,
     PermissionEnum.DELETE,
     PermissionEnum.VIEW_DELETED,
+    PermissionEnum.VOID,
+  ],
+  [ScopeEnum.PAYMENTS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.DELETE,
+    PermissionEnum.VIEW_DELETED,
+    PermissionEnum.VOID,
   ],
   [ScopeEnum.PROFESSORS]: [PermissionEnum.READ, PermissionEnum.UPDATE],
   [ScopeEnum.EMPLOYEES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
@@ -103,6 +115,18 @@ export const StaffRole = {
     PermissionEnum.READ,
     PermissionEnum.CREATE,
     PermissionEnum.UPDATE,
+  ],
+  [ScopeEnum.DUES]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.VOID,
+  ],
+  [ScopeEnum.PAYMENTS]: [
+    PermissionEnum.READ,
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.VOID,
   ],
   [ScopeEnum.USERS]: [PermissionEnum.CREATE, PermissionEnum.UPDATE],
 };

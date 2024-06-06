@@ -22,6 +22,7 @@ export class DueMapper extends Mapper<Due, DueEntity> {
       {
         _id: orm._id,
         amount: new Money({ amount: orm.amount }),
+        balanceAmount: new Money({ amount: orm.balanceAmount }),
         category: orm.category,
         createdAt: orm.createdAt,
         createdBy: orm.createdBy,
@@ -31,16 +32,18 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         isDeleted: orm.isDeleted,
         memberId: orm.memberId,
         notes: orm.notes,
+        payments: orm.payments.map((payment) => ({
+          amount: new Money({ amount: payment.amount }),
+          date: new DateUtcVo(payment.date),
+          paymentId: payment.paymentId,
+          receiptNumber: payment.receiptNumber,
+        })),
         status: orm.status,
+        totalPaidAmount: new Money({ amount: orm.totalPaidAmount }),
         updatedAt: orm.updatedAt,
         updatedBy: orm.updatedBy,
       },
       orm.member ? this._memberMapper.toDomain(orm.member) : undefined,
-      orm.payments
-        ? orm.payments.map((payment) =>
-            this._paymentDueMapper.toDomain(payment),
-          )
-        : undefined,
     );
   }
 
@@ -48,6 +51,7 @@ export class DueMapper extends Mapper<Due, DueEntity> {
     return new DueEntity({
       _id: model._id,
       amount: model.amount.value,
+      balanceAmount: model.balanceAmount.value,
       category: model.category,
       createdAt: model.createdAt,
       createdBy: model.createdBy,
@@ -57,7 +61,14 @@ export class DueMapper extends Mapper<Due, DueEntity> {
       isDeleted: model.isDeleted,
       memberId: model.memberId,
       notes: model.notes,
+      payments: model.payments.map((payment) => ({
+        amount: payment.amount.value,
+        date: payment.date.toDate(),
+        paymentId: payment.paymentId,
+        receiptNumber: payment.receiptNumber,
+      })),
       status: model.status,
+      totalPaidAmount: model.totalPaidAmount.value,
       updatedAt: model.updatedAt,
       updatedBy: model.updatedBy,
     });

@@ -12,7 +12,7 @@ import { IDueRepository } from '@domain/dues/due.repository';
 import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
-export class DeletePaymentUseCase implements IUseCase<FindOneById, null> {
+export class VoidPaymentUseCase implements IUseCase<FindOneById, null> {
   public constructor(
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
@@ -35,6 +35,12 @@ export class DeletePaymentUseCase implements IUseCase<FindOneById, null> {
 
     try {
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
+        const voidResult = payment.void();
+
+        if (voidResult.isErr()) {
+          throw voidResult.error;
+        }
+
         await Promise.all(
           dues.map(async (due) => {
             const result = due.revertToPending();
@@ -47,10 +53,10 @@ export class DeletePaymentUseCase implements IUseCase<FindOneById, null> {
           }),
         );
 
-        await this._paymentRepository.deleteWithSession(request, unitOfWork);
+        await this._paymentRepository.updateWithSession(payment, unitOfWork);
       });
 
-      this._logger.info('Payment deleted', { payment: request.id });
+      this._logger.info('Payment voided', { payment: request.id });
 
       return ok(null);
     } catch (error) {

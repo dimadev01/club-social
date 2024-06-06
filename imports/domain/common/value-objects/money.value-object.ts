@@ -1,9 +1,12 @@
 import { ARS as dineroARS, USD as dineroUSD } from '@dinero.js/currencies';
 import {
   Dinero,
+  add,
   dinero,
   greaterThan,
   greaterThanOrEqual,
+  lessThan,
+  lessThanOrEqual,
   subtract,
   toDecimal,
   toSnapshot,
@@ -50,6 +53,15 @@ export class Money extends ValueObject<InternalMoneyProps> {
     return new Money({ amount: amount * 100, currency });
   }
 
+  public add(amount: Money): Money {
+    const result = add(this.props.dinero, amount.props.dinero);
+
+    return new Money({
+      amount: toSnapshot(result).amount,
+      currency: this.props.currency,
+    });
+  }
+
   public format({
     currency = false,
     decimals = false,
@@ -88,12 +100,20 @@ export class Money extends ValueObject<InternalMoneyProps> {
     return this.format({ decimals: true });
   }
 
+  public isGreaterThan(value: Money) {
+    return greaterThan(this.props.dinero, value.props.dinero);
+  }
+
   public isGreaterThanOrEqual(value: Money) {
     return greaterThanOrEqual(this.props.dinero, value.props.dinero);
   }
 
-  public isGreaterThan(value: Money) {
-    return greaterThan(this.props.dinero, value.props.dinero);
+  public isLessThan(value: Money) {
+    return lessThan(this.props.dinero, value.props.dinero);
+  }
+
+  public isLessThanOrEqual(value: Money) {
+    return lessThanOrEqual(this.props.dinero, value.props.dinero);
   }
 
   public subtract(value: Money): Money {

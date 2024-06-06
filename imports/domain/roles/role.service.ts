@@ -19,6 +19,8 @@ export abstract class RoleService {
   }
 
   public static async update(): Promise<void> {
+    // await Promise.all(Object.values(PermissionEnum).map(async (role) => {}));
+
     await Promise.all(
       Object.entries(RolePermissionAssignment).map(
         async ([roleKey, roleAssignment]) => {

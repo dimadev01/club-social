@@ -2,13 +2,12 @@
 import { Meteor } from 'meteor/meteor';
 import { container } from 'tsyringe';
 
-import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 import { DueCollection } from '@infra/mongo/collections/due.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
-import { PaymentDueCollection } from '@infra/mongo/collections/payment-due.collection';
 import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
 import { DateUtils } from '@shared/utils/date.utils';
 
@@ -114,21 +113,12 @@ Migrations.add({
       { multi: true },
     );
 
-    next();
-  }),
-  version: 19,
-});
-
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
     /**
      * Dues
      */
     const dueCollection = container.resolve(DueCollection);
+
+    const paymentsCollection = container.resolve(PaymentCollection);
 
     const dues = await dueCollection
       .rawCollection()
@@ -136,25 +126,9 @@ Migrations.add({
       .find({ memberId: null })
       .toArray();
 
-    await Promise.all(
-      dues.map(async (oldDue: any) => {
-        await dueCollection.updateAsync(oldDue._id, {
-          $set: { memberId: oldDue.member._id },
-          $unset: {
-            member: 1,
-            payments: 1,
-          },
-        });
-      }),
-    );
-
     /**
      * Payments
      */
-    const paymentsCollection = container.resolve(PaymentCollection);
-
-    const paymentsDuesCollection = container.resolve(PaymentDueCollection);
-
     const payments: any = await paymentsCollection
       .rawCollection()
       // @ts-expect-error
@@ -162,57 +136,87 @@ Migrations.add({
       .toArray();
 
     await Promise.all(
-      payments.map(async (oldPayment: any) => {
-        await Promise.all(
-          oldPayment.dues.map(async (oldPaymentDue: any) => {
-            const newPaymentDue: any = {
-              amount: oldPaymentDue.amount,
-              dueId: oldPaymentDue.due._id,
-              paymentId: oldPayment._id,
-              source: PaymentDueSourceEnum.DIRECT,
-            };
+      dues.map(async (oldDue: any) => {
+        const duePayments =
+          oldDue.payments
+            ?.map((oldDuePayment: any) => {
+              const payment = payments.find(
+                (p: any) => p._id === oldDuePayment._id,
+              );
 
-            newPaymentDue.isDeleted = oldPayment.isDeleted;
+              if (!payment) {
+                return undefined;
+              }
 
-            newPaymentDue.createdAt = oldPayment.createdAt;
+              return {
+                amount: oldDuePayment.amount,
+                date: oldDuePayment.date,
+                paymentId: oldDuePayment._id,
+                receiptNumber: payment?.receiptNumber ?? null,
+              };
+            })
+            .filter(Boolean) ?? [];
 
-            newPaymentDue.createdBy = oldPayment.createdBy;
-
-            newPaymentDue.updatedAt = oldPayment.updatedAt;
-
-            newPaymentDue.updatedBy = oldPayment.updatedBy;
-
-            newPaymentDue.deletedAt = oldPayment.deletedAt;
-
-            newPaymentDue.deletedBy = oldPayment.deletedBy;
-
-            await paymentsDuesCollection.insertAsync(newPaymentDue);
-          }),
+        let totalPaidAmount = duePayments.reduce(
+          (acc: any, duePayment: any) => acc + duePayment.amount,
+          0,
         );
 
-        await paymentsCollection.updateAsync(oldPayment._id, {
+        let balanceAmount = oldDue.amount - totalPaidAmount;
+
+        let { status } = oldDue;
+
+        if (balanceAmount < 0) {
+          balanceAmount = 0;
+
+          totalPaidAmount = oldDue.amount;
+        } else if (balanceAmount > 0 && oldDue.status === DueStatusEnum.PAID) {
+          status = DueStatusEnum.PARTIALLY_PAID;
+        }
+
+        await dueCollection.updateAsync(oldDue._id, {
           $set: {
-            memberId: oldPayment.member._id,
+            balanceAmount,
+            memberId: oldDue.member._id,
+            payments: duePayments,
+            status,
+            totalPaidAmount,
           },
           $unset: {
-            dues: 1,
             member: 1,
           },
         });
       }),
     );
 
-    next();
-  }),
-  version: 20,
-});
+    await Promise.all(
+      payments.map(async (oldPayment: any) => {
+        const paymentDues = oldPayment.dues.map((oldPaymentDue: any) => ({
+          amount: oldPaymentDue.amount,
+          dueAmount: oldPaymentDue.due.amount,
+          dueCategory: oldPaymentDue.due.category,
+          dueDate: oldPaymentDue.due.date,
+          dueId: oldPaymentDue.due._id,
+          source: PaymentDueSourceEnum.DIRECT,
+        }));
 
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+        await paymentsCollection.updateAsync(oldPayment._id, {
+          $set: {
+            amount: paymentDues.reduce(
+              (acc: any, paymentDue: any) => acc + paymentDue.amount,
+              0,
+            ),
+            dues: paymentDues,
+            memberId: oldPayment.member._id,
+            receiptNumber: oldPayment.receiptNumber ?? null,
+          },
+          $unset: {
+            member: 1,
+          },
+        });
+      }),
+    );
+
     const users = await Meteor.users.find().fetchAsync();
 
     await Promise.all(
@@ -222,72 +226,19 @@ Migrations.add({
             createdBy: 'System',
             deletedAt: null,
             isDeleted: false,
+            // @ts-expect-error
+            'profile.state': user.state,
             updatedAt: user.createdAt,
             updatedBy: 'System',
           },
-        });
-      }),
-    );
-
-    next();
-  }),
-  version: 21,
-});
-
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    const users = await Meteor.users.find().fetchAsync();
-
-    await Promise.all(
-      users.map(async (user) => {
-        await Meteor.users.updateAsync(user._id, {
-          $set: {
-            // @ts-expect-error
-            'profile.state': user.state,
-          },
           $unset: {
             state: 1,
+            username: 1,
           },
         });
       }),
     );
 
-    next();
-  }),
-  version: 22,
-});
-
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    const users = await Meteor.users.find().fetchAsync();
-
-    await Promise.all(
-      users.map(async (user) => {
-        await Meteor.users.updateAsync(user._id, {
-          $unset: { username: 1 },
-        });
-      }),
-    );
-
-    next();
-  }),
-  version: 23,
-});
-
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
     await container
       .resolve(DueCollection)
       .rawCollection()
@@ -299,5 +250,5 @@ Migrations.add({
 
     next();
   }),
-  version: 24,
+  version: 19,
 });

@@ -1,4 +1,4 @@
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, StopOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -20,6 +20,7 @@ import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
+import { useVoidPayment } from '@ui/hooks/payments/useVoidPayment';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 import { useTable } from '@ui/hooks/useTable';
 
@@ -50,8 +51,10 @@ export const PaymentsPage = () => {
 
   const deletePayment = useDeletePayment();
 
+  const voidPayment = useVoidPayment();
+
   const expandedRowRender = (payment: PaymentGridDto) => (
-    <PaymentDuesGrid payment={payment} />
+    <PaymentDuesGrid dues={payment.dues} />
   );
 
   return (
@@ -64,14 +67,10 @@ export const PaymentsPage = () => {
       <Card
         title="Pagos"
         extra={
-          <>
+          <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-
-            {SecurityUtils.isInRole(
-              PermissionEnum.CREATE,
-              ScopeEnum.PAYMENTS,
-            ) && <GridNewButton to={AppUrl.PaymentsNew} />}
-          </>
+            <GridNewButton scope={ScopeEnum.PAYMENTS} to={AppUrl.PaymentsNew} />
+          </Space.Compact>
         }
       >
         <Grid<PaymentGridDto>
@@ -104,15 +103,15 @@ export const PaymentsPage = () => {
             },
             {
               align: 'right',
-              dataIndex: 'paymentDuesCount',
+              dataIndex: 'duesCount',
               title: '#',
               width: 50,
             },
             {
               align: 'right',
-              dataIndex: 'totalAmount',
-              render: (totalAmount: number) =>
-                new Money({ amount: totalAmount }).formatWithCurrency(),
+              dataIndex: 'amount',
+              render: (amount: number) =>
+                new Money({ amount }).formatWithCurrency(),
               title: 'Total',
               width: 150,
             },
@@ -152,6 +151,36 @@ export const PaymentsPage = () => {
                       icon={<DeleteOutlined />}
                       loading={deletePayment.variables?.id === payment.id}
                       disabled={deletePayment.variables?.id === payment.id}
+                    />
+                  )}
+
+                  {SecurityUtils.isInRole(
+                    PermissionEnum.VOID,
+                    ScopeEnum.PAYMENTS,
+                  ) && (
+                    <Button
+                      popConfirm={{
+                        onConfirm: () =>
+                          voidPayment.mutate(
+                            { id: payment.id },
+                            {
+                              onError: () => voidPayment.reset(),
+                              onSuccess: () => {
+                                voidPayment.reset();
+
+                                refetch();
+                              },
+                            },
+                          ),
+                        title:
+                          '¿Está seguro de anular este pago? Esto volverá a poner las cuotas como pendientes.',
+                      }}
+                      type="text"
+                      htmlType="button"
+                      tooltip={{ title: 'Anular' }}
+                      icon={<StopOutlined />}
+                      loading={voidPayment.variables?.id === payment.id}
+                      disabled={voidPayment.variables?.id === payment.id}
                     />
                   )}
 

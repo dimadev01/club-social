@@ -16,8 +16,7 @@ import {
   getMemberCategoryFilters,
   getMemberStatusFilters,
 } from '@domain/members/member.enum';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { SecurityUtils } from '@infra/security/security.utils';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
@@ -129,13 +128,8 @@ export const MembersPage = () => {
         extra={
           <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-
             <MembersGridCsvDownloaderButton request={gridRequest} />
-
-            {SecurityUtils.isInRole(
-              PermissionEnum.CREATE,
-              ScopeEnum.MEMBERS,
-            ) && <GridNewButton to={AppUrl.MembersNew} />}
+            <GridNewButton scope={ScopeEnum.MEMBERS} to={AppUrl.MembersNew} />
           </Space.Compact>
         }
       >

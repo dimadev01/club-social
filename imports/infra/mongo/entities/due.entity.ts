@@ -1,4 +1,6 @@
+import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsDate,
   IsEnum,
   IsInt,
@@ -6,19 +8,30 @@ import {
   IsNumber,
   IsPositive,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 
 import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { Entity } from '@infra/mongo/common/entities/entity';
+import { DuePaymentEntity } from '@infra/mongo/entities/due-payment.entity';
 import { MemberEntity } from '@infra/mongo/entities/member.entity';
-import { PaymentDueEntity } from '@infra/mongo/entities/payment-due.entity';
 
 export class DueEntity extends Entity {
   @IsInt()
   @IsPositive()
   @IsNumber()
   public amount: number;
+
+  @IsInt()
+  @IsPositive()
+  @IsNumber()
+  public totalPaidAmount: number;
+
+  @IsInt()
+  @IsPositive()
+  @IsNumber()
+  public balanceAmount: number;
 
   @IsEnum(DueCategoryEnum)
   public category: DueCategoryEnum;
@@ -37,7 +50,10 @@ export class DueEntity extends Entity {
   @IsNullable()
   public notes: string | null;
 
-  public payments?: PaymentDueEntity[];
+  @ValidateNested({ each: true })
+  @Type(() => DuePaymentEntity)
+  @IsArray()
+  public payments: DuePaymentEntity[];
 
   @IsEnum(DueStatusEnum)
   public status: DueStatusEnum;
@@ -56,5 +72,11 @@ export class DueEntity extends Entity {
     this.notes = props.notes;
 
     this.status = props.status;
+
+    this.payments = props.payments;
+
+    this.balanceAmount = props.balanceAmount;
+
+    this.totalPaidAmount = props.totalPaidAmount;
   }
 }

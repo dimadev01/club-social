@@ -70,12 +70,6 @@ export class PaymentMongoRepository
       });
     }
 
-    if (request.fetchPaymentDues) {
-      payment.paymentDues = await this._paymentDueRepository.findByPayment({
-        paymentId: payment._id,
-      });
-    }
-
     return payment;
   }
 
@@ -85,22 +79,14 @@ export class PaymentMongoRepository
     const pipeline: Document[] = [];
 
     const $match: Document = {
-      $expr: {
-        $and: [
-          {
-            $eq: ['$isDeleted', false],
-          },
-        ],
-      },
+      isDeleted: false,
     };
 
-    pipeline.push({ $match });
-
     if (request.filterByMember.length > 0) {
-      $match.$expr.$and.push({
-        $in: ['$memberId', request.filterByMember],
-      });
+      $match.memberId = { $in: request.filterByMember };
     }
+
+    pipeline.push({ $match });
 
     const entitiesPipeline: Document[] = [];
 
@@ -129,27 +115,6 @@ export class PaymentMongoRepository
       },
       {
         $unwind: '$member',
-      },
-      {
-        $lookup: {
-          as: 'dues',
-          foreignField: 'paymentId',
-          from: 'payment.dues',
-          localField: '_id',
-          pipeline: [
-            {
-              $lookup: {
-                as: 'due',
-                foreignField: '_id',
-                from: 'dues',
-                localField: 'dueId',
-              },
-            },
-            {
-              $unwind: '$due',
-            },
-          ],
-        },
       },
     );
 

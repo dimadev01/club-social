@@ -1,4 +1,4 @@
-import { DeleteOutlined } from '@ant-design/icons';
+import { StopOutlined } from '@ant-design/icons';
 import { ButtonProps, Popconfirm } from 'antd';
 import React from 'react';
 
@@ -11,19 +11,19 @@ export type FormDeleteButtonProps = ButtonProps & {
   scope: ScopeEnum;
 };
 
-export const FormDeleteButton: React.FC<FormDeleteButtonProps> = ({
+export const FormVoidButton: React.FC<FormDeleteButtonProps> = ({
   onClick,
   scope,
   ...rest
 }) => {
-  if (!SecurityUtils.isInRole(PermissionEnum.DELETE, scope)) {
+  if (!SecurityUtils.isInRole(PermissionEnum.VOID, scope)) {
     return false;
   }
 
   return (
     <Popconfirm title="¿Confirma la acción?" onConfirm={() => onClick()}>
-      <Button icon={<DeleteOutlined />} danger {...rest}>
-        Eliminar
+      <Button icon={<StopOutlined />} danger {...rest}>
+        Anular
       </Button>
     </Popconfirm>
   );

@@ -4,12 +4,14 @@ import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
-import { CreateDue, IDue } from '@domain/dues/models/due.interface';
+import { CreateDue, CreateDuePayment, IDue } from '@domain/dues/due.interface';
+import { DuePayment } from '@domain/dues/models/due-payment.model';
 import { Member } from '@domain/members/models/member.model';
-import { PaymentDue } from '@domain/payments/models/payment-due.model';
 
 export class Due extends Model implements IDue {
   private _amount: Money;
+
+  private _balanceAmount: Money;
 
   private _category: DueCategoryEnum;
 
@@ -21,15 +23,13 @@ export class Due extends Model implements IDue {
 
   private _notes: string | null;
 
-  private _paymentDues: PaymentDue[] | undefined;
+  private _payments: DuePayment[];
 
   private _status: DueStatusEnum;
 
-  public constructor(
-    props?: IDue,
-    member?: Member,
-    paymentDues?: PaymentDue[],
-  ) {
+  private _totalPaidAmount: Money;
+
+  public constructor(props?: IDue, member?: Member) {
     super(props);
 
     this._amount = props?.amount ?? new Money({ amount: 0 });
@@ -44,13 +44,22 @@ export class Due extends Model implements IDue {
 
     this._status = props?.status ?? DueStatusEnum.PENDING;
 
-    this._member = member;
+    this._totalPaidAmount = new Money({ amount: 0 });
 
-    this._paymentDues = paymentDues;
+    this._balanceAmount = this._amount;
+
+    this._payments =
+      props?.payments.map((payment) => new DuePayment(payment)) ?? [];
+
+    this._member = member;
   }
 
   public get amount(): Money {
     return this._amount;
+  }
+
+  public get balanceAmount(): Money {
+    return this._balanceAmount;
   }
 
   public get category(): DueCategoryEnum {
@@ -77,16 +86,16 @@ export class Due extends Model implements IDue {
     return this._notes;
   }
 
-  public get paymentDues(): PaymentDue[] | undefined {
-    return this._paymentDues;
-  }
-
-  public set paymentDues(value: PaymentDue[] | undefined) {
-    this._paymentDues = value;
+  public get payments(): DuePayment[] {
+    return this._payments;
   }
 
   public get status(): DueStatusEnum {
     return this._status;
+  }
+
+  public get totalPaidAmount(): Money {
+    return this._totalPaidAmount;
   }
 
   public static createOne(props: CreateDue): Result<Due, Error> {
@@ -108,16 +117,24 @@ export class Due extends Model implements IDue {
     return ok(due);
   }
 
-  public getPendingAmount(): Money {
-    // invariant(this._paymentDues);
+  public addPayment(props: CreateDuePayment): Result<DuePayment, Error> {
+    const duePayment = DuePayment.createOne(props);
 
-    const paidAmount =
-      this._paymentDues?.reduce(
-        (acc, paymentDue) => acc + paymentDue.amount.value,
-        0,
-      ) ?? 0;
+    if (duePayment.isErr()) {
+      return err(duePayment.error);
+    }
 
-    return this._amount.subtract(new Money({ amount: paidAmount }));
+    this._payments.push(duePayment.value);
+
+    this._totalPaidAmount = this._totalPaidAmount.add(duePayment.value.amount);
+
+    this._balanceAmount = this._balanceAmount.subtract(this._totalPaidAmount);
+
+    if (this._balanceAmount.isLessThan(new Money({ amount: 0 }))) {
+      this._balanceAmount = new Money({ amount: 0 });
+    }
+
+    return ok(duePayment.value);
   }
 
   public isDeletable() {
@@ -146,37 +163,41 @@ export class Due extends Model implements IDue {
     return ok(null);
   }
 
-  public setAmount(value: Money): Result<null, Error> {
+  public revertToPending(): Result<null, Error> {
+    return this.setStatus(DueStatusEnum.PENDING);
+  }
+
+  private setAmount(value: Money): Result<null, Error> {
     this._amount = value;
 
     return ok(null);
   }
 
-  public setCategory(value: DueCategoryEnum): Result<null, Error> {
+  private setCategory(value: DueCategoryEnum): Result<null, Error> {
     this._category = value;
 
     return ok(null);
   }
 
-  public setDate(value: DateUtcVo): Result<null, Error> {
+  private setDate(value: DateUtcVo): Result<null, Error> {
     this._date = value;
 
     return ok(null);
   }
 
-  public setMemberId(value: string): Result<null, Error> {
+  private setMemberId(value: string): Result<null, Error> {
     this._memberId = value;
 
     return ok(null);
   }
 
-  public setNotes(value: string | null): Result<null, Error> {
+  private setNotes(value: string | null): Result<null, Error> {
     this._notes = value;
 
     return ok(null);
   }
 
-  public setStatus(value: DueStatusEnum): Result<null, Error> {
+  private setStatus(value: DueStatusEnum): Result<null, Error> {
     this._status = value;
 
     return ok(null);

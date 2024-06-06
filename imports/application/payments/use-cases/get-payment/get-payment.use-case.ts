@@ -20,11 +20,7 @@ export class GetPaymentUseCase implements IUseCase<FindOneById, PaymentDto> {
   public async execute(
     request: FindOneById,
   ): Promise<Result<PaymentDto, Error>> {
-    const payment = await this._paymentRepository.findOneById({
-      fetchMember: true,
-      fetchPaymentDues: true,
-      id: request.id,
-    });
+    const payment = await this._paymentRepository.findOneById(request);
 
     if (!payment) {
       return err(new ModelNotFoundError());

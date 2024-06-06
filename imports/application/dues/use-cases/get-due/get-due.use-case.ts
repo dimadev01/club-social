@@ -18,10 +18,7 @@ export class GetDueUseCase implements IUseCase<FindOneById, DueDto> {
   ) {}
 
   public async execute(request: FindOneById): Promise<Result<DueDto, Error>> {
-    const due = await this._dueRepository.findOneById({
-      fetchPaymentDues: true,
-      id: request.id,
-    });
+    const due = await this._dueRepository.findOneById(request);
 
     if (!due) {
       return err(new ModelNotFoundError());

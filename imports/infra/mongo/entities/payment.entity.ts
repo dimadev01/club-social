@@ -1,23 +1,34 @@
+import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsDate,
   IsEnum,
   IsNotEmpty,
   IsNumber,
   IsPositive,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 
 import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { Entity } from '@infra/mongo/common/entities/entity';
 import { MemberEntity } from '@infra/mongo/entities/member.entity';
-import { PaymentDueEntity } from '@infra/mongo/entities/payment-due.entity';
+import { PaymentDueEntityNew } from '@infra/mongo/entities/payment-due.entity-new';
 
 export class PaymentEntity extends Entity {
+  @IsPositive()
+  @IsNumber()
+  @IsNullable()
+  public amount: number;
+
   @IsDate()
   public date: Date;
 
-  public dues?: PaymentDueEntity[];
+  @ValidateNested({ each: true })
+  @Type(() => PaymentDueEntityNew)
+  @IsArray()
+  public dues: PaymentDueEntityNew[];
 
   public member?: MemberEntity;
 
@@ -41,6 +52,8 @@ export class PaymentEntity extends Entity {
   public constructor(props: PaymentEntity) {
     super(props);
 
+    this.amount = props.amount;
+
     this.date = props.date;
 
     this.memberId = props.memberId;
@@ -50,5 +63,7 @@ export class PaymentEntity extends Entity {
     this.receiptNumber = props.receiptNumber;
 
     this.status = props.status;
+
+    this.dues = props.dues;
   }
 }

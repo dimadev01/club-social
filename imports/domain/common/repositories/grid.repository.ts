@@ -13,7 +13,7 @@ export interface FindPaginatedRequest {
   sorter: PaginatedSorter;
 }
 
-export interface FindPaginatedResponse<T> {
+export interface FindPaginatedResponse<T = Model> {
   items: T[];
   totalCount: number;
 }

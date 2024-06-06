@@ -20,6 +20,12 @@ export class DueDtoMapper extends MapperDto<Due, DueDto> {
       member: due.member ? this._memberDtoMapper.toDto(due.member) : undefined,
       memberId: due.memberId,
       notes: due.notes,
+      payments: due.payments.map((payment) => ({
+        amount: payment.amount.value,
+        date: payment.date.toISOString(),
+        id: payment.paymentId,
+        receiptNumber: payment.receiptNumber,
+      })),
       status: due.status,
     };
   }

@@ -11,6 +11,7 @@ import { CreatePaymentUseCase } from '@application/payments/use-cases/create-pay
 import { DeletePaymentUseCase } from '@application/payments/use-cases/delete-payment/delete-payment.use-case';
 import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment/get-payment.use-case';
 import { GetPaymentsGridUseCase } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.use-case';
+import { VoidPaymentUseCase } from '@application/payments/use-cases/void-payment/void-payment.use-case';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 
@@ -23,6 +24,7 @@ export class PaymentController extends BaseController {
     private readonly _getOne: GetPaymentUseCase,
     private readonly _create: CreatePaymentUseCase,
     private readonly _delete: DeletePaymentUseCase,
+    private readonly _void: VoidPaymentUseCase,
   ) {
     super(logger);
   }
@@ -60,6 +62,14 @@ export class PaymentController extends BaseController {
       classType: GetOneByIdRequestDto,
       request,
       useCase: this._getOne,
+    });
+  }
+
+  public async void(request: GetOneByIdRequestDto): Promise<void> {
+    await this.execute({
+      classType: GetOneByIdRequestDto,
+      request,
+      useCase: this._void,
     });
   }
 }

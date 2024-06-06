@@ -1,6 +1,6 @@
-import { GetOneDtoByIdRequestDto } from '@adapters/dtos/get-one-dto-request.dto';
 import { injectable } from 'tsyringe';
 
+import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.dto';
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { PaymentController } from '@adapters/controllers/payment.controller';
 import { CreatePaymentRequestDto } from '@adapters/dtos/create-payment-request.dto';
@@ -15,14 +15,16 @@ export class PaymentMethods extends MeteorMethods {
 
   public register(): void {
     Meteor.methods({
-      [MeteorMethodEnum.PaymentsGet]: (req: GetOneDtoByIdRequestDto) =>
+      [MeteorMethodEnum.PaymentsGet]: (req: GetOneByIdRequestDto) =>
         this._controller.getOne(req),
       [MeteorMethodEnum.PaymentsGetGrid]: (req: GetPaymentsGridRequestDto) =>
         this._controller.getGrid(req),
       [MeteorMethodEnum.PaymentsCreate]: (req: CreatePaymentRequestDto) =>
         this._controller.create(req),
-      [MeteorMethodEnum.PaymentsDelete]: (req: GetOneDtoByIdRequestDto) =>
+      [MeteorMethodEnum.PaymentsDelete]: (req: GetOneByIdRequestDto) =>
         this._controller.delete(req),
+      [MeteorMethodEnum.PaymentsVoid]: (req: GetOneByIdRequestDto) =>
+        this._controller.void(req),
     });
   }
 }

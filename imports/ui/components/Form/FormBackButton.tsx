@@ -1,3 +1,4 @@
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd';
 import React from 'react';
 
@@ -15,7 +16,11 @@ export const FormBackButton: React.FC<FormBackButtonProps> = ({
   const navigate = useNavigate();
 
   return (
-    <Button onClick={() => (to ? navigate(to) : navigate(-1))} {...rest}>
+    <Button
+      icon={<ArrowLeftOutlined />}
+      onClick={() => (to ? navigate(to) : navigate(-1))}
+      {...rest}
+    >
       Atrás
     </Button>
   );

@@ -49,7 +49,13 @@ export function useTable<T>({
      */
     if ('field' in obj && typeof obj.field === 'string' && 'order' in obj) {
       if (!obj.order) {
-        return defaultSorter;
+        const invertedSorter: GridSorter = {};
+
+        Object.entries(defaultSorter).forEach(([key, value]) => {
+          invertedSorter[key] = value === 'ascend' ? 'descend' : 'ascend';
+        });
+
+        return invertedSorter;
       }
 
       return {
@@ -98,6 +104,8 @@ export function useTable<T>({
     antFilters: Record<string, FilterValue | null>,
     antSorter: SorterResult<T> | SorterResult<T>[],
   ) => {
+    console.log(antSorter);
+
     setState({
       ...state,
       filters: getFilters(antFilters),

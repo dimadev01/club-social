@@ -1,3 +1,4 @@
+import { SaveOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd';
 import React from 'react';
 
@@ -30,7 +31,7 @@ export const FormSaveButton: React.FC<FormSaveButtonProps> = ({
   }
 
   return (
-    <Button type="primary" htmlType="submit" {...rest}>
+    <Button icon={<SaveOutlined />} type="primary" htmlType="submit" {...rest}>
       {text ?? 'Guardar'}
     </Button>
   );

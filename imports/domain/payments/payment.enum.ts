@@ -1,5 +1,6 @@
 export enum PaymentStatusEnum {
   PAID = 'paid',
+  VOIDED = 'voided',
 }
 
 export enum PaymentDueSourceEnum {
@@ -9,6 +10,7 @@ export enum PaymentDueSourceEnum {
 
 export const PaymentStatusLabel = {
   [PaymentStatusEnum.PAID]: 'Pagado',
+  [PaymentStatusEnum.VOIDED]: 'Anulado',
 };
 
 export const getPaymentStatusColumnFilters = () =>
