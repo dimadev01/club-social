@@ -8,14 +8,10 @@ export enum RoleEnum {
 }
 
 export enum ScopeEnum {
-  CATEGORIES = 'categories',
   DUES = 'dues',
-  EMPLOYEES = 'employees',
   MEMBERS = 'members',
   MOVEMENTS = 'movements',
   PAYMENTS = 'payments',
-  PROFESSORS = 'professors',
-  SERVICES = 'services',
   USERS = 'users',
 }
 
@@ -29,10 +25,6 @@ export enum PermissionEnum {
 }
 
 export const ScopePermissionAssignment: Record<ScopeEnum, PermissionEnum[]> = {
-  [ScopeEnum.CATEGORIES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
-  [ScopeEnum.EMPLOYEES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
-  [ScopeEnum.SERVICES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
-  [ScopeEnum.PROFESSORS]: [PermissionEnum.READ, PermissionEnum.UPDATE],
   [ScopeEnum.MEMBERS]: [
     PermissionEnum.CREATE,
     PermissionEnum.READ,
@@ -80,7 +72,6 @@ export const AdminRole = {
     PermissionEnum.UPDATE,
     PermissionEnum.DELETE,
   ],
-  [ScopeEnum.CATEGORIES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
   [ScopeEnum.MOVEMENTS]: [
     PermissionEnum.READ,
     PermissionEnum.CREATE,
@@ -104,38 +95,39 @@ export const AdminRole = {
     PermissionEnum.VIEW_DELETED,
     PermissionEnum.VOID,
   ],
-  [ScopeEnum.PROFESSORS]: [PermissionEnum.READ, PermissionEnum.UPDATE],
-  [ScopeEnum.EMPLOYEES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
-  [ScopeEnum.SERVICES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
 };
 
 export const StaffRole = {
-  [ScopeEnum.MEMBERS]: [PermissionEnum.READ, PermissionEnum.UPDATE],
+  [ScopeEnum.MEMBERS]: [
+    PermissionEnum.READ,
+    PermissionEnum.UPDATE,
+    PermissionEnum.CREATE,
+  ],
   [ScopeEnum.MOVEMENTS]: [
     PermissionEnum.READ,
     PermissionEnum.CREATE,
     PermissionEnum.UPDATE,
   ],
   [ScopeEnum.DUES]: [
-    PermissionEnum.READ,
     PermissionEnum.CREATE,
+    PermissionEnum.READ,
     PermissionEnum.UPDATE,
     PermissionEnum.VOID,
   ],
   [ScopeEnum.PAYMENTS]: [
-    PermissionEnum.READ,
     PermissionEnum.CREATE,
+    PermissionEnum.READ,
     PermissionEnum.UPDATE,
     PermissionEnum.VOID,
   ],
-  [ScopeEnum.USERS]: [PermissionEnum.CREATE, PermissionEnum.UPDATE],
+  [ScopeEnum.USERS]: [
+    PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
+    PermissionEnum.READ,
+  ],
 };
 
 export const MemberRole = {
-  [ScopeEnum.MOVEMENTS]: [PermissionEnum.READ],
-};
-
-export const ViewerRole = {
-  [ScopeEnum.MEMBERS]: [PermissionEnum.READ],
-  [ScopeEnum.MOVEMENTS]: [PermissionEnum.READ],
+  [ScopeEnum.DUES]: [PermissionEnum.READ],
+  [ScopeEnum.PAYMENTS]: [PermissionEnum.READ],
 };

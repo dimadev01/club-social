@@ -1,7 +1,7 @@
-import { Roles } from 'meteor/alanning:roles';
 import invariant from 'tiny-invariant';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { Roles } from 'types/meteor-roles';
 
 export abstract class SecurityUtils {
   public static isInRole(

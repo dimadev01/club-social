@@ -16,7 +16,6 @@ import {
   Typography,
 } from 'antd';
 import { ItemType } from 'antd/es/menu/interface';
-import { Roles } from 'meteor/alanning:roles';
 import React, { useEffect, useState } from 'react';
 import {
   FaCreditCard,
@@ -34,6 +33,7 @@ import { useThemeContext } from '@ui/AppContext';
 import { Button } from '@ui/components/Button';
 import { Select } from '@ui/components/Select';
 import { useUpdateUserTheme } from '@ui/hooks/users/useUpdateUserTheme';
+import { Roles } from 'types/meteor-roles';
 
 type Props = {
   children: JSX.Element;

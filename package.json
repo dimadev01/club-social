@@ -56,7 +56,6 @@
     "@types/globalize": "^1.5.5",
     "@types/lodash": "^4.14.191",
     "@types/meteor": "^2.8.2",
-    "@types/meteor-roles": "^1.2.34",
     "@types/mocha": "^10.0.1",
     "@types/mongodb": "^4.0.7",
     "@types/numeral": "^2.0.5",

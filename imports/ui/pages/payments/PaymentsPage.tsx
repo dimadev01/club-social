@@ -88,6 +88,8 @@ export const PaymentsPage = () => {
                   {new DateUtcVo(date).format()}
                 </Link>
               ),
+              sortOrder: gridState.sorter.date,
+              sorter: true,
               title: 'Fecha',
               width: 125,
             },

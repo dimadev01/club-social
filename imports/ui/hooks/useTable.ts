@@ -39,7 +39,7 @@ export function useTable<T>({
 
   const [, setSearchParams] = useSearchParams();
 
-  const getSorter = (obj: unknown): GridSorter => {
+  const getSorter = (obj: unknown, currentState?: GridState): GridSorter => {
     if (!isObject(obj) || isEmpty(obj) || isArray(obj)) {
       return defaultSorter;
     }
@@ -49,9 +49,13 @@ export function useTable<T>({
      */
     if ('field' in obj && typeof obj.field === 'string' && 'order' in obj) {
       if (!obj.order) {
+        if (!currentState) {
+          return defaultSorter;
+        }
+
         const invertedSorter: GridSorter = {};
 
-        Object.entries(defaultSorter).forEach(([key, value]) => {
+        Object.entries(currentState.sorter).forEach(([key, value]) => {
           invertedSorter[key] = value === 'ascend' ? 'descend' : 'ascend';
         });
 
@@ -104,14 +108,12 @@ export function useTable<T>({
     antFilters: Record<string, FilterValue | null>,
     antSorter: SorterResult<T> | SorterResult<T>[],
   ) => {
-    console.log(antSorter);
-
     setState({
       ...state,
       filters: getFilters(antFilters),
       page: antPagination.current ?? 1,
       pageSize: antPagination.pageSize ?? DEFAULT_PAGE_SIZE,
-      sorter: getSorter(antSorter),
+      sorter: getSorter(antSorter, state),
     });
   };
 

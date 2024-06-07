@@ -1,7 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 
-import { RoleEnum } from '@domain/roles/role.enum';
+import { RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { RolePermissionAssignment } from '@domain/roles/roles';
+import { Roles } from 'types/meteor-roles';
 
 export abstract class RoleService {
   public static findAll(): Array<{ _id: string; value: RoleEnum }> {
@@ -18,6 +19,16 @@ export abstract class RoleService {
     }));
   }
 
+  public static async update2(): Promise<void> {
+    Object.values(RoleEnum).forEach((role) => {
+      Roles.createRole(role, { unlessExists: true });
+    });
+
+    Object.values(ScopeEnum).forEach((role) => {
+      Roles.createRole(role, { unlessExists: true });
+    });
+  }
+
   public static async update(): Promise<void> {
     // await Promise.all(Object.values(PermissionEnum).map(async (role) => {}));
 
@@ -31,7 +42,6 @@ export abstract class RoleService {
                   .find({ 'profile.role': roleKey })
                   .fetchAsync();
 
-                // @ts-expect-error
                 Roles.removeUsersFromRoles(users, permissions, {
                   anyScope: true,
                 });
