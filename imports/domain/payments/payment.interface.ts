@@ -21,8 +21,8 @@ export interface IPayment extends IModel {
 }
 
 export interface CreatePayment {
+  createDues: CreatePaymentDue[];
   date: DateUtcVo;
-  dues: CreatePaymentDue[];
   memberId: string;
   notes: string | null;
   receiptNumber: number;

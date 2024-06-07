@@ -68,30 +68,26 @@ export class CreatePaymentUseCase
           }
         });
 
-        const paymentDues = await Promise.all(
-          request.dues.map(async (requestDue) => {
-            const due = dues.find((d) => d._id === requestDue.dueId);
+        const createDues = request.dues.map((requestDue) => {
+          const due = dues.find((d) => d._id === requestDue.dueId);
 
-            invariant(due);
+          invariant(due);
 
-            const createPaymentDue: CreatePaymentDue = {
-              amount: new Money({ amount: requestDue.amount }),
-              dueAmount: due.amount,
-              dueCategory: due.category,
-              dueDate: due.date,
-              dueId: due._id,
-              source: PaymentDueSourceEnum.DIRECT,
-            };
+          const createPaymentDue: CreatePaymentDue = {
+            amount: new Money({ amount: requestDue.amount }),
+            dueAmount: due.amount,
+            dueCategory: due.category,
+            dueDate: due.date,
+            dueId: due._id,
+            source: PaymentDueSourceEnum.DIRECT,
+          };
 
-            await this._duePort.updateWithSession(due, unitOfWork);
-
-            return createPaymentDue;
-          }),
-        );
+          return createPaymentDue;
+        });
 
         const newPaymentResult = Payment.createOne({
+          createDues,
           date: new DateUtcVo(request.date),
-          dues: paymentDues,
           memberId: request.memberId,
           notes: request.notes,
           receiptNumber: request.receiptNumber,
@@ -104,10 +100,10 @@ export class CreatePaymentUseCase
         const newPayment = newPaymentResult.value;
 
         await Promise.all(
-          dues.map(async (due) => {
-            const paymentDue = paymentDues.find((pd) => pd.dueId === due._id);
+          newPayment.dues.map(async (paymentDue) => {
+            const due = dues.find((d) => d._id === paymentDue.dueId);
 
-            invariant(paymentDue);
+            invariant(due);
 
             due.addPayment({
               amount: paymentDue.amount,

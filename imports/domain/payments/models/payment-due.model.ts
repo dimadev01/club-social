@@ -23,9 +23,9 @@ export class PaymentDue implements IPaymentDue {
   private _source: PaymentDueSourceEnum;
 
   public constructor(props?: IPaymentDue) {
-    this._amount = props?.amount ?? new Money({ amount: 0 });
+    this._amount = props?.amount ?? new Money();
 
-    this._dueAmount = props?.dueAmount ?? new Money({ amount: 0 });
+    this._dueAmount = props?.dueAmount ?? new Money();
 
     this._dueCategory = props?.dueCategory ?? DueCategoryEnum.MEMBERSHIP;
 

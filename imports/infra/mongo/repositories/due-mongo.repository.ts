@@ -75,7 +75,9 @@ export class DueMongoRepository
 
     if (request.filterByMember.length > 0) {
       $match.memberId = { $in: request.filterByMember };
-    } else if (request.filterByStatus.length > 0) {
+    }
+
+    if (request.filterByStatus.length > 0) {
       $match.status = { $in: request.filterByStatus };
     }
 

@@ -5,6 +5,7 @@ import {
   dinero,
   greaterThan,
   greaterThanOrEqual,
+  isZero,
   lessThan,
   lessThanOrEqual,
   subtract,
@@ -27,17 +28,17 @@ interface InternalMoneyProps {
 }
 
 interface MoneyProps {
-  amount: number;
+  amount?: number;
   currency?: CurrencyEnum;
 }
 
 export class Money extends ValueObject<InternalMoneyProps> {
-  public constructor({ amount, currency = CurrencyEnum.ARS }: MoneyProps) {
+  public constructor(props?: MoneyProps) {
     super({
-      currency,
+      currency: props?.currency ?? CurrencyEnum.ARS,
       dinero: dinero({
-        amount,
-        currency: Money.getDineroCurrency(currency),
+        amount: props?.amount ?? 0,
+        currency: Money.getDineroCurrency(props?.currency ?? CurrencyEnum.ARS),
       }),
     });
   }
@@ -100,12 +101,16 @@ export class Money extends ValueObject<InternalMoneyProps> {
     return this.format({ decimals: true });
   }
 
-  public isGreaterThan(value: Money) {
+  public isGreaterThan(value: Money): boolean {
     return greaterThan(this.props.dinero, value.props.dinero);
   }
 
   public isGreaterThanOrEqual(value: Money) {
     return greaterThanOrEqual(this.props.dinero, value.props.dinero);
+  }
+
+  public isGreaterThanZero(): boolean {
+    return greaterThan(this.props.dinero, new Money().props.dinero);
   }
 
   public isLessThan(value: Money) {
@@ -114,6 +119,14 @@ export class Money extends ValueObject<InternalMoneyProps> {
 
   public isLessThanOrEqual(value: Money) {
     return lessThanOrEqual(this.props.dinero, value.props.dinero);
+  }
+
+  public isLessThanZero() {
+    return lessThan(this.props.dinero, new Money().props.dinero);
+  }
+
+  public isZero(): boolean {
+    return isZero(this.props.dinero);
   }
 
   public subtract(value: Money): Money {

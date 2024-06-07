@@ -22,7 +22,7 @@ export class MemberCredit extends Model implements IMemberCredit {
   public constructor(props?: IMemberCredit) {
     super(props);
 
-    this._amount = props?.amount ?? new Money({ amount: 0 });
+    this._amount = props?.amount ?? new Money();
 
     this._memberId = props?.memberId ?? '';
 

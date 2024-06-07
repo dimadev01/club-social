@@ -6,11 +6,7 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 import { Member } from '@domain/members/models/member.model';
 import { PaymentDue } from '@domain/payments/models/payment-due.model';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
-import {
-  CreatePayment,
-  CreatePaymentDue,
-  IPayment,
-} from '@domain/payments/payment.interface';
+import { CreatePayment, IPayment } from '@domain/payments/payment.interface';
 
 export class Payment extends Model implements IPayment {
   private _amount: Money;
@@ -50,7 +46,7 @@ export class Payment extends Model implements IPayment {
 
     this._dues = props?.dues.map((due) => new PaymentDue(due)) ?? [];
 
-    this._amount = props?.amount ?? new Money({ amount: 0 });
+    this._amount = props?.amount ?? new Money();
 
     this._voidedAt = props?.voidedAt ?? null;
 
@@ -116,29 +112,29 @@ export class Payment extends Model implements IPayment {
       return err(result.error);
     }
 
-    const addDues = props.dues.map((due) => payment.addDue(due));
+    const addDuesResult = props.createDues.map((createPaymentDue) => {
+      const paymentDue = PaymentDue.createOne(createPaymentDue);
 
-    const addDuesResult = Result.combine(addDues);
+      if (paymentDue.isErr()) {
+        return err(paymentDue.error);
+      }
 
-    if (addDuesResult.isErr()) {
-      return err(addDuesResult.error);
+      const addDueResult = payment.addDue(paymentDue.value);
+
+      if (addDueResult.isErr()) {
+        return err(addDueResult.error);
+      }
+
+      return ok(paymentDue.value);
+    });
+
+    const addPaymentDuesResultCombined = Result.combine(addDuesResult);
+
+    if (addPaymentDuesResultCombined.isErr()) {
+      return err(addPaymentDuesResultCombined.error);
     }
 
     return ok(payment);
-  }
-
-  public addDue(props: CreatePaymentDue): Result<PaymentDue, Error> {
-    const paymentDue = PaymentDue.createOne(props);
-
-    if (paymentDue.isErr()) {
-      return err(paymentDue.error);
-    }
-
-    this._dues.push(paymentDue.value);
-
-    this._amount = this._amount.add(paymentDue.value.amount);
-
-    return ok(paymentDue.value);
   }
 
   public void(voidedBy: string, voidReason: string): Result<null, Error> {
@@ -149,6 +145,14 @@ export class Payment extends Model implements IPayment {
     this._voidReason = voidReason;
 
     return this.setStatus(PaymentStatusEnum.VOIDED);
+  }
+
+  private addDue(paymentDue: PaymentDue): Result<null, Error> {
+    this._dues.push(paymentDue);
+
+    this._amount = this._amount.add(paymentDue.amount);
+
+    return ok(null);
   }
 
   private setDate(value: DateUtcVo): Result<null, Error> {

@@ -1,6 +1,7 @@
 import {
   IsDate,
   IsDefined,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -9,6 +10,7 @@ import {
 } from 'class-validator';
 
 import { IsNullable } from '@adapters/common/class-validator/is-nullable';
+import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export class DuePaymentEntity {
   @IsInt()
@@ -30,6 +32,9 @@ export class DuePaymentEntity {
   @IsDefined()
   public receiptNumber: number | null;
 
+  @IsEnum(PaymentStatusEnum)
+  public status: PaymentStatusEnum;
+
   public constructor(props: DuePaymentEntity) {
     this.amount = props.amount;
 
@@ -38,5 +43,7 @@ export class DuePaymentEntity {
     this.date = props.date;
 
     this.receiptNumber = props.receiptNumber;
+
+    this.status = props.status;
   }
 }

@@ -3,6 +3,7 @@ import { Result, err, ok } from 'neverthrow';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { CreateDuePayment, IDuePayment } from '@domain/dues/due.interface';
+import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export class DuePayment implements IDuePayment {
   private _amount: Money;
@@ -13,14 +14,18 @@ export class DuePayment implements IDuePayment {
 
   private _receiptNumber: number | null;
 
+  private _status: PaymentStatusEnum;
+
   public constructor(props?: IDuePayment) {
-    this._amount = props?.amount ?? new Money({ amount: 0 });
+    this._amount = props?.amount ?? new Money();
 
     this._date = props?.date ?? new DateUtcVo();
 
     this._paymentId = props?.paymentId ?? '';
 
     this._receiptNumber = props?.receiptNumber ?? null;
+
+    this._status = props?.status ?? PaymentStatusEnum.PAID;
   }
 
   public get amount(): Money {
@@ -39,6 +44,10 @@ export class DuePayment implements IDuePayment {
     return this._receiptNumber;
   }
 
+  public get status(): PaymentStatusEnum {
+    return this._status;
+  }
+
   public static createOne(props: CreateDuePayment): Result<DuePayment, Error> {
     const duePayment = new DuePayment();
 
@@ -47,6 +56,7 @@ export class DuePayment implements IDuePayment {
       duePayment.setDate(props.date),
       duePayment.setPaymentId(props.paymentId),
       duePayment.setReceiptNumber(props.receiptNumber),
+      duePayment.setStatus(PaymentStatusEnum.PAID),
     ]);
 
     if (result.isErr()) {
@@ -54,6 +64,10 @@ export class DuePayment implements IDuePayment {
     }
 
     return ok(duePayment);
+  }
+
+  public void(): Result<null, Error> {
+    return this.setStatus(PaymentStatusEnum.VOIDED);
   }
 
   private setAmount(value: Money): Result<null, Error> {
@@ -76,6 +90,12 @@ export class DuePayment implements IDuePayment {
 
   private setReceiptNumber(value: number | null): Result<null, Error> {
     this._receiptNumber = value;
+
+    return ok(null);
+  }
+
+  private setStatus(value: PaymentStatusEnum): Result<null, Error> {
+    this._status = value;
 
     return ok(null);
   }

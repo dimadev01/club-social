@@ -124,7 +124,7 @@ export const PaymentNewPage = () => {
     if (pendingDues && pendingDues.length > 0) {
       form.setFieldsValue({
         dues: pendingDues.map((due: DueDto) => ({
-          amount: new Money({ amount: due.amount }).toInteger(),
+          amount: new Money({ amount: due.balanceAmount }).toInteger(),
           dueId: due.id,
           isSelected: formDuesSelectedIds?.includes(due.id),
         })),

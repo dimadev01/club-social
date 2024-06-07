@@ -2,6 +2,7 @@ import { IModel } from '@domain/common/models/model.interface';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
+import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export interface IDue extends IModel {
   amount: Money;
@@ -31,6 +32,7 @@ export interface IDuePayment {
   date: DateUtcVo;
   paymentId: string;
   receiptNumber: number | null;
+  status: PaymentStatusEnum;
 }
 
 export interface CreateDuePayment {

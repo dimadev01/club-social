@@ -36,6 +36,7 @@ export class GetDuesGridUseCase
 
         return {
           amount: due.amount.value,
+          balanceAmount: due.balanceAmount.value,
           category: due.category,
           date: due.date.toISOString(),
           id: due._id,
@@ -45,8 +46,8 @@ export class GetDuesGridUseCase
             amount: duePayment.amount.value,
             date: duePayment.date.toISOString(),
             receiptNumber: duePayment.receiptNumber,
+            status: duePayment.status,
           })),
-          pendingAmount: due.balanceAmount.value,
           status: due.status,
         };
       }),

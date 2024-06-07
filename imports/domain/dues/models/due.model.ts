@@ -1,4 +1,5 @@
 import { Result, err, ok } from 'neverthrow';
+import invariant from 'tiny-invariant';
 
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
@@ -38,7 +39,7 @@ export class Due extends Model implements IDue {
   public constructor(props?: IDue, member?: Member) {
     super(props);
 
-    this._amount = props?.amount ?? new Money({ amount: 0 });
+    this._amount = props?.amount ?? new Money();
 
     this._category = props?.category ?? DueCategoryEnum.MEMBERSHIP;
 
@@ -50,9 +51,9 @@ export class Due extends Model implements IDue {
 
     this._status = props?.status ?? DueStatusEnum.PENDING;
 
-    this._totalPaidAmount = new Money({ amount: 0 });
+    this._totalPaidAmount = props?.totalPaidAmount ?? new Money();
 
-    this._balanceAmount = this._amount;
+    this._balanceAmount = props?.balanceAmount ?? this._amount;
 
     this._voidedAt = props?.voidedAt ?? null;
 
@@ -144,17 +145,11 @@ export class Due extends Model implements IDue {
 
     this._totalPaidAmount = this._totalPaidAmount.add(duePayment.value.amount);
 
-    this._balanceAmount = this._balanceAmount.subtract(this._totalPaidAmount);
+    this._balanceAmount = this._balanceAmount.subtract(duePayment.value.amount);
 
-    if (this._balanceAmount.isLessThan(new Money({ amount: 0 }))) {
-      this._balanceAmount = new Money({ amount: 0 });
-    }
+    this._calculateBalanceAmount();
 
-    if (this._balanceAmount.isGreaterThan(new Money({ amount: 0 }))) {
-      this._status = DueStatusEnum.PARTIALLY_PAID;
-    } else {
-      this._status = DueStatusEnum.PAID;
-    }
+    this._calculateStatus();
 
     return ok(duePayment.value);
   }
@@ -175,17 +170,11 @@ export class Due extends Model implements IDue {
     return this._status === DueStatusEnum.PENDING;
   }
 
-  public revertToPending(): Result<null, Error> {
-    this._payments = [];
-
-    this._totalPaidAmount = new Money({ amount: 0 });
-
-    this._balanceAmount = this._amount;
-
-    return this.setStatus(DueStatusEnum.PENDING);
-  }
-
   public void(voidedBy: string, voidReason: string): Result<null, Error> {
+    if (this._payments.length > 0) {
+      return err(new Error('No se puede anular un cobro con pagos asociados'));
+    }
+
     this._voidedAt = new DateUtcVo();
 
     this._voidedBy = voidedBy;
@@ -193,6 +182,48 @@ export class Due extends Model implements IDue {
     this._voidReason = voidReason;
 
     return this.setStatus(DueStatusEnum.VOIDED);
+  }
+
+  public voidPayment(paymentId: string): Result<null, Error> {
+    const paymentToVoid = this._payments.find(
+      (duePayment) => duePayment.paymentId === paymentId,
+    );
+
+    invariant(paymentToVoid);
+
+    const voidResult = paymentToVoid.void();
+
+    if (voidResult.isErr()) {
+      return err(voidResult.error);
+    }
+
+    this._totalPaidAmount = this._totalPaidAmount.subtract(
+      paymentToVoid.amount,
+    );
+
+    this._balanceAmount = this._balanceAmount.add(paymentToVoid.amount);
+
+    this._calculateBalanceAmount();
+
+    this._calculateStatus();
+
+    return ok(null);
+  }
+
+  private _calculateBalanceAmount(): void {
+    if (this._balanceAmount.isLessThanZero()) {
+      this._balanceAmount = new Money();
+    }
+  }
+
+  private _calculateStatus(): void {
+    if (this._balanceAmount.value === this._amount.value) {
+      this._status = DueStatusEnum.PENDING;
+    } else if (this._balanceAmount.isGreaterThanZero()) {
+      this._status = DueStatusEnum.PARTIALLY_PAID;
+    } else {
+      this._status = DueStatusEnum.PAID;
+    }
   }
 
   private setAmount(value: Money): Result<null, Error> {

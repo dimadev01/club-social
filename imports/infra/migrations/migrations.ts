@@ -249,17 +249,6 @@ Migrations.add({
       .resolve(MemberMongoCollection)
       .update({}, { $unset: { user: 1 } }, { multi: true });
 
-    next();
-  }),
-  version: 19,
-});
-
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
     await Meteor.users.updateAsync(
       {
         $or: [
@@ -280,20 +269,57 @@ Migrations.add({
 
     RoleService.update2();
 
+    next();
+  }),
+  version: 19,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
     const duesCollection = container.resolve(DueCollection);
 
-    await duesCollection.updateAsync(
+    await duesCollection.rawCollection().updateMany(
       {
         isDeleted: true,
       },
-      {
-        $set: {
-          deletedAt: null,
-          deletedBy: null,
-          status: DueStatusEnum.VOIDED,
+      [
+        {
+          $set: {
+            deletedAt: null,
+            deletedBy: null,
+            isDeleted: false,
+            status: DueStatusEnum.VOIDED,
+            voidReason: 'Migración',
+            voidedAt: '$deletedAt',
+            voidedBy: '$deletedBy',
+          },
         },
+      ],
+    );
+
+    const paymentsCollection = container.resolve(PaymentCollection);
+
+    await paymentsCollection.rawCollection().updateMany(
+      {
+        isDeleted: true,
       },
-      { multi: true },
+      [
+        {
+          $set: {
+            deletedAt: null,
+            deletedBy: null,
+            isDeleted: false,
+            status: DueStatusEnum.VOIDED,
+            voidReason: 'Migración',
+            voidedAt: '$deletedAt',
+            voidedBy: '$deletedBy',
+          },
+        },
+      ],
     );
 
     next();

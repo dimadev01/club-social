@@ -49,7 +49,7 @@ export class VoidPaymentUseCase implements IUseCase<VoidPaymentRequest, null> {
 
         await Promise.all(
           dues.map(async (due) => {
-            const result = due.revertToPending();
+            const result = due.voidPayment(payment._id);
 
             if (result.isErr()) {
               throw result.error;

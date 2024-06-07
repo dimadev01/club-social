@@ -120,13 +120,13 @@ export const DuesPage = () => {
             },
             {
               align: 'right',
-              dataIndex: 'pendingAmount',
-              render: (pendingAmount: number, due: DueGridDto) => {
+              dataIndex: 'balanceAmount',
+              render: (balanceAmount: number, due: DueGridDto) => {
                 const pendingAmountFormatted = new Money({
-                  amount: pendingAmount,
+                  amount: balanceAmount,
                 }).formatWithCurrency();
 
-                if (pendingAmount === due.amount) {
+                if (balanceAmount === due.amount || balanceAmount === 0) {
                   return pendingAmountFormatted;
                 }
 

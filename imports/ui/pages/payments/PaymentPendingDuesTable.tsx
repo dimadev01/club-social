@@ -127,15 +127,17 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
       />
 
       <Table.Column
-        dataIndex="amount"
+        dataIndex="balanceAmount"
         width={250}
-        title="Monto deudor"
+        title="Monto pendiente"
         align="right"
-        render={(amount: number) => new Money({ amount }).formatWithCurrency()}
+        render={(balanceAmount: number) =>
+          new Money({ amount: balanceAmount }).formatWithCurrency()
+        }
       />
 
       <Table.Column
-        title="Monto a registrar"
+        title="Monto a pagar"
         align="right"
         width={250}
         render={(_, due: DueDto) => {
