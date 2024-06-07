@@ -22,4 +22,19 @@ export class MemberCreditMongoRepository
   ) {
     super(collection, mapper, logger);
   }
+
+  public async findOneByPayment(
+    paymentId: string,
+  ): Promise<MemberCredit | null> {
+    const entity = await this.collection.findOneAsync({
+      isDeleted: false,
+      paymentId,
+    });
+
+    if (!entity) {
+      return null;
+    }
+
+    return this.mapper.toDomain(entity);
+  }
 }

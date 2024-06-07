@@ -1,14 +1,20 @@
 import { StopOutlined } from '@ant-design/icons';
-import { App, ButtonProps, Form, Input } from 'antd';
+import { ButtonProps, Form, Input } from 'antd';
+import { useForm } from 'antd/es/form/Form';
 import React, { useState } from 'react';
 
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
 import { SecurityUtils } from '@infra/security/security.utils';
 import { Button } from '@ui/components/Button';
+import { Popconfirm } from '@ui/components/Popconfirm/Popconfirm';
 
 export type FormDeleteButtonProps = ButtonProps & {
   onConfirm: (reason: string) => void;
   scope: ScopeEnum;
+};
+
+type FormValues = {
+  reason: string;
 };
 
 export const FormVoidButton: React.FC<FormDeleteButtonProps> = ({
@@ -16,45 +22,53 @@ export const FormVoidButton: React.FC<FormDeleteButtonProps> = ({
   scope,
   ...rest
 }) => {
-  const { modal } = App.useApp();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const [reason, setReason] = useState<string>('');
-
-  const [isError, setIsError] = useState<boolean>(false);
+  const [form] = useForm<FormValues>();
 
   if (!SecurityUtils.isInRole(PermissionEnum.VOID, scope)) {
     return false;
   }
 
   const handleConfirm = async () => {
-    await modal.confirm({
-      content: (
+    const values = await form.validateFields();
+
+    setIsOpen(false);
+
+    onConfirm(values.reason);
+  };
+
+  return (
+    <Popconfirm
+      open={isOpen}
+      description={
         <Form
-          onFinish={(values) => {
-            console.log(values);
+          form={form}
+          layout="vertical"
+          initialValues={{
+            reason: undefined,
           }}
         >
           <Form.Item
             label="Motivo"
+            name="reason"
             rules={[{ required: true, whitespace: true }]}
           >
             <Input.TextArea />
           </Form.Item>
         </Form>
-      ),
-      // onOk: () => handleConfirm(),
-      title: 'Ingrese un motivo',
-    });
-  };
-
-  return (
-    <Button
-      onClick={async () => handleConfirm()}
-      icon={<StopOutlined />}
-      danger
-      {...rest}
+      }
+      onCancel={() => setIsOpen(false)}
+      onConfirm={() => handleConfirm()}
     >
-      Anular
-    </Button>
+      <Button
+        onClick={() => setIsOpen(true)}
+        icon={<StopOutlined />}
+        danger
+        {...rest}
+      >
+        Anular
+      </Button>
+    </Popconfirm>
   );
 };

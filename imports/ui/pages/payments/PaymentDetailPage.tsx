@@ -1,4 +1,4 @@
-import { Breadcrumb, Card, Descriptions, Divider, Flex, Space } from 'antd';
+import { Breadcrumb, Card, Descriptions, Divider, Flex } from 'antd';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
@@ -7,11 +7,9 @@ import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
-import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
 import { FormVoidButton } from '@ui/components/Form/FormVoidButton';
 import { NotFound } from '@ui/components/NotFound';
 import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
-import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { usePayment } from '@ui/hooks/payments/usePayment';
 import { useVoidPayment } from '@ui/hooks/payments/useVoidPayment';
 import { useNavigate } from '@ui/hooks/useNavigate';
@@ -27,8 +25,6 @@ export const PaymentDetailPage = () => {
   const { data: payment, error } = usePayment(
     paymentId ? { id: paymentId } : undefined,
   );
-
-  const deletePayment = useDeletePayment();
 
   const voidPayment = useVoidPayment();
 
@@ -81,42 +77,25 @@ export const PaymentDetailPage = () => {
 
           <Flex justify="space-between">
             <FormBackButton />
-            <Space.Compact>
-              <FormVoidButton
-                scope={ScopeEnum.PAYMENTS}
-                onConfirm={(reason: string) => {
-                  voidPayment.mutate(
-                    {
-                      id: payment.id,
-                      voidReason: reason,
-                      voidedBy: '',
-                    },
-                    {
-                      onSuccess: () => {
-                        notificationSuccess('Pago anulado');
 
-                        navigate(AppUrl.Payments);
-                      },
-                    },
-                  );
-                }}
-              />
-              <FormDeleteButton
-                scope={ScopeEnum.PAYMENTS}
-                onClick={() => {
-                  deletePayment.mutate(
-                    { id: payment.id },
-                    {
-                      onSuccess: () => {
-                        notificationSuccess('Pago eliminado');
+            <FormVoidButton
+              scope={ScopeEnum.PAYMENTS}
+              onConfirm={(reason: string) => {
+                voidPayment.mutate(
+                  {
+                    id: payment.id,
+                    voidReason: reason,
+                  },
+                  {
+                    onSuccess: () => {
+                      notificationSuccess('Pago anulado');
 
-                        navigate(AppUrl.Payments);
-                      },
+                      navigate(AppUrl.Payments);
                     },
-                  );
-                }}
-              />
-            </Space.Compact>{' '}
+                  },
+                );
+              }}
+            />
           </Flex>
         </>
       </Card>

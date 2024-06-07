@@ -83,24 +83,6 @@ export class CreatePaymentUseCase
               source: PaymentDueSourceEnum.DIRECT,
             };
 
-            if (createPaymentDue.amount.isGreaterThan(due.amount)) {
-              const memberCredit = MemberCredit.createOne({
-                amount: createPaymentDue.amount.subtract(due.amount),
-                memberId: request.memberId,
-                paymentDueId: createPaymentDue.dueId,
-                type: MemberCreditTypeEnum.CREDIT,
-              });
-
-              if (memberCredit.isErr()) {
-                throw memberCredit.error;
-              }
-
-              await this._memberCreditRepository.insertWithSession(
-                memberCredit.value,
-                unitOfWork,
-              );
-            }
-
             await this._duePort.updateWithSession(due, unitOfWork);
 
             return createPaymentDue;
@@ -135,6 +117,29 @@ export class CreatePaymentUseCase
             });
 
             await this._duePort.updateWithSession(due, unitOfWork);
+          }),
+        );
+
+        await Promise.all(
+          newPayment.dues.map(async (paymentDue) => {
+            if (paymentDue.amount.isGreaterThan(paymentDue.dueAmount)) {
+              const memberCredit = MemberCredit.createOne({
+                amount: paymentDue.amount.subtract(paymentDue.dueAmount),
+                dueId: paymentDue.dueId,
+                memberId: request.memberId,
+                paymentId: newPayment._id,
+                type: MemberCreditTypeEnum.CREDIT,
+              });
+
+              if (memberCredit.isErr()) {
+                throw memberCredit.error;
+              }
+
+              await this._memberCreditRepository.insertWithSession(
+                memberCredit.value,
+                unitOfWork,
+              );
+            }
           }),
         );
 

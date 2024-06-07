@@ -1,6 +1,5 @@
-import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Tooltip } from 'antd';
-import ButtonGroup from 'antd/es/button/button-group';
 import React from 'react';
 import { FaCreditCard } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
@@ -17,8 +16,7 @@ import {
   DueStatusLabel,
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { SecurityUtils } from '@infra/security/security.utils';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
@@ -28,9 +26,7 @@ import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
-import { useDeleteDue } from '@ui/hooks/dues/useDeleteDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import { useNotificationSuccess } from '@ui/hooks/useNotification';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 import { useTable } from '@ui/hooks/useTable';
 
@@ -49,8 +45,6 @@ export const DuesPage = () => {
 
   const navigate = useNavigate();
 
-  const notificationSuccess = useNotificationSuccess();
-
   const { data: members } = useMembers({});
 
   const { data, isLoading, isRefetching, refetch } = useQueryGrid<
@@ -66,8 +60,6 @@ export const DuesPage = () => {
       sorter: gridState.sorter,
     },
   });
-
-  const deleteDue = useDeleteDue();
 
   const expandedRowRender = (due: DueGridDto) => (
     <DuePaymentsGrid payments={due.payments} />
@@ -171,41 +163,7 @@ export const DuesPage = () => {
             {
               align: 'center',
               render: (_, due: DueGridDto) => (
-                <ButtonGroup size="small">
-                  {SecurityUtils.isInRole(
-                    PermissionEnum.DELETE,
-                    ScopeEnum.DUES,
-                  ) && (
-                    <Button
-                      popConfirm={{
-                        onConfirm: () =>
-                          deleteDue.mutate(
-                            { id: due.id },
-                            {
-                              onError: () => deleteDue.reset(),
-                              onSuccess: () => {
-                                deleteDue.reset();
-
-                                notificationSuccess('Cobro eliminado');
-
-                                refetch();
-                              },
-                            },
-                          ),
-                        title: '¿Está seguro de eliminar este cobro?',
-                      }}
-                      type="text"
-                      htmlType="button"
-                      tooltip={{ title: 'Eliminar' }}
-                      icon={<DeleteOutlined />}
-                      loading={deleteDue.variables?.id === due.id}
-                      disabled={
-                        deleteDue.variables?.id === due.id ||
-                        due.status !== DueStatusEnum.PENDING
-                      }
-                    />
-                  )}
-
+                <Space.Compact size="small">
                   <GridFilterByMemberButton
                     gridState={gridState}
                     setState={setState}
@@ -227,7 +185,7 @@ export const DuesPage = () => {
                     tooltip={{ title: 'Cobrar' }}
                     icon={<FaCreditCard />}
                   />
-                </ButtonGroup>
+                </Space.Compact>
               ),
               title: 'Acciones',
               width: 100,

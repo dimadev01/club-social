@@ -18,11 +18,15 @@ export class MemberCreditEntity extends Entity {
 
   @IsNotEmpty()
   @IsString()
+  public dueId: string;
+
+  @IsNotEmpty()
+  @IsString()
   public memberId: string;
 
   @IsNotEmpty()
   @IsString()
-  public paymentDueId: string;
+  public paymentId: string;
 
   @IsEnum(MemberCreditTypeEnum)
   public type: MemberCreditTypeEnum;
@@ -34,7 +38,9 @@ export class MemberCreditEntity extends Entity {
 
     this.amount = props.amount;
 
-    this.paymentDueId = props.paymentDueId;
+    this.paymentId = props.paymentId;
+
+    this.dueId = props.dueId;
 
     this.type = props.type;
   }

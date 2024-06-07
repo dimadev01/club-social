@@ -1,6 +1,8 @@
 import invariant from 'tiny-invariant';
 
 export abstract class MeteorMethods {
+  public abstract register(): void;
+
   protected getCurrentUser(): Meteor.User {
     const user = Meteor.user();
 
@@ -16,6 +18,4 @@ export abstract class MeteorMethods {
 
     return `${user.profile.firstName} ${user.profile.lastName}`;
   }
-
-  public abstract register(): void;
 }

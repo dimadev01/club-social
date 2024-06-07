@@ -2,55 +2,47 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { VoidDueRequest } from '@application/dues/use-cases/void-due/void-due.request';
 import { BaseError } from '@domain/common/errors/base.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { ILogger } from '@domain/common/logger/logger.interface';
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { IDueRepository } from '@domain/dues/due.repository';
-import { IPaymentRepository } from '@domain/payments/payment.repository';
+import { DueNotVoidableError } from '@domain/dues/errors/due-not-voidable.error';
 
 @injectable()
-export class DeletePaymentUseCase implements IUseCase<FindOneById, null> {
+export class VoidDueUseCase implements IUseCase<VoidDueRequest, null> {
   public constructor(
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
-    @inject(DIToken.IPaymentRepository)
-    private readonly _paymentRepository: IPaymentRepository,
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork,
   ) {}
 
-  public async execute(request: FindOneById): Promise<Result<null, Error>> {
-    const payment = await this._paymentRepository.findOneByIdOrThrow(request);
-
-    const dues = await this._dueRepository.findByIds({
-      ids: payment.dues.map((paymentDue) => paymentDue.dueId),
-    });
-
+  public async execute(request: VoidDueRequest): Promise<Result<null, Error>> {
     this._unitOfWork.start();
 
     try {
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
-        await Promise.all(
-          dues.map(async (due) => {
-            const result = due.revertToPending();
+        const due = await this._dueRepository.findOneByIdOrThrow(request);
 
-            if (result.isErr()) {
-              throw result.error;
-            }
+        if (!due.isPending()) {
+          throw new DueNotVoidableError();
+        }
 
-            await this._dueRepository.updateWithSession(due, unitOfWork);
-          }),
-        );
+        const voidResult = due.void(request.voidedBy, request.voidReason);
 
-        await this._paymentRepository.deleteWithSession(request, unitOfWork);
+        if (voidResult.isErr()) {
+          throw voidResult.error;
+        }
+
+        await this._dueRepository.updateWithSession(due, unitOfWork);
       });
 
-      this._logger.info('Payment deleted', { payment: request.id });
+      this._logger.info('Due voided', { due: request.id });
 
       return ok(null);
     } catch (error) {

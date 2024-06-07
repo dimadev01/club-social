@@ -5,15 +5,15 @@ import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { DueStatusLabel } from '@domain/dues/due.enum';
+import { DueStatusEnum, DueStatusLabel } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
-import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
+import { FormVoidButton } from '@ui/components/Form/FormVoidButton';
 import { NotFound } from '@ui/components/NotFound';
-import { useDeleteDue } from '@ui/hooks/dues/useDeleteDue';
 import { useDue } from '@ui/hooks/dues/useDue';
+import { useVoidDue } from '@ui/hooks/dues/useVoidDue';
 import { useNavigate } from '@ui/hooks/useNavigate';
 import { useNotificationSuccess } from '@ui/hooks/useNotification';
 
@@ -26,7 +26,7 @@ export const DueDetailPage = () => {
 
   const { data: due, error } = useDue(dueId ? { id: dueId } : undefined);
 
-  const deleteDue = useDeleteDue();
+  const voidDue = useVoidDue();
 
   if (error) {
     return <NotFound />;
@@ -85,14 +85,18 @@ export const DueDetailPage = () => {
           <Flex justify="space-between">
             <FormBackButton />
 
-            <FormDeleteButton
+            <FormVoidButton
+              disabled={due.status !== DueStatusEnum.PENDING}
               scope={ScopeEnum.DUES}
-              onClick={() => {
-                deleteDue.mutate(
-                  { id: due.id },
+              onConfirm={(reason: string) => {
+                voidDue.mutate(
+                  {
+                    id: due.id,
+                    voidReason: reason,
+                  },
                   {
                     onSuccess: () => {
-                      notificationSuccess('Cobro eliminado');
+                      notificationSuccess('Deuda anulada');
 
                       navigate(AppUrl.Dues);
                     },

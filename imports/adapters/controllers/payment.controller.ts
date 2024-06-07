@@ -9,7 +9,6 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
 import { PaymentDto } from '@application/payments/dtos/payment.dto';
 import { CreatePaymentUseCase } from '@application/payments/use-cases/create-payment/create-payment.use-case';
-import { DeletePaymentUseCase } from '@application/payments/use-cases/delete-payment/delete-payment.use-case';
 import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment/get-payment.use-case';
 import { GetPaymentsGridUseCase } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.use-case';
 import { VoidPaymentUseCase } from '@application/payments/use-cases/void-payment/void-payment.use-case';
@@ -24,7 +23,6 @@ export class PaymentController extends BaseController {
     private readonly _getGrid: GetPaymentsGridUseCase,
     private readonly _getOne: GetPaymentUseCase,
     private readonly _create: CreatePaymentUseCase,
-    private readonly _delete: DeletePaymentUseCase,
     private readonly _void: VoidPaymentUseCase,
   ) {
     super(logger);
@@ -35,14 +33,6 @@ export class PaymentController extends BaseController {
       classType: CreatePaymentRequestDto,
       request,
       useCase: this._create,
-    });
-  }
-
-  public async delete(request: GetOneByIdRequestDto): Promise<void> {
-    await this.execute({
-      classType: GetOneByIdRequestDto,
-      request,
-      useCase: this._delete,
     });
   }
 

@@ -190,7 +190,7 @@ export const MembersPage = () => {
               sortOrder: gridState.sorter.pendingMembership,
               sorter: true,
               title: 'Deuda Cuota',
-              width: 125,
+              width: 150,
             },
             {
               align: 'right',
@@ -200,7 +200,7 @@ export const MembersPage = () => {
               sortOrder: gridState.sorter.pendingElectricity,
               sorter: true,
               title: 'Deuda Luz',
-              width: 125,
+              width: 150,
             },
             {
               align: 'right',
@@ -210,7 +210,7 @@ export const MembersPage = () => {
               sortOrder: gridState.sorter.pendingGuest,
               sorter: true,
               title: 'Deuda Invitado',
-              width: 125,
+              width: 150,
             },
             {
               align: 'right',
@@ -232,7 +232,7 @@ export const MembersPage = () => {
               sortOrder: gridState.sorter.pendingTotal,
               sorter: true,
               title: 'Deuda Total',
-              width: 125,
+              width: 150,
             },
             {
               align: 'center',

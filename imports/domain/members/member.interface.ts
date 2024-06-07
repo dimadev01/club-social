@@ -58,14 +58,16 @@ export interface CreateMemberAddress {
 
 export interface IMemberCredit extends IModel {
   amount: Money;
+  dueId: string;
   memberId: string;
-  paymentDueId: string;
+  paymentId: string;
   type: MemberCreditTypeEnum;
 }
 
 export interface CreateMemberCredit {
   amount: Money;
+  dueId: string;
   memberId: string;
-  paymentDueId: string;
+  paymentId: string;
   type: MemberCreditTypeEnum;
 }

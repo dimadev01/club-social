@@ -1,9 +1,9 @@
 export enum MeteorMethodEnum {
   DuesCreate = 'dues/create',
-  DuesDelete = 'dues/delete',
   DuesGet = 'dues/get',
   DuesGetGrid = 'dues/getGrid',
   DuesGetPending = 'dues/getPending',
+  DuesVoid = 'dues/void',
 
   MembersCreate = 'members/create',
   MembersGet = 'members/get',
@@ -19,7 +19,6 @@ export enum MeteorMethodEnum {
   MovementsRestore = 'movements/restore',
 
   PaymentsCreate = 'payments/create',
-  PaymentsDelete = 'payments/delete',
   PaymentsGet = 'payments/get',
   PaymentsGetGrid = 'payments/getGrid',
   PaymentsVoid = 'payments/void',

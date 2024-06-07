@@ -16,8 +16,6 @@ import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
-import { useVoidPayment } from '@ui/hooks/payments/useVoidPayment';
 import { useQueryGrid } from '@ui/hooks/useQueryGrid';
 import { useTable } from '@ui/hooks/useTable';
 
@@ -45,10 +43,6 @@ export const PaymentsPage = () => {
       sorter: gridState.sorter,
     },
   });
-
-  const deletePayment = useDeletePayment();
-
-  const voidPayment = useVoidPayment();
 
   const expandedRowRender = (payment: PaymentGridDto) => (
     <PaymentDuesGrid dues={payment.dues} />

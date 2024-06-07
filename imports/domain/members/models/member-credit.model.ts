@@ -11,9 +11,11 @@ import {
 export class MemberCredit extends Model implements IMemberCredit {
   private _amount: Money;
 
+  private _dueId: string;
+
   private _memberId: string;
 
-  private _paymentDueId: string;
+  private _paymentId: string;
 
   private _type: MemberCreditTypeEnum;
 
@@ -24,7 +26,9 @@ export class MemberCredit extends Model implements IMemberCredit {
 
     this._memberId = props?.memberId ?? '';
 
-    this._paymentDueId = props?.paymentDueId ?? '';
+    this._paymentId = props?.paymentId ?? '';
+
+    this._dueId = props?.dueId ?? '';
 
     this._type = props?.type ?? MemberCreditTypeEnum.CREDIT;
   }
@@ -33,12 +37,16 @@ export class MemberCredit extends Model implements IMemberCredit {
     return this._amount;
   }
 
+  public get dueId(): string {
+    return this._dueId;
+  }
+
   public get memberId(): string {
     return this._memberId;
   }
 
-  public get paymentDueId(): string {
-    return this._paymentDueId;
+  public get paymentId(): string {
+    return this._paymentId;
   }
 
   public get type(): MemberCreditTypeEnum {
@@ -53,7 +61,8 @@ export class MemberCredit extends Model implements IMemberCredit {
     const result = Result.combine([
       memberCredit.setAmount(props.amount),
       memberCredit.setMemberId(props.memberId),
-      memberCredit.setPaymentDueId(props.paymentDueId),
+      memberCredit.setPaymentId(props.paymentId),
+      memberCredit.setDueId(props.dueId),
       memberCredit.setType(props.type),
     ]);
 
@@ -76,8 +85,14 @@ export class MemberCredit extends Model implements IMemberCredit {
     return ok(null);
   }
 
-  private setPaymentDueId(value: string): Result<null, Error> {
-    this._paymentDueId = value;
+  private setPaymentId(value: string): Result<null, Error> {
+    this._paymentId = value;
+
+    return ok(null);
+  }
+
+  private setDueId(value: string): Result<null, Error> {
+    this._dueId = value;
 
     return ok(null);
   }
