@@ -3,7 +3,6 @@ import { inject, injectable } from 'tsyringe';
 import { BaseController } from '@adapters/common/controllers/base.controller';
 import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.dto';
 import { CreateDueRequestDto } from '@adapters/dtos/create-due-request.dto';
-import { GetDuesByPaymentRequestDto } from '@adapters/dtos/get-dues-by-payment-request.dto';
 import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid.request.dto';
 import { GetPendingDuesRequestDto } from '@adapters/dtos/get-pending-dues-request.dto';
 import { DIToken } from '@application/common/di/tokens.di';
@@ -12,7 +11,6 @@ import { DueDto } from '@application/dues/dtos/due.dto';
 import { CreateDueUseCase } from '@application/dues/use-cases/create-due/create-due.use-case';
 import { DeleteDueUseCase } from '@application/dues/use-cases/delete-due/delete-due.use-case';
 import { GetDueUseCase } from '@application/dues/use-cases/get-due/get-due.use-case';
-import { GetDuesByPaymentUseCase } from '@application/dues/use-cases/get-dues-by-payment/get-dues-by-payment.use-case';
 import { GetDuesGridUseCase } from '@application/dues/use-cases/get-dues-grid/get-dues-grid.use-case';
 import { GetPendingDuesUseCase } from '@application/dues/use-cases/get-pending-dues/get-pending-dues.use-case';
 import { ILogger } from '@domain/common/logger/logger.interface';
@@ -28,7 +26,6 @@ export class DueController extends BaseController {
     private readonly _delete: DeleteDueUseCase,
     private readonly _getGrid: GetDuesGridUseCase,
     private readonly _getPending: GetPendingDuesUseCase,
-    private readonly _getByPayment: GetDuesByPaymentUseCase,
   ) {
     super(logger);
   }
@@ -54,16 +51,6 @@ export class DueController extends BaseController {
       classType: GetOneByIdRequestDto,
       request,
       useCase: this._getOne,
-    });
-  }
-
-  public async getByPayment(
-    request: GetDuesByPaymentRequestDto,
-  ): Promise<DueDto[]> {
-    return this.execute({
-      classType: GetDuesByPaymentRequestDto,
-      request,
-      useCase: this._getByPayment,
     });
   }
 

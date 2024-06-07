@@ -36,7 +36,7 @@ export class Member extends Model implements IMember {
 
   private _status: MemberStatusEnum;
 
-  private _user?: User;
+  public user?: User;
 
   private _userId: string;
 
@@ -65,7 +65,7 @@ export class Member extends Model implements IMember {
 
     this._userId = props?.userId ?? '';
 
-    this._user = user;
+    this.user = user;
   }
 
   public get address(): MemberAddress {
@@ -114,14 +114,6 @@ export class Member extends Model implements IMember {
     return this._status;
   }
 
-  public get user(): User | undefined {
-    return this._user;
-  }
-
-  public set user(value: User | undefined) {
-    this._user = value;
-  }
-
   public get userId(): string {
     return this._userId;
   }
@@ -146,6 +138,7 @@ export class Member extends Model implements IMember {
       member.setUserId(props.userId),
       member.setPhones(props.phones),
       member.setSex(props.sex),
+      member.setStatus(MemberStatusEnum.ACTIVE),
     ]);
 
     if (result.isErr()) {
@@ -155,31 +148,31 @@ export class Member extends Model implements IMember {
     return ok(member);
   }
 
-  public setAddress(value: MemberAddress): Result<null, Error> {
+  private setAddress(value: MemberAddress): Result<null, Error> {
     this._address = value;
 
     return ok(null);
   }
 
-  public setCategory(value: MemberCategoryEnum): Result<null, Error> {
+  private setCategory(value: MemberCategoryEnum): Result<null, Error> {
     this._category = value;
 
     return ok(null);
   }
 
-  public setBirthDate(value: BirthDate | null): Result<null, Error> {
+  private setBirthDate(value: BirthDate | null): Result<null, Error> {
     this._birthDate = value;
 
     return ok(null);
   }
 
-  public setDocumentID(value: string | null): Result<null, Error> {
+  private setDocumentID(value: string | null): Result<null, Error> {
     this._documentID = value;
 
     return ok(null);
   }
 
-  public setFileStatus(
+  private setFileStatus(
     value: MemberFileStatusEnum | null,
   ): Result<null, Error> {
     this._fileStatus = value;
@@ -187,7 +180,7 @@ export class Member extends Model implements IMember {
     return ok(null);
   }
 
-  public setMaritalStatus(
+  private setMaritalStatus(
     value: MemberMaritalStatusEnum | null,
   ): Result<null, Error> {
     this._maritalStatus = value;
@@ -195,7 +188,7 @@ export class Member extends Model implements IMember {
     return ok(null);
   }
 
-  public setNationality(
+  private setNationality(
     value: MemberNationalityEnum | null,
   ): Result<null, Error> {
     this._nationality = value;
@@ -203,25 +196,25 @@ export class Member extends Model implements IMember {
     return ok(null);
   }
 
-  public setPhones(value: string[] | null): Result<null, Error> {
+  private setPhones(value: string[] | null): Result<null, Error> {
     this._phones = value;
 
     return ok(null);
   }
 
-  public setSex(value: MemberSexEnum | null): Result<null, Error> {
+  private setSex(value: MemberSexEnum | null): Result<null, Error> {
     this._sex = value;
 
     return ok(null);
   }
 
-  public setStatus(value: MemberStatusEnum): Result<null, Error> {
+  private setStatus(value: MemberStatusEnum): Result<null, Error> {
     this._status = value;
 
     return ok(null);
   }
 
-  public setUserId(value: string): Result<null, Error> {
+  private setUserId(value: string): Result<null, Error> {
     this._userId = value;
 
     return ok(null);

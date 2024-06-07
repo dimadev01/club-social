@@ -4,7 +4,6 @@ import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { DueController } from '@adapters/controllers/due.controller';
 import { CreateDueRequestDto } from '@adapters/dtos/create-due-request.dto';
-import { GetDuesByPaymentRequestDto } from '@adapters/dtos/get-dues-by-payment-request.dto';
 import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid.request.dto';
 import { GetPendingDuesRequestDto } from '@adapters/dtos/get-pending-dues-request.dto';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
@@ -27,8 +26,6 @@ export class DueMethods extends MeteorMethods {
         this._controller.getGrid(req),
       [MeteorMethodEnum.DuesGetPending]: (req: GetPendingDuesRequestDto) =>
         this._controller.getPending(req),
-      [MeteorMethodEnum.DuesGetByPayment]: (req: GetDuesByPaymentRequestDto) =>
-        this._controller.getByPayment(req),
     });
   }
 }

@@ -77,37 +77,37 @@ export class MemberAddress implements IMemberAddress {
     return ok(address);
   }
 
-  public setCityGovId(value: string | null): Result<null, Error> {
+  private setCityGovId(value: string | null): Result<null, Error> {
     this._cityGovId = value;
 
     return ok(null);
   }
 
-  public setCityName(value: string | null): Result<null, Error> {
+  private setCityName(value: string | null): Result<null, Error> {
     this._cityName = value;
 
     return ok(null);
   }
 
-  public setStateGovId(value: string | null): Result<null, Error> {
+  private setStateGovId(value: string | null): Result<null, Error> {
     this._stateGovId = value;
 
     return ok(null);
   }
 
-  public setStateName(value: string | null): Result<null, Error> {
+  private setStateName(value: string | null): Result<null, Error> {
     this._stateName = value;
 
     return ok(null);
   }
 
-  public setStreet(value: string | null): Result<null, Error> {
+  private setStreet(value: string | null): Result<null, Error> {
     this._street = value;
 
     return ok(null);
   }
 
-  public setZipCode(value: string | null): Result<null, Error> {
+  private setZipCode(value: string | null): Result<null, Error> {
     this._zipCode = value;
 
     return ok(null);

@@ -6,14 +6,10 @@ import { Due } from '@domain/dues/models/due.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { DueEntity } from '@infra/mongo/entities/due.entity';
 import { MemberMapper } from '@infra/mongo/mappers/member.mapper';
-import { PaymentDueMapper } from '@infra/mongo/mappers/payment-due.mapper';
 
 @injectable()
 export class DueMapper extends Mapper<Due, DueEntity> {
-  public constructor(
-    private readonly _memberMapper: MemberMapper,
-    private readonly _paymentDueMapper: PaymentDueMapper,
-  ) {
+  public constructor(private readonly _memberMapper: MemberMapper) {
     super();
   }
 

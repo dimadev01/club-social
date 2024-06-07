@@ -20,10 +20,7 @@ export class GetMemberUseCase implements IUseCase<FindOneById, MemberDto> {
   public async execute(
     request: FindOneById,
   ): Promise<Result<MemberDto, Error>> {
-    const member = await this._memberRepository.findOneById({
-      fetchUser: true,
-      id: request.id,
-    });
+    const member = await this._memberRepository.findOneById(request);
 
     if (!member) {
       return err(new ModelNotFoundError());

@@ -24,12 +24,10 @@ export class DueEntity extends Entity {
   public amount: number;
 
   @IsInt()
-  @IsPositive()
   @IsNumber()
   public totalPaidAmount: number;
 
   @IsInt()
-  @IsPositive()
   @IsNumber()
   public balanceAmount: number;
 

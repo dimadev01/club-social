@@ -105,55 +105,55 @@ export class Movement extends EntityOld {
     return ok(movement);
   }
 
-  public setAmount(amount: number): Result<null, Error> {
+  private setAmount(amount: number): Result<null, Error> {
     this.amount = amount;
 
     return ok(null);
   }
 
-  public setCategory(category: CategoryEnum): Result<null, Error> {
+  private setCategory(category: CategoryEnum): Result<null, Error> {
     this.category = category;
 
     return ok(null);
   }
 
-  public setDate(date: Date): Result<null, Error> {
+  private setDate(date: Date): Result<null, Error> {
     this.date = date;
 
     return ok(null);
   }
 
-  public setEmployeeId(employeeId: string | null): Result<null, Error> {
+  private setEmployeeId(employeeId: string | null): Result<null, Error> {
     this.employeeId = employeeId;
 
     return ok(null);
   }
 
-  public setMemberId(memberId: string | null): Result<null, Error> {
+  private setMemberId(memberId: string | null): Result<null, Error> {
     this.memberId = memberId;
 
     return ok(null);
   }
 
-  public setNotes(notes: string | null): Result<null, Error> {
+  private setNotes(notes: string | null): Result<null, Error> {
     this.notes = notes;
 
     return ok(null);
   }
 
-  public setProfessorId(professorId: string | null): Result<null, Error> {
+  private setProfessorId(professorId: string | null): Result<null, Error> {
     this.professorId = professorId;
 
     return ok(null);
   }
 
-  public setServiceId(serviceId: string | null): Result<null, Error> {
+  private setServiceId(serviceId: string | null): Result<null, Error> {
     this.serviceId = serviceId;
 
     return ok(null);
   }
 
-  public setType(type: CategoryTypeEnum): Result<null, Error> {
+  private setType(type: CategoryTypeEnum): Result<null, Error> {
     this.type = type;
 
     return ok(null);

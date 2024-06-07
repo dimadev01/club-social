@@ -1,30 +1,37 @@
 import { Result, err, ok } from 'neverthrow';
 
-import { Model } from '@domain/common/models/model';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
 import {
   CreatePaymentDue,
   IPaymentDue,
 } from '@domain/payments/payment.interface';
 
-export class PaymentDue extends Model implements IPaymentDue {
+export class PaymentDue implements IPaymentDue {
   private _amount: Money;
 
-  private _dueId: string;
+  private _dueAmount: Money;
 
-  private _paymentId: string;
+  private _dueCategory: DueCategoryEnum;
+
+  private _dueDate: DateUtcVo;
+
+  private _dueId: string;
 
   private _source: PaymentDueSourceEnum;
 
   public constructor(props?: IPaymentDue) {
-    super(props);
-
     this._amount = props?.amount ?? new Money({ amount: 0 });
 
-    this._dueId = props?.dueId ?? '';
+    this._dueAmount = props?.dueAmount ?? new Money({ amount: 0 });
 
-    this._paymentId = props?.paymentId ?? '';
+    this._dueCategory = props?.dueCategory ?? DueCategoryEnum.MEMBERSHIP;
+
+    this._dueDate = props?.dueDate ?? new DateUtcVo();
+
+    this._dueId = props?.dueId ?? '';
 
     this._source = props?.source ?? PaymentDueSourceEnum.DIRECT;
   }
@@ -33,12 +40,20 @@ export class PaymentDue extends Model implements IPaymentDue {
     return this._amount;
   }
 
-  public get dueId(): string {
-    return this._dueId;
+  public get dueAmount(): Money {
+    return this._dueAmount;
   }
 
-  public get paymentId(): string {
-    return this._paymentId;
+  public get dueCategory(): DueCategoryEnum {
+    return this._dueCategory;
+  }
+
+  public get dueDate(): DateUtcVo {
+    return this._dueDate;
+  }
+
+  public get dueId(): string {
+    return this._dueId;
   }
 
   public get source(): PaymentDueSourceEnum {
@@ -50,8 +65,10 @@ export class PaymentDue extends Model implements IPaymentDue {
 
     const result = Result.combine([
       paymentDue.setAmount(props.amount),
+      paymentDue.setDueAmount(props.dueAmount),
+      paymentDue.setDueCategory(props.dueCategory),
+      paymentDue.setDueDate(props.dueDate),
       paymentDue.setDueId(props.dueId),
-      paymentDue.setPaymentId(props.paymentId),
       paymentDue.setSource(props.source),
     ]);
 
@@ -68,14 +85,26 @@ export class PaymentDue extends Model implements IPaymentDue {
     return ok(null);
   }
 
-  private setDueId(value: string): Result<null, Error> {
-    this._dueId = value;
+  private setDueAmount(value: Money): Result<null, Error> {
+    this._dueAmount = value;
 
     return ok(null);
   }
 
-  private setPaymentId(value: string): Result<null, Error> {
-    this._paymentId = value;
+  private setDueCategory(value: DueCategoryEnum): Result<null, Error> {
+    this._dueCategory = value;
+
+    return ok(null);
+  }
+
+  private setDueDate(value: DateUtcVo): Result<null, Error> {
+    this._dueDate = value;
+
+    return ok(null);
+  }
+
+  private setDueId(value: string): Result<null, Error> {
+    this._dueId = value;
 
     return ok(null);
   }

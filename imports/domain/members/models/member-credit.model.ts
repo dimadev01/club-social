@@ -64,25 +64,25 @@ export class MemberCredit extends Model implements IMemberCredit {
     return ok(memberCredit);
   }
 
-  public setAmount(value: Money): Result<null, Error> {
+  private setAmount(value: Money): Result<null, Error> {
     this._amount = value;
 
     return ok(null);
   }
 
-  public setMemberId(value: string): Result<null, Error> {
+  private setMemberId(value: string): Result<null, Error> {
     this._memberId = value;
 
     return ok(null);
   }
 
-  public setPaymentDueId(value: string): Result<null, Error> {
+  private setPaymentDueId(value: string): Result<null, Error> {
     this._paymentDueId = value;
 
     return ok(null);
   }
 
-  public setType(value: MemberCreditTypeEnum): Result<null, Error> {
+  private setType(value: MemberCreditTypeEnum): Result<null, Error> {
     this._type = value;
 
     return ok(null);

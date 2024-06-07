@@ -19,6 +19,7 @@ import { DuePaidError } from '@domain/payments/errors/due-paid.error';
 import { ExistingPaymentError } from '@domain/payments/errors/existing-payment.error';
 import { Payment } from '@domain/payments/models/payment.model';
 import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
+import { CreatePaymentDue } from '@domain/payments/payment.interface';
 import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
@@ -67,56 +68,26 @@ export class CreatePaymentUseCase
           }
         });
 
-        const newPayment = Payment.createOne({
-          date: new DateUtcVo(request.date),
-          memberId: request.memberId,
-          notes: request.notes,
-          receiptNumber: request.receiptNumber,
-        });
-
-        if (newPayment.isErr()) {
-          throw newPayment.error;
-        }
-
-        newPaymentId = newPayment.value._id;
-
-        await Promise.all(
+        const paymentDues = await Promise.all(
           request.dues.map(async (requestDue) => {
             const due = dues.find((d) => d._id === requestDue.dueId);
 
             invariant(due);
 
-            const amountToPay = new Money({ amount: requestDue.amount });
-
-            const addPaymentResult = due.addPayment({
-              amount: amountToPay,
-              date: new DateUtcVo(request.date),
-              paymentId: newPayment.value._id,
-              receiptNumber: request.receiptNumber,
-            });
-
-            if (addPaymentResult.isErr()) {
-              throw addPaymentResult.error;
-            }
-
-            const newPaymentDue = newPayment.value.addDue({
-              amount: amountToPay,
+            const createPaymentDue: CreatePaymentDue = {
+              amount: new Money({ amount: requestDue.amount }),
               dueAmount: due.amount,
               dueCategory: due.category,
               dueDate: due.date,
               dueId: due._id,
               source: PaymentDueSourceEnum.DIRECT,
-            });
+            };
 
-            if (newPaymentDue.isErr()) {
-              throw newPaymentDue.error;
-            }
-
-            if (newPaymentDue.value.amount.isGreaterThan(due.amount)) {
+            if (createPaymentDue.amount.isGreaterThan(due.amount)) {
               const memberCredit = MemberCredit.createOne({
-                amount: newPaymentDue.value.amount.subtract(due.amount),
-                memberId: newPayment.value.memberId,
-                paymentDueId: newPaymentDue.value.dueId,
+                amount: createPaymentDue.amount.subtract(due.amount),
+                memberId: request.memberId,
+                paymentDueId: createPaymentDue.dueId,
                 type: MemberCreditTypeEnum.CREDIT,
               });
 
@@ -131,13 +102,45 @@ export class CreatePaymentUseCase
             }
 
             await this._duePort.updateWithSession(due, unitOfWork);
+
+            return createPaymentDue;
           }),
         );
 
-        await this._paymentRepository.insertWithSession(
-          newPayment.value,
-          unitOfWork,
+        const newPaymentResult = Payment.createOne({
+          date: new DateUtcVo(request.date),
+          dues: paymentDues,
+          memberId: request.memberId,
+          notes: request.notes,
+          receiptNumber: request.receiptNumber,
+        });
+
+        if (newPaymentResult.isErr()) {
+          throw newPaymentResult.error;
+        }
+
+        const newPayment = newPaymentResult.value;
+
+        await Promise.all(
+          dues.map(async (due) => {
+            const paymentDue = paymentDues.find((pd) => pd.dueId === due._id);
+
+            invariant(paymentDue);
+
+            due.addPayment({
+              amount: paymentDue.amount,
+              date: newPayment.date,
+              paymentId: newPayment._id,
+              receiptNumber: newPayment.receiptNumber,
+            });
+
+            await this._duePort.updateWithSession(due, unitOfWork);
+          }),
         );
+
+        newPaymentId = newPayment._id;
+
+        await this._paymentRepository.insertWithSession(newPayment, unitOfWork);
       });
 
       invariant(newPaymentId);

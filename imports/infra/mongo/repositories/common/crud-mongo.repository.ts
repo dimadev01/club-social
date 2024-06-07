@@ -1,4 +1,3 @@
-import { Mongo } from 'meteor/mongo';
 import type {
   ClientSession,
   Document,
@@ -113,30 +112,6 @@ export abstract class CrudMongoRepository<
     } catch (error) {
       return this.handleError(error);
     }
-  }
-
-  public async findPaginated(
-    request: FindPaginatedRequest,
-  ): Promise<FindPaginatedResponse<TDomain>> {
-    // @ts-expect-error
-    const query: Mongo.Selector<TEntity> = {
-      isDeleted: false,
-    };
-
-    const totalCount = await this._collection.find(query).countAsync();
-
-    const options: Mongo.Options<TEntity> = {
-      sort: this.getMongoSorter(request.sorter),
-      // eslint-disable-next-line sort-keys-fix/sort-keys-fix
-      limit: request.limit,
-      skip: (request.page - 1) * request.limit,
-    };
-
-    const entities = await this._collection.find(query, options).fetchAsync();
-
-    const items = entities.map((entity) => this._mapper.toDomain(entity));
-
-    return { items, totalCount };
   }
 
   public async insert(model: TDomain): Promise<void> {
@@ -256,6 +231,20 @@ export abstract class CrudMongoRepository<
     return sorter;
   }
 
+  protected getUserLookupPipeline(): Document[] {
+    return [
+      {
+        $lookup: {
+          as: 'user',
+          foreignField: '_id',
+          from: 'users',
+          localField: 'userId',
+        },
+      },
+      { $unwind: '$user' },
+    ];
+  }
+
   protected getPaginatedPipeline(request: FindPaginatedRequest): Document[] {
     return [
       this.getPaginatedSorterStage(request.sorter),
@@ -267,7 +256,7 @@ export abstract class CrudMongoRepository<
     return { $sort: this.getMongoSorter(sorter) };
   }
 
-  protected getPaginatedStages(page: number, limit: number): Document[] {
+  private getPaginatedStages(page: number, limit: number): Document[] {
     return [{ $skip: (page - 1) * limit }, { $limit: limit }];
   }
 

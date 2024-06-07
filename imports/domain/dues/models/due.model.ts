@@ -17,8 +17,6 @@ export class Due extends Model implements IDue {
 
   private _date: DateUtcVo;
 
-  private _member?: Member;
-
   private _memberId: string;
 
   private _notes: string | null;
@@ -28,6 +26,8 @@ export class Due extends Model implements IDue {
   private _status: DueStatusEnum;
 
   private _totalPaidAmount: Money;
+
+  public member?: Member;
 
   public constructor(props?: IDue, member?: Member) {
     super(props);
@@ -51,7 +51,7 @@ export class Due extends Model implements IDue {
     this._payments =
       props?.payments.map((payment) => new DuePayment(payment)) ?? [];
 
-    this._member = member;
+    this.member = member;
   }
 
   public get amount(): Money {
@@ -68,14 +68,6 @@ export class Due extends Model implements IDue {
 
   public get date(): DateUtcVo {
     return this._date;
-  }
-
-  public get member(): Member | undefined {
-    return this._member;
-  }
-
-  public set member(value: Member | undefined) {
-    this._member = value;
   }
 
   public get memberId(): string {
@@ -134,6 +126,12 @@ export class Due extends Model implements IDue {
       this._balanceAmount = new Money({ amount: 0 });
     }
 
+    if (this._balanceAmount.isGreaterThan(new Money({ amount: 0 }))) {
+      this._status = DueStatusEnum.PARTIALLY_PAID;
+    } else {
+      this._status = DueStatusEnum.PAID;
+    }
+
     return ok(duePayment.value);
   }
 
@@ -153,17 +151,13 @@ export class Due extends Model implements IDue {
     return this._status === DueStatusEnum.PENDING;
   }
 
-  public pay(amount: Money): Result<null, Error> {
-    if (amount.isGreaterThanOrEqual(this.amount)) {
-      this._status = DueStatusEnum.PAID;
-    } else {
-      this._status = DueStatusEnum.PARTIALLY_PAID;
-    }
-
-    return ok(null);
-  }
-
   public revertToPending(): Result<null, Error> {
+    this._payments = [];
+
+    this._totalPaidAmount = new Money({ amount: 0 });
+
+    this._balanceAmount = this._amount;
+
     return this.setStatus(DueStatusEnum.PENDING);
   }
 

@@ -8,7 +8,6 @@ import { MongoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-
 import { DueMongoRepository } from '@infra/mongo/repositories/due-mongo.repository';
 import { MemberCreditMongoRepository } from '@infra/mongo/repositories/member-credit-mongo.repository';
 import { MemberMongoRepository } from '@infra/mongo/repositories/member-mongo.repository';
-import { PaymentDueMongoRepository } from '@infra/mongo/repositories/payment-due-mongo.repository';
 import { PaymentMongoRepository } from '@infra/mongo/repositories/payment-mongo.repository';
 import { UserMongoRepository } from '@infra/mongo/repositories/user-mongo.repository';
 
@@ -37,7 +36,5 @@ container.register(
 );
 
 container.register(DIToken.IPaymentRepository, PaymentMongoRepository);
-
-container.register(DIToken.IPaymentDueRepository, PaymentDueMongoRepository);
 
 container.register(DIToken.IUserRepository, UserMongoRepository);

@@ -20,13 +20,8 @@ export interface IMemberRepository
     > {
   find(request: FindMembers): Promise<Member[]>;
   findByDocument(documentID: string): Promise<Member | null>;
-  findOneById(request: FindOneMemberById): Promise<Member | null>;
-  findToExport(request: FindMembersToExport): Promise<Member[]>;
-  getBalances(memberIds: string[]): Promise<MemberTotalDues[]>;
-}
-
-export interface FindOneMemberById extends FindOneById {
-  fetchUser?: boolean;
+  findOneById(request: FindOneById): Promise<Member | null>;
+  findToExport(request: FindMembersToExport): Promise<PaginatedMember[]>;
 }
 
 export interface FindMembers {
@@ -34,23 +29,9 @@ export interface FindMembers {
   status?: MemberStatusEnum[];
 }
 
-export interface MemberTotalDues {
-  _id: string;
-  electricity: number;
-  guest: number;
-  membership: number;
-  total: number;
-}
-
 /**
  * FindPaginatedMembers
  */
-export interface FindPaginatedMembersResponseTotals {
-  electricity: number;
-  guest: number;
-  membership: number;
-  total: number;
-}
 
 export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
   filterByCategory: MemberCategoryEnum[];
@@ -60,16 +41,14 @@ export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
 }
 
 export interface PaginatedMember {
-  dues: MemberTotalDues;
   member: Member;
+  pendingElectricity: number;
+  pendingGuest: number;
+  pendingMembership: number;
+  pendingTotal: number;
 }
 
-export interface FindPaginatedMembersResponse
-  extends FindPaginatedResponse<PaginatedMember> {
-  totals: FindPaginatedMembersResponseTotals;
-}
+export type FindPaginatedMembersResponse =
+  FindPaginatedResponse<PaginatedMember>;
 
-/**
- * FindMembersToExport
- */
 export type FindMembersToExport = FindPaginatedMembersRequest;

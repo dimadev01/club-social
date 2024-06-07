@@ -10,7 +10,7 @@ import {
 export interface IPayment extends IModel {
   amount: Money;
   date: DateUtcVo;
-  dues: IPaymentDueNew[];
+  dues: IPaymentDue[];
   memberId: string;
   notes: string | null;
   receiptNumber: number | null;
@@ -19,26 +19,13 @@ export interface IPayment extends IModel {
 
 export interface CreatePayment {
   date: DateUtcVo;
+  dues: CreatePaymentDue[];
   memberId: string;
   notes: string | null;
   receiptNumber: number;
 }
 
-export interface IPaymentDue extends IModel {
-  amount: Money;
-  dueId: string;
-  paymentId: string;
-  source: PaymentDueSourceEnum;
-}
-
-export interface CreatePaymentDue {
-  amount: Money;
-  dueId: string;
-  paymentId: string;
-  source: PaymentDueSourceEnum;
-}
-
-export interface IPaymentDueNew {
+export interface IPaymentDue {
   amount: Money;
   dueAmount: Money;
   dueCategory: DueCategoryEnum;
@@ -47,7 +34,7 @@ export interface IPaymentDueNew {
   source: PaymentDueSourceEnum;
 }
 
-export interface CreatePaymentDueNew {
+export interface CreatePaymentDue {
   amount: Money;
   dueAmount: Money;
   dueCategory: DueCategoryEnum;

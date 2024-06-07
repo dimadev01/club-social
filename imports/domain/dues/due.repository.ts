@@ -10,14 +10,9 @@ import { Due } from '@domain/dues/models/due.model';
 export interface IDueRepository
   extends ICrudRepository<Due>,
     IGridRepository<Due, FindPaginatedDuesRequest> {
-  findByPayment(request: FindDuesByPayment): Promise<Due[]>;
-  findOneById(request: FindOneDueById): Promise<Due | null>;
-  findOneByIdOrThrow(request: FindOneDueById): Promise<Due>;
+  findOneById(request: FindOneById): Promise<Due | null>;
+  findOneByIdOrThrow(request: FindOneById): Promise<Due>;
   findPending(request: FindPendingDues): Promise<Due[]>;
-}
-
-export interface FindOneDueById extends FindOneById {
-  fetchMember?: boolean;
 }
 
 export interface FindPaginatedDuesRequest extends FindPaginatedRequest {

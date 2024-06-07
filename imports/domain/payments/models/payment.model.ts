@@ -4,11 +4,11 @@ import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { Member } from '@domain/members/models/member.model';
-import { PaymentDueNew } from '@domain/payments/models/payment-due.model-2';
+import { PaymentDue } from '@domain/payments/models/payment-due.model';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import {
   CreatePayment,
-  CreatePaymentDueNew,
+  CreatePaymentDue,
   IPayment,
 } from '@domain/payments/payment.interface';
 
@@ -17,9 +17,7 @@ export class Payment extends Model implements IPayment {
 
   private _date: DateUtcVo;
 
-  private _dues: PaymentDueNew[];
-
-  private _member?: Member;
+  private _dues: PaymentDue[];
 
   private _memberId: string;
 
@@ -28,6 +26,8 @@ export class Payment extends Model implements IPayment {
   private _receiptNumber: number | null;
 
   private _status: PaymentStatusEnum;
+
+  public member?: Member;
 
   public constructor(props?: IPayment, member?: Member) {
     super(props);
@@ -42,11 +42,11 @@ export class Payment extends Model implements IPayment {
 
     this._status = props?.status ?? PaymentStatusEnum.PAID;
 
-    this._dues = props?.dues.map((due) => new PaymentDueNew(due)) ?? [];
+    this._dues = props?.dues.map((due) => new PaymentDue(due)) ?? [];
 
     this._amount = props?.amount ?? new Money({ amount: 0 });
 
-    this._member = member;
+    this.member = member;
   }
 
   public get amount(): Money {
@@ -57,16 +57,8 @@ export class Payment extends Model implements IPayment {
     return this._date;
   }
 
-  public get dues(): PaymentDueNew[] {
+  public get dues(): PaymentDue[] {
     return this._dues;
-  }
-
-  public get member(): Member | undefined {
-    return this._member;
-  }
-
-  public set member(value: Member | undefined) {
-    this._member = value;
   }
 
   public get memberId(): string {
@@ -100,11 +92,19 @@ export class Payment extends Model implements IPayment {
       return err(result.error);
     }
 
+    const addDues = props.dues.map((due) => payment.addDue(due));
+
+    const addDuesResult = Result.combine(addDues);
+
+    if (addDuesResult.isErr()) {
+      return err(addDuesResult.error);
+    }
+
     return ok(payment);
   }
 
-  public addDue(props: CreatePaymentDueNew): Result<PaymentDueNew, Error> {
-    const paymentDue = PaymentDueNew.createOne(props);
+  public addDue(props: CreatePaymentDue): Result<PaymentDue, Error> {
+    const paymentDue = PaymentDue.createOne(props);
 
     if (paymentDue.isErr()) {
       return err(paymentDue.error);

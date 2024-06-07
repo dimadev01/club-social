@@ -4,9 +4,9 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
+import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { Payment } from '@domain/payments/models/payment.model';
 import {
-  FindOnePaymentById,
   FindPaginatedPaymentsRequest,
   IPaymentRepository,
 } from '@domain/payments/payment.repository';
@@ -17,7 +17,6 @@ import { PaymentEntity } from '@infra/mongo/entities/payment.entity';
 import { PaymentMapper } from '@infra/mongo/mappers/payment.mapper';
 import { CrudMongoAuditableRepository } from '@infra/mongo/repositories/common/crud-mongo-auditable.repository';
 import { MemberMongoRepository } from '@infra/mongo/repositories/member-mongo.repository';
-import { PaymentDueMongoRepository } from '@infra/mongo/repositories/payment-due-mongo.repository';
 
 @injectable()
 export class PaymentMongoRepository
@@ -35,7 +34,6 @@ export class PaymentMongoRepository
     protected readonly auditableCollection: PaymentAuditableCollection,
     protected readonly mapper: PaymentMapper,
     private readonly _memberRepository: MemberMongoRepository,
-    private readonly _paymentDueRepository: PaymentDueMongoRepository,
   ) {
     super(collection, mapper, logger, auditableCollection);
   }
@@ -55,20 +53,16 @@ export class PaymentMongoRepository
     return this.mapper.toDomain(entity);
   }
 
-  public async findOneById(
-    request: FindOnePaymentById,
-  ): Promise<Payment | null> {
+  public async findOneById(request: FindOneById): Promise<Payment | null> {
     const payment = await super.findOneById(request);
 
     if (!payment) {
       return null;
     }
 
-    if (request.fetchMember ?? true) {
-      payment.member = await this._memberRepository.findOneByIdOrThrow({
-        id: payment.memberId,
-      });
-    }
+    payment.member = await this._memberRepository.findOneByIdOrThrow({
+      id: payment.memberId,
+    });
 
     return payment;
   }

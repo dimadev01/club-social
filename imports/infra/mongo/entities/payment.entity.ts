@@ -14,7 +14,7 @@ import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { Entity } from '@infra/mongo/common/entities/entity';
 import { MemberEntity } from '@infra/mongo/entities/member.entity';
-import { PaymentDueEntityNew } from '@infra/mongo/entities/payment-due.entity-new';
+import { PaymentDueEntity } from '@infra/mongo/entities/payment-due.entity';
 
 export class PaymentEntity extends Entity {
   @IsPositive()
@@ -26,9 +26,9 @@ export class PaymentEntity extends Entity {
   public date: Date;
 
   @ValidateNested({ each: true })
-  @Type(() => PaymentDueEntityNew)
+  @Type(() => PaymentDueEntity)
   @IsArray()
-  public dues: PaymentDueEntityNew[];
+  public dues: PaymentDueEntity[];
 
   public member?: MemberEntity;
 

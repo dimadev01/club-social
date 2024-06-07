@@ -6,10 +6,9 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
+import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { DueStatusEnum } from '@domain/dues/due.enum';
 import {
-  FindDuesByPayment,
-  FindOneDueById,
   FindPaginatedDuesRequest,
   FindPendingDues,
   IDueRepository,
@@ -20,7 +19,6 @@ import { DueEntity } from '@infra/mongo/entities/due.entity';
 import { DueMapper } from '@infra/mongo/mappers/due.mapper';
 import { CrudMongoRepository } from '@infra/mongo/repositories/common/crud-mongo.repository';
 import { MemberMongoRepository } from '@infra/mongo/repositories/member-mongo.repository';
-import { PaymentDueMongoRepository } from '@infra/mongo/repositories/payment-due-mongo.repository';
 
 @injectable()
 export class DueMongoRepository
@@ -33,28 +31,11 @@ export class DueMongoRepository
     protected readonly collection: DueCollection,
     protected readonly mapper: DueMapper,
     private readonly _memberRepository: MemberMongoRepository,
-    private readonly _paymentDueRepository: PaymentDueMongoRepository,
   ) {
     super(collection, mapper, logger);
   }
 
-  public async findByPayment(request: FindDuesByPayment): Promise<Due[]> {
-    const paymentDues = await this._paymentDueRepository.findByPayment({
-      paymentId: request.paymentId,
-    });
-
-    const duesIds = paymentDues.map((paymentDue) => paymentDue.dueId);
-
-    const query: Mongo.Query<DueEntity> = {
-      _id: { $in: duesIds },
-    };
-
-    const entities = await this.collection.find(query).fetchAsync();
-
-    return entities.map((entity) => this.mapper.toDomain(entity));
-  }
-
-  public async findOneById(request: FindOneDueById): Promise<Due | null> {
+  public async findOneById(request: FindOneById): Promise<Due | null> {
     const entity = await this.collection.findOneAsync({
       _id: request.id,
       isDeleted: false,
@@ -66,16 +47,14 @@ export class DueMongoRepository
 
     const due = this.mapper.toDomain(entity);
 
-    if (request.fetchMember ?? true) {
-      due.member = await this._memberRepository.findOneByIdOrThrow({
-        id: due.memberId,
-      });
-    }
+    due.member = await this._memberRepository.findOneByIdOrThrow({
+      id: due.memberId,
+    });
 
     return due;
   }
 
-  public async findOneByIdOrThrow(request: FindOneDueById): Promise<Due> {
+  public async findOneByIdOrThrow(request: FindOneById): Promise<Due> {
     const due = await this.findOneById(request);
 
     if (!due) {

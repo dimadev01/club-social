@@ -22,7 +22,7 @@ export class GetMembersGridUseCase
   public async execute(
     request: FindPaginatedMembersRequest,
   ): Promise<Result<GetMembersGridResponse, Error>> {
-    const { items, totalCount, totals } =
+    const { items, totalCount } =
       await this._memberRepository.findPaginated(request);
 
     return ok({
@@ -30,14 +30,13 @@ export class GetMembersGridUseCase
         category: paginatedMember.member.category,
         id: paginatedMember.member._id,
         name: paginatedMember.member.name,
-        pendingElectricity: paginatedMember.dues.electricity,
-        pendingGuest: paginatedMember.dues.guest,
-        pendingMembership: paginatedMember.dues.membership,
-        pendingTotal: paginatedMember.dues.total,
+        pendingElectricity: paginatedMember.pendingElectricity,
+        pendingGuest: paginatedMember.pendingGuest,
+        pendingMembership: paginatedMember.pendingMembership,
+        pendingTotal: paginatedMember.pendingTotal,
         status: paginatedMember.member.status,
       })),
       totalCount,
-      totals,
     });
   }
 }

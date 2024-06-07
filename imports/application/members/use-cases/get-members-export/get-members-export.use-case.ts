@@ -24,27 +24,19 @@ export class GetMembersToExportUseCase
   ): Promise<Result<MemberGridDto[], Error>> {
     const members = await this._memberRepository.findToExport(request);
 
-    const balances = await this._memberRepository.getBalances(
-      members.map((item) => item._id),
-    );
-
     return ok<MemberGridDto[]>(
-      members.map<MemberGridDto>((item) => {
-        const balance = balances.find((b) => b._id === item._id);
-
-        invariant(balance);
-
-        invariant(item.user);
+      members.map<MemberGridDto>((paginatedMember) => {
+        invariant(paginatedMember.member.user);
 
         return {
-          category: item.category,
-          id: item._id,
-          name: item.user.name,
-          pendingElectricity: balance.electricity,
-          pendingGuest: balance.guest,
-          pendingMembership: balance.membership,
-          pendingTotal: balance.total,
-          status: item.status,
+          category: paginatedMember.member.category,
+          id: paginatedMember.member._id,
+          name: paginatedMember.member.user.name,
+          pendingElectricity: paginatedMember.pendingElectricity,
+          pendingGuest: paginatedMember.pendingGuest,
+          pendingMembership: paginatedMember.pendingMembership,
+          pendingTotal: paginatedMember.pendingTotal,
+          status: paginatedMember.member.status,
         };
       }),
     );

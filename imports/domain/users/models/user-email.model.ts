@@ -36,13 +36,13 @@ export class UserEmail implements IUserEmail {
     return ok(email);
   }
 
-  public setAddress(value: string): Result<null, Error> {
+  private setAddress(value: string): Result<null, Error> {
     this._address = value;
 
     return ok(null);
   }
 
-  public setVerified(value: boolean): Result<null, Error> {
+  private setVerified(value: boolean): Result<null, Error> {
     this._verified = value;
 
     return ok(null);

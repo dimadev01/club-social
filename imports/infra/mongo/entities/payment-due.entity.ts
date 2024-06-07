@@ -1,4 +1,5 @@
 import {
+  IsDate,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -7,34 +8,43 @@ import {
   IsString,
 } from 'class-validator';
 
+import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
-import { Entity } from '@infra/mongo/common/entities/entity';
 
-export class PaymentDueEntity extends Entity {
+export class PaymentDueEntity {
   @IsInt()
   @IsPositive()
   @IsNumber()
   public amount: number;
 
-  @IsNotEmpty()
-  @IsString()
-  public dueId: string;
+  @IsInt()
+  @IsPositive()
+  @IsNumber()
+  public dueAmount: number;
+
+  @IsEnum(DueCategoryEnum)
+  public dueCategory: DueCategoryEnum;
+
+  @IsDate()
+  public dueDate: Date;
 
   @IsNotEmpty()
   @IsString()
-  public paymentId: string;
+  public dueId: string;
 
   @IsEnum(PaymentDueSourceEnum)
   public source: PaymentDueSourceEnum;
 
   public constructor(props: PaymentDueEntity) {
-    super(props);
-
     this.amount = props.amount;
 
-    this.dueId = props.dueId;
+    this.dueCategory = props.dueCategory;
 
-    this.paymentId = props.paymentId;
+    this.dueAmount = props.dueAmount;
+
+    this.dueDate = props.dueDate;
+
+    this.dueId = props.dueId;
 
     this.source = props.source;
   }

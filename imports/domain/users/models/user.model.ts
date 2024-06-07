@@ -114,49 +114,49 @@ export class User extends Model implements IUserModel {
     return ok(user);
   }
 
-  public setEmails(value: UserEmail[]): Result<null, Error> {
+  private setEmails(value: UserEmail[]): Result<null, Error> {
     this._emails = value;
 
     return ok(null);
   }
 
-  public setFirstName(value: string): Result<null, Error> {
+  private setFirstName(value: string): Result<null, Error> {
     this._firstName = value;
 
     return ok(null);
   }
 
-  public setHeartbeat(value: Date | null): Result<null, Error> {
+  private setHeartbeat(value: Date | null): Result<null, Error> {
     this._heartbeat = value;
 
     return ok(null);
   }
 
-  public setLastName(value: string): Result<null, Error> {
+  private setLastName(value: string): Result<null, Error> {
     this._lastName = value;
 
     return ok(null);
   }
 
-  public setRole(value: RoleEnum): Result<null, Error> {
+  private setRole(value: RoleEnum): Result<null, Error> {
     this._role = value;
 
     return ok(null);
   }
 
-  public setServices(value: Record<string, unknown>): Result<null, Error> {
+  private setServices(value: Record<string, unknown>): Result<null, Error> {
     this._services = value;
 
     return ok(null);
   }
 
-  public setState(value: UserStateEnum): Result<null, Error> {
+  private setState(value: UserStateEnum): Result<null, Error> {
     this._state = value;
 
     return ok(null);
   }
 
-  public setTheme(value: UserThemeEnum): Result<null, Error> {
+  private setTheme(value: UserThemeEnum): Result<null, Error> {
     this._theme = value;
 
     return ok(null);
