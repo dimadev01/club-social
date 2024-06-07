@@ -208,7 +208,7 @@ export class MemberMongoRepository
       return {
         [category]: {
           $sum: {
-            $cond: [{ $eq: ['$category', category] }, '$balanceAmount', 0],
+            $cond: [{ $eq: ['$category', category] }, '$totalPendingAmount', 0],
           },
         },
       };
@@ -237,7 +237,7 @@ export class MemberMongoRepository
                 ...getPendingByCategoryDocument(DueCategoryEnum.GUEST),
                 ...getPendingByCategoryDocument(DueCategoryEnum.MEMBERSHIP),
                 total: {
-                  $sum: '$balanceAmount',
+                  $sum: '$totalPendingAmount',
                 },
               },
             },

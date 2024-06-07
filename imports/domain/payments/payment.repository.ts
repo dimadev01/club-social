@@ -14,6 +14,7 @@ export interface IPaymentRepository
 
 export interface FindPaginatedPaymentsRequest extends FindPaginatedRequest {
   filterByMember: string[];
+  filterByStatus: string[];
 }
 
 export type FindPaginatedPaymentsResponse = FindPaginatedResponse<Payment>;

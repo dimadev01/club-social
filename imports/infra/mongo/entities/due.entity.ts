@@ -26,7 +26,7 @@ export class DueEntity extends Entity {
 
   @IsInt()
   @IsNumber()
-  public balanceAmount: number;
+  public totalPendingAmount: number;
 
   @IsEnum(DueCategoryEnum)
   public category: DueCategoryEnum;
@@ -91,7 +91,7 @@ export class DueEntity extends Entity {
 
     this.payments = props.payments;
 
-    this.balanceAmount = props.balanceAmount;
+    this.totalPendingAmount = props.totalPendingAmount;
 
     this.totalPaidAmount = props.totalPaidAmount;
 

@@ -24,8 +24,6 @@ export class GetPendingDuesUseCase
       memberId: request.memberId,
     });
 
-    console.log(dues.map((due) => this._dueDtoMapper.toDto(due)));
-
     return ok(dues.map((due) => this._dueDtoMapper.toDto(due)));
   }
 }

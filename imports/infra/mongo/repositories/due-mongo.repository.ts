@@ -88,16 +88,6 @@ export class DueMongoRepository
       ...this.getMemberLookupPipeline(),
     ];
 
-    entitiesPipeline.push({
-      $lookup: {
-        as: 'payments',
-        foreignField: 'dueId',
-        from: 'payment.dues',
-        localField: '_id',
-        pipeline: [{ $match: { isDeleted: false } }],
-      },
-    });
-
     return super.findPaginatedPipeline(pipeline, entitiesPipeline);
   }
 

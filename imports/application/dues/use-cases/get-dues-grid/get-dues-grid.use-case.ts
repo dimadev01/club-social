@@ -36,7 +36,6 @@ export class GetDuesGridUseCase
 
         return {
           amount: due.amount.value,
-          balanceAmount: due.balanceAmount.value,
           category: due.category,
           date: due.date.toISOString(),
           id: due._id,
@@ -45,10 +44,12 @@ export class GetDuesGridUseCase
           payments: due.payments.map<DuePaymentDto>((duePayment) => ({
             amount: duePayment.amount.value,
             date: duePayment.date.toISOString(),
+            paymentId: duePayment.paymentId,
             receiptNumber: duePayment.receiptNumber,
             status: duePayment.status,
           })),
           status: due.status,
+          totalPendingAmount: due.totalPendingAmount.value,
         };
       }),
       totalCount,

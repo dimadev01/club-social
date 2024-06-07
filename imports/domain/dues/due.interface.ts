@@ -6,7 +6,6 @@ import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export interface IDue extends IModel {
   amount: Money;
-  balanceAmount: Money;
   category: DueCategoryEnum;
   date: DateUtcVo;
   memberId: string;
@@ -14,6 +13,7 @@ export interface IDue extends IModel {
   payments: IDuePayment[];
   status: DueStatusEnum;
   totalPaidAmount: Money;
+  totalPendingAmount: Money;
   voidReason: string | null;
   voidedAt: DateUtcVo | null;
   voidedBy: string | null;

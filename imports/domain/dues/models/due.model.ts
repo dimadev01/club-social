@@ -12,7 +12,7 @@ import { Member } from '@domain/members/models/member.model';
 export class Due extends Model implements IDue {
   private _amount: Money;
 
-  private _balanceAmount: Money;
+  private _totalPendingAmount: Money;
 
   private _category: DueCategoryEnum;
 
@@ -53,7 +53,7 @@ export class Due extends Model implements IDue {
 
     this._totalPaidAmount = props?.totalPaidAmount ?? new Money();
 
-    this._balanceAmount = props?.balanceAmount ?? this._amount;
+    this._totalPendingAmount = props?.totalPendingAmount ?? this._amount;
 
     this._voidedAt = props?.voidedAt ?? null;
 
@@ -71,8 +71,8 @@ export class Due extends Model implements IDue {
     return this._amount;
   }
 
-  public get balanceAmount(): Money {
-    return this._balanceAmount;
+  public get totalPendingAmount(): Money {
+    return this._totalPendingAmount;
   }
 
   public get category(): DueCategoryEnum {
@@ -145,7 +145,9 @@ export class Due extends Model implements IDue {
 
     this._totalPaidAmount = this._totalPaidAmount.add(duePayment.value.amount);
 
-    this._balanceAmount = this._balanceAmount.subtract(duePayment.value.amount);
+    this._totalPendingAmount = this._totalPendingAmount.subtract(
+      duePayment.value.amount,
+    );
 
     this._calculateBalanceAmount();
 
@@ -201,7 +203,9 @@ export class Due extends Model implements IDue {
       paymentToVoid.amount,
     );
 
-    this._balanceAmount = this._balanceAmount.add(paymentToVoid.amount);
+    this._totalPendingAmount = this._totalPendingAmount.add(
+      paymentToVoid.amount,
+    );
 
     this._calculateBalanceAmount();
 
@@ -211,15 +215,15 @@ export class Due extends Model implements IDue {
   }
 
   private _calculateBalanceAmount(): void {
-    if (this._balanceAmount.isLessThanZero()) {
-      this._balanceAmount = new Money();
+    if (this._totalPendingAmount.isLessThanZero()) {
+      this._totalPendingAmount = new Money();
     }
   }
 
   private _calculateStatus(): void {
-    if (this._balanceAmount.value === this._amount.value) {
+    if (this._totalPendingAmount.value === this._amount.value) {
       this._status = DueStatusEnum.PENDING;
-    } else if (this._balanceAmount.isGreaterThanZero()) {
+    } else if (this._totalPendingAmount.isGreaterThanZero()) {
       this._status = DueStatusEnum.PARTIALLY_PAID;
     } else {
       this._status = DueStatusEnum.PAID;

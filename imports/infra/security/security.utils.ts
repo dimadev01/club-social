@@ -11,8 +11,6 @@ export abstract class SecurityUtils {
 
     invariant(user);
 
-    return true;
-
-    // return Roles.userIsInRole(user, permission, scope);
+    return Roles.userIsInRole(user, permission, scope);
   }
 }

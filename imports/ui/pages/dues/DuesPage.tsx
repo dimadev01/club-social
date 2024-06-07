@@ -16,7 +16,8 @@ import {
   DueStatusLabel,
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
-import { ScopeEnum } from '@domain/roles/role.enum';
+import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { SecurityUtils } from '@infra/security/security.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
@@ -38,7 +39,11 @@ export const DuesPage = () => {
   } = useTable<DueGridDto>({
     defaultFilters: {
       memberId: [],
-      status: [DueStatusEnum.PENDING, DueStatusEnum.PARTIALLY_PAID],
+      status: [
+        DueStatusEnum.PAID,
+        DueStatusEnum.PARTIALLY_PAID,
+        DueStatusEnum.PENDING,
+      ],
     },
     defaultSorter: { date: 'descend' },
   });
@@ -120,13 +125,24 @@ export const DuesPage = () => {
             },
             {
               align: 'right',
-              dataIndex: 'balanceAmount',
-              render: (balanceAmount: number, due: DueGridDto) => {
+              dataIndex: 'amount',
+              render: (amount: number) =>
+                new Money({ amount }).formatWithCurrency(),
+              title: 'Monto',
+              width: 100,
+            },
+            {
+              align: 'right',
+              dataIndex: 'totalPendingAmount',
+              render: (totalPendingAmount: number, due: DueGridDto) => {
                 const pendingAmountFormatted = new Money({
-                  amount: balanceAmount,
+                  amount: totalPendingAmount,
                 }).formatWithCurrency();
 
-                if (balanceAmount === due.amount || balanceAmount === 0) {
+                if (
+                  totalPendingAmount === due.amount ||
+                  totalPendingAmount === 0
+                ) {
                   return pendingAmountFormatted;
                 }
 
@@ -149,10 +165,6 @@ export const DuesPage = () => {
             {
               align: 'center',
               dataIndex: 'status',
-              defaultFilteredValue: [
-                DueStatusEnum.PENDING,
-                DueStatusEnum.PARTIALLY_PAID,
-              ],
               filterResetToDefaultFilteredValue: true,
               filteredValue: gridState.filters.status,
               filters: getDueStatusColumnFilters(),
@@ -170,21 +182,26 @@ export const DuesPage = () => {
                     memberId={due.memberId}
                   />
 
-                  <Button
-                    type="text"
-                    onClick={() => {
-                      navigate(
-                        UrlUtils.navigate(AppUrl.PaymentsNew, {
-                          dueIds: [due.id],
-                          memberId: due.memberId,
-                        }),
-                      );
-                    }}
-                    htmlType="button"
-                    disabled={due.status === DueStatusEnum.PAID}
-                    tooltip={{ title: 'Cobrar' }}
-                    icon={<FaCreditCard />}
-                  />
+                  {SecurityUtils.isInRole(
+                    PermissionEnum.CREATE,
+                    ScopeEnum.PAYMENTS,
+                  ) && (
+                    <Button
+                      type="text"
+                      onClick={() => {
+                        navigate(
+                          UrlUtils.navigate(AppUrl.PaymentsNew, {
+                            dueIds: [due.id],
+                            memberId: due.memberId,
+                          }),
+                        );
+                      }}
+                      htmlType="button"
+                      disabled={due.status === DueStatusEnum.PAID}
+                      tooltip={{ title: 'Cobrar' }}
+                      icon={<FaCreditCard />}
+                    />
+                  )}
                 </Space.Compact>
               ),
               title: 'Acciones',

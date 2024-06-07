@@ -3,7 +3,10 @@ import { Meteor } from 'meteor/meteor';
 import { container } from 'tsyringe';
 
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
-import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
+import {
+  PaymentDueSourceEnum,
+  PaymentStatusEnum,
+} from '@domain/payments/payment.enum';
 import { RoleEnum } from '@domain/roles/role.enum';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
@@ -18,7 +21,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await RoleService.update2();
+    await RoleService.update();
 
     next();
   }),
@@ -63,7 +66,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await RoleService.update2();
+    await RoleService.update();
 
     next();
   }),
@@ -154,6 +157,7 @@ Migrations.add({
                 date: oldDuePayment.date,
                 paymentId: oldDuePayment._id,
                 receiptNumber: payment?.receiptNumber ?? null,
+                status: PaymentStatusEnum.PAID,
               };
             })
             .filter(Boolean) ?? [];
@@ -163,25 +167,28 @@ Migrations.add({
           0,
         );
 
-        let balanceAmount = oldDue.amount - totalPaidAmount;
+        let totalPendingAmount = oldDue.amount - totalPaidAmount;
 
         let { status } = oldDue;
 
-        if (balanceAmount < 0) {
-          balanceAmount = 0;
+        if (totalPendingAmount < 0) {
+          totalPendingAmount = 0;
 
           totalPaidAmount = oldDue.amount;
-        } else if (balanceAmount > 0 && oldDue.status === DueStatusEnum.PAID) {
+        } else if (
+          totalPendingAmount > 0 &&
+          oldDue.status === DueStatusEnum.PAID
+        ) {
           status = DueStatusEnum.PARTIALLY_PAID;
         }
 
         await dueCollection.updateAsync(oldDue._id, {
           $set: {
-            balanceAmount,
             memberId: oldDue.member._id,
             payments: duePayments,
             status,
             totalPaidAmount,
+            totalPendingAmount,
           },
           $unset: {
             member: 1,
@@ -265,64 +272,14 @@ Migrations.add({
           'profile.role': RoleEnum.MEMBER,
         },
       },
+      {
+        multi: true,
+      },
     );
 
-    RoleService.update2();
+    await RoleService.update();
 
     next();
   }),
   version: 19,
-});
-
-// @ts-expect-error
-Migrations.add({
-  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    next();
-  }),
-  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    const duesCollection = container.resolve(DueCollection);
-
-    await duesCollection.rawCollection().updateMany(
-      {
-        isDeleted: true,
-      },
-      [
-        {
-          $set: {
-            deletedAt: null,
-            deletedBy: null,
-            isDeleted: false,
-            status: DueStatusEnum.VOIDED,
-            voidReason: 'Migración',
-            voidedAt: '$deletedAt',
-            voidedBy: '$deletedBy',
-          },
-        },
-      ],
-    );
-
-    const paymentsCollection = container.resolve(PaymentCollection);
-
-    await paymentsCollection.rawCollection().updateMany(
-      {
-        isDeleted: true,
-      },
-      [
-        {
-          $set: {
-            deletedAt: null,
-            deletedBy: null,
-            isDeleted: false,
-            status: DueStatusEnum.VOIDED,
-            voidReason: 'Migración',
-            voidedAt: '$deletedAt',
-            voidedBy: '$deletedBy',
-          },
-        },
-      ],
-    );
-
-    next();
-  }),
-  version: 20,
 });

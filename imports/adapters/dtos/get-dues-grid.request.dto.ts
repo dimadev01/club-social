@@ -1,22 +1,18 @@
-import { GetDuesGridRequest } from '@application/dues/use-cases/get-dues-grid/get-dues-grid.request';
-import { ArrayMinSize, IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
 
 import { GetGridRequestDto } from '@adapters/common/dtos/get-grid-request.dto';
 import { DueStatusEnum } from '@domain/dues/due.enum';
+import { FindPaginatedDuesRequest } from '@domain/dues/due.repository';
 
 export class GetDuesGridRequestDto
   extends GetGridRequestDto
-  implements GetDuesGridRequest
+  implements FindPaginatedDuesRequest
 {
   @IsString({ each: true })
-  @ArrayMinSize(1)
   @IsArray()
-  @IsOptional()
   public filterByMember!: string[];
 
   @IsString({ each: true })
-  @ArrayMinSize(1)
   @IsArray()
-  @IsOptional()
   public filterByStatus!: DueStatusEnum[];
 }

@@ -4,7 +4,6 @@ import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 
 export interface DueGridDto {
   amount: number;
-  balanceAmount: number;
   category: DueCategoryEnum;
   date: string;
   id: string;
@@ -12,4 +11,5 @@ export interface DueGridDto {
   memberId: string;
   payments: DuePaymentDto[];
   status: DueStatusEnum;
+  totalPendingAmount: number;
 }

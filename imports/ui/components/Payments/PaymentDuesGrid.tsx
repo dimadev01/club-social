@@ -1,10 +1,12 @@
 import { Table } from 'antd';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
+import { AppUrl } from '@ui/app.enum';
 
 interface PaymentDuesGridProps {
   dues: PaymentDueDto[];
@@ -20,7 +22,11 @@ export const PaymentDuesGrid: React.FC<PaymentDuesGridProps> = ({ dues }) => (
     columns={[
       {
         dataIndex: 'dueDate',
-        render: (dueDate) => new DateUtcVo(dueDate).format(),
+        render: (dueDate, paymentDue) => (
+          <Link to={`${AppUrl.Dues}/${paymentDue.dueId}`}>
+            {new DateUtcVo(dueDate).format()}
+          </Link>
+        ),
         title: 'Fecha',
         width: 150,
       },

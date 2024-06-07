@@ -7,6 +7,11 @@ import { GetPaymentsGridRequestDto } from '@adapters/dtos/get-payments-grid-requ
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import {
+  PaymentStatusEnum,
+  PaymentStatusLabel,
+  getPaymentStatusColumnFilters,
+} from '@domain/payments/payment.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { Grid } from '@ui/components/Grid/Grid';
@@ -25,7 +30,7 @@ export const PaymentsPage = () => {
     onTableChange,
     setState,
   } = useTable<PaymentGridDto>({
-    defaultFilters: { memberId: [] },
+    defaultFilters: { memberId: [], status: [PaymentStatusEnum.PAID] },
     defaultSorter: { date: 'descend' },
   });
 
@@ -38,6 +43,7 @@ export const PaymentsPage = () => {
     methodName: MeteorMethodEnum.PaymentsGetGrid,
     request: {
       filterByMember: gridState.filters.memberId,
+      filterByStatus: gridState.filters.status as PaymentStatusEnum[],
       limit: gridState.pageSize,
       page: gridState.page,
       sorter: gridState.sorter,
@@ -113,6 +119,16 @@ export const PaymentsPage = () => {
               dataIndex: 'receiptNumber',
               title: 'Recibo #',
               width: 100,
+            },
+            {
+              align: 'center',
+              dataIndex: 'status',
+              filterResetToDefaultFilteredValue: true,
+              filteredValue: gridState.filters.status,
+              filters: getPaymentStatusColumnFilters(),
+              render: (status: PaymentStatusEnum) => PaymentStatusLabel[status],
+              title: 'Estado',
+              width: 150,
             },
             {
               align: 'center',

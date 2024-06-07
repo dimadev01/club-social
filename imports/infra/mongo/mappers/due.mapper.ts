@@ -18,7 +18,6 @@ export class DueMapper extends Mapper<Due, DueEntity> {
       {
         _id: orm._id,
         amount: new Money({ amount: orm.amount }),
-        balanceAmount: new Money({ amount: orm.balanceAmount }),
         category: orm.category,
         createdAt: orm.createdAt,
         createdBy: orm.createdBy,
@@ -37,6 +36,7 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         })),
         status: orm.status,
         totalPaidAmount: new Money({ amount: orm.totalPaidAmount }),
+        totalPendingAmount: new Money({ amount: orm.totalPendingAmount }),
         updatedAt: orm.updatedAt,
         updatedBy: orm.updatedBy,
         voidReason: orm.voidReason,
@@ -51,7 +51,6 @@ export class DueMapper extends Mapper<Due, DueEntity> {
     return new DueEntity({
       _id: model._id,
       amount: model.amount.value,
-      balanceAmount: model.balanceAmount.value,
       category: model.category,
       createdAt: model.createdAt,
       createdBy: model.createdBy,
@@ -70,6 +69,7 @@ export class DueMapper extends Mapper<Due, DueEntity> {
       })),
       status: model.status,
       totalPaidAmount: model.totalPaidAmount.value,
+      totalPendingAmount: model.totalPendingAmount.value,
       updatedAt: model.updatedAt,
       updatedBy: model.updatedBy,
       voidReason: model.voidReason,

@@ -2,6 +2,7 @@ import { injectable } from 'tsyringe';
 
 import { MapperDto } from '@adapters/common/mapper/dto-mapper';
 import { MemberDtoMapper } from '@application/members/mappers/member-dto.mapper';
+import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
 import { PaymentDto } from '@application/payments/dtos/payment.dto';
 import { Payment } from '@domain/payments/models/payment.model';
 
@@ -13,8 +14,9 @@ export class PaymentDtoMapper extends MapperDto<Payment, PaymentDto> {
 
   public toDto(payment: Payment): PaymentDto {
     return {
+      amount: payment.amount.value,
       date: payment.date.toISOString(),
-      dues: payment.dues.map((due) => ({
+      dues: payment.dues.map<PaymentDueDto>((due) => ({
         amount: due.amount.value,
         dueAmount: due.dueAmount.value,
         dueCategory: due.dueCategory,

@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
@@ -66,6 +67,10 @@ export const PaymentDetailPage = () => {
 
             <Descriptions.Item label="Recibo #">
               {payment.receiptNumber}
+            </Descriptions.Item>
+
+            <Descriptions.Item label="Total Pago">
+              {new Money({ amount: payment.amount }).formatWithCurrency()}
             </Descriptions.Item>
 
             <Descriptions.Item label="Notas">{payment.notes}</Descriptions.Item>

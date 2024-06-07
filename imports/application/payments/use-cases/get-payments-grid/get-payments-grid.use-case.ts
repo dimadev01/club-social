@@ -51,6 +51,7 @@ export class GetPaymentsGridUseCase
         member: this._memberDtoMapper.toDto(payment.member),
         memberId: payment.memberId,
         receiptNumber: payment.receiptNumber,
+        status: payment.status,
       };
     });
 

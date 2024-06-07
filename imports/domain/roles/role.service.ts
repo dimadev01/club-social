@@ -23,7 +23,7 @@ export abstract class RoleService {
     }));
   }
 
-  public static async update2(): Promise<void> {
+  public static async update(): Promise<void> {
     // @ts-expect-error
     await Meteor.roleAssignment.removeAsync({});
 
@@ -41,30 +41,6 @@ export abstract class RoleService {
         await Roles.createRoleAsync(permission, { unlessExists: true });
       }),
     );
-
-    // await Promise.all(
-    //   Object.values(Permissions).map(async (permissions) => {
-    //     await Promise.all(
-    //       Object.values(permissions).map(async (permission) => {
-    //         await Roles.createRoleAsync(permission, { unlessExists: true });
-    //       }),
-    //     );
-    //   }),
-    // );
-
-    // await Promise.all(
-    //   Object.entries(RolePermissionAssignment).map(async ([role, scopes]) => {
-    //     await Promise.all(
-    //       Object.entries(scopes).map(async ([scope, permissions]) => {
-    //         await Promise.all(
-    //           permissions.map(async (permission) => {
-    //             await Roles.addRolesToParentAsync(permission, role);
-    //           }),
-    //         );
-    //       }),
-    //     );
-    //   }),
-    // );
 
     const users = await Meteor.users.find({}).fetchAsync();
 

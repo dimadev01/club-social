@@ -7,30 +7,30 @@ import { Member } from '@domain/members/models/member.model';
 
 @injectable()
 export class MemberDtoMapper extends MapperDto<Member, MemberDto> {
-  public toDto(domain: Member): MemberDto {
-    invariant(domain.user);
+  public toDto(member: Member): MemberDto {
+    invariant(member.user);
 
     return {
-      addressCityGovId: domain.address.cityGovId,
-      addressCityName: domain.address.cityName,
-      addressStateGovId: domain.address.stateGovId,
-      addressStateName: domain.address.stateName,
-      addressStreet: domain.address.street,
-      addressZipCode: domain.address.zipCode,
-      birthDate: domain.birthDate?.toISOString() ?? null,
-      category: domain.category,
-      documentID: domain.documentID,
-      emails: [],
-      fileStatus: domain.fileStatus,
-      firstName: domain.user.firstName,
-      id: domain._id,
-      lastName: domain.user.lastName,
-      maritalStatus: domain.maritalStatus,
-      name: domain.name,
-      nationality: domain.nationality,
-      phones: domain.phones,
-      sex: domain.sex,
-      status: domain.status,
+      addressCityGovId: member.address.cityGovId,
+      addressCityName: member.address.cityName,
+      addressStateGovId: member.address.stateGovId,
+      addressStateName: member.address.stateName,
+      addressStreet: member.address.street,
+      addressZipCode: member.address.zipCode,
+      birthDate: member.birthDate?.toISOString() ?? null,
+      category: member.category,
+      documentID: member.documentID,
+      emails: member.user.emails.map((email) => email.address),
+      fileStatus: member.fileStatus,
+      firstName: member.user.firstName,
+      id: member._id,
+      lastName: member.user.lastName,
+      maritalStatus: member.maritalStatus,
+      name: member.name,
+      nationality: member.nationality,
+      phones: member.phones,
+      sex: member.sex,
+      status: member.status,
     };
   }
 }

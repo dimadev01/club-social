@@ -2,6 +2,7 @@ import { MemberDto } from '@application/members/dtos/member.dto';
 import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
 
 export interface PaymentDto {
+  amount: number;
   date: string;
   dues: PaymentDueDto[];
   id: string;
