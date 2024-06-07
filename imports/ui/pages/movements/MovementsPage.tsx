@@ -11,6 +11,7 @@ import {
 } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import dayjs, { Dayjs } from 'dayjs';
+import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
@@ -36,7 +37,6 @@ import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 import { useMovementsGrid } from '@ui/hooks/movements/useMovementsGrid';
 import { useRestoreMovement } from '@ui/hooks/movements/useRestoreMovement';
 import { useGrid } from '@ui/hooks/useGrid';
-import { Roles } from 'types/meteor-roles';
 
 export const MovementsPage = () => {
   const location = useLocation();

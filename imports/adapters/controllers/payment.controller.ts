@@ -4,6 +4,7 @@ import { BaseController } from '@adapters/common/controllers/base.controller';
 import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.dto';
 import { CreatePaymentRequestDto } from '@adapters/dtos/create-payment-request.dto';
 import { GetPaymentsGridRequestDto } from '@adapters/dtos/get-payments-grid-request.dto';
+import { VoidPaymentRequestDto } from '@adapters/dtos/void-payment-request.dto';
 import { DIToken } from '@application/common/di/tokens.di';
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
 import { PaymentDto } from '@application/payments/dtos/payment.dto';
@@ -65,9 +66,9 @@ export class PaymentController extends BaseController {
     });
   }
 
-  public async void(request: GetOneByIdRequestDto): Promise<void> {
+  public async void(request: VoidPaymentRequestDto): Promise<void> {
     await this.execute({
-      classType: GetOneByIdRequestDto,
+      classType: VoidPaymentRequestDto,
       request,
       useCase: this._void,
     });

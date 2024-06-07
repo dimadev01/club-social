@@ -1,4 +1,3 @@
-import { DeleteOutlined, StopOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -8,10 +7,8 @@ import { GetPaymentsGridRequestDto } from '@adapters/dtos/get-payments-grid-requ
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { SecurityUtils } from '@infra/security/security.utils';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
-import { Button } from '@ui/components/Button';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
@@ -127,65 +124,6 @@ export const PaymentsPage = () => {
               align: 'center',
               render: (_, payment: PaymentGridDto) => (
                 <Space.Compact size="small">
-                  {SecurityUtils.isInRole(
-                    PermissionEnum.DELETE,
-                    ScopeEnum.PAYMENTS,
-                  ) && (
-                    <Button
-                      popConfirm={{
-                        onConfirm: () =>
-                          deletePayment.mutate(
-                            { id: payment.id },
-                            {
-                              onError: () => deletePayment.reset(),
-                              onSuccess: () => {
-                                deletePayment.reset();
-
-                                refetch();
-                              },
-                            },
-                          ),
-                        title: '¿Está seguro de eliminar este pago?',
-                      }}
-                      type="text"
-                      htmlType="button"
-                      tooltip={{ title: 'Eliminar' }}
-                      icon={<DeleteOutlined />}
-                      loading={deletePayment.variables?.id === payment.id}
-                      disabled={deletePayment.variables?.id === payment.id}
-                    />
-                  )}
-
-                  {SecurityUtils.isInRole(
-                    PermissionEnum.VOID,
-                    ScopeEnum.PAYMENTS,
-                  ) && (
-                    <Button
-                      popConfirm={{
-                        onConfirm: () =>
-                          voidPayment.mutate(
-                            { id: payment.id },
-                            {
-                              onError: () => voidPayment.reset(),
-                              onSuccess: () => {
-                                voidPayment.reset();
-
-                                refetch();
-                              },
-                            },
-                          ),
-                        title:
-                          '¿Está seguro de anular este pago? Esto volverá a poner las cuotas como pendientes.',
-                      }}
-                      type="text"
-                      htmlType="button"
-                      tooltip={{ title: 'Anular' }}
-                      icon={<StopOutlined />}
-                      loading={voidPayment.variables?.id === payment.id}
-                      disabled={voidPayment.variables?.id === payment.id}
-                    />
-                  )}
-
                   <GridFilterByMemberButton
                     gridState={gridState}
                     setState={setState}

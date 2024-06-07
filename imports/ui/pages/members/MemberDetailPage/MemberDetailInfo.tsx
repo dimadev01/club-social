@@ -2,6 +2,7 @@ import { App, Card, Col, DatePicker, Form, Input, Row, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import compact from 'lodash/compact';
 import uniq from 'lodash/uniq';
+import { Roles } from 'meteor/alanning:roles';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
@@ -32,7 +33,6 @@ import { useUpdateMember } from '@ui/hooks/members/useUpdateMemberNew';
 import { useCities } from '@ui/hooks/useCities';
 import { useNavigate } from '@ui/hooks/useNavigate';
 import { useStates } from '@ui/hooks/useStates';
-import { Roles } from 'types/meteor-roles';
 
 type FormValues = {
   address: {

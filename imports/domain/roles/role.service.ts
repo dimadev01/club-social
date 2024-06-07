@@ -1,8 +1,12 @@
+import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
+import invariant from 'tiny-invariant';
 
-import { RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { RolePermissionAssignment } from '@domain/roles/roles';
-import { Roles } from 'types/meteor-roles';
+import {
+  PermissionEnum,
+  RoleAssignment,
+  RoleEnum,
+} from '@domain/roles/role.enum';
 
 export abstract class RoleService {
   public static findAll(): Array<{ _id: string; value: RoleEnum }> {
@@ -20,38 +24,62 @@ export abstract class RoleService {
   }
 
   public static async update2(): Promise<void> {
-    Object.values(RoleEnum).forEach((role) => {
-      Roles.createRole(role, { unlessExists: true });
-    });
+    // @ts-expect-error
+    await Meteor.roleAssignment.removeAsync({});
 
-    Object.values(ScopeEnum).forEach((role) => {
-      Roles.createRole(role, { unlessExists: true });
-    });
-  }
-
-  public static async update(): Promise<void> {
-    // await Promise.all(Object.values(PermissionEnum).map(async (role) => {}));
+    // @ts-expect-error
+    await Meteor.roles.removeAsync({});
 
     await Promise.all(
-      Object.entries(RolePermissionAssignment).map(
-        async ([roleKey, roleAssignment]) => {
-          await Promise.all(
-            Object.entries(roleAssignment).map(
-              async ([scopeKey, permissions]) => {
-                const users = await Meteor.users
-                  .find({ 'profile.role': roleKey })
-                  .fetchAsync();
+      Object.values(RoleEnum).map(async (role) => {
+        await Roles.createRoleAsync(role, { unlessExists: true });
+      }),
+    );
 
-                Roles.removeUsersFromRoles(users, permissions, {
-                  anyScope: true,
-                });
+    await Promise.all(
+      Object.values(PermissionEnum).map(async (permission) => {
+        await Roles.createRoleAsync(permission, { unlessExists: true });
+      }),
+    );
 
-                Roles.addUsersToRoles(users, permissions, scopeKey);
-              },
-            ),
-          );
-        },
-      ),
+    // await Promise.all(
+    //   Object.values(Permissions).map(async (permissions) => {
+    //     await Promise.all(
+    //       Object.values(permissions).map(async (permission) => {
+    //         await Roles.createRoleAsync(permission, { unlessExists: true });
+    //       }),
+    //     );
+    //   }),
+    // );
+
+    // await Promise.all(
+    //   Object.entries(RolePermissionAssignment).map(async ([role, scopes]) => {
+    //     await Promise.all(
+    //       Object.entries(scopes).map(async ([scope, permissions]) => {
+    //         await Promise.all(
+    //           permissions.map(async (permission) => {
+    //             await Roles.addRolesToParentAsync(permission, role);
+    //           }),
+    //         );
+    //       }),
+    //     );
+    //   }),
+    // );
+
+    const users = await Meteor.users.find({}).fetchAsync();
+
+    await Promise.all(
+      users.map(async (user) => {
+        invariant(user.profile);
+
+        const role = RoleAssignment[user.profile.role];
+
+        await Promise.all(
+          Object.entries(role).map(async ([scope, permissions]) => {
+            await Roles.addUsersToRolesAsync(user, permissions, scope);
+          }),
+        );
+      }),
     );
   }
 }

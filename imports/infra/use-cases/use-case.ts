@@ -1,13 +1,13 @@
 import { SortOrder } from 'antd/es/table/interface';
 import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
+import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 
 import { MongoOptionsOld } from '@application/use-cases-old/use-case.interface';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
-import { Roles } from 'types/meteor-roles';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export abstract class UseCaseOld<T extends object = any> {

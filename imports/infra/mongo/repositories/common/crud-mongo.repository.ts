@@ -245,6 +245,23 @@ export abstract class CrudMongoRepository<
     ];
   }
 
+  protected getMemberLookupPipeline(): Document[] {
+    return [
+      {
+        $lookup: {
+          as: 'member',
+          foreignField: '_id',
+          from: 'members',
+          localField: 'memberId',
+          pipeline: [...this.getUserLookupPipeline()],
+        },
+      },
+      {
+        $unwind: '$member',
+      },
+    ];
+  }
+
   protected getPaginatedPipeline(request: FindPaginatedRequest): Document[] {
     return [
       this.getPaginatedSorterStage(request.sorter),

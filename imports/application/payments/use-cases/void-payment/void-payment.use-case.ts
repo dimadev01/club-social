@@ -2,17 +2,17 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { VoidPaymentRequest } from '@application/payments/use-cases/void-payment/void-payment.request';
 import { BaseError } from '@domain/common/errors/base.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { ILogger } from '@domain/common/logger/logger.interface';
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { IDueRepository } from '@domain/dues/due.repository';
 import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
-export class VoidPaymentUseCase implements IUseCase<FindOneById, null> {
+export class VoidPaymentUseCase implements IUseCase<VoidPaymentRequest, null> {
   public constructor(
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
@@ -24,7 +24,9 @@ export class VoidPaymentUseCase implements IUseCase<FindOneById, null> {
     private readonly _unitOfWork: IUnitOfWork,
   ) {}
 
-  public async execute(request: FindOneById): Promise<Result<null, Error>> {
+  public async execute(
+    request: VoidPaymentRequest,
+  ): Promise<Result<null, Error>> {
     const payment = await this._paymentRepository.findOneByIdOrThrow(request);
 
     const dues = await this._dueRepository.findByIds({
@@ -35,7 +37,7 @@ export class VoidPaymentUseCase implements IUseCase<FindOneById, null> {
 
     try {
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
-        const voidResult = payment.void();
+        const voidResult = payment.void(request.voidedBy, request.voidReason);
 
         if (voidResult.isErr()) {
           throw voidResult.error;

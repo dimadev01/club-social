@@ -27,6 +27,12 @@ export class Due extends Model implements IDue {
 
   private _totalPaidAmount: Money;
 
+  private _voidReason: string | null;
+
+  private _voidedAt: DateUtcVo | null;
+
+  private _voidedBy: string | null;
+
   public member?: Member;
 
   public constructor(props?: IDue, member?: Member) {
@@ -47,6 +53,12 @@ export class Due extends Model implements IDue {
     this._totalPaidAmount = new Money({ amount: 0 });
 
     this._balanceAmount = this._amount;
+
+    this._voidedAt = props?.voidedAt ?? null;
+
+    this._voidedBy = props?.voidedBy ?? null;
+
+    this._voidReason = props?.voidReason ?? null;
 
     this._payments =
       props?.payments.map((payment) => new DuePayment(payment)) ?? [];
@@ -88,6 +100,18 @@ export class Due extends Model implements IDue {
 
   public get totalPaidAmount(): Money {
     return this._totalPaidAmount;
+  }
+
+  public get voidReason(): string | null {
+    return this._voidReason;
+  }
+
+  public get voidedAt(): DateUtcVo | null {
+    return this._voidedAt;
+  }
+
+  public get voidedBy(): string | null {
+    return this._voidedBy;
   }
 
   public static createOne(props: CreateDue): Result<Due, Error> {
@@ -159,6 +183,16 @@ export class Due extends Model implements IDue {
     this._balanceAmount = this._amount;
 
     return this.setStatus(DueStatusEnum.PENDING);
+  }
+
+  public void(voidedBy: string, voidReason: string): Result<null, Error> {
+    this._voidedAt = new DateUtcVo();
+
+    this._voidedBy = voidedBy;
+
+    this._voidReason = voidReason;
+
+    return this.setStatus(DueStatusEnum.VOIDED);
   }
 
   private setAmount(value: Money): Result<null, Error> {

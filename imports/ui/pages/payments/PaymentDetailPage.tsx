@@ -13,6 +13,7 @@ import { NotFound } from '@ui/components/NotFound';
 import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
 import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
 import { usePayment } from '@ui/hooks/payments/usePayment';
+import { useVoidPayment } from '@ui/hooks/payments/useVoidPayment';
 import { useNavigate } from '@ui/hooks/useNavigate';
 import { useNotificationSuccess } from '@ui/hooks/useNotification';
 
@@ -28,6 +29,8 @@ export const PaymentDetailPage = () => {
   );
 
   const deletePayment = useDeletePayment();
+
+  const voidPayment = useVoidPayment();
 
   if (error) {
     return <NotFound />;
@@ -81,9 +84,13 @@ export const PaymentDetailPage = () => {
             <Space.Compact>
               <FormVoidButton
                 scope={ScopeEnum.PAYMENTS}
-                onClick={() => {
-                  deletePayment.mutate(
-                    { id: payment.id },
+                onConfirm={(reason: string) => {
+                  voidPayment.mutate(
+                    {
+                      id: payment.id,
+                      voidReason: reason,
+                      voidedBy: '',
+                    },
                     {
                       onSuccess: () => {
                         notificationSuccess('Pago anulado');

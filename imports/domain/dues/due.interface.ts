@@ -13,6 +13,9 @@ export interface IDue extends IModel {
   payments: IDuePayment[];
   status: DueStatusEnum;
   totalPaidAmount: Money;
+  voidReason: string | null;
+  voidedAt: DateUtcVo | null;
+  voidedBy: string | null;
 }
 
 export interface CreateDue {

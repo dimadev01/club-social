@@ -38,6 +38,9 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         totalPaidAmount: new Money({ amount: orm.totalPaidAmount }),
         updatedAt: orm.updatedAt,
         updatedBy: orm.updatedBy,
+        voidReason: orm.voidReason,
+        voidedAt: orm.voidedAt ? new DateUtcVo(orm.voidedAt) : null,
+        voidedBy: orm.voidedBy,
       },
       orm.member ? this._memberMapper.toDomain(orm.member) : undefined,
     );
@@ -67,6 +70,9 @@ export class DueMapper extends Mapper<Due, DueEntity> {
       totalPaidAmount: model.totalPaidAmount.value,
       updatedAt: model.updatedAt,
       updatedBy: model.updatedBy,
+      voidReason: model.voidReason,
+      voidedAt: model.voidedAt ? model.voidedAt.toDate() : null,
+      voidedBy: model.voidedBy,
     });
   }
 }

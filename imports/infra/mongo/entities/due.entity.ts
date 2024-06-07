@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsDate,
+  IsDefined,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -22,10 +23,6 @@ export class DueEntity extends Entity {
   @IsPositive()
   @IsNumber()
   public amount: number;
-
-  @IsInt()
-  @IsNumber()
-  public totalPaidAmount: number;
 
   @IsInt()
   @IsNumber()
@@ -56,6 +53,27 @@ export class DueEntity extends Entity {
   @IsEnum(DueStatusEnum)
   public status: DueStatusEnum;
 
+  @IsInt()
+  @IsNumber()
+  public totalPaidAmount: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsNullable()
+  @IsDefined()
+  public voidReason: string | null;
+
+  @IsDate()
+  @IsNullable()
+  @IsDefined()
+  public voidedAt: Date | null;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsNullable()
+  @IsDefined()
+  public voidedBy: string | null;
+
   public constructor(props: DueEntity) {
     super(props);
 
@@ -76,5 +94,11 @@ export class DueEntity extends Entity {
     this.balanceAmount = props.balanceAmount;
 
     this.totalPaidAmount = props.totalPaidAmount;
+
+    this.voidReason = props.voidReason;
+
+    this.voidedAt = props.voidedAt;
+
+    this.voidedBy = props.voidedBy;
   }
 }

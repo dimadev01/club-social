@@ -27,6 +27,12 @@ export class Payment extends Model implements IPayment {
 
   private _status: PaymentStatusEnum;
 
+  private _voidReason: string | null;
+
+  private _voidedAt: DateUtcVo | null;
+
+  private _voidedBy: string | null;
+
   public member?: Member;
 
   public constructor(props?: IPayment, member?: Member) {
@@ -45,6 +51,12 @@ export class Payment extends Model implements IPayment {
     this._dues = props?.dues.map((due) => new PaymentDue(due)) ?? [];
 
     this._amount = props?.amount ?? new Money({ amount: 0 });
+
+    this._voidedAt = props?.voidedAt ?? null;
+
+    this._voidedBy = props?.voidedBy ?? null;
+
+    this._voidReason = props?.voidReason ?? null;
 
     this.member = member;
   }
@@ -75,6 +87,18 @@ export class Payment extends Model implements IPayment {
 
   public get status(): PaymentStatusEnum {
     return this._status;
+  }
+
+  public get voidReason(): string | null {
+    return this._voidReason;
+  }
+
+  public get voidedAt(): DateUtcVo | null {
+    return this._voidedAt;
+  }
+
+  public get voidedBy(): string | null {
+    return this._voidedBy;
   }
 
   public static createOne(props: CreatePayment): Result<Payment, Error> {
@@ -117,7 +141,13 @@ export class Payment extends Model implements IPayment {
     return ok(paymentDue.value);
   }
 
-  public void(): Result<null, Error> {
+  public void(voidedBy: string, voidReason: string): Result<null, Error> {
+    this._voidedAt = new DateUtcVo();
+
+    this._voidedBy = voidedBy;
+
+    this._voidReason = voidReason;
+
     return this.setStatus(PaymentStatusEnum.VOIDED);
   }
 

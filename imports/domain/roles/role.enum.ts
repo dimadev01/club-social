@@ -1,10 +1,7 @@
 export enum RoleEnum {
   ADMIN = 'admin',
-  EMPLOYEE = 'employee',
   MEMBER = 'member',
-  PROFESSOR = 'professor',
   STAFF = 'staff',
-  VIEWER = 'viewer',
 }
 
 export enum ScopeEnum {
@@ -16,7 +13,7 @@ export enum ScopeEnum {
 }
 
 export enum PermissionEnum {
-  CREATE = 'write',
+  CREATE = 'create',
   DELETE = 'delete',
   READ = 'read',
   UPDATE = 'update',
@@ -29,105 +26,102 @@ export const ScopePermissionAssignment: Record<ScopeEnum, PermissionEnum[]> = {
     PermissionEnum.CREATE,
     PermissionEnum.READ,
     PermissionEnum.UPDATE,
-    PermissionEnum.DELETE,
   ],
   [ScopeEnum.MOVEMENTS]: [
     PermissionEnum.CREATE,
     PermissionEnum.READ,
     PermissionEnum.UPDATE,
-    PermissionEnum.DELETE,
+    PermissionEnum.VOID,
   ],
   [ScopeEnum.DUES]: [
     PermissionEnum.CREATE,
     PermissionEnum.READ,
     PermissionEnum.UPDATE,
     PermissionEnum.VOID,
-    PermissionEnum.DELETE,
   ],
   [ScopeEnum.PAYMENTS]: [
     PermissionEnum.CREATE,
     PermissionEnum.READ,
     PermissionEnum.VOID,
     PermissionEnum.UPDATE,
-    PermissionEnum.DELETE,
   ],
   [ScopeEnum.USERS]: [
     PermissionEnum.CREATE,
     PermissionEnum.READ,
     PermissionEnum.UPDATE,
-    PermissionEnum.DELETE,
   ],
 };
 
-export const AdminRole = {
+type ScopePermissions = {
+  [scope in ScopeEnum]: PermissionEnum[];
+};
+
+export const AdminRole: ScopePermissions = {
   [ScopeEnum.USERS]: [
-    PermissionEnum.READ,
     PermissionEnum.CREATE,
+    PermissionEnum.READ,
     PermissionEnum.UPDATE,
-    PermissionEnum.DELETE,
   ],
   [ScopeEnum.MEMBERS]: [
-    PermissionEnum.READ,
     PermissionEnum.CREATE,
+    PermissionEnum.READ,
     PermissionEnum.UPDATE,
-    PermissionEnum.DELETE,
   ],
   [ScopeEnum.MOVEMENTS]: [
-    PermissionEnum.READ,
     PermissionEnum.CREATE,
-    PermissionEnum.UPDATE,
-    PermissionEnum.DELETE,
-    PermissionEnum.VIEW_DELETED,
+    PermissionEnum.READ,
+    PermissionEnum.VOID,
   ],
   [ScopeEnum.DUES]: [
-    PermissionEnum.READ,
     PermissionEnum.CREATE,
-    PermissionEnum.UPDATE,
-    PermissionEnum.DELETE,
-    PermissionEnum.VIEW_DELETED,
+    PermissionEnum.READ,
     PermissionEnum.VOID,
   ],
   [ScopeEnum.PAYMENTS]: [
-    PermissionEnum.READ,
     PermissionEnum.CREATE,
-    PermissionEnum.UPDATE,
-    PermissionEnum.DELETE,
-    PermissionEnum.VIEW_DELETED,
+    PermissionEnum.READ,
     PermissionEnum.VOID,
   ],
 };
 
-export const StaffRole = {
+export const StaffRole: ScopePermissions = {
   [ScopeEnum.MEMBERS]: [
+    PermissionEnum.CREATE,
     PermissionEnum.READ,
     PermissionEnum.UPDATE,
-    PermissionEnum.CREATE,
   ],
   [ScopeEnum.MOVEMENTS]: [
-    PermissionEnum.READ,
     PermissionEnum.CREATE,
-    PermissionEnum.UPDATE,
+    PermissionEnum.READ,
+    PermissionEnum.VOID,
   ],
   [ScopeEnum.DUES]: [
     PermissionEnum.CREATE,
     PermissionEnum.READ,
-    PermissionEnum.UPDATE,
     PermissionEnum.VOID,
   ],
   [ScopeEnum.PAYMENTS]: [
     PermissionEnum.CREATE,
     PermissionEnum.READ,
-    PermissionEnum.UPDATE,
     PermissionEnum.VOID,
   ],
-  [ScopeEnum.USERS]: [
-    PermissionEnum.CREATE,
-    PermissionEnum.UPDATE,
-    PermissionEnum.READ,
-  ],
+  [ScopeEnum.USERS]: [],
 };
 
-export const MemberRole = {
+export const MemberRole: ScopePermissions = {
   [ScopeEnum.DUES]: [PermissionEnum.READ],
   [ScopeEnum.PAYMENTS]: [PermissionEnum.READ],
+  [ScopeEnum.MEMBERS]: [],
+  [ScopeEnum.MOVEMENTS]: [],
+  [ScopeEnum.USERS]: [],
+};
+
+type RoleScopePermission = {
+  [x in RoleEnum]: ScopePermissions;
+};
+
+export const RoleAssignment: RoleScopePermission = {
+  [RoleEnum.ADMIN]: AdminRole,
+  [RoleEnum.MEMBER]: MemberRole,
+  [RoleEnum.STAFF]: StaffRole,
 };

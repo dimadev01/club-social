@@ -38,6 +38,9 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
         status: orm.status,
         updatedAt: orm.updatedAt,
         updatedBy: orm.updatedBy,
+        voidReason: orm.voidReason,
+        voidedAt: orm.voidedAt ? new DateUtcVo(orm.voidedAt) : null,
+        voidedBy: orm.voidedBy,
       },
       orm.member ? this._memberMapper.toDomain(orm.member) : undefined,
     );
@@ -67,6 +70,9 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
       status: model.status,
       updatedAt: model.updatedAt,
       updatedBy: model.updatedBy,
+      voidReason: model.voidReason,
+      voidedAt: model.voidedAt ? model.voidedAt.toDate() : null,
+      voidedBy: model.voidedBy,
     });
   }
 }

@@ -2,10 +2,8 @@ import { Result, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 import { injectable } from 'tsyringe';
 
-import { UpdateUserThemeRequestDto } from '../dtos/update-user-theme-request.dto';
-
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { UpdateUserThemeRequestDto } from '@application/users/dtos/update-user-theme-request.dto';
 import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
@@ -20,8 +18,6 @@ export class UpdateUserThemeUseCase
   public async execute(
     request: UpdateUserThemeRequestDto,
   ): Promise<Result<null, Error>> {
-    await this.validatePermission(ScopeEnum.USERS, PermissionEnum.UPDATE);
-
     const user = Meteor.user();
 
     invariant(user);

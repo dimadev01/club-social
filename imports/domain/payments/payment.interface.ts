@@ -15,6 +15,9 @@ export interface IPayment extends IModel {
   notes: string | null;
   receiptNumber: number | null;
   status: PaymentStatusEnum;
+  voidReason: string | null;
+  voidedAt: DateUtcVo | null;
+  voidedBy: string | null;
 }
 
 export interface CreatePayment {

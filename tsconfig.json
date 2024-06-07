@@ -45,7 +45,6 @@
     "imports/**/*.tsx",
     "client/**/*.tsx",
     "server/**/*.ts",
-    "types/*.d.ts",
-    "imports/domain/payments/models/payment-due.entity.old.ts"
+    "types/**/*.d.ts"
   ]
 }

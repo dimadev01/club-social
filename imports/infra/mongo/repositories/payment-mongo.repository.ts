@@ -6,6 +6,7 @@ import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { Payment } from '@domain/payments/models/payment.model';
+import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import {
   FindPaginatedPaymentsRequest,
   IPaymentRepository,
@@ -44,6 +45,7 @@ export class PaymentMongoRepository
     const entity = await this.collection.findOneAsync({
       isDeleted: false,
       receiptNumber,
+      status: PaymentStatusEnum.PAID,
     });
 
     if (!entity) {
@@ -74,6 +76,7 @@ export class PaymentMongoRepository
 
     const $match: Document = {
       isDeleted: false,
+      status: PaymentStatusEnum.PAID,
     };
 
     if (request.filterByMember.length > 0) {
@@ -86,30 +89,7 @@ export class PaymentMongoRepository
 
     entitiesPipeline.push(
       ...this.getPaginatedPipeline(request),
-      {
-        $lookup: {
-          as: 'member',
-          foreignField: '_id',
-          from: 'members',
-          localField: 'memberId',
-          pipeline: [
-            {
-              $lookup: {
-                as: 'user',
-                foreignField: '_id',
-                from: 'users',
-                localField: 'userId',
-              },
-            },
-            {
-              $unwind: '$user',
-            },
-          ],
-        },
-      },
-      {
-        $unwind: '$member',
-      },
+      ...this.getMemberLookupPipeline(),
     );
 
     return super.findPaginatedPipeline(pipeline, entitiesPipeline);

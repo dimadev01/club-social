@@ -75,9 +75,7 @@ export class DueMongoRepository
 
     if (request.filterByMember.length > 0) {
       $match.memberId = { $in: request.filterByMember };
-    }
-
-    if (request.filterByStatus.length > 0) {
+    } else if (request.filterByStatus.length > 0) {
       $match.status = { $in: request.filterByStatus };
     }
 
@@ -85,30 +83,7 @@ export class DueMongoRepository
 
     const entitiesPipeline: Document[] = [
       ...this.getPaginatedPipeline(request),
-      {
-        $lookup: {
-          as: 'member',
-          foreignField: '_id',
-          from: 'members',
-          localField: 'memberId',
-          pipeline: [
-            {
-              $lookup: {
-                as: 'user',
-                foreignField: '_id',
-                from: 'users',
-                localField: 'userId',
-              },
-            },
-            {
-              $unwind: '$user',
-            },
-          ],
-        },
-      },
-      {
-        $unwind: '$member',
-      },
+      ...this.getMemberLookupPipeline(),
     ];
 
     entitiesPipeline.push({

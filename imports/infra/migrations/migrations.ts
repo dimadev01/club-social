@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
+import { RoleEnum } from '@domain/roles/role.enum';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 import { DueCollection } from '@infra/mongo/collections/due.collection';
@@ -17,7 +18,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await RoleService.update();
+    await RoleService.update2();
 
     next();
   }),
@@ -62,7 +63,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    await RoleService.update();
+    await RoleService.update2();
 
     next();
   }),
@@ -251,4 +252,51 @@ Migrations.add({
     next();
   }),
   version: 19,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await Meteor.users.updateAsync(
+      {
+        $or: [
+          {
+            'profile.role': 'employee',
+          },
+          {
+            'profile.role': 'professor',
+          },
+        ],
+      },
+      {
+        $set: {
+          'profile.role': RoleEnum.MEMBER,
+        },
+      },
+    );
+
+    RoleService.update2();
+
+    const duesCollection = container.resolve(DueCollection);
+
+    await duesCollection.updateAsync(
+      {
+        isDeleted: true,
+      },
+      {
+        $set: {
+          deletedAt: null,
+          deletedBy: null,
+          status: DueStatusEnum.VOIDED,
+        },
+      },
+      { multi: true },
+    );
+
+    next();
+  }),
+  version: 20,
 });
