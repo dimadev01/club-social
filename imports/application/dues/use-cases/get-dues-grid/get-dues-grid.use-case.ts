@@ -49,6 +49,7 @@ export class GetDuesGridUseCase
             status: duePayment.status,
           })),
           status: due.status,
+          totalPaidAmount: due.totalPaidAmount.value,
           totalPendingAmount: due.totalPendingAmount.value,
         };
       }),

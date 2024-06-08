@@ -12,8 +12,6 @@ import { Member } from '@domain/members/models/member.model';
 export class Due extends Model implements IDue {
   private _amount: Money;
 
-  private _totalPendingAmount: Money;
-
   private _category: DueCategoryEnum;
 
   private _date: DateUtcVo;
@@ -27,6 +25,8 @@ export class Due extends Model implements IDue {
   private _status: DueStatusEnum;
 
   private _totalPaidAmount: Money;
+
+  private _totalPendingAmount: Money;
 
   private _voidReason: string | null;
 
@@ -71,10 +71,6 @@ export class Due extends Model implements IDue {
     return this._amount;
   }
 
-  public get totalPendingAmount(): Money {
-    return this._totalPendingAmount;
-  }
-
   public get category(): DueCategoryEnum {
     return this._category;
   }
@@ -103,6 +99,10 @@ export class Due extends Model implements IDue {
     return this._totalPaidAmount;
   }
 
+  public get totalPendingAmount(): Money {
+    return this._totalPendingAmount;
+  }
+
   public get voidReason(): string | null {
     return this._voidReason;
   }
@@ -125,6 +125,7 @@ export class Due extends Model implements IDue {
       due.setMemberId(props.memberId),
       due.setNotes(props.notes),
       due.setStatus(DueStatusEnum.PENDING),
+      due.setTotalPendingAmount(props.amount),
     ]);
 
     if (result.isErr()) {
@@ -262,6 +263,12 @@ export class Due extends Model implements IDue {
 
   private setStatus(value: DueStatusEnum): Result<null, Error> {
     this._status = value;
+
+    return ok(null);
+  }
+
+  private setTotalPendingAmount(value: Money): Result<null, Error> {
+    this._totalPendingAmount = value;
 
     return ok(null);
   }

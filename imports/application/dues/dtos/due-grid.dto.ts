@@ -11,5 +11,6 @@ export interface DueGridDto {
   memberId: string;
   payments: DuePaymentDto[];
   status: DueStatusEnum;
+  totalPaidAmount: number;
   totalPendingAmount: number;
 }

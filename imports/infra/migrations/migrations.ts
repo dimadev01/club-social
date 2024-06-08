@@ -162,7 +162,7 @@ Migrations.add({
             })
             .filter(Boolean) ?? [];
 
-        let totalPaidAmount = duePayments.reduce(
+        const totalPaidAmount = duePayments.reduce(
           (acc: any, duePayment: any) => acc + duePayment.amount,
           0,
         );
@@ -173,8 +173,6 @@ Migrations.add({
 
         if (totalPendingAmount < 0) {
           totalPendingAmount = 0;
-
-          totalPaidAmount = oldDue.amount;
         } else if (
           totalPendingAmount > 0 &&
           oldDue.status === DueStatusEnum.PAID

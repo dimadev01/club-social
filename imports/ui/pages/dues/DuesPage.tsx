@@ -97,6 +97,7 @@ export const DuesPage = () => {
       sortOrder: gridState.sorter.date,
       sorter: true,
       title: 'Fecha',
+      width: 125,
     });
 
     if (isAdmin || isStaff) {
@@ -124,8 +125,16 @@ export const DuesPage = () => {
         align: 'right',
         dataIndex: 'amount',
         render: (amount: number) => new Money({ amount }).formatWithCurrency(),
-        title: 'Monto',
-        width: 100,
+        title: 'Monto inicial',
+        width: 125,
+      },
+      {
+        align: 'right',
+        dataIndex: 'totalPaidAmount',
+        render: (totalPaidAmount: number) =>
+          new Money({ amount: totalPaidAmount }).formatWithCurrency(),
+        title: 'Monto pago',
+        width: 125,
       },
       {
         align: 'right',
@@ -153,7 +162,7 @@ export const DuesPage = () => {
           );
         },
         title: 'Pendiente',
-        width: 100,
+        width: 125,
       },
       {
         align: 'center',

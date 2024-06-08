@@ -99,29 +99,18 @@ export class CreatePaymentUseCase
 
         const newPayment = newPaymentResult.value;
 
+        await this._paymentRepository.insertWithSession(newPayment, unitOfWork);
+
         await Promise.all(
           newPayment.dues.map(async (paymentDue) => {
             const due = dues.find((d) => d._id === paymentDue.dueId);
 
             invariant(due);
 
-            due.addPayment({
-              amount: paymentDue.amount,
-              date: newPayment.date,
-              paymentId: newPayment._id,
-              receiptNumber: newPayment.receiptNumber,
-            });
-
-            await this._duePort.updateWithSession(due, unitOfWork);
-          }),
-        );
-
-        await Promise.all(
-          newPayment.dues.map(async (paymentDue) => {
-            if (paymentDue.amount.isGreaterThan(paymentDue.dueAmount)) {
+            if (paymentDue.amount.isGreaterThan(due.totalPendingAmount)) {
               const memberCredit = MemberCredit.createOne({
-                amount: paymentDue.amount.subtract(paymentDue.dueAmount),
-                dueId: paymentDue.dueId,
+                amount: paymentDue.amount.subtract(due.totalPendingAmount),
+                dueId: due._id,
                 memberId: request.memberId,
                 paymentId: newPayment._id,
                 type: MemberCreditTypeEnum.CREDIT,
@@ -136,12 +125,19 @@ export class CreatePaymentUseCase
                 unitOfWork,
               );
             }
+
+            due.addPayment({
+              amount: paymentDue.amount,
+              date: newPayment.date,
+              paymentId: newPayment._id,
+              receiptNumber: newPayment.receiptNumber,
+            });
+
+            await this._duePort.updateWithSession(due, unitOfWork);
           }),
         );
 
         newPaymentId = newPayment._id;
-
-        await this._paymentRepository.insertWithSession(newPayment, unitOfWork);
       });
 
       invariant(newPaymentId);

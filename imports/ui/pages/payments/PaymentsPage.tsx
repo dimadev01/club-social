@@ -81,6 +81,7 @@ export const PaymentsPage = () => {
       sortOrder: gridState.sorter.date,
       sorter: true,
       title: 'Fecha',
+      width: 125,
     });
 
     if (isAdmin || isStaff) {
