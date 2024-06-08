@@ -2,7 +2,7 @@
   "compilerOptions": {
     /* Basic Options */
     "target": "es2018",
-    "module": "esNext",
+    "module": "NodeNext",
     "lib": ["esnext", "dom"],
     "allowJs": true,
     "checkJs": false,
@@ -14,7 +14,6 @@
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "strictPropertyInitialization": false,
 
     /* Additional Checks */
     "noUnusedLocals": true,
@@ -25,19 +24,27 @@
     /* Module Resolution Options */
     "baseUrl": ".",
     "paths": {
-      "@domain/*": ["./imports/domain/*"],
-      "@ui/*": ["./imports/ui/*"],
-      "@infra/*": ["./imports/infra/*"],
-      "@shared/*": ["./imports/shared/*"],
-      "@application/*": ["./imports/application/*"]
+      "@domain/*": ["imports/domain/*"],
+      "@infra/*": ["imports/infra/*"],
+      "@adapters/*": ["imports/adapters/*"],
+      "@shared/*": ["imports/shared/*"],
+      "@application/*": ["imports/application/*"],
+      "@ui/*": ["imports/ui/*"]
     },
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
-    // "types": ["node", "mocha", "meteor", "meteor-roles"],
     "esModuleInterop": true,
     "preserveSymlinks": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "exclude": ["./.meteor/**", "./packages/**"]
+  "exclude": ["./.meteor/**", "./packages/**"],
+  "include": [
+    ".meteor/**/*.ts",
+    "imports/**/*.ts",
+    "imports/**/*.tsx",
+    "client/**/*.tsx",
+    "server/**/*.ts",
+    "types/**/*.d.ts"
+  ]
 }

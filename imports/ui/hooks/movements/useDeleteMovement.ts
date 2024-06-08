@@ -1,10 +1,11 @@
-import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
 import { useMutation } from '@tanstack/react-query';
+
+import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
+import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-movement/delete-movement-request.dto';
 
 export const useDeleteMovement = (onSuccess: () => void) =>
   useMutation<null, Error, DeleteMovementRequestDto>(
-    [MethodsEnum.MovementsDelete],
-    (request) => Meteor.callAsync(MethodsEnum.MovementsDelete, request),
-    { onSuccess: () => onSuccess() }
+    [MeteorMethodEnum.MovementsDelete],
+    (request) => Meteor.callAsync(MeteorMethodEnum.MovementsDelete, request),
+    { onSuccess: () => onSuccess() },
   );

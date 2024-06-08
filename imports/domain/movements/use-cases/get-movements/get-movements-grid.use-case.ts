@@ -1,7 +1,10 @@
+import { FindPaginatedMovement } from '@adapters/repositories/movements/movement-repository.types';
 import { plainToInstance } from 'class-transformer';
-import { ok, Result } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
-import { IUseCase } from '@application/use-cases/use-case.interface';
+
+import { DIToken } from '@application/common/di/tokens.di';
+import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import {
   CategoryEnum,
   MemberCategories,
@@ -11,24 +14,23 @@ import { IMovementPaginatedPort } from '@domain/movements/movement.port';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
 import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
-import { DIToken } from '@infra/di/di-tokens';
-import { FindPaginatedMovement } from '@infra/mongo/repositories/movements/movement-repository.types';
-import { UseCase } from '@infra/use-cases/use-case';
+import { UseCaseOld } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetMovementsGridUseCase
-  extends UseCase<GetMovementsGridRequestDto>
-  implements IUseCase<GetMovementsGridRequestDto, GetMovementsGridResponseDto>
+  extends UseCaseOld<GetMovementsGridRequestDto>
+  implements
+    IUseCaseOld<GetMovementsGridRequestDto, GetMovementsGridResponseDto>
 {
   public constructor(
     @inject(DIToken.MovementFindPaginatedRepository)
-    private readonly _movementFindPaginatedPort: IMovementPaginatedPort
+    private readonly _movementFindPaginatedPort: IMovementPaginatedPort,
   ) {
     super();
   }
 
   public async execute(
-    request: GetMovementsGridRequestDto
+    request: GetMovementsGridRequestDto,
   ): Promise<Result<GetMovementsGridResponseDto, Error>> {
     const { data, count, debt, expenses, income, balance } =
       await this._movementFindPaginatedPort.findPaginated(request);
@@ -64,7 +66,7 @@ export class GetMovementsGridUseCase
             memberId: movement.memberId,
             type: movement.type,
           };
-        }
+        },
       ),
       debt,
       expense: expenses,

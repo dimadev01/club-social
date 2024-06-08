@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
+  Table as AntTable,
   Breadcrumb,
   Card,
   Checkbox,
   DatePicker,
   Form,
   Space,
-  Table as AntTable,
   Tag,
 } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
@@ -15,35 +15,28 @@ import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import qs from 'qs';
 import { RangeValue } from 'rc-picker/lib/interface';
-import { Navigate, NavLink, useLocation } from 'react-router-dom';
-import {
-  DeleteOutlined,
-  FilterOutlined,
-  ReloadOutlined,
-} from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Link, Navigate, useLocation } from 'react-router-dom';
+
 import {
   CategoryEnum,
   CategoryLabel,
   CategoryTypeEnum,
   MemberCategories,
 } from '@domain/categories/category.enum';
-import { GetMembersDto } from '@domain/members/use-cases/get-members/get-members.dto';
 import { MovementGridDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { MoneyUtils } from '@shared/utils/currency.utils';
 import { DateFormatEnum } from '@shared/utils/date.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
-import { Select } from '@ui/components/Select';
-import { Table } from '@ui/components/Table/Table';
-import { TableNewButton } from '@ui/components/Table/TableNewButton';
-import { TableReloadButton } from '@ui/components/Table/TableReloadButton';
-import { useCategories } from '@ui/hooks/categories/useCategories';
-import { useMembers } from '@ui/hooks/members/useMembers';
+import { GridNewButton } from '@ui/components/Grid/GridNewButton';
+import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
+import { TableOld } from '@ui/components/Grid/Table';
+import { useGrid } from '@ui/components/Grid/useGrid';
 import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 import { useMovementsGrid } from '@ui/hooks/movements/useMovementsGrid';
 import { useRestoreMovement } from '@ui/hooks/movements/useRestoreMovement';
-import { useGrid } from '@ui/hooks/useGrid';
 
 export const MovementsPage = () => {
   const location = useLocation();
@@ -55,40 +48,32 @@ export const MovementsPage = () => {
     sortOrder: 'descend',
   });
 
-  const [memberIdsFilter, setMemberIdsFilter] = useState<string[]>(
-    (parsedQs.memberIds as string[]) ?? []
-  );
-
   const [showDeleted, setShowDeleted] = useState<boolean>(false);
 
   const [dateFilter, setDateFilter] = useState<RangeValue<Dayjs> | null>(
     parsedQs.from && parsedQs.to
       ? [dayjs(parsedQs.from as string), dayjs(parsedQs.to as string)]
-      : null
+      : null,
   );
-
-  const { data: members, isLoading: isLoadingMembers } = useMembers();
 
   const { data, isLoading, isRefetching, refetch } = useMovementsGrid({
     filters: gridState.filters,
     from: dateFilter
-      ? dateFilter[0]?.format(DateFormatEnum.Date) ?? null
+      ? dateFilter[0]?.format(DateFormatEnum.DATE) ?? null
       : null,
-    memberIds: memberIdsFilter ?? [],
+    memberIds: [],
     page: gridState.page,
     pageSize: gridState.pageSize,
     search: gridState.search,
     showDeleted,
     sortField: gridState.sortField as 'createdAt',
     sortOrder: gridState.sortOrder,
-    to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.Date) ?? null : null,
+    to: dateFilter ? dateFilter[1]?.format(DateFormatEnum.DATE) ?? null : null,
   });
 
   const deleteMovement = useDeleteMovement(refetch);
 
   const restoreMovement = useRestoreMovement(refetch);
-
-  const { data: categories } = useCategories();
 
   const user = Meteor.user();
 
@@ -102,34 +87,28 @@ export const MovementsPage = () => {
         <AntTable.Summary.Cell index={0}>
           <div className="flex justify-between">
             <span>Entrada</span>
-            <span>
-              {data ? MoneyUtils.formatCents(data.income, false) : ''}
-            </span>
+            <span>{data ? MoneyUtils.formatCents(data.income) : ''}</span>
           </div>
         </AntTable.Summary.Cell>
 
         <AntTable.Summary.Cell index={1}>
           <div className="flex justify-between">
             <span>Salida</span>
-            <span>
-              {data ? MoneyUtils.formatCents(data.expense, false) : ''}
-            </span>
+            <span>{data ? MoneyUtils.formatCents(data.expense) : ''}</span>
           </div>
         </AntTable.Summary.Cell>
 
         <AntTable.Summary.Cell index={2}>
           <div className="flex justify-between">
             <span>Deudas</span>
-            <span>{data ? MoneyUtils.formatCents(data.debt, false) : ''}</span>
+            <span>{data ? MoneyUtils.formatCents(data.debt) : ''}</span>
           </div>
         </AntTable.Summary.Cell>
 
         <AntTable.Summary.Cell index={3}>
           <div className="flex justify-between">
             <span>Balance</span>
-            <span>
-              {data ? MoneyUtils.formatCents(data.balance, false) : ''}
-            </span>
+            <span>{data ? MoneyUtils.formatCents(data.balance) : ''}</span>
           </div>
         </AntTable.Summary.Cell>
         <AntTable.Summary.Cell index={4} />
@@ -147,27 +126,18 @@ export const MovementsPage = () => {
     <>
       <Breadcrumb
         className="mb-8"
-        items={[
-          {
-            title: 'Inicio',
-          },
-          {
-            title: 'Movimientos',
-          },
-        ]}
+        items={[{ title: 'Inicio' }, { title: 'Movimientos' }]}
       />
 
       <Card
         title="Movimientos"
         extra={
           <>
-            <TableReloadButton isRefetching={isRefetching} refetch={refetch} />
-
-            {Roles.userIsInRole(
-              user,
-              PermissionEnum.Create,
-              ScopeEnum.Movements
-            ) && <TableNewButton to={AppUrl.MovementsNew} />}
+            <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
+            <GridNewButton
+              scope={ScopeEnum.MOVEMENTS}
+              to={AppUrl.MovementsNew}
+            />
           </>
         }
       >
@@ -188,32 +158,10 @@ export const MovementsPage = () => {
                 />
               </Form.Item>
 
-              <Form.Item>
-                <Select
-                  value={memberIdsFilter}
-                  mode="multiple"
-                  onChange={(value) => {
-                    setMemberIdsFilter(value ?? null);
-
-                    setGridState((prevState) => ({ ...prevState, page: 1 }));
-                  }}
-                  className="!min-w-[333px]"
-                  disabled={isLoadingMembers || isLoading}
-                  loading={isLoadingMembers}
-                  placeholder="Buscar por socios"
-                  options={
-                    members?.map((member: GetMembersDto) => ({
-                      label: member.name,
-                      value: member._id,
-                    })) ?? []
-                  }
-                />
-              </Form.Item>
-
               {Roles.userIsInRole(
                 userId,
-                PermissionEnum.ViewDeleted,
-                ScopeEnum.Movements
+                PermissionEnum.VIEW_DELETED,
+                ScopeEnum.MOVEMENTS,
               ) && (
                 <Form.Item>
                   <Checkbox
@@ -227,7 +175,7 @@ export const MovementsPage = () => {
             </Space>
           </Form>
 
-          <Table<MovementGridDto>
+          <TableOld<MovementGridDto>
             total={data?.count ?? 0}
             gridState={gridState}
             onStateChange={setGridState}
@@ -241,9 +189,7 @@ export const MovementsPage = () => {
                     ? gridState.sortOrder
                     : undefined,
                 render: (date: string, movement: MovementGridDto) => (
-                  <NavLink to={`${AppUrl.Movements}/${movement._id}`}>
-                    {date}
-                  </NavLink>
+                  <Link to={`${AppUrl.Movements}/${movement._id}`}>{date}</Link>
                 ),
                 sorter: true,
                 title: 'Fecha',
@@ -251,12 +197,6 @@ export const MovementsPage = () => {
               {
                 align: 'center',
                 dataIndex: 'category',
-                filteredValue: gridState.filters?.category ?? [],
-                filters:
-                  categories?.map((category) => ({
-                    text: category.name,
-                    value: category.code,
-                  })) ?? [],
                 render: (category: CategoryEnum) => CategoryLabel[category],
                 title: 'Categoría',
               },
@@ -281,9 +221,9 @@ export const MovementsPage = () => {
                 render: (details: string | null, movement: MovementGridDto) => {
                   if (MemberCategories.includes(movement.category)) {
                     return (
-                      <NavLink to={`${AppUrl.Members}/${movement.memberId}`}>
+                      <Link to={`${AppUrl.Members}/${movement.memberId}`}>
                         {details}
-                      </NavLink>
+                      </Link>
                     );
                   }
 
@@ -298,8 +238,8 @@ export const MovementsPage = () => {
                     {!movement.isDeleted &&
                       Roles.userIsInRole(
                         userId,
-                        PermissionEnum.Delete,
-                        ScopeEnum.Movements
+                        PermissionEnum.DELETE,
+                        ScopeEnum.MOVEMENTS,
                       ) && (
                         <Button
                           popConfirm={{
@@ -309,7 +249,7 @@ export const MovementsPage = () => {
                                 {
                                   onError: () => deleteMovement.reset(),
                                   onSuccess: () => deleteMovement.reset(),
-                                }
+                                },
                               ),
                             title: '¿Está seguro de eliminar este movimiento?',
                           }}
@@ -329,8 +269,8 @@ export const MovementsPage = () => {
                     {movement.isDeleted &&
                       Roles.userIsInRole(
                         userId,
-                        PermissionEnum.Update,
-                        ScopeEnum.Movements
+                        PermissionEnum.UPDATE,
+                        ScopeEnum.MOVEMENTS,
                       ) && (
                         <Button
                           type="text"
@@ -348,24 +288,6 @@ export const MovementsPage = () => {
                           }
                         />
                       )}
-
-                    <Button
-                      type="text"
-                      disabled={!movement.memberId}
-                      onClick={() => {
-                        if (movement.memberId) {
-                          setMemberIdsFilter([movement.memberId]);
-
-                          setGridState((prevState) => ({
-                            ...prevState,
-                            page: 1,
-                          }));
-                        }
-                      }}
-                      htmlType="button"
-                      tooltip={{ title: 'Filtrar por este socio' }}
-                      icon={<FilterOutlined />}
-                    />
                   </ButtonGroup>
                 ),
                 title: 'Acciones',

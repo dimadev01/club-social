@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { App, Button, Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { useTracker } from 'meteor/react-meteor-data';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
+import { useNotificationError } from '@ui/hooks/ui/useNotification';
 
 type FormValues = {
   email: string;
@@ -17,7 +19,7 @@ export const LoginPage = () => {
     isLoggingIn: Meteor.loggingIn(),
   }));
 
-  const { message } = App.useApp();
+  const notificationError = useNotificationError();
 
   const navigate = useNavigate();
 
@@ -40,17 +42,17 @@ export const LoginPage = () => {
         if (error) {
           if (error instanceof Meteor.Error) {
             if (error.error === 403) {
-              message.error('El email ingresado no existe');
+              notificationError('El email no está registrado');
             } else {
-              message.error(error.message);
+              notificationError(error.message);
             }
           } else if (error instanceof Error) {
-            message.error(error.message);
+            notificationError(error.message);
           }
         } else {
           navigate(AppUrl.LoginPasswordless.replace(':email', values.email));
         }
-      }
+      },
     );
   };
 
@@ -78,7 +80,7 @@ export const LoginPage = () => {
 
         <div className="flex justify-between">
           <Button
-            className="flex-1 rounded-bl-none rounded-tr-none rounded-tl-[10px] rounded-br-[10px]"
+            className="flex-1 rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
             type="primary"
             htmlType="submit"
             disabled={isLoggingIn || isSendingEmail}

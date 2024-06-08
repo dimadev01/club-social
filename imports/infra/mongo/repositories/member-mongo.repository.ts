@@ -1,0 +1,289 @@
+import type { Document } from 'mongodb';
+import { inject, injectable } from 'tsyringe';
+
+import { DIToken } from '@application/common/di/tokens.di';
+import { ILogger } from '@domain/common/logger/logger.interface';
+import { FindOneById } from '@domain/common/repositories/queryable.repository';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
+import {
+  FindMembers,
+  FindMembersToExport,
+  FindPaginatedMembersRequest,
+  FindPaginatedMembersResponse,
+  IMemberRepository,
+  PaginatedMember,
+} from '@domain/members/member.repository';
+import { Member } from '@domain/members/models/member.model';
+import { MemberMongoAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
+import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
+import { MemberAuditEntity } from '@infra/mongo/entities/member-audit.entity';
+import { MemberEntity } from '@infra/mongo/entities/member.entity';
+import { MemberMapper } from '@infra/mongo/mappers/member.mapper';
+import { MongoUtils } from '@infra/mongo/mongo.utils';
+import { CrudMongoAuditableRepository } from '@infra/mongo/repositories/common/crud-mongo-auditable.repository';
+import {
+  FindPaginatedMembersAggregationResult,
+  MemberEntityWithDues,
+} from '@infra/mongo/repositories/types/member-mongo-repository.types';
+import { UserMongoRepository } from '@infra/mongo/repositories/user-mongo.repository';
+
+@injectable()
+export class MemberMongoRepository
+  extends CrudMongoAuditableRepository<Member, MemberEntity, MemberAuditEntity>
+  implements IMemberRepository
+{
+  public constructor(
+    @inject(DIToken.Logger)
+    protected readonly logger: ILogger,
+    protected readonly collection: MemberMongoCollection,
+    protected readonly auditableCollection: MemberMongoAuditableCollection,
+    protected readonly mapper: MemberMapper,
+    private readonly _userRepository: UserMongoRepository,
+  ) {
+    super(collection, mapper, logger, auditableCollection);
+  }
+
+  public async find(request: FindMembers): Promise<Member[]> {
+    const pipeline: Document[] = [];
+
+    const $match: Document = {
+      $expr: { $and: [{ $eq: ['$isDeleted', false] }] },
+    };
+
+    if (request.status && request.status.length > 0) {
+      $match.$expr.$and.push({ $in: ['$status', request.status] });
+    }
+
+    if (request.category && request.category.length > 0) {
+      $match.$expr.$and.push({ $in: ['$category', request.category] });
+    }
+
+    pipeline.push({ $match }, ...this.getUserLookupPipeline(), {
+      $sort: {
+        'user.profile.firstName': 1,
+        'user.profile.lastName': 1,
+      },
+    });
+
+    const entities = await this.collection
+      .rawCollection()
+      .aggregate<MemberEntity>(pipeline)
+      .toArray();
+
+    return entities.map((entity) => this.mapper.toDomain(entity));
+  }
+
+  public async findByDocument(documentID: string): Promise<Member | null> {
+    const entity = await this.collection.findOneAsync({
+      documentID,
+      isDeleted: false,
+    });
+
+    if (!entity) {
+      return null;
+    }
+
+    return this.mapper.toDomain(entity);
+  }
+
+  public async findOneById(request: FindOneById): Promise<Member | null> {
+    const member = await super.findOneById(request);
+
+    if (!member) {
+      return null;
+    }
+
+    member.user = await this._userRepository.findOneByIdOrThrow({
+      id: member.userId,
+    });
+
+    return member;
+  }
+
+  public async findPaginated(
+    request: FindPaginatedMembersRequest,
+  ): Promise<FindPaginatedMembersResponse> {
+    const pipeline = this._getPipelineToGridOrExport(request);
+
+    const entitiesPipeline: Document[] = [
+      ...this.getUserLookupPipeline(),
+      ...this.getPaginatedPipeline(request),
+    ];
+
+    if (!this._isSortingByPendingDues(request)) {
+      entitiesPipeline.push(...this._getPipelineWithDues(request));
+    }
+
+    pipeline.push(
+      {
+        $facet: {
+          entities: entitiesPipeline,
+          totalCount: [{ $count: 'count' }],
+        },
+      },
+      {
+        $project: {
+          entities: 1,
+          totalCount: MongoUtils.first('$totalCount.count', 0),
+        },
+      },
+    );
+
+    const [{ entities, totalCount }] = await this.collection
+      .rawCollection()
+      .aggregate<FindPaginatedMembersAggregationResult>(pipeline)
+      .toArray();
+
+    return {
+      items: entities.map<PaginatedMember>((entity) => ({
+        member: this.mapper.toDomain(entity),
+        pendingElectricity: entity.pendingElectricity,
+        pendingGuest: entity.pendingGuest,
+        pendingMembership: entity.pendingMembership,
+        pendingTotal: entity.pendingTotal,
+      })),
+      totalCount,
+    };
+  }
+
+  public async findToExport(
+    request: FindMembersToExport,
+  ): Promise<PaginatedMember[]> {
+    const pipeline = this._getPipelineToGridOrExport(request);
+
+    pipeline.push(
+      ...this.getUserLookupPipeline(),
+      ...this._getPipelineWithDues(request),
+      this.getPaginatedSorterStage(request.sorter),
+    );
+
+    const entities = await this.collection
+      .rawCollection()
+      .aggregate<MemberEntityWithDues>(pipeline)
+      .toArray();
+
+    return entities.map<PaginatedMember>((entity) => ({
+      member: this.mapper.toDomain(entity),
+      pendingElectricity: entity.pendingElectricity,
+      pendingGuest: entity.pendingGuest,
+      pendingMembership: entity.pendingMembership,
+      pendingTotal: entity.pendingTotal,
+    }));
+  }
+
+  private _getPipelineToGridOrExport(
+    request: FindPaginatedMembersRequest,
+  ): Document[] {
+    const pipeline: Document[] = [];
+
+    const $match: Document = {
+      isDeleted: false,
+    };
+
+    if (request.filterById.length > 0) {
+      $match._id = { $in: request.filterById };
+    } else {
+      if (request.filterByCategory.length > 0) {
+        $match.category = { $in: request.filterByCategory };
+      }
+
+      if (request.filterByStatus.length > 0) {
+        $match.status = { $in: request.filterByStatus };
+      }
+    }
+
+    pipeline.push({ $match });
+
+    if (this._isSortingByPendingDues(request)) {
+      pipeline.push(...this._getPipelineWithDues(request));
+    }
+
+    return pipeline;
+  }
+
+  private _getPipelineWithDues(
+    request: FindPaginatedMembersRequest,
+  ): Document[] {
+    function getPendingByCategoryDocument(category: DueCategoryEnum): Document {
+      return {
+        [category]: {
+          $sum: {
+            $cond: [{ $eq: ['$category', category] }, '$totalPendingAmount', 0],
+          },
+        },
+      };
+    }
+
+    const pipeline: Document[] = [
+      {
+        $lookup: {
+          as: 'dues',
+          foreignField: 'memberId',
+          from: 'dues',
+          localField: '_id',
+          pipeline: [
+            {
+              $match: {
+                isDeleted: false,
+                status: {
+                  $in: [DueStatusEnum.PENDING, DueStatusEnum.PARTIALLY_PAID],
+                },
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                ...getPendingByCategoryDocument(DueCategoryEnum.ELECTRICITY),
+                ...getPendingByCategoryDocument(DueCategoryEnum.GUEST),
+                ...getPendingByCategoryDocument(DueCategoryEnum.MEMBERSHIP),
+                total: {
+                  $sum: '$totalPendingAmount',
+                },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          pendingElectricity: {
+            $ifNull: [{ $first: `$dues.${DueCategoryEnum.ELECTRICITY}` }, 0],
+          },
+          pendingGuest: {
+            $ifNull: [{ $first: `$dues.${DueCategoryEnum.GUEST}` }, 0],
+          },
+          pendingMembership: {
+            $ifNull: [{ $first: `$dues.${DueCategoryEnum.MEMBERSHIP}` }, 0],
+          },
+          pendingTotal: {
+            $ifNull: [{ $first: `$dues.total` }, 0],
+          },
+        },
+      },
+    ];
+
+    if (request.filterByDebtStatus.includes('true')) {
+      pipeline.push({ $match: { pendingTotal: { $gt: 0 } } });
+    } else if (request.filterByDebtStatus.includes('false')) {
+      pipeline.push({ $match: { pendingTotal: 0 } });
+    }
+
+    return pipeline;
+  }
+
+  private _isSortingByPendingDues(
+    request: FindPaginatedMembersRequest,
+  ): boolean {
+    if (
+      request.sorter.pendingElectricity ||
+      request.sorter.pendingMembership ||
+      request.sorter.pendingGuest ||
+      request.sorter.pendingTotal ||
+      request.filterByDebtStatus.length > 0
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+}

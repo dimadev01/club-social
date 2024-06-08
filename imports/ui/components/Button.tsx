@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Button as AntButton,
   ButtonProps,
@@ -7,6 +6,7 @@ import {
   Tooltip,
   TooltipProps,
 } from 'antd';
+import React from 'react';
 
 type Props = ButtonProps & {
   popConfirm?: PopconfirmProps;

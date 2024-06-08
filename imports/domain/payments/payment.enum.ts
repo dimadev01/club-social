@@ -1,9 +1,16 @@
 export enum PaymentStatusEnum {
-  Paid = 'paid',
+  PAID = 'paid',
+  VOIDED = 'voided',
+}
+
+export enum PaymentDueSourceEnum {
+  CREDIT = 'credit',
+  DIRECT = 'direct',
 }
 
 export const PaymentStatusLabel = {
-  [PaymentStatusEnum.Paid]: 'Pagado',
+  [PaymentStatusEnum.PAID]: 'Pagado',
+  [PaymentStatusEnum.VOIDED]: 'Anulado',
 };
 
 export const getPaymentStatusColumnFilters = () =>

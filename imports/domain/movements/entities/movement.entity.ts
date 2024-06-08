@@ -8,78 +8,64 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { err, ok, Result } from 'neverthrow';
+import { Result, err, ok } from 'neverthrow';
+
+import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import {
   CategoryEnum,
   CategoryTypeEnum,
 } from '@domain/categories/category.enum';
-import { Entity } from '@domain/common/entity';
-import { Employee } from '@domain/employees/employee.entity';
-import { Member } from '@domain/members/entities/member.entity';
+import { EntityOld } from '@domain/common/entity.old';
 import { CreateMovement } from '@domain/movements/movement.types';
-import { Professor } from '@domain/professors/professor.entity';
-import { Service } from '@domain/services/service.entity';
-import { IsNullable } from '@shared/class-validator/is-nullable';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { MemberEntity } from '@infra/mongo/entities/member.entity';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { MoneyUtils } from '@shared/utils/money.utils';
 
-export class Movement extends Entity {
+export class Movement extends EntityOld {
   @IsInt()
-  public amount: number;
+  public amount!: number;
 
   @IsEnum(CategoryEnum)
-  public category: CategoryEnum;
+  public category!: CategoryEnum;
 
   @IsDate()
-  public date: Date;
-
-  @IsOptional()
-  @Type(() => Employee)
-  public employee: Employee | null;
+  public date!: Date;
 
   @IsString()
   @IsOptional()
-  public employeeId: string | null;
+  public employeeId!: string | null;
 
   @IsOptional()
-  @Type(() => Member)
-  public member: Member | null;
-
-  @IsString()
-  @IsOptional()
-  public memberId: string | null;
+  @Type(() => MemberEntity)
+  public member!: MemberEntity | null;
 
   @IsString()
   @IsOptional()
-  public notes: string | null;
-
-  @IsOptional()
-  @Type(() => Professor)
-  public professor: Professor | null;
+  public memberId!: string | null;
 
   @IsString()
   @IsOptional()
-  public professorId: string | null;
-
-  @IsOptional()
-  @Type(() => Service)
-  public service: Service | null;
+  public notes!: string | null;
 
   @IsString()
   @IsOptional()
-  public serviceId: string | null;
+  public professorId!: string | null;
+
+  @IsString()
+  @IsOptional()
+  public serviceId!: string | null;
 
   @IsEnum(CategoryTypeEnum)
-  public type: CategoryTypeEnum;
+  public type!: CategoryTypeEnum;
 
   @IsBoolean()
   @IsOptional()
-  public isMigrated: boolean | null;
+  public isMigrated!: boolean | null;
 
   @IsNotEmpty()
   @IsString()
   @IsNullable()
-  public paymentId: string | null;
+  public paymentId!: string | null;
 
   public constructor() {
     super();
@@ -96,7 +82,7 @@ export class Movement extends Entity {
   public static create(props: CreateMovement): Result<Movement, Error> {
     const movement = new Movement();
 
-    const updateResult: Result<null, Error> = Result.combine([
+    const updateResult = Result.combine([
       movement.setCategory(props.category),
       movement.setAmount(props.amount),
       movement.setDate(new Date(props.date)),
@@ -119,55 +105,55 @@ export class Movement extends Entity {
     return ok(movement);
   }
 
-  public setAmount(amount: number): Result<null, Error> {
+  private setAmount(amount: number): Result<null, Error> {
     this.amount = amount;
 
     return ok(null);
   }
 
-  public setCategory(category: CategoryEnum): Result<null, Error> {
+  private setCategory(category: CategoryEnum): Result<null, Error> {
     this.category = category;
 
     return ok(null);
   }
 
-  public setDate(date: Date): Result<null, Error> {
+  private setDate(date: Date): Result<null, Error> {
     this.date = date;
 
     return ok(null);
   }
 
-  public setEmployeeId(employeeId: string | null): Result<null, Error> {
+  private setEmployeeId(employeeId: string | null): Result<null, Error> {
     this.employeeId = employeeId;
 
     return ok(null);
   }
 
-  public setMemberId(memberId: string | null): Result<null, Error> {
+  private setMemberId(memberId: string | null): Result<null, Error> {
     this.memberId = memberId;
 
     return ok(null);
   }
 
-  public setNotes(notes: string | null): Result<null, Error> {
+  private setNotes(notes: string | null): Result<null, Error> {
     this.notes = notes;
 
     return ok(null);
   }
 
-  public setProfessorId(professorId: string | null): Result<null, Error> {
+  private setProfessorId(professorId: string | null): Result<null, Error> {
     this.professorId = professorId;
 
     return ok(null);
   }
 
-  public setServiceId(serviceId: string | null): Result<null, Error> {
+  private setServiceId(serviceId: string | null): Result<null, Error> {
     this.serviceId = serviceId;
 
     return ok(null);
   }
 
-  public setType(type: CategoryTypeEnum): Result<null, Error> {
+  private setType(type: CategoryTypeEnum): Result<null, Error> {
     this.type = type;
 
     return ok(null);

@@ -1,10 +1,14 @@
-import React, { useEffect } from 'react';
 import { App } from 'antd';
+import React, { useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
+
 import { AppUrl } from '@ui/app.enum';
+import { useNotificationError } from '@ui/hooks/ui/useNotification';
 
 export const VerifyEmailPage = () => {
   const navigate = useNavigate();
+
+  const notificationError = useNotificationError();
 
   const { message } = App.useApp();
 
@@ -17,7 +21,7 @@ export const VerifyEmailPage = () => {
       Accounts.verifyEmail(token, (error) => {
         if (error) {
           if (!isVerifying) {
-            message.error(error.message);
+            notificationError(error.message);
           }
         } else {
           message.success('Email verificado');
@@ -30,7 +34,7 @@ export const VerifyEmailPage = () => {
     return () => {
       isVerifying = true;
     };
-  }, [token, navigate, message]);
+  }, [token, navigate, message, notificationError]);
 
   if (!token) {
     return <Navigate to={AppUrl.Home} />;

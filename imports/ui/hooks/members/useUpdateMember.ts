@@ -1,9 +1,9 @@
-import { UpdateMemberRequestDto } from '@domain/members/use-cases/update-member/update-member-request.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
-import { useMutation } from '@tanstack/react-query';
+import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
+import { UpdateMemberRequestDto } from '@adapters/dtos/update-member-request.dto';
+import { MemberDto } from '@application/members/dtos/member.dto';
+import { useMutation } from '@ui/hooks/query/useMutation';
 
 export const useUpdateMember = () =>
-  useMutation<null, Error, UpdateMemberRequestDto>(
-    [MethodsEnum.MembersUpdate],
-    (request) => Meteor.callAsync(MethodsEnum.MembersUpdate, request)
-  );
+  useMutation<UpdateMemberRequestDto, MemberDto>({
+    methodName: MeteorMethodEnum.MembersUpdate,
+  });

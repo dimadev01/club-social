@@ -1,6 +1,7 @@
-import React from 'react';
 import { Meteor } from 'meteor/meteor';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
+
 import { RoleEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { MovementsPage } from '@ui/pages/movements/MovementsPage';
@@ -13,7 +14,7 @@ export const MovementsRoot = () => {
   }
 
   // @ts-expect-error
-  if (user.profile?.role === RoleEnum.Member) {
+  if (user.profile?.role === RoleEnum.MEMBER) {
     return <Navigate to={AppUrl.Home} />;
   }
 

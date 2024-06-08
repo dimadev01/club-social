@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
 import { App, Button, Form, Input, Spin } from 'antd';
+import React, { useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
+
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
+import { useNotificationError } from '@ui/hooks/ui/useNotification';
 import { useUserByToken } from '@ui/hooks/users/useUserByToken';
 
 type LoginFormValues = {
@@ -10,6 +12,8 @@ type LoginFormValues = {
 };
 
 export const EnrollPage = () => {
+  const notificationError = useNotificationError();
+
   const navigate = useNavigate();
 
   const { token } = useParams<{ email?: string; token?: string }>();
@@ -36,7 +40,7 @@ export const EnrollPage = () => {
     if (token) {
       Accounts.resetPassword(token, values.newPassword, (error) => {
         if (error) {
-          message.error(error.message);
+          notificationError(error.message);
         } else {
           message.success('Usuario activado');
 
@@ -104,7 +108,7 @@ export const EnrollPage = () => {
         </Form.Item>
         <Button
           block
-          className="rounded-bl-none rounded-tr-none rounded-tl-[10px] rounded-br-[10px]"
+          className="rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
           type="primary"
           htmlType="submit"
         >

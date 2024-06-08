@@ -1,17 +1,18 @@
 import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 import { container } from 'tsyringe';
-import { ILogger } from '@application/logger/logger.interface';
-import { IUseCase } from '@application/use-cases/use-case.interface';
-import { DIToken } from '@infra/di/di-tokens';
+
+import { DIToken } from '@application/common/di/tokens.di';
+import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 export abstract class MeteorMethod {
   protected async execute<TRequest extends object, TResponse>(
-    useCase: IUseCase<TRequest, TResponse>,
+    useCase: IUseCaseOld<TRequest, TResponse>,
     request?: TRequest,
-    classType?: ClassType<TRequest>
+    classType?: ClassType<TRequest>,
   ): Promise<TResponse> {
     try {
       if (request && classType) {
@@ -22,8 +23,8 @@ export abstract class MeteorMethod {
 
       if (result.isErr()) {
         throw new Meteor.Error(
-          MeteorErrorCodeEnum.BadRequest,
-          result.error.message
+          MeteorErrorCodeEnum.BAD_REQUEST,
+          result.error.message,
         );
       }
 
@@ -37,26 +38,26 @@ export abstract class MeteorMethod {
 
       if (error instanceof Error) {
         throw new Meteor.Error(
-          MeteorErrorCodeEnum.InternalServerError,
-          error.message
+          MeteorErrorCodeEnum.INTERNAL_SERVER_ERROR,
+          error.message,
         );
       }
 
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.InternalServerError,
-        'Unexpected and unhandled server error'
+        MeteorErrorCodeEnum.INTERNAL_SERVER_ERROR,
+        'Unexpected and unhandled server error',
       );
     }
   }
 
   protected async validateDto<T extends object>(
     classType: ClassType<T>,
-    value: T
+    value: T,
   ): Promise<void> {
     if (!value) {
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.BadRequest,
-        'Request is empty'
+        MeteorErrorCodeEnum.BAD_REQUEST,
+        'Request is empty',
       );
     }
 
@@ -66,8 +67,8 @@ export abstract class MeteorMethod {
       const errors = err as ValidationError[];
 
       throw new Meteor.Error(
-        MeteorErrorCodeEnum.BadRequest,
-        ClassValidationUtils.getErrorMessage(errors)
+        MeteorErrorCodeEnum.BAD_REQUEST,
+        ClassValidationUtils.getErrorMessage(errors),
       );
     }
   }

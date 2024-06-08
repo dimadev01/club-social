@@ -1,35 +1,33 @@
+import { Breadcrumb, Card, Descriptions, Divider, Flex } from 'antd';
 import React from 'react';
-import { App, Breadcrumb, Card, Descriptions, Table } from 'antd';
-import { Navigate, NavLink, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import invariant from 'tiny-invariant';
+
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { Money } from '@domain/common/value-objects/money.value-object';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
+import { FormBackButton } from '@ui/components/Form/FormBackButton';
+import { FormVoidButton } from '@ui/components/Form/FormVoidButton';
 import { NotFound } from '@ui/components/NotFound';
-import { useDeletePayment } from '@ui/hooks/payments/useDeletePayment';
+import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
 import { usePayment } from '@ui/hooks/payments/usePayment';
-import { FormDeleteButton } from '@ui/components/Form/FormDeleteButton';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { MoneyUtils } from '@shared/utils/currency.utils';
+import { useVoidPayment } from '@ui/hooks/payments/useVoidPayment';
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
+import { useNotificationSuccess } from '@ui/hooks/ui/useNotification';
 
 export const PaymentDetailPage = () => {
-  const { message } = App.useApp();
-
   const { id: paymentId } = useParams<{ id?: string }>();
 
   const navigate = useNavigate();
 
-  const { data: payment, error } = usePayment(paymentId);
+  const notificationSuccess = useNotificationSuccess();
 
-  const deletePayment = useDeletePayment(() => {
-    message.success('Pago eliminado');
+  const { data: payment, error } = usePayment(
+    paymentId ? { id: paymentId } : undefined,
+  );
 
-    navigate(AppUrl.Payments);
-  });
-
-  const user = Meteor.user();
-
-  if (!user) {
-    return <Navigate to={AppUrl.Login} />;
-  }
+  const voidPayment = useVoidPayment();
 
   if (error) {
     return <NotFound />;
@@ -39,85 +37,71 @@ export const PaymentDetailPage = () => {
     return <Card loading />;
   }
 
-  /**
-   * Renders component
-   */
+  invariant(payment.member);
+
   return (
     <>
       <Breadcrumb
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <NavLink to={AppUrl.Payments}>Pagos</NavLink> },
-          { title: `Pago a ${payment.memberName} del ${payment.date}` },
+          { title: <Link to={AppUrl.Payments}>Pagos</Link> },
+          {
+            title: `Pago a ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`,
+          },
         ]}
       />
 
       <Card
-        title={`Pago a ${payment.memberName} del ${payment.date}`}
-        extra={`Recibo Nro. ${payment.receiptNumber}`}
+        title={`Pago a ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`}
       >
         <>
           <Descriptions column={1} layout="vertical" colon={false}>
-            <Descriptions.Item label="Fecha">{payment.date}</Descriptions.Item>
-            <Descriptions.Item label="Socio">
-              {payment.memberName}
+            <Descriptions.Item label="Fecha">
+              {new DateUtcVo(payment.date).format()}
             </Descriptions.Item>
-            <Descriptions.Item label="Comprobante Nro.">
+
+            <Descriptions.Item label="Socio">
+              {payment.member.name}
+            </Descriptions.Item>
+
+            <Descriptions.Item label="Recibo #">
               {payment.receiptNumber}
             </Descriptions.Item>
-            <Descriptions.Item label="Tabla">
-              <Table
-                dataSource={payment.dues}
-                pagination={false}
-                size="small"
-                bordered
-                rowKey="dueId"
-                columns={[
-                  {
-                    dataIndex: 'dueDate',
-                    title: 'Fecha',
-                  },
-                  {
-                    dataIndex: 'dueCategory',
-                    render: (category: DueCategoryEnum, paymentDue) =>
-                      `${DueCategoryLabel[category]} ${
-                        category === DueCategoryEnum.Membership
-                          ? `(${paymentDue.membershipMonth})`
-                          : ''
-                      }`,
-                    title: 'Categoría',
-                  },
-                  {
-                    dataIndex: 'dueAmount',
-                    render: (dueAmount: number) =>
-                      MoneyUtils.formatCents(dueAmount),
-                    title: 'Monto deudor',
-                  },
-                  {
-                    dataIndex: 'amount',
-                    render: (amount: number) => MoneyUtils.formatCents(amount),
-                    title: 'Monto registrado',
-                  },
-                ]}
-              />
+
+            <Descriptions.Item label="Total Pago">
+              {new Money({ amount: payment.amount }).formatWithCurrency()}
             </Descriptions.Item>
+
             <Descriptions.Item label="Notas">{payment.notes}</Descriptions.Item>
           </Descriptions>
 
-          {Roles.userIsInRole(
-            user,
-            PermissionEnum.Delete,
-            ScopeEnum.Payments
-          ) && (
-            <FormDeleteButton
-              onClick={() => {
-                if (payment) {
-                  deletePayment.mutate({ id: payment._id });
-                }
+          <PaymentDuesGrid dues={payment.dues} />
+
+          <Divider />
+
+          <Flex justify="space-between">
+            <FormBackButton />
+
+            <FormVoidButton
+              scope={ScopeEnum.PAYMENTS}
+              onConfirm={(reason: string) => {
+                voidPayment.mutate(
+                  {
+                    id: payment.id,
+                    voidReason: reason,
+                  },
+                  {
+                    onSuccess: () => {
+                      notificationSuccess('Pago anulado');
+
+                      navigate(AppUrl.Payments);
+                    },
+                  },
+                );
               }}
             />
-          )}
+          </Flex>
         </>
       </Card>
     </>

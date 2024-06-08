@@ -1,20 +1,30 @@
 import React from 'react';
-import { Meteor } from 'meteor/meteor';
 import { Navigate } from 'react-router-dom';
-import { RoleEnum } from '@domain/roles/role.enum';
+
 import { AppUrl } from '@ui/app.enum';
+import { InternalError } from '@ui/components/InternalError';
+import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
+import { useIsMember } from '@ui/hooks/auth/useIsMember';
+import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 
 export const HomePage = () => {
-  const user = Meteor.user();
+  const isMember = useIsMember();
 
-  if (!user) {
-    return <Navigate to={AppUrl.Logout} />;
-  }
+  const isStaff = useIsStaff();
 
-  // @ts-expect-error
-  if (user.profile?.role === RoleEnum.Member) {
+  const isAdmin = useIsAdmin();
+
+  if (isMember) {
     return <Navigate to={AppUrl.Dues} />;
   }
 
-  return <Navigate to={AppUrl.Payments} />;
+  if (isStaff) {
+    return <Navigate to={AppUrl.Payments} />;
+  }
+
+  if (isAdmin) {
+    return <Navigate to={AppUrl.Members} />;
+  }
+
+  return <InternalError />;
 };

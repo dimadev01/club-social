@@ -1,10 +1,13 @@
-import { UserStateEnum } from '@domain/users/user.enum';
-
 declare namespace Meteor {
+  interface User {
+    profile?: UserProfile;
+  }
+
   interface UserProfile {
     firstName: string;
     lastName: string;
-    role: string;
-    state: UserStateEnum;
+    role: import('../imports/domain/roles/role.enum').RoleEnum;
+    state: import('../imports/domain/users/user.enum').UserStateEnum;
+    theme: import('../imports/domain/users/user.enum').UserThemeEnum;
   }
 }

@@ -13,7 +13,7 @@ export abstract class ClassValidationUtils {
           : [],
         property: error.property,
         value: error.value,
-      }))
+      })),
     );
   }
 }

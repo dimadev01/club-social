@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import { ReloadOutlined } from '@ant-design/icons';
 import { App, Form, Input, Space } from 'antd';
 import { useTracker } from 'meteor/react-meteor-data';
+import React, { useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { ReloadOutlined } from '@ant-design/icons';
+
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
+import { useNotificationError } from '@ui/hooks/ui/useNotification';
 
 type FormValues = {
   token: string;
@@ -15,6 +17,8 @@ export const LoginPasswordlessPage = () => {
   const { isLoggingIn } = useTracker(() => ({
     isLoggingIn: Meteor.loggingIn(),
   }));
+
+  const notificationError = useNotificationError();
 
   const { email } = useParams<{ email?: string }>();
 
@@ -33,9 +37,9 @@ export const LoginPasswordlessPage = () => {
     Meteor.passwordlessLoginWithToken(email, values.token, (error: unknown) => {
       if (error) {
         if (error instanceof Meteor.Error && error.error === 403) {
-          message.error('Clave de acceso incorrecta');
+          notificationError('El código es incorrecto');
         } else if (error instanceof Error) {
-          message.error(error.message);
+          notificationError(error.message);
         }
       } else {
         navigate(AppUrl.Home);
@@ -51,7 +55,7 @@ export const LoginPasswordlessPage = () => {
       setIsSendingEmail(false);
 
       if (error && error instanceof Error) {
-        message.error(error.message);
+        notificationError(error.message);
       } else {
         message.success('El código ha sido enviado nuevamente');
       }
@@ -74,7 +78,7 @@ export const LoginPasswordlessPage = () => {
           <Input className="text-sm" placeholder="Ingresa tu clave de acceso" />
         </Form.Item>
 
-        <div className="text-right mb-16">
+        <div className="mb-16 text-right">
           <Button
             tooltip={{ title: 'Reenviar código' }}
             htmlType="button"
@@ -88,7 +92,7 @@ export const LoginPasswordlessPage = () => {
 
         <Space direction="horizontal" className="flex justify-between">
           <Button
-            className="rounded-bl-none rounded-tr-none rounded-tl-[10px] rounded-br-[10px]"
+            className="rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
             type="primary"
             htmlType="submit"
             disabled={isLoggingIn}
@@ -98,7 +102,7 @@ export const LoginPasswordlessPage = () => {
           </Button>
 
           <Button
-            className="ml-auto rounded-bl-none rounded-tr-none rounded-tl-[10px] rounded-br-[10px]"
+            className="ml-auto rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
             htmlType="button"
             type="text"
             onClick={() => navigate(AppUrl.Login)}

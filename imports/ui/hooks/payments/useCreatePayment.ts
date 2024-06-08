@@ -1,10 +1,9 @@
-import { CreatePaymentRequestDto } from '@domain/payments/use-cases/create-payment/create-payment-request.dto';
-import { CreatePaymentResponseDto } from '@domain/payments/use-cases/create-payment/create-payment-response.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
-import { useMutation } from '@tanstack/react-query';
+import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
+import { CreatePaymentRequestDto } from '@adapters/dtos/create-payment-request.dto';
+import { PaymentDto } from '@application/payments/dtos/payment.dto';
+import { useMutation } from '@ui/hooks/query/useMutation';
 
 export const useCreatePayment = () =>
-  useMutation<CreatePaymentResponseDto, Error, CreatePaymentRequestDto>(
-    [MethodsEnum.PaymentsCreate],
-    (request) => Meteor.callAsync(MethodsEnum.PaymentsCreate, request)
-  );
+  useMutation<CreatePaymentRequestDto, PaymentDto>({
+    methodName: MeteorMethodEnum.PaymentsCreate,
+  });

@@ -1,13 +1,12 @@
-/* eslint-disable react/prop-types */
-import React from 'react';
 import { Select as AntSelect, SelectProps } from 'antd';
+import React from 'react';
 
 type Props = SelectProps;
 
 export const Select: React.FC<Props> = React.forwardRef(
   (
-    { children, placeholder = 'Seleccionar', allowClear = true, ...props },
-    ref
+    { children, placeholder = 'Seleccionar', allowClear = false, ...props },
+    ref,
   ) => (
     <AntSelect
       // @ts-expect-error
@@ -19,5 +18,5 @@ export const Select: React.FC<Props> = React.forwardRef(
     >
       {children}
     </AntSelect>
-  )
+  ),
 );

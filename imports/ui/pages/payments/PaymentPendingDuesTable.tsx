@@ -1,24 +1,15 @@
-import React from 'react';
-import { Checkbox, Form, Input, InputNumber, Table } from 'antd';
+import { Checkbox, Form, Input, Table } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
-import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
-import { MoneyUtils } from '@shared/utils/currency.utils';
-import { NavLink } from 'react-router-dom';
-import { AppUrl } from '@ui/app.enum';
-import { ARS } from '@dinero.js/currencies';
+import React from 'react';
 
-type Due = {
-  _id: string;
-  amount: number;
-  category: DueCategoryEnum;
-  date: string;
-  memberId: string;
-  memberName: string;
-  membershipMonth: string;
-};
+import { DueDto } from '@application/dues/dtos/due.dto';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { Money } from '@domain/common/value-objects/money.value-object';
+import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
+import { FormInputAmount } from '@ui/components/Form/FormInputAmount';
 
 type Props = {
-  pendingDues: Due[] | undefined;
+  pendingDues?: DueDto[];
 };
 
 type FormDueValue = {
@@ -55,18 +46,25 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
           <Table.Summary.Cell index={1} />
           <Table.Summary.Cell index={2} />
           <Table.Summary.Cell align="right" index={3}>
-            Total: {MoneyUtils.formatCents(totalPending)}
+            Total: {new Money({ amount: totalPending }).formatWithCurrency()}
           </Table.Summary.Cell>
           <Table.Summary.Cell align="right" index={4}>
-            Total: {MoneyUtils.format(totalDuesToPay)}
+            Total: {Money.fromNumber(totalDuesToPay).formatWithCurrency()}
           </Table.Summary.Cell>
         </Table.Summary.Row>
       </Table.Summary>
     );
   };
 
+  const dueIdFieldName = (index: number) => ['dues', index, 'dueId'];
+
+  const isSelectedFieldName = (index: number) => ['dues', index, 'isSelected'];
+
+  const amountFieldName = (index: number) => ['dues', index, 'amount'];
+
   return (
-    <Table
+    <Table<DueDto>
+      scroll={{ x: true }}
       rowSelection={{
         onChange: (rowKeys) => {
           form.setFieldsValue({
@@ -85,92 +83,85 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
       pagination={false}
       size="small"
       bordered
-      rowKey="_id"
+      rowKey="id"
       summary={tableSummary}
     >
       <Table.Column
         dataIndex="date"
         title="Fecha"
-        render={(date: string, due: Due) => {
-          const index = pendingDues?.findIndex((d) => d._id === due._id) ?? 0;
+        width={150}
+        render={(date: string, due: DueDto) => {
+          const index = pendingDues?.findIndex((d) => d.id === due.id) ?? 0;
 
           return (
             <>
-              <Form.Item hidden name={['dues', index, 'dueId']}>
+              <Form.Item hidden name={dueIdFieldName(index)}>
                 <Input />
               </Form.Item>
 
               <Form.Item
                 valuePropName="checked"
                 hidden
-                name={['dues', index, 'isSelected']}
+                name={isSelectedFieldName(index)}
               >
                 <Checkbox />
               </Form.Item>
 
-              <NavLink to={`${AppUrl.Dues}/${due._id}`}>{date}</NavLink>
+              {new DateUtcVo(date).format()}
             </>
           );
         }}
       />
 
-      <Table.Column
+      <Table.Column<DueDto>
         dataIndex="category"
         title="Categoría"
+        render={(category: DueCategoryEnum, due: DueDto) => {
+          if (category === DueCategoryEnum.MEMBERSHIP) {
+            return `${DueCategoryLabel[category]} (${new DateUtcVo(due.date).monthName()})`;
+          }
+
+          return DueCategoryLabel[category];
+        }}
         align="center"
-        render={(category: DueCategoryEnum, due: Due) =>
-          `${DueCategoryLabel[category]} ${
-            due.category === DueCategoryEnum.Membership
-              ? `(${due.membershipMonth})`
-              : ''
-          }`
+      />
+
+      <Table.Column
+        dataIndex="totalPendingAmount"
+        width={250}
+        title="Monto pendiente"
+        align="right"
+        render={(totalPendingAmount: number) =>
+          new Money({ amount: totalPendingAmount }).formatWithCurrency()
         }
       />
 
       <Table.Column
-        dataIndex="amount"
-        title="Monto deudor"
+        title="Monto a pagar"
         align="right"
-        render={(amount: number) => MoneyUtils.formatCents(amount)}
-      />
+        width={250}
+        render={(_, due: DueDto) => {
+          const index = pendingDues?.findIndex((d) => d.id === due.id) ?? 0;
 
-      <Table.Column
-        title="Monto a registrar"
-        align="right"
-        render={(_, due: Due) => {
-          const index = pendingDues?.findIndex((d) => d._id === due._id) ?? 0;
-
-          const name = ['dues', index, 'amount'];
-
-          const isFieldValid = form.getFieldError(name).length === 0;
-
-          const isSelected = form.getFieldValue(['dues', index, 'isSelected']);
+          const isSelected = form.getFieldValue(isSelectedFieldName(index));
 
           return (
             <Form.Item
-              name={name}
-              className={isFieldValid ? 'mb-0' : ''}
+              name={amountFieldName(index)}
+              className="mb-0"
               rules={[
                 {
-                  message: 'Requerido',
+                  message: 'Por favor ingrese monto a registrar',
                   required: true,
                 },
                 {
-                  message: 'Requerido',
+                  message: 'El mínimo es ARS 1',
                   min: 1,
                   type: 'number',
                 },
               ]}
             >
-              <InputNumber
-                disabled={!isSelected}
-                className="w-32"
-                prefix={ARS.code}
-                precision={0}
-                decimalSeparator=","
-                step={100}
-                min={1}
-              />
+              <FormInputAmount className="w-32" disabled={!isSelected} />
             </Form.Item>
           );
         }}

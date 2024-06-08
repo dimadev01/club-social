@@ -1,15 +1,15 @@
-import React from 'react';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@ui/components/Button';
+import React from 'react';
 
-type Props = ButtonProps & {
+import { Button } from '@ui/components/Button';
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
+
+export type FormBackButtonProps = ButtonProps & {
   to?: string;
 };
 
-export const FormBackButton: React.FC<Props> = ({
-  disabled,
-  loading,
+export const FormBackButton: React.FC<FormBackButtonProps> = ({
   to,
   ...rest
 }) => {
@@ -17,9 +17,7 @@ export const FormBackButton: React.FC<Props> = ({
 
   return (
     <Button
-      disabled={disabled}
-      loading={loading}
-      type="text"
+      icon={<ArrowLeftOutlined />}
       onClick={() => (to ? navigate(to) : navigate(-1))}
       {...rest}
     >

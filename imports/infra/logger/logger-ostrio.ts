@@ -5,7 +5,8 @@ import { Logger as OstrioLogger } from 'meteor/ostrio:logger';
 import { LoggerConsole as OstrioLoggerConsole } from 'meteor/ostrio:loggerconsole';
 // @ts-expect-error
 import { LoggerMongo as OstrioLoggerMongo } from 'meteor/ostrio:loggermongo';
-import { ILogger } from '@application/logger/logger.interface';
+
+import { ILogger } from '@domain/common/logger/logger.interface';
 import { LoggerOstrioFormat } from '@infra/logger/logger-ostrio-format';
 
 export class LoggerOstrio implements ILogger {
@@ -22,32 +23,50 @@ export class LoggerOstrio implements ILogger {
         ...params,
         additional: isEmpty(params.additional) ? null : params.additional,
       }),
-    }).enable();
+    }).enable({
+      client: false,
+      enable: true,
+      server: true,
+    });
 
     if (Meteor.isServer) {
       ostrioLoggerMongo.collection.createIndex({ date: -1 });
     }
   }
 
-  public info(message: string, ...meta: unknown[]): void {
-    this._logger.info(message, ...meta);
+  public debug(message: string, meta?: object): void {
+    this._logger.debug(message, { ...meta }, this._getUserId());
   }
 
-  public error(error: string | Error | unknown, ...meta: unknown[]): void {
+  public error(error: string | Error | unknown, meta?: object): void {
+    const userId = this._getUserId();
+
     if (error instanceof Error) {
-      this._logger.error(error.message, { stack: error.stack, ...meta });
+      this._logger.error(
+        error.message,
+        { stack: error.stack, ...meta },
+        userId,
+      );
     } else if (typeof error === 'string') {
-      this._logger.error(error, ...meta);
+      this._logger.error(error, { ...meta }, userId);
     } else {
-      this._logger.error('Unknown error', ...meta);
+      this._logger.error('Unknown error', { ...meta }, userId);
     }
   }
 
-  public debug(message: string, ...meta: unknown[]): void {
-    this._logger.debug(message, ...meta);
+  public info(message: string, meta?: object): void {
+    this._logger.info(message, { ...meta }, this._getUserId());
   }
 
-  public warn(message: string, ...meta: unknown[]): void {
-    this._logger.warn(message, ...meta);
+  public warn(message: string, meta?: object): void {
+    this._logger.warn(message, { ...meta }, this._getUserId());
+  }
+
+  private _getUserId(): string | null {
+    try {
+      return Meteor.userId();
+    } catch (error) {
+      return null;
+    }
   }
 }

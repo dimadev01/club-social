@@ -1,37 +1,37 @@
-import React from 'react';
 import { App, Card, Col, DatePicker, Form, Input, Row, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import compact from 'lodash/compact';
 import uniq from 'lodash/uniq';
-import { Roles } from 'meteor/alanning:roles';
-import { Navigate, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+
+import { MemberDto } from '@application/members/dtos/member.dto';
 import {
-  getMemberCategoryOptions,
-  getMemberFileStatusOptions,
-  getMemberMaritalStatusOptions,
-  getMemberNationalityOptions,
-  getMemberSexOptions,
-  getMemberStatusOptions,
   MemberCategoryEnum,
   MemberFileStatusEnum,
   MemberMaritalStatusEnum,
   MemberNationalityEnum,
   MemberSexEnum,
   MemberStatusEnum,
+  getMemberCategoryOptions,
+  getMemberFileStatusOptions,
+  getMemberMaritalStatusOptions,
+  getMemberNationalityOptions,
+  getMemberSexOptions,
+  getMemberStatusOptions,
 } from '@domain/members/member.enum';
-import { GetMemberResponseDto } from '@domain/members/use-cases/get-member/get-member-response.dto';
-import { PermissionEnum, RoleEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
 import { FormListInput } from '@ui/components/Form/FormListInput';
 import { Select } from '@ui/components/Select';
+import { useCities } from '@ui/hooks/gov/useCities';
+import { useStates } from '@ui/hooks/gov/useStates';
 import { useCreateMember } from '@ui/hooks/members/useCreateMember';
-import { useDeleteMember } from '@ui/hooks/members/useDeleteMember';
 import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
-import { useCities } from '@ui/hooks/useCities';
-import { useStates } from '@ui/hooks/useStates';
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
 
 type FormValues = {
   address: {
@@ -40,8 +40,8 @@ type FormValues = {
     street: string | undefined;
     zipCode: string | undefined;
   };
+  birthDate: Dayjs | undefined;
   category: MemberCategoryEnum;
-  dateOfBirth: Dayjs | undefined;
   documentID: string | undefined;
   emails: string[];
   fileStatus: MemberFileStatusEnum | undefined;
@@ -55,7 +55,7 @@ type FormValues = {
 };
 
 type Props = {
-  member?: GetMemberResponseDto;
+  member?: MemberDto | null;
 };
 
 export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
@@ -70,18 +70,12 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
   const { data: states, isLoading: statesIsLoading } = useStates();
 
   const { data: cities, fetchStatus: citiesFetchStatus } = useCities(
-    stateGovId?.value
+    stateGovId?.value,
   );
 
   const createMember = useCreateMember();
 
   const updateMember = useUpdateMember();
-
-  const deleteMember = useDeleteMember(() => {
-    message.success('Socio eliminado');
-
-    navigate(-1);
-  });
 
   const user = Meteor.user();
 
@@ -91,60 +85,59 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
   const handleSubmit = async (values: FormValues) => {
     if (!member) {
-      const memberId = await createMember.mutateAsync({
-        addressCityGovId: values.address.cityGovId?.value ?? null,
-        addressCityName: values.address.cityGovId?.label ?? null,
-        addressStateGovId: values.address.stateGovId?.value ?? null,
-        addressStateName: values.address.stateGovId?.label ?? null,
-        addressStreet: values.address.street ?? null,
-        addressZipCode: values.address.zipCode ?? null,
-        category: values.category,
-        dateOfBirth: values.dateOfBirth
-          ? DateUtils.format(values.dateOfBirth, DateFormatEnum.Date)
+      const response = await createMember.mutateAsync({
+        addressCityGovId: values.address.cityGovId?.value || null,
+        addressCityName: values.address.cityGovId?.label || null,
+        addressStateGovId: values.address.stateGovId?.value || null,
+        addressStateName: values.address.stateGovId?.label || null,
+        addressStreet: values.address.street || null,
+        addressZipCode: values.address.zipCode || null,
+        birthDate: values.birthDate
+          ? DateUtils.format(values.birthDate, DateFormatEnum.DATE)
           : null,
-        documentID: values.documentID ?? null,
+        category: values.category,
+        documentID: values.documentID || null,
         emails: compact(values.emails).length > 0 ? values.emails : null,
-        fileStatus: values.fileStatus ?? null,
+        fileStatus: values.fileStatus || null,
         firstName: values.firstName,
         lastName: values.lastName,
-        maritalStatus: values.maritalStatus ?? null,
-        nationality: values.nationality ?? null,
+        maritalStatus: values.maritalStatus || null,
+        nationality: values.nationality || null,
         phones: compact(values.phones).length > 0 ? values.phones : null,
-        role: RoleEnum.Member,
-        sex: values.sex ?? null,
-        status: MemberStatusEnum.Active,
+        sex: values.sex || null,
       });
 
       message.success('Socio creado');
 
-      navigate(`${AppUrl.Members}/${memberId}`);
+      navigate(`${AppUrl.Members}/${response.id}`);
     } else {
       await updateMember.mutateAsync({
-        addressCityGovId: values.address.cityGovId?.value ?? null,
-        addressCityName: values.address.cityGovId?.label ?? null,
-        addressStateGovId: values.address.stateGovId?.value ?? null,
-        addressStateName: values.address.stateGovId?.label ?? null,
-        addressStreet: values.address.street ?? null,
-        addressZipCode: values.address.zipCode ?? null,
-        category: values.category ?? null,
-        dateOfBirth: values.dateOfBirth
-          ? DateUtils.format(values.dateOfBirth, DateFormatEnum.Date)
+        addressCityGovId: values.address.cityGovId?.value || null,
+        addressCityName: values.address.cityGovId?.label || null,
+        addressStateGovId: values.address.stateGovId?.value || null,
+        addressStateName: values.address.stateGovId?.label || null,
+        addressStreet: values.address.street || null,
+        addressZipCode: values.address.zipCode || null,
+        birthDate: values.birthDate
+          ? DateUtils.format(values.birthDate, DateFormatEnum.DATE)
           : null,
-        documentID: values.documentID ?? null,
+        category: values.category || null,
+        documentID: values.documentID || null,
         emails: compact(values.emails).length > 0 ? values.emails : null,
-        fileStatus: values.fileStatus ?? null,
+        fileStatus: values.fileStatus || null,
         firstName: values.firstName,
-        id: member._id,
+        id: member.id,
         lastName: values.lastName,
-        maritalStatus: values.maritalStatus ?? null,
-        nationality: values.nationality ?? null,
+        maritalStatus: values.maritalStatus || null,
+        nationality: values.nationality || null,
         phones: compact(values.phones).length > 0 ? values.phones : null,
-        role: RoleEnum.Member,
-        sex: values.sex ?? null,
+        sex: values.sex || null,
         status: values.status,
       });
 
       message.success('Socio actualizado');
+
+      navigate(-1);
     }
   };
 
@@ -152,10 +145,6 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
     <Card>
       <Form<FormValues>
         layout="vertical"
-        disabled={
-          !Roles.userIsInRole(user, PermissionEnum.Create, ScopeEnum.Members) ||
-          !Roles.userIsInRole(user, PermissionEnum.Update, ScopeEnum.Members)
-        }
         form={form}
         onFinish={(values) => handleSubmit(values)}
         initialValues={{
@@ -175,10 +164,10 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
             street: member?.addressStreet,
             zipCode: member?.addressZipCode,
           },
-          category: member?.category,
-          dateOfBirth: member?.dateOfBirth
-            ? DateUtils.utc(member.dateOfBirth)
+          birthDate: member?.birthDate
+            ? dayjs.utc(member.birthDate)
             : undefined,
+          category: member?.category,
           documentID: member?.documentID,
           emails:
             member?.emails && member.emails.length > 0 ? member.emails : [''],
@@ -187,9 +176,9 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
           lastName: member?.lastName,
           maritalStatus: member?.maritalStatus,
           nationality: member?.nationality,
-          phones: member?.phones ?? [''],
+          phones: member?.phones || [''],
           sex: member?.sex,
-          status: member?.status ?? MemberStatusEnum.Active,
+          status: member?.status || MemberStatusEnum.ACTIVE,
         }}
       >
         <Row gutter={[16, 16]}>
@@ -220,7 +209,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
               </Form.Item>
 
               <Form.Item
-                name="dateOfBirth"
+                name="birthDate"
                 label="Fecha de Nacimiento"
                 rules={[{ type: 'date' }]}
               >
@@ -281,8 +270,8 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                         ) {
                           return Promise.reject(
                             new Error(
-                              'No se pueden ingresar teléfonos duplicados'
-                            )
+                              'No se pueden ingresar teléfonos duplicados',
+                            ),
                           );
                         }
 
@@ -338,7 +327,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                       states?.map((state) => ({
                         label: state.nombre,
                         value: state.id,
-                      })) ?? []
+                      })) || []
                     }
                   />
                 </Form.Item>
@@ -357,7 +346,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
                       cities?.map((city) => ({
                         label: city.nombre,
                         value: city.id,
-                      })) ?? []
+                      })) || []
                     }
                   />
                 </Form.Item>
@@ -387,15 +376,10 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
         <div className="mb-4" />
 
         <FormButtons
-          scope={ScopeEnum.Members}
-          isLoading={createMember.isLoading || updateMember.isLoading}
-          isSaveDisabled={createMember.isLoading || updateMember.isLoading}
-          isBackDisabled={createMember.isLoading || updateMember.isLoading}
-          isDeleteDisabled={createMember.isLoading || updateMember.isLoading}
-          showDeleteButton={!!member}
-          onClickDelete={() =>
-            member && deleteMember.mutate({ id: member._id })
-          }
+          saveButtonProps={{
+            text: member ? 'Actualizar Socio' : 'Crear Socio',
+          }}
+          scope={ScopeEnum.MEMBERS}
         />
       </Form>
     </Card>

@@ -1,36 +1,12 @@
 @color-primary: #22883e;
-@input-color: #9d9d9d;
-@background-color: #f8f9fd;
-@color-success: '#52c41a';
-@color-error: '#f5222d';
 
 div#react-target {
   min-height: 100%;
   height: 100%;
 }
 
-.ant-table a {
-  text-decoration: underline dotted @color-primary;
-}
-
-.ant-btn-primary {
-  background-color: @color-primary;
-}
-
-.ant-btn:disabled {
-  opacity: 0.5;
-}
-
-.ant-input-number-affix-wrapper-status-success {
-  border-color: @color-success;
-}
-
-.ant-input-number-affix-wrapper-status-error {
-  border-color: @color-error;
-}
-
 .cs-layout {
-  background-color: #f8f9fd;
+  @apply min-h-full;
 }
 
 .cs-layout-content {
@@ -51,11 +27,9 @@ div#react-target {
   &.ant-menu-light:not(.ant-menu-horizontal)
     .ant-menu-item:not(.ant-menu-item-selected):hover {
     color: @color-primary;
-    background-color: transparent;
   }
 
   &.ant-menu-light:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    background-color: @background-color;
     border-left: 0.475rem solid @color-primary;
     color: @color-primary;
   }
@@ -78,7 +52,7 @@ div#react-target {
 }
 
 .cs-sider.ant-layout-sider {
-  height: 100vh;
+  min-height: 100vh;
 
   @media (min-width: 992px) {
     bottom: 0;
@@ -91,11 +65,5 @@ div#react-target {
   .ant-layout-sider-children {
     display: flex;
     flex-direction: column;
-  }
-}
-
-.cs-form-item-extra {
-  label.ant-form-item-required {
-    display: block;
   }
 }
