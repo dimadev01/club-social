@@ -1,5 +1,4 @@
 import { Result, err, ok } from 'neverthrow';
-import invariant from 'tiny-invariant';
 
 import { Model } from '@domain/common/models/model';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
@@ -18,13 +17,17 @@ import { User } from '@domain/users/models/user.model';
 export class Member extends Model implements IMember {
   private _address: MemberAddress;
 
-  private _category: MemberCategoryEnum;
-
   private _birthDate: BirthDate | null;
+
+  private _category: MemberCategoryEnum;
 
   private _documentID: string | null;
 
   private _fileStatus: MemberFileStatusEnum | null;
+
+  private _firstName: string;
+
+  private _lastName: string;
 
   private _maritalStatus: MemberMaritalStatusEnum | null;
 
@@ -36,9 +39,9 @@ export class Member extends Model implements IMember {
 
   private _status: MemberStatusEnum;
 
-  public user?: User;
-
   private _userId: string;
+
+  public user?: User;
 
   public constructor(props?: IMember, user?: User) {
     super(props);
@@ -65,6 +68,10 @@ export class Member extends Model implements IMember {
 
     this._userId = props?.userId ?? '';
 
+    this._firstName = props?.firstName ?? '';
+
+    this._lastName = props?.lastName ?? '';
+
     this.user = user;
   }
 
@@ -72,12 +79,12 @@ export class Member extends Model implements IMember {
     return this._address;
   }
 
-  public get category(): MemberCategoryEnum {
-    return this._category;
-  }
-
   public get birthDate(): BirthDate | null {
     return this._birthDate;
+  }
+
+  public get category(): MemberCategoryEnum {
+    return this._category;
   }
 
   public get documentID(): string | null {
@@ -88,14 +95,20 @@ export class Member extends Model implements IMember {
     return this._fileStatus;
   }
 
+  public get firstName(): string {
+    return this._firstName;
+  }
+
+  public get lastName(): string {
+    return this._lastName;
+  }
+
   public get maritalStatus(): MemberMaritalStatusEnum | null {
     return this._maritalStatus;
   }
 
   public get name(): string {
-    invariant(this.user);
-
-    return this.user.name;
+    return `${this.firstName} ${this.lastName}`;
   }
 
   public get nationality(): MemberNationalityEnum | null {
@@ -139,6 +152,8 @@ export class Member extends Model implements IMember {
       member.setPhones(props.phones),
       member.setSex(props.sex),
       member.setStatus(MemberStatusEnum.ACTIVE),
+      member.setFirstName(props.firstName),
+      member.setLastName(props.lastName),
     ]);
 
     if (result.isErr()) {
@@ -154,14 +169,14 @@ export class Member extends Model implements IMember {
     return ok(null);
   }
 
-  private setCategory(value: MemberCategoryEnum): Result<null, Error> {
-    this._category = value;
+  private setBirthDate(value: BirthDate | null): Result<null, Error> {
+    this._birthDate = value;
 
     return ok(null);
   }
 
-  private setBirthDate(value: BirthDate | null): Result<null, Error> {
-    this._birthDate = value;
+  private setCategory(value: MemberCategoryEnum): Result<null, Error> {
+    this._category = value;
 
     return ok(null);
   }
@@ -176,6 +191,18 @@ export class Member extends Model implements IMember {
     value: MemberFileStatusEnum | null,
   ): Result<null, Error> {
     this._fileStatus = value;
+
+    return ok(null);
+  }
+
+  private setFirstName(value: string): Result<null, Error> {
+    this._firstName = value;
+
+    return ok(null);
+  }
+
+  private setLastName(value: string): Result<null, Error> {
+    this._lastName = value;
 
     return ok(null);
   }

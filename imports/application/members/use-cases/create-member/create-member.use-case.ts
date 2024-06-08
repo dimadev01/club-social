@@ -74,6 +74,8 @@ export class CreateMemberUseCase
           category: request.category,
           documentID: request.documentID,
           fileStatus: request.fileStatus,
+          firstName: userResult.value.firstName,
+          lastName: userResult.value.lastName,
           maritalStatus: request.maritalStatus,
           nationality: request.nationality,
           phones: request.phones,

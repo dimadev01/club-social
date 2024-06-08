@@ -28,13 +28,13 @@ export class MemberEntity extends Entity {
   @Type(() => MemberAddressEntity)
   public address: MemberAddressEntity;
 
-  @IsEnum(MemberCategoryEnum)
-  public category: MemberCategoryEnum;
-
   @IsDate()
   @IsNullable()
   @IsDefined()
   public birthDate: Date | null;
+
+  @IsEnum(MemberCategoryEnum)
+  public category: MemberCategoryEnum;
 
   @IsString()
   @IsNullable()
@@ -45,6 +45,14 @@ export class MemberEntity extends Entity {
   @IsNullable()
   @IsDefined()
   public fileStatus: MemberFileStatusEnum | null;
+
+  @IsNotEmpty()
+  @IsString()
+  public firstName: string;
+
+  @IsNotEmpty()
+  @IsString()
+  public lastName: string;
 
   @IsEnum(MemberMaritalStatusEnum)
   @IsNullable()
@@ -101,5 +109,9 @@ export class MemberEntity extends Entity {
     this.status = props.status;
 
     this.userId = props.userId;
+
+    this.firstName = props.firstName;
+
+    this.lastName = props.lastName;
   }
 }

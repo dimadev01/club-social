@@ -1,3 +1,4 @@
+import { Mongo } from 'meteor/mongo';
 import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
@@ -72,29 +73,24 @@ export class PaymentMongoRepository
   public async findPaginated(
     request: FindPaginatedPaymentsRequest,
   ): Promise<FindPaginatedResponse<Payment>> {
-    const pipeline: Document[] = [];
-
-    const $match: Document = {
+    const query: Mongo.Query<PaymentEntity> = {
       isDeleted: false,
     };
 
     if (request.filterByMember.length > 0) {
-      $match.memberId = { $in: request.filterByMember };
+      query.memberId = { $in: request.filterByMember };
     }
 
     if (request.filterByStatus.length > 0) {
-      $match.status = { $in: request.filterByStatus };
+      query.status = { $in: request.filterByStatus as PaymentStatusEnum[] };
     }
 
-    pipeline.push({ $match });
-
-    const entitiesPipeline: Document[] = [];
-
-    entitiesPipeline.push(
+    const pipeline: Document[] = [
+      { $match: query },
       ...this.getPaginatedPipeline(request),
       ...this.getMemberLookupPipeline(),
-    );
+    ];
 
-    return super.findPaginatedPipeline(pipeline, entitiesPipeline);
+    return super.paginate(pipeline, query);
   }
 }

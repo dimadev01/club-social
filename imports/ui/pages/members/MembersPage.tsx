@@ -48,9 +48,9 @@ export const MembersPage = () => {
   const sorter = { ...gridState.sorter };
 
   if (sorter.id) {
-    sorter['user.profile.firstName'] = sorter.id;
+    sorter.firstName = sorter.id;
 
-    sorter['user.profile.lastName'] = sorter.id;
+    sorter.lastName = sorter.id;
 
     delete sorter.id;
   }

@@ -13,17 +13,17 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
     super();
   }
 
-  public toDomain(orm: PaymentEntity): Payment {
+  public toDomain(payment: PaymentEntity): Payment {
     return new Payment(
       {
-        _id: orm._id,
-        amount: new Money({ amount: orm.amount }),
-        createdAt: orm.createdAt,
-        createdBy: orm.createdBy,
-        date: new DateUtcVo(orm.date),
-        deletedAt: orm.deletedAt,
-        deletedBy: orm.deletedBy,
-        dues: orm.dues.map((due) => ({
+        _id: payment._id,
+        amount: new Money({ amount: payment.amount }),
+        createdAt: payment.createdAt,
+        createdBy: payment.createdBy,
+        date: new DateUtcVo(payment.date),
+        deletedAt: payment.deletedAt,
+        deletedBy: payment.deletedBy,
+        dues: payment.dues.map((due) => ({
           amount: new Money({ amount: due.amount }),
           dueAmount: new Money({ amount: due.dueAmount }),
           dueCategory: due.dueCategory,
@@ -31,31 +31,31 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
           dueId: due.dueId,
           source: due.source,
         })),
-        isDeleted: orm.isDeleted,
-        memberId: orm.memberId,
-        notes: orm.notes,
-        receiptNumber: orm.receiptNumber,
-        status: orm.status,
-        updatedAt: orm.updatedAt,
-        updatedBy: orm.updatedBy,
-        voidReason: orm.voidReason,
-        voidedAt: orm.voidedAt ? new DateUtcVo(orm.voidedAt) : null,
-        voidedBy: orm.voidedBy,
+        isDeleted: payment.isDeleted,
+        memberId: payment.memberId,
+        notes: payment.notes,
+        receiptNumber: payment.receiptNumber,
+        status: payment.status,
+        updatedAt: payment.updatedAt,
+        updatedBy: payment.updatedBy,
+        voidReason: payment.voidReason,
+        voidedAt: payment.voidedAt ? new DateUtcVo(payment.voidedAt) : null,
+        voidedBy: payment.voidedBy,
       },
-      orm.member ? this._memberMapper.toDomain(orm.member) : undefined,
+      payment.member ? this._memberMapper.toDomain(payment.member) : undefined,
     );
   }
 
-  protected getEntity(model: Payment): PaymentEntity {
+  protected getEntity(payment: Payment): PaymentEntity {
     return new PaymentEntity({
-      _id: model._id,
-      amount: model.amount.value,
-      createdAt: model.createdAt,
-      createdBy: model.createdBy,
-      date: model.date.toDate(),
-      deletedAt: model.deletedAt,
-      deletedBy: model.deletedBy,
-      dues: model.dues.map((due) => ({
+      _id: payment._id,
+      amount: payment.amount.value,
+      createdAt: payment.createdAt,
+      createdBy: payment.createdBy,
+      date: payment.date.toDate(),
+      deletedAt: payment.deletedAt,
+      deletedBy: payment.deletedBy,
+      dues: payment.dues.map((due) => ({
         amount: due.amount.value,
         dueAmount: due.dueAmount.value,
         dueCategory: due.dueCategory,
@@ -63,16 +63,16 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
         dueId: due.dueId,
         source: due.source,
       })),
-      isDeleted: model.isDeleted,
-      memberId: model.memberId,
-      notes: model.notes,
-      receiptNumber: model.receiptNumber,
-      status: model.status,
-      updatedAt: model.updatedAt,
-      updatedBy: model.updatedBy,
-      voidReason: model.voidReason,
-      voidedAt: model.voidedAt ? model.voidedAt.toDate() : null,
-      voidedBy: model.voidedBy,
+      isDeleted: payment.isDeleted,
+      memberId: payment.memberId,
+      notes: payment.notes,
+      receiptNumber: payment.receiptNumber,
+      status: payment.status,
+      updatedAt: payment.updatedAt,
+      updatedBy: payment.updatedBy,
+      voidReason: payment.voidReason,
+      voidedAt: payment.voidedAt ? payment.voidedAt.toDate() : null,
+      voidedBy: payment.voidedBy,
     });
   }
 }

@@ -1,5 +1,7 @@
+/* eslint-disable sort-keys-fix/sort-keys-fix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Meteor } from 'meteor/meteor';
+import invariant from 'tiny-invariant';
 import { container } from 'tsyringe';
 
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
@@ -13,6 +15,7 @@ import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 import { DueCollection } from '@infra/mongo/collections/due.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
 import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
+import { UserMongoCollection } from '@infra/mongo/collections/user.collection';
 import { DateUtils } from '@shared/utils/date.utils';
 
 // @ts-expect-error
@@ -280,4 +283,66 @@ Migrations.add({
     next();
   }),
   version: 19,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const memberCollection = container.resolve(MemberMongoCollection);
+
+    const paymentsCollection = container.resolve(PaymentCollection);
+
+    const duesCollection = container.resolve(DueCollection);
+
+    const usersCollection = container.resolve(UserMongoCollection);
+
+    const members = await memberCollection.find().fetchAsync();
+
+    const users = await usersCollection.collection.find().fetchAsync();
+
+    await Promise.all(
+      members.map(async (member) => {
+        const user = users.find((u) => u._id === member.userId);
+
+        invariant(user);
+
+        invariant(user.profile);
+
+        await memberCollection.updateAsync(member._id, {
+          $set: {
+            firstName: user.profile.firstName,
+            lastName: user.profile.lastName,
+          },
+        });
+      }),
+    );
+
+    await memberCollection.createIndexAsync(
+      { firstName: 1, lastName: 1 },
+      { name: 'm_fn_ln' },
+    );
+
+    await paymentsCollection.createIndexAsync(
+      { date: -1, receiptNumber: -1 },
+      { name: 'p_d_rn' },
+    );
+
+    await paymentsCollection.createIndexAsync(
+      { memberId: 1, date: -1, receiptNumber: -1 },
+      { name: 'p_mi_d_rn' },
+    );
+
+    await duesCollection.createIndexAsync({ date: -1 }, { name: 'd_d' });
+
+    await duesCollection.createIndexAsync(
+      { memberId: 1, date: -1 },
+      { name: 'd_mi_d' },
+    );
+
+    next();
+  }),
+  version: 20,
 });
