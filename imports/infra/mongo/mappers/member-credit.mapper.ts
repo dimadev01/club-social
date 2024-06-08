@@ -10,39 +10,39 @@ export class MemberCreditMapper extends Mapper<
   MemberCredit,
   MemberCreditEntity
 > {
-  public toDomain(orm: MemberCreditEntity): MemberCredit {
+  public toDomain(memberCredit: MemberCreditEntity): MemberCredit {
     return new MemberCredit({
-      _id: orm._id,
-      amount: new Money({ amount: orm.amount }),
-      createdAt: orm.createdAt,
-      createdBy: orm.createdBy,
-      deletedAt: orm.deletedAt,
-      deletedBy: orm.deletedBy,
-      dueId: orm.dueId,
-      isDeleted: orm.isDeleted,
-      memberId: orm.memberId,
-      paymentId: orm.paymentId,
-      type: orm.type,
-      updatedAt: orm.updatedAt,
-      updatedBy: orm.updatedBy,
+      _id: memberCredit._id,
+      amount: new Money({ amount: memberCredit.amount }),
+      createdAt: memberCredit.createdAt,
+      createdBy: memberCredit.createdBy,
+      deletedAt: memberCredit.deletedAt,
+      deletedBy: memberCredit.deletedBy,
+      dueId: memberCredit.dueId,
+      isDeleted: memberCredit.isDeleted,
+      memberId: memberCredit.memberId,
+      paymentId: memberCredit.paymentId,
+      type: memberCredit.type,
+      updatedAt: memberCredit.updatedAt,
+      updatedBy: memberCredit.updatedBy,
     });
   }
 
-  protected getEntity(domain: MemberCredit): MemberCreditEntity {
+  protected getEntity(memberCredit: MemberCredit): MemberCreditEntity {
     return new MemberCreditEntity({
-      _id: domain._id,
-      amount: domain.amount.value,
-      createdAt: domain.createdAt,
-      createdBy: domain.createdBy,
-      deletedAt: domain.deletedAt,
-      deletedBy: domain.deletedBy,
-      dueId: domain.dueId,
-      isDeleted: domain.isDeleted,
-      memberId: domain.memberId,
-      paymentId: domain.paymentId,
-      type: domain.type,
-      updatedAt: domain.updatedAt,
-      updatedBy: domain.updatedBy,
+      _id: memberCredit._id,
+      amount: memberCredit.amount.value,
+      createdAt: memberCredit.createdAt,
+      createdBy: memberCredit.createdBy,
+      deletedAt: memberCredit.deletedAt,
+      deletedBy: memberCredit.deletedBy,
+      dueId: memberCredit.dueId,
+      isDeleted: memberCredit.isDeleted,
+      memberId: memberCredit.memberId,
+      paymentId: memberCredit.paymentId,
+      type: memberCredit.type,
+      updatedAt: memberCredit.updatedAt,
+      updatedBy: memberCredit.updatedBy,
     });
   }
 }

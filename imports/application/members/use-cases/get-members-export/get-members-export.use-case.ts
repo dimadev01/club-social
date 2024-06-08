@@ -1,5 +1,4 @@
 import { Result, ok } from 'neverthrow';
-import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
@@ -25,20 +24,16 @@ export class GetMembersToExportUseCase
     const members = await this._memberRepository.findToExport(request);
 
     return ok<MemberGridDto[]>(
-      members.map<MemberGridDto>((paginatedMember) => {
-        invariant(paginatedMember.member.user);
-
-        return {
-          category: paginatedMember.member.category,
-          id: paginatedMember.member._id,
-          name: paginatedMember.member.user.name,
-          pendingElectricity: paginatedMember.pendingElectricity,
-          pendingGuest: paginatedMember.pendingGuest,
-          pendingMembership: paginatedMember.pendingMembership,
-          pendingTotal: paginatedMember.pendingTotal,
-          status: paginatedMember.member.status,
-        };
-      }),
+      members.map<MemberGridDto>((paginatedMember) => ({
+        category: paginatedMember.member.category,
+        id: paginatedMember.member._id,
+        name: paginatedMember.member.name,
+        pendingElectricity: paginatedMember.pendingElectricity,
+        pendingGuest: paginatedMember.pendingGuest,
+        pendingMembership: paginatedMember.pendingMembership,
+        pendingTotal: paginatedMember.pendingTotal,
+        status: paginatedMember.member.status,
+      })),
     );
   }
 }

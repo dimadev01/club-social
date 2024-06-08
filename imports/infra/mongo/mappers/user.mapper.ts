@@ -8,58 +8,58 @@ import { UserEntity } from '@infra/mongo/entities/user.entity';
 
 @injectable()
 export class UserMapper extends Mapper<User, UserEntity> {
-  public toDomain(orm: UserEntity): User {
+  public toDomain(user: UserEntity): User {
     return new User({
-      _id: orm._id,
-      createdAt: orm.createdAt,
-      createdBy: orm.createdBy,
-      deletedAt: orm.deletedAt,
-      deletedBy: orm.deletedBy,
+      _id: user._id,
+      createdAt: user.createdAt,
+      createdBy: user.createdBy,
+      deletedAt: user.deletedAt,
+      deletedBy: user.deletedBy,
       emails:
-        orm.emails?.map((email) => ({
+        user.emails?.map((email) => ({
           address: email.address,
           verified: email.verified,
         })) ?? [],
-      firstName: orm.profile.firstName,
-      heartbeat: orm.heartbeat,
-      isDeleted: orm.isDeleted,
-      lastName: orm.profile.lastName,
-      role: orm.profile.role,
-      services: orm.services,
-      state: orm.profile.state,
-      theme: orm.profile.theme,
-      updatedAt: orm.updatedAt,
-      updatedBy: orm.updatedBy,
+      firstName: user.profile.firstName,
+      heartbeat: user.heartbeat,
+      isDeleted: user.isDeleted,
+      lastName: user.profile.lastName,
+      role: user.profile.role,
+      services: user.services,
+      state: user.profile.state,
+      theme: user.profile.theme,
+      updatedAt: user.updatedAt,
+      updatedBy: user.updatedBy,
     });
   }
 
-  protected getEntity(model: User): UserEntity {
+  protected getEntity(user: User): UserEntity {
     return new UserEntity({
-      _id: model._id,
-      createdAt: model.createdAt,
-      createdBy: model.createdBy,
-      deletedAt: model.deletedAt,
-      deletedBy: model.deletedBy,
+      _id: user._id,
+      createdAt: user.createdAt,
+      createdBy: user.createdBy,
+      deletedAt: user.deletedAt,
+      deletedBy: user.deletedBy,
       emails:
-        model.emails?.map(
+        user.emails?.map(
           (email) =>
             new UserEmailEntity({
               address: email.address,
               verified: email.verified,
             }),
         ) ?? null,
-      heartbeat: model.heartbeat,
-      isDeleted: model.isDeleted,
+      heartbeat: user.heartbeat,
+      isDeleted: user.isDeleted,
       profile: new UserProfileEntity({
-        firstName: model.firstName,
-        lastName: model.lastName,
-        role: model.role,
-        state: model.state,
-        theme: model.theme,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        state: user.state,
+        theme: user.theme,
       }),
-      services: model.services,
-      updatedAt: model.updatedAt,
-      updatedBy: model.updatedBy,
+      services: user.services,
+      updatedAt: user.updatedAt,
+      updatedBy: user.updatedBy,
     });
   }
 }

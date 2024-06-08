@@ -1,3 +1,4 @@
+import { Mongo } from 'meteor/mongo';
 import type {
   ClientSession,
   Document,
@@ -24,9 +25,7 @@ import { MongoCollection } from '@infra/mongo/common/collections/mongo.collectio
 import { Entity } from '@infra/mongo/common/entities/entity';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { UserEntity } from '@infra/mongo/entities/user.entity';
-import { MongoUtils } from '@infra/mongo/mongo.utils';
 import { MongoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-work';
-import { PaginatedMongoAggregationResult } from '@infra/mongo/repositories/types/paginated-mongo-aggregation.interface';
 
 export abstract class CrudMongoRepository<
   TDomain extends Model,
@@ -183,34 +182,31 @@ export abstract class CrudMongoRepository<
     }
   }
 
-  protected async findPaginatedPipeline(
+  protected async aggregate<T extends Document>(
     pipeline: Document[],
-    entitiesPipeline: Document[],
-  ): Promise<FindPaginatedResponse<TDomain>> {
-    pipeline.push(
+  ): Promise<T[]> {
+    return this._collection.rawCollection().aggregate<T>(pipeline).toArray();
+  }
+
+  protected async count(query: Mongo.Query<TEntity>): Promise<number> {
+    return this._collection.rawCollection().countDocuments(query);
+  }
+
+  protected getMemberLookupPipeline(): Document[] {
+    return [
       {
-        $facet: {
-          entities: entitiesPipeline,
-          totalCount: [{ $count: 'count' }],
+        $lookup: {
+          as: 'member',
+          foreignField: '_id',
+          from: 'members',
+          localField: 'memberId',
+          pipeline: [...this.getUserLookupPipeline()],
         },
       },
       {
-        $project: {
-          entities: 1,
-          totalCount: MongoUtils.first('$totalCount.count', 0),
-        },
+        $unwind: '$member',
       },
-    );
-
-    const [{ entities, totalCount }] = await this._collection
-      .rawCollection()
-      .aggregate<PaginatedMongoAggregationResult<TEntity>>(pipeline)
-      .toArray();
-
-    return {
-      items: entities.map((entity) => this._mapper.toDomain(entity)),
-      totalCount,
-    };
+    ];
   }
 
   protected getMongoSorter(paginatedSorter: PaginatedSorter): {
@@ -231,6 +227,17 @@ export abstract class CrudMongoRepository<
     return sorter;
   }
 
+  protected getPaginatedPipeline(request: FindPaginatedRequest): Document[] {
+    return [
+      this.getPaginatedSorterStage(request.sorter),
+      ...this.getPaginatedStages(request.page, request.limit),
+    ];
+  }
+
+  protected getPaginatedSorterStage(sorter: PaginatedSorter): Document {
+    return { $sort: this.getMongoSorter(sorter) };
+  }
+
   protected getUserLookupPipeline(): Document[] {
     return [
       {
@@ -243,38 +250,6 @@ export abstract class CrudMongoRepository<
       },
       { $unwind: '$user' },
     ];
-  }
-
-  protected getMemberLookupPipeline(): Document[] {
-    return [
-      {
-        $lookup: {
-          as: 'member',
-          foreignField: '_id',
-          from: 'members',
-          localField: 'memberId',
-          pipeline: [...this.getUserLookupPipeline()],
-        },
-      },
-      {
-        $unwind: '$member',
-      },
-    ];
-  }
-
-  protected getPaginatedPipeline(request: FindPaginatedRequest): Document[] {
-    return [
-      this.getPaginatedSorterStage(request.sorter),
-      ...this.getPaginatedStages(request.page, request.limit),
-    ];
-  }
-
-  protected getPaginatedSorterStage(sorter: PaginatedSorter): Document {
-    return { $sort: this.getMongoSorter(sorter) };
-  }
-
-  private getPaginatedStages(page: number, limit: number): Document[] {
-    return [{ $skip: (page - 1) * limit }, { $limit: limit }];
   }
 
   protected handleError(error: unknown): never {
@@ -297,6 +272,21 @@ export abstract class CrudMongoRepository<
     throw internalServerError;
   }
 
+  protected async paginate(
+    pipeline: Document[],
+    query: Mongo.Query<TEntity>,
+  ): Promise<FindPaginatedResponse<TDomain>> {
+    const [entities, totalCount] = await Promise.all([
+      this.aggregate<TEntity>(pipeline),
+      this.count(query),
+    ]);
+
+    return {
+      items: entities.map((entity) => this._mapper.toDomain(entity)),
+      totalCount,
+    };
+  }
+
   private async _getLoggedInUserName(): Promise<string> {
     try {
       const user = (await Meteor.userAsync()) as unknown as UserEntity | null;
@@ -309,5 +299,9 @@ export abstract class CrudMongoRepository<
     } catch (error) {
       return 'System';
     }
+  }
+
+  private getPaginatedStages(page: number, limit: number): Document[] {
+    return [{ $skip: (page - 1) * limit }, { $limit: limit }];
   }
 }
