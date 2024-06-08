@@ -67,28 +67,25 @@ export class DueMongoRepository
   public async findPaginated(
     request: FindPaginatedDuesRequest,
   ): Promise<FindPaginatedResponse<Due>> {
-    const pipeline: Document[] = [];
-
-    const $match: Document = {
+    const query: Mongo.Query<DueEntity> = {
       isDeleted: false,
     };
 
     if (request.filterByMember.length > 0) {
-      $match.memberId = { $in: request.filterByMember };
+      query.memberId = { $in: request.filterByMember };
     }
 
     if (request.filterByStatus.length > 0) {
-      $match.status = { $in: request.filterByStatus };
+      query.status = { $in: request.filterByStatus };
     }
 
-    pipeline.push({ $match });
-
-    const entitiesPipeline: Document[] = [
+    const pipeline: Document[] = [
+      { $match: query },
       ...this.getPaginatedPipeline(request),
       ...this.getMemberLookupPipeline(),
     ];
 
-    return super.findPaginatedPipeline(pipeline, entitiesPipeline);
+    return super.paginate(pipeline, request);
   }
 
   public async findPending(request: FindPendingDues): Promise<Due[]> {

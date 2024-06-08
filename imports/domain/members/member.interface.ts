@@ -17,6 +17,8 @@ export interface IMember extends IModel {
   category: MemberCategoryEnum;
   documentID: string | null;
   fileStatus: MemberFileStatusEnum | null;
+  firstName: string;
+  lastName: string;
   maritalStatus: MemberMaritalStatusEnum | null;
   nationality: MemberNationalityEnum | null;
   phones: string[] | null;
@@ -31,6 +33,8 @@ export interface CreateMember {
   category: MemberCategoryEnum;
   documentID: string | null;
   fileStatus: MemberFileStatusEnum | null;
+  firstName: string;
+  lastName: string;
   maritalStatus: MemberMaritalStatusEnum | null;
   nationality: MemberNationalityEnum | null;
   phones: string[] | null;

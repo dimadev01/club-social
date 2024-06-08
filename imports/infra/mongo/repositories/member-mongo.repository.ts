@@ -19,12 +19,8 @@ import { MemberMongoCollection } from '@infra/mongo/collections/member.collectio
 import { MemberAuditEntity } from '@infra/mongo/entities/member-audit.entity';
 import { MemberEntity } from '@infra/mongo/entities/member.entity';
 import { MemberMapper } from '@infra/mongo/mappers/member.mapper';
-import { MongoUtils } from '@infra/mongo/mongo.utils';
 import { CrudMongoAuditableRepository } from '@infra/mongo/repositories/common/crud-mongo-auditable.repository';
-import {
-  FindPaginatedMembersAggregationResult,
-  MemberEntityWithDues,
-} from '@infra/mongo/repositories/types/member-mongo-repository.types';
+import { MemberEntityWithDues } from '@infra/mongo/repositories/types/member-mongo-repository.types';
 import { UserMongoRepository } from '@infra/mongo/repositories/user-mongo.repository';
 
 @injectable()
@@ -103,36 +99,24 @@ export class MemberMongoRepository
   public async findPaginated(
     request: FindPaginatedMembersRequest,
   ): Promise<FindPaginatedMembersResponse> {
-    const pipeline = this._getPipelineToGridOrExport(request);
+    const query = this._getMatchQueryToGridOrExport(request);
 
-    const entitiesPipeline: Document[] = [
-      ...this.getUserLookupPipeline(),
-      ...this.getPaginatedPipeline(request),
-    ];
+    const pipeline: Document[] = [{ $match: query }];
 
-    if (!this._isSortingByPendingDues(request)) {
-      entitiesPipeline.push(...this._getPipelineWithDues(request));
+    if (this._isSortingByPendingDues(request)) {
+      pipeline.push(...this._getPipelineWithDues(request));
     }
 
-    pipeline.push(
-      {
-        $facet: {
-          entities: entitiesPipeline,
-          totalCount: [{ $count: 'count' }],
-        },
-      },
-      {
-        $project: {
-          entities: 1,
-          totalCount: MongoUtils.first('$totalCount.count', 0),
-        },
-      },
-    );
+    pipeline.push(...this.getPaginatedPipeline(request));
 
-    const [{ entities, totalCount }] = await this.collection
-      .rawCollection()
-      .aggregate<FindPaginatedMembersAggregationResult>(pipeline)
-      .toArray();
+    if (!this._isSortingByPendingDues(request)) {
+      pipeline.push(...this._getPipelineWithDues(request));
+    }
+
+    const [entities, totalCount] = await Promise.all([
+      this.aggregate<MemberEntityWithDues>(pipeline),
+      this.count(query),
+    ]);
 
     return {
       items: entities.map<PaginatedMember>((entity) => ({
@@ -149,13 +133,13 @@ export class MemberMongoRepository
   public async findToExport(
     request: FindMembersToExport,
   ): Promise<PaginatedMember[]> {
-    const pipeline = this._getPipelineToGridOrExport(request);
+    const query = this._getMatchQueryToGridOrExport(request);
 
-    pipeline.push(
-      ...this.getUserLookupPipeline(),
+    const pipeline: Document[] = [
+      { $match: query },
       ...this._getPipelineWithDues(request),
       this.getPaginatedSorterStage(request.sorter),
-    );
+    ];
 
     const entities = await this.collection
       .rawCollection()
@@ -171,34 +155,28 @@ export class MemberMongoRepository
     }));
   }
 
-  private _getPipelineToGridOrExport(
+  private _getMatchQueryToGridOrExport(
     request: FindPaginatedMembersRequest,
-  ): Document[] {
-    const pipeline: Document[] = [];
-
-    const $match: Document = {
+  ): Mongo.Query<MemberEntity> {
+    const query: Mongo.Query<MemberEntity> = {
       isDeleted: false,
     };
 
     if (request.filterById.length > 0) {
-      $match._id = { $in: request.filterById };
-    } else {
-      if (request.filterByCategory.length > 0) {
-        $match.category = { $in: request.filterByCategory };
-      }
+      query._id = { $in: request.filterById };
 
-      if (request.filterByStatus.length > 0) {
-        $match.status = { $in: request.filterByStatus };
-      }
+      return query;
     }
 
-    pipeline.push({ $match });
-
-    if (this._isSortingByPendingDues(request)) {
-      pipeline.push(...this._getPipelineWithDues(request));
+    if (request.filterByCategory.length > 0) {
+      query.category = { $in: request.filterByCategory };
     }
 
-    return pipeline;
+    if (request.filterByStatus.length > 0) {
+      query.status = { $in: request.filterByStatus };
+    }
+
+    return query;
   }
 
   private _getPipelineWithDues(
