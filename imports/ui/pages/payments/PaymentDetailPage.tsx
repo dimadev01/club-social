@@ -13,8 +13,8 @@ import { NotFound } from '@ui/components/NotFound';
 import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
 import { usePayment } from '@ui/hooks/payments/usePayment';
 import { useVoidPayment } from '@ui/hooks/payments/useVoidPayment';
-import { useNavigate } from '@ui/hooks/useNavigate';
-import { useNotificationSuccess } from '@ui/hooks/useNotification';
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
+import { useNotificationSuccess } from '@ui/hooks/ui/useNotification';
 
 export const PaymentDetailPage = () => {
   const { id: paymentId } = useParams<{ id?: string }>();

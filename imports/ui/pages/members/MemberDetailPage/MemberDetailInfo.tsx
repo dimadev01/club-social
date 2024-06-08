@@ -2,7 +2,6 @@ import { App, Card, Col, DatePicker, Form, Input, Row, Space } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import compact from 'lodash/compact';
 import uniq from 'lodash/uniq';
-import { Roles } from 'meteor/alanning:roles';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
@@ -21,18 +20,18 @@ import {
   getMemberSexOptions,
   getMemberStatusOptions,
 } from '@domain/members/member.enum';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { FormListEmails } from '@ui/components/Form/FormListEmails';
 import { FormListInput } from '@ui/components/Form/FormListInput';
 import { Select } from '@ui/components/Select';
+import { useCities } from '@ui/hooks/gov/useCities';
+import { useStates } from '@ui/hooks/gov/useStates';
 import { useCreateMember } from '@ui/hooks/members/useCreateMember';
-import { useUpdateMember } from '@ui/hooks/members/useUpdateMemberNew';
-import { useCities } from '@ui/hooks/useCities';
-import { useNavigate } from '@ui/hooks/useNavigate';
-import { useStates } from '@ui/hooks/useStates';
+import { useUpdateMember } from '@ui/hooks/members/useUpdateMember';
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
 
 type FormValues = {
   address: {
@@ -110,7 +109,7 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
 
       message.success('Socio creado');
 
-      navigate(`${AppUrl.Members}/${response._id}`);
+      navigate(`${AppUrl.Members}/${response.id}`);
     } else {
       await updateMember.mutateAsync({
         addressCityGovId: values.address.cityGovId?.value || null,
@@ -146,10 +145,6 @@ export const MemberDetailInfo: React.FC<Props> = ({ member }) => {
     <Card>
       <Form<FormValues>
         layout="vertical"
-        disabled={
-          !Roles.userIsInRole(user, PermissionEnum.CREATE, ScopeEnum.MEMBERS) ||
-          !Roles.userIsInRole(user, PermissionEnum.UPDATE, ScopeEnum.MEMBERS)
-        }
         form={form}
         onFinish={(values) => handleSubmit(values)}
         initialValues={{

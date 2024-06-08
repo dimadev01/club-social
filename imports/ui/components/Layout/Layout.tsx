@@ -16,30 +16,31 @@ import {
   Typography,
 } from 'antd';
 import { ItemType } from 'antd/es/menu/interface';
-import { Roles } from 'meteor/alanning:roles';
-import React, { useEffect, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 import {
   FaCreditCard,
   FaExchangeAlt,
   FaFileInvoiceDollar,
   FaUsers,
 } from 'react-icons/fa';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { UserThemeEnum } from '@domain/users/user.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl } from '@ui/app.enum';
-import { useThemeContext } from '@ui/AppContext';
 import { Button } from '@ui/components/Button';
 import { Select } from '@ui/components/Select';
+import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
+import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
 import { useUpdateUserTheme } from '@ui/hooks/users/useUpdateUserTheme';
+import { useThemeContext } from '@ui/providers/ThemeContext';
 
-type Props = {
-  children: JSX.Element;
-};
+export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
+  const user = useLoggedInUser();
 
-export const Layout: React.FC<Props> = ({ children }) => {
+  const isInRole = useIsInRole();
+
   const { setTheme, theme } = useThemeContext();
 
   const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(true);
@@ -55,30 +56,16 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     LocalStorageUtils.set('theme', theme);
-  }, [updateUserTheme, theme]);
+  }, [theme]);
 
   useEffect(() => {
     setMenuKey(pathnameKey);
   }, [pathnameKey]);
 
-  const user = Meteor.user();
-
-  if (!user) {
-    return <Navigate to={AppUrl.Login} />;
-  }
-
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
 
-    // if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.USERS)) {
-    //   items.push({
-    //     icon: <UserOutlined className="!text-lg" />,
-    //     key: AppUrl.Users,
-    //     label: <Link to={AppUrl.Users}>Usuarios</Link>,
-    //   });
-    // }
-
-    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.MEMBERS)) {
+    if (isInRole(PermissionEnum.READ, ScopeEnum.MEMBERS)) {
       items.push({
         icon: <FaUsers className="!text-lg" />,
         key: AppUrl.Members,
@@ -90,7 +77,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.DUES)) {
+    if (isInRole(PermissionEnum.READ, ScopeEnum.DUES)) {
       items.push({
         icon: <FaFileInvoiceDollar className="!text-lg" />,
         key: AppUrl.Dues,
@@ -102,7 +89,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.PAYMENTS)) {
+    if (isInRole(PermissionEnum.READ, ScopeEnum.PAYMENTS)) {
       items.push({
         icon: <FaCreditCard className="!text-lg" />,
         key: AppUrl.Payments,
@@ -114,7 +101,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.MOVEMENTS)) {
+    if (isInRole(PermissionEnum.READ, ScopeEnum.MOVEMENTS)) {
       items.push({
         icon: <FaExchangeAlt className="!text-lg" />,
         key: AppUrl.Movements,
@@ -125,38 +112,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
         ),
       });
     }
-
-    // if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.CATEGORIES)) {
-    //   items.push({
-    //     icon: <BankOutlined className="!text-lg" />,
-    //     key: AppUrl.Categories,
-    //     label: <Link to={AppUrl.Categories}>Categorías</Link>,
-    //   });
-    // }
-
-    // if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.PROFESSORS)) {
-    //   items.push({
-    //     icon: <UserOutlined className="!text-lg" />,
-    //     key: AppUrl.Professors,
-    //     label: <Link to={AppUrl.Professors}>Profesores</Link>,
-    //   });
-    // }
-
-    // if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.EMPLOYEES)) {
-    //   items.push({
-    //     icon: <UserOutlined className="!text-lg" />,
-    //     key: AppUrl.Employees,
-    //     label: <Link to={AppUrl.Employees}>Empleados</Link>,
-    //   });
-    // }
-
-    // if (Roles.userIsInRole(user, PermissionEnum.READ, ScopeEnum.SERVICES)) {
-    //   items.push({
-    //     icon: <BulbOutlined className="!text-lg" />,
-    //     key: AppUrl.Services,
-    //     label: <Link to={AppUrl.Services}>Servicios</Link>,
-    //   });
-    // }
 
     return items;
   };
@@ -254,7 +209,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
             <Space>
               <Select
                 allowClear={false}
-                value={user?.profile?.theme}
+                value={user.profile?.theme}
                 showSearch={false}
                 onChange={(value) => {
                   setTheme(value);

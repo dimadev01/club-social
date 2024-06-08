@@ -1,7 +1,7 @@
 import { Flex, Image, Space, Spin } from 'antd';
 import React from 'react';
 
-export const LoggingIn: React.FC = () => (
+export const LoadingScreen: React.FC = () => (
   <Flex justify="center" align="center" className="h-full">
     <Space direction="vertical" align="center">
       <Image

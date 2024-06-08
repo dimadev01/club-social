@@ -30,7 +30,7 @@ import { MembersSelect } from '@ui/components/Members/MembersSelect';
 import { Select } from '@ui/components/Select';
 import { useCreateDue } from '@ui/hooks/dues/useCreateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import { useNotificationSuccess } from '@ui/hooks/useNotification';
+import { useNotificationSuccess } from '@ui/hooks/ui/useNotification';
 
 type FormValues = {
   amount: number;

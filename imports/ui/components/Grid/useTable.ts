@@ -14,7 +14,7 @@ import {
 import { DEFAULT_PAGE_SIZE } from '@domain/common/repositories/grid.repository';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { GridState } from '@ui/components/Grid/Grid';
-import { useParsedQs } from '@ui/hooks/useParsedQs';
+import { useParsedQs } from '@ui/hooks/ui/useParsedQs';
 
 interface UseTableProps {
   defaultFilters: GridFilter;

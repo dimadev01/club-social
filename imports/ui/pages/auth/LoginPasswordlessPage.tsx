@@ -7,7 +7,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
-import { useNotificationError } from '@ui/hooks/useNotification';
+import { useNotificationError } from '@ui/hooks/ui/useNotification';
 
 type FormValues = {
   token: string;

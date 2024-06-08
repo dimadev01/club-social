@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
-import { useNotificationError } from '@ui/hooks/useNotification';
+import { useNotificationError } from '@ui/hooks/ui/useNotification';
 
 type FormValues = {
   email: string;

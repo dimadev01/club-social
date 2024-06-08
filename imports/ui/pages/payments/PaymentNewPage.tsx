@@ -24,7 +24,7 @@ import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
 import {
   useNotificationError,
   useNotificationSuccess,
-} from '@ui/hooks/useNotification';
+} from '@ui/hooks/ui/useNotification';
 
 type FormDueValue = {
   amount: number;

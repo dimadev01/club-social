@@ -10,7 +10,7 @@ import {
 } from '@domain/members/member.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { Button } from '@ui/components/Button';
-import { useMembersToExport } from '@ui/hooks/members/useGetMembersToExport';
+import { useGetMembersToExport } from '@ui/hooks/members/useGetMembersToExport';
 
 interface Props {
   request: GetMembersGridRequestDto;
@@ -19,7 +19,7 @@ interface Props {
 export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
   request,
 }) => {
-  const getMembersToExport = useMembersToExport();
+  const getMembersToExport = useGetMembersToExport();
 
   return (
     <CsvDownloader

@@ -3,13 +3,13 @@ import React from 'react';
 
 import { useNavigate } from '@ui/hooks/ui/useNavigate';
 
-export const NotFound = () => {
+export const InternalError = () => {
   const navigate = useNavigate();
 
   return (
     <Result
-      status="404"
-      title="No encontrado"
+      status="500"
+      title="Error inesperado"
       subTitle={<Button onClick={() => navigate(-1)}>Ir hacia atrás</Button>}
     />
   );

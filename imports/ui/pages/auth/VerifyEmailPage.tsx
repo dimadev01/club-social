@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
-import { useNotificationError } from '@ui/hooks/useNotification';
+import { useNotificationError } from '@ui/hooks/ui/useNotification';
 
 export const VerifyEmailPage = () => {
   const navigate = useNavigate();

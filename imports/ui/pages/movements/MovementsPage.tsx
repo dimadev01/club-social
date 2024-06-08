@@ -33,10 +33,10 @@ import { Button } from '@ui/components/Button';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { TableOld } from '@ui/components/Grid/Table';
+import { useGrid } from '@ui/components/Grid/useGrid';
 import { useDeleteMovement } from '@ui/hooks/movements/useDeleteMovement';
 import { useMovementsGrid } from '@ui/hooks/movements/useMovementsGrid';
 import { useRestoreMovement } from '@ui/hooks/movements/useRestoreMovement';
-import { useGrid } from '@ui/hooks/useGrid';
 
 export const MovementsPage = () => {
   const location = useLocation();
@@ -134,12 +134,10 @@ export const MovementsPage = () => {
         extra={
           <>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-
-            {Roles.userIsInRole(
-              user,
-              PermissionEnum.CREATE,
-              ScopeEnum.MOVEMENTS,
-            ) && <GridNewButton to={AppUrl.MovementsNew} />}
+            <GridNewButton
+              scope={ScopeEnum.MOVEMENTS}
+              to={AppUrl.MovementsNew}
+            />
           </>
         }
       >

@@ -11,6 +11,12 @@ export abstract class MeteorMethods {
     return user;
   }
 
+  protected getCurrentUserId(): string {
+    const user = this.getCurrentUser();
+
+    return user._id;
+  }
+
   protected getCurrentUserName(): string {
     const user = this.getCurrentUser();
 

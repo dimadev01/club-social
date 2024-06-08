@@ -22,8 +22,8 @@ export class GetMembersUseCase implements IUseCase<FindMembers, MemberDto[]> {
     request: FindMembers,
   ): Promise<Result<MemberDto[], Error>> {
     const members = await this._memberRepository.find({
-      category: request.category,
-      status: request.status,
+      category: request.category ?? [],
+      status: request.status ?? [],
     });
 
     return ok(members.map((member) => this._memberDtoMapper.toDto(member)));

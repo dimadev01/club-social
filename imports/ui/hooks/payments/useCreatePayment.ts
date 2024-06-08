@@ -1,10 +1,9 @@
-import { CreatePaymentResponse } from '@application/payments/use-cases/create-payment/create-payment.response';
-
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { CreatePaymentRequest } from '@application/payments/use-cases/create-payment/create-payment.request';
-import { useMutation } from '@ui/hooks/useMutation';
+import { CreatePaymentRequestDto } from '@adapters/dtos/create-payment-request.dto';
+import { PaymentDto } from '@application/payments/dtos/payment.dto';
+import { useMutation } from '@ui/hooks/query/useMutation';
 
 export const useCreatePayment = () =>
-  useMutation<CreatePaymentRequest, CreatePaymentResponse>({
+  useMutation<CreatePaymentRequestDto, PaymentDto>({
     methodName: MeteorMethodEnum.PaymentsCreate,
   });

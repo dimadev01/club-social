@@ -63,7 +63,10 @@ const router = createBrowserRouter([
   },
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.MEMBERS}>
+      <PrivateRoute
+        permission={PermissionEnum.CREATE}
+        scope={ScopeEnum.MEMBERS}
+      >
         <MembersDetailPage />
       </PrivateRoute>
     ),

@@ -24,11 +24,11 @@ import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
+import { useTable } from '@ui/components/Grid/useTable';
 import { MembersGridCsvDownloaderButton } from '@ui/components/Members/MembersGridCsvDownloader';
 import { useMembers } from '@ui/hooks/members/useMembers';
-import { useNavigate } from '@ui/hooks/useNavigate';
-import { useQueryGrid } from '@ui/hooks/useQueryGrid';
-import { useTable } from '@ui/hooks/useTable';
+import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
 
 export const MembersPage = () => {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export const MembersPage = () => {
     defaultSorter: { id: 'ascend' },
   });
 
-  const { data: members } = useMembers({});
+  const { data: members } = useMembers();
 
   const sorter = { ...gridState.sorter };
 

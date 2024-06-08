@@ -16,37 +16,37 @@ import {
 
 export class CreateMovementRequestDto {
   @IsDateString()
-  date: string;
+  date!: string;
 
   @IsEnum(CategoryEnum)
-  category: CategoryEnum;
+  category!: CategoryEnum;
 
   @IsEnum(CategoryTypeEnum)
-  type: CategoryTypeEnum;
+  type!: CategoryTypeEnum;
 
   @IsInt()
   @IsPositive()
-  amount: number;
+  amount!: number;
 
   @IsString()
   @IsOptional()
-  notes: string | null;
+  notes!: string | null;
 
   @IsOptional()
   @IsString({ each: true })
   @ArrayMinSize(1)
   @IsArray()
-  memberIds: string[] | null;
+  memberIds!: string[] | null;
 
   @IsOptional()
   @IsString()
-  professorId: string | null;
+  professorId!: string | null;
 
   @IsOptional()
   @IsString()
-  serviceId: string | null;
+  serviceId!: string | null;
 
   @IsOptional()
   @IsString()
-  employeeId: string | null;
+  employeeId!: string | null;
 }

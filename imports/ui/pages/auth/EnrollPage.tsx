@@ -4,7 +4,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
-import { useNotificationError } from '@ui/hooks/useNotification';
+import { useNotificationError } from '@ui/hooks/ui/useNotification';
 import { useUserByToken } from '@ui/hooks/users/useUserByToken';
 
 type LoginFormValues = {

@@ -11,9 +11,9 @@ import ReactJson from 'react-json-view';
 
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { AppThemeEnum } from '@ui/app.enum';
-import { useThemeContext } from '@ui/AppContext';
-import { useModalError } from '@ui/hooks/useModalError';
-import { useNotificationError } from '@ui/hooks/useNotification';
+import { useModalError } from '@ui/hooks/ui/useModalError';
+import { useNotificationError } from '@ui/hooks/ui/useNotification';
+import { useThemeContext } from '@ui/providers/ThemeContext';
 
 export const QueryClientApp: React.FC<PropsWithChildren> = ({ children }) => {
   const notificationError = useNotificationError();
