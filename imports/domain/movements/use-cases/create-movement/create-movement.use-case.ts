@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import { ILogger } from '@domain/common/logger/logger.interface';
-import { Movement } from '@domain/movements/entities/movement.entity';
+import { OldMovement } from '@domain/movements/entities/movement.entity';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { CreateMovementRequestDto } from '@domain/movements/use-cases/create-movement/create-movement-request.dto';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
@@ -29,7 +29,7 @@ export class CreateMovementUseCase
   ): Promise<Result<null, Error>> {
     await this.validatePermission(ScopeEnum.MOVEMENTS, PermissionEnum.CREATE);
 
-    const movement = Movement.create({
+    const movement = OldMovement.create({
       amount: request.amount,
       category: request.category,
       date: request.date,

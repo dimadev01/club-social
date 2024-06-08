@@ -10,19 +10,19 @@ import {
 } from 'class-validator';
 
 import {
-  CategoryEnum,
-  CategoryTypeEnum,
+  MovementCategoryEnum,
+  MovementTypeEnum,
 } from '@domain/categories/category.enum';
 
 export class CreateMovementRequestDto {
   @IsDateString()
   date!: string;
 
-  @IsEnum(CategoryEnum)
-  category!: CategoryEnum;
+  @IsEnum(MovementCategoryEnum)
+  category!: MovementCategoryEnum;
 
-  @IsEnum(CategoryTypeEnum)
-  type!: CategoryTypeEnum;
+  @IsEnum(MovementTypeEnum)
+  type!: MovementTypeEnum;
 
   @IsInt()
   @IsPositive()

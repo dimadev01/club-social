@@ -3,20 +3,15 @@ import {
   MovementTypeEnum,
 } from '@domain/categories/category.enum';
 
-export interface CreateMovement {
+export interface MovementDto {
   amount: number;
   category: MovementCategoryEnum;
   date: string;
   employeeId: string | null;
-  memberId: string | null;
+  id: string;
   notes: string | null;
+  paymentId: string | null;
   professorId: string | null;
   serviceId: string | null;
   type: MovementTypeEnum;
-}
-
-export interface CreateMovementMember {
-  _id: string;
-  firstName: string;
-  lastName: string;
 }

@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
-import { Movement } from '@domain/movements/entities/movement.entity';
+import { OldMovement } from '@domain/movements/entities/movement.entity';
 import {
   MovementCollection,
   MovementSchema,
@@ -13,8 +13,8 @@ import { MongoCollectionOld } from '@infra/mongo/old/mongo-collection.old';
 import { MongoCrudRepositoryOld } from '@infra/mongo/old/mongo-crud.repository';
 
 @injectable()
-export class MovementRepository
-  extends MongoCrudRepositoryOld<Movement>
+export class OldMovementRepository
+  extends MongoCrudRepositoryOld<OldMovement>
   implements IMovementPort
 {
   public constructor(
@@ -24,7 +24,7 @@ export class MovementRepository
     super(_logger);
   }
 
-  protected getCollection(): MongoCollectionOld<Movement> {
+  protected getCollection(): MongoCollectionOld<OldMovement> {
     return MovementCollection;
   }
 

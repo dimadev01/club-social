@@ -2,6 +2,7 @@ import { CreditCardOutlined, FileSearchOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space } from 'antd';
 import ButtonGroup from 'antd/es/button/button-group';
 import React from 'react';
+import { FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -124,7 +125,12 @@ export const MembersPage = () => {
       />
 
       <Card
-        title="Socios"
+        title={
+          <Space>
+            <FaUsers />
+            <span>Socios</span>
+          </Space>
+        }
         extra={
           <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />

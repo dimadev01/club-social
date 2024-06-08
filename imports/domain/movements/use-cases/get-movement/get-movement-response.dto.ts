@@ -1,6 +1,6 @@
 import {
-  CategoryEnum,
-  CategoryTypeEnum,
+  MovementCategoryEnum,
+  MovementTypeEnum,
 } from '@domain/categories/category.enum';
 
 export class GetMovementResponseDto {
@@ -10,7 +10,7 @@ export class GetMovementResponseDto {
 
   public amountFormatted: string;
 
-  public category: CategoryEnum;
+  public category: MovementCategoryEnum;
 
   public date: string;
 
@@ -24,5 +24,5 @@ export class GetMovementResponseDto {
 
   public serviceId: string | null;
 
-  public type: CategoryTypeEnum;
+  public type: MovementTypeEnum;
 }

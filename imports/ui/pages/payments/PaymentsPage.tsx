@@ -1,6 +1,7 @@
 import { Breadcrumb, Card, Space } from 'antd';
 import { ColumnProps } from 'antd/es/table';
 import React from 'react';
+import { FaCreditCard } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -157,7 +158,12 @@ export const PaymentsPage = () => {
       />
 
       <Card
-        title="Pagos"
+        title={
+          <Space>
+            <FaCreditCard />
+            <span>Pagos</span>
+          </Space>
+        }
         extra={
           <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />

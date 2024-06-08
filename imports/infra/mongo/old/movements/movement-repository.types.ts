@@ -1,7 +1,7 @@
 import { FindPaginatedAggregationResult } from '@application/pagination/find-paginated-aggregation.result';
 import { FindPaginatedRequestOld } from '@application/pagination/find-paginated.request';
 import { FindPaginatedResponseOld } from '@application/pagination/find-paginated.response';
-import { Movement } from '@domain/movements/entities/movement.entity';
+import { OldMovement } from '@domain/movements/entities/movement.entity';
 
 export type FindPaginatedMovementsRequest = FindPaginatedRequestOld & {
   from: string | null;
@@ -11,7 +11,7 @@ export type FindPaginatedMovementsRequest = FindPaginatedRequestOld & {
   to: string | null;
 };
 
-export type FindPaginatedMovement = Movement & {
+export type FindPaginatedMovement = OldMovement & {
   balance: number;
 };
 

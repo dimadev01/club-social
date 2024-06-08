@@ -1,22 +1,22 @@
 import {
-  CategoryEnum,
-  CategoryTypeEnum,
+  MovementCategoryEnum,
+  MovementTypeEnum,
 } from '@domain/categories/category.enum';
 
-export class MovementGridDto {
+export class OldMovementGridDto {
   _id: string;
 
   date: string;
 
   amount: string;
 
-  category: CategoryEnum;
+  category: MovementCategoryEnum;
 
   details: string;
 
   memberId: string | null;
 
-  type: CategoryTypeEnum;
+  type: MovementTypeEnum;
 
   isDeleted: boolean;
 }

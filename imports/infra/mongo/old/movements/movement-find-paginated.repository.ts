@@ -4,11 +4,11 @@ import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import {
-  CategoryEnum,
-  CategoryTypeEnum,
+  MovementCategoryEnum,
+  MovementTypeEnum,
 } from '@domain/categories/category.enum';
 import { ILogger } from '@domain/common/logger/logger.interface';
-import { Movement } from '@domain/movements/entities/movement.entity';
+import { OldMovement } from '@domain/movements/entities/movement.entity';
 import {
   MovementCollection,
   MovementSchema,
@@ -26,7 +26,7 @@ import { MongoUtilsOld } from '@shared/utils/mongo.utils';
 
 @injectable()
 export class MovementFindPaginatedRepository
-  extends MongoCrudRepositoryOld<Movement>
+  extends MongoCrudRepositoryOld<OldMovement>
   implements IMovementPaginatedPort
 {
   public constructor(
@@ -39,7 +39,7 @@ export class MovementFindPaginatedRepository
   public async findPaginated(
     request: FindPaginatedMovementsRequest,
   ): Promise<FindPaginatedMovementsResponse> {
-    const query: Mongo.Selector<Movement> = {
+    const query: Mongo.Selector<OldMovement> = {
       isDeleted: request.showDeleted ?? false,
     };
 
@@ -55,7 +55,9 @@ export class MovementFindPaginatedRepository
     }
 
     if (request.filters.category?.length) {
-      query.category = { $in: request.filters.category as CategoryEnum[] };
+      query.category = {
+        $in: request.filters.category as MovementCategoryEnum[],
+      };
     }
 
     const [{ data, allDebt, allExpenses, count, allDebtIncome, allIncome }] =
@@ -65,13 +67,13 @@ export class MovementFindPaginatedRepository
           { $match: query },
           {
             $facet: {
-              allDebt: this._getGroupedByCategoryType(CategoryTypeEnum.Debt),
+              allDebt: this._getGroupedByCategoryType(MovementTypeEnum.Debt),
               allDebtIncome: this._getAllDebtIncome(),
               allExpenses: this._getGroupedByCategoryType(
-                CategoryTypeEnum.Expense,
+                MovementTypeEnum.Expense,
               ),
               allIncome: this._getGroupedByCategoryType(
-                CategoryTypeEnum.Income,
+                MovementTypeEnum.Income,
               ),
               data: [
                 ...this.getPaginatedPipelineQuery(request),
@@ -132,7 +134,7 @@ export class MovementFindPaginatedRepository
     };
   }
 
-  protected getCollection(): MongoCollectionOld<Movement> {
+  protected getCollection(): MongoCollectionOld<OldMovement> {
     return MovementCollection;
   }
 
@@ -146,9 +148,9 @@ export class MovementFindPaginatedRepository
         $match: {
           category: {
             $in: [
-              CategoryEnum.MembershipIncome,
-              CategoryEnum.GuestIncome,
-              CategoryEnum.ElectricityIncome,
+              MovementCategoryEnum.MembershipIncome,
+              MovementCategoryEnum.GuestIncome,
+              MovementCategoryEnum.ElectricityIncome,
             ],
           },
         },
@@ -189,7 +191,7 @@ export class MovementFindPaginatedRepository
     ];
   }
 
-  private _getGroupedByCategoryType(type: CategoryTypeEnum) {
+  private _getGroupedByCategoryType(type: MovementTypeEnum) {
     return [{ $match: { type } }, MongoUtilsOld.getGroupByAmount()];
   }
 

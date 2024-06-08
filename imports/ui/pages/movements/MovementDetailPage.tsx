@@ -15,9 +15,9 @@ import React from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import {
-  CategoryEnum,
-  CategoryLabel,
-  CategoryTypeEnum,
+  MovementCategoryEnum,
+  MovementCategoryEnumLabel,
+  MovementTypeEnum,
   getCategoryOptions,
   getCategoryTypeOptions,
 } from '@domain/categories/category.enum';
@@ -33,7 +33,7 @@ import { useMovement } from '@ui/hooks/movements/useMovement';
 
 type FormValues = {
   amount: number;
-  category: CategoryEnum;
+  category: MovementCategoryEnum;
   date: Dayjs;
   employeeId: string | undefined;
   memberId: string | undefined;
@@ -41,7 +41,7 @@ type FormValues = {
   notes: string;
   professorId: string | undefined;
   serviceId: string | undefined;
-  type: CategoryTypeEnum;
+  type: MovementTypeEnum;
 };
 
 export const MovementDetailPage = () => {
@@ -112,7 +112,7 @@ export const MovementDetailPage = () => {
           },
           {
             title: movement
-              ? `${movement.date} - ${CategoryLabel[movement.category]} - ${
+              ? `${movement.date} - ${MovementCategoryEnumLabel[movement.category]} - ${
                   movement.amountFormatted
                 }`
               : 'Nuevo Movimiento',
@@ -139,7 +139,7 @@ export const MovementDetailPage = () => {
               notes: movement?.notes,
               professorId: movement?.professorId,
               serviceId: movement?.serviceId,
-              type: movement?.type ?? CategoryTypeEnum.Income,
+              type: movement?.type ?? MovementTypeEnum.Income,
             }}
           >
             <Form.Item
@@ -176,9 +176,9 @@ export const MovementDetailPage = () => {
                     getCategoryOptions(formCategoryType)?.filter(
                       (categoryByType) =>
                         ![
-                          CategoryEnum.GuestIncome,
-                          CategoryEnum.MembershipIncome,
-                          CategoryEnum.ElectricityIncome,
+                          MovementCategoryEnum.GuestIncome,
+                          MovementCategoryEnum.MembershipIncome,
+                          MovementCategoryEnum.ElectricityIncome,
                         ].includes(categoryByType.value),
                     ) ?? []
                   }

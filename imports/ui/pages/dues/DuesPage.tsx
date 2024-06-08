@@ -2,7 +2,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Tooltip } from 'antd';
 import { ColumnProps } from 'antd/es/table';
 import React from 'react';
-import { FaCreditCard } from 'react-icons/fa';
+import { FaCreditCard, FaFileInvoiceDollar } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -225,7 +225,12 @@ export const DuesPage = () => {
       />
 
       <Card
-        title="Cobros"
+        title={
+          <Space>
+            <FaFileInvoiceDollar />
+            <span>Cobros</span>
+          </Space>
+        }
         extra={
           <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />

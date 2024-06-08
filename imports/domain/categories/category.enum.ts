@@ -1,5 +1,5 @@
 /* eslint-disable typescript-sort-keys/string-enum */
-export enum CategoryEnum {
+export enum MovementCategoryEnum {
   MembershipIncome = 'membership-income',
   MembershipDebt = 'membership-debt',
   Employee = 'employee',
@@ -19,56 +19,60 @@ export enum CategoryEnum {
   OtherExpense = 'other-expense',
   OtherIncome = 'other-income',
   Professor = 'professor',
+  MemberIncome = 'member-income',
   Service = 'service',
 }
 
-export const CategoryLabel = {
-  [CategoryEnum.MembershipIncome]: 'Pago de Cuota',
-  [CategoryEnum.MembershipDebt]: 'Cobro de Cuota',
-  [CategoryEnum.CourtRental]: 'Alquiler de cancha',
-  [CategoryEnum.Expense]: 'Gastos',
-  [CategoryEnum.Fair]: 'Ferias',
-  [CategoryEnum.Buffet]: 'Buffet',
-  [CategoryEnum.Saloon]: 'Salón',
-  [CategoryEnum.GuestIncome]: 'Pago de Invitado',
-  [CategoryEnum.GuestDebt]: 'Cobro de Invitado',
-  [CategoryEnum.ElectricityIncome]: 'Pago de Luz',
-  [CategoryEnum.ElectricityDebt]: 'Cobro de Luz',
-  [CategoryEnum.Maintenance]: 'Mantenimiento',
-  [CategoryEnum.OtherIncome]: 'Otros ingresos',
-  [CategoryEnum.OtherExpense]: 'Otros egresos',
-  [CategoryEnum.Parking]: 'Estacionamiento',
-  [CategoryEnum.Professor]: 'Profesores',
-  [CategoryEnum.Salary]: 'Honorarios',
-  [CategoryEnum.Employee]: 'Empleados',
-  [CategoryEnum.Saving]: 'Atesoramiento',
-  [CategoryEnum.Service]: 'Servicios',
+export const MovementCategoryEnumLabel: {
+  [key in MovementCategoryEnum]: string;
+} = {
+  [MovementCategoryEnum.MembershipIncome]: 'Pago de Cuota',
+  [MovementCategoryEnum.MembershipDebt]: 'Cobro de Cuota',
+  [MovementCategoryEnum.CourtRental]: 'Alquiler de cancha',
+  [MovementCategoryEnum.Expense]: 'Gastos',
+  [MovementCategoryEnum.Fair]: 'Ferias',
+  [MovementCategoryEnum.Buffet]: 'Buffet',
+  [MovementCategoryEnum.Saloon]: 'Salón',
+  [MovementCategoryEnum.GuestIncome]: 'Pago de Invitado',
+  [MovementCategoryEnum.GuestDebt]: 'Cobro de Invitado',
+  [MovementCategoryEnum.ElectricityIncome]: 'Pago de Luz',
+  [MovementCategoryEnum.ElectricityDebt]: 'Cobro de Luz',
+  [MovementCategoryEnum.Maintenance]: 'Mantenimiento',
+  [MovementCategoryEnum.MemberIncome]: 'Pago de socio',
+  [MovementCategoryEnum.OtherIncome]: 'Otros ingresos',
+  [MovementCategoryEnum.OtherExpense]: 'Otros egresos',
+  [MovementCategoryEnum.Parking]: 'Estacionamiento',
+  [MovementCategoryEnum.Professor]: 'Profesores',
+  [MovementCategoryEnum.Salary]: 'Honorarios',
+  [MovementCategoryEnum.Employee]: 'Empleados',
+  [MovementCategoryEnum.Saving]: 'Atesoramiento',
+  [MovementCategoryEnum.Service]: 'Servicios',
 };
 
 export const getCategoryFilters = () =>
-  Object.values(CategoryEnum)
+  Object.values(MovementCategoryEnum)
     .map((category) => ({
-      text: CategoryLabel[category],
+      text: MovementCategoryEnumLabel[category],
       value: category,
     }))
     .sort((a, b) => a.text.localeCompare(b.text));
 
-export enum CategoryTypeEnum {
+export enum MovementTypeEnum {
   Debt = 'debt',
   Income = 'income',
   Expense = 'expense',
 }
 
 export const CategoryTypeLabel = {
-  [CategoryTypeEnum.Debt]: 'Deuda',
-  [CategoryTypeEnum.Income]: 'Ingreso',
-  [CategoryTypeEnum.Expense]: 'Egreso',
+  [MovementTypeEnum.Debt]: 'Deuda',
+  [MovementTypeEnum.Income]: 'Ingreso',
+  [MovementTypeEnum.Expense]: 'Egreso',
 };
 
 export const getCategoryTypeOptions = () =>
-  Object.values(CategoryTypeEnum)
+  Object.values(MovementTypeEnum)
     .filter((category) =>
-      [CategoryTypeEnum.Expense, CategoryTypeEnum.Income].includes(category),
+      [MovementTypeEnum.Expense, MovementTypeEnum.Income].includes(category),
     )
     .map((category) => ({
       label: CategoryTypeLabel[category],
@@ -77,86 +81,86 @@ export const getCategoryTypeOptions = () =>
     .sort((a, b) => a.label.localeCompare(b.label));
 
 export const CategoryTypeFilters = {
-  [CategoryTypeEnum.Debt]: [
-    CategoryEnum.ElectricityDebt,
-    CategoryEnum.MembershipDebt,
-    CategoryEnum.GuestDebt,
+  [MovementTypeEnum.Debt]: [
+    MovementCategoryEnum.ElectricityDebt,
+    MovementCategoryEnum.MembershipDebt,
+    MovementCategoryEnum.GuestDebt,
   ],
-  [CategoryTypeEnum.Income]: [
-    CategoryEnum.ElectricityIncome,
-    CategoryEnum.MembershipIncome,
-    CategoryEnum.GuestIncome,
-    CategoryEnum.CourtRental,
-    CategoryEnum.Fair,
-    CategoryEnum.Buffet,
-    CategoryEnum.Saloon,
-    CategoryEnum.Parking,
-    CategoryEnum.Professor,
-    CategoryEnum.OtherIncome,
+  [MovementTypeEnum.Income]: [
+    MovementCategoryEnum.ElectricityIncome,
+    MovementCategoryEnum.MembershipIncome,
+    MovementCategoryEnum.GuestIncome,
+    MovementCategoryEnum.CourtRental,
+    MovementCategoryEnum.Fair,
+    MovementCategoryEnum.Buffet,
+    MovementCategoryEnum.Saloon,
+    MovementCategoryEnum.Parking,
+    MovementCategoryEnum.Professor,
+    MovementCategoryEnum.OtherIncome,
   ],
-  [CategoryTypeEnum.Expense]: [
-    CategoryEnum.Expense,
-    CategoryEnum.Salary,
-    CategoryEnum.Saving,
-    CategoryEnum.Service,
-    CategoryEnum.Maintenance,
-    CategoryEnum.OtherExpense,
-    CategoryEnum.Employee,
+  [MovementTypeEnum.Expense]: [
+    MovementCategoryEnum.Expense,
+    MovementCategoryEnum.Salary,
+    MovementCategoryEnum.Saving,
+    MovementCategoryEnum.Service,
+    MovementCategoryEnum.Maintenance,
+    MovementCategoryEnum.OtherExpense,
+    MovementCategoryEnum.Employee,
   ],
 };
 
-export const getCategoryOptions = (categoryType: CategoryTypeEnum) =>
+export const getCategoryOptions = (categoryType: MovementTypeEnum) =>
   CategoryTypeFilters[categoryType]
     .filter(
       (category) =>
         ![
-          CategoryEnum.MembershipIncome,
-          CategoryEnum.GuestIncome,
-          CategoryEnum.ElectricityIncome,
+          MovementCategoryEnum.MembershipIncome,
+          MovementCategoryEnum.GuestIncome,
+          MovementCategoryEnum.ElectricityIncome,
         ].includes(category),
     )
     .map((category) => ({
-      label: CategoryLabel[category],
+      label: MovementCategoryEnumLabel[category],
       value: category,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
 export const CategoryTypes = {
-  [CategoryEnum.MembershipIncome]: CategoryTypeEnum.Income,
-  [CategoryEnum.MembershipDebt]: CategoryTypeEnum.Debt,
-  [CategoryEnum.CourtRental]: CategoryTypeEnum.Income,
-  [CategoryEnum.Expense]: CategoryTypeEnum.Expense,
-  [CategoryEnum.Fair]: CategoryTypeEnum.Income,
-  [CategoryEnum.Saloon]: CategoryTypeEnum.Income,
-  [CategoryEnum.Buffet]: CategoryTypeEnum.Income,
-  [CategoryEnum.GuestIncome]: CategoryTypeEnum.Income,
-  [CategoryEnum.GuestDebt]: CategoryTypeEnum.Debt,
-  [CategoryEnum.ElectricityIncome]: CategoryTypeEnum.Income,
-  [CategoryEnum.ElectricityDebt]: CategoryTypeEnum.Debt,
-  [CategoryEnum.Maintenance]: CategoryTypeEnum.Expense,
-  [CategoryEnum.Employee]: CategoryTypeEnum.Expense,
-  [CategoryEnum.OtherIncome]: CategoryTypeEnum.Income,
-  [CategoryEnum.OtherExpense]: CategoryTypeEnum.Expense,
-  [CategoryEnum.Parking]: CategoryTypeEnum.Income,
-  [CategoryEnum.Professor]: CategoryTypeEnum.Income,
-  [CategoryEnum.Salary]: CategoryTypeEnum.Expense,
-  [CategoryEnum.Saving]: CategoryTypeEnum.Expense,
-  [CategoryEnum.Service]: CategoryTypeEnum.Expense,
+  [MovementCategoryEnum.MembershipIncome]: MovementTypeEnum.Income,
+  [MovementCategoryEnum.MembershipDebt]: MovementTypeEnum.Debt,
+  [MovementCategoryEnum.CourtRental]: MovementTypeEnum.Income,
+  [MovementCategoryEnum.Expense]: MovementTypeEnum.Expense,
+  [MovementCategoryEnum.Fair]: MovementTypeEnum.Income,
+  [MovementCategoryEnum.Saloon]: MovementTypeEnum.Income,
+  [MovementCategoryEnum.Buffet]: MovementTypeEnum.Income,
+  [MovementCategoryEnum.GuestIncome]: MovementTypeEnum.Income,
+  [MovementCategoryEnum.GuestDebt]: MovementTypeEnum.Debt,
+  [MovementCategoryEnum.ElectricityIncome]: MovementTypeEnum.Income,
+  [MovementCategoryEnum.ElectricityDebt]: MovementTypeEnum.Debt,
+  [MovementCategoryEnum.Maintenance]: MovementTypeEnum.Expense,
+  [MovementCategoryEnum.Employee]: MovementTypeEnum.Expense,
+  [MovementCategoryEnum.OtherIncome]: MovementTypeEnum.Income,
+  [MovementCategoryEnum.OtherExpense]: MovementTypeEnum.Expense,
+  [MovementCategoryEnum.Parking]: MovementTypeEnum.Income,
+  [MovementCategoryEnum.Professor]: MovementTypeEnum.Income,
+  [MovementCategoryEnum.Salary]: MovementTypeEnum.Expense,
+  [MovementCategoryEnum.Saving]: MovementTypeEnum.Expense,
+  [MovementCategoryEnum.Service]: MovementTypeEnum.Expense,
 };
 
 export const MemberCategories = [
-  CategoryEnum.MembershipDebt,
-  CategoryEnum.MembershipIncome,
-  CategoryEnum.ElectricityDebt,
-  CategoryEnum.ElectricityIncome,
-  CategoryEnum.GuestDebt,
-  CategoryEnum.GuestIncome,
+  MovementCategoryEnum.MembershipDebt,
+  MovementCategoryEnum.MembershipIncome,
+  MovementCategoryEnum.ElectricityDebt,
+  MovementCategoryEnum.ElectricityIncome,
+  MovementCategoryEnum.GuestDebt,
+  MovementCategoryEnum.GuestIncome,
 ];
 
 export const getMemberCategoryFilters = () =>
   Object.values(MemberCategories)
     .map((category) => ({
-      text: CategoryLabel[category],
+      text: MovementCategoryEnumLabel[category],
       value: category,
     }))
     .sort((a, b) => a.text.localeCompare(b.text));

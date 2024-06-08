@@ -5,11 +5,11 @@ import {
 
 import { ICrudPort } from '@application/ports/crud.port';
 import { IPaginatedPort } from '@application/ports/paginated.port';
-import { Movement } from '@domain/movements/entities/movement.entity';
+import { OldMovement } from '@domain/movements/entities/movement.entity';
 
-export type IMovementPort = ICrudPort<Movement>;
+export type IMovementPort = ICrudPort<OldMovement>;
 
-export interface IMovementPaginatedPort extends IPaginatedPort<Movement> {
+export interface IMovementPaginatedPort extends IPaginatedPort<OldMovement> {
   findPaginated(
     request: FindPaginatedMovementsRequest,
   ): Promise<FindPaginatedMovementsResponse>;

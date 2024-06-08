@@ -12,8 +12,8 @@ import { Result, err, ok } from 'neverthrow';
 
 import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import {
-  CategoryEnum,
-  CategoryTypeEnum,
+  MovementCategoryEnum,
+  MovementTypeEnum,
 } from '@domain/categories/category.enum';
 import { EntityOld } from '@domain/common/entity.old';
 import { CreateMovement } from '@domain/movements/movement.types';
@@ -21,12 +21,12 @@ import { MemberEntity } from '@infra/mongo/entities/member.entity';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { MoneyUtils } from '@shared/utils/money.utils';
 
-export class Movement extends EntityOld {
+export class OldMovement extends EntityOld {
   @IsInt()
   public amount!: number;
 
-  @IsEnum(CategoryEnum)
-  public category!: CategoryEnum;
+  @IsEnum(MovementCategoryEnum)
+  public category!: MovementCategoryEnum;
 
   @IsDate()
   public date!: Date;
@@ -55,8 +55,8 @@ export class Movement extends EntityOld {
   @IsOptional()
   public serviceId!: string | null;
 
-  @IsEnum(CategoryTypeEnum)
-  public type!: CategoryTypeEnum;
+  @IsEnum(MovementTypeEnum)
+  public type!: MovementTypeEnum;
 
   @IsBoolean()
   @IsOptional()
@@ -79,8 +79,8 @@ export class Movement extends EntityOld {
     return DateUtils.formatUtc(this.date, DateFormatEnum.DDMMYYYY);
   }
 
-  public static create(props: CreateMovement): Result<Movement, Error> {
-    const movement = new Movement();
+  public static create(props: CreateMovement): Result<OldMovement, Error> {
+    const movement = new OldMovement();
 
     const updateResult = Result.combine([
       movement.setCategory(props.category),
@@ -111,7 +111,7 @@ export class Movement extends EntityOld {
     return ok(null);
   }
 
-  private setCategory(category: CategoryEnum): Result<null, Error> {
+  private setCategory(category: MovementCategoryEnum): Result<null, Error> {
     this.category = category;
 
     return ok(null);
@@ -153,7 +153,7 @@ export class Movement extends EntityOld {
     return ok(null);
   }
 
-  private setType(type: CategoryTypeEnum): Result<null, Error> {
+  private setType(type: MovementTypeEnum): Result<null, Error> {
     this.type = type;
 
     return ok(null);

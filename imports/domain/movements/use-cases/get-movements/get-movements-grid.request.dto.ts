@@ -9,7 +9,7 @@ import {
 
 import { PaginatedRequestDto } from '@infra/pagination/paginated-request.dto';
 
-export class GetMovementsGridRequestDto extends PaginatedRequestDto {
+export class OldGetMovementsGridRequestDto extends PaginatedRequestDto {
   @IsArray()
   @IsString({ each: true })
   public memberIds: string[];

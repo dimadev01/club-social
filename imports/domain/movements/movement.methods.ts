@@ -7,8 +7,8 @@ import { DeleteMovementRequestDto } from '@domain/movements/use-cases/delete-mov
 import { DeleteMovementUseCase } from '@domain/movements/use-cases/delete-movement/delete-movement.use-case';
 import { GetMovementRequestDto } from '@domain/movements/use-cases/get-movement/get-movement-request.dto';
 import { GetMovementUseCase } from '@domain/movements/use-cases/get-movement/get-movement.use-case';
-import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
-import { GetMovementsGridUseCase } from '@domain/movements/use-cases/get-movements/get-movements-grid.use-case';
+import { OldGetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
+import { OldGetMovementsGridUseCase } from '@domain/movements/use-cases/get-movements/get-movements-grid.use-case';
 import { RestoreMovementRequestDto } from '@domain/movements/use-cases/restore-movement/restore-movement-request.dto';
 import { RestoreMovementUseCase } from '@domain/movements/use-cases/restore-movement/restore-movement.use-case';
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
@@ -16,7 +16,7 @@ import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 @injectable()
 export class MovementMethod extends MeteorMethod {
   public constructor(
-    private readonly _getMovementsGrid: GetMovementsGridUseCase,
+    private readonly _getMovementsGrid: OldGetMovementsGridUseCase,
     private readonly _getMovement: GetMovementUseCase,
     private readonly _createMovement: CreateMovementUseCase,
     private readonly _deleteMovement: DeleteMovementUseCase,
@@ -28,12 +28,12 @@ export class MovementMethod extends MeteorMethod {
   public register() {
     Meteor.methods({
       [MeteorMethodEnum.MovementsGetGrid]: (
-        request: GetMovementsGridRequestDto,
+        request: OldGetMovementsGridRequestDto,
       ) =>
         this.execute(
           this._getMovementsGrid,
           request,
-          GetMovementsGridRequestDto,
+          OldGetMovementsGridRequestDto,
         ),
 
       [MeteorMethodEnum.MovementsGet]: (request: GetMovementRequestDto) =>
