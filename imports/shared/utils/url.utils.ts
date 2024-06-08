@@ -5,7 +5,7 @@ export abstract class UrlUtils {
   public static navigate(
     url: string,
     obj?: unknown,
-    options?: qs.IStringifyOptions
+    options?: qs.IStringifyOptions,
   ): string {
     if (!obj) {
       return url;
@@ -14,9 +14,13 @@ export abstract class UrlUtils {
     return `${url}${this.stringify(obj, options)}`;
   }
 
+  public static parse(): qs.ParsedQs {
+    return qs.parse(window.location.search, { ignoreQueryPrefix: true });
+  }
+
   public static stringify(
     obj: unknown,
-    options?: qs.IStringifyOptions
+    options?: qs.IStringifyOptions,
   ): URLSearchParamsInit {
     return qs.stringify(obj, {
       addQueryPrefix: true,

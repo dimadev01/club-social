@@ -1,7 +1,8 @@
 import type { ClientSession } from 'mongodb';
-import { Entity } from '@domain/common/entity';
 
-export interface IUpdatablePort<T extends Entity> {
+import { EntityOld } from '@domain/common/entity.old';
+
+export interface IUpdatablePort<T extends EntityOld> {
   update(entity: T): Promise<void>;
   updateWithSession(entity: T, session: ClientSession): Promise<void>;
 }

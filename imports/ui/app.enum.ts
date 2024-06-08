@@ -1,3 +1,8 @@
+export enum AppThemeEnum {
+  DARK = 'dark',
+  LIGHT = 'light',
+}
+
 /* eslint-disable typescript-sort-keys/string-enum */
 export enum AppUrl {
   Home = '/',
@@ -18,7 +23,6 @@ export enum AppUrl {
 
   Movements = '/movements',
   MovementsDetail = '/movements/:id',
-  MovementsMigrate = '/movements/:id/migrate',
   MovementsNew = '/movements/new',
 
   Payments = '/payments',
@@ -37,8 +41,4 @@ export enum AppUrl {
 
   Categories = '/categories',
   CategoriesDetail = '/categories/:id',
-}
-
-export enum AppConstants {
-  EmailFrom = 'Club Social <info@clubsocialmontegrande.ar>',
 }

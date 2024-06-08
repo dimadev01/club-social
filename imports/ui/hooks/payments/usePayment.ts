@@ -1,11 +1,10 @@
-import { GetPaymentRequestDto } from '@domain/payments/use-cases/get-payment/get-payment-request.dto';
-import { GetPaymentResponseDto } from '@domain/payments/use-cases/get-payment/get-payment-response.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
-import { useQuery } from '@tanstack/react-query';
+import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.dto';
+import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
+import { PaymentDto } from '@application/payments/dtos/payment.dto';
+import { useQuery } from '@ui/hooks/query/useQuery';
 
-export const usePayment = (id?: string) =>
-  useQuery<GetPaymentRequestDto, Error, GetPaymentResponseDto | undefined>(
-    [MethodsEnum.PaymentsGet, id],
-    () => Meteor.callAsync(MethodsEnum.PaymentsGet, { id }),
-    { enabled: !!id }
-  );
+export const usePayment = (request?: GetOneByIdRequestDto) =>
+  useQuery<GetOneByIdRequestDto, PaymentDto>({
+    methodName: MeteorMethodEnum.PaymentsGet,
+    request,
+  });

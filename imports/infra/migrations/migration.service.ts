@@ -1,13 +1,14 @@
 import './migrations';
 import { inject, injectable } from 'tsyringe';
-import { ILogger } from '@application/logger/logger.interface';
-import { DIToken } from '@infra/di/di-tokens';
+
+import { DIToken } from '@application/common/di/tokens.di';
+import { ILogger } from '@domain/common/logger/logger.interface';
 
 @injectable()
 export class MigrationService {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger
+    private readonly _logger: ILogger,
   ) {}
 
   public start() {

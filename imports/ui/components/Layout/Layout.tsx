@@ -1,28 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { Col, Image, Layout as AntLayout, Menu, Row, Typography } from 'antd';
-import ButtonGroup from 'antd/es/button/button-group';
-import { ItemType } from 'antd/es/menu/hooks/useItems';
-import { Roles } from 'meteor/alanning:roles';
-import { Navigate, NavLink } from 'react-router-dom';
 import {
-  BankOutlined,
-  BulbOutlined,
   FilePdfOutlined,
   LogoutOutlined,
   MailOutlined,
   NotificationOutlined,
-  UserOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
+import {
+  Layout as AntLayout,
+  Col,
+  Flex,
+  Image,
+  Menu,
+  Row,
+  Space,
+  Typography,
+} from 'antd';
+import { ItemType } from 'antd/es/menu/interface';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
+import {
+  FaCreditCard,
+  FaExchangeAlt,
+  FaFileInvoiceDollar,
+  FaUsers,
+} from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { UserThemeEnum } from '@domain/users/user.enum';
+import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
+import { Select } from '@ui/components/Select';
+import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
+import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
+import { useUpdateUserTheme } from '@ui/hooks/users/useUpdateUserTheme';
+import { useThemeContext } from '@ui/providers/ThemeContext';
 
-type Props = {
-  children: JSX.Element;
-};
+export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
+  const user = useLoggedInUser();
 
-export const Layout: React.FC<Props> = ({ children }) => {
+  const isInRole = useIsInRole();
+
+  const { setTheme, theme } = useThemeContext();
+
   const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(true);
 
   const [isMenuResponsiveMode, setIsMenuResponsiveMode] =
@@ -32,129 +52,107 @@ export const Layout: React.FC<Props> = ({ children }) => {
 
   const [menuKey, setMenuKey] = useState<string>(pathnameKey);
 
+  const updateUserTheme = useUpdateUserTheme();
+
+  useEffect(() => {
+    LocalStorageUtils.set('theme', theme);
+  }, [theme]);
+
   useEffect(() => {
     setMenuKey(pathnameKey);
   }, [pathnameKey]);
 
-  const user = Meteor.user();
-
-  if (!user) {
-    return <Navigate to={AppUrl.Login} />;
-  }
-
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Users)) {
+    if (isInRole(PermissionEnum.READ, ScopeEnum.MEMBERS)) {
       items.push({
-        icon: <UserOutlined className="!text-lg" />,
-        key: AppUrl.Users,
-        label: <NavLink to={AppUrl.Users}>Usuarios</NavLink>,
-      });
-    }
-
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Members)) {
-      items.push({
-        icon: <UserOutlined className="!text-lg" />,
+        icon: <FaUsers className="!text-lg" />,
         key: AppUrl.Members,
-        label: <NavLink to={AppUrl.Members}>Socios</NavLink>,
+        label: (
+          <Link className="no-underline" to={AppUrl.Members}>
+            Socios
+          </Link>
+        ),
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Movements)) {
+    if (isInRole(PermissionEnum.READ, ScopeEnum.DUES)) {
       items.push({
-        icon: <BankOutlined className="!text-lg" />,
-        key: AppUrl.Movements,
-        label: <NavLink to={AppUrl.Movements}>Movimientos</NavLink>,
-      });
-    }
-
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Dues)) {
-      items.push({
-        icon: <BankOutlined className="!text-lg" />,
+        icon: <FaFileInvoiceDollar className="!text-lg" />,
         key: AppUrl.Dues,
-        label: <NavLink to={AppUrl.Dues}>Cobros</NavLink>,
+        label: (
+          <Link className="no-underline" to={AppUrl.Dues}>
+            Cobros
+          </Link>
+        ),
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Payments)) {
+    if (isInRole(PermissionEnum.READ, ScopeEnum.PAYMENTS)) {
       items.push({
-        icon: <BankOutlined className="!text-lg" />,
+        icon: <FaCreditCard className="!text-lg" />,
         key: AppUrl.Payments,
-        label: <NavLink to={AppUrl.Payments}>Pagos</NavLink>,
+        label: (
+          <Link className="no-underline" to={AppUrl.Payments}>
+            Pagos
+          </Link>
+        ),
       });
     }
 
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Categories)) {
+    if (isInRole(PermissionEnum.READ, ScopeEnum.MOVEMENTS)) {
       items.push({
-        icon: <BankOutlined className="!text-lg" />,
-        key: AppUrl.Categories,
-        label: <NavLink to={AppUrl.Categories}>Categorías</NavLink>,
-      });
-    }
-
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Professors)) {
-      items.push({
-        icon: <UserOutlined className="!text-lg" />,
-        key: AppUrl.Professors,
-        label: <NavLink to={AppUrl.Professors}>Profesores</NavLink>,
-      });
-    }
-
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Employees)) {
-      items.push({
-        icon: <UserOutlined className="!text-lg" />,
-        key: AppUrl.Employees,
-        label: <NavLink to={AppUrl.Employees}>Empleados</NavLink>,
-      });
-    }
-
-    if (Roles.userIsInRole(user, PermissionEnum.Read, ScopeEnum.Services)) {
-      items.push({
-        icon: <BulbOutlined className="!text-lg" />,
-        key: AppUrl.Services,
-        label: <NavLink to={AppUrl.Services}>Servicios</NavLink>,
+        icon: <FaExchangeAlt className="!text-lg" />,
+        key: AppUrl.Movements,
+        label: (
+          <Link className="no-underline" to={AppUrl.Movements}>
+            Movimientos
+          </Link>
+        ),
       });
     }
 
     return items;
   };
 
+  const userName = `${user.profile?.firstName} ${user.profile?.lastName}`;
+
   return (
-    <AntLayout hasSider className="cs-layout min-h-full">
+    <AntLayout hasSider className="cs-layout">
       <AntLayout.Sider
         collapsed={isMenuCollapsed}
         onCollapse={setIsMenuCollapsed}
         breakpoint="lg"
         collapsedWidth="0"
-        className="!bg-[#f8f9fd] cs-sider"
+        className="cs-sider"
         width={260}
+        theme={theme}
         onBreakpoint={(broken) => setIsMenuResponsiveMode(broken)}
       >
-        <NavLink to={AppUrl.Home} onClick={() => setMenuKey(AppUrl.Home)}>
-          <Image
-            wrapperClassName="py-8 px-20 w-full"
-            preview={false}
-            src="/images/logo.png"
-            alt="Rixsus Logo"
-          />
-        </NavLink>
+        <Image
+          wrapperClassName="py-8 px-16 w-full"
+          preview={false}
+          src="/images/logo.png"
+          alt="Rixsus Logo"
+        />
 
         <div className="mb-20 px-8">
           <Row align="middle" wrap={false}>
             <Col flex={1} className="pl-4">
-              <Typography.Text className="block font-light text-base">
+              <Typography.Text className="block text-base font-light">
                 Hola,
               </Typography.Text>
-              <Typography.Text className="block font-medium text-base">
-                {user.profile?.firstName} {user.profile?.lastName}
+
+              <Typography.Text className="block text-base font-medium">
+                {userName}
               </Typography.Text>
             </Col>
           </Row>
         </div>
 
         <Menu
-          className="!bg-[#f8f9fd] cs-menu"
+          className="cs-menu"
           selectedKeys={[menuKey]}
           onClick={({ key }) => {
             setMenuKey(key);
@@ -167,12 +165,16 @@ export const Layout: React.FC<Props> = ({ children }) => {
         />
 
         <Menu
-          className="!bg-[#f8f9fd] cs-menu mt-auto !mb-8"
+          className="cs-menu !mb-8 mt-auto"
           items={[
             {
               icon: <LogoutOutlined className="!text-lg" />,
               key: 'logout',
-              label: <NavLink to={AppUrl.Logout}>Cerrar sesión</NavLink>,
+              label: (
+                <Link className="no-underline" to={AppUrl.Logout}>
+                  Cerrar sesión
+                </Link>
+              ),
             },
           ]}
         />
@@ -183,47 +185,74 @@ export const Layout: React.FC<Props> = ({ children }) => {
           {children}
         </AntLayout.Content>
 
-        <AntLayout.Footer className="flex justify-between">
-          <ButtonGroup>
-            <Button
-              size="large"
-              tooltip={{ title: 'Reglamento' }}
-              icon={<FilePdfOutlined />}
-              htmlType="button"
-              type="text"
-              href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
-              target="_blank"
-            />
-            <Button
-              size="large"
-              tooltip={{ title: 'Comunicados' }}
-              icon={<NotificationOutlined />}
-              htmlType="button"
-              type="text"
-              href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
-              target="_blank"
-            />
-          </ButtonGroup>
-          <ButtonGroup>
-            <Button
-              size="large"
-              tooltip={{ title: 'Enviar Email' }}
-              icon={<MailOutlined />}
-              htmlType="button"
-              type="text"
-              href="mailto:info@clubsocialmontegrande.ar"
-              target="_blank"
-            />
-            <Button
-              size="large"
-              tooltip={{ title: 'Enviar WhatsApp' }}
-              icon={<WhatsAppOutlined />}
-              htmlType="button"
-              type="text"
-              href="https://wa.me/5491158804950"
-              target="_blank"
-            />
-          </ButtonGroup>
+        <AntLayout.Footer>
+          <Flex justify="space-between">
+            <Space.Compact>
+              <Button
+                tooltip={{ title: 'Reglamento' }}
+                icon={<FilePdfOutlined />}
+                htmlType="button"
+                type="text"
+                href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
+                target="_blank"
+              />
+              <Button
+                tooltip={{ title: 'Comunicados' }}
+                icon={<NotificationOutlined />}
+                htmlType="button"
+                type="text"
+                href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
+                target="_blank"
+              />
+            </Space.Compact>
+
+            <Space>
+              <Select
+                allowClear={false}
+                value={user.profile?.theme}
+                showSearch={false}
+                onChange={(value) => {
+                  setTheme(value);
+
+                  updateUserTheme.mutate({ theme: value });
+                }}
+                options={[
+                  {
+                    label: 'Claro',
+                    value: UserThemeEnum.LIGHT,
+                  },
+                  {
+                    label: 'Oscuro',
+                    value: UserThemeEnum.DARK,
+                  },
+                  {
+                    label: 'Automático',
+                    value: UserThemeEnum.AUTO,
+                  },
+                ]}
+              />
+
+              <Space.Compact>
+                <Button
+                  tooltip={{ title: 'Enviar Email' }}
+                  icon={<MailOutlined />}
+                  htmlType="button"
+                  type="text"
+                  href="mailto:info@clubsocialmontegrande.ar"
+                  target="_blank"
+                />
+
+                <Button
+                  tooltip={{ title: 'Enviar WhatsApp' }}
+                  icon={<WhatsAppOutlined />}
+                  htmlType="button"
+                  type="text"
+                  href="https://wa.me/5491158804950"
+                  target="_blank"
+                />
+              </Space.Compact>
+            </Space>
+          </Flex>
         </AntLayout.Footer>
       </AntLayout>
     </AntLayout>

@@ -1,11 +1,10 @@
-import { GetDueRequestDto } from '@domain/dues/use-cases/get-due/get-due-request.dto';
-import { GetDueResponseDto } from '@domain/dues/use-cases/get-due/get-due-response.dto';
-import { MethodsEnum } from '@infra/meteor/common/meteor-methods.enum';
-import { useQuery } from '@tanstack/react-query';
+import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.dto';
+import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
+import { DueDto } from '@application/dues/dtos/due.dto';
+import { useQuery } from '@ui/hooks/query/useQuery';
 
-export const useDue = (id?: string) =>
-  useQuery<GetDueRequestDto, Error, GetDueResponseDto | undefined>(
-    [MethodsEnum.DuesGet, id],
-    () => Meteor.callAsync(MethodsEnum.DuesGet, { id }),
-    { enabled: !!id }
-  );
+export const useDue = (request?: GetOneByIdRequestDto) =>
+  useQuery<GetOneByIdRequestDto, DueDto>({
+    methodName: MeteorMethodEnum.DuesGet,
+    request,
+  });

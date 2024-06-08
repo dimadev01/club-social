@@ -1,7 +1,8 @@
-import React from 'react';
 import { Form } from 'antd';
 import compact from 'lodash/compact';
 import uniq from 'lodash/uniq';
+import React from 'react';
+
 import { FormListInput } from '@ui/components/Form/FormListInput';
 
 export const FormListEmails: React.FC = () => (
@@ -12,7 +13,7 @@ export const FormListEmails: React.FC = () => (
         validator: async (_, names) => {
           if (compact(uniq(names)).length !== compact(names).length) {
             return Promise.reject(
-              new Error('No se pueden ingresar emails duplicados')
+              new Error('No se pueden ingresar emails duplicados'),
             );
           }
 

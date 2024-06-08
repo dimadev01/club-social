@@ -1,20 +1,19 @@
 import { DueCategoryEnum } from '@domain/dues/due.enum';
-import { DueMember } from '@domain/dues/entities/due-member';
 
-export interface CreateDue {
+export interface CreateDueOld {
   amount: number;
   category: DueCategoryEnum;
   date: string;
-  member: DueMember;
+  memberId: string;
   notes: string | null;
 }
 
-export interface CreateDueMember {
+export interface CreateDueMemberOld {
   _id: string;
   name: string;
 }
 
-export interface CreateDuePayment {
+export interface CreateDuePaymentOld {
   _id: string;
   amount: number;
   date: Date;

@@ -1,6 +1,7 @@
-import React from 'react';
 import { Button, Result } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
 
 export const NotFound = () => {
   const navigate = useNavigate();
@@ -9,11 +10,7 @@ export const NotFound = () => {
     <Result
       status="404"
       title="No encontrado"
-      subTitle={
-        <Button type="link" onClick={() => navigate(-1)}>
-          Ir hacia atrás
-        </Button>
-      }
+      subTitle={<Button onClick={() => navigate(-1)}>Ir hacia atrás</Button>}
     />
   );
 };

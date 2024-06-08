@@ -1,6 +1,7 @@
-import React from 'react';
-import { Input, Space } from 'antd';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { Input, Space } from 'antd';
+import React from 'react';
+
 import { Button } from '@ui/components/Button';
 
 type Props = {

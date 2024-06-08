@@ -1,10 +1,10 @@
 import { MongoInternals } from 'meteor/mongo';
 import type { ClientSession } from 'mongodb';
 
-export abstract class MongoUtils {
+export abstract class MongoUtilsOld {
   public static elementAtArray0(
     path: string,
-    defaultValue: string | number | boolean
+    defaultValue: string | number | boolean,
   ) {
     return { $ifNull: [{ $arrayElemAt: [path, 0] }, defaultValue] };
   }
