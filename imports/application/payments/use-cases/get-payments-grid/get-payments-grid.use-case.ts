@@ -30,19 +30,15 @@ export class GetPaymentsGridUseCase
   public async execute(
     request: FindPaginatedPaymentsRequest,
   ): Promise<Result<FindPaginatedResponse<PaymentGridDto>, Error>> {
-    const { items, totalCount } = await this._paymentRepository.findPaginated({
-      ...request,
-      sorter: {
-        ...request.sorter,
-        receiptNumber: request.sorter.date ?? 'descend',
-      },
-    });
+    const { items, totalCount } =
+      await this._paymentRepository.findPaginated(request);
 
     const dtos = items.map<PaymentGridDto>((payment) => {
       invariant(payment.member);
 
       return {
         amount: payment.amount.value,
+        createdAt: payment.createdAt.toISOString(),
         date: payment.date.toISOString(),
         dues: payment.dues.map<PaymentDueDto>((paymentDue) => ({
           amount: paymentDue.amount.value,

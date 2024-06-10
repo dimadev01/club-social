@@ -13,6 +13,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
+import { DateVo } from '@domain/common/value-objects/date.value-object';
+import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, getDueCategoryOptions } from '@domain/dues/due.enum';
 import {
   MemberCategoryEnum,
@@ -20,7 +22,6 @@ import {
 } from '@domain/members/member.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
-import { MoneyUtils } from '@shared/utils/money.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
@@ -123,14 +124,16 @@ export const DuesNewPage = () => {
     let date: string;
 
     if (values.category === DueCategoryEnum.MEMBERSHIP) {
-      date = values.date.startOf('month').format(DateFormatEnum.DATE);
+      date = new DateVo(values.date)
+        .startOf('month')
+        .format(DateFormatEnum.DATE);
     } else {
-      date = values.date.startOf('day').format(DateFormatEnum.DATE);
+      date = new DateVo(values.date).startOf('day').format(DateFormatEnum.DATE);
     }
 
     createDue.mutate(
       {
-        amount: MoneyUtils.toCents(values.amount),
+        amount: Money.fromNumber(values.amount).value,
         category: values.category,
         date,
         memberIds: Array.isArray(values.memberIds) ? values.memberIds : [],
@@ -306,7 +309,7 @@ export const DuesNewPage = () => {
 
           <FormButtons
             saveButtonProps={{ text: 'Registrar Cobro' }}
-            scope={ScopeEnum.MOVEMENTS}
+            scope={ScopeEnum.DUES}
           />
         </Form>
       </Card>

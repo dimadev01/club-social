@@ -4,11 +4,11 @@ import { injectable } from 'tsyringe';
 
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import { UpdateUserThemeRequestDto } from '@application/users/dtos/update-user-theme-request.dto';
-import { UseCaseOld } from '@infra/use-cases/use-case';
+import { OldUseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class UpdateUserThemeUseCase
-  extends UseCaseOld<UpdateUserThemeRequestDto>
+  extends OldUseCase<UpdateUserThemeRequestDto>
   implements IUseCaseOld<UpdateUserThemeRequestDto, null>
 {
   public constructor() {

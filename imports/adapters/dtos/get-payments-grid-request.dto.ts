@@ -1,6 +1,7 @@
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsString } from 'class-validator';
 
 import { GetGridRequestDto } from '@adapters/common/dtos/get-grid-request.dto';
+import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { FindPaginatedPaymentsRequest } from '@domain/payments/payment.repository';
 
 export class GetPaymentsGridRequestDto
@@ -11,7 +12,7 @@ export class GetPaymentsGridRequestDto
   @IsArray()
   public filterByMember!: string[];
 
-  @IsString({ each: true })
+  @IsEnum(PaymentStatusEnum, { each: true })
   @IsArray()
   public filterByStatus!: string[];
 }

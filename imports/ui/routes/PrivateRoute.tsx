@@ -16,12 +16,12 @@ export const PrivateRoute: React.FC<Props> = ({
   permission,
   scope,
 }) => {
-  const isInRole = useIsInRole();
+  const isInRole = useIsInRole(permission, scope);
 
   return (
     <AuthRoute>
       {(() => {
-        if (!isInRole(permission, scope)) {
+        if (!isInRole) {
           return <Navigate to={AppUrl.Home} />;
         }
 

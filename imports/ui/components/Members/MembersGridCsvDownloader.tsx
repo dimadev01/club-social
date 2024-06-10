@@ -1,4 +1,4 @@
-import { FileExcelOutlined } from '@ant-design/icons';
+import { FileExcelFilled } from '@ant-design/icons';
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
@@ -26,7 +26,7 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
       columns={[
         {
           displayName: 'ID',
-          id: '_id',
+          id: 'id',
         },
         {
           displayName: 'Nombre',
@@ -63,8 +63,8 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
         const data = await getMembersToExport.mutateAsync(request);
 
         return data.map((member) => ({
-          _id: member.id,
           category: MemberCategoryLabel[member.category],
+          id: member.id,
           name: member.name,
           pendingElectricity: new Money({
             amount: member.pendingElectricity,
@@ -83,7 +83,7 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
         disabled={getMembersToExport.isLoading}
         tooltip={{ title: 'Descargar CSV' }}
         htmlType="button"
-        icon={<FileExcelOutlined />}
+        icon={<FileExcelFilled />}
       >
         Exportar
       </Button>

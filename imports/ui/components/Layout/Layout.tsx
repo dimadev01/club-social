@@ -1,8 +1,9 @@
 import {
-  FilePdfOutlined,
+  CreditCardFilled,
+  FilePdfFilled,
   LogoutOutlined,
-  MailOutlined,
-  NotificationOutlined,
+  MailFilled,
+  NotificationFilled,
   WhatsAppOutlined,
 } from '@ant-design/icons';
 import {
@@ -17,12 +18,7 @@ import {
 } from 'antd';
 import { ItemType } from 'antd/es/menu/interface';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
-import {
-  FaCreditCard,
-  FaExchangeAlt,
-  FaFileInvoiceDollar,
-  FaUsers,
-} from 'react-icons/fa';
+import { FaExchangeAlt, FaFileInvoiceDollar, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
@@ -39,7 +35,16 @@ import { useThemeContext } from '@ui/providers/ThemeContext';
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const user = useLoggedInUser();
 
-  const isInRole = useIsInRole();
+  const canReadMembers = useIsInRole(PermissionEnum.READ, ScopeEnum.MEMBERS);
+
+  const canReadDues = useIsInRole(PermissionEnum.READ, ScopeEnum.DUES);
+
+  const canReadPayments = useIsInRole(PermissionEnum.READ, ScopeEnum.PAYMENTS);
+
+  const canReadMovements = useIsInRole(
+    PermissionEnum.READ,
+    ScopeEnum.MOVEMENTS,
+  );
 
   const { setTheme, theme } = useThemeContext();
 
@@ -65,7 +70,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
 
-    if (isInRole(PermissionEnum.READ, ScopeEnum.MEMBERS)) {
+    if (canReadMembers) {
       items.push({
         icon: <FaUsers className="!text-lg" />,
         key: AppUrl.Members,
@@ -77,7 +82,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       });
     }
 
-    if (isInRole(PermissionEnum.READ, ScopeEnum.DUES)) {
+    if (canReadDues) {
       items.push({
         icon: <FaFileInvoiceDollar className="!text-lg" />,
         key: AppUrl.Dues,
@@ -89,9 +94,9 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       });
     }
 
-    if (isInRole(PermissionEnum.READ, ScopeEnum.PAYMENTS)) {
+    if (canReadPayments) {
       items.push({
-        icon: <FaCreditCard className="!text-lg" />,
+        icon: <CreditCardFilled className="!text-lg" />,
         key: AppUrl.Payments,
         label: (
           <Link className="no-underline" to={AppUrl.Payments}>
@@ -101,7 +106,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       });
     }
 
-    if (isInRole(PermissionEnum.READ, ScopeEnum.MOVEMENTS)) {
+    if (canReadMovements) {
       items.push({
         icon: <FaExchangeAlt className="!text-lg" />,
         key: AppUrl.Movements,
@@ -190,7 +195,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
             <Space.Compact>
               <Button
                 tooltip={{ title: 'Reglamento' }}
-                icon={<FilePdfOutlined />}
+                icon={<FilePdfFilled />}
                 htmlType="button"
                 type="text"
                 href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
@@ -198,7 +203,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
               />
               <Button
                 tooltip={{ title: 'Comunicados' }}
-                icon={<NotificationOutlined />}
+                icon={<NotificationFilled />}
                 htmlType="button"
                 type="text"
                 href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
@@ -235,7 +240,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
               <Space.Compact>
                 <Button
                   tooltip={{ title: 'Enviar Email' }}
-                  icon={<MailOutlined />}
+                  icon={<MailFilled />}
                   htmlType="button"
                   type="text"
                   href="mailto:info@clubsocialmontegrande.ar"

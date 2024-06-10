@@ -1,3 +1,4 @@
+import { PlusOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Col, DatePicker, Form, InputNumber } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import TextArea from 'antd/es/input/TextArea';
@@ -10,17 +11,20 @@ import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
 
 import { CreatePaymentRequestDto } from '@adapters/dtos/create-payment-request.dto';
 import { DueDto } from '@application/dues/dtos/due.dto';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
+import { Button } from '@ui/components/Button';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { Row } from '@ui/components/Layout/Row';
 import { MembersSelect } from '@ui/components/Members/MembersSelect';
 import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDuesByMember';
 import { useMember } from '@ui/hooks/members/useMember';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import {
   useNotificationError,
   useNotificationSuccess,
@@ -44,6 +48,8 @@ export const PaymentNewPage = () => {
   const notificationError = useNotificationError();
 
   const notificationSuccess = useNotificationSuccess();
+
+  const navigate = useNavigate();
 
   /**
    * Url params
@@ -145,7 +151,7 @@ export const PaymentNewPage = () => {
     }
 
     const request: CreatePaymentRequestDto = {
-      date: values.date.format(DateFormatEnum.DATE),
+      date: new DateVo(values.date).format(DateFormatEnum.DATE),
       dues: selectedDues.map((due) => ({
         amount: Money.fromNumber(due.amount).value,
         dueId: due.dueId,
@@ -257,6 +263,23 @@ export const PaymentNewPage = () => {
               </Form.Item>
             </Col>
           </Row>
+
+          {formMemberId && (
+            <Row className="mb-6">
+              <Col xs={12} sm={12} md={10} lg={8} xl={6}>
+                <Button
+                  onClick={() =>
+                    navigate(
+                      `${AppUrl.Dues}/new/${UrlUtils.stringify({ memberIds: [formMemberId] })}`,
+                    )
+                  }
+                  icon={<PlusOutlined />}
+                >
+                  Nuevo Cobro
+                </Button>
+              </Col>
+            </Row>
+          )}
 
           <Row>
             <Col xs={6} sm={6} md={5} lg={4} xl={3}>

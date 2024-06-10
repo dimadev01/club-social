@@ -71,7 +71,7 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
       updatedAt: payment.updatedAt,
       updatedBy: payment.updatedBy,
       voidReason: payment.voidReason,
-      voidedAt: payment.voidedAt ? payment.voidedAt.toDate() : null,
+      voidedAt: payment.voidedAt?.toDate() ?? null,
       voidedBy: payment.voidedBy,
     });
   }

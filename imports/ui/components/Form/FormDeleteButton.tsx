@@ -3,9 +3,9 @@ import { ButtonProps } from 'antd';
 import React from 'react';
 
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
-import { SecurityUtils } from '@infra/security/security.utils';
 import { Button } from '@ui/components/Button';
 import { Popconfirm } from '@ui/components/Popconfirm/Popconfirm';
+import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 
 export type FormDeleteButtonProps = ButtonProps & {
   onClick: () => void;
@@ -17,15 +17,15 @@ export const FormDeleteButton: React.FC<FormDeleteButtonProps> = ({
   scope,
   ...rest
 }) => {
-  if (!SecurityUtils.isInRole(PermissionEnum.DELETE, scope)) {
-    return false;
-  }
+  const canDelete = useIsInRole(PermissionEnum.DELETE, scope);
 
   return (
-    <Popconfirm title="¿Confirma la acción?" onConfirm={() => onClick()}>
-      <Button icon={<DeleteOutlined />} danger {...rest}>
-        Eliminar
-      </Button>
-    </Popconfirm>
+    canDelete && (
+      <Popconfirm title="¿Confirma la acción?" onConfirm={() => onClick()}>
+        <Button icon={<DeleteOutlined />} danger {...rest}>
+          Eliminar
+        </Button>
+      </Popconfirm>
+    )
   );
 };

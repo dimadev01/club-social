@@ -19,9 +19,9 @@ export class DueMethods extends MeteorMethods {
   public register(): void {
     Meteor.methods({
       [MeteorMethodEnum.DuesCreate]: (req: CreateDueRequestDto) =>
-        this._controller.create(req),
-      [MeteorMethodEnum.DuesGet]: (req: GetOneByIdRequestDto) =>
-        this._controller.get(req),
+        this.execute(this._controller.create.bind(this._controller), req),
+      [MeteorMethodEnum.DuesGetOne]: (req: GetOneByIdRequestDto) =>
+        this.execute(this._controller.get.bind(this._controller), req),
       [MeteorMethodEnum.DuesGetGrid]: (req: GetDuesGridRequestDto) => {
         const currentUser = this.getCurrentUser();
 
@@ -29,12 +29,15 @@ export class DueMethods extends MeteorMethods {
           req.filterByMember.push(currentUser._id);
         }
 
-        return this._controller.getGrid(req);
+        return this.execute(
+          this._controller.getGrid.bind(this._controller),
+          req,
+        );
       },
       [MeteorMethodEnum.DuesGetPending]: (req: GetPendingDuesRequestDto) =>
-        this._controller.getPending(req),
+        this.execute(this._controller.getPending.bind(this._controller), req),
       [MeteorMethodEnum.DuesVoid]: (req: VoidDueMethodRequestDto) =>
-        this._controller.void({
+        this.execute(this._controller.void.bind(this._controller), {
           ...req,
           voidedBy: this.getCurrentUserName(),
         }),

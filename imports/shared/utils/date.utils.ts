@@ -7,11 +7,12 @@ import utc from 'dayjs/plugin/utc';
 export enum DateFormatEnum {
   DATE = 'YYYY-MM-DD',
   DATETIME = 'YYYY-MM-DD HH:mm:ss',
+  DDMMYYHHmm = 'DD/MM/YYYY HH:mm',
   DDMMYYYY = 'DD/MM/YYYY',
   ISO = 'YYYY-MM-DDTHH:mm:ss.SSSZ',
   MMMM = 'MMMM',
   MMMM_YYYY = 'MMMM YYYY',
-  Time = 'HH:mm:ss',
+  TIME = 'HH:mm:ss',
 }
 
 export abstract class DateUtils {

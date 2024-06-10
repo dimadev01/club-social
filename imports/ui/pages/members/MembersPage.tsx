@@ -1,7 +1,7 @@
-import { CreditCardOutlined, FileSearchOutlined } from '@ant-design/icons';
+import { CreditCardFilled } from '@ant-design/icons';
 import { Breadcrumb, Card, Space } from 'antd';
-import ButtonGroup from 'antd/es/button/button-group';
 import React from 'react';
+import { FaFileInvoiceDollar, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -13,8 +13,8 @@ import {
   MemberCategoryLabel,
   MemberStatusEnum,
   MemberStatusLabel,
-  getMemberCategoryFilters,
-  getMemberStatusFilters,
+  getMemberCategoryColumnFilters,
+  getMemberStatusColumnFilters,
 } from '@domain/members/member.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
@@ -124,7 +124,12 @@ export const MembersPage = () => {
       />
 
       <Card
-        title="Socios"
+        title={
+          <Space>
+            <FaUsers />
+            <span>Socios</span>
+          </Space>
+        }
         extra={
           <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
@@ -165,7 +170,7 @@ export const MembersPage = () => {
               dataIndex: 'category',
               filteredValue: gridState.filters.category,
 
-              filters: getMemberCategoryFilters(),
+              filters: getMemberCategoryColumnFilters(),
               render: (category: MemberCategoryEnum) =>
                 MemberCategoryLabel[category],
               title: 'Categoría',
@@ -177,7 +182,7 @@ export const MembersPage = () => {
               defaultFilteredValue: [MemberStatusEnum.ACTIVE],
               filterResetToDefaultFilteredValue: true,
               filteredValue: gridState.filters.status,
-              filters: getMemberStatusFilters(),
+              filters: getMemberStatusColumnFilters(),
               render: (status: MemberStatusEnum) => MemberStatusLabel[status],
               title: 'Estado',
               width: 150,
@@ -237,10 +242,10 @@ export const MembersPage = () => {
             {
               align: 'center',
               render: (_, member: MemberGridDto) => (
-                <ButtonGroup size="small">
+                <Space.Compact size="small">
                   <Button
                     type="text"
-                    icon={<FileSearchOutlined />}
+                    icon={<FaFileInvoiceDollar />}
                     onClick={() =>
                       navigate(
                         UrlUtils.navigate(AppUrl.Dues, {
@@ -252,7 +257,7 @@ export const MembersPage = () => {
                   />
                   <Button
                     type="text"
-                    icon={<CreditCardOutlined />}
+                    icon={<CreditCardFilled />}
                     onClick={() =>
                       navigate(
                         UrlUtils.navigate(AppUrl.Payments, {
@@ -262,7 +267,7 @@ export const MembersPage = () => {
                     }
                     tooltip={{ title: 'Ver Pagos' }}
                   />
-                </ButtonGroup>
+                </Space.Compact>
               ),
               title: 'Acciones',
               width: 100,

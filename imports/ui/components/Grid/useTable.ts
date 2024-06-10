@@ -49,15 +49,17 @@ export function useTable<T>({
      */
     if ('field' in obj && typeof obj.field === 'string' && 'order' in obj) {
       if (!obj.order) {
-        if (!currentState) {
+        if (!Object.getOwnPropertyNames(defaultSorter).includes(obj.field)) {
           return defaultSorter;
         }
 
         const invertedSorter: GridSorter = {};
 
-        Object.entries(currentState.sorter).forEach(([key, value]) => {
-          invertedSorter[key] = value === 'ascend' ? 'descend' : 'ascend';
-        });
+        Object.entries(currentState?.sorter ?? defaultSorter).forEach(
+          ([key, value]) => {
+            invertedSorter[key] = value === 'ascend' ? 'descend' : 'ascend';
+          },
+        );
 
         return invertedSorter;
       }

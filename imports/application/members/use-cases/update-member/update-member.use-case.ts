@@ -71,6 +71,8 @@ export class UpdateMemberUseCase
           ),
           member.setDocumentID(request.documentID),
           member.setFileStatus(request.fileStatus),
+          member.setFirstName(request.firstName),
+          member.setLastName(request.lastName),
           member.setMaritalStatus(request.maritalStatus),
           member.setNationality(request.nationality),
           member.setPhones(request.phones),
