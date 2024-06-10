@@ -4,9 +4,9 @@ import { useForm } from 'antd/es/form/Form';
 import React, { useState } from 'react';
 
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
-import { SecurityUtils } from '@infra/security/security.utils';
 import { Button } from '@ui/components/Button';
 import { Popconfirm } from '@ui/components/Popconfirm/Popconfirm';
+import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 
 export type FormVoidButtonProps = ButtonProps & {
   onConfirm: (reason: string) => void;
@@ -26,7 +26,9 @@ export const FormVoidButton: React.FC<FormVoidButtonProps> = ({
 
   const [form] = useForm<FormValues>();
 
-  if (!SecurityUtils.isInRole(PermissionEnum.VOID, scope)) {
+  const canVoid = useIsInRole(PermissionEnum.VOID, scope);
+
+  if (!canVoid) {
     return false;
   }
 

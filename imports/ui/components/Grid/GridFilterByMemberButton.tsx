@@ -1,4 +1,4 @@
-import { CloseCircleFilled, FilterFilled } from '@ant-design/icons';
+import { CloseOutlined, FilterFilled } from '@ant-design/icons';
 import React from 'react';
 
 import { RoleEnum } from '@domain/roles/role.enum';
@@ -53,15 +53,17 @@ export const GridFilterByMemberButton: React.FC<Props> = ({
           onClick={() => {
             setState({
               ...gridState,
-              filters: {
-                ...gridState.filters,
-                memberId: [],
-              },
+              filters: { ...gridState.filters, memberId: [] },
             });
           }}
           htmlType="button"
           tooltip={{ title: 'Quitar filtro' }}
-          icon={<CloseCircleFilled />}
+          icon={
+            <div className="relative">
+              <FilterFilled />
+              <CloseOutlined className="absolute -right-2 -top-2 !text-[10px]" />
+            </div>
+          }
         />
       )}
     </>
