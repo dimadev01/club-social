@@ -1,9 +1,10 @@
-import { SaveOutlined } from '@ant-design/icons';
+import { SaveFilled } from '@ant-design/icons';
 import { ButtonProps } from 'antd';
 import React from 'react';
 
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
 import { Button } from '@ui/components/Button';
+import { useIsInRoleFn } from '@ui/hooks/auth/useIsInRole';
 
 export type FormSaveButtonProps = ButtonProps & {
   scope?: ScopeEnum;
@@ -15,23 +16,20 @@ export const FormSaveButton: React.FC<FormSaveButtonProps> = ({
   text,
   ...rest
 }) => {
-  const user = Meteor.user();
-
-  if (!user) {
-    return null;
-  }
+  const isInRole = useIsInRoleFn();
 
   if (scope) {
-    if (
-      !Roles.userIsInRole(user, PermissionEnum.CREATE, scope) &&
-      !Roles.userIsInRole(user, PermissionEnum.UPDATE, scope)
-    ) {
-      return false;
+    const canCreate = isInRole(PermissionEnum.CREATE, scope);
+
+    const canUpdate = isInRole(PermissionEnum.UPDATE, scope);
+
+    if (!canCreate && !canUpdate) {
+      return null;
     }
   }
 
   return (
-    <Button icon={<SaveOutlined />} type="primary" htmlType="submit" {...rest}>
+    <Button icon={<SaveFilled />} type="primary" htmlType="submit" {...rest}>
       {text ?? 'Guardar'}
     </Button>
   );

@@ -1,4 +1,4 @@
-import { Button, Flex } from 'antd';
+import { Flex, Space } from 'antd';
 import React from 'react';
 
 import { ScopeEnum } from '@domain/roles/role.enum';
@@ -23,9 +23,9 @@ export const FormButtons: React.FC<Props> = ({
   scope,
 }) => (
   <Flex justify="space-between">
-    <Button.Group>
+    <Space.Compact>
       <FormSaveButton scope={scope} {...saveButtonProps} />
       <FormBackButton {...backButtonProps} />
-    </Button.Group>
+    </Space.Compact>
   </Flex>
 );

@@ -3,6 +3,7 @@ import {
   IsDefined,
   IsEnum,
   IsInt,
+  IsNotEmpty,
   IsNumber,
   IsPositive,
   IsString,
@@ -11,6 +12,7 @@ import {
 import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import {
   MovementCategoryEnum,
+  MovementStatusEnum,
   MovementTypeEnum,
 } from '@domain/categories/category.enum';
 import { Entity } from '@infra/mongo/common/entities/entity';
@@ -58,6 +60,26 @@ export class MovementEntity extends Entity {
   @IsEnum(MovementTypeEnum)
   public type: MovementTypeEnum;
 
+  @IsEnum(MovementStatusEnum)
+  public status: MovementStatusEnum;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsNullable()
+  @IsDefined()
+  public voidReason: string | null;
+
+  @IsDate()
+  @IsNullable()
+  @IsDefined()
+  public voidedAt: Date | null;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsNullable()
+  @IsDefined()
+  public voidedBy: string | null;
+
   public constructor(props: MovementEntity) {
     super(props);
 
@@ -78,5 +100,13 @@ export class MovementEntity extends Entity {
     this.type = props.type;
 
     this.paymentId = props.paymentId;
+
+    this.status = props.status;
+
+    this.voidReason = props.voidReason;
+
+    this.voidedAt = props.voidedAt;
+
+    this.voidedBy = props.voidedBy;
   }
 }

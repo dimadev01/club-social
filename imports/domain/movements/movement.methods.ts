@@ -14,7 +14,7 @@ import { RestoreMovementUseCase } from '@domain/movements/use-cases/restore-move
 import { MeteorMethod } from '@infra/meteor/common/meteor-methods.base';
 
 @injectable()
-export class MovementMethod extends MeteorMethod {
+export class OldMovementMethod extends MeteorMethod {
   public constructor(
     private readonly _getMovementsGrid: OldGetMovementsGridUseCase,
     private readonly _getMovement: GetMovementUseCase,
@@ -36,15 +36,12 @@ export class MovementMethod extends MeteorMethod {
           OldGetMovementsGridRequestDto,
         ),
 
-      [MeteorMethodEnum.MovementsGet]: (request: GetMovementRequestDto) =>
+      [MeteorMethodEnum.MovementsGetOne]: (request: GetMovementRequestDto) =>
         this.execute(this._getMovement, request, GetMovementRequestDto),
-
       [MeteorMethodEnum.MovementsCreate]: (request: CreateMovementRequestDto) =>
         this.execute(this._createMovement, request, CreateMovementRequestDto),
-
       [MeteorMethodEnum.MovementsDelete]: (request: DeleteMovementRequestDto) =>
         this.execute(this._deleteMovement, request, DeleteMovementRequestDto),
-
       [MeteorMethodEnum.MovementsRestore]: (
         request: RestoreMovementRequestDto,
       ) =>

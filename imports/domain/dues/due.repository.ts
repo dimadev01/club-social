@@ -1,6 +1,7 @@
 import { ICrudRepository } from '@domain/common/repositories/crud.repository';
 import {
   FindPaginatedRequest,
+  FindPaginatedResponse,
   IGridRepository,
 } from '@domain/common/repositories/grid.repository';
 import { FindOneById } from '@domain/common/repositories/queryable.repository';
@@ -12,6 +13,9 @@ export interface IDueRepository
     IGridRepository<Due, FindPaginatedDuesRequest> {
   findOneById(request: FindOneById): Promise<Due | null>;
   findOneByIdOrThrow(request: FindOneById): Promise<Due>;
+  findPaginated(
+    request: FindPaginatedDuesRequest,
+  ): Promise<FindPaginatedResponse<Due>>;
   findPending(request: FindPendingDues): Promise<Due[]>;
 }
 

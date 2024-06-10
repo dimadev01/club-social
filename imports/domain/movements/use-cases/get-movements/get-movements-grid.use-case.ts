@@ -46,11 +46,11 @@ export class OldGetMovementsGridUseCase
 
           if (MemberCategories.includes(movement.category)) {
             details = movement.member?.name ?? '';
-          } else if (movement.category === MovementCategoryEnum.Employee) {
+          } else if (movement.category === MovementCategoryEnum.EMPLOYEE) {
             details = movement.employee?.name ?? '';
-          } else if (movement.category === MovementCategoryEnum.Professor) {
+          } else if (movement.category === MovementCategoryEnum.PROFESSOR) {
             details = movement.professor?.name ?? '';
-          } else if (movement.category === MovementCategoryEnum.Service) {
+          } else if (movement.category === MovementCategoryEnum.SERVICE) {
             details = movement.service?.name ?? '';
           } else {
             details = movement.notes ?? '';

@@ -1,4 +1,4 @@
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsString } from 'class-validator';
 
 import { GetGridRequestDto } from '@adapters/common/dtos/get-grid-request.dto';
 import { DueStatusEnum } from '@domain/dues/due.enum';
@@ -12,7 +12,7 @@ export class GetDuesGridRequestDto
   @IsArray()
   public filterByMember!: string[];
 
-  @IsString({ each: true })
+  @IsEnum(DueStatusEnum, { each: true })
   @IsArray()
   public filterByStatus!: DueStatusEnum[];
 }

@@ -2,6 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 
 import {
   MovementCategoryEnum,
+  MovementStatusEnum,
   MovementTypeEnum,
 } from '@domain/categories/category.enum';
 import { Model } from '@domain/common/models/model';
@@ -31,7 +32,15 @@ export class Movement extends Model implements IMovement {
 
   private _serviceId: string | null;
 
+  private _status: MovementStatusEnum;
+
   private _type: MovementTypeEnum;
+
+  private _voidReason: string | null;
+
+  private _voidedAt: DateUtcVo | null;
+
+  private _voidedBy: string | null;
 
   public payment?: Payment;
 
@@ -40,7 +49,7 @@ export class Movement extends Model implements IMovement {
 
     this._amount = props?.amount ?? new Money();
 
-    this._category = props?.category ?? MovementCategoryEnum.OtherIncome;
+    this._category = props?.category ?? MovementCategoryEnum.OTHER_INCOME;
 
     this._date = props?.date ?? new DateUtcVo();
 
@@ -52,9 +61,17 @@ export class Movement extends Model implements IMovement {
 
     this._serviceId = props?.serviceId ?? null;
 
-    this._type = props?.type ?? MovementTypeEnum.Income;
+    this._type = props?.type ?? MovementTypeEnum.INCOME;
 
     this._notes = props?.notes ?? null;
+
+    this._voidReason = props?.voidReason ?? null;
+
+    this._voidedAt = props?.voidedAt ?? null;
+
+    this._voidedBy = props?.voidedBy ?? null;
+
+    this._status = props?.status ?? MovementStatusEnum.REGISTERED;
 
     this.payment = payment;
   }
@@ -91,21 +108,60 @@ export class Movement extends Model implements IMovement {
     return this._serviceId;
   }
 
+  public get status(): MovementStatusEnum {
+    return this._status;
+  }
+
   public get type(): MovementTypeEnum {
     return this._type;
+  }
+
+  public get voidReason(): string | null {
+    return this._voidReason;
+  }
+
+  public get voidedAt(): DateUtcVo | null {
+    return this._voidedAt;
+  }
+
+  public get voidedBy(): string | null {
+    return this._voidedBy;
+  }
+
+  public static createOne(props: CreateMovement): Result<Movement, Error> {
+    const movement = new Movement();
+
+    const result = Result.combine([
+      movement.setAmount(props.amount),
+      movement.setCategory(props.category),
+      movement.setDate(props.date),
+      movement.setEmployeeId(props.employeeId),
+      movement.setPaymentId(props.paymentId),
+      movement.setProfessorId(props.professorId),
+      movement.setServiceId(props.serviceId),
+      movement.setType(props.type),
+      movement.setNotes(props.notes),
+      movement.setStatus(MovementStatusEnum.REGISTERED),
+    ]);
+
+    if (result.isErr()) {
+      return err(result.error);
+    }
+
+    return ok(movement);
   }
 
   public static createPayment(props: CreatePayment): Result<Movement, Error> {
     return this.createOne({
       amount: props.amount,
-      category: MovementCategoryEnum.MemberIncome,
+      category: MovementCategoryEnum.MEMBER_PAYMENT,
       date: props.date,
       employeeId: null,
       notes: props.notes,
       paymentId: props.paymentId,
       professorId: null,
       serviceId: null,
-      type: MovementTypeEnum.Income,
+      type: MovementTypeEnum.INCOME,
     });
   }
 
@@ -163,25 +219,19 @@ export class Movement extends Model implements IMovement {
     return ok(null);
   }
 
-  private static createOne(props: CreateMovement): Result<Movement, Error> {
-    const movement = new Movement();
+  public void(voidedBy: string, voidReason: string): Result<null, Error> {
+    this._voidedAt = new DateUtcVo();
 
-    const result = Result.combine([
-      movement.setAmount(props.amount),
-      movement.setCategory(props.category),
-      movement.setDate(props.date),
-      movement.setEmployeeId(props.employeeId),
-      movement.setPaymentId(props.paymentId),
-      movement.setProfessorId(props.professorId),
-      movement.setServiceId(props.serviceId),
-      movement.setType(props.type),
-      movement.setNotes(props.notes),
-    ]);
+    this._voidedBy = voidedBy;
 
-    if (result.isErr()) {
-      return err(result.error);
-    }
+    this._voidReason = voidReason;
 
-    return ok(movement);
+    return this.setStatus(MovementStatusEnum.VOIDED);
+  }
+
+  private setStatus(value: MovementStatusEnum): Result<null, Error> {
+    this._status = value;
+
+    return ok(null);
   }
 }

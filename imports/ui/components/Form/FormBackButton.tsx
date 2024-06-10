@@ -19,6 +19,7 @@ export const FormBackButton: React.FC<FormBackButtonProps> = ({
     <Button
       icon={<ArrowLeftOutlined />}
       onClick={() => (to ? navigate(to) : navigate(-1))}
+      disabled={false}
       {...rest}
     >
       Atrás

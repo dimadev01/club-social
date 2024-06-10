@@ -85,7 +85,7 @@ export class DueMongoRepository
       ...this.getMemberLookupPipeline(),
     ];
 
-    return super.paginate(pipeline, request);
+    return super.paginate(pipeline, query);
   }
 
   public async findPending(request: FindPendingDues): Promise<Due[]> {

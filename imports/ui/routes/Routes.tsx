@@ -12,7 +12,7 @@ import { DueDetailPage } from '@ui/pages/dues/DueDetailPage';
 import { DuesNewPage } from '@ui/pages/dues/DuesNewPage';
 import { DuesRoot } from '@ui/pages/dues/DuesRoot';
 import { HomePage } from '@ui/pages/HomePage';
-import { MembersDetailPage } from '@ui/pages/members/MemberDetailPage/MemberDetailPage';
+import { MemberDetailPage } from '@ui/pages/members/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
 import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
@@ -67,15 +67,18 @@ const router = createBrowserRouter([
         permission={PermissionEnum.CREATE}
         scope={ScopeEnum.MEMBERS}
       >
-        <MembersDetailPage />
+        <MemberDetailPage />
       </PrivateRoute>
     ),
     path: AppUrl.MembersNew,
   },
   {
     element: (
-      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.MEMBERS}>
-        <MembersDetailPage />
+      <PrivateRoute
+        permission={PermissionEnum.UPDATE}
+        scope={ScopeEnum.MEMBERS}
+      >
+        <MemberDetailPage />
       </PrivateRoute>
     ),
     path: AppUrl.MembersDetail,

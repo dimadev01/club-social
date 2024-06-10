@@ -10,6 +10,7 @@ export class MovementDtoMapper extends MapperDto<Movement, MovementDto> {
     return {
       amount: movement.amount.value,
       category: movement.category,
+      createdAt: movement.createdAt.toISOString(),
       date: movement.date.toISOString(),
       employeeId: movement.employeeId,
       id: movement._id,
@@ -17,6 +18,7 @@ export class MovementDtoMapper extends MapperDto<Movement, MovementDto> {
       paymentId: movement.paymentId,
       professorId: movement.professorId,
       serviceId: movement.serviceId,
+      status: movement.status,
       type: movement.type,
     };
   }

@@ -3,6 +3,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import dayjsCustomParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjsDuration from 'dayjs/plugin/duration';
 import dayjsLocaleData from 'dayjs/plugin/localeData';
+import dayjsLocalizedFormat from 'dayjs/plugin/localizedFormat';
 import dayjsUtc from 'dayjs/plugin/utc';
 
 import { ValueObject } from '@domain/common/value-objects/value-object';
@@ -15,6 +16,8 @@ dayjs.extend(dayjsLocaleData);
 dayjs.extend(dayjsCustomParseFormat);
 
 dayjs.extend(dayjsDuration);
+
+dayjs.extend(dayjsLocalizedFormat);
 
 dayjs.locale('es');
 
@@ -29,6 +32,10 @@ export class DateVo extends ValueObject<Dayjs> {
 
   public monthName(): string {
     return this.format(DateFormatEnum.MMMM);
+  }
+
+  public startOf(value: dayjs.OpUnitType) {
+    return new DateVo(this.props.startOf(value));
   }
 
   public toDate(): Date {

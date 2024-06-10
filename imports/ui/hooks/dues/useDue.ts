@@ -5,6 +5,6 @@ import { useQuery } from '@ui/hooks/query/useQuery';
 
 export const useDue = (request?: GetOneByIdRequestDto) =>
   useQuery<GetOneByIdRequestDto, DueDto>({
-    methodName: MeteorMethodEnum.DuesGet,
+    methodName: MeteorMethodEnum.DuesGetOne,
     request,
   });

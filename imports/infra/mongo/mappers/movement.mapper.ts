@@ -24,9 +24,13 @@ export class MovementMapper extends Mapper<Movement, MovementEntity> {
       paymentId: movement.paymentId,
       professorId: movement.professorId,
       serviceId: movement.serviceId,
+      status: movement.status,
       type: movement.type,
       updatedAt: movement.updatedAt,
       updatedBy: movement.updatedBy,
+      voidReason: movement.voidReason,
+      voidedAt: movement.voidedAt ? new DateUtcVo(movement.voidedAt) : null,
+      voidedBy: movement.voidedBy,
     });
   }
 
@@ -46,9 +50,13 @@ export class MovementMapper extends Mapper<Movement, MovementEntity> {
       paymentId: movement.paymentId,
       professorId: movement.professorId,
       serviceId: movement.serviceId,
+      status: movement.status,
       type: movement.type,
       updatedAt: movement.updatedAt,
       updatedBy: movement.updatedBy,
+      voidReason: movement.voidReason,
+      voidedAt: movement.voidedAt?.toDate() ?? null,
+      voidedBy: movement.voidedBy,
     });
   }
 }

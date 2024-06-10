@@ -16,14 +16,14 @@ export class PaymentMethods extends MeteorMethods {
 
   public register(): void {
     Meteor.methods({
-      [MeteorMethodEnum.PaymentsGet]: (req: GetOneByIdRequestDto) =>
-        this._controller.getOne(req),
+      [MeteorMethodEnum.PaymentsGetOne]: (req: GetOneByIdRequestDto) =>
+        this.execute(this._controller.getOne.bind(this._controller), req),
       [MeteorMethodEnum.PaymentsGetGrid]: (req: GetPaymentsGridRequestDto) =>
-        this._controller.getGrid(req),
+        this.execute(this._controller.getGrid.bind(this._controller), req),
       [MeteorMethodEnum.PaymentsCreate]: (req: CreatePaymentRequestDto) =>
-        this._controller.create(req),
+        this.execute(this._controller.create.bind(this._controller), req),
       [MeteorMethodEnum.PaymentsVoid]: (req: VoidPaymentMethodRequestDto) =>
-        this._controller.void({
+        this.execute(this._controller.void.bind(this._controller), {
           ...req,
           voidedBy: this.getCurrentUserName(),
         }),

@@ -8,7 +8,7 @@ import { SecurityUtils } from '@infra/security/security.utils';
 import { Button } from '@ui/components/Button';
 import { Popconfirm } from '@ui/components/Popconfirm/Popconfirm';
 
-export type FormDeleteButtonProps = ButtonProps & {
+export type FormVoidButtonProps = ButtonProps & {
   onConfirm: (reason: string) => void;
   scope: ScopeEnum;
 };
@@ -17,7 +17,7 @@ type FormValues = {
   reason: string;
 };
 
-export const FormVoidButton: React.FC<FormDeleteButtonProps> = ({
+export const FormVoidButton: React.FC<FormVoidButtonProps> = ({
   onConfirm,
   scope,
   ...rest

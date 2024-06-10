@@ -4,7 +4,7 @@ import SimpleSchema from 'simpl-schema';
 import { OldMovement } from '@domain/movements/entities/movement.entity';
 import { MongoCollectionOld } from '@infra/mongo/old/mongo-collection.old';
 
-export const MovementCollection = new MongoCollectionOld(
+export const OldMovementCollection = new MongoCollectionOld(
   'movements',
   OldMovement,
 );
@@ -31,25 +31,4 @@ export const MovementSchema = new SimpleSchema({
   updatedBy: String,
 });
 
-MovementCollection.attachSchema(MovementSchema);
-
-await MovementCollection.createIndexAsync({ category: 1 });
-
-await MovementCollection.createIndexAsync({ date: -1 });
-
-await MovementCollection.createIndexAsync({
-  isDeleted: 1,
-  memberId: 1,
-  category: 1,
-  professor: 1,
-  employeeId: 1,
-  date: -1,
-});
-
-await MovementCollection.createIndexAsync({ type: 1 });
-
-await MovementCollection.createIndexAsync({ memberId: 1 });
-
-await MovementCollection.createIndexAsync({ employeeId: 1 });
-
-await MovementCollection.createIndexAsync({ professorId: 1 });
+OldMovementCollection.attachSchema(MovementSchema);

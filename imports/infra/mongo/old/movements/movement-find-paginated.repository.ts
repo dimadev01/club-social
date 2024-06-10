@@ -10,8 +10,8 @@ import {
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { OldMovement } from '@domain/movements/entities/movement.entity';
 import {
-  MovementCollection,
   MovementSchema,
+  OldMovementCollection,
 } from '@domain/movements/movement.collection';
 import { IMovementPaginatedPort } from '@domain/movements/movement.port';
 import { MongoCollectionOld } from '@infra/mongo/old/mongo-collection.old';
@@ -60,20 +60,19 @@ export class MovementFindPaginatedRepository
       };
     }
 
-    const [{ data, allDebt, allExpenses, count, allDebtIncome, allIncome }] =
+    const [{ data, allExpenses, count, allDebtIncome, allIncome }] =
       await this.getCollection()
         .rawCollection()
         .aggregate<FindPaginatedMovementsAggregationResult>([
           { $match: query },
           {
             $facet: {
-              allDebt: this._getGroupedByCategoryType(MovementTypeEnum.Debt),
               allDebtIncome: this._getAllDebtIncome(),
               allExpenses: this._getGroupedByCategoryType(
-                MovementTypeEnum.Expense,
+                MovementTypeEnum.EXPENSE,
               ),
               allIncome: this._getGroupedByCategoryType(
-                MovementTypeEnum.Income,
+                MovementTypeEnum.INCOME,
               ),
               data: [
                 ...this.getPaginatedPipelineQuery(request),
@@ -106,23 +105,9 @@ export class MovementFindPaginatedRepository
         ])
         .toArray();
 
-    let debt = 0;
+    const debt = 0;
 
-    let balance = 0;
-
-    if (request.memberIds.length > 0) {
-      debt = allDebt;
-
-      balance = allIncome - debt;
-    } else if (allExpenses === 0) {
-      debt = allDebt;
-
-      balance = allIncome - debt;
-    } else {
-      balance = allIncome - allExpenses;
-
-      debt = allDebt - allDebtIncome;
-    }
+    const balance = 0;
 
     return {
       balance,
@@ -135,7 +120,7 @@ export class MovementFindPaginatedRepository
   }
 
   protected getCollection(): MongoCollectionOld<OldMovement> {
-    return MovementCollection;
+    return OldMovementCollection;
   }
 
   protected getSchema(): SimpleSchema {
@@ -147,11 +132,7 @@ export class MovementFindPaginatedRepository
       {
         $match: {
           category: {
-            $in: [
-              MovementCategoryEnum.MembershipIncome,
-              MovementCategoryEnum.GuestIncome,
-              MovementCategoryEnum.ElectricityIncome,
-            ],
+            $in: [],
           },
         },
       },

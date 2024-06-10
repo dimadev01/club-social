@@ -5,8 +5,8 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { OldMovement } from '@domain/movements/entities/movement.entity';
 import {
-  MovementCollection,
   MovementSchema,
+  OldMovementCollection,
 } from '@domain/movements/movement.collection';
 import { IMovementPort } from '@domain/movements/movement.port';
 import { MongoCollectionOld } from '@infra/mongo/old/mongo-collection.old';
@@ -25,7 +25,7 @@ export class OldMovementRepository
   }
 
   protected getCollection(): MongoCollectionOld<OldMovement> {
-    return MovementCollection;
+    return OldMovementCollection;
   }
 
   protected getSchema(): SimpleSchema {

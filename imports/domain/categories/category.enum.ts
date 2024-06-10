@@ -1,52 +1,58 @@
 /* eslint-disable typescript-sort-keys/string-enum */
+export enum MovementStatusEnum {
+  REGISTERED = 'registered',
+  VOIDED = 'voided',
+}
+
+export const MovementStatusLabel: {
+  [key in MovementStatusEnum]: string;
+} = {
+  [MovementStatusEnum.REGISTERED]: 'Registrado',
+  [MovementStatusEnum.VOIDED]: 'Anulado',
+};
+
+export const getMovementStatusColumnFilters = () =>
+  Object.values(MovementStatusEnum).map((status) => ({
+    text: MovementStatusLabel[status],
+    value: status,
+  }));
+
 export enum MovementCategoryEnum {
-  MembershipIncome = 'membership-income',
-  MembershipDebt = 'membership-debt',
-  Employee = 'employee',
-  CourtRental = 'court-rental',
-  Saving = 'saving',
-  Parking = 'parking',
-  Fair = 'fair',
-  Buffet = 'buffet',
-  Saloon = 'saloon',
-  Expense = 'expense',
-  Salary = 'salary',
-  GuestIncome = 'guest-income',
-  GuestDebt = 'guest-debt',
-  ElectricityIncome = 'electricity-income',
-  ElectricityDebt = 'electricity-debt',
-  Maintenance = 'maintenance',
-  OtherExpense = 'other-expense',
-  OtherIncome = 'other-income',
-  Professor = 'professor',
-  MemberIncome = 'member-income',
-  Service = 'service',
+  EMPLOYEE = 'employee',
+  COURT_RENTAL = 'court-rental',
+  SAVING = 'saving',
+  PARKING = 'parking',
+  FAIR = 'fair',
+  BUFFET = 'buffet',
+  SALOON = 'saloon',
+  EXPENSE = 'expense',
+  SALARY = 'salary',
+  MAINTENANCE = 'maintenance',
+  OTHER_EXPENSE = 'other-expense',
+  OTHER_INCOME = 'other-income',
+  PROFESSOR = 'professor',
+  MEMBER_PAYMENT = 'member-payment',
+  SERVICE = 'service',
 }
 
 export const MovementCategoryEnumLabel: {
   [key in MovementCategoryEnum]: string;
 } = {
-  [MovementCategoryEnum.MembershipIncome]: 'Pago de Cuota',
-  [MovementCategoryEnum.MembershipDebt]: 'Cobro de Cuota',
-  [MovementCategoryEnum.CourtRental]: 'Alquiler de cancha',
-  [MovementCategoryEnum.Expense]: 'Gastos',
-  [MovementCategoryEnum.Fair]: 'Ferias',
-  [MovementCategoryEnum.Buffet]: 'Buffet',
-  [MovementCategoryEnum.Saloon]: 'Salón',
-  [MovementCategoryEnum.GuestIncome]: 'Pago de Invitado',
-  [MovementCategoryEnum.GuestDebt]: 'Cobro de Invitado',
-  [MovementCategoryEnum.ElectricityIncome]: 'Pago de Luz',
-  [MovementCategoryEnum.ElectricityDebt]: 'Cobro de Luz',
-  [MovementCategoryEnum.Maintenance]: 'Mantenimiento',
-  [MovementCategoryEnum.MemberIncome]: 'Pago de socio',
-  [MovementCategoryEnum.OtherIncome]: 'Otros ingresos',
-  [MovementCategoryEnum.OtherExpense]: 'Otros egresos',
-  [MovementCategoryEnum.Parking]: 'Estacionamiento',
-  [MovementCategoryEnum.Professor]: 'Profesores',
-  [MovementCategoryEnum.Salary]: 'Honorarios',
-  [MovementCategoryEnum.Employee]: 'Empleados',
-  [MovementCategoryEnum.Saving]: 'Atesoramiento',
-  [MovementCategoryEnum.Service]: 'Servicios',
+  [MovementCategoryEnum.COURT_RENTAL]: 'Alquiler de cancha',
+  [MovementCategoryEnum.EXPENSE]: 'Gastos',
+  [MovementCategoryEnum.FAIR]: 'Ferias',
+  [MovementCategoryEnum.BUFFET]: 'Buffet',
+  [MovementCategoryEnum.SALOON]: 'Salón',
+  [MovementCategoryEnum.MAINTENANCE]: 'Mantenimiento',
+  [MovementCategoryEnum.MEMBER_PAYMENT]: 'Pago de socio',
+  [MovementCategoryEnum.OTHER_INCOME]: 'Otros ingresos',
+  [MovementCategoryEnum.OTHER_EXPENSE]: 'Otros egresos',
+  [MovementCategoryEnum.PARKING]: 'Estacionamiento',
+  [MovementCategoryEnum.PROFESSOR]: 'Profesores',
+  [MovementCategoryEnum.SALARY]: 'Honorarios',
+  [MovementCategoryEnum.EMPLOYEE]: 'Empleados',
+  [MovementCategoryEnum.SAVING]: 'Atesoramiento',
+  [MovementCategoryEnum.SERVICE]: 'Servicios',
 };
 
 export const getCategoryFilters = () =>
@@ -58,109 +64,51 @@ export const getCategoryFilters = () =>
     .sort((a, b) => a.text.localeCompare(b.text));
 
 export enum MovementTypeEnum {
-  Debt = 'debt',
-  Income = 'income',
-  Expense = 'expense',
+  INCOME = 'income',
+  EXPENSE = 'expense',
 }
 
-export const CategoryTypeLabel = {
-  [MovementTypeEnum.Debt]: 'Deuda',
-  [MovementTypeEnum.Income]: 'Ingreso',
-  [MovementTypeEnum.Expense]: 'Egreso',
+export const MovementCategoryTypeLabel = {
+  [MovementTypeEnum.INCOME]: 'Ingreso',
+  [MovementTypeEnum.EXPENSE]: 'Egreso',
 };
 
-export const getCategoryTypeOptions = () =>
+export const getMovementCategoryTypeOptions = () =>
   Object.values(MovementTypeEnum)
     .filter((category) =>
-      [MovementTypeEnum.Expense, MovementTypeEnum.Income].includes(category),
+      [MovementTypeEnum.EXPENSE, MovementTypeEnum.INCOME].includes(category),
     )
     .map((category) => ({
-      label: CategoryTypeLabel[category],
+      label: MovementCategoryTypeLabel[category],
       value: category,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
-export const CategoryTypeFilters = {
-  [MovementTypeEnum.Debt]: [
-    MovementCategoryEnum.ElectricityDebt,
-    MovementCategoryEnum.MembershipDebt,
-    MovementCategoryEnum.GuestDebt,
+export const MovementCategoryTypeFilters = {
+  [MovementTypeEnum.INCOME]: [
+    MovementCategoryEnum.COURT_RENTAL,
+    MovementCategoryEnum.FAIR,
+    MovementCategoryEnum.BUFFET,
+    MovementCategoryEnum.SALOON,
+    MovementCategoryEnum.PARKING,
+    MovementCategoryEnum.PROFESSOR,
+    MovementCategoryEnum.OTHER_INCOME,
   ],
-  [MovementTypeEnum.Income]: [
-    MovementCategoryEnum.ElectricityIncome,
-    MovementCategoryEnum.MembershipIncome,
-    MovementCategoryEnum.GuestIncome,
-    MovementCategoryEnum.CourtRental,
-    MovementCategoryEnum.Fair,
-    MovementCategoryEnum.Buffet,
-    MovementCategoryEnum.Saloon,
-    MovementCategoryEnum.Parking,
-    MovementCategoryEnum.Professor,
-    MovementCategoryEnum.OtherIncome,
-  ],
-  [MovementTypeEnum.Expense]: [
-    MovementCategoryEnum.Expense,
-    MovementCategoryEnum.Salary,
-    MovementCategoryEnum.Saving,
-    MovementCategoryEnum.Service,
-    MovementCategoryEnum.Maintenance,
-    MovementCategoryEnum.OtherExpense,
-    MovementCategoryEnum.Employee,
+  [MovementTypeEnum.EXPENSE]: [
+    MovementCategoryEnum.EXPENSE,
+    MovementCategoryEnum.SALARY,
+    MovementCategoryEnum.SAVING,
+    MovementCategoryEnum.SERVICE,
+    MovementCategoryEnum.MAINTENANCE,
+    MovementCategoryEnum.OTHER_EXPENSE,
+    MovementCategoryEnum.EMPLOYEE,
   ],
 };
 
-export const getCategoryOptions = (categoryType: MovementTypeEnum) =>
-  CategoryTypeFilters[categoryType]
-    .filter(
-      (category) =>
-        ![
-          MovementCategoryEnum.MembershipIncome,
-          MovementCategoryEnum.GuestIncome,
-          MovementCategoryEnum.ElectricityIncome,
-        ].includes(category),
-    )
+export const getMovementCategoryOptions = (categoryType: MovementTypeEnum) =>
+  MovementCategoryTypeFilters[categoryType]
     .map((category) => ({
       label: MovementCategoryEnumLabel[category],
       value: category,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
-
-export const CategoryTypes = {
-  [MovementCategoryEnum.MembershipIncome]: MovementTypeEnum.Income,
-  [MovementCategoryEnum.MembershipDebt]: MovementTypeEnum.Debt,
-  [MovementCategoryEnum.CourtRental]: MovementTypeEnum.Income,
-  [MovementCategoryEnum.Expense]: MovementTypeEnum.Expense,
-  [MovementCategoryEnum.Fair]: MovementTypeEnum.Income,
-  [MovementCategoryEnum.Saloon]: MovementTypeEnum.Income,
-  [MovementCategoryEnum.Buffet]: MovementTypeEnum.Income,
-  [MovementCategoryEnum.GuestIncome]: MovementTypeEnum.Income,
-  [MovementCategoryEnum.GuestDebt]: MovementTypeEnum.Debt,
-  [MovementCategoryEnum.ElectricityIncome]: MovementTypeEnum.Income,
-  [MovementCategoryEnum.ElectricityDebt]: MovementTypeEnum.Debt,
-  [MovementCategoryEnum.Maintenance]: MovementTypeEnum.Expense,
-  [MovementCategoryEnum.Employee]: MovementTypeEnum.Expense,
-  [MovementCategoryEnum.OtherIncome]: MovementTypeEnum.Income,
-  [MovementCategoryEnum.OtherExpense]: MovementTypeEnum.Expense,
-  [MovementCategoryEnum.Parking]: MovementTypeEnum.Income,
-  [MovementCategoryEnum.Professor]: MovementTypeEnum.Income,
-  [MovementCategoryEnum.Salary]: MovementTypeEnum.Expense,
-  [MovementCategoryEnum.Saving]: MovementTypeEnum.Expense,
-  [MovementCategoryEnum.Service]: MovementTypeEnum.Expense,
-};
-
-export const MemberCategories = [
-  MovementCategoryEnum.MembershipDebt,
-  MovementCategoryEnum.MembershipIncome,
-  MovementCategoryEnum.ElectricityDebt,
-  MovementCategoryEnum.ElectricityIncome,
-  MovementCategoryEnum.GuestDebt,
-  MovementCategoryEnum.GuestIncome,
-];
-
-export const getMemberCategoryFilters = () =>
-  Object.values(MemberCategories)
-    .map((category) => ({
-      text: MovementCategoryEnumLabel[category],
-      value: category,
-    }))
-    .sort((a, b) => a.text.localeCompare(b.text));

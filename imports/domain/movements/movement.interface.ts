@@ -1,5 +1,6 @@
 import {
   MovementCategoryEnum,
+  MovementStatusEnum,
   MovementTypeEnum,
 } from '@domain/categories/category.enum';
 import { IModel } from '@domain/common/models/model.interface';
@@ -15,7 +16,11 @@ export interface IMovement extends IModel {
   paymentId: string | null;
   professorId: string | null;
   serviceId: string | null;
+  status: MovementStatusEnum;
   type: MovementTypeEnum;
+  voidReason: string | null;
+  voidedAt: DateUtcVo | null;
+  voidedBy: string | null;
 }
 
 export interface CreateMovement {

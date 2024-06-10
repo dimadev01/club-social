@@ -5,6 +5,6 @@ import { useQuery } from '@ui/hooks/query/useQuery';
 
 export const usePayment = (request?: GetOneByIdRequestDto) =>
   useQuery<GetOneByIdRequestDto, PaymentDto>({
-    methodName: MeteorMethodEnum.PaymentsGet,
+    methodName: MeteorMethodEnum.PaymentsGetOne,
     request,
   });
