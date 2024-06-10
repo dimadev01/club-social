@@ -73,7 +73,7 @@ export class DueMapper extends Mapper<Due, DueEntity> {
       updatedAt: due.updatedAt,
       updatedBy: due.updatedBy,
       voidReason: due.voidReason,
-      voidedAt: due.voidedAt ? due.voidedAt.toDate() : null,
+      voidedAt: due.voidedAt?.toDate() ?? null,
       voidedBy: due.voidedBy,
     });
   }

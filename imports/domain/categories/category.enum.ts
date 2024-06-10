@@ -1,162 +1,114 @@
 /* eslint-disable typescript-sort-keys/string-enum */
-export enum CategoryEnum {
-  MembershipIncome = 'membership-income',
-  MembershipDebt = 'membership-debt',
-  Employee = 'employee',
-  CourtRental = 'court-rental',
-  Saving = 'saving',
-  Parking = 'parking',
-  Fair = 'fair',
-  Buffet = 'buffet',
-  Saloon = 'saloon',
-  Expense = 'expense',
-  Salary = 'salary',
-  GuestIncome = 'guest-income',
-  GuestDebt = 'guest-debt',
-  ElectricityIncome = 'electricity-income',
-  ElectricityDebt = 'electricity-debt',
-  Maintenance = 'maintenance',
-  OtherExpense = 'other-expense',
-  OtherIncome = 'other-income',
-  Professor = 'professor',
-  Service = 'service',
+export enum MovementStatusEnum {
+  REGISTERED = 'registered',
+  VOIDED = 'voided',
 }
 
-export const CategoryLabel = {
-  [CategoryEnum.MembershipIncome]: 'Pago de Cuota',
-  [CategoryEnum.MembershipDebt]: 'Cobro de Cuota',
-  [CategoryEnum.CourtRental]: 'Alquiler de cancha',
-  [CategoryEnum.Expense]: 'Gastos',
-  [CategoryEnum.Fair]: 'Ferias',
-  [CategoryEnum.Buffet]: 'Buffet',
-  [CategoryEnum.Saloon]: 'Salón',
-  [CategoryEnum.GuestIncome]: 'Pago de Invitado',
-  [CategoryEnum.GuestDebt]: 'Cobro de Invitado',
-  [CategoryEnum.ElectricityIncome]: 'Pago de Luz',
-  [CategoryEnum.ElectricityDebt]: 'Cobro de Luz',
-  [CategoryEnum.Maintenance]: 'Mantenimiento',
-  [CategoryEnum.OtherIncome]: 'Otros ingresos',
-  [CategoryEnum.OtherExpense]: 'Otros egresos',
-  [CategoryEnum.Parking]: 'Estacionamiento',
-  [CategoryEnum.Professor]: 'Profesores',
-  [CategoryEnum.Salary]: 'Honorarios',
-  [CategoryEnum.Employee]: 'Empleados',
-  [CategoryEnum.Saving]: 'Atesoramiento',
-  [CategoryEnum.Service]: 'Servicios',
+export const MovementStatusLabel: {
+  [key in MovementStatusEnum]: string;
+} = {
+  [MovementStatusEnum.REGISTERED]: 'Registrado',
+  [MovementStatusEnum.VOIDED]: 'Anulado',
+};
+
+export const getMovementStatusColumnFilters = () =>
+  Object.values(MovementStatusEnum).map((status) => ({
+    text: MovementStatusLabel[status],
+    value: status,
+  }));
+
+export enum MovementCategoryEnum {
+  EMPLOYEE = 'employee',
+  COURT_RENTAL = 'court-rental',
+  SAVING = 'saving',
+  PARKING = 'parking',
+  FAIR = 'fair',
+  BUFFET = 'buffet',
+  SALOON = 'saloon',
+  EXPENSE = 'expense',
+  SALARY = 'salary',
+  MAINTENANCE = 'maintenance',
+  OTHER_EXPENSE = 'other-expense',
+  OTHER_INCOME = 'other-income',
+  PROFESSOR = 'professor',
+  MEMBER_PAYMENT = 'member-payment',
+  SERVICE = 'service',
+}
+
+export const MovementCategoryEnumLabel: {
+  [key in MovementCategoryEnum]: string;
+} = {
+  [MovementCategoryEnum.COURT_RENTAL]: 'Alquiler de cancha',
+  [MovementCategoryEnum.EXPENSE]: 'Gastos',
+  [MovementCategoryEnum.FAIR]: 'Ferias',
+  [MovementCategoryEnum.BUFFET]: 'Buffet',
+  [MovementCategoryEnum.SALOON]: 'Salón',
+  [MovementCategoryEnum.MAINTENANCE]: 'Mantenimiento',
+  [MovementCategoryEnum.MEMBER_PAYMENT]: 'Pago de socio',
+  [MovementCategoryEnum.OTHER_INCOME]: 'Otros ingresos',
+  [MovementCategoryEnum.OTHER_EXPENSE]: 'Otros egresos',
+  [MovementCategoryEnum.PARKING]: 'Estacionamiento',
+  [MovementCategoryEnum.PROFESSOR]: 'Profesores',
+  [MovementCategoryEnum.SALARY]: 'Honorarios',
+  [MovementCategoryEnum.EMPLOYEE]: 'Empleados',
+  [MovementCategoryEnum.SAVING]: 'Atesoramiento',
+  [MovementCategoryEnum.SERVICE]: 'Servicios',
 };
 
 export const getCategoryFilters = () =>
-  Object.values(CategoryEnum)
+  Object.values(MovementCategoryEnum)
     .map((category) => ({
-      text: CategoryLabel[category],
+      text: MovementCategoryEnumLabel[category],
       value: category,
     }))
     .sort((a, b) => a.text.localeCompare(b.text));
 
-export enum CategoryTypeEnum {
-  Debt = 'debt',
-  Income = 'income',
-  Expense = 'expense',
+export enum MovementTypeEnum {
+  INCOME = 'income',
+  EXPENSE = 'expense',
 }
 
-export const CategoryTypeLabel = {
-  [CategoryTypeEnum.Debt]: 'Deuda',
-  [CategoryTypeEnum.Income]: 'Ingreso',
-  [CategoryTypeEnum.Expense]: 'Egreso',
+export const MovementCategoryTypeLabel = {
+  [MovementTypeEnum.INCOME]: 'Ingreso',
+  [MovementTypeEnum.EXPENSE]: 'Egreso',
 };
 
-export const getCategoryTypeOptions = () =>
-  Object.values(CategoryTypeEnum)
+export const getMovementCategoryTypeOptions = () =>
+  Object.values(MovementTypeEnum)
     .filter((category) =>
-      [CategoryTypeEnum.Expense, CategoryTypeEnum.Income].includes(category),
+      [MovementTypeEnum.EXPENSE, MovementTypeEnum.INCOME].includes(category),
     )
     .map((category) => ({
-      label: CategoryTypeLabel[category],
+      label: MovementCategoryTypeLabel[category],
       value: category,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
-export const CategoryTypeFilters = {
-  [CategoryTypeEnum.Debt]: [
-    CategoryEnum.ElectricityDebt,
-    CategoryEnum.MembershipDebt,
-    CategoryEnum.GuestDebt,
+export const MovementCategoryTypeFilters = {
+  [MovementTypeEnum.INCOME]: [
+    MovementCategoryEnum.COURT_RENTAL,
+    MovementCategoryEnum.FAIR,
+    MovementCategoryEnum.BUFFET,
+    MovementCategoryEnum.SALOON,
+    MovementCategoryEnum.PARKING,
+    MovementCategoryEnum.PROFESSOR,
+    MovementCategoryEnum.OTHER_INCOME,
   ],
-  [CategoryTypeEnum.Income]: [
-    CategoryEnum.ElectricityIncome,
-    CategoryEnum.MembershipIncome,
-    CategoryEnum.GuestIncome,
-    CategoryEnum.CourtRental,
-    CategoryEnum.Fair,
-    CategoryEnum.Buffet,
-    CategoryEnum.Saloon,
-    CategoryEnum.Parking,
-    CategoryEnum.Professor,
-    CategoryEnum.OtherIncome,
-  ],
-  [CategoryTypeEnum.Expense]: [
-    CategoryEnum.Expense,
-    CategoryEnum.Salary,
-    CategoryEnum.Saving,
-    CategoryEnum.Service,
-    CategoryEnum.Maintenance,
-    CategoryEnum.OtherExpense,
-    CategoryEnum.Employee,
+  [MovementTypeEnum.EXPENSE]: [
+    MovementCategoryEnum.EXPENSE,
+    MovementCategoryEnum.SALARY,
+    MovementCategoryEnum.SAVING,
+    MovementCategoryEnum.SERVICE,
+    MovementCategoryEnum.MAINTENANCE,
+    MovementCategoryEnum.OTHER_EXPENSE,
+    MovementCategoryEnum.EMPLOYEE,
   ],
 };
 
-export const getCategoryOptions = (categoryType: CategoryTypeEnum) =>
-  CategoryTypeFilters[categoryType]
-    .filter(
-      (category) =>
-        ![
-          CategoryEnum.MembershipIncome,
-          CategoryEnum.GuestIncome,
-          CategoryEnum.ElectricityIncome,
-        ].includes(category),
-    )
+export const getMovementCategoryOptions = (categoryType: MovementTypeEnum) =>
+  MovementCategoryTypeFilters[categoryType]
     .map((category) => ({
-      label: CategoryLabel[category],
+      label: MovementCategoryEnumLabel[category],
       value: category,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
-
-export const CategoryTypes = {
-  [CategoryEnum.MembershipIncome]: CategoryTypeEnum.Income,
-  [CategoryEnum.MembershipDebt]: CategoryTypeEnum.Debt,
-  [CategoryEnum.CourtRental]: CategoryTypeEnum.Income,
-  [CategoryEnum.Expense]: CategoryTypeEnum.Expense,
-  [CategoryEnum.Fair]: CategoryTypeEnum.Income,
-  [CategoryEnum.Saloon]: CategoryTypeEnum.Income,
-  [CategoryEnum.Buffet]: CategoryTypeEnum.Income,
-  [CategoryEnum.GuestIncome]: CategoryTypeEnum.Income,
-  [CategoryEnum.GuestDebt]: CategoryTypeEnum.Debt,
-  [CategoryEnum.ElectricityIncome]: CategoryTypeEnum.Income,
-  [CategoryEnum.ElectricityDebt]: CategoryTypeEnum.Debt,
-  [CategoryEnum.Maintenance]: CategoryTypeEnum.Expense,
-  [CategoryEnum.Employee]: CategoryTypeEnum.Expense,
-  [CategoryEnum.OtherIncome]: CategoryTypeEnum.Income,
-  [CategoryEnum.OtherExpense]: CategoryTypeEnum.Expense,
-  [CategoryEnum.Parking]: CategoryTypeEnum.Income,
-  [CategoryEnum.Professor]: CategoryTypeEnum.Income,
-  [CategoryEnum.Salary]: CategoryTypeEnum.Expense,
-  [CategoryEnum.Saving]: CategoryTypeEnum.Expense,
-  [CategoryEnum.Service]: CategoryTypeEnum.Expense,
-};
-
-export const MemberCategories = [
-  CategoryEnum.MembershipDebt,
-  CategoryEnum.MembershipIncome,
-  CategoryEnum.ElectricityDebt,
-  CategoryEnum.ElectricityIncome,
-  CategoryEnum.GuestDebt,
-  CategoryEnum.GuestIncome,
-];
-
-export const getMemberCategoryFilters = () =>
-  Object.values(MemberCategories)
-    .map((category) => ({
-      text: CategoryLabel[category],
-      value: category,
-    }))
-    .sort((a, b) => a.text.localeCompare(b.text));

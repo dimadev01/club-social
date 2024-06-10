@@ -1,7 +1,7 @@
 export enum MeteorMethodEnum {
   DuesCreate = 'dues/create',
-  DuesGet = 'dues/get',
   DuesGetGrid = 'dues/getGrid',
+  DuesGetOne = 'dues/get',
   DuesGetPending = 'dues/getPending',
   DuesVoid = 'dues/void',
 
@@ -14,13 +14,16 @@ export enum MeteorMethodEnum {
 
   MovementsCreate = 'movements/create',
   MovementsDelete = 'movements/delete',
-  MovementsGet = 'movements/get',
   MovementsGetGrid = 'movements/getGrid',
+  MovementsGetOne = 'movements/get',
+  MovementsGetToExport = 'movements/getToExport',
   MovementsRestore = 'movements/restore',
+  MovementsUpdate = 'movements/update',
+  MovementsVoid = 'movements/void',
 
   PaymentsCreate = 'payments/create',
-  PaymentsGet = 'payments/get',
   PaymentsGetGrid = 'payments/getGrid',
+  PaymentsGetOne = 'payments/get',
   PaymentsVoid = 'payments/void',
 
   UsersGetByToken = 'users/getByToken',

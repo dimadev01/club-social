@@ -13,11 +13,8 @@ type Props = SelectProps & {
   disableInactive?: boolean;
   groupByStatus?: boolean;
   maxCount?: number;
-  // onChange?: (value: unknown) => void;
-  // select?: SelectProps;
   showInactiveLabel?: boolean;
   status?: MemberStatusEnum[];
-  // value?: unknown | null;
 };
 
 export const MembersSelect: React.FC<Props> = ({

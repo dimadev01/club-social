@@ -163,31 +163,31 @@ export class Member extends Model implements IMember {
     return ok(member);
   }
 
-  private setAddress(value: MemberAddress): Result<null, Error> {
+  public setAddress(value: MemberAddress): Result<null, Error> {
     this._address = value;
 
     return ok(null);
   }
 
-  private setBirthDate(value: BirthDate | null): Result<null, Error> {
+  public setBirthDate(value: BirthDate | null): Result<null, Error> {
     this._birthDate = value;
 
     return ok(null);
   }
 
-  private setCategory(value: MemberCategoryEnum): Result<null, Error> {
+  public setCategory(value: MemberCategoryEnum): Result<null, Error> {
     this._category = value;
 
     return ok(null);
   }
 
-  private setDocumentID(value: string | null): Result<null, Error> {
+  public setDocumentID(value: string | null): Result<null, Error> {
     this._documentID = value;
 
     return ok(null);
   }
 
-  private setFileStatus(
+  public setFileStatus(
     value: MemberFileStatusEnum | null,
   ): Result<null, Error> {
     this._fileStatus = value;
@@ -195,19 +195,19 @@ export class Member extends Model implements IMember {
     return ok(null);
   }
 
-  private setFirstName(value: string): Result<null, Error> {
+  public setFirstName(value: string): Result<null, Error> {
     this._firstName = value;
 
     return ok(null);
   }
 
-  private setLastName(value: string): Result<null, Error> {
+  public setLastName(value: string): Result<null, Error> {
     this._lastName = value;
 
     return ok(null);
   }
 
-  private setMaritalStatus(
+  public setMaritalStatus(
     value: MemberMaritalStatusEnum | null,
   ): Result<null, Error> {
     this._maritalStatus = value;
@@ -215,7 +215,7 @@ export class Member extends Model implements IMember {
     return ok(null);
   }
 
-  private setNationality(
+  public setNationality(
     value: MemberNationalityEnum | null,
   ): Result<null, Error> {
     this._nationality = value;
@@ -223,25 +223,25 @@ export class Member extends Model implements IMember {
     return ok(null);
   }
 
-  private setPhones(value: string[] | null): Result<null, Error> {
+  public setPhones(value: string[] | null): Result<null, Error> {
     this._phones = value;
 
     return ok(null);
   }
 
-  private setSex(value: MemberSexEnum | null): Result<null, Error> {
+  public setSex(value: MemberSexEnum | null): Result<null, Error> {
     this._sex = value;
 
     return ok(null);
   }
 
-  private setStatus(value: MemberStatusEnum): Result<null, Error> {
+  public setStatus(value: MemberStatusEnum): Result<null, Error> {
     this._status = value;
 
     return ok(null);
   }
 
-  private setUserId(value: string): Result<null, Error> {
+  public setUserId(value: string): Result<null, Error> {
     this._userId = value;
 
     return ok(null);

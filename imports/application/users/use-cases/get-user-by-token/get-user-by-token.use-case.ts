@@ -3,11 +3,11 @@ import { injectable } from 'tsyringe';
 
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import { GetUserByTokenRequestDto } from '@application/users/dtos/get-user-by-token-request.dto';
-import { UseCaseOld } from '@infra/use-cases/use-case';
+import { OldUseCase } from '@infra/use-cases/use-case';
 
 @injectable()
 export class GetUserByTokenUseCase
-  extends UseCaseOld<GetUserByTokenRequestDto>
+  extends OldUseCase<GetUserByTokenRequestDto>
   implements IUseCaseOld<GetUserByTokenRequestDto, Meteor.User | null>
 {
   public async execute(

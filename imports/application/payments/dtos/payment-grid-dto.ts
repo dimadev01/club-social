@@ -4,6 +4,7 @@ import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export interface PaymentGridDto {
   amount: number;
+  createdAt: string;
   date: string;
   dues: PaymentDueDto[];
   duesCount: number;

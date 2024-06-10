@@ -4,6 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import invariant from 'tiny-invariant';
 import { container } from 'tsyringe';
 
+import { MovementStatusEnum } from '@domain/categories/category.enum';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import {
   PaymentDueSourceEnum,
@@ -14,6 +15,7 @@ import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
 import { DueCollection } from '@infra/mongo/collections/due.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
+import { MovementCollection } from '@infra/mongo/collections/movement.collection';
 import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
 import { UserMongoCollection } from '@infra/mongo/collections/user.collection';
 import { DateUtils } from '@shared/utils/date.utils';
@@ -248,11 +250,6 @@ Migrations.add({
       }),
     );
 
-    await container
-      .resolve(DueCollection)
-      .rawCollection()
-      .createIndex({ memberId: 1 }, { name: 'd_mi' });
-
     container
       .resolve(MemberMongoCollection)
       .update({}, { $unset: { user: 1 } }, { multi: true });
@@ -320,26 +317,52 @@ Migrations.add({
       }),
     );
 
+    await memberCollection.rawCollection().dropIndexes();
+
     await memberCollection.createIndexAsync(
       { firstName: 1, lastName: 1 },
       { name: 'm_fn_ln' },
     );
 
+    await paymentsCollection.rawCollection().dropIndexes();
+
     await paymentsCollection.createIndexAsync(
-      { date: -1, receiptNumber: -1 },
-      { name: 'p_d_rn' },
+      { memberId: 1, createdAt: -1 },
+      { name: 'p_mi_ca' },
     );
 
     await paymentsCollection.createIndexAsync(
-      { memberId: 1, date: -1, receiptNumber: -1 },
-      { name: 'p_mi_d_rn' },
+      { createdAt: -1 },
+      { name: 'p_ca' },
     );
 
-    await duesCollection.createIndexAsync({ date: -1 }, { name: 'd_d' });
+    await duesCollection.rawCollection().dropIndexes();
 
     await duesCollection.createIndexAsync(
-      { memberId: 1, date: -1 },
-      { name: 'd_mi_d' },
+      { memberId: 1, createdAt: -1 },
+      { name: 'd_mi_ca' },
+    );
+
+    await duesCollection.createIndexAsync({ createdAt: -1 }, { name: 'd_ca' });
+
+    const movementsCollection = container.resolve(MovementCollection);
+
+    await movementsCollection.updateAsync(
+      {},
+      { $set: { status: MovementStatusEnum.REGISTERED } },
+      { multi: true },
+    );
+
+    await movementsCollection.removeAsync({ isMigrated: true });
+
+    await movementsCollection.createIndexAsync(
+      { createdAt: -1 },
+      { name: 'm_ca' },
+    );
+
+    await movementsCollection.createIndexAsync(
+      { category: 1, createdAt: -1 },
+      { name: 'm_c_ca' },
     );
 
     next();

@@ -1,14 +1,15 @@
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { CreditCardFilled, InfoCircleOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Tooltip } from 'antd';
 import { ColumnProps } from 'antd/es/table';
 import React from 'react';
-import { FaCreditCard } from 'react-icons/fa';
+import { FaFileInvoiceDollar } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid.request.dto';
 import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   DueCategoryEnum,
@@ -18,7 +19,7 @@ import {
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { SecurityUtils } from '@infra/security/security.utils';
+import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
@@ -30,6 +31,7 @@ import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
 import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
+import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
@@ -41,6 +43,11 @@ export const DuesPage = () => {
   const isAdmin = useIsAdmin();
 
   const { member } = useUserContext();
+
+  const canCreatePayments = useIsInRole(
+    PermissionEnum.CREATE,
+    ScopeEnum.PAYMENTS,
+  );
 
   const {
     state: gridState,
@@ -55,7 +62,7 @@ export const DuesPage = () => {
         DueStatusEnum.PENDING,
       ],
     },
-    defaultSorter: { date: 'descend' },
+    defaultSorter: { createdAt: 'descend' },
   });
 
   const navigate = useNavigate();
@@ -87,18 +94,26 @@ export const DuesPage = () => {
   const getColumns = (): ColumnProps<DueGridDto>[] => {
     const columns: ColumnProps<DueGridDto>[] = [];
 
-    columns.push({
-      dataIndex: 'date',
-      render: (date: string, due: DueGridDto) => (
-        <Link to={`${AppUrl.Dues}/${due.id}`}>
-          {new DateUtcVo(date).format()}
-        </Link>
-      ),
-      sortOrder: gridState.sorter.date,
-      sorter: true,
-      title: 'Fecha',
-      width: 125,
-    });
+    columns.push(
+      {
+        dataIndex: 'createdAt',
+        render: (createdAt: string, due: DueGridDto) => (
+          <Link to={`${AppUrl.Dues}/${due.id}`}>
+            {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
+          </Link>
+        ),
+        sortOrder: gridState.sorter.createdAt,
+        sorter: true,
+        title: 'Fecha de creación',
+        width: 175,
+      },
+      {
+        dataIndex: 'date',
+        render: (date: string) => new DateUtcVo(date).format(),
+        title: 'Fecha de deuda',
+        width: 125,
+      },
+    );
 
     if (isAdmin || isStaff) {
       columns.push({
@@ -107,8 +122,6 @@ export const DuesPage = () => {
         filteredValue: gridState.filters.memberId,
         filters: GridUtils.getMembersForFilter(members),
         render: (_, payment: DueGridDto) => payment.member?.name,
-        sortOrder: gridState.sorter.memberId,
-        sorter: true,
         title: 'Socio',
       });
     }
@@ -187,10 +200,7 @@ export const DuesPage = () => {
               memberId={due.memberId}
             />
 
-            {SecurityUtils.isInRole(
-              PermissionEnum.CREATE,
-              ScopeEnum.PAYMENTS,
-            ) && (
+            {canCreatePayments && (
               <Button
                 type="text"
                 onClick={() => {
@@ -202,9 +212,12 @@ export const DuesPage = () => {
                   );
                 }}
                 htmlType="button"
-                disabled={due.status === DueStatusEnum.PAID}
+                disabled={
+                  due.status === DueStatusEnum.PAID ||
+                  due.status === DueStatusEnum.VOIDED
+                }
                 tooltip={{ title: 'Cobrar' }}
-                icon={<FaCreditCard />}
+                icon={<CreditCardFilled />}
               />
             )}
           </Space.Compact>
@@ -225,7 +238,12 @@ export const DuesPage = () => {
       />
 
       <Card
-        title="Cobros"
+        title={
+          <Space>
+            <FaFileInvoiceDollar />
+            <span>Cobros</span>
+          </Space>
+        }
         extra={
           <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />

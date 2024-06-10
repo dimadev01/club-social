@@ -6,11 +6,11 @@ import { container, inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
-import { MovementMethod } from '@domain/movements/movement.methods';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethodOld } from '@domain/users/user.methods';
 import { DueMethods } from '@infra/meteor/methods/due.methods';
 import { MemberMethods } from '@infra/meteor/methods/member.methods';
+import { MovementMethods } from '@infra/meteor/methods/movement.methods';
 import { PaymentMethods } from '@infra/meteor/methods/payment.methods';
 import { MigrationService } from '@infra/migrations/migration.service';
 import { DateUtils } from '@shared/utils/date.utils';
@@ -24,7 +24,7 @@ export class ServerStartup {
     private readonly _logger: ILogger,
     private readonly _migrationService: MigrationService,
     private readonly _userMethod: UserMethodOld,
-    private readonly _movementMethod: MovementMethod,
+    private readonly _movementMethod: MovementMethods,
     private readonly _memberMethods: MemberMethods,
     private readonly _paymentMethods: PaymentMethods,
     private readonly _dueMethods: DueMethods,

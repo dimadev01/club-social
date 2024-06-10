@@ -37,6 +37,7 @@ export class GetDuesGridUseCase
         return {
           amount: due.amount.value,
           category: due.category,
+          createdAt: due.createdAt.toISOString(),
           date: due.date.toISOString(),
           id: due._id,
           member: this._memberDtoMapper.toDto(due.member),

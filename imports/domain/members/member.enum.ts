@@ -9,13 +9,13 @@ export const MemberStatusLabel = {
   [MemberStatusEnum.INACTIVE]: 'Inactivo',
 };
 
-export const getMemberStatusOptions = () =>
+export const getMemberStatusSelectOptions = () =>
   Object.values(MemberStatusEnum).map((status) => ({
     label: MemberStatusLabel[status],
     value: status,
   }));
 
-export const getMemberStatusFilters = () =>
+export const getMemberStatusColumnFilters = () =>
   Object.values(MemberStatusEnum).map((status) => ({
     text: MemberStatusLabel[status],
     value: status,
@@ -26,18 +26,20 @@ export enum MemberCategoryEnum {
   CADET = 'cadet',
 }
 
-export const MemberCategoryLabel = {
+export const MemberCategoryLabel: {
+  [x in MemberCategoryEnum]: string;
+} = {
   [MemberCategoryEnum.CADET]: 'Cadete',
   [MemberCategoryEnum.MEMBER]: 'Socio',
 };
 
-export const getMemberCategoryOptions = () =>
+export const getMemberCategorySelectOptions = () =>
   Object.values(MemberCategoryEnum).map((category) => ({
     label: MemberCategoryLabel[category],
     value: category,
   }));
 
-export const getMemberCategoryFilters = () =>
+export const getMemberCategoryColumnFilters = () =>
   Object.values(MemberCategoryEnum).map((category) => ({
     text: MemberCategoryLabel[category],
     value: category,
@@ -50,14 +52,16 @@ export enum MemberMaritalStatusEnum {
   WIDOWED = 'widowed',
 }
 
-export const MemberMaritalStatusLabel = {
+export const MemberMaritalStatusLabel: {
+  [x in MemberMaritalStatusEnum]: string;
+} = {
   [MemberMaritalStatusEnum.DIVORCED]: 'Divorciado',
   [MemberMaritalStatusEnum.MARRIED]: 'Casado',
   [MemberMaritalStatusEnum.SINGLE]: 'Soltero',
   [MemberMaritalStatusEnum.WIDOWED]: 'Viudo',
 };
 
-export const getMemberMaritalStatusOptions = () =>
+export const getMemberMaritalStatusSelectOptions = () =>
   Object.values(MemberMaritalStatusEnum).map((status) => ({
     label: MemberMaritalStatusLabel[status],
     value: status,
@@ -70,14 +74,16 @@ export enum MemberNationalityEnum {
   UKRAINE = 'ukraine',
 }
 
-export const MemberNationalityLabel = {
+export const MemberNationalityLabel: {
+  [x in MemberNationalityEnum]: string;
+} = {
   [MemberNationalityEnum.ARGENTINA]: 'Argentina',
   [MemberNationalityEnum.COLOMBIA]: 'Colombia',
   [MemberNationalityEnum.UKRAINE]: 'Ucrania',
   [MemberNationalityEnum.BULGARIA]: 'Bulgaria',
 };
 
-export const getMemberNationalityOptions = () =>
+export const getMemberNationalitySelectOptions = () =>
   Object.values(MemberNationalityEnum).map((value) => ({
     label: MemberNationalityLabel[value],
     value,
@@ -88,12 +94,14 @@ export enum MemberSexEnum {
   FEMALE = 'female',
 }
 
-export const MemberSexLabel = {
+export const MemberSexLabel: {
+  [x in MemberSexEnum]: string;
+} = {
   [MemberSexEnum.FEMALE]: 'Femenino',
   [MemberSexEnum.MALE]: 'Masculino',
 };
 
-export const getMemberSexOptions = () =>
+export const getMemberSexSelectOptions = () =>
   Object.values(MemberSexEnum).map((value) => ({
     label: MemberSexLabel[value],
     value,
@@ -104,18 +112,20 @@ export enum MemberFileStatusEnum {
   PENDING = 'pending',
 }
 
-export const MemberFileStatusLabel = {
+export const MemberFileStatusLabel: {
+  [x in MemberFileStatusEnum]: string;
+} = {
   [MemberFileStatusEnum.COMPLETED]: 'Completo',
   [MemberFileStatusEnum.PENDING]: 'Pendiente',
 };
 
-export const getMemberFileStatusOptions = () =>
+export const getMemberFileStatusSelectOptions = () =>
   Object.values(MemberFileStatusEnum).map((value) => ({
     label: MemberFileStatusLabel[value],
     value,
   }));
 
-export const getMemberFileStatusFilters = () =>
+export const getMemberFileStatusColumnFilters = () =>
   Object.values(MemberFileStatusEnum).map((value) => ({
     text: MemberFileStatusLabel[value],
     value,

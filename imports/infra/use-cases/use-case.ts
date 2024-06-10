@@ -10,7 +10,7 @@ import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export abstract class UseCaseOld<T extends object = any> {
+export abstract class OldUseCase<T extends object = any> {
   /**
    * @deprecated Use validateDto from MeteorMethod instead
    */

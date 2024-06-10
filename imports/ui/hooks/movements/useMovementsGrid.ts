@@ -3,11 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { GetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
-import { GetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
+import { OldGetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
+import { OldGetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
 import { UrlUtils } from '@shared/utils/url.utils';
 
-export const useMovementsGrid = (request: GetMovementsGridRequestDto) => {
+export const useMovementsGrid = (request: OldGetMovementsGridRequestDto) => {
   const [, setSearchParams] = useSearchParams();
 
   useDeepCompareEffect(() => {
@@ -15,9 +15,9 @@ export const useMovementsGrid = (request: GetMovementsGridRequestDto) => {
   }, [request]);
 
   return useQuery<
-    GetMovementsGridRequestDto,
+    OldGetMovementsGridRequestDto,
     Error,
-    GetMovementsGridResponseDto
+    OldGetMovementsGridResponseDto
   >([MeteorMethodEnum.MovementsGetGrid, request], () =>
     Meteor.callAsync(MeteorMethodEnum.MovementsGetGrid, request),
   );
