@@ -9,7 +9,9 @@ import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { Payment } from '@domain/payments/models/payment.model';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import {
+  FindPaginatedPaymentsFilters,
   FindPaginatedPaymentsRequest,
+  GetPaymentsTotalsResponse,
   IPaymentRepository,
 } from '@domain/payments/payment.repository';
 import { PaymentAuditableCollection } from '@infra/mongo/collections/payment-auditable.collection';
@@ -40,6 +42,20 @@ export class PaymentMongoRepository
     super(collection, mapper, logger, auditableCollection);
   }
 
+  public async findOneById(request: FindOneById): Promise<Payment | null> {
+    const payment = await super.findOneById(request);
+
+    if (!payment) {
+      return null;
+    }
+
+    payment.member = await this._memberRepository.findOneByIdOrThrow({
+      id: payment.memberId,
+    });
+
+    return payment;
+  }
+
   public async findOneByReceipt(
     receiptNumber: number,
   ): Promise<Payment | null> {
@@ -56,23 +72,23 @@ export class PaymentMongoRepository
     return this.mapper.toDomain(entity);
   }
 
-  public async findOneById(request: FindOneById): Promise<Payment | null> {
-    const payment = await super.findOneById(request);
-
-    if (!payment) {
-      return null;
-    }
-
-    payment.member = await this._memberRepository.findOneByIdOrThrow({
-      id: payment.memberId,
-    });
-
-    return payment;
-  }
-
   public async findPaginated(
     request: FindPaginatedPaymentsRequest,
   ): Promise<FindPaginatedResponse<Payment>> {
+    const query = this._getQueryForGridOrTotals(request);
+
+    const pipeline: Document[] = [
+      { $match: query },
+      ...this.getPaginatedPipeline(request),
+      ...this.getMemberLookupPipeline(),
+    ];
+
+    return super.paginate(pipeline, query);
+  }
+
+  private _getQueryForGridOrTotals(
+    request: FindPaginatedPaymentsFilters,
+  ): Mongo.Query<PaymentEntity> {
     const query: Mongo.Query<PaymentEntity> = {
       isDeleted: false,
     };
@@ -85,12 +101,24 @@ export class PaymentMongoRepository
       query.status = { $in: request.filterByStatus as PaymentStatusEnum[] };
     }
 
-    const pipeline: Document[] = [
-      { $match: query },
-      ...this.getPaginatedPipeline(request),
-      ...this.getMemberLookupPipeline(),
-    ];
+    return query;
+  }
 
-    return super.paginate(pipeline, query);
+  public async getTotals(
+    request: FindPaginatedPaymentsFilters,
+  ): Promise<GetPaymentsTotalsResponse> {
+    const query = this._getQueryForGridOrTotals(request);
+
+    const [result] = await this.collection
+      .rawCollection()
+      .aggregate([
+        { $match: query },
+        { $group: { _id: null, total: { $sum: '$amount' } } },
+      ])
+      .toArray();
+
+    return {
+      amount: result.total ?? 0,
+    };
   }
 }

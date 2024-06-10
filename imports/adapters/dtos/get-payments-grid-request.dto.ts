@@ -12,6 +12,9 @@ export class GetPaymentsGridRequestDto
   @IsArray()
   public filterByMember!: string[];
 
+  @IsArray()
+  public filterByPeriod!: [string, string];
+
   @IsEnum(PaymentStatusEnum, { each: true })
   @IsArray()
   public filterByStatus!: string[];
