@@ -6,10 +6,9 @@ import {
   Flex,
   Form,
   Space,
-  Spin,
   Typography,
 } from 'antd';
-import { ColumnProps } from 'antd/es/table';
+import Table, { ColumnProps } from 'antd/es/table';
 import { Dayjs } from 'dayjs';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -122,7 +121,9 @@ export const PaymentsPage = () => {
     columns.push(
       {
         dataIndex: 'createdAt',
-        // filterDropdown: () => renderCreatedAtFilter(),
+        ellipsis: true,
+        filterDropdown: () => renderCreatedAtFilter(),
+        fixed: 'left',
         render: (createdAt: string, payment: PaymentGridDto) => (
           <Link to={`${AppUrl.Payments}/${payment.id}`}>
             {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
@@ -131,12 +132,14 @@ export const PaymentsPage = () => {
         sortOrder: gridState.sorter.createdAt,
         sorter: true,
         title: 'Fecha de creación',
-        width: 200,
+        width: 175,
       },
       {
         dataIndex: 'date',
+        ellipsis: true,
         render: (date: string) => new DateUtcVo(date).format(),
         title: 'Fecha de pago',
+        width: 100,
       },
     );
 
@@ -144,12 +147,14 @@ export const PaymentsPage = () => {
       columns.push({
         dataIndex: 'memberId',
         defaultFilteredValue: undefined,
+        ellipsis: true,
         filterResetToDefaultFilteredValue: true,
         filterSearch: true,
         filteredValue: gridState.filters.memberId,
         filters: GridUtils.getMembersForFilter(members),
         render: (_, payment: PaymentGridDto) => payment.member.name,
         title: 'Socio',
+        width: 200,
       });
     }
 
@@ -157,19 +162,22 @@ export const PaymentsPage = () => {
       {
         align: 'right',
         dataIndex: 'duesCount',
+        ellipsis: true,
         title: '#',
         width: 50,
       },
       {
         align: 'right',
         dataIndex: 'amount',
+        ellipsis: true,
         render: (amount: number) => new Money({ amount }).formatWithCurrency(),
         title: 'Total',
-        width: 150,
+        width: 175,
       },
       {
         align: 'right',
         dataIndex: 'receiptNumber',
+        ellipsis: true,
         title: 'Recibo #',
         width: 100,
       },
@@ -177,18 +185,20 @@ export const PaymentsPage = () => {
         align: 'center',
         dataIndex: 'status',
         defaultFilteredValue: [PaymentStatusEnum.PAID],
+        ellipsis: true,
         filterResetToDefaultFilteredValue: true,
         filteredValue: gridState.filters.status,
         filters: getPaymentStatusColumnFilters(),
         render: (status: PaymentStatusEnum) => PaymentStatusLabel[status],
         title: 'Estado',
-        width: 150,
+        width: 100,
       },
     );
 
     if (isAdmin || isStaff) {
       columns.push({
         align: 'center',
+        ellipsis: true,
         render: (_, payment: PaymentGridDto) => (
           <Space.Compact size="small">
             <GridFilterByMemberButton
@@ -206,6 +216,23 @@ export const PaymentsPage = () => {
     return columns;
   };
 
+  const renderSummary = () => (
+    <Table.Summary fixed>
+      <Table.Summary.Row>
+        <Table.Summary.Cell align="right" index={0} colSpan={5} />
+        <Table.Summary.Cell index={1} align="right">
+          <Typography.Text strong>
+            Total:{' '}
+            {new Money({
+              amount: paymentTotals?.amount ?? 0,
+            }).formatWithCurrency()}
+          </Typography.Text>
+        </Table.Summary.Cell>
+        <Table.Summary.Cell align="right" index={2} colSpan={3} />
+      </Table.Summary.Row>
+    </Table.Summary>
+  );
+
   return (
     <>
       <Breadcrumb
@@ -221,31 +248,16 @@ export const PaymentsPage = () => {
           </Space>
         }
         extra={
-          <Space>
-            {isLoadingPaymentTotals && <Spin spinning />}
-
-            {paymentTotals && (
-              <Typography.Text className="self-center">
-                Total:{' '}
-                {new Money({
-                  amount: paymentTotals.amount,
-                }).formatWithCurrency()}
-              </Typography.Text>
-            )}
-
-            <Space.Compact>
-              <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-              <GridNewButton
-                scope={ScopeEnum.PAYMENTS}
-                to={AppUrl.PaymentsNew}
-              />
-            </Space.Compact>
-          </Space>
+          <Space.Compact>
+            <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
+            <GridNewButton scope={ScopeEnum.PAYMENTS} to={AppUrl.PaymentsNew} />
+          </Space.Compact>
         }
       >
         <Grid<PaymentGridDto>
           total={data?.totalCount}
           state={gridState}
+          summary={() => renderSummary()}
           onTableChange={onTableChange}
           loading={isLoading}
           dataSource={data?.items}

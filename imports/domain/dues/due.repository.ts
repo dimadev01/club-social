@@ -5,7 +5,7 @@ import {
   IGridRepository,
 } from '@domain/common/repositories/grid.repository';
 import { FindOneById } from '@domain/common/repositories/queryable.repository';
-import { DueStatusEnum } from '@domain/dues/due.enum';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { Due } from '@domain/dues/models/due.model';
 
 export interface IDueRepository
@@ -20,6 +20,7 @@ export interface IDueRepository
 }
 
 export interface FindPaginatedDuesRequest extends FindPaginatedRequest {
+  filterByCategory: DueCategoryEnum[];
   filterByMember: string[];
   filterByStatus: DueStatusEnum[];
 }

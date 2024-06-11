@@ -214,26 +214,28 @@ export const MovementDetailPage = () => {
               scope={ScopeEnum.MOVEMENTS}
             />
 
-            <FormVoidButton
-              scope={ScopeEnum.MOVEMENTS}
-              onConfirm={(reason: string) => {
-                invariant(movement);
+            {movement && (
+              <FormVoidButton
+                scope={ScopeEnum.MOVEMENTS}
+                onConfirm={(reason: string) => {
+                  invariant(movement);
 
-                voidMovement.mutate(
-                  {
-                    id: movement.id,
-                    voidReason: reason,
-                  },
-                  {
-                    onSuccess: () => {
-                      notificationSuccess('Movimiento anulado');
-
-                      navigate(AppUrl.Movements);
+                  voidMovement.mutate(
+                    {
+                      id: movement.id,
+                      voidReason: reason,
                     },
-                  },
-                );
-              }}
-            />
+                    {
+                      onSuccess: () => {
+                        notificationSuccess('Movimiento anulado');
+
+                        navigate(AppUrl.Movements);
+                      },
+                    },
+                  );
+                }}
+              />
+            )}
           </Flex>
         </Form>
       </Card>

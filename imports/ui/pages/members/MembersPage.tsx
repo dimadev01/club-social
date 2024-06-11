@@ -73,49 +73,6 @@ export const MembersPage = () => {
     request: gridRequest,
   });
 
-  // const renderSummary = () => (
-  //   <Table.Summary>
-  //     <Table.Summary.Row>
-  //       <Table.Summary.Cell index={0} />
-  //       <Table.Summary.Cell index={1} />
-  //       <Table.Summary.Cell index={2} />
-  //       <Table.Summary.Cell index={3}>
-  //         <Flex justify="end">
-  //           {data
-  //             ? new Money({
-  //                 amount: data.totals.membership,
-  //               }).formatWithCurrency()
-  //             : '-'}
-  //         </Flex>
-  //       </Table.Summary.Cell>
-  //       <Table.Summary.Cell index={4}>
-  //         <Flex justify="end">
-  //           {data
-  //             ? new Money({
-  //                 amount: data.totals.electricity,
-  //               }).formatWithCurrency()
-  //             : '-'}
-  //         </Flex>
-  //       </Table.Summary.Cell>
-  //       <Table.Summary.Cell index={5}>
-  //         <Flex justify="end">
-  //           {data
-  //             ? new Money({ amount: data.totals.guest }).formatWithCurrency()
-  //             : '-'}
-  //         </Flex>
-  //       </Table.Summary.Cell>
-  //       <Table.Summary.Cell index={6}>
-  //         <Flex justify="end">
-  //           {data
-  //             ? new Money({ amount: data.totals.total }).formatWithCurrency()
-  //             : '-'}
-  //         </Flex>
-  //       </Table.Summary.Cell>
-  //       <Table.Summary.Cell index={7} />
-  //     </Table.Summary.Row>
-  //   </Table.Summary>
-  // );
-
   return (
     <>
       <Breadcrumb
@@ -144,7 +101,6 @@ export const MembersPage = () => {
           onTableChange={onTableChange}
           loading={isLoading}
           dataSource={data?.items}
-          // summary={renderSummary}
           rowClassName={(member) => {
             if (member.pendingTotal > 0) {
               return 'bg-red-100 dark:bg-red-950';
@@ -155,71 +111,80 @@ export const MembersPage = () => {
           columns={[
             {
               dataIndex: 'id',
+              ellipsis: true,
               filterSearch: true,
               filteredValue: gridState.filters.id,
               filters: GridUtils.getMembersForFilter(members),
+              fixed: 'left',
               render: (id: string, member: MemberGridDto) => (
                 <Link to={`${AppUrl.Members}/${id}`}>{member.name}</Link>
               ),
               sortOrder: gridState.sorter.id,
               sorter: true,
               title: 'Socio',
+              width: 200,
             },
             {
               align: 'center',
               dataIndex: 'category',
-              filteredValue: gridState.filters.category,
+              ellipsis: true,
 
+              filteredValue: gridState.filters.category,
               filters: getMemberCategoryColumnFilters(),
               render: (category: MemberCategoryEnum) =>
                 MemberCategoryLabel[category],
               title: 'Categoría',
-              width: 150,
+              width: 100,
             },
             {
               align: 'center',
               dataIndex: 'status',
               defaultFilteredValue: [MemberStatusEnum.ACTIVE],
+              ellipsis: true,
               filterResetToDefaultFilteredValue: true,
               filteredValue: gridState.filters.status,
               filters: getMemberStatusColumnFilters(),
               render: (status: MemberStatusEnum) => MemberStatusLabel[status],
               title: 'Estado',
-              width: 150,
+              width: 100,
             },
             {
               align: 'right',
               dataIndex: 'pendingMembership',
+              ellipsis: true,
               render: (pendingMembership: number) =>
                 new Money({ amount: pendingMembership }).formatWithCurrency(),
               sortOrder: gridState.sorter.pendingMembership,
               sorter: true,
               title: 'Deuda Cuota',
-              width: 150,
+              width: 125,
             },
             {
               align: 'right',
               dataIndex: 'pendingElectricity',
+              ellipsis: true,
               render: (pendingElectricity: number) =>
                 new Money({ amount: pendingElectricity }).formatWithCurrency(),
               sortOrder: gridState.sorter.pendingElectricity,
               sorter: true,
               title: 'Deuda Luz',
-              width: 150,
+              width: 125,
             },
             {
               align: 'right',
               dataIndex: 'pendingGuest',
+              ellipsis: true,
               render: (pendingGuest: number) =>
                 new Money({ amount: pendingGuest }).formatWithCurrency(),
               sortOrder: gridState.sorter.pendingGuest,
               sorter: true,
               title: 'Deuda Invitado',
-              width: 150,
+              width: 125,
             },
             {
               align: 'right',
               dataIndex: 'pendingTotal',
+              ellipsis: true,
               filterMultiple: false,
               filteredValue: gridState.filters.pendingTotal,
               filters: [
@@ -237,10 +202,11 @@ export const MembersPage = () => {
               sortOrder: gridState.sorter.pendingTotal,
               sorter: true,
               title: 'Deuda Total',
-              width: 150,
+              width: 125,
             },
             {
               align: 'center',
+              ellipsis: true,
               render: (_, member: MemberGridDto) => (
                 <Space.Compact size="small">
                   <Button

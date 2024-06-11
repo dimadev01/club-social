@@ -41,3 +41,11 @@ export const getDueCategoryOptions = () =>
       value: category,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
+
+export const getDueCategoryFilters = () =>
+  Object.values(DueCategoryEnum)
+    .map((category) => ({
+      text: DueCategoryLabel[category],
+      value: category,
+    }))
+    .sort((a, b) => a.text.localeCompare(b.text));
