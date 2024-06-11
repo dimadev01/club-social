@@ -6,6 +6,7 @@ import { DueController } from '@adapters/controllers/due.controller';
 import { CreateDueRequestDto } from '@adapters/dtos/create-due-request.dto';
 import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid.request.dto';
 import { GetPendingDuesRequestDto } from '@adapters/dtos/get-pending-dues-request.dto';
+import { UpdateDueRequestDto } from '@adapters/dtos/update-due-request.dto';
 import { RoleEnum } from '@domain/roles/role.enum';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
 import { VoidDueMethodRequestDto } from '@infra/meteor/dtos/void-due-method-request.dto';
@@ -20,6 +21,8 @@ export class DueMethods extends MeteorMethods {
     Meteor.methods({
       [MeteorMethodEnum.DuesCreate]: (req: CreateDueRequestDto) =>
         this.execute(this._controller.create.bind(this._controller), req),
+      [MeteorMethodEnum.DuesUpdate]: (req: UpdateDueRequestDto) =>
+        this.execute(this._controller.update.bind(this._controller), req),
       [MeteorMethodEnum.DuesGetOne]: (req: GetOneByIdRequestDto) =>
         this.execute(this._controller.get.bind(this._controller), req),
       [MeteorMethodEnum.DuesGetGrid]: (req: GetDuesGridRequestDto) => {

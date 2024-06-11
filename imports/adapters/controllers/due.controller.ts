@@ -5,6 +5,7 @@ import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.
 import { CreateDueRequestDto } from '@adapters/dtos/create-due-request.dto';
 import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid.request.dto';
 import { GetPendingDuesRequestDto } from '@adapters/dtos/get-pending-dues-request.dto';
+import { UpdateDueRequestDto } from '@adapters/dtos/update-due-request.dto';
 import { VoidDueRequestDto } from '@adapters/dtos/void-due-request.dto';
 import { DIToken } from '@application/common/di/tokens.di';
 import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
@@ -13,6 +14,7 @@ import { CreateDueUseCase } from '@application/dues/use-cases/create-due/create-
 import { GetDueUseCase } from '@application/dues/use-cases/get-due/get-due.use-case';
 import { GetDuesGridUseCase } from '@application/dues/use-cases/get-dues-grid/get-dues-grid.use-case';
 import { GetPendingDuesUseCase } from '@application/dues/use-cases/get-pending-dues/get-pending-dues.use-case';
+import { UpdateDueUseCase } from '@application/dues/use-cases/update-due/update-due.use-case';
 import { VoidDueUseCase } from '@application/dues/use-cases/void-due/void-due.use-case';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
@@ -23,6 +25,7 @@ export class DueController extends BaseController {
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
     private readonly _create: CreateDueUseCase,
+    private readonly _update: UpdateDueUseCase,
     private readonly _getOne: GetDueUseCase,
     private readonly _getGrid: GetDuesGridUseCase,
     private readonly _getPending: GetPendingDuesUseCase,
@@ -64,6 +67,14 @@ export class DueController extends BaseController {
       classType: GetPendingDuesRequestDto,
       request,
       useCase: this._getPending,
+    });
+  }
+
+  public async update(request: UpdateDueRequestDto): Promise<DueDto> {
+    return this.execute({
+      classType: UpdateDueRequestDto,
+      request,
+      useCase: this._update,
     });
   }
 

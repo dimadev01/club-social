@@ -5,6 +5,7 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { MovementDto } from '@application/movements/dtos/movement.dto';
 import { GetMovementUseCase } from '@application/movements/use-cases/get-movement/get-movement.use.case';
 import { UpdateMovementRequest } from '@application/movements/use-cases/update-movement/update-movement.request';
+import { ModelNotUpdatableError } from '@domain/common/errors/model-not-updatable.error';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
@@ -36,6 +37,10 @@ export class UpdateMovementUseCase
       const movement = await this._movementRepository.findOneByIdOrThrow({
         id: request.id,
       });
+
+      if (!movement.isUpdatable()) {
+        return err(new ModelNotUpdatableError());
+      }
 
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
         const result = Result.combine([

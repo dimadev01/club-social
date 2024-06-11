@@ -1,8 +1,8 @@
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { CreateDueRequest } from '@application/dues/use-cases/create-due/create-due.request';
+import { CreateDueRequestDto } from '@adapters/dtos/create-due-request.dto';
 import { useMutation } from '@ui/hooks/query/useMutation';
 
 export const useCreateDue = () =>
-  useMutation<CreateDueRequest, null>({
+  useMutation<CreateDueRequestDto, null>({
     methodName: MeteorMethodEnum.DuesCreate,
   });

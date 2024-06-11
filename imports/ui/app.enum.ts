@@ -10,6 +10,7 @@ export enum AppUrl {
   Dues = '/dues',
   DuesDetail = '/dues/:id',
   DuesNew = '/dues/new',
+  DuesEdit = '/dues/:id/edit',
 
   Enroll = '/enroll-account/:token',
   Login = '/login',

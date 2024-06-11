@@ -14,7 +14,7 @@ export interface NavigateFunc {
 export function useNavigate(): NavigateFunc {
   const navigate = reactQueryUseNavigate();
 
-  return (to: To | number, props: Props = { replace: true }) => {
+  return (to: To | number, props: Props = { replace: false }) => {
     const queryString = qs.stringify(props.state, {
       addQueryPrefix: true,
       arrayFormat: 'brackets',

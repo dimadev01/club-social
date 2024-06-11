@@ -111,7 +111,6 @@ export const DuesPage = () => {
         dataIndex: 'date',
         render: (date: string) => new DateUtcVo(date).format(),
         title: 'Fecha de deuda',
-        width: 125,
       },
     );
 
