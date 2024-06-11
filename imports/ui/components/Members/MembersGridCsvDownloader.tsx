@@ -1,4 +1,4 @@
-import { FileExcelOutlined } from '@ant-design/icons';
+import { FileExcelFilled } from '@ant-design/icons';
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
@@ -83,7 +83,7 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
         disabled={getMembersToExport.isLoading}
         tooltip={{ title: 'Descargar CSV' }}
         htmlType="button"
-        icon={<FileExcelOutlined />}
+        icon={<FileExcelFilled />}
       >
         Exportar
       </Button>

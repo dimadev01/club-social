@@ -85,6 +85,8 @@ export const MovementsPage = () => {
           columns={[
             {
               dataIndex: 'createdAt',
+              ellipsis: true,
+              fixed: 'left',
               render: (date: string, movement: MovementGridDto) => (
                 <Link to={`${AppUrl.Movements}/${movement.id}`}>
                   {new DateUtcVo(date).format(DateFormatEnum.DDMMYYHHmm)}
@@ -97,43 +99,48 @@ export const MovementsPage = () => {
             },
             {
               dataIndex: 'date',
+              ellipsis: true,
               render: (date: string) => new DateUtcVo(date).format(),
-              title: 'Fecha de mov.',
-              width: 125,
+              title: 'Fecha de movimiento',
+              width: 120,
             },
             {
               align: 'center',
               dataIndex: 'category',
+              ellipsis: true,
               filteredValue: gridState.filters.category,
               filters: getCategoryFilters(),
               render: (category: MovementCategoryEnum) =>
                 MovementCategoryEnumLabel[category],
               title: 'Categoría',
-              width: 150,
+              width: 125,
             },
             {
               align: 'right',
               dataIndex: 'amount',
+              ellipsis: true,
               render: (amount) => new Money({ amount }).formatWithCurrency(),
               title: 'Importe',
-              width: 150,
+              width: 100,
             },
             {
               align: 'center',
               dataIndex: 'status',
               defaultFilteredValue: [MovementStatusEnum.REGISTERED],
+              ellipsis: true,
               filterResetToDefaultFilteredValue: true,
               filteredValue: gridState.filters.status,
               filters: getMovementStatusColumnFilters(),
               render: (status: MovementStatusEnum) =>
                 MovementStatusLabel[status],
               title: 'Estado',
-              width: 150,
+              width: 100,
             },
             {
               dataIndex: 'notes',
               render: (notes: string) => notes,
               title: 'Detalle',
+              width: 300,
             },
           ]}
         />

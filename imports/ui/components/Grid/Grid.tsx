@@ -39,12 +39,17 @@ export function Grid<T extends object>({
   state,
   onTableChange,
   total,
+  columns,
   ...rest
 }: Props<T>): JSX.Element {
+  const columnsWidth =
+    columns?.reduce((acc, column) => acc + Number(column.width ?? 0), 0) ?? 0;
+
   return (
     <AntTable<T>
       bordered
       size="small"
+      columns={columns}
       onChange={(
         pagination: TablePaginationConfig,
         filters: Record<string, FilterValue | null>,
@@ -61,9 +66,8 @@ export function Grid<T extends object>({
         size: 'small',
         total,
       }}
-      className="rxs-table"
       rowKey={rowKey}
-      scroll={{ x: true }}
+      scroll={{ scrollToFirstRowOnChange: true, x: columnsWidth, y: 800 }}
       {...rest}
     />
   );
