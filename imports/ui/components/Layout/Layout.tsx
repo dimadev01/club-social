@@ -1,9 +1,9 @@
 import {
-  CreditCardFilled,
-  FilePdfFilled,
+  CreditCardOutlined,
+  FilePdfOutlined,
   LogoutOutlined,
-  MailFilled,
-  NotificationFilled,
+  MailOutlined,
+  NotificationOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
 import {
@@ -96,7 +96,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
     if (canReadPayments) {
       items.push({
-        icon: <CreditCardFilled className="!text-lg" />,
+        icon: <CreditCardOutlined className="!text-lg" />,
         key: AppUrl.Payments,
         label: (
           <Link className="no-underline" to={AppUrl.Payments}>
@@ -195,7 +195,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
             <Space.Compact>
               <Button
                 tooltip={{ title: 'Reglamento' }}
-                icon={<FilePdfFilled />}
+                icon={<FilePdfOutlined />}
                 htmlType="button"
                 type="text"
                 href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
@@ -203,7 +203,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
               />
               <Button
                 tooltip={{ title: 'Comunicados' }}
-                icon={<NotificationFilled />}
+                icon={<NotificationOutlined />}
                 htmlType="button"
                 type="text"
                 href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
@@ -240,7 +240,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
               <Space.Compact>
                 <Button
                   tooltip={{ title: 'Enviar Email' }}
-                  icon={<MailFilled />}
+                  icon={<MailOutlined />}
                   htmlType="button"
                   type="text"
                   href="mailto:info@clubsocialmontegrande.ar"

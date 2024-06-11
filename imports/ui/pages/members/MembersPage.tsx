@@ -1,4 +1,4 @@
-import { CreditCardFilled } from '@ant-design/icons';
+import { CreditCardOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space } from 'antd';
 import React from 'react';
 import { FaFileInvoiceDollar, FaUsers } from 'react-icons/fa';
@@ -257,7 +257,7 @@ export const MembersPage = () => {
                   />
                   <Button
                     type="text"
-                    icon={<CreditCardFilled />}
+                    icon={<CreditCardOutlined />}
                     onClick={() =>
                       navigate(
                         UrlUtils.navigate(AppUrl.Payments, {
