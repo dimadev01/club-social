@@ -7,6 +7,7 @@ import { InternalServerError } from '@domain/common/errors/internal-server.error
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { FindOneById } from '@domain/common/repositories/queryable.repository';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DueStatusEnum } from '@domain/dues/due.enum';
 import {
   FindPaginatedDuesRequest,
@@ -81,6 +82,20 @@ export class DueMongoRepository
 
     if (request.filterByCategory.length > 0) {
       query.category = { $in: request.filterByCategory };
+    }
+
+    if (request.filterByCreatedAt.length > 0) {
+      query.createdAt = {
+        $gte: new DateUtcVo(request.filterByCreatedAt[0]).toDate(),
+        $lte: new DateUtcVo(request.filterByCreatedAt[1]).toDate(),
+      };
+    }
+
+    if (request.filterByDate.length > 0) {
+      query.date = {
+        $gte: new DateUtcVo(request.filterByDate[0]).toDate(),
+        $lte: new DateUtcVo(request.filterByDate[1]).toDate(),
+      };
     }
 
     const pipeline: Document[] = [

@@ -4,7 +4,7 @@ import { useForm } from 'antd/es/form/Form';
 import React, { useState } from 'react';
 
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
-import { Button } from '@ui/components/Button';
+import { Button } from '@ui/components/Button/Button';
 import { Popconfirm } from '@ui/components/Popconfirm/Popconfirm';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 

@@ -1,8 +1,12 @@
-import { CreditCardFilled, InfoCircleOutlined } from '@ant-design/icons';
+import {
+  CreditCardOutlined,
+  InfoCircleOutlined,
+  WalletOutlined,
+} from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Tooltip } from 'antd';
 import { ColumnProps } from 'antd/es/table';
+import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
-import { FaFileInvoiceDollar } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -23,7 +27,7 @@ import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
-import { Button } from '@ui/components/Button';
+import { Button } from '@ui/components/Button/Button';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
@@ -36,6 +40,7 @@ import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
+import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 import { useUserContext } from '@ui/providers/UserContext';
 
 export const DuesPage = () => {
@@ -51,12 +56,14 @@ export const DuesPage = () => {
   );
 
   const {
-    state: gridState,
+    gridState,
     onTableChange,
-    setState,
+    setGridState: setState,
   } = useTable<DueGridDto>({
     defaultFilters: {
       category: [],
+      createdAt: [],
+      date: [],
       memberId: [],
       status: [
         DueStatusEnum.PAID,
@@ -82,6 +89,8 @@ export const DuesPage = () => {
     methodName: MeteorMethodEnum.DuesGetGrid,
     request: {
       filterByCategory: gridState.filters.category as DueCategoryEnum[],
+      filterByCreatedAt: gridState.filters.createdAt,
+      filterByDate: gridState.filters.date,
       filterByMember: gridState.filters.memberId,
       filterByStatus: gridState.filters.status as DueStatusEnum[],
       limit: gridState.pageSize,
@@ -94,6 +103,22 @@ export const DuesPage = () => {
     <DuePaymentsGrid payments={due.payments} />
   );
 
+  const renderCreatedAtFilter = (props: FilterDropdownProps) => (
+    <GridPeriodFilter
+      title="Filtrar por Fecha de Creación"
+      value={gridState.filters.createdAt}
+      props={props}
+    />
+  );
+
+  const renderDateFilter = (props: FilterDropdownProps) => (
+    <GridPeriodFilter
+      title="Filtrar por Fecha de Deuda"
+      value={gridState.filters.date}
+      props={props}
+    />
+  );
+
   const getColumns = (): ColumnProps<DueGridDto>[] => {
     const columns: ColumnProps<DueGridDto>[] = [];
 
@@ -101,6 +126,8 @@ export const DuesPage = () => {
       {
         dataIndex: 'createdAt',
         ellipsis: true,
+        filterDropdown: renderCreatedAtFilter,
+        filteredValue: gridState.filters.createdAt,
         fixed: 'left',
         render: (createdAt: string, due: DueGridDto) => (
           <Link to={`${AppUrl.Dues}/${due.id}`}>
@@ -115,6 +142,8 @@ export const DuesPage = () => {
       {
         dataIndex: 'date',
         ellipsis: true,
+        filterDropdown: renderDateFilter,
+        filteredValue: gridState.filters.date,
         render: (date: string) => new DateUtcVo(date).format(),
         title: 'Fecha de deuda',
         width: 100,
@@ -232,7 +261,7 @@ export const DuesPage = () => {
                   due.status === DueStatusEnum.VOIDED
                 }
                 tooltip={{ title: 'Cobrar' }}
-                icon={<CreditCardFilled />}
+                icon={<CreditCardOutlined />}
               />
             )}
           </Space.Compact>
@@ -255,7 +284,7 @@ export const DuesPage = () => {
       <Card
         title={
           <Space>
-            <FaFileInvoiceDollar />
+            <WalletOutlined />
             <span>Cobros</span>
           </Space>
         }
@@ -274,6 +303,25 @@ export const DuesPage = () => {
           dataSource={data?.items}
           expandable={{ expandedRowRender }}
           columns={getColumns()}
+          rowClassName={(due) => {
+            if (due.status === DueStatusEnum.PENDING) {
+              return 'bg-blue-100 dark:bg-blue-900';
+            }
+
+            if (due.status === DueStatusEnum.PAID) {
+              return 'bg-green-100 dark:bg-green-900';
+            }
+
+            if (due.status === DueStatusEnum.PARTIALLY_PAID) {
+              return 'bg-yellow-100 dark:bg-yellow-900';
+            }
+
+            if (due.status === DueStatusEnum.VOIDED) {
+              return 'bg-gray-100 dark:bg-gray-900';
+            }
+
+            throw new Error('Unknown movement type');
+          }}
         />
       </Card>
     </>

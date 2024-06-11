@@ -1,6 +1,7 @@
+import { SwapOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space } from 'antd';
+import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
-import { FaExchangeAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -8,9 +9,10 @@ import { GetMovementsGridRequestDto } from '@adapters/dtos/get-movements-grid-re
 import { MovementGridDto } from '@application/movements/dtos/movement-grid.dto';
 import {
   MovementCategoryEnum,
-  MovementCategoryEnumLabel,
+  MovementCategoryLabel,
   MovementStatusEnum,
   MovementStatusLabel,
+  MovementTypeEnum,
   getCategoryFilters,
   getMovementStatusColumnFilters,
 } from '@domain/categories/category.enum';
@@ -25,11 +27,14 @@ import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
 import { MovementsGridCsvDownloaderButton } from '@ui/components/Movements/MovementsGridCsvDownloader';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
+import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 
 export const MovementsPage = () => {
-  const { state: gridState, onTableChange } = useTable<MovementGridDto>({
+  const { gridState, onTableChange } = useTable<MovementGridDto>({
     defaultFilters: {
       category: [],
+      createdAt: [],
+      date: [],
       status: [MovementStatusEnum.REGISTERED],
     },
     defaultSorter: { createdAt: 'descend' },
@@ -37,6 +42,8 @@ export const MovementsPage = () => {
 
   const gridRequest: GetMovementsGridRequestDto = {
     filterByCategory: gridState.filters.category as MovementCategoryEnum[],
+    filterByCreatedAt: gridState.filters.createdAt,
+    filterByDate: gridState.filters.date,
     filterByStatus: gridState.filters.status as MovementStatusEnum[],
     limit: gridState.pageSize,
     page: gridState.page,
@@ -51,6 +58,22 @@ export const MovementsPage = () => {
     request: gridRequest,
   });
 
+  const renderCreatedAtFilter = (props: FilterDropdownProps) => (
+    <GridPeriodFilter
+      title="Filtrar por Fecha de Creación"
+      value={gridState.filters.createdAt}
+      props={props}
+    />
+  );
+
+  const renderDateFilter = (props: FilterDropdownProps) => (
+    <GridPeriodFilter
+      title="Filtrar por Fecha de Movimiento"
+      value={gridState.filters.date}
+      props={props}
+    />
+  );
+
   return (
     <>
       <Breadcrumb
@@ -61,7 +84,7 @@ export const MovementsPage = () => {
       <Card
         title={
           <Space>
-            <FaExchangeAlt />
+            <SwapOutlined />
             <span>Movimientos</span>
           </Space>
         }
@@ -82,10 +105,23 @@ export const MovementsPage = () => {
           onTableChange={onTableChange}
           loading={isLoading}
           dataSource={data?.items}
+          rowClassName={(movement) => {
+            if (movement.type === MovementTypeEnum.EXPENSE) {
+              return 'bg-red-100 dark:bg-red-900';
+            }
+
+            if (movement.type === MovementTypeEnum.INCOME) {
+              return 'bg-green-100 dark:bg-green-900';
+            }
+
+            throw new Error('Unknown movement type');
+          }}
           columns={[
             {
               dataIndex: 'createdAt',
               ellipsis: true,
+              filterDropdown: renderCreatedAtFilter,
+              filteredValue: gridState.filters.createdAt,
               fixed: 'left',
               render: (date: string, movement: MovementGridDto) => (
                 <Link to={`${AppUrl.Movements}/${movement.id}`}>
@@ -100,6 +136,8 @@ export const MovementsPage = () => {
             {
               dataIndex: 'date',
               ellipsis: true,
+              filterDropdown: renderDateFilter,
+              filteredValue: gridState.filters.date,
               render: (date: string) => new DateUtcVo(date).format(),
               title: 'Fecha de movimiento',
               width: 120,
@@ -111,7 +149,7 @@ export const MovementsPage = () => {
               filteredValue: gridState.filters.category,
               filters: getCategoryFilters(),
               render: (category: MovementCategoryEnum) =>
-                MovementCategoryEnumLabel[category],
+                MovementCategoryLabel[category],
               title: 'Categoría',
               width: 125,
             },

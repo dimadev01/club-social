@@ -1,9 +1,8 @@
-import { CreditCardFilled } from '@ant-design/icons';
+import { CreditCardOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
-import { Dayjs } from 'dayjs';
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -17,6 +16,7 @@ import {
   PaymentStatusLabel,
   getPaymentStatusColumnFilters,
 } from '@domain/payments/payment.enum';
+import { FindPaginatedPaymentsFilters } from '@domain/payments/payment.repository';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -42,12 +42,13 @@ export const PaymentsPage = () => {
 
   const { member } = useUserContext();
 
-  const {
-    state: gridState,
-    onTableChange,
-    setState,
-  } = useTable<PaymentGridDto>({
-    defaultFilters: { memberId: [], status: [PaymentStatusEnum.PAID] },
+  const { gridState, onTableChange, setGridState } = useTable<PaymentGridDto>({
+    defaultFilters: {
+      createdAt: [],
+      date: [],
+      memberId: [],
+      status: [PaymentStatusEnum.PAID],
+    },
     defaultSorter: { createdAt: 'descend' },
   });
 
@@ -57,9 +58,12 @@ export const PaymentsPage = () => {
     gridState.filters.memberId = [member._id];
   }
 
-  const [rangeFilter, setRangeFilter] = useState<[Dayjs, Dayjs] | undefined>(
-    undefined,
-  );
+  const gridRequestFilters: FindPaginatedPaymentsFilters = {
+    filterByCreatedAt: gridState.filters.createdAt,
+    filterByDate: gridState.filters.date,
+    filterByMember: gridState.filters.memberId,
+    filterByStatus: gridState.filters.status as PaymentStatusEnum[],
+  };
 
   const { data, isLoading, refetch, isRefetching } = useQueryGrid<
     GetPaymentsGridRequestDto,
@@ -67,22 +71,14 @@ export const PaymentsPage = () => {
   >({
     methodName: MeteorMethodEnum.PaymentsGetGrid,
     request: {
-      filterByFrom: rangeFilter?.[0].toISOString() ?? null,
-      filterByMember: gridState.filters.memberId,
-      filterByStatus: gridState.filters.status as PaymentStatusEnum[],
-      filterByTo: rangeFilter?.[1].toISOString() ?? null,
+      ...gridRequestFilters,
       limit: gridState.pageSize,
       page: gridState.page,
       sorter: gridState.sorter,
     },
   });
 
-  const { data: paymentTotals } = usePaymentsTotals({
-    filterByFrom: rangeFilter?.[0].toISOString() ?? null,
-    filterByMember: gridState.filters.memberId,
-    filterByStatus: gridState.filters.status as PaymentStatusEnum[],
-    filterByTo: rangeFilter?.[1].toISOString() ?? null,
-  });
+  const { data: paymentTotals } = usePaymentsTotals(gridRequestFilters);
 
   const expandedRowRender = (payment: PaymentGridDto) => (
     <PaymentDuesGrid dues={payment.dues} />
@@ -90,11 +86,17 @@ export const PaymentsPage = () => {
 
   const renderCreatedAtFilter = (props: FilterDropdownProps) => (
     <GridPeriodFilter
-      onChange={(value) => {
-        setRangeFilter(value);
+      title="Filtrar por Fecha de Creación"
+      value={gridState.filters.createdAt}
+      props={props}
+    />
+  );
 
-        props.confirm({ closeDropdown: true });
-      }}
+  const renderDateFilter = (props: FilterDropdownProps) => (
+    <GridPeriodFilter
+      title="Filtrar por Fecha de Pago"
+      value={gridState.filters.date}
+      props={props}
     />
   );
 
@@ -106,6 +108,7 @@ export const PaymentsPage = () => {
         dataIndex: 'createdAt',
         ellipsis: true,
         filterDropdown: renderCreatedAtFilter,
+        filteredValue: gridState.filters.createdAt,
         fixed: 'left',
         render: (createdAt: string, payment: PaymentGridDto) => (
           <Link to={`${AppUrl.Payments}/${payment.id}`}>
@@ -120,6 +123,8 @@ export const PaymentsPage = () => {
       {
         dataIndex: 'date',
         ellipsis: true,
+        filterDropdown: renderDateFilter,
+        filteredValue: gridState.filters.date,
         render: (date: string) => new DateUtcVo(date).format(),
         title: 'Fecha de pago',
         width: 100,
@@ -155,7 +160,7 @@ export const PaymentsPage = () => {
         ellipsis: true,
         render: (amount: number) => new Money({ amount }).formatWithCurrency(),
         title: 'Total',
-        width: 175,
+        width: 100,
       },
       {
         align: 'right',
@@ -186,13 +191,13 @@ export const PaymentsPage = () => {
           <Space.Compact size="small">
             <GridFilterByMemberButton
               gridState={gridState}
-              setState={setState}
+              setState={setGridState}
               memberId={payment.memberId}
             />
           </Space.Compact>
         ),
         title: 'Acciones',
-        width: 100,
+        width: 75,
       });
     }
 
@@ -202,8 +207,7 @@ export const PaymentsPage = () => {
   const renderSummary = () => (
     <Table.Summary fixed>
       <Table.Summary.Row>
-        <Table.Summary.Cell align="right" index={0} colSpan={5} />
-        <Table.Summary.Cell index={1} align="right">
+        <Table.Summary.Cell align="right" index={0} colSpan={6}>
           <Typography.Text strong>
             Total:{' '}
             {new Money({
@@ -211,7 +215,7 @@ export const PaymentsPage = () => {
             }).formatWithCurrency()}
           </Typography.Text>
         </Table.Summary.Cell>
-        <Table.Summary.Cell align="right" index={2} colSpan={3} />
+        <Table.Summary.Cell index={1} colSpan={4} />
       </Table.Summary.Row>
     </Table.Summary>
   );
@@ -226,7 +230,7 @@ export const PaymentsPage = () => {
       <Card
         title={
           <Space>
-            <CreditCardFilled />
+            <CreditCardOutlined />
             <span>Pagos</span>
           </Space>
         }

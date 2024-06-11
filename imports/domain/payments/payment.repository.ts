@@ -5,6 +5,7 @@ import {
   IGridRepository,
 } from '@domain/common/repositories/grid.repository';
 import { Payment } from '@domain/payments/models/payment.model';
+import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export interface IPaymentRepository
   extends ICrudRepository<Payment>,
@@ -20,10 +21,10 @@ export interface FindPaginatedPaymentsRequest
     FindPaginatedRequest {}
 
 export interface FindPaginatedPaymentsFilters {
-  filterByFrom: string | null;
+  filterByCreatedAt: string[];
+  filterByDate: string[];
   filterByMember: string[];
-  filterByStatus: string[];
-  filterByTo: string | null;
+  filterByStatus: PaymentStatusEnum[];
 }
 
 export interface GetPaymentsTotalsResponse {

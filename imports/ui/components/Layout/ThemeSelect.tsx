@@ -1,3 +1,8 @@
+import {
+  InteractionOutlined,
+  MoonOutlined,
+  SunOutlined,
+} from '@ant-design/icons';
 import React, { useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
@@ -24,17 +29,17 @@ export const ThemeSelect = () => {
     LocalStorageUtils.set('theme', theme);
   }, [theme]);
 
-  const handleOnChange = (value: UserThemeEnum) => {
-    if (value === UserThemeEnum.AUTO) {
-      setTheme(systemPrefersDark ? AppThemeEnum.DARK : AppThemeEnum.LIGHT);
-    } else if (value === UserThemeEnum.LIGHT) {
-      setTheme(AppThemeEnum.LIGHT);
-    } else if (value === UserThemeEnum.DARK) {
-      setTheme(AppThemeEnum.DARK);
+  useEffect(() => {
+    if (user) {
+      if (user.profile?.theme === UserThemeEnum.AUTO) {
+        setTheme(systemPrefersDark ? AppThemeEnum.DARK : AppThemeEnum.LIGHT);
+      } else if (user.profile?.theme === UserThemeEnum.LIGHT) {
+        setTheme(AppThemeEnum.LIGHT);
+      } else if (user.profile?.theme === UserThemeEnum.DARK) {
+        setTheme(AppThemeEnum.DARK);
+      }
     }
-
-    updateUserTheme.mutate({ theme: value });
-  };
+  }, [user, setTheme, systemPrefersDark]);
 
   return (
     <Select
@@ -42,18 +47,32 @@ export const ThemeSelect = () => {
       value={user.profile?.theme}
       showSearch={false}
       disabled={updateUserTheme.isLoading}
-      onChange={handleOnChange}
+      onChange={(value) => {
+        updateUserTheme.mutate({ theme: value });
+      }}
       options={[
         {
-          label: 'Claro',
+          label: (
+            <>
+              <SunOutlined /> Claro
+            </>
+          ),
           value: UserThemeEnum.LIGHT,
         },
         {
-          label: 'Oscuro',
+          label: (
+            <>
+              <MoonOutlined /> Oscuro
+            </>
+          ),
           value: UserThemeEnum.DARK,
         },
         {
-          label: 'Automático',
+          label: (
+            <>
+              <InteractionOutlined /> Automático
+            </>
+          ),
           value: UserThemeEnum.AUTO,
         },
       ]}

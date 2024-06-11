@@ -382,3 +382,72 @@ Migrations.add({
   }),
   version: 21,
 });
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const memberCollection = container.resolve(MemberMongoCollection);
+
+    await memberCollection.createIndexAsync(
+      { lastName: 1, firstName: 1 },
+      { name: 'm_ln_fn' },
+    );
+
+    /**
+     * Payments
+     */
+    const paymentsCollection = container.resolve(PaymentCollection);
+
+    await paymentsCollection.rawCollection().dropIndexes();
+
+    await paymentsCollection.createIndexAsync(
+      { memberId: 1, createdAt: -1, date: -1 },
+      { name: 'p_mi_ca_d' },
+    );
+
+    await paymentsCollection.createIndexAsync(
+      { createdAt: -1, date: -1 },
+      { name: 'p_ca_d' },
+    );
+
+    /**
+     * Dues
+     */
+    const duesCollection = container.resolve(DueCollection);
+
+    await duesCollection.rawCollection().dropIndexes();
+
+    await duesCollection.createIndexAsync(
+      { memberId: 1, createdAt: -1, date: -1 },
+      { name: 'd_mi_ca_d' },
+    );
+
+    await duesCollection.createIndexAsync(
+      { createdAt: -1, date: -1 },
+      { name: 'd_ca_d' },
+    );
+
+    /**
+     * Movements
+     */
+    const movementsCollection = container.resolve(MovementCollection);
+
+    await movementsCollection.rawCollection().dropIndexes();
+
+    await movementsCollection.createIndexAsync(
+      { createdAt: -1, date: -1 },
+      { name: 'm_ca_d' },
+    );
+
+    await movementsCollection.createIndexAsync(
+      { category: 1, createdAt: -1, date: -1 },
+      { name: 'm_c_ca_d' },
+    );
+
+    next();
+  }),
+  version: 22,
+});

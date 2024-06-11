@@ -102,17 +102,19 @@ export class PaymentMongoRepository
       query.status = { $in: request.filterByStatus as PaymentStatusEnum[] };
     }
 
-    if (request.filterByFrom) {
+    if (request.filterByCreatedAt.length > 0) {
       query.createdAt = {
-        $gte: new DateUtcVo(request.filterByFrom).toDate(),
+        $gte: new DateUtcVo(request.filterByCreatedAt[0]).toDate(),
+        $lte: new DateUtcVo(request.filterByCreatedAt[1]).toDate(),
       };
     }
 
-    if (request.filterByTo)
-      query.createdAt = {
-        ...query.createdAt,
-        $lte: new DateUtcVo(request.filterByTo).toDate(),
+    if (request.filterByDate.length > 0) {
+      query.date = {
+        $gte: new DateUtcVo(request.filterByDate[0]).toDate(),
+        $lte: new DateUtcVo(request.filterByDate[1]).toDate(),
       };
+    }
 
     return query;
   }
