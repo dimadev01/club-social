@@ -17,11 +17,12 @@ export const GridPeriodFilter: React.FC<Props> = ({ value, title, props }) => {
   const now = dayjs();
 
   const presets: TimeRangePickerProps['presets'] = [
-    { label: 'Ayer', value: [now.add(-1, 'd'), now] },
-    { label: 'Últimos 7 días', value: [now.add(-7, 'd'), now] },
-    { label: 'Últimos 14 días', value: [now.add(-14, 'd'), now] },
-    { label: 'Últimos 30 días', value: [now.add(-30, 'd'), now] },
-    { label: 'Últimos 90 días', value: [now.add(-90, 'd'), now] },
+    { label: 'Hoy', value: [now, now] },
+    { label: 'Ayer', value: [now.add(-1, 'd'), now.add(-1, 'd')] },
+    {
+      label: 'Esta semana',
+      value: [now.startOf('week'), now],
+    },
     {
       label: 'Semana pasada',
       value: [
@@ -36,6 +37,10 @@ export const GridPeriodFilter: React.FC<Props> = ({ value, title, props }) => {
         now.subtract(1, 'month').endOf('month'),
       ],
     },
+    { label: 'Últimos 7 días', value: [now.add(-7, 'd'), now] },
+    { label: 'Últimos 14 días', value: [now.add(-14, 'd'), now] },
+    { label: 'Últimos 30 días', value: [now.add(-30, 'd'), now] },
+    { label: 'Últimos 90 días', value: [now.add(-90, 'd'), now] },
   ];
 
   return (
