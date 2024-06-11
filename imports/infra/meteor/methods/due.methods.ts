@@ -4,7 +4,8 @@ import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { DueController } from '@adapters/controllers/due.controller';
 import { CreateDueRequestDto } from '@adapters/dtos/create-due-request.dto';
-import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid.request.dto';
+import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid-request.dto';
+import { GetDuesTotalsRequestDto } from '@adapters/dtos/get-dues-totals-request.dto';
 import { GetPendingDuesRequestDto } from '@adapters/dtos/get-pending-dues-request.dto';
 import { UpdateDueRequestDto } from '@adapters/dtos/update-due-request.dto';
 import { RoleEnum } from '@domain/roles/role.enum';
@@ -25,6 +26,10 @@ export class DueMethods extends MeteorMethods {
         this.execute(this._controller.update.bind(this._controller), req),
       [MeteorMethodEnum.DuesGetOne]: (req: GetOneByIdRequestDto) =>
         this.execute(this._controller.get.bind(this._controller), req),
+      [MeteorMethodEnum.DuesGetTotals]: (req: GetDuesTotalsRequestDto) =>
+        this.execute(this._controller.getTotals.bind(this._controller), req),
+      [MeteorMethodEnum.DuesGetToExport]: (req: GetDuesGridRequestDto) =>
+        this.execute(this._controller.getToExport.bind(this._controller), req),
       [MeteorMethodEnum.DuesGetGrid]: (req: GetDuesGridRequestDto) => {
         const currentUser = this.getCurrentUser();
 

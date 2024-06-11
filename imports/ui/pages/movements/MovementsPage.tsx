@@ -1,5 +1,5 @@
 import { SwapOutlined } from '@ant-design/icons';
-import { Breadcrumb, Card, Space } from 'antd';
+import { Breadcrumb, Card, Space, Typography } from 'antd';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -176,7 +176,14 @@ export const MovementsPage = () => {
             },
             {
               dataIndex: 'notes',
-              render: (notes: string) => notes,
+              render: (notes: string) => (
+                <Typography.Paragraph
+                  className="!mb-0"
+                  ellipsis={{ expandable: true }}
+                >
+                  {notes}
+                </Typography.Paragraph>
+              ),
               title: 'Detalle',
               width: 300,
             },

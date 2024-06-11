@@ -26,7 +26,7 @@ export class MemberDtoMapper extends MapperDto<Member, MemberDto> {
       id: member._id,
       lastName: member.lastName,
       maritalStatus: member.maritalStatus,
-      name: member.name,
+      name: member.nameLastFirst,
       nationality: member.nationality,
       phones: member.phones,
       sex: member.sex,
