@@ -33,9 +33,6 @@ export const AntProvider: React.FC<PropsWithChildren> = ({ children }) => {
             itemBg: 'transparent',
             itemSelectedBg: 'transparent',
           },
-          Table: {
-            bodySortBg: 'transparent',
-          },
         },
         token: {
           borderRadius: 0,

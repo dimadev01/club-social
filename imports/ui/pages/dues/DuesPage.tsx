@@ -1,4 +1,4 @@
-import { CreditCardOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { CreditCardFilled, InfoCircleOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Tooltip } from 'antd';
 import { ColumnProps } from 'antd/es/table';
 import React from 'react';
@@ -16,6 +16,7 @@ import {
   DueCategoryLabel,
   DueStatusEnum,
   DueStatusLabel,
+  getDueCategoryFilters,
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
@@ -55,6 +56,7 @@ export const DuesPage = () => {
     setState,
   } = useTable<DueGridDto>({
     defaultFilters: {
+      category: [],
       memberId: [],
       status: [
         DueStatusEnum.PAID,
@@ -79,6 +81,7 @@ export const DuesPage = () => {
   >({
     methodName: MeteorMethodEnum.DuesGetGrid,
     request: {
+      filterByCategory: gridState.filters.category as DueCategoryEnum[],
       filterByMember: gridState.filters.memberId,
       filterByStatus: gridState.filters.status as DueStatusEnum[],
       limit: gridState.pageSize,
@@ -97,6 +100,8 @@ export const DuesPage = () => {
     columns.push(
       {
         dataIndex: 'createdAt',
+        ellipsis: true,
+        fixed: 'left',
         render: (createdAt: string, due: DueGridDto) => (
           <Link to={`${AppUrl.Dues}/${due.id}`}>
             {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
@@ -109,19 +114,23 @@ export const DuesPage = () => {
       },
       {
         dataIndex: 'date',
+        ellipsis: true,
         render: (date: string) => new DateUtcVo(date).format(),
         title: 'Fecha de deuda',
+        width: 100,
       },
     );
 
     if (isAdmin || isStaff) {
       columns.push({
         dataIndex: 'memberId',
+        ellipsis: true,
         filterSearch: true,
         filteredValue: gridState.filters.memberId,
         filters: GridUtils.getMembersForFilter(members),
         render: (_, payment: DueGridDto) => payment.member?.name,
         title: 'Socio',
+        width: 200,
       });
     }
 
@@ -129,28 +138,34 @@ export const DuesPage = () => {
       {
         align: 'center',
         dataIndex: 'category',
+        ellipsis: true,
+        filteredValue: gridState.filters.category,
+        filters: getDueCategoryFilters(),
         render: (category: DueCategoryEnum) => DueCategoryLabel[category],
         title: 'Categoría',
-        width: 150,
+        width: 100,
       },
       {
         align: 'right',
         dataIndex: 'amount',
+        ellipsis: true,
         render: (amount: number) => new Money({ amount }).formatWithCurrency(),
         title: 'Monto inicial',
-        width: 125,
+        width: 100,
       },
       {
         align: 'right',
         dataIndex: 'totalPaidAmount',
+        ellipsis: true,
         render: (totalPaidAmount: number) =>
           new Money({ amount: totalPaidAmount }).formatWithCurrency(),
         title: 'Monto pago',
-        width: 125,
+        width: 100,
       },
       {
         align: 'right',
         dataIndex: 'totalPendingAmount',
+        ellipsis: true,
         render: (totalPendingAmount: number, due: DueGridDto) => {
           const pendingAmountFormatted = new Money({
             amount: totalPendingAmount,
@@ -174,17 +189,18 @@ export const DuesPage = () => {
           );
         },
         title: 'Pendiente',
-        width: 125,
+        width: 100,
       },
       {
         align: 'center',
         dataIndex: 'status',
+        ellipsis: true,
         filterResetToDefaultFilteredValue: true,
         filteredValue: gridState.filters.status,
         filters: getDueStatusColumnFilters(),
         render: (status: DueStatusEnum) => DueStatusLabel[status],
         title: 'Estado',
-        width: 150,
+        width: 125,
       },
     );
 
@@ -216,7 +232,7 @@ export const DuesPage = () => {
                   due.status === DueStatusEnum.VOIDED
                 }
                 tooltip={{ title: 'Cobrar' }}
-                icon={<CreditCardOutlined />}
+                icon={<CreditCardFilled />}
               />
             )}
           </Space.Compact>

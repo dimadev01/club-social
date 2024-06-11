@@ -79,6 +79,10 @@ export class DueMongoRepository
       query.status = { $in: request.filterByStatus };
     }
 
+    if (request.filterByCategory.length > 0) {
+      query.category = { $in: request.filterByCategory };
+    }
+
     const pipeline: Document[] = [
       { $match: query },
       ...this.getPaginatedPipeline(request),

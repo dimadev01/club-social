@@ -1,4 +1,4 @@
-import { EditOutlined } from '@ant-design/icons';
+import { EditFilled } from '@ant-design/icons';
 import { ButtonProps } from 'antd';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
@@ -35,7 +35,7 @@ export const FormEditButton: React.FC<FormEditButtonProps> = ({
   return (
     <Button
       onClick={() => navigate(`${location.pathname}/edit`)}
-      icon={<EditOutlined />}
+      icon={<EditFilled />}
       type="primary"
       htmlType="button"
       {...rest}
