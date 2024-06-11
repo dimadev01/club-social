@@ -26,6 +26,10 @@ export abstract class MeteorMethods {
         throw new MeteorBadRequestError(error.message);
       }
 
+      if (error instanceof Error) {
+        throw new MeteorBadRequestError(error.message);
+      }
+
       if (error instanceof Meteor.Error) {
         throw error;
       }

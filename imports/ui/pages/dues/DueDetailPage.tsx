@@ -5,12 +5,7 @@ import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import {
-  DueCategoryEnum,
-  DueCategoryLabel,
-  DueStatusEnum,
-  DueStatusLabel,
-} from '@domain/dues/due.enum';
+import { DueStatusEnum, DueStatusLabel } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
@@ -22,6 +17,7 @@ import { useDue } from '@ui/hooks/dues/useDue';
 import { useVoidDue } from '@ui/hooks/dues/useVoidDue';
 import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import { useNotificationSuccess } from '@ui/hooks/ui/useNotification';
+import { renderDueCategoryLabel } from '@ui/utils/renderDueCategory';
 
 export const DueDetailPage = () => {
   const { id: dueId } = useParams<{ id?: string }>();
@@ -74,15 +70,11 @@ export const DueDetailPage = () => {
             </Descriptions.Item>
 
             <Descriptions.Item label="Categoría">
-              {due.category === DueCategoryEnum.MEMBERSHIP &&
-                `${DueCategoryLabel[due.category]} (${new DateUtcVo(due.date).monthName()})`}
-
-              {due.category !== DueCategoryEnum.MEMBERSHIP &&
-                DueCategoryLabel[due.category]}
+              {renderDueCategoryLabel(due.category, due.date)}
             </Descriptions.Item>
 
             <Descriptions.Item label="Estado">
-              <Space>{DueStatusLabel[due.status]}</Space>
+              {DueStatusLabel[due.status]}
             </Descriptions.Item>
 
             <Descriptions.Item label="Monto">

@@ -11,6 +11,7 @@ export interface MovementGridDto {
   date: string;
   id: string;
   notes: string | null;
+  paymentId: string | null;
   status: MovementStatusEnum;
   type: MovementTypeEnum;
 }

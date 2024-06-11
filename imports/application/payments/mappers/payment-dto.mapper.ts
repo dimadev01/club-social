@@ -31,6 +31,7 @@ export class PaymentDtoMapper extends MapperDto<Payment, PaymentDto> {
       memberId: payment.memberId,
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
+      status: payment.status,
     };
   }
 }

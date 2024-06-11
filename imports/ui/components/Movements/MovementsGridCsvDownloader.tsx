@@ -4,9 +4,9 @@ import CsvDownloader from 'react-csv-downloader';
 import { GetMovementsGridRequestDto } from '@adapters/dtos/get-movements-grid-request.dto';
 import {
   MovementCategoryLabel,
-  MovementCategoryTypeLabel,
   MovementStatusLabel,
   MovementTypeEnum,
+  MovementTypeLabel,
 } from '@domain/categories/category.enum';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
@@ -82,7 +82,7 @@ export const MovementsGridCsvDownloaderButton: React.FC<Props> = ({
             id: movement.id,
             notes: movement.notes,
             status: MovementStatusLabel[movement.status],
-            type: MovementCategoryTypeLabel[movement.type],
+            type: MovementTypeLabel[movement.type],
           };
         });
       }}

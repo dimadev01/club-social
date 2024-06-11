@@ -76,7 +76,7 @@ export class PaymentMongoRepository
   public async findPaginated(
     request: FindPaginatedPaymentsRequest,
   ): Promise<FindPaginatedResponse<Payment>> {
-    const query = this._getQueryForGridOrTotals(request);
+    const query = this._getQueryByFilters(request);
 
     const pipeline: Document[] = [
       { $match: query },
@@ -87,7 +87,7 @@ export class PaymentMongoRepository
     return super.paginate(pipeline, query);
   }
 
-  private _getQueryForGridOrTotals(
+  private _getQueryByFilters(
     request: FindPaginatedPaymentsFilters,
   ): Mongo.Query<PaymentEntity> {
     const query: Mongo.Query<PaymentEntity> = {
@@ -122,7 +122,7 @@ export class PaymentMongoRepository
   public async getTotals(
     request: FindPaginatedPaymentsFilters,
   ): Promise<GetPaymentsTotalsResponse> {
-    const query = this._getQueryForGridOrTotals(request);
+    const query = this._getQueryByFilters(request);
 
     const [result] = await this.collection
       .rawCollection()

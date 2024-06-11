@@ -40,6 +40,7 @@ export function Grid<T extends object>({
   onTableChange,
   total,
   columns,
+  expandable,
   ...rest
 }: Props<T>): JSX.Element {
   const columnsWidth =
@@ -67,7 +68,12 @@ export function Grid<T extends object>({
         total,
       }}
       rowKey={rowKey}
-      scroll={{ scrollToFirstRowOnChange: true, x: columnsWidth, y: 800 }}
+      scroll={{
+        scrollToFirstRowOnChange: true,
+        x: columnsWidth,
+        y: 600,
+      }}
+      expandable={{ ...expandable, columnWidth: 32 }}
       {...rest}
     />
   );

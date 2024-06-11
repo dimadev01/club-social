@@ -20,6 +20,7 @@ export enum MeteorMethodEnum {
   MovementsGetGrid = 'movements/getGrid',
   MovementsGetOne = 'movements/get',
   MovementsGetToExport = 'movements/getToExport',
+  MovementsGetTotals = 'movements/getTotals',
   MovementsRestore = 'movements/restore',
   MovementsUpdate = 'movements/update',
   MovementsVoid = 'movements/void',

@@ -37,6 +37,7 @@ export class GetMovementsGridUseCase
         date: movement.date.toISOString(),
         id: movement._id,
         notes: movement.notes,
+        paymentId: movement.paymentId,
         status: movement.status,
         type: movement.type,
       })),

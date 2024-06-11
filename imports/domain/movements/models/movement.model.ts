@@ -131,6 +131,12 @@ export class Movement extends Model implements IMovement {
   public static createOne(props: CreateMovement): Result<Movement, Error> {
     const movement = new Movement();
 
+    if (props.category === MovementCategoryEnum.MEMBER_PAYMENT) {
+      return err(
+        new Error('Cannot create a movement with category MEMBER_PAYMENT'),
+      );
+    }
+
     const result = Result.combine([
       movement.setAmount(props.amount),
       movement.setCategory(props.category),
@@ -170,6 +176,10 @@ export class Movement extends Model implements IMovement {
   }
 
   public isUpdatable() {
+    if (this._category === MovementCategoryEnum.MEMBER_PAYMENT) {
+      return false;
+    }
+
     return this.isRegistered();
   }
 
