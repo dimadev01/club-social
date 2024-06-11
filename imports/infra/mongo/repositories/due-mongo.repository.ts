@@ -10,8 +10,10 @@ import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DueStatusEnum } from '@domain/dues/due.enum';
 import {
+  FindPaginatedDuesFilters,
   FindPaginatedDuesRequest,
   FindPendingDues,
+  GetDuesTotalsResponse,
   IDueRepository,
 } from '@domain/dues/due.repository';
 import { Due } from '@domain/dues/models/due.model';
@@ -68,6 +70,67 @@ export class DueMongoRepository
   public async findPaginated(
     request: FindPaginatedDuesRequest,
   ): Promise<FindPaginatedResponse<Due>> {
+    const query = this._getMatchQueryToGridOrExport(request);
+
+    const pipeline: Document[] = [
+      { $match: query },
+      ...this.getPaginatedPipeline(request),
+      ...this.getMemberLookupPipeline(),
+    ];
+
+    return super.paginate(pipeline, query);
+  }
+
+  public async findPending(request: FindPendingDues): Promise<Due[]> {
+    const query: Mongo.Query<DueEntity> = {
+      isDeleted: false,
+      memberId: request.memberId,
+      status: { $in: [DueStatusEnum.PENDING, DueStatusEnum.PARTIALLY_PAID] },
+    };
+
+    const entities = await this.collection.find(query).fetchAsync();
+
+    return entities.map((entity) => this.mapper.toDomain(entity));
+  }
+
+  public async findToExport(request: FindPaginatedDuesRequest): Promise<Due[]> {
+    const query = this._getMatchQueryToGridOrExport(request);
+
+    const pipeline: Document[] = [
+      { $match: query },
+      this.getPaginatedSorterStage(request.sorter),
+      ...this.getMemberLookupPipeline(),
+    ];
+
+    const entities = await this.collection
+      .rawCollection()
+      .aggregate<DueEntity>(pipeline)
+      .toArray();
+
+    return entities.map<Due>((entity) => this.mapper.toDomain(entity));
+  }
+
+  public async getTotals(
+    request: FindPaginatedDuesFilters,
+  ): Promise<GetDuesTotalsResponse> {
+    const query = this._getMatchQueryToGridOrExport(request);
+
+    const [result] = await this.collection
+      .rawCollection()
+      .aggregate([
+        { $match: query },
+        { $group: { _id: null, total: { $sum: '$totalPendingAmount' } } },
+      ])
+      .toArray();
+
+    return {
+      pendingAmount: result?.total ?? 0,
+    };
+  }
+
+  private _getMatchQueryToGridOrExport(
+    request: FindPaginatedDuesFilters,
+  ): Mongo.Query<DueEntity> {
     const query: Mongo.Query<DueEntity> = {
       isDeleted: false,
     };
@@ -98,24 +161,6 @@ export class DueMongoRepository
       };
     }
 
-    const pipeline: Document[] = [
-      { $match: query },
-      ...this.getPaginatedPipeline(request),
-      ...this.getMemberLookupPipeline(),
-    ];
-
-    return super.paginate(pipeline, query);
-  }
-
-  public async findPending(request: FindPendingDues): Promise<Due[]> {
-    const query: Mongo.Query<DueEntity> = {
-      isDeleted: false,
-      memberId: request.memberId,
-      status: { $in: [DueStatusEnum.PENDING, DueStatusEnum.PARTIALLY_PAID] },
-    };
-
-    const entities = await this.collection.find(query).fetchAsync();
-
-    return entities.map((entity) => this.mapper.toDomain(entity));
+    return query;
   }
 }

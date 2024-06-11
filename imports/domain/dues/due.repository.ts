@@ -17,9 +17,11 @@ export interface IDueRepository
     request: FindPaginatedDuesRequest,
   ): Promise<FindPaginatedResponse<Due>>;
   findPending(request: FindPendingDues): Promise<Due[]>;
+  findToExport(request: FindPaginatedDuesRequest): Promise<Due[]>;
+  getTotals(request: FindPaginatedDuesFilters): Promise<GetDuesTotalsResponse>;
 }
 
-export interface FindPaginatedDuesRequest extends FindPaginatedRequest {
+export interface FindPaginatedDuesFilters {
   filterByCategory: DueCategoryEnum[];
   filterByCreatedAt: string[];
   filterByDate: string[];
@@ -27,10 +29,18 @@ export interface FindPaginatedDuesRequest extends FindPaginatedRequest {
   filterByStatus: DueStatusEnum[];
 }
 
+export interface FindPaginatedDuesRequest
+  extends FindPaginatedDuesFilters,
+    FindPaginatedRequest {}
+
 export interface FindPendingDues {
   memberId: string;
 }
 
 export interface FindDuesByPayment {
   paymentId: string;
+}
+
+export interface GetDuesTotalsResponse {
+  pendingAmount: number;
 }
