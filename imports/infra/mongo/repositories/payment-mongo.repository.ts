@@ -6,6 +6,7 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { FindOneById } from '@domain/common/repositories/queryable.repository';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Payment } from '@domain/payments/models/payment.model';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import {
@@ -100,6 +101,18 @@ export class PaymentMongoRepository
     if (request.filterByStatus.length > 0) {
       query.status = { $in: request.filterByStatus as PaymentStatusEnum[] };
     }
+
+    if (request.filterByFrom) {
+      query.createdAt = {
+        $gte: new DateUtcVo(request.filterByFrom).toDate(),
+      };
+    }
+
+    if (request.filterByTo)
+      query.createdAt = {
+        ...query.createdAt,
+        $lte: new DateUtcVo(request.filterByTo).toDate(),
+      };
 
     return query;
   }

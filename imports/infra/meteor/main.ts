@@ -13,9 +13,6 @@ import { MemberMethods } from '@infra/meteor/methods/member.methods';
 import { MovementMethods } from '@infra/meteor/methods/movement.methods';
 import { PaymentMethods } from '@infra/meteor/methods/payment.methods';
 import { MigrationService } from '@infra/migrations/migration.service';
-import { DateUtils } from '@shared/utils/date.utils';
-
-DateUtils.extend();
 
 @injectable()
 export class ServerStartup {

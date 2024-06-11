@@ -3,12 +3,13 @@ import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
 import { GetMembersGridRequestDto } from '@adapters/dtos/get-members-grid-request.dto';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   MemberCategoryLabel,
   MemberStatusLabel,
 } from '@domain/members/member.enum';
-import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
+import { DateFormatEnum } from '@shared/utils/date.utils';
 import { Button } from '@ui/components/Button';
 import { useGetMembersToExport } from '@ui/hooks/members/useGetMembersToExport';
 
@@ -57,7 +58,7 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
           id: 'pendingTotal',
         },
       ]}
-      filename={`club-social-socios-al-${DateUtils.c().format(DateFormatEnum.DATE)}-${DateUtils.c().unix()}.csv`}
+      filename={`club-social-socios-al-${new DateVo().format(DateFormatEnum.DATE)}-${new DateVo().unix()}.csv`}
       // @ts-expect-error
       datas={async () => {
         const data = await getMembersToExport.mutateAsync(request);

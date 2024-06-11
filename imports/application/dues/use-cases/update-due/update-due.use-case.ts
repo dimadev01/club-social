@@ -5,13 +5,13 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { GetDueUseCase } from '@application/dues/use-cases/get-due/get-due.use-case';
 import { UpdateDueRequest } from '@application/dues/use-cases/update-due/update-due.request';
+import { ErrorUtils } from '@domain/common/errors/error.utils';
 import { ModelNotUpdatableError } from '@domain/common/errors/model-not-updatable.error';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { IDueRepository } from '@domain/dues/due.repository';
-import { ErrorUtils } from '@shared/utils/error.utils';
 
 @injectable()
 export class UpdateDueUseCase implements IUseCase<UpdateDueRequest, DueDto> {

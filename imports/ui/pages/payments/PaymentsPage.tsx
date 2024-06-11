@@ -1,16 +1,9 @@
 import { CreditCardFilled } from '@ant-design/icons';
-import {
-  Breadcrumb,
-  Card,
-  DatePicker,
-  Flex,
-  Form,
-  Space,
-  Typography,
-} from 'antd';
+import { Breadcrumb, Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
+import { FilterDropdownProps } from 'antd/es/table/interface';
 import { Dayjs } from 'dayjs';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -27,7 +20,6 @@ import {
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
-import { Button } from '@ui/components/Button';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
@@ -40,11 +32,8 @@ import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { usePaymentsTotals } from '@ui/hooks/payments/usePaymentsTotals';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
+import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 import { useUserContext } from '@ui/providers/UserContext';
-
-type FilterByCreatedAtFormValues = {
-  period: [Dayjs, Dayjs];
-};
 
 export const PaymentsPage = () => {
   const isStaff = useIsStaff();
@@ -68,51 +57,45 @@ export const PaymentsPage = () => {
     gridState.filters.memberId = [member._id];
   }
 
+  const [rangeFilter, setRangeFilter] = useState<[Dayjs, Dayjs] | undefined>(
+    undefined,
+  );
+
   const { data, isLoading, refetch, isRefetching } = useQueryGrid<
     GetPaymentsGridRequestDto,
     PaymentGridDto
   >({
     methodName: MeteorMethodEnum.PaymentsGetGrid,
     request: {
+      filterByFrom: rangeFilter?.[0].toISOString() ?? null,
       filterByMember: gridState.filters.memberId,
-      filterByPeriod: ['', ''],
       filterByStatus: gridState.filters.status as PaymentStatusEnum[],
+      filterByTo: rangeFilter?.[1].toISOString() ?? null,
       limit: gridState.pageSize,
       page: gridState.page,
       sorter: gridState.sorter,
     },
   });
 
-  const { data: paymentTotals, isLoading: isLoadingPaymentTotals } =
-    usePaymentsTotals({
-      filterByMember: gridState.filters.memberId,
-      filterByStatus: gridState.filters.status as PaymentStatusEnum[],
-    });
+  const { data: paymentTotals } = usePaymentsTotals({
+    filterByFrom: rangeFilter?.[0].toISOString() ?? null,
+    filterByMember: gridState.filters.memberId,
+    filterByStatus: gridState.filters.status as PaymentStatusEnum[],
+    filterByTo: rangeFilter?.[1].toISOString() ?? null,
+  });
 
   const expandedRowRender = (payment: PaymentGridDto) => (
     <PaymentDuesGrid dues={payment.dues} />
   );
 
-  const renderCreatedAtFilter = () => (
-    <Form<FilterByCreatedAtFormValues>
-      onFinish={(value) => {
-        console.log(value);
-      }}
-      requiredMark={false}
-      layout="vertical"
-      className="p-4"
-    >
-      <Form.Item name="period" label="Filtrar por fecha">
-        <DatePicker.RangePicker />
-      </Form.Item>
+  const renderCreatedAtFilter = (props: FilterDropdownProps) => (
+    <GridPeriodFilter
+      onChange={(value) => {
+        setRangeFilter(value);
 
-      <Flex justify="space-between">
-        <Button size="small">Cancelar</Button>
-        <Button htmlType="submit" size="small" type="primary">
-          Confirmar
-        </Button>
-      </Flex>
-    </Form>
+        props.confirm({ closeDropdown: true });
+      }}
+    />
   );
 
   const getColumns = (): ColumnProps<PaymentGridDto>[] => {
@@ -122,7 +105,7 @@ export const PaymentsPage = () => {
       {
         dataIndex: 'createdAt',
         ellipsis: true,
-        filterDropdown: () => renderCreatedAtFilter(),
+        filterDropdown: renderCreatedAtFilter,
         fixed: 'left',
         render: (createdAt: string, payment: PaymentGridDto) => (
           <Link to={`${AppUrl.Payments}/${payment.id}`}>
