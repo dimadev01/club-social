@@ -90,7 +90,7 @@ export const MovementsPage = () => {
   const renderSummary = () => (
     <Table.Summary fixed>
       <Table.Summary.Row>
-        <Table.Summary.Cell align="right" index={0} colSpan={4}>
+        <Table.Summary.Cell align="right" index={0} colSpan={5}>
           <Typography.Text strong>
             Total:{' '}
             {new Money({
@@ -156,7 +156,6 @@ export const MovementsPage = () => {
               ellipsis: true,
               filterDropdown: renderCreatedAtFilter,
               filteredValue: gridState.filters.createdAt,
-              fixed: 'left',
               render: (date: string, movement: MovementGridDto) => (
                 <Link to={`${AppUrl.Movements}/${movement.id}`}>
                   {new DateVo(date).format(DateFormatEnum.DDMMYYHHmm)}
