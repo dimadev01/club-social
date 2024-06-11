@@ -29,7 +29,7 @@ export class GetMembersGridUseCase
       items: items.map<MemberGridDto>((paginatedMember) => ({
         category: paginatedMember.member.category,
         id: paginatedMember.member._id,
-        name: paginatedMember.member.name,
+        name: paginatedMember.member.nameLastFirst,
         pendingElectricity: paginatedMember.pendingElectricity,
         pendingGuest: paginatedMember.pendingGuest,
         pendingMembership: paginatedMember.pendingMembership,

@@ -35,7 +35,7 @@ export enum MovementCategoryEnum {
   SERVICE = 'service',
 }
 
-export const MovementCategoryEnumLabel: {
+export const MovementCategoryLabel: {
   [key in MovementCategoryEnum]: string;
 } = {
   [MovementCategoryEnum.COURT_RENTAL]: 'Alquiler de cancha',
@@ -58,7 +58,7 @@ export const MovementCategoryEnumLabel: {
 export const getCategoryFilters = () =>
   Object.values(MovementCategoryEnum)
     .map((category) => ({
-      text: MovementCategoryEnumLabel[category],
+      text: MovementCategoryLabel[category],
       value: category,
     }))
     .sort((a, b) => a.text.localeCompare(b.text));
@@ -108,7 +108,7 @@ export const MovementCategoryTypeFilters = {
 export const getMovementCategoryOptions = (categoryType: MovementTypeEnum) =>
   MovementCategoryTypeFilters[categoryType]
     .map((category) => ({
-      label: MovementCategoryEnumLabel[category],
+      label: MovementCategoryLabel[category],
       value: category,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));

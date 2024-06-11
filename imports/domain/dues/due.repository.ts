@@ -21,6 +21,8 @@ export interface IDueRepository
 
 export interface FindPaginatedDuesRequest extends FindPaginatedRequest {
   filterByCategory: DueCategoryEnum[];
+  filterByCreatedAt: string[];
+  filterByDate: string[];
   filterByMember: string[];
   filterByStatus: DueStatusEnum[];
 }

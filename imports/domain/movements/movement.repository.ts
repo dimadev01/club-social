@@ -21,5 +21,7 @@ export interface IMovementRepository
 
 export interface FindPaginatedMovementsRequest extends FindPaginatedRequest {
   filterByCategory: MovementCategoryEnum[];
+  filterByCreatedAt: string[];
+  filterByDate: string[];
   filterByStatus: MovementStatusEnum[];
 }

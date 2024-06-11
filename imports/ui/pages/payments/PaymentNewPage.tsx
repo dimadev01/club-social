@@ -17,7 +17,7 @@ import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
-import { Button } from '@ui/components/Button';
+import { Button } from '@ui/components/Button/Button';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { Row } from '@ui/components/Layout/Row';
 import { MembersSelect } from '@ui/components/Members/MembersSelect';

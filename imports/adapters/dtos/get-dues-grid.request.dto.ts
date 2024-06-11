@@ -14,6 +14,14 @@ export class GetDuesGridRequestDto
 
   @IsString({ each: true })
   @IsArray()
+  public filterByCreatedAt!: string[];
+
+  @IsString({ each: true })
+  @IsArray()
+  public filterByDate!: string[];
+
+  @IsString({ each: true })
+  @IsArray()
   public filterByMember!: string[];
 
   @IsEnum(DueStatusEnum, { each: true })

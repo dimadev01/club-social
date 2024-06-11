@@ -1,9 +1,12 @@
 import {
-  CreditCardFilled,
-  FilePdfFilled,
+  CreditCardOutlined,
+  FilePdfOutlined,
   LogoutOutlined,
-  MailFilled,
-  NotificationFilled,
+  MailOutlined,
+  NotificationOutlined,
+  SwapOutlined,
+  TeamOutlined,
+  WalletOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
 import {
@@ -18,12 +21,11 @@ import {
 } from 'antd';
 import { ItemType } from 'antd/es/menu/interface';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
-import { FaExchangeAlt, FaFileInvoiceDollar, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
-import { Button } from '@ui/components/Button';
+import { Button } from '@ui/components/Button/Button';
 import { ThemeSelect } from '@ui/components/Layout/ThemeSelect';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
@@ -63,7 +65,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
     if (canReadMembers) {
       items.push({
-        icon: <FaUsers className="!text-lg" />,
+        icon: <TeamOutlined className="!text-lg" />,
         key: AppUrl.Members,
         label: (
           <Link className="no-underline" to={AppUrl.Members}>
@@ -75,7 +77,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
     if (canReadDues) {
       items.push({
-        icon: <FaFileInvoiceDollar className="!text-lg" />,
+        icon: <WalletOutlined className="!text-lg" />,
         key: AppUrl.Dues,
         label: (
           <Link className="no-underline" to={AppUrl.Dues}>
@@ -87,7 +89,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
     if (canReadPayments) {
       items.push({
-        icon: <CreditCardFilled className="!text-lg" />,
+        icon: <CreditCardOutlined className="!text-lg" />,
         key: AppUrl.Payments,
         label: (
           <Link className="no-underline" to={AppUrl.Payments}>
@@ -99,7 +101,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
     if (canReadMovements) {
       items.push({
-        icon: <FaExchangeAlt className="!text-lg" />,
+        icon: <SwapOutlined className="!text-lg" />,
         key: AppUrl.Movements,
         label: (
           <Link className="no-underline" to={AppUrl.Movements}>
@@ -186,7 +188,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
             <Space.Compact>
               <Button
                 tooltip={{ title: 'Reglamento' }}
-                icon={<FilePdfFilled />}
+                icon={<FilePdfOutlined />}
                 htmlType="button"
                 type="text"
                 href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
@@ -194,7 +196,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
               />
               <Button
                 tooltip={{ title: 'Comunicados' }}
-                icon={<NotificationFilled />}
+                icon={<NotificationOutlined />}
                 htmlType="button"
                 type="text"
                 href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
@@ -208,7 +210,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
               <Space.Compact>
                 <Button
                   tooltip={{ title: 'Enviar Email' }}
-                  icon={<MailFilled />}
+                  icon={<MailOutlined />}
                   htmlType="button"
                   type="text"
                   href="mailto:info@clubsocialmontegrande.ar"

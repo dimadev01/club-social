@@ -1,4 +1,4 @@
-import { FileExcelFilled } from '@ant-design/icons';
+import { FileExcelOutlined } from '@ant-design/icons';
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
@@ -10,7 +10,7 @@ import {
   MemberStatusLabel,
 } from '@domain/members/member.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
-import { Button } from '@ui/components/Button';
+import { ExportButton } from '@ui/components/Button/ExportButton';
 import { useGetMembersToExport } from '@ui/hooks/members/useGetMembersToExport';
 
 interface Props {
@@ -79,15 +79,13 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
         }));
       }}
     >
-      <Button
+      <ExportButton
         loading={getMembersToExport.isLoading}
         disabled={getMembersToExport.isLoading}
-        tooltip={{ title: 'Descargar CSV' }}
-        htmlType="button"
-        icon={<FileExcelFilled />}
+        icon={<FileExcelOutlined />}
       >
         Exportar
-      </Button>
+      </ExportButton>
     </CsvDownloader>
   );
 };

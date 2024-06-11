@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { Button } from '@ui/components/Button';
+import { Button } from '@ui/components/Button/Button';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 
 type Props = {
@@ -17,12 +17,7 @@ export const GridNewButton: React.FC<Props> = ({ to, scope }) => {
   return (
     canCreate && (
       <Link to={to}>
-        <Button
-          icon={<PlusOutlined />}
-          htmlType="button"
-          type="primary"
-          tooltip={{ title: 'Nuevo' }}
-        >
+        <Button icon={<PlusOutlined />} htmlType="button" type="primary">
           Nuevo
         </Button>
       </Link>
