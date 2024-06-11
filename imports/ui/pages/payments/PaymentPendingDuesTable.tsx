@@ -32,7 +32,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
 
   const tableSummary = () => {
     const totalPending =
-      pendingDues?.reduce((acc, d) => acc + d.amount, 0) ?? 0;
+      pendingDues?.reduce((acc, d) => acc + d.totalPendingAmount, 0) ?? 0;
 
     const totalDuesToPay =
       formDues
