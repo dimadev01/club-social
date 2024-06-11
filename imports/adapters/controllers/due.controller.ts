@@ -15,7 +15,7 @@ import { CreateDueUseCase } from '@application/dues/use-cases/create-due/create-
 import { GetDueUseCase } from '@application/dues/use-cases/get-due/get-due.use-case';
 import { GetDuesToExportUseCase } from '@application/dues/use-cases/get-dues-export/get-dues-export.use-case';
 import { GetDuesGridUseCase } from '@application/dues/use-cases/get-dues-grid/get-dues-grid.use-case';
-import { GetDuesTotalUseCase } from '@application/dues/use-cases/get-dues-totals/get-dues-totals';
+import { GetDuesTotalUseCase } from '@application/dues/use-cases/get-dues-totals/get-dues-totals.use-case';
 import { GetPendingDuesUseCase } from '@application/dues/use-cases/get-pending-dues/get-pending-dues.use-case';
 import { UpdateDueUseCase } from '@application/dues/use-cases/update-due/update-due.use-case';
 import { VoidDueUseCase } from '@application/dues/use-cases/void-due/void-due.use-case';

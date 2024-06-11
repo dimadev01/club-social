@@ -5,6 +5,10 @@ div#react-target {
   height: 100%;
 }
 
+.cs-ant-app {
+  height: inherit;
+}
+
 .cs-layout {
   @apply min-h-full;
 }
@@ -13,14 +17,6 @@ div#react-target {
   @media (min-width: 992px) {
     margin-left: 260px;
   }
-}
-
-.cs-ant-app {
-  height: inherit;
-}
-
-.ant-table-cell.ant-table-row-expand-icon-cell {
-  @apply bg-gray-50 dark:bg-gray-950;
 }
 
 .cs-menu {
@@ -57,6 +53,7 @@ div#react-target {
 
 .cs-sider.ant-layout-sider {
   min-height: 100vh;
+  // @apply dark:bg-gray-400;
 
   @media (min-width: 992px) {
     bottom: 0;
@@ -70,4 +67,8 @@ div#react-target {
     display: flex;
     flex-direction: column;
   }
+}
+
+.ant-table-cell.ant-table-row-expand-icon-cell {
+  @apply bg-gray-50 dark:bg-gray-950;
 }

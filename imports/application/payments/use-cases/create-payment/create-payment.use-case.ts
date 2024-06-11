@@ -15,6 +15,8 @@ import { IDueRepository } from '@domain/dues/due.repository';
 import { IMemberCreditRepository } from '@domain/members/member-credit.repository';
 import { MemberCreditTypeEnum } from '@domain/members/member.enum';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
+import { Movement } from '@domain/movements/models/movement.model';
+import { IMovementRepository } from '@domain/movements/movement.repository';
 import { DuePaidError } from '@domain/payments/errors/due-paid.error';
 import { ExistingPaymentError } from '@domain/payments/errors/existing-payment.error';
 import { Payment } from '@domain/payments/models/payment.model';
@@ -35,6 +37,8 @@ export class CreatePaymentUseCase
     private readonly _duePort: IDueRepository,
     @inject(DIToken.IMemberCreditRepository)
     private readonly _memberCreditRepository: IMemberCreditRepository,
+    @inject(DIToken.IMovementRepository)
+    private readonly _movementRepository: IMovementRepository,
     private readonly _getPaymentUseCase: GetPaymentUseCase,
   ) {}
 
@@ -135,6 +139,22 @@ export class CreatePaymentUseCase
 
             await this._duePort.updateWithSession(due, unitOfWork);
           }),
+        );
+
+        const movement = Movement.createPayment({
+          amount: newPayment.amount,
+          date: newPayment.date,
+          notes: newPayment.notes,
+          paymentId: newPayment._id,
+        });
+
+        if (movement.isErr()) {
+          throw movement.error;
+        }
+
+        await this._movementRepository.insertWithSession(
+          movement.value,
+          unitOfWork,
         );
 
         newPaymentId = newPayment._id;

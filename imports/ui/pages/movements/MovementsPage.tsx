@@ -1,5 +1,5 @@
 import { SwapOutlined } from '@ant-design/icons';
-import { Breadcrumb, Card, Space, Typography } from 'antd';
+import { Breadcrumb, Card, Space, Table, Typography } from 'antd';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -13,11 +13,15 @@ import {
   MovementStatusEnum,
   MovementStatusLabel,
   MovementTypeEnum,
+  MovementTypeLabel,
   getCategoryFilters,
   getMovementStatusColumnFilters,
+  getMovementTypeOptions,
 } from '@domain/categories/category.enum';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { FindPaginatedMovementsFilters } from '@domain/movements/movement.repository';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -26,6 +30,7 @@ import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
 import { MovementsGridCsvDownloaderButton } from '@ui/components/Movements/MovementsGridCsvDownloader';
+import { useMovementsTotals } from '@ui/hooks/movements/useMovementsTotals';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
 import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 
@@ -36,15 +41,21 @@ export const MovementsPage = () => {
       createdAt: [],
       date: [],
       status: [MovementStatusEnum.REGISTERED],
+      type: [],
     },
     defaultSorter: { createdAt: 'descend' },
   });
 
-  const gridRequest: GetMovementsGridRequestDto = {
+  const gridRequestFilters: FindPaginatedMovementsFilters = {
     filterByCategory: gridState.filters.category as MovementCategoryEnum[],
     filterByCreatedAt: gridState.filters.createdAt,
     filterByDate: gridState.filters.date,
     filterByStatus: gridState.filters.status as MovementStatusEnum[],
+    filterByType: gridState.filters.type as MovementTypeEnum[],
+  };
+
+  const gridRequest: GetMovementsGridRequestDto = {
+    ...gridRequestFilters,
     limit: gridState.pageSize,
     page: gridState.page,
     sorter: gridState.sorter,
@@ -57,6 +68,8 @@ export const MovementsPage = () => {
     methodName: MeteorMethodEnum.MovementsGetGrid,
     request: gridRequest,
   });
+
+  const { data: movementsTotals } = useMovementsTotals(gridRequestFilters);
 
   const renderCreatedAtFilter = (props: FilterDropdownProps) => (
     <GridPeriodFilter
@@ -72,6 +85,22 @@ export const MovementsPage = () => {
       value={gridState.filters.date}
       props={props}
     />
+  );
+
+  const renderSummary = () => (
+    <Table.Summary fixed>
+      <Table.Summary.Row>
+        <Table.Summary.Cell align="right" index={0} colSpan={4}>
+          <Typography.Text strong>
+            Total:{' '}
+            {new Money({
+              amount: movementsTotals?.amount ?? 0,
+            }).formatWithCurrency()}
+          </Typography.Text>
+        </Table.Summary.Cell>
+        <Table.Summary.Cell index={1} colSpan={3} />
+      </Table.Summary.Row>
+    </Table.Summary>
   );
 
   return (
@@ -100,12 +129,17 @@ export const MovementsPage = () => {
         }
       >
         <Grid<MovementGridDto>
+          summary={renderSummary}
           total={data?.totalCount}
           state={gridState}
           onTableChange={onTableChange}
           loading={isLoading}
           dataSource={data?.items}
           rowClassName={(movement) => {
+            if (movement.status === MovementStatusEnum.VOIDED) {
+              return 'bg-gray-100 dark:bg-gray-900';
+            }
+
             if (movement.type === MovementTypeEnum.EXPENSE) {
               return 'bg-red-100 dark:bg-red-900';
             }
@@ -125,13 +159,13 @@ export const MovementsPage = () => {
               fixed: 'left',
               render: (date: string, movement: MovementGridDto) => (
                 <Link to={`${AppUrl.Movements}/${movement.id}`}>
-                  {new DateUtcVo(date).format(DateFormatEnum.DDMMYYHHmm)}
+                  {new DateVo(date).format(DateFormatEnum.DDMMYYHHmm)}
                 </Link>
               ),
               sortOrder: gridState.sorter.createdAt,
               sorter: true,
               title: 'Fecha de creación',
-              width: 175,
+              width: 125,
             },
             {
               dataIndex: 'date',
@@ -140,7 +174,17 @@ export const MovementsPage = () => {
               filteredValue: gridState.filters.date,
               render: (date: string) => new DateUtcVo(date).format(),
               title: 'Fecha de movimiento',
-              width: 120,
+              width: 100,
+            },
+            {
+              align: 'center',
+              dataIndex: 'type',
+              ellipsis: true,
+              filteredValue: gridState.filters.type,
+              filters: getMovementTypeOptions(),
+              render: (type: MovementTypeEnum) => MovementTypeLabel[type],
+              title: 'Tipo',
+              width: 75,
             },
             {
               align: 'center',
@@ -151,7 +195,7 @@ export const MovementsPage = () => {
               render: (category: MovementCategoryEnum) =>
                 MovementCategoryLabel[category],
               title: 'Categoría',
-              width: 125,
+              width: 100,
             },
             {
               align: 'right',
@@ -159,7 +203,18 @@ export const MovementsPage = () => {
               ellipsis: true,
               render: (amount) => new Money({ amount }).formatWithCurrency(),
               title: 'Importe',
-              width: 100,
+              width: 75,
+            },
+            {
+              align: 'center',
+              dataIndex: 'paymentId',
+              ellipsis: true,
+              render: (paymentId: string | null) =>
+                paymentId && (
+                  <Link to={`${AppUrl.Payments}/${paymentId}`}>Ver Pago</Link>
+                ),
+              title: 'Pago',
+              width: 75,
             },
             {
               align: 'center',

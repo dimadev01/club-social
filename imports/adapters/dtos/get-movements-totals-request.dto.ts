@@ -1,16 +1,13 @@
 import { IsArray, IsEnum, IsString } from 'class-validator';
 
-import { GetGridRequestDto } from '@adapters/common/dtos/get-grid-request.dto';
 import {
   MovementCategoryEnum,
   MovementStatusEnum,
-  MovementTypeEnum,
 } from '@domain/categories/category.enum';
-import { FindPaginatedMovementsRequest } from '@domain/movements/movement.repository';
+import { FindPaginatedMovementsFilters } from '@domain/movements/movement.repository';
 
-export class GetMovementsGridRequestDto
-  extends GetGridRequestDto
-  implements FindPaginatedMovementsRequest
+export class GetMovementsTotalsRequestDto
+  implements FindPaginatedMovementsFilters
 {
   @IsEnum(MovementCategoryEnum, { each: true })
   @IsArray()
@@ -27,8 +24,4 @@ export class GetMovementsGridRequestDto
   @IsEnum(MovementStatusEnum, { each: true })
   @IsArray()
   public filterByStatus!: MovementStatusEnum[];
-
-  @IsEnum(MovementTypeEnum, { each: true })
-  @IsArray()
-  public filterByType!: MovementTypeEnum[];
 }

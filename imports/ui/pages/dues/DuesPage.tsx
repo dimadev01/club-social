@@ -17,7 +17,6 @@ import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   DueCategoryEnum,
-  DueCategoryLabel,
   DueStatusEnum,
   DueStatusLabel,
   getDueCategoryFilters,
@@ -39,17 +38,21 @@ import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
 import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
+import { useIsMember } from '@ui/hooks/auth/useIsMember';
 import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useDuesTotals } from '@ui/hooks/dues/useDuesTotals';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
 import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 import { useUserContext } from '@ui/providers/UserContext';
+import { renderDueCategoryLabel } from '@ui/utils/renderDueCategory';
 
 export const DuesPage = () => {
   const isStaff = useIsStaff();
 
   const isAdmin = useIsAdmin();
+
+  const isMember = useIsMember();
 
   const { member } = useUserContext();
 
@@ -147,7 +150,7 @@ export const DuesPage = () => {
         sortOrder: gridState.sorter.createdAt,
         sorter: true,
         title: 'Fecha de creación',
-        width: 175,
+        width: 125,
       },
       {
         dataIndex: 'date',
@@ -180,7 +183,8 @@ export const DuesPage = () => {
         ellipsis: true,
         filteredValue: gridState.filters.category,
         filters: getDueCategoryFilters(),
-        render: (category: DueCategoryEnum) => DueCategoryLabel[category],
+        render: (category: DueCategoryEnum, due) =>
+          renderDueCategoryLabel(category, due.date),
         title: 'Categoría',
         width: 100,
       },
@@ -289,21 +293,37 @@ export const DuesPage = () => {
     return columns;
   };
 
-  const renderSummary = () => (
-    <Table.Summary fixed>
-      <Table.Summary.Row>
-        <Table.Summary.Cell align="right" index={0} colSpan={8}>
-          <Typography.Text strong>
-            Total Pendiente:{' '}
-            {new Money({
-              amount: duesTotals?.pendingAmount ?? 0,
-            }).formatWithCurrency()}
-          </Typography.Text>
-        </Table.Summary.Cell>
-        <Table.Summary.Cell index={1} colSpan={2} />
-      </Table.Summary.Row>
-    </Table.Summary>
-  );
+  const renderSummary = () => {
+    let totalPendingColSpan = 8;
+
+    let restColSpan = 2;
+
+    if (isMember) {
+      totalPendingColSpan = 7;
+
+      restColSpan = 1;
+    }
+
+    return (
+      <Table.Summary fixed>
+        <Table.Summary.Row>
+          <Table.Summary.Cell
+            align="right"
+            index={0}
+            colSpan={totalPendingColSpan}
+          >
+            <Typography.Text strong>
+              Total Pendiente:{' '}
+              {new Money({
+                amount: duesTotals?.pendingAmount ?? 0,
+              }).formatWithCurrency()}
+            </Typography.Text>
+          </Table.Summary.Cell>
+          <Table.Summary.Cell index={1} colSpan={restColSpan} />
+        </Table.Summary.Row>
+      </Table.Summary>
+    );
+  };
 
   return (
     <>
@@ -336,7 +356,7 @@ export const DuesPage = () => {
           expandable={{
             expandedRowRender,
           }}
-          summary={() => renderSummary()}
+          summary={renderSummary}
           columns={getColumns()}
           rowClassName={(due) => {
             if (due.status === DueStatusEnum.PENDING) {

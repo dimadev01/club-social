@@ -5,6 +5,7 @@ import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { MovementController } from '@adapters/controllers/movement.controller';
 import { CreateMovementRequestDto } from '@adapters/dtos/create-movement-request.dto';
 import { GetMovementsGridRequestDto } from '@adapters/dtos/get-movements-grid-request.dto';
+import { GetMovementsTotalsRequestDto } from '@adapters/dtos/get-movements-totals-request.dto';
 import { UpdateMovementRequestDto } from '@adapters/dtos/update-movement-request.dto';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
 import { VoidMovementMethodRequestDto } from '@infra/meteor/dtos/void-movement-method-request.dto';
@@ -25,6 +26,9 @@ export class MovementMethods extends MeteorMethods {
         this.execute(this._controller.create.bind(this._controller), req),
       [MeteorMethodEnum.MovementsUpdate]: (req: UpdateMovementRequestDto) =>
         this.execute(this._controller.update.bind(this._controller), req),
+      [MeteorMethodEnum.MovementsGetTotals]: (
+        req: GetMovementsTotalsRequestDto,
+      ) => this.execute(this._controller.getTotals.bind(this._controller), req),
       [MeteorMethodEnum.MovementsGetToExport]: (
         req: GetMovementsGridRequestDto,
       ) =>

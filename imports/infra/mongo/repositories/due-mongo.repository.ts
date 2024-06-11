@@ -70,7 +70,7 @@ export class DueMongoRepository
   public async findPaginated(
     request: FindPaginatedDuesRequest,
   ): Promise<FindPaginatedResponse<Due>> {
-    const query = this._getMatchQueryToGridOrExport(request);
+    const query = this._getQueryByFilters(request);
 
     const pipeline: Document[] = [
       { $match: query },
@@ -94,7 +94,7 @@ export class DueMongoRepository
   }
 
   public async findToExport(request: FindPaginatedDuesRequest): Promise<Due[]> {
-    const query = this._getMatchQueryToGridOrExport(request);
+    const query = this._getQueryByFilters(request);
 
     const pipeline: Document[] = [
       { $match: query },
@@ -113,7 +113,7 @@ export class DueMongoRepository
   public async getTotals(
     request: FindPaginatedDuesFilters,
   ): Promise<GetDuesTotalsResponse> {
-    const query = this._getMatchQueryToGridOrExport(request);
+    const query = this._getQueryByFilters(request);
 
     const [result] = await this.collection
       .rawCollection()
@@ -128,7 +128,7 @@ export class DueMongoRepository
     };
   }
 
-  private _getMatchQueryToGridOrExport(
+  private _getQueryByFilters(
     request: FindPaginatedDuesFilters,
   ): Mongo.Query<DueEntity> {
     const query: Mongo.Query<DueEntity> = {

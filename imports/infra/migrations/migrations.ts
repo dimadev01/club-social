@@ -1,10 +1,15 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
 import invariant from 'tiny-invariant';
 import { container } from 'tsyringe';
 
-import { MovementStatusEnum } from '@domain/categories/category.enum';
+import {
+  MovementCategoryEnum,
+  MovementStatusEnum,
+  MovementTypeEnum,
+} from '@domain/categories/category.enum';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import {
   PaymentDueSourceEnum,
@@ -18,6 +23,7 @@ import { MemberMongoCollection } from '@infra/mongo/collections/member.collectio
 import { MovementCollection } from '@infra/mongo/collections/movement.collection';
 import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
 import { UserMongoCollection } from '@infra/mongo/collections/user.collection';
+import { MovementEntity } from '@infra/mongo/entities/movement.entity';
 import { DateUtils } from '@shared/utils/date.utils';
 
 // @ts-expect-error
@@ -450,4 +456,69 @@ Migrations.add({
     next();
   }),
   version: 22,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const paymentsCollection = container.resolve(PaymentCollection);
+
+    const movementsCollection = container.resolve(MovementCollection);
+
+    const payments = await paymentsCollection.find().fetchAsync();
+
+    await Promise.all(
+      payments.map(async (payment) => {
+        const movement: MovementEntity = {
+          _id: Random.id(),
+          amount: payment.amount,
+          category: MovementCategoryEnum.MEMBER_PAYMENT,
+          createdAt: payment.createdAt,
+          date: payment.date,
+          notes: payment.notes,
+          status: MovementStatusEnum.REGISTERED,
+          type: MovementTypeEnum.INCOME,
+          createdBy: payment.createdBy,
+          deletedAt: payment.deletedAt,
+          deletedBy: payment.deletedBy,
+          isDeleted: payment.isDeleted,
+          updatedAt: payment.updatedAt,
+          updatedBy: payment.updatedBy,
+          paymentId: payment._id,
+          employeeId: null,
+          professorId: null,
+          serviceId: null,
+          voidedAt: null,
+          voidedBy: null,
+          voidReason: null,
+        };
+
+        await movementsCollection.insertAsync(movement);
+      }),
+    );
+
+    next();
+  }),
+  version: 23,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const movementsCollection = container.resolve(MovementCollection);
+
+    await movementsCollection.createIndexAsync(
+      { paymentId: 1 },
+      { name: 'm_pi' },
+    );
+
+    next();
+  }),
+  version: 24,
 });
