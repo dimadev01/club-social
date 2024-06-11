@@ -112,7 +112,6 @@ export const PaymentsPage = () => {
         ellipsis: true,
         filterDropdown: renderCreatedAtFilter,
         filteredValue: gridState.filters.createdAt,
-        fixed: 'left',
         render: (createdAt: string, payment: PaymentGridDto) => (
           <Link to={`${AppUrl.Payments}/${payment.id}`}>
             {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}

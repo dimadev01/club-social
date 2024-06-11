@@ -27,7 +27,9 @@ export const AntProvider: React.FC<PropsWithChildren> = ({ children }) => {
           },
           Layout: {
             lightSiderBg: '#f8f9fd',
+            lightTriggerBg: '#f8f9fd',
             siderBg: '#111111',
+            triggerBg: '#111111',
           },
           Menu: {
             itemBg: 'transparent',

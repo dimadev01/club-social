@@ -98,7 +98,7 @@ export const MovementsPage = () => {
             }).formatWithCurrency()}
           </Typography.Text>
         </Table.Summary.Cell>
-        <Table.Summary.Cell index={1} colSpan={3} />
+        <Table.Summary.Cell index={1} colSpan={4} />
       </Table.Summary.Row>
     </Table.Summary>
   );
@@ -156,7 +156,6 @@ export const MovementsPage = () => {
               ellipsis: true,
               filterDropdown: renderCreatedAtFilter,
               filteredValue: gridState.filters.createdAt,
-              fixed: 'left',
               render: (date: string, movement: MovementGridDto) => (
                 <Link to={`${AppUrl.Movements}/${movement.id}`}>
                   {new DateVo(date).format(DateFormatEnum.DDMMYYHHmm)}

@@ -15,7 +15,6 @@ import {
   Flex,
   Image,
   Menu,
-  Row,
   Space,
   Typography,
 } from 'antd';
@@ -24,8 +23,10 @@ import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
+import { Row } from '@ui/components/Layout/Row';
 import { ThemeSelect } from '@ui/components/Layout/ThemeSelect';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
@@ -47,18 +48,15 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
   const { theme } = useThemeContext();
 
-  const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(true);
-
-  const [isMenuResponsiveMode, setIsMenuResponsiveMode] =
-    useState<boolean>(false);
-
-  const pathnameKey = `/${window.location.pathname.split('/')[1]}`;
-
-  const [menuKey, setMenuKey] = useState<string>(pathnameKey);
+  const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(
+    LocalStorageUtils.get('isMenuCollapsed') ?? false,
+  );
 
   useEffect(() => {
-    setMenuKey(pathnameKey);
-  }, [pathnameKey]);
+    LocalStorageUtils.set('isMenuCollapsed', isMenuCollapsed);
+  }, [isMenuCollapsed]);
+
+  const pathnameKey = `/${window.location.pathname.split('/')[1]}`;
 
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
@@ -117,53 +115,49 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const userName = `${user.profile?.firstName} ${user.profile?.lastName}`;
 
   return (
-    <AntLayout hasSider className="cs-layout">
+    <AntLayout hasSider className="flex min-h-screen flex-col">
       <AntLayout.Sider
         collapsed={isMenuCollapsed}
         onCollapse={setIsMenuCollapsed}
-        breakpoint="lg"
-        collapsedWidth="0"
+        collapsible
         className="cs-sider"
-        width={260}
+        width={200}
         theme={theme}
-        onBreakpoint={(broken) => setIsMenuResponsiveMode(broken)}
       >
         <Image
-          wrapperClassName="py-8 px-16 w-full"
+          wrapperClassName="my-8 ml-[.475rem]"
+          className="mx-auto max-w-[128px]"
           preview={false}
           src="/images/logo.png"
           alt="Rixsus Logo"
         />
 
-        <div className="mb-20 px-8">
-          <Row align="middle" wrap={false}>
-            <Col flex={1} className="pl-4">
-              <Typography.Text className="block text-base font-light">
-                Hola,
-              </Typography.Text>
+        {!isMenuCollapsed && (
+          <div className="mb-12 px-8">
+            <Row align="middle" wrap={false}>
+              <Col flex={1} className="pl-4">
+                <Typography.Text className="block text-base font-light">
+                  Hola,
+                </Typography.Text>
 
-              <Typography.Text className="block text-base font-medium">
-                {userName}
-              </Typography.Text>
-            </Col>
-          </Row>
-        </div>
+                <Typography.Text className="block text-base font-medium">
+                  {userName}
+                </Typography.Text>
+              </Col>
+            </Row>
+          </div>
+        )}
 
         <Menu
           className="cs-menu"
-          selectedKeys={[menuKey]}
-          onClick={({ key }) => {
-            setMenuKey(key);
-
-            if (isMenuResponsiveMode) {
-              setIsMenuCollapsed(true);
-            }
-          }}
+          mode="inline"
+          defaultSelectedKeys={[pathnameKey]}
           items={getMenuItems()}
         />
 
         <Menu
-          className="cs-menu !mb-8 mt-auto"
+          className="cs-menu mt-auto"
+          mode="inline"
           items={[
             {
               icon: <LogoutOutlined className="!text-lg" />,
