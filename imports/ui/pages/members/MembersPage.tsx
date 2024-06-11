@@ -1,7 +1,10 @@
-import { CreditCardOutlined, TeamOutlined } from '@ant-design/icons';
+import {
+  CreditCardOutlined,
+  TeamOutlined,
+  WalletOutlined,
+} from '@ant-design/icons';
 import { Breadcrumb, Card, Space } from 'antd';
 import React from 'react';
-import { FaFileInvoiceDollar } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -211,7 +214,7 @@ export const MembersPage = () => {
                 <Space.Compact size="small">
                   <Button
                     type="text"
-                    icon={<FaFileInvoiceDollar />}
+                    icon={<WalletOutlined />}
                     onClick={() =>
                       navigate(
                         UrlUtils.navigate(AppUrl.Dues, {
