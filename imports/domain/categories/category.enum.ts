@@ -111,3 +111,11 @@ export const MovementCategoryTypeFilters = {
     MovementCategoryEnum.EMPLOYEE,
   ],
 };
+
+export const getMovementCategoryOptions = (categoryType: MovementTypeEnum) =>
+  MovementCategoryTypeFilters[categoryType]
+    .map((category) => ({
+      label: MovementCategoryLabel[category],
+      value: category,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));

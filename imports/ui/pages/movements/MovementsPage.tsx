@@ -90,7 +90,7 @@ export const MovementsPage = () => {
   const renderSummary = () => (
     <Table.Summary fixed>
       <Table.Summary.Row>
-        <Table.Summary.Cell align="right" index={0} colSpan={4}>
+        <Table.Summary.Cell align="right" index={0} colSpan={5}>
           <Typography.Text strong>
             Total:{' '}
             {new Money({
@@ -98,7 +98,7 @@ export const MovementsPage = () => {
             }).formatWithCurrency()}
           </Typography.Text>
         </Table.Summary.Cell>
-        <Table.Summary.Cell index={1} colSpan={4} />
+        <Table.Summary.Cell index={1} colSpan={3} />
       </Table.Summary.Row>
     </Table.Summary>
   );
