@@ -1,4 +1,4 @@
-import { CreditCardOutlined } from '@ant-design/icons';
+import { CreditCardFilled } from '@ant-design/icons';
 import {
   Breadcrumb,
   Card,
@@ -216,7 +216,7 @@ export const PaymentsPage = () => {
       <Card
         title={
           <Space>
-            <CreditCardOutlined />
+            <CreditCardFilled />
             <span>Pagos</span>
           </Space>
         }

@@ -118,7 +118,7 @@ export class PaymentMongoRepository
       .toArray();
 
     return {
-      amount: result?.total ?? 0,
+      amount: result.total ?? 0,
     };
   }
 }
