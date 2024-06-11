@@ -1,10 +1,10 @@
-import { EditFilled } from '@ant-design/icons';
+import { EditOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
-import { Button } from '@ui/components/Button';
+import { Button } from '@ui/components/Button/Button';
 import { useIsInRoleFn } from '@ui/hooks/auth/useIsInRole';
 import { useNavigate } from '@ui/hooks/ui/useNavigate';
 
@@ -35,7 +35,7 @@ export const FormEditButton: React.FC<FormEditButtonProps> = ({
   return (
     <Button
       onClick={() => navigate(`${location.pathname}/edit`)}
-      icon={<EditFilled />}
+      icon={<EditOutlined />}
       type="primary"
       htmlType="button"
       {...rest}

@@ -1,7 +1,7 @@
-import { CreditCardFilled } from '@ant-design/icons';
+import { CreditCardOutlined, TeamOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space } from 'antd';
 import React from 'react';
-import { FaFileInvoiceDollar, FaUsers } from 'react-icons/fa';
+import { FaFileInvoiceDollar } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
@@ -19,7 +19,7 @@ import {
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
-import { Button } from '@ui/components/Button';
+import { Button } from '@ui/components/Button/Button';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
@@ -33,7 +33,7 @@ import { useNavigate } from '@ui/hooks/ui/useNavigate';
 export const MembersPage = () => {
   const navigate = useNavigate();
 
-  const { state: gridState, onTableChange } = useTable<MemberGridDto>({
+  const { gridState, onTableChange } = useTable<MemberGridDto>({
     defaultFilters: {
       category: [],
       id: [],
@@ -48,9 +48,9 @@ export const MembersPage = () => {
   const sorter = { ...gridState.sorter };
 
   if (sorter.id) {
-    sorter.firstName = sorter.id;
-
     sorter.lastName = sorter.id;
+
+    sorter.firstName = sorter.id;
 
     delete sorter.id;
   }
@@ -83,7 +83,7 @@ export const MembersPage = () => {
       <Card
         title={
           <Space>
-            <FaUsers />
+            <TeamOutlined />
             <span>Socios</span>
           </Space>
         }
@@ -103,7 +103,7 @@ export const MembersPage = () => {
           dataSource={data?.items}
           rowClassName={(member) => {
             if (member.pendingTotal > 0) {
-              return 'bg-red-100 dark:bg-red-950';
+              return 'bg-red-100 dark:bg-red-900';
             }
 
             return '';
@@ -223,7 +223,7 @@ export const MembersPage = () => {
                   />
                   <Button
                     type="text"
-                    icon={<CreditCardFilled />}
+                    icon={<CreditCardOutlined />}
                     onClick={() =>
                       navigate(
                         UrlUtils.navigate(AppUrl.Payments, {

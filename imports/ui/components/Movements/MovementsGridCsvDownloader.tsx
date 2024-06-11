@@ -1,16 +1,18 @@
-import { FileExcelFilled } from '@ant-design/icons';
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
 import { GetMovementsGridRequestDto } from '@adapters/dtos/get-movements-grid-request.dto';
 import {
+  MovementCategoryLabel,
   MovementCategoryTypeLabel,
   MovementStatusLabel,
+  MovementTypeEnum,
 } from '@domain/categories/category.enum';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
-import { Button } from '@ui/components/Button';
+import { ExportButton } from '@ui/components/Button/ExportButton';
 import { useGetMovementsToExport } from '@ui/hooks/movements/useGetMovementsToExport';
 
 interface Props {
@@ -38,6 +40,10 @@ export const MovementsGridCsvDownloaderButton: React.FC<Props> = ({
           id: 'date',
         },
         {
+          displayName: 'Categoría',
+          id: 'category',
+        },
+        {
           displayName: 'Tipo',
           id: 'type',
         },
@@ -59,28 +65,34 @@ export const MovementsGridCsvDownloaderButton: React.FC<Props> = ({
       datas={async () => {
         const data = await getMovementsToExport.mutateAsync(request);
 
-        return data.map((movement) => ({
-          amount: new Money({ amount: movement.amount }).toInteger(),
-          createdAt: new DateVo(movement.createdAt).format(
-            DateFormatEnum.DDMMYYHHmm,
-          ),
-          date: new DateVo(movement.date).format(DateFormatEnum.DDMMYYHHmm),
-          id: movement.id,
-          notes: movement.notes,
-          status: MovementStatusLabel[movement.status],
-          type: MovementCategoryTypeLabel[movement.type],
-        }));
+        return data.map((movement) => {
+          let amount = new Money({ amount: movement.amount }).toInteger();
+
+          if (movement.type === MovementTypeEnum.EXPENSE) {
+            amount *= -1;
+          }
+
+          return {
+            amount,
+            category: MovementCategoryLabel[movement.category],
+            createdAt: new DateVo(movement.createdAt).format(
+              DateFormatEnum.DDMMYYHHmm,
+            ),
+            date: new DateUtcVo(movement.date).format(DateFormatEnum.DDMMYYYY),
+            id: movement.id,
+            notes: movement.notes,
+            status: MovementStatusLabel[movement.status],
+            type: MovementCategoryTypeLabel[movement.type],
+          };
+        });
       }}
     >
-      <Button
+      <ExportButton
         loading={getMovementsToExport.isLoading}
         disabled={getMovementsToExport.isLoading}
-        tooltip={{ title: 'Descargar CSV' }}
-        htmlType="button"
-        icon={<FileExcelFilled />}
       >
         Exportar
-      </Button>
+      </ExportButton>
     </CsvDownloader>
   );
 };

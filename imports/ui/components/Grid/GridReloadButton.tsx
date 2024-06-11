@@ -1,7 +1,7 @@
 import { ReloadOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import { Button } from '@ui/components/Button';
+import { Button } from '@ui/components/Button/Button';
 
 type Props = {
   isRefetching: boolean;

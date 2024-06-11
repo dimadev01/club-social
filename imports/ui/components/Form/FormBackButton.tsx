@@ -2,7 +2,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd';
 import React from 'react';
 
-import { Button } from '@ui/components/Button';
+import { Button } from '@ui/components/Button/Button';
 import { useNavigate } from '@ui/hooks/ui/useNavigate';
 
 export type FormBackButtonProps = ButtonProps & {

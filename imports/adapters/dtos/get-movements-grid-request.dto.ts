@@ -1,4 +1,4 @@
-import { IsArray, IsEnum } from 'class-validator';
+import { IsArray, IsEnum, IsString } from 'class-validator';
 
 import { GetGridRequestDto } from '@adapters/common/dtos/get-grid-request.dto';
 import {
@@ -11,6 +11,14 @@ export class GetMovementsGridRequestDto
   extends GetGridRequestDto
   implements FindPaginatedMovementsRequest
 {
+  @IsString({ each: true })
+  @IsArray()
+  public filterByCreatedAt!: string[];
+
+  @IsString({ each: true })
+  @IsArray()
+  public filterByDate!: string[];
+
   @IsEnum(MovementCategoryEnum, { each: true })
   @IsArray()
   public filterByCategory!: MovementCategoryEnum[];

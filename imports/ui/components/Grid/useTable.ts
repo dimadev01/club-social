@@ -22,13 +22,13 @@ interface UseTableProps {
 }
 
 interface UseTable<T> {
+  gridState: GridState;
   onTableChange: (
     pagination: TablePaginationConfig,
     filters: Record<string, FilterValue | null>,
     sorter: SorterResult<T> | SorterResult<T>[],
   ) => void;
-  setState: React.Dispatch<React.SetStateAction<GridState>>;
-  state: GridState;
+  setGridState: React.Dispatch<React.SetStateAction<GridState>>;
 }
 
 export function useTable<T>({
@@ -94,7 +94,7 @@ export function useTable<T>({
     return filters;
   };
 
-  const [state, setState] = useState<GridState>({
+  const [gridState, setGridState] = useState<GridState>({
     filters: getFilters(parsedQs.filters),
     page: parsedQs.page ? Number(parsedQs.page) : 1,
     pageSize: parsedQs.pageSize ? Number(parsedQs.pageSize) : DEFAULT_PAGE_SIZE,
@@ -102,22 +102,22 @@ export function useTable<T>({
   });
 
   useEffect(() => {
-    setSearchParams(UrlUtils.stringify(state), { replace: true });
-  }, [state, setSearchParams]);
+    setSearchParams(UrlUtils.stringify(gridState), { replace: true });
+  }, [gridState, setSearchParams]);
 
   const onTableChange = (
     antPagination: TablePaginationConfig,
     antFilters: Record<string, FilterValue | null>,
     antSorter: SorterResult<T> | SorterResult<T>[],
   ) => {
-    setState({
-      ...state,
+    setGridState({
+      ...gridState,
       filters: getFilters(antFilters),
       page: antPagination.current ?? 1,
       pageSize: antPagination.pageSize ?? DEFAULT_PAGE_SIZE,
-      sorter: getSorter(antSorter, state),
+      sorter: getSorter(antSorter, gridState),
     });
   };
 
-  return { onTableChange, setState, state };
+  return { gridState, onTableChange, setGridState };
 }

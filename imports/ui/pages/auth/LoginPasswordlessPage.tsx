@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
-import { Button } from '@ui/components/Button';
+import { Button } from '@ui/components/Button/Button';
 import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
 import { useNotificationError } from '@ui/hooks/ui/useNotification';
 

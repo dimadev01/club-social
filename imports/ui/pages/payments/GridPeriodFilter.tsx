@@ -1,63 +1,75 @@
-import { ClearOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { Card, DatePicker, Flex, Space, TimeRangePickerProps } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
-import React, { useState } from 'react';
+import { FilterDropdownProps } from 'antd/es/table/interface';
+import dayjs from 'dayjs';
+import React from 'react';
 
-import { Button } from '@ui/components/Button';
-
-const presets: TimeRangePickerProps['presets'] = [
-  { label: 'Ayer', value: [dayjs().add(-1, 'd'), dayjs()] },
-  { label: 'Últimos 7 días', value: [dayjs().add(-7, 'd'), dayjs()] },
-  { label: 'Últimos 14 días', value: [dayjs().add(-14, 'd'), dayjs()] },
-  { label: 'Últimos 30 días', value: [dayjs().add(-30, 'd'), dayjs()] },
-  { label: 'Últimos 90 días', value: [dayjs().add(-90, 'd'), dayjs()] },
-  {
-    label: 'Semana pasada',
-    value: [
-      dayjs().subtract(1, 'week').startOf('week'),
-      dayjs().subtract(1, 'week').endOf('week'),
-    ],
-  },
-  {
-    label: 'Mes pasado',
-    value: [
-      dayjs().subtract(1, 'month').startOf('month'),
-      dayjs().subtract(1, 'month').endOf('month'),
-    ],
-  },
-];
+import { DateFormatEnum } from '@shared/utils/date.utils';
+import { Button } from '@ui/components/Button/Button';
 
 type Props = {
-  onChange: (value: [Dayjs, Dayjs] | undefined) => void;
+  props: FilterDropdownProps;
+  title: string;
+  value: string[];
 };
 
-export const GridPeriodFilter: React.FC<Props> = ({ onChange }) => {
-  const [rangeFilter, setRangeFilter] = useState<[Dayjs, Dayjs] | undefined>(
-    undefined,
-  );
+export const GridPeriodFilter: React.FC<Props> = ({ value, title, props }) => {
+  const now = dayjs();
+
+  const presets: TimeRangePickerProps['presets'] = [
+    { label: 'Ayer', value: [now.add(-1, 'd'), now] },
+    { label: 'Últimos 7 días', value: [now.add(-7, 'd'), now] },
+    { label: 'Últimos 14 días', value: [now.add(-14, 'd'), now] },
+    { label: 'Últimos 30 días', value: [now.add(-30, 'd'), now] },
+    { label: 'Últimos 90 días', value: [now.add(-90, 'd'), now] },
+    {
+      label: 'Semana pasada',
+      value: [
+        now.subtract(1, 'week').startOf('week'),
+        now.subtract(1, 'week').endOf('week'),
+      ],
+    },
+    {
+      label: 'Mes pasado',
+      value: [
+        now.subtract(1, 'month').startOf('month'),
+        now.subtract(1, 'month').endOf('month'),
+      ],
+    },
+  ];
 
   return (
-    <Card>
+    <Card size="small" title={title}>
       <Space direction="vertical">
         <DatePicker.RangePicker
-          value={rangeFilter}
-          onChange={(value) => {
-            setRangeFilter(value as [Dayjs, Dayjs]);
+          value={
+            value.length > 0
+              ? [dayjs.utc(value[0]), dayjs.utc(value[1])]
+              : undefined
+          }
+          onChange={(v) => {
+            const [from, to] = v || [];
 
-            onChange(value as [Dayjs, Dayjs]);
+            const fromDate = from?.format(DateFormatEnum.DATE);
+
+            const toDate = to?.format(DateFormatEnum.DATE);
+
+            props.setSelectedKeys(fromDate && toDate ? [fromDate, toDate] : []);
+
+            props.confirm({ closeDropdown: true });
           }}
           presets={presets}
         />
 
-        {rangeFilter && (
+        {value.length > 0 && (
           <Flex justify="center">
             <Button
-              icon={<ClearOutlined />}
+              icon={<CloseCircleOutlined />}
               size="small"
               onClick={() => {
-                setRangeFilter(undefined);
+                props.setSelectedKeys([]);
 
-                onChange(undefined);
+                props.confirm({ closeDropdown: true });
               }}
             >
               Limpiar

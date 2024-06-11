@@ -111,6 +111,10 @@ export class Member extends Model implements IMember {
     return `${this.firstName} ${this.lastName}`;
   }
 
+  public get nameLastFirst(): string {
+    return `${this.lastName} ${this.firstName}`;
+  }
+
   public get nationality(): MemberNationalityEnum | null {
     return this._nationality;
   }

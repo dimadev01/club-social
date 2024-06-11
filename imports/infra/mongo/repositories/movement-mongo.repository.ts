@@ -4,6 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Movement } from '@domain/movements/models/movement.model';
 import {
   FindPaginatedMovementsRequest,
@@ -79,6 +80,20 @@ export class MovementMongoRepository
 
     if (request.filterByStatus.length > 0) {
       query.status = { $in: request.filterByStatus };
+    }
+
+    if (request.filterByCreatedAt.length > 0) {
+      query.createdAt = {
+        $gte: new DateUtcVo(request.filterByCreatedAt[0]).toDate(),
+        $lte: new DateUtcVo(request.filterByCreatedAt[1]).toDate(),
+      };
+    }
+
+    if (request.filterByDate.length > 0) {
+      query.date = {
+        $gte: new DateUtcVo(request.filterByDate[0]).toDate(),
+        $lte: new DateUtcVo(request.filterByDate[1]).toDate(),
+      };
     }
 
     return query;
