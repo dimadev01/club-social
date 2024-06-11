@@ -122,7 +122,7 @@ export const PaymentsPage = () => {
     columns.push(
       {
         dataIndex: 'createdAt',
-        filterDropdown: () => renderCreatedAtFilter(),
+        // filterDropdown: () => renderCreatedAtFilter(),
         render: (createdAt: string, payment: PaymentGridDto) => (
           <Link to={`${AppUrl.Payments}/${payment.id}`}>
             {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
@@ -131,13 +131,12 @@ export const PaymentsPage = () => {
         sortOrder: gridState.sorter.createdAt,
         sorter: true,
         title: 'Fecha de creación',
-        width: 175,
+        width: 200,
       },
       {
         dataIndex: 'date',
         render: (date: string) => new DateUtcVo(date).format(),
         title: 'Fecha de pago',
-        width: 125,
       },
     );
 

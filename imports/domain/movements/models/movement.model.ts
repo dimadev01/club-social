@@ -165,6 +165,14 @@ export class Movement extends Model implements IMovement {
     });
   }
 
+  public isRegistered() {
+    return this._status === MovementStatusEnum.REGISTERED;
+  }
+
+  public isUpdatable() {
+    return this.isRegistered();
+  }
+
   public setAmount(value: Money): Result<null, Error> {
     this._amount = value;
 

@@ -3,6 +3,7 @@ export enum MeteorMethodEnum {
   DuesGetGrid = 'dues/getGrid',
   DuesGetOne = 'dues/get',
   DuesGetPending = 'dues/getPending',
+  DuesUpdate = 'dues/update',
   DuesVoid = 'dues/void',
 
   MembersCreate = 'members/create',

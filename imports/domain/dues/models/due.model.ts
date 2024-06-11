@@ -173,6 +173,24 @@ export class Due extends Model implements IDue {
     return this._status === DueStatusEnum.PENDING;
   }
 
+  public isUpdatable() {
+    return this.isPending();
+  }
+
+  public setAmount(value: Money): Result<null, Error> {
+    this._amount = value;
+
+    this._totalPendingAmount = this._amount;
+
+    return ok(null);
+  }
+
+  public setNotes(value: string | null): Result<null, Error> {
+    this._notes = value;
+
+    return ok(null);
+  }
+
   public void(voidedBy: string, voidReason: string): Result<null, Error> {
     if (this._payments.length > 0) {
       return err(new Error('No se puede anular un cobro con pagos asociados'));
@@ -231,12 +249,6 @@ export class Due extends Model implements IDue {
     }
   }
 
-  private setAmount(value: Money): Result<null, Error> {
-    this._amount = value;
-
-    return ok(null);
-  }
-
   private setCategory(value: DueCategoryEnum): Result<null, Error> {
     this._category = value;
 
@@ -251,12 +263,6 @@ export class Due extends Model implements IDue {
 
   private setMemberId(value: string): Result<null, Error> {
     this._memberId = value;
-
-    return ok(null);
-  }
-
-  private setNotes(value: string | null): Result<null, Error> {
-    this._notes = value;
 
     return ok(null);
   }
