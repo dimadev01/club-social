@@ -3,14 +3,14 @@ import {
   InfoCircleOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Card, Space, Tooltip } from 'antd';
-import { ColumnProps } from 'antd/es/table';
+import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
+import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid.request.dto';
+import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid-request.dto';
 import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
@@ -23,12 +23,14 @@ import {
   getDueCategoryFilters,
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
+import { FindPaginatedDuesFilters } from '@domain/dues/due.repository';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
+import { DuesGridCsvDownloaderButton } from '@ui/components/Dues/DuesGridCsvDownloader';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
@@ -38,6 +40,7 @@ import { useTable } from '@ui/components/Grid/useTable';
 import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
+import { useDuesTotals } from '@ui/hooks/dues/useDuesTotals';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
 import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
@@ -82,22 +85,30 @@ export const DuesPage = () => {
     gridState.filters.memberId = [member._id];
   }
 
+  const gridRequestFilters: FindPaginatedDuesFilters = {
+    filterByCategory: gridState.filters.category as DueCategoryEnum[],
+    filterByCreatedAt: gridState.filters.createdAt,
+    filterByDate: gridState.filters.date,
+    filterByMember: gridState.filters.memberId,
+    filterByStatus: gridState.filters.status as DueStatusEnum[],
+  };
+
+  const gridRequest: GetDuesGridRequestDto = {
+    ...gridRequestFilters,
+    limit: gridState.pageSize,
+    page: gridState.page,
+    sorter: gridState.sorter,
+  };
+
   const { data, isLoading, isRefetching, refetch } = useQueryGrid<
     GetDuesGridRequestDto,
     DueGridDto
   >({
     methodName: MeteorMethodEnum.DuesGetGrid,
-    request: {
-      filterByCategory: gridState.filters.category as DueCategoryEnum[],
-      filterByCreatedAt: gridState.filters.createdAt,
-      filterByDate: gridState.filters.date,
-      filterByMember: gridState.filters.memberId,
-      filterByStatus: gridState.filters.status as DueStatusEnum[],
-      limit: gridState.pageSize,
-      page: gridState.page,
-      sorter: gridState.sorter,
-    },
+    request: gridRequest,
   });
+
+  const { data: duesTotals } = useDuesTotals(gridRequestFilters);
 
   const expandedRowRender = (due: DueGridDto) => (
     <DuePaymentsGrid payments={due.payments} />
@@ -128,7 +139,6 @@ export const DuesPage = () => {
         ellipsis: true,
         filterDropdown: renderCreatedAtFilter,
         filteredValue: gridState.filters.createdAt,
-        fixed: 'left',
         render: (createdAt: string, due: DueGridDto) => (
           <Link to={`${AppUrl.Dues}/${due.id}`}>
             {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
@@ -223,6 +233,11 @@ export const DuesPage = () => {
       {
         align: 'center',
         dataIndex: 'status',
+        defaultFilteredValue: [
+          DueStatusEnum.PAID,
+          DueStatusEnum.PARTIALLY_PAID,
+          DueStatusEnum.PENDING,
+        ],
         ellipsis: true,
         filterResetToDefaultFilteredValue: true,
         filteredValue: gridState.filters.status,
@@ -274,6 +289,22 @@ export const DuesPage = () => {
     return columns;
   };
 
+  const renderSummary = () => (
+    <Table.Summary fixed>
+      <Table.Summary.Row>
+        <Table.Summary.Cell align="right" index={0} colSpan={8}>
+          <Typography.Text strong>
+            Total Pendiente:{' '}
+            {new Money({
+              amount: duesTotals?.pendingAmount ?? 0,
+            }).formatWithCurrency()}
+          </Typography.Text>
+        </Table.Summary.Cell>
+        <Table.Summary.Cell index={1} colSpan={2} />
+      </Table.Summary.Row>
+    </Table.Summary>
+  );
+
   return (
     <>
       <Breadcrumb
@@ -291,6 +322,7 @@ export const DuesPage = () => {
         extra={
           <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
+            <DuesGridCsvDownloaderButton request={gridRequest} />
             <GridNewButton scope={ScopeEnum.DUES} to={AppUrl.DuesNew} />
           </Space.Compact>
         }
@@ -301,7 +333,10 @@ export const DuesPage = () => {
           onTableChange={onTableChange}
           loading={isLoading}
           dataSource={data?.items}
-          expandable={{ expandedRowRender }}
+          expandable={{
+            expandedRowRender,
+          }}
+          summary={() => renderSummary()}
           columns={getColumns()}
           rowClassName={(due) => {
             if (due.status === DueStatusEnum.PENDING) {

@@ -18,10 +18,17 @@ export const GridPeriodFilter: React.FC<Props> = ({ value, title, props }) => {
 
   const presets: TimeRangePickerProps['presets'] = [
     { label: 'Hoy', value: [now, now] },
-    { label: 'Ayer', value: [now.add(-1, 'd'), now.add(-1, 'd')] },
+    {
+      label: 'Ayer',
+      value: [now.subtract(-1, 'day'), now.subtract(-1, 'day')],
+    },
     {
       label: 'Esta semana',
       value: [now.startOf('week'), now],
+    },
+    {
+      label: 'Este mes',
+      value: [now.startOf('month'), now],
     },
     {
       label: 'Semana pasada',
@@ -37,10 +44,10 @@ export const GridPeriodFilter: React.FC<Props> = ({ value, title, props }) => {
         now.subtract(1, 'month').endOf('month'),
       ],
     },
-    { label: 'Últimos 7 días', value: [now.add(-7, 'd'), now] },
-    { label: 'Últimos 14 días', value: [now.add(-14, 'd'), now] },
-    { label: 'Últimos 30 días', value: [now.add(-30, 'd'), now] },
-    { label: 'Últimos 90 días', value: [now.add(-90, 'd'), now] },
+    { label: 'Últimos 7 días', value: [now.subtract(7, 'days'), now] },
+    { label: 'Últimos 14 días', value: [now.subtract(14, 'days'), now] },
+    { label: 'Últimos 30 días', value: [now.subtract(30, 'days'), now] },
+    { label: 'Últimos 90 días', value: [now.subtract(90, 'days'), now] },
   ];
 
   return (
@@ -53,7 +60,7 @@ export const GridPeriodFilter: React.FC<Props> = ({ value, title, props }) => {
               : undefined
           }
           onChange={(v) => {
-            const [from, to] = v || [];
+            const [from, to] = v ?? [];
 
             const fromDate = from?.format(DateFormatEnum.DATE);
 
