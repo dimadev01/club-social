@@ -177,6 +177,10 @@ export class Due extends Model implements IDue {
     return this.isPending();
   }
 
+  public isVoidable(): boolean {
+    return this.isPending();
+  }
+
   public setAmount(value: Money): Result<null, Error> {
     this._amount = value;
 

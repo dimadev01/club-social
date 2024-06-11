@@ -5,6 +5,10 @@ import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import {
+  PaymentStatusEnum,
+  PaymentStatusLabel,
+} from '@domain/payments/payment.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
@@ -47,7 +51,7 @@ export const PaymentDetailPage = () => {
           { title: 'Inicio' },
           { title: <Link to={AppUrl.Payments}>Pagos</Link> },
           {
-            title: `Pago a ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`,
+            title: `Pago de ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`,
           },
         ]}
       />
@@ -69,6 +73,10 @@ export const PaymentDetailPage = () => {
               {payment.receiptNumber}
             </Descriptions.Item>
 
+            <Descriptions.Item label="Estado">
+              {PaymentStatusLabel[payment.status]}
+            </Descriptions.Item>
+
             <Descriptions.Item label="Total Pago">
               {new Money({ amount: payment.amount }).formatWithCurrency()}
             </Descriptions.Item>
@@ -85,6 +93,7 @@ export const PaymentDetailPage = () => {
 
             <FormVoidButton
               scope={ScopeEnum.PAYMENTS}
+              disabled={payment.status === PaymentStatusEnum.VOIDED}
               onConfirm={(reason: string) => {
                 voidPayment.mutate(
                   {

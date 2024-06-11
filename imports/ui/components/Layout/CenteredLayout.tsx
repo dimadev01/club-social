@@ -8,7 +8,6 @@ type Props = {
 export const CenteredLayout: React.FC<Props> = ({ children }) => (
   <Layout className="min-h-full pt-24">
     <Card
-      bordered={false}
       styles={{ body: { padding: 0 } }}
       className="mx-auto mb-20 w-80 rounded-bl-none rounded-br-3xl rounded-tl-3xl rounded-tr-none px-4 pb-8 pt-10 drop-shadow-xl md:w-[670px] md:px-40 md:pb-32 md:pt-20"
     >

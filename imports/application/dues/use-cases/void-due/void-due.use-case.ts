@@ -29,7 +29,7 @@ export class VoidDueUseCase implements IUseCase<VoidDueRequest, null> {
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
         const due = await this._dueRepository.findOneByIdOrThrow(request);
 
-        if (!due.isPending()) {
+        if (!due.isVoidable()) {
           throw new DueNotVoidableError();
         }
 

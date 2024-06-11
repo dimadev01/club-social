@@ -12,7 +12,7 @@ import { PaymentDto } from '@application/payments/dtos/payment.dto';
 import { CreatePaymentUseCase } from '@application/payments/use-cases/create-payment/create-payment.use-case';
 import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment/get-payment.use-case';
 import { GetPaymentsGridUseCase } from '@application/payments/use-cases/get-payments-grid/get-payments-grid.use-case';
-import { GetPaymentsTotalUseCase } from '@application/payments/use-cases/get-payments-totals/get-payments-totals';
+import { GetPaymentsTotalUseCase } from '@application/payments/use-cases/get-payments-totals/get-payments-totals.use-case';
 import { VoidPaymentUseCase } from '@application/payments/use-cases/void-payment/void-payment.use-case';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';

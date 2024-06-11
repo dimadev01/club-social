@@ -68,10 +68,16 @@ export enum MovementTypeEnum {
   EXPENSE = 'expense',
 }
 
-export const MovementCategoryTypeLabel = {
+export const MovementTypeLabel = {
   [MovementTypeEnum.INCOME]: 'Ingreso',
   [MovementTypeEnum.EXPENSE]: 'Egreso',
 };
+
+export const getMovementTypeOptions = () =>
+  Object.values(MovementTypeEnum).map((type) => ({
+    text: MovementTypeLabel[type],
+    value: type,
+  }));
 
 export const getMovementCategoryTypeOptions = () =>
   Object.values(MovementTypeEnum)
@@ -79,7 +85,7 @@ export const getMovementCategoryTypeOptions = () =>
       [MovementTypeEnum.EXPENSE, MovementTypeEnum.INCOME].includes(category),
     )
     .map((category) => ({
-      label: MovementCategoryTypeLabel[category],
+      label: MovementTypeLabel[category],
       value: category,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
@@ -93,6 +99,7 @@ export const MovementCategoryTypeFilters = {
     MovementCategoryEnum.PARKING,
     MovementCategoryEnum.PROFESSOR,
     MovementCategoryEnum.OTHER_INCOME,
+    MovementCategoryEnum.MEMBER_PAYMENT,
   ],
   [MovementTypeEnum.EXPENSE]: [
     MovementCategoryEnum.EXPENSE,
@@ -104,11 +111,3 @@ export const MovementCategoryTypeFilters = {
     MovementCategoryEnum.EMPLOYEE,
   ],
 };
-
-export const getMovementCategoryOptions = (categoryType: MovementTypeEnum) =>
-  MovementCategoryTypeFilters[categoryType]
-    .map((category) => ({
-      label: MovementCategoryLabel[category],
-      value: category,
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label));

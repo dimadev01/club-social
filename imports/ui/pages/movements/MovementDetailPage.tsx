@@ -126,7 +126,8 @@ export const MovementDetailPage = () => {
           onFinish={(values) => handleSubmit(values)}
           disabled={
             createMovement.isLoading ||
-            movement?.status === MovementStatusEnum.VOIDED
+            movement?.status === MovementStatusEnum.VOIDED ||
+            !!movement?.paymentId
           }
           initialValues={{
             amount: movement

@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
+import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { AppUrl } from '@ui/app.enum';
+import { renderDueCategoryLabel } from '@ui/utils/renderDueCategory';
 
 interface PaymentDuesGridProps {
   dues: PaymentDueDto[];
@@ -33,13 +34,8 @@ export const PaymentDuesGrid: React.FC<PaymentDuesGridProps> = ({ dues }) => (
       {
         align: 'center',
         dataIndex: 'dueCategory',
-        render: (dueCategory: DueCategoryEnum, paymentDue) => {
-          if (dueCategory === DueCategoryEnum.MEMBERSHIP) {
-            return `${DueCategoryLabel[dueCategory]} (${new DateUtcVo(paymentDue.dueDate).monthName()})`;
-          }
-
-          return DueCategoryLabel[dueCategory];
-        },
+        render: (dueCategory: DueCategoryEnum, paymentDue) =>
+          renderDueCategoryLabel(dueCategory, paymentDue.dueDate),
         title: 'Categoría',
         width: 150,
       },

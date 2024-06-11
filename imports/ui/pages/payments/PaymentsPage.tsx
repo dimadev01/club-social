@@ -28,6 +28,7 @@ import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
 import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
 import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
+import { useIsMember } from '@ui/hooks/auth/useIsMember';
 import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { usePaymentsTotals } from '@ui/hooks/payments/usePaymentsTotals';
@@ -39,6 +40,8 @@ export const PaymentsPage = () => {
   const isStaff = useIsStaff();
 
   const isAdmin = useIsAdmin();
+
+  const isMember = useIsMember();
 
   const { member } = useUserContext();
 
@@ -118,7 +121,7 @@ export const PaymentsPage = () => {
         sortOrder: gridState.sorter.createdAt,
         sorter: true,
         title: 'Fecha de creación',
-        width: 175,
+        width: 125,
       },
       {
         dataIndex: 'date',
@@ -204,21 +207,37 @@ export const PaymentsPage = () => {
     return columns;
   };
 
-  const renderSummary = () => (
-    <Table.Summary fixed>
-      <Table.Summary.Row>
-        <Table.Summary.Cell align="right" index={0} colSpan={6}>
-          <Typography.Text strong>
-            Total:{' '}
-            {new Money({
-              amount: paymentTotals?.amount ?? 0,
-            }).formatWithCurrency()}
-          </Typography.Text>
-        </Table.Summary.Cell>
-        <Table.Summary.Cell index={1} colSpan={4} />
-      </Table.Summary.Row>
-    </Table.Summary>
-  );
+  const renderSummary = () => {
+    let totalAmountColSpan = 6;
+
+    let restColSpan = 4;
+
+    if (isMember) {
+      totalAmountColSpan = 5;
+
+      restColSpan = 3;
+    }
+
+    return (
+      <Table.Summary fixed>
+        <Table.Summary.Row>
+          <Table.Summary.Cell
+            align="right"
+            index={0}
+            colSpan={totalAmountColSpan}
+          >
+            <Typography.Text strong>
+              Total:{' '}
+              {new Money({
+                amount: paymentTotals?.amount ?? 0,
+              }).formatWithCurrency()}
+            </Typography.Text>
+          </Table.Summary.Cell>
+          <Table.Summary.Cell index={1} colSpan={restColSpan} />
+        </Table.Summary.Row>
+      </Table.Summary>
+    );
+  };
 
   return (
     <>
@@ -244,7 +263,7 @@ export const PaymentsPage = () => {
         <Grid<PaymentGridDto>
           total={data?.totalCount}
           state={gridState}
-          summary={() => renderSummary()}
+          summary={renderSummary}
           onTableChange={onTableChange}
           loading={isLoading}
           dataSource={data?.items}
