@@ -9,6 +9,7 @@ import { LoginPasswordlessPage } from '@ui/pages/auth/LoginPasswordlessPage';
 import { LogoutPage } from '@ui/pages/auth/LogoutPage';
 import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
 import { DueDetailPage } from '@ui/pages/dues/DueDetailPage';
+import { DueEditPage } from '@ui/pages/dues/DueEditPage';
 import { DuesNewPage } from '@ui/pages/dues/DuesNewPage';
 import { DuesRoot } from '@ui/pages/dues/DuesRoot';
 import { HomePage } from '@ui/pages/HomePage';
@@ -133,6 +134,14 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     path: AppUrl.DuesNew,
+  },
+  {
+    element: (
+      <PrivateRoute permission={PermissionEnum.UPDATE} scope={ScopeEnum.DUES}>
+        <DueEditPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.DuesEdit,
   },
   {
     element: (

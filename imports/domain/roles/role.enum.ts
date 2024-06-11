@@ -43,7 +43,6 @@ export const ScopePermissionAssignment: Record<ScopeEnum, PermissionEnum[]> = {
     PermissionEnum.CREATE,
     PermissionEnum.READ,
     PermissionEnum.VOID,
-    PermissionEnum.UPDATE,
   ],
   [ScopeEnum.USERS]: [
     PermissionEnum.CREATE,
@@ -69,6 +68,7 @@ export const AdminRole: ScopePermissions = {
   ],
   [ScopeEnum.MOVEMENTS]: [
     PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
     PermissionEnum.READ,
     PermissionEnum.VOID,
   ],
@@ -76,6 +76,7 @@ export const AdminRole: ScopePermissions = {
     PermissionEnum.CREATE,
     PermissionEnum.READ,
     PermissionEnum.VOID,
+    PermissionEnum.UPDATE,
   ],
   [ScopeEnum.PAYMENTS]: [
     PermissionEnum.CREATE,
@@ -92,6 +93,7 @@ export const StaffRole: ScopePermissions = {
   ],
   [ScopeEnum.MOVEMENTS]: [
     PermissionEnum.CREATE,
+    PermissionEnum.UPDATE,
     PermissionEnum.READ,
     PermissionEnum.VOID,
   ],
@@ -99,6 +101,7 @@ export const StaffRole: ScopePermissions = {
     PermissionEnum.CREATE,
     PermissionEnum.READ,
     PermissionEnum.VOID,
+    PermissionEnum.UPDATE,
   ],
   [ScopeEnum.PAYMENTS]: [
     PermissionEnum.CREATE,
