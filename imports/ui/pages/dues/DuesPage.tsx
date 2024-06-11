@@ -1,4 +1,4 @@
-import { CreditCardFilled, InfoCircleOutlined } from '@ant-design/icons';
+import { CreditCardOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Tooltip } from 'antd';
 import { ColumnProps } from 'antd/es/table';
 import React from 'react';
@@ -216,7 +216,7 @@ export const DuesPage = () => {
                   due.status === DueStatusEnum.VOIDED
                 }
                 tooltip={{ title: 'Cobrar' }}
-                icon={<CreditCardFilled />}
+                icon={<CreditCardOutlined />}
               />
             )}
           </Space.Compact>
