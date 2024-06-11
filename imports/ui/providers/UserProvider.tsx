@@ -9,9 +9,12 @@ import { UserContext } from '@ui/providers/UserContext';
 const memberCollection = container.resolve(MemberMongoCollection);
 
 export const UserProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const isLoadingMember = useSubscribe('member');
+  const { user, isLoggingIn } = useTracker(
+    () => ({ isLoggingIn: Meteor.loggingIn(), user: Meteor.user() }),
+    [],
+  );
 
-  const { user } = useTracker(() => ({ user: Meteor.user() }), []);
+  const isLoadingMember = useSubscribe('member');
 
   const { member } = useTracker(
     () => ({
@@ -22,7 +25,7 @@ export const UserProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const stateMemoized = useMemo(() => ({ member, user }), [user, member]);
 
-  if (isLoadingMember()) {
+  if (isLoggingIn || isLoadingMember()) {
     return <LoadingScreen />;
   }
 

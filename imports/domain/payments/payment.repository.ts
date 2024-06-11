@@ -20,9 +20,10 @@ export interface FindPaginatedPaymentsRequest
     FindPaginatedRequest {}
 
 export interface FindPaginatedPaymentsFilters {
+  filterByFrom: string | null;
   filterByMember: string[];
-  filterByPeriod: [string, string];
   filterByStatus: string[];
+  filterByTo: string | null;
 }
 
 export interface GetPaymentsTotalsResponse {

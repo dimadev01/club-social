@@ -1,5 +1,5 @@
 export abstract class ErrorUtils {
-  static unknownToError(error: unknown): Error {
+  public static unknownToError(error: unknown): Error {
     if (error instanceof Error) {
       return error;
     }

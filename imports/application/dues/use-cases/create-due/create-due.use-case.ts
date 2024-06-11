@@ -5,6 +5,7 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { CreateDueRequest } from '@application/dues/use-cases/create-due/create-due.request';
 import { GetDuesByIdsUseCase } from '@application/dues/use-cases/get-dues-by-ids/get-dues-by-ids.use-case';
+import { ErrorUtils } from '@domain/common/errors/error.utils';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
@@ -12,7 +13,6 @@ import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { IDueRepository } from '@domain/dues/due.repository';
 import { Due } from '@domain/dues/models/due.model';
-import { ErrorUtils } from '@shared/utils/error.utils';
 
 @injectable()
 export class CreateDueUseCase implements IUseCase<CreateDueRequest, DueDto[]> {
