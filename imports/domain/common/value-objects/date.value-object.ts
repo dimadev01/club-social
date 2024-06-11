@@ -45,4 +45,8 @@ export class DateVo extends ValueObject<Dayjs> {
   public toISOString(): string {
     return this.props.toISOString();
   }
+
+  public unix(): number {
+    return this.props.unix();
+  }
 }

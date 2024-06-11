@@ -5,6 +5,7 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { MovementDto } from '@application/movements/dtos/movement.dto';
 import { GetMovementUseCase } from '@application/movements/use-cases/get-movement/get-movement.use.case';
 import { UpdateMovementRequest } from '@application/movements/use-cases/update-movement/update-movement.request';
+import { ErrorUtils } from '@domain/common/errors/error.utils';
 import { ModelNotUpdatableError } from '@domain/common/errors/model-not-updatable.error';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
@@ -12,7 +13,6 @@ import { IUseCase } from '@domain/common/use-case.interface';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { IMovementRepository } from '@domain/movements/movement.repository';
-import { ErrorUtils } from '@shared/utils/error.utils';
 
 @injectable()
 export class UpdateMovementUseCase

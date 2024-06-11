@@ -22,14 +22,11 @@ import { FaExchangeAlt, FaFileInvoiceDollar, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { UserThemeEnum } from '@domain/users/user.enum';
-import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button';
-import { Select } from '@ui/components/Select';
+import { ThemeSelect } from '@ui/components/Layout/ThemeSelect';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
-import { useUpdateUserTheme } from '@ui/hooks/users/useUpdateUserTheme';
 import { useThemeContext } from '@ui/providers/ThemeContext';
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
@@ -46,7 +43,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     ScopeEnum.MOVEMENTS,
   );
 
-  const { setTheme, theme } = useThemeContext();
+  const { theme } = useThemeContext();
 
   const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(true);
 
@@ -56,12 +53,6 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const pathnameKey = `/${window.location.pathname.split('/')[1]}`;
 
   const [menuKey, setMenuKey] = useState<string>(pathnameKey);
-
-  const updateUserTheme = useUpdateUserTheme();
-
-  useEffect(() => {
-    LocalStorageUtils.set('theme', theme);
-  }, [theme]);
 
   useEffect(() => {
     setMenuKey(pathnameKey);
@@ -212,30 +203,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
             </Space.Compact>
 
             <Space>
-              <Select
-                allowClear={false}
-                value={user.profile?.theme}
-                showSearch={false}
-                onChange={(value) => {
-                  setTheme(value);
-
-                  updateUserTheme.mutate({ theme: value });
-                }}
-                options={[
-                  {
-                    label: 'Claro',
-                    value: UserThemeEnum.LIGHT,
-                  },
-                  {
-                    label: 'Oscuro',
-                    value: UserThemeEnum.DARK,
-                  },
-                  {
-                    label: 'Automático',
-                    value: UserThemeEnum.AUTO,
-                  },
-                ]}
-              />
+              <ThemeSelect />
 
               <Space.Compact>
                 <Button
