@@ -4,7 +4,7 @@ import { MongoCollection } from '@infra/mongo/common/collections/mongo.collectio
 import { DueEntity } from '@infra/mongo/entities/due.entity';
 
 @singleton()
-export class DueCollection extends MongoCollection<DueEntity> {
+export class DueMongoCollection extends MongoCollection<DueEntity> {
   public constructor() {
     super('dues');
   }

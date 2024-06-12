@@ -4,13 +4,16 @@ import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
 import invariant from 'tiny-invariant';
 import { container } from 'tsyringe';
+import '@infra/di/di.container';
 
+import { VoidDueUseCase } from '@application/dues/use-cases/void-due/void-due.use-case';
 import {
   MovementCategoryEnum,
   MovementStatusEnum,
   MovementTypeEnum,
 } from '@domain/categories/category.enum';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
+import { MemberStatusEnum } from '@domain/members/member.enum';
 import {
   PaymentDueSourceEnum,
   PaymentStatusEnum,
@@ -18,10 +21,10 @@ import {
 import { RoleEnum } from '@domain/roles/role.enum';
 import { RoleService } from '@domain/roles/role.service';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
-import { DueCollection } from '@infra/mongo/collections/due.collection';
+import { DueMongoCollection } from '@infra/mongo/collections/due.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
-import { MovementCollection } from '@infra/mongo/collections/movement.collection';
-import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
+import { MovementMongoCollection } from '@infra/mongo/collections/movement.collection';
+import { PaymentMongoCollection } from '@infra/mongo/collections/payment.collection';
 import { UserMongoCollection } from '@infra/mongo/collections/user.collection';
 import { MovementEntity } from '@infra/mongo/entities/movement.entity';
 import { DateUtils } from '@shared/utils/date.utils';
@@ -46,7 +49,7 @@ Migrations.add({
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
     await container
-      .resolve(DueCollection)
+      .resolve(DueMongoCollection)
       .rawCollection()
       .updateMany(
         {
@@ -108,7 +111,7 @@ Migrations.add({
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
     await container
-      .resolve(PaymentCollection)
+      .resolve(PaymentMongoCollection)
       .updateAsync({}, { $set: { receiptNumber: null } }, { multi: true });
 
     next();
@@ -131,9 +134,9 @@ Migrations.add({
     /**
      * Dues
      */
-    const dueCollection = container.resolve(DueCollection);
+    const dueCollection = container.resolve(DueMongoCollection);
 
-    const paymentsCollection = container.resolve(PaymentCollection);
+    const paymentsCollection = container.resolve(PaymentMongoCollection);
 
     const dues = await dueCollection
       .rawCollection()
@@ -296,9 +299,9 @@ Migrations.add({
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
     const memberCollection = container.resolve(MemberMongoCollection);
 
-    const paymentsCollection = container.resolve(PaymentCollection);
+    const paymentsCollection = container.resolve(PaymentMongoCollection);
 
-    const duesCollection = container.resolve(DueCollection);
+    const duesCollection = container.resolve(DueMongoCollection);
 
     const usersCollection = container.resolve(UserMongoCollection);
 
@@ -351,7 +354,7 @@ Migrations.add({
 
     await duesCollection.createIndexAsync({ createdAt: -1 }, { name: 'd_ca' });
 
-    const movementsCollection = container.resolve(MovementCollection);
+    const movementsCollection = container.resolve(MovementMongoCollection);
 
     await movementsCollection.updateAsync(
       {},
@@ -405,7 +408,7 @@ Migrations.add({
     /**
      * Payments
      */
-    const paymentsCollection = container.resolve(PaymentCollection);
+    const paymentsCollection = container.resolve(PaymentMongoCollection);
 
     await paymentsCollection.rawCollection().dropIndexes();
 
@@ -422,7 +425,7 @@ Migrations.add({
     /**
      * Dues
      */
-    const duesCollection = container.resolve(DueCollection);
+    const duesCollection = container.resolve(DueMongoCollection);
 
     await duesCollection.rawCollection().dropIndexes();
 
@@ -439,7 +442,7 @@ Migrations.add({
     /**
      * Movements
      */
-    const movementsCollection = container.resolve(MovementCollection);
+    const movementsCollection = container.resolve(MovementMongoCollection);
 
     await movementsCollection.rawCollection().dropIndexes();
 
@@ -464,9 +467,9 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    const paymentsCollection = container.resolve(PaymentCollection);
+    const paymentsCollection = container.resolve(PaymentMongoCollection);
 
-    const movementsCollection = container.resolve(MovementCollection);
+    const movementsCollection = container.resolve(MovementMongoCollection);
 
     const payments = await paymentsCollection.find().fetchAsync();
 
@@ -511,7 +514,7 @@ Migrations.add({
     next();
   }),
   up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
-    const movementsCollection = container.resolve(MovementCollection);
+    const movementsCollection = container.resolve(MovementMongoCollection);
 
     await movementsCollection.createIndexAsync(
       { paymentId: 1 },
@@ -521,4 +524,50 @@ Migrations.add({
     next();
   }),
   version: 24,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const membersCollection = container.resolve(MemberMongoCollection);
+
+    const inactiveMembers = await membersCollection
+      .find({ status: MemberStatusEnum.INACTIVE })
+      .fetchAsync();
+
+    const duesCollection = container.resolve(DueMongoCollection);
+
+    await Promise.all(
+      inactiveMembers.map(async (member) => {
+        const dues = await duesCollection
+          .find({ status: DueStatusEnum.PENDING, memberId: member._id })
+          .fetchAsync();
+
+        await Promise.all(
+          dues.map(async (due) => {
+            const voidDueUseCase = container.resolve(VoidDueUseCase);
+
+            await voidDueUseCase.execute({
+              id: due._id,
+              voidedBy: 'System',
+              voidReason: 'Member is inactive',
+            });
+          }),
+        );
+      }),
+    );
+
+    const movementsCollection = container.resolve(MovementMongoCollection);
+
+    await movementsCollection.createIndexAsync(
+      { paymentId: 1 },
+      { name: 'm_pi' },
+    );
+
+    next();
+  }),
+  version: 25,
 });
