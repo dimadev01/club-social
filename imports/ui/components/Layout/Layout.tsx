@@ -5,6 +5,7 @@ import {
   LogoutOutlined,
   MailOutlined,
   NotificationOutlined,
+  PlusOutlined,
   SwapOutlined,
   TeamOutlined,
   WalletOutlined,
@@ -14,6 +15,7 @@ import {
   Layout as AntLayout,
   Col,
   Flex,
+  FloatButton,
   Image,
   Menu,
   Space,
@@ -28,11 +30,12 @@ import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
 import { Row } from '@ui/components/Layout/Row';
-import { ThemeSelect } from '@ui/components/Layout/ThemeSelect';
+import { ThemeSelector } from '@ui/components/Layout/ThemeSelector';
 import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import { useThemeContext } from '@ui/providers/ThemeContext';
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
@@ -41,6 +44,8 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const isAdmin = useIsAdmin();
 
   const isStaff = useIsStaff();
+
+  const navigate = useNavigate();
 
   const canReadMembers = useIsInRole(PermissionEnum.READ, ScopeEnum.MEMBERS);
 
@@ -140,7 +145,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         onCollapse={setIsMenuCollapsed}
         collapsible
         className="cs-sider"
-        width={200}
+        width={220}
         theme={theme}
       >
         <Image
@@ -192,7 +197,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       </AntLayout.Sider>
 
       <AntLayout className="cs-layout-content">
-        <AntLayout.Content className="px-4 py-8 sm:p-14 ">
+        <AntLayout.Content className="max-w-screen-xl px-4 py-8 lg:p-10">
           {children}
         </AntLayout.Content>
 
@@ -218,9 +223,8 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
             </Space.Compact>
 
             <Space>
-              <ThemeSelect />
-
               <Space.Compact>
+                <ThemeSelector />
                 <Button
                   tooltip={{ title: 'Enviar Email' }}
                   icon={<MailOutlined />}
@@ -243,6 +247,29 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
           </Flex>
         </AntLayout.Footer>
       </AntLayout>
+
+      <FloatButton.Group
+        trigger="hover"
+        type="primary"
+        style={{ bottom: 75 }}
+        icon={<PlusOutlined />}
+      >
+        <FloatButton
+          tooltip="Nuevo movimiento"
+          icon={<SwapOutlined />}
+          onClick={() => navigate(AppUrl.MOVEMENTS_NEW)}
+        />
+        <FloatButton
+          tooltip="Nueva deuda"
+          icon={<WalletOutlined />}
+          onClick={() => navigate(AppUrl.DUES_NEW)}
+        />
+        <FloatButton
+          tooltip="Nuevo pago"
+          icon={<CreditCardOutlined />}
+          onClick={() => navigate(AppUrl.PAYMENTS_NEW)}
+        />
+      </FloatButton.Group>
     </AntLayout>
   );
 };

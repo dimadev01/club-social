@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "start": "meteor run --inspect --port 3100 --settings settings.json --no-release-check --no-lint --exclude-archs web.browser.legacy",
+    "start:ip": "meteor run --inspect --port 192.168.1.6:3100 --settings settings.json --no-release-check --no-lint --exclude-archs web.browser.legacy",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer",

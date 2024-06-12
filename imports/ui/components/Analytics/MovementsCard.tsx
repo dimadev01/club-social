@@ -21,7 +21,7 @@ export const MovementsCard = () => {
   );
 
   return (
-    <Card title="Caja" bordered className="min-h-[285px]">
+    <Card title="Caja" bordered>
       <Statistic
         loading={isLoading}
         value={new Money({ amount: data?.amount ?? 0 }).toInteger()}

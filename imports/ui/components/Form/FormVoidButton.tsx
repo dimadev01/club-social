@@ -67,6 +67,8 @@ export const FormVoidButton: React.FC<FormVoidButtonProps> = ({
         onClick={() => setIsOpen(true)}
         icon={<StopOutlined />}
         danger
+        htmlType="button"
+        type="dashed"
         {...rest}
       >
         Anular
