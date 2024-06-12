@@ -33,6 +33,7 @@ import { Row } from '@ui/components/Layout/Row';
 import { ThemeSelector } from '@ui/components/Layout/ThemeSelector';
 import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
+import { useIsMember } from '@ui/hooks/auth/useIsMember';
 import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
 import { useNavigate } from '@ui/hooks/ui/useNavigate';
@@ -45,16 +46,30 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
   const isStaff = useIsStaff();
 
+  const isMember = useIsMember();
+
   const navigate = useNavigate();
 
   const canReadMembers = useIsInRole(PermissionEnum.READ, ScopeEnum.MEMBERS);
 
   const canReadDues = useIsInRole(PermissionEnum.READ, ScopeEnum.DUES);
 
+  const canCreateDues = useIsInRole(PermissionEnum.CREATE, ScopeEnum.DUES);
+
   const canReadPayments = useIsInRole(PermissionEnum.READ, ScopeEnum.PAYMENTS);
+
+  const canCreatePayments = useIsInRole(
+    PermissionEnum.CREATE,
+    ScopeEnum.PAYMENTS,
+  );
 
   const canReadMovements = useIsInRole(
     PermissionEnum.READ,
+    ScopeEnum.MOVEMENTS,
+  );
+
+  const canCreateMovements = useIsInRole(
+    PermissionEnum.CREATE,
     ScopeEnum.MOVEMENTS,
   );
 
@@ -134,6 +149,45 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     }
 
     return items;
+  };
+
+  const renderFloatButton = () => {
+    if (isMember) {
+      return null;
+    }
+
+    return (
+      <FloatButton.Group
+        trigger="hover"
+        type="primary"
+        style={{ bottom: 75 }}
+        icon={<PlusOutlined />}
+      >
+        {canCreateMovements && (
+          <FloatButton
+            tooltip="Nuevo movimiento"
+            icon={<SwapOutlined />}
+            onClick={() => navigate(AppUrl.MOVEMENTS_NEW)}
+          />
+        )}
+
+        {canCreateDues && (
+          <FloatButton
+            tooltip="Nueva deuda"
+            icon={<WalletOutlined />}
+            onClick={() => navigate(AppUrl.DUES_NEW)}
+          />
+        )}
+
+        {canCreatePayments && (
+          <FloatButton
+            tooltip="Nuevo pago"
+            icon={<CreditCardOutlined />}
+            onClick={() => navigate(AppUrl.PAYMENTS_NEW)}
+          />
+        )}
+      </FloatButton.Group>
+    );
   };
 
   const userName = `${user.profile?.firstName} ${user.profile?.lastName}`;
@@ -248,28 +302,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         </AntLayout.Footer>
       </AntLayout>
 
-      <FloatButton.Group
-        trigger="hover"
-        type="primary"
-        style={{ bottom: 75 }}
-        icon={<PlusOutlined />}
-      >
-        <FloatButton
-          tooltip="Nuevo movimiento"
-          icon={<SwapOutlined />}
-          onClick={() => navigate(AppUrl.MOVEMENTS_NEW)}
-        />
-        <FloatButton
-          tooltip="Nueva deuda"
-          icon={<WalletOutlined />}
-          onClick={() => navigate(AppUrl.DUES_NEW)}
-        />
-        <FloatButton
-          tooltip="Nuevo pago"
-          icon={<CreditCardOutlined />}
-          onClick={() => navigate(AppUrl.PAYMENTS_NEW)}
-        />
-      </FloatButton.Group>
+      {renderFloatButton()}
     </AntLayout>
   );
 };
