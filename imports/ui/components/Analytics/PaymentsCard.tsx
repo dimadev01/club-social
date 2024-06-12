@@ -43,11 +43,8 @@ export const PaymentsCard = () => {
   );
 
   return (
-    <Card
-      className="min-h-[285px]"
-      bordered
-      title="Pagos"
-      extra={
+    <Card bordered title="Pagos">
+      <Space size="large" direction="vertical" className="flex">
         <DatePicker.RangePicker
           presets={getPresets()}
           allowClear
@@ -55,9 +52,7 @@ export const PaymentsCard = () => {
           value={datePickerValue}
           onChange={(value) => setDatePickerValue(value as [Dayjs, Dayjs])}
         />
-      }
-    >
-      <Space size="large" direction="vertical" className="flex">
+
         <Statistic
           loading={isLoading}
           value={new Money({ amount: data?.totalAmount ?? 0 }).toInteger()}

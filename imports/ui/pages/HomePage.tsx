@@ -17,22 +17,25 @@ export const HomePage = () => {
 
   return (
     <>
-      <Typography.Title level={1}>Inicio</Typography.Title>
+      <Typography.Title level={1}>Club Social Monte Grande</Typography.Title>
 
       <List
         dataSource={[
-          { component: <DuesCard /> },
-          { component: <PaymentsCard /> },
-          { component: <MovementsCard /> },
+          {
+            component: <DuesCard />,
+          },
+          {
+            component: <PaymentsCard />,
+          },
+          {
+            component: <MovementsCard />,
+          },
         ]}
         grid={{
+          column: 2,
           gutter: [16, 16],
-          lg: 2,
-          md: 1,
           sm: 1,
-          xl: 3,
           xs: 1,
-          xxl: 4,
         }}
         renderItem={(item) => <List.Item>{item.component}</List.Item>}
       />

@@ -66,16 +66,9 @@ export const DuesCard = () => {
     </Descriptions.Item>
   );
 
-  if (!data) {
-    return <p>Test</p>;
-  }
-
   return (
-    <Card
-      className="min-h-[285px]"
-      bordered
-      title="Deudas"
-      extra={
+    <Card bordered title="Deudas" loading={isLoading}>
+      <Space size="large" direction="vertical" className="flex">
         <DatePicker.RangePicker
           presets={getPresets()}
           allowClear
@@ -83,22 +76,21 @@ export const DuesCard = () => {
           value={datePickerValue}
           onChange={(value) => setDatePickerValue(value as [Dayjs, Dayjs])}
         />
-      }
-    >
-      <Space size="large" direction="vertical" className="flex">
+
         <Statistic
-          loading={isLoading}
           value={new Money({ amount: data?.pendingTotal ?? 0 }).toInteger()}
           formatter={(value) => renderStatisticValue(+value)}
           precision={0}
           prefix="$"
         />
 
-        <Descriptions bordered size="small" column={1} layout="horizontal">
-          {renderItem(DueCategoryEnum.MEMBERSHIP, data.pendingMembership)}
-          {renderItem(DueCategoryEnum.ELECTRICITY, data.pendingElectricity)}
-          {renderItem(DueCategoryEnum.GUEST, data.pendingGuest)}
-        </Descriptions>
+        {data && (
+          <Descriptions bordered size="small" column={1} layout="horizontal">
+            {renderItem(DueCategoryEnum.MEMBERSHIP, data.pendingMembership)}
+            {renderItem(DueCategoryEnum.ELECTRICITY, data.pendingElectricity)}
+            {renderItem(DueCategoryEnum.GUEST, data.pendingGuest)}
+          </Descriptions>
+        )}
       </Space>
     </Card>
   );

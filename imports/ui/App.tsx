@@ -10,7 +10,9 @@ import { Routes } from '@ui/routes/Routes';
 
 export const App = () => (
   <>
-    <GoogleFontLoader fonts={[{ font: 'Rubik', weights: [300, 400, 500] }]} />
+    <GoogleFontLoader
+      fonts={[{ font: 'Rubik', weights: [300, 400, 500, 600] }]}
+    />
 
     <ThemeProvider>
       <AppLayout>
