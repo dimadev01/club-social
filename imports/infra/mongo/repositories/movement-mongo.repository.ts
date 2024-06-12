@@ -16,7 +16,7 @@ import {
   IMovementRepository,
 } from '@domain/movements/movement.repository';
 import { MovementAuditableCollection } from '@infra/mongo/collections/movement-auditable.collection';
-import { MovementCollection } from '@infra/mongo/collections/movement.collection';
+import { MovementMongoCollection } from '@infra/mongo/collections/movement.collection';
 import { MovementAuditEntity } from '@infra/mongo/entities/movement-audit.entity';
 import { MovementEntity } from '@infra/mongo/entities/movement.entity';
 import { MovementMapper } from '@infra/mongo/mappers/movement.mapper';
@@ -34,7 +34,7 @@ export class MovementMongoRepository
   public constructor(
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
-    protected readonly collection: MovementCollection,
+    protected readonly collection: MovementMongoCollection,
     protected readonly mapper: MovementMapper,
     protected readonly auditableCollection: MovementAuditableCollection,
   ) {

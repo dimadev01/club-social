@@ -4,7 +4,7 @@ import { MongoCollection } from '@infra/mongo/common/collections/mongo.collectio
 import { MovementEntity } from '@infra/mongo/entities/movement.entity';
 
 @singleton()
-export class MovementCollection extends MongoCollection<MovementEntity> {
+export class MovementMongoCollection extends MongoCollection<MovementEntity> {
   public constructor() {
     super('movements');
   }
