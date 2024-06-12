@@ -30,6 +30,9 @@ export class DueDtoMapper extends MapperDto<Due, DueDto> {
       status: due.status,
       totalPaidAmount: due.totalPaidAmount.value,
       totalPendingAmount: due.totalPendingAmount.value,
+      voidReason: due.voidReason,
+      voidedAt: due.voidedAt?.toISOString() ?? null,
+      voidedBy: due.voidedBy,
     };
   }
 }

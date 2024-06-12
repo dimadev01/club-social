@@ -136,15 +136,15 @@ export const MovementsPage = () => {
           loading={isLoading}
           dataSource={data?.items}
           rowClassName={(movement) => {
-            if (movement.status === MovementStatusEnum.VOIDED) {
+            if (movement.isVoided) {
               return 'bg-gray-100 dark:bg-gray-900';
             }
 
-            if (movement.type === MovementTypeEnum.EXPENSE) {
+            if (movement.isExpense) {
               return 'bg-red-100 dark:bg-red-900';
             }
 
-            if (movement.type === MovementTypeEnum.INCOME) {
+            if (movement.isIncome) {
               return 'bg-green-100 dark:bg-green-900';
             }
 
@@ -189,6 +189,7 @@ export const MovementsPage = () => {
               align: 'center',
               dataIndex: 'category',
               ellipsis: true,
+              filterMode: 'tree',
               filteredValue: gridState.filters.category,
               filters: getCategoryFilters(),
               render: (category: MovementCategoryEnum) =>

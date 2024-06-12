@@ -1,4 +1,10 @@
 import {
+  HomeOutlined,
+  IdcardOutlined,
+  MailOutlined,
+  PhoneOutlined,
+} from '@ant-design/icons';
+import {
   Breadcrumb,
   Card,
   Col,
@@ -170,7 +176,7 @@ export const MemberDetailPage: React.FC = () => {
         ]}
       />
 
-      <Card loading={isLoading}>
+      <Card loading={isLoading} title={member ? member.name : 'Nuevo Socio'}>
         <Form<FormValues>
           layout="vertical"
           form={form}
@@ -212,7 +218,11 @@ export const MemberDetailPage: React.FC = () => {
         >
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12}>
-              <Card title="Datos" type="inner">
+              <Card
+                title="Información básica"
+                type="inner"
+                extra={<IdcardOutlined />}
+              >
                 <Form.Item
                   name="firstName"
                   label="Nombre"
@@ -284,11 +294,11 @@ export const MemberDetailPage: React.FC = () => {
             </Col>
             <Col xs={24} sm={12}>
               <Space size="middle" direction="vertical" className="flex">
-                <Card title="Emails" type="inner">
+                <Card title="Emails" type="inner" extra={<MailOutlined />}>
                   <FormListEmails />
                 </Card>
 
-                <Card title="Teléfonos" type="inner">
+                <Card title="Teléfonos" type="inner" extra={<PhoneOutlined />}>
                   <Form.List
                     name="phones"
                     rules={[
@@ -345,7 +355,7 @@ export const MemberDetailPage: React.FC = () => {
                   </Form.List>
                 </Card>
 
-                <Card title="Dirección" type="inner">
+                <Card title="Dirección" type="inner" extra={<HomeOutlined />}>
                   <Form.Item name={['address', 'stateGovId']} label="Provincia">
                     <Select
                       onChange={() => {

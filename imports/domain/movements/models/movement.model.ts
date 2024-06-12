@@ -174,6 +174,14 @@ export class Movement extends Model implements IMovement {
     });
   }
 
+  public isExpense(): boolean {
+    return this._type === MovementTypeEnum.EXPENSE;
+  }
+
+  public isIncome(): boolean {
+    return this._type === MovementTypeEnum.INCOME;
+  }
+
   public isRegistered() {
     return this._status === MovementStatusEnum.REGISTERED;
   }
@@ -184,6 +192,18 @@ export class Movement extends Model implements IMovement {
     }
 
     return this.isRegistered();
+  }
+
+  public isVoidable() {
+    if (this._category === MovementCategoryEnum.MEMBER_PAYMENT) {
+      return false;
+    }
+
+    return this.isRegistered();
+  }
+
+  public isVoided() {
+    return this._status === MovementStatusEnum.VOIDED;
   }
 
   public setAmount(value: Money): Result<null, Error> {

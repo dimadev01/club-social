@@ -82,7 +82,9 @@ export const DueEditPage = () => {
         ]}
       />
 
-      <Card>
+      <Card
+        title={`Editando cobro a ${due.member.name} del ${new DateUtcVo(due.date).format()}`}
+      >
         <Form<FormValues>
           layout="vertical"
           disabled={updateDue.isLoading}

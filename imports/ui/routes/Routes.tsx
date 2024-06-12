@@ -16,6 +16,8 @@ import { HomePage } from '@ui/pages/HomePage';
 import { MemberDetailPage } from '@ui/pages/members/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
+import { MovementEditPage } from '@ui/pages/movements/MovementEditPage';
+import { MovementNewPage } from '@ui/pages/movements/MovementNewPage';
 import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
 import { PaymentDetailPage } from '@ui/pages/payments/PaymentDetailPage';
 import { PaymentNewPage } from '@ui/pages/payments/PaymentNewPage';
@@ -99,13 +101,24 @@ const router = createBrowserRouter([
   {
     element: (
       <PrivateRoute
-        permission={PermissionEnum.READ}
+        permission={PermissionEnum.CREATE}
         scope={ScopeEnum.MOVEMENTS}
       >
-        <MovementDetailPage />
+        <MovementNewPage />
       </PrivateRoute>
     ),
     path: AppUrl.MovementsNew,
+  },
+  {
+    element: (
+      <PrivateRoute
+        permission={PermissionEnum.UPDATE}
+        scope={ScopeEnum.MOVEMENTS}
+      >
+        <MovementEditPage />
+      </PrivateRoute>
+    ),
+    path: AppUrl.MovementsEdit,
   },
   {
     element: (

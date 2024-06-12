@@ -56,8 +56,9 @@ export class MemberMongoRepository
 
     pipeline.push({ $match }, ...this.getUserLookupPipeline(), {
       $sort: {
-        'user.profile.firstName': 1,
-        'user.profile.lastName': 1,
+        lastName: 1,
+        // eslint-disable-next-line sort-keys-fix/sort-keys-fix
+        firstName: 1,
       },
     });
 

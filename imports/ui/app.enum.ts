@@ -25,6 +25,7 @@ export enum AppUrl {
   Movements = '/movements',
   MovementsDetail = '/movements/:id',
   MovementsNew = '/movements/new',
+  MovementsEdit = '/movements/:id/edit',
 
   Payments = '/payments',
   PaymentsDetail = '/payments/:id',

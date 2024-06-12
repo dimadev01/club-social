@@ -17,10 +17,10 @@ export const GridPeriodFilter: React.FC<Props> = ({ value, title, props }) => {
   const now = dayjs();
 
   const presets: TimeRangePickerProps['presets'] = [
-    { label: 'Hoy', value: [now, now] },
+    { label: 'Hoy', value: [now, now.add(1, 'day')] },
     {
       label: 'Ayer',
-      value: [now.subtract(-1, 'day'), now.subtract(-1, 'day')],
+      value: [now.subtract(1, 'day'), now],
     },
     {
       label: 'Esta semana',

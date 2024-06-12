@@ -1,6 +1,7 @@
 import {
   CreditCardOutlined,
   FilePdfOutlined,
+  LineChartOutlined,
   LogoutOutlined,
   MailOutlined,
   NotificationOutlined,
@@ -28,12 +29,18 @@ import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
 import { Row } from '@ui/components/Layout/Row';
 import { ThemeSelect } from '@ui/components/Layout/ThemeSelect';
+import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
+import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
 import { useThemeContext } from '@ui/providers/ThemeContext';
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const user = useLoggedInUser();
+
+  const isAdmin = useIsAdmin();
+
+  const isStaff = useIsStaff();
 
   const canReadMembers = useIsInRole(PermissionEnum.READ, ScopeEnum.MEMBERS);
 
@@ -60,6 +67,18 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
+
+    if (isAdmin || isStaff) {
+      items.push({
+        icon: <LineChartOutlined className="!text-lg" />,
+        key: AppUrl.Home,
+        label: (
+          <Link className="no-underline" to={AppUrl.Home}>
+            Inicio
+          </Link>
+        ),
+      });
+    }
 
     if (canReadMembers) {
       items.push({
