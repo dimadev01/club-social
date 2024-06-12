@@ -1,9 +1,19 @@
-import { Card, DatePicker, Space, Statistic } from 'antd';
+import { CreditCardOutlined } from '@ant-design/icons';
+import {
+  Card,
+  DatePicker,
+  Descriptions,
+  Form,
+  Skeleton,
+  Space,
+  Statistic,
+} from 'antd';
 import { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { DueCategoryEnum, DueCategoryLabel } from '@domain/dues/due.enum';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
@@ -42,17 +52,29 @@ export const PaymentsCard = () => {
     </Link>
   );
 
+  const renderDescriptionItem = (
+    category: DueCategoryEnum,
+    amount?: number,
+  ) => (
+    <Descriptions.Item label={DueCategoryLabel[category]}>
+      {isLoading && <Skeleton.Input />}
+
+      {!isLoading && 'Pronto'}
+    </Descriptions.Item>
+  );
+
   return (
-    <Card bordered title="Pagos">
-      <Space size="large" direction="vertical" className="flex">
+    <Card bordered title="Pagos" extra={<CreditCardOutlined />}>
+      <Form.Item label="Fecha de pago">
         <DatePicker.RangePicker
           presets={getPresets()}
           allowClear
-          className="w-full"
           value={datePickerValue}
           onChange={(value) => setDatePickerValue(value as [Dayjs, Dayjs])}
         />
+      </Form.Item>
 
+      <Space direction="vertical" className="flex" size="middle">
         <Statistic
           loading={isLoading}
           value={new Money({ amount: data?.totalAmount ?? 0 }).toInteger()}
@@ -60,6 +82,18 @@ export const PaymentsCard = () => {
           formatter={(value) => renderStatisticValue(+value)}
           prefix="$"
         />
+
+        <Descriptions bordered size="small" column={1} layout="horizontal">
+          {renderDescriptionItem(
+            DueCategoryEnum.MEMBERSHIP,
+            data?.pendingMembership,
+          )}
+          {renderDescriptionItem(
+            DueCategoryEnum.ELECTRICITY,
+            data?.pendingElectricity,
+          )}
+          {renderDescriptionItem(DueCategoryEnum.GUEST, data?.pendingGuest)}
+        </Descriptions>
       </Space>
     </Card>
   );

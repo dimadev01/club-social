@@ -1,4 +1,13 @@
-import { Card, DatePicker, Descriptions, Space, Statistic } from 'antd';
+import { WalletOutlined } from '@ant-design/icons';
+import {
+  Card,
+  DatePicker,
+  Descriptions,
+  Form,
+  Skeleton,
+  Space,
+  Statistic,
+} from 'antd';
 import { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -51,24 +60,31 @@ export const DuesCard = () => {
     </Link>
   );
 
-  const renderItem = (category: DueCategoryEnum, amount: number) => (
+  const renderDescriptionItem = (
+    category: DueCategoryEnum,
+    amount?: number,
+  ) => (
     <Descriptions.Item label={DueCategoryLabel[category]}>
-      <Link
-        to={`${AppUrl.DUES}${UrlUtils.stringify({
-          filters: {
-            category: [category],
-            date: [filterByDate],
-          },
-        })}`}
-      >
-        {new Money({ amount }).formatWithCurrency()}
-      </Link>
+      {isLoading && <Skeleton.Input />}
+
+      {!isLoading && (
+        <Link
+          to={`${AppUrl.DUES}${UrlUtils.stringify({
+            filters: {
+              category: [category],
+              date: [filterByDate],
+            },
+          })}`}
+        >
+          {new Money({ amount }).formatWithCurrency()}
+        </Link>
+      )}
     </Descriptions.Item>
   );
 
   return (
-    <Card bordered title="Deudas" loading={isLoading}>
-      <Space size="large" direction="vertical" className="flex">
+    <Card bordered title="Deudas" extra={<WalletOutlined />}>
+      <Form.Item label="Fecha de cobro">
         <DatePicker.RangePicker
           presets={getPresets()}
           allowClear
@@ -76,21 +92,28 @@ export const DuesCard = () => {
           value={datePickerValue}
           onChange={(value) => setDatePickerValue(value as [Dayjs, Dayjs])}
         />
+      </Form.Item>
 
+      <Space className="flex" direction="vertical" size="middle">
         <Statistic
           value={new Money({ amount: data?.pendingTotal ?? 0 }).toInteger()}
+          loading={isLoading}
           formatter={(value) => renderStatisticValue(+value)}
           precision={0}
           prefix="$"
         />
 
-        {data && (
-          <Descriptions bordered size="small" column={1} layout="horizontal">
-            {renderItem(DueCategoryEnum.MEMBERSHIP, data.pendingMembership)}
-            {renderItem(DueCategoryEnum.ELECTRICITY, data.pendingElectricity)}
-            {renderItem(DueCategoryEnum.GUEST, data.pendingGuest)}
-          </Descriptions>
-        )}
+        <Descriptions bordered size="small" column={1} layout="horizontal">
+          {renderDescriptionItem(
+            DueCategoryEnum.MEMBERSHIP,
+            data?.pendingMembership,
+          )}
+          {renderDescriptionItem(
+            DueCategoryEnum.ELECTRICITY,
+            data?.pendingElectricity,
+          )}
+          {renderDescriptionItem(DueCategoryEnum.GUEST, data?.pendingGuest)}
+        </Descriptions>
       </Space>
     </Card>
   );
