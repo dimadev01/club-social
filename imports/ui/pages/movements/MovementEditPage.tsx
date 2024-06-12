@@ -85,7 +85,7 @@ export const MovementEditPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.Movements}>Movimientos</Link> },
+          { title: <Link to={AppUrl.MOVEMENTS}>Movimientos</Link> },
           {
             title: `Movimiento del ${new DateUtcVo(movement.date).format()} creado el ${new DateVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`,
           },

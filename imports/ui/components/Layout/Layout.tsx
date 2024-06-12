@@ -83,9 +83,9 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     if (canReadMembers) {
       items.push({
         icon: <TeamOutlined className="!text-lg" />,
-        key: AppUrl.Members,
+        key: AppUrl.MEMBERS,
         label: (
-          <Link className="no-underline" to={AppUrl.Members}>
+          <Link className="no-underline" to={AppUrl.MEMBERS}>
             Socios
           </Link>
         ),
@@ -95,10 +95,10 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     if (canReadDues) {
       items.push({
         icon: <WalletOutlined className="!text-lg" />,
-        key: AppUrl.Dues,
+        key: AppUrl.DUES,
         label: (
-          <Link className="no-underline" to={AppUrl.Dues}>
-            Cobros
+          <Link className="no-underline" to={AppUrl.DUES}>
+            Deudas
           </Link>
         ),
       });
@@ -107,9 +107,9 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     if (canReadPayments) {
       items.push({
         icon: <CreditCardOutlined className="!text-lg" />,
-        key: AppUrl.Payments,
+        key: AppUrl.PAYMENTS,
         label: (
-          <Link className="no-underline" to={AppUrl.Payments}>
+          <Link className="no-underline" to={AppUrl.PAYMENTS}>
             Pagos
           </Link>
         ),
@@ -119,9 +119,9 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     if (canReadMovements) {
       items.push({
         icon: <SwapOutlined className="!text-lg" />,
-        key: AppUrl.Movements,
+        key: AppUrl.MOVEMENTS,
         label: (
-          <Link className="no-underline" to={AppUrl.Movements}>
+          <Link className="no-underline" to={AppUrl.MOVEMENTS}>
             Movimientos
           </Link>
         ),
@@ -182,7 +182,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
               icon: <LogoutOutlined className="!text-lg" />,
               key: 'logout',
               label: (
-                <Link className="no-underline" to={AppUrl.Logout}>
+                <Link className="no-underline" to={AppUrl.LOGOUT}>
                   Cerrar sesión
                 </Link>
               ),

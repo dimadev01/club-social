@@ -1,34 +1,41 @@
-import { Card } from 'antd';
+import { List, Typography } from 'antd';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
+import { DuesCard } from '@ui/components/Analytics/DuesCard';
+import { MovementsCard } from '@ui/components/Analytics/MovementsCard';
+import { PaymentsCard } from '@ui/components/Analytics/PaymentsCard';
 import { useIsMember } from '@ui/hooks/auth/useIsMember';
 
 export const HomePage = () => {
   const isMember = useIsMember();
 
-  // const isStaff = useIsStaff();
-
-  // const isAdmin = useIsAdmin();
-
   if (isMember) {
-    return <Navigate to={AppUrl.Dues} />;
+    return <Navigate to={AppUrl.DUES} />;
   }
-
-  // if (isStaff) {
-  //   return <Navigate to={AppUrl.Payments} />;
-  // }
-
-  // if (isAdmin) {
-  //   return <Navigate to={AppUrl.Members} />;
-  // }
 
   return (
     <>
-      <Card>Test2</Card>
+      <Typography.Title level={1}>Inicio</Typography.Title>
 
-      <Card>Test</Card>
+      <List
+        dataSource={[
+          { component: <DuesCard /> },
+          { component: <PaymentsCard /> },
+          { component: <MovementsCard /> },
+        ]}
+        grid={{
+          gutter: [16, 16],
+          lg: 2,
+          md: 1,
+          sm: 1,
+          xl: 3,
+          xs: 1,
+          xxl: 4,
+        }}
+        renderItem={(item) => <List.Item>{item.component}</List.Item>}
+      />
     </>
   );
 };

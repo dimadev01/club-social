@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         <LoginPage />
       </PublicRoute>
     ),
-    path: AppUrl.Login,
+    path: AppUrl.LOGIN,
   },
   {
     element: (
@@ -49,11 +49,11 @@ const router = createBrowserRouter([
         <LoginPasswordlessPage />
       </PublicRoute>
     ),
-    path: AppUrl.LoginPasswordless,
+    path: AppUrl.LOGIN_PASSWORDLESS,
   },
   {
     element: <LogoutPage />,
-    path: AppUrl.Logout,
+    path: AppUrl.LOGOUT,
   },
 
   {
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
         <MembersPage />
       </PrivateRoute>
     ),
-    path: AppUrl.Members,
+    path: AppUrl.MEMBERS,
   },
   {
     element: (
@@ -73,7 +73,7 @@ const router = createBrowserRouter([
         <MemberDetailPage />
       </PrivateRoute>
     ),
-    path: AppUrl.MembersNew,
+    path: AppUrl.MEMBERS_NEW,
   },
   {
     element: (
@@ -84,7 +84,7 @@ const router = createBrowserRouter([
         <MemberDetailPage />
       </PrivateRoute>
     ),
-    path: AppUrl.MembersDetail,
+    path: AppUrl.MEMBERS_DETAIL,
   },
 
   {
@@ -96,7 +96,7 @@ const router = createBrowserRouter([
         <MovementsRoot />
       </PrivateRoute>
     ),
-    path: AppUrl.Movements,
+    path: AppUrl.MOVEMENTS,
   },
   {
     element: (
@@ -107,7 +107,7 @@ const router = createBrowserRouter([
         <MovementNewPage />
       </PrivateRoute>
     ),
-    path: AppUrl.MovementsNew,
+    path: AppUrl.MOVEMENTS_NEW,
   },
   {
     element: (
@@ -118,7 +118,7 @@ const router = createBrowserRouter([
         <MovementEditPage />
       </PrivateRoute>
     ),
-    path: AppUrl.MovementsEdit,
+    path: AppUrl.MOVEMENTS_EDIT,
   },
   {
     element: (
@@ -129,7 +129,7 @@ const router = createBrowserRouter([
         <MovementDetailPage />
       </PrivateRoute>
     ),
-    path: AppUrl.MovementsDetail,
+    path: AppUrl.MOVEMENTS_DETAIL,
   },
 
   {
@@ -138,7 +138,7 @@ const router = createBrowserRouter([
         <DuesRoot />
       </PrivateRoute>
     ),
-    path: AppUrl.Dues,
+    path: AppUrl.DUES,
   },
   {
     element: (
@@ -146,7 +146,7 @@ const router = createBrowserRouter([
         <DuesNewPage />
       </PrivateRoute>
     ),
-    path: AppUrl.DuesNew,
+    path: AppUrl.DUES_NEW,
   },
   {
     element: (
@@ -154,7 +154,7 @@ const router = createBrowserRouter([
         <DueEditPage />
       </PrivateRoute>
     ),
-    path: AppUrl.DuesEdit,
+    path: AppUrl.DUES_EDIT,
   },
   {
     element: (
@@ -162,7 +162,7 @@ const router = createBrowserRouter([
         <DueDetailPage />
       </PrivateRoute>
     ),
-    path: AppUrl.DuesDetail,
+    path: AppUrl.DUES_DETAIL,
   },
 
   {
@@ -171,7 +171,7 @@ const router = createBrowserRouter([
         <PaymentsRoot />
       </PrivateRoute>
     ),
-    path: AppUrl.Payments,
+    path: AppUrl.PAYMENTS,
   },
   {
     element: (
@@ -179,7 +179,7 @@ const router = createBrowserRouter([
         <PaymentNewPage />
       </PrivateRoute>
     ),
-    path: AppUrl.PaymentsNew,
+    path: AppUrl.PAYMENTS_NEW,
   },
 
   {
@@ -188,16 +188,16 @@ const router = createBrowserRouter([
         <PaymentDetailPage />
       </PrivateRoute>
     ),
-    path: AppUrl.PaymentsDetail,
+    path: AppUrl.PAYMENTS_DETAIL,
   },
 
   {
     element: <EnrollPage />,
-    path: AppUrl.Enroll,
+    path: AppUrl.ENROLL,
   },
   {
     element: <VerifyEmailPage />,
-    path: AppUrl.VerifyEmail,
+    path: AppUrl.VERIFY_EMAIL,
   },
 ]);
 

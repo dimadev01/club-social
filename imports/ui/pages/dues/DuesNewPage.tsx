@@ -141,7 +141,7 @@ export const DuesNewPage = () => {
       },
       {
         onSuccess: () => {
-          notificationSuccess('Cobro creado');
+          notificationSuccess('Deuda creada');
 
           form.setFieldValue('memberIds', []);
         },
@@ -153,7 +153,7 @@ export const DuesNewPage = () => {
    * Render helpers
    */
   const renderCardTitle = () => {
-    let title = 'Nuevo Cobro';
+    let title = 'Nuevo Deuda';
 
     if (formDate) {
       title += ` del ${formDate.format(DateFormatEnum.DDMMYYYY)}`;
@@ -219,7 +219,7 @@ export const DuesNewPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.Dues}>Cobros</Link> },
+          { title: <Link to={AppUrl.DUES}>Deudas</Link> },
           { title: renderCardTitle() },
         ]}
       />
@@ -308,7 +308,7 @@ export const DuesNewPage = () => {
           </Form.Item>
 
           <FormButtons
-            saveButtonProps={{ text: 'Registrar Cobro' }}
+            saveButtonProps={{ text: 'Registrar Deuda' }}
             scope={ScopeEnum.DUES}
           />
         </Form>

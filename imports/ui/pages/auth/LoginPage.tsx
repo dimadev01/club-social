@@ -50,7 +50,7 @@ export const LoginPage = () => {
             notificationError(error.message);
           }
         } else {
-          navigate(AppUrl.LoginPasswordless.replace(':email', values.email));
+          navigate(AppUrl.LOGIN_PASSWORDLESS.replace(':email', values.email));
         }
       },
     );

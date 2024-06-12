@@ -66,7 +66,7 @@ export const MovementNewPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.Movements}>Movimientos</Link> },
+          { title: <Link to={AppUrl.MOVEMENTS}>Movimientos</Link> },
           {
             title: 'Nuevo Movimiento',
           },

@@ -8,7 +8,7 @@ export const LogoutPage = () => {
 
   useEffect(() => {
     Meteor.logout(() => {
-      navigate(AppUrl.Login);
+      navigate(AppUrl.LOGIN);
     });
   }, [navigate]);
 

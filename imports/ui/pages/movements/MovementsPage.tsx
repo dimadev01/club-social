@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { GetMovementsGridRequestDto } from '@adapters/dtos/get-movements-grid-request.dto';
+import { GetMovementsTotalsRequestDto } from '@adapters/dtos/get-movements-totals-request.dto';
 import { MovementGridDto } from '@application/movements/dtos/movement-grid.dto';
 import {
   MovementCategoryEnum,
@@ -21,7 +22,6 @@ import {
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { FindPaginatedMovementsFilters } from '@domain/movements/movement.repository';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -46,7 +46,7 @@ export const MovementsPage = () => {
     defaultSorter: { createdAt: 'descend' },
   });
 
-  const gridRequestFilters: FindPaginatedMovementsFilters = {
+  const gridRequestFilters: GetMovementsTotalsRequestDto = {
     filterByCategory: gridState.filters.category as MovementCategoryEnum[],
     filterByCreatedAt: gridState.filters.createdAt,
     filterByDate: gridState.filters.date,
@@ -123,7 +123,7 @@ export const MovementsPage = () => {
             <MovementsGridCsvDownloaderButton request={gridRequest} />
             <GridNewButton
               scope={ScopeEnum.MOVEMENTS}
-              to={AppUrl.MovementsNew}
+              to={AppUrl.MOVEMENTS_NEW}
             />
           </Space.Compact>
         }
@@ -157,7 +157,7 @@ export const MovementsPage = () => {
               filterDropdown: renderCreatedAtFilter,
               filteredValue: gridState.filters.createdAt,
               render: (date: string, movement: MovementGridDto) => (
-                <Link to={`${AppUrl.Movements}/${movement.id}`}>
+                <Link to={`${AppUrl.MOVEMENTS}/${movement.id}`}>
                   {new DateVo(date).format(DateFormatEnum.DDMMYYHHmm)}
                 </Link>
               ),
@@ -211,7 +211,7 @@ export const MovementsPage = () => {
               ellipsis: true,
               render: (paymentId: string | null) =>
                 paymentId && (
-                  <Link to={`${AppUrl.Payments}/${paymentId}`}>Ver Pago</Link>
+                  <Link to={`${AppUrl.PAYMENTS}/${paymentId}`}>Ver Pago</Link>
                 ),
               title: 'Pago',
               width: 75,

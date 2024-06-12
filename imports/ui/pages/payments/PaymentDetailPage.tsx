@@ -51,7 +51,7 @@ export const PaymentDetailPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.Payments}>Pagos</Link> },
+          { title: <Link to={AppUrl.PAYMENTS}>Pagos</Link> },
           {
             title: `Pago de ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`,
           },
@@ -135,7 +135,7 @@ export const PaymentDetailPage = () => {
                       onSuccess: () => {
                         notificationSuccess('Pago anulado');
 
-                        navigate(AppUrl.Payments);
+                        navigate(AppUrl.PAYMENTS);
                       },
                     },
                   );

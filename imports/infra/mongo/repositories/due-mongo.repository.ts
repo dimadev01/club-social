@@ -8,7 +8,7 @@ import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
-import { DueStatusEnum } from '@domain/dues/due.enum';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import {
   FindPaginatedDuesFilters,
   FindPaginatedDuesRequest,
@@ -119,12 +119,41 @@ export class DueMongoRepository
       .rawCollection()
       .aggregate([
         { $match: query },
-        { $group: { _id: null, total: { $sum: '$totalPendingAmount' } } },
+        {
+          $facet: {
+            electricity: [
+              { $match: { category: DueCategoryEnum.ELECTRICITY } },
+              { $group: { _id: null, total: { $sum: '$totalPendingAmount' } } },
+            ],
+            guest: [
+              { $match: { category: DueCategoryEnum.GUEST } },
+              { $group: { _id: null, total: { $sum: '$totalPendingAmount' } } },
+            ],
+            membership: [
+              { $match: { category: DueCategoryEnum.MEMBERSHIP } },
+              { $group: { _id: null, total: { $sum: '$totalPendingAmount' } } },
+            ],
+            total: [
+              { $group: { _id: null, total: { $sum: '$totalPendingAmount' } } },
+            ],
+          },
+        },
+        {
+          $project: {
+            electricity: { $ifNull: [{ $first: '$electricity.total' }, 0] },
+            guest: { $ifNull: [{ $first: '$guest.total' }, 0] },
+            membership: { $ifNull: [{ $first: '$membership.total' }, 0] },
+            total: { $ifNull: [{ $first: '$total.total' }, 0] },
+          },
+        },
       ])
       .toArray();
 
     return {
-      pendingAmount: result?.total ?? 0,
+      pendingElectricity: result?.electricity ?? 0,
+      pendingGuest: result?.guest ?? 0,
+      pendingMembership: result?.membership ?? 0,
+      pendingTotal: result?.total ?? 0,
     };
   }
 

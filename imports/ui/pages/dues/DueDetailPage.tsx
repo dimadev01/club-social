@@ -59,9 +59,9 @@ export const DueDetailPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.Dues}>Cobros</Link> },
+          { title: <Link to={AppUrl.DUES}>Deudas</Link> },
           {
-            title: `Cobro a ${due.member.name} del ${new DateUtcVo(due.date).format()}`,
+            title: `Deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`,
           },
         ]}
       />
@@ -74,7 +74,7 @@ export const DueDetailPage = () => {
         }
       >
         <Card
-          title={`Cobro a ${due.member.name} del ${new DateUtcVo(due.date).format()}`}
+          title={`Deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`}
         >
           <>
             <Descriptions column={1} layout="vertical" colon={false}>
@@ -147,7 +147,7 @@ export const DueDetailPage = () => {
                       onSuccess: () => {
                         notificationSuccess('Deuda anulada');
 
-                        navigate(AppUrl.Dues);
+                        navigate(AppUrl.DUES);
                       },
                     },
                   );

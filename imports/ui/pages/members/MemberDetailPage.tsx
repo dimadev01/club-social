@@ -171,7 +171,7 @@ export const MemberDetailPage: React.FC = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.Members}>Socios</Link> },
+          { title: <Link to={AppUrl.MEMBERS}>Socios</Link> },
           { title: member ? member.name : 'Nuevo Socio' },
         ]}
       />
