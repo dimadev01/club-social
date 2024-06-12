@@ -1,3 +1,4 @@
+import { SwapOutlined } from '@ant-design/icons';
 import { Card, Statistic } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -21,7 +22,7 @@ export const MovementsCard = () => {
   );
 
   return (
-    <Card title="Caja" bordered>
+    <Card title="Caja" bordered extra={<SwapOutlined />}>
       <Statistic
         loading={isLoading}
         value={new Money({ amount: data?.amount ?? 0 }).toInteger()}
