@@ -10,6 +10,10 @@ export interface MovementGridDto {
   createdAt: string;
   date: string;
   id: string;
+  isExpense: boolean;
+  isIncome: boolean;
+  isRegistered: boolean;
+  isVoided: boolean;
   notes: string | null;
   paymentId: string | null;
   status: MovementStatusEnum;

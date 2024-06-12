@@ -11,6 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid-request.dto';
+import { GetDuesTotalsRequestDto } from '@adapters/dtos/get-dues-totals-request.dto';
 import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
@@ -22,7 +23,6 @@ import {
   getDueCategoryFilters,
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
-import { FindPaginatedDuesFilters } from '@domain/dues/due.repository';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
@@ -88,7 +88,7 @@ export const DuesPage = () => {
     gridState.filters.memberId = [member._id];
   }
 
-  const gridRequestFilters: FindPaginatedDuesFilters = {
+  const gridRequestFilters: GetDuesTotalsRequestDto = {
     filterByCategory: gridState.filters.category as DueCategoryEnum[],
     filterByCreatedAt: gridState.filters.createdAt,
     filterByDate: gridState.filters.date,
@@ -143,7 +143,7 @@ export const DuesPage = () => {
         filterDropdown: renderCreatedAtFilter,
         filteredValue: gridState.filters.createdAt,
         render: (createdAt: string, due: DueGridDto) => (
-          <Link to={`${AppUrl.Dues}/${due.id}`}>
+          <Link to={`${AppUrl.DUES}/${due.id}`}>
             {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
           </Link>
         ),
@@ -268,7 +268,7 @@ export const DuesPage = () => {
                 type="text"
                 onClick={() => {
                   navigate(
-                    UrlUtils.navigate(AppUrl.PaymentsNew, {
+                    UrlUtils.navigate(AppUrl.PAYMENTS_NEW, {
                       dueIds: [due.id],
                       memberId: due.memberId,
                     }),
@@ -315,7 +315,7 @@ export const DuesPage = () => {
             <Typography.Text strong>
               Total Pendiente:{' '}
               {new Money({
-                amount: duesTotals?.pendingAmount ?? 0,
+                amount: duesTotals?.pendingTotal ?? 0,
               }).formatWithCurrency()}
             </Typography.Text>
           </Table.Summary.Cell>
@@ -329,21 +329,21 @@ export const DuesPage = () => {
     <>
       <Breadcrumb
         className="mb-8"
-        items={[{ title: 'Inicio' }, { title: 'Cobros' }]}
+        items={[{ title: 'Inicio' }, { title: 'Deudas' }]}
       />
 
       <Card
         title={
           <Space>
             <WalletOutlined />
-            <span>Cobros</span>
+            <span>Deudas</span>
           </Space>
         }
         extra={
           <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
             <DuesGridCsvDownloaderButton request={gridRequest} />
-            <GridNewButton scope={ScopeEnum.DUES} to={AppUrl.DuesNew} />
+            <GridNewButton scope={ScopeEnum.DUES} to={AppUrl.DUES_NEW} />
           </Space.Compact>
         }
       >

@@ -24,7 +24,7 @@ export const PaymentDuesGrid: React.FC<PaymentDuesGridProps> = ({ dues }) => (
       {
         dataIndex: 'dueDate',
         render: (dueDate, paymentDue) => (
-          <Link to={`${AppUrl.Dues}/${paymentDue.dueId}`}>
+          <Link to={`${AppUrl.DUES}/${paymentDue.dueId}`}>
             {new DateUtcVo(dueDate).format()}
           </Link>
         ),

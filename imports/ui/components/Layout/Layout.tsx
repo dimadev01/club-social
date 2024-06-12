@@ -1,6 +1,7 @@
 import {
   CreditCardOutlined,
   FilePdfOutlined,
+  LineChartOutlined,
   LogoutOutlined,
   MailOutlined,
   NotificationOutlined,
@@ -28,12 +29,18 @@ import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
 import { Row } from '@ui/components/Layout/Row';
 import { ThemeSelect } from '@ui/components/Layout/ThemeSelect';
+import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
+import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
 import { useThemeContext } from '@ui/providers/ThemeContext';
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const user = useLoggedInUser();
+
+  const isAdmin = useIsAdmin();
+
+  const isStaff = useIsStaff();
 
   const canReadMembers = useIsInRole(PermissionEnum.READ, ScopeEnum.MEMBERS);
 
@@ -61,12 +68,24 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
 
+    if (isAdmin || isStaff) {
+      items.push({
+        icon: <LineChartOutlined className="!text-lg" />,
+        key: AppUrl.Home,
+        label: (
+          <Link className="no-underline" to={AppUrl.Home}>
+            Inicio
+          </Link>
+        ),
+      });
+    }
+
     if (canReadMembers) {
       items.push({
         icon: <TeamOutlined className="!text-lg" />,
-        key: AppUrl.Members,
+        key: AppUrl.MEMBERS,
         label: (
-          <Link className="no-underline" to={AppUrl.Members}>
+          <Link className="no-underline" to={AppUrl.MEMBERS}>
             Socios
           </Link>
         ),
@@ -76,10 +95,10 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     if (canReadDues) {
       items.push({
         icon: <WalletOutlined className="!text-lg" />,
-        key: AppUrl.Dues,
+        key: AppUrl.DUES,
         label: (
-          <Link className="no-underline" to={AppUrl.Dues}>
-            Cobros
+          <Link className="no-underline" to={AppUrl.DUES}>
+            Deudas
           </Link>
         ),
       });
@@ -88,9 +107,9 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     if (canReadPayments) {
       items.push({
         icon: <CreditCardOutlined className="!text-lg" />,
-        key: AppUrl.Payments,
+        key: AppUrl.PAYMENTS,
         label: (
-          <Link className="no-underline" to={AppUrl.Payments}>
+          <Link className="no-underline" to={AppUrl.PAYMENTS}>
             Pagos
           </Link>
         ),
@@ -100,9 +119,9 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     if (canReadMovements) {
       items.push({
         icon: <SwapOutlined className="!text-lg" />,
-        key: AppUrl.Movements,
+        key: AppUrl.MOVEMENTS,
         label: (
-          <Link className="no-underline" to={AppUrl.Movements}>
+          <Link className="no-underline" to={AppUrl.MOVEMENTS}>
             Movimientos
           </Link>
         ),
@@ -163,7 +182,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
               icon: <LogoutOutlined className="!text-lg" />,
               key: 'logout',
               label: (
-                <Link className="no-underline" to={AppUrl.Logout}>
+                <Link className="no-underline" to={AppUrl.LOGOUT}>
                   Cerrar sesión
                 </Link>
               ),

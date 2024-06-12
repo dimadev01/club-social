@@ -1,12 +1,22 @@
-import { Breadcrumb, Card, Descriptions, Divider, Flex, Space } from 'antd';
+import {
+  Breadcrumb,
+  Card,
+  Descriptions,
+  Divider,
+  Flex,
+  Space,
+  Watermark,
+} from 'antd';
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueStatusEnum, DueStatusLabel } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
+import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
@@ -49,76 +59,104 @@ export const DueDetailPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.Dues}>Cobros</Link> },
+          { title: <Link to={AppUrl.DUES}>Deudas</Link> },
           {
-            title: `Cobro a ${due.member.name} del ${new DateUtcVo(due.date).format()}`,
+            title: `Deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`,
           },
         ]}
       />
 
-      <Card
-        title={`Cobro a ${due.member.name} del ${new DateUtcVo(due.date).format()}`}
+      <Watermark
+        content={
+          due.status === DueStatusEnum.VOIDED
+            ? DueStatusLabel[due.status]
+            : undefined
+        }
       >
-        <>
-          <Descriptions column={1} layout="vertical" colon={false}>
-            <Descriptions.Item label="Fecha">
-              {new DateUtcVo(due.date).format()}
-            </Descriptions.Item>
+        <Card
+          title={`Deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`}
+        >
+          <>
+            <Descriptions column={1} layout="vertical" colon={false}>
+              <Descriptions.Item label="Fecha">
+                {new DateUtcVo(due.date).format()}
+              </Descriptions.Item>
 
-            <Descriptions.Item label="Socio">
-              {due.member.name}
-            </Descriptions.Item>
+              <Descriptions.Item label="Socio">
+                {due.member.name}
+              </Descriptions.Item>
 
-            <Descriptions.Item label="Categoría">
-              {renderDueCategoryLabel(due.category, due.date)}
-            </Descriptions.Item>
+              <Descriptions.Item label="Categoría">
+                {renderDueCategoryLabel(due.category, due.date)}
+              </Descriptions.Item>
 
-            <Descriptions.Item label="Estado">
-              {DueStatusLabel[due.status]}
-            </Descriptions.Item>
+              <Descriptions.Item label="Estado">
+                {DueStatusLabel[due.status]}
+              </Descriptions.Item>
 
-            <Descriptions.Item label="Monto">
-              {new Money({ amount: due.amount }).formatWithCurrency()}
-            </Descriptions.Item>
+              <Descriptions.Item label="Monto">
+                {new Money({ amount: due.amount }).formatWithCurrency()}
+              </Descriptions.Item>
 
-            <Descriptions.Item label="Notas">{due.notes}</Descriptions.Item>
-          </Descriptions>
+              <Descriptions.Item label="Notas">{due.notes}</Descriptions.Item>
 
-          <DuePaymentsGrid payments={due.payments} />
+              {due.status === DueStatusEnum.VOIDED && (
+                <>
+                  <Descriptions.Item label="Anulado el">
+                    {due.voidedAt
+                      ? new DateVo(due.voidedAt).format(
+                          DateFormatEnum.DDMMYYHHmm,
+                        )
+                      : ''}
+                  </Descriptions.Item>
 
-          <Divider />
+                  <Descriptions.Item label="Anulado por">
+                    {due.voidedBy}
+                  </Descriptions.Item>
 
-          <Flex justify="space-between">
-            <Space.Compact>
-              <FormEditButton
-                scope={ScopeEnum.DUES}
+                  <Descriptions.Item label="Motivo de anulación">
+                    {due.voidReason}
+                  </Descriptions.Item>
+                </>
+              )}
+            </Descriptions>
+
+            <DuePaymentsGrid payments={due.payments} />
+
+            <Divider />
+
+            <Flex justify="space-between">
+              <Space.Compact>
+                <FormEditButton
+                  scope={ScopeEnum.DUES}
+                  disabled={due.status !== DueStatusEnum.PENDING}
+                />
+                <FormBackButton />
+              </Space.Compact>
+
+              <FormVoidButton
                 disabled={due.status !== DueStatusEnum.PENDING}
-              />
-              <FormBackButton />
-            </Space.Compact>
-
-            <FormVoidButton
-              disabled={due.status !== DueStatusEnum.PENDING}
-              scope={ScopeEnum.DUES}
-              onConfirm={(reason: string) => {
-                voidDue.mutate(
-                  {
-                    id: due.id,
-                    voidReason: reason,
-                  },
-                  {
-                    onSuccess: () => {
-                      notificationSuccess('Deuda anulada');
-
-                      navigate(AppUrl.Dues);
+                scope={ScopeEnum.DUES}
+                onConfirm={(reason: string) => {
+                  voidDue.mutate(
+                    {
+                      id: due.id,
+                      voidReason: reason,
                     },
-                  },
-                );
-              }}
-            />
-          </Flex>
-        </>
-      </Card>
+                    {
+                      onSuccess: () => {
+                        notificationSuccess('Deuda anulada');
+
+                        navigate(AppUrl.DUES);
+                      },
+                    },
+                  );
+                }}
+              />
+            </Flex>
+          </>
+        </Card>
+      </Watermark>
     </>
   );
 };

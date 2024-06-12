@@ -32,6 +32,9 @@ export class PaymentDtoMapper extends MapperDto<Payment, PaymentDto> {
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
       status: payment.status,
+      voidReason: payment.voidReason,
+      voidedAt: payment.voidedAt?.toISOString() ?? null,
+      voidedBy: payment.voidedBy,
     };
   }
 }

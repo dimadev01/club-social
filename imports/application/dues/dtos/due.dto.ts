@@ -14,4 +14,7 @@ export interface DueDto {
   status: DueStatusEnum;
   totalPaidAmount: number;
   totalPendingAmount: number;
+  voidReason: string | null;
+  voidedAt: string | null;
+  voidedBy: string | null;
 }

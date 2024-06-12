@@ -9,7 +9,7 @@ export const AuthRoute: React.FC<PropsWithChildren> = ({ children }) => {
   const { user } = useUserContext();
 
   if (!user) {
-    return <Navigate to={AppUrl.Login} />;
+    return <Navigate to={AppUrl.LOGIN} />;
   }
 
   return <Layout>{children}</Layout>;

@@ -213,7 +213,7 @@ export const PaymentNewPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.Payments}>Pagos</Link> },
+          { title: <Link to={AppUrl.PAYMENTS}>Pagos</Link> },
           { title: renderCardTitle() },
         ]}
       />
@@ -270,12 +270,12 @@ export const PaymentNewPage = () => {
                 <Button
                   onClick={() =>
                     navigate(
-                      `${AppUrl.Dues}/new/${UrlUtils.stringify({ memberIds: [formMemberId] })}`,
+                      `${AppUrl.DUES}/new/${UrlUtils.stringify({ memberIds: [formMemberId] })}`,
                     )
                   }
                   icon={<PlusOutlined />}
                 >
-                  Nuevo Cobro
+                  Nueva Deuda
                 </Button>
               </Col>
             </Row>
