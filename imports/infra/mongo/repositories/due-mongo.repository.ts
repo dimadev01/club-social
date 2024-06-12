@@ -17,7 +17,7 @@ import {
   IDueRepository,
 } from '@domain/dues/due.repository';
 import { Due } from '@domain/dues/models/due.model';
-import { DueCollection } from '@infra/mongo/collections/due.collection';
+import { DueMongoCollection } from '@infra/mongo/collections/due.collection';
 import { DueEntity } from '@infra/mongo/entities/due.entity';
 import { DueMapper } from '@infra/mongo/mappers/due.mapper';
 import { CrudMongoRepository } from '@infra/mongo/repositories/common/crud-mongo.repository';
@@ -31,7 +31,7 @@ export class DueMongoRepository
   public constructor(
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
-    protected readonly collection: DueCollection,
+    protected readonly collection: DueMongoCollection,
     protected readonly mapper: DueMapper,
     private readonly _memberRepository: MemberMongoRepository,
   ) {

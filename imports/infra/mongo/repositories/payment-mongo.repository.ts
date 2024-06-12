@@ -16,7 +16,7 @@ import {
   IPaymentRepository,
 } from '@domain/payments/payment.repository';
 import { PaymentAuditableCollection } from '@infra/mongo/collections/payment-auditable.collection';
-import { PaymentCollection } from '@infra/mongo/collections/payment.collection';
+import { PaymentMongoCollection } from '@infra/mongo/collections/payment.collection';
 import { PaymentAuditEntity } from '@infra/mongo/entities/payment-audit.entity';
 import { PaymentEntity } from '@infra/mongo/entities/payment.entity';
 import { PaymentMapper } from '@infra/mongo/mappers/payment.mapper';
@@ -35,7 +35,7 @@ export class PaymentMongoRepository
   public constructor(
     @inject(DIToken.Logger)
     protected readonly logger: ILogger,
-    protected readonly collection: PaymentCollection,
+    protected readonly collection: PaymentMongoCollection,
     protected readonly auditableCollection: PaymentAuditableCollection,
     protected readonly mapper: PaymentMapper,
     private readonly _memberRepository: MemberMongoRepository,
