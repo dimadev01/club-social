@@ -131,7 +131,10 @@ export class Movement extends Model implements IMovement {
   public static createOne(props: CreateMovement): Result<Movement, Error> {
     const movement = new Movement();
 
-    if (props.category === MovementCategoryEnum.MEMBER_PAYMENT) {
+    if (
+      props.category === MovementCategoryEnum.MEMBER_PAYMENT &&
+      !props.paymentId
+    ) {
       return err(
         new Error('Cannot create a movement with category MEMBER_PAYMENT'),
       );
