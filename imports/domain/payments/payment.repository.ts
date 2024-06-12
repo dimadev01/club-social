@@ -28,7 +28,10 @@ export interface FindPaginatedPaymentsFilters {
 }
 
 export interface GetPaymentsTotalsResponse {
-  totalAmount: number;
+  electricity: number;
+  guest: number;
+  membership: number;
+  total: number;
 }
 
 export type FindPaginatedPaymentsResponse = FindPaginatedResponse<Payment>;

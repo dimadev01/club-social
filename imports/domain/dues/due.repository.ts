@@ -42,8 +42,8 @@ export interface FindDuesByPayment {
 }
 
 export interface GetDuesTotalsResponse {
-  pendingElectricity: number;
-  pendingGuest: number;
-  pendingMembership: number;
-  pendingTotal: number;
+  electricity: number;
+  guest: number;
+  membership: number;
+  total: number;
 }
