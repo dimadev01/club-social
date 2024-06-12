@@ -7,6 +7,7 @@ import { ILogger } from '@domain/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 import { FindOneById } from '@domain/common/repositories/queryable.repository';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { Payment } from '@domain/payments/models/payment.model';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import {
@@ -124,16 +125,43 @@ export class PaymentMongoRepository
   ): Promise<GetPaymentsTotalsResponse> {
     const query = this._getQueryByFilters(request);
 
+    const getGroupCategory = (category: DueCategoryEnum) => ({
+      [category]: {
+        $sum: {
+          $cond: [{ $eq: ['$_id', category] }, '$amount', 0],
+        },
+      },
+    });
+
     const [result] = await this.collection
       .rawCollection()
       .aggregate([
         { $match: query },
-        { $group: { _id: null, total: { $sum: '$amount' } } },
+        { $unwind: '$dues' },
+        {
+          $group: {
+            _id: '$dues.dueCategory',
+            amount: { $sum: '$dues.amount' },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            ...getGroupCategory(DueCategoryEnum.ELECTRICITY),
+            ...getGroupCategory(DueCategoryEnum.MEMBERSHIP),
+            ...getGroupCategory(DueCategoryEnum.GUEST),
+            total: { $sum: '$amount' },
+          },
+        },
+        { $project: { _id: 0 } },
       ])
       .toArray();
 
     return {
-      totalAmount: result?.total ?? 0,
+      electricity: result?.electricity ?? 0,
+      guest: result?.guest ?? 0,
+      membership: result?.membership ?? 0,
+      total: result?.total ?? 0,
     };
   }
 }
