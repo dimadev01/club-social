@@ -315,7 +315,7 @@ export const DuesPage = () => {
             <Typography.Text strong>
               Total Pendiente:{' '}
               {new Money({
-                amount: duesTotals?.pendingTotal ?? 0,
+                amount: duesTotals?.total ?? 0,
               }).formatWithCurrency()}
             </Typography.Text>
           </Table.Summary.Cell>

@@ -150,10 +150,10 @@ export class DueMongoRepository
       .toArray();
 
     return {
-      pendingElectricity: result?.electricity ?? 0,
-      pendingGuest: result?.guest ?? 0,
-      pendingMembership: result?.membership ?? 0,
-      pendingTotal: result?.total ?? 0,
+      electricity: result?.electricity ?? 0,
+      guest: result?.guest ?? 0,
+      membership: result?.membership ?? 0,
+      total: result?.total ?? 0,
     };
   }
 
