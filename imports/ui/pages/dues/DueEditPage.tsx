@@ -51,7 +51,7 @@ export const DueEditPage = () => {
       },
       {
         onSuccess: () => {
-          notificationSuccess('Cobro actualizado');
+          notificationSuccess('Deuda actualizada');
 
           navigate(-1);
         },
@@ -75,14 +75,16 @@ export const DueEditPage = () => {
         className="mb-8"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.Dues}>Cobros</Link> },
+          { title: <Link to={AppUrl.DUES}>Deudas</Link> },
           {
-            title: `Editando cobro a ${due.member.name} del ${new DateUtcVo(due.date).format()}`,
+            title: `Editando deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`,
           },
         ]}
       />
 
-      <Card>
+      <Card
+        title={`Editando deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`}
+      >
         <Form<FormValues>
           layout="vertical"
           disabled={updateDue.isLoading}
@@ -137,7 +139,7 @@ export const DueEditPage = () => {
           </Form.Item>
 
           <FormButtons
-            saveButtonProps={{ text: 'Actualizar Cobro' }}
+            saveButtonProps={{ text: 'Actualizar deuda' }}
             scope={ScopeEnum.DUES}
           />
         </Form>

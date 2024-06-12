@@ -197,7 +197,7 @@ export class Due extends Model implements IDue {
 
   public void(voidedBy: string, voidReason: string): Result<null, Error> {
     if (this._payments.length > 0) {
-      return err(new Error('No se puede anular un cobro con pagos asociados'));
+      return err(new Error('No se puede anular una deuda con pagos asociados'));
     }
 
     this._voidedAt = new DateUtcVo();

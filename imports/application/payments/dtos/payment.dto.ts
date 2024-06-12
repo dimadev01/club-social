@@ -12,4 +12,7 @@ export interface PaymentDto {
   notes: string | null;
   receiptNumber: number | null;
   status: PaymentStatusEnum;
+  voidReason: string | null;
+  voidedAt: string | null;
+  voidedBy: string | null;
 }

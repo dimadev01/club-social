@@ -94,7 +94,7 @@ export const MembersPage = () => {
           <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
             <MembersGridCsvDownloaderButton request={gridRequest} />
-            <GridNewButton scope={ScopeEnum.MEMBERS} to={AppUrl.MembersNew} />
+            <GridNewButton scope={ScopeEnum.MEMBERS} to={AppUrl.MEMBERS_NEW} />
           </Space.Compact>
         }
       >
@@ -120,7 +120,7 @@ export const MembersPage = () => {
               filters: GridUtils.getMembersForFilter(members),
               fixed: 'left',
               render: (id: string, member: MemberGridDto) => (
-                <Link to={`${AppUrl.Members}/${id}`}>{member.name}</Link>
+                <Link to={`${AppUrl.MEMBERS}/${id}`}>{member.name}</Link>
               ),
               sortOrder: gridState.sorter.id,
               sorter: true,
@@ -217,19 +217,19 @@ export const MembersPage = () => {
                     icon={<WalletOutlined />}
                     onClick={() =>
                       navigate(
-                        UrlUtils.navigate(AppUrl.Dues, {
+                        UrlUtils.navigate(AppUrl.DUES, {
                           filters: { memberId: [member.id] },
                         }),
                       )
                     }
-                    tooltip={{ title: 'Ver cobros' }}
+                    tooltip={{ title: 'Ver deudas' }}
                   />
                   <Button
                     type="text"
                     icon={<CreditCardOutlined />}
                     onClick={() =>
                       navigate(
-                        UrlUtils.navigate(AppUrl.Payments, {
+                        UrlUtils.navigate(AppUrl.PAYMENTS, {
                           filters: { memberId: [member.id] },
                         }),
                       )

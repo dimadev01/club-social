@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { GetPaymentsGridRequestDto } from '@adapters/dtos/get-payments-grid-request.dto';
+import { GetPaymentsTotalsRequestDto } from '@adapters/dtos/get-payments-totals-request.dto';
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
@@ -16,7 +17,6 @@ import {
   PaymentStatusLabel,
   getPaymentStatusColumnFilters,
 } from '@domain/payments/payment.enum';
-import { FindPaginatedPaymentsFilters } from '@domain/payments/payment.repository';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -61,7 +61,7 @@ export const PaymentsPage = () => {
     gridState.filters.memberId = [member._id];
   }
 
-  const gridRequestFilters: FindPaginatedPaymentsFilters = {
+  const gridRequestFilters: GetPaymentsTotalsRequestDto = {
     filterByCreatedAt: gridState.filters.createdAt,
     filterByDate: gridState.filters.date,
     filterByMember: gridState.filters.memberId,
@@ -113,7 +113,7 @@ export const PaymentsPage = () => {
         filterDropdown: renderCreatedAtFilter,
         filteredValue: gridState.filters.createdAt,
         render: (createdAt: string, payment: PaymentGridDto) => (
-          <Link to={`${AppUrl.Payments}/${payment.id}`}>
+          <Link to={`${AppUrl.PAYMENTS}/${payment.id}`}>
             {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
           </Link>
         ),
@@ -228,7 +228,7 @@ export const PaymentsPage = () => {
             <Typography.Text strong>
               Total:{' '}
               {new Money({
-                amount: paymentTotals?.amount ?? 0,
+                amount: paymentTotals?.totalAmount ?? 0,
               }).formatWithCurrency()}
             </Typography.Text>
           </Table.Summary.Cell>
@@ -255,7 +255,10 @@ export const PaymentsPage = () => {
         extra={
           <Space.Compact>
             <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-            <GridNewButton scope={ScopeEnum.PAYMENTS} to={AppUrl.PaymentsNew} />
+            <GridNewButton
+              scope={ScopeEnum.PAYMENTS}
+              to={AppUrl.PAYMENTS_NEW}
+            />
           </Space.Compact>
         }
       >

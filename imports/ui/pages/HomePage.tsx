@@ -1,30 +1,41 @@
+import { List, Typography } from 'antd';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
-import { InternalError } from '@ui/components/InternalError';
-import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
+import { DuesCard } from '@ui/components/Analytics/DuesCard';
+import { MovementsCard } from '@ui/components/Analytics/MovementsCard';
+import { PaymentsCard } from '@ui/components/Analytics/PaymentsCard';
 import { useIsMember } from '@ui/hooks/auth/useIsMember';
-import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 
 export const HomePage = () => {
   const isMember = useIsMember();
 
-  const isStaff = useIsStaff();
-
-  const isAdmin = useIsAdmin();
-
   if (isMember) {
-    return <Navigate to={AppUrl.Dues} />;
+    return <Navigate to={AppUrl.DUES} />;
   }
 
-  if (isStaff) {
-    return <Navigate to={AppUrl.Payments} />;
-  }
+  return (
+    <>
+      <Typography.Title level={1}>Inicio</Typography.Title>
 
-  if (isAdmin) {
-    return <Navigate to={AppUrl.Members} />;
-  }
-
-  return <InternalError />;
+      <List
+        dataSource={[
+          { component: <DuesCard /> },
+          { component: <PaymentsCard /> },
+          { component: <MovementsCard /> },
+        ]}
+        grid={{
+          gutter: [16, 16],
+          lg: 2,
+          md: 1,
+          sm: 1,
+          xl: 3,
+          xs: 1,
+          xxl: 4,
+        }}
+        renderItem={(item) => <List.Item>{item.component}</List.Item>}
+      />
+    </>
+  );
 };

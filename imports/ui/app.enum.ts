@@ -7,39 +7,40 @@ export enum AppThemeEnum {
 export enum AppUrl {
   Home = '/',
 
-  Dues = '/dues',
-  DuesDetail = '/dues/:id',
-  DuesNew = '/dues/new',
-  DuesEdit = '/dues/:id/edit',
+  DUES = '/dues',
+  DUES_DETAIL = '/dues/:id',
+  DUES_NEW = '/dues/new',
+  DUES_EDIT = '/dues/:id/edit',
 
-  Enroll = '/enroll-account/:token',
-  Login = '/login',
-  LoginPasswordless = '/login/passwordless/:email',
-  Logout = '/logout',
-  VerifyEmail = '/verify-email/:token',
+  ENROLL = '/enroll-account/:token',
+  LOGIN = '/login',
+  LOGIN_PASSWORDLESS = '/login/passwordless/:email',
+  LOGOUT = '/logout',
+  VERIFY_EMAIL = '/verify-email/:token',
 
-  Members = '/members',
-  MembersDetail = '/members/:id',
-  MembersNew = '/members/new',
+  MEMBERS = '/members',
+  MEMBERS_DETAIL = '/members/:id',
+  MEMBERS_NEW = '/members/new',
 
-  Movements = '/movements',
-  MovementsDetail = '/movements/:id',
-  MovementsNew = '/movements/new',
+  MOVEMENTS = '/movements',
+  MOVEMENTS_DETAIL = '/movements/:id',
+  MOVEMENTS_NEW = '/movements/new',
+  MOVEMENTS_EDIT = '/movements/:id/edit',
 
-  Payments = '/payments',
-  PaymentsDetail = '/payments/:id',
-  PaymentsNew = '/payments/new',
+  PAYMENTS = '/payments',
+  PAYMENTS_DETAIL = '/payments/:id',
+  PAYMENTS_NEW = '/payments/new',
 
-  Professors = '/professors',
+  PROFESSORS = '/professors',
 
-  Employees = '/employees',
+  EMPLOYEES = '/employees',
 
-  Services = '/services',
+  SERVICES = '/services',
 
-  Users = '/users',
-  UsersDetail = '/users/:id',
-  UsersNew = '/users/new',
+  USERS = '/users',
+  USERS_DETAIL = '/users/:id',
+  USERS_NEW = '/users/new',
 
-  Categories = '/categories',
-  CategoriesDetail = '/categories/:id',
+  CATEGORIES = '/categories',
+  CATEGORIES_DETAIL = '/categories/:id',
 }

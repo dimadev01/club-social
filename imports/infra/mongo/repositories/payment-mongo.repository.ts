@@ -133,7 +133,7 @@ export class PaymentMongoRepository
       .toArray();
 
     return {
-      amount: result?.total ?? 0,
+      totalAmount: result?.total ?? 0,
     };
   }
 }

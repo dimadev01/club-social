@@ -29,7 +29,7 @@ export const LoginPasswordlessPage = () => {
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
   if (!email) {
-    return <Navigate to={AppUrl.Login} />;
+    return <Navigate to={AppUrl.LOGIN} />;
   }
 
   const login = (values: FormValues) => {
@@ -105,7 +105,7 @@ export const LoginPasswordlessPage = () => {
             className="ml-auto rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
             htmlType="button"
             type="text"
-            onClick={() => navigate(AppUrl.Login)}
+            onClick={() => navigate(AppUrl.LOGIN)}
           >
             Atrás
           </Button>

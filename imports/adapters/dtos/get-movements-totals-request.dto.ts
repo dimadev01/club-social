@@ -3,6 +3,7 @@ import { IsArray, IsEnum, IsString } from 'class-validator';
 import {
   MovementCategoryEnum,
   MovementStatusEnum,
+  MovementTypeEnum,
 } from '@domain/categories/category.enum';
 import { FindPaginatedMovementsFilters } from '@domain/movements/movement.repository';
 
@@ -24,4 +25,8 @@ export class GetMovementsTotalsRequestDto
   @IsEnum(MovementStatusEnum, { each: true })
   @IsArray()
   public filterByStatus!: MovementStatusEnum[];
+
+  @IsEnum(MovementTypeEnum, { each: true })
+  @IsArray()
+  public filterByType!: MovementTypeEnum[];
 }
