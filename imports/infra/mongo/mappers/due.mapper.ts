@@ -31,7 +31,7 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         notes: due.notes,
         payments: due.payments.map<IDuePayment>((payment) => ({
           creditAmount: new Money({ amount: payment.creditAmount }),
-          debitAmount: new Money({ amount: payment.debitAmount }),
+          directAmount: new Money({ amount: payment.directAmount }),
           paymentDate: new DateUtcVo(payment.paymentDate),
           paymentId: payment.paymentId,
           paymentReceiptNumber: payment.paymentReceiptNumber,
@@ -67,7 +67,7 @@ export class DueMapper extends Mapper<Due, DueEntity> {
       notes: due.notes,
       payments: due.payments.map<DuePaymentEntity>((payment) => ({
         creditAmount: payment.creditAmount.value,
-        debitAmount: payment.debitAmount.value,
+        directAmount: payment.directAmount.value,
         paymentDate: payment.paymentDate.toDate(),
         paymentId: payment.paymentId,
         paymentReceiptNumber: payment.paymentReceiptNumber,

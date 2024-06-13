@@ -44,7 +44,7 @@ export class GetDuesGridUseCase
           memberId: due.memberId,
           payments: due.payments.map<DuePaymentDto>((duePayment) => ({
             creditAmount: duePayment.creditAmount.value,
-            debitAmount: duePayment.debitAmount.value,
+            directAmount: duePayment.directAmount.value,
             paymentDate: duePayment.paymentDate.toISOString(),
             paymentId: duePayment.paymentId,
             paymentReceiptNumber: duePayment.paymentReceiptNumber,

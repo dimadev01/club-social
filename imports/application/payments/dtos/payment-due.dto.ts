@@ -1,6 +1,6 @@
 export interface PaymentDueDto {
   creditAmount: number;
-  debitAmount: number;
+  directAmount: number;
   dueAmount: number;
   dueCategory: string;
   dueDate: string;

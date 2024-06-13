@@ -8,6 +8,6 @@ export interface CreatePaymentRequest {
 
 export interface CreatePaymentDueRequest {
   creditAmount: number;
-  debitAmount: number;
+  directAmount: number;
   dueId: string;
 }

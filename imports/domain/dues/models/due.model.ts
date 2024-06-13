@@ -149,7 +149,7 @@ export class Due extends Model implements IDue {
       duePayment.value.totalAmount,
     );
 
-    this._calculateTotalPendingAmount();
+    this.calculateTotalPendingAmount();
 
     this._calculateStatus();
 
@@ -229,7 +229,7 @@ export class Due extends Model implements IDue {
       paymentToVoid.totalAmount,
     );
 
-    this._calculateTotalPendingAmount();
+    this.calculateTotalPendingAmount();
 
     this._calculateStatus();
 
@@ -248,7 +248,7 @@ export class Due extends Model implements IDue {
     }
   }
 
-  private _calculateTotalPendingAmount(): void {
+  public calculateTotalPendingAmount(): void {
     this._totalPendingAmount = this._amount.subtract(this._totalPaidAmount);
 
     if (this._totalPendingAmount.isLessThanZero()) {

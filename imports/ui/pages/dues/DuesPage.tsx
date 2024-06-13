@@ -1,9 +1,5 @@
-import {
-  CreditCardOutlined,
-  InfoCircleOutlined,
-  WalletOutlined,
-} from '@ant-design/icons';
-import { Breadcrumb, Card, Space, Tooltip, Typography } from 'antd';
+import { CreditCardOutlined, WalletOutlined } from '@ant-design/icons';
+import { Breadcrumb, Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
@@ -193,7 +189,7 @@ export const DuesPage = () => {
         dataIndex: 'amount',
         ellipsis: true,
         render: (amount: number) => new Money({ amount }).formatWithCurrency(),
-        title: 'Monto inicial',
+        title: 'Monto Original',
         width: 100,
       },
       {
@@ -209,28 +205,8 @@ export const DuesPage = () => {
         align: 'right',
         dataIndex: 'totalPendingAmount',
         ellipsis: true,
-        render: (totalPendingAmount: number, due: DueGridDto) => {
-          const pendingAmountFormatted = new Money({
-            amount: totalPendingAmount,
-          }).formatWithCurrency();
-
-          if (totalPendingAmount === due.amount || totalPendingAmount === 0) {
-            return pendingAmountFormatted;
-          }
-
-          const amountFormatted = new Money({
-            amount: due.amount,
-          }).formatWithCurrency();
-
-          return (
-            <Space>
-              <Tooltip title={`Importe original: ${amountFormatted}`}>
-                <InfoCircleOutlined />
-              </Tooltip>
-              {pendingAmountFormatted}
-            </Space>
-          );
-        },
+        render: (totalPendingAmount: number) =>
+          new Money({ amount: totalPendingAmount }).formatWithCurrency(),
         title: 'Pendiente',
         width: 100,
       },

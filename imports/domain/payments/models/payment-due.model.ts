@@ -29,7 +29,7 @@ export class PaymentDue implements IPaymentDue {
   private _totalAmount: Money;
 
   public constructor(props?: IPaymentDue) {
-    this._debitAmount = props?.debitAmount ?? new Money();
+    this._debitAmount = props?.directAmount ?? new Money();
 
     this._dueAmount = props?.dueAmount ?? new Money();
 
@@ -41,7 +41,7 @@ export class PaymentDue implements IPaymentDue {
 
     this._creditAmount = props?.creditAmount ?? new Money();
 
-    this._debitAmount = props?.debitAmount ?? new Money();
+    this._debitAmount = props?.directAmount ?? new Money();
 
     this._totalAmount = props?.totalAmount ?? new Money();
 
@@ -54,7 +54,7 @@ export class PaymentDue implements IPaymentDue {
     return this._creditAmount;
   }
 
-  public get debitAmount(): Money {
+  public get directAmount(): Money {
     return this._debitAmount;
   }
 
@@ -93,16 +93,16 @@ export class PaymentDue implements IPaymentDue {
 
     if (props.creditAmount.isZero()) {
       source = PaymentDueSourceEnum.DIRECT;
-    } else if (props.debitAmount.isZero()) {
+    } else if (props.directAmount.isZero()) {
       source = PaymentDueSourceEnum.CREDIT;
     } else {
       source = PaymentDueSourceEnum.MIXED;
     }
 
-    const totalAmount = props.debitAmount.add(props.creditAmount);
+    const totalAmount = props.directAmount.add(props.creditAmount);
 
     const result = Result.combine([
-      paymentDue.setDebitAmount(props.debitAmount),
+      paymentDue.setDebitAmount(props.directAmount),
       paymentDue.setCreditAmount(props.creditAmount),
       paymentDue.setDueAmount(props.dueAmount),
       paymentDue.setDueCategory(props.dueCategory),

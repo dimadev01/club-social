@@ -5,7 +5,7 @@ import { CreatePaymentDueRequest } from '@application/payments/use-cases/create-
 export class CreatePaymentDueRequestDto implements CreatePaymentDueRequest {
   @IsInt()
   @IsNumber()
-  public debitAmount!: number;
+  public directAmount!: number;
 
   @IsNotEmpty()
   @IsString()

@@ -18,7 +18,7 @@ export class PaymentDueEntity {
 
   @IsInt()
   @IsNumber()
-  public debitAmount: number;
+  public directAmount: number;
 
   @IsInt()
   @IsPositive()
@@ -48,7 +48,7 @@ export class PaymentDueEntity {
   public totalAmount: number;
 
   public constructor(props: PaymentDueEntity) {
-    this.debitAmount = props.debitAmount;
+    this.directAmount = props.directAmount;
 
     this.dueCategory = props.dueCategory;
 

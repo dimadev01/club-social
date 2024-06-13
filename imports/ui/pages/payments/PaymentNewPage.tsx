@@ -156,7 +156,7 @@ export const PaymentNewPage = () => {
       dues: selectedDues.map<CreatePaymentDueRequestDto>((due) => ({
         // creditAmount: 100000,
         creditAmount: 0,
-        debitAmount: Money.fromNumber(due.amount).value,
+        directAmount: Money.fromNumber(due.amount).value,
         dueId: due.dueId,
       })),
       memberId: values.memberId,

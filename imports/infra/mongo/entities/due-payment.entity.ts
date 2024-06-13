@@ -27,7 +27,7 @@ export class DuePaymentEntity {
 
   @IsInt()
   @IsNumber()
-  public debitAmount: number;
+  public directAmount: number;
 
   @IsEnum(PaymentDueSourceEnum)
   public source: PaymentDueSourceEnum;
@@ -62,7 +62,7 @@ export class DuePaymentEntity {
 
     this.creditAmount = props.creditAmount;
 
-    this.debitAmount = props.debitAmount;
+    this.directAmount = props.directAmount;
 
     this.source = props.source;
   }

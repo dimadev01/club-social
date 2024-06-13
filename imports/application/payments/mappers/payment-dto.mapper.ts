@@ -19,7 +19,7 @@ export class PaymentDtoMapper extends MapperDto<Payment, PaymentDto> {
       date: payment.date.toISOString(),
       dues: payment.dues.map<PaymentDueDto>((due) => ({
         creditAmount: due.creditAmount.value,
-        debitAmount: due.debitAmount.value,
+        directAmount: due.directAmount.value,
         dueAmount: due.dueAmount.value,
         dueCategory: due.dueCategory,
         dueDate: due.dueDate.toISOString(),

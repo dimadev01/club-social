@@ -30,7 +30,7 @@ export interface CreatePayment {
 
 export interface IPaymentDue {
   creditAmount: Money;
-  debitAmount: Money;
+  directAmount: Money;
   dueAmount: Money;
   dueCategory: DueCategoryEnum;
   dueDate: DateUtcVo;
@@ -42,7 +42,7 @@ export interface IPaymentDue {
 
 export interface CreatePaymentDue {
   creditAmount: Money;
-  debitAmount: Money;
+  directAmount: Money;
   dueAmount: Money;
   dueCategory: DueCategoryEnum;
   dueDate: DateUtcVo;

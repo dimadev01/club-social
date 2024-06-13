@@ -36,7 +36,7 @@ export class DuePayment implements IDuePayment {
 
     this._creditAmount = props?.creditAmount ?? new Money();
 
-    this._debitAmount = props?.debitAmount ?? new Money();
+    this._debitAmount = props?.directAmount ?? new Money();
 
     this._source = props?.source ?? PaymentDueSourceEnum.MIXED;
 
@@ -51,7 +51,7 @@ export class DuePayment implements IDuePayment {
     return this._paymentDate;
   }
 
-  public get debitAmount(): Money {
+  public get directAmount(): Money {
     return this._debitAmount;
   }
 
@@ -85,7 +85,7 @@ export class DuePayment implements IDuePayment {
       duePayment.setPaymentReceiptNumber(props.receiptNumber),
       duePayment.setPaymentStatus(PaymentStatusEnum.PAID),
       duePayment.setCreditAmount(props.creditAmount),
-      duePayment.setDebitAmount(props.debitAmount),
+      duePayment.setDebitAmount(props.directAmount),
       duePayment.setSource(props.source),
     ]);
 

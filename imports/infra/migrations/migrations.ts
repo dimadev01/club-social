@@ -12,6 +12,7 @@ import { DueMongoCollection } from '@infra/mongo/collections/due.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
 import { MovementMongoCollection } from '@infra/mongo/collections/movement.collection';
 import { PaymentMongoCollection } from '@infra/mongo/collections/payment.collection';
+import { DueMapper } from '@infra/mongo/mappers/due.mapper';
 
 // @ts-expect-error
 Migrations.add({
@@ -136,7 +137,7 @@ Migrations.add({
 
                   return {
                     totalAmount: paymentDue.amount,
-                    debitAmount: paymentDue.amount,
+                    directAmount: paymentDue.amount,
                     creditAmount: 0,
                     dueAmount: paymentDue.dueAmount,
                     dueCategory: paymentDue.dueCategory,
@@ -188,7 +189,7 @@ Migrations.add({
                     paymentId: duePayment.paymentId,
                     totalAmount: duePayment.amount,
                     creditAmount: 0,
-                    debitAmount: duePayment.amount,
+                    directAmount: duePayment.amount,
                     paymentReceiptNumber: duePayment.receiptNumber,
                     source: PaymentDueSourceEnum.DIRECT,
                     paymentStatus: duePayment.status,
@@ -196,6 +197,27 @@ Migrations.add({
                   };
                 })
                 .filter(Boolean),
+            },
+          },
+        );
+      }),
+    );
+
+    const duesAgain = await duesCollection.find({}).fetchAsync();
+
+    const duesMapper = container.resolve(DueMapper);
+
+    await Promise.all(
+      duesAgain.map(async (due) => {
+        const dueDomain = duesMapper.toDomain(due);
+
+        dueDomain.calculateTotalPendingAmount();
+
+        await duesCollection.updateAsync(
+          { _id: due._id },
+          {
+            $set: {
+              totalPendingAmount: dueDomain.totalPendingAmount.value,
             },
           },
         );

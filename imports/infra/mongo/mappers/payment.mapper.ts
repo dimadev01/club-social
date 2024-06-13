@@ -27,7 +27,7 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
         deletedBy: payment.deletedBy,
         dues: payment.dues.map<IPaymentDue>((due) => ({
           creditAmount: new Money({ amount: due.creditAmount }),
-          debitAmount: new Money({ amount: due.debitAmount }),
+          directAmount: new Money({ amount: due.directAmount }),
           dueAmount: new Money({ amount: due.dueAmount }),
           dueCategory: due.dueCategory,
           dueDate: new DateUtcVo(due.dueDate),
@@ -62,7 +62,7 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
       deletedBy: payment.deletedBy,
       dues: payment.dues.map<PaymentDueEntity>((due) => ({
         creditAmount: due.creditAmount.value,
-        debitAmount: due.debitAmount.value,
+        directAmount: due.directAmount.value,
         dueAmount: due.dueAmount.value,
         dueCategory: due.dueCategory,
         dueDate: due.dueDate.toDate(),

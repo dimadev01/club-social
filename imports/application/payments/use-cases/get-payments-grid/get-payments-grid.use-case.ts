@@ -42,7 +42,7 @@ export class GetPaymentsGridUseCase
         date: payment.date.toISOString(),
         dues: payment.dues.map<PaymentDueDto>((paymentDue) => ({
           creditAmount: paymentDue.creditAmount.value,
-          debitAmount: paymentDue.debitAmount.value,
+          directAmount: paymentDue.directAmount.value,
           dueAmount: paymentDue.dueAmount.value,
           dueCategory: paymentDue.dueCategory,
           dueDate: paymentDue.dueDate.toISOString(),

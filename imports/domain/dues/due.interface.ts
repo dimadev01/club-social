@@ -32,7 +32,7 @@ export interface CreateDue {
 
 export interface IDuePayment {
   creditAmount: Money;
-  debitAmount: Money;
+  directAmount: Money;
   paymentDate: DateUtcVo;
   paymentId: string;
   paymentReceiptNumber: number | null;
@@ -44,7 +44,7 @@ export interface IDuePayment {
 export interface CreateDuePayment {
   creditAmount: Money;
   date: DateUtcVo;
-  debitAmount: Money;
+  directAmount: Money;
   paymentId: string;
   receiptNumber: number | null;
   source: PaymentDueSourceEnum;

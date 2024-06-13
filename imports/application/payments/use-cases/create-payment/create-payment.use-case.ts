@@ -116,7 +116,7 @@ export class CreatePaymentUseCase
             due.addPayment({
               creditAmount: paymentDue.creditAmount,
               date: newPayment.date,
-              debitAmount: paymentDue.debitAmount,
+              directAmount: paymentDue.directAmount,
               paymentId: newPayment._id,
               receiptNumber: newPayment.receiptNumber,
               source: paymentDue.source,
@@ -178,11 +178,11 @@ export class CreatePaymentUseCase
 
       const creditAmount = new Money({ amount: requestDue.creditAmount });
 
-      const debitAmount = new Money({ amount: requestDue.debitAmount });
+      const directAmount = new Money({ amount: requestDue.directAmount });
 
       const createPaymentDue: CreatePaymentDue = {
         creditAmount,
-        debitAmount,
+        directAmount,
         dueAmount: due.amount,
         dueCategory: due.category,
         dueDate: due.date,
