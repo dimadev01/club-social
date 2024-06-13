@@ -139,7 +139,10 @@ export const DueEditPage = () => {
           </Form.Item>
 
           <FormButtons
-            saveButtonProps={{ text: 'Actualizar deuda' }}
+            saveButtonProps={{
+              disabled: updateDue.isLoading,
+              text: 'Actualizar deuda',
+            }}
             scope={ScopeEnum.DUES}
           />
         </Form>
