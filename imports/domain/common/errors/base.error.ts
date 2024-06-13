@@ -1,1 +1,5 @@
-export abstract class BaseError extends Error {}
+export class DomainError extends Error {
+  public constructor(message: string) {
+    super(message);
+  }
+}

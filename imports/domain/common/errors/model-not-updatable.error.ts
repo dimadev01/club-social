@@ -1,6 +1,6 @@
-import { BaseError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/base.error';
 
-export class ModelNotUpdatableError extends BaseError {
+export class ModelNotUpdatableError extends DomainError {
   constructor() {
     super('Model is not updatable');
   }

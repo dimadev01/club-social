@@ -4,7 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { VoidMovementUseCase } from '@application/movements/use-cases/void-movement/void-movement.use-case';
 import { VoidPaymentRequest } from '@application/payments/use-cases/void-payment/void-payment.request';
-import { BaseError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/base.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
@@ -108,7 +108,7 @@ export class VoidPaymentUseCase implements IUseCase<VoidPaymentRequest, null> {
     } catch (error) {
       this._logger.error(error);
 
-      if (error instanceof BaseError) {
+      if (error instanceof DomainError) {
         return err(error);
       }
 
