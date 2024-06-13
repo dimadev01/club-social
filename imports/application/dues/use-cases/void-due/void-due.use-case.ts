@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { VoidDueRequest } from '@application/dues/use-cases/void-due/void-due.request';
-import { BaseError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/base.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
@@ -46,7 +46,7 @@ export class VoidDueUseCase implements IUseCase<VoidDueRequest, null> {
 
       return ok(null);
     } catch (error) {
-      if (error instanceof BaseError) {
+      if (error instanceof DomainError) {
         return err(error);
       }
 
