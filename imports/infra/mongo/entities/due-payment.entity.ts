@@ -10,16 +10,30 @@ import {
 } from 'class-validator';
 
 import { IsNullable } from '@adapters/common/class-validator/is-nullable';
-import { PaymentStatusEnum } from '@domain/payments/payment.enum';
+import {
+  PaymentDueSourceEnum,
+  PaymentStatusEnum,
+} from '@domain/payments/payment.enum';
 
 export class DuePaymentEntity {
   @IsInt()
   @IsPositive()
   @IsNumber()
-  public amount: number;
+  public totalAmount: number;
+
+  @IsInt()
+  @IsNumber()
+  public creditAmount: number;
+
+  @IsInt()
+  @IsNumber()
+  public debitAmount: number;
+
+  @IsEnum(PaymentDueSourceEnum)
+  public source: PaymentDueSourceEnum;
 
   @IsDate()
-  public date: Date;
+  public paymentDate: Date;
 
   @IsNotEmpty()
   @IsString()
@@ -30,20 +44,26 @@ export class DuePaymentEntity {
   @IsNumber()
   @IsNullable()
   @IsDefined()
-  public receiptNumber: number | null;
+  public paymentReceiptNumber: number | null;
 
   @IsEnum(PaymentStatusEnum)
-  public status: PaymentStatusEnum;
+  public paymentStatus: PaymentStatusEnum;
 
   public constructor(props: DuePaymentEntity) {
-    this.amount = props.amount;
+    this.totalAmount = props.totalAmount;
 
     this.paymentId = props.paymentId;
 
-    this.date = props.date;
+    this.paymentDate = props.paymentDate;
 
-    this.receiptNumber = props.receiptNumber;
+    this.paymentReceiptNumber = props.paymentReceiptNumber;
 
-    this.status = props.status;
+    this.paymentStatus = props.paymentStatus;
+
+    this.creditAmount = props.creditAmount;
+
+    this.debitAmount = props.debitAmount;
+
+    this.source = props.source;
   }
 }

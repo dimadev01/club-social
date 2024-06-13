@@ -150,7 +150,7 @@ export const DuesPage = () => {
         sortOrder: gridState.sorter.createdAt,
         sorter: true,
         title: 'Fecha de creación',
-        width: 125,
+        width: 150,
       },
       {
         dataIndex: 'date',

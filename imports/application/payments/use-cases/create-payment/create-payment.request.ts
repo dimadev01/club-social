@@ -7,6 +7,7 @@ export interface CreatePaymentRequest {
 }
 
 export interface CreatePaymentDueRequest {
-  amount: number;
+  creditAmount: number;
+  debitAmount: number;
   dueId: string;
 }

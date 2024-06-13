@@ -1,9 +1,11 @@
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export interface DuePaymentDto {
-  amount: number;
-  date: string;
+  creditAmount: number;
+  debitAmount: number;
+  paymentDate: string;
   paymentId: string;
-  receiptNumber: number | null;
-  status: PaymentStatusEnum;
+  paymentReceiptNumber: number | null;
+  paymentStatus: PaymentStatusEnum;
+  totalAmount: number;
 }

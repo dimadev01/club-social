@@ -2,8 +2,10 @@ import { injectable } from 'tsyringe';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { IDuePayment } from '@domain/dues/due.interface';
 import { Due } from '@domain/dues/models/due.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
+import { DuePaymentEntity } from '@infra/mongo/entities/due-payment.entity';
 import { DueEntity } from '@infra/mongo/entities/due.entity';
 import { MemberMapper } from '@infra/mongo/mappers/member.mapper';
 
@@ -27,12 +29,15 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         isDeleted: due.isDeleted,
         memberId: due.memberId,
         notes: due.notes,
-        payments: due.payments.map((payment) => ({
-          amount: new Money({ amount: payment.amount }),
-          date: new DateUtcVo(payment.date),
+        payments: due.payments.map<IDuePayment>((payment) => ({
+          creditAmount: new Money({ amount: payment.creditAmount }),
+          debitAmount: new Money({ amount: payment.debitAmount }),
+          paymentDate: new DateUtcVo(payment.paymentDate),
           paymentId: payment.paymentId,
-          receiptNumber: payment.receiptNumber,
-          status: payment.status,
+          paymentReceiptNumber: payment.paymentReceiptNumber,
+          paymentStatus: payment.paymentStatus,
+          source: payment.source,
+          totalAmount: new Money({ amount: payment.totalAmount }),
         })),
         status: due.status,
         totalPaidAmount: new Money({ amount: due.totalPaidAmount }),
@@ -60,12 +65,15 @@ export class DueMapper extends Mapper<Due, DueEntity> {
       isDeleted: due.isDeleted,
       memberId: due.memberId,
       notes: due.notes,
-      payments: due.payments.map((payment) => ({
-        amount: payment.amount.value,
-        date: payment.date.toDate(),
+      payments: due.payments.map<DuePaymentEntity>((payment) => ({
+        creditAmount: payment.creditAmount.value,
+        debitAmount: payment.debitAmount.value,
+        paymentDate: payment.paymentDate.toDate(),
         paymentId: payment.paymentId,
-        receiptNumber: payment.receiptNumber,
-        status: payment.status,
+        paymentReceiptNumber: payment.paymentReceiptNumber,
+        paymentStatus: payment.paymentStatus,
+        source: payment.source,
+        totalAmount: payment.totalAmount.value,
       })),
       status: due.status,
       totalPaidAmount: due.totalPaidAmount.value,
