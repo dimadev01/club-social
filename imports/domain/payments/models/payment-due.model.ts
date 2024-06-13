@@ -10,7 +10,9 @@ import {
 } from '@domain/payments/payment.interface';
 
 export class PaymentDue implements IPaymentDue {
-  private _amount: Money;
+  private _creditAmount: Money;
+
+  private _debitAmount: Money;
 
   private _dueAmount: Money;
 
@@ -20,10 +22,14 @@ export class PaymentDue implements IPaymentDue {
 
   private _dueId: string;
 
+  private _duePendingAmount: Money;
+
   private _source: PaymentDueSourceEnum;
 
+  private _totalAmount: Money;
+
   public constructor(props?: IPaymentDue) {
-    this._amount = props?.amount ?? new Money();
+    this._debitAmount = props?.directAmount ?? new Money();
 
     this._dueAmount = props?.dueAmount ?? new Money();
 
@@ -33,11 +39,23 @@ export class PaymentDue implements IPaymentDue {
 
     this._dueId = props?.dueId ?? '';
 
+    this._creditAmount = props?.creditAmount ?? new Money();
+
+    this._debitAmount = props?.directAmount ?? new Money();
+
+    this._totalAmount = props?.totalAmount ?? new Money();
+
+    this._duePendingAmount = props?.duePendingAmount ?? new Money();
+
     this._source = props?.source ?? PaymentDueSourceEnum.DIRECT;
   }
 
-  public get amount(): Money {
-    return this._amount;
+  public get creditAmount(): Money {
+    return this._creditAmount;
+  }
+
+  public get directAmount(): Money {
+    return this._debitAmount;
   }
 
   public get dueAmount(): Money {
@@ -56,20 +74,43 @@ export class PaymentDue implements IPaymentDue {
     return this._dueId;
   }
 
+  public get duePendingAmount(): Money {
+    return this._duePendingAmount;
+  }
+
   public get source(): PaymentDueSourceEnum {
     return this._source;
+  }
+
+  public get totalAmount(): Money {
+    return this._totalAmount;
   }
 
   public static createOne(props: CreatePaymentDue): Result<PaymentDue, Error> {
     const paymentDue = new PaymentDue();
 
+    let source: PaymentDueSourceEnum;
+
+    if (props.creditAmount.isZero()) {
+      source = PaymentDueSourceEnum.DIRECT;
+    } else if (props.directAmount.isZero()) {
+      source = PaymentDueSourceEnum.CREDIT;
+    } else {
+      source = PaymentDueSourceEnum.MIXED;
+    }
+
+    const totalAmount = props.directAmount.add(props.creditAmount);
+
     const result = Result.combine([
-      paymentDue.setAmount(props.amount),
+      paymentDue.setDebitAmount(props.directAmount),
+      paymentDue.setCreditAmount(props.creditAmount),
       paymentDue.setDueAmount(props.dueAmount),
       paymentDue.setDueCategory(props.dueCategory),
       paymentDue.setDueDate(props.dueDate),
       paymentDue.setDueId(props.dueId),
-      paymentDue.setSource(props.source),
+      paymentDue.setSource(source),
+      paymentDue.setDuePendingAmount(props.duePendingAmount),
+      paymentDue.setTotalAmount(totalAmount),
     ]);
 
     if (result.isErr()) {
@@ -79,8 +120,14 @@ export class PaymentDue implements IPaymentDue {
     return ok(paymentDue);
   }
 
-  private setAmount(value: Money): Result<null, Error> {
-    this._amount = value;
+  private setCreditAmount(value: Money): Result<null, Error> {
+    this._creditAmount = value;
+
+    return ok(null);
+  }
+
+  private setDebitAmount(value: Money): Result<null, Error> {
+    this._debitAmount = value;
 
     return ok(null);
   }
@@ -109,8 +156,24 @@ export class PaymentDue implements IPaymentDue {
     return ok(null);
   }
 
+  private setDuePendingAmount(value: Money): Result<null, Error> {
+    this._duePendingAmount = value;
+
+    return ok(null);
+  }
+
   private setSource(value: PaymentDueSourceEnum): Result<null, Error> {
     this._source = value;
+
+    return ok(null);
+  }
+
+  private setTotalAmount(value: Money): Result<null, Error> {
+    if (value.isZero()) {
+      return err(new Error('Total amount cannot be zero'));
+    }
+
+    this._totalAmount = value;
 
     return ok(null);
   }

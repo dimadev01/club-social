@@ -12,15 +12,15 @@ import { IUseCase } from '@domain/common/use-case.interface';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { IDueRepository } from '@domain/dues/due.repository';
+import { Due } from '@domain/dues/models/due.model';
 import { IMemberCreditRepository } from '@domain/members/member-credit.repository';
 import { MemberCreditTypeEnum } from '@domain/members/member.enum';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
 import { Movement } from '@domain/movements/models/movement.model';
 import { IMovementRepository } from '@domain/movements/movement.repository';
-import { DuePaidError } from '@domain/payments/errors/due-paid.error';
+import { DueNotPayable } from '@domain/payments/errors/due-not-payable.error';
 import { ExistingPaymentError } from '@domain/payments/errors/existing-payment.error';
 import { Payment } from '@domain/payments/models/payment.model';
-import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
 import { CreatePaymentDue } from '@domain/payments/payment.interface';
 import { IPaymentRepository } from '@domain/payments/payment.repository';
 
@@ -40,7 +40,11 @@ export class CreatePaymentUseCase
     @inject(DIToken.IMovementRepository)
     private readonly _movementRepository: IMovementRepository,
     private readonly _getPaymentUseCase: GetPaymentUseCase,
-  ) {}
+  ) {
+    this._dues = [];
+  }
+
+  private _dues: Due[];
 
   public async execute(
     request: CreatePaymentRequest,
@@ -61,36 +65,15 @@ export class CreatePaymentUseCase
 
       let newPaymentId: string | undefined;
 
+      this._dues = await this._duePort.findByIds({
+        ids: request.dues.map((d) => d.dueId),
+      });
+
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
-        const dues = await this._duePort.findByIds({
-          ids: request.dues.map((d) => d.dueId),
-        });
-
-        dues.forEach((due) => {
-          if (due.isPaid()) {
-            throw new DuePaidError(due._id);
-          }
-        });
-
-        const createDues = request.dues.map((requestDue) => {
-          const due = dues.find((d) => d._id === requestDue.dueId);
-
-          invariant(due);
-
-          const createPaymentDue: CreatePaymentDue = {
-            amount: new Money({ amount: requestDue.amount }),
-            dueAmount: due.amount,
-            dueCategory: due.category,
-            dueDate: due.date,
-            dueId: due._id,
-            source: PaymentDueSourceEnum.DIRECT,
-          };
-
-          return createPaymentDue;
-        });
+        this._validateDues();
 
         const newPaymentResult = Payment.createOne({
-          createDues,
+          createDues: this._createPaymentDues(request),
           date: new DateUtcVo(request.date),
           memberId: request.memberId,
           notes: request.notes,
@@ -107,13 +90,13 @@ export class CreatePaymentUseCase
 
         await Promise.all(
           newPayment.dues.map(async (paymentDue) => {
-            const due = dues.find((d) => d._id === paymentDue.dueId);
+            const due = this._dues.find((d) => d._id === paymentDue.dueId);
 
             invariant(due);
 
-            if (paymentDue.amount.isGreaterThan(due.totalPendingAmount)) {
+            if (paymentDue.totalAmount.isGreaterThan(due.totalPendingAmount)) {
               const memberCredit = MemberCredit.createOne({
-                amount: paymentDue.amount.subtract(due.totalPendingAmount),
+                amount: paymentDue.totalAmount.subtract(due.totalPendingAmount),
                 dueId: due._id,
                 memberId: request.memberId,
                 paymentId: newPayment._id,
@@ -131,10 +114,13 @@ export class CreatePaymentUseCase
             }
 
             due.addPayment({
-              amount: paymentDue.amount,
+              creditAmount: paymentDue.creditAmount,
               date: newPayment.date,
+              directAmount: paymentDue.directAmount,
               paymentId: newPayment._id,
               receiptNumber: newPayment.receiptNumber,
+              source: paymentDue.source,
+              totalAmount: paymentDue.totalAmount,
             });
 
             await this._duePort.updateWithSession(due, unitOfWork);
@@ -172,5 +158,41 @@ export class CreatePaymentUseCase
     } finally {
       await this._unitOfWork.end();
     }
+  }
+
+  private _validateDues(): void {
+    this._dues.forEach((due) => {
+      if (!due.isPayable()) {
+        throw new DueNotPayable(due._id);
+      }
+    });
+  }
+
+  private _createPaymentDues(
+    request: CreatePaymentRequest,
+  ): CreatePaymentDue[] {
+    const createDues = request.dues.map((requestDue) => {
+      const due = this._dues.find((d) => d._id === requestDue.dueId);
+
+      invariant(due);
+
+      const creditAmount = new Money({ amount: requestDue.creditAmount });
+
+      const directAmount = new Money({ amount: requestDue.directAmount });
+
+      const createPaymentDue: CreatePaymentDue = {
+        creditAmount,
+        directAmount,
+        dueAmount: due.amount,
+        dueCategory: due.category,
+        dueDate: due.date,
+        dueId: due._id,
+        duePendingAmount: due.totalPendingAmount,
+      };
+
+      return createPaymentDue;
+    });
+
+    return createDues;
   }
 }

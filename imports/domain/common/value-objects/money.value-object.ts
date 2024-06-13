@@ -3,6 +3,7 @@ import {
   Dinero,
   add,
   dinero,
+  equal,
   greaterThan,
   greaterThanOrEqual,
   isZero,
@@ -101,6 +102,10 @@ export class Money extends ValueObject<InternalMoneyProps> {
     return this.format({ decimals: true });
   }
 
+  public isEqual(value: Money) {
+    return equal(this.props.dinero, value.props.dinero);
+  }
+
   public isGreaterThan(value: Money): boolean {
     return greaterThan(this.props.dinero, value.props.dinero);
   }
@@ -119,6 +124,10 @@ export class Money extends ValueObject<InternalMoneyProps> {
 
   public isLessThanOrEqual(value: Money) {
     return lessThanOrEqual(this.props.dinero, value.props.dinero);
+  }
+
+  public isLessThanOrEqualZero() {
+    return lessThanOrEqual(this.props.dinero, new Money().props.dinero);
   }
 
   public isLessThanZero() {

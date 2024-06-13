@@ -152,8 +152,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
                   required: true,
                 },
                 {
-                  message: 'El mínimo es ARS 1',
-                  min: 1,
+                  min: 0,
                   type: 'number',
                 },
               ]}

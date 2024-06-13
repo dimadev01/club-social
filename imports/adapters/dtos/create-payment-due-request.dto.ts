@@ -1,18 +1,17 @@
-import {
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsPositive,
-  IsString,
-} from 'class-validator';
+import { IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class CreatePaymentDueRequestDto {
+import { CreatePaymentDueRequest } from '@application/payments/use-cases/create-payment/create-payment.request';
+
+export class CreatePaymentDueRequestDto implements CreatePaymentDueRequest {
   @IsInt()
-  @IsPositive()
   @IsNumber()
-  public amount!: number;
+  public directAmount!: number;
 
   @IsNotEmpty()
   @IsString()
   public dueId!: string;
+
+  @IsInt()
+  @IsNumber()
+  public creditAmount!: number;
 }

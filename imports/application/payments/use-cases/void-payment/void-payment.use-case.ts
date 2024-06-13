@@ -53,6 +53,8 @@ export class VoidPaymentUseCase implements IUseCase<VoidPaymentRequest, null> {
           throw voidResult.error;
         }
 
+        await this._paymentRepository.updateWithSession(payment, unitOfWork);
+
         const dues = await this._dueRepository.findByIds({
           ids: payment.dues.map((paymentDue) => paymentDue.dueId),
         });
@@ -69,30 +71,35 @@ export class VoidPaymentUseCase implements IUseCase<VoidPaymentRequest, null> {
           }),
         );
 
-        const memberCredit =
-          await this._memberCreditRepository.findOneByPayment(payment._id);
-
-        if (memberCredit) {
-          await this._memberCreditRepository.deleteWithSession(
-            { id: memberCredit._id },
-            unitOfWork,
-          );
-        }
-
-        await this._paymentRepository.updateWithSession(payment, unitOfWork);
-
         const movement = await this._movementRepository.findOneByPaymentOrThrow(
           {
             id: payment._id,
           },
         );
 
-        await this._voidMovementUseCase.execute({
+        const result = await this._voidMovementUseCase.execute({
           id: movement._id,
           unitOfWork,
           voidReason: request.voidReason,
           voidedBy: request.voidedBy,
         });
+
+        if (result.isErr()) {
+          throw result.error;
+        }
+
+        const memberCredits = await this._memberCreditRepository.findByPayment(
+          payment._id,
+        );
+
+        await Promise.all(
+          memberCredits.map(async (memberCredit) => {
+            await this._memberCreditRepository.deleteWithSession(
+              { id: memberCredit._id },
+              unitOfWork,
+            );
+          }),
+        );
       });
 
       this._logger.info('Payment voided', { payment: request.id });

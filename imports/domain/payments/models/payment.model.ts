@@ -134,6 +134,10 @@ export class Payment extends Model implements IPayment {
       return err(addPaymentDuesResultCombined.error);
     }
 
+    if (payment.amount.isZero()) {
+      return err(new Error('Payment amount cannot be zero'));
+    }
+
     return ok(payment);
   }
 
@@ -158,7 +162,7 @@ export class Payment extends Model implements IPayment {
   private addDue(paymentDue: PaymentDue): Result<null, Error> {
     this._dues.push(paymentDue);
 
-    this._amount = this._amount.add(paymentDue.amount);
+    this._amount = this._amount.add(paymentDue.totalAmount);
 
     return ok(null);
   }
