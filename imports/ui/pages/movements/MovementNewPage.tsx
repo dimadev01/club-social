@@ -157,7 +157,10 @@ export const MovementNewPage = () => {
 
           <Flex justify="space-between">
             <FormButtons
-              saveButtonProps={{ text: 'Crear movimiento' }}
+              saveButtonProps={{
+                loading: createMovement.isLoading,
+                text: 'Crear movimiento',
+              }}
               scope={ScopeEnum.MOVEMENTS}
             />
           </Flex>

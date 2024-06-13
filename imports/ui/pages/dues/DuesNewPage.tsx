@@ -308,7 +308,10 @@ export const DuesNewPage = () => {
           </Form.Item>
 
           <FormButtons
-            saveButtonProps={{ text: 'Registrar Deuda' }}
+            saveButtonProps={{
+              loading: createDue.isLoading,
+              text: 'Registrar Deuda',
+            }}
             scope={ScopeEnum.DUES}
           />
         </Form>

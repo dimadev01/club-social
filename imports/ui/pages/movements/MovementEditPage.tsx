@@ -179,6 +179,7 @@ export const MovementEditPage = () => {
           <Flex justify="space-between">
             <FormButtons
               saveButtonProps={{
+                loading: updateMovement.isLoading,
                 text: 'Actualizar movimiento',
               }}
               scope={ScopeEnum.MOVEMENTS}
