@@ -1,5 +1,6 @@
 import { Result, err, ok } from 'neverthrow';
 
+import { DomainError } from '@domain/common/errors/base.error';
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
@@ -135,7 +136,7 @@ export class Payment extends Model implements IPayment {
     }
 
     if (payment.amount.isZero()) {
-      return err(new Error('Payment amount cannot be zero'));
+      return err(new DomainError('Payment amount cannot be zero'));
     }
 
     return ok(payment);

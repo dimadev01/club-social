@@ -1,6 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 
+import { DomainError } from '@domain/common/errors/base.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
@@ -9,6 +10,7 @@ import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { CreateDue, CreateDuePayment, IDue } from '@domain/dues/due.interface';
 import { DuePayment } from '@domain/dues/models/due-payment.model';
 import { Member } from '@domain/members/models/member.model';
+import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export class Due extends Model implements IDue {
   private _amount: Money;
@@ -198,9 +200,17 @@ export class Due extends Model implements IDue {
     return ok(null);
   }
 
+  private _allPaymentsValid(): boolean {
+    return this._payments.every(
+      (payment) => payment.paymentStatus === PaymentStatusEnum.PAID,
+    );
+  }
+
   public void(voidedBy: string, voidReason: string): Result<null, Error> {
-    if (this._payments.length > 0) {
-      return err(new Error('No se puede anular una deuda con pagos asociados'));
+    if (this._allPaymentsValid()) {
+      return err(
+        new DomainError('No se puede anular una deuda con pagos asociados'),
+      );
     }
 
     this._voidedAt = new DateUtcVo();

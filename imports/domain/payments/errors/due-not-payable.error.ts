@@ -1,6 +1,6 @@
-import { BaseError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/base.error';
 
-export class DueNotPayable extends BaseError {
+export class DueNotPayable extends DomainError {
   constructor(id: string) {
     super(`Due ${id} is not payable`);
   }

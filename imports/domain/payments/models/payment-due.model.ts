@@ -1,5 +1,6 @@
 import { Result, err, ok } from 'neverthrow';
 
+import { DomainError } from '@domain/common/errors/base.error';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
@@ -170,7 +171,7 @@ export class PaymentDue implements IPaymentDue {
 
   private setTotalAmount(value: Money): Result<null, Error> {
     if (value.isZero()) {
-      return err(new Error('Total amount cannot be zero'));
+      return err(new DomainError('Total amount cannot be zero'));
     }
 
     this._totalAmount = value;

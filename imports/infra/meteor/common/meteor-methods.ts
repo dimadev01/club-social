@@ -1,7 +1,7 @@
 import invariant from 'tiny-invariant';
 
 import { ClassValidationError } from '@adapters/common/errors/class-validation.error';
-import { BaseError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/base.error';
 import { MeteorBadRequestError } from '@infra/meteor/errors/meteor-bad-request.error';
 import { MeteorInternalServerError } from '@infra/meteor/errors/meteor-internal-server.error';
 
@@ -22,7 +22,7 @@ export abstract class MeteorMethods {
         );
       }
 
-      if (error instanceof BaseError) {
+      if (error instanceof DomainError) {
         throw new MeteorBadRequestError(error.message);
       }
 

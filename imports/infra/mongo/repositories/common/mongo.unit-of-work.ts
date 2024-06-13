@@ -1,5 +1,6 @@
 import { MongoInternals } from 'meteor/mongo';
 import type { ClientSession } from 'mongodb';
+import invariant from 'tiny-invariant';
 import { injectable } from 'tsyringe';
 
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
@@ -13,9 +14,7 @@ export class MongoUnitOfWork implements IUnitOfWork<ClientSession> {
   }
 
   public get value(): ClientSession {
-    if (!this._value) {
-      throw new Error('Session not started');
-    }
+    invariant(this._value, 'Session not started');
 
     return this._value;
   }
