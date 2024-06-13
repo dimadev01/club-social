@@ -305,7 +305,10 @@ export const PaymentNewPage = () => {
 
           <FormButtons
             scope={ScopeEnum.PAYMENTS}
-            saveButtonProps={{ text: 'Registrar Pago' }}
+            saveButtonProps={{
+              loading: createPayment.isLoading,
+              text: 'Registrar Pago',
+            }}
           />
         </Form>
       </Card>
