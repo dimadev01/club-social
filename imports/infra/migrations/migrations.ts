@@ -96,8 +96,6 @@ Migrations.add({
 
     const dues = await duesCollection.find({}).fetchAsync();
 
-    console.log('2');
-
     await Promise.all(
       payments.map(async (payment) => {
         await paymentsCollection.updateAsync(
