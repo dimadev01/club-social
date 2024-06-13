@@ -141,7 +141,7 @@ export class PaymentMongoRepository
         {
           $group: {
             _id: '$dues.dueCategory',
-            amount: { $sum: '$dues.amount' },
+            amount: { $sum: '$dues.totalAmount' },
           },
         },
         {

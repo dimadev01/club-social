@@ -3,60 +3,90 @@ import { Result, err, ok } from 'neverthrow';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { CreateDuePayment, IDuePayment } from '@domain/dues/due.interface';
-import { PaymentStatusEnum } from '@domain/payments/payment.enum';
+import {
+  PaymentDueSourceEnum,
+  PaymentStatusEnum,
+} from '@domain/payments/payment.enum';
 
 export class DuePayment implements IDuePayment {
   private _amount: Money;
 
-  private _date: DateUtcVo;
+  private _creditAmount: Money;
+
+  private _paymentDate: DateUtcVo;
+
+  private _debitAmount: Money;
 
   private _paymentId: string;
 
-  private _receiptNumber: number | null;
+  private _paymentReceiptNumber: number | null;
 
-  private _status: PaymentStatusEnum;
+  private _source: PaymentDueSourceEnum;
+
+  private _paymentStatus: PaymentStatusEnum;
 
   public constructor(props?: IDuePayment) {
-    this._amount = props?.amount ?? new Money();
+    this._amount = props?.totalAmount ?? new Money();
 
-    this._date = props?.date ?? new DateUtcVo();
+    this._paymentDate = props?.paymentDate ?? new DateUtcVo();
 
     this._paymentId = props?.paymentId ?? '';
 
-    this._receiptNumber = props?.receiptNumber ?? null;
+    this._paymentReceiptNumber = props?.paymentReceiptNumber ?? null;
 
-    this._status = props?.status ?? PaymentStatusEnum.PAID;
+    this._creditAmount = props?.creditAmount ?? new Money();
+
+    this._debitAmount = props?.directAmount ?? new Money();
+
+    this._source = props?.source ?? PaymentDueSourceEnum.MIXED;
+
+    this._paymentStatus = props?.paymentStatus ?? PaymentStatusEnum.PAID;
   }
 
-  public get amount(): Money {
-    return this._amount;
+  public get creditAmount(): Money {
+    return this._creditAmount;
   }
 
-  public get date(): DateUtcVo {
-    return this._date;
+  public get paymentDate(): DateUtcVo {
+    return this._paymentDate;
+  }
+
+  public get directAmount(): Money {
+    return this._debitAmount;
   }
 
   public get paymentId(): string {
     return this._paymentId;
   }
 
-  public get receiptNumber(): number | null {
-    return this._receiptNumber;
+  public get paymentReceiptNumber(): number | null {
+    return this._paymentReceiptNumber;
   }
 
-  public get status(): PaymentStatusEnum {
-    return this._status;
+  public get source(): PaymentDueSourceEnum {
+    return this._source;
+  }
+
+  public get paymentStatus(): PaymentStatusEnum {
+    return this._paymentStatus;
+  }
+
+  public get totalAmount(): Money {
+    return this._amount;
   }
 
   public static createOne(props: CreateDuePayment): Result<DuePayment, Error> {
     const duePayment = new DuePayment();
 
     const result = Result.combine([
-      duePayment.setAmount(props.amount),
-      duePayment.setDate(props.date),
+      duePayment.setTotalAmount(props.totalAmount),
+      duePayment.setPaymentDate(props.date),
       duePayment.setPaymentId(props.paymentId),
-      duePayment.setReceiptNumber(props.receiptNumber),
-      duePayment.setStatus(PaymentStatusEnum.PAID),
+      duePayment.setPaymentReceiptNumber(props.receiptNumber),
+      duePayment.setPaymentStatus(PaymentStatusEnum.PAID),
+      duePayment.setCreditAmount(props.creditAmount),
+      duePayment.setDebitAmount(props.directAmount),
+      duePayment.setSource(props.source),
     ]);
 
     if (result.isErr()) {
@@ -67,17 +97,23 @@ export class DuePayment implements IDuePayment {
   }
 
   public void(): Result<null, Error> {
-    return this.setStatus(PaymentStatusEnum.VOIDED);
+    return this.setPaymentStatus(PaymentStatusEnum.VOIDED);
   }
 
-  private setAmount(value: Money): Result<null, Error> {
-    this._amount = value;
+  private setCreditAmount(value: Money): Result<null, Error> {
+    this._creditAmount = value;
 
     return ok(null);
   }
 
-  private setDate(value: DateUtcVo): Result<null, Error> {
-    this._date = value;
+  private setPaymentDate(value: DateUtcVo): Result<null, Error> {
+    this._paymentDate = value;
+
+    return ok(null);
+  }
+
+  private setDebitAmount(value: Money): Result<null, Error> {
+    this._debitAmount = value;
 
     return ok(null);
   }
@@ -88,14 +124,26 @@ export class DuePayment implements IDuePayment {
     return ok(null);
   }
 
-  private setReceiptNumber(value: number | null): Result<null, Error> {
-    this._receiptNumber = value;
+  private setPaymentReceiptNumber(value: number | null): Result<null, Error> {
+    this._paymentReceiptNumber = value;
 
     return ok(null);
   }
 
-  private setStatus(value: PaymentStatusEnum): Result<null, Error> {
-    this._status = value;
+  private setSource(value: PaymentDueSourceEnum): Result<null, Error> {
+    this._source = value;
+
+    return ok(null);
+  }
+
+  private setPaymentStatus(value: PaymentStatusEnum): Result<null, Error> {
+    this._paymentStatus = value;
+
+    return ok(null);
+  }
+
+  private setTotalAmount(value: Money): Result<null, Error> {
+    this._amount = value;
 
     return ok(null);
   }

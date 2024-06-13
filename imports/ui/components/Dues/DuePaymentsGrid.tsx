@@ -1,4 +1,3 @@
-import { Table } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -10,6 +9,7 @@ import {
   PaymentStatusLabel,
 } from '@domain/payments/payment.enum';
 import { AppUrl } from '@ui/app.enum';
+import { Table } from '@ui/components/Table/Table';
 
 interface DuePaymentsGridProps {
   payments: DuePaymentDto[];
@@ -21,15 +21,12 @@ export const DuePaymentsGrid: React.FC<DuePaymentsGridProps> = ({
   <Table
     title={() => 'Pagos realizados'}
     rowKey="paymentId"
-    pagination={false}
-    bordered
-    size="small"
     columns={[
       {
-        dataIndex: 'date',
-        render: (date, duePayment) => (
+        dataIndex: 'paymentDate',
+        render: (paymentDate, duePayment) => (
           <Link to={`${AppUrl.PAYMENTS}/${duePayment.paymentId}`}>
-            {new DateUtcVo(date).format()}
+            {new DateUtcVo(paymentDate).format()}
           </Link>
         ),
         title: 'Fecha',
@@ -37,19 +34,20 @@ export const DuePaymentsGrid: React.FC<DuePaymentsGridProps> = ({
       },
       {
         align: 'right',
-        dataIndex: 'amount',
+        dataIndex: 'totalAmount',
         render: (amount) => new Money({ amount }).formatWithCurrency(),
         title: 'Monto Registrado',
+        width: 150,
       },
       {
         align: 'right',
-        dataIndex: 'receiptNumber',
+        dataIndex: 'paymentReceiptNumber',
         title: 'Recibo #',
         width: 150,
       },
       {
         align: 'center',
-        dataIndex: 'status',
+        dataIndex: 'paymentStatus',
         render: (status: PaymentStatusEnum) => PaymentStatusLabel[status],
         title: 'Estado',
         width: 150,

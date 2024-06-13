@@ -70,7 +70,13 @@ export const PaymentDetailPage = () => {
         >
           <>
             <Descriptions column={1} layout="vertical" colon={false}>
-              <Descriptions.Item label="Fecha">
+              <Descriptions.Item label="Fecha de creación del pago">
+                {new DateVo(payment.createdAt).format(
+                  DateFormatEnum.DDMMYYHHmm,
+                )}
+              </Descriptions.Item>
+
+              <Descriptions.Item label="Fecha de pago del socio">
                 {new DateUtcVo(payment.date).format()}
               </Descriptions.Item>
 

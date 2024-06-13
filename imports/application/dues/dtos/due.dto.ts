@@ -5,6 +5,7 @@ import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 export interface DueDto {
   amount: number;
   category: DueCategoryEnum;
+  createdAt: string;
   date: string;
   id: string;
   member?: MemberDto;

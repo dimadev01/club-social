@@ -29,19 +29,23 @@ export interface CreatePayment {
 }
 
 export interface IPaymentDue {
-  amount: Money;
+  creditAmount: Money;
+  directAmount: Money;
   dueAmount: Money;
   dueCategory: DueCategoryEnum;
   dueDate: DateUtcVo;
   dueId: string;
+  duePendingAmount: Money;
   source: PaymentDueSourceEnum;
+  totalAmount: Money;
 }
 
 export interface CreatePaymentDue {
-  amount: Money;
+  creditAmount: Money;
+  directAmount: Money;
   dueAmount: Money;
   dueCategory: DueCategoryEnum;
   dueDate: DateUtcVo;
   dueId: string;
-  source: PaymentDueSourceEnum;
+  duePendingAmount: Money;
 }

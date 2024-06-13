@@ -1,4 +1,3 @@
-import { Table } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -7,6 +6,7 @@ import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { AppUrl } from '@ui/app.enum';
+import { Table } from '@ui/components/Table/Table';
 import { renderDueCategoryLabel } from '@ui/utils/renderDueCategory';
 
 interface PaymentDuesGridProps {
@@ -44,13 +44,21 @@ export const PaymentDuesGrid: React.FC<PaymentDuesGridProps> = ({ dues }) => (
         dataIndex: 'dueAmount',
         render: (dueAmount) =>
           new Money({ amount: dueAmount }).formatWithCurrency(),
-        title: 'Deuda',
+        title: 'Monto original',
+        width: 150,
       },
       {
         align: 'right',
-        dataIndex: 'amount',
+        dataIndex: 'duePendingAmount',
         render: (amount) => new Money({ amount }).formatWithCurrency(),
-        title: 'Monto Registrado',
+        title: 'Monto pendiente',
+        width: 150,
+      },
+      {
+        align: 'right',
+        dataIndex: 'totalAmount',
+        render: (amount) => new Money({ amount }).formatWithCurrency(),
+        title: 'Monto registrado',
         width: 150,
       },
     ]}

@@ -6,6 +6,7 @@ export enum PaymentStatusEnum {
 export enum PaymentDueSourceEnum {
   CREDIT = 'credit',
   DIRECT = 'direct',
+  MIXED = 'mixed',
 }
 
 export const PaymentStatusLabel = {

@@ -1,6 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 
+import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
@@ -144,13 +145,11 @@ export class Due extends Model implements IDue {
 
     this._payments.push(duePayment.value);
 
-    this._totalPaidAmount = this._totalPaidAmount.add(duePayment.value.amount);
-
-    this._totalPendingAmount = this._totalPendingAmount.subtract(
-      duePayment.value.amount,
+    this._totalPaidAmount = this._totalPaidAmount.add(
+      duePayment.value.totalAmount,
     );
 
-    this._calculateBalanceAmount();
+    this.calculateTotalPendingAmount();
 
     this._calculateStatus();
 
@@ -167,6 +166,10 @@ export class Due extends Model implements IDue {
 
   public isPartiallyPaid(): boolean {
     return this._status === DueStatusEnum.PARTIALLY_PAID;
+  }
+
+  public isPayable() {
+    return this.isPending() || this.isPartiallyPaid();
   }
 
   public isPending(): boolean {
@@ -223,33 +226,33 @@ export class Due extends Model implements IDue {
     }
 
     this._totalPaidAmount = this._totalPaidAmount.subtract(
-      paymentToVoid.amount,
+      paymentToVoid.totalAmount,
     );
 
-    this._totalPendingAmount = this._totalPendingAmount.add(
-      paymentToVoid.amount,
-    );
-
-    this._calculateBalanceAmount();
+    this.calculateTotalPendingAmount();
 
     this._calculateStatus();
 
     return ok(null);
   }
 
-  private _calculateBalanceAmount(): void {
-    if (this._totalPendingAmount.isLessThanZero()) {
-      this._totalPendingAmount = new Money();
-    }
-  }
-
   private _calculateStatus(): void {
-    if (this._totalPendingAmount.value === this._amount.value) {
+    if (this._totalPendingAmount.isEqual(this._amount)) {
       this._status = DueStatusEnum.PENDING;
     } else if (this._totalPendingAmount.isGreaterThanZero()) {
       this._status = DueStatusEnum.PARTIALLY_PAID;
-    } else {
+    } else if (this._totalPendingAmount.isLessThanOrEqualZero()) {
       this._status = DueStatusEnum.PAID;
+    } else {
+      throw new InternalServerError();
+    }
+  }
+
+  public calculateTotalPendingAmount(): void {
+    this._totalPendingAmount = this._amount.subtract(this._totalPaidAmount);
+
+    if (this._totalPendingAmount.isLessThanZero()) {
+      this._totalPendingAmount = new Money();
     }
   }
 

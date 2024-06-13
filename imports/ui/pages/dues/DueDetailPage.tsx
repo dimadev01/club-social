@@ -78,7 +78,11 @@ export const DueDetailPage = () => {
         >
           <>
             <Descriptions column={1} layout="vertical" colon={false}>
-              <Descriptions.Item label="Fecha">
+              <Descriptions.Item label="Fecha de creación de deuda">
+                {new DateVo(due.createdAt).format(DateFormatEnum.DDMMYYHHmm)}
+              </Descriptions.Item>
+
+              <Descriptions.Item label="Fecha de deuda del socio">
                 {new DateUtcVo(due.date).format()}
               </Descriptions.Item>
 
@@ -94,8 +98,20 @@ export const DueDetailPage = () => {
                 {DueStatusLabel[due.status]}
               </Descriptions.Item>
 
-              <Descriptions.Item label="Monto">
+              <Descriptions.Item label="Monto Original">
                 {new Money({ amount: due.amount }).formatWithCurrency()}
+              </Descriptions.Item>
+
+              <Descriptions.Item label="Monto Pago">
+                {new Money({
+                  amount: due.totalPaidAmount,
+                }).formatWithCurrency()}
+              </Descriptions.Item>
+
+              <Descriptions.Item label="Monto Pendiente">
+                {new Money({
+                  amount: due.totalPendingAmount,
+                }).formatWithCurrency()}
               </Descriptions.Item>
 
               <Descriptions.Item label="Notas">{due.notes}</Descriptions.Item>

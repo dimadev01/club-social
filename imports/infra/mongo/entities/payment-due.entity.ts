@@ -13,14 +13,22 @@ import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
 
 export class PaymentDueEntity {
   @IsInt()
-  @IsPositive()
   @IsNumber()
-  public amount: number;
+  public creditAmount: number;
+
+  @IsInt()
+  @IsNumber()
+  public directAmount: number;
 
   @IsInt()
   @IsPositive()
   @IsNumber()
   public dueAmount: number;
+
+  @IsInt()
+  @IsPositive()
+  @IsNumber()
+  public duePendingAmount: number;
 
   @IsEnum(DueCategoryEnum)
   public dueCategory: DueCategoryEnum;
@@ -35,8 +43,12 @@ export class PaymentDueEntity {
   @IsEnum(PaymentDueSourceEnum)
   public source: PaymentDueSourceEnum;
 
+  @IsInt()
+  @IsNumber()
+  public totalAmount: number;
+
   public constructor(props: PaymentDueEntity) {
-    this.amount = props.amount;
+    this.directAmount = props.directAmount;
 
     this.dueCategory = props.dueCategory;
 
@@ -46,6 +58,12 @@ export class PaymentDueEntity {
 
     this.dueId = props.dueId;
 
+    this.duePendingAmount = props.duePendingAmount;
+
     this.source = props.source;
+
+    this.creditAmount = props.creditAmount;
+
+    this.totalAmount = props.totalAmount;
   }
 }
