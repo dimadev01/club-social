@@ -1,6 +1,7 @@
 import { container, instanceCachingFactory } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { SendGridEmailService } from '@infra/email/sendgrid-email.service';
 import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 import { MongoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-work';
 import { DueMongoRepository } from '@infra/mongo/repositories/due-mongo.repository';
@@ -32,3 +33,5 @@ container.register(DIToken.IPaymentRepository, PaymentMongoRepository);
 container.register(DIToken.IMovementRepository, MovementMongoRepository);
 
 container.register(DIToken.IUserRepository, UserMongoRepository);
+
+container.register(DIToken.IEmailService, SendGridEmailService);

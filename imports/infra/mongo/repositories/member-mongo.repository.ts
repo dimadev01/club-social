@@ -3,7 +3,10 @@ import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILogger } from '@domain/common/logger/logger.interface';
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
+import {
+  FindManyByIds,
+  FindOneById,
+} from '@domain/common/repositories/queryable.repository';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import {
   FindMembers,
@@ -37,6 +40,25 @@ export class MemberMongoRepository
     private readonly _userRepository: UserMongoRepository,
   ) {
     super(collection, mapper, logger, auditableCollection);
+  }
+
+  public async findByIds(request: FindManyByIds): Promise<Member[]> {
+    const pipeline: Document[] = [
+      {
+        $match: {
+          _id: { $in: request.ids },
+          isDeleted: false,
+        },
+      },
+      ...this.getUserLookupPipeline(),
+    ];
+
+    const entities = await this.collection
+      .rawCollection()
+      .aggregate<MemberEntity>(pipeline)
+      .toArray();
+
+    return entities.map((entity) => this.mapper.toDomain(entity));
   }
 
   public async find(request: FindMembers): Promise<Member[]> {

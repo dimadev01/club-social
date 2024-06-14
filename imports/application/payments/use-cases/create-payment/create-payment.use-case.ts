@@ -3,6 +3,7 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { IEmailService } from '@application/notifications/emails/email-service.interface';
 import { PaymentDto } from '@application/payments/dtos/payment.dto';
 import { CreatePaymentRequest } from '@application/payments/use-cases/create-payment/create-payment.request';
 import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment/get-payment.use-case';
@@ -11,10 +12,12 @@ import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { DueCategoryLabel } from '@domain/dues/due.enum';
 import { IDueRepository } from '@domain/dues/due.repository';
 import { Due } from '@domain/dues/models/due.model';
 import { IMemberCreditRepository } from '@domain/members/member-credit.repository';
 import { MemberCreditTypeEnum } from '@domain/members/member.enum';
+import { IMemberRepository } from '@domain/members/member.repository';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
 import { Movement } from '@domain/movements/models/movement.model';
 import { IMovementRepository } from '@domain/movements/movement.repository';
@@ -37,8 +40,12 @@ export class CreatePaymentUseCase
     private readonly _duePort: IDueRepository,
     @inject(DIToken.IMemberCreditRepository)
     private readonly _memberCreditRepository: IMemberCreditRepository,
+    @inject(DIToken.IMemberRepository)
+    private readonly _memberRepository: IMemberRepository,
     @inject(DIToken.IMovementRepository)
     private readonly _movementRepository: IMovementRepository,
+    @inject(DIToken.IEmailService)
+    private readonly _emailService: IEmailService,
     private readonly _getPaymentUseCase: GetPaymentUseCase,
   ) {
     this._dues = [];
@@ -63,7 +70,7 @@ export class CreatePaymentUseCase
     try {
       this._unitOfWork.start();
 
-      let newPaymentId: string | undefined;
+      let newPayment: Payment | undefined;
 
       this._dues = await this._duePort.findByIds({
         ids: request.dues.map((d) => d.dueId),
@@ -72,7 +79,7 @@ export class CreatePaymentUseCase
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
         this._validateDues();
 
-        const newPaymentResult = Payment.createOne({
+        const paymentResult = Payment.createOne({
           createDues: this._createPaymentDues(request),
           date: new DateUtcVo(request.date),
           memberId: request.memberId,
@@ -80,16 +87,16 @@ export class CreatePaymentUseCase
           receiptNumber: request.receiptNumber,
         });
 
-        if (newPaymentResult.isErr()) {
-          throw newPaymentResult.error;
+        if (paymentResult.isErr()) {
+          throw paymentResult.error;
         }
 
-        const newPayment = newPaymentResult.value;
+        const payment = paymentResult.value;
 
-        await this._paymentRepository.insertWithSession(newPayment, unitOfWork);
+        await this._paymentRepository.insertWithSession(payment, unitOfWork);
 
         await Promise.all(
-          newPayment.dues.map(async (paymentDue) => {
+          payment.dues.map(async (paymentDue) => {
             const due = this._dues.find((d) => d._id === paymentDue.dueId);
 
             invariant(due);
@@ -99,7 +106,7 @@ export class CreatePaymentUseCase
                 amount: paymentDue.totalAmount.subtract(due.totalPendingAmount),
                 dueId: due._id,
                 memberId: request.memberId,
-                paymentId: newPayment._id,
+                paymentId: payment._id,
                 type: MemberCreditTypeEnum.CREDIT,
               });
 
@@ -115,10 +122,10 @@ export class CreatePaymentUseCase
 
             due.addPayment({
               creditAmount: paymentDue.creditAmount,
-              date: newPayment.date,
+              date: payment.date,
               directAmount: paymentDue.directAmount,
-              paymentId: newPayment._id,
-              receiptNumber: newPayment.receiptNumber,
+              paymentId: payment._id,
+              receiptNumber: payment.receiptNumber,
               source: paymentDue.source,
               totalAmount: paymentDue.totalAmount,
             });
@@ -128,10 +135,10 @@ export class CreatePaymentUseCase
         );
 
         const movement = Movement.createPayment({
-          amount: newPayment.amount,
-          date: newPayment.date,
-          notes: newPayment.notes,
-          paymentId: newPayment._id,
+          amount: payment.amount,
+          date: payment.date,
+          notes: payment.notes,
+          paymentId: payment._id,
         });
 
         if (movement.isErr()) {
@@ -143,12 +150,35 @@ export class CreatePaymentUseCase
           unitOfWork,
         );
 
-        newPaymentId = newPayment._id;
+        newPayment = payment;
       });
 
-      invariant(newPaymentId);
+      invariant(newPayment);
 
-      return await this._getPaymentUseCase.execute({ id: newPaymentId });
+      const member = await this._memberRepository.findOneByIdOrThrow({
+        id: newPayment.memberId,
+      });
+
+      await this._emailService.sendTemplateEmail({
+        templateId: 'd-229024941d0447aeb80c945adaf7169b',
+        to: {
+          email: member.firstEmail(),
+          name: member.name,
+        },
+        unsubscribeGroupId: 237801,
+        variables: {
+          amount: newPayment.amount.formatWithCurrency(),
+          date: newPayment.date.format(),
+          dues: newPayment.dues.map((due) => ({
+            dueAmount: due.dueAmount.formatWithCurrency(),
+            dueCategory: DueCategoryLabel[due.dueCategory],
+            dueDate: due.dueDate.format(),
+          })),
+          memberName: member.name,
+        },
+      });
+
+      return await this._getPaymentUseCase.execute({ id: newPayment._id });
     } catch (error) {
       if (error instanceof Error) {
         return err(error);
