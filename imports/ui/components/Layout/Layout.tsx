@@ -25,7 +25,7 @@ import { ItemType } from 'antd/es/menu/interface';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { EmailServiceEnum } from '@application/notifications/emails/email-service.enum';
+import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';

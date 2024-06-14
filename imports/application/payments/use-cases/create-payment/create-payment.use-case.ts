@@ -3,21 +3,19 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { IEmailService } from '@application/notifications/emails/email-service.interface';
 import { PaymentDto } from '@application/payments/dtos/payment.dto';
 import { CreatePaymentRequest } from '@application/payments/use-cases/create-payment/create-payment.request';
 import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment/get-payment.use-case';
+import { SendNewPaymentEmailUseCase } from '@application/payments/use-cases/send-new-payment-email/send-new-payment-email.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
 import { IUseCase } from '@domain/common/use-case.interface';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { DueCategoryLabel } from '@domain/dues/due.enum';
 import { IDueRepository } from '@domain/dues/due.repository';
 import { Due } from '@domain/dues/models/due.model';
 import { IMemberCreditRepository } from '@domain/members/member-credit.repository';
 import { MemberCreditTypeEnum } from '@domain/members/member.enum';
-import { IMemberRepository } from '@domain/members/member.repository';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
 import { Movement } from '@domain/movements/models/movement.model';
 import { IMovementRepository } from '@domain/movements/movement.repository';
@@ -40,13 +38,10 @@ export class CreatePaymentUseCase
     private readonly _duePort: IDueRepository,
     @inject(DIToken.IMemberCreditRepository)
     private readonly _memberCreditRepository: IMemberCreditRepository,
-    @inject(DIToken.IMemberRepository)
-    private readonly _memberRepository: IMemberRepository,
     @inject(DIToken.IMovementRepository)
     private readonly _movementRepository: IMovementRepository,
-    @inject(DIToken.IEmailService)
-    private readonly _emailService: IEmailService,
     private readonly _getPaymentUseCase: GetPaymentUseCase,
+    private readonly _sendNewPaymentEmailUseCase: SendNewPaymentEmailUseCase,
   ) {
     this._dues = [];
   }
@@ -155,28 +150,7 @@ export class CreatePaymentUseCase
 
       invariant(newPayment);
 
-      const member = await this._memberRepository.findOneByIdOrThrow({
-        id: newPayment.memberId,
-      });
-
-      await this._emailService.sendTemplate({
-        templateId: 'd-229024941d0447aeb80c945adaf7169b',
-        to: {
-          email: member.firstEmail(),
-          name: member.name,
-        },
-        unsubscribeGroupId: 237801,
-        variables: {
-          amount: newPayment.amount.formatWithCurrency(),
-          date: newPayment.date.format(),
-          dues: newPayment.dues.map((due) => ({
-            dueAmount: due.dueAmount.formatWithCurrency(),
-            dueCategory: DueCategoryLabel[due.dueCategory].toLowerCase(),
-            dueDate: due.dueDate.format(),
-          })),
-          memberName: member.name,
-        },
-      });
+      this._sendNewPaymentEmailUseCase.execute({ id: newPayment._id });
 
       return await this._getPaymentUseCase.execute({ id: newPayment._id });
     } catch (error) {
