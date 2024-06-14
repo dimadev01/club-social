@@ -17,7 +17,7 @@ export class SendGridEmailService implements IEmailService {
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
   ) {
-    const apiKey = Meteor.settings.private.SENDGRID_API_KEY;
+    const apiKey = process.env.SENDGRID_API_KEY;
 
     invariant(apiKey);
 
