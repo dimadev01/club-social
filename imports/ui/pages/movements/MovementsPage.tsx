@@ -5,7 +5,7 @@ import {
   UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Card, Space, Table, Typography } from 'antd';
+import { Card, Space, Table, Typography } from 'antd';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -119,229 +119,219 @@ export const MovementsPage = () => {
   );
 
   return (
-    <>
-      <Breadcrumb
-        className="mb-8"
-        items={[{ title: 'Inicio' }, { title: 'Movimientos' }]}
+    <Card
+      title={
+        <Space>
+          <SwapOutlined />
+          <span>Movimientos</span>
+        </Space>
+      }
+      extra={
+        <Space.Compact>
+          <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
+          <MovementsGridCsvDownloaderButton request={gridRequest} />
+          <GridNewButton
+            scope={ScopeEnum.MOVEMENTS}
+            to={AppUrl.MOVEMENTS_NEW}
+          />
+        </Space.Compact>
+      }
+    >
+      <Grid<MovementGridDto>
+        summary={renderSummary}
+        total={data?.totalCount}
+        state={gridState}
+        onTableChange={onTableChange}
+        loading={isLoading}
+        dataSource={data?.items}
+        rowClassName={(movement) => {
+          if (movement.isVoided) {
+            return 'bg-gray-100 dark:bg-gray-900';
+          }
+
+          if (movement.isExpense) {
+            return 'bg-red-100 dark:bg-red-900';
+          }
+
+          if (movement.isIncome) {
+            return 'bg-green-100 dark:bg-green-900';
+          }
+
+          throw new Error('Unknown movement type');
+        }}
+        columns={[
+          {
+            dataIndex: 'createdAt',
+            ellipsis: true,
+            filterDropdown: renderCreatedAtFilter,
+            filteredValue: gridState.filters.createdAt,
+            render: (date: string, movement: MovementGridDto) => (
+              <Link to={`${AppUrl.MOVEMENTS}/${movement.id}`}>
+                {new DateVo(date).format(DateFormatEnum.DDMMYYHHmm)}
+              </Link>
+            ),
+            sortOrder: gridState.sorter.createdAt,
+            sorter: true,
+            title: 'Fecha de creación',
+            width: 150,
+          },
+          {
+            dataIndex: 'date',
+            ellipsis: true,
+            filterDropdown: renderDateFilter,
+            filteredValue: gridState.filters.date,
+            render: (date: string) => new DateUtcVo(date).format(),
+            title: 'Fecha de movimiento',
+            width: 100,
+          },
+          {
+            align: 'center',
+            dataIndex: 'type',
+            ellipsis: true,
+            filteredValue: gridState.filters.type,
+            filters: getMovementTypeOptions(),
+            render: (type: MovementTypeEnum) => MovementTypeLabel[type],
+            title: 'Tipo',
+            width: 75,
+          },
+          {
+            align: 'center',
+            dataIndex: 'category',
+            ellipsis: true,
+            filterMode: 'tree',
+            filteredValue: gridState.filters.category,
+            filters: getCategoryFilters(),
+            render: (category: MovementCategoryEnum) =>
+              MovementCategoryLabel[category],
+            title: 'Categoría',
+            width: 125,
+          },
+          {
+            align: 'right',
+            dataIndex: 'amount',
+            ellipsis: true,
+            render: (amount) => new Money({ amount }).formatWithCurrency(),
+            title: 'Importe',
+            width: 75,
+          },
+          {
+            dataIndex: 'paymentMemberName',
+            ellipsis: true,
+            title: 'Socio',
+            width: 125,
+          },
+          {
+            align: 'center',
+            dataIndex: 'status',
+            defaultFilteredValue: [MovementStatusEnum.REGISTERED],
+            ellipsis: true,
+            filterResetToDefaultFilteredValue: true,
+            filteredValue: gridState.filters.status,
+            filters: getMovementStatusColumnFilters(),
+            render: (status: MovementStatusEnum) => MovementStatusLabel[status],
+            title: 'Estado',
+            width: 100,
+          },
+          {
+            dataIndex: 'notes',
+            render: (notes: string) => (
+              <Typography.Paragraph
+                className="!mb-0"
+                ellipsis={{ expandable: true }}
+              >
+                {notes}
+              </Typography.Paragraph>
+            ),
+            title: 'Notas',
+            width: 150,
+          },
+          {
+            align: 'center',
+            ellipsis: true,
+            render: (_, movement: MovementGridDto) => {
+              if (!movement.paymentId) {
+                return null;
+              }
+
+              invariant(movement.paymentMemberId);
+
+              invariant(movement.paymentMemberName);
+
+              return (
+                movement.paymentId && (
+                  <Space.Compact size="small">
+                    {permissions.payments.read && (
+                      <Button
+                        type="text"
+                        onClick={() => {
+                          navigate(`${AppUrl.PAYMENTS}/${movement.paymentId}`);
+                        }}
+                        htmlType="button"
+                        tooltip={{ title: 'Ver Detalle del Pago' }}
+                        icon={<EyeOutlined />}
+                      />
+                    )}
+
+                    {permissions.dues.read && (
+                      <Button
+                        type="text"
+                        onClick={() => {
+                          navigate(
+                            UrlUtils.navigate(AppUrl.DUES, {
+                              filters: {
+                                memberId: [movement.paymentMemberId],
+                              },
+                            }),
+                          );
+                        }}
+                        htmlType="button"
+                        tooltip={{ title: 'Ver Deudas' }}
+                        icon={<WalletOutlined />}
+                      />
+                    )}
+
+                    {permissions.payments.read && (
+                      <Button
+                        type="text"
+                        onClick={() => {
+                          navigate(
+                            UrlUtils.navigate(AppUrl.PAYMENTS, {
+                              filters: {
+                                memberId: [movement.paymentMemberId],
+                              },
+                            }),
+                          );
+                        }}
+                        htmlType="button"
+                        tooltip={{ title: 'Ver Pago' }}
+                        icon={<CreditCardOutlined />}
+                      />
+                    )}
+
+                    {permissions.member.read && (
+                      <Button
+                        type="text"
+                        onClick={() => {
+                          navigate(
+                            UrlUtils.navigate(AppUrl.MEMBERS, {
+                              filters: { id: [movement.paymentMemberId] },
+                            }),
+                          );
+                        }}
+                        htmlType="button"
+                        tooltip={{ title: 'Ver Socio' }}
+                        icon={<UserOutlined />}
+                      />
+                    )}
+                  </Space.Compact>
+                )
+              );
+            },
+            title: 'Acciones',
+            width: 125,
+          },
+        ]}
       />
-
-      <Card
-        title={
-          <Space>
-            <SwapOutlined />
-            <span>Movimientos</span>
-          </Space>
-        }
-        extra={
-          <Space.Compact>
-            <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-            <MovementsGridCsvDownloaderButton request={gridRequest} />
-            <GridNewButton
-              scope={ScopeEnum.MOVEMENTS}
-              to={AppUrl.MOVEMENTS_NEW}
-            />
-          </Space.Compact>
-        }
-      >
-        <Grid<MovementGridDto>
-          summary={renderSummary}
-          total={data?.totalCount}
-          state={gridState}
-          onTableChange={onTableChange}
-          loading={isLoading}
-          dataSource={data?.items}
-          rowClassName={(movement) => {
-            if (movement.isVoided) {
-              return 'bg-gray-100 dark:bg-gray-900';
-            }
-
-            if (movement.isExpense) {
-              return 'bg-red-100 dark:bg-red-900';
-            }
-
-            if (movement.isIncome) {
-              return 'bg-green-100 dark:bg-green-900';
-            }
-
-            throw new Error('Unknown movement type');
-          }}
-          columns={[
-            {
-              dataIndex: 'createdAt',
-              ellipsis: true,
-              filterDropdown: renderCreatedAtFilter,
-              filteredValue: gridState.filters.createdAt,
-              render: (date: string, movement: MovementGridDto) => (
-                <Link to={`${AppUrl.MOVEMENTS}/${movement.id}`}>
-                  {new DateVo(date).format(DateFormatEnum.DDMMYYHHmm)}
-                </Link>
-              ),
-              sortOrder: gridState.sorter.createdAt,
-              sorter: true,
-              title: 'Fecha de creación',
-              width: 150,
-            },
-            {
-              dataIndex: 'date',
-              ellipsis: true,
-              filterDropdown: renderDateFilter,
-              filteredValue: gridState.filters.date,
-              render: (date: string) => new DateUtcVo(date).format(),
-              title: 'Fecha de movimiento',
-              width: 100,
-            },
-            {
-              align: 'center',
-              dataIndex: 'type',
-              ellipsis: true,
-              filteredValue: gridState.filters.type,
-              filters: getMovementTypeOptions(),
-              render: (type: MovementTypeEnum) => MovementTypeLabel[type],
-              title: 'Tipo',
-              width: 75,
-            },
-            {
-              align: 'center',
-              dataIndex: 'category',
-              ellipsis: true,
-              filterMode: 'tree',
-              filteredValue: gridState.filters.category,
-              filters: getCategoryFilters(),
-              render: (category: MovementCategoryEnum) =>
-                MovementCategoryLabel[category],
-              title: 'Categoría',
-              width: 125,
-            },
-            {
-              align: 'right',
-              dataIndex: 'amount',
-              ellipsis: true,
-              render: (amount) => new Money({ amount }).formatWithCurrency(),
-              title: 'Importe',
-              width: 75,
-            },
-            {
-              dataIndex: 'paymentMemberName',
-              ellipsis: true,
-              title: 'Socio',
-              width: 125,
-            },
-            {
-              align: 'center',
-              dataIndex: 'status',
-              defaultFilteredValue: [MovementStatusEnum.REGISTERED],
-              ellipsis: true,
-              filterResetToDefaultFilteredValue: true,
-              filteredValue: gridState.filters.status,
-              filters: getMovementStatusColumnFilters(),
-              render: (status: MovementStatusEnum) =>
-                MovementStatusLabel[status],
-              title: 'Estado',
-              width: 100,
-            },
-            {
-              dataIndex: 'notes',
-              render: (notes: string) => (
-                <Typography.Paragraph
-                  className="!mb-0"
-                  ellipsis={{ expandable: true }}
-                >
-                  {notes}
-                </Typography.Paragraph>
-              ),
-              title: 'Notas',
-              width: 150,
-            },
-            {
-              align: 'center',
-              ellipsis: true,
-              render: (_, movement: MovementGridDto) => {
-                if (!movement.paymentId) {
-                  return null;
-                }
-
-                invariant(movement.paymentMemberId);
-
-                invariant(movement.paymentMemberName);
-
-                return (
-                  movement.paymentId && (
-                    <Space.Compact size="small">
-                      {permissions.payments.read && (
-                        <Button
-                          type="text"
-                          onClick={() => {
-                            navigate(
-                              `${AppUrl.PAYMENTS}/${movement.paymentId}`,
-                            );
-                          }}
-                          htmlType="button"
-                          tooltip={{ title: 'Ver Detalle' }}
-                          icon={<EyeOutlined />}
-                        />
-                      )}
-
-                      {permissions.dues.read && (
-                        <Button
-                          type="text"
-                          onClick={() => {
-                            navigate(
-                              UrlUtils.navigate(AppUrl.DUES, {
-                                filters: {
-                                  memberId: [movement.paymentMemberId],
-                                },
-                              }),
-                            );
-                          }}
-                          htmlType="button"
-                          tooltip={{ title: 'Ver Deudas' }}
-                          icon={<WalletOutlined />}
-                        />
-                      )}
-
-                      {permissions.payments.read && (
-                        <Button
-                          type="text"
-                          onClick={() => {
-                            navigate(
-                              UrlUtils.navigate(AppUrl.PAYMENTS, {
-                                filters: {
-                                  memberId: [movement.paymentMemberId],
-                                },
-                              }),
-                            );
-                          }}
-                          htmlType="button"
-                          tooltip={{ title: 'Ver Pago' }}
-                          icon={<CreditCardOutlined />}
-                        />
-                      )}
-
-                      {permissions.member.read && (
-                        <Button
-                          type="text"
-                          onClick={() => {
-                            navigate(
-                              UrlUtils.navigate(AppUrl.MEMBERS, {
-                                filters: { id: [movement.paymentMemberId] },
-                              }),
-                            );
-                          }}
-                          htmlType="button"
-                          tooltip={{ title: 'Ver Socio' }}
-                          icon={<UserOutlined />}
-                        />
-                      )}
-                    </Space.Compact>
-                  )
-                );
-              },
-              title: 'Acciones',
-              width: 125,
-            },
-          ]}
-        />
-      </Card>
-    </>
+    </Card>
   );
 };

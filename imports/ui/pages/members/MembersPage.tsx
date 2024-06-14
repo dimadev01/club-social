@@ -3,7 +3,7 @@ import {
   TeamOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Card, Space } from 'antd';
+import { Card, Space } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -80,185 +80,178 @@ export const MembersPage = () => {
   });
 
   return (
-    <>
-      <Breadcrumb
-        className="mb-8"
-        items={[{ title: 'Inicio' }, { title: 'Socios' }]}
+    <Card
+      title={
+        <Space>
+          <TeamOutlined />
+          <span>Socios</span>
+        </Space>
+      }
+      extra={
+        <Space.Compact>
+          <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
+          <MembersGridCsvDownloaderButton request={gridRequest} />
+          <GridNewButton scope={ScopeEnum.MEMBERS} to={AppUrl.MEMBERS_NEW} />
+        </Space.Compact>
+      }
+    >
+      <Grid<MemberGridDto>
+        total={data?.totalCount}
+        state={gridState}
+        onTableChange={onTableChange}
+        loading={isLoading}
+        dataSource={data?.items}
+        rowClassName={(member) => {
+          if (member.pendingTotal > 0) {
+            return 'bg-red-100 dark:bg-red-900';
+          }
+
+          return '';
+        }}
+        columns={[
+          {
+            dataIndex: 'id',
+            ellipsis: true,
+            filterSearch: true,
+            filteredValue: gridState.filters.id,
+            filters: GridUtils.getMembersForFilter(members),
+            fixed: 'left',
+            render: (id: string, member: MemberGridDto) => (
+              <Link to={`${AppUrl.MEMBERS}/${id}`}>{member.name}</Link>
+            ),
+            sortOrder: gridState.sorter.id,
+            sorter: true,
+            title: 'Socio',
+            width: 200,
+          },
+          {
+            align: 'center',
+            dataIndex: 'category',
+            ellipsis: true,
+
+            filteredValue: gridState.filters.category,
+            filters: getMemberCategoryColumnFilters(),
+            render: (category: MemberCategoryEnum) =>
+              MemberCategoryLabel[category],
+            title: 'Categoría',
+            width: 100,
+          },
+          {
+            align: 'center',
+            dataIndex: 'status',
+            defaultFilteredValue: [MemberStatusEnum.ACTIVE],
+            ellipsis: true,
+            filterResetToDefaultFilteredValue: true,
+            filteredValue: gridState.filters.status,
+            filters: getMemberStatusColumnFilters(),
+            render: (status: MemberStatusEnum) => MemberStatusLabel[status],
+            title: 'Estado',
+            width: 100,
+          },
+          {
+            align: 'left',
+            dataIndex: 'email',
+            ellipsis: true,
+            title: 'Email',
+            width: 150,
+          },
+          {
+            align: 'right',
+            dataIndex: 'pendingMembership',
+            ellipsis: true,
+            render: (pendingMembership: number) =>
+              new Money({ amount: pendingMembership }).formatWithCurrency(),
+            sortOrder: gridState.sorter.pendingMembership,
+            sorter: true,
+            title: 'Deuda Cuota',
+            width: 125,
+          },
+          {
+            align: 'right',
+            dataIndex: 'pendingElectricity',
+            ellipsis: true,
+            render: (pendingElectricity: number) =>
+              new Money({ amount: pendingElectricity }).formatWithCurrency(),
+            sortOrder: gridState.sorter.pendingElectricity,
+            sorter: true,
+            title: 'Deuda Luz',
+            width: 125,
+          },
+          {
+            align: 'right',
+            dataIndex: 'pendingGuest',
+            ellipsis: true,
+            render: (pendingGuest: number) =>
+              new Money({ amount: pendingGuest }).formatWithCurrency(),
+            sortOrder: gridState.sorter.pendingGuest,
+            sorter: true,
+            title: 'Deuda Invitado',
+            width: 125,
+          },
+          {
+            align: 'right',
+            dataIndex: 'pendingTotal',
+            ellipsis: true,
+            filterMultiple: false,
+            filteredValue: gridState.filters.pendingTotal,
+            filters: [
+              {
+                text: 'Con deuda',
+                value: 'true',
+              },
+              {
+                text: 'Sin deuda',
+                value: 'false',
+              },
+            ],
+            render: (pendingTotal: number) =>
+              new Money({ amount: pendingTotal }).formatWithCurrency(),
+            sortOrder: gridState.sorter.pendingTotal,
+            sorter: true,
+            title: 'Deuda Total',
+            width: 125,
+          },
+          {
+            align: 'center',
+            ellipsis: true,
+            render: (_, member: MemberGridDto) => (
+              <Space.Compact size="small">
+                {permissions.dues.read && (
+                  <Button
+                    type="text"
+                    icon={<WalletOutlined />}
+                    onClick={() =>
+                      navigate(
+                        UrlUtils.navigate(AppUrl.DUES, {
+                          filters: { memberId: [member.id] },
+                        }),
+                      )
+                    }
+                    tooltip={{ title: 'Ver deudas' }}
+                  />
+                )}
+
+                {permissions.payments.read && (
+                  <Button
+                    type="text"
+                    icon={<CreditCardOutlined />}
+                    onClick={() =>
+                      navigate(
+                        UrlUtils.navigate(AppUrl.PAYMENTS, {
+                          filters: { memberId: [member.id] },
+                        }),
+                      )
+                    }
+                    tooltip={{ title: 'Ver Pagos' }}
+                  />
+                )}
+              </Space.Compact>
+            ),
+            title: 'Acciones',
+            width: 100,
+          },
+        ]}
       />
-
-      <Card
-        title={
-          <Space>
-            <TeamOutlined />
-            <span>Socios</span>
-          </Space>
-        }
-        extra={
-          <Space.Compact>
-            <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-            <MembersGridCsvDownloaderButton request={gridRequest} />
-            <GridNewButton scope={ScopeEnum.MEMBERS} to={AppUrl.MEMBERS_NEW} />
-          </Space.Compact>
-        }
-      >
-        <Grid<MemberGridDto>
-          total={data?.totalCount}
-          state={gridState}
-          onTableChange={onTableChange}
-          loading={isLoading}
-          dataSource={data?.items}
-          rowClassName={(member) => {
-            if (member.pendingTotal > 0) {
-              return 'bg-red-100 dark:bg-red-900';
-            }
-
-            return '';
-          }}
-          columns={[
-            {
-              dataIndex: 'id',
-              ellipsis: true,
-              filterSearch: true,
-              filteredValue: gridState.filters.id,
-              filters: GridUtils.getMembersForFilter(members),
-              fixed: 'left',
-              render: (id: string, member: MemberGridDto) => (
-                <Link to={`${AppUrl.MEMBERS}/${id}`}>{member.name}</Link>
-              ),
-              sortOrder: gridState.sorter.id,
-              sorter: true,
-              title: 'Socio',
-              width: 200,
-            },
-            {
-              align: 'center',
-              dataIndex: 'category',
-              ellipsis: true,
-
-              filteredValue: gridState.filters.category,
-              filters: getMemberCategoryColumnFilters(),
-              render: (category: MemberCategoryEnum) =>
-                MemberCategoryLabel[category],
-              title: 'Categoría',
-              width: 100,
-            },
-            {
-              align: 'center',
-              dataIndex: 'status',
-              defaultFilteredValue: [MemberStatusEnum.ACTIVE],
-              ellipsis: true,
-              filterResetToDefaultFilteredValue: true,
-              filteredValue: gridState.filters.status,
-              filters: getMemberStatusColumnFilters(),
-              render: (status: MemberStatusEnum) => MemberStatusLabel[status],
-              title: 'Estado',
-              width: 100,
-            },
-            {
-              align: 'left',
-              dataIndex: 'email',
-              ellipsis: true,
-              title: 'Email',
-              width: 150,
-            },
-            {
-              align: 'right',
-              dataIndex: 'pendingMembership',
-              ellipsis: true,
-              render: (pendingMembership: number) =>
-                new Money({ amount: pendingMembership }).formatWithCurrency(),
-              sortOrder: gridState.sorter.pendingMembership,
-              sorter: true,
-              title: 'Deuda Cuota',
-              width: 125,
-            },
-            {
-              align: 'right',
-              dataIndex: 'pendingElectricity',
-              ellipsis: true,
-              render: (pendingElectricity: number) =>
-                new Money({ amount: pendingElectricity }).formatWithCurrency(),
-              sortOrder: gridState.sorter.pendingElectricity,
-              sorter: true,
-              title: 'Deuda Luz',
-              width: 125,
-            },
-            {
-              align: 'right',
-              dataIndex: 'pendingGuest',
-              ellipsis: true,
-              render: (pendingGuest: number) =>
-                new Money({ amount: pendingGuest }).formatWithCurrency(),
-              sortOrder: gridState.sorter.pendingGuest,
-              sorter: true,
-              title: 'Deuda Invitado',
-              width: 125,
-            },
-            {
-              align: 'right',
-              dataIndex: 'pendingTotal',
-              ellipsis: true,
-              filterMultiple: false,
-              filteredValue: gridState.filters.pendingTotal,
-              filters: [
-                {
-                  text: 'Con deuda',
-                  value: 'true',
-                },
-                {
-                  text: 'Sin deuda',
-                  value: 'false',
-                },
-              ],
-              render: (pendingTotal: number) =>
-                new Money({ amount: pendingTotal }).formatWithCurrency(),
-              sortOrder: gridState.sorter.pendingTotal,
-              sorter: true,
-              title: 'Deuda Total',
-              width: 125,
-            },
-            {
-              align: 'center',
-              ellipsis: true,
-              render: (_, member: MemberGridDto) => (
-                <Space.Compact size="small">
-                  {permissions.dues.read && (
-                    <Button
-                      type="text"
-                      icon={<WalletOutlined />}
-                      onClick={() =>
-                        navigate(
-                          UrlUtils.navigate(AppUrl.DUES, {
-                            filters: { memberId: [member.id] },
-                          }),
-                        )
-                      }
-                      tooltip={{ title: 'Ver deudas' }}
-                    />
-                  )}
-
-                  {permissions.payments.read && (
-                    <Button
-                      type="text"
-                      icon={<CreditCardOutlined />}
-                      onClick={() =>
-                        navigate(
-                          UrlUtils.navigate(AppUrl.PAYMENTS, {
-                            filters: { memberId: [member.id] },
-                          }),
-                        )
-                      }
-                      tooltip={{ title: 'Ver Pagos' }}
-                    />
-                  )}
-                </Space.Compact>
-              ),
-              title: 'Acciones',
-              width: 100,
-            },
-          ]}
-        />
-      </Card>
-    </>
+    </Card>
   );
 };

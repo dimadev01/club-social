@@ -3,7 +3,7 @@ import {
   UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Card, Space, Typography } from 'antd';
+import { Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
@@ -307,59 +307,52 @@ export const DuesPage = () => {
   };
 
   return (
-    <>
-      <Breadcrumb
-        className="mb-8"
-        items={[{ title: 'Inicio' }, { title: 'Deudas' }]}
+    <Card
+      title={
+        <Space>
+          <WalletOutlined />
+          <span>Deudas</span>
+        </Space>
+      }
+      extra={
+        <Space.Compact>
+          <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
+          <DuesGridCsvDownloaderButton request={gridRequest} />
+          <GridNewButton scope={ScopeEnum.DUES} to={AppUrl.DUES_NEW} />
+        </Space.Compact>
+      }
+    >
+      <Grid<DueGridDto>
+        total={data?.totalCount}
+        state={gridState}
+        onTableChange={onTableChange}
+        loading={isLoading}
+        dataSource={data?.items}
+        expandable={{
+          expandedRowRender,
+        }}
+        summary={renderSummary}
+        columns={getColumns()}
+        rowClassName={(due) => {
+          if (due.status === DueStatusEnum.PENDING) {
+            return 'bg-blue-100 dark:bg-blue-900';
+          }
+
+          if (due.status === DueStatusEnum.PAID) {
+            return 'bg-green-100 dark:bg-green-900';
+          }
+
+          if (due.status === DueStatusEnum.PARTIALLY_PAID) {
+            return 'bg-yellow-100 dark:bg-yellow-900';
+          }
+
+          if (due.status === DueStatusEnum.VOIDED) {
+            return 'bg-gray-100 dark:bg-gray-900';
+          }
+
+          throw new Error('Unknown movement type');
+        }}
       />
-
-      <Card
-        title={
-          <Space>
-            <WalletOutlined />
-            <span>Deudas</span>
-          </Space>
-        }
-        extra={
-          <Space.Compact>
-            <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-            <DuesGridCsvDownloaderButton request={gridRequest} />
-            <GridNewButton scope={ScopeEnum.DUES} to={AppUrl.DUES_NEW} />
-          </Space.Compact>
-        }
-      >
-        <Grid<DueGridDto>
-          total={data?.totalCount}
-          state={gridState}
-          onTableChange={onTableChange}
-          loading={isLoading}
-          dataSource={data?.items}
-          expandable={{
-            expandedRowRender,
-          }}
-          summary={renderSummary}
-          columns={getColumns()}
-          rowClassName={(due) => {
-            if (due.status === DueStatusEnum.PENDING) {
-              return 'bg-blue-100 dark:bg-blue-900';
-            }
-
-            if (due.status === DueStatusEnum.PAID) {
-              return 'bg-green-100 dark:bg-green-900';
-            }
-
-            if (due.status === DueStatusEnum.PARTIALLY_PAID) {
-              return 'bg-yellow-100 dark:bg-yellow-900';
-            }
-
-            if (due.status === DueStatusEnum.VOIDED) {
-              return 'bg-gray-100 dark:bg-gray-900';
-            }
-
-            throw new Error('Unknown movement type');
-          }}
-        />
-      </Card>
-    </>
+    </Card>
   );
 };

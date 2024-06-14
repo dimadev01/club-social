@@ -168,7 +168,7 @@ export const MemberDetailPage: React.FC = () => {
   return (
     <>
       <Breadcrumb
-        className="mb-8"
+        className="mb-4"
         items={[
           { title: 'Inicio' },
           { title: <Link to={AppUrl.MEMBERS}>Socios</Link> },
