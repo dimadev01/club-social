@@ -29,12 +29,15 @@ import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
 import { MembersGridCsvDownloaderButton } from '@ui/components/Members/MembersGridCsvDownloader';
+import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
 import { useNavigate } from '@ui/hooks/ui/useNavigate';
 
 export const MembersPage = () => {
   const navigate = useNavigate();
+
+  const permissions = usePermissions();
 
   const { gridState, onTableChange } = useTable<MemberGridDto>({
     defaultFilters: {
@@ -212,30 +215,35 @@ export const MembersPage = () => {
               ellipsis: true,
               render: (_, member: MemberGridDto) => (
                 <Space.Compact size="small">
-                  <Button
-                    type="text"
-                    icon={<WalletOutlined />}
-                    onClick={() =>
-                      navigate(
-                        UrlUtils.navigate(AppUrl.DUES, {
-                          filters: { memberId: [member.id] },
-                        }),
-                      )
-                    }
-                    tooltip={{ title: 'Ver deudas' }}
-                  />
-                  <Button
-                    type="text"
-                    icon={<CreditCardOutlined />}
-                    onClick={() =>
-                      navigate(
-                        UrlUtils.navigate(AppUrl.PAYMENTS, {
-                          filters: { memberId: [member.id] },
-                        }),
-                      )
-                    }
-                    tooltip={{ title: 'Ver Pagos' }}
-                  />
+                  {permissions.dues.read && (
+                    <Button
+                      type="text"
+                      icon={<WalletOutlined />}
+                      onClick={() =>
+                        navigate(
+                          UrlUtils.navigate(AppUrl.DUES, {
+                            filters: { memberId: [member.id] },
+                          }),
+                        )
+                      }
+                      tooltip={{ title: 'Ver deudas' }}
+                    />
+                  )}
+
+                  {permissions.payments.read && (
+                    <Button
+                      type="text"
+                      icon={<CreditCardOutlined />}
+                      onClick={() =>
+                        navigate(
+                          UrlUtils.navigate(AppUrl.PAYMENTS, {
+                            filters: { memberId: [member.id] },
+                          }),
+                        )
+                      }
+                      tooltip={{ title: 'Ver Pagos' }}
+                    />
+                  )}
                 </Space.Compact>
               ),
               title: 'Acciones',

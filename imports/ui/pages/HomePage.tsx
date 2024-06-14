@@ -4,12 +4,12 @@ import { Navigate } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
 import { DuesAndPaymentsBalanceCard } from '@ui/components/Analytics/DuesAndPaymentsBalanceCard';
-import { useIsMember } from '@ui/hooks/auth/useIsMember';
+import { usePermissions } from '@ui/hooks/auth/usePermissions';
 
 export const HomePage = () => {
-  const isMember = useIsMember();
+  const permissions = usePermissions();
 
-  if (isMember) {
+  if (permissions.isMember) {
     return <Navigate to={AppUrl.DUES} />;
   }
 

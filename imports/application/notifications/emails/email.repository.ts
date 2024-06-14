@@ -1,6 +1,6 @@
 import { Result } from 'neverthrow';
 
-export interface IEmailService {
+export interface IEmailRepository {
   sendTemplate(options: EmailWithTemplateOptions): Promise<Result<null, Error>>;
 }
 

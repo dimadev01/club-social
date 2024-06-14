@@ -4,16 +4,16 @@ import invariant from 'tiny-invariant';
 import { inject, singleton } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { EmailServiceEnum } from '@application/notifications/emails/email-service.enum';
+import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
 import {
   EmailWithTemplateOptions,
-  IEmailService,
-} from '@application/notifications/emails/email-service.interface';
+  IEmailRepository,
+} from '@application/notifications/emails/email.repository';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
 import { ILogger } from '@domain/common/logger/logger.interface';
 
 @singleton()
-export class SendGridEmailService implements IEmailService {
+export class EmailSendGridRepository implements IEmailRepository {
   public constructor(
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,

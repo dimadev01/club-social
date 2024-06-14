@@ -5,7 +5,7 @@ import { Meteor } from 'meteor/meteor';
 import { container, inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { EmailServiceEnum } from '@application/notifications/emails/email-service.enum';
+import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethodOld } from '@domain/users/user.methods';
