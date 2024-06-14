@@ -1,5 +1,6 @@
 import sendgrid from '@sendgrid/mail';
 import { Result, err, ok } from 'neverthrow';
+import invariant from 'tiny-invariant';
 import { inject, singleton } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
@@ -16,11 +17,11 @@ export class SendGridEmailService implements IEmailService {
     @inject(DIToken.Logger)
     private readonly _logger: ILogger,
   ) {
-    const apiKey = process.env.SENDGRID_API_KEY;
+    const apiKey = Meteor.settings.private.SENDGRID_API_KEY;
 
-    if (apiKey) {
-      sendgrid.setApiKey(apiKey);
-    }
+    invariant(apiKey);
+
+    sendgrid.setApiKey(apiKey);
   }
 
   public async sendTemplate(
