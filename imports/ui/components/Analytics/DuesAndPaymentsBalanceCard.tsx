@@ -1,15 +1,22 @@
-import { CreditCardOutlined, WalletOutlined } from '@ant-design/icons';
+import {
+  CreditCardOutlined,
+  SwapOutlined,
+  WalletOutlined,
+} from '@ant-design/icons';
 import { Card, Col, DatePicker, Divider, Form, Space } from 'antd';
 import { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 
+import { MovementStatusEnum } from '@domain/categories/category.enum';
 import { DueStatusEnum } from '@domain/dues/due.enum';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { DueAndPaymentBalanceTotals } from '@ui/components/Analytics/DueAndPaymentBalanceTotals';
+import { MovementsCard } from '@ui/components/Analytics/MovementsCard';
 import { getPresets } from '@ui/components/DatePicker/DatePicker.utils';
 import { Row } from '@ui/components/Layout/Row';
 import { useDuesTotals } from '@ui/hooks/dues/useDuesTotals';
+import { useMovementsTotals } from '@ui/hooks/movements/useMovementsTotals';
 import { usePaymentsTotals } from '@ui/hooks/payments/usePaymentsTotals';
 
 export const DuesAndPaymentsBalanceCard = () => {
@@ -24,7 +31,7 @@ export const DuesAndPaymentsBalanceCard = () => {
       ]
     : [];
 
-  const { data: duesTotals, isLoading: isLoadingDuesTotals } = useDuesTotals({
+  const { data: dues, isLoading: isLoadingDues } = useDuesTotals({
     filterByCategory: [],
     filterByCreatedAt: [],
     filterByDate,
@@ -36,26 +43,36 @@ export const DuesAndPaymentsBalanceCard = () => {
     ],
   });
 
-  const { data: paymentsTotals, isLoading: isLoadingPaymentsTotals } =
-    usePaymentsTotals({
+  const { data: payments, isLoading: isLoadingPayments } = usePaymentsTotals({
+    filterByCreatedAt: [],
+    filterByDate,
+    filterByMember: [],
+    filterByStatus: [PaymentStatusEnum.PAID],
+  });
+
+  const { data: movements, isLoading: isLoadingMovements } = useMovementsTotals(
+    {
+      filterByCategory: [],
       filterByCreatedAt: [],
       filterByDate,
-      filterByMember: [],
-      filterByStatus: [PaymentStatusEnum.PAID],
-    });
+      filterByStatus: [MovementStatusEnum.REGISTERED],
+      filterByType: [],
+    },
+  );
 
   return (
     <Card
       bordered
-      title="Balance de Deudas y Pagos"
+      title="Balance de Deudas, Pagos y Movimientos"
       extra={
         <Space split={<Divider type="vertical" />}>
           <WalletOutlined />
           <CreditCardOutlined />
+          <SwapOutlined />
         </Space>
       }
     >
-      <Form.Item label="Fecha">
+      <Form.Item layout="vertical" label="Fecha">
         <DatePicker.RangePicker
           presets={getPresets()}
           allowClear
@@ -65,24 +82,32 @@ export const DuesAndPaymentsBalanceCard = () => {
       </Form.Item>
 
       <Row>
-        <Col xs={24} md={12}>
+        <Col xs={24} md={8}>
           <DueAndPaymentBalanceTotals
-            isLoading={isLoadingDuesTotals}
-            total={duesTotals?.total ?? 0}
-            electricity={duesTotals?.electricity ?? 0}
-            guest={duesTotals?.guest ?? 0}
-            membership={duesTotals?.membership ?? 0}
-            title="Deudas pendientes"
+            isLoading={isLoadingDues}
+            total={dues?.total ?? 0}
+            electricity={dues?.electricity ?? 0}
+            guest={dues?.guest ?? 0}
+            membership={dues?.membership ?? 0}
+            title="Deudas"
           />
         </Col>
-        <Col xs={24} md={12}>
+        <Col xs={24} md={8}>
           <DueAndPaymentBalanceTotals
-            isLoading={isLoadingPaymentsTotals}
-            total={paymentsTotals?.total ?? 0}
-            electricity={paymentsTotals?.electricity ?? 0}
-            guest={paymentsTotals?.guest ?? 0}
-            membership={paymentsTotals?.membership ?? 0}
+            isLoading={isLoadingPayments}
+            total={payments?.total ?? 0}
+            electricity={payments?.electricity ?? 0}
+            guest={payments?.guest ?? 0}
+            membership={payments?.membership ?? 0}
             title="Pagos"
+          />
+        </Col>
+        <Col xs={24} md={8}>
+          <MovementsCard
+            isLoading={isLoadingMovements}
+            expense={movements?.expense ?? 0}
+            income={movements?.income ?? 0}
+            total={movements?.total ?? 0}
           />
         </Col>
       </Row>

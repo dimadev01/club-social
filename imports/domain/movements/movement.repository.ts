@@ -25,7 +25,9 @@ export interface FindPaginatedMovementsRequest
     FindPaginatedRequest {}
 
 export interface GetMovementsTotalsResponse {
-  amount: number;
+  expense: number;
+  income: number;
+  total: number;
 }
 
 export interface IMovementRepository
