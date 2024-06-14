@@ -138,7 +138,7 @@ export class Movement extends Model implements IMovement {
     ) {
       return err(
         new DomainError(
-          'Cannot create a movement with category MEMBER_PAYMENT',
+          'Este tipo de movimiento lo debe crear desde el apartado de Pagos',
         ),
       );
     }
