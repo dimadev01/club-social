@@ -159,7 +159,7 @@ export class CreatePaymentUseCase
         id: newPayment.memberId,
       });
 
-      await this._emailService.sendTemplateEmail({
+      await this._emailService.sendTemplate({
         templateId: 'd-229024941d0447aeb80c945adaf7169b',
         to: {
           email: member.firstEmail(),

@@ -17,22 +17,18 @@ export interface EmailOptions {
   to: string | string[];
 }
 
-export interface Email {
+export interface EmailTo {
   email: string;
   name: string;
 }
 
-export interface TemplateEmailOptions {
+export interface EmailWithTemplateOptions {
   templateId: string;
-  to: Email | Email[];
+  to: EmailTo | EmailTo[];
   unsubscribeGroupId: number | null;
   variables: { [key: string]: unknown };
 }
 
 export interface IEmailService {
-  // sendBatchEmails(options: EmailOptions[]): Promise<void>;
-  // sendEmail(options: EmailOptions): Promise<Result<null, Error>>;
-  sendTemplateEmail(
-    options: TemplateEmailOptions,
-  ): Promise<Result<null, Error>>;
+  sendTemplate(options: EmailWithTemplateOptions): Promise<Result<null, Error>>;
 }

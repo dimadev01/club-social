@@ -1,12 +1,11 @@
 import sendgrid from '@sendgrid/mail';
 import { Result, err, ok } from 'neverthrow';
-import invariant from 'tiny-invariant';
 import { inject, singleton } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import {
+  EmailWithTemplateOptions,
   IEmailService,
-  TemplateEmailOptions,
 } from '@application/notifications/emails/email-service.interface';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
 import { ILogger } from '@domain/common/logger/logger.interface';
@@ -19,13 +18,13 @@ export class SendGridEmailService implements IEmailService {
   ) {
     const apiKey = process.env.SENDGRID_API_KEY;
 
-    invariant(apiKey);
-
-    sendgrid.setApiKey(apiKey);
+    if (apiKey) {
+      sendgrid.setApiKey(apiKey);
+    }
   }
 
-  public async sendTemplateEmail(
-    options: TemplateEmailOptions,
+  public async sendTemplate(
+    options: EmailWithTemplateOptions,
   ): Promise<Result<null, Error>> {
     try {
       let { to } = options;

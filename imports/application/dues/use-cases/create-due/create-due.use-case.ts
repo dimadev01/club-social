@@ -76,7 +76,7 @@ export class CreateDueUseCase implements IUseCase<CreateDueRequest, DueDto[]> {
 
           invariant(due);
 
-          await this._emailService.sendTemplateEmail({
+          await this._emailService.sendTemplate({
             templateId: 'd-523b01d111fe4a3798b80d9dc7a4a2f7',
             to: {
               email: member.firstEmail(),
