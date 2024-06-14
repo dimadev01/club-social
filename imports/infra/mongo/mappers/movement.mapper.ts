@@ -5,58 +5,66 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 import { Movement } from '@domain/movements/models/movement.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { MovementEntity } from '@infra/mongo/entities/movement.entity';
+import { PaymentMapper } from '@infra/mongo/mappers/payment.mapper';
 
 @injectable()
 export class MovementMapper extends Mapper<Movement, MovementEntity> {
-  public toDomain(movement: MovementEntity): Movement {
-    return new Movement({
-      _id: movement._id,
-      amount: new Money({ amount: movement.amount }),
-      category: movement.category,
-      createdAt: movement.createdAt,
-      createdBy: movement.createdBy,
-      date: new DateUtcVo(movement.date),
-      deletedAt: movement.deletedAt,
-      deletedBy: movement.deletedBy,
-      employeeId: movement.employeeId,
-      isDeleted: movement.isDeleted,
-      notes: movement.notes,
-      paymentId: movement.paymentId,
-      professorId: movement.professorId,
-      serviceId: movement.serviceId,
-      status: movement.status,
-      type: movement.type,
-      updatedAt: movement.updatedAt,
-      updatedBy: movement.updatedBy,
-      voidReason: movement.voidReason,
-      voidedAt: movement.voidedAt ? new DateUtcVo(movement.voidedAt) : null,
-      voidedBy: movement.voidedBy,
-    });
+  public constructor(private readonly _paymentMapper: PaymentMapper) {
+    super();
   }
 
-  protected getEntity(movement: Movement): MovementEntity {
+  public toDomain(entity: MovementEntity): Movement {
+    return new Movement(
+      {
+        _id: entity._id,
+        amount: new Money({ amount: entity.amount }),
+        category: entity.category,
+        createdAt: entity.createdAt,
+        createdBy: entity.createdBy,
+        date: new DateUtcVo(entity.date),
+        deletedAt: entity.deletedAt,
+        deletedBy: entity.deletedBy,
+        employeeId: entity.employeeId,
+        isDeleted: entity.isDeleted,
+        notes: entity.notes,
+        paymentId: entity.paymentId,
+        professorId: entity.professorId,
+        serviceId: entity.serviceId,
+        status: entity.status,
+        type: entity.type,
+        updatedAt: entity.updatedAt,
+        updatedBy: entity.updatedBy,
+        voidReason: entity.voidReason,
+        voidedAt: entity.voidedAt ? new DateUtcVo(entity.voidedAt) : null,
+        voidedBy: entity.voidedBy,
+      },
+      entity.payment ? this._paymentMapper.toDomain(entity.payment) : undefined,
+    );
+  }
+
+  protected getEntity(domain: Movement): MovementEntity {
     return new MovementEntity({
-      _id: movement._id,
-      amount: movement.amount.value,
-      category: movement.category,
-      createdAt: movement.createdAt,
-      createdBy: movement.createdBy,
-      date: movement.date.toDate(),
-      deletedAt: movement.deletedAt,
-      deletedBy: movement.deletedBy,
-      employeeId: movement.employeeId,
-      isDeleted: movement.isDeleted,
-      notes: movement.notes,
-      paymentId: movement.paymentId,
-      professorId: movement.professorId,
-      serviceId: movement.serviceId,
-      status: movement.status,
-      type: movement.type,
-      updatedAt: movement.updatedAt,
-      updatedBy: movement.updatedBy,
-      voidReason: movement.voidReason,
-      voidedAt: movement.voidedAt?.toDate() ?? null,
-      voidedBy: movement.voidedBy,
+      _id: domain._id,
+      amount: domain.amount.value,
+      category: domain.category,
+      createdAt: domain.createdAt,
+      createdBy: domain.createdBy,
+      date: domain.date.toDate(),
+      deletedAt: domain.deletedAt,
+      deletedBy: domain.deletedBy,
+      employeeId: domain.employeeId,
+      isDeleted: domain.isDeleted,
+      notes: domain.notes,
+      paymentId: domain.paymentId,
+      professorId: domain.professorId,
+      serviceId: domain.serviceId,
+      status: domain.status,
+      type: domain.type,
+      updatedAt: domain.updatedAt,
+      updatedBy: domain.updatedBy,
+      voidReason: domain.voidReason,
+      voidedAt: domain.voidedAt?.toDate() ?? null,
+      voidedBy: domain.voidedBy,
     });
   }
 }

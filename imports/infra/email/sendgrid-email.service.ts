@@ -4,6 +4,7 @@ import invariant from 'tiny-invariant';
 import { inject, singleton } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { EmailServiceEnum } from '@application/notifications/emails/email-service.enum';
 import {
   EmailWithTemplateOptions,
   IEmailService,
@@ -32,8 +33,8 @@ export class SendGridEmailService implements IEmailService {
 
       if (Meteor.isDevelopment) {
         to = {
-          email: 'info@clubsocialmontegrande.ar',
-          name: 'Club Social Monte Grande',
+          email: EmailServiceEnum.EMAIL_FROM_ADDRESS,
+          name: EmailServiceEnum.EMAIL_FORM_NAME,
         };
 
         /**
@@ -48,8 +49,8 @@ export class SendGridEmailService implements IEmailService {
           : undefined,
         dynamicTemplateData: options.variables,
         from: {
-          email: 'info@clubsocialmontegrande.ar',
-          name: 'Club Social Monte Grande',
+          email: EmailServiceEnum.EMAIL_FROM_ADDRESS,
+          name: EmailServiceEnum.EMAIL_FORM_NAME,
         },
         // mailSettings: {
         //   sandboxMode: {

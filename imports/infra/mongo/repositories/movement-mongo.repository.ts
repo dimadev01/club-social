@@ -61,6 +61,21 @@ export class MovementMongoRepository
     const pipeline: Document[] = [
       { $match: query },
       ...this.getPaginatedPipeline(request),
+      {
+        $lookup: {
+          as: 'payment',
+          foreignField: '_id',
+          from: 'payments',
+          localField: 'paymentId',
+          pipeline: [...this.getMemberLookupPipeline()],
+        },
+      },
+      {
+        $unwind: {
+          path: '$payment',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
     ];
 
     return super.paginate(pipeline, query);
