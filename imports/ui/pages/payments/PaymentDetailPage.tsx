@@ -48,7 +48,7 @@ export const PaymentDetailPage = () => {
   return (
     <>
       <Breadcrumb
-        className="mb-8"
+        className="mb-4"
         items={[
           { title: 'Inicio' },
           { title: <Link to={AppUrl.PAYMENTS}>Pagos</Link> },

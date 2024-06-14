@@ -72,7 +72,7 @@ export const DueEditPage = () => {
   return (
     <>
       <Breadcrumb
-        className="mb-8"
+        className="mb-4"
         items={[
           { title: 'Inicio' },
           { title: <Link to={AppUrl.DUES}>Deudas</Link> },
