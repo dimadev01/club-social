@@ -31,6 +31,8 @@ export enum MeteorMethodEnum {
   PaymentsGetTotals = 'payments/getTotals',
   PaymentsVoid = 'payments/void',
 
+  TestOpenresa = 'test/openresa',
+
   UsersGetByToken = 'users/getByToken',
   UsersUpdateTheme = 'users/updateTheme',
 }

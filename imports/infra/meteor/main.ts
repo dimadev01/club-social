@@ -13,6 +13,7 @@ import { DueMethods } from '@infra/meteor/methods/due.methods';
 import { MemberMethods } from '@infra/meteor/methods/member.methods';
 import { MovementMethods } from '@infra/meteor/methods/movement.methods';
 import { PaymentMethods } from '@infra/meteor/methods/payment.methods';
+import { TestMethods } from '@infra/meteor/methods/test.methods';
 import { MigrationService } from '@infra/migrations/migration.service';
 
 @injectable()
@@ -26,6 +27,7 @@ export class ServerStartup {
     private readonly _memberMethods: MemberMethods,
     private readonly _paymentMethods: PaymentMethods,
     private readonly _dueMethods: DueMethods,
+    private readonly _testMethods: TestMethods,
   ) {}
 
   public async start() {
@@ -110,6 +112,8 @@ export class ServerStartup {
     this._memberMethods.register();
 
     this._dueMethods.register();
+
+    this._testMethods.register();
   }
 }
 

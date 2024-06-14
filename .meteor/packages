@@ -30,3 +30,4 @@ less
 aldeed:collection2
 accounts-passwordless@2.1.4
 standard-minifier-css@1.9.2
+fetch
