@@ -16,6 +16,7 @@ export interface MovementGridDto {
   isVoided: boolean;
   notes: string | null;
   paymentId: string | null;
+  paymentMemberName: string | null;
   status: MovementStatusEnum;
   type: MovementTypeEnum;
 }

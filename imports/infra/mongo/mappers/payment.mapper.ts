@@ -15,17 +15,17 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
     super();
   }
 
-  public toDomain(payment: PaymentEntity): Payment {
+  public toDomain(entity: PaymentEntity): Payment {
     return new Payment(
       {
-        _id: payment._id,
-        amount: new Money({ amount: payment.amount }),
-        createdAt: payment.createdAt,
-        createdBy: payment.createdBy,
-        date: new DateUtcVo(payment.date),
-        deletedAt: payment.deletedAt,
-        deletedBy: payment.deletedBy,
-        dues: payment.dues.map<IPaymentDue>((due) => ({
+        _id: entity._id,
+        amount: new Money({ amount: entity.amount }),
+        createdAt: entity.createdAt,
+        createdBy: entity.createdBy,
+        date: new DateUtcVo(entity.date),
+        deletedAt: entity.deletedAt,
+        deletedBy: entity.deletedBy,
+        dues: entity.dues.map<IPaymentDue>((due) => ({
           creditAmount: new Money({ amount: due.creditAmount }),
           directAmount: new Money({ amount: due.directAmount }),
           dueAmount: new Money({ amount: due.dueAmount }),
@@ -36,31 +36,31 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
           source: due.source,
           totalAmount: new Money({ amount: due.totalAmount }),
         })),
-        isDeleted: payment.isDeleted,
-        memberId: payment.memberId,
-        notes: payment.notes,
-        receiptNumber: payment.receiptNumber,
-        status: payment.status,
-        updatedAt: payment.updatedAt,
-        updatedBy: payment.updatedBy,
-        voidReason: payment.voidReason,
-        voidedAt: payment.voidedAt ? new DateUtcVo(payment.voidedAt) : null,
-        voidedBy: payment.voidedBy,
+        isDeleted: entity.isDeleted,
+        memberId: entity.memberId,
+        notes: entity.notes,
+        receiptNumber: entity.receiptNumber,
+        status: entity.status,
+        updatedAt: entity.updatedAt,
+        updatedBy: entity.updatedBy,
+        voidReason: entity.voidReason,
+        voidedAt: entity.voidedAt ? new DateUtcVo(entity.voidedAt) : null,
+        voidedBy: entity.voidedBy,
       },
-      payment.member ? this._memberMapper.toDomain(payment.member) : undefined,
+      entity.member ? this._memberMapper.toDomain(entity.member) : undefined,
     );
   }
 
-  protected getEntity(payment: Payment): PaymentEntity {
+  protected getEntity(domain: Payment): PaymentEntity {
     return new PaymentEntity({
-      _id: payment._id,
-      amount: payment.amount.value,
-      createdAt: payment.createdAt,
-      createdBy: payment.createdBy,
-      date: payment.date.toDate(),
-      deletedAt: payment.deletedAt,
-      deletedBy: payment.deletedBy,
-      dues: payment.dues.map<PaymentDueEntity>((due) => ({
+      _id: domain._id,
+      amount: domain.amount.value,
+      createdAt: domain.createdAt,
+      createdBy: domain.createdBy,
+      date: domain.date.toDate(),
+      deletedAt: domain.deletedAt,
+      deletedBy: domain.deletedBy,
+      dues: domain.dues.map<PaymentDueEntity>((due) => ({
         creditAmount: due.creditAmount.value,
         directAmount: due.directAmount.value,
         dueAmount: due.dueAmount.value,
@@ -71,16 +71,16 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
         source: due.source,
         totalAmount: due.totalAmount.value,
       })),
-      isDeleted: payment.isDeleted,
-      memberId: payment.memberId,
-      notes: payment.notes,
-      receiptNumber: payment.receiptNumber,
-      status: payment.status,
-      updatedAt: payment.updatedAt,
-      updatedBy: payment.updatedBy,
-      voidReason: payment.voidReason,
-      voidedAt: payment.voidedAt?.toDate() ?? null,
-      voidedBy: payment.voidedBy,
+      isDeleted: domain.isDeleted,
+      memberId: domain.memberId,
+      notes: domain.notes,
+      receiptNumber: domain.receiptNumber,
+      status: domain.status,
+      updatedAt: domain.updatedAt,
+      updatedBy: domain.updatedBy,
+      voidReason: domain.voidReason,
+      voidedAt: domain.voidedAt?.toDate() ?? null,
+      voidedBy: domain.voidedBy,
     });
   }
 }
