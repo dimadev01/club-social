@@ -1,8 +1,15 @@
-import { CreditCardOutlined, SwapOutlined } from '@ant-design/icons';
+import {
+  CreditCardOutlined,
+  EyeOutlined,
+  SwapOutlined,
+  UserOutlined,
+  WalletOutlined,
+} from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Table, Typography } from 'antd';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import invariant from 'tiny-invariant';
 
 import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { GetMovementsGridRequestDto } from '@adapters/dtos/get-movements-grid-request.dto';
@@ -24,6 +31,7 @@ import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
 import { Grid } from '@ui/components/Grid/Grid';
@@ -168,7 +176,7 @@ export const MovementsPage = () => {
               sortOrder: gridState.sorter.createdAt,
               sorter: true,
               title: 'Fecha de creación',
-              width: 125,
+              width: 150,
             },
             {
               dataIndex: 'date',
@@ -210,25 +218,10 @@ export const MovementsPage = () => {
               width: 75,
             },
             {
-              dataIndex: 'paymentId',
+              dataIndex: 'paymentMemberName',
               ellipsis: true,
-              render: (paymentId: string | null, movement) =>
-                paymentId && (
-                  <Space>
-                    {movement.paymentMemberName}
-                    <Button
-                      size="small"
-                      type="text"
-                      tooltip={{ title: 'Ver pago' }}
-                      onClick={() =>
-                        navigate(`${AppUrl.PAYMENTS}/${paymentId}`)
-                      }
-                      icon={<CreditCardOutlined />}
-                    />
-                  </Space>
-                ),
               title: 'Socio',
-              width: 225,
+              width: 125,
             },
             {
               align: 'center',
@@ -254,7 +247,77 @@ export const MovementsPage = () => {
                 </Typography.Paragraph>
               ),
               title: 'Notas',
-              width: 300,
+              width: 150,
+            },
+            {
+              align: 'center',
+              ellipsis: true,
+              render: (_, movement: MovementGridDto) => {
+                if (!movement.paymentId) {
+                  return null;
+                }
+
+                invariant(movement.paymentMemberId);
+
+                invariant(movement.paymentMemberName);
+
+                return (
+                  movement.paymentId && (
+                    <Space.Compact size="small">
+                      <Button
+                        type="text"
+                        onClick={() => {
+                          navigate(`${AppUrl.PAYMENTS}/${movement.paymentId}`);
+                        }}
+                        htmlType="button"
+                        tooltip={{ title: 'Ver Detalle' }}
+                        icon={<EyeOutlined />}
+                      />
+                      <Button
+                        type="text"
+                        onClick={() => {
+                          navigate(
+                            UrlUtils.navigate(AppUrl.DUES, {
+                              filters: { memberId: [movement.paymentMemberId] },
+                            }),
+                          );
+                        }}
+                        htmlType="button"
+                        tooltip={{ title: 'Ver Deudas' }}
+                        icon={<WalletOutlined />}
+                      />
+                      <Button
+                        type="text"
+                        onClick={() => {
+                          navigate(
+                            UrlUtils.navigate(AppUrl.PAYMENTS, {
+                              filters: { memberId: [movement.paymentMemberId] },
+                            }),
+                          );
+                        }}
+                        htmlType="button"
+                        tooltip={{ title: 'Ver Pago' }}
+                        icon={<CreditCardOutlined />}
+                      />
+                      <Button
+                        type="text"
+                        onClick={() => {
+                          navigate(
+                            UrlUtils.navigate(AppUrl.MEMBERS, {
+                              filters: { id: [movement.paymentMemberId] },
+                            }),
+                          );
+                        }}
+                        htmlType="button"
+                        tooltip={{ title: 'Ver Socio' }}
+                        icon={<UserOutlined />}
+                      />
+                    </Space.Compact>
+                  )
+                );
+              },
+              title: 'Acciones',
+              width: 125,
             },
           ]}
         />

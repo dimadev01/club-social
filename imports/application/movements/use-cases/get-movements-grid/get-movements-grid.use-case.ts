@@ -42,6 +42,7 @@ export class GetMovementsGridUseCase
         isVoided: movement.isVoided(),
         notes: movement.notes,
         paymentId: movement.paymentId,
+        paymentMemberId: movement.payment?.memberId ?? null,
         paymentMemberName: movement.payment?.member?.name ?? null,
         status: movement.status,
         type: movement.type,

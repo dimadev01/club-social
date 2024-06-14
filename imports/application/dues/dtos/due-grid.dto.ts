@@ -8,6 +8,7 @@ export interface DueGridDto {
   createdAt: string;
   date: string;
   id: string;
+  isPayable: boolean;
   member: MemberDto;
   memberId: string;
   payments: DuePaymentDto[];
