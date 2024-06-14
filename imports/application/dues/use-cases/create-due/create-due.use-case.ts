@@ -85,7 +85,7 @@ export class CreateDueUseCase implements IUseCase<CreateDueRequest, DueDto[]> {
             unsubscribeGroupId: 237800,
             variables: {
               amount: due.amount.formatWithCurrency(),
-              category: DueCategoryLabel[due.category],
+              category: DueCategoryLabel[due.category].toLowerCase(),
               date: due.date.format(),
               memberName: member.name,
             },
