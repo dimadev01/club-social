@@ -2,7 +2,7 @@
   "name": "meteor-typescript",
   "private": true,
   "scripts": {
-    "start": "meteor run --inspect --port 3100 --settings settings.json --no-release-check --no-lint --exclude-archs web.browser.legacy",
+    "start": "MAIL_URL=smtp://localhost:1025 meteor run --inspect --port 3100  --settings settings.json --no-release-check --no-lint --exclude-archs web.browser.legacy",
     "start:ip": "meteor run --inspect --port 192.168.1.6:3100 --settings settings.json --no-release-check --no-lint --exclude-archs web.browser.legacy",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
@@ -15,6 +15,7 @@
     "@ant-design/icons": "^5.3.7",
     "@babel/runtime": "^7.24.7",
     "@dinero.js/currencies": "2.0.0-alpha.14",
+    "@sendgrid/mail": "^8.1.3",
     "@tanstack/react-query": "^4.24.4",
     "@tanstack/react-query-devtools": "^4.24.4",
     "antd": "^5.18.1",

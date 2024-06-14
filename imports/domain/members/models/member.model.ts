@@ -1,5 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
+import invariant from 'tiny-invariant';
 
+import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { Model } from '@domain/common/models/model';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import {
@@ -165,6 +167,22 @@ export class Member extends Model implements IMember {
     }
 
     return ok(member);
+  }
+
+  public firstEmail(): string {
+    if (!this.hasEmail()) {
+      throw new InternalServerError();
+    }
+
+    invariant(this.user);
+
+    return this.user.emails[0].address;
+  }
+
+  public hasEmail(): boolean {
+    invariant(this.user);
+
+    return this.user.emails.length > 0;
   }
 
   public setAddress(value: MemberAddress): Result<null, Error> {
