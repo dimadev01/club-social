@@ -46,6 +46,10 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
           id: 'pendingMembership',
         },
         {
+          displayName: 'Email',
+          id: 'email',
+        },
+        {
           displayName: 'Deuda de invitado',
           id: 'pendingGuest',
         },
@@ -65,6 +69,7 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
 
         return data.map((member) => ({
           category: MemberCategoryLabel[member.category],
+          email: member.email,
           id: member.id,
           name: member.name,
           pendingElectricity: new Money({

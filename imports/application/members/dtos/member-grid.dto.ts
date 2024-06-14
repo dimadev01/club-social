@@ -5,6 +5,7 @@ import {
 
 export interface MemberGridDto {
   category: MemberCategoryEnum;
+  email: string | null;
   id: string;
   name: string;
   pendingElectricity: number;
