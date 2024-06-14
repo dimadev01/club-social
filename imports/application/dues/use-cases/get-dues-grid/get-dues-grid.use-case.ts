@@ -40,6 +40,7 @@ export class GetDuesGridUseCase
           createdAt: due.createdAt.toISOString(),
           date: due.date.toISOString(),
           id: due._id,
+          isPayable: due.isPayable(),
           member: this._memberDtoMapper.toDto(due.member),
           memberId: due.memberId,
           payments: due.payments.map<DuePaymentDto>((duePayment) => ({
