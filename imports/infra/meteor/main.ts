@@ -5,6 +5,7 @@ import { Meteor } from 'meteor/meteor';
 import { container, inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { EmailServiceEnum } from '@application/notifications/emails/email-service.enum';
 import { ILogger } from '@domain/common/logger/logger.interface';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethodOld } from '@domain/users/user.methods';
@@ -52,8 +53,7 @@ export class ServerStartup {
 
     Accounts.emailTemplates.siteName = 'Club Social Monte Grande';
 
-    Accounts.emailTemplates.from =
-      'Club Social Monte Grande <info@clubsocialmontegrande.ar>';
+    Accounts.emailTemplates.from = `${EmailServiceEnum.EMAIL_FORM_NAME} ${EmailServiceEnum.EMAIL_FROM_ADDRESS}`;
 
     Accounts.emailTemplates.verifyEmail.html = (
       user: Meteor.User,

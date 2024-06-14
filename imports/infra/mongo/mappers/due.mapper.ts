@@ -15,21 +15,21 @@ export class DueMapper extends Mapper<Due, DueEntity> {
     super();
   }
 
-  public toDomain(due: DueEntity): Due {
+  public toDomain(entity: DueEntity): Due {
     return new Due(
       {
-        _id: due._id,
-        amount: new Money({ amount: due.amount }),
-        category: due.category,
-        createdAt: due.createdAt,
-        createdBy: due.createdBy,
-        date: new DateUtcVo(due.date),
-        deletedAt: due.deletedAt,
-        deletedBy: due.deletedBy,
-        isDeleted: due.isDeleted,
-        memberId: due.memberId,
-        notes: due.notes,
-        payments: due.payments.map<IDuePayment>((payment) => ({
+        _id: entity._id,
+        amount: new Money({ amount: entity.amount }),
+        category: entity.category,
+        createdAt: entity.createdAt,
+        createdBy: entity.createdBy,
+        date: new DateUtcVo(entity.date),
+        deletedAt: entity.deletedAt,
+        deletedBy: entity.deletedBy,
+        isDeleted: entity.isDeleted,
+        memberId: entity.memberId,
+        notes: entity.notes,
+        payments: entity.payments.map<IDuePayment>((payment) => ({
           creditAmount: new Money({ amount: payment.creditAmount }),
           directAmount: new Money({ amount: payment.directAmount }),
           paymentDate: new DateUtcVo(payment.paymentDate),
@@ -39,33 +39,33 @@ export class DueMapper extends Mapper<Due, DueEntity> {
           source: payment.source,
           totalAmount: new Money({ amount: payment.totalAmount }),
         })),
-        status: due.status,
-        totalPaidAmount: new Money({ amount: due.totalPaidAmount }),
-        totalPendingAmount: new Money({ amount: due.totalPendingAmount }),
-        updatedAt: due.updatedAt,
-        updatedBy: due.updatedBy,
-        voidReason: due.voidReason,
-        voidedAt: due.voidedAt ? new DateUtcVo(due.voidedAt) : null,
-        voidedBy: due.voidedBy,
+        status: entity.status,
+        totalPaidAmount: new Money({ amount: entity.totalPaidAmount }),
+        totalPendingAmount: new Money({ amount: entity.totalPendingAmount }),
+        updatedAt: entity.updatedAt,
+        updatedBy: entity.updatedBy,
+        voidReason: entity.voidReason,
+        voidedAt: entity.voidedAt ? new DateUtcVo(entity.voidedAt) : null,
+        voidedBy: entity.voidedBy,
       },
-      due.member ? this._memberMapper.toDomain(due.member) : undefined,
+      entity.member ? this._memberMapper.toDomain(entity.member) : undefined,
     );
   }
 
-  protected getEntity(due: Due): DueEntity {
+  protected getEntity(domain: Due): DueEntity {
     return new DueEntity({
-      _id: due._id,
-      amount: due.amount.value,
-      category: due.category,
-      createdAt: due.createdAt,
-      createdBy: due.createdBy,
-      date: due.date.toDate(),
-      deletedAt: due.deletedAt,
-      deletedBy: due.deletedBy,
-      isDeleted: due.isDeleted,
-      memberId: due.memberId,
-      notes: due.notes,
-      payments: due.payments.map<DuePaymentEntity>((payment) => ({
+      _id: domain._id,
+      amount: domain.amount.value,
+      category: domain.category,
+      createdAt: domain.createdAt,
+      createdBy: domain.createdBy,
+      date: domain.date.toDate(),
+      deletedAt: domain.deletedAt,
+      deletedBy: domain.deletedBy,
+      isDeleted: domain.isDeleted,
+      memberId: domain.memberId,
+      notes: domain.notes,
+      payments: domain.payments.map<DuePaymentEntity>((payment) => ({
         creditAmount: payment.creditAmount.value,
         directAmount: payment.directAmount.value,
         paymentDate: payment.paymentDate.toDate(),
@@ -75,14 +75,14 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         source: payment.source,
         totalAmount: payment.totalAmount.value,
       })),
-      status: due.status,
-      totalPaidAmount: due.totalPaidAmount.value,
-      totalPendingAmount: due.totalPendingAmount.value,
-      updatedAt: due.updatedAt,
-      updatedBy: due.updatedBy,
-      voidReason: due.voidReason,
-      voidedAt: due.voidedAt?.toDate() ?? null,
-      voidedBy: due.voidedBy,
+      status: domain.status,
+      totalPaidAmount: domain.totalPaidAmount.value,
+      totalPendingAmount: domain.totalPendingAmount.value,
+      updatedAt: domain.updatedAt,
+      updatedBy: domain.updatedBy,
+      voidReason: domain.voidReason,
+      voidedAt: domain.voidedAt?.toDate() ?? null,
+      voidedBy: domain.voidedBy,
     });
   }
 }

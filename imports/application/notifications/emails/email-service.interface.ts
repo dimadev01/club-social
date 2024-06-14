@@ -1,5 +1,9 @@
 import { Result } from 'neverthrow';
 
+export interface IEmailService {
+  sendTemplate(options: EmailWithTemplateOptions): Promise<Result<null, Error>>;
+}
+
 export interface EmailAttachment {
   content: Buffer | string;
   contentType?: string;
@@ -27,8 +31,4 @@ export interface EmailWithTemplateOptions {
   to: EmailTo | EmailTo[];
   unsubscribeGroupId: number | null;
   variables: { [key: string]: unknown };
-}
-
-export interface IEmailService {
-  sendTemplate(options: EmailWithTemplateOptions): Promise<Result<null, Error>>;
 }

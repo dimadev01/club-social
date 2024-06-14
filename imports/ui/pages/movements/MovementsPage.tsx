@@ -1,4 +1,4 @@
-import { SwapOutlined } from '@ant-design/icons';
+import { CreditCardOutlined, SwapOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Table, Typography } from 'antd';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
@@ -25,6 +25,7 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { AppUrl } from '@ui/app.enum';
+import { Button } from '@ui/components/Button/Button';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
@@ -32,9 +33,12 @@ import { useTable } from '@ui/components/Grid/useTable';
 import { MovementsGridCsvDownloaderButton } from '@ui/components/Movements/MovementsGridCsvDownloader';
 import { useMovementsTotals } from '@ui/hooks/movements/useMovementsTotals';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 
 export const MovementsPage = () => {
+  const navigate = useNavigate();
+
   const { gridState, onTableChange } = useTable<MovementGridDto>({
     defaultFilters: {
       category: [],
@@ -195,7 +199,7 @@ export const MovementsPage = () => {
               render: (category: MovementCategoryEnum) =>
                 MovementCategoryLabel[category],
               title: 'Categoría',
-              width: 100,
+              width: 125,
             },
             {
               align: 'right',
@@ -206,15 +210,25 @@ export const MovementsPage = () => {
               width: 75,
             },
             {
-              align: 'center',
               dataIndex: 'paymentId',
               ellipsis: true,
-              render: (paymentId: string | null) =>
+              render: (paymentId: string | null, movement) =>
                 paymentId && (
-                  <Link to={`${AppUrl.PAYMENTS}/${paymentId}`}>Ver Pago</Link>
+                  <Space>
+                    {movement.paymentMemberName}
+                    <Button
+                      size="small"
+                      type="text"
+                      tooltip={{ title: 'Ver pago' }}
+                      onClick={() =>
+                        navigate(`${AppUrl.PAYMENTS}/${paymentId}`)
+                      }
+                      icon={<CreditCardOutlined />}
+                    />
+                  </Space>
                 ),
-              title: 'Pago',
-              width: 75,
+              title: 'Socio',
+              width: 225,
             },
             {
               align: 'center',
@@ -239,7 +253,7 @@ export const MovementsPage = () => {
                   {notes}
                 </Typography.Paragraph>
               ),
-              title: 'Detalle',
+              title: 'Notas',
               width: 300,
             },
           ]}
