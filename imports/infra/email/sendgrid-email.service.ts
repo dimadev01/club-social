@@ -47,7 +47,10 @@ export class SendGridEmailService implements IEmailService {
           ? { groupId: options.unsubscribeGroupId }
           : undefined,
         dynamicTemplateData: options.variables,
-        from: 'info@clubsocialmontegrande.ar',
+        from: {
+          email: 'info@clubsocialmontegrande.ar',
+          name: 'Club Social Monte Grande',
+        },
         // mailSettings: {
         //   sandboxMode: {
         //     enable: Meteor.isDevelopment,
