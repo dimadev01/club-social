@@ -155,6 +155,13 @@ export const MembersPage = () => {
               width: 100,
             },
             {
+              align: 'left',
+              dataIndex: 'email',
+              ellipsis: true,
+              title: 'Email',
+              width: 150,
+            },
+            {
               align: 'right',
               dataIndex: 'pendingMembership',
               ellipsis: true,

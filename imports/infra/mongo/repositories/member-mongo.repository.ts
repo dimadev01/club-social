@@ -130,7 +130,10 @@ export class MemberMongoRepository
       pipeline.push(...this._getPipelineWithDues(request));
     }
 
-    pipeline.push(...this.getPaginatedPipeline(request));
+    pipeline.push(
+      ...this.getPaginatedPipeline(request),
+      ...this.getUserLookupPipeline(),
+    );
 
     if (!this._isSortingByPendingDues(request)) {
       pipeline.push(...this._getPipelineWithDues(request));
@@ -162,6 +165,7 @@ export class MemberMongoRepository
       { $match: query },
       ...this._getPipelineWithDues(request),
       this.getPaginatedSorterStage(request.sorter),
+      ...this.getUserLookupPipeline(),
     ];
 
     const entities = await this.collection

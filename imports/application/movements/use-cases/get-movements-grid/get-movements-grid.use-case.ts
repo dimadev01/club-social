@@ -43,7 +43,7 @@ export class GetMovementsGridUseCase
         notes: movement.notes,
         paymentId: movement.paymentId,
         paymentMemberId: movement.payment?.memberId ?? null,
-        paymentMemberName: movement.payment?.member?.name ?? null,
+        paymentMemberName: movement.payment?.member?.nameLastFirst ?? null,
         status: movement.status,
         type: movement.type,
       })),
