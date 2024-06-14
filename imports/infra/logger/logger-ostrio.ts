@@ -15,7 +15,9 @@ export class LoggerOstrio implements ILogger {
   public constructor() {
     this._logger = new OstrioLogger();
 
-    new OstrioLoggerConsole(this._logger, { highlight: true }).enable();
+    new OstrioLoggerConsole(this._logger, {
+      highlight: Meteor.isDevelopment,
+    }).enable();
 
     const ostrioLoggerMongo = new OstrioLoggerMongo(this._logger, {
       collectionName: 'logs',
