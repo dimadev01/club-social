@@ -25,54 +25,23 @@ import { ItemType } from 'antd/es/menu/interface';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { EmailServiceEnum } from '@application/notifications/emails/email-service.enum';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
 import { Row } from '@ui/components/Layout/Row';
 import { ThemeSelector } from '@ui/components/Layout/ThemeSelector';
-import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
-import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
-import { useIsMember } from '@ui/hooks/auth/useIsMember';
-import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
+import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import { useThemeContext } from '@ui/providers/ThemeContext';
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const user = useLoggedInUser();
 
-  const isAdmin = useIsAdmin();
-
-  const isStaff = useIsStaff();
-
-  const isMember = useIsMember();
+  const permissions = usePermissions();
 
   const navigate = useNavigate();
-
-  const canReadMembers = useIsInRole(PermissionEnum.READ, ScopeEnum.MEMBERS);
-
-  const canReadDues = useIsInRole(PermissionEnum.READ, ScopeEnum.DUES);
-
-  const canCreateDues = useIsInRole(PermissionEnum.CREATE, ScopeEnum.DUES);
-
-  const canReadPayments = useIsInRole(PermissionEnum.READ, ScopeEnum.PAYMENTS);
-
-  const canCreatePayments = useIsInRole(
-    PermissionEnum.CREATE,
-    ScopeEnum.PAYMENTS,
-  );
-
-  const canReadMovements = useIsInRole(
-    PermissionEnum.READ,
-    ScopeEnum.MOVEMENTS,
-  );
-
-  const canCreateMovements = useIsInRole(
-    PermissionEnum.CREATE,
-    ScopeEnum.MOVEMENTS,
-  );
 
   const { theme } = useThemeContext();
 
@@ -89,7 +58,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
 
-    if (isAdmin || isStaff) {
+    if (permissions.isAdmin || permissions.isStaff) {
       items.push({
         icon: <LineChartOutlined className="!text-lg" />,
         key: AppUrl.Home,
@@ -101,7 +70,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       });
     }
 
-    if (canReadMembers) {
+    if (permissions.member.read) {
       items.push({
         icon: <TeamOutlined className="!text-lg" />,
         key: AppUrl.MEMBERS,
@@ -113,7 +82,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       });
     }
 
-    if (canReadDues) {
+    if (permissions.dues.read) {
       items.push({
         icon: <WalletOutlined className="!text-lg" />,
         key: AppUrl.DUES,
@@ -125,7 +94,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       });
     }
 
-    if (canReadPayments) {
+    if (permissions.payments.read) {
       items.push({
         icon: <CreditCardOutlined className="!text-lg" />,
         key: AppUrl.PAYMENTS,
@@ -137,7 +106,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       });
     }
 
-    if (canReadMovements) {
+    if (permissions.movements.read) {
       items.push({
         icon: <SwapOutlined className="!text-lg" />,
         key: AppUrl.MOVEMENTS,
@@ -153,7 +122,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   };
 
   const renderFloatButton = () => {
-    if (isMember) {
+    if (permissions.isMember) {
       return null;
     }
 
@@ -164,7 +133,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         style={{ bottom: 75 }}
         icon={<PlusOutlined />}
       >
-        {canCreateMovements && (
+        {permissions.movements.create && (
           <FloatButton
             tooltip="Nuevo movimiento"
             icon={<SwapOutlined />}
@@ -172,7 +141,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
           />
         )}
 
-        {canCreateDues && (
+        {permissions.dues.create && (
           <FloatButton
             tooltip="Nueva deuda"
             icon={<WalletOutlined />}
@@ -180,7 +149,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
           />
         )}
 
-        {canCreatePayments && (
+        {permissions.payments.create && (
           <FloatButton
             tooltip="Nuevo pago"
             icon={<CreditCardOutlined />}

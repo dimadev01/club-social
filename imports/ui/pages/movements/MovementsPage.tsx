@@ -39,6 +39,7 @@ import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
 import { MovementsGridCsvDownloaderButton } from '@ui/components/Movements/MovementsGridCsvDownloader';
+import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useMovementsTotals } from '@ui/hooks/movements/useMovementsTotals';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
 import { useNavigate } from '@ui/hooks/ui/useNavigate';
@@ -46,6 +47,8 @@ import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 
 export const MovementsPage = () => {
   const navigate = useNavigate();
+
+  const permissions = usePermissions();
 
   const { gridState, onTableChange } = useTable<MovementGridDto>({
     defaultFilters: {
@@ -264,54 +267,71 @@ export const MovementsPage = () => {
                 return (
                   movement.paymentId && (
                     <Space.Compact size="small">
-                      <Button
-                        type="text"
-                        onClick={() => {
-                          navigate(`${AppUrl.PAYMENTS}/${movement.paymentId}`);
-                        }}
-                        htmlType="button"
-                        tooltip={{ title: 'Ver Detalle' }}
-                        icon={<EyeOutlined />}
-                      />
-                      <Button
-                        type="text"
-                        onClick={() => {
-                          navigate(
-                            UrlUtils.navigate(AppUrl.DUES, {
-                              filters: { memberId: [movement.paymentMemberId] },
-                            }),
-                          );
-                        }}
-                        htmlType="button"
-                        tooltip={{ title: 'Ver Deudas' }}
-                        icon={<WalletOutlined />}
-                      />
-                      <Button
-                        type="text"
-                        onClick={() => {
-                          navigate(
-                            UrlUtils.navigate(AppUrl.PAYMENTS, {
-                              filters: { memberId: [movement.paymentMemberId] },
-                            }),
-                          );
-                        }}
-                        htmlType="button"
-                        tooltip={{ title: 'Ver Pago' }}
-                        icon={<CreditCardOutlined />}
-                      />
-                      <Button
-                        type="text"
-                        onClick={() => {
-                          navigate(
-                            UrlUtils.navigate(AppUrl.MEMBERS, {
-                              filters: { id: [movement.paymentMemberId] },
-                            }),
-                          );
-                        }}
-                        htmlType="button"
-                        tooltip={{ title: 'Ver Socio' }}
-                        icon={<UserOutlined />}
-                      />
+                      {permissions.payments.read && (
+                        <Button
+                          type="text"
+                          onClick={() => {
+                            navigate(
+                              `${AppUrl.PAYMENTS}/${movement.paymentId}`,
+                            );
+                          }}
+                          htmlType="button"
+                          tooltip={{ title: 'Ver Detalle' }}
+                          icon={<EyeOutlined />}
+                        />
+                      )}
+
+                      {permissions.dues.read && (
+                        <Button
+                          type="text"
+                          onClick={() => {
+                            navigate(
+                              UrlUtils.navigate(AppUrl.DUES, {
+                                filters: {
+                                  memberId: [movement.paymentMemberId],
+                                },
+                              }),
+                            );
+                          }}
+                          htmlType="button"
+                          tooltip={{ title: 'Ver Deudas' }}
+                          icon={<WalletOutlined />}
+                        />
+                      )}
+
+                      {permissions.payments.read && (
+                        <Button
+                          type="text"
+                          onClick={() => {
+                            navigate(
+                              UrlUtils.navigate(AppUrl.PAYMENTS, {
+                                filters: {
+                                  memberId: [movement.paymentMemberId],
+                                },
+                              }),
+                            );
+                          }}
+                          htmlType="button"
+                          tooltip={{ title: 'Ver Pago' }}
+                          icon={<CreditCardOutlined />}
+                        />
+                      )}
+
+                      {permissions.member.read && (
+                        <Button
+                          type="text"
+                          onClick={() => {
+                            navigate(
+                              UrlUtils.navigate(AppUrl.MEMBERS, {
+                                filters: { id: [movement.paymentMemberId] },
+                              }),
+                            );
+                          }}
+                          htmlType="button"
+                          tooltip={{ title: 'Ver Socio' }}
+                          icon={<UserOutlined />}
+                        />
+                      )}
                     </Space.Compact>
                   )
                 );

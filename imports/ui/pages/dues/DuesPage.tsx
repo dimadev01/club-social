@@ -23,7 +23,7 @@ import {
   getDueCategoryFilters,
   getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
-import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -36,10 +36,7 @@ import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMember
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
-import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
-import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
-import { useIsMember } from '@ui/hooks/auth/useIsMember';
-import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
+import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useDuesTotals } from '@ui/hooks/dues/useDuesTotals';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
@@ -48,18 +45,9 @@ import { useUserContext } from '@ui/providers/UserContext';
 import { renderDueCategoryLabel } from '@ui/utils/renderDueCategory';
 
 export const DuesPage = () => {
-  const isStaff = useIsStaff();
-
-  const isAdmin = useIsAdmin();
-
-  const isMember = useIsMember();
-
   const { member } = useUserContext();
 
-  const canCreatePayments = useIsInRole(
-    PermissionEnum.CREATE,
-    ScopeEnum.PAYMENTS,
-  );
+  const permissions = usePermissions();
 
   const {
     gridState,
@@ -163,7 +151,7 @@ export const DuesPage = () => {
       },
     );
 
-    if (isAdmin || isStaff) {
+    if (permissions.isAdmin || permissions.isStaff) {
       columns.push({
         dataIndex: 'memberId',
         ellipsis: true,
@@ -232,7 +220,7 @@ export const DuesPage = () => {
       },
     );
 
-    if (isAdmin || isStaff) {
+    if (permissions.isAdmin || permissions.isStaff) {
       columns.push({
         align: 'center',
         render: (_, due: DueGridDto) => (
@@ -243,7 +231,7 @@ export const DuesPage = () => {
               memberId={due.memberId}
             />
 
-            {canCreatePayments && (
+            {permissions.payments.create && (
               <Button
                 type="text"
                 onClick={() => {
@@ -261,19 +249,21 @@ export const DuesPage = () => {
               />
             )}
 
-            <Button
-              type="text"
-              onClick={() => {
-                navigate(
-                  UrlUtils.navigate(AppUrl.MEMBERS, {
-                    filters: { id: [due.memberId] },
-                  }),
-                );
-              }}
-              htmlType="button"
-              tooltip={{ title: 'Ver Socio' }}
-              icon={<UserOutlined />}
-            />
+            {permissions.member.read && (
+              <Button
+                type="text"
+                onClick={() => {
+                  navigate(
+                    UrlUtils.navigate(AppUrl.MEMBERS, {
+                      filters: { id: [due.memberId] },
+                    }),
+                  );
+                }}
+                htmlType="button"
+                tooltip={{ title: 'Ver Socio' }}
+                icon={<UserOutlined />}
+              />
+            )}
           </Space.Compact>
         ),
         title: 'Acciones',
@@ -289,7 +279,7 @@ export const DuesPage = () => {
 
     let restColSpan = 2;
 
-    if (isMember) {
+    if (permissions.isMember) {
       totalPendingColSpan = 7;
 
       restColSpan = 1;
