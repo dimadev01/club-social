@@ -29,9 +29,7 @@ import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
 import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
-import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
-import { useIsMember } from '@ui/hooks/auth/useIsMember';
-import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
+import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { usePaymentsTotals } from '@ui/hooks/payments/usePaymentsTotals';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
@@ -42,11 +40,7 @@ import { useUserContext } from '@ui/providers/UserContext';
 export const PaymentsPage = () => {
   const navigate = useNavigate();
 
-  const isStaff = useIsStaff();
-
-  const isAdmin = useIsAdmin();
-
-  const isMember = useIsMember();
+  const permissions = usePermissions();
 
   const { member } = useUserContext();
 
@@ -138,7 +132,7 @@ export const PaymentsPage = () => {
       },
     );
 
-    if (isAdmin || isStaff) {
+    if (permissions.isAdmin || permissions.isStaff) {
       columns.push({
         dataIndex: 'memberId',
         defaultFilteredValue: undefined,
@@ -190,7 +184,7 @@ export const PaymentsPage = () => {
       },
     );
 
-    if (isAdmin || isStaff) {
+    if (permissions.isAdmin || permissions.isStaff) {
       columns.push({
         align: 'center',
         ellipsis: true,
@@ -201,19 +195,22 @@ export const PaymentsPage = () => {
               setState={setGridState}
               memberId={payment.memberId}
             />
-            <Button
-              type="text"
-              onClick={() => {
-                navigate(
-                  UrlUtils.navigate(AppUrl.MEMBERS, {
-                    filters: { id: [payment.memberId] },
-                  }),
-                );
-              }}
-              htmlType="button"
-              tooltip={{ title: 'Ver Socio' }}
-              icon={<UserOutlined />}
-            />
+
+            {permissions.member.read && (
+              <Button
+                type="text"
+                onClick={() => {
+                  navigate(
+                    UrlUtils.navigate(AppUrl.MEMBERS, {
+                      filters: { id: [payment.memberId] },
+                    }),
+                  );
+                }}
+                htmlType="button"
+                tooltip={{ title: 'Ver Socio' }}
+                icon={<UserOutlined />}
+              />
+            )}
           </Space.Compact>
         ),
         title: 'Acciones',
@@ -229,7 +226,7 @@ export const PaymentsPage = () => {
 
     let restColSpan = 4;
 
-    if (isMember) {
+    if (permissions.isMember) {
       totalAmountColSpan = 5;
 
       restColSpan = 3;
