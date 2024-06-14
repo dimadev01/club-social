@@ -1,35 +1,60 @@
-import { SwapOutlined } from '@ant-design/icons';
-import { Card, Statistic } from 'antd';
+import { Descriptions, Skeleton } from 'antd';
 import React from 'react';
-import { Link } from 'react-router-dom';
 
-import { MovementStatusEnum } from '@domain/categories/category.enum';
+import {
+  MovementTypeEnum,
+  MovementTypeLabel,
+} from '@domain/categories/category.enum';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { AppUrl } from '@ui/app.enum';
-import { useMovementsTotals } from '@ui/hooks/movements/useMovementsTotals';
 
-export const MovementsCard = () => {
-  const { data, isLoading } = useMovementsTotals({
-    filterByCategory: [],
-    filterByCreatedAt: [],
-    filterByDate: [],
-    filterByStatus: [MovementStatusEnum.REGISTERED],
-    filterByType: [],
-  });
+type Props = {
+  expense: number;
+  income: number;
+  isLoading: boolean;
+  total: number;
+};
 
-  const renderStatisticValue = (value: number) => (
-    <Link to={AppUrl.MOVEMENTS}>{Money.fromNumber(value).format()}</Link>
-  );
+export const MovementsCard: React.FC<Props> = ({
+  expense,
+  income,
+  total,
+  isLoading,
+}) => {
+  if (isLoading) {
+    return <Skeleton />;
+  }
 
   return (
-    <Card title="Caja" bordered extra={<SwapOutlined />}>
-      <Statistic
-        loading={isLoading}
-        value={new Money({ amount: data?.amount ?? 0 }).toInteger()}
-        formatter={(value) => renderStatisticValue(+value)}
-        precision={0}
-        prefix="$"
-      />
-    </Card>
+    <Descriptions
+      bordered
+      size="small"
+      column={1}
+      layout="horizontal"
+      title="Movimientos"
+    >
+      <Descriptions.Item
+        labelStyle={{ textAlign: 'right' }}
+        label={MovementTypeLabel[MovementTypeEnum.INCOME]}
+        className="text-right"
+      >
+        {new Money({ amount: income }).formatWithCurrency()}
+      </Descriptions.Item>
+
+      <Descriptions.Item
+        labelStyle={{ textAlign: 'right' }}
+        label={MovementTypeLabel[MovementTypeEnum.EXPENSE]}
+        className="text-right"
+      >
+        {new Money({ amount: expense }).formatWithCurrency()}
+      </Descriptions.Item>
+
+      <Descriptions.Item
+        labelStyle={{ textAlign: 'right' }}
+        label="Total (Caja)"
+        className="text-right"
+      >
+        {new Money({ amount: total }).formatWithCurrency()}
+      </Descriptions.Item>
+    </Descriptions>
   );
 };
