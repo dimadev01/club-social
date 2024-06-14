@@ -1,4 +1,4 @@
-import { CreditCardOutlined } from '@ant-design/icons';
+import { CreditCardOutlined, UserOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
@@ -19,7 +19,9 @@ import {
 } from '@domain/payments/payment.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
+import { Button } from '@ui/components/Button/Button';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
@@ -33,10 +35,13 @@ import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { usePaymentsTotals } from '@ui/hooks/payments/usePaymentsTotals';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
+import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 import { useUserContext } from '@ui/providers/UserContext';
 
 export const PaymentsPage = () => {
+  const navigate = useNavigate();
+
   const isStaff = useIsStaff();
 
   const isAdmin = useIsAdmin();
@@ -195,6 +200,19 @@ export const PaymentsPage = () => {
               gridState={gridState}
               setState={setGridState}
               memberId={payment.memberId}
+            />
+            <Button
+              type="text"
+              onClick={() => {
+                navigate(
+                  UrlUtils.navigate(AppUrl.MEMBERS, {
+                    filters: { id: [payment.memberId] },
+                  }),
+                );
+              }}
+              htmlType="button"
+              tooltip={{ title: 'Ver Socio' }}
+              icon={<UserOutlined />}
             />
           </Space.Compact>
         ),

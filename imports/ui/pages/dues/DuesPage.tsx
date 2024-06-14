@@ -1,4 +1,8 @@
-import { CreditCardOutlined, WalletOutlined } from '@ant-design/icons';
+import {
+  CreditCardOutlined,
+  UserOutlined,
+  WalletOutlined,
+} from '@ant-design/icons';
 import { Breadcrumb, Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
@@ -251,14 +255,25 @@ export const DuesPage = () => {
                   );
                 }}
                 htmlType="button"
-                disabled={
-                  due.status === DueStatusEnum.PAID ||
-                  due.status === DueStatusEnum.VOIDED
-                }
+                disabled={!due.isPayable}
                 tooltip={{ title: 'Cobrar' }}
                 icon={<CreditCardOutlined />}
               />
             )}
+
+            <Button
+              type="text"
+              onClick={() => {
+                navigate(
+                  UrlUtils.navigate(AppUrl.MEMBERS, {
+                    filters: { id: [due.memberId] },
+                  }),
+                );
+              }}
+              htmlType="button"
+              tooltip={{ title: 'Ver Socio' }}
+              icon={<UserOutlined />}
+            />
           </Space.Compact>
         ),
         title: 'Acciones',
