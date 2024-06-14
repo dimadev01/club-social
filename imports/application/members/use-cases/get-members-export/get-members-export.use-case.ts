@@ -26,6 +26,9 @@ export class GetMembersToExportUseCase
     return ok<MemberGridDto[]>(
       members.map<MemberGridDto>((paginatedMember) => ({
         category: paginatedMember.member.category,
+        email: paginatedMember.member.hasEmail()
+          ? paginatedMember.member.firstEmail()
+          : null,
         id: paginatedMember.member._id,
         name: paginatedMember.member.name,
         pendingElectricity: paginatedMember.pendingElectricity,
