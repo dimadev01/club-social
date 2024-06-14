@@ -1,5 +1,5 @@
 import { CreditCardOutlined, UserOutlined } from '@ant-design/icons';
-import { Breadcrumb, Card, Space, Typography } from 'antd';
+import { Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
@@ -254,40 +254,30 @@ export const PaymentsPage = () => {
   };
 
   return (
-    <>
-      <Breadcrumb
-        className="mb-8"
-        items={[{ title: 'Inicio' }, { title: 'Pagos' }]}
+    <Card
+      title={
+        <Space>
+          <CreditCardOutlined />
+          <span>Pagos</span>
+        </Space>
+      }
+      extra={
+        <Space.Compact>
+          <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
+          <GridNewButton scope={ScopeEnum.PAYMENTS} to={AppUrl.PAYMENTS_NEW} />
+        </Space.Compact>
+      }
+    >
+      <Grid<PaymentGridDto>
+        total={data?.totalCount}
+        state={gridState}
+        summary={renderSummary}
+        onTableChange={onTableChange}
+        loading={isLoading}
+        dataSource={data?.items}
+        expandable={{ expandedRowRender }}
+        columns={getColumns()}
       />
-
-      <Card
-        title={
-          <Space>
-            <CreditCardOutlined />
-            <span>Pagos</span>
-          </Space>
-        }
-        extra={
-          <Space.Compact>
-            <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-            <GridNewButton
-              scope={ScopeEnum.PAYMENTS}
-              to={AppUrl.PAYMENTS_NEW}
-            />
-          </Space.Compact>
-        }
-      >
-        <Grid<PaymentGridDto>
-          total={data?.totalCount}
-          state={gridState}
-          summary={renderSummary}
-          onTableChange={onTableChange}
-          loading={isLoading}
-          dataSource={data?.items}
-          expandable={{ expandedRowRender }}
-          columns={getColumns()}
-        />
-      </Card>
-    </>
+    </Card>
   );
 };
