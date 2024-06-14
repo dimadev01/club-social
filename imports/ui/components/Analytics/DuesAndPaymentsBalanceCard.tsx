@@ -82,7 +82,7 @@ export const DuesAndPaymentsBalanceCard = () => {
       </Form.Item>
 
       <Row>
-        <Col xs={24} md={8}>
+        <Col xs={24} sm={24} md={12} lg={8}>
           <DueAndPaymentBalanceTotals
             isLoading={isLoadingDues}
             total={dues?.total ?? 0}
@@ -92,7 +92,7 @@ export const DuesAndPaymentsBalanceCard = () => {
             title="Deudas"
           />
         </Col>
-        <Col xs={24} md={8}>
+        <Col xs={24} sm={24} md={12} lg={8}>
           <DueAndPaymentBalanceTotals
             isLoading={isLoadingPayments}
             total={payments?.total ?? 0}
@@ -102,7 +102,7 @@ export const DuesAndPaymentsBalanceCard = () => {
             title="Pagos"
           />
         </Col>
-        <Col xs={24} md={8}>
+        <Col xs={24} sm={24} md={12} lg={8}>
           <MovementsCard
             isLoading={isLoadingMovements}
             expense={movements?.expense ?? 0}
