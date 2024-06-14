@@ -94,7 +94,7 @@ export const MovementsPage = () => {
           <Typography.Text strong>
             Total:{' '}
             {new Money({
-              amount: movementsTotals?.amount ?? 0,
+              amount: movementsTotals?.total ?? 0,
             }).formatWithCurrency()}
           </Typography.Text>
         </Table.Summary.Cell>

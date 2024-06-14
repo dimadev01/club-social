@@ -107,6 +107,12 @@ export class MovementMongoRepository
         },
         {
           $project: {
+            expense: {
+              $ifNull: [{ $first: '$expense.total' }, 0],
+            },
+            income: {
+              $ifNull: [{ $first: '$income.total' }, 0],
+            },
             total: {
               $subtract: [
                 { $ifNull: [{ $first: ['$income.total'] }, 0] },
@@ -119,7 +125,9 @@ export class MovementMongoRepository
       .toArray();
 
     return {
-      amount: result?.total ?? 0,
+      expense: result?.expense ?? 0,
+      income: result?.income ?? 0,
+      total: result?.total ?? 0,
     };
   }
 
