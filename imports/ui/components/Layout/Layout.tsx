@@ -25,6 +25,7 @@ import { ItemType } from 'antd/es/menu/interface';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { EmailServiceEnum } from '@application/notifications/emails/email-service.enum';
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl } from '@ui/app.enum';
@@ -284,7 +285,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
                   icon={<MailOutlined />}
                   htmlType="button"
                   type="text"
-                  href="mailto:info@clubsocialmontegrande.ar"
+                  href={`mailto:${EmailServiceEnum.EMAIL_FROM_ADDRESS}`}
                   target="_blank"
                 />
 
