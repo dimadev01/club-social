@@ -171,7 +171,7 @@ export class CreatePaymentUseCase
           date: newPayment.date.format(),
           dues: newPayment.dues.map((due) => ({
             dueAmount: due.dueAmount.formatWithCurrency(),
-            dueCategory: DueCategoryLabel[due.dueCategory],
+            dueCategory: DueCategoryLabel[due.dueCategory].toLowerCase(),
             dueDate: due.dueDate.format(),
           })),
           memberName: member.name,
