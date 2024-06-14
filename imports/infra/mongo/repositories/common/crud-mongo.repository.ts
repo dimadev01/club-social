@@ -61,7 +61,7 @@ export abstract class CrudMongoRepository<
     try {
       const entities = await this._collection
         // @ts-expect-error
-        .find({ _id: { $in: request.ids } })
+        .find({ _id: { $in: request.ids }, isDeleted: false })
         .fetchAsync();
 
       return entities.map((entity) => this._mapper.toDomain(entity));

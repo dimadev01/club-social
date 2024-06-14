@@ -46,14 +46,14 @@ export class ServerStartup {
   }
 
   private _configureEmails() {
-    if (Meteor.isDevelopment) {
-      process.env.MAIL_URL = Meteor.settings.MAIL_URL;
-    }
+    // if (Meteor.isDevelopment) {
+    //   process.env.MAIL_URL = Meteor.settings.MAIL_URL;
+    // }
 
     Accounts.emailTemplates.siteName = 'Club Social Monte Grande';
 
     Accounts.emailTemplates.from =
-      'Club Social <info@clubsocialmontegrande.ar>';
+      'Club Social Monte Grande <info@clubsocialmontegrande.ar>';
 
     Accounts.emailTemplates.verifyEmail.html = (
       user: Meteor.User,
