@@ -1,8 +1,8 @@
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { IMemberCreditRepository } from '@domain/members/member-credit.repository';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { IMemberCreditRepository } from '@application/members/repositories/member-credit.repository';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
 import { MemberCreditCollection } from '@infra/mongo/collections/member-credit.collection';
 import { MemberCreditEntity } from '@infra/mongo/entities/member-credit.entity';
@@ -16,7 +16,7 @@ export class MemberCreditMongoRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly logger: ILogger,
+    protected readonly logger: ILoggerRepository,
     protected readonly collection: MemberCreditCollection,
     protected readonly mapper: MemberCreditMapper,
   ) {

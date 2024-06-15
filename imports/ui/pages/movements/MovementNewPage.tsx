@@ -47,14 +47,18 @@ export const MovementNewPage = () => {
         amount: Money.fromNumber(values.amount).value,
         category: values.category,
         date: new DateVo(values.date).format(DateFormatEnum.DATE),
-        notes: values.notes ?? null,
+        notes: values.notes || null,
         type: values.type,
       },
       {
         onSuccess: () => {
           notificationSuccess('Movimiento creado');
 
-          navigate(-1);
+          form.setFieldsValue({
+            amount: 0,
+            category: undefined,
+            notes: undefined,
+          });
         },
       },
     );

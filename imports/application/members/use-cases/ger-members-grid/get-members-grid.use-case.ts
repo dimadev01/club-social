@@ -2,13 +2,13 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { IUseCase } from '@application/common/use-case.interface';
 import { MemberGridDto } from '@application/members/dtos/member-grid.dto';
-import { GetMembersGridResponse } from '@application/members/use-cases/ger-members-grid/get-members-grid.response';
-import { IUseCase } from '@domain/common/use-case.interface';
 import {
   FindPaginatedMembersRequest,
   IMemberRepository,
-} from '@domain/members/member.repository';
+} from '@application/members/repositories/member.repository';
+import { GetMembersGridResponse } from '@application/members/use-cases/ger-members-grid/get-members-grid.response';
 
 @injectable()
 export class GetMembersGridUseCase

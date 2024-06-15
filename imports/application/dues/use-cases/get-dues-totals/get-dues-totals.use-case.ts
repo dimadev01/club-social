@@ -2,12 +2,12 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { IUseCase } from '@domain/common/use-case.interface';
+import { IUseCase } from '@application/common/use-case.interface';
 import {
   FindPaginatedDuesFilters,
   GetDuesTotalsResponse,
   IDueRepository,
-} from '@domain/dues/due.repository';
+} from '@application/dues/repositories/due.repository';
 
 @injectable()
 export class GetDuesTotalUseCase

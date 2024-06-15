@@ -1,6 +1,6 @@
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { GetDuesTotalsRequestDto } from '@adapters/dtos/get-dues-totals-request.dto';
-import { GetDuesTotalsResponse } from '@domain/dues/due.repository';
+import { GetDuesTotalsResponse } from '@application/dues/repositories/due.repository';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
+import { GetDuesTotalsRequestDto } from '@ui/dtos/get-dues-totals-request.dto';
 import { useQuery } from '@ui/hooks/query/useQuery';
 
 export const useDuesTotals = (request: GetDuesTotalsRequestDto) =>

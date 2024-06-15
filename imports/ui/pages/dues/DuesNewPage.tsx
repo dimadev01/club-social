@@ -137,13 +137,15 @@ export const DuesNewPage = () => {
         category: values.category,
         date,
         memberIds: Array.isArray(values.memberIds) ? values.memberIds : [],
-        notes: values.notes ?? null,
+        notes: values.notes || null,
       },
       {
         onSuccess: () => {
           notificationSuccess('Deuda creada');
 
           form.setFieldValue('memberIds', []);
+
+          form.setFieldValue('notes', undefined);
         },
       },
     );

@@ -2,24 +2,24 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
+import { IUseCase } from '@application/common/use-case.interface';
 import { DueDto } from '@application/dues/dtos/due.dto';
+import { IDueRepository } from '@application/dues/repositories/due.repository';
 import { CreateDueRequest } from '@application/dues/use-cases/create-due/create-due.request';
 import { GetDueUseCase } from '@application/dues/use-cases/get-due/get-due.use-case';
 import { SendNewDueEmailUseCase } from '@application/dues/use-cases/send-new-due-email/send-new-due-email.use-case';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
-import { IUseCase } from '@domain/common/use-case.interface';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { IDueRepository } from '@domain/dues/due.repository';
 import { Due } from '@domain/dues/models/due.model';
 
 @injectable()
 export class CreateDueUseCase implements IUseCase<CreateDueRequest, DueDto[]> {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
+    private readonly _logger: ILoggerRepository,
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
     @inject(DIToken.IUnitOfWork)

@@ -3,19 +3,19 @@ import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { InternalServerError } from '@domain/common/errors/internal-server.error';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
-import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
+import { FindOneById } from '@application/common/repositories/queryable.repository';
 import {
   FindPaginatedDuesFilters,
   FindPaginatedDuesRequest,
   FindPendingDues,
   GetDuesTotalsResponse,
   IDueRepository,
-} from '@domain/dues/due.repository';
+} from '@application/dues/repositories/due.repository';
+import { InternalServerError } from '@domain/common/errors/internal-server.error';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { Due } from '@domain/dues/models/due.model';
 import { DueMongoCollection } from '@infra/mongo/collections/due.collection';
 import { DueEntity } from '@infra/mongo/entities/due.entity';
@@ -30,7 +30,7 @@ export class DueMongoRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly logger: ILogger,
+    protected readonly logger: ILoggerRepository,
     protected readonly collection: DueMongoCollection,
     protected readonly mapper: DueMapper,
     private readonly _memberRepository: MemberMongoRepository,

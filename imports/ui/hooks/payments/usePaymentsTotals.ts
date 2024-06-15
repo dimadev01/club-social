@@ -1,6 +1,6 @@
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { GetPaymentsTotalsRequestDto } from '@adapters/dtos/get-payments-totals-request.dto';
-import { GetPaymentsTotalsResponse } from '@domain/payments/payment.repository';
+import { GetPaymentsTotalsResponse } from '@application/payments/repositories/payment.repository';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
+import { GetPaymentsTotalsRequestDto } from '@ui/dtos/get-payments-totals-request.dto';
 import { useQuery } from '@ui/hooks/query/useQuery';
 
 export const usePaymentsTotals = (request: GetPaymentsTotalsRequestDto) =>

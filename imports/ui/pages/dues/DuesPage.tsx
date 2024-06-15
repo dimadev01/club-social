@@ -9,9 +9,6 @@ import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid-request.dto';
-import { GetDuesTotalsRequestDto } from '@adapters/dtos/get-dues-totals-request.dto';
 import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
@@ -27,6 +24,7 @@ import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 import { Button } from '@ui/components/Button/Button';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
 import { DuesGridCsvDownloaderButton } from '@ui/components/Dues/DuesGridCsvDownloader';
@@ -36,6 +34,8 @@ import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMember
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
+import { GetDuesGridRequestDto } from '@ui/dtos/get-dues-grid-request.dto';
+import { GetDuesTotalsRequestDto } from '@ui/dtos/get-dues-totals-request.dto';
 import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useDuesTotals } from '@ui/hooks/dues/useDuesTotals';
 import { useMembers } from '@ui/hooks/members/useMembers';

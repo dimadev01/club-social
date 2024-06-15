@@ -2,13 +2,13 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { IUseCase } from '@application/common/use-case.interface';
 import { MemberDto } from '@application/members/dtos/member.dto';
 import { MemberDtoMapper } from '@application/members/mappers/member-dto.mapper';
-import { IUseCase } from '@domain/common/use-case.interface';
 import {
   FindMembers,
   IMemberRepository,
-} from '@domain/members/member.repository';
+} from '@application/members/repositories/member.repository';
 
 @injectable()
 export class GetMembersUseCase implements IUseCase<FindMembers, MemberDto[]> {

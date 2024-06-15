@@ -1,3 +1,3 @@
-import { FindPaginatedMembersRequest } from '@domain/members/member.repository';
+import { FindPaginatedMembersRequest } from '@application/members/repositories/member.repository';
 
 export type GetMembersGridRequest = FindPaginatedMembersRequest;

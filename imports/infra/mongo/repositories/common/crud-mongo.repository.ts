@@ -7,25 +7,25 @@ import type {
   OptionalUnlessRequiredId,
 } from 'mongodb';
 
-import { ClassValidationError } from '@adapters/common/errors/class-validation.error';
-import { InternalServerError } from '@domain/common/errors/internal-server.error';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { Model } from '@domain/common/models/model';
-import { ICrudRepository } from '@domain/common/repositories/crud.repository';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ICrudRepository } from '@application/common/repositories/crud.repository';
 import {
   FindPaginatedRequest,
   FindPaginatedResponse,
   PaginatedSorter,
-} from '@domain/common/repositories/grid.repository';
+} from '@application/common/repositories/grid.repository';
 import {
   FindManyByIds,
   FindOneById,
-} from '@domain/common/repositories/queryable.repository';
+} from '@application/common/repositories/queryable.repository';
+import { InternalServerError } from '@domain/common/errors/internal-server.error';
+import { Model } from '@domain/common/models/model';
 import { MongoCollection } from '@infra/mongo/common/collections/mongo.collection';
 import { Entity } from '@infra/mongo/common/entities/entity';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { UserEntity } from '@infra/mongo/entities/user.entity';
 import { MongoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-work';
+import { ClassValidationError } from '@ui/common/errors/class-validation.error';
 
 export abstract class CrudMongoRepository<
   TDomain extends Model,
@@ -35,7 +35,7 @@ export abstract class CrudMongoRepository<
   public constructor(
     private readonly _collection: MongoCollection<TEntity>,
     private readonly _mapper: Mapper<TDomain, TEntity>,
-    private readonly _logger: ILogger,
+    private readonly _logger: ILoggerRepository,
   ) {}
 
   public async delete(request: FindOneById): Promise<void> {

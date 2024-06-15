@@ -2,12 +2,12 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { IUseCase } from '@application/common/use-case.interface';
+import { IUserRepository } from '@application/users/repositories/user.repository';
 import { CreateUserRequest } from '@application/users/use-cases/create-user/create-user.request';
 import { CreateUserResponse } from '@application/users/use-cases/create-user/create-user.response';
-import { IUseCase } from '@domain/common/use-case.interface';
 import { ExistingUserByEmailError } from '@domain/users/errors/existing-user-by-email.error';
 import { User } from '@domain/users/models/user.model';
-import { IUserRepository } from '@domain/users/user.repository';
 
 @injectable()
 export class CreateUserUseCase

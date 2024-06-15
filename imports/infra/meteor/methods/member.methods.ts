@@ -1,13 +1,13 @@
 import { injectable } from 'tsyringe';
 
-import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.dto';
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { MemberController } from '@adapters/controllers/member.controller';
-import { CreateMemberRequestDto } from '@adapters/dtos/create-member-request.dto';
-import { GetMembersGridRequestDto } from '@adapters/dtos/get-members-grid-request.dto';
-import { GetMembersRequestDto } from '@adapters/dtos/get-members-request.dto';
-import { UpdateMemberRequestDto } from '@adapters/dtos/update-member-request.dto';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
+import { GetOneByIdRequestDto } from '@ui/common/dtos/get-one-dto-request.dto';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
+import { MemberController } from '@ui/controllers/member.controller';
+import { CreateMemberRequestDto } from '@ui/dtos/create-member-request.dto';
+import { GetMembersGridRequestDto } from '@ui/dtos/get-members-grid-request.dto';
+import { GetMembersRequestDto } from '@ui/dtos/get-members-request.dto';
+import { UpdateMemberRequestDto } from '@ui/dtos/update-member-request.dto';
 
 @injectable()
 export class MemberMethods extends MeteorMethods {

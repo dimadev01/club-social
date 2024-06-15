@@ -3,12 +3,12 @@ import { ValidationError } from 'class-validator';
 import { container } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
-import { ILogger } from '@domain/common/logger/logger.interface';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
 
-export abstract class MeteorMethod {
+export abstract class OldMeteorMethod {
   protected async execute<TRequest extends object, TResponse>(
     useCase: IUseCaseOld<TRequest, TResponse>,
     request?: TRequest,
@@ -30,7 +30,7 @@ export abstract class MeteorMethod {
 
       return result.value;
     } catch (error) {
-      container.resolve<ILogger>(DIToken.Logger).error(error);
+      container.resolve<ILoggerRepository>(DIToken.Logger).error(error);
 
       if (error instanceof Meteor.Error) {
         throw error;

@@ -3,15 +3,15 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
+import { IUseCase } from '@application/common/use-case.interface';
 import { MemberDtoMapper } from '@application/members/mappers/member-dto.mapper';
 import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
-import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
-import { IUseCase } from '@domain/common/use-case.interface';
 import {
   FindPaginatedPaymentsRequest,
   IPaymentRepository,
-} from '@domain/payments/payment.repository';
+} from '@application/payments/repositories/payment.repository';
 
 @injectable()
 export class GetPaymentsGridUseCase

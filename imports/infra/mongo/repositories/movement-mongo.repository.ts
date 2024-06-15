@@ -3,18 +3,18 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { MovementTypeEnum } from '@domain/categories/category.enum';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
-import { Movement } from '@domain/movements/models/movement.model';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
+import { FindOneById } from '@application/common/repositories/queryable.repository';
 import {
   FindPaginatedMovementsFilters,
   FindPaginatedMovementsRequest,
   GetMovementsTotalsResponse,
   IMovementRepository,
-} from '@domain/movements/movement.repository';
+} from '@application/movements/repositories/movement.repository';
+import { MovementTypeEnum } from '@domain/categories/category.enum';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { Movement } from '@domain/movements/models/movement.model';
 import { MovementAuditableCollection } from '@infra/mongo/collections/movement-auditable.collection';
 import { MovementMongoCollection } from '@infra/mongo/collections/movement.collection';
 import { MovementAuditEntity } from '@infra/mongo/entities/movement-audit.entity';
@@ -33,7 +33,7 @@ export class MovementMongoRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly logger: ILogger,
+    protected readonly logger: ILoggerRepository,
     protected readonly collection: MovementMongoCollection,
     protected readonly mapper: MovementMapper,
     protected readonly auditableCollection: MovementAuditableCollection,

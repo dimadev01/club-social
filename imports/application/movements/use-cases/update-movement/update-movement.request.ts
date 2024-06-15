@@ -1,8 +1,8 @@
+import { FindOneById } from '@application/common/repositories/queryable.repository';
 import {
   MovementCategoryEnum,
   MovementTypeEnum,
 } from '@domain/categories/category.enum';
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
 
 export interface UpdateMovementRequest extends FindOneById {
   amount: number;

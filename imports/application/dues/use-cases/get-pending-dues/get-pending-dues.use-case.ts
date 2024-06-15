@@ -2,10 +2,13 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { IUseCase } from '@application/common/use-case.interface';
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { DueDtoMapper } from '@application/dues/mappers/due-dto.mapper';
-import { IUseCase } from '@domain/common/use-case.interface';
-import { FindPendingDues, IDueRepository } from '@domain/dues/due.repository';
+import {
+  FindPendingDues,
+  IDueRepository,
+} from '@application/dues/repositories/due.repository';
 
 @injectable()
 export class GetPendingDuesUseCase

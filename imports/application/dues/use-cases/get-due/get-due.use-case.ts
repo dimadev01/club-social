@@ -2,12 +2,12 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { FindOneById } from '@application/common/repositories/queryable.repository';
+import { IUseCase } from '@application/common/use-case.interface';
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { DueDtoMapper } from '@application/dues/mappers/due-dto.mapper';
+import { IDueRepository } from '@application/dues/repositories/due.repository';
 import { ModelNotFoundError } from '@domain/common/errors/model-not-found.error';
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
-import { IUseCase } from '@domain/common/use-case.interface';
-import { IDueRepository } from '@domain/dues/due.repository';
 
 @injectable()
 export class GetDueUseCase implements IUseCase<FindOneById, DueDto> {

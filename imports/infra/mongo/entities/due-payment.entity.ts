@@ -9,11 +9,11 @@ import {
   IsString,
 } from 'class-validator';
 
-import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import {
   PaymentDueSourceEnum,
   PaymentStatusEnum,
 } from '@domain/payments/payment.enum';
+import { IsNullable } from '@ui/common/class-validator/is-nullable';
 
 export class DuePaymentEntity {
   @IsInt()
