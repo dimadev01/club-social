@@ -160,7 +160,7 @@ export const PaymentNewPage = () => {
         dueId: due.dueId,
       })),
       memberId: values.memberId,
-      notes: values.notes ?? null,
+      notes: values.notes || null,
       receiptNumber: values.receiptNumber,
     };
 
