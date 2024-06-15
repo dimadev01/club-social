@@ -2,10 +2,10 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { IUseCase } from '@application/common/use-case.interface';
+import { IMovementRepository } from '@application/movements/repositories/movement.repository';
 import { VoidMovementRequest } from '@application/movements/use-cases/void-movement/void-movement.request';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { IUseCase } from '@domain/common/use-case.interface';
-import { IMovementRepository } from '@domain/movements/movement.repository';
 
 @injectable()
 export class VoidMovementUseCase
@@ -13,7 +13,7 @@ export class VoidMovementUseCase
 {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
+    private readonly _logger: ILoggerRepository,
     @inject(DIToken.IMovementRepository)
     private readonly _movementRepository: IMovementRepository,
   ) {}

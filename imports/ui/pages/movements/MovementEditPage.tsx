@@ -58,7 +58,7 @@ export const MovementEditPage = () => {
         category: values.category,
         date: new DateVo(values.date).format(DateFormatEnum.DATE),
         id: movement.id,
-        notes: values.notes ?? null,
+        notes: values.notes || null,
         type: values.type,
       },
       {

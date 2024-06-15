@@ -3,17 +3,17 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
+import { IUseCase } from '@application/common/use-case.interface';
 import { MovementDto } from '@application/movements/dtos/movement.dto';
+import { IMovementRepository } from '@application/movements/repositories/movement.repository';
 import { CreateMovementRequest } from '@application/movements/use-cases/create-movement/create-movement.request';
 import { GetMovementUseCase } from '@application/movements/use-cases/get-movement/get-movement.use.case';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
-import { IUseCase } from '@domain/common/use-case.interface';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { Movement } from '@domain/movements/models/movement.model';
-import { IMovementRepository } from '@domain/movements/movement.repository';
 
 @injectable()
 export class CreateMovementUseCase
@@ -21,7 +21,7 @@ export class CreateMovementUseCase
 {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
+    private readonly _logger: ILoggerRepository,
     @inject(DIToken.IMovementRepository)
     private readonly _movementRepository: IMovementRepository,
     @inject(DIToken.IUnitOfWork)

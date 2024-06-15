@@ -3,16 +3,16 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
+import { IUseCase } from '@application/common/use-case.interface';
 import { MemberDto } from '@application/members/dtos/member.dto';
+import { IMemberRepository } from '@application/members/repositories/member.repository';
 import { CreateMemberRequest } from '@application/members/use-cases/create-member/create-member.request';
 import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
 import { CreateUserUseCase } from '@application/users/use-cases/create-user/create-user.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
-import { IUseCase } from '@domain/common/use-case.interface';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import { ExistingMemberByDocumentError } from '@domain/members/errors/existing-member-by-document.error';
-import { IMemberRepository } from '@domain/members/member.repository';
 import { Member } from '@domain/members/models/member.model';
 import { RoleEnum } from '@domain/roles/role.enum';
 

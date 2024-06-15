@@ -47,7 +47,7 @@ export const DueEditPage = () => {
       {
         amount: Money.fromNumber(values.amount).value,
         id: due.id,
-        notes: values.notes ?? null,
+        notes: values.notes || null,
       },
       {
         onSuccess: () => {

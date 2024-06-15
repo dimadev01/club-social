@@ -1,3 +1,3 @@
-import { DomainError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/domain.error';
 
 export class ExistingPaymentError extends DomainError {}

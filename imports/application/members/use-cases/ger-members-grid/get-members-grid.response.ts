@@ -1,4 +1,4 @@
+import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
 import { MemberGridDto } from '@application/members/dtos/member-grid.dto';
-import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
 
 export type GetMembersGridResponse = FindPaginatedResponse<MemberGridDto>;

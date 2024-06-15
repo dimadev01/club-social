@@ -1,7 +1,6 @@
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
-import { GetMovementsGridRequestDto } from '@adapters/dtos/get-movements-grid-request.dto';
 import {
   MovementCategoryLabel,
   MovementStatusLabel,
@@ -13,6 +12,7 @@ import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { ExportButton } from '@ui/components/Button/ExportButton';
+import { GetMovementsGridRequestDto } from '@ui/dtos/get-movements-grid-request.dto';
 import { useGetMovementsToExport } from '@ui/hooks/movements/useGetMovementsToExport';
 
 interface Props {

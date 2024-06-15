@@ -2,12 +2,12 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { IUseCase } from '@application/common/use-case.interface';
 import { MovementGridDto } from '@application/movements/dtos/movement-grid.dto';
-import { IUseCase } from '@domain/common/use-case.interface';
 import {
   FindPaginatedMovementsRequest,
   IMovementRepository,
-} from '@domain/movements/movement.repository';
+} from '@application/movements/repositories/movement.repository';
 
 @injectable()
 export class GetMovementsToExportUseCase

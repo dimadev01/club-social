@@ -74,6 +74,10 @@ export class MemberCredit extends Model implements IMemberCredit {
   }
 
   private setAmount(value: Money): Result<null, Error> {
+    if (value.isNegative()) {
+      return err(new Error('El monto no puede ser negativo'));
+    }
+
     this._amount = value;
 
     return ok(null);

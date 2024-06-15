@@ -5,7 +5,7 @@ import {
   MovementStatusEnum,
   MovementTypeEnum,
 } from '@domain/categories/category.enum';
-import { DomainError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/domain.error';
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';

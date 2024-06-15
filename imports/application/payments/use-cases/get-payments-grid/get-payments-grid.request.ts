@@ -1,3 +1,3 @@
-import { FindPaginatedPaymentsRequest } from '@domain/payments/payment.repository';
+import { FindPaginatedPaymentsRequest } from '@application/payments/repositories/payment.repository';
 
 export type GetPaymentsGridRequest = FindPaginatedPaymentsRequest;

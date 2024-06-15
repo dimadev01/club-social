@@ -2,22 +2,22 @@ import { Result, err } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
+import { IUseCase } from '@application/common/use-case.interface';
 import { DueDto } from '@application/dues/dtos/due.dto';
+import { IDueRepository } from '@application/dues/repositories/due.repository';
 import { GetDueUseCase } from '@application/dues/use-cases/get-due/get-due.use-case';
 import { UpdateDueRequest } from '@application/dues/use-cases/update-due/update-due.request';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
 import { ModelNotUpdatableError } from '@domain/common/errors/model-not-updatable.error';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
-import { IUseCase } from '@domain/common/use-case.interface';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { IDueRepository } from '@domain/dues/due.repository';
 
 @injectable()
 export class UpdateDueUseCase implements IUseCase<UpdateDueRequest, DueDto> {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
+    private readonly _logger: ILoggerRepository,
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
     @inject(DIToken.IUnitOfWork)

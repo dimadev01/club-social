@@ -1,10 +1,10 @@
 import { injectable } from 'tsyringe';
 
-import { MapperDto } from '@adapters/common/mapper/dto-mapper';
 import { DuePaymentDto } from '@application/dues/dtos/due-payment.dto';
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { MemberDtoMapper } from '@application/members/mappers/member-dto.mapper';
 import { Due } from '@domain/dues/models/due.model';
+import { MapperDto } from '@ui/common/mapper/dto-mapper';
 
 @injectable()
 export class DueDtoMapper extends MapperDto<Due, DueDto> {

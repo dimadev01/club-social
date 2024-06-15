@@ -1,5 +1,5 @@
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
+import { FindOneById } from '@application/common/repositories/queryable.repository';
+import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 
 export interface VoidMovementRequest extends FindOneById {
   unitOfWork?: IUnitOfWork;

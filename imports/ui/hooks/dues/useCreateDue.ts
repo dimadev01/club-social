@@ -1,5 +1,5 @@
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { CreateDueRequestDto } from '@adapters/dtos/create-due-request.dto';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
+import { CreateDueRequestDto } from '@ui/dtos/create-due-request.dto';
 import { useMutation } from '@ui/hooks/query/useMutation';
 
 export const useCreateDue = () =>

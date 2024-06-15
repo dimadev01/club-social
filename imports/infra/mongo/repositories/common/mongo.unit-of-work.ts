@@ -3,7 +3,7 @@ import type { ClientSession } from 'mongodb';
 import invariant from 'tiny-invariant';
 import { injectable } from 'tsyringe';
 
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
+import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 
 @injectable()
 export class MongoUnitOfWork implements IUnitOfWork<ClientSession> {

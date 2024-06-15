@@ -5,8 +5,8 @@ import { Meteor } from 'meteor/meteor';
 import { container, inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
 import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
-import { ILogger } from '@domain/common/logger/logger.interface';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethodOld } from '@domain/users/user.methods';
 import { DueMethods } from '@infra/meteor/methods/due.methods';
@@ -19,7 +19,7 @@ import { MigrationService } from '@infra/migrations/migration.service';
 export class ServerStartup {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
+    private readonly _logger: ILoggerRepository,
     private readonly _migrationService: MigrationService,
     private readonly _userMethod: UserMethodOld,
     private readonly _movementMethod: MovementMethods,

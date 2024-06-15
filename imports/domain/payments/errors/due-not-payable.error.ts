@@ -1,4 +1,4 @@
-import { DomainError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/domain.error';
 
 export class DueNotPayable extends DomainError {
   constructor(id: string) {

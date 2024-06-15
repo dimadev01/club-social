@@ -2,20 +2,20 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { FindOneById } from '@application/common/repositories/queryable.repository';
+import { IUseCase } from '@application/common/use-case.interface';
+import { IMemberRepository } from '@application/members/repositories/member.repository';
 import { IEmailRepository } from '@application/notifications/emails/email.repository';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
-import { IUseCase } from '@domain/common/use-case.interface';
+import { IPaymentRepository } from '@application/payments/repositories/payment.repository';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryLabel } from '@domain/dues/due.enum';
-import { IMemberRepository } from '@domain/members/member.repository';
-import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
 export class SendNewPaymentEmailUseCase implements IUseCase<FindOneById, null> {
   constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
+    private readonly _logger: ILoggerRepository,
     @inject(DIToken.IEmailRepository)
     private readonly _emailRepository: IEmailRepository,
     @inject(DIToken.IPaymentRepository)

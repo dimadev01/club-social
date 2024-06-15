@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { UpdateUserThemeRequestDto } from '@application/users/dtos/update-user-theme-request.dto';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 
 export const useUpdateUserTheme = () =>
   useMutation<null, Error, UpdateUserThemeRequestDto>(

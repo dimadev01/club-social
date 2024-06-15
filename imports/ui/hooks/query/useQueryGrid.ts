@@ -1,6 +1,6 @@
-import { GetGridRequestDto } from '@adapters/common/dtos/get-grid-request.dto';
-import { GetGridResponseDto } from '@adapters/common/dtos/get-grid-response.dto';
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
+import { GetGridRequestDto } from '@ui/common/dtos/get-grid-request.dto';
+import { GetGridResponseDto } from '@ui/common/dtos/get-grid-response.dto';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 import { useQuery } from '@ui/hooks/query/useQuery';
 
 interface UseQueryGridProps<TRequest extends GetGridRequestDto> {

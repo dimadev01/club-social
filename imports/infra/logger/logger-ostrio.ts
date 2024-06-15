@@ -6,10 +6,10 @@ import { LoggerConsole as OstrioLoggerConsole } from 'meteor/ostrio:loggerconsol
 // @ts-expect-error
 import { LoggerMongo as OstrioLoggerMongo } from 'meteor/ostrio:loggermongo';
 
-import { ILogger } from '@domain/common/logger/logger.interface';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
 import { LoggerOstrioFormat } from '@infra/logger/logger-ostrio-format';
 
-export class LoggerOstrio implements ILogger {
+export class LoggerOstrio implements ILoggerRepository {
   private readonly _logger;
 
   public constructor() {

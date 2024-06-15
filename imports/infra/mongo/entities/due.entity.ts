@@ -12,11 +12,11 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { Entity } from '@infra/mongo/common/entities/entity';
 import { DuePaymentEntity } from '@infra/mongo/entities/due-payment.entity';
 import { MemberEntity } from '@infra/mongo/entities/member.entity';
+import { IsNullable } from '@ui/common/class-validator/is-nullable';
 
 export class DueEntity extends Entity {
   @IsInt()

@@ -7,12 +7,9 @@ import { isArray, isEmpty, isObject } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import {
-  GridFilter,
-  GridSorter,
-} from '@adapters/common/dtos/get-grid-request.dto';
-import { DEFAULT_PAGE_SIZE } from '@domain/common/repositories/grid.repository';
+import { DEFAULT_PAGE_SIZE } from '@application/common/repositories/grid.repository';
 import { UrlUtils } from '@shared/utils/url.utils';
+import { GridFilter, GridSorter } from '@ui/common/dtos/get-grid-request.dto';
 import { GridState } from '@ui/components/Grid/Grid';
 import { useParsedQs } from '@ui/hooks/ui/useParsedQs';
 
