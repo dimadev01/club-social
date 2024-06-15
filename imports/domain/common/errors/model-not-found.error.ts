@@ -1,7 +1,7 @@
-import { DomainError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/domain.error';
 
 export class ModelNotFoundError extends DomainError {
   public constructor() {
-    super('Modelo no encontrado');
+    super('Model not found');
   }
 }

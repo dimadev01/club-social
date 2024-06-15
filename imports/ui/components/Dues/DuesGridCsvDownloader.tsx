@@ -1,13 +1,13 @@
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
-import { GetDuesGridRequestDto } from '@adapters/dtos/get-dues-grid-request.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryLabel, DueStatusLabel } from '@domain/dues/due.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { ExportButton } from '@ui/components/Button/ExportButton';
+import { GetDuesGridRequestDto } from '@ui/dtos/get-dues-grid-request.dto';
 import { useGetDuesToExport } from '@ui/hooks/dues/useGetDuesToExport';
 
 interface Props {

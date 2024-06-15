@@ -1,8 +1,8 @@
 import { injectable } from 'tsyringe';
 
-import { MapperDto } from '@adapters/common/mapper/dto-mapper';
 import { MovementDto } from '@application/movements/dtos/movement.dto';
 import { Movement } from '@domain/movements/models/movement.model';
+import { MapperDto } from '@ui/common/mapper/dto-mapper';
 
 @injectable()
 export class MovementDtoMapper extends MapperDto<Movement, MovementDto> {

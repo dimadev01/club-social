@@ -6,6 +6,7 @@ import {
   equal,
   greaterThan,
   greaterThanOrEqual,
+  isNegative,
   isZero,
   lessThan,
   lessThanOrEqual,
@@ -106,7 +107,7 @@ export class Money extends ValueObject<InternalMoneyProps> {
     return equal(this.props.dinero, value.props.dinero);
   }
 
-  public isGreaterThan(value: Money): boolean {
+  public isGreaterThan(value: Money) {
     return greaterThan(this.props.dinero, value.props.dinero);
   }
 
@@ -114,7 +115,7 @@ export class Money extends ValueObject<InternalMoneyProps> {
     return greaterThanOrEqual(this.props.dinero, value.props.dinero);
   }
 
-  public isGreaterThanZero(): boolean {
+  public isGreaterThanZero() {
     return greaterThan(this.props.dinero, new Money().props.dinero);
   }
 
@@ -134,7 +135,11 @@ export class Money extends ValueObject<InternalMoneyProps> {
     return lessThan(this.props.dinero, new Money().props.dinero);
   }
 
-  public isZero(): boolean {
+  public isNegative() {
+    return isNegative(this.props.dinero);
+  }
+
+  public isZero() {
     return isZero(this.props.dinero);
   }
 

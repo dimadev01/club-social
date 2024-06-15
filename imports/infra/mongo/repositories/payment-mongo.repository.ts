@@ -3,19 +3,19 @@ import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { FindPaginatedResponse } from '@domain/common/repositories/grid.repository';
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
-import { DueCategoryEnum } from '@domain/dues/due.enum';
-import { Payment } from '@domain/payments/models/payment.model';
-import { PaymentStatusEnum } from '@domain/payments/payment.enum';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
+import { FindOneById } from '@application/common/repositories/queryable.repository';
 import {
   FindPaginatedPaymentsFilters,
   FindPaginatedPaymentsRequest,
   GetPaymentsTotalsResponse,
   IPaymentRepository,
-} from '@domain/payments/payment.repository';
+} from '@application/payments/repositories/payment.repository';
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { Payment } from '@domain/payments/models/payment.model';
+import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { PaymentAuditableCollection } from '@infra/mongo/collections/payment-auditable.collection';
 import { PaymentMongoCollection } from '@infra/mongo/collections/payment.collection';
 import { PaymentAuditEntity } from '@infra/mongo/entities/payment-audit.entity';
@@ -35,7 +35,7 @@ export class PaymentMongoRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly logger: ILogger,
+    protected readonly logger: ILoggerRepository,
     protected readonly collection: PaymentMongoCollection,
     protected readonly auditableCollection: PaymentAuditableCollection,
     protected readonly mapper: PaymentMapper,

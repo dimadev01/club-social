@@ -1,6 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 
+import { DomainError } from '@domain/common/errors/domain.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { Model } from '@domain/common/models/model';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
@@ -12,11 +13,11 @@ import {
   MemberSexEnum,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
-import { CreateMember, IMember } from '@domain/members/member.interface';
+import { CreateMember, IMemberProps } from '@domain/members/member.interface';
 import { MemberAddress } from '@domain/members/models/member-address.model';
 import { User } from '@domain/users/models/user.model';
 
-export class Member extends Model implements IMember {
+export class Member extends Model implements IMemberProps {
   private _address: MemberAddress;
 
   private _birthDate: BirthDate | null;
@@ -45,7 +46,7 @@ export class Member extends Model implements IMember {
 
   public user?: User;
 
-  public constructor(props?: IMember, user?: User) {
+  public constructor(props?: IMemberProps, user?: User) {
     super(props);
 
     this._address = new MemberAddress(props?.address);
@@ -192,6 +193,26 @@ export class Member extends Model implements IMember {
   }
 
   public setBirthDate(value: BirthDate | null): Result<null, Error> {
+    if (value) {
+      const isBirthDateInTheFuture = new Date() < value.toDate();
+
+      if (isBirthDateInTheFuture) {
+        return err(
+          new DomainError('La fecha de nacimiento no puede ser futura'),
+        );
+      }
+
+      const isBirthDateMoreThan80YearsAgo = value.getAge() > 80;
+
+      if (isBirthDateMoreThan80YearsAgo) {
+        return err(
+          new DomainError(
+            'La fecha de nacimiento no puede ser mayor a 80 años',
+          ),
+        );
+      }
+    }
+
     this._birthDate = value;
 
     return ok(null);

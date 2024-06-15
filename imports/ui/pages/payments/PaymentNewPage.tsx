@@ -9,8 +9,6 @@ import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
 
-import { CreatePaymentDueRequestDto } from '@adapters/dtos/create-payment-due-request.dto';
-import { CreatePaymentRequestDto } from '@adapters/dtos/create-payment-request.dto';
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
@@ -22,6 +20,8 @@ import { Button } from '@ui/components/Button/Button';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { Row } from '@ui/components/Layout/Row';
 import { MembersSelect } from '@ui/components/Members/MembersSelect';
+import { CreatePaymentDueRequestDto } from '@ui/dtos/create-payment-due-request.dto';
+import { CreatePaymentRequestDto } from '@ui/dtos/create-payment-request.dto';
 import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDuesByMember';
 import { useMember } from '@ui/hooks/members/useMember';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';

@@ -3,27 +3,27 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
+import { IUseCase } from '@application/common/use-case.interface';
+import { IDueRepository } from '@application/dues/repositories/due.repository';
+import { IMemberCreditRepository } from '@application/members/repositories/member-credit.repository';
+import { IMovementRepository } from '@application/movements/repositories/movement.repository';
 import { PaymentDto } from '@application/payments/dtos/payment.dto';
+import { IPaymentRepository } from '@application/payments/repositories/payment.repository';
 import { CreatePaymentRequest } from '@application/payments/use-cases/create-payment/create-payment.request';
 import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment/get-payment.use-case';
 import { SendNewPaymentEmailUseCase } from '@application/payments/use-cases/send-new-payment-email/send-new-payment-email.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
-import { IUseCase } from '@domain/common/use-case.interface';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { IDueRepository } from '@domain/dues/due.repository';
 import { Due } from '@domain/dues/models/due.model';
-import { IMemberCreditRepository } from '@domain/members/member-credit.repository';
 import { MemberCreditTypeEnum } from '@domain/members/member.enum';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
 import { Movement } from '@domain/movements/models/movement.model';
-import { IMovementRepository } from '@domain/movements/movement.repository';
 import { DueNotPayable } from '@domain/payments/errors/due-not-payable.error';
 import { ExistingPaymentError } from '@domain/payments/errors/existing-payment.error';
 import { Payment } from '@domain/payments/models/payment.model';
 import { CreatePaymentDue } from '@domain/payments/payment.interface';
-import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
 export class CreatePaymentUseCase

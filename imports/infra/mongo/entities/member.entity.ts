@@ -10,7 +10,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import {
   MemberCategoryEnum,
   MemberFileStatusEnum,
@@ -22,6 +21,7 @@ import {
 import { Entity } from '@infra/mongo/common/entities/entity';
 import { MemberAddressEntity } from '@infra/mongo/entities/member-address.entity';
 import { UserEntity } from '@infra/mongo/entities/user.entity';
+import { IsNullable } from '@ui/common/class-validator/is-nullable';
 
 export class MemberEntity extends Entity {
   @ValidateNested()

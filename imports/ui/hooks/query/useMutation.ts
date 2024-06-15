@@ -1,7 +1,7 @@
 import { useMutation as mutation } from '@tanstack/react-query';
 
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
 import { MeteorError } from '@infra/meteor/errors/meteor-error';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 
 interface UseMutationProps {
   methodName: MeteorMethodEnum;

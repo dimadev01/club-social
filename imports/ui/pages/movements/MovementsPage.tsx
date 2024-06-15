@@ -11,9 +11,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { GetMovementsGridRequestDto } from '@adapters/dtos/get-movements-grid-request.dto';
-import { GetMovementsTotalsRequestDto } from '@adapters/dtos/get-movements-totals-request.dto';
 import { MovementGridDto } from '@application/movements/dtos/movement-grid.dto';
 import {
   MovementCategoryEnum,
@@ -33,12 +30,15 @@ import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 import { Button } from '@ui/components/Button/Button';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
 import { MovementsGridCsvDownloaderButton } from '@ui/components/Movements/MovementsGridCsvDownloader';
+import { GetMovementsGridRequestDto } from '@ui/dtos/get-movements-grid-request.dto';
+import { GetMovementsTotalsRequestDto } from '@ui/dtos/get-movements-totals-request.dto';
 import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useMovementsTotals } from '@ui/hooks/movements/useMovementsTotals';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';

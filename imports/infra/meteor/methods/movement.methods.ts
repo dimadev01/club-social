@@ -1,14 +1,14 @@
 import { injectable } from 'tsyringe';
 
-import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.dto';
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { MovementController } from '@adapters/controllers/movement.controller';
-import { CreateMovementRequestDto } from '@adapters/dtos/create-movement-request.dto';
-import { GetMovementsGridRequestDto } from '@adapters/dtos/get-movements-grid-request.dto';
-import { GetMovementsTotalsRequestDto } from '@adapters/dtos/get-movements-totals-request.dto';
-import { UpdateMovementRequestDto } from '@adapters/dtos/update-movement-request.dto';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
 import { VoidMovementMethodRequestDto } from '@infra/meteor/dtos/void-movement-method-request.dto';
+import { GetOneByIdRequestDto } from '@ui/common/dtos/get-one-dto-request.dto';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
+import { MovementController } from '@ui/controllers/movement.controller';
+import { CreateMovementRequestDto } from '@ui/dtos/create-movement-request.dto';
+import { GetMovementsGridRequestDto } from '@ui/dtos/get-movements-grid-request.dto';
+import { GetMovementsTotalsRequestDto } from '@ui/dtos/get-movements-totals-request.dto';
+import { UpdateMovementRequestDto } from '@ui/dtos/update-movement-request.dto';
 
 @injectable()
 export class MovementMethods extends MeteorMethods {

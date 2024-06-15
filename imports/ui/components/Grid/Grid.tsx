@@ -6,10 +6,7 @@ import {
 } from 'antd/es/table/interface';
 import React from 'react';
 
-import {
-  GridFilter,
-  GridSorter,
-} from '@adapters/common/dtos/get-grid-request.dto';
+import { GridFilter, GridSorter } from '@ui/common/dtos/get-grid-request.dto';
 
 export interface TableState<T> {
   filters: Record<string, FilterValue | null>;

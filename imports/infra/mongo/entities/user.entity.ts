@@ -1,10 +1,10 @@
 import { Type } from 'class-transformer';
 import { IsArray, IsDefined, IsObject, ValidateNested } from 'class-validator';
 
-import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import { Entity } from '@infra/mongo/common/entities/entity';
 import { UserEmailEntity } from '@infra/mongo/entities/user-email.entity';
 import { UserProfileEntity } from '@infra/mongo/entities/user-profile.entity';
+import { IsNullable } from '@ui/common/class-validator/is-nullable';
 
 export class UserEntity extends Entity {
   @IsNullable()

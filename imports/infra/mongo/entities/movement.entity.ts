@@ -9,7 +9,6 @@ import {
   IsString,
 } from 'class-validator';
 
-import { IsNullable } from '@adapters/common/class-validator/is-nullable';
 import {
   MovementCategoryEnum,
   MovementStatusEnum,
@@ -17,6 +16,7 @@ import {
 } from '@domain/categories/category.enum';
 import { Entity } from '@infra/mongo/common/entities/entity';
 import { PaymentEntity } from '@infra/mongo/entities/payment.entity';
+import { IsNullable } from '@ui/common/class-validator/is-nullable';
 
 export class MovementEntity extends Entity {
   @IsInt()

@@ -4,19 +4,19 @@ import invariant from 'tiny-invariant';
 import { inject, singleton } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
 import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
 import {
   EmailWithTemplateOptions,
   IEmailRepository,
 } from '@application/notifications/emails/email.repository';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
-import { ILogger } from '@domain/common/logger/logger.interface';
 
 @singleton()
 export class EmailSendGridRepository implements IEmailRepository {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
+    private readonly _logger: ILoggerRepository,
   ) {
     const apiKey = Meteor.settings.private.SENDGRID_API_KEY;
 

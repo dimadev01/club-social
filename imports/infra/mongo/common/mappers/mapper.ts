@@ -1,8 +1,8 @@
 import { validate } from 'class-validator';
 
-import { ClassValidationError } from '@adapters/common/errors/class-validation.error';
 import { Model } from '@domain/common/models/model';
 import { Entity } from '@infra/mongo/common/entities/entity';
+import { ClassValidationError } from '@ui/common/errors/class-validation.error';
 
 export abstract class Mapper<TDomain extends Model, TEntity extends Entity> {
   public async toEntity(domain: TDomain): Promise<TEntity> {

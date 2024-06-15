@@ -1,7 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 
-import { DomainError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/domain.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { Model } from '@domain/common/models/model';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';

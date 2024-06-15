@@ -1,4 +1,4 @@
-import { DomainError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/domain.error';
 
 export class ExistingMemberByDocumentError extends DomainError {
   constructor(documentID: string) {

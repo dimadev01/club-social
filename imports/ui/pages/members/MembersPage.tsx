@@ -7,8 +7,6 @@ import { Card, Space } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { GetMembersGridRequestDto } from '@adapters/dtos/get-members-grid-request.dto';
 import { MemberGridDto } from '@application/members/dtos/member-grid.dto';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
@@ -22,6 +20,7 @@ import {
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 import { Button } from '@ui/components/Button/Button';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
@@ -29,6 +28,7 @@ import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useTable } from '@ui/components/Grid/useTable';
 import { MembersGridCsvDownloaderButton } from '@ui/components/Members/MembersGridCsvDownloader';
+import { GetMembersGridRequestDto } from '@ui/dtos/get-members-grid-request.dto';
 import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';

@@ -11,7 +11,7 @@ import {
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 
-export interface IMember extends IModel {
+export interface IMemberProps extends IModel {
   address: IMemberAddress;
   birthDate: BirthDate | null;
   category: MemberCategoryEnum;

@@ -2,12 +2,11 @@ import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILogger } from '@domain/common/logger/logger.interface';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
 import {
   FindManyByIds,
   FindOneById,
-} from '@domain/common/repositories/queryable.repository';
-import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
+} from '@application/common/repositories/queryable.repository';
 import {
   FindMembers,
   FindMembersToExport,
@@ -15,7 +14,8 @@ import {
   FindPaginatedMembersResponse,
   IMemberRepository,
   PaginatedMember,
-} from '@domain/members/member.repository';
+} from '@application/members/repositories/member.repository';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { Member } from '@domain/members/models/member.model';
 import { MemberMongoAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
@@ -33,7 +33,7 @@ export class MemberMongoRepository
 {
   public constructor(
     @inject(DIToken.Logger)
-    protected readonly logger: ILogger,
+    protected readonly logger: ILoggerRepository,
     protected readonly collection: MemberMongoCollection,
     protected readonly auditableCollection: MemberMongoAuditableCollection,
     protected readonly mapper: MemberMapper,

@@ -1,11 +1,11 @@
+import { OldGetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
+import { OldGetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { OldGetMovementsGridRequestDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.request.dto';
-import { OldGetMovementsGridResponseDto } from '@domain/movements/use-cases/get-movements/get-movements-grid.response.dto';
 import { UrlUtils } from '@shared/utils/url.utils';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 
 export const useMovementsGrid = (request: OldGetMovementsGridRequestDto) => {
   const [, setSearchParams] = useSearchParams();

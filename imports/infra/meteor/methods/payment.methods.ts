@@ -1,13 +1,13 @@
 import { injectable } from 'tsyringe';
 
-import { GetOneByIdRequestDto } from '@adapters/common/dtos/get-one-dto-request.dto';
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { PaymentController } from '@adapters/controllers/payment.controller';
-import { CreatePaymentRequestDto } from '@adapters/dtos/create-payment-request.dto';
-import { GetPaymentsGridRequestDto } from '@adapters/dtos/get-payments-grid-request.dto';
-import { GetPaymentsTotalsRequestDto } from '@adapters/dtos/get-payments-totals-request.dto';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
 import { VoidPaymentMethodRequestDto } from '@infra/meteor/dtos/void-payment-method-request.dto';
+import { GetOneByIdRequestDto } from '@ui/common/dtos/get-one-dto-request.dto';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
+import { PaymentController } from '@ui/controllers/payment.controller';
+import { CreatePaymentRequestDto } from '@ui/dtos/create-payment-request.dto';
+import { GetPaymentsGridRequestDto } from '@ui/dtos/get-payments-grid-request.dto';
+import { GetPaymentsTotalsRequestDto } from '@ui/dtos/get-payments-totals-request.dto';
 
 @injectable()
 export class PaymentMethods extends MeteorMethods {

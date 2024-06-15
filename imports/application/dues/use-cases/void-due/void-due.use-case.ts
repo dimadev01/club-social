@@ -2,20 +2,20 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
+import { IUseCase } from '@application/common/use-case.interface';
+import { IDueRepository } from '@application/dues/repositories/due.repository';
 import { VoidDueRequest } from '@application/dues/use-cases/void-due/void-due.request';
-import { DomainError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/domain.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
-import { ILogger } from '@domain/common/logger/logger.interface';
-import { IUnitOfWork } from '@domain/common/repositories/unit-of-work';
-import { IUseCase } from '@domain/common/use-case.interface';
-import { IDueRepository } from '@domain/dues/due.repository';
 import { DueNotVoidableError } from '@domain/dues/errors/due-not-voidable.error';
 
 @injectable()
 export class VoidDueUseCase implements IUseCase<VoidDueRequest, null> {
   public constructor(
     @inject(DIToken.Logger)
-    private readonly _logger: ILogger,
+    private readonly _logger: ILoggerRepository,
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
     @inject(DIToken.IUnitOfWork)

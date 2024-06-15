@@ -2,12 +2,12 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
+import { FindOneById } from '@application/common/repositories/queryable.repository';
+import { IUseCase } from '@application/common/use-case.interface';
 import { PaymentDto } from '@application/payments/dtos/payment.dto';
 import { PaymentDtoMapper } from '@application/payments/mappers/payment-dto.mapper';
+import { IPaymentRepository } from '@application/payments/repositories/payment.repository';
 import { ModelNotFoundError } from '@domain/common/errors/model-not-found.error';
-import { FindOneById } from '@domain/common/repositories/queryable.repository';
-import { IUseCase } from '@domain/common/use-case.interface';
-import { IPaymentRepository } from '@domain/payments/payment.repository';
 
 @injectable()
 export class GetPaymentUseCase implements IUseCase<FindOneById, PaymentDto> {

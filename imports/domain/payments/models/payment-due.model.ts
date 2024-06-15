@@ -1,6 +1,6 @@
 import { Result, err, ok } from 'neverthrow';
 
-import { DomainError } from '@domain/common/errors/base.error';
+import { DomainError } from '@domain/common/errors/domain.error';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';

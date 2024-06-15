@@ -1,6 +1,6 @@
-import { MeteorMethodEnum } from '@adapters/common/meteor/meteor-methods.enum';
-import { GetPendingDuesRequestDto } from '@adapters/dtos/get-pending-dues-request.dto';
 import { DueDto } from '@application/dues/dtos/due.dto';
+import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
+import { GetPendingDuesRequestDto } from '@ui/dtos/get-pending-dues-request.dto';
 import { useQuery } from '@ui/hooks/query/useQuery';
 
 export const usePendingDuesByMember = (request?: GetPendingDuesRequestDto) =>
