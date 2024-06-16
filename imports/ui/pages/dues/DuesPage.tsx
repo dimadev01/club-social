@@ -1,8 +1,3 @@
-import {
-  CreditCardOutlined,
-  UserOutlined,
-  WalletOutlined,
-} from '@ant-design/icons';
 import { Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
@@ -23,7 +18,7 @@ import {
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
-import { AppUrl } from '@ui/app.enum';
+import { AppUrl, AppUrlGenericEnum } from '@ui/app.enum';
 import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 import { Button } from '@ui/components/Button/Button';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
@@ -33,7 +28,10 @@ import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
-import { useTable } from '@ui/components/Grid/useTable';
+import { useGrid } from '@ui/components/Grid/useGrid';
+import { DuesIcon } from '@ui/components/Icons/DuesIcon';
+import { PaymentsIcon } from '@ui/components/Icons/PaymentsIcon';
+import { UserIcon } from '@ui/components/Icons/UserIcon';
 import { GetDuesGridRequestDto } from '@ui/dtos/get-dues-grid-request.dto';
 import { GetDuesTotalsRequestDto } from '@ui/dtos/get-dues-totals-request.dto';
 import { usePermissions } from '@ui/hooks/auth/usePermissions';
@@ -42,7 +40,7 @@ import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
 import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 import { useUserContext } from '@ui/providers/UserContext';
-import { renderDueCategoryLabel } from '@ui/utils/renderDueCategory';
+import { DueCategoryIconWithLabel } from '@ui/utils/DueCategoryLabel';
 
 export const DuesPage = () => {
   const { member } = useUserContext();
@@ -53,7 +51,9 @@ export const DuesPage = () => {
     gridState,
     onTableChange,
     setGridState: setState,
-  } = useTable<DueGridDto>({
+    clearFilters,
+    resetFilters,
+  } = useGrid<DueGridDto>({
     defaultFilters: {
       category: [],
       createdAt: [],
@@ -131,7 +131,7 @@ export const DuesPage = () => {
         filterDropdown: renderCreatedAtFilter,
         filteredValue: gridState.filters.createdAt,
         render: (createdAt: string, due: DueGridDto) => (
-          <Link to={`${AppUrl.DUES}/${due.id}`}>
+          <Link to={due.id} state={gridState}>
             {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
           </Link>
         ),
@@ -171,8 +171,9 @@ export const DuesPage = () => {
         ellipsis: true,
         filteredValue: gridState.filters.category,
         filters: getDueCategoryFilters(),
-        render: (category: DueCategoryEnum, due) =>
-          renderDueCategoryLabel(category, due.date),
+        render: (category: DueCategoryEnum, due) => (
+          <DueCategoryIconWithLabel category={category} date={due.date} />
+        ),
         title: 'Categoría',
         width: 100,
       },
@@ -211,6 +212,7 @@ export const DuesPage = () => {
           DueStatusEnum.PENDING,
         ],
         ellipsis: true,
+        filterMode: 'tree',
         filterResetToDefaultFilteredValue: true,
         filteredValue: gridState.filters.status,
         filters: getDueStatusColumnFilters(),
@@ -236,16 +238,18 @@ export const DuesPage = () => {
                 type="text"
                 onClick={() => {
                   navigate(
-                    UrlUtils.navigate(AppUrl.PAYMENTS_NEW, {
-                      dueIds: [due.id],
-                      memberId: due.memberId,
-                    }),
+                    `/${AppUrl.PAYMENTS}/${AppUrlGenericEnum.NEW}${UrlUtils.stringify(
+                      {
+                        dueIds: [due.id],
+                        memberId: due.memberId,
+                      },
+                    )}`,
                   );
                 }}
                 htmlType="button"
                 disabled={!due.isPayable}
                 tooltip={{ title: 'Cobrar' }}
-                icon={<CreditCardOutlined />}
+                icon={<PaymentsIcon />}
               />
             )}
 
@@ -254,14 +258,14 @@ export const DuesPage = () => {
                 type="text"
                 onClick={() => {
                   navigate(
-                    UrlUtils.navigate(AppUrl.MEMBERS, {
+                    `/${AppUrl.MEMBERS}${UrlUtils.stringify({
                       filters: { id: [due.memberId] },
-                    }),
+                    })}`,
                   );
                 }}
                 htmlType="button"
                 tooltip={{ title: 'Ver Socio' }}
-                icon={<UserOutlined />}
+                icon={<UserIcon />}
               />
             )}
           </Space.Compact>
@@ -310,7 +314,7 @@ export const DuesPage = () => {
     <Card
       title={
         <Space>
-          <WalletOutlined />
+          <DuesIcon />
           <span>Deudas</span>
         </Space>
       }
@@ -318,7 +322,7 @@ export const DuesPage = () => {
         <Space.Compact>
           <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
           <DuesGridCsvDownloaderButton request={gridRequest} />
-          <GridNewButton scope={ScopeEnum.DUES} to={AppUrl.DUES_NEW} />
+          <GridNewButton scope={ScopeEnum.DUES} />
         </Space.Compact>
       }
     >
@@ -326,11 +330,11 @@ export const DuesPage = () => {
         total={data?.totalCount}
         state={gridState}
         onTableChange={onTableChange}
+        clearFilters={clearFilters}
+        resetFilters={resetFilters}
         loading={isLoading}
         dataSource={data?.items}
-        expandable={{
-          expandedRowRender,
-        }}
+        expandable={{ expandedRowRender }}
         summary={renderSummary}
         columns={getColumns()}
         rowClassName={(due) => {

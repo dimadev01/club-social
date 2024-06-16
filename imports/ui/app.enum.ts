@@ -3,44 +3,43 @@ export enum AppThemeEnum {
   LIGHT = 'light',
 }
 
-/* eslint-disable typescript-sort-keys/string-enum */
 export enum AppUrl {
-  Home = '/',
+  AUTH = '/auth',
+  AUTH_LOGIN = 'login',
+  AUTH_LOGIN_PASSWORDLESS = 'passwordless/:email',
+  AUTH_LOGOUT = 'logout',
 
-  DUES = '/dues',
-  DUES_DETAIL = '/dues/:id',
-  DUES_NEW = '/dues/new',
-  DUES_EDIT = '/dues/:id/edit',
+  CATEGORIES = 'categories',
+  CATEGORIES_DETAIL = 'categories/:id',
 
-  ENROLL = '/enroll-account/:token',
-  LOGIN = '/login',
-  LOGIN_PASSWORDLESS = '/login/passwordless/:email',
-  LOGOUT = '/logout',
-  VERIFY_EMAIL = '/verify-email/:token',
+  DUES = 'dues',
+  DUES_NEW = 'new',
 
-  MEMBERS = '/members',
-  MEMBERS_DETAIL = '/members/:id',
-  MEMBERS_NEW = '/members/new',
+  EMPLOYEES = 'employees',
 
-  MOVEMENTS = '/movements',
-  MOVEMENTS_DETAIL = '/movements/:id',
-  MOVEMENTS_NEW = '/movements/new',
-  MOVEMENTS_EDIT = '/movements/:id/edit',
+  ENROLL = 'enroll-account/:token',
 
-  PAYMENTS = '/payments',
-  PAYMENTS_DETAIL = '/payments/:id',
-  PAYMENTS_NEW = '/payments/new',
+  HOME = '/',
 
-  PROFESSORS = '/professors',
+  MEMBERS = 'members',
 
-  EMPLOYEES = '/employees',
+  MOVEMENTS = 'movements',
 
-  SERVICES = '/services',
+  PAYMENTS = 'payments',
 
-  USERS = '/users',
-  USERS_DETAIL = '/users/:id',
-  USERS_NEW = '/users/new',
+  PROFESSORS = 'professors',
 
-  CATEGORIES = '/categories',
-  CATEGORIES_DETAIL = '/categories/:id',
+  SERVICES = 'services',
+
+  USERS = 'users',
+  USERS_DETAIL = 'users/:id',
+  USERS_NEW = 'users/new',
+
+  VERIFY_EMAIL = 'verify-email/:token',
+}
+
+export enum AppUrlGenericEnum {
+  EDIT = 'edit',
+  ID = ':id',
+  NEW = 'new',
 }

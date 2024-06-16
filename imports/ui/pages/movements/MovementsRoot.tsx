@@ -10,12 +10,12 @@ export const MovementsRoot = () => {
   const user = Meteor.user();
 
   if (!user) {
-    return <Navigate to={AppUrl.Home} />;
+    return <Navigate to={AppUrl.HOME} />;
   }
 
   // @ts-expect-error
   if (user.profile?.role === RoleEnum.MEMBER) {
-    return <Navigate to={AppUrl.Home} />;
+    return <Navigate to={AppUrl.HOME} />;
   }
 
   return <MovementsPage />;

@@ -1,14 +1,8 @@
 import {
-  CreditCardOutlined,
   FilePdfOutlined,
-  LineChartOutlined,
-  LogoutOutlined,
+  HeartOutlined,
   MailOutlined,
   NotificationOutlined,
-  PlusOutlined,
-  SwapOutlined,
-  TeamOutlined,
-  WalletOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
 import {
@@ -23,17 +17,23 @@ import {
 } from 'antd';
 import { ItemType } from 'antd/es/menu/interface';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
-import { AppUrl } from '@ui/app.enum';
+import { AppUrl, AppUrlGenericEnum } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
+import { AddNewIcon } from '@ui/components/Icons/AddNewIcon';
+import { DashboardIcon } from '@ui/components/Icons/DashboardIcon';
+import { DuesIcon } from '@ui/components/Icons/DuesIcon';
+import { LogoutIcon } from '@ui/components/Icons/LogoutIcon';
+import { MovementsIcon } from '@ui/components/Icons/MovementsIcon';
+import { PaymentsIcon } from '@ui/components/Icons/PaymentsIcon';
+import { UsersIcon } from '@ui/components/Icons/UsersIcon';
 import { Row } from '@ui/components/Layout/Row';
 import { ThemeSelector } from '@ui/components/Layout/ThemeSelector';
 import { useLoggedInUser } from '@ui/hooks/auth/useLoggedInUser';
 import { usePermissions } from '@ui/hooks/auth/usePermissions';
-import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import { useThemeContext } from '@ui/providers/ThemeContext';
 
 export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
@@ -45,34 +45,41 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
   const { theme } = useThemeContext();
 
+  const location = useLocation();
+
   const [isMenuCollapsed, setIsMenuCollapsed] = useState<boolean>(
     LocalStorageUtils.get('isMenuCollapsed') ?? false,
   );
+
+  const pathnameKey = `${location.pathname.split('/')[1]}` || AppUrl.HOME;
+
+  const [selectedMenuItemKey, setSelectedMenuItemKey] =
+    useState<string>(pathnameKey);
+
+  useEffect(() => {
+    setSelectedMenuItemKey(pathnameKey);
+  }, [pathnameKey]);
 
   useEffect(() => {
     LocalStorageUtils.set('isMenuCollapsed', isMenuCollapsed);
   }, [isMenuCollapsed]);
 
-  const pathnameKey = `/${window.location.pathname.split('/')[1]}`;
-
   const getMenuItems = (): ItemType[] => {
     const items: ItemType[] = [];
 
-    if (permissions.isAdmin || permissions.isStaff) {
-      items.push({
-        icon: <LineChartOutlined className="!text-lg" />,
-        key: AppUrl.Home,
-        label: (
-          <Link className="no-underline" to={AppUrl.Home}>
-            Inicio
-          </Link>
-        ),
-      });
-    }
+    items.push({
+      icon: <DashboardIcon />,
+      key: AppUrl.HOME,
+      label: (
+        <Link className="no-underline" to={AppUrl.HOME}>
+          Inicio
+        </Link>
+      ),
+    });
 
     if (permissions.member.read) {
       items.push({
-        icon: <TeamOutlined className="!text-lg" />,
+        icon: <UsersIcon />,
         key: AppUrl.MEMBERS,
         label: (
           <Link className="no-underline" to={AppUrl.MEMBERS}>
@@ -84,7 +91,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
     if (permissions.dues.read) {
       items.push({
-        icon: <WalletOutlined className="!text-lg" />,
+        icon: <DuesIcon />,
         key: AppUrl.DUES,
         label: (
           <Link className="no-underline" to={AppUrl.DUES}>
@@ -96,7 +103,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
     if (permissions.payments.read) {
       items.push({
-        icon: <CreditCardOutlined className="!text-lg" />,
+        icon: <PaymentsIcon />,
         key: AppUrl.PAYMENTS,
         label: (
           <Link className="no-underline" to={AppUrl.PAYMENTS}>
@@ -108,7 +115,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
 
     if (permissions.movements.read) {
       items.push({
-        icon: <SwapOutlined className="!text-lg" />,
+        icon: <MovementsIcon />,
         key: AppUrl.MOVEMENTS,
         label: (
           <Link className="no-underline" to={AppUrl.MOVEMENTS}>
@@ -131,29 +138,33 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         trigger="hover"
         type="primary"
         style={{ bottom: 75 }}
-        icon={<PlusOutlined />}
+        icon={<AddNewIcon />}
       >
         {permissions.movements.create && (
           <FloatButton
             tooltip="Nuevo movimiento"
-            icon={<SwapOutlined />}
-            onClick={() => navigate(AppUrl.MOVEMENTS_NEW)}
+            icon={<MovementsIcon />}
+            onClick={() =>
+              navigate(`${AppUrl.MOVEMENTS}/${AppUrlGenericEnum.NEW}`)
+            }
           />
         )}
 
         {permissions.dues.create && (
           <FloatButton
             tooltip="Nueva deuda"
-            icon={<WalletOutlined />}
-            onClick={() => navigate(AppUrl.DUES_NEW)}
+            icon={<DuesIcon />}
+            onClick={() => navigate(`${AppUrl.DUES}/${AppUrlGenericEnum.NEW}`)}
           />
         )}
 
         {permissions.payments.create && (
           <FloatButton
             tooltip="Nuevo pago"
-            icon={<CreditCardOutlined />}
-            onClick={() => navigate(AppUrl.PAYMENTS_NEW)}
+            icon={<PaymentsIcon />}
+            onClick={() =>
+              navigate(`${AppUrl.PAYMENTS}/${AppUrlGenericEnum.NEW}`)
+            }
           />
         )}
       </FloatButton.Group>
@@ -199,7 +210,7 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         <Menu
           className="cs-menu"
           mode="inline"
-          defaultSelectedKeys={[pathnameKey]}
+          selectedKeys={[selectedMenuItemKey]}
           items={getMenuItems()}
         />
 
@@ -208,10 +219,13 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
           mode="inline"
           items={[
             {
-              icon: <LogoutOutlined className="!text-lg" />,
-              key: 'logout',
+              icon: <LogoutIcon />,
+              key: `${AppUrl.AUTH}/${AppUrl.AUTH_LOGOUT}`,
               label: (
-                <Link className="no-underline" to={AppUrl.LOGOUT}>
+                <Link
+                  className="no-underline"
+                  to={`${AppUrl.AUTH}/${AppUrl.AUTH_LOGOUT}`}
+                >
                   Cerrar sesión
                 </Link>
               ),
@@ -221,12 +235,12 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       </AntLayout.Sider>
 
       <AntLayout className="cs-layout-content">
-        <AntLayout.Content className="max-w-screen-xl px-4 py-8 lg:p-10">
+        <AntLayout.Content className="max-w-screen-2xl px-4 py-12 lg:p-10">
           {children}
         </AntLayout.Content>
 
-        <AntLayout.Footer>
-          <Flex justify="space-between">
+        <AntLayout.Footer className="px-4 py-2 lg:px-10">
+          <Flex align="center" wrap justify="space-between">
             <Space.Compact>
               <Button
                 tooltip={{ title: 'Reglamento' }}
@@ -245,6 +259,10 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
                 target="_blank"
               />
             </Space.Compact>
+
+            <Typography.Text className="text-xs">
+              Hecho con <HeartOutlined /> por D.
+            </Typography.Text>
 
             <Space>
               <Space.Compact>

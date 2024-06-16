@@ -1,11 +1,8 @@
 import { Card, Image, Layout } from 'antd';
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
+import { Outlet } from 'react-router-dom';
 
-type Props = {
-  children: JSX.Element;
-};
-
-export const CenteredLayout: React.FC<Props> = ({ children }) => (
+export const CenteredLayout: React.FC<PropsWithChildren> = ({ children }) => (
   <Layout className="min-h-full pt-24">
     <Card
       styles={{ body: { padding: 0 } }}
@@ -19,7 +16,7 @@ export const CenteredLayout: React.FC<Props> = ({ children }) => (
         alt="Club Social logo"
       />
 
-      {children}
+      <Outlet />
     </Card>
   </Layout>
 );

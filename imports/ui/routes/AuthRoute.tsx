@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
 import { Layout } from '@ui/components/Layout/Layout';
@@ -9,8 +9,13 @@ export const AuthRoute: React.FC<PropsWithChildren> = ({ children }) => {
   const { user } = useUserContext();
 
   if (!user) {
-    return <Navigate to={AppUrl.LOGIN} />;
+    return <Navigate to={`${AppUrl.AUTH}/${AppUrl.AUTH_LOGIN}`} />;
   }
 
-  return <Layout>{children}</Layout>;
+  // return <Layout>{children}</Layout>;
+  return (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
 };

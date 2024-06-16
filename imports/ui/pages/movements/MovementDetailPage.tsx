@@ -1,14 +1,6 @@
-import {
-  Breadcrumb,
-  Card,
-  Descriptions,
-  Divider,
-  Flex,
-  Space,
-  Watermark,
-} from 'antd';
+import { Card, Descriptions, Divider, Flex, Space, Watermark } from 'antd';
 import React from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import {
   MovementCategoryLabel,
@@ -20,10 +12,13 @@ import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
+import { Breadcrumbs } from '@ui/components/Breadcrumbs/Breadcrumbs';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormEditButton } from '@ui/components/Form/FormEditButton';
 import { FormVoidButton } from '@ui/components/Form/FormVoidButton';
+import { MovementsIcon } from '@ui/components/Icons/MovementsIcon';
 import { NotFound } from '@ui/components/NotFound';
 import { useMovement } from '@ui/hooks/movements/useMovement';
 import { useVoidMovement } from '@ui/hooks/movements/useVoidMovement';
@@ -33,6 +28,8 @@ export const MovementDetailPage = () => {
   const { id } = useParams<{ id?: string }>();
 
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   const notificationSuccess = useNotificationSuccess();
 
@@ -50,11 +47,18 @@ export const MovementDetailPage = () => {
 
   return (
     <>
-      <Breadcrumb
-        className="mb-4"
+      <Breadcrumbs
         items={[
-          { title: 'Inicio' },
-          { title: <Link to={AppUrl.MOVEMENTS}>Movimientos</Link> },
+          {
+            title: (
+              <Space>
+                <MovementsIcon />
+                <Link to={`..${UrlUtils.stringify(location.state)}`}>
+                  Movimientos
+                </Link>
+              </Space>
+            ),
+          },
           {
             title: `Movimiento del ${new DateUtcVo(movement.date).format()} creado el ${new DateVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`,
           },
@@ -67,6 +71,7 @@ export const MovementDetailPage = () => {
         }
       >
         <Card
+          extra={<MovementsIcon />}
           title={`Movimiento del ${new DateUtcVo(movement.date).format()} creado el ${new DateVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`}
         >
           <Descriptions column={1} layout="vertical" colon={false}>

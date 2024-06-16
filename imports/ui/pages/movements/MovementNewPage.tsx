@@ -2,7 +2,7 @@ import { Breadcrumb, Card, Col, DatePicker, Flex, Form, Input } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import {
   MovementCategoryEnum,
@@ -34,8 +34,6 @@ export const MovementNewPage = () => {
   const [form] = Form.useForm<FormValues>();
 
   const formCategoryType = useWatch(['type'], form);
-
-  const navigate = useNavigate();
 
   const notificationSuccess = useNotificationSuccess();
 

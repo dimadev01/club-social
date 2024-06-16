@@ -1,23 +1,23 @@
-import { PlusOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
+import { AppUrlGenericEnum } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
+import { AddNewIcon } from '@ui/components/Icons/AddNewIcon';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 
 type Props = {
   scope: ScopeEnum;
-  to: string;
 };
 
-export const GridNewButton: React.FC<Props> = ({ to, scope }) => {
+export const GridNewButton: React.FC<Props> = ({ scope }) => {
   const canCreate = useIsInRole(PermissionEnum.CREATE, scope);
 
   return (
     canCreate && (
-      <Link to={to}>
-        <Button icon={<PlusOutlined />} htmlType="button" type="primary">
+      <Link to={AppUrlGenericEnum.NEW}>
+        <Button icon={<AddNewIcon />} htmlType="button" type="primary">
           Nuevo
         </Button>
       </Link>

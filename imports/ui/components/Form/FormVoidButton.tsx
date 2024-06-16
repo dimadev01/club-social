@@ -1,10 +1,10 @@
-import { StopOutlined } from '@ant-design/icons';
 import { ButtonProps, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import React, { useState } from 'react';
 
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
 import { Button } from '@ui/components/Button/Button';
+import { VoidIcon } from '@ui/components/Icons/VoidIcon';
 import { Popconfirm } from '@ui/components/Popconfirm/Popconfirm';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 
@@ -65,7 +65,7 @@ export const FormVoidButton: React.FC<FormVoidButtonProps> = ({
     >
       <Button
         onClick={() => setIsOpen(true)}
-        icon={<StopOutlined />}
+        icon={<VoidIcon />}
         danger
         htmlType="button"
         type="dashed"

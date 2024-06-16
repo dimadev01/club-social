@@ -1,6 +1,6 @@
-import { Breadcrumb, Card, Descriptions, Divider, Flex, Watermark } from 'antd';
+import { Card, Descriptions, Divider, Flex, Space, Watermark } from 'antd';
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
@@ -12,20 +12,24 @@ import {
 } from '@domain/payments/payment.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
+import { Breadcrumbs } from '@ui/components/Breadcrumbs/Breadcrumbs';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormVoidButton } from '@ui/components/Form/FormVoidButton';
+import { PaymentsIcon } from '@ui/components/Icons/PaymentsIcon';
 import { NotFound } from '@ui/components/NotFound';
 import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
 import { usePayment } from '@ui/hooks/payments/usePayment';
 import { useVoidPayment } from '@ui/hooks/payments/useVoidPayment';
-import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import { useNotificationSuccess } from '@ui/hooks/ui/useNotification';
 
 export const PaymentDetailPage = () => {
   const { id: paymentId } = useParams<{ id?: string }>();
 
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   const notificationSuccess = useNotificationSuccess();
 
@@ -47,11 +51,18 @@ export const PaymentDetailPage = () => {
 
   return (
     <>
-      <Breadcrumb
-        className="mb-4"
+      <Breadcrumbs
         items={[
-          { title: 'Inicio' },
-          { title: <Link to={AppUrl.PAYMENTS}>Pagos</Link> },
+          {
+            title: (
+              <Space>
+                <PaymentsIcon />
+                <Link to={`..${UrlUtils.stringify(location.state)}`}>
+                  Pagos
+                </Link>
+              </Space>
+            ),
+          },
           {
             title: `Pago de ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`,
           },
@@ -66,6 +77,7 @@ export const PaymentDetailPage = () => {
         }
       >
         <Card
+          extra={<PaymentsIcon />}
           title={`Pago a ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`}
         >
           <>

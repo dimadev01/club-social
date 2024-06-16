@@ -29,7 +29,7 @@ export const EnrollPage = () => {
   }, []);
 
   if (!token) {
-    return <Navigate to={AppUrl.Home} />;
+    return <Navigate to={AppUrl.HOME} />;
   }
 
   if (isLoading) {
@@ -44,7 +44,7 @@ export const EnrollPage = () => {
         } else {
           message.success('Usuario activado');
 
-          navigate(AppUrl.Home);
+          navigate(AppUrl.HOME);
         }
       });
     }
