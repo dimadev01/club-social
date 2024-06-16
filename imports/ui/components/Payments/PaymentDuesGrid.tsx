@@ -7,7 +7,7 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { AppUrl } from '@ui/app.enum';
 import { Table } from '@ui/components/Table/Table';
-import { renderDueCategoryLabel } from '@ui/utils/renderDueCategory';
+import { DueCategoryIconWithLabel } from '@ui/utils/DueCategoryLabel';
 
 interface PaymentDuesGridProps {
   dues: PaymentDueDto[];
@@ -24,7 +24,7 @@ export const PaymentDuesGrid: React.FC<PaymentDuesGridProps> = ({ dues }) => (
       {
         dataIndex: 'dueDate',
         render: (dueDate, paymentDue) => (
-          <Link to={`${AppUrl.DUES}/${paymentDue.dueId}`}>
+          <Link to={`/${AppUrl.DUES}/${paymentDue.dueId}`}>
             {new DateUtcVo(dueDate).format()}
           </Link>
         ),
@@ -34,8 +34,12 @@ export const PaymentDuesGrid: React.FC<PaymentDuesGridProps> = ({ dues }) => (
       {
         align: 'center',
         dataIndex: 'dueCategory',
-        render: (dueCategory: DueCategoryEnum, paymentDue) =>
-          renderDueCategoryLabel(dueCategory, paymentDue.dueDate),
+        render: (dueCategory: DueCategoryEnum, paymentDue) => (
+          <DueCategoryIconWithLabel
+            category={dueCategory}
+            date={paymentDue.dueDate}
+          />
+        ),
         title: 'Categoría',
         width: 150,
       },

@@ -26,7 +26,7 @@ export const VerifyEmailPage = () => {
         } else {
           message.success('Email verificado');
 
-          navigate(AppUrl.Home);
+          navigate(AppUrl.HOME);
         }
       });
     }
@@ -37,7 +37,7 @@ export const VerifyEmailPage = () => {
   }, [token, navigate, message, notificationError]);
 
   if (!token) {
-    return <Navigate to={AppUrl.Home} />;
+    return <Navigate to={AppUrl.HOME} />;
   }
 
   return <>...</>;

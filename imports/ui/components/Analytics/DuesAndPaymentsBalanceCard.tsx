@@ -1,8 +1,3 @@
-import {
-  CreditCardOutlined,
-  SwapOutlined,
-  WalletOutlined,
-} from '@ant-design/icons';
 import { Card, Col, DatePicker, Divider, Form, Space } from 'antd';
 import { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
@@ -14,6 +9,9 @@ import { DateFormatEnum } from '@shared/utils/date.utils';
 import { DueAndPaymentBalanceTotals } from '@ui/components/Analytics/DueAndPaymentBalanceTotals';
 import { MovementsCard } from '@ui/components/Analytics/MovementsCard';
 import { getPresets } from '@ui/components/DatePicker/DatePicker.utils';
+import { DuesIcon } from '@ui/components/Icons/DuesIcon';
+import { MovementsIcon } from '@ui/components/Icons/MovementsIcon';
+import { PaymentsIcon } from '@ui/components/Icons/PaymentsIcon';
 import { Row } from '@ui/components/Layout/Row';
 import { useDuesTotals } from '@ui/hooks/dues/useDuesTotals';
 import { useMovementsTotals } from '@ui/hooks/movements/useMovementsTotals';
@@ -66,13 +64,13 @@ export const DuesAndPaymentsBalanceCard = () => {
       title="Balance de Deudas, Pagos y Movimientos"
       extra={
         <Space split={<Divider type="vertical" />}>
-          <WalletOutlined />
-          <CreditCardOutlined />
-          <SwapOutlined />
+          <DuesIcon />
+          <PaymentsIcon />
+          <MovementsIcon />
         </Space>
       }
     >
-      <Form.Item layout="vertical" label="Fecha">
+      <Form.Item layout="vertical" label="Filtrar por Período">
         <DatePicker.RangePicker
           presets={getPresets()}
           allowClear

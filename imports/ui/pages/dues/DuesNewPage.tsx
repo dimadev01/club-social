@@ -15,7 +15,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { DueCategoryEnum, getDueCategoryOptions } from '@domain/dues/due.enum';
+import { DueCategoryEnum } from '@domain/dues/due.enum';
 import {
   MemberCategoryEnum,
   MemberStatusEnum,
@@ -32,6 +32,7 @@ import { Select } from '@ui/components/Select';
 import { useCreateDue } from '@ui/hooks/dues/useCreateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useNotificationSuccess } from '@ui/hooks/ui/useNotification';
+import { getDueCategoryOptionsReact } from '@ui/utils/DueCategoryLabel';
 
 type FormValues = {
   amount: number;
@@ -287,7 +288,7 @@ export const DuesNewPage = () => {
                   onChange={() => {
                     form.setFieldValue('amount', 0);
                   }}
-                  options={getDueCategoryOptions()}
+                  options={getDueCategoryOptionsReact()}
                 />
               </Form.Item>
             </Col>

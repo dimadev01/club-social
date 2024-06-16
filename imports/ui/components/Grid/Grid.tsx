@@ -1,4 +1,4 @@
-import { Table as AntTable, TableProps } from 'antd';
+import { Table as AntTable, Flex, Space, TableProps } from 'antd';
 import {
   FilterValue,
   SorterResult,
@@ -7,6 +7,9 @@ import {
 import React from 'react';
 
 import { GridFilter, GridSorter } from '@ui/common/dtos/get-grid-request.dto';
+import { Button } from '@ui/components/Button/Button';
+import { FilterClearIcon } from '@ui/components/Icons/FilterClearIcon';
+import { FilterResetIcon } from '@ui/components/Icons/FilterResetICon';
 
 export interface TableState<T> {
   filters: Record<string, FilterValue | null>;
@@ -15,11 +18,13 @@ export interface TableState<T> {
 }
 
 interface Props<T> extends TableProps<T> {
+  clearFilters?: () => void;
   onTableChange: (
     pagination: TablePaginationConfig,
     filters: Record<string, FilterValue | null>,
     sorter: SorterResult<T> | SorterResult<T>[],
   ) => void;
+  resetFilters?: () => void;
   state: GridState;
   total?: number;
 }
@@ -34,6 +39,8 @@ export interface GridState {
 export function Grid<T extends object>({
   rowKey = 'id',
   state,
+  clearFilters,
+  resetFilters,
   onTableChange,
   total,
   columns,
@@ -42,6 +49,35 @@ export function Grid<T extends object>({
 }: Props<T>): JSX.Element {
   const columnsWidth =
     columns?.reduce((acc, column) => acc + Number(column.width ?? 0), 0) ?? 0;
+
+  const renderTitle =
+    clearFilters || resetFilters
+      ? () => (
+          <Flex justify="flex-end">
+            <Space>
+              {resetFilters && (
+                <Button
+                  onClick={() => resetFilters()}
+                  type="text"
+                  tooltip={{ title: 'Filtros por defecto' }}
+                  size="small"
+                  icon={<FilterResetIcon />}
+                />
+              )}
+
+              {clearFilters && (
+                <Button
+                  onClick={() => clearFilters()}
+                  type="text"
+                  tooltip={{ title: '   Quitar todos los filtros' }}
+                  size="small"
+                  icon={<FilterClearIcon />}
+                />
+              )}
+            </Space>
+          </Flex>
+        )
+      : undefined;
 
   return (
     <AntTable<T>
@@ -53,6 +89,7 @@ export function Grid<T extends object>({
         filters: Record<string, FilterValue | null>,
         sorter: SorterResult<T> | SorterResult<T>[],
       ) => onTableChange(pagination, filters, sorter)}
+      title={renderTitle}
       pagination={{
         current: state.page,
         hideOnSinglePage: false,

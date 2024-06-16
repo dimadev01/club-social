@@ -1,9 +1,9 @@
 import { Table as AntTable, TableProps } from 'antd';
 import React from 'react';
 
-type Props = TableProps;
+type Props<T> = TableProps<T>;
 
-export const Table: React.FC<Props> = ({ columns, ...rest }) => {
+export function Table<T extends object>({ columns, ...rest }: Props<T>) {
   const columnsWidth =
     columns?.reduce((acc, column) => acc + Number(column.width ?? 0), 0) ?? 0;
 
@@ -16,9 +16,9 @@ export const Table: React.FC<Props> = ({ columns, ...rest }) => {
       scroll={{
         scrollToFirstRowOnChange: true,
         x: columnsWidth,
-        y: 600,
+        y: 400,
       }}
       {...rest}
     />
   );
-};
+}
