@@ -1,8 +1,7 @@
 import {
+  CopyrightCircleOutlined,
   FilePdfOutlined,
   HeartOutlined,
-  MailOutlined,
-  NotificationOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
 import {
@@ -13,13 +12,13 @@ import {
   Image,
   Menu,
   Space,
+  Tooltip,
   Typography,
 } from 'antd';
 import { ItemType } from 'antd/es/menu/interface';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
-import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
 import { LocalStorageUtils } from '@shared/utils/localStorage.utils';
 import { AppUrl, AppUrlGenericEnum } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
@@ -128,49 +127,6 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
     return items;
   };
 
-  const renderFloatButton = () => {
-    if (permissions.isMember) {
-      return null;
-    }
-
-    return (
-      <FloatButton.Group
-        trigger="hover"
-        type="primary"
-        style={{ bottom: 75 }}
-        icon={<AddNewIcon />}
-      >
-        {permissions.movements.create && (
-          <FloatButton
-            tooltip="Nuevo movimiento"
-            icon={<MovementsIcon />}
-            onClick={() =>
-              navigate(`${AppUrl.MOVEMENTS}/${AppUrlGenericEnum.NEW}`)
-            }
-          />
-        )}
-
-        {permissions.dues.create && (
-          <FloatButton
-            tooltip="Nueva deuda"
-            icon={<DuesIcon />}
-            onClick={() => navigate(`${AppUrl.DUES}/${AppUrlGenericEnum.NEW}`)}
-          />
-        )}
-
-        {permissions.payments.create && (
-          <FloatButton
-            tooltip="Nuevo pago"
-            icon={<PaymentsIcon />}
-            onClick={() =>
-              navigate(`${AppUrl.PAYMENTS}/${AppUrlGenericEnum.NEW}`)
-            }
-          />
-        )}
-      </FloatButton.Group>
-    );
-  };
-
   const userName = `${user.profile?.firstName} ${user.profile?.lastName}`;
 
   return (
@@ -237,47 +193,20 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       <AntLayout className="cs-layout-content">
         <AntLayout.Content className="max-w-screen-2xl px-4 py-12 lg:p-10">
           {children}
-        </AntLayout.Content>
 
-        <AntLayout.Footer className="px-4 py-2 lg:px-10">
-          <Flex align="center" wrap justify="space-between">
-            <Space.Compact>
-              <Button
-                tooltip={{ title: 'Reglamento' }}
-                icon={<FilePdfOutlined />}
-                htmlType="button"
-                type="text"
-                href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
-                target="_blank"
-              />
-              <Button
-                tooltip={{ title: 'Comunicados' }}
-                icon={<NotificationOutlined />}
-                htmlType="button"
-                type="text"
-                href="https://drive.google.com/drive/folders/1GOvB0buIDLSpj_WofhsfASH8t8E_eMvi?usp=sharing"
-                target="_blank"
-              />
-            </Space.Compact>
-
-            <Typography.Text className="text-xs">
-              Hecho con <HeartOutlined /> por D.
-            </Typography.Text>
-
-            <Space>
+          <AntLayout.Footer className="px-0">
+            <Flex align="center" wrap justify="space-between">
               <Space.Compact>
-                <ThemeSelector />
                 <Button
-                  tooltip={{ title: 'Enviar Email' }}
-                  icon={<MailOutlined />}
+                  tooltip={{ title: 'Reglamento' }}
+                  icon={<FilePdfOutlined />}
                   htmlType="button"
                   type="text"
-                  href={`mailto:${EmailServiceEnum.EMAIL_FROM_ADDRESS}`}
+                  href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
                   target="_blank"
                 />
-
                 <Button
-                  tooltip={{ title: 'Enviar WhatsApp' }}
+                  tooltip={{ title: 'Enviar WhatsApp al Club' }}
                   icon={<WhatsAppOutlined />}
                   htmlType="button"
                   type="text"
@@ -285,12 +214,62 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
                   target="_blank"
                 />
               </Space.Compact>
-            </Space>
-          </Flex>
-        </AntLayout.Footer>
-      </AntLayout>
 
-      {renderFloatButton()}
+              <Tooltip
+                title={
+                  <>
+                    Hecho con <HeartOutlined /> por D.
+                  </>
+                }
+              >
+                <CopyrightCircleOutlined />
+              </Tooltip>
+
+              <ThemeSelector />
+            </Flex>
+
+            {(permissions.isAdmin || permissions.isStaff) && (
+              <FloatButton.Group
+                shape="square"
+                trigger="hover"
+                type="primary"
+                style={{ bottom: 75 }}
+                icon={<AddNewIcon />}
+              >
+                {permissions.movements.create && (
+                  <FloatButton
+                    tooltip="Nuevo movimiento"
+                    icon={<MovementsIcon />}
+                    onClick={() =>
+                      navigate(`${AppUrl.MOVEMENTS}/${AppUrlGenericEnum.NEW}`)
+                    }
+                  />
+                )}
+
+                {permissions.dues.create && (
+                  <FloatButton
+                    tooltip="Nueva deuda"
+                    icon={<DuesIcon />}
+                    onClick={() =>
+                      navigate(`${AppUrl.DUES}/${AppUrlGenericEnum.NEW}`)
+                    }
+                  />
+                )}
+
+                {permissions.payments.create && (
+                  <FloatButton
+                    tooltip="Nuevo pago"
+                    icon={<PaymentsIcon />}
+                    onClick={() =>
+                      navigate(`${AppUrl.PAYMENTS}/${AppUrlGenericEnum.NEW}`)
+                    }
+                  />
+                )}
+              </FloatButton.Group>
+            )}
+          </AntLayout.Footer>
+        </AntLayout.Content>
+      </AntLayout>
     </AntLayout>
   );
 };
