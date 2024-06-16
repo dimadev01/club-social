@@ -1,12 +1,12 @@
-import { EditOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
+import { AppUrlGenericEnum } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
+import { EditIcon } from '@ui/components/Icons/EditIcon';
 import { useIsInRoleFn } from '@ui/hooks/auth/useIsInRole';
-import { useNavigate } from '@ui/hooks/ui/useNavigate';
 
 export type FormEditButtonProps = ButtonProps & {
   scope: ScopeEnum;
@@ -20,8 +20,6 @@ export const FormEditButton: React.FC<FormEditButtonProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const location = useLocation();
-
   const isInRole = useIsInRoleFn();
 
   if (scope) {
@@ -34,8 +32,8 @@ export const FormEditButton: React.FC<FormEditButtonProps> = ({
 
   return (
     <Button
-      onClick={() => navigate(`${location.pathname}/edit`)}
-      icon={<EditOutlined />}
+      onClick={() => navigate(AppUrlGenericEnum.EDIT)}
+      icon={<EditIcon />}
       type="primary"
       htmlType="button"
       {...rest}

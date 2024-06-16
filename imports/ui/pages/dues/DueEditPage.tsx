@@ -1,7 +1,7 @@
-import { Breadcrumb, Card, Col, Descriptions, Form, Input, Space } from 'antd';
+import { Card, Col, Descriptions, Form, Input, Space } from 'antd';
 import { Dayjs } from 'dayjs';
 import React from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
@@ -13,8 +13,10 @@ import {
 } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
+import { Breadcrumbs } from '@ui/components/Breadcrumbs/Breadcrumbs';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { FormInputAmount } from '@ui/components/Form/FormInputAmount';
+import { DuesIcon } from '@ui/components/Icons/DuesIcon';
 import { Row } from '@ui/components/Layout/Row';
 import { NotFound } from '@ui/components/NotFound';
 import { useDue } from '@ui/hooks/dues/useDue';
@@ -33,6 +35,8 @@ export const DueEditPage = () => {
   const { id: dueId } = useParams<{ id?: string }>();
 
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   const { data: due, error } = useDue(dueId ? { id: dueId } : undefined);
 
@@ -71,11 +75,16 @@ export const DueEditPage = () => {
 
   return (
     <>
-      <Breadcrumb
-        className="mb-4"
+      <Breadcrumbs
         items={[
-          { title: 'Inicio' },
-          { title: <Link to={AppUrl.DUES}>Deudas</Link> },
+          {
+            title: (
+              <Space>
+                <DuesIcon />
+                <Link to={`/${AppUrl.DUES}`}>Deudas</Link>
+              </Space>
+            ),
+          },
           {
             title: `Editando deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`,
           },
@@ -83,6 +92,7 @@ export const DueEditPage = () => {
       />
 
       <Card
+        extra={<DuesIcon />}
         title={`Editando deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`}
       >
         <Form<FormValues>

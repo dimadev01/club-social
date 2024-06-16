@@ -1,9 +1,9 @@
-import { SaveOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd';
 import React from 'react';
 
 import { PermissionEnum, type ScopeEnum } from '@domain/roles/role.enum';
 import { Button } from '@ui/components/Button/Button';
+import { SaveIcon } from '@ui/components/Icons/SaveIcon';
 import { useIsInRoleFn } from '@ui/hooks/auth/useIsInRole';
 
 export type FormSaveButtonProps = ButtonProps & {
@@ -29,7 +29,7 @@ export const FormSaveButton: React.FC<FormSaveButtonProps> = ({
   }
 
   return (
-    <Button icon={<SaveOutlined />} type="primary" htmlType="submit" {...rest}>
+    <Button icon={<SaveIcon />} type="primary" htmlType="submit" {...rest}>
       {text ?? 'Guardar'}
     </Button>
   );

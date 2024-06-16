@@ -1,11 +1,6 @@
-import {
-  CreditCardOutlined,
-  TeamOutlined,
-  WalletOutlined,
-} from '@ant-design/icons';
 import { Card, Space } from 'antd';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { MemberGridDto } from '@application/members/dtos/member-grid.dto';
 import { Money } from '@domain/common/value-objects/money.value-object';
@@ -26,28 +21,31 @@ import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
-import { useTable } from '@ui/components/Grid/useTable';
+import { useGrid } from '@ui/components/Grid/useGrid';
+import { DuesIcon } from '@ui/components/Icons/DuesIcon';
+import { PaymentsIcon } from '@ui/components/Icons/PaymentsIcon';
+import { UsersIcon } from '@ui/components/Icons/UsersIcon';
 import { MembersGridCsvDownloaderButton } from '@ui/components/Members/MembersGridCsvDownloader';
 import { GetMembersGridRequestDto } from '@ui/dtos/get-members-grid-request.dto';
 import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
-import { useNavigate } from '@ui/hooks/ui/useNavigate';
 
 export const MembersPage = () => {
   const navigate = useNavigate();
 
   const permissions = usePermissions();
 
-  const { gridState, onTableChange } = useTable<MemberGridDto>({
-    defaultFilters: {
-      category: [],
-      id: [],
-      pendingTotal: [],
-      status: [MemberStatusEnum.ACTIVE],
-    },
-    defaultSorter: { id: 'ascend' },
-  });
+  const { gridState, onTableChange, resetFilters, clearFilters } =
+    useGrid<MemberGridDto>({
+      defaultFilters: {
+        category: [],
+        id: [],
+        pendingTotal: [],
+        status: [MemberStatusEnum.ACTIVE],
+      },
+      defaultSorter: { id: 'ascend' },
+    });
 
   const { data: members } = useMembers();
 
@@ -83,7 +81,7 @@ export const MembersPage = () => {
     <Card
       title={
         <Space>
-          <TeamOutlined />
+          <UsersIcon />
           <span>Socios</span>
         </Space>
       }
@@ -91,7 +89,7 @@ export const MembersPage = () => {
         <Space.Compact>
           <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
           <MembersGridCsvDownloaderButton request={gridRequest} />
-          <GridNewButton scope={ScopeEnum.MEMBERS} to={AppUrl.MEMBERS_NEW} />
+          <GridNewButton scope={ScopeEnum.MEMBERS} />
         </Space.Compact>
       }
     >
@@ -101,6 +99,8 @@ export const MembersPage = () => {
         onTableChange={onTableChange}
         loading={isLoading}
         dataSource={data?.items}
+        clearFilters={clearFilters}
+        resetFilters={resetFilters}
         rowClassName={(member) => {
           if (member.pendingTotal > 0) {
             return 'bg-red-100 dark:bg-red-900';
@@ -117,7 +117,9 @@ export const MembersPage = () => {
             filters: GridUtils.getMembersForFilter(members),
             fixed: 'left',
             render: (id: string, member: MemberGridDto) => (
-              <Link to={`${AppUrl.MEMBERS}/${id}`}>{member.name}</Link>
+              <Link to={id} state={gridState}>
+                {member.name}
+              </Link>
             ),
             sortOrder: gridState.sorter.id,
             sorter: true,
@@ -219,12 +221,14 @@ export const MembersPage = () => {
                 {permissions.dues.read && (
                   <Button
                     type="text"
-                    icon={<WalletOutlined />}
+                    icon={<DuesIcon />}
                     onClick={() =>
                       navigate(
-                        UrlUtils.navigate(AppUrl.DUES, {
-                          filters: { memberId: [member.id] },
-                        }),
+                        `/${AppUrl.DUES}${UrlUtils.stringify({
+                          filters: {
+                            memberId: [member.id],
+                          },
+                        })}`,
                       )
                     }
                     tooltip={{ title: 'Ver deudas' }}
@@ -234,12 +238,14 @@ export const MembersPage = () => {
                 {permissions.payments.read && (
                   <Button
                     type="text"
-                    icon={<CreditCardOutlined />}
+                    icon={<PaymentsIcon />}
                     onClick={() =>
                       navigate(
-                        UrlUtils.navigate(AppUrl.PAYMENTS, {
-                          filters: { memberId: [member.id] },
-                        }),
+                        `/${AppUrl.PAYMENTS}${UrlUtils.stringify({
+                          filters: {
+                            memberId: [member.id],
+                          },
+                        })}`,
                       )
                     }
                     tooltip={{ title: 'Ver Pagos' }}

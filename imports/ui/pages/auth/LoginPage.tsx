@@ -6,7 +6,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
-import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
 import { useNotificationError } from '@ui/hooks/ui/useNotification';
 
 type FormValues = {
@@ -25,7 +24,7 @@ export const LoginPage = () => {
 
   const [isSendingEmail, setIsSendingEmail] = useState(false);
 
-  const login = (values: FormValues) => {
+  const handleLogin = (values: FormValues) => {
     setIsSendingEmail(true);
 
     // @ts-expect-error
@@ -50,46 +49,46 @@ export const LoginPage = () => {
             notificationError(error.message);
           }
         } else {
-          navigate(AppUrl.LOGIN_PASSWORDLESS.replace(':email', values.email));
+          navigate(
+            AppUrl.AUTH_LOGIN_PASSWORDLESS.replace(':email', values.email),
+          );
         }
       },
     );
   };
 
   return (
-    <CenteredLayout>
-      <Form<FormValues>
-        onFinish={(values) => login(values)}
-        layout="vertical"
-        requiredMark={false}
+    <Form<FormValues>
+      onFinish={(values) => handleLogin(values)}
+      layout="vertical"
+      requiredMark={false}
+    >
+      <Form.Item
+        label="Email"
+        name="email"
+        className="mb-16"
+        rules={[{ required: true }, { type: 'email' }]}
       >
-        <Form.Item
-          label="Email"
-          name="email"
-          className="mb-16"
-          rules={[{ required: true }, { type: 'email' }]}
-        >
-          <Input
-            autoFocus
-            size="large"
-            className="text-sm"
-            type="email"
-            placeholder="Ingresa tu email"
-          />
-        </Form.Item>
+        <Input
+          autoFocus
+          size="large"
+          className="text-sm"
+          type="email"
+          placeholder="Ingresa tu email"
+        />
+      </Form.Item>
 
-        <div className="flex justify-between">
-          <Button
-            className="flex-1 rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
-            type="primary"
-            htmlType="submit"
-            disabled={isLoggingIn || isSendingEmail}
-            loading={isLoggingIn || isSendingEmail}
-          >
-            Iniciar Sesión
-          </Button>
-        </div>
-      </Form>
-    </CenteredLayout>
+      <div className="flex justify-between">
+        <Button
+          className="flex-1 rounded-bl-none rounded-br-[10px] rounded-tl-[10px] rounded-tr-none"
+          type="primary"
+          htmlType="submit"
+          disabled={isLoggingIn || isSendingEmail}
+          loading={isLoggingIn || isSendingEmail}
+        >
+          Iniciar Sesión
+        </Button>
+      </div>
+    </Form>
   );
 };

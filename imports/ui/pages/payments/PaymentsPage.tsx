@@ -1,9 +1,8 @@
-import { CreditCardOutlined, UserOutlined } from '@ant-design/icons';
 import { Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
@@ -25,7 +24,9 @@ import { GridUtils } from '@ui/components/Grid/grid.utils';
 import { GridFilterByMemberButton } from '@ui/components/Grid/GridFilterByMemberButton';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
-import { useTable } from '@ui/components/Grid/useTable';
+import { useGrid } from '@ui/components/Grid/useGrid';
+import { PaymentsIcon } from '@ui/components/Icons/PaymentsIcon';
+import { UserIcon } from '@ui/components/Icons/UserIcon';
 import { PaymentDuesGrid } from '@ui/components/Payments/PaymentDuesGrid';
 import { GetPaymentsGridRequestDto } from '@ui/dtos/get-payments-grid-request.dto';
 import { GetPaymentsTotalsRequestDto } from '@ui/dtos/get-payments-totals-request.dto';
@@ -33,7 +34,6 @@ import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { usePaymentsTotals } from '@ui/hooks/payments/usePaymentsTotals';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
-import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 import { useUserContext } from '@ui/providers/UserContext';
 
@@ -44,15 +44,16 @@ export const PaymentsPage = () => {
 
   const { member } = useUserContext();
 
-  const { gridState, onTableChange, setGridState } = useTable<PaymentGridDto>({
-    defaultFilters: {
-      createdAt: [],
-      date: [],
-      memberId: [],
-      status: [PaymentStatusEnum.PAID],
-    },
-    defaultSorter: { createdAt: 'descend' },
-  });
+  const { gridState, onTableChange, setGridState, clearFilters, resetFilters } =
+    useGrid<PaymentGridDto>({
+      defaultFilters: {
+        createdAt: [],
+        date: [],
+        memberId: [],
+        status: [PaymentStatusEnum.PAID],
+      },
+      defaultSorter: { createdAt: 'descend' },
+    });
 
   const { data: members } = useMembers();
 
@@ -112,7 +113,7 @@ export const PaymentsPage = () => {
         filterDropdown: renderCreatedAtFilter,
         filteredValue: gridState.filters.createdAt,
         render: (createdAt: string, payment: PaymentGridDto) => (
-          <Link to={`${AppUrl.PAYMENTS}/${payment.id}`}>
+          <Link to={payment.id} state={gridState}>
             {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
           </Link>
         ),
@@ -201,14 +202,14 @@ export const PaymentsPage = () => {
                 type="text"
                 onClick={() => {
                   navigate(
-                    UrlUtils.navigate(AppUrl.MEMBERS, {
+                    `/${AppUrl.MEMBERS}${UrlUtils.stringify({
                       filters: { id: [payment.memberId] },
-                    }),
+                    })}`,
                   );
                 }}
                 htmlType="button"
                 tooltip={{ title: 'Ver Socio' }}
-                icon={<UserOutlined />}
+                icon={<UserIcon />}
               />
             )}
           </Space.Compact>
@@ -257,18 +258,20 @@ export const PaymentsPage = () => {
     <Card
       title={
         <Space>
-          <CreditCardOutlined />
+          <PaymentsIcon />
           <span>Pagos</span>
         </Space>
       }
       extra={
         <Space.Compact>
           <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
-          <GridNewButton scope={ScopeEnum.PAYMENTS} to={AppUrl.PAYMENTS_NEW} />
+          <GridNewButton scope={ScopeEnum.PAYMENTS} />
         </Space.Compact>
       }
     >
       <Grid<PaymentGridDto>
+        resetFilters={resetFilters}
+        clearFilters={clearFilters}
         total={data?.totalCount}
         state={gridState}
         summary={renderSummary}

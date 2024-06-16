@@ -1,14 +1,7 @@
-import {
-  CreditCardOutlined,
-  EyeOutlined,
-  SwapOutlined,
-  UserOutlined,
-  WalletOutlined,
-} from '@ant-design/icons';
 import { Card, Space, Table, Typography } from 'antd';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
 import { MovementGridDto } from '@application/movements/dtos/movement-grid.dto';
@@ -35,14 +28,18 @@ import { Button } from '@ui/components/Button/Button';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridNewButton } from '@ui/components/Grid/GridNewButton';
 import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
-import { useTable } from '@ui/components/Grid/useTable';
+import { useGrid } from '@ui/components/Grid/useGrid';
+import { DuesIcon } from '@ui/components/Icons/DuesIcon';
+import { MovementsIcon } from '@ui/components/Icons/MovementsIcon';
+import { PaymentsIcon } from '@ui/components/Icons/PaymentsIcon';
+import { UserIcon } from '@ui/components/Icons/UserIcon';
+import { ViewIcon } from '@ui/components/Icons/ViewIcon';
 import { MovementsGridCsvDownloaderButton } from '@ui/components/Movements/MovementsGridCsvDownloader';
 import { GetMovementsGridRequestDto } from '@ui/dtos/get-movements-grid-request.dto';
 import { GetMovementsTotalsRequestDto } from '@ui/dtos/get-movements-totals-request.dto';
 import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useMovementsTotals } from '@ui/hooks/movements/useMovementsTotals';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
-import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 
 export const MovementsPage = () => {
@@ -50,16 +47,17 @@ export const MovementsPage = () => {
 
   const permissions = usePermissions();
 
-  const { gridState, onTableChange } = useTable<MovementGridDto>({
-    defaultFilters: {
-      category: [],
-      createdAt: [],
-      date: [],
-      status: [MovementStatusEnum.REGISTERED],
-      type: [],
-    },
-    defaultSorter: { createdAt: 'descend' },
-  });
+  const { gridState, onTableChange, clearFilters, resetFilters } =
+    useGrid<MovementGridDto>({
+      defaultFilters: {
+        category: [],
+        createdAt: [],
+        date: [],
+        status: [MovementStatusEnum.REGISTERED],
+        type: [],
+      },
+      defaultSorter: { createdAt: 'descend' },
+    });
 
   const gridRequestFilters: GetMovementsTotalsRequestDto = {
     filterByCategory: gridState.filters.category as MovementCategoryEnum[],
@@ -122,7 +120,7 @@ export const MovementsPage = () => {
     <Card
       title={
         <Space>
-          <SwapOutlined />
+          <MovementsIcon />
           <span>Movimientos</span>
         </Space>
       }
@@ -130,15 +128,14 @@ export const MovementsPage = () => {
         <Space.Compact>
           <GridReloadButton isRefetching={isRefetching} refetch={refetch} />
           <MovementsGridCsvDownloaderButton request={gridRequest} />
-          <GridNewButton
-            scope={ScopeEnum.MOVEMENTS}
-            to={AppUrl.MOVEMENTS_NEW}
-          />
+          <GridNewButton scope={ScopeEnum.MOVEMENTS} />
         </Space.Compact>
       }
     >
       <Grid<MovementGridDto>
         summary={renderSummary}
+        clearFilters={clearFilters}
+        resetFilters={resetFilters}
         total={data?.totalCount}
         state={gridState}
         onTableChange={onTableChange}
@@ -166,7 +163,7 @@ export const MovementsPage = () => {
             filterDropdown: renderCreatedAtFilter,
             filteredValue: gridState.filters.createdAt,
             render: (date: string, movement: MovementGridDto) => (
-              <Link to={`${AppUrl.MOVEMENTS}/${movement.id}`}>
+              <Link to={movement.id} state={gridState}>
                 {new DateVo(date).format(DateFormatEnum.DDMMYYHHmm)}
               </Link>
             ),
@@ -264,11 +261,14 @@ export const MovementsPage = () => {
                       <Button
                         type="text"
                         onClick={() => {
-                          navigate(`${AppUrl.PAYMENTS}/${movement.paymentId}`);
+                          navigate(
+                            `/${AppUrl.PAYMENTS}/${movement.paymentId}`,
+                            { state: gridState },
+                          );
                         }}
                         htmlType="button"
                         tooltip={{ title: 'Ver Detalle del Pago' }}
-                        icon={<EyeOutlined />}
+                        icon={<ViewIcon />}
                       />
                     )}
 
@@ -277,16 +277,17 @@ export const MovementsPage = () => {
                         type="text"
                         onClick={() => {
                           navigate(
-                            UrlUtils.navigate(AppUrl.DUES, {
+                            `/${AppUrl.DUES}${UrlUtils.stringify({
                               filters: {
                                 memberId: [movement.paymentMemberId],
                               },
-                            }),
+                            })}`,
+                            { state: gridState },
                           );
                         }}
                         htmlType="button"
                         tooltip={{ title: 'Ver Deudas' }}
-                        icon={<WalletOutlined />}
+                        icon={<DuesIcon />}
                       />
                     )}
 
@@ -295,16 +296,17 @@ export const MovementsPage = () => {
                         type="text"
                         onClick={() => {
                           navigate(
-                            UrlUtils.navigate(AppUrl.PAYMENTS, {
+                            `/${AppUrl.PAYMENTS}${UrlUtils.stringify({
                               filters: {
                                 memberId: [movement.paymentMemberId],
                               },
-                            }),
+                            })}`,
+                            { state: gridState },
                           );
                         }}
                         htmlType="button"
                         tooltip={{ title: 'Ver Pago' }}
-                        icon={<CreditCardOutlined />}
+                        icon={<PaymentsIcon />}
                       />
                     )}
 
@@ -313,14 +315,17 @@ export const MovementsPage = () => {
                         type="text"
                         onClick={() => {
                           navigate(
-                            UrlUtils.navigate(AppUrl.MEMBERS, {
-                              filters: { id: [movement.paymentMemberId] },
-                            }),
+                            `/${AppUrl.MEMBERS}${UrlUtils.stringify({
+                              filters: {
+                                id: [movement.paymentMemberId],
+                              },
+                            })}`,
+                            { state: gridState },
                           );
                         }}
                         htmlType="button"
                         tooltip={{ title: 'Ver Socio' }}
-                        icon={<UserOutlined />}
+                        icon={<UserIcon />}
                       />
                     )}
                   </Space.Compact>

@@ -1,10 +1,9 @@
-import { PlusOutlined } from '@ant-design/icons';
 import { Breadcrumb, Card, Col, DatePicker, Form, InputNumber } from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
 import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
@@ -18,6 +17,7 @@ import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Button } from '@ui/components/Button/Button';
 import { FormButtons } from '@ui/components/Form/FormButtons';
+import { AddNewIcon } from '@ui/components/Icons/AddNewIcon';
 import { Row } from '@ui/components/Layout/Row';
 import { MembersSelect } from '@ui/components/Members/MembersSelect';
 import { CreatePaymentDueRequestDto } from '@ui/dtos/create-payment-due-request.dto';
@@ -25,7 +25,6 @@ import { CreatePaymentRequestDto } from '@ui/dtos/create-payment-request.dto';
 import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDuesByMember';
 import { useMember } from '@ui/hooks/members/useMember';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
-import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import {
   useNotificationError,
   useNotificationSuccess,
@@ -277,7 +276,7 @@ export const PaymentNewPage = () => {
                       `${AppUrl.DUES}/new/${UrlUtils.stringify({ memberIds: [formMemberId] })}`,
                     )
                   }
-                  icon={<PlusOutlined />}
+                  icon={<AddNewIcon />}
                 >
                   Nueva Deuda
                 </Button>

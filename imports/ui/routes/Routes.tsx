@@ -1,204 +1,216 @@
 import React from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import {
+  Outlet,
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
-import { AppUrl } from '@ui/app.enum';
-import { EnrollPage } from '@ui/pages/auth/EnrollPage';
+import { AppUrl, AppUrlGenericEnum } from '@ui/app.enum';
+import { CenteredLayout } from '@ui/components/Layout/CenteredLayout';
 import { LoginPage } from '@ui/pages/auth/LoginPage';
 import { LoginPasswordlessPage } from '@ui/pages/auth/LoginPasswordlessPage';
 import { LogoutPage } from '@ui/pages/auth/LogoutPage';
-import { VerifyEmailPage } from '@ui/pages/auth/VerifyEmailPage';
 import { DueDetailPage } from '@ui/pages/dues/DueDetailPage';
 import { DueEditPage } from '@ui/pages/dues/DueEditPage';
 import { DuesNewPage } from '@ui/pages/dues/DuesNewPage';
-import { DuesRoot } from '@ui/pages/dues/DuesRoot';
+import { DuesPage } from '@ui/pages/dues/DuesPage';
 import { HomePage } from '@ui/pages/HomePage';
 import { MemberDetailPage } from '@ui/pages/members/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
 import { MovementDetailPage } from '@ui/pages/movements/MovementDetailPage';
 import { MovementEditPage } from '@ui/pages/movements/MovementEditPage';
 import { MovementNewPage } from '@ui/pages/movements/MovementNewPage';
-import { MovementsRoot } from '@ui/pages/movements/MovementsRoot';
+import { MovementsPage } from '@ui/pages/movements/MovementsPage';
 import { PaymentDetailPage } from '@ui/pages/payments/PaymentDetailPage';
 import { PaymentNewPage } from '@ui/pages/payments/PaymentNewPage';
-import { PaymentsRoot } from '@ui/pages/payments/PaymentsRoot';
+import { PaymentsPage } from '@ui/pages/payments/PaymentsPage';
 import { AuthRoute } from '@ui/routes/AuthRoute';
-import { PrivateRoute } from '@ui/routes/PrivateRoute';
+import { PrivateRoute } from '@ui/routes/PrivateRoute2';
 import { PublicRoute } from '@ui/routes/PublicRoute';
 
-const router = createBrowserRouter([
-  {
-    element: (
-      <AuthRoute>
-        <HomePage />
-      </AuthRoute>
-    ),
-    path: AppUrl.Home,
-  },
-  {
-    element: (
-      <PublicRoute>
-        <LoginPage />
-      </PublicRoute>
-    ),
-    path: AppUrl.LOGIN,
-  },
-  {
-    element: (
-      <PublicRoute>
-        <LoginPasswordlessPage />
-      </PublicRoute>
-    ),
-    path: AppUrl.LOGIN_PASSWORDLESS,
-  },
-  {
-    element: <LogoutPage />,
-    path: AppUrl.LOGOUT,
-  },
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path={AppUrl.HOME} element={<AuthRoute />}>
+        <Route index element={<HomePage />} />
 
-  {
-    element: (
-      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.MEMBERS}>
-        <MembersPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.MEMBERS,
-  },
-  {
-    element: (
-      <PrivateRoute
-        permission={PermissionEnum.CREATE}
-        scope={ScopeEnum.MEMBERS}
-      >
-        <MemberDetailPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.MEMBERS_NEW,
-  },
-  {
-    element: (
-      <PrivateRoute
-        permission={PermissionEnum.UPDATE}
-        scope={ScopeEnum.MEMBERS}
-      >
-        <MemberDetailPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.MEMBERS_DETAIL,
-  },
+        <Route path={AppUrl.MEMBERS} element={<Outlet />}>
+          <Route
+            index
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.MEMBERS}
+                permission={PermissionEnum.READ}
+                element={<MembersPage />}
+              />
+            }
+          />
 
-  {
-    element: (
-      <PrivateRoute
-        permission={PermissionEnum.READ}
-        scope={ScopeEnum.MOVEMENTS}
-      >
-        <MovementsRoot />
-      </PrivateRoute>
-    ),
-    path: AppUrl.MOVEMENTS,
-  },
-  {
-    element: (
-      <PrivateRoute
-        permission={PermissionEnum.CREATE}
-        scope={ScopeEnum.MOVEMENTS}
-      >
-        <MovementNewPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.MOVEMENTS_NEW,
-  },
-  {
-    element: (
-      <PrivateRoute
-        permission={PermissionEnum.UPDATE}
-        scope={ScopeEnum.MOVEMENTS}
-      >
-        <MovementEditPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.MOVEMENTS_EDIT,
-  },
-  {
-    element: (
-      <PrivateRoute
-        permission={PermissionEnum.READ}
-        scope={ScopeEnum.MOVEMENTS}
-      >
-        <MovementDetailPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.MOVEMENTS_DETAIL,
-  },
+          <Route
+            path={AppUrlGenericEnum.ID}
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.MEMBERS}
+                permission={PermissionEnum.UPDATE}
+                element={<MemberDetailPage />}
+              />
+            }
+          />
+          <Route
+            path={AppUrlGenericEnum.NEW}
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.MEMBERS}
+                permission={PermissionEnum.CREATE}
+                element={<MemberDetailPage />}
+              />
+            }
+          />
+        </Route>
 
-  {
-    element: (
-      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.DUES}>
-        <DuesRoot />
-      </PrivateRoute>
-    ),
-    path: AppUrl.DUES,
-  },
-  {
-    element: (
-      <PrivateRoute permission={PermissionEnum.CREATE} scope={ScopeEnum.DUES}>
-        <DuesNewPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.DUES_NEW,
-  },
-  {
-    element: (
-      <PrivateRoute permission={PermissionEnum.UPDATE} scope={ScopeEnum.DUES}>
-        <DueEditPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.DUES_EDIT,
-  },
-  {
-    element: (
-      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.DUES}>
-        <DueDetailPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.DUES_DETAIL,
-  },
+        <Route path={AppUrl.DUES} element={<Outlet />}>
+          <Route
+            index
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.DUES}
+                permission={PermissionEnum.READ}
+                element={<DuesPage />}
+              />
+            }
+          />
+          <Route
+            path={AppUrlGenericEnum.NEW}
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.DUES}
+                permission={PermissionEnum.CREATE}
+                element={<DuesNewPage />}
+              />
+            }
+          />
+          <Route path={AppUrlGenericEnum.ID} element={<Outlet />}>
+            <Route
+              index
+              element={
+                <PrivateRoute
+                  scope={ScopeEnum.DUES}
+                  permission={PermissionEnum.READ}
+                  element={<DueDetailPage />}
+                />
+              }
+            />
+            <Route
+              path={AppUrlGenericEnum.EDIT}
+              element={
+                <PrivateRoute
+                  scope={ScopeEnum.DUES}
+                  permission={PermissionEnum.UPDATE}
+                  element={<DueEditPage />}
+                />
+              }
+            />
+          </Route>
+        </Route>
 
-  {
-    element: (
-      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.PAYMENTS}>
-        <PaymentsRoot />
-      </PrivateRoute>
-    ),
-    path: AppUrl.PAYMENTS,
-  },
-  {
-    element: (
-      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.PAYMENTS}>
-        <PaymentNewPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.PAYMENTS_NEW,
-  },
+        <Route path={AppUrl.PAYMENTS} element={<Outlet />}>
+          <Route
+            index
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.PAYMENTS}
+                permission={PermissionEnum.READ}
+                element={<PaymentsPage />}
+              />
+            }
+          />
+          <Route
+            path={AppUrlGenericEnum.NEW}
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.PAYMENTS}
+                permission={PermissionEnum.CREATE}
+                element={<PaymentNewPage />}
+              />
+            }
+          />
+          <Route path={AppUrlGenericEnum.ID} element={<Outlet />}>
+            <Route
+              index
+              element={
+                <PrivateRoute
+                  scope={ScopeEnum.PAYMENTS}
+                  permission={PermissionEnum.READ}
+                  element={<PaymentDetailPage />}
+                />
+              }
+            />
+          </Route>
+        </Route>
 
-  {
-    element: (
-      <PrivateRoute permission={PermissionEnum.READ} scope={ScopeEnum.PAYMENTS}>
-        <PaymentDetailPage />
-      </PrivateRoute>
-    ),
-    path: AppUrl.PAYMENTS_DETAIL,
-  },
+        <Route path={AppUrl.MOVEMENTS} element={<Outlet />}>
+          <Route
+            index
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.MOVEMENTS}
+                permission={PermissionEnum.READ}
+                element={<MovementsPage />}
+              />
+            }
+          />
+          <Route
+            path={AppUrlGenericEnum.NEW}
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.MOVEMENTS}
+                permission={PermissionEnum.CREATE}
+                element={<MovementNewPage />}
+              />
+            }
+          />
+          <Route path={AppUrlGenericEnum.ID} element={<Outlet />}>
+            <Route
+              index
+              element={
+                <PrivateRoute
+                  scope={ScopeEnum.MOVEMENTS}
+                  permission={PermissionEnum.UPDATE}
+                  element={<MovementDetailPage />}
+                />
+              }
+            />
+            <Route
+              path={AppUrlGenericEnum.EDIT}
+              element={
+                <PrivateRoute
+                  scope={ScopeEnum.MOVEMENTS}
+                  permission={PermissionEnum.UPDATE}
+                  element={<MovementEditPage />}
+                />
+              }
+            />
+          </Route>
+        </Route>
+      </Route>
 
-  {
-    element: <EnrollPage />,
-    path: AppUrl.ENROLL,
-  },
-  {
-    element: <VerifyEmailPage />,
-    path: AppUrl.VERIFY_EMAIL,
-  },
-]);
+      <Route path={AppUrl.AUTH}>
+        <Route path={AppUrl.AUTH_LOGOUT} element={<LogoutPage />} />,
+        <Route element={<PublicRoute />}>
+          <Route path={AppUrl.AUTH_LOGIN} element={<CenteredLayout />}>
+            <Route index element={<LoginPage />} />
+            <Route
+              path={AppUrl.AUTH_LOGIN_PASSWORDLESS}
+              element={<LoginPasswordlessPage />}
+            />
+          </Route>
+        </Route>
+      </Route>
+    </>,
+  ),
+);
 
 export const Routes = () => <RouterProvider router={router} />;

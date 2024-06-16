@@ -1,14 +1,6 @@
-import {
-  Breadcrumb,
-  Card,
-  Descriptions,
-  Divider,
-  Flex,
-  Space,
-  Watermark,
-} from 'antd';
+import { Card, Descriptions, Divider, Flex, Space, Watermark } from 'antd';
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
@@ -17,15 +9,17 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueStatusEnum, DueStatusLabel } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
+import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
+import { Breadcrumbs } from '@ui/components/Breadcrumbs/Breadcrumbs';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormEditButton } from '@ui/components/Form/FormEditButton';
 import { FormVoidButton } from '@ui/components/Form/FormVoidButton';
+import { DuesIcon } from '@ui/components/Icons/DuesIcon';
 import { NotFound } from '@ui/components/NotFound';
 import { useDue } from '@ui/hooks/dues/useDue';
 import { useVoidDue } from '@ui/hooks/dues/useVoidDue';
-import { useNavigate } from '@ui/hooks/ui/useNavigate';
 import { useNotificationSuccess } from '@ui/hooks/ui/useNotification';
 import { renderDueCategoryLabel } from '@ui/utils/renderDueCategory';
 
@@ -33,6 +27,8 @@ export const DueDetailPage = () => {
   const { id: dueId } = useParams<{ id?: string }>();
 
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   const notificationSuccess = useNotificationSuccess();
 
@@ -55,11 +51,18 @@ export const DueDetailPage = () => {
    */
   return (
     <>
-      <Breadcrumb
-        className="mb-4"
+      <Breadcrumbs
         items={[
-          { title: 'Inicio' },
-          { title: <Link to={AppUrl.DUES}>Deudas</Link> },
+          {
+            title: (
+              <Space>
+                <DuesIcon />
+                <Link to={`..${UrlUtils.stringify(location.state)}`}>
+                  Deudas
+                </Link>
+              </Space>
+            ),
+          },
           {
             title: `Deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`,
           },
@@ -74,6 +77,7 @@ export const DueDetailPage = () => {
         }
       >
         <Card
+          extra={<DuesIcon />}
           title={`Deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`}
         >
           <>

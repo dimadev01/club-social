@@ -1,19 +1,15 @@
 import { useTracker } from 'meteor/react-meteor-data';
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { PropsWithChildren } from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
 
-type Props = {
-  children: JSX.Element;
-};
-
-export const PublicRoute: React.FC<Props> = ({ children }) => {
+export const PublicRoute: React.FC<PropsWithChildren> = ({ children }) => {
   const { user } = useTracker(() => ({ user: Meteor.user() }));
 
   if (user) {
-    return <Navigate to={AppUrl.Home} />;
+    return <Navigate to={AppUrl.HOME} />;
   }
 
-  return children;
+  return <Outlet />;
 };

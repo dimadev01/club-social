@@ -1,9 +1,10 @@
-import { CloseOutlined, FilterOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { RoleEnum } from '@domain/roles/role.enum';
 import { Button } from '@ui/components/Button/Button';
 import { GridState } from '@ui/components/Grid/Grid';
+import { FilterClearIcon } from '@ui/components/Icons/FilterClearIcon';
+import { FilterIcon } from '@ui/components/Icons/FilterIcon';
 
 interface Props {
   gridState: GridState;
@@ -42,7 +43,7 @@ export const GridFilterByMemberButton: React.FC<Props> = ({
           }}
           htmlType="button"
           tooltip={{ title: 'Filtrar por este socio' }}
-          icon={<FilterOutlined />}
+          icon={<FilterIcon />}
         />
       )}
 
@@ -58,12 +59,7 @@ export const GridFilterByMemberButton: React.FC<Props> = ({
           }}
           htmlType="button"
           tooltip={{ title: 'Quitar filtro' }}
-          icon={
-            <div className="relative">
-              <FilterOutlined />
-              <CloseOutlined className="absolute -right-2 -top-2 !text-[10px]" />
-            </div>
-          }
+          icon={<FilterClearIcon />}
         />
       )}
     </>

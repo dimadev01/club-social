@@ -1,7 +1,6 @@
 import { Button, Result } from 'antd';
 import React from 'react';
-
-import { useNavigate } from '@ui/hooks/ui/useNavigate';
+import { useNavigate } from 'react-router-dom';
 
 export const InternalError = () => {
   const navigate = useNavigate();
