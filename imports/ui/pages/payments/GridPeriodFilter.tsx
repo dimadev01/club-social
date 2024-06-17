@@ -2,9 +2,10 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { Card, DatePicker, Flex, Space } from 'antd';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import dayjs from 'dayjs';
-import React from 'react';
+import { isEqual } from 'lodash';
+import React, { useMemo, useState } from 'react';
+import useDeepCompareEffect from 'use-deep-compare-effect';
 
-import { DateFormatEnum } from '@shared/utils/date.utils';
 import { Button } from '@ui/components/Button/Button';
 import { getPresets } from '@ui/components/DatePicker/DatePicker.utils';
 
@@ -14,44 +15,58 @@ type Props = {
   value: string[];
 };
 
-export const GridPeriodFilter: React.FC<Props> = ({ value, title, props }) => (
-  <Card size="small" title={title}>
-    <Space direction="vertical">
-      <DatePicker.RangePicker
-        value={
-          value.length > 0
-            ? [dayjs.utc(value[0]), dayjs.utc(value[1])]
-            : undefined
-        }
-        onChange={(v) => {
-          const [from, to] = v ?? [];
+export const GridPeriodFilter: React.FC<Props> = ({ value, title, props }) => {
+  const presets = useMemo(() => getPresets(), []);
 
-          const fromDate = from?.format(DateFormatEnum.DATE);
+  const [state, setState] = useState<string[] | undefined>(
+    value.length > 0 ? value : undefined,
+  );
 
-          const toDate = to?.format(DateFormatEnum.DATE);
+  useDeepCompareEffect(() => {
+    if (!isEqual(props.selectedKeys, value)) {
+      props.confirm({ closeDropdown: true });
+    }
+  }, [props.selectedKeys, value]);
 
-          props.setSelectedKeys(fromDate && toDate ? [fromDate, toDate] : []);
+  return (
+    <Card size="small" title={title}>
+      <Space direction="vertical">
+        <DatePicker.RangePicker
+          value={state ? [dayjs.utc(state[0]), dayjs.utc(state[1])] : undefined}
+          onChange={(_, c) => {
+            if (c) {
+              const [from, to] = c;
 
-          props.confirm({ closeDropdown: true });
-        }}
-        presets={getPresets()}
-      />
+              const values = from && to ? [from, to] : undefined;
 
-      {value.length > 0 && (
-        <Flex justify="center">
-          <Button
-            icon={<CloseCircleOutlined />}
-            size="small"
-            onClick={() => {
+              props.setSelectedKeys(values ?? []);
+
+              setState(values);
+            } else {
               props.setSelectedKeys([]);
 
-              props.confirm({ closeDropdown: true });
-            }}
-          >
-            Limpiar
-          </Button>
-        </Flex>
-      )}
-    </Space>
-  </Card>
-);
+              setState(undefined);
+            }
+          }}
+          presets={presets}
+        />
+
+        {value.length > 0 && (
+          <Flex justify="center">
+            <Button
+              icon={<CloseCircleOutlined />}
+              size="small"
+              onClick={() => {
+                props.setSelectedKeys([]);
+
+                setState(undefined);
+              }}
+            >
+              Limpiar
+            </Button>
+          </Flex>
+        )}
+      </Space>
+    </Card>
+  );
+};

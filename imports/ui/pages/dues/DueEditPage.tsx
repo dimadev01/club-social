@@ -1,7 +1,7 @@
 import { Card, Col, Descriptions, Form, Input, Space } from 'antd';
 import { Dayjs } from 'dayjs';
 import React from 'react';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
@@ -35,8 +35,6 @@ export const DueEditPage = () => {
   const { id: dueId } = useParams<{ id?: string }>();
 
   const navigate = useNavigate();
-
-  const location = useLocation();
 
   const { data: due, error } = useDue(dueId ? { id: dueId } : undefined);
 
