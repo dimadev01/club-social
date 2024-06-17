@@ -190,85 +190,84 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         />
       </AntLayout.Sider>
 
-      <AntLayout className="cs-layout-content">
-        <AntLayout.Content className="max-w-screen-2xl px-4 py-12 lg:p-10">
-          {children}
+      <AntLayout className="relative max-w-screen-2xl px-4 pb-4 pt-10 lg:px-10">
+        <AntLayout.Content className="">{children}</AntLayout.Content>
 
-          <AntLayout.Footer className="px-0">
-            <Flex align="center" wrap justify="space-between">
-              <Space.Compact>
-                <Button
-                  tooltip={{ title: 'Reglamento' }}
-                  icon={<FilePdfOutlined />}
-                  htmlType="button"
-                  type="text"
-                  href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
-                  target="_blank"
-                />
-                <Button
-                  tooltip={{ title: 'Enviar WhatsApp al Club' }}
-                  icon={<WhatsAppOutlined />}
-                  htmlType="button"
-                  type="text"
-                  href="https://wa.me/5491158804950"
-                  target="_blank"
-                />
-              </Space.Compact>
+        <AntLayout.Footer className="p-0">
+          <Flex align="center" wrap justify="space-between">
+            <Space.Compact>
+              <Button
+                tooltip={{ title: 'Reglamento' }}
+                icon={<FilePdfOutlined />}
+                htmlType="button"
+                type="text"
+                href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
+                target="_blank"
+              />
+              <Button
+                tooltip={{ title: 'Enviar WhatsApp al Club' }}
+                icon={<WhatsAppOutlined />}
+                htmlType="button"
+                type="text"
+                href="https://wa.me/5491158804950"
+                target="_blank"
+              />
+            </Space.Compact>
 
-              <Tooltip
-                title={
-                  <>
-                    Hecho con <HeartOutlined /> por D.
-                  </>
+            <Tooltip
+              title={
+                <>
+                  Hecho con <HeartOutlined /> por D.
+                </>
+              }
+            >
+              <CopyrightCircleOutlined />
+            </Tooltip>
+
+            <ThemeSelector />
+          </Flex>
+        </AntLayout.Footer>
+
+        {(permissions.isAdmin || permissions.isStaff) && (
+          <FloatButton.Group
+            className="absolute right-4 lg:right-10"
+            shape="square"
+            trigger="hover"
+            type="primary"
+            style={{ bottom: 75 }}
+            icon={<AddNewIcon />}
+          >
+            {permissions.movements.create && (
+              <FloatButton
+                tooltip="Nuevo movimiento"
+                icon={<MovementsIcon />}
+                onClick={() =>
+                  navigate(`${AppUrl.MOVEMENTS}/${AppUrlGenericEnum.NEW}`)
                 }
-              >
-                <CopyrightCircleOutlined />
-              </Tooltip>
-
-              <ThemeSelector />
-            </Flex>
-
-            {(permissions.isAdmin || permissions.isStaff) && (
-              <FloatButton.Group
-                shape="square"
-                trigger="hover"
-                type="primary"
-                style={{ bottom: 75 }}
-                icon={<AddNewIcon />}
-              >
-                {permissions.movements.create && (
-                  <FloatButton
-                    tooltip="Nuevo movimiento"
-                    icon={<MovementsIcon />}
-                    onClick={() =>
-                      navigate(`${AppUrl.MOVEMENTS}/${AppUrlGenericEnum.NEW}`)
-                    }
-                  />
-                )}
-
-                {permissions.dues.create && (
-                  <FloatButton
-                    tooltip="Nueva deuda"
-                    icon={<DuesIcon />}
-                    onClick={() =>
-                      navigate(`${AppUrl.DUES}/${AppUrlGenericEnum.NEW}`)
-                    }
-                  />
-                )}
-
-                {permissions.payments.create && (
-                  <FloatButton
-                    tooltip="Nuevo pago"
-                    icon={<PaymentsIcon />}
-                    onClick={() =>
-                      navigate(`${AppUrl.PAYMENTS}/${AppUrlGenericEnum.NEW}`)
-                    }
-                  />
-                )}
-              </FloatButton.Group>
+              />
             )}
-          </AntLayout.Footer>
-        </AntLayout.Content>
+
+            {permissions.dues.create && (
+              <FloatButton
+                tooltip="Nueva deuda"
+                icon={<DuesIcon />}
+                onClick={() =>
+                  navigate(`${AppUrl.DUES}/${AppUrlGenericEnum.NEW}`)
+                }
+              />
+            )}
+
+            {permissions.payments.create && (
+              <FloatButton
+                tooltip="Nuevo pago"
+                icon={<PaymentsIcon />}
+                onClick={() =>
+                  navigate(`${AppUrl.PAYMENTS}/${AppUrlGenericEnum.NEW}`)
+                }
+              />
+            )}
+          </FloatButton.Group>
+        )}
       </AntLayout>
     </AntLayout>
   );

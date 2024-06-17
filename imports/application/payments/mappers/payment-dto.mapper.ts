@@ -16,6 +16,7 @@ export class PaymentDtoMapper extends MapperDto<Payment, PaymentDto> {
     return {
       amount: payment.amount.value,
       createdAt: payment.createdAt.toISOString(),
+      createdBy: payment.createdBy,
       date: payment.date.toISOString(),
       dues: payment.dues.map<PaymentDueDto>((due) => ({
         creditAmount: due.creditAmount.value,
@@ -29,6 +30,7 @@ export class PaymentDtoMapper extends MapperDto<Payment, PaymentDto> {
         totalAmount: due.totalAmount.value,
       })),
       id: payment._id,
+      isVoided: payment.isVoided(),
       member: payment.member
         ? this._memberDtoMapper.toDto(payment.member)
         : undefined,

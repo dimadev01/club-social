@@ -83,7 +83,8 @@ export const DueDetailPage = () => {
           <>
             <Descriptions column={1} layout="vertical" colon={false}>
               <Descriptions.Item label="Fecha de creación de deuda">
-                {new DateVo(due.createdAt).format(DateFormatEnum.DDMMYYHHmm)}
+                {new DateVo(due.createdAt).format(DateFormatEnum.DDMMYYHHmm)} (
+                {due.createdBy})
               </Descriptions.Item>
 
               <Descriptions.Item label="Fecha de deuda del socio">

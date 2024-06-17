@@ -17,6 +17,7 @@ export class DueDtoMapper extends MapperDto<Due, DueDto> {
       amount: due.amount.value,
       category: due.category,
       createdAt: due.createdAt.toISOString(),
+      createdBy: due.createdBy,
       date: due.date.toISOString(),
       id: due._id,
       member: due.member ? this._memberDtoMapper.toDto(due.member) : undefined,

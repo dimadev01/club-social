@@ -6,6 +6,7 @@ export interface DueDto {
   amount: number;
   category: DueCategoryEnum;
   createdAt: string;
+  createdBy: string;
   date: string;
   id: string;
   member?: MemberDto;
