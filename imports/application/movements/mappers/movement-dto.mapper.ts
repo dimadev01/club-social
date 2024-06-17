@@ -11,6 +11,7 @@ export class MovementDtoMapper extends MapperDto<Movement, MovementDto> {
       amount: movement.amount.value,
       category: movement.category,
       createdAt: movement.createdAt.toISOString(),
+      createdBy: movement.createdBy,
       date: movement.date.toISOString(),
       employeeId: movement.employeeId,
       id: movement._id,

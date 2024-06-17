@@ -8,6 +8,7 @@ export interface MovementDto {
   amount: number;
   category: MovementCategoryEnum;
   createdAt: string;
+  createdBy: string;
   date: string;
   employeeId: string | null;
   id: string;

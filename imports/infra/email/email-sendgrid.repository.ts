@@ -52,11 +52,11 @@ export class EmailSendGridRepository implements IEmailRepository {
           email: EmailServiceEnum.EMAIL_FROM_ADDRESS,
           name: EmailServiceEnum.EMAIL_FORM_NAME,
         },
-        // mailSettings: {
-        //   sandboxMode: {
-        //     enable: Meteor.isDevelopment,
-        //   },
-        // },
+        mailSettings: {
+          sandboxMode: {
+            enable: Meteor.isDevelopment,
+          },
+        },
         templateId: options.templateId,
         to,
       });

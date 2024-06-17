@@ -150,6 +150,10 @@ export class Payment extends Model implements IPayment {
     return this.isPaid();
   }
 
+  public isVoided(): boolean {
+    return this._status === PaymentStatusEnum.VOIDED;
+  }
+
   public void(voidedBy: string, voidReason: string): Result<null, Error> {
     this._voidedAt = new DateUtcVo();
 

@@ -1,4 +1,12 @@
-import { Breadcrumb, Card, Col, DatePicker, Form, InputNumber } from 'antd';
+import {
+  Breadcrumb,
+  Card,
+  Checkbox,
+  Col,
+  DatePicker,
+  Form,
+  InputNumber,
+} from 'antd';
 import { useWatch } from 'antd/es/form/Form';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs, { Dayjs } from 'dayjs';
@@ -42,6 +50,7 @@ type FormValues = {
   memberId: string;
   notes: string | null;
   receiptNumber: number;
+  sendEmail: boolean;
 };
 
 export const PaymentNewPage = () => {
@@ -161,6 +170,7 @@ export const PaymentNewPage = () => {
       memberId: values.memberId,
       notes: values.notes || null,
       receiptNumber: values.receiptNumber,
+      sendEmail: values.sendEmail,
     };
 
     createPayment.mutate(request, {
@@ -172,6 +182,7 @@ export const PaymentNewPage = () => {
           memberId: undefined,
           notes: undefined,
           receiptNumber: undefined,
+          sendEmail: true,
         });
       },
     });
@@ -236,6 +247,7 @@ export const PaymentNewPage = () => {
             })),
             memberId: urlMemberId,
             receiptNumber: undefined,
+            sendEmail: true,
           }}
         >
           <Row>
@@ -300,6 +312,16 @@ export const PaymentNewPage = () => {
 
           <Form.Item label="Notas" rules={[{ whitespace: true }]} name="notes">
             <TextArea rows={2} />
+          </Form.Item>
+
+          <Form.Item
+            label="Enviar correo electrónico"
+            name="sendEmail"
+            layout="horizontal"
+            valuePropName="checked"
+            rules={[{ required: true }]}
+          >
+            <Checkbox />
           </Form.Item>
 
           <FormButtons
