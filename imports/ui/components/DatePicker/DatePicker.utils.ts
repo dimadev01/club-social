@@ -1,8 +1,6 @@
 import { TimeRangePickerProps } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 
-const now = dayjs();
-
 export enum DatePickerPresetEnum {
   LAST_14_DAYS = 'LAST_14_DAYS',
   LAST_30_DAYS = 'LAST_30_DAYS',
@@ -35,34 +33,38 @@ export const DatePickerPresetLabel: {
   [DatePickerPresetEnum.PAST_YEAR]: 'Año pasado',
 };
 
-export const DatePickerPreset: {
+export const generatePresets = (): {
   [x in DatePickerPresetEnum]: [Dayjs, Dayjs];
-} = {
-  [DatePickerPresetEnum.TODAY]: [now, now.add(1, 'day')],
-  [DatePickerPresetEnum.YESTERDAY]: [now.subtract(1, 'day'), now],
-  [DatePickerPresetEnum.THIS_WEEK]: [now.startOf('week'), now],
-  [DatePickerPresetEnum.THIS_MONTH]: [now.startOf('month'), now],
-  [DatePickerPresetEnum.LAST_WEEK]: [
-    now.subtract(1, 'week').startOf('week'),
-    now.subtract(1, 'week').endOf('week'),
-  ],
-  [DatePickerPresetEnum.LAST_MONTH]: [
-    now.subtract(1, 'month').startOf('month'),
-    now.subtract(1, 'month').endOf('month'),
-  ],
-  [DatePickerPresetEnum.LAST_7_DAYS]: [now.subtract(7, 'days'), now],
-  [DatePickerPresetEnum.LAST_14_DAYS]: [now.subtract(14, 'days'), now],
-  [DatePickerPresetEnum.LAST_30_DAYS]: [now.subtract(30, 'days'), now],
-  [DatePickerPresetEnum.LAST_90_DAYS]: [now.subtract(90, 'days'), now],
-  [DatePickerPresetEnum.THIS_YEAR]: [now.startOf('year'), now],
-  [DatePickerPresetEnum.PAST_YEAR]: [
-    now.subtract(1, 'year').startOf('year'),
-    now.subtract(1, 'year').endOf('year'),
-  ],
+} => {
+  const now = dayjs();
+
+  return {
+    [DatePickerPresetEnum.TODAY]: [now, now.add(1, 'day')],
+    [DatePickerPresetEnum.YESTERDAY]: [now.subtract(1, 'day'), now],
+    [DatePickerPresetEnum.THIS_WEEK]: [now.startOf('week'), now],
+    [DatePickerPresetEnum.THIS_MONTH]: [now.startOf('month'), now],
+    [DatePickerPresetEnum.LAST_WEEK]: [
+      now.subtract(1, 'week').startOf('week'),
+      now.subtract(1, 'week').endOf('week'),
+    ],
+    [DatePickerPresetEnum.LAST_MONTH]: [
+      now.subtract(1, 'month').startOf('month'),
+      now.subtract(1, 'month').endOf('month'),
+    ],
+    [DatePickerPresetEnum.LAST_7_DAYS]: [now.subtract(7, 'days'), now],
+    [DatePickerPresetEnum.LAST_14_DAYS]: [now.subtract(14, 'days'), now],
+    [DatePickerPresetEnum.LAST_30_DAYS]: [now.subtract(30, 'days'), now],
+    [DatePickerPresetEnum.LAST_90_DAYS]: [now.subtract(90, 'days'), now],
+    [DatePickerPresetEnum.THIS_YEAR]: [now.startOf('year'), now],
+    [DatePickerPresetEnum.PAST_YEAR]: [
+      now.subtract(1, 'year').startOf('year'),
+      now.subtract(1, 'year').endOf('year'),
+    ],
+  };
 };
 
 export function getPresets(): TimeRangePickerProps['presets'] {
-  return Object.entries(DatePickerPreset).map(([key, value]) => ({
+  return Object.entries(generatePresets()).map(([key, value]) => ({
     label: DatePickerPresetLabel[key as DatePickerPresetEnum],
     value,
   }));

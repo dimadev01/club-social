@@ -1,19 +1,20 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { AppUrl } from '@ui/app.enum';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 
-type Props = PropsWithChildren & {
+type Props = {
+  element: React.ReactNode;
   permission: PermissionEnum;
   scope: ScopeEnum;
 };
 
-export const OldPrivateRoute: React.FC<Props> = ({
-  children,
+export const PrivateRoute: React.FC<Props> = ({
   permission,
   scope,
+  element,
 }) => {
   const isInRole = useIsInRole(permission, scope);
 
@@ -21,5 +22,5 @@ export const OldPrivateRoute: React.FC<Props> = ({
     return <Navigate to={AppUrl.HOME} />;
   }
 
-  return children;
+  return element;
 };

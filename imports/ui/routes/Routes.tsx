@@ -28,7 +28,7 @@ import { PaymentDetailPage } from '@ui/pages/payments/PaymentDetailPage';
 import { PaymentNewPage } from '@ui/pages/payments/PaymentNewPage';
 import { PaymentsPage } from '@ui/pages/payments/PaymentsPage';
 import { AuthRoute } from '@ui/routes/AuthRoute';
-import { PrivateRoute } from '@ui/routes/PrivateRoute2';
+import { PrivateRoute } from '@ui/routes/PrivateRoute';
 import { PublicRoute } from '@ui/routes/PublicRoute';
 
 const router = createBrowserRouter(

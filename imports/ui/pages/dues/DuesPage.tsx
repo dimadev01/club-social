@@ -1,7 +1,7 @@
 import { Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
@@ -12,8 +12,6 @@ import {
   DueCategoryEnum,
   DueStatusEnum,
   DueStatusLabel,
-  getDueCategoryFilters,
-  getDueStatusColumnFilters,
 } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
@@ -21,7 +19,10 @@ import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl, AppUrlGenericEnum } from '@ui/app.enum';
 import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 import { Button } from '@ui/components/Button/Button';
+import { getPresets } from '@ui/components/DatePicker/DatePicker.utils';
+import { DueCategoryIconWithLabel } from '@ui/components/Dues/DueCategoryLabel';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
+import { DuesUIUtils } from '@ui/components/Dues/Dues.utils';
 import { DuesGridCsvDownloaderButton } from '@ui/components/Dues/DuesGridCsvDownloader';
 import { Grid } from '@ui/components/Grid/Grid';
 import { GridUtils } from '@ui/components/Grid/grid.utils';
@@ -40,12 +41,13 @@ import { useMembers } from '@ui/hooks/members/useMembers';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
 import { GridPeriodFilter } from '@ui/pages/payments/GridPeriodFilter';
 import { useUserContext } from '@ui/providers/UserContext';
-import { DueCategoryIconWithLabel } from '@ui/utils/DueCategoryLabel';
 
 export const DuesPage = () => {
   const { member } = useUserContext();
 
   const permissions = usePermissions();
+
+  const presets = useMemo(() => getPresets(), []);
 
   const {
     gridState,
@@ -170,7 +172,7 @@ export const DuesPage = () => {
         dataIndex: 'category',
         ellipsis: true,
         filteredValue: gridState.filters.category,
-        filters: getDueCategoryFilters(),
+        filters: DuesUIUtils.getCategoryGridFilters(),
         render: (category: DueCategoryEnum, due) => (
           <DueCategoryIconWithLabel category={category} date={due.date} />
         ),
@@ -215,7 +217,7 @@ export const DuesPage = () => {
         filterMode: 'tree',
         filterResetToDefaultFilteredValue: true,
         filteredValue: gridState.filters.status,
-        filters: getDueStatusColumnFilters(),
+        filters: DuesUIUtils.getStatusGridFilters(),
         render: (status: DueStatusEnum) => DueStatusLabel[status],
         title: 'Estado',
         width: 125,

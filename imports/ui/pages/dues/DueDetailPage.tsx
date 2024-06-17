@@ -12,6 +12,7 @@ import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
 import { Breadcrumbs } from '@ui/components/Breadcrumbs/Breadcrumbs';
+import { DueCategoryIconWithLabel } from '@ui/components/Dues/DueCategoryLabel';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormEditButton } from '@ui/components/Form/FormEditButton';
@@ -21,7 +22,6 @@ import { NotFound } from '@ui/components/NotFound';
 import { useDue } from '@ui/hooks/dues/useDue';
 import { useVoidDue } from '@ui/hooks/dues/useVoidDue';
 import { useNotificationSuccess } from '@ui/hooks/ui/useNotification';
-import { renderDueCategoryLabel } from '@ui/utils/renderDueCategory';
 
 export const DueDetailPage = () => {
   const { id: dueId } = useParams<{ id?: string }>();
@@ -95,7 +95,10 @@ export const DueDetailPage = () => {
               </Descriptions.Item>
 
               <Descriptions.Item label="Categoría">
-                {renderDueCategoryLabel(due.category, due.date)}
+                <DueCategoryIconWithLabel
+                  category={due.category}
+                  date={due.date}
+                />
               </Descriptions.Item>
 
               <Descriptions.Item label="Estado">

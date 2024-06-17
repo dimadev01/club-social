@@ -1,3 +1,5 @@
+import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+
 export enum DueStatusEnum {
   PAID = 'paid',
   PARTIALLY_PAID = 'partially-paid',
@@ -14,14 +16,6 @@ export const DueStatusLabel: {
   [DueStatusEnum.VOIDED]: 'Anulado',
 };
 
-export const getDueStatusColumnFilters = () =>
-  Object.values(DueStatusEnum)
-    .map((category) => ({
-      text: DueStatusLabel[category],
-      value: category,
-    }))
-    .sort((a, b) => a.text.localeCompare(b.text));
-
 export enum DueCategoryEnum {
   ELECTRICITY = 'electricity',
   GUEST = 'guest',
@@ -34,18 +28,13 @@ export const DueCategoryLabel = {
   [DueCategoryEnum.MEMBERSHIP]: 'Cuota',
 };
 
-export const getDueCategoryOptions = () =>
-  Object.values(DueCategoryEnum)
-    .map((category) => ({
-      label: DueCategoryLabel[category],
-      value: category,
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+export function formatDueCategoryLabel(
+  category: DueCategoryEnum,
+  date: string,
+) {
+  if (category === DueCategoryEnum.MEMBERSHIP) {
+    return `${DueCategoryLabel[category]} (${new DateUtcVo(date).monthName()})`;
+  }
 
-export const getDueCategoryFilters = () =>
-  Object.values(DueCategoryEnum)
-    .map((category) => ({
-      text: DueCategoryLabel[category],
-      value: category,
-    }))
-    .sort((a, b) => a.text.localeCompare(b.text));
+  return DueCategoryLabel[category];
+}

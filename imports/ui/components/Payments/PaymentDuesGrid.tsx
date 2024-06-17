@@ -6,8 +6,8 @@ import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { AppUrl } from '@ui/app.enum';
+import { DueCategoryIconWithLabel } from '@ui/components/Dues/DueCategoryLabel';
 import { Table } from '@ui/components/Table/Table';
-import { DueCategoryIconWithLabel } from '@ui/utils/DueCategoryLabel';
 
 interface PaymentDuesGridProps {
   dues: PaymentDueDto[];
