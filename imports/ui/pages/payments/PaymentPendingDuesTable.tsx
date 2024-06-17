@@ -5,9 +5,8 @@ import React from 'react';
 import { DueDto } from '@application/dues/dtos/due.dto';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import { DueCategoryEnum } from '@domain/dues/due.enum';
+import { DueCategoryEnum, formatDueCategoryLabel } from '@domain/dues/due.enum';
 import { FormInputAmount } from '@ui/components/Form/FormInputAmount';
-import { renderDueCategoryLabel } from '@ui/utils/renderDueCategory';
 
 type Props = {
   pendingDues?: DueDto[];
@@ -118,7 +117,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
         dataIndex="category"
         title="Categoría"
         render={(category: DueCategoryEnum, due: DueDto) =>
-          renderDueCategoryLabel(category, due.date)
+          formatDueCategoryLabel(category, due.date)
         }
         align="center"
       />

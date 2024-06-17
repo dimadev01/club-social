@@ -4,7 +4,7 @@ import {
   TablePaginationConfig,
 } from 'antd/es/table/interface';
 import { isArray, isEmpty, isObject } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { DEFAULT_PAGE_SIZE } from '@application/common/repositories/grid.repository';
@@ -100,22 +100,22 @@ export function useGrid<T>({
     sorter: getSorter(parsedQs.sorter),
   });
 
-  useEffect(() => {
-    setSearchParams(UrlUtils.stringify(gridState), { replace: true });
-  }, [gridState, setSearchParams]);
-
   const onTableChange = (
     antPagination: TablePaginationConfig,
     antFilters: Record<string, FilterValue | null>,
     antSorter: SorterResult<T> | SorterResult<T>[],
   ) => {
-    setGridState({
+    const newState: GridState = {
       ...gridState,
       filters: getFilters(antFilters),
       page: antPagination.current ?? 1,
       pageSize: antPagination.pageSize ?? DEFAULT_PAGE_SIZE,
       sorter: getSorter(antSorter, gridState),
-    });
+    };
+
+    setGridState(newState);
+
+    setSearchParams(UrlUtils.stringify(newState), { replace: true });
   };
 
   const clearFilters = () => {

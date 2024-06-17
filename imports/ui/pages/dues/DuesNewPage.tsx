@@ -24,6 +24,7 @@ import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl } from '@ui/app.enum';
+import { DuesUIUtils } from '@ui/components/Dues/Dues.utils';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { FormInputAmount } from '@ui/components/Form/FormInputAmount';
 import { Row } from '@ui/components/Layout/Row';
@@ -32,7 +33,6 @@ import { Select } from '@ui/components/Select';
 import { useCreateDue } from '@ui/hooks/dues/useCreateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
 import { useNotificationSuccess } from '@ui/hooks/ui/useNotification';
-import { getDueCategoryOptionsReact } from '@ui/utils/DueCategoryLabel';
 
 type FormValues = {
   amount: number;
@@ -288,7 +288,7 @@ export const DuesNewPage = () => {
                   onChange={() => {
                     form.setFieldValue('amount', 0);
                   }}
-                  options={getDueCategoryOptionsReact()}
+                  options={DuesUIUtils.getCategorySelectOptions()}
                 />
               </Form.Item>
             </Col>
