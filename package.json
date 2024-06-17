@@ -35,6 +35,7 @@
     "postcss": "^8.4.21",
     "postcss-load-config": "^4.0.1",
     "qs": "^6.11.0",
+    "rc-picker": "^4.6.4-0",
     "react": "^18.2.0",
     "react-csv-downloader": "^3.0.0",
     "react-dom": "^18.2.0",

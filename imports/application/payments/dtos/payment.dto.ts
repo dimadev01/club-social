@@ -5,9 +5,11 @@ import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 export interface PaymentDto {
   amount: number;
   createdAt: string;
+  createdBy: string;
   date: string;
   dues: PaymentDueDto[];
   id: string;
+  isVoided: boolean;
   member?: MemberDto;
   memberId: string;
   notes: string | null;

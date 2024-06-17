@@ -150,7 +150,9 @@ export class CreatePaymentUseCase
 
       invariant(newPayment);
 
-      this._sendNewPaymentEmailUseCase.execute({ id: newPayment._id });
+      if (request.sendEmail) {
+        this._sendNewPaymentEmailUseCase.execute({ id: newPayment._id });
+      }
 
       return await this._getPaymentUseCase.execute({ id: newPayment._id });
     } catch (error) {

@@ -6,10 +6,7 @@ import invariant from 'tiny-invariant';
 import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
-import {
-  PaymentStatusEnum,
-  PaymentStatusLabel,
-} from '@domain/payments/payment.enum';
+import { PaymentStatusLabel } from '@domain/payments/payment.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
@@ -71,9 +68,7 @@ export const PaymentDetailPage = () => {
 
       <Watermark
         content={
-          payment.status === PaymentStatusEnum.VOIDED
-            ? PaymentStatusLabel[payment.status]
-            : undefined
+          payment.isVoided ? PaymentStatusLabel[payment.status] : undefined
         }
       >
         <Card
@@ -85,7 +80,8 @@ export const PaymentDetailPage = () => {
               <Descriptions.Item label="Fecha de creación del pago">
                 {new DateVo(payment.createdAt).format(
                   DateFormatEnum.DDMMYYHHmm,
-                )}
+                )}{' '}
+                ({payment.createdBy})
               </Descriptions.Item>
 
               <Descriptions.Item label="Fecha de pago del socio">
@@ -112,7 +108,7 @@ export const PaymentDetailPage = () => {
                 {payment.notes}
               </Descriptions.Item>
 
-              {payment.status === PaymentStatusEnum.VOIDED && (
+              {payment.isVoided && (
                 <>
                   <Descriptions.Item label="Anulado el">
                     {payment.voidedAt
@@ -142,7 +138,7 @@ export const PaymentDetailPage = () => {
 
               <FormVoidButton
                 scope={ScopeEnum.PAYMENTS}
-                disabled={payment.status === PaymentStatusEnum.VOIDED}
+                disabled={payment.isVoided}
                 onConfirm={(reason: string) => {
                   voidPayment.mutate(
                     {

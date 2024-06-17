@@ -76,7 +76,7 @@ export const MovementDetailPage = () => {
         >
           <Descriptions column={1} layout="vertical" colon={false}>
             <Descriptions.Item label="Fecha">
-              {new DateUtcVo(movement.date).format()}
+              {new DateUtcVo(movement.date).format()} ({movement.createdBy})
             </Descriptions.Item>
 
             <Descriptions.Item label="Tipo">
