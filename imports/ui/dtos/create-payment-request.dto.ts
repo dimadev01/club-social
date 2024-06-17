@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
+  IsBoolean,
   IsDateString,
   IsNotEmpty,
   IsNumber,
@@ -38,4 +39,7 @@ export class CreatePaymentRequestDto implements CreatePaymentRequest {
   @IsPositive()
   @IsNumber()
   public receiptNumber!: number;
+
+  @IsBoolean()
+  public sendEmail!: boolean;
 }
