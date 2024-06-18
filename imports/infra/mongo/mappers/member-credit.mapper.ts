@@ -1,5 +1,6 @@
 import { injectable } from 'tsyringe';
 
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
@@ -14,16 +15,18 @@ export class MemberCreditMapper extends Mapper<
     return new MemberCredit({
       _id: memberCredit._id,
       amount: new Money({ amount: memberCredit.amount }),
-      createdAt: memberCredit.createdAt,
+      createdAt: new DateTimeVo(memberCredit.createdAt),
       createdBy: memberCredit.createdBy,
-      deletedAt: memberCredit.deletedAt,
+      deletedAt: memberCredit.deletedAt
+        ? new DateTimeVo(memberCredit.deletedAt)
+        : null,
       deletedBy: memberCredit.deletedBy,
       dueId: memberCredit.dueId,
       isDeleted: memberCredit.isDeleted,
       memberId: memberCredit.memberId,
       paymentId: memberCredit.paymentId,
       type: memberCredit.type,
-      updatedAt: memberCredit.updatedAt,
+      updatedAt: new DateTimeVo(memberCredit.updatedAt),
       updatedBy: memberCredit.updatedBy,
     });
   }
@@ -32,16 +35,16 @@ export class MemberCreditMapper extends Mapper<
     return new MemberCreditEntity({
       _id: memberCredit._id,
       amount: memberCredit.amount.value,
-      createdAt: memberCredit.createdAt,
+      createdAt: memberCredit.createdAt.toDate(),
       createdBy: memberCredit.createdBy,
-      deletedAt: memberCredit.deletedAt,
+      deletedAt: memberCredit.deletedAt?.toDate() ?? null,
       deletedBy: memberCredit.deletedBy,
       dueId: memberCredit.dueId,
       isDeleted: memberCredit.isDeleted,
       memberId: memberCredit.memberId,
       paymentId: memberCredit.paymentId,
       type: memberCredit.type,
-      updatedAt: memberCredit.updatedAt,
+      updatedAt: memberCredit.updatedAt.toDate(),
       updatedBy: memberCredit.updatedBy,
     });
   }

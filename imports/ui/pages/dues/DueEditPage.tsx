@@ -4,7 +4,7 @@ import React from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   DueCategoryEnum,
@@ -84,14 +84,14 @@ export const DueEditPage = () => {
             ),
           },
           {
-            title: `Editando deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`,
+            title: `Editando deuda de ${due.member.name} del ${new DateVo(due.date).format()}`,
           },
         ]}
       />
 
       <Card
         extra={<DuesIcon />}
-        title={`Editando deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`}
+        title={`Editando deuda de ${due.member.name} del ${new DateVo(due.date).format()}`}
       >
         <Form<FormValues>
           layout="vertical"
@@ -104,7 +104,7 @@ export const DueEditPage = () => {
         >
           <Descriptions column={1} layout="vertical" colon={false}>
             <Descriptions.Item label="Fecha">
-              {new DateUtcVo(due.date).format()}
+              {new DateVo(due.date).format()}
             </Descriptions.Item>
 
             <Descriptions.Item label="Socio">
@@ -113,7 +113,7 @@ export const DueEditPage = () => {
 
             <Descriptions.Item label="Categoría">
               {due.category === DueCategoryEnum.MEMBERSHIP &&
-                `${DueCategoryLabel[due.category]} (${new DateUtcVo(due.date).monthName()})`}
+                `${DueCategoryLabel[due.category]} (${new DateVo(due.date).monthName()})`}
 
               {due.category !== DueCategoryEnum.MEMBERSHIP &&
                 DueCategoryLabel[due.category]}

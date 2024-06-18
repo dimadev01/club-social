@@ -1,7 +1,7 @@
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
-import { DateVo } from '@domain/common/value-objects/date.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   MemberCategoryLabel,
@@ -62,7 +62,7 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
           id: 'pendingTotal',
         },
       ]}
-      filename={`club-social-socios-al-${new DateVo().format(DateFormatEnum.DATE)}-${new DateVo().unix()}.csv`}
+      filename={`club-social-socios-al-${new DateTimeVo().format(DateFormatEnum.DATE)}-${new DateTimeVo().unix()}.csv`}
       // @ts-expect-error
       datas={async () => {
         const data = await getMembersToExport.mutateAsync(request);

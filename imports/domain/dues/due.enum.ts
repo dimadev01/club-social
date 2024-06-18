@@ -1,4 +1,4 @@
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 
 export enum DueStatusEnum {
   PAID = 'paid',
@@ -33,7 +33,7 @@ export function formatDueCategoryLabel(
   date: string,
 ) {
   if (category === DueCategoryEnum.MEMBERSHIP) {
-    return `${DueCategoryLabel[category]} (${new DateUtcVo(date).monthName()})`;
+    return `${DueCategoryLabel[category]} (${new DateVo(date).monthName()})`;
   }
 
   return DueCategoryLabel[category];

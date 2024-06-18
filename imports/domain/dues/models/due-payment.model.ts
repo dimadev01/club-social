@@ -1,6 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
 
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DomainError } from '@domain/common/errors/domain.error';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { CreateDuePayment, IDuePayment } from '@domain/dues/due.interface';
 import {
@@ -9,26 +10,26 @@ import {
 } from '@domain/payments/payment.enum';
 
 export class DuePayment implements IDuePayment {
-  private _amount: Money;
-
   private _creditAmount: Money;
 
-  private _paymentDate: DateUtcVo;
+  private _directAmount: Money;
 
-  private _debitAmount: Money;
+  private _paymentDate: DateVo;
 
   private _paymentId: string;
 
   private _paymentReceiptNumber: number | null;
 
-  private _source: PaymentDueSourceEnum;
-
   private _paymentStatus: PaymentStatusEnum;
 
-  public constructor(props?: IDuePayment) {
-    this._amount = props?.totalAmount ?? new Money();
+  private _source: PaymentDueSourceEnum;
 
-    this._paymentDate = props?.paymentDate ?? new DateUtcVo();
+  private _totalAmount: Money;
+
+  public constructor(props?: IDuePayment) {
+    this._totalAmount = props?.totalAmount ?? new Money();
+
+    this._paymentDate = props?.paymentDate ?? new DateVo();
 
     this._paymentId = props?.paymentId ?? '';
 
@@ -36,7 +37,7 @@ export class DuePayment implements IDuePayment {
 
     this._creditAmount = props?.creditAmount ?? new Money();
 
-    this._debitAmount = props?.directAmount ?? new Money();
+    this._directAmount = props?.directAmount ?? new Money();
 
     this._source = props?.source ?? PaymentDueSourceEnum.MIXED;
 
@@ -47,12 +48,12 @@ export class DuePayment implements IDuePayment {
     return this._creditAmount;
   }
 
-  public get paymentDate(): DateUtcVo {
-    return this._paymentDate;
+  public get directAmount(): Money {
+    return this._directAmount;
   }
 
-  public get directAmount(): Money {
-    return this._debitAmount;
+  public get paymentDate(): DateVo {
+    return this._paymentDate;
   }
 
   public get paymentId(): string {
@@ -63,16 +64,16 @@ export class DuePayment implements IDuePayment {
     return this._paymentReceiptNumber;
   }
 
-  public get source(): PaymentDueSourceEnum {
-    return this._source;
-  }
-
   public get paymentStatus(): PaymentStatusEnum {
     return this._paymentStatus;
   }
 
+  public get source(): PaymentDueSourceEnum {
+    return this._source;
+  }
+
   public get totalAmount(): Money {
-    return this._amount;
+    return this._totalAmount;
   }
 
   public static createOne(props: CreateDuePayment): Result<DuePayment, Error> {
@@ -85,7 +86,7 @@ export class DuePayment implements IDuePayment {
       duePayment.setPaymentReceiptNumber(props.receiptNumber),
       duePayment.setPaymentStatus(PaymentStatusEnum.PAID),
       duePayment.setCreditAmount(props.creditAmount),
-      duePayment.setDebitAmount(props.directAmount),
+      duePayment.setDirectAmount(props.directAmount),
       duePayment.setSource(props.source),
     ]);
 
@@ -93,7 +94,27 @@ export class DuePayment implements IDuePayment {
       return err(result.error);
     }
 
+    const creditPlusDirectAmount = duePayment.creditAmount.add(
+      duePayment.directAmount,
+    );
+
+    if (!creditPlusDirectAmount.isEqual(duePayment.totalAmount)) {
+      return err(
+        new DomainError(
+          'El monto total no coincide con la suma del monto de crédito y directo.',
+        ),
+      );
+    }
+
     return ok(duePayment);
+  }
+
+  public isPaid() {
+    return this._paymentStatus === PaymentStatusEnum.PAID;
+  }
+
+  public isVoided() {
+    return this._paymentStatus === PaymentStatusEnum.VOIDED;
   }
 
   public void(): Result<null, Error> {
@@ -106,14 +127,18 @@ export class DuePayment implements IDuePayment {
     return ok(null);
   }
 
-  private setPaymentDate(value: DateUtcVo): Result<null, Error> {
-    this._paymentDate = value;
+  private setDirectAmount(value: Money): Result<null, Error> {
+    this._directAmount = value;
 
     return ok(null);
   }
 
-  private setDebitAmount(value: Money): Result<null, Error> {
-    this._debitAmount = value;
+  private setPaymentDate(value: DateVo): Result<null, Error> {
+    if (value.isInTheFuture()) {
+      return err(new DomainError('El pago no puede estar en el futuro'));
+    }
+
+    this._paymentDate = value;
 
     return ok(null);
   }
@@ -125,7 +150,21 @@ export class DuePayment implements IDuePayment {
   }
 
   private setPaymentReceiptNumber(value: number | null): Result<null, Error> {
+    if (value && value <= 0) {
+      return err(new DomainError('El número de recibo no puede ser negativo.'));
+    }
+
     this._paymentReceiptNumber = value;
+
+    return ok(null);
+  }
+
+  private setPaymentStatus(value: PaymentStatusEnum): Result<null, Error> {
+    if (this.isVoided()) {
+      return err(new DomainError('No se puede modificar un pago anulado.'));
+    }
+
+    this._paymentStatus = value;
 
     return ok(null);
   }
@@ -136,14 +175,8 @@ export class DuePayment implements IDuePayment {
     return ok(null);
   }
 
-  private setPaymentStatus(value: PaymentStatusEnum): Result<null, Error> {
-    this._paymentStatus = value;
-
-    return ok(null);
-  }
-
   private setTotalAmount(value: Money): Result<null, Error> {
-    this._amount = value;
+    this._totalAmount = value;
 
     return ok(null);
   }

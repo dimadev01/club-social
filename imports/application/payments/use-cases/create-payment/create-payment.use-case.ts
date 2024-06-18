@@ -14,7 +14,7 @@ import { CreatePaymentRequest } from '@application/payments/use-cases/create-pay
 import { GetPaymentUseCase } from '@application/payments/use-cases/get-payment/get-payment.use-case';
 import { SendNewPaymentEmailUseCase } from '@application/payments/use-cases/send-new-payment-email/send-new-payment-email.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { Due } from '@domain/dues/models/due.model';
 import { MemberCreditTypeEnum } from '@domain/members/member.enum';
@@ -76,7 +76,7 @@ export class CreatePaymentUseCase
 
         const paymentResult = Payment.createOne({
           createDues: this._createPaymentDues(request),
-          date: new DateUtcVo(request.date),
+          date: new DateVo(request.date),
           memberId: request.memberId,
           notes: request.notes,
           receiptNumber: request.receiptNumber,
@@ -115,7 +115,7 @@ export class CreatePaymentUseCase
               );
             }
 
-            due.addPayment({
+            const addPaymentResult = due.addPayment({
               creditAmount: paymentDue.creditAmount,
               date: payment.date,
               directAmount: paymentDue.directAmount,
@@ -124,6 +124,10 @@ export class CreatePaymentUseCase
               source: paymentDue.source,
               totalAmount: paymentDue.totalAmount,
             });
+
+            if (addPaymentResult.isErr()) {
+              throw addPaymentResult.error;
+            }
 
             await this._duePort.updateWithSession(due, unitOfWork);
           }),

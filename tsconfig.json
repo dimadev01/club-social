@@ -41,6 +41,7 @@
   "exclude": ["./.meteor/**", "./packages/**"],
   "include": [
     ".meteor/**/*.ts",
+    "tests/**/*.ts",
     "imports/**/*.ts",
     "imports/**/*.tsx",
     "client/**/*.tsx",

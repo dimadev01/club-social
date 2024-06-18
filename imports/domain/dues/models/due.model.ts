@@ -4,20 +4,19 @@ import invariant from 'tiny-invariant';
 import { DomainError } from '@domain/common/errors/domain.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { Model } from '@domain/common/models/model';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { CreateDue, CreateDuePayment, IDue } from '@domain/dues/due.interface';
 import { DuePayment } from '@domain/dues/models/due-payment.model';
 import { Member } from '@domain/members/models/member.model';
-import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 
 export class Due extends Model implements IDue {
   private _amount: Money;
 
   private _category: DueCategoryEnum;
 
-  private _date: DateUtcVo;
+  private _date: DateVo;
 
   private _memberId: string;
 
@@ -33,7 +32,7 @@ export class Due extends Model implements IDue {
 
   private _voidReason: string | null;
 
-  private _voidedAt: DateUtcVo | null;
+  private _voidedAt: DateVo | null;
 
   private _voidedBy: string | null;
 
@@ -46,7 +45,7 @@ export class Due extends Model implements IDue {
 
     this._category = props?.category ?? DueCategoryEnum.MEMBERSHIP;
 
-    this._date = props?.date ?? new DateUtcVo();
+    this._date = props?.date ?? new DateVo();
 
     this._memberId = props?.memberId ?? '';
 
@@ -78,7 +77,7 @@ export class Due extends Model implements IDue {
     return this._category;
   }
 
-  public get date(): DateUtcVo {
+  public get date(): DateVo {
     return this._date;
   }
 
@@ -110,7 +109,7 @@ export class Due extends Model implements IDue {
     return this._voidReason;
   }
 
-  public get voidedAt(): DateUtcVo | null {
+  public get voidedAt(): DateVo | null {
     return this._voidedAt;
   }
 
@@ -128,7 +127,6 @@ export class Due extends Model implements IDue {
       due.setMemberId(props.memberId),
       due.setNotes(props.notes),
       due.setStatus(DueStatusEnum.PENDING),
-      due.setTotalPendingAmount(props.amount),
     ]);
 
     if (result.isErr()) {
@@ -147,13 +145,7 @@ export class Due extends Model implements IDue {
 
     this._payments.push(duePayment.value);
 
-    this._totalPaidAmount = this._totalPaidAmount.add(
-      duePayment.value.totalAmount,
-    );
-
-    this.calculateTotalPendingAmount();
-
-    this._calculateStatus();
+    this._addToTotalPaidAmount(duePayment.value.totalAmount);
 
     return ok(duePayment.value);
   }
@@ -186,6 +178,10 @@ export class Due extends Model implements IDue {
     return this.isPending();
   }
 
+  public isVoided() {
+    return this._status === DueStatusEnum.VOIDED;
+  }
+
   public setAmount(value: Money): Result<null, Error> {
     this._amount = value;
 
@@ -200,20 +196,18 @@ export class Due extends Model implements IDue {
     return ok(null);
   }
 
-  private _allPaymentsValid(): boolean {
-    return this._payments.every(
-      (payment) => payment.paymentStatus === PaymentStatusEnum.PAID,
-    );
-  }
-
   public void(voidedBy: string, voidReason: string): Result<null, Error> {
+    if (this.isVoided()) {
+      return err(new DomainError('La deuda ya se encuentra anulada.'));
+    }
+
     if (this._allPaymentsValid()) {
       return err(
         new DomainError('No se puede anular una deuda con pagos asociados'),
       );
     }
 
-    this._voidedAt = new DateUtcVo();
+    this._voidedAt = new DateVo();
 
     this._voidedBy = voidedBy;
 
@@ -246,6 +240,18 @@ export class Due extends Model implements IDue {
     return ok(null);
   }
 
+  private _addToTotalPaidAmount(amount: Money): void {
+    this._totalPaidAmount = this._totalPaidAmount.add(amount);
+
+    this.calculateTotalPendingAmount();
+
+    this._calculateStatus();
+  }
+
+  private _allPaymentsValid(): boolean {
+    return this._payments.every((payment) => payment.isPaid());
+  }
+
   private _calculateStatus(): void {
     if (this._totalPendingAmount.isEqual(this._amount)) {
       this._status = DueStatusEnum.PENDING;
@@ -272,7 +278,7 @@ export class Due extends Model implements IDue {
     return ok(null);
   }
 
-  private setDate(value: DateUtcVo): Result<null, Error> {
+  private setDate(value: DateVo): Result<null, Error> {
     this._date = value;
 
     return ok(null);
@@ -285,13 +291,13 @@ export class Due extends Model implements IDue {
   }
 
   private setStatus(value: DueStatusEnum): Result<null, Error> {
+    if (this.isVoided()) {
+      return err(
+        new DomainError('No se puede cambiar el estado de una deuda anulada.'),
+      );
+    }
+
     this._status = value;
-
-    return ok(null);
-  }
-
-  private setTotalPendingAmount(value: Money): Result<null, Error> {
-    this._totalPendingAmount = value;
 
     return ok(null);
   }

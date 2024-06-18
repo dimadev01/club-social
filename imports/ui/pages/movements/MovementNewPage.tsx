@@ -10,7 +10,7 @@ import {
   getMovementCategoryOptions,
   getMovementCategoryTypeOptions,
 } from '@domain/categories/category.enum';
-import { DateVo } from '@domain/common/value-objects/date.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
@@ -44,7 +44,7 @@ export const MovementNewPage = () => {
       {
         amount: Money.fromNumber(values.amount).value,
         category: values.category,
-        date: new DateVo(values.date).format(DateFormatEnum.DATE),
+        date: new DateTimeVo(values.date).format(DateFormatEnum.DATE),
         notes: values.notes || null,
         type: values.type,
       },

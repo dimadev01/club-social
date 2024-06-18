@@ -13,7 +13,7 @@ import {
   IMovementRepository,
 } from '@application/movements/repositories/movement.repository';
 import { MovementTypeEnum } from '@domain/categories/category.enum';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Movement } from '@domain/movements/models/movement.model';
 import { MovementAuditableCollection } from '@infra/mongo/collections/movement-auditable.collection';
 import { MovementMongoCollection } from '@infra/mongo/collections/movement.collection';
@@ -167,15 +167,15 @@ export class MovementMongoRepository
 
     if (request.filterByCreatedAt.length > 0) {
       query.createdAt = {
-        $gte: new DateUtcVo(request.filterByCreatedAt[0]).toDate(),
-        $lte: new DateUtcVo(request.filterByCreatedAt[1]).toDate(),
+        $gte: new DateVo(request.filterByCreatedAt[0]).toDate(),
+        $lte: new DateVo(request.filterByCreatedAt[1]).toDate(),
       };
     }
 
     if (request.filterByDate.length > 0) {
       query.date = {
-        $gte: new DateUtcVo(request.filterByDate[0]).toDate(),
-        $lte: new DateUtcVo(request.filterByDate[1]).toDate(),
+        $gte: new DateVo(request.filterByDate[0]).toDate(),
+        $lte: new DateVo(request.filterByDate[1]).toDate(),
       };
     }
 

@@ -13,7 +13,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-import { DateVo } from '@domain/common/value-objects/date.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import {
@@ -125,11 +125,13 @@ export const DuesNewPage = () => {
     let date: string;
 
     if (values.category === DueCategoryEnum.MEMBERSHIP) {
-      date = new DateVo(values.date)
+      date = new DateTimeVo(values.date)
         .startOf('month')
         .format(DateFormatEnum.DATE);
     } else {
-      date = new DateVo(values.date).startOf('day').format(DateFormatEnum.DATE);
+      date = new DateTimeVo(values.date)
+        .startOf('day')
+        .format(DateFormatEnum.DATE);
     }
 
     createDue.mutate(

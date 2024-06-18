@@ -1,7 +1,7 @@
 import { Result, err, ok } from 'neverthrow';
 
 import { DomainError } from '@domain/common/errors/domain.error';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
@@ -19,7 +19,7 @@ export class PaymentDue implements IPaymentDue {
 
   private _dueCategory: DueCategoryEnum;
 
-  private _dueDate: DateUtcVo;
+  private _dueDate: DateVo;
 
   private _dueId: string;
 
@@ -36,7 +36,7 @@ export class PaymentDue implements IPaymentDue {
 
     this._dueCategory = props?.dueCategory ?? DueCategoryEnum.MEMBERSHIP;
 
-    this._dueDate = props?.dueDate ?? new DateUtcVo();
+    this._dueDate = props?.dueDate ?? new DateVo();
 
     this._dueId = props?.dueId ?? '';
 
@@ -67,7 +67,7 @@ export class PaymentDue implements IPaymentDue {
     return this._dueCategory;
   }
 
-  public get dueDate(): DateUtcVo {
+  public get dueDate(): DateVo {
     return this._dueDate;
   }
 
@@ -145,7 +145,7 @@ export class PaymentDue implements IPaymentDue {
     return ok(null);
   }
 
-  private setDueDate(value: DateUtcVo): Result<null, Error> {
+  private setDueDate(value: DateVo): Result<null, Error> {
     this._dueDate = value;
 
     return ok(null);

@@ -2,7 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 
 import { DomainError } from '@domain/common/errors/domain.error';
 import { Model } from '@domain/common/models/model';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { Member } from '@domain/members/models/member.model';
 import { PaymentDue } from '@domain/payments/models/payment-due.model';
@@ -12,7 +12,7 @@ import { CreatePayment, IPayment } from '@domain/payments/payment.interface';
 export class Payment extends Model implements IPayment {
   private _amount: Money;
 
-  private _date: DateUtcVo;
+  private _date: DateVo;
 
   private _dues: PaymentDue[];
 
@@ -26,7 +26,7 @@ export class Payment extends Model implements IPayment {
 
   private _voidReason: string | null;
 
-  private _voidedAt: DateUtcVo | null;
+  private _voidedAt: DateVo | null;
 
   private _voidedBy: string | null;
 
@@ -35,7 +35,7 @@ export class Payment extends Model implements IPayment {
   public constructor(props?: IPayment, member?: Member) {
     super(props);
 
-    this._date = props?.date ?? new DateUtcVo();
+    this._date = props?.date ?? new DateVo();
 
     this._memberId = props?.memberId ?? '';
 
@@ -62,7 +62,7 @@ export class Payment extends Model implements IPayment {
     return this._amount;
   }
 
-  public get date(): DateUtcVo {
+  public get date(): DateVo {
     return this._date;
   }
 
@@ -90,7 +90,7 @@ export class Payment extends Model implements IPayment {
     return this._voidReason;
   }
 
-  public get voidedAt(): DateUtcVo | null {
+  public get voidedAt(): DateVo | null {
     return this._voidedAt;
   }
 
@@ -155,7 +155,7 @@ export class Payment extends Model implements IPayment {
   }
 
   public void(voidedBy: string, voidReason: string): Result<null, Error> {
-    this._voidedAt = new DateUtcVo();
+    this._voidedAt = new DateVo();
 
     this._voidedBy = voidedBy;
 
@@ -172,7 +172,7 @@ export class Payment extends Model implements IPayment {
     return ok(null);
   }
 
-  private setDate(value: DateUtcVo): Result<null, Error> {
+  private setDate(value: DateVo): Result<null, Error> {
     this._date = value;
 
     return ok(null);

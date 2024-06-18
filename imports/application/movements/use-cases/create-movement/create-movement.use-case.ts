@@ -11,7 +11,7 @@ import { IMovementRepository } from '@application/movements/repositories/movemen
 import { CreateMovementRequest } from '@application/movements/use-cases/create-movement/create-movement.request';
 import { GetMovementUseCase } from '@application/movements/use-cases/get-movement/get-movement.use.case';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { Movement } from '@domain/movements/models/movement.model';
 
@@ -41,7 +41,7 @@ export class CreateMovementUseCase
         const movement = Movement.createOne({
           amount: new Money({ amount: request.amount }),
           category: request.category,
-          date: new DateUtcVo(request.date),
+          date: new DateVo(request.date),
           employeeId: null,
           notes: request.notes,
           paymentId: null,

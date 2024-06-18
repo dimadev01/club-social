@@ -3,7 +3,7 @@ import { useWatch } from 'antd/es/form/Form';
 import React from 'react';
 
 import { DueDto } from '@application/dues/dtos/due.dto';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, formatDueCategoryLabel } from '@domain/dues/due.enum';
 import { FormInputAmount } from '@ui/components/Form/FormInputAmount';
@@ -107,7 +107,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
                 <Checkbox />
               </Form.Item>
 
-              {new DateUtcVo(date).format()}
+              {new DateVo(date).format()}
             </>
           );
         }}

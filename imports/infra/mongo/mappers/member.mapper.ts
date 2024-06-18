@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { Member } from '@domain/members/models/member.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { MemberAddressEntity } from '@infra/mongo/entities/member-address.entity';
@@ -27,9 +28,9 @@ export class MemberMapper extends Mapper<Member, MemberEntity> {
         },
         birthDate: member.birthDate ? new BirthDate(member.birthDate) : null,
         category: member.category,
-        createdAt: member.createdAt,
+        createdAt: new DateTimeVo(member.createdAt),
         createdBy: member.createdBy,
-        deletedAt: member.deletedAt,
+        deletedAt: member.deletedAt ? new DateTimeVo(member.deletedAt) : null,
         deletedBy: member.deletedBy,
         documentID: member.documentID,
         fileStatus: member.fileStatus,
@@ -41,7 +42,7 @@ export class MemberMapper extends Mapper<Member, MemberEntity> {
         phones: member.phones,
         sex: member.sex,
         status: member.status,
-        updatedAt: member.updatedAt,
+        updatedAt: new DateTimeVo(member.updatedAt),
         updatedBy: member.updatedBy,
         userId: member.userId,
       },
@@ -62,9 +63,9 @@ export class MemberMapper extends Mapper<Member, MemberEntity> {
       }),
       birthDate: member.birthDate?.toDate() ?? null,
       category: member.category,
-      createdAt: member.createdAt,
+      createdAt: member.createdAt.toDate(),
       createdBy: member.createdBy,
-      deletedAt: member.deletedAt,
+      deletedAt: member.deletedAt?.toDate() ?? null,
       deletedBy: member.deletedBy,
       documentID: member.documentID,
       fileStatus: member.fileStatus,
@@ -76,7 +77,7 @@ export class MemberMapper extends Mapper<Member, MemberEntity> {
       phones: member.phones,
       sex: member.sex,
       status: member.status,
-      updatedAt: member.updatedAt,
+      updatedAt: member.updatedAt.toDate(),
       updatedBy: member.updatedBy,
       userId: member.userId,
     });
