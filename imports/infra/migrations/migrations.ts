@@ -215,7 +215,7 @@ Migrations.add({
           { _id: due._id },
           {
             $set: {
-              totalPendingAmount: dueDomain.totalPendingAmount.value,
+              totalPendingAmount: dueDomain.totalPendingAmount.amount,
             },
           },
         );

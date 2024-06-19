@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { PaymentDueDto } from '@application/payments/dtos/payment-due.dto';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { AppUrl } from '@ui/app.enum';
@@ -25,7 +25,7 @@ export const PaymentDuesGrid: React.FC<PaymentDuesGridProps> = ({ dues }) => (
         dataIndex: 'dueDate',
         render: (dueDate, paymentDue) => (
           <Link to={`/${AppUrl.DUES}/${paymentDue.dueId}`}>
-            {new DateUtcVo(dueDate).format()}
+            {new DateVo(dueDate).format()}
           </Link>
         ),
         title: 'Fecha',

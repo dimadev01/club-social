@@ -7,7 +7,7 @@ import {
   MovementTypeEnum,
   MovementTypeLabel,
 } from '@domain/categories/category.enum';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
@@ -75,10 +75,10 @@ export const MovementsGridCsvDownloaderButton: React.FC<Props> = ({
           return {
             amount,
             category: MovementCategoryLabel[movement.category],
-            createdAt: new DateVo(movement.createdAt).format(
+            createdAt: new DateTimeVo(movement.createdAt).format(
               DateFormatEnum.DDMMYYHHmm,
             ),
-            date: new DateUtcVo(movement.date).format(DateFormatEnum.DDMMYYYY),
+            date: new DateVo(movement.date).format(DateFormatEnum.DDMMYYYY),
             id: movement.id,
             notes: movement.notes,
             status: MovementStatusLabel[movement.status],

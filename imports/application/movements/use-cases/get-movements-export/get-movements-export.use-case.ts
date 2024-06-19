@@ -25,7 +25,7 @@ export class GetMovementsToExportUseCase
 
     return ok<MovementGridDto[]>(
       movements.map<MovementGridDto>((movement) => ({
-        amount: movement.amount.value,
+        amount: movement.amount.amount,
         category: movement.category,
         createdAt: movement.createdAt.toISOString(),
         date: movement.date.toISOString(),

@@ -14,20 +14,17 @@
       "command": "meteor npm start"
     },
     {
-      "type": "node-terminal",
+      "type": "node",
       "request": "launch",
-      "name": "meteor:ip",
-      "command": "meteor npm run start:ip"
+      "name": "tests",
+      "runtimeExecutable": "meteor",
+      "runtimeArgs": ["npm", "run", "test:dev"]
     }
   ],
   "compounds": [
     {
       "name": "app",
       "configurations": ["meteor", "maildev"]
-    },
-    {
-      "name": "app:ip",
-      "configurations": ["meteor:ip", "maildev"]
     }
   ]
 }

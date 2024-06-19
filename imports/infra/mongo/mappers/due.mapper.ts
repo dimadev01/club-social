@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { IDuePayment } from '@domain/dues/due.interface';
 import { Due } from '@domain/dues/models/due.model';
@@ -21,10 +22,10 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         _id: entity._id,
         amount: new Money({ amount: entity.amount }),
         category: entity.category,
-        createdAt: entity.createdAt,
+        createdAt: new DateTimeVo(entity.createdAt),
         createdBy: entity.createdBy,
-        date: new DateUtcVo(entity.date),
-        deletedAt: entity.deletedAt,
+        date: new DateVo(entity.date),
+        deletedAt: entity.deletedAt ? new DateTimeVo(entity.deletedAt) : null,
         deletedBy: entity.deletedBy,
         isDeleted: entity.isDeleted,
         memberId: entity.memberId,
@@ -32,7 +33,7 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         payments: entity.payments.map<IDuePayment>((payment) => ({
           creditAmount: new Money({ amount: payment.creditAmount }),
           directAmount: new Money({ amount: payment.directAmount }),
-          paymentDate: new DateUtcVo(payment.paymentDate),
+          paymentDate: new DateVo(payment.paymentDate),
           paymentId: payment.paymentId,
           paymentReceiptNumber: payment.paymentReceiptNumber,
           paymentStatus: payment.paymentStatus,
@@ -42,10 +43,10 @@ export class DueMapper extends Mapper<Due, DueEntity> {
         status: entity.status,
         totalPaidAmount: new Money({ amount: entity.totalPaidAmount }),
         totalPendingAmount: new Money({ amount: entity.totalPendingAmount }),
-        updatedAt: entity.updatedAt,
+        updatedAt: new DateTimeVo(entity.updatedAt),
         updatedBy: entity.updatedBy,
         voidReason: entity.voidReason,
-        voidedAt: entity.voidedAt ? new DateUtcVo(entity.voidedAt) : null,
+        voidedAt: entity.voidedAt ? new DateVo(entity.voidedAt) : null,
         voidedBy: entity.voidedBy,
       },
       entity.member ? this._memberMapper.toDomain(entity.member) : undefined,
@@ -55,33 +56,33 @@ export class DueMapper extends Mapper<Due, DueEntity> {
   protected getEntity(domain: Due): DueEntity {
     return new DueEntity({
       _id: domain._id,
-      amount: domain.amount.value,
+      amount: domain.amount.amount,
       category: domain.category,
-      createdAt: domain.createdAt,
+      createdAt: domain.createdAt.date,
       createdBy: domain.createdBy,
-      date: domain.date.toDate(),
-      deletedAt: domain.deletedAt,
+      date: domain.date.date,
+      deletedAt: domain.deletedAt?.date ?? null,
       deletedBy: domain.deletedBy,
       isDeleted: domain.isDeleted,
       memberId: domain.memberId,
       notes: domain.notes,
       payments: domain.payments.map<DuePaymentEntity>((payment) => ({
-        creditAmount: payment.creditAmount.value,
-        directAmount: payment.directAmount.value,
-        paymentDate: payment.paymentDate.toDate(),
+        creditAmount: payment.creditAmount.amount,
+        directAmount: payment.directAmount.amount,
+        paymentDate: payment.paymentDate.date,
         paymentId: payment.paymentId,
         paymentReceiptNumber: payment.paymentReceiptNumber,
         paymentStatus: payment.paymentStatus,
         source: payment.source,
-        totalAmount: payment.totalAmount.value,
+        totalAmount: payment.totalAmount.amount,
       })),
       status: domain.status,
-      totalPaidAmount: domain.totalPaidAmount.value,
-      totalPendingAmount: domain.totalPendingAmount.value,
-      updatedAt: domain.updatedAt,
+      totalPaidAmount: domain.totalPaidAmount.amount,
+      totalPendingAmount: domain.totalPendingAmount.amount,
+      updatedAt: domain.updatedAt.date,
       updatedBy: domain.updatedBy,
       voidReason: domain.voidReason,
-      voidedAt: domain.voidedAt?.toDate() ?? null,
+      voidedAt: domain.voidedAt?.date ?? null,
       voidedBy: domain.voidedBy,
     });
   }

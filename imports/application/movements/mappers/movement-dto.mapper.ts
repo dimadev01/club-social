@@ -8,7 +8,7 @@ import { MapperDto } from '@ui/common/mapper/dto-mapper';
 export class MovementDtoMapper extends MapperDto<Movement, MovementDto> {
   public toDto(movement: Movement): MovementDto {
     return {
-      amount: movement.amount.value,
+      amount: movement.amount.amount,
       category: movement.category,
       createdAt: movement.createdAt.toISOString(),
       createdBy: movement.createdBy,

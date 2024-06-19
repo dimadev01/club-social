@@ -7,7 +7,7 @@ import {
 } from '@domain/categories/category.enum';
 import { DomainError } from '@domain/common/errors/domain.error';
 import { Model } from '@domain/common/models/model';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   CreateMovement,
@@ -21,7 +21,7 @@ export class Movement extends Model implements IMovement {
 
   private _category: MovementCategoryEnum;
 
-  private _date: DateUtcVo;
+  private _date: DateVo;
 
   private _employeeId: string | null;
 
@@ -39,7 +39,7 @@ export class Movement extends Model implements IMovement {
 
   private _voidReason: string | null;
 
-  private _voidedAt: DateUtcVo | null;
+  private _voidedAt: DateVo | null;
 
   private _voidedBy: string | null;
 
@@ -52,7 +52,7 @@ export class Movement extends Model implements IMovement {
 
     this._category = props?.category ?? MovementCategoryEnum.OTHER_INCOME;
 
-    this._date = props?.date ?? new DateUtcVo();
+    this._date = props?.date ?? new DateVo();
 
     this._employeeId = props?.employeeId ?? null;
 
@@ -85,7 +85,7 @@ export class Movement extends Model implements IMovement {
     return this._category;
   }
 
-  public get date(): DateUtcVo {
+  public get date(): DateVo {
     return this._date;
   }
 
@@ -121,7 +121,7 @@ export class Movement extends Model implements IMovement {
     return this._voidReason;
   }
 
-  public get voidedAt(): DateUtcVo | null {
+  public get voidedAt(): DateVo | null {
     return this._voidedAt;
   }
 
@@ -131,17 +131,6 @@ export class Movement extends Model implements IMovement {
 
   public static createOne(props: CreateMovement): Result<Movement, Error> {
     const movement = new Movement();
-
-    if (
-      props.category === MovementCategoryEnum.MEMBER_PAYMENT &&
-      !props.paymentId
-    ) {
-      return err(
-        new DomainError(
-          'Este tipo de movimiento lo debe crear desde el apartado de Pagos',
-        ),
-      );
-    }
 
     const result = Result.combine([
       movement.setAmount(props.amount),
@@ -158,6 +147,14 @@ export class Movement extends Model implements IMovement {
 
     if (result.isErr()) {
       return err(result.error);
+    }
+
+    if (movement.isMemberPayment() && !props.paymentId) {
+      return err(
+        new DomainError(
+          'Este tipo de movimiento lo debe crear desde el apartado de Pagos',
+        ),
+      );
     }
 
     return ok(movement);
@@ -183,6 +180,10 @@ export class Movement extends Model implements IMovement {
 
   public isIncome(): boolean {
     return this._type === MovementTypeEnum.INCOME;
+  }
+
+  public isMemberPayment() {
+    return this._category === MovementCategoryEnum.MEMBER_PAYMENT;
   }
 
   public isRegistered() {
@@ -221,7 +222,7 @@ export class Movement extends Model implements IMovement {
     return ok(null);
   }
 
-  public setDate(value: DateUtcVo): Result<null, Error> {
+  public setDate(value: DateVo): Result<null, Error> {
     this._date = value;
 
     return ok(null);
@@ -264,7 +265,13 @@ export class Movement extends Model implements IMovement {
   }
 
   public void(voidedBy: string, voidReason: string): Result<null, Error> {
-    this._voidedAt = new DateUtcVo();
+    if (this.isVoided()) {
+      return err(
+        new DomainError('El movimiento ya ha sido anulado previamente.'),
+      );
+    }
+
+    this._voidedAt = new DateVo();
 
     this._voidedBy = voidedBy;
 
@@ -274,6 +281,14 @@ export class Movement extends Model implements IMovement {
   }
 
   private setStatus(value: MovementStatusEnum): Result<null, Error> {
+    if (this.isVoided()) {
+      return err(
+        new DomainError(
+          'No se puede cambiar el estado de un movimiento anulado.',
+        ),
+      );
+    }
+
     this._status = value;
 
     return ok(null);

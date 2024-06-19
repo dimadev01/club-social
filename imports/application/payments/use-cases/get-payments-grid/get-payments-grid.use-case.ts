@@ -37,19 +37,19 @@ export class GetPaymentsGridUseCase
       invariant(payment.member);
 
       return {
-        amount: payment.amount.value,
+        amount: payment.amount.amount,
         createdAt: payment.createdAt.toISOString(),
         date: payment.date.toISOString(),
         dues: payment.dues.map<PaymentDueDto>((paymentDue) => ({
-          creditAmount: paymentDue.creditAmount.value,
-          directAmount: paymentDue.directAmount.value,
-          dueAmount: paymentDue.dueAmount.value,
+          creditAmount: paymentDue.creditAmount.amount,
+          directAmount: paymentDue.directAmount.amount,
+          dueAmount: paymentDue.dueAmount.amount,
           dueCategory: paymentDue.dueCategory,
           dueDate: paymentDue.dueDate.toISOString(),
           dueId: paymentDue.dueId,
-          duePendingAmount: paymentDue.duePendingAmount.value,
+          duePendingAmount: paymentDue.duePendingAmount.amount,
           source: paymentDue.source,
-          totalAmount: paymentDue.totalAmount.value,
+          totalAmount: paymentDue.totalAmount.amount,
         })),
         duesCount: payment.dues.length,
         id: payment._id,

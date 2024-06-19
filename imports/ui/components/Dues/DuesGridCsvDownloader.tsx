@@ -1,7 +1,7 @@
 import React from 'react';
 import CsvDownloader from 'react-csv-downloader';
 
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryLabel, DueStatusLabel } from '@domain/dues/due.enum';
@@ -65,10 +65,10 @@ export const DuesGridCsvDownloaderButton: React.FC<Props> = ({ request }) => {
         return data.map((due) => ({
           amount: new Money({ amount: due.amount }).toInteger(),
           category: DueCategoryLabel[due.category],
-          createdAt: new DateVo(due.createdAt).format(
+          createdAt: new DateTimeVo(due.createdAt).format(
             DateFormatEnum.DDMMYYHHmm,
           ),
-          date: new DateUtcVo(due.date).format(DateFormatEnum.DDMMYYYY),
+          date: new DateVo(due.date).format(DateFormatEnum.DDMMYYYY),
           id: due.id,
           memberName: due.member.name,
           status: DueStatusLabel[due.status],

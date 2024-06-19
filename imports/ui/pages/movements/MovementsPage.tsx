@@ -16,7 +16,7 @@ import {
   getMovementStatusColumnFilters,
   getMovementTypeOptions,
 } from '@domain/categories/category.enum';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
@@ -164,7 +164,7 @@ export const MovementsPage = () => {
             filteredValue: gridState.filters.createdAt,
             render: (date: string, movement: MovementGridDto) => (
               <Link to={movement.id} state={gridState}>
-                {new DateVo(date).format(DateFormatEnum.DDMMYYHHmm)}
+                {new DateTimeVo(date).format(DateFormatEnum.DDMMYYHHmm)}
               </Link>
             ),
             sortOrder: gridState.sorter.createdAt,
@@ -177,7 +177,7 @@ export const MovementsPage = () => {
             ellipsis: true,
             filterDropdown: renderDateFilter,
             filteredValue: gridState.filters.date,
-            render: (date: string) => new DateUtcVo(date).format(),
+            render: (date: string) => new DateVo(date).format(),
             title: 'Fecha de movimiento',
             width: 100,
           },

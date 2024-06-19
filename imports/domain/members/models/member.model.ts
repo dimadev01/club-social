@@ -194,7 +194,7 @@ export class Member extends Model implements IMemberProps {
 
   public setBirthDate(value: BirthDate | null): Result<null, Error> {
     if (value) {
-      const isBirthDateInTheFuture = new Date() < value.toDate();
+      const isBirthDateInTheFuture = new Date() < value.date;
 
       if (isBirthDateInTheFuture) {
         return err(

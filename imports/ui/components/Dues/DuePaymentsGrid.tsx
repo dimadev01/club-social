@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { DuePaymentDto } from '@application/dues/dtos/due-payment.dto';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
   PaymentStatusEnum,
@@ -26,7 +26,7 @@ export const DuePaymentsGrid: React.FC<DuePaymentsGridProps> = ({
         dataIndex: 'paymentDate',
         render: (paymentDate, duePayment) => (
           <Link to={`/${AppUrl.PAYMENTS}/${duePayment.paymentId}`}>
-            {new DateUtcVo(paymentDate).format()}
+            {new DateVo(paymentDate).format()}
           </Link>
         ),
         title: 'Fecha',

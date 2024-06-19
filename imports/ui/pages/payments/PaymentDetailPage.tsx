@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { PaymentStatusLabel } from '@domain/payments/payment.enum';
@@ -61,7 +61,7 @@ export const PaymentDetailPage = () => {
             ),
           },
           {
-            title: `Pago de ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`,
+            title: `Pago de ${payment.member.name} del ${new DateVo(payment.date).format()}`,
           },
         ]}
       />
@@ -73,19 +73,19 @@ export const PaymentDetailPage = () => {
       >
         <Card
           extra={<PaymentsIcon />}
-          title={`Pago a ${payment.member.name} del ${new DateUtcVo(payment.date).format()}`}
+          title={`Pago a ${payment.member.name} del ${new DateVo(payment.date).format()}`}
         >
           <>
             <Descriptions column={1} layout="vertical" colon={false}>
               <Descriptions.Item label="Fecha de creación del pago">
-                {new DateVo(payment.createdAt).format(
+                {new DateTimeVo(payment.createdAt).format(
                   DateFormatEnum.DDMMYYHHmm,
                 )}{' '}
                 ({payment.createdBy})
               </Descriptions.Item>
 
               <Descriptions.Item label="Fecha de pago del socio">
-                {new DateUtcVo(payment.date).format()}
+                {new DateVo(payment.date).format()}
               </Descriptions.Item>
 
               <Descriptions.Item label="Socio">
@@ -112,7 +112,7 @@ export const PaymentDetailPage = () => {
                 <>
                   <Descriptions.Item label="Anulado el">
                     {payment.voidedAt
-                      ? new DateVo(payment.voidedAt).format(
+                      ? new DateTimeVo(payment.voidedAt).format(
                           DateFormatEnum.DDMMYYHHmm,
                         )
                       : ''}

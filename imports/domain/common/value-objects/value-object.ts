@@ -1,8 +1,8 @@
 export abstract class ValueObject<T> {
-  protected readonly props: T;
+  protected readonly value: T;
 
   constructor(props: T) {
-    this.props = Object.freeze(props);
+    this.value = Object.freeze(props);
   }
 
   public equals(vo?: ValueObject<T>): boolean {
@@ -10,10 +10,10 @@ export abstract class ValueObject<T> {
       return false;
     }
 
-    if (vo.props === undefined) {
+    if (vo.value === undefined) {
       return false;
     }
 
-    return JSON.stringify(this.props) === JSON.stringify(vo.props);
+    return JSON.stringify(this.value) === JSON.stringify(vo.value);
   }
 }

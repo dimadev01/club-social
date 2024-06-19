@@ -1,5 +1,7 @@
 import { Result } from 'neverthrow';
 
+import { IEmailTo } from '@domain/emails/email.interface';
+
 export interface IEmailRepository {
   sendTemplate(options: EmailWithTemplateOptions): Promise<Result<null, Error>>;
 }
@@ -21,14 +23,9 @@ export interface EmailOptions {
   to: string | string[];
 }
 
-export interface EmailTo {
-  email: string;
-  name: string;
-}
-
 export interface EmailWithTemplateOptions {
   templateId: string;
-  to: EmailTo | EmailTo[];
+  to: IEmailTo;
   unsubscribeGroupId: number | null;
   variables: { [key: string]: unknown };
 }

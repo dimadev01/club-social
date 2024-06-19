@@ -1,11 +1,13 @@
 import { IUniqueID } from './unique-id-model.interface';
 
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
+
 export interface IModel extends IUniqueID {
-  createdAt: Date;
+  createdAt: DateTimeVo;
   createdBy: string;
-  deletedAt: Date | null;
+  deletedAt: DateTimeVo | null;
   deletedBy: string | null;
   isDeleted: boolean;
-  updatedAt: Date;
+  updatedAt: DateTimeVo;
   updatedBy: string;
 }

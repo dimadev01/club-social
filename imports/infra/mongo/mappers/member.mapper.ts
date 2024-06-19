@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { Member } from '@domain/members/models/member.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { MemberAddressEntity } from '@infra/mongo/entities/member-address.entity';
@@ -27,9 +28,9 @@ export class MemberMapper extends Mapper<Member, MemberEntity> {
         },
         birthDate: member.birthDate ? new BirthDate(member.birthDate) : null,
         category: member.category,
-        createdAt: member.createdAt,
+        createdAt: new DateTimeVo(member.createdAt),
         createdBy: member.createdBy,
-        deletedAt: member.deletedAt,
+        deletedAt: member.deletedAt ? new DateTimeVo(member.deletedAt) : null,
         deletedBy: member.deletedBy,
         documentID: member.documentID,
         fileStatus: member.fileStatus,
@@ -41,7 +42,7 @@ export class MemberMapper extends Mapper<Member, MemberEntity> {
         phones: member.phones,
         sex: member.sex,
         status: member.status,
-        updatedAt: member.updatedAt,
+        updatedAt: new DateTimeVo(member.updatedAt),
         updatedBy: member.updatedBy,
         userId: member.userId,
       },
@@ -60,11 +61,11 @@ export class MemberMapper extends Mapper<Member, MemberEntity> {
         street: member.address.street,
         zipCode: member.address.zipCode,
       }),
-      birthDate: member.birthDate?.toDate() ?? null,
+      birthDate: member.birthDate?.date ?? null,
       category: member.category,
-      createdAt: member.createdAt,
+      createdAt: member.createdAt.date,
       createdBy: member.createdBy,
-      deletedAt: member.deletedAt,
+      deletedAt: member.deletedAt?.date ?? null,
       deletedBy: member.deletedBy,
       documentID: member.documentID,
       fileStatus: member.fileStatus,
@@ -76,7 +77,7 @@ export class MemberMapper extends Mapper<Member, MemberEntity> {
       phones: member.phones,
       sex: member.sex,
       status: member.status,
-      updatedAt: member.updatedAt,
+      updatedAt: member.updatedAt.date,
       updatedBy: member.updatedBy,
       userId: member.userId,
     });

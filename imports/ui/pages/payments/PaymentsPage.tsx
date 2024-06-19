@@ -5,7 +5,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
@@ -114,7 +114,7 @@ export const PaymentsPage = () => {
         filteredValue: gridState.filters.createdAt,
         render: (createdAt: string, payment: PaymentGridDto) => (
           <Link to={payment.id} state={gridState}>
-            {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
+            {new DateTimeVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
           </Link>
         ),
         sortOrder: gridState.sorter.createdAt,
@@ -127,7 +127,7 @@ export const PaymentsPage = () => {
         ellipsis: true,
         filterDropdown: renderDateFilter,
         filteredValue: gridState.filters.date,
-        render: (date: string) => new DateUtcVo(date).format(),
+        render: (date: string) => new DateVo(date).format(),
         title: 'Fecha de pago',
         width: 100,
       },
