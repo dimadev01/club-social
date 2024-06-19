@@ -1,4 +1,4 @@
-import { ResultAsync, ok } from 'neverthrow';
+import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
@@ -8,6 +8,7 @@ import { IUseCase } from '@application/common/use-case.interface';
 import { IMemberRepository } from '@application/members/repositories/member.repository';
 import { IEmailRepository } from '@application/notifications/emails/email.repository';
 import { IPaymentRepository } from '@application/payments/repositories/payment.repository';
+import { EmailVo } from '@domain/common/value-objects/email.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryLabel } from '@domain/dues/due.enum';
 
@@ -24,7 +25,7 @@ export class SendNewPaymentEmailUseCase implements IUseCase<FindOneById, null> {
     private readonly _memberRepository: IMemberRepository,
   ) {}
 
-  public async execute(request: FindOneById): ResultAsync<null, Error> {
+  public async execute(request: FindOneById): Promise<Result<null, Error>> {
     const payment = await this._paymentRepository.findOneByIdOrThrow(request);
 
     const member = await this._memberRepository.findOneByIdOrThrow({
@@ -48,7 +49,7 @@ export class SendNewPaymentEmailUseCase implements IUseCase<FindOneById, null> {
     const result = await this._emailRepository.sendTemplate({
       templateId: `d-229024941d0447aeb80c945adaf7169b`,
       to: {
-        email: member.firstEmail(),
+        email: EmailVo.from(member.firstEmail()),
         name: member.name,
       },
       unsubscribeGroupId: 237801,

@@ -35,7 +35,7 @@ export class GetDuesGridUseCase
         invariant(due.member);
 
         return {
-          amount: due.amount.value,
+          amount: due.amount.amount,
           category: due.category,
           createdAt: due.createdAt.toISOString(),
           date: due.date.toISOString(),
@@ -44,17 +44,17 @@ export class GetDuesGridUseCase
           member: this._memberDtoMapper.toDto(due.member),
           memberId: due.memberId,
           payments: due.payments.map<DuePaymentDto>((duePayment) => ({
-            creditAmount: duePayment.creditAmount.value,
-            directAmount: duePayment.directAmount.value,
+            creditAmount: duePayment.creditAmount.amount,
+            directAmount: duePayment.directAmount.amount,
             paymentDate: duePayment.paymentDate.toISOString(),
             paymentId: duePayment.paymentId,
             paymentReceiptNumber: duePayment.paymentReceiptNumber,
             paymentStatus: duePayment.paymentStatus,
-            totalAmount: duePayment.totalAmount.value,
+            totalAmount: duePayment.totalAmount.amount,
           })),
           status: due.status,
-          totalPaidAmount: due.totalPaidAmount.value,
-          totalPendingAmount: due.totalPendingAmount.value,
+          totalPaidAmount: due.totalPaidAmount.amount,
+          totalPendingAmount: due.totalPendingAmount.amount,
         };
       }),
       totalCount,

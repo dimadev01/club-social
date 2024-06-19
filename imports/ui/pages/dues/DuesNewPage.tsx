@@ -136,7 +136,7 @@ export const DuesNewPage = () => {
 
     createDue.mutate(
       {
-        amount: Money.fromNumber(values.amount).value,
+        amount: Money.fromNumber(values.amount).amount,
         category: values.category,
         date,
         memberIds: Array.isArray(values.memberIds) ? values.memberIds : [],

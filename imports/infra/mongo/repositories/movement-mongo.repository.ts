@@ -167,15 +167,15 @@ export class MovementMongoRepository
 
     if (request.filterByCreatedAt.length > 0) {
       query.createdAt = {
-        $gte: new DateVo(request.filterByCreatedAt[0]).toDate(),
-        $lte: new DateVo(request.filterByCreatedAt[1]).toDate(),
+        $gte: new DateVo(request.filterByCreatedAt[0]).date,
+        $lte: new DateVo(request.filterByCreatedAt[1]).date,
       };
     }
 
     if (request.filterByDate.length > 0) {
       query.date = {
-        $gte: new DateVo(request.filterByDate[0]).toDate(),
-        $lte: new DateVo(request.filterByDate[1]).toDate(),
+        $gte: new DateVo(request.filterByDate[0]).date,
+        $lte: new DateVo(request.filterByDate[1]).date,
       };
     }
 

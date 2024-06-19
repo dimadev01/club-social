@@ -8,6 +8,6 @@ export class BirthDate extends DateVo {
   }
 
   public getAge(): number {
-    return dayjs().diff(this.props.toDate(), 'year');
+    return dayjs().diff(this.value.toDate(), 'year');
   }
 }

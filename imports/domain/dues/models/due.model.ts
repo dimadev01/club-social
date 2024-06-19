@@ -1,8 +1,6 @@
 import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
 
-import { DuePayment } from './DuePayment';
-
 import { DomainError } from '@domain/common/errors/domain.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { Model } from '@domain/common/models/model';
@@ -10,6 +8,7 @@ import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { CreateDue, CreateDuePayment, IDue } from '@domain/dues/due.interface';
+import { DuePayment } from '@domain/dues/models/due-payment.model';
 import { Member } from '@domain/members/models/member.model';
 
 export class Due extends Model implements IDue {

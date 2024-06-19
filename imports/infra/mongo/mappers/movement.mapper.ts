@@ -46,12 +46,12 @@ export class MovementMapper extends Mapper<Movement, MovementEntity> {
   protected getEntity(domain: Movement): MovementEntity {
     return new MovementEntity({
       _id: domain._id,
-      amount: domain.amount.value,
+      amount: domain.amount.amount,
       category: domain.category,
-      createdAt: domain.createdAt.toDate(),
+      createdAt: domain.createdAt.date,
       createdBy: domain.createdBy,
-      date: domain.date.toDate(),
-      deletedAt: domain.deletedAt?.toDate() ?? null,
+      date: domain.date.date,
+      deletedAt: domain.deletedAt?.date ?? null,
       deletedBy: domain.deletedBy,
       employeeId: domain.employeeId,
       isDeleted: domain.isDeleted,
@@ -61,10 +61,10 @@ export class MovementMapper extends Mapper<Movement, MovementEntity> {
       serviceId: domain.serviceId,
       status: domain.status,
       type: domain.type,
-      updatedAt: domain.updatedAt.toDate(),
+      updatedAt: domain.updatedAt.date,
       updatedBy: domain.updatedBy,
       voidReason: domain.voidReason,
-      voidedAt: domain.voidedAt?.toDate() ?? null,
+      voidedAt: domain.voidedAt?.date ?? null,
       voidedBy: domain.voidedBy,
     });
   }

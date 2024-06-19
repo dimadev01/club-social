@@ -1,15 +1,8 @@
-import { shallowEqualObjects } from 'shallow-equal';
-
-interface ValueObjectProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [index: string]: any;
-}
-
-export abstract class ValueObject<T extends ValueObjectProps> {
-  public readonly props: T;
+export abstract class ValueObject<T> {
+  protected readonly value: T;
 
   constructor(props: T) {
-    this.props = Object.freeze(props);
+    this.value = Object.freeze(props);
   }
 
   public equals(vo?: ValueObject<T>): boolean {
@@ -17,10 +10,10 @@ export abstract class ValueObject<T extends ValueObjectProps> {
       return false;
     }
 
-    if (vo.props === undefined) {
+    if (vo.value === undefined) {
       return false;
     }
 
-    return shallowEqualObjects(this.props, vo.props);
+    return JSON.stringify(this.value) === JSON.stringify(vo.value);
   }
 }

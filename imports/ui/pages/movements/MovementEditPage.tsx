@@ -54,7 +54,7 @@ export const MovementEditPage = () => {
 
     updateMovement.mutate(
       {
-        amount: Money.fromNumber(values.amount).value,
+        amount: Money.fromNumber(values.amount).amount,
         category: values.category,
         date: new DateTimeVo(values.date).format(DateFormatEnum.DATE),
         id: movement.id,

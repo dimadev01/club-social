@@ -37,9 +37,9 @@ export class UserMapper extends Mapper<User, UserEntity> {
   protected getEntity(user: User): UserEntity {
     return new UserEntity({
       _id: user._id,
-      createdAt: user.createdAt.toDate(),
+      createdAt: user.createdAt.date,
       createdBy: user.createdBy,
-      deletedAt: user.deletedAt?.toDate() ?? null,
+      deletedAt: user.deletedAt?.date ?? null,
       deletedBy: user.deletedBy,
       emails:
         user.emails?.map(
@@ -59,7 +59,7 @@ export class UserMapper extends Mapper<User, UserEntity> {
         theme: user.theme,
       }),
       services: user.services,
-      updatedAt: user.updatedAt.toDate(),
+      updatedAt: user.updatedAt.date,
       updatedBy: user.updatedBy,
     });
   }

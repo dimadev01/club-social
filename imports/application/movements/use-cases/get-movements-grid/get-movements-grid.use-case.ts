@@ -31,7 +31,7 @@ export class GetMovementsGridUseCase
 
     return ok({
       items: items.map<MovementGridDto>((movement) => ({
-        amount: movement.amount.value,
+        amount: movement.amount.amount,
         category: movement.category,
         createdAt: movement.createdAt.toISOString(),
         date: movement.date.toISOString(),

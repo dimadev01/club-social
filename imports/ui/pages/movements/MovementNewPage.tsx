@@ -42,7 +42,7 @@ export const MovementNewPage = () => {
   const handleSubmit = async (values: FormValues) => {
     createMovement.mutate(
       {
-        amount: Money.fromNumber(values.amount).value,
+        amount: Money.fromNumber(values.amount).amount,
         category: values.category,
         date: new DateTimeVo(values.date).format(DateFormatEnum.DATE),
         notes: values.notes || null,

@@ -34,17 +34,17 @@ export class MemberCreditMapper extends Mapper<
   protected getEntity(memberCredit: MemberCredit): MemberCreditEntity {
     return new MemberCreditEntity({
       _id: memberCredit._id,
-      amount: memberCredit.amount.value,
-      createdAt: memberCredit.createdAt.toDate(),
+      amount: memberCredit.amount.amount,
+      createdAt: memberCredit.createdAt.date,
       createdBy: memberCredit.createdBy,
-      deletedAt: memberCredit.deletedAt?.toDate() ?? null,
+      deletedAt: memberCredit.deletedAt?.date ?? null,
       deletedBy: memberCredit.deletedBy,
       dueId: memberCredit.dueId,
       isDeleted: memberCredit.isDeleted,
       memberId: memberCredit.memberId,
       paymentId: memberCredit.paymentId,
       type: memberCredit.type,
-      updatedAt: memberCredit.updatedAt.toDate(),
+      updatedAt: memberCredit.updatedAt.date,
       updatedBy: memberCredit.updatedBy,
     });
   }

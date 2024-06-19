@@ -21,21 +21,41 @@ dayjs.extend(dayjsLocalizedFormat);
 
 dayjs.locale('es');
 
-export class DateTimeVo extends ValueObject<Dayjs> {
-  public constructor(value?: dayjs.ConfigType) {
-    super(dayjs(value));
+interface IDateTimeVo {
+  date: Date;
+}
+
+export class DateTimeVo extends ValueObject<IDateTimeVo> {
+  protected _dayjs: Dayjs;
+
+  public constructor(props?: dayjs.ConfigType) {
+    super({ date: dayjs(props).toDate() });
+
+    this._dayjs = dayjs(this.value.date);
+  }
+
+  public get date(): Date {
+    return this.value.date;
   }
 
   public add(value: number, unit: dayjs.ManipulateType) {
-    return new DateTimeVo(this.props.add(value, unit));
+    return new DateTimeVo(this._dayjs.add(value, unit));
+  }
+
+  public equals(vo?: DateTimeVo): boolean {
+    if (vo === null || vo === undefined) {
+      return false;
+    }
+
+    return this._dayjs.isSame(vo.toDayjs());
   }
 
   public format(format = DateFormatEnum.DDMMYYYY): string {
-    return this.props.format(format);
+    return this._dayjs.format(format);
   }
 
   public isInTheFuture() {
-    return this.props.isAfter(dayjs());
+    return this._dayjs.isAfter(dayjs());
   }
 
   public monthName(): string {
@@ -43,22 +63,22 @@ export class DateTimeVo extends ValueObject<Dayjs> {
   }
 
   public startOf(value: dayjs.OpUnitType) {
-    return new DateTimeVo(this.props.startOf(value));
+    return new DateTimeVo(this._dayjs.startOf(value));
   }
 
   public subtract(value: number, unit: dayjs.ManipulateType) {
-    return new DateTimeVo(this.props.subtract(value, unit));
-  }
-
-  public toDate(): Date {
-    return this.props.toDate();
+    return new DateTimeVo(this._dayjs.subtract(value, unit));
   }
 
   public toISOString(): string {
-    return this.props.toISOString();
+    return this._dayjs.toISOString();
   }
 
   public unix(): number {
-    return this.props.unix();
+    return this._dayjs.unix();
+  }
+
+  private toDayjs(): Dayjs {
+    return this._dayjs;
   }
 }

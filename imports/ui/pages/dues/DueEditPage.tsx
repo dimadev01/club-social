@@ -47,7 +47,7 @@ export const DueEditPage = () => {
 
     updateDue.mutate(
       {
-        amount: Money.fromNumber(values.amount).value,
+        amount: Money.fromNumber(values.amount).amount,
         id: due.id,
         notes: values.notes || null,
       },
