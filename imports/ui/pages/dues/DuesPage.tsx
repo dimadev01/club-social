@@ -1,11 +1,11 @@
 import { Card, Space, Typography } from 'antd';
 import Table, { ColumnProps } from 'antd/es/table';
 import { FilterDropdownProps } from 'antd/es/table/interface';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import {
@@ -19,7 +19,6 @@ import { UrlUtils } from '@shared/utils/url.utils';
 import { AppUrl, AppUrlGenericEnum } from '@ui/app.enum';
 import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 import { Button } from '@ui/components/Button/Button';
-import { getPresets } from '@ui/components/DatePicker/DatePicker.utils';
 import { DueCategoryIconWithLabel } from '@ui/components/Dues/DueCategoryLabel';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
 import { DuesUIUtils } from '@ui/components/Dues/Dues.utils';
@@ -46,8 +45,6 @@ export const DuesPage = () => {
   const { member } = useUserContext();
 
   const permissions = usePermissions();
-
-  const presets = useMemo(() => getPresets(), []);
 
   const {
     gridState,
@@ -134,7 +131,7 @@ export const DuesPage = () => {
         filteredValue: gridState.filters.createdAt,
         render: (createdAt: string, due: DueGridDto) => (
           <Link to={due.id} state={gridState}>
-            {new DateVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
+            {new DateTimeVo(createdAt).format(DateFormatEnum.DDMMYYHHmm)}
           </Link>
         ),
         sortOrder: gridState.sorter.createdAt,
@@ -147,7 +144,7 @@ export const DuesPage = () => {
         ellipsis: true,
         filterDropdown: renderDateFilter,
         filteredValue: gridState.filters.date,
-        render: (date: string) => new DateUtcVo(date).format(),
+        render: (date: string) => new DateVo(date).format(),
         title: 'Fecha de deuda',
         width: 100,
       },

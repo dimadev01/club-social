@@ -4,13 +4,13 @@ import {
   MovementTypeEnum,
 } from '@domain/categories/category.enum';
 import { IModel } from '@domain/common/models/model.interface';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 
 export interface IMovement extends IModel {
   amount: Money;
   category: MovementCategoryEnum;
-  date: DateUtcVo;
+  date: DateVo;
   employeeId: string | null;
   notes: string | null;
   paymentId: string | null;
@@ -19,14 +19,14 @@ export interface IMovement extends IModel {
   status: MovementStatusEnum;
   type: MovementTypeEnum;
   voidReason: string | null;
-  voidedAt: DateUtcVo | null;
+  voidedAt: DateVo | null;
   voidedBy: string | null;
 }
 
 export interface CreateMovement {
   amount: Money;
   category: MovementCategoryEnum;
-  date: DateUtcVo;
+  date: DateVo;
   employeeId: string | null;
   notes: string | null;
   paymentId: string | null;
@@ -37,7 +37,7 @@ export interface CreateMovement {
 
 export interface CreatePayment {
   amount: Money;
-  date: DateUtcVo;
+  date: DateVo;
   notes: string | null;
   paymentId: string;
 }

@@ -11,7 +11,7 @@ import { CreateDueRequest } from '@application/dues/use-cases/create-due/create-
 import { GetDueUseCase } from '@application/dues/use-cases/get-due/get-due.use-case';
 import { SendNewDueEmailUseCase } from '@application/dues/use-cases/send-new-due-email/send-new-due-email.use-case';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { Due } from '@domain/dues/models/due.model';
 
@@ -42,7 +42,7 @@ export class CreateDueUseCase implements IUseCase<CreateDueRequest, DueDto[]> {
             const due = Due.createOne({
               amount: new Money({ amount: request.amount }),
               category: request.category,
-              date: new DateUtcVo(request.date),
+              date: new DateVo(request.date),
               memberId,
               notes: request.notes,
             });

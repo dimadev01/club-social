@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { Payment } from '@domain/payments/models/payment.model';
 import { IPaymentDue } from '@domain/payments/payment.interface';
@@ -20,17 +21,17 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
       {
         _id: entity._id,
         amount: new Money({ amount: entity.amount }),
-        createdAt: entity.createdAt,
+        createdAt: new DateTimeVo(entity.createdAt),
         createdBy: entity.createdBy,
-        date: new DateUtcVo(entity.date),
-        deletedAt: entity.deletedAt,
+        date: new DateVo(entity.date),
+        deletedAt: entity.deletedAt ? new DateTimeVo(entity.deletedAt) : null,
         deletedBy: entity.deletedBy,
         dues: entity.dues.map<IPaymentDue>((due) => ({
           creditAmount: new Money({ amount: due.creditAmount }),
           directAmount: new Money({ amount: due.directAmount }),
           dueAmount: new Money({ amount: due.dueAmount }),
           dueCategory: due.dueCategory,
-          dueDate: new DateUtcVo(due.dueDate),
+          dueDate: new DateVo(due.dueDate),
           dueId: due.dueId,
           duePendingAmount: new Money({ amount: due.duePendingAmount }),
           source: due.source,
@@ -41,10 +42,10 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
         notes: entity.notes,
         receiptNumber: entity.receiptNumber,
         status: entity.status,
-        updatedAt: entity.updatedAt,
+        updatedAt: new DateTimeVo(entity.updatedAt),
         updatedBy: entity.updatedBy,
         voidReason: entity.voidReason,
-        voidedAt: entity.voidedAt ? new DateUtcVo(entity.voidedAt) : null,
+        voidedAt: entity.voidedAt ? new DateVo(entity.voidedAt) : null,
         voidedBy: entity.voidedBy,
       },
       entity.member ? this._memberMapper.toDomain(entity.member) : undefined,
@@ -54,32 +55,32 @@ export class PaymentMapper extends Mapper<Payment, PaymentEntity> {
   protected getEntity(domain: Payment): PaymentEntity {
     return new PaymentEntity({
       _id: domain._id,
-      amount: domain.amount.value,
-      createdAt: domain.createdAt,
+      amount: domain.amount.amount,
+      createdAt: domain.createdAt.date,
       createdBy: domain.createdBy,
-      date: domain.date.toDate(),
-      deletedAt: domain.deletedAt,
+      date: domain.date.date,
+      deletedAt: domain.deletedAt?.date ?? null,
       deletedBy: domain.deletedBy,
       dues: domain.dues.map<PaymentDueEntity>((due) => ({
-        creditAmount: due.creditAmount.value,
-        directAmount: due.directAmount.value,
-        dueAmount: due.dueAmount.value,
+        creditAmount: due.creditAmount.amount,
+        directAmount: due.directAmount.amount,
+        dueAmount: due.dueAmount.amount,
         dueCategory: due.dueCategory,
-        dueDate: due.dueDate.toDate(),
+        dueDate: due.dueDate.date,
         dueId: due.dueId,
-        duePendingAmount: due.duePendingAmount.value,
+        duePendingAmount: due.duePendingAmount.amount,
         source: due.source,
-        totalAmount: due.totalAmount.value,
+        totalAmount: due.totalAmount.amount,
       })),
       isDeleted: domain.isDeleted,
       memberId: domain.memberId,
       notes: domain.notes,
       receiptNumber: domain.receiptNumber,
       status: domain.status,
-      updatedAt: domain.updatedAt,
+      updatedAt: domain.updatedAt.date,
       updatedBy: domain.updatedBy,
       voidReason: domain.voidReason,
-      voidedAt: domain.voidedAt?.toDate() ?? null,
+      voidedAt: domain.voidedAt?.date ?? null,
       voidedBy: domain.voidedBy,
     });
   }

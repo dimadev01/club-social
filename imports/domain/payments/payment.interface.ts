@@ -1,5 +1,5 @@
 import { IModel } from '@domain/common/models/model.interface';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import {
@@ -9,20 +9,20 @@ import {
 
 export interface IPayment extends IModel {
   amount: Money;
-  date: DateUtcVo;
+  date: DateVo;
   dues: IPaymentDue[];
   memberId: string;
   notes: string | null;
   receiptNumber: number | null;
   status: PaymentStatusEnum;
   voidReason: string | null;
-  voidedAt: DateUtcVo | null;
+  voidedAt: DateVo | null;
   voidedBy: string | null;
 }
 
 export interface CreatePayment {
   createDues: CreatePaymentDue[];
-  date: DateUtcVo;
+  date: DateVo;
   memberId: string;
   notes: string | null;
   receiptNumber: number;
@@ -33,7 +33,7 @@ export interface IPaymentDue {
   directAmount: Money;
   dueAmount: Money;
   dueCategory: DueCategoryEnum;
-  dueDate: DateUtcVo;
+  dueDate: DateVo;
   dueId: string;
   duePendingAmount: Money;
   source: PaymentDueSourceEnum;
@@ -45,7 +45,7 @@ export interface CreatePaymentDue {
   directAmount: Money;
   dueAmount: Money;
   dueCategory: DueCategoryEnum;
-  dueDate: DateUtcVo;
+  dueDate: DateVo;
   dueId: string;
   duePendingAmount: Money;
 }

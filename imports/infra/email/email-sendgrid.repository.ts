@@ -11,6 +11,7 @@ import {
   IEmailRepository,
 } from '@application/notifications/emails/email.repository';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
+import { EmailVo } from '@domain/common/value-objects/email.value-object';
 
 @singleton()
 export class EmailSendGridRepository implements IEmailRepository {
@@ -32,8 +33,14 @@ export class EmailSendGridRepository implements IEmailRepository {
       let { to } = options;
 
       if (Meteor.isDevelopment) {
+        const email = EmailVo.create(EmailServiceEnum.EMAIL_FROM_ADDRESS);
+
+        if (email.isErr()) {
+          return err(email.error);
+        }
+
         to = {
-          email: EmailServiceEnum.EMAIL_FROM_ADDRESS,
+          email: email.value,
           name: EmailServiceEnum.EMAIL_FORM_NAME,
         };
 
@@ -58,7 +65,10 @@ export class EmailSendGridRepository implements IEmailRepository {
           },
         },
         templateId: options.templateId,
-        to,
+        to: {
+          email: to.email.address,
+          name: to.name,
+        },
       });
 
       if (Meteor.isDevelopment && response[0].statusCode === 200) {

@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { Movement } from '@domain/movements/models/movement.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
@@ -19,10 +20,10 @@ export class MovementMapper extends Mapper<Movement, MovementEntity> {
         _id: entity._id,
         amount: new Money({ amount: entity.amount }),
         category: entity.category,
-        createdAt: entity.createdAt,
+        createdAt: new DateTimeVo(entity.createdAt),
         createdBy: entity.createdBy,
-        date: new DateUtcVo(entity.date),
-        deletedAt: entity.deletedAt,
+        date: new DateVo(entity.date),
+        deletedAt: entity.deletedAt ? new DateTimeVo(entity.deletedAt) : null,
         deletedBy: entity.deletedBy,
         employeeId: entity.employeeId,
         isDeleted: entity.isDeleted,
@@ -32,10 +33,10 @@ export class MovementMapper extends Mapper<Movement, MovementEntity> {
         serviceId: entity.serviceId,
         status: entity.status,
         type: entity.type,
-        updatedAt: entity.updatedAt,
+        updatedAt: new DateTimeVo(entity.updatedAt),
         updatedBy: entity.updatedBy,
         voidReason: entity.voidReason,
-        voidedAt: entity.voidedAt ? new DateUtcVo(entity.voidedAt) : null,
+        voidedAt: entity.voidedAt ? new DateVo(entity.voidedAt) : null,
         voidedBy: entity.voidedBy,
       },
       entity.payment ? this._paymentMapper.toDomain(entity.payment) : undefined,
@@ -45,12 +46,12 @@ export class MovementMapper extends Mapper<Movement, MovementEntity> {
   protected getEntity(domain: Movement): MovementEntity {
     return new MovementEntity({
       _id: domain._id,
-      amount: domain.amount.value,
+      amount: domain.amount.amount,
       category: domain.category,
-      createdAt: domain.createdAt,
+      createdAt: domain.createdAt.date,
       createdBy: domain.createdBy,
-      date: domain.date.toDate(),
-      deletedAt: domain.deletedAt,
+      date: domain.date.date,
+      deletedAt: domain.deletedAt?.date ?? null,
       deletedBy: domain.deletedBy,
       employeeId: domain.employeeId,
       isDeleted: domain.isDeleted,
@@ -60,10 +61,10 @@ export class MovementMapper extends Mapper<Movement, MovementEntity> {
       serviceId: domain.serviceId,
       status: domain.status,
       type: domain.type,
-      updatedAt: domain.updatedAt,
+      updatedAt: domain.updatedAt.date,
       updatedBy: domain.updatedBy,
       voidReason: domain.voidReason,
-      voidedAt: domain.voidedAt?.toDate() ?? null,
+      voidedAt: domain.voidedAt?.date ?? null,
       voidedBy: domain.voidedBy,
     });
   }

@@ -11,7 +11,7 @@ import { GetMovementUseCase } from '@application/movements/use-cases/get-movemen
 import { UpdateMovementRequest } from '@application/movements/use-cases/update-movement/update-movement.request';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
 import { ModelNotUpdatableError } from '@domain/common/errors/model-not-updatable.error';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 
 @injectable()
@@ -46,7 +46,7 @@ export class UpdateMovementUseCase
         const result = Result.combine([
           movement.setAmount(new Money({ amount: request.amount })),
           movement.setCategory(request.category),
-          movement.setDate(new DateUtcVo(request.date)),
+          movement.setDate(new DateVo(request.date)),
           movement.setNotes(request.notes),
           movement.setType(request.type),
         ]);

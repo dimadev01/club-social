@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
 
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueStatusEnum, DueStatusLabel } from '@domain/dues/due.enum';
@@ -64,7 +64,7 @@ export const DueDetailPage = () => {
             ),
           },
           {
-            title: `Deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`,
+            title: `Deuda de ${due.member.name} del ${new DateVo(due.date).format()}`,
           },
         ]}
       />
@@ -78,17 +78,19 @@ export const DueDetailPage = () => {
       >
         <Card
           extra={<DuesIcon />}
-          title={`Deuda de ${due.member.name} del ${new DateUtcVo(due.date).format()}`}
+          title={`Deuda de ${due.member.name} del ${new DateVo(due.date).format()}`}
         >
           <>
             <Descriptions column={1} layout="vertical" colon={false}>
               <Descriptions.Item label="Fecha de creación de deuda">
-                {new DateVo(due.createdAt).format(DateFormatEnum.DDMMYYHHmm)} (
-                {due.createdBy})
+                {new DateTimeVo(due.createdAt).format(
+                  DateFormatEnum.DDMMYYHHmm,
+                )}{' '}
+                ({due.createdBy})
               </Descriptions.Item>
 
               <Descriptions.Item label="Fecha de deuda del socio">
-                {new DateUtcVo(due.date).format()}
+                {new DateVo(due.date).format()}
               </Descriptions.Item>
 
               <Descriptions.Item label="Socio">
@@ -128,7 +130,7 @@ export const DueDetailPage = () => {
                 <>
                   <Descriptions.Item label="Anulado el">
                     {due.voidedAt
-                      ? new DateVo(due.voidedAt).format(
+                      ? new DateTimeVo(due.voidedAt).format(
                           DateFormatEnum.DDMMYYHHmm,
                         )
                       : ''}

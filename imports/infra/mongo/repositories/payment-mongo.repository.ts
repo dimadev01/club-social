@@ -12,7 +12,7 @@ import {
   GetPaymentsTotalsResponse,
   IPaymentRepository,
 } from '@application/payments/repositories/payment.repository';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import { Payment } from '@domain/payments/models/payment.model';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
@@ -105,15 +105,15 @@ export class PaymentMongoRepository
 
     if (request.filterByCreatedAt.length > 0) {
       query.createdAt = {
-        $gte: new DateUtcVo(request.filterByCreatedAt[0]).toDate(),
-        $lte: new DateUtcVo(request.filterByCreatedAt[1]).toDate(),
+        $gte: new DateVo(request.filterByCreatedAt[0]).date,
+        $lte: new DateVo(request.filterByCreatedAt[1]).date,
       };
     }
 
     if (request.filterByDate.length > 0) {
       query.date = {
-        $gte: new DateUtcVo(request.filterByDate[0]).toDate(),
-        $lte: new DateUtcVo(request.filterByDate[1]).toDate(),
+        $gte: new DateVo(request.filterByDate[0]).date,
+        $lte: new DateVo(request.filterByDate[1]).date,
       };
     }
 

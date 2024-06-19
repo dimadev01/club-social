@@ -17,7 +17,7 @@ import useDeepCompareEffect from 'use-deep-compare-effect';
 import { PaymentPendingDuesTable } from './PaymentPendingDuesTable';
 
 import { DueDto } from '@application/dues/dtos/due.dto';
-import { DateVo } from '@domain/common/value-objects/date.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
@@ -160,11 +160,11 @@ export const PaymentNewPage = () => {
     }
 
     const request: CreatePaymentRequestDto = {
-      date: new DateVo(values.date).format(DateFormatEnum.DATE),
+      date: new DateTimeVo(values.date).format(DateFormatEnum.DATE),
       dues: selectedDues.map<CreatePaymentDueRequestDto>((due) => ({
         // creditAmount: 100000,
         creditAmount: 0,
-        directAmount: Money.fromNumber(due.amount).value,
+        directAmount: Money.fromNumber(due.amount).amount,
         dueId: due.dueId,
       })),
       memberId: values.memberId,

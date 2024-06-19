@@ -1,5 +1,6 @@
 import { injectable } from 'tsyringe';
 
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { User } from '@domain/users/models/user.model';
 import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { UserEmailEntity } from '@infra/mongo/entities/user-email.entity';
@@ -11,9 +12,9 @@ export class UserMapper extends Mapper<User, UserEntity> {
   public toDomain(user: UserEntity): User {
     return new User({
       _id: user._id,
-      createdAt: user.createdAt,
+      createdAt: new DateTimeVo(user.createdAt),
       createdBy: user.createdBy,
-      deletedAt: user.deletedAt,
+      deletedAt: user.deletedAt ? new DateTimeVo(user.deletedAt) : null,
       deletedBy: user.deletedBy,
       emails:
         user.emails?.map((email) => ({
@@ -28,7 +29,7 @@ export class UserMapper extends Mapper<User, UserEntity> {
       services: user.services,
       state: user.profile.state,
       theme: user.profile.theme,
-      updatedAt: user.updatedAt,
+      updatedAt: new DateTimeVo(user.updatedAt),
       updatedBy: user.updatedBy,
     });
   }
@@ -36,9 +37,9 @@ export class UserMapper extends Mapper<User, UserEntity> {
   protected getEntity(user: User): UserEntity {
     return new UserEntity({
       _id: user._id,
-      createdAt: user.createdAt,
+      createdAt: user.createdAt.date,
       createdBy: user.createdBy,
-      deletedAt: user.deletedAt,
+      deletedAt: user.deletedAt?.date ?? null,
       deletedBy: user.deletedBy,
       emails:
         user.emails?.map(
@@ -58,7 +59,7 @@ export class UserMapper extends Mapper<User, UserEntity> {
         theme: user.theme,
       }),
       services: user.services,
-      updatedAt: user.updatedAt,
+      updatedAt: user.updatedAt.date,
       updatedBy: user.updatedBy,
     });
   }

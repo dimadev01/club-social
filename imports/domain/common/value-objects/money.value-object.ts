@@ -1,4 +1,8 @@
-import { ARS as dineroARS, USD as dineroUSD } from '@dinero.js/currencies';
+import {
+  Currency,
+  ARS as dineroARS,
+  USD as dineroUSD,
+} from '@dinero.js/currencies';
 import {
   Dinero,
   add,
@@ -18,35 +22,44 @@ import {
 import { CurrencyEnum } from '@domain/common/enums/currency.enum';
 import { ValueObject } from '@domain/common/value-objects/value-object';
 
+interface CreateMoney {
+  amount: number;
+  currency?: CurrencyEnum;
+}
+
 interface FormatOptions {
   currency?: boolean;
   decimals?: boolean;
   minimumFractionDigits?: number;
 }
 
-interface InternalMoneyProps {
+interface IMoney {
+  amount: number;
   currency: CurrencyEnum;
-  dinero: Dinero<number>;
 }
 
-interface MoneyProps {
-  amount?: number;
-  currency?: CurrencyEnum;
-}
+export class Money extends ValueObject<IMoney> {
+  private _dinero: Dinero<number>;
 
-export class Money extends ValueObject<InternalMoneyProps> {
-  public constructor(props?: MoneyProps) {
-    super({
-      currency: props?.currency ?? CurrencyEnum.ARS,
-      dinero: dinero({
-        amount: props?.amount ?? 0,
-        currency: Money.getDineroCurrency(props?.currency ?? CurrencyEnum.ARS),
-      }),
+  public constructor(props?: CreateMoney) {
+    const amount = props?.amount ?? 0;
+
+    const currency = props?.currency ?? CurrencyEnum.ARS;
+
+    super({ amount, currency });
+
+    this._dinero = dinero({
+      amount: this.value.amount,
+      currency: Money.getDineroCurrency(this.value.currency),
     });
   }
 
-  public get value(): number {
-    return toSnapshot(this.props.dinero).amount;
+  public get amount(): number {
+    return this.value.amount;
+  }
+
+  public get currency(): CurrencyEnum {
+    return this.value.currency;
   }
 
   public static fromNumber(
@@ -57,12 +70,20 @@ export class Money extends ValueObject<InternalMoneyProps> {
   }
 
   public add(amount: Money): Money {
-    const result = add(this.props.dinero, amount.props.dinero);
+    const result = add(this._dinero, amount.toDinero());
 
     return new Money({
       amount: toSnapshot(result).amount,
-      currency: this.props.currency,
+      currency: this.currency,
     });
+  }
+
+  public equals(vo?: Money): boolean {
+    if (vo === null || vo === undefined) {
+      return false;
+    }
+
+    return this.isEqual(vo);
   }
 
   public format({
@@ -71,7 +92,7 @@ export class Money extends ValueObject<InternalMoneyProps> {
     minimumFractionDigits = 2,
   }: FormatOptions = {}): string {
     const options: Intl.NumberFormatOptions = {
-      currency: this.props.currency,
+      currency: this.currency,
       minimumFractionDigits: decimals ? minimumFractionDigits : 0,
     };
 
@@ -104,51 +125,51 @@ export class Money extends ValueObject<InternalMoneyProps> {
   }
 
   public isEqual(value: Money) {
-    return equal(this.props.dinero, value.props.dinero);
+    return equal(this._dinero, value.toDinero());
   }
 
   public isGreaterThan(value: Money) {
-    return greaterThan(this.props.dinero, value.props.dinero);
+    return greaterThan(this._dinero, value.toDinero());
   }
 
   public isGreaterThanOrEqual(value: Money) {
-    return greaterThanOrEqual(this.props.dinero, value.props.dinero);
+    return greaterThanOrEqual(this._dinero, value.toDinero());
   }
 
   public isGreaterThanZero() {
-    return greaterThan(this.props.dinero, new Money().props.dinero);
+    return greaterThan(this._dinero, new Money().toDinero());
   }
 
   public isLessThan(value: Money) {
-    return lessThan(this.props.dinero, value.props.dinero);
+    return lessThan(this._dinero, value.toDinero());
   }
 
   public isLessThanOrEqual(value: Money) {
-    return lessThanOrEqual(this.props.dinero, value.props.dinero);
+    return lessThanOrEqual(this._dinero, value.toDinero());
   }
 
   public isLessThanOrEqualZero() {
-    return lessThanOrEqual(this.props.dinero, new Money().props.dinero);
+    return lessThanOrEqual(this._dinero, new Money().toDinero());
   }
 
   public isLessThanZero() {
-    return lessThan(this.props.dinero, new Money().props.dinero);
+    return lessThan(this._dinero, new Money().toDinero());
   }
 
   public isNegative() {
-    return isNegative(this.props.dinero);
+    return isNegative(this._dinero);
   }
 
   public isZero() {
-    return isZero(this.props.dinero);
+    return isZero(this._dinero);
   }
 
   public subtract(value: Money): Money {
-    const result = subtract(this.props.dinero, value.props.dinero);
+    const result = subtract(this._dinero, value.toDinero());
 
     return new Money({
       amount: toSnapshot(result).amount,
-      currency: this.props.currency,
+      currency: this.currency,
     });
   }
 
@@ -157,10 +178,10 @@ export class Money extends ValueObject<InternalMoneyProps> {
   }
 
   public toNumber(): number {
-    return +toDecimal(this.props.dinero);
+    return +toDecimal(this._dinero);
   }
 
-  private static getDineroCurrency(currency: CurrencyEnum) {
+  private static getDineroCurrency(currency: CurrencyEnum): Currency<number> {
     switch (currency) {
       case CurrencyEnum.ARS:
         return dineroARS;
@@ -174,7 +195,7 @@ export class Money extends ValueObject<InternalMoneyProps> {
   }
 
   private _getIntlLocale(): string {
-    switch (this.props.currency) {
+    switch (this.currency) {
       case CurrencyEnum.ARS:
         return 'es-AR';
 
@@ -184,5 +205,9 @@ export class Money extends ValueObject<InternalMoneyProps> {
       default:
         throw new Error('Currency not supported');
     }
+  }
+
+  private toDinero(): Dinero<number> {
+    return this._dinero;
   }
 }

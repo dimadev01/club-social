@@ -11,7 +11,7 @@ import {
   getMovementCategoryOptions,
   getMovementCategoryTypeOptions,
 } from '@domain/categories/category.enum';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
@@ -54,9 +54,9 @@ export const MovementEditPage = () => {
 
     updateMovement.mutate(
       {
-        amount: Money.fromNumber(values.amount).value,
+        amount: Money.fromNumber(values.amount).amount,
         category: values.category,
-        date: new DateVo(values.date).format(DateFormatEnum.DATE),
+        date: new DateTimeVo(values.date).format(DateFormatEnum.DATE),
         id: movement.id,
         notes: values.notes || null,
         type: values.type,
@@ -87,13 +87,13 @@ export const MovementEditPage = () => {
           { title: 'Inicio' },
           { title: <Link to={AppUrl.MOVEMENTS}>Movimientos</Link> },
           {
-            title: `Movimiento del ${new DateUtcVo(movement.date).format()} creado el ${new DateVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`,
+            title: `Movimiento del ${new DateVo(movement.date).format()} creado el ${new DateTimeVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`,
           },
         ]}
       />
 
       <Card
-        title={`Movimiento del ${new DateUtcVo(movement.date).format()} creado el ${new DateVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`}
+        title={`Movimiento del ${new DateVo(movement.date).format()} creado el ${new DateTimeVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`}
       >
         <Form<FormValues>
           layout="vertical"

@@ -7,7 +7,7 @@ import {
   MovementStatusLabel,
   MovementTypeLabel,
 } from '@domain/categories/category.enum';
-import { DateUtcVo } from '@domain/common/value-objects/date-utc.value-object';
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
@@ -60,7 +60,7 @@ export const MovementDetailPage = () => {
             ),
           },
           {
-            title: `Movimiento del ${new DateUtcVo(movement.date).format()} creado el ${new DateVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`,
+            title: `Movimiento del ${new DateVo(movement.date).format()} creado el ${new DateTimeVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`,
           },
         ]}
       />
@@ -72,11 +72,11 @@ export const MovementDetailPage = () => {
       >
         <Card
           extra={<MovementsIcon />}
-          title={`Movimiento del ${new DateUtcVo(movement.date).format()} creado el ${new DateVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`}
+          title={`Movimiento del ${new DateVo(movement.date).format()} creado el ${new DateTimeVo(movement.createdAt).format(DateFormatEnum.DDMMYYHHmm)}`}
         >
           <Descriptions column={1} layout="vertical" colon={false}>
             <Descriptions.Item label="Fecha">
-              {new DateUtcVo(movement.date).format()} ({movement.createdBy})
+              {new DateVo(movement.date).format()} ({movement.createdBy})
             </Descriptions.Item>
 
             <Descriptions.Item label="Tipo">
@@ -99,7 +99,7 @@ export const MovementDetailPage = () => {
               <>
                 <Descriptions.Item label="Anulado el">
                   {movement.voidedAt
-                    ? new DateVo(movement.voidedAt).format(
+                    ? new DateTimeVo(movement.voidedAt).format(
                         DateFormatEnum.DDMMYYHHmm,
                       )
                     : ''}
