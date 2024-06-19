@@ -20,9 +20,9 @@ describe('DuePayment', () => {
       receiptNumber: null,
       source: PaymentDueSourceEnum.DIRECT,
       totalAmount: new Money({ amount: 500000 }),
-    })._unsafeUnwrap();
+    });
 
-    expect(duePayment).to.be.instanceOf(DuePayment);
+    expect(duePayment.isErr()).to.be.false;
   });
 
   it('should create a DuePayment error because the date is in the future', () => {
