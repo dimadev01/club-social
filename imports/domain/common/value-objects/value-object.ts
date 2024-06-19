@@ -1,5 +1,12 @@
-export abstract class ValueObject<T> {
-  protected readonly props: T;
+import { shallowEqualObjects } from 'shallow-equal';
+
+interface ValueObjectProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [index: string]: any;
+}
+
+export abstract class ValueObject<T extends ValueObjectProps> {
+  public readonly props: T;
 
   constructor(props: T) {
     this.props = Object.freeze(props);
@@ -14,6 +21,6 @@ export abstract class ValueObject<T> {
       return false;
     }
 
-    return JSON.stringify(this.props) === JSON.stringify(vo.props);
+    return shallowEqualObjects(this.props, vo.props);
   }
 }

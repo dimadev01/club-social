@@ -1,4 +1,4 @@
-import { Result, ok } from 'neverthrow';
+import { ResultAsync, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
@@ -24,7 +24,7 @@ export class SendNewPaymentEmailUseCase implements IUseCase<FindOneById, null> {
     private readonly _memberRepository: IMemberRepository,
   ) {}
 
-  public async execute(request: FindOneById): Promise<Result<null, Error>> {
+  public async execute(request: FindOneById): ResultAsync<null, Error> {
     const payment = await this._paymentRepository.findOneByIdOrThrow(request);
 
     const member = await this._memberRepository.findOneByIdOrThrow({

@@ -24,18 +24,18 @@ interface FormatOptions {
   minimumFractionDigits?: number;
 }
 
-interface InternalMoneyProps {
+interface MoneyProps {
   currency: CurrencyEnum;
   dinero: Dinero<number>;
 }
 
-interface MoneyProps {
+interface CreateMoney {
   amount?: number;
   currency?: CurrencyEnum;
 }
 
-export class Money extends ValueObject<InternalMoneyProps> {
-  public constructor(props?: MoneyProps) {
+export class Money extends ValueObject<MoneyProps> {
+  public constructor(props?: CreateMoney) {
     super({
       currency: props?.currency ?? CurrencyEnum.ARS,
       dinero: dinero({
@@ -43,6 +43,14 @@ export class Money extends ValueObject<InternalMoneyProps> {
         currency: Money.getDineroCurrency(props?.currency ?? CurrencyEnum.ARS),
       }),
     });
+  }
+
+  public equals(vo?: ValueObject<MoneyProps> | undefined): boolean {
+    if (vo === null || vo === undefined) {
+      return false;
+    }
+
+    return equal(this.props.dinero, vo.props.dinero);
   }
 
   public get value(): number {

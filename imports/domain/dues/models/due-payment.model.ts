@@ -4,6 +4,7 @@ import { DomainError } from '@domain/common/errors/domain.error';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { CreateDuePayment, IDuePayment } from '@domain/dues/due.interface';
+import { DuePaymentInTheFutureError } from '@domain/dues/errors/due-payment-in-the-future.error';
 import {
   PaymentDueSourceEnum,
   PaymentStatusEnum,
@@ -135,7 +136,7 @@ export class DuePayment implements IDuePayment {
 
   private setPaymentDate(value: DateVo): Result<null, Error> {
     if (value.isInTheFuture()) {
-      return err(new DomainError('El pago no puede estar en el futuro'));
+      return err(new DuePaymentInTheFutureError());
     }
 
     this._paymentDate = value;
