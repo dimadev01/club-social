@@ -31,9 +31,14 @@
   "root": true,
   "overrides": [
     {
-      "files": ["tests/**/*.ts"],
+      "files": ["**/*test*.ts"],
       "rules": {
-        "no-underscore-dangle": "off"
+        "no-underscore-dangle": [
+          "error",
+          {
+            "allow": ["_unsafeUnwrapErr"]
+          }
+        ]
       }
     }
   ],

@@ -29,7 +29,8 @@
       "@adapters/*": ["imports/adapters/*"],
       "@shared/*": ["imports/shared/*"],
       "@application/*": ["imports/application/*"],
-      "@ui/*": ["imports/ui/*"]
+      "@ui/*": ["imports/ui/*"],
+      "@test/*": ["imports/test/*"]
     },
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,

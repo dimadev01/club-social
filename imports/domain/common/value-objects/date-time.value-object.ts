@@ -26,6 +26,10 @@ export class DateTimeVo extends ValueObject<Dayjs> {
     super(dayjs(value));
   }
 
+  public add(value: number, unit: dayjs.ManipulateType) {
+    return new DateTimeVo(this.props.add(value, unit));
+  }
+
   public format(format = DateFormatEnum.DDMMYYYY): string {
     return this.props.format(format);
   }
@@ -40,6 +44,10 @@ export class DateTimeVo extends ValueObject<Dayjs> {
 
   public startOf(value: dayjs.OpUnitType) {
     return new DateTimeVo(this.props.startOf(value));
+  }
+
+  public subtract(value: number, unit: dayjs.ManipulateType) {
+    return new DateTimeVo(this.props.subtract(value, unit));
   }
 
   public toDate(): Date {

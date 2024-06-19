@@ -5,6 +5,7 @@ import { Model } from '@domain/common/models/model';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { Member } from '@domain/members/models/member.model';
+import { PaymentReceiptNumberError } from '@domain/payments/errors/payment-receipt-number.error';
 import { PaymentDue } from '@domain/payments/models/payment-due.model';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { CreatePayment, IPayment } from '@domain/payments/payment.interface';
@@ -20,7 +21,7 @@ export class Payment extends Model implements IPayment {
 
   private _notes: string | null;
 
-  private _receiptNumber: number | null;
+  private _receiptNumber: number;
 
   private _status: PaymentStatusEnum;
 
@@ -41,7 +42,7 @@ export class Payment extends Model implements IPayment {
 
     this._notes = props?.notes ?? null;
 
-    this._receiptNumber = props?.receiptNumber ?? null;
+    this._receiptNumber = props?.receiptNumber ?? 0;
 
     this._status = props?.status ?? PaymentStatusEnum.PAID;
 
@@ -78,7 +79,7 @@ export class Payment extends Model implements IPayment {
     return this._notes;
   }
 
-  public get receiptNumber(): number | null {
+  public get receiptNumber(): number {
     return this._receiptNumber;
   }
 
@@ -190,7 +191,11 @@ export class Payment extends Model implements IPayment {
     return ok(null);
   }
 
-  private setReceiptNumber(value: number | null): Result<null, Error> {
+  private setReceiptNumber(value: number): Result<null, Error> {
+    if (value <= 0) {
+      return err(new PaymentReceiptNumberError());
+    }
+
     this._receiptNumber = value;
 
     return ok(null);

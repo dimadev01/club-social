@@ -43,10 +43,10 @@ export interface IDuePayment {
 
 export interface CreateDuePayment {
   creditAmount: Money;
-  date: DateVo;
   directAmount: Money;
+  paymentDate: DateVo;
   paymentId: string;
-  receiptNumber: number | null;
+  paymentReceiptNumber: number;
   source: PaymentDueSourceEnum;
   totalAmount: Money;
 }

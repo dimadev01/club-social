@@ -1,10 +1,11 @@
 import { Result, err, ok } from 'neverthrow';
 
-import { DomainError } from '@domain/common/errors/domain.error';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { CreateDuePayment, IDuePayment } from '@domain/dues/due.interface';
-import { DuePaymentInTheFutureError } from '@domain/dues/errors/due-payment-in-the-future.error';
+import { DuePaymentAlreadyVoidedError } from '@domain/dues/errors/due-payment-already-voided.error';
+import { PaymentInTheFutureError } from '@domain/payments/errors/payment-in-the-future.error';
+import { PaymentReceiptNumberError } from '@domain/payments/errors/payment-receipt-number.error';
 import {
   PaymentDueSourceEnum,
   PaymentStatusEnum,
@@ -82,9 +83,9 @@ export class DuePayment implements IDuePayment {
 
     const result = Result.combine([
       duePayment.setTotalAmount(props.totalAmount),
-      duePayment.setPaymentDate(props.date),
+      duePayment.setPaymentDate(props.paymentDate),
       duePayment.setPaymentId(props.paymentId),
-      duePayment.setPaymentReceiptNumber(props.receiptNumber),
+      duePayment.setPaymentReceiptNumber(props.paymentReceiptNumber),
       duePayment.setPaymentStatus(PaymentStatusEnum.PAID),
       duePayment.setCreditAmount(props.creditAmount),
       duePayment.setDirectAmount(props.directAmount),
@@ -93,18 +94,6 @@ export class DuePayment implements IDuePayment {
 
     if (result.isErr()) {
       return err(result.error);
-    }
-
-    const creditPlusDirectAmount = duePayment.creditAmount.add(
-      duePayment.directAmount,
-    );
-
-    if (!creditPlusDirectAmount.isEqual(duePayment.totalAmount)) {
-      return err(
-        new DomainError(
-          'El monto total no coincide con la suma del monto de crédito y directo.',
-        ),
-      );
     }
 
     return ok(duePayment);
@@ -136,7 +125,7 @@ export class DuePayment implements IDuePayment {
 
   private setPaymentDate(value: DateVo): Result<null, Error> {
     if (value.isInTheFuture()) {
-      return err(new DuePaymentInTheFutureError());
+      return err(new PaymentInTheFutureError());
     }
 
     this._paymentDate = value;
@@ -150,9 +139,9 @@ export class DuePayment implements IDuePayment {
     return ok(null);
   }
 
-  private setPaymentReceiptNumber(value: number | null): Result<null, Error> {
-    if (value && value <= 0) {
-      return err(new DomainError('El número de recibo no puede ser negativo.'));
+  private setPaymentReceiptNumber(value: number): Result<null, Error> {
+    if (value <= 0) {
+      return err(new PaymentReceiptNumberError());
     }
 
     this._paymentReceiptNumber = value;
@@ -162,7 +151,7 @@ export class DuePayment implements IDuePayment {
 
   private setPaymentStatus(value: PaymentStatusEnum): Result<null, Error> {
     if (this.isVoided()) {
-      return err(new DomainError('No se puede modificar un pago anulado.'));
+      return err(new DuePaymentAlreadyVoidedError());
     }
 
     this._paymentStatus = value;

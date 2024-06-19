@@ -16,11 +16,11 @@ import { SendNewPaymentEmailUseCase } from '@application/payments/use-cases/send
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { DueNotPayable } from '@domain/dues/errors/due-not-payable.error';
 import { Due } from '@domain/dues/models/due.model';
 import { MemberCreditTypeEnum } from '@domain/members/member.enum';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
 import { Movement } from '@domain/movements/models/movement.model';
-import { DueNotPayable } from '@domain/payments/errors/due-not-payable.error';
 import { ExistingPaymentError } from '@domain/payments/errors/existing-payment.error';
 import { Payment } from '@domain/payments/models/payment.model';
 import { CreatePaymentDue } from '@domain/payments/payment.interface';
@@ -117,10 +117,10 @@ export class CreatePaymentUseCase
 
             const addPaymentResult = due.addPayment({
               creditAmount: paymentDue.creditAmount,
-              date: payment.date,
               directAmount: paymentDue.directAmount,
+              paymentDate: payment.date,
               paymentId: payment._id,
-              receiptNumber: payment.receiptNumber,
+              paymentReceiptNumber: payment.receiptNumber,
               source: paymentDue.source,
               totalAmount: paymentDue.totalAmount,
             });
