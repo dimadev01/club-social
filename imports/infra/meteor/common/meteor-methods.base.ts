@@ -3,7 +3,7 @@ import { ValidationError } from 'class-validator';
 import { container } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUseCaseOld } from '@application/use-cases-old/use-case.interface';
 import { MeteorErrorCodeEnum } from '@infra/meteor/common/meteor-errors.enum';
 import { ClassValidationUtils } from '@shared/utils/validation.utils';
@@ -30,7 +30,7 @@ export abstract class OldMeteorMethod {
 
       return result.value;
     } catch (error) {
-      container.resolve<ILoggerRepository>(DIToken.Logger).error(error);
+      container.resolve<ILoggerService>(DIToken.ILoggerService).error(error);
 
       if (error instanceof Meteor.Error) {
         throw error;

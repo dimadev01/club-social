@@ -101,7 +101,7 @@ export const PaymentDetailPage = () => {
               </Descriptions.Item>
 
               <Descriptions.Item label="Total Pago">
-                {new Money({ amount: payment.amount }).formatWithCurrency()}
+                {Money.from({ amount: payment.amount }).formatWithCurrency()}
               </Descriptions.Item>
 
               <Descriptions.Item label="Notas">

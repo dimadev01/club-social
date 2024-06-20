@@ -3,9 +3,10 @@ import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 import { IUseCase } from '@application/common/use-case.interface';
+import { IEventRepository } from '@application/events/repositories/event.repository';
 import { MovementDto } from '@application/movements/dtos/movement.dto';
 import { IMovementRepository } from '@application/movements/repositories/movement.repository';
 import { CreateMovementRequest } from '@application/movements/use-cases/create-movement/create-movement.request';
@@ -13,6 +14,8 @@ import { GetMovementUseCase } from '@application/movements/use-cases/get-movemen
 import { ErrorUtils } from '@domain/common/errors/error.utils';
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { EventActionEnum, EventResourceEnum } from '@domain/events/event.enum';
+import { Event } from '@domain/events/models/event.model';
 import { Movement } from '@domain/movements/models/movement.model';
 
 @injectable()
@@ -20,13 +23,15 @@ export class CreateMovementUseCase
   implements IUseCase<CreateMovementRequest, MovementDto>
 {
   public constructor(
-    @inject(DIToken.Logger)
-    private readonly _logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    private readonly _logger: ILoggerService,
     @inject(DIToken.IMovementRepository)
     private readonly _movementRepository: IMovementRepository,
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork,
     private readonly _getMovementUseCase: GetMovementUseCase,
+    @inject(DIToken.IEventRepository)
+    private readonly _eventRepository: IEventRepository,
   ) {}
 
   public async execute(
@@ -38,8 +43,14 @@ export class CreateMovementUseCase
       let newMovementId: string | undefined;
 
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
-        const movement = Movement.createOne({
-          amount: new Money({ amount: request.amount }),
+        const amount = Money.create({ amount: request.amount });
+
+        if (amount.isErr()) {
+          throw amount.error;
+        }
+
+        const movement = Movement.create({
+          amount: amount.value,
           category: request.category,
           date: new DateVo(request.date),
           employeeId: null,
@@ -58,6 +69,19 @@ export class CreateMovementUseCase
           movement.value,
           unitOfWork,
         );
+
+        const event = Event.create({
+          action: EventActionEnum.CREATE,
+          description: null,
+          resource: EventResourceEnum.MOVEMENTS,
+          resourceId: movement.value._id,
+        });
+
+        if (event.isErr()) {
+          throw event.error;
+        }
+
+        await this._eventRepository.insertWithSession(event.value, unitOfWork);
 
         newMovementId = movement.value._id;
       });

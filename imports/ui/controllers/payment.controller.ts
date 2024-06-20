@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
 import { PaymentGridDto } from '@application/payments/dtos/payment-grid-dto';
 import { PaymentDto } from '@application/payments/dtos/payment.dto';
@@ -21,8 +21,8 @@ import { VoidPaymentRequestDto } from '@ui/dtos/void-payment-request.dto';
 @injectable()
 export class PaymentController extends BaseController {
   public constructor(
-    @inject(DIToken.Logger)
-    protected readonly logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    protected readonly logger: ILoggerService,
     private readonly _getGrid: GetPaymentsGridUseCase,
     private readonly _getOne: GetPaymentUseCase,
     private readonly _create: CreatePaymentUseCase,

@@ -41,7 +41,7 @@ export class Due extends Model implements IDue {
   public constructor(props?: IDue, member?: Member) {
     super(props);
 
-    this._amount = props?.amount ?? new Money();
+    this._amount = props?.amount ?? Money.from();
 
     this._category = props?.category ?? DueCategoryEnum.MEMBERSHIP;
 
@@ -53,7 +53,7 @@ export class Due extends Model implements IDue {
 
     this._status = props?.status ?? DueStatusEnum.PENDING;
 
-    this._totalPaidAmount = props?.totalPaidAmount ?? new Money();
+    this._totalPaidAmount = props?.totalPaidAmount ?? Money.from();
 
     this._totalPendingAmount = props?.totalPendingAmount ?? this._amount;
 
@@ -117,7 +117,7 @@ export class Due extends Model implements IDue {
     return this._voidedBy;
   }
 
-  public static createOne(props: CreateDue): Result<Due, Error> {
+  public static create(props: CreateDue): Result<Due, Error> {
     const due = new Due();
 
     const result = Result.combine([
@@ -137,7 +137,7 @@ export class Due extends Model implements IDue {
   }
 
   public addPayment(props: CreateDuePayment): Result<DuePayment, Error> {
-    const duePayment = DuePayment.createOne(props);
+    const duePayment = DuePayment.create(props);
 
     if (duePayment.isErr()) {
       return err(duePayment.error);
@@ -268,7 +268,7 @@ export class Due extends Model implements IDue {
     this._totalPendingAmount = this._amount.subtract(this._totalPaidAmount);
 
     if (this._totalPendingAmount.isLessThanZero()) {
-      this._totalPendingAmount = new Money();
+      this._totalPendingAmount = Money.from();
     }
   }
 

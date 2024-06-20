@@ -42,6 +42,10 @@ export class DateTimeVo extends ValueObject<IDateTimeVo> {
     return new DateTimeVo(this._dayjs.add(value, unit));
   }
 
+  public diff(vo: DateTimeVo, unit: dayjs.OpUnitType) {
+    return this._dayjs.diff(vo.toDayjs(), unit);
+  }
+
   public equals(vo?: DateTimeVo): boolean {
     if (vo === null || vo === undefined) {
       return false;

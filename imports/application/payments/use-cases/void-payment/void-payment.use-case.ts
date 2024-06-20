@@ -2,10 +2,11 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 import { IUseCase } from '@application/common/use-case.interface';
 import { IDueRepository } from '@application/dues/repositories/due.repository';
+import { IEventRepository } from '@application/events/repositories/event.repository';
 import { IMemberCreditRepository } from '@application/members/repositories/member-credit.repository';
 import { IMovementRepository } from '@application/movements/repositories/movement.repository';
 import { VoidMovementUseCase } from '@application/movements/use-cases/void-movement/void-movement.use-case';
@@ -13,13 +14,15 @@ import { IPaymentRepository } from '@application/payments/repositories/payment.r
 import { VoidPaymentRequest } from '@application/payments/use-cases/void-payment/void-payment.request';
 import { DomainError } from '@domain/common/errors/domain.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
+import { EventActionEnum, EventResourceEnum } from '@domain/events/event.enum';
+import { Event } from '@domain/events/models/event.model';
 import { PaymentNotVoidableError } from '@domain/payments/errors/payment-not-voidable.error';
 
 @injectable()
 export class VoidPaymentUseCase implements IUseCase<VoidPaymentRequest, null> {
   public constructor(
-    @inject(DIToken.Logger)
-    private readonly _logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    private readonly _logger: ILoggerService,
     @inject(DIToken.IPaymentRepository)
     private readonly _paymentRepository: IPaymentRepository,
     @inject(DIToken.IMovementRepository)
@@ -30,6 +33,8 @@ export class VoidPaymentUseCase implements IUseCase<VoidPaymentRequest, null> {
     private readonly _unitOfWork: IUnitOfWork,
     @inject(DIToken.IMemberCreditRepository)
     private readonly _memberCreditRepository: IMemberCreditRepository,
+    @inject(DIToken.IEventRepository)
+    private readonly _eventRepository: IEventRepository,
     private readonly _voidMovementUseCase: VoidMovementUseCase,
   ) {}
 
@@ -100,9 +105,20 @@ export class VoidPaymentUseCase implements IUseCase<VoidPaymentRequest, null> {
             );
           }),
         );
-      });
 
-      this._logger.info('Payment voided', { payment: request.id });
+        const event = Event.create({
+          action: EventActionEnum.VOID,
+          description: null,
+          resource: EventResourceEnum.PAYMENTS,
+          resourceId: movement._id,
+        });
+
+        if (event.isErr()) {
+          throw event.error;
+        }
+
+        await this._eventRepository.updateWithSession(event.value, unitOfWork);
+      });
 
       return ok(null);
     } catch (error) {

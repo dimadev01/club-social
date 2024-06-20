@@ -1,7 +1,7 @@
 import { Random } from 'meteor/random';
 import { err } from 'neverthrow';
 
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { Model } from '@domain/common/models/model';
 import { MongoCollection } from '@infra/mongo/common/collections/mongo.collection';
 import { AuditableEntity } from '@infra/mongo/common/entities/auditable.entity';
@@ -18,7 +18,7 @@ export abstract class CrudMongoAuditableRepository<
   public constructor(
     protected readonly collection: MongoCollection<TEntity>,
     protected readonly mapper: Mapper<TDomain, TEntity>,
-    protected readonly logger: ILoggerRepository,
+    protected readonly logger: ILoggerService,
     protected readonly auditableCollection: MongoCollection<TAuditableEntity>,
   ) {
     super(collection, mapper, logger);

@@ -9,7 +9,7 @@ export class EmailTo implements IEmailTo {
   private _name: string;
 
   public constructor(props?: IEmailTo) {
-    this._email = props?.email ?? EmailVo.from('');
+    this._email = props?.email ?? EmailVo.from({ address: '' });
 
     this._name = props?.name ?? '';
   }
@@ -22,7 +22,7 @@ export class EmailTo implements IEmailTo {
     return this._name;
   }
 
-  public static createOne(props: IEmailTo): Result<EmailTo, Error> {
+  public static create(props: IEmailTo): Result<EmailTo, Error> {
     const emailTo = new EmailTo();
 
     const result = Result.combine([

@@ -17,6 +17,7 @@ import { DueDetailPage } from '@ui/pages/dues/DueDetailPage';
 import { DueEditPage } from '@ui/pages/dues/DueEditPage';
 import { DuesNewPage } from '@ui/pages/dues/DuesNewPage';
 import { DuesPage } from '@ui/pages/dues/DuesPage';
+import { EventsPage } from '@ui/pages/events/EventsPage';
 import { HomePage } from '@ui/pages/HomePage';
 import { MemberDetailPage } from '@ui/pages/members/MemberDetailPage';
 import { MembersPage } from '@ui/pages/members/MembersPage';
@@ -194,6 +195,19 @@ const router = createBrowserRouter(
               }
             />
           </Route>
+        </Route>
+
+        <Route path={AppUrl.EVENTS} element={<Outlet />}>
+          <Route
+            index
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.EVENTS}
+                permission={PermissionEnum.READ}
+                element={<EventsPage />}
+              />
+            }
+          />
         </Route>
       </Route>
 

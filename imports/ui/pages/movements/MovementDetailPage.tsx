@@ -13,7 +13,6 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
-import { AppUrl } from '@ui/app.enum';
 import { Breadcrumbs } from '@ui/components/Breadcrumbs/Breadcrumbs';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormEditButton } from '@ui/components/Form/FormEditButton';
@@ -88,7 +87,7 @@ export const MovementDetailPage = () => {
             </Descriptions.Item>
 
             <Descriptions.Item label="Monto">
-              {new Money({ amount: movement.amount }).formatWithCurrency()}
+              {Money.from({ amount: movement.amount }).formatWithCurrency()}
             </Descriptions.Item>
 
             <Descriptions.Item label="Notas">
@@ -140,7 +139,7 @@ export const MovementDetailPage = () => {
                     onSuccess: () => {
                       notificationSuccess('Movimiento anulado');
 
-                      navigate(AppUrl.MOVEMENTS);
+                      navigate('..');
                     },
                   },
                 );

@@ -38,7 +38,7 @@ export const DueAndPaymentBalanceTotals: React.FC<Props> = ({
         label={DueCategoryLabel[DueCategoryEnum.MEMBERSHIP]}
         className="text-right"
       >
-        {new Money({ amount: membership }).formatWithCurrency()}
+        {Money.from({ amount: membership }).formatWithCurrency()}
       </Descriptions.Item>
 
       <Descriptions.Item
@@ -46,14 +46,14 @@ export const DueAndPaymentBalanceTotals: React.FC<Props> = ({
         label={DueCategoryLabel[DueCategoryEnum.ELECTRICITY]}
         className="text-right"
       >
-        {new Money({ amount: electricity }).formatWithCurrency()}
+        {Money.from({ amount: electricity }).formatWithCurrency()}
       </Descriptions.Item>
       <Descriptions.Item
         labelStyle={{ textAlign: 'right' }}
         label={DueCategoryLabel[DueCategoryEnum.GUEST]}
         className="text-right"
       >
-        {new Money({ amount: guest }).formatWithCurrency()}
+        {Money.from({ amount: guest }).formatWithCurrency()}
       </Descriptions.Item>
 
       <Descriptions.Item
@@ -61,7 +61,7 @@ export const DueAndPaymentBalanceTotals: React.FC<Props> = ({
         labelStyle={{ fontWeight: 'bold', textAlign: 'right' }}
         className="text-right font-bold"
       >
-        {new Money({ amount: total }).formatWithCurrency()}
+        {Money.from({ amount: total }).formatWithCurrency()}
       </Descriptions.Item>
     </Descriptions>
   );

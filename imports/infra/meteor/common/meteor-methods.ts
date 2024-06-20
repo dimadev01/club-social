@@ -4,7 +4,7 @@ import invariant from 'tiny-invariant';
 import { container } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUseCase } from '@application/common/use-case.interface';
 import { DomainError } from '@domain/common/errors/domain.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
@@ -76,7 +76,7 @@ export abstract class MeteorMethods {
       return result.value;
     } catch (error) {
       container
-        .resolve<ILoggerRepository>(DIToken.Logger)
+        .resolve<ILoggerService>(DIToken.ILoggerService)
         .error(error, { request });
 
       if (error instanceof ClassValidationError) {

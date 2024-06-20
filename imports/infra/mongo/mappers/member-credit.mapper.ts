@@ -14,7 +14,7 @@ export class MemberCreditMapper extends Mapper<
   public toDomain(memberCredit: MemberCreditEntity): MemberCredit {
     return new MemberCredit({
       _id: memberCredit._id,
-      amount: new Money({ amount: memberCredit.amount }),
+      amount: Money.from({ amount: memberCredit.amount }),
       createdAt: new DateTimeVo(memberCredit.createdAt),
       createdBy: memberCredit.createdBy,
       deletedAt: memberCredit.deletedAt

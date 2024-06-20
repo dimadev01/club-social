@@ -29,7 +29,7 @@ export class DuePayment implements IDuePayment {
   private _totalAmount: Money;
 
   public constructor(props?: IDuePayment) {
-    this._totalAmount = props?.totalAmount ?? new Money();
+    this._totalAmount = props?.totalAmount ?? Money.from();
 
     this._paymentDate = props?.paymentDate ?? new DateVo();
 
@@ -37,9 +37,9 @@ export class DuePayment implements IDuePayment {
 
     this._paymentReceiptNumber = props?.paymentReceiptNumber ?? null;
 
-    this._creditAmount = props?.creditAmount ?? new Money();
+    this._creditAmount = props?.creditAmount ?? Money.from();
 
-    this._directAmount = props?.directAmount ?? new Money();
+    this._directAmount = props?.directAmount ?? Money.from();
 
     this._source = props?.source ?? PaymentDueSourceEnum.MIXED;
 
@@ -78,7 +78,7 @@ export class DuePayment implements IDuePayment {
     return this._totalAmount;
   }
 
-  public static createOne(props: CreateDuePayment): Result<DuePayment, Error> {
+  public static create(props: CreateDuePayment): Result<DuePayment, Error> {
     const duePayment = new DuePayment();
 
     const result = Result.combine([

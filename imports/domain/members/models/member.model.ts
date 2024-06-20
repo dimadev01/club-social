@@ -138,10 +138,10 @@ export class Member extends Model implements IMemberProps {
     return this._userId;
   }
 
-  public static createOne(props: CreateMember): Result<Member, Error> {
+  public static create(props: CreateMember): Result<Member, Error> {
     const member = new Member();
 
-    const address = MemberAddress.createOne(props.address);
+    const address = MemberAddress.create(props.address);
 
     if (address.isErr()) {
       return err(address.error);

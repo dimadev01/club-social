@@ -19,6 +19,8 @@ export enum AppUrl {
 
   ENROLL = 'enroll-account/:token',
 
+  EVENTS = 'events',
+
   HOME = '/',
 
   MEMBERS = 'members',

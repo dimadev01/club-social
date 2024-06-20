@@ -2,7 +2,7 @@ import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import {
   FindManyByIds,
   FindOneById,
@@ -32,8 +32,8 @@ export class MemberMongoRepository
   implements IMemberRepository
 {
   public constructor(
-    @inject(DIToken.Logger)
-    protected readonly logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    protected readonly logger: ILoggerService,
     protected readonly collection: MemberMongoCollection,
     protected readonly auditableCollection: MemberMongoAuditableCollection,
     protected readonly mapper: MemberMapper,

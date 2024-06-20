@@ -139,7 +139,7 @@ export const PaymentNewPage = () => {
     if (pendingDues && pendingDues.length > 0) {
       form.setFieldsValue({
         dues: pendingDues.map((due: DueDto) => ({
-          amount: new Money({ amount: due.totalPendingAmount }).toInteger(),
+          amount: Money.from({ amount: due.totalPendingAmount }).toInteger(),
           dueId: due.id,
           isSelected: formDuesSelectedIds?.includes(due.id),
         })),
@@ -285,7 +285,7 @@ export const PaymentNewPage = () => {
                 <Button
                   onClick={() =>
                     navigate(
-                      `${AppUrl.DUES}/new/${UrlUtils.stringify({ memberIds: [formMemberId] })}`,
+                      `/${AppUrl.DUES}/new/${UrlUtils.stringify({ memberIds: [formMemberId] })}`,
                     )
                   }
                   icon={<AddNewIcon />}

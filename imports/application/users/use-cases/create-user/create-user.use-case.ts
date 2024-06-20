@@ -27,7 +27,7 @@ export class CreateUserUseCase
       return err(validation.error);
     }
 
-    const user = User.createOne({
+    const user = User.create({
       emails: request.emails?.map((email) => email) ?? null,
       firstName: request.firstName,
       lastName: request.lastName,
