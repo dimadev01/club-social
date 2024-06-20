@@ -61,8 +61,6 @@ export class VoidMovementUseCase
       await this._eventRepository.insert(event.value);
     }
 
-    this._logger.info('Movement voided', { movement: request.id });
-
     return ok(null);
   }
 }

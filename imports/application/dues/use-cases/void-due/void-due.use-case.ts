@@ -60,8 +60,6 @@ export class VoidDueUseCase implements IUseCase<VoidDueRequest, null> {
         await this._eventRepository.updateWithSession(event.value, unitOfWork);
       });
 
-      this._logger.info('Due voided', { due: request.id });
-
       return ok(null);
     } catch (error) {
       if (error instanceof DomainError) {

@@ -120,8 +120,6 @@ export class VoidPaymentUseCase implements IUseCase<VoidPaymentRequest, null> {
         await this._eventRepository.updateWithSession(event.value, unitOfWork);
       });
 
-      this._logger.info('Payment voided', { payment: request.id });
-
       return ok(null);
     } catch (error) {
       this._logger.error(error);
