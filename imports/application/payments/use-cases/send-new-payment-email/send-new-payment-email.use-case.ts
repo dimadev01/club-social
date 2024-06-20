@@ -92,19 +92,17 @@ export class SendNewPaymentEmailUseCase implements IUseCase<FindOneById, null> {
 
     await this._emailRepository.insert(email.value);
 
-    setTimeout(() => {
-      this._emailService
-        .sendNewPayment({ id: email.value._id })
-        .then(async (result) => {
-          if (result.isErr()) {
-            this._logger.error(result.error, { member, payment });
-          } else {
-            email.value.markSent();
+    this._emailService
+      .sendNewPayment({ id: email.value._id })
+      .then(async (result) => {
+        if (result.isErr()) {
+          this._logger.error(result.error, { member, payment });
+        } else {
+          email.value.markSent();
 
-            await this._emailRepository.update(email.value);
-          }
-        });
-    }, 5000);
+          await this._emailRepository.update(email.value);
+        }
+      });
 
     return ok(null);
   }

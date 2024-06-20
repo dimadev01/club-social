@@ -88,19 +88,17 @@ export class SendNewDueEmailUseCase implements IUseCase<FindOneById, null> {
 
     await this._emailRepository.insert(email.value);
 
-    setTimeout(() => {
-      this._emailService
-        .sendNewDue({ id: email.value._id })
-        .then(async (result) => {
-          if (result.isErr()) {
-            this._logger.error(result.error, { due, member });
-          } else {
-            email.value.markSent();
+    this._emailService
+      .sendNewDue({ id: email.value._id })
+      .then(async (result) => {
+        if (result.isErr()) {
+          this._logger.error(result.error, { due, member });
+        } else {
+          email.value.markSent();
 
-            await this._emailRepository.update(email.value);
-          }
-        });
-    }, 5000);
+          await this._emailRepository.update(email.value);
+        }
+      });
 
     return ok(null);
   }
