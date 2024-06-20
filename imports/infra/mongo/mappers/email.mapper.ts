@@ -1,4 +1,4 @@
-import { singleton } from 'tsyringe';
+import { injectable } from 'tsyringe';
 
 import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { EmailVo } from '@domain/common/value-objects/email.value-object';
@@ -9,7 +9,7 @@ import { Mapper } from '@infra/mongo/common/mappers/mapper';
 import { EmailEventEntity } from '@infra/mongo/entities/email-event.entity';
 import { EmailEntity } from '@infra/mongo/entities/email.entity';
 
-@singleton()
+@injectable()
 export class EmailMapper extends Mapper<Email, EmailEntity> {
   public toDomain(entity: EmailEntity): Email {
     return new Email({

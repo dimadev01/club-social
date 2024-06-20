@@ -1,20 +1,19 @@
-import { injectable } from 'tsyringe';
+import { container } from 'tsyringe';
 
+import { GetEventsGridUseCase } from '@application/events/use-cases/get-events-grid/get-events-grid.use-case';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
-import { GetGridRequestDto } from '@ui/common/dtos/get-grid-request.dto';
 import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
-import { EventController } from '@ui/controllers/event.controller';
+import { GetEventsGridRequestDto } from '@ui/dtos/get-events-grid-request.dto';
 
-@injectable()
 export class EventMethods extends MeteorMethods {
-  public constructor(private readonly _controller: EventController) {
-    super();
-  }
-
   public register(): void {
     Meteor.methods({
-      [MeteorMethodEnum.EventsGetGrid]: (req: GetGridRequestDto) =>
-        this.execute(this._controller.getGrid.bind(this._controller), req),
+      [MeteorMethodEnum.EventsGetGrid]: (req: GetEventsGridRequestDto) =>
+        this.execute(
+          container.resolve(GetEventsGridUseCase),
+          GetEventsGridRequestDto,
+          req,
+        ),
     });
   }
 }
