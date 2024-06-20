@@ -11,6 +11,16 @@ import {
 } from '@domain/categories/category.enum';
 import { Movement } from '@domain/movements/models/movement.model';
 
+export interface IMovementRepository
+  extends ICrudRepository<Movement>,
+    IGridRepository<Movement, FindPaginatedMovementsRequest> {
+  findOneByPaymentOrThrow(request: FindOneById): Promise<Movement>;
+  findToExport(request: FindPaginatedMovementsRequest): Promise<Movement[]>;
+  getTotals(
+    request: FindPaginatedMovementsFilters,
+  ): Promise<GetMovementsTotalsResponse>;
+}
+
 export interface FindPaginatedMovementsFilters {
   filterByCategory: MovementCategoryEnum[];
   filterByCreatedAt: string[];
@@ -27,14 +37,4 @@ export interface GetMovementsTotalsResponse {
   expense: number;
   income: number;
   total: number;
-}
-
-export interface IMovementRepository
-  extends ICrudRepository<Movement>,
-    IGridRepository<Movement, FindPaginatedMovementsRequest> {
-  findOneByPaymentOrThrow(request: FindOneById): Promise<Movement>;
-  findToExport(request: FindPaginatedMovementsRequest): Promise<Movement[]>;
-  getTotals(
-    request: FindPaginatedMovementsFilters,
-  ): Promise<GetMovementsTotalsResponse>;
 }
