@@ -1,4 +1,4 @@
-import { container, instanceCachingFactory } from 'tsyringe';
+import { container } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { EmailSendGridService } from '@infra/email/email-sendgrid.service';
@@ -13,9 +13,7 @@ import { MovementMongoRepository } from '@infra/mongo/repositories/movement-mong
 import { PaymentMongoRepository } from '@infra/mongo/repositories/payment-mongo.repository';
 import { UserMongoRepository } from '@infra/mongo/repositories/user-mongo.repository';
 
-container.register(DIToken.ILoggerService, {
-  useFactory: instanceCachingFactory((c) => c.resolve(LoggerOstrio)),
-});
+container.registerSingleton(DIToken.ILoggerService, LoggerOstrio);
 
 container.register(DIToken.IMeteorUsers, { useValue: Meteor.users });
 

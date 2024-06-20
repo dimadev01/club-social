@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import '@infra/di/di.container';
 import '@infra/meteor/common/meteor-publications';
 import { Meteor } from 'meteor/meteor';
-import { container, inject, injectable } from 'tsyringe';
+import { container } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILoggerService } from '@application/common/logger/logger.interface';
@@ -16,20 +16,7 @@ import { MovementMethods } from '@infra/meteor/methods/movement.methods';
 import { PaymentMethods } from '@infra/meteor/methods/payment.methods';
 import { MigrationService } from '@infra/migrations/migration.service';
 
-@injectable()
 export class ServerStartup {
-  public constructor(
-    @inject(DIToken.ILoggerService)
-    private readonly _logger: ILoggerService,
-    private readonly _migrationService: MigrationService,
-    private readonly _userMethod: UserMethodOld,
-    private readonly _movementMethod: MovementMethods,
-    private readonly _memberMethods: MemberMethods,
-    private readonly _paymentMethods: PaymentMethods,
-    private readonly _dueMethods: DueMethods,
-    private readonly _eventMethods: EventMethods,
-  ) {}
-
   public async start() {
     this._configureEmails();
 
@@ -41,18 +28,14 @@ export class ServerStartup {
 
     this._configureValidateLoginAttempt();
 
-    // this._configureOnCreateUser();
-
     if (Meteor.isProduction) {
-      this._logger.info('Server startup completed');
+      container
+        .resolve<ILoggerService>(DIToken.ILoggerService)
+        .info('Server startup completed');
     }
   }
 
   private _configureEmails() {
-    // if (Meteor.isDevelopment) {
-    //   process.env.MAIL_URL = Meteor.settings.MAIL_URL;
-    // }
-
     Accounts.emailTemplates.siteName = 'Club Social Monte Grande';
 
     Accounts.emailTemplates.from = `${EmailServiceEnum.EMAIL_FORM_NAME} ${EmailServiceEnum.EMAIL_FROM_ADDRESS}`;
@@ -99,27 +82,27 @@ export class ServerStartup {
   }
 
   private _migrate() {
-    this._migrationService.start();
+    new MigrationService().start();
   }
 
   private async _registerMethods() {
-    this._userMethod.register();
+    new UserMethodOld().register();
 
-    this._movementMethod.register();
+    new MovementMethods().register();
 
-    this._paymentMethods.register();
+    new PaymentMethods().register();
 
-    this._memberMethods.register();
+    new MemberMethods().register();
 
-    this._dueMethods.register();
+    new DueMethods().register();
 
-    this._eventMethods.register();
+    new EventMethods().register();
   }
 }
 
 Meteor.startup(async () => {
   try {
-    await container.resolve(ServerStartup).start();
+    await new ServerStartup().start();
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error);

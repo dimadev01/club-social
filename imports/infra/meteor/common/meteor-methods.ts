@@ -21,13 +21,28 @@ export interface ExecuteRequest<TRequest extends object, TResponse> {
 export abstract class MeteorMethods {
   public abstract register(): void;
 
-  protected async execute<TRequest, TResponse>(
-    fn: (request: TRequest) => Promise<TResponse>,
-    request: TRequest,
+  protected async execute<TRequest extends object, TResponse>(
+    useCase: IUseCase<TRequest, TResponse>,
+    classType?: ClassType<TRequest>,
+    request?: TRequest,
   ): Promise<TResponse> {
     try {
-      return await fn(request);
+      if (request && classType) {
+        await this._validateDto(classType, request);
+      }
+
+      const result = await useCase.execute(request);
+
+      if (result.isErr()) {
+        throw result.error;
+      }
+
+      return result.value;
     } catch (error) {
+      container
+        .resolve<ILoggerService>(DIToken.ILoggerService)
+        .error(error, { classType: classType?.name, request });
+
       if (error instanceof ClassValidationError) {
         throw new MeteorInternalServerError(
           error.message,
@@ -57,53 +72,6 @@ export abstract class MeteorMethods {
     }
   }
 
-  protected async execute2<TRequest extends object, TResponse>({
-    useCase,
-    classType,
-    request,
-  }: ExecuteRequest<TRequest, TResponse>): Promise<TResponse> {
-    try {
-      if (request && classType) {
-        await this._validateDto(classType, request);
-      }
-
-      const result = await useCase.execute(request);
-
-      if (result.isErr()) {
-        throw result.error;
-      }
-
-      return result.value;
-    } catch (error) {
-      container
-        .resolve<ILoggerService>(DIToken.ILoggerService)
-        .error(error, { request });
-
-      if (error instanceof ClassValidationError) {
-        throw new MeteorInternalServerError(
-          error.message,
-          JSON.stringify(error.errors, null, 2),
-        );
-      }
-
-      if (error instanceof DomainError) {
-        throw new MeteorBadRequestError(error.message);
-      }
-
-      if (error instanceof Error) {
-        throw new MeteorBadRequestError(error.message);
-      }
-
-      if (error instanceof Meteor.Error) {
-        throw error;
-      }
-
-      throw new MeteorInternalServerError(
-        'Unexpected and unhandled server error',
-      );
-    }
-  }
-
   protected getCurrentUser(): Meteor.User {
     const user = Meteor.user();
 
@@ -112,18 +80,41 @@ export abstract class MeteorMethods {
     return user;
   }
 
-  protected getCurrentUserId(): string {
-    const user = this.getCurrentUser();
-
-    return user._id;
-  }
-
   protected getCurrentUserName(): string {
     const user = this.getCurrentUser();
 
     invariant(user.profile);
 
     return `${user.profile.firstName} ${user.profile.lastName}`;
+  }
+
+  protected handleError(error: unknown): never {
+    if (error instanceof ClassValidationError) {
+      throw new MeteorInternalServerError(
+        error.message,
+        JSON.stringify(error.errors, null, 2),
+      );
+    }
+
+    if (error instanceof DomainError) {
+      throw new MeteorBadRequestError(error.message);
+    }
+
+    if (error instanceof Error) {
+      throw new MeteorBadRequestError(error.message);
+    }
+
+    if (error instanceof Meteor.Error) {
+      throw error;
+    }
+
+    if (error instanceof Error) {
+      throw new MeteorInternalServerError(error.message);
+    }
+
+    throw new MeteorInternalServerError(
+      'Unexpected and unhandled server error',
+    );
   }
 
   private async _validateDto<T extends object>(
