@@ -79,7 +79,7 @@ export class EmailSendGridService implements IEmailService {
         };
 
         /**
-         * Comment to send real emails in development
+         * Comment to send emails to sendgrid in development
          */
         return ok(null);
       }

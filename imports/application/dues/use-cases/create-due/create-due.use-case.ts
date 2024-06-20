@@ -87,8 +87,10 @@ export class CreateDueUseCase implements IUseCase<CreateDueRequest, DueDto[]> {
         );
       });
 
-      newDues.forEach((newDue) =>
-        this._sendNewDueEmail.execute({ id: newDue._id }),
+      await Promise.all(
+        newDues.map(async (newDue) =>
+          this._sendNewDueEmail.execute({ id: newDue._id }),
+        ),
       );
 
       const duesDtos = await Promise.all(
