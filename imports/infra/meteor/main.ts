@@ -5,11 +5,12 @@ import { Meteor } from 'meteor/meteor';
 import { container, inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethodOld } from '@domain/users/user.methods';
 import { DueMethods } from '@infra/meteor/methods/due.methods';
+import { EventMethods } from '@infra/meteor/methods/event.methods';
 import { MemberMethods } from '@infra/meteor/methods/member.methods';
 import { MovementMethods } from '@infra/meteor/methods/movement.methods';
 import { PaymentMethods } from '@infra/meteor/methods/payment.methods';
@@ -18,14 +19,15 @@ import { MigrationService } from '@infra/migrations/migration.service';
 @injectable()
 export class ServerStartup {
   public constructor(
-    @inject(DIToken.Logger)
-    private readonly _logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    private readonly _logger: ILoggerService,
     private readonly _migrationService: MigrationService,
     private readonly _userMethod: UserMethodOld,
     private readonly _movementMethod: MovementMethods,
     private readonly _memberMethods: MemberMethods,
     private readonly _paymentMethods: PaymentMethods,
     private readonly _dueMethods: DueMethods,
+    private readonly _eventMethods: EventMethods,
   ) {}
 
   public async start() {
@@ -110,6 +112,8 @@ export class ServerStartup {
     this._memberMethods.register();
 
     this._dueMethods.register();
+
+    this._eventMethods.register();
   }
 }
 

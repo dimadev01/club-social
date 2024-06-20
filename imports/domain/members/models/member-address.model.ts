@@ -56,7 +56,7 @@ export class MemberAddress implements IMemberAddress {
     return this._zipCode;
   }
 
-  public static createOne(
+  public static create(
     props: CreateMemberAddress,
   ): Result<MemberAddress, Error> {
     const address = new MemberAddress();

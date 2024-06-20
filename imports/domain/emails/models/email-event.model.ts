@@ -1,20 +1,21 @@
 import { Result, err, ok } from 'neverthrow';
 
+import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { EmailEventTypeEnum } from '@domain/emails/email.enum';
 import { IEmailEvent } from '@domain/emails/email.interface';
 
 export class EmailEvent implements IEmailEvent {
-  private _timestamp: Date;
+  private _timestamp: DateTimeVo;
 
   private _type: EmailEventTypeEnum;
 
   public constructor(props?: IEmailEvent) {
-    this._timestamp = props?.timestamp ?? new Date();
+    this._timestamp = props?.timestamp ?? new DateTimeVo();
 
     this._type = props?.type ?? EmailEventTypeEnum.OPEN;
   }
 
-  public get timestamp(): Date {
+  public get timestamp(): DateTimeVo {
     return this._timestamp;
   }
 
@@ -22,7 +23,7 @@ export class EmailEvent implements IEmailEvent {
     return this._type;
   }
 
-  public static createOne(props: IEmailEvent): Result<EmailEvent, Error> {
+  public static create(props: IEmailEvent): Result<EmailEvent, Error> {
     const emailEvent = new EmailEvent();
 
     const result = Result.combine([
@@ -37,7 +38,7 @@ export class EmailEvent implements IEmailEvent {
     return ok(emailEvent);
   }
 
-  public setTimeStamp(value: Date): Result<null, Error> {
+  public setTimeStamp(value: DateTimeVo): Result<null, Error> {
     this._timestamp = value;
 
     return ok(null);

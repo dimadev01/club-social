@@ -1,13 +1,12 @@
 import { Mongo } from 'meteor/mongo';
 import type {
-  ClientSession,
   Document,
   Filter,
   MatchKeysAndValues,
   OptionalUnlessRequiredId,
 } from 'mongodb';
 
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { ICrudRepository } from '@application/common/repositories/crud.repository';
 import {
   FindPaginatedRequest,
@@ -35,7 +34,7 @@ export abstract class CrudMongoRepository<
   public constructor(
     private readonly _collection: MongoCollection<TEntity>,
     private readonly _mapper: Mapper<TDomain, TEntity>,
-    private readonly _logger: ILoggerRepository,
+    private readonly _logger: ILoggerService,
   ) {}
 
   public async delete(request: FindOneById): Promise<void> {
@@ -95,16 +94,18 @@ export abstract class CrudMongoRepository<
   }
 
   public async findOneByIdOrThrowWithSession(
-    id: string,
-    session: ClientSession,
+    request: FindOneById,
+    unitOfWork: MongoUnitOfWork,
   ): Promise<TDomain> {
     try {
       const entity = await this._collection
         .rawCollection()
-        .findOne({ _id: id, isDeleted: false } as Filter<TEntity>, { session });
+        .findOne({ _id: request.id, isDeleted: false } as Filter<TEntity>, {
+          session: unitOfWork.value,
+        });
 
       if (!entity) {
-        throw new InternalServerError(`Entity with id ${id} not found`);
+        throw new InternalServerError(`Entity with id ${request.id} not found`);
       }
 
       return this._mapper.toDomain(entity as TEntity);

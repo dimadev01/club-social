@@ -3,7 +3,7 @@ import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
 import { FindOneById } from '@application/common/repositories/queryable.repository';
 import {
@@ -34,8 +34,8 @@ export class PaymentMongoRepository
   implements IPaymentRepository
 {
   public constructor(
-    @inject(DIToken.Logger)
-    protected readonly logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    protected readonly logger: ILoggerService,
     protected readonly collection: PaymentMongoCollection,
     protected readonly auditableCollection: PaymentAuditableCollection,
     protected readonly mapper: PaymentMapper,

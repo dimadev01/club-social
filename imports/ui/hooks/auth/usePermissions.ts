@@ -1,19 +1,22 @@
 import { useDuesPermissions } from '@ui/hooks/auth/useDuesPermissions';
+import { useEventsPermissions } from '@ui/hooks/auth/useEventsPermissions';
 import { useIsAdmin } from '@ui/hooks/auth/useIsAdmin';
 import { useIsMember } from '@ui/hooks/auth/useIsMember';
 import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
-import { useMemberPermissions } from '@ui/hooks/auth/useMemberPermissions';
+import { useMembersPermissions } from '@ui/hooks/auth/useMembersPermissions';
 import { useMovementsPermissions } from '@ui/hooks/auth/useMovementPermissions';
 import { usePaymentsPermissions } from '@ui/hooks/auth/usePaymentsPermissions';
 
 export const usePermissions = () => {
-  const member = useMemberPermissions();
+  const member = useMembersPermissions();
 
   const payments = usePaymentsPermissions();
 
   const dues = useDuesPermissions();
 
   const movements = useMovementsPermissions();
+
+  const events = useEventsPermissions();
 
   const isAdmin = useIsAdmin();
 
@@ -23,6 +26,7 @@ export const usePermissions = () => {
 
   return {
     dues,
+    events,
     isAdmin,
     isMember,
     isStaff,

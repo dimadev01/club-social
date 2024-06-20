@@ -4,6 +4,7 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 import { IUseCase } from '@application/common/use-case.interface';
+import { IEventRepository } from '@application/events/repositories/event.repository';
 import { MemberDto } from '@application/members/dtos/member.dto';
 import { IMemberRepository } from '@application/members/repositories/member.repository';
 import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
@@ -11,6 +12,8 @@ import { UpdateMemberRequest } from '@application/members/use-cases/update-membe
 import { UpdateUserUseCase } from '@application/users/use-cases/update-user-theme/update-user.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
+import { EventActionEnum, EventResourceEnum } from '@domain/events/event.enum';
+import { Event } from '@domain/events/models/event.model';
 import { ExistingMemberByDocumentError } from '@domain/members/errors/existing-member-by-document.error';
 import { RoleEnum } from '@domain/roles/role.enum';
 
@@ -21,6 +24,8 @@ export class UpdateMemberUseCase
   public constructor(
     @inject(DIToken.IMemberRepository)
     private readonly _memberRepository: IMemberRepository,
+    @inject(DIToken.IEventRepository)
+    private readonly _eventRepository: IEventRepository,
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork,
     private readonly _updateUserUseCase: UpdateUserUseCase,
@@ -84,6 +89,19 @@ export class UpdateMemberUseCase
         }
 
         await this._memberRepository.updateWithSession(member, unitOfWork);
+
+        const event = Event.create({
+          action: EventActionEnum.UPDATE,
+          description: null,
+          resource: EventResourceEnum.MEMBERS,
+          resourceId: member._id,
+        });
+
+        if (event.isErr()) {
+          throw event.error;
+        }
+
+        await this._eventRepository.insertWithSession(event.value, unitOfWork);
       });
 
       return await this._getMemberUseCase.execute({ id: request.id });

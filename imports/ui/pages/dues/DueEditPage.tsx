@@ -98,7 +98,7 @@ export const DueEditPage = () => {
           disabled={updateDue.isLoading}
           onFinish={(values) => handleSubmit(values)}
           initialValues={{
-            amount: new Money({ amount: due.amount }).toInteger(),
+            amount: Money.from({ amount: due.amount }).toInteger(),
             notes: due.notes,
           }}
         >
@@ -124,7 +124,7 @@ export const DueEditPage = () => {
             </Descriptions.Item>
 
             <Descriptions.Item label="Monto">
-              {new Money({ amount: due.amount }).formatWithCurrency()}
+              {Money.from({ amount: due.amount }).formatWithCurrency()}
             </Descriptions.Item>
 
             <Descriptions.Item label="Notas">{due.notes}</Descriptions.Item>

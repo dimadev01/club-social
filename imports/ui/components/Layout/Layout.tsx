@@ -25,6 +25,7 @@ import { Button } from '@ui/components/Button/Button';
 import { AddNewIcon } from '@ui/components/Icons/AddNewIcon';
 import { DashboardIcon } from '@ui/components/Icons/DashboardIcon';
 import { DuesIcon } from '@ui/components/Icons/DuesIcon';
+import { EventsIcon } from '@ui/components/Icons/EventsIcon';
 import { LogoutIcon } from '@ui/components/Icons/LogoutIcon';
 import { MovementsIcon } from '@ui/components/Icons/MovementsIcon';
 import { PaymentsIcon } from '@ui/components/Icons/PaymentsIcon';
@@ -119,6 +120,18 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         label: (
           <Link className="no-underline" to={AppUrl.MOVEMENTS}>
             Movimientos
+          </Link>
+        ),
+      });
+    }
+
+    if (permissions.events.read) {
+      items.push({
+        icon: <EventsIcon />,
+        key: AppUrl.EVENTS,
+        label: (
+          <Link className="no-underline" to={AppUrl.EVENTS}>
+            Eventos
           </Link>
         ),
       });

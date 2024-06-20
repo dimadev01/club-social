@@ -1,7 +1,6 @@
 import { ICrudRepository } from '@application/common/repositories/crud.repository';
 import {
   FindPaginatedRequest,
-  FindPaginatedResponse,
   IGridRepository,
 } from '@application/common/repositories/grid.repository';
 import { FindOneById } from '@application/common/repositories/queryable.repository';
@@ -32,11 +31,8 @@ export interface GetMovementsTotalsResponse {
 
 export interface IMovementRepository
   extends ICrudRepository<Movement>,
-    IGridRepository<Movement, FindPaginatedRequest> {
+    IGridRepository<Movement, FindPaginatedMovementsRequest> {
   findOneByPaymentOrThrow(request: FindOneById): Promise<Movement>;
-  findPaginated(
-    request: FindPaginatedMovementsRequest,
-  ): Promise<FindPaginatedResponse<Movement>>;
   findToExport(request: FindPaginatedMovementsRequest): Promise<Movement[]>;
   getTotals(
     request: FindPaginatedMovementsFilters,

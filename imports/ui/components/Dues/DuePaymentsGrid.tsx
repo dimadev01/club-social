@@ -35,7 +35,7 @@ export const DuePaymentsGrid: React.FC<DuePaymentsGridProps> = ({
       {
         align: 'right',
         dataIndex: 'totalAmount',
-        render: (amount) => new Money({ amount }).formatWithCurrency(),
+        render: (amount) => Money.from({ amount }).formatWithCurrency(),
         title: 'Monto Registrado',
         width: 150,
       },

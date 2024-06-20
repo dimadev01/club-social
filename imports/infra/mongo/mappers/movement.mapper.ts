@@ -18,7 +18,7 @@ export class MovementMapper extends Mapper<Movement, MovementEntity> {
     return new Movement(
       {
         _id: entity._id,
-        amount: new Money({ amount: entity.amount }),
+        amount: Money.from({ amount: entity.amount }),
         category: entity.category,
         createdAt: new DateTimeVo(entity.createdAt),
         createdBy: entity.createdBy,

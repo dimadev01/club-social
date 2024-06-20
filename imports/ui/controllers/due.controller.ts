@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
 import { DueGridDto } from '@application/dues/dtos/due-grid.dto';
 import { DueDto } from '@application/dues/dtos/due.dto';
@@ -26,8 +26,8 @@ import { VoidDueRequestDto } from '@ui/dtos/void-due-request.dto';
 @injectable()
 export class DueController extends BaseController {
   public constructor(
-    @inject(DIToken.Logger)
-    protected readonly logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    protected readonly logger: ILoggerService,
     private readonly _create: CreateDueUseCase,
     private readonly _update: UpdateDueUseCase,
     private readonly _getOne: GetDueUseCase,

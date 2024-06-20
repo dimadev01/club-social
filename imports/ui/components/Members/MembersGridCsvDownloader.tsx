@@ -72,14 +72,14 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
           email: member.email,
           id: member.id,
           name: member.name,
-          pendingElectricity: new Money({
+          pendingElectricity: Money.from({
             amount: member.pendingElectricity,
           }).toInteger(),
-          pendingGuest: new Money({ amount: member.pendingGuest }).toInteger(),
-          pendingMembership: new Money({
+          pendingGuest: Money.from({ amount: member.pendingGuest }).toInteger(),
+          pendingMembership: Money.from({
             amount: member.pendingMembership,
           }).toInteger(),
-          pendingTotal: new Money({ amount: member.pendingTotal }).toInteger(),
+          pendingTotal: Money.from({ amount: member.pendingTotal }).toInteger(),
           status: MemberStatusLabel[member.status],
         }));
       }}

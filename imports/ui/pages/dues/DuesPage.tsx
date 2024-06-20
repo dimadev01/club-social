@@ -180,7 +180,7 @@ export const DuesPage = () => {
         align: 'right',
         dataIndex: 'amount',
         ellipsis: true,
-        render: (amount: number) => new Money({ amount }).formatWithCurrency(),
+        render: (amount: number) => Money.from({ amount }).formatWithCurrency(),
         title: 'Monto Original',
         width: 100,
       },
@@ -189,7 +189,7 @@ export const DuesPage = () => {
         dataIndex: 'totalPaidAmount',
         ellipsis: true,
         render: (totalPaidAmount: number) =>
-          new Money({ amount: totalPaidAmount }).formatWithCurrency(),
+          Money.from({ amount: totalPaidAmount }).formatWithCurrency(),
         title: 'Monto pago',
         width: 100,
       },
@@ -198,7 +198,7 @@ export const DuesPage = () => {
         dataIndex: 'totalPendingAmount',
         ellipsis: true,
         render: (totalPendingAmount: number) =>
-          new Money({ amount: totalPendingAmount }).formatWithCurrency(),
+          Money.from({ amount: totalPendingAmount }).formatWithCurrency(),
         title: 'Pendiente',
         width: 100,
       },
@@ -298,7 +298,7 @@ export const DuesPage = () => {
           >
             <Typography.Text strong>
               Total Pendiente:{' '}
-              {new Money({
+              {Money.from({
                 amount: duesTotals?.total ?? 0,
               }).formatWithCurrency()}
             </Typography.Text>

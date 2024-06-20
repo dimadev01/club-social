@@ -8,6 +8,8 @@ export enum MeteorMethodEnum {
   DuesUpdate = 'dues/update',
   DuesVoid = 'dues/void',
 
+  EventsGetGrid = 'events/getGrid',
+
   MembersCreate = 'members/create',
   MembersGet = 'members/get',
   MembersGetGrid = 'members/getGrid',

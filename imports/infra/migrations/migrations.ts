@@ -8,6 +8,7 @@ import { VoidDueUseCase } from '@application/dues/use-cases/void-due/void-due.us
 import { DueStatusEnum } from '@domain/dues/due.enum';
 import { MemberStatusEnum } from '@domain/members/member.enum';
 import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
+import { RoleService } from '@domain/roles/role.service';
 import { DueMongoCollection } from '@infra/mongo/collections/due.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
 import { MovementMongoCollection } from '@infra/mongo/collections/movement.collection';
@@ -225,4 +226,35 @@ Migrations.add({
     next();
   }),
   version: 26,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const movementsCollection = container.resolve(MovementMongoCollection);
+
+    await movementsCollection.createIndexAsync(
+      { paymentId: 1 },
+      { name: 'm_pi' },
+    );
+
+    next();
+  }),
+  version: 24,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    await RoleService.update();
+
+    next();
+  }),
+  version: 27,
 });

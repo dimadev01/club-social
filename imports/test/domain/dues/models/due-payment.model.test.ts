@@ -24,35 +24,35 @@ const VALID_RECEIPT_NUMBER = 1;
 describe('DuePayment', () => {
   const createValidDuePayment = (props?: Partial<IDuePayment>): DuePayment =>
     new DuePayment({
-      creditAmount: new Money({ amount: AMOUNT_ZERO }),
-      directAmount: new Money({ amount: AMOUNT_FIVE_HUNDRED_THOUSAND }),
+      creditAmount: Money.from({ amount: AMOUNT_ZERO }),
+      directAmount: Money.from({ amount: AMOUNT_FIVE_HUNDRED_THOUSAND }),
       paymentDate: new DateTimeVo().subtract(1, 'day'),
       paymentId: A_PAYMENT_ID,
       paymentReceiptNumber: VALID_RECEIPT_NUMBER,
       paymentStatus: PaymentStatusEnum.PAID,
       source: PaymentDueSourceEnum.DIRECT,
-      totalAmount: new Money({ amount: AMOUNT_FIVE_HUNDRED_THOUSAND }),
+      totalAmount: Money.from({ amount: AMOUNT_FIVE_HUNDRED_THOUSAND }),
       ...props,
     });
 
-  describe('.createOne()', () => {
+  describe('.create()', () => {
     const getValidDuePaymentProps = (
       props?: Partial<CreateDuePayment>,
     ): CreateDuePayment => ({
-      creditAmount: new Money({ amount: AMOUNT_ZERO }),
-      directAmount: new Money({ amount: AMOUNT_FIVE_HUNDRED_THOUSAND }),
+      creditAmount: Money.from({ amount: AMOUNT_ZERO }),
+      directAmount: Money.from({ amount: AMOUNT_FIVE_HUNDRED_THOUSAND }),
       paymentDate: new DateTimeVo().subtract(1, 'day'),
       paymentId: A_PAYMENT_ID,
       paymentReceiptNumber: VALID_RECEIPT_NUMBER,
       source: PaymentDueSourceEnum.DIRECT,
-      totalAmount: new Money({ amount: AMOUNT_FIVE_HUNDRED_THOUSAND }),
+      totalAmount: Money.from({ amount: AMOUNT_FIVE_HUNDRED_THOUSAND }),
       ...props,
     });
 
     it('should create a DuePayment successfully', () => {
       const props = getValidDuePaymentProps();
 
-      const duePayment = DuePayment.createOne(props);
+      const duePayment = DuePayment.create(props);
 
       expect(duePayment.isErr()).to.be.false;
     });
@@ -62,7 +62,7 @@ describe('DuePayment', () => {
         paymentDate: new DateVo().add(1, 'day'),
       });
 
-      const duePayment = DuePayment.createOne(props)._unsafeUnwrapErr();
+      const duePayment = DuePayment.create(props)._unsafeUnwrapErr();
 
       expect(duePayment).to.be.an.instanceOf(PaymentInTheFutureError);
     });
@@ -70,7 +70,7 @@ describe('DuePayment', () => {
     it('should return an error because the payment receipt numbers is 0', () => {
       const props = getValidDuePaymentProps({ paymentReceiptNumber: 0 });
 
-      const duePayment = DuePayment.createOne(props)._unsafeUnwrapErr();
+      const duePayment = DuePayment.create(props)._unsafeUnwrapErr();
 
       expect(duePayment).to.be.an.instanceOf(PaymentReceiptNumberError);
     });
@@ -78,7 +78,7 @@ describe('DuePayment', () => {
     it('should return an error because the payment receipt numbers is negative', () => {
       const props = getValidDuePaymentProps({ paymentReceiptNumber: -1 });
 
-      const duePayment = DuePayment.createOne(props)._unsafeUnwrapErr();
+      const duePayment = DuePayment.create(props)._unsafeUnwrapErr();
 
       expect(duePayment).to.be.an.instanceOf(PaymentReceiptNumberError);
     });
