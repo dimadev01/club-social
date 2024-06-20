@@ -6,6 +6,8 @@ import { DateFormatEnum } from '@shared/utils/date.utils';
 export class DateVo extends DateTimeVo {
   public constructor(value?: dayjs.ConfigType) {
     super(dayjs.utc(value));
+
+    this._dayjs = dayjs.utc(this.value.date);
   }
 
   public isInTheFuture() {

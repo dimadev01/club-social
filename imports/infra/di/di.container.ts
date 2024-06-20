@@ -1,4 +1,4 @@
-import { container, instanceCachingFactory } from 'tsyringe';
+import { container } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { EmailSendGridService } from '@infra/email/email-sendgrid.service';
@@ -10,12 +10,11 @@ import { EventMongoRepository } from '@infra/mongo/repositories/event-mongo.repo
 import { MemberCreditMongoRepository } from '@infra/mongo/repositories/member-credit-mongo.repository';
 import { MemberMongoRepository } from '@infra/mongo/repositories/member-mongo.repository';
 import { MovementMongoRepository } from '@infra/mongo/repositories/movement-mongo.repository';
+import { NotificationMongoRepository } from '@infra/mongo/repositories/notification-mongo.repository';
 import { PaymentMongoRepository } from '@infra/mongo/repositories/payment-mongo.repository';
 import { UserMongoRepository } from '@infra/mongo/repositories/user-mongo.repository';
 
-container.register(DIToken.ILoggerService, {
-  useFactory: instanceCachingFactory((c) => c.resolve(LoggerOstrio)),
-});
+container.registerSingleton(DIToken.ILoggerService, LoggerOstrio);
 
 container.register(DIToken.IMeteorUsers, { useValue: Meteor.users });
 
@@ -41,3 +40,8 @@ container.register(DIToken.IEmailService, EmailSendGridService);
 container.register(DIToken.IEmailRepository, EmailMongoRepository);
 
 container.register(DIToken.IEventRepository, EventMongoRepository);
+
+container.register(
+  DIToken.INotificationRepository,
+  NotificationMongoRepository,
+);

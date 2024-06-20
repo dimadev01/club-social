@@ -5,10 +5,12 @@ import { Logger as OstrioLogger } from 'meteor/ostrio:logger';
 import { LoggerConsole as OstrioLoggerConsole } from 'meteor/ostrio:loggerconsole';
 // @ts-expect-error
 import { LoggerMongo as OstrioLoggerMongo } from 'meteor/ostrio:loggermongo';
+import { singleton } from 'tsyringe';
 
 import { ILoggerService } from '@application/common/logger/logger.interface';
 import { LoggerOstrioFormat } from '@infra/logger/logger-ostrio-format';
 
+@singleton()
 export class LoggerOstrio implements ILoggerService {
   private readonly _logger;
 

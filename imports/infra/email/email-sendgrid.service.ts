@@ -1,7 +1,7 @@
 import sendgrid from '@sendgrid/mail';
 import { Result, err, ok } from 'neverthrow';
 import invariant from 'tiny-invariant';
-import { inject, singleton } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILoggerService } from '@application/common/logger/logger.interface';
@@ -15,7 +15,7 @@ import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
 import { EmailVo } from '@domain/common/value-objects/email.value-object';
 
-@singleton()
+@injectable()
 export class EmailSendGridService implements IEmailService {
   public constructor(
     @inject(DIToken.ILoggerService)
