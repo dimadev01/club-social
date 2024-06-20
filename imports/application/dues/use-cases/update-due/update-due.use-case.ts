@@ -2,7 +2,7 @@ import { Result, err } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 import { IUseCase } from '@application/common/use-case.interface';
 import { DueDto } from '@application/dues/dtos/due.dto';
@@ -16,8 +16,8 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 @injectable()
 export class UpdateDueUseCase implements IUseCase<UpdateDueRequest, DueDto> {
   public constructor(
-    @inject(DIToken.Logger)
-    private readonly _logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    private readonly _logger: ILoggerService,
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
     @inject(DIToken.IUnitOfWork)
@@ -40,7 +40,13 @@ export class UpdateDueUseCase implements IUseCase<UpdateDueRequest, DueDto> {
       this._unitOfWork.start();
 
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
-        due.setAmount(new Money({ amount: request.amount }));
+        const amount = Money.create({ amount: request.amount });
+
+        if (amount.isErr()) {
+          throw amount.error;
+        }
+
+        due.setAmount(amount.value);
 
         due.setNotes(request.notes);
 

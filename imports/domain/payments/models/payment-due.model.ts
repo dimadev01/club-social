@@ -30,9 +30,9 @@ export class PaymentDue implements IPaymentDue {
   private _totalAmount: Money;
 
   public constructor(props?: IPaymentDue) {
-    this._debitAmount = props?.directAmount ?? new Money();
+    this._debitAmount = props?.directAmount ?? Money.from();
 
-    this._dueAmount = props?.dueAmount ?? new Money();
+    this._dueAmount = props?.dueAmount ?? Money.from();
 
     this._dueCategory = props?.dueCategory ?? DueCategoryEnum.MEMBERSHIP;
 
@@ -40,13 +40,13 @@ export class PaymentDue implements IPaymentDue {
 
     this._dueId = props?.dueId ?? '';
 
-    this._creditAmount = props?.creditAmount ?? new Money();
+    this._creditAmount = props?.creditAmount ?? Money.from();
 
-    this._debitAmount = props?.directAmount ?? new Money();
+    this._debitAmount = props?.directAmount ?? Money.from();
 
-    this._totalAmount = props?.totalAmount ?? new Money();
+    this._totalAmount = props?.totalAmount ?? Money.from();
 
-    this._duePendingAmount = props?.duePendingAmount ?? new Money();
+    this._duePendingAmount = props?.duePendingAmount ?? Money.from();
 
     this._source = props?.source ?? PaymentDueSourceEnum.DIRECT;
   }
@@ -87,7 +87,7 @@ export class PaymentDue implements IPaymentDue {
     return this._totalAmount;
   }
 
-  public static createOne(props: CreatePaymentDue): Result<PaymentDue, Error> {
+  public static create(props: CreatePaymentDue): Result<PaymentDue, Error> {
     const paymentDue = new PaymentDue();
 
     let source: PaymentDueSourceEnum;

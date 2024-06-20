@@ -2,7 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 import { IUseCase } from '@application/common/use-case.interface';
 import { IDueRepository } from '@application/dues/repositories/due.repository';
@@ -18,8 +18,8 @@ import { PaymentNotVoidableError } from '@domain/payments/errors/payment-not-voi
 @injectable()
 export class VoidPaymentUseCase implements IUseCase<VoidPaymentRequest, null> {
   public constructor(
-    @inject(DIToken.Logger)
-    private readonly _logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    private readonly _logger: ILoggerService,
     @inject(DIToken.IPaymentRepository)
     private readonly _paymentRepository: IPaymentRepository,
     @inject(DIToken.IMovementRepository)

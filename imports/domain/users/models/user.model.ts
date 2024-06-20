@@ -79,12 +79,12 @@ export class User extends Model implements IUserModel {
     return this._theme;
   }
 
-  public static createOne(props: CreateUser): Result<User, Error> {
+  public static create(props: CreateUser): Result<User, Error> {
     const user = new User();
 
     const emails =
       props.emails?.map((email) =>
-        UserEmail.createOne({
+        UserEmail.create({
           address: email,
           verified: false,
         }),

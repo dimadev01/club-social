@@ -2,7 +2,7 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUseCase } from '@application/common/use-case.interface';
 import { IMovementRepository } from '@application/movements/repositories/movement.repository';
 import { VoidMovementRequest } from '@application/movements/use-cases/void-movement/void-movement.request';
@@ -12,8 +12,8 @@ export class VoidMovementUseCase
   implements IUseCase<VoidMovementRequest, null>
 {
   public constructor(
-    @inject(DIToken.Logger)
-    private readonly _logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    private readonly _logger: ILoggerService,
     @inject(DIToken.IMovementRepository)
     private readonly _movementRepository: IMovementRepository,
   ) {}

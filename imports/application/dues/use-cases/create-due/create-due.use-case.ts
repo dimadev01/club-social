@@ -2,7 +2,7 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 import { IUseCase } from '@application/common/use-case.interface';
 import { DueDto } from '@application/dues/dtos/due.dto';
@@ -18,8 +18,8 @@ import { Due } from '@domain/dues/models/due.model';
 @injectable()
 export class CreateDueUseCase implements IUseCase<CreateDueRequest, DueDto[]> {
   public constructor(
-    @inject(DIToken.Logger)
-    private readonly _logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    private readonly _logger: ILoggerService,
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
     @inject(DIToken.IUnitOfWork)
@@ -39,8 +39,14 @@ export class CreateDueUseCase implements IUseCase<CreateDueRequest, DueDto[]> {
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
         await Promise.all(
           request.memberIds.map(async (memberId: string) => {
-            const due = Due.createOne({
-              amount: new Money({ amount: request.amount }),
+            const amount = Money.create({ amount: request.amount });
+
+            if (amount.isErr()) {
+              throw amount.error;
+            }
+
+            const due = Due.create({
+              amount: amount.value,
               category: request.category,
               date: new DateVo(request.date),
               memberId,

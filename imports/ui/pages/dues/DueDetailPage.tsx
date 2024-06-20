@@ -109,17 +109,17 @@ export const DueDetailPage = () => {
               </Descriptions.Item>
 
               <Descriptions.Item label="Monto Original">
-                {new Money({ amount: due.amount }).formatWithCurrency()}
+                {Money.from({ amount: due.amount }).formatWithCurrency()}
               </Descriptions.Item>
 
               <Descriptions.Item label="Monto Pago">
-                {new Money({
+                {Money.from({
                   amount: due.totalPaidAmount,
                 }).formatWithCurrency()}
               </Descriptions.Item>
 
               <Descriptions.Item label="Monto Pendiente">
-                {new Money({
+                {Money.from({
                   amount: due.totalPendingAmount,
                 }).formatWithCurrency()}
               </Descriptions.Item>

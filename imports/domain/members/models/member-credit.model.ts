@@ -22,7 +22,7 @@ export class MemberCredit extends Model implements IMemberCredit {
   public constructor(props?: IMemberCredit) {
     super(props);
 
-    this._amount = props?.amount ?? new Money();
+    this._amount = props?.amount ?? Money.from();
 
     this._memberId = props?.memberId ?? '';
 
@@ -53,9 +53,7 @@ export class MemberCredit extends Model implements IMemberCredit {
     return this._type;
   }
 
-  public static createOne(
-    props: CreateMemberCredit,
-  ): Result<MemberCredit, Error> {
+  public static create(props: CreateMemberCredit): Result<MemberCredit, Error> {
     const memberCredit = new MemberCredit();
 
     const result = Result.combine([

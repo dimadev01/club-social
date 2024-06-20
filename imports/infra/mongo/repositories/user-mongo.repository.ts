@@ -2,7 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUserRepository } from '@application/users/repositories/user.repository';
 import { User } from '@domain/users/models/user.model';
 import { UserEntity } from '@infra/mongo/entities/user.entity';
@@ -19,8 +19,8 @@ export class UserMongoRepository
     protected readonly collection: Mongo.Collection<UserEntity>,
     @inject(UserMapper)
     protected readonly mapper: UserMapper,
-    @inject(DIToken.Logger)
-    protected readonly logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    protected readonly logger: ILoggerService,
   ) {
     super(collection, mapper, logger);
   }

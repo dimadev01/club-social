@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { MemberGridDto } from '@application/members/dtos/member-grid.dto';
 import { MemberDto } from '@application/members/dtos/member.dto';
 import { CreateMemberUseCase } from '@application/members/use-cases/create-member/create-member.use-case';
@@ -21,8 +21,8 @@ import { UpdateMemberRequestDto } from '@ui/dtos/update-member-request.dto';
 @injectable()
 export class MemberController extends BaseController {
   public constructor(
-    @inject(DIToken.Logger)
-    protected readonly logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    protected readonly logger: ILoggerService,
     private readonly _create: CreateMemberUseCase,
     private readonly _getOne: GetMemberUseCase,
     private readonly _get: GetMembersUseCase,
@@ -33,7 +33,7 @@ export class MemberController extends BaseController {
     super(logger);
   }
 
-  public async createOne(request: CreateMemberRequestDto): Promise<MemberDto> {
+  public async create(request: CreateMemberRequestDto): Promise<MemberDto> {
     return this.execute({
       classType: CreateMemberRequestDto,
       request,

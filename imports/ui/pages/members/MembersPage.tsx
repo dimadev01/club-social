@@ -162,7 +162,7 @@ export const MembersPage = () => {
             dataIndex: 'pendingMembership',
             ellipsis: true,
             render: (pendingMembership: number) =>
-              new Money({ amount: pendingMembership }).formatWithCurrency(),
+              Money.from({ amount: pendingMembership }).formatWithCurrency(),
             sortOrder: gridState.sorter.pendingMembership,
             sorter: true,
             title: 'Deuda Cuota',
@@ -173,7 +173,7 @@ export const MembersPage = () => {
             dataIndex: 'pendingElectricity',
             ellipsis: true,
             render: (pendingElectricity: number) =>
-              new Money({ amount: pendingElectricity }).formatWithCurrency(),
+              Money.from({ amount: pendingElectricity }).formatWithCurrency(),
             sortOrder: gridState.sorter.pendingElectricity,
             sorter: true,
             title: 'Deuda Luz',
@@ -184,7 +184,7 @@ export const MembersPage = () => {
             dataIndex: 'pendingGuest',
             ellipsis: true,
             render: (pendingGuest: number) =>
-              new Money({ amount: pendingGuest }).formatWithCurrency(),
+              Money.from({ amount: pendingGuest }).formatWithCurrency(),
             sortOrder: gridState.sorter.pendingGuest,
             sorter: true,
             title: 'Deuda Invitado',
@@ -207,7 +207,7 @@ export const MembersPage = () => {
               },
             ],
             render: (pendingTotal: number) =>
-              new Money({ amount: pendingTotal }).formatWithCurrency(),
+              Money.from({ amount: pendingTotal }).formatWithCurrency(),
             sortOrder: gridState.sorter.pendingTotal,
             sorter: true,
             title: 'Deuda Total',

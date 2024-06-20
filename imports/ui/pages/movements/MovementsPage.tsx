@@ -106,7 +106,7 @@ export const MovementsPage = () => {
         <Table.Summary.Cell align="right" index={0} colSpan={5}>
           <Typography.Text strong>
             Total:{' '}
-            {new Money({
+            {Money.from({
               amount: movementsTotals?.total ?? 0,
             }).formatWithCurrency()}
           </Typography.Text>
@@ -207,7 +207,7 @@ export const MovementsPage = () => {
             align: 'right',
             dataIndex: 'amount',
             ellipsis: true,
-            render: (amount) => new Money({ amount }).formatWithCurrency(),
+            render: (amount) => Money.from({ amount }).formatWithCurrency(),
             title: 'Importe',
             width: 75,
           },

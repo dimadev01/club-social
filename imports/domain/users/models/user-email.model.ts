@@ -21,7 +21,7 @@ export class UserEmail implements IUserEmail {
     return this._verified;
   }
 
-  public static createOne(props: CreateUserEmail): Result<UserEmail, Error> {
+  public static create(props: CreateUserEmail): Result<UserEmail, Error> {
     const email = new UserEmail();
 
     const result = Result.combine([

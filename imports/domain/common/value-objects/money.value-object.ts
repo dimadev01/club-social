@@ -18,8 +18,10 @@ import {
   toDecimal,
   toSnapshot,
 } from 'dinero.js';
+import { Result, err, ok } from 'neverthrow';
 
 import { CurrencyEnum } from '@domain/common/enums/currency.enum';
+import { DomainError } from '@domain/common/errors/domain.error';
 import { ValueObject } from '@domain/common/value-objects/value-object';
 
 interface CreateMoney {
@@ -41,7 +43,7 @@ interface IMoney {
 export class Money extends ValueObject<IMoney> {
   private _dinero: Dinero<number>;
 
-  public constructor(props?: CreateMoney) {
+  private constructor(props?: CreateMoney) {
     const amount = props?.amount ?? 0;
 
     const currency = props?.currency ?? CurrencyEnum.ARS;
@@ -60,6 +62,18 @@ export class Money extends ValueObject<IMoney> {
 
   public get currency(): CurrencyEnum {
     return this.value.currency;
+  }
+
+  public static create(props: CreateMoney): Result<Money, Error> {
+    if (props.amount < 0) {
+      return err(new DomainError('Amount must be greater than 0'));
+    }
+
+    return ok(new Money(props));
+  }
+
+  public static from(props?: CreateMoney): Money {
+    return new Money(props);
   }
 
   public static fromNumber(

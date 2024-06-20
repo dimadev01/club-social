@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
 import { MovementGridDto } from '@application/movements/dtos/movement-grid.dto';
 import { MovementDto } from '@application/movements/dtos/movement.dto';
@@ -24,8 +24,8 @@ import { VoidMovementRequestDto } from '@ui/dtos/void-movement-request.dto';
 @injectable()
 export class MovementController extends BaseController {
   public constructor(
-    @inject(DIToken.Logger)
-    protected readonly logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    protected readonly logger: ILoggerService,
     private readonly _getGrid: GetMovementsGridUseCase,
     private readonly _getOne: GetMovementUseCase,
     private readonly _create: CreateMovementUseCase,

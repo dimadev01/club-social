@@ -74,7 +74,7 @@ export class CreatePaymentUseCase
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
         this._validateDues();
 
-        const paymentResult = Payment.createOne({
+        const paymentResult = Payment.create({
           createDues: this._createPaymentDues(request),
           date: new DateVo(request.date),
           memberId: request.memberId,
@@ -97,7 +97,7 @@ export class CreatePaymentUseCase
             invariant(due);
 
             if (paymentDue.totalAmount.isGreaterThan(due.totalPendingAmount)) {
-              const memberCredit = MemberCredit.createOne({
+              const memberCredit = MemberCredit.create({
                 amount: paymentDue.totalAmount.subtract(due.totalPendingAmount),
                 dueId: due._id,
                 memberId: request.memberId,
@@ -155,7 +155,13 @@ export class CreatePaymentUseCase
       invariant(newPayment);
 
       if (request.sendEmail) {
-        this._sendNewPaymentEmailUseCase.execute({ id: newPayment._id });
+        const result = await this._sendNewPaymentEmailUseCase.execute({
+          id: newPayment._id,
+        });
+
+        if (result.isErr()) {
+          throw result.error;
+        }
       }
 
       return await this._getPaymentUseCase.execute({ id: newPayment._id });
@@ -186,13 +192,21 @@ export class CreatePaymentUseCase
 
       invariant(due);
 
-      const creditAmount = new Money({ amount: requestDue.creditAmount });
+      const creditAmount = Money.create({ amount: requestDue.creditAmount });
 
-      const directAmount = new Money({ amount: requestDue.directAmount });
+      if (creditAmount.isErr()) {
+        throw creditAmount.error;
+      }
+
+      const directAmount = Money.create({ amount: requestDue.directAmount });
+
+      if (directAmount.isErr()) {
+        throw directAmount.error;
+      }
 
       const createPaymentDue: CreatePaymentDue = {
-        creditAmount,
-        directAmount,
+        creditAmount: creditAmount.value,
+        directAmount: directAmount.value,
         dueAmount: due.amount,
         dueCategory: due.category,
         dueDate: due.date,

@@ -66,7 +66,7 @@ export const MovementsGridCsvDownloaderButton: React.FC<Props> = ({
         const data = await getMovementsToExport.mutateAsync(request);
 
         return data.map((movement) => {
-          let amount = new Money({ amount: movement.amount }).toInteger();
+          let amount = Money.from({ amount: movement.amount }).toInteger();
 
           if (movement.type === MovementTypeEnum.EXPENSE) {
             amount *= -1;

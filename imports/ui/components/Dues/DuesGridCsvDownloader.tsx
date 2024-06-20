@@ -63,7 +63,7 @@ export const DuesGridCsvDownloaderButton: React.FC<Props> = ({ request }) => {
         const data = await getDuesToExport.mutateAsync(request);
 
         return data.map((due) => ({
-          amount: new Money({ amount: due.amount }).toInteger(),
+          amount: Money.from({ amount: due.amount }).toInteger(),
           category: DueCategoryLabel[due.category],
           createdAt: new DateTimeVo(due.createdAt).format(
             DateFormatEnum.DDMMYYHHmm,
@@ -72,10 +72,10 @@ export const DuesGridCsvDownloaderButton: React.FC<Props> = ({ request }) => {
           id: due.id,
           memberName: due.member.name,
           status: DueStatusLabel[due.status],
-          totalPaidAmount: new Money({
+          totalPaidAmount: Money.from({
             amount: due.totalPaidAmount,
           }).toInteger(),
-          totalPendingAmount: new Money({
+          totalPendingAmount: Money.from({
             amount: due.totalPendingAmount,
           }).toInteger(),
         }));

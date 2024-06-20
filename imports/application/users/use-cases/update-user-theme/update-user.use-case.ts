@@ -70,7 +70,7 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserRequest, User> {
         return ok(userEmail);
       }
 
-      return UserEmail.createOne({
+      return UserEmail.create({
         address: email,
         verified: false,
       });

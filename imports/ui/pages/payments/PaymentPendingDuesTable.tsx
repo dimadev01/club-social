@@ -46,7 +46,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
           <Table.Summary.Cell index={1} />
           <Table.Summary.Cell index={2} />
           <Table.Summary.Cell align="right" index={3}>
-            Total: {new Money({ amount: totalPending }).formatWithCurrency()}
+            Total: {Money.from({ amount: totalPending }).formatWithCurrency()}
           </Table.Summary.Cell>
           <Table.Summary.Cell align="right" index={4}>
             Total: {Money.fromNumber(totalDuesToPay).formatWithCurrency()}
@@ -128,7 +128,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({ pendingDues }) => {
         title="Monto pendiente"
         align="right"
         render={(totalPendingAmount: number) =>
-          new Money({ amount: totalPendingAmount }).formatWithCurrency()
+          Money.from({ amount: totalPendingAmount }).formatWithCurrency()
         }
       />
 

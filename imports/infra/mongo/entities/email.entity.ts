@@ -4,6 +4,7 @@ import {
   IsDate,
   IsDefined,
   IsEnum,
+  IsNotEmpty,
   IsObject,
   IsString,
   ValidateNested,
@@ -49,6 +50,17 @@ export class EmailEntity extends Entity {
   @IsObject()
   public to: EmailToEntity;
 
+  @IsNotEmpty()
+  @IsString()
+  @IsNullable()
+  @IsDefined()
+  public unsubscribeGroupID: string | null;
+
+  @IsObject()
+  @IsNullable()
+  @IsDefined()
+  public variables: Record<string, unknown> | null;
+
   public constructor(props: EmailEntity) {
     super(props);
 
@@ -63,6 +75,10 @@ export class EmailEntity extends Entity {
     this.status = props.status;
 
     this.templateId = props.templateId;
+
+    this.unsubscribeGroupID = props.unsubscribeGroupID;
+
+    this.variables = props.variables;
 
     this.to = props.to;
   }

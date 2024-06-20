@@ -1,7 +1,7 @@
 import { ClassType, transformAndValidate } from 'class-transformer-validator';
 import { ValidationError } from 'class-validator';
 
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUseCase } from '@application/common/use-case.interface';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { ClassValidationError } from '@ui/common/errors/class-validation.error';
@@ -13,7 +13,7 @@ export interface ExecuteRequest<TRequest extends object, TResponse> {
 }
 
 export abstract class BaseController {
-  public constructor(private readonly _logger: ILoggerRepository) {}
+  public constructor(private readonly _logger: ILoggerService) {}
 
   protected async execute<TRequest extends object, TResponse>({
     useCase,

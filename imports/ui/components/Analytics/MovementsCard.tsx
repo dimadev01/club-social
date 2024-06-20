@@ -37,7 +37,7 @@ export const MovementsCard: React.FC<Props> = ({
         label={MovementTypeLabel[MovementTypeEnum.INCOME]}
         className="text-right"
       >
-        {new Money({ amount: income }).formatWithCurrency()}
+        {Money.from({ amount: income }).formatWithCurrency()}
       </Descriptions.Item>
 
       <Descriptions.Item
@@ -45,7 +45,7 @@ export const MovementsCard: React.FC<Props> = ({
         label={MovementTypeLabel[MovementTypeEnum.EXPENSE]}
         className="text-right"
       >
-        {new Money({ amount: expense }).formatWithCurrency()}
+        {Money.from({ amount: expense }).formatWithCurrency()}
       </Descriptions.Item>
 
       <Descriptions.Item
@@ -53,7 +53,7 @@ export const MovementsCard: React.FC<Props> = ({
         label="Total (Caja)"
         className="text-right"
       >
-        {new Money({ amount: total }).formatWithCurrency()}
+        {Money.from({ amount: total }).formatWithCurrency()}
       </Descriptions.Item>
     </Descriptions>
   );

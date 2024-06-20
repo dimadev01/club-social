@@ -1,5 +1,3 @@
-import dayjs from 'dayjs';
-
 import { DateVo } from '@domain/common/value-objects/date.value-object';
 
 export class BirthDate extends DateVo {
@@ -8,6 +6,6 @@ export class BirthDate extends DateVo {
   }
 
   public getAge(): number {
-    return dayjs().diff(this.value.toDate(), 'year');
+    return this.diff(new DateVo(), 'year');
   }
 }

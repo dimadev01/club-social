@@ -2,7 +2,7 @@ import { Result, err } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerRepository } from '@application/common/logger/logger.interface';
+import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 import { IUseCase } from '@application/common/use-case.interface';
 import { MovementDto } from '@application/movements/dtos/movement.dto';
@@ -19,8 +19,8 @@ export class UpdateMovementUseCase
   implements IUseCase<UpdateMovementRequest, MovementDto>
 {
   public constructor(
-    @inject(DIToken.Logger)
-    private readonly _logger: ILoggerRepository,
+    @inject(DIToken.ILoggerService)
+    private readonly _logger: ILoggerService,
     @inject(DIToken.IMovementRepository)
     private readonly _movementRepository: IMovementRepository,
     @inject(DIToken.IUnitOfWork)
@@ -43,8 +43,14 @@ export class UpdateMovementUseCase
       }
 
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
+        const amount = Money.create({ amount: request.amount });
+
+        if (amount.isErr()) {
+          throw amount.error;
+        }
+
         const result = Result.combine([
-          movement.setAmount(new Money({ amount: request.amount })),
+          movement.setAmount(amount.value),
           movement.setCategory(request.category),
           movement.setDate(new DateVo(request.date)),
           movement.setNotes(request.notes),

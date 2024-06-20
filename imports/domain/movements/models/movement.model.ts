@@ -48,7 +48,7 @@ export class Movement extends Model implements IMovement {
   public constructor(props?: IMovement, payment?: Payment) {
     super(props);
 
-    this._amount = props?.amount ?? new Money();
+    this._amount = props?.amount ?? Money.from();
 
     this._category = props?.category ?? MovementCategoryEnum.OTHER_INCOME;
 
@@ -129,7 +129,7 @@ export class Movement extends Model implements IMovement {
     return this._voidedBy;
   }
 
-  public static createOne(props: CreateMovement): Result<Movement, Error> {
+  public static create(props: CreateMovement): Result<Movement, Error> {
     const movement = new Movement();
 
     const result = Result.combine([
@@ -161,7 +161,7 @@ export class Movement extends Model implements IMovement {
   }
 
   public static createPayment(props: CreatePayment): Result<Movement, Error> {
-    return this.createOne({
+    return this.create({
       amount: props.amount,
       category: MovementCategoryEnum.MEMBER_PAYMENT,
       date: props.date,

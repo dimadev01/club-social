@@ -59,7 +59,7 @@ export class CreateMemberUseCase
           throw userResult.error;
         }
 
-        const member = Member.createOne({
+        const member = Member.create({
           address: {
             cityGovId: request.addressCityGovId,
             cityName: request.addressCityName,

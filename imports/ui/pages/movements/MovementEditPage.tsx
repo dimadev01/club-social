@@ -101,7 +101,7 @@ export const MovementEditPage = () => {
           onFinish={(values) => handleSubmit(values)}
           disabled={updateMovement.isLoading}
           initialValues={{
-            amount: new Money({ amount: movement.amount }).toInteger(),
+            amount: Money.from({ amount: movement.amount }).toInteger(),
             category: movement.category,
             date: dayjs.utc(movement.date),
             notes: movement.notes,

@@ -17,16 +17,16 @@ export class EmailVo extends ValueObject<IEmailVo> {
     return this.value.address;
   }
 
-  public static create(email: string): Result<EmailVo, Error> {
-    if (!EmailVo.isValid(email)) {
+  public static create(props: IEmailVo): Result<EmailVo, Error> {
+    if (!EmailVo.isValid(props.address)) {
       return err(new DomainError('Invalid email'));
     }
 
-    return ok(new EmailVo({ address: email }));
+    return ok(new EmailVo(props));
   }
 
-  public static from(email: string): EmailVo {
-    return new EmailVo({ address: email });
+  public static from(props: IEmailVo): EmailVo {
+    return new EmailVo(props);
   }
 
   private static isValid(email: string) {

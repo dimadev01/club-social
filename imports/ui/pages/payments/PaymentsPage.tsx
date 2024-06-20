@@ -160,7 +160,7 @@ export const PaymentsPage = () => {
         align: 'right',
         dataIndex: 'amount',
         ellipsis: true,
-        render: (amount: number) => new Money({ amount }).formatWithCurrency(),
+        render: (amount: number) => Money.from({ amount }).formatWithCurrency(),
         title: 'Total',
         width: 100,
       },
@@ -243,7 +243,7 @@ export const PaymentsPage = () => {
           >
             <Typography.Text strong>
               Total:{' '}
-              {new Money({
+              {Money.from({
                 amount: paymentTotals?.total ?? 0,
               }).formatWithCurrency()}
             </Typography.Text>

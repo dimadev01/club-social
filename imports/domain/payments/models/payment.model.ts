@@ -48,7 +48,7 @@ export class Payment extends Model implements IPayment {
 
     this._dues = props?.dues.map((due) => new PaymentDue(due)) ?? [];
 
-    this._amount = props?.amount ?? new Money();
+    this._amount = props?.amount ?? Money.from();
 
     this._voidedAt = props?.voidedAt ?? null;
 
@@ -99,7 +99,7 @@ export class Payment extends Model implements IPayment {
     return this._voidedBy;
   }
 
-  public static createOne(props: CreatePayment): Result<Payment, Error> {
+  public static create(props: CreatePayment): Result<Payment, Error> {
     const payment = new Payment();
 
     const result = Result.combine([
@@ -115,7 +115,7 @@ export class Payment extends Model implements IPayment {
     }
 
     const addDuesResult = props.createDues.map((createPaymentDue) => {
-      const paymentDue = PaymentDue.createOne(createPaymentDue);
+      const paymentDue = PaymentDue.create(createPaymentDue);
 
       if (paymentDue.isErr()) {
         return err(paymentDue.error);

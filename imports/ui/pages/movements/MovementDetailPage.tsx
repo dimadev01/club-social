@@ -88,7 +88,7 @@ export const MovementDetailPage = () => {
             </Descriptions.Item>
 
             <Descriptions.Item label="Monto">
-              {new Money({ amount: movement.amount }).formatWithCurrency()}
+              {Money.from({ amount: movement.amount }).formatWithCurrency()}
             </Descriptions.Item>
 
             <Descriptions.Item label="Notas">
