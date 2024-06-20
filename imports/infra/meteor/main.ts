@@ -10,6 +10,7 @@ import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
 import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethodOld } from '@domain/users/user.methods';
 import { DueMethods } from '@infra/meteor/methods/due.methods';
+import { EventMethods } from '@infra/meteor/methods/event.methods';
 import { MemberMethods } from '@infra/meteor/methods/member.methods';
 import { MovementMethods } from '@infra/meteor/methods/movement.methods';
 import { PaymentMethods } from '@infra/meteor/methods/payment.methods';
@@ -26,6 +27,7 @@ export class ServerStartup {
     private readonly _memberMethods: MemberMethods,
     private readonly _paymentMethods: PaymentMethods,
     private readonly _dueMethods: DueMethods,
+    private readonly _eventMethods: EventMethods,
   ) {}
 
   public async start() {
@@ -110,6 +112,8 @@ export class ServerStartup {
     this._memberMethods.register();
 
     this._dueMethods.register();
+
+    this._eventMethods.register();
   }
 }
 

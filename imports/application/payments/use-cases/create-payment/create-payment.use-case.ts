@@ -6,6 +6,7 @@ import { DIToken } from '@application/common/di/tokens.di';
 import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 import { IUseCase } from '@application/common/use-case.interface';
 import { IDueRepository } from '@application/dues/repositories/due.repository';
+import { IEventRepository } from '@application/events/repositories/event.repository';
 import { IMemberCreditRepository } from '@application/members/repositories/member-credit.repository';
 import { IMovementRepository } from '@application/movements/repositories/movement.repository';
 import { PaymentDto } from '@application/payments/dtos/payment.dto';
@@ -18,6 +19,8 @@ import { DateVo } from '@domain/common/value-objects/date.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueNotPayable } from '@domain/dues/errors/due-not-payable.error';
 import { Due } from '@domain/dues/models/due.model';
+import { EventActionEnum, EventResourceEnum } from '@domain/events/event.enum';
+import { Event } from '@domain/events/models/event.model';
 import { MemberCreditTypeEnum } from '@domain/members/member.enum';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
 import { Movement } from '@domain/movements/models/movement.model';
@@ -29,6 +32,8 @@ import { CreatePaymentDue } from '@domain/payments/payment.interface';
 export class CreatePaymentUseCase
   implements IUseCase<CreatePaymentRequest, PaymentDto>
 {
+  private _dues: Due[];
+
   public constructor(
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork,
@@ -40,13 +45,13 @@ export class CreatePaymentUseCase
     private readonly _memberCreditRepository: IMemberCreditRepository,
     @inject(DIToken.IMovementRepository)
     private readonly _movementRepository: IMovementRepository,
+    @inject(DIToken.IEventRepository)
+    private readonly _eventRepository: IEventRepository,
     private readonly _getPaymentUseCase: GetPaymentUseCase,
     private readonly _sendNewPaymentEmailUseCase: SendNewPaymentEmailUseCase,
   ) {
     this._dues = [];
   }
-
-  private _dues: Due[];
 
   public async execute(
     request: CreatePaymentRequest,
@@ -149,6 +154,19 @@ export class CreatePaymentUseCase
           unitOfWork,
         );
 
+        const event = Event.create({
+          action: EventActionEnum.CREATE,
+          description: null,
+          resource: EventResourceEnum.PAYMENTS,
+          resourceId: payment._id,
+        });
+
+        if (event.isErr()) {
+          throw event.error;
+        }
+
+        await this._eventRepository.insertWithSession(event.value, unitOfWork);
+
         newPayment = payment;
       });
 
@@ -174,14 +192,6 @@ export class CreatePaymentUseCase
     } finally {
       await this._unitOfWork.end();
     }
-  }
-
-  private _validateDues(): void {
-    this._dues.forEach((due) => {
-      if (!due.isPayable()) {
-        throw new DueNotPayable(due._id);
-      }
-    });
   }
 
   private _createPaymentDues(
@@ -218,5 +228,13 @@ export class CreatePaymentUseCase
     });
 
     return createDues;
+  }
+
+  private _validateDues(): void {
+    this._dues.forEach((due) => {
+      if (!due.isPayable()) {
+        throw new DueNotPayable(due._id);
+      }
+    });
   }
 }

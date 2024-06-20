@@ -285,7 +285,7 @@ export const PaymentNewPage = () => {
                 <Button
                   onClick={() =>
                     navigate(
-                      `${AppUrl.DUES}/new/${UrlUtils.stringify({ memberIds: [formMemberId] })}`,
+                      `/${AppUrl.DUES}/new/${UrlUtils.stringify({ memberIds: [formMemberId] })}`,
                     )
                   }
                   icon={<AddNewIcon />}

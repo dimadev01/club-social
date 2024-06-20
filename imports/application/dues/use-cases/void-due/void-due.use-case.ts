@@ -7,9 +7,12 @@ import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 import { IUseCase } from '@application/common/use-case.interface';
 import { IDueRepository } from '@application/dues/repositories/due.repository';
 import { VoidDueRequest } from '@application/dues/use-cases/void-due/void-due.request';
+import { IEventRepository } from '@application/events/repositories/event.repository';
 import { DomainError } from '@domain/common/errors/domain.error';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { DueNotVoidableError } from '@domain/dues/errors/due-not-voidable.error';
+import { EventActionEnum, EventResourceEnum } from '@domain/events/event.enum';
+import { Event } from '@domain/events/models/event.model';
 
 @injectable()
 export class VoidDueUseCase implements IUseCase<VoidDueRequest, null> {
@@ -18,6 +21,8 @@ export class VoidDueUseCase implements IUseCase<VoidDueRequest, null> {
     private readonly _logger: ILoggerService,
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
+    @inject(DIToken.IEventRepository)
+    private readonly _eventRepository: IEventRepository,
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork,
   ) {}
@@ -40,6 +45,19 @@ export class VoidDueUseCase implements IUseCase<VoidDueRequest, null> {
         }
 
         await this._dueRepository.updateWithSession(due, unitOfWork);
+
+        const event = Event.create({
+          action: EventActionEnum.VOID,
+          description: null,
+          resource: EventResourceEnum.DUES,
+          resourceId: due._id,
+        });
+
+        if (event.isErr()) {
+          throw event.error;
+        }
+
+        await this._eventRepository.updateWithSession(event.value, unitOfWork);
       });
 
       this._logger.info('Due voided', { due: request.id });

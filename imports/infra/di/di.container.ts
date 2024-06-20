@@ -6,6 +6,7 @@ import { LoggerOstrio } from '@infra/logger/logger-ostrio';
 import { MongoUnitOfWork } from '@infra/mongo/repositories/common/mongo.unit-of-work';
 import { DueMongoRepository } from '@infra/mongo/repositories/due-mongo.repository';
 import { EmailMongoRepository } from '@infra/mongo/repositories/email-mongo.repository';
+import { EventMongoRepository } from '@infra/mongo/repositories/event-mongo.repository';
 import { MemberCreditMongoRepository } from '@infra/mongo/repositories/member-credit-mongo.repository';
 import { MemberMongoRepository } from '@infra/mongo/repositories/member-mongo.repository';
 import { MovementMongoRepository } from '@infra/mongo/repositories/movement-mongo.repository';
@@ -38,3 +39,5 @@ container.register(DIToken.IUserRepository, UserMongoRepository);
 container.register(DIToken.IEmailService, EmailSendGridService);
 
 container.register(DIToken.IEmailRepository, EmailMongoRepository);
+
+container.register(DIToken.IEventRepository, EventMongoRepository);

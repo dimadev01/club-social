@@ -6,6 +6,7 @@ export enum RoleEnum {
 
 export enum ScopeEnum {
   DUES = 'dues',
+  EVENTS = 'events',
   MEMBERS = 'members',
   MOVEMENTS = 'movements',
   PAYMENTS = 'payments',
@@ -21,36 +22,6 @@ export enum PermissionEnum {
   VOID = 'void',
 }
 
-export const ScopePermissionAssignment: Record<ScopeEnum, PermissionEnum[]> = {
-  [ScopeEnum.MEMBERS]: [
-    PermissionEnum.CREATE,
-    PermissionEnum.READ,
-    PermissionEnum.UPDATE,
-  ],
-  [ScopeEnum.MOVEMENTS]: [
-    PermissionEnum.CREATE,
-    PermissionEnum.READ,
-    PermissionEnum.UPDATE,
-    PermissionEnum.VOID,
-  ],
-  [ScopeEnum.DUES]: [
-    PermissionEnum.CREATE,
-    PermissionEnum.READ,
-    PermissionEnum.UPDATE,
-    PermissionEnum.VOID,
-  ],
-  [ScopeEnum.PAYMENTS]: [
-    PermissionEnum.CREATE,
-    PermissionEnum.READ,
-    PermissionEnum.VOID,
-  ],
-  [ScopeEnum.USERS]: [
-    PermissionEnum.CREATE,
-    PermissionEnum.READ,
-    PermissionEnum.UPDATE,
-  ],
-};
-
 type ScopePermissions = {
   [scope in ScopeEnum]: PermissionEnum[];
 };
@@ -61,6 +32,7 @@ export const AdminRole: ScopePermissions = {
     PermissionEnum.READ,
     PermissionEnum.UPDATE,
   ],
+  [ScopeEnum.EVENTS]: [PermissionEnum.READ],
   [ScopeEnum.MEMBERS]: [
     PermissionEnum.CREATE,
     PermissionEnum.READ,
@@ -91,6 +63,7 @@ export const StaffRole: ScopePermissions = {
     PermissionEnum.READ,
     PermissionEnum.UPDATE,
   ],
+  [ScopeEnum.EVENTS]: [PermissionEnum.READ],
   [ScopeEnum.MOVEMENTS]: [
     PermissionEnum.CREATE,
     PermissionEnum.UPDATE,
@@ -117,6 +90,7 @@ export const MemberRole: ScopePermissions = {
   [ScopeEnum.MEMBERS]: [],
   [ScopeEnum.MOVEMENTS]: [],
   [ScopeEnum.USERS]: [],
+  [ScopeEnum.EVENTS]: [],
 };
 
 type RoleScopePermission = {

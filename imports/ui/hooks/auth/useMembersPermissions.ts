@@ -1,7 +1,7 @@
 import { PermissionEnum, ScopeEnum } from '@domain/roles/role.enum';
 import { useIsInRole } from '@ui/hooks/auth/useIsInRole';
 
-export const useMemberPermissions = () => {
+export const useMembersPermissions = () => {
   const read = useIsInRole(PermissionEnum.READ, ScopeEnum.MEMBERS);
 
   const create = useIsInRole(PermissionEnum.CREATE, ScopeEnum.MEMBERS);

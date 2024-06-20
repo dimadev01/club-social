@@ -9,9 +9,12 @@ import { DueDto } from '@application/dues/dtos/due.dto';
 import { IDueRepository } from '@application/dues/repositories/due.repository';
 import { GetDueUseCase } from '@application/dues/use-cases/get-due/get-due.use-case';
 import { UpdateDueRequest } from '@application/dues/use-cases/update-due/update-due.request';
+import { IEventRepository } from '@application/events/repositories/event.repository';
 import { ErrorUtils } from '@domain/common/errors/error.utils';
 import { ModelNotUpdatableError } from '@domain/common/errors/model-not-updatable.error';
 import { Money } from '@domain/common/value-objects/money.value-object';
+import { EventActionEnum, EventResourceEnum } from '@domain/events/event.enum';
+import { Event } from '@domain/events/models/event.model';
 
 @injectable()
 export class UpdateDueUseCase implements IUseCase<UpdateDueRequest, DueDto> {
@@ -22,6 +25,8 @@ export class UpdateDueUseCase implements IUseCase<UpdateDueRequest, DueDto> {
     private readonly _dueRepository: IDueRepository,
     @inject(DIToken.IUnitOfWork)
     private readonly _unitOfWork: IUnitOfWork,
+    @inject(DIToken.IEventRepository)
+    private readonly _eventRepository: IEventRepository,
     private readonly _getDueUseCase: GetDueUseCase,
   ) {}
 
@@ -51,6 +56,19 @@ export class UpdateDueUseCase implements IUseCase<UpdateDueRequest, DueDto> {
         due.setNotes(request.notes);
 
         await this._dueRepository.updateWithSession(due, unitOfWork);
+
+        const event = Event.create({
+          action: EventActionEnum.UPDATE,
+          description: null,
+          resource: EventResourceEnum.DUES,
+          resourceId: due._id,
+        });
+
+        if (event.isErr()) {
+          throw event.error;
+        }
+
+        await this._eventRepository.insertWithSession(event.value, unitOfWork);
       });
 
       return await this._getDueUseCase.execute({ id: due._id });
