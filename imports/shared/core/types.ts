@@ -16,3 +16,8 @@ export interface UID<T = UUIDv4> {
 export interface IEntity {
   get id(): UID;
 }
+
+export interface IResult {
+  readonly err: boolean;
+  readonly ok: boolean;
+}
