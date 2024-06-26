@@ -8,6 +8,7 @@
           "@infra": "./imports/infra",
           "@adapters": "./imports/adapters",
           "@shared": "./imports/shared",
+          "@modules": "./imports/modules",
           "@application": "./imports/application",
           "@ui": "./imports/ui",
           "@test": "./imports/test"
