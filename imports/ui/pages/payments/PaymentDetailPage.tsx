@@ -10,7 +10,6 @@ import { PaymentStatusLabel } from '@domain/payments/payment.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
-import { AppUrl } from '@ui/app.enum';
 import { Breadcrumbs } from '@ui/components/Breadcrumbs/Breadcrumbs';
 import { FormBackButton } from '@ui/components/Form/FormBackButton';
 import { FormVoidButton } from '@ui/components/Form/FormVoidButton';
@@ -149,7 +148,7 @@ export const PaymentDetailPage = () => {
                       onSuccess: () => {
                         notificationSuccess('Pago anulado');
 
-                        navigate(AppUrl.PAYMENTS);
+                        navigate(-1);
                       },
                     },
                   );
