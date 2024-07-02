@@ -249,6 +249,10 @@ export class Due extends Model implements IDue {
   }
 
   private _allPaymentsValid(): boolean {
+    if (this._payments.length === 0) {
+      return true;
+    }
+
     return this._payments.every((payment) => payment.isPaid());
   }
 

@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto';
 
-import { UID, UUIDv4 } from '@shared/core/types';
+import { IId, UUIDv4 } from '@shared/core/types';
 
-export class ID implements UID<UUIDv4> {
+export class Id implements IId<UUIDv4> {
   private readonly _value: UUIDv4;
 
   protected constructor(id?: UUIDv4) {
@@ -13,8 +13,8 @@ export class ID implements UID<UUIDv4> {
     }
   }
 
-  public static create(id?: UUIDv4): ID {
-    return new ID(id);
+  public static create(id?: UUIDv4): Id {
+    return new Id(id);
   }
 
   public get value(): UUIDv4 {
