@@ -1,11 +1,11 @@
 import { Result, ok } from 'neverthrow';
 
-import { ID } from '@shared/core/id';
+import { Id } from '@shared/core/id';
 
 export interface DueAggregateProps {
   amount: number;
   createdAt?: Date;
-  id?: ID;
+  id?: Id;
 }
 
 export class DueAggregate {
@@ -13,10 +13,10 @@ export class DueAggregate {
 
   private _createdAt: Date;
 
-  private _id: ID;
+  private _id: Id;
 
   private constructor(props: DueAggregateProps) {
-    this._id = props.id ?? ID.create();
+    this._id = props.id ?? Id.create();
 
     this._createdAt = props.createdAt ?? new Date();
 

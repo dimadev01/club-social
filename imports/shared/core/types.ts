@@ -6,7 +6,7 @@ export type UUIDv4 = `${string}-${string}-${string}-${string}-${string}`;
 /**
  * UID interface
  */
-export interface UID<T = UUIDv4> {
+export interface IId<T = UUIDv4> {
   get value(): T;
 }
 
@@ -14,7 +14,7 @@ export interface UID<T = UUIDv4> {
  * IEntity interface
  */
 export interface IEntity {
-  get id(): UID;
+  get id(): IId;
 }
 
 export type Result<T, E extends Error> = IResultOk<T> | IResultErr<E>;
