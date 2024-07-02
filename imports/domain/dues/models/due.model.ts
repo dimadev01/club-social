@@ -201,7 +201,7 @@ export class Due extends Model implements IDue {
       return err(new DomainError('La deuda ya se encuentra anulada.'));
     }
 
-    if (this._allPaymentsValid()) {
+    if (this._hasPaidPayments()) {
       return err(
         new DomainError('No se puede anular una deuda con pagos asociados'),
       );
@@ -248,12 +248,12 @@ export class Due extends Model implements IDue {
     this._calculateStatus();
   }
 
-  private _allPaymentsValid(): boolean {
+  private _hasPaidPayments(): boolean {
     if (this._payments.length === 0) {
-      return true;
+      return false;
     }
 
-    return this._payments.every((payment) => payment.isPaid());
+    return this._payments.some((payment) => payment.isPaid());
   }
 
   private _calculateStatus(): void {
