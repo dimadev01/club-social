@@ -1,22 +1,22 @@
-import { ID } from '@shared/core/id';
-import { IEntity, UID } from '@shared/core/types';
+import { Id } from '@shared/core/id';
+import { IEntity, IId } from '@shared/core/types';
 
 export type EntityProps = {
   createdAt?: Date;
 };
 
 export abstract class Entity<Props extends EntityProps> implements IEntity {
-  private readonly _id: UID;
+  private readonly _id: IId;
 
   protected props: Props;
 
-  protected constructor(props: Props, id?: UID) {
+  protected constructor(props: Props, id?: IId) {
     this.props = { createdAt: new Date(), ...props };
 
-    this._id = id ?? ID.create();
+    this._id = id ?? Id.create();
   }
 
-  public get id(): UID {
+  public get id(): IId {
     return this._id;
   }
 }
