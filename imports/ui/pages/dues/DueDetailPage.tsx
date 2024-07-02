@@ -10,7 +10,6 @@ import { DueStatusEnum, DueStatusLabel } from '@domain/dues/due.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
-import { AppUrl } from '@ui/app.enum';
 import { Breadcrumbs } from '@ui/components/Breadcrumbs/Breadcrumbs';
 import { DueCategoryIconWithLabel } from '@ui/components/Dues/DueCategoryLabel';
 import { DuePaymentsGrid } from '@ui/components/Dues/DuePaymentsGrid';
@@ -173,7 +172,7 @@ export const DueDetailPage = () => {
                       onSuccess: () => {
                         notificationSuccess('Deuda anulada');
 
-                        navigate(AppUrl.DUES);
+                        navigate(-1);
                       },
                     },
                   );

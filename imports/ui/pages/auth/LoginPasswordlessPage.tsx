@@ -41,7 +41,7 @@ export const LoginPasswordlessPage = () => {
           notificationError(error.message);
         }
       } else {
-        navigate(AppUrl.HOME);
+        navigate(`/${AppUrl.HOME}`);
       }
     });
   };
