@@ -30,11 +30,12 @@ export class GetMembersToExportUseCase
           ? paginatedMember.member.firstEmail()
           : null,
         id: paginatedMember.member._id,
-        name: paginatedMember.member.name,
+        name: paginatedMember.member.nameLastFirst,
         pendingElectricity: paginatedMember.pendingElectricity,
         pendingGuest: paginatedMember.pendingGuest,
         pendingMembership: paginatedMember.pendingMembership,
         pendingTotal: paginatedMember.pendingTotal,
+        phones: paginatedMember.member.phones?.join('//') ?? '',
         status: paginatedMember.member.status,
       })),
     );

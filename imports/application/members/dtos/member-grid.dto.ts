@@ -12,5 +12,6 @@ export interface MemberGridDto {
   pendingGuest: number;
   pendingMembership: number;
   pendingTotal: number;
+  phones: string;
   status: MemberStatusEnum;
 }

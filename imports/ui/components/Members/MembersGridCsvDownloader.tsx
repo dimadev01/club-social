@@ -50,6 +50,10 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
           id: 'email',
         },
         {
+          displayName: 'Teléfono/s',
+          id: 'phones',
+        },
+        {
           displayName: 'Deuda de invitado',
           id: 'pendingGuest',
         },
@@ -80,6 +84,7 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
             amount: member.pendingMembership,
           }).toInteger(),
           pendingTotal: Money.from({ amount: member.pendingTotal }).toInteger(),
+          phones: member.phones,
           status: MemberStatusLabel[member.status],
         }));
       }}
