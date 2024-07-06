@@ -28,6 +28,8 @@ import { MovementsPage } from '@ui/pages/movements/MovementsPage';
 import { PaymentDetailPage } from '@ui/pages/payments/PaymentDetailPage';
 import { PaymentNewPage } from '@ui/pages/payments/PaymentNewPage';
 import { PaymentsPage } from '@ui/pages/payments/PaymentsPage';
+import { UserDetailPage } from '@ui/pages/users/UserDetailPage';
+import { UsersPage } from '@ui/pages/users/UsersPage';
 import { AuthRoute } from '@ui/routes/AuthRoute';
 import { PrivateRoute } from '@ui/routes/PrivateRoute';
 import { PublicRoute } from '@ui/routes/PublicRoute';
@@ -67,6 +69,40 @@ const router = createBrowserRouter(
                 scope={ScopeEnum.MEMBERS}
                 permission={PermissionEnum.CREATE}
                 element={<MemberDetailPage />}
+              />
+            }
+          />
+        </Route>
+
+        <Route path={AppUrl.USERS} element={<Outlet />}>
+          <Route
+            index
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.USERS}
+                permission={PermissionEnum.READ}
+                element={<UsersPage />}
+              />
+            }
+          />
+
+          <Route
+            path={AppUrlGenericEnum.ID}
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.USERS}
+                permission={PermissionEnum.UPDATE}
+                element={<UserDetailPage />}
+              />
+            }
+          />
+          <Route
+            path={AppUrlGenericEnum.NEW}
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.USERS}
+                permission={PermissionEnum.CREATE}
+                element={<UserDetailPage />}
               />
             }
           />

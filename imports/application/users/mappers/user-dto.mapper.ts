@@ -16,6 +16,7 @@ export class UserDtoMapper extends MapperDto<User, UserDto> {
       firstName: user.firstName,
       id: user._id,
       lastName: user.lastName,
+      name: `${user.firstName} ${user.lastName}`,
       role: user.role,
     };
   }

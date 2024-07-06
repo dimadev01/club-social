@@ -36,7 +36,7 @@ export class UserEmail implements IUserEmail {
     return ok(email);
   }
 
-  private setAddress(value: string): Result<null, Error> {
+  public setAddress(value: string): Result<null, Error> {
     this._address = value;
 
     return ok(null);

@@ -33,6 +33,9 @@ export enum MeteorMethodEnum {
   PaymentsGetTotals = 'payments/getTotals',
   PaymentsVoid = 'payments/void',
 
+  UsersCreate = 'users/create',
   UsersGetByToken = 'users/getByToken',
+  UsersGetOne = 'users/getOne',
+  UsersUpdate = 'users/update',
   UsersUpdateTheme = 'users/updateTheme',
 }
