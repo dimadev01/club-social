@@ -93,7 +93,7 @@ export const MemberDetailPage: React.FC = () => {
 
   const handleSubmit = async (values: FormValues) => {
     if (!member) {
-      createMember.mutateAsync(
+      await createMember.mutateAsync(
         {
           addressCityGovId: values.address.cityGovId?.value || null,
           addressCityName: values.address.cityGovId?.label || null,
@@ -124,7 +124,7 @@ export const MemberDetailPage: React.FC = () => {
         },
       );
     } else {
-      updateMember.mutateAsync(
+      await updateMember.mutateAsync(
         {
           addressCityGovId: values.address.cityGovId?.value || null,
           addressCityName: values.address.cityGovId?.label || null,

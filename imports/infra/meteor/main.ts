@@ -14,6 +14,7 @@ import { EventMethods } from '@infra/meteor/methods/event.methods';
 import { MemberMethods } from '@infra/meteor/methods/member.methods';
 import { MovementMethods } from '@infra/meteor/methods/movement.methods';
 import { PaymentMethods } from '@infra/meteor/methods/payment.methods';
+import { UserMethods } from '@infra/meteor/methods/user.methods';
 import { MigrationService } from '@infra/migrations/migration.service';
 
 export class ServerStartup {
@@ -97,6 +98,8 @@ export class ServerStartup {
     new DueMethods().register();
 
     new EventMethods().register();
+
+    new UserMethods().register();
   }
 }
 
