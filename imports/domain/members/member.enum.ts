@@ -24,6 +24,8 @@ export const getMemberStatusColumnFilters = () =>
 export enum MemberCategoryEnum {
   MEMBER = 'member',
   CADET = 'cadet',
+  PRE_CADET = 'pre-cadet',
+  ADHERENT_MEMBER = 'adherent-member',
 }
 
 export const MemberCategoryLabel: {
@@ -31,6 +33,8 @@ export const MemberCategoryLabel: {
 } = {
   [MemberCategoryEnum.CADET]: 'Cadete',
   [MemberCategoryEnum.MEMBER]: 'Socio',
+  [MemberCategoryEnum.PRE_CADET]: 'Pre-Cadete',
+  [MemberCategoryEnum.ADHERENT_MEMBER]: 'Socio Adherente',
 };
 
 export const getMemberCategorySelectOptions = () =>
