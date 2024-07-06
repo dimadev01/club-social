@@ -9,7 +9,7 @@ import { MemberDto } from '@application/members/dtos/member.dto';
 import { IMemberRepository } from '@application/members/repositories/member.repository';
 import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
 import { UpdateMemberRequest } from '@application/members/use-cases/update-member/update-member.request';
-import { UpdateUserUseCase } from '@application/users/use-cases/update-user-theme/update-user.use-case';
+import { UpdateUserUseCase } from '@application/users/use-cases/update-user/update-user.use-case';
 import { InternalServerError } from '@domain/common/errors/internal-server.error';
 import { BirthDate } from '@domain/common/value-objects/birth-date.value-object';
 import { EventActionEnum, EventResourceEnum } from '@domain/events/event.enum';

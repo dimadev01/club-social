@@ -5,6 +5,7 @@ export interface UserDto {
   firstName: string;
   id: string;
   lastName: string;
+  name: string;
   role: RoleEnum;
 }
 

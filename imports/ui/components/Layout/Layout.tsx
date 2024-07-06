@@ -77,6 +77,18 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       ),
     });
 
+    if (permissions.users.read) {
+      items.push({
+        icon: <UsersIcon />,
+        key: AppUrl.USERS,
+        label: (
+          <Link className="no-underline" to={AppUrl.USERS}>
+            Usuarios
+          </Link>
+        ),
+      });
+    }
+
     if (permissions.member.read) {
       items.push({
         icon: <UsersIcon />,

@@ -114,13 +114,13 @@ export class User extends Model implements IUserModel {
     return ok(user);
   }
 
-  private setEmails(value: UserEmail[]): Result<null, Error> {
+  public setEmails(value: UserEmail[]): Result<null, Error> {
     this._emails = value;
 
     return ok(null);
   }
 
-  private setFirstName(value: string): Result<null, Error> {
+  public setFirstName(value: string): Result<null, Error> {
     this._firstName = value;
 
     return ok(null);
@@ -132,13 +132,13 @@ export class User extends Model implements IUserModel {
     return ok(null);
   }
 
-  private setLastName(value: string): Result<null, Error> {
+  public setLastName(value: string): Result<null, Error> {
     this._lastName = value;
 
     return ok(null);
   }
 
-  private setRole(value: RoleEnum): Result<null, Error> {
+  public setRole(value: RoleEnum): Result<null, Error> {
     this._role = value;
 
     return ok(null);
