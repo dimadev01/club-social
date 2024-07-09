@@ -136,7 +136,7 @@ export const DuesNewPage = () => {
 
       if (firstSelectedMember) {
         const priceCategory = price.categories.find(
-          (c) => c.category === firstSelectedMember.category,
+          (c) => c.memberCategory === firstSelectedMember.category,
         );
 
         if (priceCategory) {

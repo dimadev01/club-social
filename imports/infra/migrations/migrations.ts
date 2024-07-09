@@ -1,6 +1,7 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
 import { container } from 'tsyringe';
 import '@infra/di/di.container';
 
@@ -16,6 +17,7 @@ import { DueMongoCollection } from '@infra/mongo/collections/due.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
 import { MovementMongoCollection } from '@infra/mongo/collections/movement.collection';
 import { PaymentMongoCollection } from '@infra/mongo/collections/payment.collection';
+import { PriceCategoryMongoCollection } from '@infra/mongo/collections/price-category.collection';
 import { PriceMongoCollection } from '@infra/mongo/collections/price.collection';
 import { UserMongoCollection } from '@infra/mongo/collections/user.collection';
 import { PriceEntity } from '@infra/mongo/entities/price.entity';
@@ -283,27 +285,13 @@ Migrations.add({
 
     const pricesCollection = container.resolve(PriceMongoCollection);
 
+    const priceCategoriesCollection = container.resolve(
+      PriceCategoryMongoCollection,
+    );
+
     const electricityPrice = new PriceEntity({
       _id: Random.id(),
       amount: 300000,
-      categories: [
-        {
-          amount: 300000,
-          category: MemberCategoryEnum.CADET,
-        },
-        {
-          amount: 300000,
-          category: MemberCategoryEnum.PRE_CADET,
-        },
-        {
-          amount: 300000,
-          category: MemberCategoryEnum.ADHERENT_MEMBER,
-        },
-        {
-          amount: 300000,
-          category: MemberCategoryEnum.MEMBER,
-        },
-      ],
       createdAt: new Date(),
       createdBy: 'System',
       updatedAt: new Date(),
@@ -316,27 +304,57 @@ Migrations.add({
 
     await pricesCollection.insertAsync(electricityPrice);
 
-    const guest = new PriceEntity({
+    const baseProps = {
+      createdAt: electricityPrice.createdAt,
+      createdBy: electricityPrice.createdBy,
+      updatedAt: electricityPrice.updatedAt,
+      updatedBy: electricityPrice.updatedBy,
+      deletedAt: electricityPrice.deletedAt,
+      deletedBy: electricityPrice.deletedBy,
+      isDeleted: electricityPrice.isDeleted,
+    };
+
+    /**
+     * Electricity
+     */
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: electricityPrice.amount,
+      memberCategory: MemberCategoryEnum.ADHERENT_MEMBER,
+      priceId: electricityPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: electricityPrice.amount,
+      memberCategory: MemberCategoryEnum.MEMBER,
+      priceId: electricityPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: electricityPrice.amount,
+      memberCategory: MemberCategoryEnum.CADET,
+      priceId: electricityPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: electricityPrice.amount,
+      memberCategory: MemberCategoryEnum.PRE_CADET,
+      priceId: electricityPrice._id,
+      _id: Random.id(),
+    });
+
+    /**
+     * Guest
+     */
+    const guestPrice = new PriceEntity({
       _id: Random.id(),
       amount: 650000,
-      categories: [
-        {
-          amount: 650000,
-          category: MemberCategoryEnum.CADET,
-        },
-        {
-          amount: 650000,
-          category: MemberCategoryEnum.PRE_CADET,
-        },
-        {
-          amount: 650000,
-          category: MemberCategoryEnum.ADHERENT_MEMBER,
-        },
-        {
-          amount: 650000,
-          category: MemberCategoryEnum.MEMBER,
-        },
-      ],
       createdAt: new Date(),
       createdBy: 'System',
       updatedAt: new Date(),
@@ -347,29 +365,46 @@ Migrations.add({
       isDeleted: false,
     });
 
-    await pricesCollection.insertAsync(guest);
+    await pricesCollection.insertAsync(guestPrice);
 
-    const membership = new PriceEntity({
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: guestPrice.amount,
+      memberCategory: MemberCategoryEnum.ADHERENT_MEMBER,
+      priceId: guestPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: guestPrice.amount,
+      memberCategory: MemberCategoryEnum.MEMBER,
+      priceId: guestPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: guestPrice.amount,
+      memberCategory: MemberCategoryEnum.CADET,
+      priceId: guestPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: guestPrice.amount,
+      memberCategory: MemberCategoryEnum.PRE_CADET,
+      priceId: guestPrice._id,
+      _id: Random.id(),
+    });
+
+    /**
+     * Membership
+     */
+    const membershipPrice = new PriceEntity({
       _id: Random.id(),
       amount: 1700000,
-      categories: [
-        {
-          amount: 1300000,
-          category: MemberCategoryEnum.CADET,
-        },
-        {
-          amount: 900000,
-          category: MemberCategoryEnum.PRE_CADET,
-        },
-        {
-          amount: 1700000,
-          category: MemberCategoryEnum.ADHERENT_MEMBER,
-        },
-        {
-          amount: 1700000,
-          category: MemberCategoryEnum.MEMBER,
-        },
-      ],
       createdAt: new Date(),
       createdBy: 'System',
       updatedAt: new Date(),
@@ -380,7 +415,39 @@ Migrations.add({
       isDeleted: false,
     });
 
-    await pricesCollection.insertAsync(membership);
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: membershipPrice.amount,
+      memberCategory: MemberCategoryEnum.ADHERENT_MEMBER,
+      priceId: membershipPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: membershipPrice.amount,
+      memberCategory: MemberCategoryEnum.MEMBER,
+      priceId: membershipPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: 1300000,
+      memberCategory: MemberCategoryEnum.CADET,
+      priceId: membershipPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: 900000,
+      memberCategory: MemberCategoryEnum.PRE_CADET,
+      priceId: membershipPrice._id,
+      _id: Random.id(),
+    });
+
+    await pricesCollection.insertAsync(membershipPrice);
 
     next();
   }),

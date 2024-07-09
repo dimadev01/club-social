@@ -50,7 +50,17 @@ export class PriceMongoRepository
   public async findPaginated(
     request: FindPaginatedRequest,
   ): Promise<FindPaginatedResponse<Price>> {
-    const pipeline: Document[] = [...this.getPaginatedPipeline(request)];
+    const pipeline: Document[] = [
+      ...this.getPaginatedPipeline(request),
+      {
+        $lookup: {
+          as: 'categories',
+          foreignField: 'priceId',
+          from: 'price.categories',
+          localField: '_id',
+        },
+      },
+    ];
 
     return super.paginate(pipeline, {});
   }

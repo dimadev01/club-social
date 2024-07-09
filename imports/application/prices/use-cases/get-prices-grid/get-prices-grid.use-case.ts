@@ -2,19 +2,18 @@ import { Result, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
+import {
+  FindPaginatedRequest,
+  FindPaginatedResponse,
+} from '@application/common/repositories/grid.repository';
 import { IUseCase } from '@application/common/use-case.interface';
 import { PriceDto } from '@application/prices/dtos/price.dto';
 import { PriceDtoMapper } from '@application/prices/mappers/price-dto.mapper';
-import {
-  FindPaginatedPricesRequest,
-  IPriceRepository,
-} from '@application/prices/repositories/price.repository';
+import { IPriceRepository } from '@application/prices/repositories/price.repository';
 
 @injectable()
 export class GetPricesGridUseCase
-  implements
-    IUseCase<FindPaginatedPricesRequest, FindPaginatedResponse<PriceDto>>
+  implements IUseCase<FindPaginatedRequest, FindPaginatedResponse<PriceDto>>
 {
   public constructor(
     @inject(DIToken.IPriceRepository)
@@ -23,7 +22,7 @@ export class GetPricesGridUseCase
   ) {}
 
   public async execute(
-    request: FindPaginatedPricesRequest,
+    request: FindPaginatedRequest,
   ): Promise<Result<FindPaginatedResponse<PriceDto>, Error>> {
     const { items, totalCount } =
       await this._priceRepository.findPaginated(request);

@@ -1,19 +1,35 @@
-import { IsEnum, IsInt, IsNumber, IsPositive } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 
 import { MemberCategoryEnum } from '@domain/members/member.enum';
+import { Entity } from '@infra/mongo/common/entities/entity';
 
-export class PriceCategoryEntity {
+export class PriceCategoryEntity extends Entity {
   @IsInt()
   @IsPositive()
   @IsNumber()
   public amount: number;
 
+  @IsNotEmpty()
+  @IsString()
+  public priceId: string;
+
   @IsEnum(MemberCategoryEnum)
-  public category: MemberCategoryEnum;
+  public memberCategory: MemberCategoryEnum;
 
   public constructor(props: PriceCategoryEntity) {
+    super(props);
+
     this.amount = props.amount;
 
-    this.category = props.category;
+    this.priceId = props.priceId;
+
+    this.memberCategory = props.memberCategory;
   }
 }

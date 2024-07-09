@@ -126,18 +126,6 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
       });
     }
 
-    if (permissions.prices.read) {
-      items.push({
-        icon: <PricesIcon />,
-        key: AppUrl.PRICES,
-        label: (
-          <Link className="no-underline" to={AppUrl.PRICES}>
-            Precios
-          </Link>
-        ),
-      });
-    }
-
     if (permissions.movements.read) {
       items.push({
         icon: <MovementsIcon />,
@@ -145,6 +133,18 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         label: (
           <Link className="no-underline" to={AppUrl.MOVEMENTS}>
             Movimientos
+          </Link>
+        ),
+      });
+    }
+
+    if (permissions.prices.read) {
+      items.push({
+        icon: <PricesIcon />,
+        key: AppUrl.PRICES,
+        label: (
+          <Link className="no-underline" to={AppUrl.PRICES}>
+            Precios
           </Link>
         ),
       });
