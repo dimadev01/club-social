@@ -12,6 +12,7 @@ import { MemberMongoRepository } from '@infra/mongo/repositories/member-mongo.re
 import { MovementMongoRepository } from '@infra/mongo/repositories/movement-mongo.repository';
 import { NotificationMongoRepository } from '@infra/mongo/repositories/notification-mongo.repository';
 import { PaymentMongoRepository } from '@infra/mongo/repositories/payment-mongo.repository';
+import { PriceCategoryMongoRepository } from '@infra/mongo/repositories/price-category-mongo.repository';
 import { PriceMongoRepository } from '@infra/mongo/repositories/price-mongo.repository';
 import { UserMongoRepository } from '@infra/mongo/repositories/user-mongo.repository';
 
@@ -43,6 +44,11 @@ container.register(DIToken.IEmailRepository, EmailMongoRepository);
 container.register(DIToken.IEventRepository, EventMongoRepository);
 
 container.register(DIToken.IPriceRepository, PriceMongoRepository);
+
+container.register(
+  DIToken.IPriceCategoryRepository,
+  PriceCategoryMongoRepository,
+);
 
 container.register(
   DIToken.INotificationRepository,

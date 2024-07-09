@@ -16,6 +16,7 @@ import { PriceAuditEntity } from '@infra/mongo/entities/price-audit.entity';
 import { PriceEntity } from '@infra/mongo/entities/price.entity';
 import { PriceMapper } from '@infra/mongo/mappers/price.mapper';
 import { CrudMongoAuditableRepository } from '@infra/mongo/repositories/common/crud-mongo-auditable.repository';
+import { PriceCategoryMongoRepository } from '@infra/mongo/repositories/price-category-mongo.repository';
 
 @injectable()
 export class PriceMongoRepository
@@ -28,6 +29,7 @@ export class PriceMongoRepository
     protected readonly collection: PriceMongoCollection,
     protected readonly mapper: PriceMapper,
     protected readonly auditableCollection: PriceAuditableCollection,
+    private readonly _priceCategoryRepository: PriceCategoryMongoRepository,
   ) {
     super(collection, mapper, logger, auditableCollection);
   }
@@ -44,7 +46,13 @@ export class PriceMongoRepository
       return null;
     }
 
-    return this.mapper.toDomain(entity);
+    const price = this.mapper.toDomain(entity);
+
+    price.categories = await this._priceCategoryRepository.findByPrice(
+      entity._id,
+    );
+
+    return price;
   }
 
   public async findPaginated(
