@@ -4,7 +4,8 @@ import { inject, injectable } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { FindPaginatedResponse } from '@application/common/repositories/grid.repository';
 import { IUseCase } from '@application/common/use-case.interface';
-import { PriceGridDto } from '@application/prices/dtos/price-grid-dto';
+import { PriceDto } from '@application/prices/dtos/price.dto';
+import { PriceDtoMapper } from '@application/prices/mappers/price-dto.mapper';
 import {
   FindPaginatedPricesRequest,
   IPriceRepository,
@@ -13,26 +14,23 @@ import {
 @injectable()
 export class GetPricesGridUseCase
   implements
-    IUseCase<FindPaginatedPricesRequest, FindPaginatedResponse<PriceGridDto>>
+    IUseCase<FindPaginatedPricesRequest, FindPaginatedResponse<PriceDto>>
 {
   public constructor(
     @inject(DIToken.IPriceRepository)
     private readonly _priceRepository: IPriceRepository,
+    private readonly _priceDtoMapper: PriceDtoMapper,
   ) {}
 
   public async execute(
     request: FindPaginatedPricesRequest,
-  ): Promise<Result<FindPaginatedResponse<PriceGridDto>, Error>> {
+  ): Promise<Result<FindPaginatedResponse<PriceDto>, Error>> {
     const { items, totalCount } =
       await this._priceRepository.findPaginated(request);
 
-    const dtos = items.map<PriceGridDto>((price) => ({
-      amount: price.amount.amount,
-      dueCategory: price.dueCategory,
-      memberCategory: price.memberCategory,
-      updatedAt: price.updatedAt.toISOString(),
-      updatedBy: price.updatedBy,
-    }));
+    const dtos = items.map<PriceDto>((price) =>
+      this._priceDtoMapper.toDto(price),
+    );
 
     return ok({ items: dtos, totalCount });
   }

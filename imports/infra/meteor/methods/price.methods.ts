@@ -3,24 +3,24 @@ import { container } from 'tsyringe';
 import { GetPriceUseCase } from '@application/prices/use-cases/get-price/get-price.use-case';
 import { GetPricesGridUseCase } from '@application/prices/use-cases/get-prices-grid/get-prices-grid.use-case';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
-import { GetOneByIdRequestDto } from '@ui/common/dtos/get-one-dto-request.dto';
+import { GetGridRequestDto } from '@ui/common/dtos/get-grid-request.dto';
 import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
-import { GetPricesGridRequestDto } from '@ui/dtos/get-prices-grid-request.dto';
+import { GetPriceRequestDto } from '@ui/dtos/get-price-request.dto';
 
-export class PaymentMethods extends MeteorMethods {
+export class PriceMethods extends MeteorMethods {
   public register(): void {
     Meteor.methods({
-      [MeteorMethodEnum.PricesGetOne]: (req: GetOneByIdRequestDto) =>
+      [MeteorMethodEnum.PricesGetOneByCategory]: (req: GetPriceRequestDto) =>
         this.execute(
           container.resolve(GetPriceUseCase),
-          GetOneByIdRequestDto,
+          GetPriceRequestDto,
           req,
         ),
 
-      [MeteorMethodEnum.PricesGetGrid]: (req: GetPricesGridRequestDto) =>
+      [MeteorMethodEnum.PricesGetGrid]: (req: GetGridRequestDto) =>
         this.execute(
           container.resolve(GetPricesGridUseCase),
-          GetPricesGridRequestDto,
+          GetGridRequestDto,
           req,
         ),
     });

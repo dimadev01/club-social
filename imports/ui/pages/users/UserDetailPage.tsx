@@ -1,5 +1,5 @@
 import { TeamOutlined } from '@ant-design/icons';
-import { Card, Form, Input, Space } from 'antd';
+import { Card, Checkbox, Form, Input, Space } from 'antd';
 import React from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import invariant from 'tiny-invariant';
@@ -17,6 +17,7 @@ import { useUser } from '@ui/hooks/users/useUser';
 type FormValues = {
   email: string;
   firstName: string;
+  isActive?: boolean;
   lastName: string;
   role: RoleEnum;
 };
@@ -64,12 +65,17 @@ export const UserDetailPage: React.FC = () => {
     } else {
       invariant(id);
 
+      if (values.isActive === undefined) {
+        throw new Error('isActive is required');
+      }
+
       await updateUser.mutateAsync(
         {
           email: values.email,
           emails: [values.email],
           firstName: values.firstName,
           id,
+          isActive: values.isActive,
           lastName: values.lastName,
           role: values.role,
           unitOfWork: null,
@@ -116,6 +122,7 @@ export const UserDetailPage: React.FC = () => {
           initialValues={{
             email: user?.emails?.[0].address,
             firstName: user?.firstName,
+            isActive: user?.isActive,
             lastName: user?.lastName,
             role: user?.role ?? RoleEnum.STAFF,
           }}
@@ -154,6 +161,17 @@ export const UserDetailPage: React.FC = () => {
               ]}
             />
           </Form.Item>
+
+          {user && (
+            <Form.Item
+              rules={[{ required: true }]}
+              label="Activo"
+              name="isActive"
+              valuePropName="checked"
+            >
+              <Checkbox />
+            </Form.Item>
+          )}
 
           <div className="mb-4" />
 

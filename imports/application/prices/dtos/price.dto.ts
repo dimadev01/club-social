@@ -1,10 +1,11 @@
+import { PriceCategoryDto } from '@application/prices/dtos/price-category.dto';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
-import { MemberCategoryEnum } from '@domain/members/member.enum';
 
 export interface PriceDto {
   amount: number;
+  categories: PriceCategoryDto[];
   dueCategory: DueCategoryEnum;
-  memberCategory: MemberCategoryEnum;
+  id: string;
   updatedAt: string;
   updatedBy: string;
 }

@@ -29,6 +29,8 @@ export enum AppUrl {
 
   PAYMENTS = 'payments',
 
+  PRICES = 'prices',
+
   PROFESSORS = 'professors',
 
   SERVICES = 'services',

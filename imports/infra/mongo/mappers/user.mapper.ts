@@ -23,6 +23,7 @@ export class UserMapper extends Mapper<User, UserEntity> {
         })) ?? [],
       firstName: user.profile.firstName,
       heartbeat: user.heartbeat,
+      isActive: user.profile.isActive,
       isDeleted: user.isDeleted,
       lastName: user.profile.lastName,
       role: user.profile.role,
@@ -53,6 +54,7 @@ export class UserMapper extends Mapper<User, UserEntity> {
       isDeleted: user.isDeleted,
       profile: new UserProfileEntity({
         firstName: user.firstName,
+        isActive: user.isActive,
         lastName: user.lastName,
         role: user.role,
         state: user.state,

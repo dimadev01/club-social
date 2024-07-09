@@ -26,11 +26,12 @@ export class GetUsersGridUseCase
       await this._userRepository.findPaginated(request);
 
     const dtos = items.map<UserGridDto>((user) => ({
+      createdAt: user.createdAt.toISOString(),
       email: user.emails[0]?.address ?? '',
       firstName: user.firstName,
       id: user._id,
       lastName: user.lastName,
-      name: user.name,
+      name: user.nameLastFirst,
       role: user.role,
     }));
 

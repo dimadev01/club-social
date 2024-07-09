@@ -5,14 +5,20 @@ import { container } from 'tsyringe';
 import '@infra/di/di.container';
 
 import { VoidDueUseCase } from '@application/dues/use-cases/void-due/void-due.use-case';
-import { DueStatusEnum } from '@domain/dues/due.enum';
-import { MemberStatusEnum } from '@domain/members/member.enum';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
+import {
+  MemberCategoryEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
 import { RoleService } from '@domain/roles/role.service';
 import { DueMongoCollection } from '@infra/mongo/collections/due.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
 import { MovementMongoCollection } from '@infra/mongo/collections/movement.collection';
 import { PaymentMongoCollection } from '@infra/mongo/collections/payment.collection';
+import { PriceMongoCollection } from '@infra/mongo/collections/price.collection';
+import { UserMongoCollection } from '@infra/mongo/collections/user.collection';
+import { PriceEntity } from '@infra/mongo/entities/price.entity';
 import { DueMapper } from '@infra/mongo/mappers/due.mapper';
 
 // @ts-expect-error
@@ -257,4 +263,126 @@ Migrations.add({
     next();
   }),
   version: 27,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const usersCollection = container.resolve(UserMongoCollection);
+
+    usersCollection.collection.update(
+      {},
+      { $set: { 'profile.isActive': true } },
+      { multi: true },
+    );
+
+    await RoleService.update();
+
+    const pricesCollection = container.resolve(PriceMongoCollection);
+
+    const electricityPrice = new PriceEntity({
+      _id: Random.id(),
+      amount: 300000,
+      categories: [
+        {
+          amount: 300000,
+          category: MemberCategoryEnum.CADET,
+        },
+        {
+          amount: 300000,
+          category: MemberCategoryEnum.PRE_CADET,
+        },
+        {
+          amount: 300000,
+          category: MemberCategoryEnum.ADHERENT_MEMBER,
+        },
+        {
+          amount: 300000,
+          category: MemberCategoryEnum.MEMBER,
+        },
+      ],
+      createdAt: new Date(),
+      createdBy: 'System',
+      updatedAt: new Date(),
+      updatedBy: 'System',
+      deletedAt: null,
+      deletedBy: null,
+      dueCategory: DueCategoryEnum.ELECTRICITY,
+      isDeleted: false,
+    });
+
+    await pricesCollection.insertAsync(electricityPrice);
+
+    const guest = new PriceEntity({
+      _id: Random.id(),
+      amount: 650000,
+      categories: [
+        {
+          amount: 650000,
+          category: MemberCategoryEnum.CADET,
+        },
+        {
+          amount: 650000,
+          category: MemberCategoryEnum.PRE_CADET,
+        },
+        {
+          amount: 650000,
+          category: MemberCategoryEnum.ADHERENT_MEMBER,
+        },
+        {
+          amount: 650000,
+          category: MemberCategoryEnum.MEMBER,
+        },
+      ],
+      createdAt: new Date(),
+      createdBy: 'System',
+      updatedAt: new Date(),
+      updatedBy: 'System',
+      deletedAt: null,
+      deletedBy: null,
+      dueCategory: DueCategoryEnum.GUEST,
+      isDeleted: false,
+    });
+
+    await pricesCollection.insertAsync(guest);
+
+    const membership = new PriceEntity({
+      _id: Random.id(),
+      amount: 1700000,
+      categories: [
+        {
+          amount: 1300000,
+          category: MemberCategoryEnum.CADET,
+        },
+        {
+          amount: 900000,
+          category: MemberCategoryEnum.PRE_CADET,
+        },
+        {
+          amount: 1700000,
+          category: MemberCategoryEnum.ADHERENT_MEMBER,
+        },
+        {
+          amount: 1700000,
+          category: MemberCategoryEnum.MEMBER,
+        },
+      ],
+      createdAt: new Date(),
+      createdBy: 'System',
+      updatedAt: new Date(),
+      updatedBy: 'System',
+      deletedAt: null,
+      deletedBy: null,
+      dueCategory: DueCategoryEnum.MEMBERSHIP,
+      isDeleted: false,
+    });
+
+    await pricesCollection.insertAsync(membership);
+
+    next();
+  }),
+  version: 28,
 });

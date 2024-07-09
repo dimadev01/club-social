@@ -6,6 +6,7 @@ import { useIsStaff } from '@ui/hooks/auth/useIsStaff';
 import { useMembersPermissions } from '@ui/hooks/auth/useMembersPermissions';
 import { useMovementsPermissions } from '@ui/hooks/auth/useMovementPermissions';
 import { usePaymentsPermissions } from '@ui/hooks/auth/usePaymentsPermissions';
+import { usePricesPermissions } from '@ui/hooks/auth/usePricesPermissions';
 import { useUsersPermissions } from '@ui/hooks/auth/useUsersPermissions';
 
 export const usePermissions = () => {
@@ -20,6 +21,8 @@ export const usePermissions = () => {
   const events = useEventsPermissions();
 
   const users = useUsersPermissions();
+
+  const prices = usePricesPermissions();
 
   const isAdmin = useIsAdmin();
 
@@ -36,6 +39,7 @@ export const usePermissions = () => {
     member,
     movements,
     payments,
+    prices,
     users,
   };
 };

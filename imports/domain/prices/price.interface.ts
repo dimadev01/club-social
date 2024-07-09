@@ -5,6 +5,11 @@ import { MemberCategoryEnum } from '@domain/members/member.enum';
 
 export interface IPrice extends IModel {
   amount: Money;
+  categories: IPriceCategory[];
   dueCategory: DueCategoryEnum;
-  memberCategory: MemberCategoryEnum;
+}
+
+export interface IPriceCategory {
+  amount: Money;
+  category: MemberCategoryEnum;
 }

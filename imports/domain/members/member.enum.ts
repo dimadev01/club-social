@@ -23,18 +23,27 @@ export const getMemberStatusColumnFilters = () =>
 
 export enum MemberCategoryEnum {
   MEMBER = 'member',
+  ADHERENT_MEMBER = 'adherent-member',
   CADET = 'cadet',
   PRE_CADET = 'pre-cadet',
-  ADHERENT_MEMBER = 'adherent-member',
 }
+
+export const MemberCategorySortOrder: {
+  [x in MemberCategoryEnum]: number;
+} = {
+  [MemberCategoryEnum.MEMBER]: 1,
+  [MemberCategoryEnum.ADHERENT_MEMBER]: 2,
+  [MemberCategoryEnum.CADET]: 3,
+  [MemberCategoryEnum.PRE_CADET]: 4,
+};
 
 export const MemberCategoryLabel: {
   [x in MemberCategoryEnum]: string;
 } = {
-  [MemberCategoryEnum.CADET]: 'Cadete',
   [MemberCategoryEnum.MEMBER]: 'Socio',
-  [MemberCategoryEnum.PRE_CADET]: 'Pre-Cadete',
   [MemberCategoryEnum.ADHERENT_MEMBER]: 'Socio Adherente',
+  [MemberCategoryEnum.CADET]: 'Cadete',
+  [MemberCategoryEnum.PRE_CADET]: 'Pre-Cadete',
 };
 
 export const getMemberCategorySelectOptions = () =>

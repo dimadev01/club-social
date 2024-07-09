@@ -38,6 +38,7 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserRequest, User> {
       user.setLastName(request.lastName),
       user.setRole(request.role),
       user.setEmails(emails.value),
+      user.setIsActive(request.isActive),
     ]);
 
     if (result.isErr()) {

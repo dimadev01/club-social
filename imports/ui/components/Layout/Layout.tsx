@@ -29,6 +29,7 @@ import { EventsIcon } from '@ui/components/Icons/EventsIcon';
 import { LogoutIcon } from '@ui/components/Icons/LogoutIcon';
 import { MovementsIcon } from '@ui/components/Icons/MovementsIcon';
 import { PaymentsIcon } from '@ui/components/Icons/PaymentsIcon';
+import { PricesIcon } from '@ui/components/Icons/PricesIcon';
 import { UsersIcon } from '@ui/components/Icons/UsersIcon';
 import { Row } from '@ui/components/Layout/Row';
 import { ThemeSelector } from '@ui/components/Layout/ThemeSelector';
@@ -120,6 +121,18 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
         label: (
           <Link className="no-underline" to={AppUrl.PAYMENTS}>
             Pagos
+          </Link>
+        ),
+      });
+    }
+
+    if (permissions.prices.read) {
+      items.push({
+        icon: <PricesIcon />,
+        key: AppUrl.PRICES,
+        label: (
+          <Link className="no-underline" to={AppUrl.PRICES}>
+            Precios
           </Link>
         ),
       });

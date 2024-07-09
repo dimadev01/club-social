@@ -1,9 +1,15 @@
 import { Mongo } from 'meteor/mongo';
+import type { Document } from 'mongodb';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILoggerService } from '@application/common/logger/logger.interface';
+import {
+  FindPaginatedRequest,
+  FindPaginatedResponse,
+} from '@application/common/repositories/grid.repository';
 import { IUserRepository } from '@application/users/repositories/user.repository';
+import { RoleEnum } from '@domain/roles/role.enum';
 import { User } from '@domain/users/models/user.model';
 import { UserEntity } from '@infra/mongo/entities/user.entity';
 import { UserMapper } from '@infra/mongo/mappers/user.mapper';
@@ -33,5 +39,20 @@ export class UserMongoRepository
     }
 
     return this.mapper.toDomain(user as UserEntity);
+  }
+
+  public findPaginated(
+    request: FindPaginatedRequest,
+  ): Promise<FindPaginatedResponse<User>> {
+    const query: Mongo.Query<UserEntity> = {
+      'profile.role': { $in: [RoleEnum.STAFF] },
+    };
+
+    const pipeline: Document[] = [
+      { $match: query },
+      ...this.getPaginatedPipeline(request),
+    ];
+
+    return super.paginate(pipeline, query);
   }
 }

@@ -9,8 +9,12 @@ export class PriceDtoMapper extends MapperDto<Price, PriceDto> {
   public toDto(price: Price): PriceDto {
     return {
       amount: price.amount.amount,
+      categories: price.categories.map((category) => ({
+        amount: category.amount.amount,
+        category: category.category,
+      })),
       dueCategory: price.dueCategory,
-      memberCategory: price.memberCategory,
+      id: price._id,
       updatedAt: price.updatedAt.toISOString(),
       updatedBy: price.updatedBy,
     };

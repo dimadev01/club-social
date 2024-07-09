@@ -4,12 +4,21 @@ export enum RoleEnum {
   STAFF = 'staff',
 }
 
+export const RoleLabel: {
+  [x in RoleEnum]: string;
+} = {
+  [RoleEnum.ADMIN]: 'Administrador',
+  [RoleEnum.MEMBER]: 'Socio',
+  [RoleEnum.STAFF]: 'Staff',
+};
+
 export enum ScopeEnum {
   DUES = 'dues',
   EVENTS = 'events',
   MEMBERS = 'members',
   MOVEMENTS = 'movements',
   PAYMENTS = 'payments',
+  PRICES = 'prices',
   USERS = 'users',
 }
 
@@ -55,6 +64,7 @@ export const AdminRole: ScopePermissions = {
     PermissionEnum.READ,
     PermissionEnum.VOID,
   ],
+  [ScopeEnum.PRICES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
 };
 
 export const StaffRole: ScopePermissions = {
@@ -63,6 +73,7 @@ export const StaffRole: ScopePermissions = {
     PermissionEnum.READ,
     PermissionEnum.UPDATE,
   ],
+  [ScopeEnum.PRICES]: [PermissionEnum.READ, PermissionEnum.UPDATE],
   [ScopeEnum.EVENTS]: [PermissionEnum.READ],
   [ScopeEnum.MOVEMENTS]: [
     PermissionEnum.CREATE,
@@ -91,6 +102,7 @@ export const MemberRole: ScopePermissions = {
   [ScopeEnum.MOVEMENTS]: [],
   [ScopeEnum.USERS]: [],
   [ScopeEnum.EVENTS]: [],
+  [ScopeEnum.PRICES]: [],
 };
 
 type RoleScopePermission = {

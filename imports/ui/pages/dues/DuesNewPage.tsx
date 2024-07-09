@@ -32,6 +32,7 @@ import { MembersSelect } from '@ui/components/Members/MembersSelect';
 import { Select } from '@ui/components/Select';
 import { useCreateDue } from '@ui/hooks/dues/useCreateDue';
 import { useMembers } from '@ui/hooks/members/useMembers';
+import { usePriceByCategory } from '@ui/hooks/prices/usePriceByCategory';
 import { useNotificationSuccess } from '@ui/hooks/ui/useNotification';
 
 type FormValues = {
@@ -91,6 +92,10 @@ export const DuesNewPage = () => {
    */
   const { data: members } = useMembers();
 
+  const { data: price, isLoading: isLoadingPrice } = usePriceByCategory(
+    formCategory ? { dueCategory: formCategory } : undefined,
+  );
+
   /**
    * Mutations
    */
@@ -120,6 +125,36 @@ export const DuesNewPage = () => {
     formSelectedMemberIds,
     setSearchParams,
   ]);
+
+  useEffect(() => {
+    if (price) {
+      const firstSelectedMemberId = formSelectedMemberIds?.[0];
+
+      const firstSelectedMember = members?.find(
+        (m) => m.id === firstSelectedMemberId,
+      );
+
+      if (firstSelectedMember) {
+        const priceCategory = price.categories.find(
+          (c) => c.category === firstSelectedMember.category,
+        );
+
+        if (priceCategory) {
+          form.setFieldValue(
+            'amount',
+            Money.from({ amount: priceCategory.amount }).toInteger(),
+          );
+
+          return;
+        }
+      }
+
+      form.setFieldValue(
+        'amount',
+        Money.from({ amount: price.amount }).toInteger(),
+      );
+    }
+  }, [price, form, formSelectedMemberIds, members]);
 
   const handleSubmit = async (values: FormValues) => {
     let date: string;
@@ -181,11 +216,11 @@ export const DuesNewPage = () => {
                 'memberIds',
                 members
                   ?.filter(
-                    (member) =>
-                      member.category === MemberCategoryEnum.MEMBER &&
-                      member.status === MemberStatusEnum.ACTIVE,
+                    (m) =>
+                      m.category === MemberCategoryEnum.MEMBER &&
+                      m.status === MemberStatusEnum.ACTIVE,
                   )
-                  .map((member) => member.id) ?? [],
+                  .map((m) => m.id) ?? [],
               );
             }}
           >
@@ -200,11 +235,11 @@ export const DuesNewPage = () => {
                 'memberIds',
                 members
                   ?.filter(
-                    (member) =>
-                      member.category === MemberCategoryEnum.CADET &&
-                      member.status === MemberStatusEnum.ACTIVE,
+                    (m) =>
+                      m.category === MemberCategoryEnum.CADET &&
+                      m.status === MemberStatusEnum.ACTIVE,
                   )
-                  .map((member) => member.id) ?? [],
+                  .map((m) => m.id) ?? [],
               );
             }}
           >
@@ -303,7 +338,7 @@ export const DuesNewPage = () => {
                 name="amount"
                 rules={[{ required: true }, { min: 1, type: 'number' }]}
               >
-                <FormInputAmount />
+                <FormInputAmount disabled={isLoadingPrice} />
               </Form.Item>
             </Col>
           </Row>
