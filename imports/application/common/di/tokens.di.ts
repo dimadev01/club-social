@@ -10,6 +10,7 @@ export const DIToken = Object.freeze({
   IMovementRepository: Symbol('IMovementRepository'),
   INotificationRepository: Symbol('INotificationRepository'),
   IPaymentRepository: Symbol('IPaymentRepository'),
+  IPriceCategoryRepository: Symbol('IPriceCategoryRepository'),
   IPriceRepository: Symbol('IPriceRepository'),
   IUnitOfWork: Symbol('IUnitOfWork'),
   IUserRepository: Symbol('IUserRepository'),
