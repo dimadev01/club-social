@@ -4,6 +4,7 @@ export interface UserDto {
   emails: UserEmailDto[];
   firstName: string;
   id: string;
+  isActive: boolean;
   lastName: string;
   name: string;
   role: RoleEnum;

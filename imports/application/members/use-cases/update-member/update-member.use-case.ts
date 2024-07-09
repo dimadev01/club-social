@@ -1,4 +1,5 @@
 import { Result, err, ok } from 'neverthrow';
+import invariant from 'tiny-invariant';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
@@ -49,10 +50,13 @@ export class UpdateMemberUseCase
       });
 
       await this._unitOfWork.withTransaction(async (unitOfWork) => {
+        invariant(member.user);
+
         const userResult = await this._updateUserUseCase.execute({
           emails: request.emails?.map((email) => email) ?? null,
           firstName: request.firstName,
           id: member.userId,
+          isActive: member.user.isActive,
           lastName: request.lastName,
           role: RoleEnum.MEMBER,
           unitOfWork: this._unitOfWork,

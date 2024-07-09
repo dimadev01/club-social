@@ -42,25 +42,6 @@ export class MemberMongoRepository
     super(collection, mapper, logger, auditableCollection);
   }
 
-  public async findByIds(request: FindManyByIds): Promise<Member[]> {
-    const pipeline: Document[] = [
-      {
-        $match: {
-          _id: { $in: request.ids },
-          isDeleted: false,
-        },
-      },
-      ...this.getUserLookupPipeline(),
-    ];
-
-    const entities = await this.collection
-      .rawCollection()
-      .aggregate<MemberEntity>(pipeline)
-      .toArray();
-
-    return entities.map((entity) => this.mapper.toDomain(entity));
-  }
-
   public async find(request: FindMembers): Promise<Member[]> {
     const pipeline: Document[] = [];
 
@@ -105,12 +86,41 @@ export class MemberMongoRepository
     return this.mapper.toDomain(entity);
   }
 
+  public async findByIds(request: FindManyByIds): Promise<Member[]> {
+    const pipeline: Document[] = [
+      {
+        $match: {
+          _id: { $in: request.ids },
+          isDeleted: false,
+        },
+      },
+      ...this.getUserLookupPipeline(),
+    ];
+
+    const entities = await this.collection
+      .rawCollection()
+      .aggregate<MemberEntity>(pipeline)
+      .toArray();
+
+    return entities.map((entity) => this.mapper.toDomain(entity));
+  }
+
   public async findOneById(request: FindOneById): Promise<Member | null> {
     const member = await super.findOneById(request);
 
     if (!member) {
       return null;
     }
+
+    member.user = await this._userRepository.findOneByIdOrThrow({
+      id: member.userId,
+    });
+
+    return member;
+  }
+
+  public async findOneByIdOrThrow(request: FindOneById): Promise<Member> {
+    const member = await super.findOneByIdOrThrow(request);
 
     member.user = await this._userRepository.findOneByIdOrThrow({
       id: member.userId,

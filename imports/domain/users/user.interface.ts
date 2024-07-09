@@ -6,6 +6,7 @@ export interface IUserModel extends IModel {
   emails: IUserEmail[];
   firstName: string;
   heartbeat: Date | null;
+  isActive: boolean;
   lastName: string;
   role: RoleEnum;
   services: Record<string, unknown>;

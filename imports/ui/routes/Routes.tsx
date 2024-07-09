@@ -28,6 +28,7 @@ import { MovementsPage } from '@ui/pages/movements/MovementsPage';
 import { PaymentDetailPage } from '@ui/pages/payments/PaymentDetailPage';
 import { PaymentNewPage } from '@ui/pages/payments/PaymentNewPage';
 import { PaymentsPage } from '@ui/pages/payments/PaymentsPage';
+import { PricesPage } from '@ui/pages/prices/PricesPage';
 import { UserDetailPage } from '@ui/pages/users/UserDetailPage';
 import { UsersPage } from '@ui/pages/users/UsersPage';
 import { AuthRoute } from '@ui/routes/AuthRoute';
@@ -225,6 +226,42 @@ const router = createBrowserRouter(
               element={
                 <PrivateRoute
                   scope={ScopeEnum.MOVEMENTS}
+                  permission={PermissionEnum.UPDATE}
+                  element={<MovementEditPage />}
+                />
+              }
+            />
+          </Route>
+        </Route>
+
+        <Route path={AppUrl.PRICES} element={<Outlet />}>
+          <Route
+            index
+            element={
+              <PrivateRoute
+                scope={ScopeEnum.PRICES}
+                permission={PermissionEnum.READ}
+                element={<PricesPage />}
+              />
+            }
+          />
+
+          <Route path={AppUrlGenericEnum.ID} element={<Outlet />}>
+            <Route
+              index
+              element={
+                <PrivateRoute
+                  scope={ScopeEnum.PRICES}
+                  permission={PermissionEnum.UPDATE}
+                  element={<MovementDetailPage />}
+                />
+              }
+            />
+            <Route
+              path={AppUrlGenericEnum.EDIT}
+              element={
+                <PrivateRoute
+                  scope={ScopeEnum.PRICES}
                   permission={PermissionEnum.UPDATE}
                   element={<MovementEditPage />}
                 />

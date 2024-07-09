@@ -1,18 +1,26 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
 import { container } from 'tsyringe';
 import '@infra/di/di.container';
 
 import { VoidDueUseCase } from '@application/dues/use-cases/void-due/void-due.use-case';
-import { DueStatusEnum } from '@domain/dues/due.enum';
-import { MemberStatusEnum } from '@domain/members/member.enum';
+import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
+import {
+  MemberCategoryEnum,
+  MemberStatusEnum,
+} from '@domain/members/member.enum';
 import { PaymentDueSourceEnum } from '@domain/payments/payment.enum';
 import { RoleService } from '@domain/roles/role.service';
 import { DueMongoCollection } from '@infra/mongo/collections/due.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
 import { MovementMongoCollection } from '@infra/mongo/collections/movement.collection';
 import { PaymentMongoCollection } from '@infra/mongo/collections/payment.collection';
+import { PriceCategoryMongoCollection } from '@infra/mongo/collections/price-category.collection';
+import { PriceMongoCollection } from '@infra/mongo/collections/price.collection';
+import { UserMongoCollection } from '@infra/mongo/collections/user.collection';
+import { PriceEntity } from '@infra/mongo/entities/price.entity';
 import { DueMapper } from '@infra/mongo/mappers/due.mapper';
 
 // @ts-expect-error
@@ -257,4 +265,191 @@ Migrations.add({
     next();
   }),
   version: 27,
+});
+
+// @ts-expect-error
+Migrations.add({
+  down: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    next();
+  }),
+  up: Meteor.wrapAsync(async (_: unknown, next: () => void) => {
+    const usersCollection = container.resolve(UserMongoCollection);
+
+    usersCollection.collection.update(
+      {},
+      { $set: { 'profile.isActive': true } },
+      { multi: true },
+    );
+
+    await RoleService.update();
+
+    const pricesCollection = container.resolve(PriceMongoCollection);
+
+    const priceCategoriesCollection = container.resolve(
+      PriceCategoryMongoCollection,
+    );
+
+    const electricityPrice = new PriceEntity({
+      _id: Random.id(),
+      amount: 300000,
+      createdAt: new Date(),
+      createdBy: 'System',
+      updatedAt: new Date(),
+      updatedBy: 'System',
+      deletedAt: null,
+      deletedBy: null,
+      dueCategory: DueCategoryEnum.ELECTRICITY,
+      isDeleted: false,
+    });
+
+    await pricesCollection.insertAsync(electricityPrice);
+
+    const baseProps = {
+      createdAt: electricityPrice.createdAt,
+      createdBy: electricityPrice.createdBy,
+      updatedAt: electricityPrice.updatedAt,
+      updatedBy: electricityPrice.updatedBy,
+      deletedAt: electricityPrice.deletedAt,
+      deletedBy: electricityPrice.deletedBy,
+      isDeleted: electricityPrice.isDeleted,
+    };
+
+    /**
+     * Electricity
+     */
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: electricityPrice.amount,
+      memberCategory: MemberCategoryEnum.ADHERENT_MEMBER,
+      priceId: electricityPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: electricityPrice.amount,
+      memberCategory: MemberCategoryEnum.MEMBER,
+      priceId: electricityPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: electricityPrice.amount,
+      memberCategory: MemberCategoryEnum.CADET,
+      priceId: electricityPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: electricityPrice.amount,
+      memberCategory: MemberCategoryEnum.PRE_CADET,
+      priceId: electricityPrice._id,
+      _id: Random.id(),
+    });
+
+    /**
+     * Guest
+     */
+    const guestPrice = new PriceEntity({
+      _id: Random.id(),
+      amount: 650000,
+      createdAt: new Date(),
+      createdBy: 'System',
+      updatedAt: new Date(),
+      updatedBy: 'System',
+      deletedAt: null,
+      deletedBy: null,
+      dueCategory: DueCategoryEnum.GUEST,
+      isDeleted: false,
+    });
+
+    await pricesCollection.insertAsync(guestPrice);
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: guestPrice.amount,
+      memberCategory: MemberCategoryEnum.ADHERENT_MEMBER,
+      priceId: guestPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: guestPrice.amount,
+      memberCategory: MemberCategoryEnum.MEMBER,
+      priceId: guestPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: guestPrice.amount,
+      memberCategory: MemberCategoryEnum.CADET,
+      priceId: guestPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: guestPrice.amount,
+      memberCategory: MemberCategoryEnum.PRE_CADET,
+      priceId: guestPrice._id,
+      _id: Random.id(),
+    });
+
+    /**
+     * Membership
+     */
+    const membershipPrice = new PriceEntity({
+      _id: Random.id(),
+      amount: 1700000,
+      createdAt: new Date(),
+      createdBy: 'System',
+      updatedAt: new Date(),
+      updatedBy: 'System',
+      deletedAt: null,
+      deletedBy: null,
+      dueCategory: DueCategoryEnum.MEMBERSHIP,
+      isDeleted: false,
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: membershipPrice.amount,
+      memberCategory: MemberCategoryEnum.ADHERENT_MEMBER,
+      priceId: membershipPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: membershipPrice.amount,
+      memberCategory: MemberCategoryEnum.MEMBER,
+      priceId: membershipPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: 1300000,
+      memberCategory: MemberCategoryEnum.CADET,
+      priceId: membershipPrice._id,
+      _id: Random.id(),
+    });
+
+    await priceCategoriesCollection.insertAsync({
+      ...baseProps,
+      amount: 900000,
+      memberCategory: MemberCategoryEnum.PRE_CADET,
+      priceId: membershipPrice._id,
+      _id: Random.id(),
+    });
+
+    await pricesCollection.insertAsync(membershipPrice);
+
+    next();
+  }),
+  version: 28,
 });

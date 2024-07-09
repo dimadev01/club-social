@@ -107,7 +107,7 @@ export function Grid<T extends object>({
         x: columnsWidth,
         y: 600,
       }}
-      expandable={{ ...expandable, columnWidth: 32 }}
+      expandable={{ columnWidth: 32, ...expandable }}
       {...rest}
     />
   );

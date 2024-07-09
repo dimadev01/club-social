@@ -5,6 +5,7 @@ declare namespace Meteor {
 
   interface UserProfile {
     firstName: string;
+    isActive: boolean;
     lastName: string;
     role: import('../imports/domain/roles/role.enum').RoleEnum;
     state: import('../imports/domain/users/user.enum').UserStateEnum;
