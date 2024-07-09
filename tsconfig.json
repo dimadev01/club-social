@@ -48,6 +48,7 @@
     "imports/**/*.tsx",
     "client/**/*.tsx",
     "server/**/*.ts",
-    "types/**/*.d.ts"
+    "types/**/*.d.ts",
+    "imports/domain/prices/.enum.ts"
   ]
 }

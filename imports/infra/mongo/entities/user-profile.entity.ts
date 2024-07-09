@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 import { RoleEnum } from '@domain/roles/role.enum';
 import { UserStateEnum, UserThemeEnum } from '@domain/users/user.enum';
@@ -21,8 +21,13 @@ export class UserProfileEntity {
   @IsEnum(UserThemeEnum)
   public theme: UserThemeEnum;
 
+  @IsBoolean()
+  public isActive: boolean;
+
   public constructor(props: UserProfileEntity) {
     this.firstName = props.firstName;
+
+    this.isActive = props.isActive;
 
     this.lastName = props.lastName;
 

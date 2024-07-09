@@ -2,8 +2,10 @@ import { container } from 'tsyringe';
 
 import { CreateUserUseCase } from '@application/users/use-cases/create-user/create-user.use-case';
 import { GetUserUseCase } from '@application/users/use-cases/get-user/get-user.use.case';
+import { GetUsersGridUseCase } from '@application/users/use-cases/get-users-grid/get-users-grid.use-case';
 import { UpdateUserUseCase } from '@application/users/use-cases/update-user/update-user.use-case';
 import { MeteorMethods } from '@infra/meteor/common/meteor-methods';
+import { GetGridRequestDto } from '@ui/common/dtos/get-grid-request.dto';
 import { GetOneByIdRequestDto } from '@ui/common/dtos/get-one-dto-request.dto';
 import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 import { CreateUserRequestDto } from '@ui/dtos/create-user-request.dto';
@@ -36,6 +38,13 @@ export class UserMethods extends MeteorMethods {
         this.execute(
           container.resolve(GetUserUseCase),
           GetOneByIdRequestDto,
+          req,
+        ),
+
+      [MeteorMethodEnum.UsersGetGrid]: async (req: GetGridRequestDto) =>
+        this.execute(
+          container.resolve(GetUsersGridUseCase),
+          GetGridRequestDto,
           req,
         ),
     });

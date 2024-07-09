@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsLowercase,
@@ -25,6 +26,9 @@ export class UpdateUserRequestDto implements UpdateUserRequest {
   @IsNotEmpty()
   @IsString()
   public id!: string;
+
+  @IsBoolean()
+  public isActive!: boolean;
 
   @IsNotEmpty()
   @IsString()

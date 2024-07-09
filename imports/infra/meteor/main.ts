@@ -7,13 +7,13 @@ import { container } from 'tsyringe';
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILoggerService } from '@application/common/logger/logger.interface';
 import { EmailServiceEnum } from '@application/notifications/emails/email.enum';
-import { UserStateEnum } from '@domain/users/user.enum';
 import { UserMethodOld } from '@domain/users/user.methods';
 import { DueMethods } from '@infra/meteor/methods/due.methods';
 import { EventMethods } from '@infra/meteor/methods/event.methods';
 import { MemberMethods } from '@infra/meteor/methods/member.methods';
 import { MovementMethods } from '@infra/meteor/methods/movement.methods';
 import { PaymentMethods } from '@infra/meteor/methods/payment.methods';
+import { PriceMethods } from '@infra/meteor/methods/price.methods';
 import { UserMethods } from '@infra/meteor/methods/user.methods';
 import { MigrationService } from '@infra/migrations/migration.service';
 
@@ -63,7 +63,7 @@ export class ServerStartup {
   private _configureValidateLoginAttempt() {
     Accounts.validateLoginAttempt(
       (attempt: { user: Meteor.User & { isActive: boolean } }) => {
-        if (attempt.user?.profile?.state === UserStateEnum.INACTIVE) {
+        if (!attempt.user?.profile?.isActive) {
           return false;
         }
 
@@ -100,6 +100,8 @@ export class ServerStartup {
     new EventMethods().register();
 
     new UserMethods().register();
+
+    new PriceMethods().register();
   }
 }
 

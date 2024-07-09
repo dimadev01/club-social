@@ -13,6 +13,8 @@ export class User extends Model implements IUserModel {
 
   private _heartbeat: Date | null;
 
+  private _isActive: boolean;
+
   private _lastName: string;
 
   private _role: RoleEnum;
@@ -41,6 +43,8 @@ export class User extends Model implements IUserModel {
     this._heartbeat = props?.heartbeat ?? null;
 
     this._services = props?.services ?? {};
+
+    this._isActive = props?.isActive ?? true;
   }
 
   public get emails(): UserEmail[] {
@@ -55,12 +59,20 @@ export class User extends Model implements IUserModel {
     return this._heartbeat;
   }
 
+  public get isActive(): boolean {
+    return this._isActive;
+  }
+
   public get lastName(): string {
     return this._lastName;
   }
 
   public get name(): string {
     return `${this.firstName} ${this.lastName}`;
+  }
+
+  public get nameLastFirst(): string {
+    return `${this.lastName} ${this.firstName}`;
   }
 
   public get role(): RoleEnum {
@@ -105,6 +117,7 @@ export class User extends Model implements IUserModel {
       user.setState(UserStateEnum.ACTIVE),
       user.setHeartbeat(null),
       user.setServices({}),
+      user.setIsActive(true),
     ]);
 
     if (result.isErr()) {
@@ -126,8 +139,8 @@ export class User extends Model implements IUserModel {
     return ok(null);
   }
 
-  private setHeartbeat(value: Date | null): Result<null, Error> {
-    this._heartbeat = value;
+  public setIsActive(value: boolean): Result<null, Error> {
+    this._isActive = value;
 
     return ok(null);
   }
@@ -140,6 +153,12 @@ export class User extends Model implements IUserModel {
 
   public setRole(value: RoleEnum): Result<null, Error> {
     this._role = value;
+
+    return ok(null);
+  }
+
+  private setHeartbeat(value: Date | null): Result<null, Error> {
+    this._heartbeat = value;
 
     return ok(null);
   }

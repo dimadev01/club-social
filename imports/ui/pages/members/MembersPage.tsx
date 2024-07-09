@@ -231,7 +231,7 @@ export const MembersPage = () => {
                         })}`,
                       )
                     }
-                    tooltip={{ title: 'Ver deudas' }}
+                    tooltip={{ title: 'Ver Deudas' }}
                   />
                 )}
 

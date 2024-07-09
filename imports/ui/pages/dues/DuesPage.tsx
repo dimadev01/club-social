@@ -297,7 +297,7 @@ export const DuesPage = () => {
             colSpan={totalPendingColSpan}
           >
             <Typography.Text strong>
-              Total Pendiente:{' '}
+              Total:{' '}
               {Money.from({
                 amount: duesTotals?.total ?? 0,
               }).formatWithCurrency()}
