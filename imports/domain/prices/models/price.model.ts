@@ -29,6 +29,10 @@ export class Price extends Model implements IPrice {
     return this._categories;
   }
 
+  public set categories(value: PriceCategory[]) {
+    this._categories = value;
+  }
+
   public get dueCategory(): DueCategoryEnum {
     return this._dueCategory;
   }
