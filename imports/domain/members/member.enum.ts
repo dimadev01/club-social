@@ -9,6 +9,11 @@ export const MemberStatusLabel = {
   [MemberStatusEnum.INACTIVE]: 'Inactivo',
 };
 
+export const MemberStatusPluralLabel = {
+  [MemberStatusEnum.ACTIVE]: 'Activos',
+  [MemberStatusEnum.INACTIVE]: 'Inactivos',
+};
+
 export const getMemberStatusSelectOptions = () =>
   Object.values(MemberStatusEnum).map((status) => ({
     label: MemberStatusLabel[status],
@@ -44,6 +49,15 @@ export const MemberCategoryLabel: {
   [MemberCategoryEnum.ADHERENT_MEMBER]: 'Socio Adherente',
   [MemberCategoryEnum.CADET]: 'Cadete',
   [MemberCategoryEnum.PRE_CADET]: 'Pre-Cadete',
+};
+
+export const MemberCategoryPluralLabel: {
+  [x in MemberCategoryEnum]: string;
+} = {
+  [MemberCategoryEnum.MEMBER]: 'Socios',
+  [MemberCategoryEnum.ADHERENT_MEMBER]: 'Socios Adherentes',
+  [MemberCategoryEnum.CADET]: 'Cadetes',
+  [MemberCategoryEnum.PRE_CADET]: 'Pre-Cadetes',
 };
 
 export const getMemberCategorySelectOptions = () =>

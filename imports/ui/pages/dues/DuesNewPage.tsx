@@ -4,6 +4,7 @@ import {
   Card,
   Col,
   DatePicker,
+  Flex,
   Form,
   Input,
   Space,
@@ -18,6 +19,7 @@ import { Money } from '@domain/common/value-objects/money.value-object';
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 import {
   MemberCategoryEnum,
+  MemberCategoryPluralLabel,
   MemberStatusEnum,
 } from '@domain/members/member.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
@@ -206,47 +208,47 @@ export const DuesNewPage = () => {
     <>
       {menu}
 
-      {formCategory === DueCategoryEnum.MEMBERSHIP && (
-        <Space className="my-1 flex justify-center">
-          <Button
-            htmlType="button"
-            size="small"
-            onClick={() => {
-              form.setFieldValue(
-                'memberIds',
-                members
-                  ?.filter(
-                    (m) =>
-                      m.category === MemberCategoryEnum.MEMBER &&
-                      m.status === MemberStatusEnum.ACTIVE,
-                  )
-                  .map((m) => m.id) ?? [],
-              );
-            }}
-          >
-            Seleccionar todos los socios
-          </Button>
-
-          <Button
-            htmlType="button"
-            size="small"
-            onClick={() => {
-              form.setFieldValue(
-                'memberIds',
-                members
-                  ?.filter(
-                    (m) =>
-                      m.category === MemberCategoryEnum.CADET &&
-                      m.status === MemberStatusEnum.ACTIVE,
-                  )
-                  .map((m) => m.id) ?? [],
-              );
-            }}
-          >
-            Seleccionar todos los cadetes
-          </Button>
-        </Space>
-      )}
+      <Flex justify="space-between" className="py-2">
+        {formCategory === DueCategoryEnum.MEMBERSHIP && (
+          <Space.Compact size="small" className="flex justify-center">
+            {[
+              MemberCategoryEnum.MEMBER,
+              MemberCategoryEnum.ADHERENT_MEMBER,
+              MemberCategoryEnum.CADET,
+              MemberCategoryEnum.PRE_CADET,
+            ].map((category) => (
+              <Button
+                htmlType="button"
+                key={category}
+                onClick={() => {
+                  form.setFieldValue(
+                    'memberIds',
+                    members
+                      ?.filter(
+                        (m) =>
+                          m.category === category &&
+                          m.status === MemberStatusEnum.ACTIVE,
+                      )
+                      .map((m) => m.id) ?? [],
+                  );
+                }}
+              >
+                Seleccionar {MemberCategoryPluralLabel[category]}
+              </Button>
+            ))}
+          </Space.Compact>
+        )}
+        <Button
+          htmlType="button"
+          size="small"
+          disabled={!formSelectedMemberIds?.length}
+          onClick={() => {
+            form.setFieldValue('memberIds', []);
+          }}
+        >
+          Quitar seleccionados
+        </Button>
+      </Flex>
     </>
   );
 
