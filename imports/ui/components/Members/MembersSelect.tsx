@@ -4,7 +4,7 @@ import React from 'react';
 
 import {
   MemberStatusEnum,
-  MemberStatusLabel,
+  MemberStatusPluralLabel,
 } from '@domain/members/member.enum';
 import { Select } from '@ui/components/Select';
 import { useMembers } from '@ui/hooks/members/useMembers';
@@ -29,14 +29,14 @@ export const MembersSelect: React.FC<Props> = ({
 
   const getOptions = () =>
     Object.entries(groupedByStatus).map(([key, membersByStatus]) => ({
-      label: MemberStatusLabel[key as MemberStatusEnum],
+      label: MemberStatusPluralLabel[key as MemberStatusEnum],
       options: membersByStatus.map((member) => {
         const isInactive = member.status === MemberStatusEnum.INACTIVE;
 
         let label = member.name;
 
         if (showInactiveLabel && isInactive) {
-          label += ` (${MemberStatusLabel[MemberStatusEnum.INACTIVE]})`;
+          label += ` (${MemberStatusPluralLabel[MemberStatusEnum.INACTIVE]})`;
         }
 
         return {
@@ -52,7 +52,7 @@ export const MembersSelect: React.FC<Props> = ({
       loading={isLoadingMembers}
       disabled={isLoadingMembers}
       options={getOptions()}
-      placeholder="Seleccionar socio"
+      placeholder="Seleccionar socio/s"
       {...rest}
     />
   );
