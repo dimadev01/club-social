@@ -1,6 +1,6 @@
 import { Model } from '@domain/common/models/model';
 
-export const DEFAULT_PAGE_SIZE = 25;
+export const DEFAULT_PAGE_SIZE = 250;
 
 export type PaginatedSorter = Record<
   string,
