@@ -25,10 +25,7 @@ export class MemberCreditMongoRepository
 
   public async findByPayment(paymentId: string): Promise<MemberCredit[]> {
     const entities = await this.collection
-      .find({
-        isDeleted: false,
-        paymentId,
-      })
+      .find({ isDeleted: false, paymentId })
       .fetchAsync();
 
     return entities.map((entity) => this.mapper.toDomain(entity));

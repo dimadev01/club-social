@@ -1,4 +1,5 @@
 import {
+  Alert,
   Breadcrumb,
   Card,
   Checkbox,
@@ -39,7 +40,8 @@ import {
 } from '@ui/hooks/ui/useNotification';
 
 type FormDueValue = {
-  amount: number;
+  creditAmount: number;
+  directAmount: number;
   dueId: string;
   isSelected: boolean;
 };
@@ -136,10 +138,13 @@ export const PaymentNewPage = () => {
   }, [formDate, formMemberId, formReceiptNumber, formDuesSelectedIds]);
 
   useDeepCompareEffect(() => {
-    if (pendingDues && pendingDues.length > 0) {
+    if (pendingDues && pendingDues.length > 0 && !formDues) {
       form.setFieldsValue({
         dues: pendingDues.map((due: DueDto) => ({
-          amount: Money.from({ amount: due.totalPendingAmount }).toInteger(),
+          creditAmount: 0,
+          directAmount: Money.from({
+            amount: due.totalPendingAmount,
+          }).toInteger(),
           dueId: due.id,
           isSelected: formDuesSelectedIds?.includes(due.id),
         })),
@@ -162,9 +167,8 @@ export const PaymentNewPage = () => {
     const request: CreatePaymentRequestDto = {
       date: new DateTimeVo(values.date).format(DateFormatEnum.DATE),
       dues: selectedDues.map<CreatePaymentDueRequestDto>((due) => ({
-        // creditAmount: 100000,
-        creditAmount: 0,
-        directAmount: Money.fromNumber(due.amount).amount,
+        creditAmount: Money.fromNumber(due.creditAmount).amount,
+        directAmount: Money.fromNumber(due.directAmount).amount,
         dueId: due.dueId,
       })),
       memberId: values.memberId,
@@ -217,6 +221,14 @@ export const PaymentNewPage = () => {
     return null;
   };
 
+  const renderMemberCredit = () => (
+    <Alert
+      className="mb-6"
+      message="Saldo a favor disponible: $4.000"
+      type="info"
+    />
+  );
+
   /**
    * Component
    */
@@ -241,7 +253,8 @@ export const PaymentNewPage = () => {
           initialValues={{
             date: urlDate ? dayjs(urlDate) : DateUtils.c(),
             dues: urlDueIds?.map((dueId) => ({
-              amount: 0,
+              creditAmount: 0,
+              directAmount: 0,
               dueId,
               isSelected: true,
             })),
@@ -308,7 +321,12 @@ export const PaymentNewPage = () => {
             </Col>
           </Row>
 
-          <PaymentPendingDuesTable pendingDues={pendingDues} />
+          {renderMemberCredit()}
+
+          <PaymentPendingDuesTable
+            availableCredit={4000}
+            pendingDues={pendingDues}
+          />
 
           <Form.Item label="Notas" rules={[{ whitespace: true }]} name="notes">
             <TextArea rows={2} />
