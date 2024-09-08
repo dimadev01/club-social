@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 import { CreateMemberUseCase } from '@application/members/use-cases/create-member/create-member.use-case';
 import { GetMembersGridUseCase } from '@application/members/use-cases/ger-members-grid/get-members-grid.use-case';
 import { GetMemberUseCase } from '@application/members/use-cases/get-member/get-member.use.case';
+import { GetMemberAvailableCreditUseCase } from '@application/members/use-cases/get-member-available-credit/get-member-available-credit.use.case';
 import { GetMembersUseCase } from '@application/members/use-cases/get-members/get-members.use-case';
 import { GetMembersToExportUseCase } from '@application/members/use-cases/get-members-export/get-members-export.use-case';
 import { UpdateMemberUseCase } from '@application/members/use-cases/update-member/update-member.use-case';
@@ -56,6 +57,15 @@ export class MemberMethods extends MeteorMethods {
         this.execute(
           container.resolve(UpdateMemberUseCase),
           UpdateMemberRequestDto,
+          req,
+        ),
+
+      [MeteorMethodEnum.MembersCreditGetAvailable]: (
+        req: GetOneByIdRequestDto,
+      ) =>
+        this.execute(
+          container.resolve(GetMemberAvailableCreditUseCase),
+          GetOneByIdRequestDto,
           req,
         ),
     });

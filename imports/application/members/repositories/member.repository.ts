@@ -34,6 +34,7 @@ export interface FindMembers {
  */
 
 export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
+  filterByAvailableCredit: string[];
   filterByCategory: MemberCategoryEnum[];
   filterByDebtStatus: string[];
   filterById: string[];
@@ -41,6 +42,7 @@ export interface FindPaginatedMembersRequest extends FindPaginatedRequest {
 }
 
 export interface PaginatedMember {
+  availableCredit: number;
   member: Member;
   pendingElectricity: number;
   pendingGuest: number;
