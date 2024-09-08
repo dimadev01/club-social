@@ -27,6 +27,7 @@ export class GetMembersGridUseCase
 
     return ok({
       items: items.map<MemberGridDto>((paginatedMember) => ({
+        availableCredit: paginatedMember.availableCredit,
         category: paginatedMember.member.category,
         email: paginatedMember.member.hasEmail()
           ? paginatedMember.member.firstEmail()
@@ -37,6 +38,7 @@ export class GetMembersGridUseCase
         pendingGuest: paginatedMember.pendingGuest,
         pendingMembership: paginatedMember.pendingMembership,
         pendingTotal: paginatedMember.pendingTotal,
+        phones: '',
         status: paginatedMember.member.status,
       })),
       totalCount,

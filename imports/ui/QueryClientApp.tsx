@@ -59,7 +59,7 @@ export const QueryClientApp: React.FC<PropsWithChildren> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       {children}
 
-      {/* {!Meteor.isProduction && <ReactQueryDevtools initialIsOpen={false} />} */}
+      {/* {!Meteor.isProduction && <ReactQueryDevtools initialIsOpen />} */}
     </QueryClientProvider>
   );
 };

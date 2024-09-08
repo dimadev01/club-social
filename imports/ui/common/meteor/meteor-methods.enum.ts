@@ -11,6 +11,7 @@ export enum MeteorMethodEnum {
   EventsGetGrid = 'events/getGrid',
 
   MembersCreate = 'members/create',
+  MembersCreditGetAvailable = 'members-credit/getAvailable',
   MembersGet = 'members/get',
   MembersGetGrid = 'members/getGrid',
   MembersGetOne = 'members/getOne',
