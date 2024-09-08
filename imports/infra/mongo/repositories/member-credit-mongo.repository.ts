@@ -2,7 +2,11 @@ import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
 import { ILoggerService } from '@application/common/logger/logger.interface';
-import { IMemberCreditRepository } from '@application/members/repositories/member-credit.repository';
+import {
+  GetAvailableResponse,
+  IMemberCreditRepository,
+} from '@application/members/repositories/member-credit.repository';
+import { MemberCreditTypeEnum } from '@domain/members/member.enum';
 import { MemberCredit } from '@domain/members/models/member-credit.model';
 import { MemberCreditCollection } from '@infra/mongo/collections/member-credit.collection';
 import { MemberCreditEntity } from '@infra/mongo/entities/member-credit.entity';
@@ -29,5 +33,32 @@ export class MemberCreditMongoRepository
       .fetchAsync();
 
     return entities.map((entity) => this.mapper.toDomain(entity));
+  }
+
+  public async getAvailable(memberId: string): Promise<GetAvailableResponse> {
+    function groupByType(type: MemberCreditTypeEnum) {
+      return {
+        $sum: {
+          $cond: [{ $eq: ['$type', type] }, '$amount', 0],
+        },
+      };
+    }
+
+    const [result] = await this.collection
+      .rawCollection()
+      .aggregate<GetAvailableResponse>()
+      .match({ isDeleted: false, memberId })
+      .group({
+        _id: null,
+        credits: groupByType(MemberCreditTypeEnum.CREDIT),
+        debits: groupByType(MemberCreditTypeEnum.DEBIT),
+      })
+      .project({
+        _id: 0,
+        amount: { $subtract: ['$credits', '$debits'] },
+      })
+      .toArray();
+
+    return result ? { amount: result.amount } : { amount: 0 };
   }
 }

@@ -14,7 +14,7 @@ type Props = {
 };
 
 type FormDueValue = {
-  creditAmount: number;
+  creditAmount?: number;
   directAmount: number;
   dueId: string;
   isSelected: boolean;
@@ -39,7 +39,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({
     formDues?.filter((d) => d.isSelected) ?? [];
 
   const totalCreditAmount = selectedPendingDuesFromForm.reduce(
-    (acc, d) => acc + d.creditAmount,
+    (acc, d) => acc + (d.creditAmount ?? 0),
     0,
   );
 
@@ -65,16 +65,20 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({
             {Money.from({ amount: totalPendingAmount }).formatWithCurrency()}
           </Table.Summary.Cell>
           <Table.Summary.Cell align="right" index={4}>
-            Total Directo:{' '}
+            Total a Registrar:{' '}
             {Money.fromNumber(totalDirectAmount).formatWithCurrency()}
           </Table.Summary.Cell>
-          <Table.Summary.Cell align="right" index={5}>
-            Total Crédito:{' '}
-            {Money.fromNumber(totalCreditAmount).formatWithCurrency()}
-          </Table.Summary.Cell>
-          <Table.Summary.Cell align="right" index={6}>
-            Total: {Money.fromNumber(totalAmount).formatWithCurrency()}
-          </Table.Summary.Cell>
+          {availableCredit > 0 && (
+            <>
+              <Table.Summary.Cell align="right" index={5}>
+                Total Crédito:{' '}
+                {Money.fromNumber(totalCreditAmount).formatWithCurrency()}
+              </Table.Summary.Cell>
+              <Table.Summary.Cell align="right" index={6}>
+                Total: {Money.fromNumber(totalAmount).formatWithCurrency()}
+              </Table.Summary.Cell>
+            </>
+          )}
         </Table.Summary.Row>
       </Table.Summary>
     );
@@ -165,7 +169,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({
       <Table.Column
         dataIndex="totalPendingAmount"
         width={250}
-        title="Monto Pendiente"
+        title="Monto a Pagar"
         align="right"
         render={(totalPendingAmount: number) =>
           Money.from({ amount: totalPendingAmount }).formatWithCurrency()
@@ -173,7 +177,7 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({
       />
 
       <Table.Column
-        title="Monto a Pagar"
+        title="Monto a Registrar"
         align="right"
         width={250}
         render={(_, due: DueDto) => {
@@ -206,90 +210,100 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({
         }}
       />
 
-      <Table.Column
-        title="Monto de Crédito"
-        align="right"
-        width={250}
-        render={(_, due: DueDto) => {
-          const { totalPendingAmount } = due;
+      {availableCredit > 0 && (
+        <>
+          <Table.Column
+            title="Monto de Crédito"
+            align="right"
+            width={250}
+            render={(_, due: DueDto) => {
+              const { totalPendingAmount } = due;
 
-          const index = pendingDues?.findIndex((d) => d.id === due.id) ?? 0;
+              const index = pendingDues?.findIndex((d) => d.id === due.id) ?? 0;
 
-          const isSelected = form.getFieldValue(isSelectedFieldName(index));
+              const isSelected = form.getFieldValue(isSelectedFieldName(index));
 
-          const directAmount = form.getFieldValue(directAmountFieldName(index));
+              const directAmount = form.getFieldValue(
+                directAmountFieldName(index),
+              );
 
-          const creditAmount = form.getFieldValue(creditAmountFieldName(index));
+              const creditAmount = form.getFieldValue(
+                creditAmountFieldName(index),
+              );
 
-          const maxByCreditUsage =
-            availableCreditAmountAfterSelectedDues + creditAmount;
+              const maxByCreditUsage =
+                availableCreditAmountAfterSelectedDues + creditAmount;
 
-          const maxByDebitUsage =
-            Money.from({ amount: totalPendingAmount }).toNumber() -
-            directAmount;
+              const maxByDebitUsage =
+                Money.from({ amount: totalPendingAmount }).toNumber() -
+                directAmount;
 
-          let max = 0;
+              let max = 0;
 
-          if (maxByCreditUsage < maxByDebitUsage) {
-            max = maxByCreditUsage;
-          } else if (maxByDebitUsage > 0) {
-            max = maxByDebitUsage;
-          }
+              if (maxByCreditUsage < maxByDebitUsage) {
+                max = maxByCreditUsage;
+              } else if (maxByDebitUsage > 0) {
+                max = maxByDebitUsage;
+              }
 
-          console.log({ index, max, maxByCreditUsage, maxByDebitUsage });
+              return (
+                <Form.Item
+                  name={creditAmountFieldName(index)}
+                  className="mb-0"
+                  rules={[
+                    {
+                      message: 'Por favor ingrese monto a registrar',
+                      required: true,
+                    },
+                    {
+                      min: 0,
+                      type: 'number',
+                    },
+                  ]}
+                >
+                  <FormInputAmount
+                    max={max}
+                    min={0}
+                    className="w-32"
+                    disabled={!isSelected}
+                  />
+                </Form.Item>
+              );
+            }}
+          />
 
-          return (
-            <Form.Item
-              name={creditAmountFieldName(index)}
-              className="mb-0"
-              rules={[
-                {
-                  message: 'Por favor ingrese monto a registrar',
-                  required: true,
-                },
-                {
-                  min: 0,
-                  type: 'number',
-                },
-              ]}
-            >
-              <FormInputAmount
-                max={max}
-                min={0}
-                className="w-32"
-                disabled={!isSelected}
-              />
-            </Form.Item>
-          );
-        }}
-      />
+          <Table.Column
+            title="Monto Total"
+            align="right"
+            width={250}
+            render={(_, due: DueDto) => {
+              const index = pendingDues?.findIndex((d) => d.id === due.id) ?? 0;
 
-      <Table.Column
-        title="Monto Total"
-        align="right"
-        width={250}
-        render={(_, due: DueDto) => {
-          const index = pendingDues?.findIndex((d) => d.id === due.id) ?? 0;
+              const isSelected = form.getFieldValue(isSelectedFieldName(index));
 
-          const isSelected = form.getFieldValue(isSelectedFieldName(index));
+              const directAmount = form.getFieldValue(
+                directAmountFieldName(index),
+              );
 
-          const directAmount = form.getFieldValue(directAmountFieldName(index));
+              const creditAmount = form.getFieldValue(
+                creditAmountFieldName(index),
+              );
 
-          const creditAmount = form.getFieldValue(creditAmountFieldName(index));
-
-          return (
-            <Form.Item className="mb-0">
-              <FormInputAmount
-                variant="borderless"
-                value={directAmount + creditAmount}
-                readOnly
-                className="text-right"
-                disabled={!isSelected}
-              />
-            </Form.Item>
-          );
-        }}
-      />
+              return (
+                <Form.Item className="mb-0">
+                  <FormInputAmount
+                    variant="borderless"
+                    value={directAmount + creditAmount}
+                    readOnly
+                    className="text-right"
+                    disabled={!isSelected}
+                  />
+                </Form.Item>
+              );
+            }}
+          />
+        </>
+      )}
     </Table>
   );
 };

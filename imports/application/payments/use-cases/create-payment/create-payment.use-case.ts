@@ -32,7 +32,7 @@ import { CreatePaymentDue } from '@domain/payments/payment.interface';
 export class CreatePaymentUseCase
   implements IUseCase<CreatePaymentRequest, PaymentDto>
 {
-  private _dues: Due[];
+  private _duesToPay: Due[];
 
   public constructor(
     @inject(DIToken.IUnitOfWork)
@@ -50,7 +50,7 @@ export class CreatePaymentUseCase
     private readonly _getPaymentUseCase: GetPaymentUseCase,
     private readonly _sendNewPaymentEmailUseCase: SendNewPaymentEmailUseCase,
   ) {
-    this._dues = [];
+    this._duesToPay = [];
   }
 
   public async execute(
@@ -72,7 +72,7 @@ export class CreatePaymentUseCase
 
       let newPayment: Payment | undefined;
 
-      this._dues = await this._duePort.findByIds({
+      this._duesToPay = await this._duePort.findByIds({
         ids: request.dues.map((d) => d.dueId),
       });
 
@@ -97,10 +97,13 @@ export class CreatePaymentUseCase
 
         await Promise.all(
           payment.dues.map(async (paymentDue) => {
-            const due = this._dues.find((d) => d._id === paymentDue.dueId);
+            const due = this._duesToPay.find((d) => d._id === paymentDue.dueId);
 
             invariant(due);
 
+            /**
+             * Member Credit creation
+             */
             if (paymentDue.totalAmount.isGreaterThan(due.totalPendingAmount)) {
               const memberCredit = MemberCredit.create({
                 amount: paymentDue.totalAmount.subtract(due.totalPendingAmount),
@@ -116,6 +119,25 @@ export class CreatePaymentUseCase
 
               await this._memberCreditRepository.insertWithSession(
                 memberCredit.value,
+                unitOfWork,
+              );
+            }
+
+            if (paymentDue.creditAmount.isGreaterThanZero()) {
+              const memberDebit = MemberCredit.create({
+                amount: paymentDue.creditAmount,
+                dueId: due._id,
+                memberId: request.memberId,
+                paymentId: payment._id,
+                type: MemberCreditTypeEnum.DEBIT,
+              });
+
+              if (memberDebit.isErr()) {
+                throw memberDebit.error;
+              }
+
+              await this._memberCreditRepository.insertWithSession(
+                memberDebit.value,
                 unitOfWork,
               );
             }
@@ -198,7 +220,7 @@ export class CreatePaymentUseCase
     request: CreatePaymentRequest,
   ): CreatePaymentDue[] {
     const createDues = request.dues.map((requestDue) => {
-      const due = this._dues.find((d) => d._id === requestDue.dueId);
+      const due = this._duesToPay.find((d) => d._id === requestDue.dueId);
 
       invariant(due);
 
@@ -231,7 +253,7 @@ export class CreatePaymentUseCase
   }
 
   private _validateDues(): void {
-    this._dues.forEach((due) => {
+    this._duesToPay.forEach((due) => {
       if (!due.isPayable()) {
         throw new DueNotPayable(due._id);
       }

@@ -39,6 +39,7 @@ export const MembersPage = () => {
   const { gridState, onTableChange, resetFilters, clearFilters } =
     useGrid<MemberGridDto>({
       defaultFilters: {
+        availableCredit: [],
         category: [],
         id: [],
         pendingTotal: [],
@@ -60,6 +61,7 @@ export const MembersPage = () => {
   }
 
   const gridRequest: GetMembersGridRequestDto = {
+    filterByAvailableCredit: gridState.filters.availableCredit,
     filterByCategory: gridState.filters.category as MemberCategoryEnum[],
     filterByDebtStatus: gridState.filters.pendingTotal,
     filterById: gridState.filters.id,
@@ -212,6 +214,29 @@ export const MembersPage = () => {
             sorter: true,
             title: 'Deuda Total',
             width: 125,
+          },
+          {
+            align: 'right',
+            dataIndex: 'availableCredit',
+            ellipsis: true,
+            filterMultiple: false,
+            filteredValue: gridState.filters.availableCredit,
+            filters: [
+              {
+                text: 'Con Saldo a Favor',
+                value: 'true',
+              },
+              {
+                text: 'Sin Saldo a Favor',
+                value: 'false',
+              },
+            ],
+            render: (availableCredit: number) =>
+              Money.from({ amount: availableCredit }).formatWithCurrency(),
+            sortOrder: gridState.sorter.availableCredit,
+            sorter: true,
+            title: 'Crédito Disponible',
+            width: 100,
           },
           {
             align: 'center',

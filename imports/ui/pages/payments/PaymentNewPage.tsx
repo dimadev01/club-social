@@ -33,6 +33,7 @@ import { CreatePaymentDueRequestDto } from '@ui/dtos/create-payment-due-request.
 import { CreatePaymentRequestDto } from '@ui/dtos/create-payment-request.dto';
 import { usePendingDuesByMember } from '@ui/hooks/dues/usePendingDuesByMember';
 import { useMember } from '@ui/hooks/members/useMember';
+import { useMemberCreditAvailable } from '@ui/hooks/members/useMemberCreditAvailable';
 import { useCreatePayment } from '@ui/hooks/payments/useCreatePayment';
 import {
   useNotificationError,
@@ -40,7 +41,7 @@ import {
 } from '@ui/hooks/ui/useNotification';
 
 type FormDueValue = {
-  creditAmount: number;
+  creditAmount?: number;
   directAmount: number;
   dueId: string;
   isSelected: boolean;
@@ -108,6 +109,10 @@ export const PaymentNewPage = () => {
     formMemberId ? { memberId: formMemberId } : undefined,
   );
 
+  const { data: memberCreditAvailable } = useMemberCreditAvailable(
+    formMemberId ? { id: formMemberId } : undefined,
+  );
+
   const { data: member } = useMember(
     formMemberId ? { id: formMemberId } : undefined,
   );
@@ -120,7 +125,6 @@ export const PaymentNewPage = () => {
   /**
    * Effects
    */
-
   useDeepCompareEffect(() => {
     const date = formDate
       ? DateUtils.format(formDate, DateFormatEnum.DATE)
@@ -138,7 +142,7 @@ export const PaymentNewPage = () => {
   }, [formDate, formMemberId, formReceiptNumber, formDuesSelectedIds]);
 
   useDeepCompareEffect(() => {
-    if (pendingDues && pendingDues.length > 0 && !formDues) {
+    if (pendingDues && pendingDues.length > 0) {
       form.setFieldsValue({
         dues: pendingDues.map((due: DueDto) => ({
           creditAmount: 0,
@@ -167,7 +171,7 @@ export const PaymentNewPage = () => {
     const request: CreatePaymentRequestDto = {
       date: new DateTimeVo(values.date).format(DateFormatEnum.DATE),
       dues: selectedDues.map<CreatePaymentDueRequestDto>((due) => ({
-        creditAmount: Money.fromNumber(due.creditAmount).amount,
+        creditAmount: Money.fromNumber(due.creditAmount ?? 0).amount,
         directAmount: Money.fromNumber(due.directAmount).amount,
         dueId: due.dueId,
       })),
@@ -182,7 +186,7 @@ export const PaymentNewPage = () => {
         notificationSuccess('Pago registrado');
 
         form.setFieldsValue({
-          dues: undefined,
+          dues: [],
           memberId: undefined,
           notes: undefined,
           receiptNumber: undefined,
@@ -221,13 +225,23 @@ export const PaymentNewPage = () => {
     return null;
   };
 
-  const renderMemberCredit = () => (
-    <Alert
-      className="mb-6"
-      message="Saldo a favor disponible: $4.000"
-      type="info"
-    />
-  );
+  const availableCreditAsNumber = Money.from({
+    amount: memberCreditAvailable?.amount ?? 0,
+  });
+
+  const renderMemberCredit = () => {
+    if (availableCreditAsNumber.isZero()) {
+      return null;
+    }
+
+    return (
+      <Alert
+        className="mb-6"
+        message={`Saldo a favor disponible: ${availableCreditAsNumber.formatWithCurrency()}`}
+        type="info"
+      />
+    );
+  };
 
   /**
    * Component
@@ -321,10 +335,14 @@ export const PaymentNewPage = () => {
             </Col>
           </Row>
 
-          {renderMemberCredit()}
+          <Row>
+            <Col xs={12} sm={12} md={10} lg={8} xl={6}>
+              {renderMemberCredit()}
+            </Col>
+          </Row>
 
           <PaymentPendingDuesTable
-            availableCredit={4000}
+            availableCredit={availableCreditAsNumber.toNumber()}
             pendingDues={pendingDues}
           />
 

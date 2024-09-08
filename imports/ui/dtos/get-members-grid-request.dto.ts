@@ -11,6 +11,10 @@ export class GetMembersGridRequestDto
   extends GetGridRequestDto
   implements FindPaginatedMembersRequest
 {
+  @IsString({ each: true })
+  @IsArray()
+  public filterByAvailableCredit!: string[];
+
   @IsEnum(MemberCategoryEnum, { each: true })
   @IsArray()
   public filterByCategory!: MemberCategoryEnum[];

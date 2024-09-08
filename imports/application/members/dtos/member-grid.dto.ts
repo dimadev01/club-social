@@ -4,6 +4,7 @@ import {
 } from '@domain/members/member.enum';
 
 export interface MemberGridDto {
+  availableCredit: number;
   category: MemberCategoryEnum;
   email: string | null;
   id: string;
