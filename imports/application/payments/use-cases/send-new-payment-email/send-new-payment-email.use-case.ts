@@ -42,6 +42,7 @@ export class SendNewPaymentEmailUseCase implements IUseCase<FindOneById, null> {
     }
 
     const [memberTotals] = await this._memberRepository.findToExport({
+      filterByAvailableCredit: [],
       filterByCategory: [],
       filterByDebtStatus: [],
       filterById: [member._id],
