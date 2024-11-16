@@ -24,6 +24,15 @@ export class GetMovementsTotalUseCase
   ): Promise<Result<GetMovementsTotalsResponse, Error>> {
     const result = await this.movementRepository.getTotals(request);
 
+    if (request.filterByDate.length > 0) {
+      const resultUntilDateFrom = await this.movementRepository.getTotals({
+        ...request,
+        filterByDate: ['2022-06-01', request.filterByDate[0]],
+      });
+
+      result.total += resultUntilDateFrom.total;
+    }
+
     return ok(result);
   }
 }

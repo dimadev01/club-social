@@ -1,4 +1,5 @@
-import { Descriptions, Skeleton } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Descriptions, Skeleton, Tooltip } from 'antd';
 import React from 'react';
 
 import {
@@ -50,7 +51,16 @@ export const MovementsCard: React.FC<Props> = ({
 
       <Descriptions.Item
         labelStyle={{ textAlign: 'right' }}
-        label="Total (Caja)"
+        label={
+          <span>
+            Total (Caja){' '}
+            <sup>
+              <Tooltip title="Incluye saldo de caja al día de cierre del filtro del período">
+                <InfoCircleOutlined />
+              </Tooltip>
+            </sup>
+          </span>
+        }
         className="text-right"
       >
         {Money.from({ amount: total }).formatWithCurrency()}
