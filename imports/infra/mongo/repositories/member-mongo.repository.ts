@@ -16,6 +16,7 @@ import {
   PaginatedMember,
 } from '@application/members/repositories/member.repository';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
+import { MemberCreditTypeEnum } from '@domain/members/member.enum';
 import { Member } from '@domain/members/models/member.model';
 import { MemberMongoAuditableCollection } from '@infra/mongo/collections/member-auditable.collection';
 import { MemberMongoCollection } from '@infra/mongo/collections/member.collection';
@@ -136,7 +137,7 @@ export class MemberMongoRepository
 
     const pipeline: Document[] = [{ $match: query }];
 
-    if (this._isSortingByPendingDues(request)) {
+    if (this._isSortingBySomePendingDues(request)) {
       pipeline.push(...this._getPipelineWithDues(request));
     }
 
@@ -145,7 +146,7 @@ export class MemberMongoRepository
       ...this.getUserLookupPipeline(),
     );
 
-    if (!this._isSortingByPendingDues(request)) {
+    if (!this._isSortingBySomePendingDues(request)) {
       pipeline.push(...this._getPipelineWithDues(request));
     }
 
@@ -156,6 +157,7 @@ export class MemberMongoRepository
 
     return {
       items: entities.map<PaginatedMember>((entity) => ({
+        availableCredit: entity.availableCredit?.amount ?? 0,
         member: this.mapper.toDomain(entity),
         pendingElectricity: entity.pendingElectricity,
         pendingGuest: entity.pendingGuest,
@@ -184,6 +186,7 @@ export class MemberMongoRepository
       .toArray();
 
     return entities.map<PaginatedMember>((entity) => ({
+      availableCredit: entity.availableCredit?.amount ?? 0,
       member: this.mapper.toDomain(entity),
       pendingElectricity: entity.pendingElectricity,
       pendingGuest: entity.pendingGuest,
@@ -225,6 +228,14 @@ export class MemberMongoRepository
           $sum: {
             $cond: [{ $eq: ['$category', category] }, '$totalPendingAmount', 0],
           },
+        },
+      };
+    }
+
+    function groupByMemberCreditType(type: MemberCreditTypeEnum) {
+      return {
+        $sum: {
+          $cond: [{ $eq: ['$type', type] }, '$amount', 0],
         },
       };
     }
@@ -275,6 +286,40 @@ export class MemberMongoRepository
           },
         },
       },
+      {
+        $lookup: {
+          as: 'availableCredit',
+          foreignField: 'memberId',
+          from: 'member.credits',
+          localField: '_id',
+          pipeline: [
+            {
+              $match: {
+                isDeleted: false,
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                credits: groupByMemberCreditType(MemberCreditTypeEnum.CREDIT),
+                debits: groupByMemberCreditType(MemberCreditTypeEnum.DEBIT),
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                amount: { $subtract: ['$credits', '$debits'] },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$availableCredit',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
     ];
 
     if (request.filterByDebtStatus.includes('true')) {
@@ -283,10 +328,16 @@ export class MemberMongoRepository
       pipeline.push({ $match: { pendingTotal: 0 } });
     }
 
+    if (request.filterByAvailableCredit.includes('true')) {
+      pipeline.push({ $match: { 'availableCredit.amount': { $gt: 0 } } });
+    } else if (request.filterByAvailableCredit.includes('false')) {
+      pipeline.push({ $match: { 'availableCredit.amount': 0 } });
+    }
+
     return pipeline;
   }
 
-  private _isSortingByPendingDues(
+  private _isSortingBySomePendingDues(
     request: FindPaginatedMembersRequest,
   ): boolean {
     if (
@@ -294,6 +345,7 @@ export class MemberMongoRepository
       request.sorter.pendingMembership ||
       request.sorter.pendingGuest ||
       request.sorter.pendingTotal ||
+      request.sorter.availableCredit ||
       request.filterByDebtStatus.length > 0
     ) {
       return true;

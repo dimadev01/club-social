@@ -65,6 +65,10 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
           displayName: 'Deuda total',
           id: 'pendingTotal',
         },
+        {
+          displayName: 'Crédito Disponible',
+          id: 'availableCredit',
+        },
       ]}
       filename={`club-social-socios-al-${new DateTimeVo().format(DateFormatEnum.DATE)}-${new DateTimeVo().unix()}.csv`}
       // @ts-expect-error
@@ -72,6 +76,9 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
         const data = await getMembersToExport.mutateAsync(request);
 
         return data.map((member) => ({
+          availableCredit: Money.from({
+            amount: member.availableCredit,
+          }).toInteger(),
           category: MemberCategoryLabel[member.category],
           email: member.email,
           id: member.id,
