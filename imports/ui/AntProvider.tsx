@@ -1,6 +1,7 @@
 import { ConfigProvider, theme as antTheme } from 'antd';
 import esEs from 'antd/es/locale/es_ES';
 import React, { PropsWithChildren } from 'react';
+import { GiTennisBall } from 'react-icons/gi';
 
 import { AppThemeEnum } from './app.enum';
 
@@ -16,6 +17,10 @@ export const AntProvider: React.FC<PropsWithChildren> = ({ children }) => {
       popupMatchSelectWidth={false}
       form={{ requiredMark: 'optional' }}
       input={{ autoComplete: 'on' }}
+      spin={{
+        className: '!max-h-none',
+        indicator: <GiTennisBall className="icon-bounce" />,
+      }}
       theme={{
         algorithm:
           theme === AppThemeEnum.LIGHT

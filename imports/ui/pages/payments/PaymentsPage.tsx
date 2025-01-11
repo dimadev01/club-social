@@ -68,7 +68,7 @@ export const PaymentsPage = () => {
     filterByStatus: gridState.filters.status as PaymentStatusEnum[],
   };
 
-  const { data, isLoading, refetch, isRefetching } = useQueryGrid<
+  const { data, isFetching, refetch, isRefetching } = useQueryGrid<
     GetPaymentsGridRequestDto,
     PaymentGridDto
   >({
@@ -276,7 +276,7 @@ export const PaymentsPage = () => {
         state={gridState}
         summary={renderSummary}
         onTableChange={onTableChange}
-        loading={isLoading}
+        loading={isFetching}
         dataSource={data?.items}
         expandable={{ expandedRowRender }}
         columns={getColumns()}

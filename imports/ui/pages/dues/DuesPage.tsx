@@ -90,7 +90,7 @@ export const DuesPage = () => {
     sorter: gridState.sorter,
   };
 
-  const { data, isLoading, isRefetching, refetch } = useQueryGrid<
+  const { data, isRefetching, refetch, isFetching } = useQueryGrid<
     GetDuesGridRequestDto,
     DueGridDto
   >({
@@ -331,7 +331,7 @@ export const DuesPage = () => {
         onTableChange={onTableChange}
         clearFilters={clearFilters}
         resetFilters={resetFilters}
-        loading={isLoading}
+        loading={isFetching}
         dataSource={data?.items}
         expandable={{ expandedRowRender }}
         summary={renderSummary}
