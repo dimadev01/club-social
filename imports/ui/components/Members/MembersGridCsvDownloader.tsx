@@ -71,7 +71,6 @@ export const MembersGridCsvDownloaderButton: React.FC<Props> = ({
         },
       ]}
       filename={`club-social-socios-al-${new DateTimeVo().format(DateFormatEnum.DATE)}-${new DateTimeVo().unix()}.csv`}
-      // @ts-expect-error
       datas={async () => {
         const data = await getMembersToExport.mutateAsync(request);
 
