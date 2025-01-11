@@ -1,5 +1,7 @@
-import { Flex, Image, Space, Spin } from 'antd';
+import { Flex, Space, Typography } from 'antd';
 import React from 'react';
+
+import { TennisBallIcon } from '@ui/components/Icons/TennisBall';
 
 export const LoadingScreen: React.FC = () => (
   <Flex
@@ -8,14 +10,8 @@ export const LoadingScreen: React.FC = () => (
     className="h-full bg-white dark:bg-black"
   >
     <Space direction="vertical" align="center">
-      <Image
-        wrapperClassName="w-40"
-        preview={false}
-        src="/images/logo.png"
-        alt="Rixsus Logo"
-      />
-
-      <Spin spinning />
+      <TennisBallIcon />
+      <Typography.Text>Cargando</Typography.Text>
     </Space>
   </Flex>
 );

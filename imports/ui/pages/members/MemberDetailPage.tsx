@@ -364,7 +364,7 @@ export const MemberDetailPage: React.FC = () => {
                   <Form.Item name={['address', 'stateGovId']} label="Provincia">
                     <Select
                       onChange={() => {
-                        form.setFieldValue('address.cityGovId', null);
+                        form.setFieldValue(['address', 'cityGovId'], null);
                       }}
                       loading={statesIsLoading}
                       labelInValue

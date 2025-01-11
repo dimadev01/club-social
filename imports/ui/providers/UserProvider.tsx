@@ -25,6 +25,8 @@ export const UserProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
   const stateMemoized = useMemo(() => ({ member, user }), [user, member]);
 
+  return <LoadingScreen />;
+
   if (isLoggingIn || isLoadingMember()) {
     return <LoadingScreen />;
   }

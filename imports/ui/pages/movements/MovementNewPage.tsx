@@ -14,7 +14,6 @@ import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object'
 import { Money } from '@domain/common/value-objects/money.value-object';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
-import { AppUrl } from '@ui/app.enum';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { FormInputAmount } from '@ui/components/Form/FormInputAmount';
 import { Row } from '@ui/components/Layout/Row';
@@ -68,7 +67,7 @@ export const MovementNewPage = () => {
         className="mb-4"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.MOVEMENTS}>Movimientos</Link> },
+          { title: <Link to="..">Movimientos</Link> },
           {
             title: 'Nuevo Movimiento',
           },
