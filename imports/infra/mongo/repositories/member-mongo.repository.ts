@@ -320,6 +320,11 @@ export class MemberMongoRepository
           preserveNullAndEmptyArrays: true,
         },
       },
+      {
+        $addFields: {
+          availableCredit: { $ifNull: ['$availableCredit', { amount: 0 }] },
+        },
+      },
     ];
 
     if (request.filterByDebtStatus.includes('true')) {
