@@ -4,7 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 import { AppUrl } from '@ui/app.enum';
 
-export const PublicRoute: React.FC<PropsWithChildren> = ({ children }) => {
+export const PublicRoute: React.FC<PropsWithChildren> = () => {
   const { user } = useTracker(() => ({ user: Meteor.user() }));
 
   if (user) {

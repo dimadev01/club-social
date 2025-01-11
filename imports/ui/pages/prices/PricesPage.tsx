@@ -1,6 +1,5 @@
 import { Card, Space } from 'antd';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { PriceDto } from '@application/prices/dtos/price.dto';
 import { Money } from '@domain/common/value-objects/money.value-object';
@@ -19,14 +18,9 @@ import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useGrid } from '@ui/components/Grid/useGrid';
 import { PricesIcon } from '@ui/components/Icons/PricesIcon';
 import { Table } from '@ui/components/Table/Table';
-import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
 
 export const PricesPage = () => {
-  const navigate = useNavigate();
-
-  const permissions = usePermissions();
-
   const { gridState, onTableChange } = useGrid<PriceDto>({
     defaultFilters: {},
     defaultSorter: { dueCategory: 'descend' },
@@ -38,7 +32,7 @@ export const PricesPage = () => {
     sorter: gridState.sorter,
   };
 
-  const { data, isLoading, isRefetching, refetch } = useQueryGrid<
+  const { data, isFetching, isRefetching, refetch } = useQueryGrid<
     GetGridRequestDto,
     PriceDto
   >({
@@ -90,17 +84,16 @@ export const PricesPage = () => {
         expandable={{ expandedRowRender }}
         state={gridState}
         onTableChange={onTableChange}
-        loading={isLoading}
+        loading={isFetching}
         dataSource={data?.items}
         columns={[
           {
             dataIndex: 'dueCategory',
             ellipsis: true,
-            render: (dueCategory: DueCategoryEnum, price: PriceDto) => (
+            render: (dueCategory: DueCategoryEnum) => (
               <Space>
                 {DueCategoryIcon[dueCategory]}
                 {DueCategoryLabel[dueCategory]}
-                {/* <Link to={price.id}>{DueCategoryLabel[dueCategory]}</Link> */}
               </Space>
             ),
             title: 'Categoría',

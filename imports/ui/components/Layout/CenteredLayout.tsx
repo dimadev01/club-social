@@ -2,7 +2,7 @@ import { Card, Image, Layout } from 'antd';
 import React, { PropsWithChildren } from 'react';
 import { Outlet } from 'react-router-dom';
 
-export const CenteredLayout: React.FC<PropsWithChildren> = ({ children }) => (
+export const CenteredLayout: React.FC<PropsWithChildren> = () => (
   <Layout className="min-h-full pt-24">
     <Card
       styles={{ body: { padding: 0 } }}

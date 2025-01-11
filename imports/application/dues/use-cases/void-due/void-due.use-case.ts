@@ -2,7 +2,6 @@ import { Result, err, ok } from 'neverthrow';
 import { inject, injectable } from 'tsyringe';
 
 import { DIToken } from '@application/common/di/tokens.di';
-import { ILoggerService } from '@application/common/logger/logger.interface';
 import { IUnitOfWork } from '@application/common/repositories/unit-of-work';
 import { IUseCase } from '@application/common/use-case.interface';
 import { IDueRepository } from '@application/dues/repositories/due.repository';
@@ -17,8 +16,6 @@ import { Event } from '@domain/events/models/event.model';
 @injectable()
 export class VoidDueUseCase implements IUseCase<VoidDueRequest, null> {
   public constructor(
-    @inject(DIToken.ILoggerService)
-    private readonly _logger: ILoggerService,
     @inject(DIToken.IDueRepository)
     private readonly _dueRepository: IDueRepository,
     @inject(DIToken.IEventRepository)

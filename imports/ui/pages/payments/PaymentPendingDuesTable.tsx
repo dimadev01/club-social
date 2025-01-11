@@ -89,19 +89,32 @@ export const PaymentPendingDuesTable: React.FC<Props> = ({
    */
   const dueIdFieldName = (index: number) => ['dues', index, 'dueId'];
 
-  const isSelectedFieldName = (index: number) => ['dues', index, 'isSelected'];
+  const isSelectedFieldName = (index: number) =>
+    ['dues', index, 'isSelected'] as
+      | ['dues']
+      | ['dues', number]
+      | ['dues', number, 'creditAmount']
+      | ['dues', number, 'directAmount']
+      | ['dues', number, 'dueId']
+      | ['dues', number, 'isSelected'];
 
-  const directAmountFieldName = (index: number) => [
-    'dues',
-    index,
-    'directAmount',
-  ];
+  const directAmountFieldName = (index: number) =>
+    ['dues', index, 'directAmount'] as
+      | ['dues']
+      | ['dues', number]
+      | ['dues', number, 'creditAmount']
+      | ['dues', number, 'directAmount']
+      | ['dues', number, 'dueId']
+      | ['dues', number, 'isSelected'];
 
-  const creditAmountFieldName = (index: number) => [
-    'dues',
-    index,
-    'creditAmount',
-  ];
+  const creditAmountFieldName = (index: number) =>
+    ['dues', index, 'creditAmount'] as
+      | ['dues']
+      | ['dues', number]
+      | ['dues', number, 'creditAmount']
+      | ['dues', number, 'directAmount']
+      | ['dues', number, 'dueId']
+      | ['dues', number, 'isSelected'];
 
   const availableCreditAmountAfterSelectedDues =
     availableCredit - totalCreditAmount;

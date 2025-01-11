@@ -1,7 +1,6 @@
 import { Flex, Space, Typography } from 'antd';
 import React from 'react';
-
-import { TennisBallIcon } from '@ui/components/Icons/TennisBall';
+import { GiTennisBall } from 'react-icons/gi';
 
 export const LoadingScreen: React.FC = () => (
   <Flex
@@ -10,7 +9,7 @@ export const LoadingScreen: React.FC = () => (
     className="h-full bg-white dark:bg-black"
   >
     <Space direction="vertical" align="center">
-      <TennisBallIcon />
+      <GiTennisBall className="icon-bounce" size={24} />
       <Typography.Text>Cargando</Typography.Text>
     </Space>
   </Flex>

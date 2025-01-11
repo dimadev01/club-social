@@ -44,25 +44,25 @@ export const DuesByMemberAnalytics = () => {
             title={`Pendiente de ${DueCategoryLabel[DueCategoryEnum.MEMBERSHIP]}`}
             loading={isLoadingDues}
             prefix="$"
-            value={Money.from({ amount: dues?.membership }).toInteger()}
+            value={Money.from({ amount: dues?.membership ?? 0 }).toInteger()}
           />,
           <Statistic
             title={`Pendiente de ${DueCategoryLabel[DueCategoryEnum.ELECTRICITY]}`}
             loading={isLoadingDues}
             prefix="$"
-            value={Money.from({ amount: dues?.electricity }).toInteger()}
+            value={Money.from({ amount: dues?.electricity ?? 0 }).toInteger()}
           />,
           <Statistic
             title={`Pendiente de ${DueCategoryLabel[DueCategoryEnum.GUEST]}`}
             loading={isLoadingDues}
             prefix="$"
-            value={Money.from({ amount: dues?.guest }).toInteger()}
+            value={Money.from({ amount: dues?.guest ?? 0 }).toInteger()}
           />,
           <Statistic
             title="Pendiente Total"
             loading={isLoadingDues}
             prefix="$"
-            value={Money.from({ amount: dues?.total }).toInteger()}
+            value={Money.from({ amount: dues?.total ?? 0 }).toInteger()}
           />,
         ]}
         grid={{ column: 4, lg: 4, md: 4, sm: 4, xl: 4, xs: 2 }}
