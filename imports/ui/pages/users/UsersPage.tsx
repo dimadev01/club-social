@@ -34,7 +34,7 @@ export const UsersPage = () => {
     sorter,
   };
 
-  const { data, isLoading, isRefetching, refetch } = useQueryGrid<
+  const { data, isFetching, isRefetching, refetch } = useQueryGrid<
     GetGridRequestDto,
     UserGridDto
   >({
@@ -63,7 +63,7 @@ export const UsersPage = () => {
         total={data?.totalCount}
         state={gridState}
         onTableChange={onTableChange}
-        loading={isLoading}
+        loading={isFetching}
         dataSource={data?.items}
         columns={[
           {

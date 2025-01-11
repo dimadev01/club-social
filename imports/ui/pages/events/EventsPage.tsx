@@ -46,7 +46,7 @@ export const EventsPage = () => {
     sorter: gridState.sorter,
   };
 
-  const { data, isLoading, isRefetching, refetch } = useQueryGrid<
+  const { data, isFetching, isRefetching, refetch } = useQueryGrid<
     GetEventsGridRequestDto,
     EventGridDto
   >({
@@ -82,7 +82,7 @@ export const EventsPage = () => {
         total={data?.totalCount}
         state={gridState}
         onTableChange={onTableChange}
-        loading={isLoading}
+        loading={isFetching}
         dataSource={data?.items}
         columns={[
           {

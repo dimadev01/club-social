@@ -106,12 +106,6 @@ export class Notification extends Model implements INotification {
     return ok(null);
   }
 
-  private setReadAt(value: DateTimeVo | null): Result<null, Error> {
-    this._readAt = value;
-
-    return ok(null);
-  }
-
   private setReceiverId(value: string): Result<null, Error> {
     this._receiverId = value;
 

@@ -4,7 +4,6 @@ import {
   Card,
   Col,
   DatePicker,
-  Flex,
   Form,
   Input,
   Space,
@@ -12,7 +11,7 @@ import {
 import { useWatch } from 'antd/es/form/Form';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useEffect, useMemo } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
 import { DateTimeVo } from '@domain/common/value-objects/date-time.value-object';
 import { Money } from '@domain/common/value-objects/money.value-object';
@@ -25,7 +24,6 @@ import {
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum, DateUtils } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
-import { AppUrl } from '@ui/app.enum';
 import { DuesUIUtils } from '@ui/components/Dues/Dues.utils';
 import { FormButtons } from '@ui/components/Form/FormButtons';
 import { FormInputAmount } from '@ui/components/Form/FormInputAmount';
@@ -47,6 +45,8 @@ type FormValues = {
 
 export const DuesNewPage = () => {
   const notificationSuccess = useNotificationSuccess();
+
+  const location = useLocation();
 
   /**
    * Url params
@@ -208,47 +208,35 @@ export const DuesNewPage = () => {
     <>
       {menu}
 
-      <Flex justify="space-between" className="py-2">
-        {formCategory === DueCategoryEnum.MEMBERSHIP && (
-          <Space.Compact size="small" className="flex justify-center">
-            {[
-              MemberCategoryEnum.MEMBER,
-              MemberCategoryEnum.ADHERENT_MEMBER,
-              MemberCategoryEnum.CADET,
-              MemberCategoryEnum.PRE_CADET,
-            ].map((category) => (
-              <Button
-                htmlType="button"
-                key={category}
-                onClick={() => {
-                  form.setFieldValue(
-                    'memberIds',
-                    members
-                      ?.filter(
-                        (m) =>
-                          m.category === category &&
-                          m.status === MemberStatusEnum.ACTIVE,
-                      )
-                      .map((m) => m.id) ?? [],
-                  );
-                }}
-              >
-                Seleccionar {MemberCategoryPluralLabel[category]}
-              </Button>
-            ))}
-          </Space.Compact>
-        )}
-        <Button
-          htmlType="button"
-          size="small"
-          disabled={!formSelectedMemberIds?.length}
-          onClick={() => {
-            form.setFieldValue('memberIds', []);
-          }}
-        >
-          Quitar seleccionados
-        </Button>
-      </Flex>
+      {formCategory === DueCategoryEnum.MEMBERSHIP && (
+        <Space.Compact className="py-2" size="small">
+          {[
+            MemberCategoryEnum.MEMBER,
+            MemberCategoryEnum.ADHERENT_MEMBER,
+            MemberCategoryEnum.CADET,
+            MemberCategoryEnum.PRE_CADET,
+          ].map((category) => (
+            <Button
+              htmlType="button"
+              key={category}
+              onClick={() => {
+                form.setFieldValue(
+                  'memberIds',
+                  members
+                    ?.filter(
+                      (m) =>
+                        m.category === category &&
+                        m.status === MemberStatusEnum.ACTIVE,
+                    )
+                    .map((m) => m.id) ?? [],
+                );
+              }}
+            >
+              Seleccionar {MemberCategoryPluralLabel[category]}
+            </Button>
+          ))}
+        </Space.Compact>
+      )}
     </>
   );
 
@@ -261,7 +249,11 @@ export const DuesNewPage = () => {
         className="mb-4"
         items={[
           { title: 'Inicio' },
-          { title: <Link to={AppUrl.DUES}>Deudas</Link> },
+          {
+            title: (
+              <Link to={`..${UrlUtils.stringify(location.state)}`}>Deudas</Link>
+            ),
+          },
           { title: renderCardTitle() },
         ]}
       />
@@ -311,6 +303,7 @@ export const DuesNewPage = () => {
             rules={[{ min: 1, required: true, type: 'array' }]}
           >
             <MembersSelect
+              allowClear
               dropdownRender={renderMemberDropdown}
               mode="multiple"
             />

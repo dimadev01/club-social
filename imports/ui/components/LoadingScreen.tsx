@@ -1,5 +1,6 @@
-import { Flex, Image, Space, Spin } from 'antd';
+import { Flex, Space, Typography } from 'antd';
 import React from 'react';
+import { GiTennisBall } from 'react-icons/gi';
 
 export const LoadingScreen: React.FC = () => (
   <Flex
@@ -8,14 +9,8 @@ export const LoadingScreen: React.FC = () => (
     className="h-full bg-white dark:bg-black"
   >
     <Space direction="vertical" align="center">
-      <Image
-        wrapperClassName="w-40"
-        preview={false}
-        src="/images/logo.png"
-        alt="Rixsus Logo"
-      />
-
-      <Spin spinning />
+      <GiTennisBall className="icon-bounce" size={24} />
+      <Typography.Text>Cargando</Typography.Text>
     </Space>
   </Flex>
 );

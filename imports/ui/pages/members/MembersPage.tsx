@@ -71,7 +71,7 @@ export const MembersPage = () => {
     sorter,
   };
 
-  const { data, isLoading, isRefetching, refetch } = useQueryGrid<
+  const { data, isRefetching, refetch, isFetching } = useQueryGrid<
     GetMembersGridRequestDto,
     MemberGridDto
   >({
@@ -99,7 +99,7 @@ export const MembersPage = () => {
         total={data?.totalCount}
         state={gridState}
         onTableChange={onTableChange}
-        loading={isLoading}
+        loading={isFetching}
         dataSource={data?.items}
         clearFilters={clearFilters}
         resetFilters={resetFilters}

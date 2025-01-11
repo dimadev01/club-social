@@ -1,6 +1,7 @@
 import {
   CopyrightCircleOutlined,
   FilePdfOutlined,
+  FileTextOutlined,
   HeartOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
@@ -240,6 +241,14 @@ export const Layout: React.FC<PropsWithChildren> = ({ children }) => {
                 htmlType="button"
                 type="text"
                 href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
+                target="_blank"
+              />
+              <Button
+                tooltip={{ title: 'Formulario de Registro' }}
+                icon={<FileTextOutlined />}
+                htmlType="button"
+                type="text"
+                href="https://docs.google.com/forms/d/e/1FAIpQLSdMysEOdliOL3Aug58ns2W3oz8vv2Q6kwJSzsbOKc_rdtqIXA/viewform?usp=header"
                 target="_blank"
               />
               <Button

@@ -100,7 +100,7 @@ export const UserDetailPage: React.FC = () => {
               <Space>
                 <TeamOutlined />
                 <Link to={`..${UrlUtils.stringify(location.state)}`}>
-                  Socios
+                  Usuarios
                 </Link>
               </Space>
             ),
