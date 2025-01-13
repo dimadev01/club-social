@@ -12,6 +12,7 @@ type Props = {
   expense: number;
   income: number;
   isLoading: boolean;
+  subtotal: number;
   total: number;
 };
 
@@ -19,6 +20,7 @@ export const MovementsCard: React.FC<Props> = ({
   expense,
   income,
   total,
+  subtotal,
   isLoading,
 }) => {
   if (isLoading) {
@@ -34,7 +36,7 @@ export const MovementsCard: React.FC<Props> = ({
       title="Movimientos"
     >
       <Descriptions.Item
-        labelStyle={{ textAlign: 'right' }}
+        styles={{ label: { textAlign: 'right' } }}
         label={MovementTypeLabel[MovementTypeEnum.INCOME]}
         className="text-right"
       >
@@ -42,7 +44,7 @@ export const MovementsCard: React.FC<Props> = ({
       </Descriptions.Item>
 
       <Descriptions.Item
-        labelStyle={{ textAlign: 'right' }}
+        styles={{ label: { textAlign: 'right' } }}
         label={MovementTypeLabel[MovementTypeEnum.EXPENSE]}
         className="text-right"
       >
@@ -50,7 +52,15 @@ export const MovementsCard: React.FC<Props> = ({
       </Descriptions.Item>
 
       <Descriptions.Item
-        labelStyle={{ textAlign: 'right' }}
+        styles={{ label: { textAlign: 'right' } }}
+        label="Sub Total"
+        className="text-right"
+      >
+        {Money.from({ amount: subtotal }).formatWithCurrency()}
+      </Descriptions.Item>
+
+      <Descriptions.Item
+        styles={{ label: { textAlign: 'right' } }}
         label={
           <span>
             Total (Caja){' '}
