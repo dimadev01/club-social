@@ -53,7 +53,16 @@ export const MovementsCard: React.FC<Props> = ({
 
       <Descriptions.Item
         styles={{ label: { textAlign: 'right' } }}
-        label="Sub Total"
+        label={
+          <span>
+            Sub Total{' '}
+            <sup>
+              <Tooltip title="Diferencia entre ingresos y egresos para el período filtrado">
+                <InfoCircleOutlined />
+              </Tooltip>
+            </sup>
+          </span>
+        }
         className="text-right"
       >
         {Money.from({ amount: subtotal }).formatWithCurrency()}

@@ -27,15 +27,16 @@ export class GetMovementsTotalUseCase
     const result = await this.movementRepository.getTotals(request);
 
     if (request.filterByDate.length > 0) {
+      const startDateOfMovements = '2022-06-01';
+
+      const dayBeforeTopBoundFilterByDate = dayjs
+        .utc(request.filterByDate[0])
+        .subtract(1, 'day')
+        .format(DateFormatEnum.DATE);
+
       const resultUntilDateFrom = await this.movementRepository.getTotals({
         ...request,
-        filterByDate: [
-          '2022-06-01',
-          dayjs
-            .utc(request.filterByDate[0])
-            .subtract(1, 'day')
-            .format(DateFormatEnum.DATE),
-        ],
+        filterByDate: [startDateOfMovements, dayBeforeTopBoundFilterByDate],
       });
 
       result.total += resultUntilDateFrom.subtotal;
