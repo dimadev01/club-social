@@ -36,5 +36,6 @@ export interface FindPaginatedMovementsRequest
 export interface GetMovementsTotalsResponse {
   expense: number;
   income: number;
+  subtotal: number;
   total: number;
 }

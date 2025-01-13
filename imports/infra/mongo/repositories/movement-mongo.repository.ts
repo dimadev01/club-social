@@ -142,6 +142,7 @@ export class MovementMongoRepository
     return {
       expense: result?.expense ?? 0,
       income: result?.income ?? 0,
+      subtotal: result?.total ?? 0,
       total: result?.total ?? 0,
     };
   }
