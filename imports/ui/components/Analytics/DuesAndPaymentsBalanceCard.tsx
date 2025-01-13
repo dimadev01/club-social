@@ -103,6 +103,7 @@ export const DuesAndPaymentsBalanceCard = () => {
         <Col xs={24} sm={24} md={12} lg={8}>
           <MovementsCard
             isLoading={isLoadingMovements}
+            subtotal={movements?.subtotal ?? 0}
             expense={movements?.expense ?? 0}
             income={movements?.income ?? 0}
             total={movements?.total ?? 0}
