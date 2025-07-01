@@ -7,6 +7,7 @@ import {
 import { FindOneById } from '@application/common/repositories/queryable.repository';
 import { DueCategoryEnum, DueStatusEnum } from '@domain/dues/due.enum';
 import { Due } from '@domain/dues/models/due.model';
+import { MemberStatusEnum } from '@domain/members/member.enum';
 
 export interface IDueRepository
   extends ICrudRepository<Due>,
@@ -26,6 +27,7 @@ export interface FindPaginatedDuesFilters {
   filterByCreatedAt: string[];
   filterByDate: string[];
   filterByMember: string[];
+  filterByMemberStatus: MemberStatusEnum[];
   filterByStatus: DueStatusEnum[];
 }
 

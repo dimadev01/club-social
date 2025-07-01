@@ -43,6 +43,7 @@ export class GetDuesGridUseCase
           isPayable: due.isPayable(),
           member: this._memberDtoMapper.toDto(due.member),
           memberId: due.memberId,
+          memberStatus: due.member.status,
           payments: due.payments.map<DuePaymentDto>((duePayment) => ({
             creditAmount: duePayment.creditAmount.amount,
             directAmount: duePayment.directAmount.amount,
