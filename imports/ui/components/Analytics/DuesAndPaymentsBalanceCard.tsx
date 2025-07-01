@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 
 import { MovementStatusEnum } from '@domain/categories/category.enum';
 import { DueStatusEnum } from '@domain/dues/due.enum';
+import { MemberStatusEnum } from '@domain/members/member.enum';
 import { PaymentStatusEnum } from '@domain/payments/payment.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { DueAndPaymentBalanceTotals } from '@ui/components/Analytics/DueAndPaymentBalanceTotals';
@@ -34,6 +35,7 @@ export const DuesAndPaymentsBalanceCard = () => {
     filterByCreatedAt: [],
     filterByDate,
     filterByMember: [],
+    filterByMemberStatus: [MemberStatusEnum.ACTIVE, MemberStatusEnum.INACTIVE],
     filterByStatus: [
       DueStatusEnum.PAID,
       DueStatusEnum.PENDING,

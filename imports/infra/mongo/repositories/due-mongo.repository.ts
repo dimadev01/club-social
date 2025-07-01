@@ -67,9 +67,49 @@ export class DueMongoRepository
     return due;
   }
 
+  private async findPaginatedWithMemberStatus(
+    request: FindPaginatedDuesRequest,
+  ): Promise<FindPaginatedResponse<Due>> {
+    const query = this._getQueryByFilters(request);
+
+    query['member.status'] = { $in: request.filterByMemberStatus };
+
+    const [{ data, total }] = await this.collection
+      .rawCollection()
+      .aggregate<{
+        data: DueEntity[];
+        total: number;
+      }>([
+        ...this.getMemberLookupPipeline(),
+        { $match: query },
+        {
+          $facet: {
+            data: [...this.getPaginatedPipeline(request)],
+            total: [{ $count: 'total' }],
+          },
+        },
+        {
+          $project: {
+            data: 1,
+            total: { $ifNull: [{ $first: '$total.total' }, 0] },
+          },
+        },
+      ])
+      .toArray();
+
+    return {
+      items: data.map((entity) => this.mapper.toDomain(entity)),
+      totalCount: total,
+    };
+  }
+
   public async findPaginated(
     request: FindPaginatedDuesRequest,
   ): Promise<FindPaginatedResponse<Due>> {
+    if (request.filterByMemberStatus.length > 0) {
+      return this.findPaginatedWithMemberStatus(request);
+    }
+
     const query = this._getQueryByFilters(request);
 
     const pipeline: Document[] = [
@@ -93,7 +133,32 @@ export class DueMongoRepository
     return entities.map((entity) => this.mapper.toDomain(entity));
   }
 
+  private async findToExportWithMemberStatus(
+    request: FindPaginatedDuesRequest,
+  ): Promise<Due[]> {
+    const query = this._getQueryByFilters(request);
+
+    query['member.status'] = { $in: request.filterByMemberStatus };
+
+    const pipeline: Document[] = [
+      ...this.getMemberLookupPipeline(),
+      { $match: query },
+      this.getPaginatedSorterStage(request.sorter),
+    ];
+
+    const entities = await this.collection
+      .rawCollection()
+      .aggregate<DueEntity>(pipeline)
+      .toArray();
+
+    return entities.map<Due>((entity) => this.mapper.toDomain(entity));
+  }
+
   public async findToExport(request: FindPaginatedDuesRequest): Promise<Due[]> {
+    if (request.filterByMemberStatus.length > 0) {
+      return this.findToExportWithMemberStatus(request);
+    }
+
     const query = this._getQueryByFilters(request);
 
     const pipeline: Document[] = [

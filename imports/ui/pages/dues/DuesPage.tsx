@@ -13,6 +13,10 @@ import {
   DueStatusEnum,
   DueStatusLabel,
 } from '@domain/dues/due.enum';
+import {
+  MemberStatusEnum,
+  MemberStatusLabel,
+} from '@domain/members/member.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
 import { DateFormatEnum } from '@shared/utils/date.utils';
 import { UrlUtils } from '@shared/utils/url.utils';
@@ -32,6 +36,7 @@ import { useGrid } from '@ui/components/Grid/useGrid';
 import { DuesIcon } from '@ui/components/Icons/DuesIcon';
 import { PaymentsIcon } from '@ui/components/Icons/PaymentsIcon';
 import { UserIcon } from '@ui/components/Icons/UserIcon';
+import { MembersUIUtils } from '@ui/components/Members/Members.utils';
 import { GetDuesGridRequestDto } from '@ui/dtos/get-dues-grid-request.dto';
 import { GetDuesTotalsRequestDto } from '@ui/dtos/get-dues-totals-request.dto';
 import { usePermissions } from '@ui/hooks/auth/usePermissions';
@@ -58,6 +63,7 @@ export const DuesPage = () => {
       createdAt: [],
       date: [],
       memberId: [],
+      memberStatus: [],
       status: [
         DueStatusEnum.PAID,
         DueStatusEnum.PARTIALLY_PAID,
@@ -80,6 +86,7 @@ export const DuesPage = () => {
     filterByCreatedAt: gridState.filters.createdAt,
     filterByDate: gridState.filters.date,
     filterByMember: gridState.filters.memberId,
+    filterByMemberStatus: gridState.filters.memberStatus as MemberStatusEnum[],
     filterByStatus: gridState.filters.status as DueStatusEnum[],
   };
 
@@ -217,6 +224,18 @@ export const DuesPage = () => {
         filters: DuesUIUtils.getStatusGridFilters(),
         render: (status: DueStatusEnum) => DueStatusLabel[status],
         title: 'Estado',
+        width: 125,
+      },
+      {
+        align: 'center',
+        dataIndex: 'memberStatus',
+        defaultFilteredValue: [],
+        ellipsis: true,
+        filterResetToDefaultFilteredValue: true,
+        filteredValue: gridState.filters.memberStatus,
+        filters: MembersUIUtils.getStatusGridFilters(),
+        render: (status: MemberStatusEnum) => MemberStatusLabel[status],
+        title: 'Estado Socio',
         width: 125,
       },
     );
