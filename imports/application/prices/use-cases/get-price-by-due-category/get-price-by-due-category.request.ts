@@ -1,5 +1,5 @@
 import { DueCategoryEnum } from '@domain/dues/due.enum';
 
-export interface GetPriceRequest {
+export interface GetPriceByDueCategoryRequest {
   dueCategory: DueCategoryEnum;
 }

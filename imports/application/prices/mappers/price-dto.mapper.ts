@@ -13,6 +13,7 @@ export class PriceDtoMapper extends MapperDto<Price, PriceDto> {
       categories:
         price.categories?.map<PriceCategoryDto>((category) => ({
           amount: category.amount.amount,
+          id: category._id,
           memberCategory: category.memberCategory,
         })) ?? [],
       dueCategory: price.dueCategory,

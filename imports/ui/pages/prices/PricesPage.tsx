@@ -1,5 +1,7 @@
 import { Card, Space } from 'antd';
+import { ColumnType } from 'antd/es/table';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { PriceDto } from '@application/prices/dtos/price.dto';
 import { Money } from '@domain/common/value-objects/money.value-object';
@@ -9,6 +11,7 @@ import {
   MemberCategoryLabel,
 } from '@domain/members/member.enum';
 import { ScopeEnum } from '@domain/roles/role.enum';
+import { AppUrlGenericEnum } from '@ui/app.enum';
 import { GetGridRequestDto } from '@ui/common/dtos/get-grid-request.dto';
 import { MeteorMethodEnum } from '@ui/common/meteor/meteor-methods.enum';
 import { DueCategoryIcon } from '@ui/components/Dues/Dues.utils';
@@ -18,9 +21,12 @@ import { GridReloadButton } from '@ui/components/Grid/GridReloadButton';
 import { useGrid } from '@ui/components/Grid/useGrid';
 import { PricesIcon } from '@ui/components/Icons/PricesIcon';
 import { Table } from '@ui/components/Table/Table';
+import { usePermissions } from '@ui/hooks/auth/usePermissions';
 import { useQueryGrid } from '@ui/hooks/query/useQueryGrid';
 
 export const PricesPage = () => {
+  const permissions = usePermissions();
+
   const { gridState, onTableChange } = useGrid<PriceDto>({
     defaultFilters: {},
     defaultSorter: { dueCategory: 'descend' },
@@ -42,7 +48,6 @@ export const PricesPage = () => {
 
   const expandedRowRender = (price: PriceDto) => (
     <Table
-      title={() => 'Precios por Categoría'}
       rowKey="category"
       columns={[
         {
@@ -64,6 +69,39 @@ export const PricesPage = () => {
     />
   );
 
+  const getColumns = (): ColumnType<PriceDto>[] => {
+    const columns: ColumnType<PriceDto>[] = [
+      {
+        dataIndex: 'dueCategory',
+        ellipsis: true,
+        render: (dueCategory: DueCategoryEnum, price: PriceDto) => {
+          const content = (
+            <div className="flex items-center gap-2">
+              {DueCategoryIcon[dueCategory]}
+              {DueCategoryLabel[dueCategory]}
+            </div>
+          );
+
+          if (permissions.isAdmin || permissions.isStaff) {
+            return (
+              <Link
+                to={`${price.id}/${AppUrlGenericEnum.EDIT}`}
+                state={gridState}
+              >
+                {content}
+              </Link>
+            );
+          }
+
+          return content;
+        },
+        title: 'Categoría',
+      },
+    ];
+
+    return columns;
+  };
+
   return (
     <Card
       title={
@@ -81,34 +119,14 @@ export const PricesPage = () => {
     >
       <Grid<PriceDto>
         total={data?.totalCount}
-        expandable={{ expandedRowRender }}
+        expandable={{
+          expandedRowRender,
+        }}
         state={gridState}
         onTableChange={onTableChange}
         loading={isFetching}
         dataSource={data?.items}
-        columns={[
-          {
-            dataIndex: 'dueCategory',
-            ellipsis: true,
-            render: (dueCategory: DueCategoryEnum) => (
-              <Space>
-                {DueCategoryIcon[dueCategory]}
-                {DueCategoryLabel[dueCategory]}
-              </Space>
-            ),
-            title: 'Categoría',
-            width: 75,
-          },
-          {
-            align: 'right',
-            dataIndex: 'amount',
-            ellipsis: true,
-            render: (amount: number) =>
-              Money.from({ amount }).formatWithCurrency(),
-            title: 'Precio Base',
-            width: 100,
-          },
-        ]}
+        columns={getColumns()}
       />
     </Card>
   );
