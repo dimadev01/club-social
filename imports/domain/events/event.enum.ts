@@ -3,6 +3,7 @@ export enum EventResourceEnum {
   MEMBERS = 'members',
   MOVEMENTS = 'movements',
   PAYMENTS = 'payments',
+  PRICES = 'prices',
   SYSTEM = 'system',
 }
 
@@ -11,6 +12,7 @@ export const EventResourceLabel: Record<EventResourceEnum, string> = {
   [EventResourceEnum.MEMBERS]: 'Socios',
   [EventResourceEnum.MOVEMENTS]: 'Movimientos',
   [EventResourceEnum.PAYMENTS]: 'Pagos',
+  [EventResourceEnum.PRICES]: 'Precios',
   [EventResourceEnum.SYSTEM]: 'Sistema',
 };
 

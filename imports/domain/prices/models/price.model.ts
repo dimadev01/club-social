@@ -36,4 +36,8 @@ export class Price extends Model implements IPrice {
   public get dueCategory(): DueCategoryEnum {
     return this._dueCategory;
   }
+
+  public set dueCategory(value: DueCategoryEnum) {
+    this._dueCategory = value;
+  }
 }
