@@ -24,6 +24,10 @@ export class PriceCategory extends Model implements IPriceCategory {
     return this._amount;
   }
 
+  public set amount(value: Money) {
+    this._amount = value;
+  }
+
   public get memberCategory(): MemberCategoryEnum {
     return this._category;
   }
