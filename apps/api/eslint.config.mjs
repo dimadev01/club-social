@@ -1,6 +1,6 @@
 // import eslint from '@eslint/js';
 // import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-// import globals from 'globals';
+import globals from 'globals';
 // import tseslint from 'typescript-eslint';
 
 // import { defineConfig, globalIgnores } from 'eslint/config';
@@ -36,5 +36,18 @@
 // );
 
 import config from '@club-social/eslint-config/nest';
+import { defineConfig } from 'eslint/config';
 
-export default config;
+export default defineConfig(config, {
+  languageOptions: {
+    globals: {
+      ...globals.node,
+      ...globals.jest,
+    },
+    sourceType: 'module',
+    parserOptions: {
+      projectService: true,
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+});
