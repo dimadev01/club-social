@@ -1,0 +1,41 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Api",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/api",
+      "type": "node",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start:dev"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Web",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/web",
+      "type": "node",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Shared",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "type": "node",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:shared"],
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Api & Web",
+      "configurations": ["Api", "Web", "Shared"]
+    }
+  ]
+}

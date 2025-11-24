@@ -13,11 +13,14 @@
     ".env.dev",
     ".env.production",
     ".env.example",
-    ".husky"
+    ".husky",
+    "tsconfig.json"
   ],
   "dictionaryDefinitions": [],
   "dictionaries": [],
-  "words": [],
+  "words": [
+    "nestjs"
+  ],
   "ignoreWords": [],
   "import": [],
   "language": "en,es"
