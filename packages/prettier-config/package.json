@@ -5,10 +5,12 @@
   "license": "UNLICENSED",
   "author": "Dmitriy Mironov",
   "type": "module",
-  "exports": {
-    ".": "./prettier.config.mjs"
-  },
+  "exports": "./index.mjs",
   "devDependencies": {
+    "prettier": "^3.6.2",
     "prettier-plugin-packagejson": "^2.5.19"
+  },
+  "peerDependencies": {
+    "prettier": "^3.6.2"
   }
 }

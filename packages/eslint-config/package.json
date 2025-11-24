@@ -3,5 +3,21 @@
   "version": "0.0.1",
   "private": true,
   "license": "UNLICENSED",
-  "author": "Dmitriy Mironov"
+  "author": "Dmitriy Mironov",
+  "exports": {
+    "./nest": "./nest.mjs"
+  },
+  "devDependencies": {
+    "@club-social/prettier-config": "*",
+    "@eslint/js": "^9.39.1",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.47.0"
+  },
+  "dependencies": {
+    "eslint-plugin-unused-imports": "^4.3.0"
+  }
 }
