@@ -1,0 +1,14 @@
+{
+  "name": "@club-social/prettier-config",
+  "version": "0.0.1",
+  "private": true,
+  "license": "UNLICENSED",
+  "author": "Dmitriy Mironov",
+  "type": "module",
+  "exports": {
+    ".": "./prettier.config.mjs"
+  },
+  "devDependencies": {
+    "prettier-plugin-packagejson": "^2.5.19"
+  }
+}
