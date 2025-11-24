@@ -1,3 +1,5 @@
+import { defineConfig } from 'eslint/config';
+
 import config from './eslint.config.mjs';
 
-export default config;
+export default defineConfig(config, {});

@@ -1,53 +1,31 @@
-// import eslint from '@eslint/js';
-// import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import globals from 'globals';
-// import tseslint from 'typescript-eslint';
-
-// import { defineConfig, globalIgnores } from 'eslint/config';
-
-// export default defineConfig(
-//   {
-//     ignores: ['eslint.config.mjs', 'prettier.config.mjs'],
-//   },
-//   eslint.configs.recommended,
-//   ...tseslint.configs.recommendedTypeChecked,
-//   eslintPluginPrettierRecommended,
-//   {
-//     languageOptions: {
-//       globals: {
-//         ...globals.node,
-//         ...globals.jest,
-//       },
-//       sourceType: 'module',
-//       parserOptions: {
-//         projectService: true,
-//         tsconfigRootDir: import.meta.dirname,
-//       },
-//     },
-//   },
-//   {
-//     rules: {
-//       '@typescript-eslint/no-explicit-any': 'off',
-//       '@typescript-eslint/no-floating-promises': 'warn',
-//       '@typescript-eslint/no-unsafe-argument': 'warn',
-//       'prettier/prettier': ['error', { endOfLine: 'auto' }],
-//     },
-//   },
-// );
-
 import config from '@club-social/eslint-config/nest';
 import { defineConfig } from 'eslint/config';
+import globals from 'globals';
 
-export default defineConfig(config, {
-  languageOptions: {
-    globals: {
-      ...globals.node,
-      ...globals.jest,
-    },
-    sourceType: 'module',
-    parserOptions: {
-      projectService: true,
-      tsconfigRootDir: import.meta.dirname,
+export default defineConfig(
+  config,
+  {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: ['*.mjs'],
+        },
+        tsconfigRootDir: import.meta.dirname,
+      },
+      sourceType: 'module',
     },
   },
-});
+  {
+    rules: {
+      /**
+       * We disable this rule because the Modules in NestJS use
+       * this pattern of empty classes
+       */
+      '@typescript-eslint/no-extraneous-class': 'off',
+    },
+  },
+);

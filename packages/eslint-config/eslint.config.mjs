@@ -1,23 +1,23 @@
-// @ts-check
-
 import eslint from '@eslint/js';
+import stylistic from '@stylistic/eslint-plugin';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
+import perfectionist from 'eslint-plugin-perfectionist';
+import unusedImports from 'eslint-plugin-unused-imports';
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import unusedImports from 'eslint-plugin-unused-imports';
-
 export default defineConfig(
-  eslint.configs.recommended,
-  tseslint.configs.recommended,
-  eslintPluginPrettierRecommended,
   {
-    languageOptions: {
-      parserOptions: {
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
+    ignores: ['*.mjs'],
   },
+  eslint.configs.recommended,
+  tseslint.configs.strict,
+  tseslint.configs.stylistic,
+  perfectionist.configs['recommended-natural'],
+  stylistic.configs.customize({
+    semi: true,
+  }),
+  eslintConfigPrettier,
   {
     plugins: {
       'unused-imports': unusedImports,
@@ -28,25 +28,66 @@ export default defineConfig(
       'unused-imports/no-unused-vars': [
         'error',
         {
-          vars: 'all',
-          varsIgnorePattern: '^_',
           args: 'after-used',
           argsIgnorePattern: '^_',
+          vars: 'all',
+          varsIgnorePattern: '^_',
         },
       ],
     },
   },
-  // {
-  //   languageOptions: {
-  //     globals: {
-  //       ...globals.node,
-  //       ...globals.jest,
-  //     },
-  //     sourceType: 'module',
-  //     parserOptions: {
-  //       projectService: true,
-  //       tsconfigRootDir: import.meta.dirname,
-  //     },
-  //   },
-  // },
+  {
+    rules: {
+      '@stylistic/padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: '*', next: 'return' },
+        { blankLine: 'always', prev: 'directive', next: '*' },
+        { blankLine: 'always', prev: '*', next: 'function' },
+        { blankLine: 'always', prev: 'function', next: '*' },
+        { blankLine: 'always', prev: 'block-like', next: '*' },
+        { blankLine: 'always', prev: '*', next: 'block-like' },
+      ],
+
+      // TS/ES best practices
+      // Import sorting
+      // 'perfectionist/sort-imports': [
+      //   'error',
+      //   {
+      //     groups: [
+      //       'type',
+      //       ['builtin', 'external'],
+      //       'internal-type',
+      //       'internal',
+      //       'alias',
+      //       ['parent-type', 'sibling-type', 'index-type'],
+      //       ['parent', 'sibling', 'index'],
+      //       'object',
+      //       'unknown',
+      //     ],
+      //     customGroups: {
+      //       value: {
+      //         alias: [
+      //           '^@/application/',
+      //           '^@/domain/',
+      //           '^@/infrastructure/',
+      //           '^@/presentation/',
+      //           '^@/shared/',
+      //           '^@/features/',
+      //           '^@/lib/',
+      //           '^@/hooks/',
+      //           '^@/components/',
+      //           '^@/pages/',
+      //           '^@/utils/',
+      //           '^@/types/',
+      //           '^@/styles/',
+      //           '^@/assets/',
+      //           '^@/constants/',
+      //           '^@/',
+      //         ],
+      //       },
+      //     },
+      //   },
+      // ],
+    },
+  },
 );
