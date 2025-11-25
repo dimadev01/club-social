@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 
 import { CreateUserUseCase } from '@/application/users/create-user/create-user.use-case';
+import { DomainEventPublisher } from '@/domain/shared/events/domain-event-publisher';
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UserEntity } from '@/domain/users/user.entity';
 import {
@@ -27,6 +28,7 @@ export class UsersController extends BaseController {
     @Inject(USERS_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
     private readonly createUserUseCase: CreateUserUseCase,
+    private readonly domainEventPublisher: DomainEventPublisher,
   ) {
     super();
   }
