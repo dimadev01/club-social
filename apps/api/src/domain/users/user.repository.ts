@@ -6,6 +6,8 @@ import {
 import { Email } from '../shared/value-objects/email/email.vo';
 import { UserEntity } from './user.entity';
 
+export const USERS_REPOSITORY_PROVIDER = Symbol('UsersRepository');
+
 export interface UserRepository
   extends PaginatedRepository<UserEntity>,
     ReadableRepository<UserEntity>,

@@ -19,7 +19,7 @@ const config: runtime.GetPrismaClientConfig = {
   engineVersion: '0c19ccc313cf9911a90d99d2ac2eb0280c76c513',
   activeProvider: 'postgresql',
   inlineSchema:
-    'generator client {\n  provider = "prisma-client"\n  output   = "generated"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nmodel User {\n  id        String @id\n  email     String @unique\n  firstName String\n  lastName  String\n\n  createdAt DateTime\n  createdBy String\n  deletedAt DateTime?\n  deletedBy String?\n  isDeleted Boolean\n  updatedAt DateTime\n  updatedBy String\n\n  @@index([email])\n}\n',
+    'generator client {\n  provider     = "prisma-client"\n  output       = "./generated"\n  moduleFormat = "cjs"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nmodel User {\n  id        String @id\n  email     String @unique\n  firstName String\n  lastName  String\n\n  createdAt DateTime\n  createdBy String\n  deletedAt DateTime?\n  deletedBy String?\n  isDeleted Boolean\n  updatedAt DateTime\n  updatedBy String\n\n  @@index([email])\n}\n',
   runtimeDataModel: {
     models: {},
     enums: {},
@@ -41,11 +41,11 @@ async function decodeBase64AsWasm(
 
 config.compilerWasm = {
   getRuntime: async () =>
-    await import('@prisma/client/runtime/query_compiler_bg.postgresql.mjs'),
+    await import('@prisma/client/runtime/query_compiler_bg.postgresql.js'),
 
   getQueryCompilerWasmModule: async () => {
     const { wasm } = await import(
-      '@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.mjs'
+      '@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.js'
     );
     return await decodeBase64AsWasm(wasm);
   },
