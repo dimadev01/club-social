@@ -19,8 +19,11 @@
   "dictionaryDefinitions": [],
   "dictionaries": [],
   "words": [
+    "datasource",
     "nestjs",
-    "neverthrow"
+    "neverthrow",
+    "postgresql",
+    "treeify"
   ],
   "ignoreWords": [],
   "import": [],
