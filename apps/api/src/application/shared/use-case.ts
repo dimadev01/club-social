@@ -1,4 +1,4 @@
-import { Result } from '@/domain/shared/result';
+import type { Result } from '@/domain/shared/result';
 
 export abstract class UseCase<
   TResponse = unknown,

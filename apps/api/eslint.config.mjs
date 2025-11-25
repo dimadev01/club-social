@@ -29,6 +29,7 @@ export default defineConfig(
        * this pattern of empty classes
        */
       '@typescript-eslint/no-extraneous-class': 'off',
+      '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
 );

@@ -1,9 +1,11 @@
-import { UseCase } from '@/application/shared/use-case';
-import { err, ok, Result } from '@/domain/shared/result';
-import { UserEntity } from '@/domain/users/user.entity';
-import { UserRepository } from '@/domain/users/user.repository';
+import type { Result } from '@/domain/shared/result';
+import type { UserRepository } from '@/domain/users/user.repository';
 
-import { CreateUserParams } from './create-user.params';
+import { UseCase } from '@/application/shared/use-case';
+import { err, ok } from '@/domain/shared/result';
+import { UserEntity } from '@/domain/users/user.entity';
+
+import type { CreateUserParams } from './create-user.params';
 
 export class CreateUserUseCase extends UseCase<UserEntity> {
   public constructor(private readonly userRepository: UserRepository) {

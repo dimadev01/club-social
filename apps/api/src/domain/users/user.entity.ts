@@ -2,9 +2,11 @@ import type { BaseEntityProps } from '@/domain/shared/base.entity';
 
 import { BaseEntity } from '@/domain/shared/base.entity';
 
+import type { Result } from '../shared/result';
+import type { Email } from '../shared/value-objects/email/email.vo';
+
 import { Guard } from '../shared/guards';
-import { ok, Result } from '../shared/result';
-import { Email } from '../shared/value-objects/email/email.vo';
+import { ok } from '../shared/result';
 
 interface UserProps {
   email: Email;

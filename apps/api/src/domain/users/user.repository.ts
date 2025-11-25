@@ -1,10 +1,10 @@
-import {
+import type {
   PaginatedRepository,
   ReadableRepository,
   WritableRepository,
 } from '../shared/base.repository';
-import { Email } from '../shared/value-objects/email/email.vo';
-import { UserEntity } from './user.entity';
+import type { Email } from '../shared/value-objects/email/email.vo';
+import type { UserEntity } from './user.entity';
 
 export const USERS_REPOSITORY_PROVIDER = Symbol('UsersRepository');
 

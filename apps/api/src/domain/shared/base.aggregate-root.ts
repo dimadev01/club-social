@@ -1,4 +1,5 @@
-import { DomainEvent } from './base.domain-event';
+import type { DomainEvent } from './base.domain-event';
+
 import { UniqueId } from './value-objects/unique-id/unique-id.vo';
 
 export abstract class AggregateRoot<T> {

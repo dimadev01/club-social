@@ -1,10 +1,11 @@
+import type { UserModel } from '@/infrastructure/prisma/generated/models';
+
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/domain/users/user.entity';
-import { Prisma } from '@/infrastructure/prisma/generated/client';
 
 export abstract class UserMapper {
-  public static toDomain(record: Prisma.UserModel): UserEntity {
+  public static toDomain(record: UserModel): UserEntity {
     return UserEntity.fromPersistence(
       {
         email: Email.fromPersistence({ value: record.email }),
@@ -24,7 +25,7 @@ export abstract class UserMapper {
     );
   }
 
-  public static toPersistence(user: UserEntity): Prisma.UserModel {
+  public static toPersistence(user: UserEntity): UserModel {
     return {
       createdAt: user.createdAt,
       createdBy: user.createdBy,

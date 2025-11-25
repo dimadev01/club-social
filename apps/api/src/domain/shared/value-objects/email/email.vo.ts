@@ -1,6 +1,8 @@
+import type { Result } from '../../result';
+
 import { ApplicationError } from '../../errors/application.error';
 import { Guard } from '../../guards';
-import { err, ok, Result } from '../../result';
+import { err, ok } from '../../result';
 import { ValueObject } from '../value-object.base';
 
 interface Props {

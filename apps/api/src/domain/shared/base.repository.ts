@@ -1,6 +1,5 @@
+import type { PaginatedRequestParams, PaginatedResponse } from './types';
 import type { UniqueId } from './value-objects/unique-id/unique-id.vo';
-
-import { PaginatedRequestParams, PaginatedResponse } from './types';
 
 export interface PaginatedRepository<T> {
   findPaginated(params: PaginatedRequestParams): Promise<PaginatedResponse<T>>;
