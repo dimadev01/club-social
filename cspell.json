@@ -21,6 +21,8 @@
   "words": [
     "datasource",
     "dotenvx",
+    "logtail",
+    "Logtail",
     "nestjs",
     "neverthrow",
     "postgresql",

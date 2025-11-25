@@ -18,13 +18,22 @@ export class ConfigService {
   public readonly port: number;
 
   public constructor(private readonly config: NestConfigService<ConfigTypes>) {
+    this.appDisplayName = 'Club Social API';
+    this.appName = 'club-social';
+
     this.environment =
       this.config.getOrThrow<ConfigTypes['ENVIRONMENT']>('ENVIRONMENT');
+
     this.isDev = this.environment === 'development';
+
     this.isLocal = this.environment === 'local';
+
     this.isProd = this.environment === 'production';
+
     this.databaseUrl = this.config.getOrThrow<string>('DATABASE_URL');
+
     this.nodeEnv = this.config.getOrThrow<ConfigTypes['NODE_ENV']>('NODE_ENV');
+
     this.port = this.config.getOrThrow<number>('PORT');
   }
 }

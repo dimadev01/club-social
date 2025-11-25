@@ -7,8 +7,11 @@ import {
   Post,
 } from '@nestjs/common';
 
+import {
+  APP_LOGGER_PROVIDER,
+  type AppLogger,
+} from '@/application/shared/logger/logger';
 import { CreateUserUseCase } from '@/application/users/create-user/create-user.use-case';
-import { DomainEventPublisher } from '@/domain/shared/events/domain-event-publisher';
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UserEntity } from '@/domain/users/user.entity';
 import {
@@ -25,12 +28,13 @@ import { UserDto } from './dto/user.dto';
 @Controller('users')
 export class UsersController extends BaseController {
   public constructor(
+    @Inject(APP_LOGGER_PROVIDER)
+    protected readonly logger: AppLogger,
     @Inject(USERS_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
     private readonly createUserUseCase: CreateUserUseCase,
-    private readonly domainEventPublisher: DomainEventPublisher,
   ) {
-    super();
+    super(logger);
   }
 
   @Post()
@@ -55,6 +59,10 @@ export class UsersController extends BaseController {
   @ApiPaginatedResponse(UserDto)
   @Get('paginated')
   public async getPaginated(): Promise<PaginatedDto<UserDto>> {
+    this.logger.info({
+      message: 'Getting paginated users',
+    });
+
     const users = await this.userRepository.findPaginated({
       page: 1,
       pageSize: 10,
