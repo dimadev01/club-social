@@ -11,7 +11,7 @@ import { UserDto } from './dto/user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(
+  public constructor(
     @Inject(USERS_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
   ) {}

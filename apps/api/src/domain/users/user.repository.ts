@@ -2,7 +2,7 @@ import type {
   PaginatedRepository,
   ReadableRepository,
   WritableRepository,
-} from '../shared/base.repository';
+} from '../shared/repository';
 import type { Email } from '../shared/value-objects/email/email.vo';
 import type { UserEntity } from './user.entity';
 

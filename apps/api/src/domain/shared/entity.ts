@@ -1,6 +1,6 @@
 import type { UniqueId } from './value-objects/unique-id/unique-id.vo';
 
-import { AggregateRoot } from './base.aggregate-root';
+import { AggregateRoot } from './aggregate-root';
 
 export interface BaseEntityProps {
   createdAt: Date | null;
@@ -13,7 +13,7 @@ export interface BaseEntityProps {
   updatedBy: null | string;
 }
 
-export abstract class BaseEntity<T> extends AggregateRoot<T> {
+export abstract class Entity<T> extends AggregateRoot<T> {
   public get createdAt(): Date {
     return new Date(this._createdAt);
   }

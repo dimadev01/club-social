@@ -1,4 +1,4 @@
-import type { DomainEvent } from './base.domain-event';
+import type { DomainEventInterface } from './domain-event';
 
 import { UniqueId } from './value-objects/unique-id/unique-id.vo';
 
@@ -9,7 +9,7 @@ export abstract class AggregateRoot<T> {
 
   protected readonly _id: UniqueId;
 
-  private _events: DomainEvent[] = [];
+  private _events: DomainEventInterface[] = [];
 
   public constructor(id?: UniqueId) {
     this._id = id ?? UniqueId.generate();
@@ -27,7 +27,7 @@ export abstract class AggregateRoot<T> {
     return this._id.equals(entity.id);
   }
 
-  public pullEvents(): DomainEvent[] {
+  public pullEvents(): DomainEventInterface[] {
     const events = [...this._events];
 
     this.clearEvents();
@@ -35,7 +35,7 @@ export abstract class AggregateRoot<T> {
     return events;
   }
 
-  protected addEvent(event: DomainEvent): void {
+  protected addEvent(event: DomainEventInterface): void {
     this._events.push(event);
   }
 }

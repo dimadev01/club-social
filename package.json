@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "build": "turbo build",
+    "check": "turbo check-types test lint format",
     "check-types": "turbo check-types",
     "commitlint": "commitlint --edit",
     "format": "turbo format",

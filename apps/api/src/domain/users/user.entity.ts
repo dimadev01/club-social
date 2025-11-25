@@ -1,6 +1,6 @@
-import type { BaseEntityProps } from '@/domain/shared/base.entity';
+import type { BaseEntityProps } from '@/domain/shared/entity';
 
-import { BaseEntity } from '@/domain/shared/base.entity';
+import { Entity } from '@/domain/shared/entity';
 
 import type { Result } from '../shared/result';
 import type { Email } from '../shared/value-objects/email/email.vo';
@@ -14,7 +14,7 @@ interface UserProps {
   lastName: string;
 }
 
-export class UserEntity extends BaseEntity<UserEntity> {
+export class UserEntity extends Entity<UserEntity> {
   public get email(): Email {
     return this._email;
   }
