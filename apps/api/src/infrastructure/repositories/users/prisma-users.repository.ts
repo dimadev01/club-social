@@ -8,6 +8,10 @@ import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/domain/users/user.entity';
 import { UserRepository } from '@/domain/users/user.repository';
+import {
+  UserFindManyArgs,
+  UserWhereInput,
+} from '@/infrastructure/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/prisma/prisma.service';
 
 import { UserMapper } from './user.mapper';
@@ -42,18 +46,26 @@ export class PrismaUsersRepository implements UserRepository {
     return UserMapper.toDomain(user);
   }
 
-  public findPaginated(
+  public async findPaginated(
     params: PaginatedRequestParams,
   ): Promise<PaginatedResponse<UserEntity>> {
-    return Promise.resolve({
-      data: [],
-      meta: {
-        page: params.page,
-        pageSize: params.pageSize,
-        total: 0,
-        totalPages: 0,
-      },
-    });
+    const where: UserWhereInput = {};
+
+    const query: UserFindManyArgs = {
+      skip: (params.page - 1) * params.pageSize,
+      take: params.pageSize,
+      where,
+    };
+
+    const [users, total] = await Promise.all([
+      this.prismaService.user.findMany(query),
+      this.prismaService.user.count({ where }),
+    ]);
+
+    return {
+      data: users.map((user) => UserMapper.toDomain(user)),
+      total,
+    };
   }
 
   public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {

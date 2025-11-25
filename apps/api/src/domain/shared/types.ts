@@ -11,14 +11,7 @@ export interface PaginatedRequestSortParams {
 
 export interface PaginatedResponse<T> {
   data: T[];
-  meta: PaginatedResponseMeta;
-}
-
-export interface PaginatedResponseMeta {
-  page: number;
-  pageSize: number;
   total: number;
-  totalPages: number;
 }
 
 export type SortOrder = 'asc' | 'desc';

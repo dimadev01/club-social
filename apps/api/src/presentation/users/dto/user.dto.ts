@@ -1,6 +1,6 @@
-export interface UserDto {
-  email: string;
-  firstName: string;
-  id: string;
-  lastName: string;
+export class UserDto {
+  public email: string;
+  public firstName: string;
+  public id: string;
+  public lastName: string;
 }
