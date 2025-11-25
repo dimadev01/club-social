@@ -19,7 +19,16 @@ export class ConfigService {
 
   public constructor(private readonly config: NestConfigService<ConfigTypes>) {
     this.appDisplayName = 'Club Social API';
+
     this.appName = 'club-social';
+
+    this.betterStackEndpoint = this.config.getOrThrow<string>(
+      'BETTER_STACK_ENDPOINT',
+    );
+
+    this.betterStackSourceToken = this.config.getOrThrow<string>(
+      'BETTER_STACK_SOURCE_TOKEN',
+    );
 
     this.environment =
       this.config.getOrThrow<ConfigTypes['ENVIRONMENT']>('ENVIRONMENT');
