@@ -1,6 +1,6 @@
 import { Guard } from '../guards';
 
-export class ErrorMapper {
+export abstract class ErrorMapper {
   public static unknownToError(value: unknown): Error {
     if (Guard.isError(value)) {
       return value;

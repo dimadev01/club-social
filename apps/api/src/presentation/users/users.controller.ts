@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Inject } from '@nestjs/common';
+import { Controller, Get, Inject } from '@nestjs/common';
 
 import { PaginatedResponse } from '@/domain/shared/types';
 import { UserEntity } from '@/domain/users/user.entity';
@@ -17,8 +17,7 @@ export class UsersController {
   ) {}
 
   @Get('paginated')
-  @HttpCode(HttpStatus.OK)
-  public async getUsersPaginated(): Promise<PaginatedResponse<UserDto>> {
+  public async getPaginated(): Promise<PaginatedResponse<UserDto>> {
     const users = await this.userRepository.findPaginated({
       page: 1,
       pageSize: 10,
