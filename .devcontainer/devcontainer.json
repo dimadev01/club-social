@@ -7,7 +7,9 @@
   "dockerComposeFile": "compose.yaml",
   "postCreateCommand": ".devcontainer/post-create.sh",
   "forwardPorts": [],
-  "features": {},
+  "features": {
+    "ghcr.io/guiyomh/features/vim:0": {}
+  },
   "mounts": [
     {
       "source": "${localEnv:HOME}/.ssh",

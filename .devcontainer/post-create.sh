@@ -23,6 +23,8 @@ alias gcm='git checkout main'
 alias gplom='git pull origin main'
 EOF
 
+git config --global core.editor "vim"
+
 if [ -z "$(git config --local --get user.name)" ]; then
   echo "Please enter your Git name:"
   read git_name
