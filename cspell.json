@@ -29,6 +29,7 @@
     "postgresql",
     "supabase",
     "Supabase",
+    "tailwindcss",
     "treeify"
   ],
   "ignoreWords": [],
