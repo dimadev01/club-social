@@ -1,3 +1,4 @@
+import './sentry';
 import { HttpStatus, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -14,19 +15,8 @@ async function bootstrap() {
   });
 
   app.set('query parser', 'extended');
-
   app.enableCors();
-
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
-
-  // app.useGlobalFilters(
-  //   new AllExceptionsFilter(
-  //     app.get(HttpAdapterHost),
-  //     app.get(TraceService),
-  //     app.get(ConfigService),
-  //     await app.resolve(AppLoggerService),
-  //   ),
-  // );
 
   app.useGlobalPipes(
     new ValidationPipe({

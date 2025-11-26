@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
+import { SentryModule } from '@sentry/nestjs/setup';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -6,11 +8,13 @@ import { ConfigModule } from './infrastructure/config/config.module';
 import { EventsModule } from './infrastructure/events/events.module';
 import { LoggerModule } from './infrastructure/logger/logger.module';
 import { TraceModule } from './infrastructure/trace/trace.module';
+import { AllExceptionsFilter } from './presentation/shared/filters/all-exceptions.filter';
 import { UsersModule } from './presentation/users/users.module';
 
 @Module({
   controllers: [AppController],
   imports: [
+    SentryModule.forRoot(),
     ConfigModule,
     EventsModule,
     TraceModule,
@@ -21,6 +25,12 @@ import { UsersModule } from './presentation/users/users.module';
      */
     UsersModule,
   ],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}
