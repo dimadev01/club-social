@@ -26,6 +26,8 @@
     "nestjs",
     "neverthrow",
     "postgresql",
+    "supabase",
+    "Supabase",
     "treeify"
   ],
   "ignoreWords": [],

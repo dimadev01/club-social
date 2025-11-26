@@ -14,7 +14,7 @@ import {
 } from '@/infrastructure/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/prisma/prisma.service';
 
-import { UserMapper } from './user.mapper';
+import { PrismaUserMapper } from './prisma-user.mapper';
 
 @Injectable()
 export class PrismaUsersRepository implements UserRepository {
@@ -35,7 +35,7 @@ export class PrismaUsersRepository implements UserRepository {
       return null;
     }
 
-    return UserMapper.toDomain(user);
+    return PrismaUserMapper.toDomain(user);
   }
 
   public async findOneByIdOrThrow(id: UniqueId): Promise<UserEntity> {
@@ -43,7 +43,7 @@ export class PrismaUsersRepository implements UserRepository {
       where: { id: id.value },
     });
 
-    return UserMapper.toDomain(user);
+    return PrismaUserMapper.toDomain(user);
   }
 
   public async findPaginated(
@@ -63,7 +63,7 @@ export class PrismaUsersRepository implements UserRepository {
     ]);
 
     return {
-      data: users.map((user) => UserMapper.toDomain(user)),
+      data: users.map((user) => PrismaUserMapper.toDomain(user)),
       total,
     };
   }
@@ -77,16 +77,16 @@ export class PrismaUsersRepository implements UserRepository {
       return null;
     }
 
-    return UserMapper.toDomain(user);
+    return PrismaUserMapper.toDomain(user);
   }
 
   public async save(entity: UserEntity): Promise<UserEntity> {
     const user = await this.prismaService.user.upsert({
-      create: UserMapper.toPersistence(entity),
-      update: UserMapper.toPersistence(entity),
+      create: PrismaUserMapper.toPersistence(entity),
+      update: PrismaUserMapper.toPersistence(entity),
       where: { id: entity.id.value },
     });
 
-    return UserMapper.toDomain(user);
+    return PrismaUserMapper.toDomain(user);
   }
 }

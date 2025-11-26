@@ -4,7 +4,7 @@ import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/domain/users/user.entity';
 
-export abstract class UserMapper {
+export abstract class PrismaUserMapper {
   public static toDomain(record: UserModel): UserEntity {
     return UserEntity.fromPersistence(
       {

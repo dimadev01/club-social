@@ -6,6 +6,9 @@ import tseslint from 'typescript-eslint';
 export default defineConfig(
   config,
   {
+    ignores: ['src/infrastructure/supabase/supabase.types.ts'],
+  },
+  {
     languageOptions: {
       globals: {
         ...globals.node,
