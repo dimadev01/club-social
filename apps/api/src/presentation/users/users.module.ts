@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { CreateUserUseCase } from '@/application/users/create-user/create-user.use-case';
 import { USERS_REPOSITORY_PROVIDER } from '@/domain/users/user.repository';
 import { DatabaseModule } from '@/infrastructure/database/database.module';
-import { PrismaUsersRepository } from '@/infrastructure/repositories/users/prisma-users.repository';
+import { SupabaseUsersRepository } from '@/infrastructure/repositories/users/supabase-users.repository';
 
 import { UsersController } from './users.controller';
 
@@ -13,7 +13,8 @@ import { UsersController } from './users.controller';
   providers: [
     {
       provide: USERS_REPOSITORY_PROVIDER,
-      useClass: PrismaUsersRepository,
+      // useClass: PrismaUsersRepository,
+      useClass: SupabaseUsersRepository,
     },
     CreateUserUseCase,
   ],

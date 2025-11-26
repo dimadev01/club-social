@@ -1,15 +1,16 @@
 {
   "name": "@club-social/web",
-  "private": true,
   "version": "0.0.1",
-  "type": "module",
+  "private": true,
   "license": "UNLICENSED",
   "author": "Dmitriy Mironov",
+  "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
     "check-types": "tsc --noEmit",
+    "dev": "vite",
+    "format": "prettier --write .",
+    "lint": "eslint . --fix",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -18,6 +19,8 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@club-social/eslint-config": "*",
+    "@club-social/prettier-config": "*",
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",

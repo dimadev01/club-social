@@ -14,7 +14,8 @@
     ".env.production",
     ".env.example",
     ".husky",
-    "tsconfig.json"
+    "tsconfig.json",
+    "config.toml"
   ],
   "dictionaryDefinitions": [],
   "dictionaries": [],

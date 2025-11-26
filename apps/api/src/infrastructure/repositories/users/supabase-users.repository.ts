@@ -1,104 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-import { EntityNotFoundError } from '@/domain/shared/errors/entity-not-found.error';
 import {
-  PaginatedRequestParams,
-  PaginatedResponse,
-} from '@/domain/shared/types';
-import { Email } from '@/domain/shared/value-objects/email/email.vo';
-import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
+  APP_LOGGER_PROVIDER,
+  type AppLogger,
+} from '@/application/shared/logger/logger';
 import { UserEntity } from '@/domain/users/user.entity';
-import { UserInterface } from '@/domain/users/user.interface';
-import { UserRepository } from '@/domain/users/user.repository';
 import { ConfigService } from '@/infrastructure/config/config.service';
-
-import { SupabaseUserMapper } from './supabase-user.mapper';
+import { Database } from '@/infrastructure/supabase/supabase.types';
 
 @Injectable()
-export class SupabaseUsersRepository implements UserRepository {
-  private readonly supabase: SupabaseClient;
+export class SupabaseUsersRepository {
+  private readonly supabase: SupabaseClient<Database>;
 
-  public constructor(private readonly configService: ConfigService) {
-    const client = createClient(
+  public constructor(
+    @Inject(APP_LOGGER_PROVIDER)
+    private readonly logger: AppLogger,
+    private readonly configService: ConfigService,
+  ) {
+    this.supabase = createClient<Database>(
       this.configService.supabaseUrl,
       this.configService.supabaseKey,
     );
-
-    this.supabase = client;
-  }
-
-  public async delete(entity: UserEntity): Promise<void> {
-    await this.supabase.from('users').delete().eq('id', entity.id.value);
-  }
-
-  public async findOneById(id: UniqueId): Promise<null | UserEntity> {
-    const { data: user, error } = await this.supabase
-      .from('users')
-      .select('*')
-      .eq('id', id.value)
-      .single<null | UserInterface>();
-
-    if (error) {
-      throw error;
-    }
-
-    return user ? SupabaseUserMapper.toDomain(user) : null;
-  }
-
-  public async findOneByIdOrThrow(id: UniqueId): Promise<UserEntity> {
-    const { data: user, error } = await this.supabase
-      .from('users')
-      .select('*')
-      .eq('id', id.value)
-      .single<null | UserInterface>();
-
-    if (error) {
-      throw error;
-    }
-
-    if (!user) {
-      throw new EntityNotFoundError(UserEntity, id.value);
-    }
-
-    return SupabaseUserMapper.toDomain(user);
-  }
-
-  public async findPaginated(
-    params: PaginatedRequestParams,
-  ): Promise<PaginatedResponse<UserEntity>> {
-    console.log('findPaginated', params);
-
-    return Promise.resolve({
-      data: [],
-      total: 0,
-    });
-  }
-
-  public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {
-    const { data: user, error } = await this.supabase
-      .from('users')
-      .select('*')
-      .eq('email', email.value)
-      .single<null | UserInterface>();
-
-    if (error) {
-      throw error;
-    }
-
-    return user ? SupabaseUserMapper.toDomain(user) : null;
   }
 
   public async save(entity: UserEntity): Promise<UserEntity> {
-    const { error } = await this.supabase
-      .from('users')
-      .upsert(SupabaseUserMapper.toPersistence(entity), {
-        onConflict: 'id',
-      });
+    const { data, error } = await this.supabase.auth.admin.createUser({
+      email: entity.email.value,
+      email_confirm: true,
+      user_metadata: {
+        first_name: entity.firstName,
+        last_name: entity.lastName,
+      },
+    });
 
     if (error) {
       throw error;
     }
+
+    this.logger.info({
+      data,
+      message: 'User created',
+    });
 
     return entity;
   }
