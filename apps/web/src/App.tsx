@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
 import { AppContext } from './context/app.context';
-import { Home } from './Home';
+import { Home } from './HomePage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { LogoutPage } from './pages/auth/LogoutPage';
 import { ProtectedRoute } from './ProtectedRoute';
