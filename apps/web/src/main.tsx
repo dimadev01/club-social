@@ -1,4 +1,5 @@
 import './index.css';
+import { MantineProvider } from '@mantine/core';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -12,6 +13,8 @@ if (!root) {
 
 createRoot(root).render(
   <StrictMode>
-    <App />
+    <MantineProvider>
+      <App />
+    </MantineProvider>
   </StrictMode>,
 );

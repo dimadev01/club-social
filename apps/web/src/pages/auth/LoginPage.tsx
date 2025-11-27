@@ -1,9 +1,11 @@
+import { Center } from '@mantine/core';
+
 import { LoginForm } from '@/components/login-form';
 
 export function LoginPage() {
   return (
-    <div className="mx-auto max-w-sm">
+    <Center>
       <LoginForm />
-    </div>
+    </Center>
   );
 }
