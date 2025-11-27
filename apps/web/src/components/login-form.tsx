@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { APP_ROUTES } from '@/app.enum';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -11,17 +12,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { createClient } from '@/src/supabase/client';
+import { supabase } from '@/supabase/client';
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,13 +28,15 @@ export function LoginForm({
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithOtp({
         email,
-        password,
+        options: {
+          emailRedirectTo: APP_ROUTES.ROOT,
+          shouldCreateUser: false,
+        },
       });
+
       if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      location.href = '/protected';
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
@@ -66,34 +67,10 @@ export function LoginForm({
                   value={email}
                 />
               </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <a
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    href="/forgot-password"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input
-                  id="password"
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  type="password"
-                  value={password}
-                />
-              </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button className="w-full" disabled={isLoading} type="submit">
                 {isLoading ? 'Logging in...' : 'Login'}
               </Button>
-            </div>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{' '}
-              <a className="underline underline-offset-4" href="/sign-up">
-                Sign up
-              </a>
             </div>
           </form>
         </CardContent>

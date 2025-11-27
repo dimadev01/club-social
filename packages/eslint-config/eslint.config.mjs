@@ -5,6 +5,7 @@ import perfectionist from 'eslint-plugin-perfectionist';
 import unusedImports from 'eslint-plugin-unused-imports';
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
+import { importX } from 'eslint-plugin-import-x';
 
 export default defineConfig(
   {
@@ -13,6 +14,8 @@ export default defineConfig(
   eslint.configs.recommended,
   tseslint.configs.strict,
   tseslint.configs.stylistic,
+  importX.flatConfigs.recommended,
+  importX.flatConfigs.typescript,
   perfectionist.configs['recommended-natural'],
   stylistic.configs.customize({
     semi: true,

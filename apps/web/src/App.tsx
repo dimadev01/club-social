@@ -1,37 +1,36 @@
-import { useState } from 'react';
-
-import reactLogo from './assets/react.svg';
-
-import viteLogo from '/vite.svg';
 import './App.css';
+import { BrowserRouter, Route, Routes } from 'react-router';
 
-function App() {
-  const [count, setCount] = useState(0);
+import { Centered } from './components/Centered';
+import { AppContext } from './context/app.context';
+import { Home } from './Home';
+import { LoginPage } from './pages/auth/LoginPage';
+import { LogoutPage } from './pages/auth/LogoutPage';
+import { ProtectedRoute } from './ProtectedRoute';
+import { PublicRoute } from './PublicRoute';
+import { useSupabaseSession } from './useSupabaseSession';
+
+export function App() {
+  const { isLoading, session } = useSupabaseSession();
+
+  if (isLoading) {
+    return <Centered>Loading...</Centered>;
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img alt="Vite logo" className="logo" src={viteLogo} />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img alt="React logo" className="logo react" src={reactLogo} />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <AppContext.Provider value={{ session }}>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Home />} path="/" />
+            <Route element={<LogoutPage />} path="auth/logout" />
+          </Route>
+
+          <Route element={<PublicRoute />} path="/auth">
+            <Route element={<LoginPage />} path="login" />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AppContext.Provider>
   );
 }
-
-export default App;

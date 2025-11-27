@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { createClient } from '@/src/supabase/client';
+import { supabase } from '@/supabase/client';
 
 export function SignUpForm({
   className,
@@ -25,7 +25,6 @@ export function SignUpForm({
   const [success, setSuccess] = useState(false);
 
   const handleSignUp = async (e: React.FormEvent) => {
-    const supabase = createClient();
     e.preventDefault();
     setError(null);
 
