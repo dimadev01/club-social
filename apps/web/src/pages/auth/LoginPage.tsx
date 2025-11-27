@@ -1,10 +1,9 @@
-import { Center } from '@mantine/core';
-
-import { LoginForm } from '@/components/login-form';
+import { Center } from '@/ui/Center';
+import { LoginForm } from '@/ui/login-form';
 
 export function LoginPage() {
   return (
-    <Center>
+    <Center h="100%" mx="auto" w={400}>
       <LoginForm />
     </Center>
   );

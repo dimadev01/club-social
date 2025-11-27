@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Input } from '@mantine/core';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -42,30 +43,27 @@ export function LoginForm() {
   };
 
   return (
-    <div>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-6">
-          <Controller
-            control={form.control}
-            name="email"
-            render={({ field, fieldState }) => (
-              <input
-                {...field}
-                aria-invalid={fieldState.invalid}
-                autoComplete="on"
-                id={field.name}
-                placeholder="juan@example.com"
-              />
-            )}
+    <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
+      <Controller
+        control={form.control}
+        name="email"
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            aria-invalid={fieldState.invalid}
+            autoComplete="on"
+            id={field.name}
+            placeholder="juan@example.com"
+            w="100%"
           />
+        )}
+      />
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-red-500">{error}</p>}
 
-          <button className="w-full" disabled={isLoading} type="submit">
-            {isLoading ? 'Logging in...' : 'Login'}
-          </button>
-        </div>
-      </form>
-    </div>
+      <Button className="w-full" disabled={isLoading} fullWidth type="submit">
+        {isLoading ? 'Logging in...' : 'Login'}
+      </Button>
+    </form>
   );
 }
