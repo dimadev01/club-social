@@ -2,7 +2,7 @@ import { LoginForm } from '@/components/login-form';
 
 export function LoginPage() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="mx-auto max-w-sm">
       <LoginForm />
     </div>
   );

@@ -1,7 +1,5 @@
-import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
-import { Centered } from './components/Centered';
 import { AppContext } from './context/app.context';
 import { Home } from './Home';
 import { LoginPage } from './pages/auth/LoginPage';
@@ -14,7 +12,7 @@ export function App() {
   const { isLoading, session } = useSupabaseSession();
 
   if (isLoading) {
-    return <Centered>Loading...</Centered>;
+    return <div>Loading...</div>;
   }
 
   return (

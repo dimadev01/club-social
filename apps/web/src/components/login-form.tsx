@@ -1,35 +1,32 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { APP_ROUTES } from '@/app.enum';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
 import { supabase } from '@/supabase/client';
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<'div'>) {
-  const [email, setEmail] = useState('');
+const _schema = z.object({ email: z.email() }).strict();
+
+type FormSchema = z.infer<typeof _schema>;
+
+export function LoginForm() {
+  const form = useForm<FormSchema>({
+    defaultValues: {
+      email: '',
+    },
+    resolver: zodResolver(_schema),
+  });
   const [error, setError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormSchema) => {
     setIsLoading(true);
     setError(null);
 
     try {
       const { error } = await supabase.auth.signInWithOtp({
-        email,
+        email: data.email,
         options: {
           emailRedirectTo: APP_ROUTES.ROOT,
           shouldCreateUser: false,
@@ -45,36 +42,30 @@ export function LoginForm({
   };
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="m@example.com"
-                  required
-                  type="email"
-                  value={email}
-                />
-              </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button className="w-full" disabled={isLoading} type="submit">
-                {isLoading ? 'Logging in...' : 'Login'}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+    <div>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="flex flex-col gap-6">
+          <Controller
+            control={form.control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <input
+                {...field}
+                aria-invalid={fieldState.invalid}
+                autoComplete="on"
+                id={field.name}
+                placeholder="juan@example.com"
+              />
+            )}
+          />
+
+          {error && <p className="text-sm text-red-500">{error}</p>}
+
+          <button className="w-full" disabled={isLoading} type="submit">
+            {isLoading ? 'Logging in...' : 'Login'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

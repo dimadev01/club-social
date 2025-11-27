@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { Centered } from '@/components/Centered';
 import { supabase } from '@/supabase/client';
 
 export function LogoutPage() {
@@ -12,5 +11,5 @@ export function LogoutPage() {
     logout();
   }, []);
 
-  return <Centered>Logging out...</Centered>;
+  return <div>Logging out...</div>;
 }
