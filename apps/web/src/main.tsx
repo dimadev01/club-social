@@ -12,6 +12,20 @@ if (!root) {
 }
 
 const theme = createTheme({
+  colors: {
+    green: [
+      '#effbf2',
+      '#ddf4e4',
+      '#b6e9c4',
+      '#8ddea2',
+      '#6bd585',
+      '#56cf73',
+      '#4acc69',
+      '#3bb458',
+      '#32a04d',
+      '#22883e',
+    ],
+  },
   components: {
     Container: Container.extend({
       defaultProps: {
@@ -19,11 +33,13 @@ const theme = createTheme({
       },
     }),
   },
+  primaryColor: 'green',
+  primaryShade: 9,
 });
 
 createRoot(root).render(
   <StrictMode>
-    <MantineProvider theme={theme}>
+    <MantineProvider defaultColorScheme="auto" theme={theme}>
       <App />
     </MantineProvider>
   </StrictMode>,

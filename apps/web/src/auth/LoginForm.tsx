@@ -37,7 +37,7 @@ export function LoginForm() {
     const { error } = await supabase.auth.signInWithOtp({
       email: data.email,
       options: {
-        emailRedirectTo: APP_ROUTES.ROOT,
+        emailRedirectTo: APP_ROUTES.HOME,
         shouldCreateUser: false,
       },
     });
@@ -48,7 +48,7 @@ export function LoginForm() {
       return;
     }
 
-    setSuccessMessage('Te hemos enviado un link para iniciar sesión');
+    setSuccessMessage('Te enviamos un link para iniciar sesión');
   };
 
   if (successMessage) {

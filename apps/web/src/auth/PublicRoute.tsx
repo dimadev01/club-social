@@ -7,7 +7,7 @@ export function PublicRoute() {
   const { session } = useAppContext();
 
   if (session) {
-    return <Navigate to={APP_ROUTES.ROOT} />;
+    return <Navigate to={APP_ROUTES.HOME} />;
   }
 
   return <Outlet />;

@@ -7,6 +7,7 @@ import { ProtectedRoute } from '@/auth/ProtectedRoute';
 import { PublicRoute } from '@/auth/PublicRoute';
 import { useSupabaseSession } from '@/auth/useSupabaseSession';
 import { Home } from '@/home/HomePage';
+import { MembersPage } from '@/members/MembersPage';
 
 import { AppContext } from './app.context';
 
@@ -27,6 +28,7 @@ export function App() {
         <Routes>
           <Route element={<ProtectedRoute />}>
             <Route element={<Home />} path="/" />
+            <Route element={<MembersPage />} path="/members" />
             <Route element={<LogoutPage />} path="auth/logout" />
           </Route>
 
