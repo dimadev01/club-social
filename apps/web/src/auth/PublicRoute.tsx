@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router';
 
-import { APP_ROUTES } from './app.enum';
-import { useAppContext } from './context/app.context';
+import { useAppContext } from '@/app/app.context';
+import { APP_ROUTES } from '@/app/app.enum';
 
 export function PublicRoute() {
   const { session } = useAppContext();

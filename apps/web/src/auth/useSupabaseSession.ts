@@ -2,7 +2,7 @@ import type { SessionData } from 'react-router';
 
 import { useState } from 'react';
 
-import { supabase } from './supabase/client';
+import { supabase } from '../shared/lib/supabase';
 
 export const useSupabaseSession = () => {
   const [session, setSession] = useState<null | SessionData>(null);

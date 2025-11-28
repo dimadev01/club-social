@@ -1,6 +1,6 @@
 import { Center } from '@mantine/core';
 
-import { LoginForm } from '@/ui/login-form';
+import { LoginForm } from '@/auth/LoginForm';
 
 export function LoginPage() {
   return (

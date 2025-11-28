@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 
-import { APP_ROUTES } from './app.enum';
+import { APP_ROUTES } from '../app/app.enum';
 
 export function Home() {
   return (

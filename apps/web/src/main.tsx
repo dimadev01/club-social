@@ -3,7 +3,7 @@ import { Container, createTheme, MantineProvider } from '@mantine/core';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { App } from './App.tsx';
+import { App } from './app/App';
 
 const root = document.getElementById('root');
 

@@ -1,13 +1,14 @@
 import { Center, Loader } from '@mantine/core';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
-import { AppContext } from './context/app.context';
-import { Home } from './HomePage';
-import { LoginPage } from './pages/auth/LoginPage';
-import { LogoutPage } from './pages/auth/LogoutPage';
-import { ProtectedRoute } from './ProtectedRoute';
-import { PublicRoute } from './PublicRoute';
-import { useSupabaseSession } from './useSupabaseSession';
+import { LoginPage } from '@/auth/LoginPage';
+import { LogoutPage } from '@/auth/LogoutPage';
+import { ProtectedRoute } from '@/auth/ProtectedRoute';
+import { PublicRoute } from '@/auth/PublicRoute';
+import { useSupabaseSession } from '@/auth/useSupabaseSession';
+import { Home } from '@/home/HomePage';
+
+import { AppContext } from './app.context';
 
 export function App() {
   const { isLoading, session } = useSupabaseSession();

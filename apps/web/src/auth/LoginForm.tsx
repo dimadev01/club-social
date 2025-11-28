@@ -12,8 +12,8 @@ import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { useState } from 'react';
 import { z } from 'zod';
 
-import { APP_ROUTES } from '@/app.enum';
-import { supabase } from '@/supabase/client';
+import { APP_ROUTES } from '@/app/app.enum';
+import { supabase } from '@/shared/lib/supabase';
 
 const _schema = z
   .object({ email: z.email({ error: 'Email inválido' }) })
