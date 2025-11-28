@@ -28,8 +28,10 @@
     "nestjs",
     "neverthrow",
     "postgresql",
+    "Signups",
     "supabase",
     "Supabase",
+    "tabler",
     "tailwindcss",
     "treeify"
   ],

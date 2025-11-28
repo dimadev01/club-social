@@ -1,69 +1,117 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Input } from '@mantine/core';
+import {
+  Alert,
+  Button,
+  LoadingOverlay,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { APP_ROUTES } from '@/app.enum';
 import { supabase } from '@/supabase/client';
 
-const _schema = z.object({ email: z.email() }).strict();
+const _schema = z
+  .object({ email: z.email({ error: 'Email inválido' }) })
+  .strict();
 
 type FormSchema = z.infer<typeof _schema>;
 
 export function LoginForm() {
   const form = useForm<FormSchema>({
-    defaultValues: {
+    initialValues: {
       email: '',
     },
-    resolver: zodResolver(_schema),
+    mode: 'uncontrolled',
+    validate: zod4Resolver(_schema),
   });
-  const [error, setError] = useState<null | string>(null);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const [successMessage, setSuccessMessage] = useState<null | string>(null);
+  const [authErrorMessage, setAuthErrorMessage] = useState<null | string>(null);
 
   const onSubmit = async (data: FormSchema) => {
-    setIsLoading(true);
-    setError(null);
+    const { error } = await supabase.auth.signInWithOtp({
+      email: data.email,
+      options: {
+        emailRedirectTo: APP_ROUTES.ROOT,
+        shouldCreateUser: false,
+      },
+    });
 
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email: data.email,
-        options: {
-          emailRedirectTo: APP_ROUTES.ROOT,
-          shouldCreateUser: false,
-        },
-      });
+    if (error && error.message === 'Signups not allowed for otp') {
+      setAuthErrorMessage('No encontramos tu cuenta');
 
-      if (error) throw error;
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An error occurred');
-    } finally {
-      setIsLoading(false);
+      return;
     }
+
+    setSuccessMessage('Te hemos enviado un link para iniciar sesión');
   };
 
+  if (successMessage) {
+    return (
+      <div className="flex-1">
+        <Alert color="green" icon={<IconCheck />} mb="md">
+          <Text>{successMessage}</Text>
+        </Alert>
+
+        <Button
+          onClick={() => {
+            setSuccessMessage(null);
+          }}
+        >
+          Volver
+        </Button>
+      </div>
+    );
+  }
+
+  if (authErrorMessage) {
+    return (
+      <div className="flex-1">
+        <Alert color="red" icon={<IconAlertCircle />} mb="md">
+          <Text>{authErrorMessage}</Text>
+        </Alert>
+
+        <Button
+          onClick={() => {
+            setAuthErrorMessage(null);
+            form.setFieldValue('email', '');
+          }}
+        >
+          Volver
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <form className="w-full" onSubmit={form.handleSubmit(onSubmit)}>
-      <Controller
-        control={form.control}
-        name="email"
-        render={({ field, fieldState }) => (
-          <Input
-            {...field}
-            aria-invalid={fieldState.invalid}
-            autoComplete="on"
-            id={field.name}
-            placeholder="juan@example.com"
-            w="100%"
+    <div className="flex-1">
+      <form className="relative" onSubmit={form.onSubmit(onSubmit)}>
+        <LoadingOverlay visible={form.submitting} />
+        <Stack>
+          <TextInput
+            autoFocus
+            key={form.key('email')}
+            label="Email"
+            placeholder="juan.perez@email.com"
+            type="email"
+            {...form.getInputProps('email')}
           />
-        )}
-      />
 
-      {error && <p className="text-sm text-red-500">{error}</p>}
-
-      <Button className="w-full" disabled={isLoading} fullWidth type="submit">
-        {isLoading ? 'Logging in...' : 'Login'}
-      </Button>
-    </form>
+          <Button
+            disabled={form.submitting}
+            fullWidth
+            loading={form.submitting}
+            type="submit"
+          >
+            {form.submitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
+          </Button>
+        </Stack>
+      </form>
+    </div>
   );
 }

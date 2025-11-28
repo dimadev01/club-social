@@ -1,6 +1,6 @@
-import { AppShell, Burger, Group, Text } from '@mantine/core';
+import { AppShell, Burger, Container, Group, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Navigate, Outlet } from 'react-router';
+import { Navigate } from 'react-router';
 
 import { APP_ROUTES } from './app.enum';
 import { useAppContext } from './context/app.context';
@@ -51,10 +51,15 @@ export function ProtectedRoute() {
         element and it takes the full width of the screen when opened.
       </AppShell.Navbar>
       <AppShell.Main>
-        <Text>This is the main section, your app content here.</Text>
-        <Text>The navbar is collapsible both on mobile and desktop. Nice!</Text>
-        <Text>Mobile and desktop opened state can be managed separately.</Text>
-        <Outlet />
+        <Container>
+          <Text>This is the main section, your app content here.</Text>
+          <Text>
+            The navbar is collapsible both on mobile and desktop. Nice!
+          </Text>
+          <Text>
+            Mobile and desktop opened state can be managed separately.
+          </Text>
+        </Container>
       </AppShell.Main>
     </AppShell>
   );
