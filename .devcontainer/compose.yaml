@@ -4,23 +4,9 @@ services:
   dev-container:
     image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
     command: sleep infinity
-    depends_on:
-      - postgres
     volumes:
       - ../:/workspace:cached
       - node_modules:/workspace/node_modules
 
-  postgres:
-    image: postgres:18
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: club-social
-    ports:
-      - "5932:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/18/docker
-
 volumes:
-  postgres_data:
   node_modules:

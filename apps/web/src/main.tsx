@@ -1,5 +1,6 @@
 import './index.css';
 import { Container, createTheme, MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -40,6 +41,7 @@ const theme = createTheme({
 createRoot(root).render(
   <StrictMode>
     <MantineProvider defaultColorScheme="auto" theme={theme}>
+      <Notifications position="top-center" />
       <App />
     </MantineProvider>
   </StrictMode>,

@@ -7,7 +7,8 @@ import { ProtectedRoute } from '@/auth/ProtectedRoute';
 import { PublicRoute } from '@/auth/PublicRoute';
 import { useSupabaseSession } from '@/auth/useSupabaseSession';
 import { Home } from '@/home/HomePage';
-import { MembersPage } from '@/members/MembersPage';
+import { MemberDetailPage } from '@/members/MemberDetailPage';
+import { MemberListPage } from '@/members/MemberListPage';
 
 import { AppContext } from './app.context';
 
@@ -28,7 +29,9 @@ export function App() {
         <Routes>
           <Route element={<ProtectedRoute />}>
             <Route element={<Home />} path="/" />
-            <Route element={<MembersPage />} path="/members" />
+            <Route element={<MemberListPage />} path="/members" />
+            <Route element={<MemberDetailPage />} path="/members/new" />
+            <Route element={<MemberDetailPage />} path="/members/:id" />
             <Route element={<LogoutPage />} path="auth/logout" />
           </Route>
 
