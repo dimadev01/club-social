@@ -3,14 +3,15 @@ import type { PropsWithChildren } from 'react';
 import {
   ActionIcon,
   AppShell,
+  Breadcrumbs,
   Burger,
   Container,
-  Divider,
   Group,
   Image,
   NavLink,
   ScrollArea,
   Stack,
+  Text,
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -20,9 +21,10 @@ import {
   IconLogout2,
   IconMoon,
   IconSun,
+  IconSunMoon,
   IconUsers,
 } from '@tabler/icons-react';
-import { Navigate, NavLink as ReactRouterNavLink } from 'react-router';
+import { NavLink as ReactRouterNavLink } from 'react-router';
 
 import { useAppContext } from '@/app/app.context';
 
@@ -30,13 +32,13 @@ import { APP_ROUTES } from '../app/app.enum';
 
 export function AppLayout({ children }: PropsWithChildren) {
   const { session } = useAppContext();
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
 
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
 
   if (!session) {
-    return <Navigate to={APP_ROUTES.LOGIN} />;
+    throw new Error('Session not found');
   }
 
   return (
@@ -68,6 +70,17 @@ export function AppLayout({ children }: PropsWithChildren) {
             size="sm"
             visibleFrom="sm"
           />
+          <Breadcrumbs>
+            <ReactRouterNavLink to={APP_ROUTES.HOME}>
+              <Text size="sm">Inicio</Text>
+            </ReactRouterNavLink>
+            <ReactRouterNavLink to={APP_ROUTES.MEMBERS}>
+              <Text size="sm">Socios</Text>
+            </ReactRouterNavLink>
+            <ReactRouterNavLink to={APP_ROUTES.MEMBERS_NEW}>
+              <Text size="sm">Nuevo socio</Text>
+            </ReactRouterNavLink>
+          </Breadcrumbs>
         </Group>
       </AppShell.Header>
 
@@ -76,7 +89,12 @@ export function AppLayout({ children }: PropsWithChildren) {
           <Image h={96} mx="auto" src="/club-social-logo.png" w={96} />
         </AppShell.Section>
 
-        <Divider />
+        <AppShell.Section p="lg">
+          <Text>Hola</Text>
+          <Text fw="bold" lineClamp={1}>
+            {session.user.email ?? ''}
+          </Text>
+        </AppShell.Section>
 
         <AppShell.Section component={ScrollArea} grow>
           <NavLink
@@ -128,9 +146,26 @@ export function AppLayout({ children }: PropsWithChildren) {
             </ActionIcon>
           </ActionIcon.Group>
           <Group>
-            <ActionIcon onClick={toggleColorScheme} variant="default">
-              {colorScheme === 'dark' ? <IconSun /> : <IconMoon />}
-            </ActionIcon>
+            <ActionIcon.Group>
+              <ActionIcon
+                onClick={() => setColorScheme('light')}
+                variant={colorScheme === 'light' ? 'filled' : 'default'}
+              >
+                <IconSun />
+              </ActionIcon>
+              <ActionIcon
+                onClick={() => setColorScheme('dark')}
+                variant={colorScheme === 'dark' ? 'filled' : 'default'}
+              >
+                <IconMoon />
+              </ActionIcon>
+              <ActionIcon
+                onClick={() => setColorScheme('auto')}
+                variant={colorScheme === 'auto' ? 'filled' : 'default'}
+              >
+                <IconSunMoon />
+              </ActionIcon>
+            </ActionIcon.Group>
           </Group>
         </Group>
       </AppShell.Footer>

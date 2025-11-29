@@ -1,9 +1,9 @@
-import type { SessionData } from 'react-router';
+import type { Session } from '@supabase/supabase-js';
 
 import { createContext, useContext } from 'react';
 
 interface AppContextType {
-  session: null | SessionData;
+  session: null | Session;
 }
 
 export const AppContext = createContext<AppContextType>({
