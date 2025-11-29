@@ -1,5 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, Card, Group, Select, Stack, TextInput } from '@mantine/core';
+import {
+  Button,
+  Card,
+  Group,
+  LoadingOverlay,
+  Select,
+  Stack,
+  TextInput,
+} from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,7 +22,12 @@ const _schema = z.object({
 type FormSchema = z.infer<typeof _schema>;
 
 export function MemberDetailPage() {
-  const reactHookForm = useForm<FormSchema>({
+  const {
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    register,
+    setValue,
+  } = useForm<FormSchema>({
     defaultValues: {
       email: '',
       firstName: '',
@@ -35,46 +48,42 @@ export function MemberDetailPage() {
         Nuevo Usuario
       </Card.Section>
 
-      <Card.Section p="md" withBorder>
-        <form className="relative">
-          <Stack>
-            <TextInput
-              {...reactHookForm.register('firstName', { required: true })}
-              error={reactHookForm.formState.errors.firstName?.message}
-              label="Nombre"
-            />
-            <TextInput
-              {...reactHookForm.register('lastName', { required: true })}
-              error={reactHookForm.formState.errors.lastName?.message}
-              label="Apellido"
-            />
-            <TextInput
-              {...reactHookForm.register('email', { required: true })}
-              error={reactHookForm.formState.errors.email?.message}
-              label="Email"
-              type="email"
-            />
-            <Select
-              {...reactHookForm.register('role', { required: true })}
-              data={['admin', 'user']}
-              error={reactHookForm.formState.errors.role?.message}
-              label="Rol"
-              onChange={(value) => {
-                reactHookForm.setValue('role', value as 'admin' | 'user');
-              }}
-            />
-          </Stack>
-        </form>
+      <Card.Section className="relative" p="md" withBorder>
+        <LoadingOverlay visible={isSubmitting} />
+        <Stack>
+          <TextInput
+            {...register('firstName')}
+            error={errors.firstName?.message}
+            label="Nombre"
+          />
+          <TextInput
+            {...register('lastName')}
+            error={errors.lastName?.message}
+            label="Apellido"
+          />
+          <TextInput
+            {...register('email')}
+            error={errors.email?.message}
+            label="Email"
+            type="email"
+          />
+          <Select
+            {...register('role')}
+            data={['admin', 'user']}
+            error={errors.role?.message}
+            label="Rol"
+            onChange={(value) => {
+              setValue('role', value as 'admin' | 'user');
+            }}
+          />
+        </Stack>
       </Card.Section>
       <Card.Section p="md">
         <Group justify="space-between">
           <Button leftSection={<IconX />} variant="default">
             Cancelar
           </Button>
-          <Button
-            leftSection={<IconCheck />}
-            onClick={reactHookForm.handleSubmit(onSubmit)}
-          >
+          <Button leftSection={<IconCheck />} onClick={handleSubmit(onSubmit)}>
             Guardar
           </Button>
         </Group>
