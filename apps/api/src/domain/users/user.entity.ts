@@ -5,14 +5,17 @@ import { Entity } from '@/domain/shared/entity';
 import type { Result } from '../shared/result';
 import type { Email } from '../shared/value-objects/email/email.vo';
 
+import { InternalServerError } from '../shared/errors/internal-server.error';
 import { Guard } from '../shared/guards';
 import { ok } from '../shared/result';
+import { UserRole } from '../users/user.enum';
 
 interface UserProps {
   authId: string;
   email: Email;
   firstName: string;
   lastName: string;
+  role: UserRole;
 }
 
 export class UserEntity extends Entity<UserEntity> {
@@ -32,10 +35,15 @@ export class UserEntity extends Entity<UserEntity> {
     return this._lastName;
   }
 
+  public get role(): UserRole {
+    return this._role;
+  }
+
   private _authId: string;
   private _email: Email;
   private _firstName: string;
   private _lastName: string;
+  private _role: UserRole;
 
   private constructor(props: UserProps, base?: BaseEntityProps) {
     super(base);
@@ -44,6 +52,7 @@ export class UserEntity extends Entity<UserEntity> {
     this._lastName = props.lastName;
     this._email = props.email;
     this._authId = props.authId;
+    this._role = props.role;
   }
 
   public static create(props: UserProps): Result<UserEntity> {
@@ -51,11 +60,16 @@ export class UserEntity extends Entity<UserEntity> {
     Guard.string(props.lastName);
     Guard.string(props.authId);
 
+    if (props.role === UserRole.ADMIN) {
+      throw new InternalServerError('Admin role is not allowed');
+    }
+
     const user = new UserEntity({
       authId: props.authId,
       email: props.email,
       firstName: props.firstName.trim(),
       lastName: props.lastName.trim(),
+      role: props.role,
     });
 
     return ok(user);

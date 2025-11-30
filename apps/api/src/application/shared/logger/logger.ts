@@ -14,7 +14,7 @@ export interface BaseLog {
 }
 
 export interface ErrorLog extends BaseLog {
-  error: Error;
+  error: unknown;
   message?: string;
 }
 

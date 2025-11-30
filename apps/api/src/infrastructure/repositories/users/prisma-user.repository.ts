@@ -17,7 +17,7 @@ import { PrismaService } from '@/infrastructure/prisma/prisma.service';
 import { PrismaUserMapper } from './prisma-user.mapper';
 
 @Injectable()
-export class PrismaUsersRepository implements UserRepository {
+export class PrismaUserRepository implements UserRepository {
   public constructor(private readonly prismaService: PrismaService) {}
 
   public async delete(entity: UserEntity): Promise<void> {

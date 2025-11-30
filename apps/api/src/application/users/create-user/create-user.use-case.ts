@@ -37,6 +37,7 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
       email: params.email,
       firstName: params.firstName,
       lastName: params.lastName,
+      role: params.role,
     });
 
     if (user.isErr()) {

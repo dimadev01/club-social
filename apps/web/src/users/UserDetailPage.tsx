@@ -1,3 +1,4 @@
+import { betterFetch } from '@better-fetch/fetch';
 import {
   Button,
   Card,
@@ -7,7 +8,9 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { useNavigate } from 'react-router';
 import { z } from 'zod';
@@ -22,6 +25,7 @@ type FormSchema = z.infer<typeof _schema>;
 
 export function UserDetailPage() {
   const navigate = useNavigate();
+
   const form = useForm<FormSchema>({
     initialValues: {
       email: '',
@@ -32,8 +36,25 @@ export function UserDetailPage() {
     validate: zod4Resolver(_schema),
   });
 
-  const onSubmit = (data: FormSchema) => {
-    console.log(data);
+  const createUserMutation = useMutation({
+    mutationFn: (data: FormSchema) =>
+      betterFetch('http://localhost:3000/users', { body: data }),
+  });
+
+  const onSubmit = async (data: FormSchema) => {
+    const { error } = await createUserMutation.mutateAsync(data);
+
+    if (error) {
+      console.log(error);
+      notifications.show({
+        color: 'red',
+        message: error.message,
+      });
+    } else {
+      notifications.show({
+        message: 'Usuario creado correctamente',
+      });
+    }
   };
 
   return (
@@ -69,13 +90,20 @@ export function UserDetailPage() {
         <Group justify="space-between">
           <Button
             color="gray"
+            disabled={createUserMutation.isPending}
             leftSection={<IconX />}
             onClick={() => navigate(-1)}
             variant="transparent"
           >
             Cancelar
           </Button>
-          <Button form="form" leftSection={<IconCheck />} type="submit">
+          <Button
+            disabled={createUserMutation.isPending}
+            form="form"
+            leftSection={<IconCheck />}
+            loading={createUserMutation.isPending}
+            type="submit"
+          >
             Crear usuario
           </Button>
         </Group>

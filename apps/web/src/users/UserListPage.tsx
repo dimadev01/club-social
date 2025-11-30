@@ -1,12 +1,25 @@
 import { Box, Button, Card, Group, Title } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconUsersPlus } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { NavLink } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 
 export function UserListPage() {
+  const {
+    data: users,
+    error,
+    isLoading,
+  } = useQuery({
+    queryFn: () =>
+      fetch('http://localhost:3000/users/paginated').then((res) => res.json()),
+    queryKey: ['users'],
+  });
+
+  console.log(users, error, isLoading);
+
   return (
     <>
       <Card withBorder>

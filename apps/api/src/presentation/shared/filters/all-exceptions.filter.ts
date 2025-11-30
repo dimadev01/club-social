@@ -13,7 +13,6 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/application/shared/logger/logger';
-import { ErrorMapper } from '@/domain/shared/errors/error.mapper';
 import { TraceService } from '@/infrastructure/trace/trace.service';
 
 @Catch()
@@ -43,7 +42,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     }
 
     this.logger.error({
-      error: ErrorMapper.unknownToError(exception),
+      error: exception,
       message: 'Unhandled exception',
       method: this.catch.name,
     });

@@ -62,6 +62,7 @@ export class UsersController extends BaseController {
       firstName: user.firstName,
       id: user.id.value,
       lastName: user.lastName,
+      role: user.role,
     };
   }
 }

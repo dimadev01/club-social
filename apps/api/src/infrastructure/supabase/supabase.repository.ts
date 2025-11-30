@@ -8,7 +8,10 @@ import {
 import { ConfigService } from '@/infrastructure/config/config.service';
 import { Database } from '@/infrastructure/supabase/supabase.types';
 
-import { CreateSupabaseUserParams } from './supabase-repository.types';
+import {
+  CreateSupabaseUserParams,
+  DeleteSupabaseUserParams,
+} from './supabase-repository.types';
 
 @Injectable()
 export class SupabaseRepository {
@@ -47,5 +50,23 @@ export class SupabaseRepository {
     }
 
     return data.user;
+  }
+
+  public async deleteUser(params: DeleteSupabaseUserParams): Promise<void> {
+    this.logger.info({
+      message: 'Deleting user',
+      params,
+    });
+
+    const { error } = await this.supabase.auth.admin.deleteUser(params.id);
+
+    if (error) {
+      this.logger.error({
+        error,
+        message: 'Error deleting user',
+        params,
+      });
+      throw error;
+    }
   }
 }

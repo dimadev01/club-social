@@ -21,21 +21,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "console": "integratedTerminal"
-    },
-    {
-      "name": "Shared",
-      "request": "launch",
-      "cwd": "${workspaceFolder}",
-      "type": "node",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev:shared"],
-      "console": "integratedTerminal"
     }
   ],
   "compounds": [
     {
       "name": "Api & Web",
-      "configurations": ["Api", "Web", "Shared"]
+      "configurations": ["Api", "Web"]
     }
   ]
 }

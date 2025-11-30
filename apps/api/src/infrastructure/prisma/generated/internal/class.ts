@@ -19,7 +19,7 @@ const config: runtime.GetPrismaClientConfig = {
   engineVersion: 'f09f2815f091dbba658cdcd2264306d88bb5bda6',
   activeProvider: 'postgresql',
   inlineSchema:
-    'generator client {\n  provider     = "prisma-client"\n  output       = "./generated"\n  moduleFormat = "cjs"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nmodel User {\n  id        String @id\n  authId    String @unique\n  email     String @unique\n  firstName String\n  lastName  String\n\n  createdAt DateTime\n  createdBy String\n  deletedAt DateTime?\n  deletedBy String?\n  isDeleted Boolean\n  updatedAt DateTime\n  updatedBy String\n\n  @@index([email])\n  @@index([authId])\n}\n',
+    'generator client {\n  provider     = "prisma-client"\n  output       = "./generated"\n  moduleFormat = "cjs"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nenum Role {\n  ADMIN\n  STAFF\n  MEMBER\n}\n\nmodel User {\n  id        String @id\n  authId    String @unique\n  email     String @unique\n  firstName String\n  lastName  String\n  role      Role\n\n  createdAt DateTime\n  createdBy String\n  deletedAt DateTime?\n  deletedBy String?\n  isDeleted Boolean\n  updatedAt DateTime\n  updatedBy String\n\n  @@index([email])\n  @@index([authId])\n}\n',
   runtimeDataModel: {
     models: {},
     enums: {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
 };
 
 config.runtimeDataModel = JSON.parse(
-  '{"models":{"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"authId","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"firstName","kind":"scalar","type":"String"},{"name":"lastName","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"createdBy","kind":"scalar","type":"String"},{"name":"deletedAt","kind":"scalar","type":"DateTime"},{"name":"deletedBy","kind":"scalar","type":"String"},{"name":"isDeleted","kind":"scalar","type":"Boolean"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"updatedBy","kind":"scalar","type":"String"}],"dbName":null}},"enums":{},"types":{}}',
+  '{"models":{"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"authId","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"firstName","kind":"scalar","type":"String"},{"name":"lastName","kind":"scalar","type":"String"},{"name":"role","kind":"enum","type":"Role"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"createdBy","kind":"scalar","type":"String"},{"name":"deletedAt","kind":"scalar","type":"DateTime"},{"name":"deletedBy","kind":"scalar","type":"String"},{"name":"isDeleted","kind":"scalar","type":"Boolean"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"updatedBy","kind":"scalar","type":"String"}],"dbName":null}},"enums":{},"types":{}}',
 );
 
 async function decodeBase64AsWasm(

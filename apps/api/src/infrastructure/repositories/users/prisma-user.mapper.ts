@@ -3,6 +3,7 @@ import type { UserModel } from '@/infrastructure/prisma/generated/models';
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/domain/users/user.entity';
+import { UserRole } from '@/domain/users/user.enum';
 
 export abstract class PrismaUserMapper {
   public static toDomain(record: UserModel): UserEntity {
@@ -12,6 +13,7 @@ export abstract class PrismaUserMapper {
         email: Email.fromPersistence({ value: record.email }),
         firstName: record.firstName,
         lastName: record.lastName,
+        role: record.role as UserRole,
       },
       {
         createdAt: record.createdAt,
@@ -38,6 +40,7 @@ export abstract class PrismaUserMapper {
       id: user.id.value,
       isDeleted: user.isDeleted,
       lastName: user.lastName,
+      role: user.role,
       updatedAt: user.updatedAt,
       updatedBy: user.updatedBy,
     };
