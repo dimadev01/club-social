@@ -20,7 +20,7 @@ const _schema = z.object({
 
 type FormSchema = z.infer<typeof _schema>;
 
-export function MemberDetailPage() {
+export function UserDetailPage() {
   const navigate = useNavigate();
   const form = useForm<FormSchema>({
     initialValues: {
@@ -68,14 +68,15 @@ export function MemberDetailPage() {
       <Card.Section p="md">
         <Group justify="space-between">
           <Button
+            color="gray"
             leftSection={<IconX />}
             onClick={() => navigate(-1)}
-            variant="default"
+            variant="transparent"
           >
             Cancelar
           </Button>
           <Button form="form" leftSection={<IconCheck />} type="submit">
-            Guardar
+            Crear usuario
           </Button>
         </Group>
       </Card.Section>

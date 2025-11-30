@@ -1,4 +1,5 @@
 export interface UserInterface {
+  authId: string;
   createdAt: Date;
   createdBy: string;
   deletedAt: Date | null;

@@ -1,18 +1,9 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/application/shared/logger/logger';
-import { CreateUserUseCase } from '@/application/users/create-user/create-user.use-case';
-import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UserEntity } from '@/domain/users/user.entity';
 import {
   type UserRepository,
@@ -24,6 +15,7 @@ import { ApiPaginatedResponse } from '../shared/decorators/api-paginated.decorat
 import { PaginatedDto } from '../shared/dto/paginated.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController extends BaseController {
@@ -32,25 +24,15 @@ export class UsersController extends BaseController {
     protected readonly logger: AppLogger,
     @Inject(USERS_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
-    private readonly createUserUseCase: CreateUserUseCase,
+    private readonly usersService: UsersService,
   ) {
     super(logger);
   }
 
   @Post()
   public async create(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
-    const email = Email.create(createUserDto.email);
-
-    if (email.isErr()) {
-      throw new BadRequestException(email.error.message);
-    }
-
     const user = this.handleResult(
-      await this.createUserUseCase.execute({
-        email: email.value,
-        firstName: createUserDto.firstName,
-        lastName: createUserDto.lastName,
-      }),
+      await this.usersService.createUser(createUserDto),
     );
 
     return this.toDto(user);

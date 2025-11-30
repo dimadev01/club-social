@@ -2,6 +2,8 @@ export const APP_ROUTES = {
   HOME: '/',
   LOGIN: '/auth/login',
   LOGOUT: '/auth/logout',
-  MEMBERS: '/members',
-  MEMBERS_NEW: '/members/new',
+  USER_LIST: '/users',
+  USER_NEW: '/users/new',
 } as const;
+
+export type AppRoutes = typeof APP_ROUTES;

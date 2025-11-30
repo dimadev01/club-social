@@ -9,12 +9,17 @@ import { Guard } from '../shared/guards';
 import { ok } from '../shared/result';
 
 interface UserProps {
+  authId: string;
   email: Email;
   firstName: string;
   lastName: string;
 }
 
 export class UserEntity extends Entity<UserEntity> {
+  public get authId(): string {
+    return this._authId;
+  }
+
   public get email(): Email {
     return this._email;
   }
@@ -27,6 +32,7 @@ export class UserEntity extends Entity<UserEntity> {
     return this._lastName;
   }
 
+  private _authId: string;
   private _email: Email;
   private _firstName: string;
   private _lastName: string;
@@ -37,13 +43,16 @@ export class UserEntity extends Entity<UserEntity> {
     this._firstName = props.firstName;
     this._lastName = props.lastName;
     this._email = props.email;
+    this._authId = props.authId;
   }
 
   public static create(props: UserProps): Result<UserEntity> {
     Guard.string(props.firstName);
     Guard.string(props.lastName);
+    Guard.string(props.authId);
 
     const user = new UserEntity({
+      authId: props.authId,
       email: props.email,
       firstName: props.firstName.trim(),
       lastName: props.lastName.trim(),

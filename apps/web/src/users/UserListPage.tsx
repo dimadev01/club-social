@@ -6,20 +6,20 @@ import { NavLink } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 
-export function MemberListPage() {
+export function UserListPage() {
   return (
     <>
       <Card withBorder>
         <Card.Section p="md" withBorder>
           <Group justify="space-between">
-            <Title>Miembros</Title>
+            <Title order={5}>Usuarios</Title>
             <Box>
               <Button
                 component={NavLink}
                 leftSection={<IconUsersPlus />}
-                to={APP_ROUTES.MEMBERS_NEW}
+                to={APP_ROUTES.USER_NEW}
               >
-                Nuevo miembro
+                Nuevo usuario
               </Button>
             </Box>
           </Group>

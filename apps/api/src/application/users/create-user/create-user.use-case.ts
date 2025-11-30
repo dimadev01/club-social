@@ -33,6 +33,7 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
     });
 
     const user = UserEntity.create({
+      authId: params.authId,
       email: params.email,
       firstName: params.firstName,
       lastName: params.lastName,

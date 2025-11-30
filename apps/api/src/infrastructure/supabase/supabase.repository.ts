@@ -1,16 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/application/shared/logger/logger';
-import { UserEntity } from '@/domain/users/user.entity';
 import { ConfigService } from '@/infrastructure/config/config.service';
 import { Database } from '@/infrastructure/supabase/supabase.types';
 
+import { CreateSupabaseUserParams } from './supabase-repository.types';
+
 @Injectable()
-export class SupabaseUsersRepository {
+export class SupabaseRepository {
   private readonly supabase: SupabaseClient<Database>;
 
   public constructor(
@@ -22,27 +23,29 @@ export class SupabaseUsersRepository {
       this.configService.supabaseUrl,
       this.configService.supabaseKey,
     );
+    this.logger.setContext(this.constructor.name);
   }
 
-  public async save(entity: UserEntity): Promise<UserEntity> {
+  public async createUser(params: CreateSupabaseUserParams): Promise<User> {
+    this.logger.info({
+      message: 'Creating user',
+      params,
+    });
+
     const { data, error } = await this.supabase.auth.admin.createUser({
-      email: entity.email.value,
+      email: params.email,
       email_confirm: true,
-      user_metadata: {
-        first_name: entity.firstName,
-        last_name: entity.lastName,
-      },
     });
 
     if (error) {
+      this.logger.error({
+        error,
+        message: 'Error creating user',
+        params,
+      });
       throw error;
     }
 
-    this.logger.info({
-      data,
-      message: 'User created',
-    });
-
-    return entity;
+    return data.user;
   }
 }

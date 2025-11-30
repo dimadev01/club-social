@@ -11,6 +11,7 @@ datasource db {
 
 model User {
   id              String                  @id
+  authId          String                  @unique
   email           String                  @unique
   firstName       String
   lastName        String
@@ -24,4 +25,5 @@ model User {
   updatedBy       String
 
   @@index([email])
+  @@index([authId])
 }

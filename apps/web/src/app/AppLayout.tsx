@@ -17,18 +17,17 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconBrandInstagram,
-  IconHome,
   IconLogout2,
   IconMoon,
   IconSun,
   IconSunMoon,
-  IconUsers,
 } from '@tabler/icons-react';
 import { NavLink as ReactRouterNavLink } from 'react-router';
 
 import { useAppContext } from '@/app/app.context';
 
 import { APP_ROUTES } from '../app/app.enum';
+import { AppMenu } from './AppMenu';
 
 export function AppLayout({ children }: PropsWithChildren) {
   const { session } = useAppContext();
@@ -74,10 +73,10 @@ export function AppLayout({ children }: PropsWithChildren) {
             <ReactRouterNavLink to={APP_ROUTES.HOME}>
               <Text size="sm">Inicio</Text>
             </ReactRouterNavLink>
-            <ReactRouterNavLink to={APP_ROUTES.MEMBERS}>
+            <ReactRouterNavLink to={APP_ROUTES.USER_LIST}>
               <Text size="sm">Socios</Text>
             </ReactRouterNavLink>
-            <ReactRouterNavLink to={APP_ROUTES.MEMBERS_NEW}>
+            <ReactRouterNavLink to={APP_ROUTES.USER_NEW}>
               <Text size="sm">Nuevo socio</Text>
             </ReactRouterNavLink>
           </Breadcrumbs>
@@ -97,22 +96,7 @@ export function AppLayout({ children }: PropsWithChildren) {
         </AppShell.Section>
 
         <AppShell.Section component={ScrollArea} grow>
-          <NavLink
-            component={ReactRouterNavLink}
-            h={48}
-            label="Inicio"
-            leftSection={<IconHome />}
-            pl="lg"
-            to={APP_ROUTES.HOME}
-          />
-          <NavLink
-            component={ReactRouterNavLink}
-            h={48}
-            label="Socios"
-            leftSection={<IconUsers />}
-            pl="lg"
-            to={APP_ROUTES.MEMBERS}
-          />
+          <AppMenu />
         </AppShell.Section>
         <AppShell.Section>
           <NavLink
@@ -135,13 +119,13 @@ export function AppLayout({ children }: PropsWithChildren) {
       <AppShell.Footer p="md" withBorder={false}>
         <Group justify="space-between">
           <ActionIcon.Group>
-            <ActionIcon color="black" variant="transparent">
+            <ActionIcon variant="transparent">
               <IconBrandInstagram />
             </ActionIcon>
-            <ActionIcon color="black" variant="transparent">
+            <ActionIcon variant="transparent">
               <IconBrandInstagram />
             </ActionIcon>
-            <ActionIcon color="black" variant="transparent">
+            <ActionIcon variant="transparent">
               <IconBrandInstagram />
             </ActionIcon>
           </ActionIcon.Group>

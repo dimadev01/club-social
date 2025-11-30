@@ -8,6 +8,7 @@ export abstract class PrismaUserMapper {
   public static toDomain(record: UserModel): UserEntity {
     return UserEntity.fromPersistence(
       {
+        authId: record.authId,
         email: Email.fromPersistence({ value: record.email }),
         firstName: record.firstName,
         lastName: record.lastName,
@@ -27,6 +28,7 @@ export abstract class PrismaUserMapper {
 
   public static toPersistence(user: UserEntity): UserModel {
     return {
+      authId: user.authId,
       createdAt: user.createdAt,
       createdBy: user.createdBy,
       deletedAt: user.deletedAt,
