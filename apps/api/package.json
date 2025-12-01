@@ -45,6 +45,7 @@
     }
   },
   "dependencies": {
+    "@club-social/types": "^0.0.1",
     "@dotenvx/dotenvx": "^1.51.1",
     "@logtail/node": "^0.5.6",
     "@logtail/winston": "^0.5.6",

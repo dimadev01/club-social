@@ -8,8 +8,10 @@
     "check-types": {
       "dependsOn": ["^check-types"]
     },
-    "test": {},
     "format": {},
-    "lint": {}
+    "lint": {},
+    "test": {
+      "dependsOn": ["@club-social/types#build"]
+    }
   }
 }

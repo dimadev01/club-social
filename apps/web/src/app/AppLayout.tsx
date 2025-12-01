@@ -3,7 +3,6 @@ import type { PropsWithChildren } from 'react';
 import {
   ActionIcon,
   AppShell,
-  Breadcrumbs,
   Burger,
   Container,
   Group,
@@ -69,17 +68,7 @@ export function AppLayout({ children }: PropsWithChildren) {
             size="sm"
             visibleFrom="sm"
           />
-          <Breadcrumbs>
-            <ReactRouterNavLink to={APP_ROUTES.HOME}>
-              <Text size="sm">Inicio</Text>
-            </ReactRouterNavLink>
-            <ReactRouterNavLink to={APP_ROUTES.USER_LIST}>
-              <Text size="sm">Socios</Text>
-            </ReactRouterNavLink>
-            <ReactRouterNavLink to={APP_ROUTES.USER_NEW}>
-              <Text size="sm">Nuevo socio</Text>
-            </ReactRouterNavLink>
-          </Breadcrumbs>
+          <div id="breadcrumbs" />
         </Group>
       </AppShell.Header>
 

@@ -1,27 +1,50 @@
-import { Box, Button, Card, Group, Title } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
+import type { PaginatedResponse } from '@club-social/types/shared';
+import type { UserDto } from '@club-social/types/users';
+
+import { betterFetch } from '@better-fetch/fetch';
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  Card,
+  Group,
+  Portal,
+  Text,
+  Title,
+} from '@mantine/core';
 import { IconUsersPlus } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
 import { NavLink } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 
 export function UserListPage() {
-  const {
-    data: users,
-    error,
-    isLoading,
-  } = useQuery({
+  const usersQuery = useQuery({
+    placeholderData: keepPreviousData,
     queryFn: () =>
-      fetch('http://localhost:3000/users/paginated').then((res) => res.json()),
+      betterFetch<PaginatedResponse<UserDto>>(
+        'http://localhost:3000/users/paginated',
+      ),
     queryKey: ['users'],
   });
 
-  console.log(users, error, isLoading);
-
   return (
     <>
+      <Portal reuseTargetNode target="#breadcrumbs">
+        <Breadcrumbs>
+          <NavLink to={APP_ROUTES.HOME}>
+            <Text size="sm">Inicio</Text>
+          </NavLink>
+          <NavLink to={APP_ROUTES.USER_LIST}>
+            <Text size="sm">Usuarios</Text>
+          </NavLink>
+          <NavLink to={APP_ROUTES.USER_NEW}>
+            <Text size="sm">Nuevo Usuario</Text>
+          </NavLink>
+        </Breadcrumbs>
+      </Portal>
+
       <Card withBorder>
         <Card.Section p="md" withBorder>
           <Group justify="space-between">
@@ -39,42 +62,23 @@ export function UserListPage() {
         </Card.Section>
 
         <Card.Section p="md">
-          <DataTable
-            // 👇 define columns
+          <DataTable<UserDto>
             columns={[
               {
                 accessor: 'id',
-                // 👇 right-align column
-                textAlign: 'right',
-                // 👇 this column has a custom title
-                title: '#',
+                title: 'ID',
               },
-              { accessor: 'name' },
               {
-                accessor: 'party',
-                // 👇 this column has custom cell data rendering
-                render: ({ party }) => (
-                  <Box c={party === 'Democratic' ? 'blue' : 'red'} fw={700}>
-                    {party.slice(0, 3).toUpperCase()}
-                  </Box>
-                ),
+                accessor: 'firstName',
+                title: 'Nombre',
               },
-              { accessor: 'bornIn' },
+              {
+                accessor: 'lastName',
+                title: 'Apellido',
+              },
             ]}
             highlightOnHover
-            // 👇 execute this callback when a row is clicked
-            onRowClick={({ record: { bornIn, name, party } }) =>
-              showNotification({
-                message: `You clicked on ${name}, a ${party.toLowerCase()} president born in ${bornIn}`,
-                title: `Clicked on ${name}`,
-                withBorder: true,
-              })
-            }
-            // 👇 provide data
-            records={[
-              { bornIn: 1942, id: 1, name: 'Joe Biden', party: 'Democratic' },
-              // more records...
-            ]}
+            records={usersQuery.data?.data?.data}
             striped
             withColumnBorders
             withTableBorder

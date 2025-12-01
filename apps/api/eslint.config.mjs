@@ -1,7 +1,6 @@
 import config from '@club-social/eslint-config/nest';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
-import tseslint from 'typescript-eslint';
 
 export default defineConfig(
   config,
@@ -24,8 +23,6 @@ export default defineConfig(
       sourceType: 'module',
     },
   },
-  tseslint.configs.strictTypeChecked,
-  tseslint.configs.stylisticTypeChecked,
   {
     rules: {
       /**

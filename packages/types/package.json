@@ -1,0 +1,31 @@
+{
+  "name": "@club-social/types",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "exports": {
+    "./users": {
+      "types": "./src/users/index.ts",
+      "require": "./dist/users/index.js",
+      "import": "./dist/users/index.mjs"
+    },
+    "./shared": {
+      "types": "./src/shared/index.ts",
+      "require": "./dist/shared/index.js",
+      "import": "./dist/shared/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "dev": "tsup --watch",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix"
+  },
+  "devDependencies": {
+    "@club-social/eslint-config": "*",
+    "@club-social/prettier-config": "*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}

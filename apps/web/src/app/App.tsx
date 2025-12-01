@@ -49,7 +49,7 @@ export function App() {
   const renderContent = () => {
     if (isLoading) {
       return (
-        <Center>
+        <Center h="100vh">
           <Loader />
         </Center>
       );

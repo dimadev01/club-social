@@ -12,6 +12,7 @@ import {
 import { CreateUserUseCase } from '@/application/users/create-user/create-user.use-case';
 import { ConflictError } from '@/domain/shared/errors/conflict.error';
 import { err, ok, Result } from '@/domain/shared/result';
+import { PaginatedResponse } from '@/domain/shared/types';
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UserEntity } from '@/domain/users/user.entity';
 import { UserRole } from '@/domain/users/user.enum';
@@ -86,5 +87,12 @@ export class UsersService {
     }
 
     return ok(createUserUseCaseResult.value);
+  }
+
+  public async getPaginated(): Promise<PaginatedResponse<UserEntity>> {
+    return this.userRepository.findPaginated({
+      page: 1,
+      pageSize: 10,
+    });
   }
 }

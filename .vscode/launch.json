@@ -21,12 +21,21 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Types",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/packages/types",
+      "type": "node",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "console": "integratedTerminal"
     }
   ],
   "compounds": [
     {
       "name": "Api & Web",
-      "configurations": ["Api", "Web"]
+      "configurations": ["Api", "Web", "Types"]
     }
   ]
 }
