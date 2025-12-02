@@ -7,16 +7,11 @@ import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig(
-  {
-    ignores: ['*.mjs'],
-  },
   eslint.configs.recommended,
   tseslint.configs.strict,
   tseslint.configs.stylistic,
   perfectionist.configs['recommended-natural'],
-  stylistic.configs.customize({
-    semi: true,
-  }),
+  stylistic.configs.customize({ semi: true }),
   eslintConfigPrettier,
   {
     plugins: {
@@ -40,12 +35,12 @@ export default defineConfig(
     rules: {
       '@stylistic/padding-line-between-statements': [
         'error',
-        { blankLine: 'always', prev: '*', next: 'return' },
-        { blankLine: 'always', prev: 'directive', next: '*' },
-        { blankLine: 'always', prev: '*', next: 'function' },
-        { blankLine: 'always', prev: 'function', next: '*' },
-        { blankLine: 'always', prev: 'block-like', next: '*' },
-        { blankLine: 'always', prev: '*', next: 'block-like' },
+        { blankLine: 'always', next: 'return', prev: '*' },
+        { blankLine: 'always', next: '*', prev: 'directive' },
+        { blankLine: 'always', next: 'function', prev: '*' },
+        { blankLine: 'always', next: '*', prev: 'function' },
+        { blankLine: 'always', next: '*', prev: 'block-like' },
+        { blankLine: 'always', next: 'block-like', prev: '*' },
       ],
 
       // TS/ES best practices

@@ -31,7 +31,7 @@ export function UserListPage() {
 
   return (
     <>
-      <Portal reuseTargetNode target="#breadcrumbs">
+      <Portal target="#breadcrumbs">
         <Breadcrumbs>
           <NavLink to={APP_ROUTES.HOME}>
             <Text size="sm">Inicio</Text>
@@ -78,8 +78,11 @@ export function UserListPage() {
               },
             ]}
             highlightOnHover
+            maxHeight={500}
+            page={1}
             records={usersQuery.data?.data?.data}
-            striped
+            recordsPerPage={10}
+            totalRecords={usersQuery.data?.data?.total}
             withColumnBorders
             withTableBorder
           />

@@ -13,25 +13,17 @@ export default defineConfig(
         ...globals.node,
         ...globals.jest,
       },
-      parserOptions: {
-        projectService: {
-          allowDefaultProject: ['*.mjs'],
-        },
-        tsconfigRootDir: import.meta.dirname,
-      },
-
       sourceType: 'module',
     },
   },
   {
     rules: {
+      '@typescript-eslint/explicit-member-accessibility': 'error',
       /**
        * We disable this rule because the Modules in NestJS use
        * this pattern of empty classes
        */
       '@typescript-eslint/no-extraneous-class': 'off',
-
-      '@typescript-eslint/explicit-member-accessibility': 'error',
     },
   },
 );

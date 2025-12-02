@@ -21,11 +21,12 @@
     "format": "turbo format",
     "lint": "turbo lint",
     "lint-staged": "lint-staged",
+    "ncu": "ncu --workspaces --interactive",
     "prepare": "husky",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "ncu": "ncu --workspaces --interactive"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "@club-social/eslint-config": "*",
     "@club-social/prettier-config": "*",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",

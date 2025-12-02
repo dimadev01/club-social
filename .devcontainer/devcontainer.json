@@ -6,7 +6,7 @@
   "workspaceFolder": "/workspace",
   "dockerComposeFile": "compose.yaml",
   "postCreateCommand": ".devcontainer/post-create.sh",
-  "forwardPorts": [],
+  "forwardPorts": [5173, 3000],
   "features": {
     "ghcr.io/guiyomh/features/vim:0": {}
   },
