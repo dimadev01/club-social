@@ -79,6 +79,9 @@ export function UserListPage() {
             ]}
             highlightOnHover
             maxHeight={500}
+            onPageChange={() => {
+              console.log('page changed');
+            }}
             page={1}
             records={usersQuery.data?.data?.data}
             recordsPerPage={10}

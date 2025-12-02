@@ -14,6 +14,13 @@ export default defineConfig(
   stylistic.configs.customize({ semi: true }),
   eslintConfigPrettier,
   {
+    languageOptions: {
+      ecmaVersion: 'latest',
+      parser: tseslint.parser,
+      sourceType: 'module',
+    },
+  },
+  {
     plugins: {
       'unused-imports': unusedImports,
     },
@@ -42,47 +49,6 @@ export default defineConfig(
         { blankLine: 'always', next: '*', prev: 'block-like' },
         { blankLine: 'always', next: 'block-like', prev: '*' },
       ],
-
-      // TS/ES best practices
-      // Import sorting
-      // 'perfectionist/sort-imports': [
-      //   'error',
-      //   {
-      //     groups: [
-      //       'type',
-      //       ['builtin', 'external'],
-      //       'internal-type',
-      //       'internal',
-      //       'alias',
-      //       ['parent-type', 'sibling-type', 'index-type'],
-      //       ['parent', 'sibling', 'index'],
-      //       'object',
-      //       'unknown',
-      //     ],
-      //     customGroups: {
-      //       value: {
-      //         alias: [
-      //           '^@/application/',
-      //           '^@/domain/',
-      //           '^@/infrastructure/',
-      //           '^@/presentation/',
-      //           '^@/shared/',
-      //           '^@/features/',
-      //           '^@/lib/',
-      //           '^@/hooks/',
-      //           '^@/components/',
-      //           '^@/pages/',
-      //           '^@/utils/',
-      //           '^@/types/',
-      //           '^@/styles/',
-      //           '^@/assets/',
-      //           '^@/constants/',
-      //           '^@/',
-      //         ],
-      //       },
-      //     },
-      //   },
-      // ],
     },
   },
 );

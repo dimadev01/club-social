@@ -30,6 +30,7 @@ export function AppMenu() {
         <NavLink
           component={ReactRouterNavLink}
           h={48}
+          key={item.route}
           label={item.label}
           leftSection={item.icon}
           pl="lg"
