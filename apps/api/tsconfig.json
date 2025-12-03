@@ -25,13 +25,13 @@
     "paths": {
       "@/test/*": ["test/*"],
       "@/*": ["./src/*"]
-    },
+    }
 
-    "inlineSources": true,
+    // "inlineSources": true,
 
     // Set `sourceRoot` to  "/" to strip the build path prefix
     // from generated source code references.
     // This improves issue grouping in Sentry.
-    "sourceRoot": "/"
+    // "sourceRoot": "/"
   }
 }

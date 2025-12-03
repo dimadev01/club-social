@@ -7,10 +7,10 @@ import { UserRole } from '@/domain/users/user.enum';
 
 export abstract class PrismaUserMapper {
   public static toDomain(record: UserModel): UserEntity {
-    return UserEntity.fromPersistence(
+    return UserEntity.raw(
       {
         authId: record.authId,
-        email: Email.fromPersistence({ value: record.email }),
+        email: Email.raw({ value: record.email }),
         firstName: record.firstName,
         lastName: record.lastName,
         role: record.role as UserRole,
@@ -20,7 +20,7 @@ export abstract class PrismaUserMapper {
         createdBy: record.createdBy,
         deletedAt: record.deletedAt,
         deletedBy: record.deletedBy,
-        id: UniqueId.fromPersistence({ value: record.id }),
+        id: UniqueId.raw({ value: record.id }),
         isDeleted: record.isDeleted,
         updatedAt: record.updatedAt,
         updatedBy: record.updatedBy,

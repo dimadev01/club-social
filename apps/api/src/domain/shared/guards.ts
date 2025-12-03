@@ -4,18 +4,21 @@ export abstract class Guard {
   public static array(
     target: unknown,
     message = 'Target is not an array',
-  ): void {
+  ): asserts target {
     this.invariant(target, this.isArray, message);
   }
 
   public static boolean(
     target: unknown,
     message = 'Target is not a boolean',
-  ): void {
+  ): asserts target {
     this.invariant(target, this.isBoolean, message);
   }
 
-  public static date(target: unknown, message = 'Target is not a date'): void {
+  public static date(
+    target: unknown,
+    message = 'Target is not a date',
+  ): asserts target {
     this.invariant(target, this.isDate, message);
   }
 
@@ -38,8 +41,9 @@ export abstract class Guard {
     target: unknown,
   ): target is null | undefined => target === null || target === undefined;
 
-  public static isNull: TypeGuard<null> = (target: unknown): target is null =>
-    target === null;
+  public static isNull: TypeGuard<null> = (target: unknown): target is null => {
+    return target === null;
+  };
 
   public static isNumber: TypeGuard<number> = (
     target: unknown,
@@ -57,39 +61,45 @@ export abstract class Guard {
     target: unknown,
   ): target is undefined => target === undefined;
 
-  public static nil(target: unknown, message = 'Target is not nil'): void {
+  public static nil(
+    target: unknown,
+    message = 'Target is not nil',
+  ): asserts target {
     this.invariant(target, this.isNil, message);
   }
 
-  public static null(target: unknown, message = 'Target is not null'): void {
+  public static null(
+    target: unknown,
+    message = 'Target is not null',
+  ): asserts target {
     this.invariant(target, this.isNull, message);
   }
 
   public static number(
     target: unknown,
     message = 'Target is not a number',
-  ): void {
+  ): asserts target {
     this.invariant(target, this.isNumber, message);
   }
 
   public static object(
     target: unknown,
     message = 'Target is not an object',
-  ): void {
+  ): asserts target {
     this.invariant(target, this.isObject, message);
   }
 
   public static string(
     target: unknown,
     message = 'Target is not a string',
-  ): void {
+  ): asserts target {
     this.invariant(target, this.isString, message);
   }
 
   public static undefined(
     target: unknown,
     message = 'Target is not undefined',
-  ): void {
+  ): asserts target {
     this.invariant(target, this.isUndefined, message);
   }
 
@@ -97,7 +107,7 @@ export abstract class Guard {
     target: unknown,
     guard: TypeGuard<T>,
     message = 'Assertion failed',
-  ): asserts target is T {
+  ): asserts target {
     if (!guard(target)) {
       throw new Error(message);
     }

@@ -15,7 +15,7 @@ import {
 import { IconUsersPlus } from '@tabler/icons-react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { DataTable } from 'mantine-datatable';
-import { NavLink } from 'react-router';
+import { Link, NavLink } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 
@@ -66,19 +66,19 @@ export function UserListPage() {
             columns={[
               {
                 accessor: 'id',
-                title: 'ID',
-              },
-              {
-                accessor: 'firstName',
+                render: (record) => (
+                  <Link to={`${APP_ROUTES.USER_LIST}/${record.id}`}>
+                    {record.firstName} {record.lastName}
+                  </Link>
+                ),
                 title: 'Nombre',
               },
               {
-                accessor: 'lastName',
-                title: 'Apellido',
+                accessor: 'email',
+                title: 'Email',
               },
             ]}
             highlightOnHover
-            maxHeight={500}
             onPageChange={() => {
               console.log('page changed');
             }}

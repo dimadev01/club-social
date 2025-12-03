@@ -6,7 +6,8 @@
   "license": "UNLICENSED",
   "author": "Dmitriy Mironov",
   "scripts": {
-    "build": "nest build && npm run sentry:sourcemaps",
+    "build": "nest build",
+    "build:sourcemaps": "nest build && npm run sentry:sourcemaps",
     "check-types": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

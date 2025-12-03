@@ -5,9 +5,9 @@
   "license": "MIT",
   "exports": {
     "./users": {
-      "types": "./src/users/index.ts",
-      "require": "./dist/users/index.js",
-      "import": "./dist/users/index.mjs"
+      "types": "./src/users.ts",
+      "require": "./dist/users.js",
+      "import": "./dist/users.mjs"
     },
     "./shared": {
       "types": "./src/shared/index.ts",

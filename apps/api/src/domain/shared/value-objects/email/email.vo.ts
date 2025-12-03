@@ -30,7 +30,7 @@ export class Email extends ValueObject<Props> {
     return ok(new Email({ value: value.trim().toLowerCase() }));
   }
 
-  public static fromPersistence(props: Props): Email {
+  public static raw(props: Props): Email {
     return new Email(props);
   }
 

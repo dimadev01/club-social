@@ -15,12 +15,12 @@ export class UniqueId extends ValueObject<Props> {
     super(props);
   }
 
-  public static fromPersistence(props: Props): UniqueId {
-    return new UniqueId(props);
-  }
-
   public static generate(): UniqueId {
     return new UniqueId({ value: randomUUID() });
+  }
+
+  public static raw(props: Props): UniqueId {
+    return new UniqueId(props);
   }
 
   public toString(): string {

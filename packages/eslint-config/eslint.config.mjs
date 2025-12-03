@@ -14,13 +14,6 @@ export default defineConfig(
   stylistic.configs.customize({ semi: true }),
   eslintConfigPrettier,
   {
-    languageOptions: {
-      ecmaVersion: 'latest',
-      parser: tseslint.parser,
-      sourceType: 'module',
-    },
-  },
-  {
     plugins: {
       'unused-imports': unusedImports,
     },
@@ -36,6 +29,12 @@ export default defineConfig(
           varsIgnorePattern: '^_',
         },
       ],
+    },
+  },
+  {
+    files: ['**/*.controller.ts'],
+    rules: {
+      'perfectionist/sort-classes': 'off',
     },
   },
   {

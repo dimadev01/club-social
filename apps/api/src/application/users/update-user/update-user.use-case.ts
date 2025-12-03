@@ -7,18 +7,20 @@ import {
   type AppLogger,
 } from '@/application/shared/logger/logger';
 import { UseCase } from '@/application/shared/use-case';
+import { ConflictError } from '@/domain/shared/errors/conflict.error';
 import { DomainEventPublisher } from '@/domain/shared/events/domain-event-publisher';
 import { err, ok } from '@/domain/shared/result';
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
+import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/domain/users/user.entity';
 import {
   type UserRepository,
   USERS_REPOSITORY_PROVIDER,
 } from '@/domain/users/user.repository';
 
-import type { CreateUserParams } from './create-user.params';
+import { UpdateUserParams } from './update-user.params';
 
-export class CreateUserUseCase extends UseCase<UserEntity> {
+export class UpdateUserUseCase extends UseCase<UserEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
@@ -29,9 +31,9 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
     super(logger);
   }
 
-  public async execute(params: CreateUserParams): Promise<Result<UserEntity>> {
+  public async execute(params: UpdateUserParams): Promise<Result<UserEntity>> {
     this.logger.info({
-      message: 'Creating user',
+      message: 'Updating user',
       params,
     });
 
@@ -41,21 +43,24 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
       return err(email.error);
     }
 
-    const user = UserEntity.create({
-      authId: null,
-      email: email.value,
-      firstName: params.firstName,
-      lastName: params.lastName,
-      role: params.role,
-    });
+    const existingUserByEmail = await this.userRepository.findUniqueByEmail(
+      email.value,
+    );
 
-    if (user.isErr()) {
-      return err(user.error);
+    if (existingUserByEmail && existingUserByEmail.id.value !== params.id) {
+      return err(new ConflictError('El email ya está en uso'));
     }
 
-    await this.userRepository.save(user.value);
-    this.eventPublisher.dispatch(user.value);
+    const user = await this.userRepository.findOneByIdOrThrow(
+      UniqueId.raw({ value: params.id }),
+    );
 
-    return ok(user.value);
+    user.updateName(params.firstName, params.lastName);
+    user.updateEmail(email.value);
+
+    await this.userRepository.save(user);
+    this.eventPublisher.dispatch(user);
+
+    return ok(user);
   }
 }

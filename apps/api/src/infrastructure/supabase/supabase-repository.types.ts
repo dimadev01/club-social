@@ -5,3 +5,8 @@ export interface CreateSupabaseUserParams {
 export interface DeleteSupabaseUserParams {
   id: string;
 }
+
+export interface UpdateSupabaseUserParams {
+  email: string;
+  id: string;
+}

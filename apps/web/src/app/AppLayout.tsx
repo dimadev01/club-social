@@ -9,7 +9,6 @@ import {
   Image,
   NavLink,
   ScrollArea,
-  Stack,
   Text,
   useMantineColorScheme,
 } from '@mantine/core';
@@ -100,9 +99,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       </AppShell.Navbar>
 
       <AppShell.Main>
-        <Container>
-          <Stack justify="space-between">{children}</Stack>
-        </Container>
+        <Container>{children}</Container>
       </AppShell.Main>
 
       <AppShell.Footer p="md" withBorder={false}>

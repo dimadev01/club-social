@@ -9,9 +9,11 @@ import { InternalServerError } from '../shared/errors/internal-server.error';
 import { Guard } from '../shared/guards';
 import { ok } from '../shared/result';
 import { UserRole } from '../users/user.enum';
+import { UserCreatedEvent } from './events/user-created.event';
+import { UserEmailUpdatedEvent } from './events/user-email-updated.event';
 
 interface UserProps {
-  authId: string;
+  authId: null | string;
   email: Email;
   firstName: string;
   lastName: string;
@@ -19,7 +21,7 @@ interface UserProps {
 }
 
 export class UserEntity extends Entity<UserEntity> {
-  public get authId(): string {
+  public get authId(): null | string {
     return this._authId;
   }
 
@@ -39,7 +41,7 @@ export class UserEntity extends Entity<UserEntity> {
     return this._role;
   }
 
-  private _authId: string;
+  private _authId: null | string;
   private _email: Email;
   private _firstName: string;
   private _lastName: string;
@@ -58,7 +60,6 @@ export class UserEntity extends Entity<UserEntity> {
   public static create(props: UserProps): Result<UserEntity> {
     Guard.string(props.firstName);
     Guard.string(props.lastName);
-    Guard.string(props.authId);
 
     if (props.role === UserRole.ADMIN) {
       throw new InternalServerError('Admin role is not allowed');
@@ -72,13 +73,26 @@ export class UserEntity extends Entity<UserEntity> {
       role: props.role,
     });
 
+    user.addEvent(new UserCreatedEvent(user));
+
     return ok(user);
   }
 
-  public static fromPersistence(
-    props: UserProps,
-    base: BaseEntityProps,
-  ): UserEntity {
+  public static raw(props: UserProps, base: BaseEntityProps): UserEntity {
     return new UserEntity(props, base);
+  }
+
+  public updateAuthId(id: string) {
+    this._authId = id;
+  }
+
+  public updateEmail(email: Email) {
+    this._email = email;
+    this.addEvent(new UserEmailUpdatedEvent(this));
+  }
+
+  public updateName(firstName: string, lastName: string) {
+    this._firstName = firstName;
+    this._lastName = lastName;
   }
 }

@@ -11,6 +11,7 @@ import { Database } from '@/infrastructure/supabase/supabase.types';
 import {
   CreateSupabaseUserParams,
   DeleteSupabaseUserParams,
+  UpdateSupabaseUserParams,
 } from './supabase-repository.types';
 
 @Injectable()
@@ -22,11 +23,11 @@ export class SupabaseRepository {
     private readonly logger: AppLogger,
     private readonly configService: ConfigService,
   ) {
+    this.logger.setContext(this.constructor.name);
     this.supabase = createClient<Database>(
       this.configService.supabaseUrl,
       this.configService.supabaseKey,
     );
-    this.logger.setContext(this.constructor.name);
   }
 
   public async createUser(params: CreateSupabaseUserParams): Promise<User> {
@@ -64,6 +65,26 @@ export class SupabaseRepository {
       this.logger.error({
         error,
         message: 'Error deleting user',
+        params,
+      });
+      throw error;
+    }
+  }
+
+  public async updateUser(params: UpdateSupabaseUserParams): Promise<void> {
+    this.logger.info({
+      message: 'Updating user',
+      params,
+    });
+
+    const { error } = await this.supabase.auth.admin.updateUserById(params.id, {
+      email: params.email,
+    });
+
+    if (error) {
+      this.logger.error({
+        error,
+        message: 'Error updating user',
         params,
       });
       throw error;

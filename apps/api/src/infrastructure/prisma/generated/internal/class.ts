@@ -19,7 +19,7 @@ const config: runtime.GetPrismaClientConfig = {
   engineVersion: 'f09f2815f091dbba658cdcd2264306d88bb5bda6',
   activeProvider: 'postgresql',
   inlineSchema:
-    'generator client {\n  provider     = "prisma-client"\n  output       = "./generated"\n  moduleFormat = "cjs"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nenum Role {\n  ADMIN\n  STAFF\n  MEMBER\n}\n\nmodel User {\n  id        String @id\n  authId    String @unique\n  email     String @unique\n  firstName String\n  lastName  String\n  role      Role\n\n  createdAt DateTime\n  createdBy String\n  deletedAt DateTime?\n  deletedBy String?\n  isDeleted Boolean\n  updatedAt DateTime\n  updatedBy String\n\n  @@index([email])\n  @@index([authId])\n}\n',
+    'generator client {\n  provider     = "prisma-client"\n  output       = "./generated"\n  moduleFormat = "cjs"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nenum Role {\n  ADMIN\n  STAFF\n  MEMBER\n}\n\nmodel User {\n  id        String  @id\n  authId    String?\n  email     String  @unique\n  firstName String\n  lastName  String\n  role      Role\n\n  createdAt DateTime\n  createdBy String\n  deletedAt DateTime?\n  deletedBy String?\n  isDeleted Boolean\n  updatedAt DateTime\n  updatedBy String\n\n  @@index([email])\n  @@index([authId])\n}\n',
   runtimeDataModel: {
     models: {},
     enums: {},
@@ -44,9 +44,8 @@ config.compilerWasm = {
     await import('@prisma/client/runtime/query_compiler_bg.postgresql.js'),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import(
-      '@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.js'
-    );
+    const { wasm } =
+      await import('@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.js');
     return await decodeBase64AsWasm(wasm);
   },
 };
@@ -81,8 +80,8 @@ export interface PrismaClientConstructor {
     }
       ? U
       : Prisma.PrismaClientOptions['omit'],
-    ExtArgs extends
-      runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+    ExtArgs extends runtime.Types.Extensions.InternalArgs =
+      runtime.Types.Extensions.DefaultArgs,
   >(
     options: Prisma.Subset<Options, Prisma.PrismaClientOptions>,
   ): PrismaClient<LogOpts, OmitOpts, ExtArgs>;
@@ -105,8 +104,8 @@ export interface PrismaClientConstructor {
 export interface PrismaClient<
   in LogOpts extends Prisma.LogLevel = never,
   in out OmitOpts extends Prisma.PrismaClientOptions['omit'] = undefined,
-  in out ExtArgs extends
-    runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+  in out ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
 > {
   [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['other'] };
 
