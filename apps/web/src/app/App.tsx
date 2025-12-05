@@ -1,5 +1,4 @@
 import { StyleProvider } from '@ant-design/cssinjs';
-import { MantineProvider } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { App as AntdApp, ConfigProvider, type ThemeConfig } from 'antd';
 import { BrowserRouter } from 'react-router';
@@ -13,7 +12,9 @@ const queryClient = new QueryClient();
 
 const theme: ThemeConfig = {
   components: {
-    Layout: {},
+    Button: {
+      primaryShadow: 'none',
+    },
   },
   token: {
     colorInfo: '#22883e',
@@ -30,24 +31,22 @@ export function App() {
   }
 
   return (
-    <MantineProvider defaultColorScheme="auto">
-      <StyleProvider layer>
-        <ConfigProvider theme={theme}>
-          <QueryClientProvider client={queryClient}>
-            <AntdApp>
-              <BrowserRouter>
-                <AppContext.Provider value={{ session }}>
-                  <AppRoutes />
-                </AppContext.Provider>
-              </BrowserRouter>
-            </AntdApp>
-            {/* <ReactQueryDevtools
+    <StyleProvider layer>
+      <ConfigProvider theme={theme}>
+        <QueryClientProvider client={queryClient}>
+          <AntdApp>
+            <BrowserRouter>
+              <AppContext.Provider value={{ session }}>
+                <AppRoutes />
+              </AppContext.Provider>
+            </BrowserRouter>
+          </AntdApp>
+          {/* <ReactQueryDevtools
               buttonPosition="top-right"
               initialIsOpen={false}
             /> */}
-          </QueryClientProvider>
-        </ConfigProvider>
-      </StyleProvider>
-    </MantineProvider>
+        </QueryClientProvider>
+      </ConfigProvider>
+    </StyleProvider>
   );
 }

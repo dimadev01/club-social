@@ -1,5 +1,4 @@
 import { BetterFetchError } from '@better-fetch/fetch';
-import { notifications } from '@mantine/notifications';
 import {
   type DefaultError,
   type UseMutationOptions,
@@ -19,7 +18,7 @@ export function useMutation<
         message = error.error.message ?? error.message;
       }
 
-      notifications.show({ color: 'red', message });
+      console.error(message);
     },
     ...options,
   });

@@ -1,12 +1,9 @@
-import { Link } from 'react-router';
-
-import { APP_ROUTES } from '../app/app.enum';
+import { Page, PageContent } from '@/components/Page';
 
 export function Home() {
   return (
-    <div>
-      Home
-      <Link to={APP_ROUTES.LOGOUT}>Logout</Link>
-    </div>
+    <Page>
+      <PageContent>Home</PageContent>
+    </Page>
   );
 }

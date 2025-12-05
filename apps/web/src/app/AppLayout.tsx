@@ -10,12 +10,13 @@ import { APP_ROUTES } from './app.enum';
 
 export function AppLayout({ children }: PropsWithChildren) {
   const { session } = useAppContext();
-  const [collapsed, setCollapsed] = useLocalStorage(
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [collapsed, setCollapsed] = useLocalStorage<boolean>(
     'is-sidebar-collapsed',
     false,
   );
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const [selectedKeys, setSelectedKeys] = useState<string[]>([
     `/${location.pathname.split('/')[1]}`,
@@ -26,17 +27,13 @@ export function AppLayout({ children }: PropsWithChildren) {
   }
 
   return (
-    <Layout className="min-h-screen">
+    <Layout className="min-h-screen" hasSider>
       <Layout.Sider
-        className="sticky start-0 top-0 bottom-0 h-screen overflow-auto"
         collapsed={collapsed}
         collapsible
         onCollapse={setCollapsed}
-        style={{
-          scrollbarGutter: 'stable',
-          scrollbarWidth: 'thin',
-        }}
         theme="light"
+        zeroWidthTriggerStyle={{ top: 8 }}
       >
         <Flex className="h-full" vertical>
           <Image
