@@ -1,13 +1,7 @@
-import {
-  Center,
-  Container,
-  createTheme,
-  Loader,
-  MantineProvider,
-} from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
+import { StyleProvider } from '@ant-design/cssinjs';
+import { MantineProvider } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { App as AntdApp, ConfigProvider, type ThemeConfig } from 'antd';
 import { BrowserRouter } from 'react-router';
 
 import { useSupabaseSession } from '@/auth/useSupabaseSession';
@@ -15,65 +9,45 @@ import { useSupabaseSession } from '@/auth/useSupabaseSession';
 import { AppContext } from './app.context';
 import { AppRoutes } from './AppRoutes';
 
-const theme = createTheme({
-  colors: {
-    green: [
-      '#effbf2',
-      '#ddf4e4',
-      '#b6e9c4',
-      '#8ddea2',
-      '#6bd585',
-      '#56cf73',
-      '#4acc69',
-      '#3bb458',
-      '#32a04d',
-      '#22883e',
-    ],
-  },
-  components: {
-    Container: Container.extend({
-      defaultProps: {
-        size: 'xl',
-      },
-    }),
-  },
-  primaryColor: 'green',
-  primaryShade: 9,
-});
-
 const queryClient = new QueryClient();
+
+const theme: ThemeConfig = {
+  components: {
+    Layout: {},
+  },
+  token: {
+    colorInfo: '#22883e',
+    colorPrimary: '#22883e',
+  },
+  zeroRuntime: true,
+};
 
 export function App() {
   const { isLoading, session } = useSupabaseSession();
 
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <Center h="100vh">
-          <Loader />
-        </Center>
-      );
-    }
-
-    return (
-      <AppContext.Provider value={{ session }}>
-        <Notifications position="top-center" />
-        <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-          <ReactQueryDevtools
-            buttonPosition="top-right"
-            initialIsOpen={false}
-          />
-        </QueryClientProvider>
-      </AppContext.Provider>
-    );
-  };
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <MantineProvider defaultColorScheme="auto" theme={theme}>
-      {renderContent()}
+    <MantineProvider defaultColorScheme="auto">
+      <StyleProvider layer>
+        <ConfigProvider theme={theme}>
+          <QueryClientProvider client={queryClient}>
+            <AntdApp>
+              <BrowserRouter>
+                <AppContext.Provider value={{ session }}>
+                  <AppRoutes />
+                </AppContext.Provider>
+              </BrowserRouter>
+            </AntdApp>
+            {/* <ReactQueryDevtools
+              buttonPosition="top-right"
+              initialIsOpen={false}
+            /> */}
+          </QueryClientProvider>
+        </ConfigProvider>
+      </StyleProvider>
     </MantineProvider>
   );
 }

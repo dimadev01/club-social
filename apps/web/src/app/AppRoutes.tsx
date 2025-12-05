@@ -13,6 +13,7 @@ import { APP_ROUTES } from './app.enum';
 export function AppRoutes() {
   return (
     <Routes>
+      {/* Protected routes */}
       <Route element={<ProtectedRoute />}>
         <Route element={<Home />} path={APP_ROUTES.HOME} />
         <Route element={<UserListPage />} path={APP_ROUTES.USER_LIST} />
@@ -24,6 +25,7 @@ export function AppRoutes() {
         <Route element={<LogoutPage />} path={APP_ROUTES.LOGOUT} />
       </Route>
 
+      {/* Public routes */}
       <Route element={<PublicRoute />}>
         <Route path="/auth">
           <Route element={<LoginPage />} path={APP_ROUTES.LOGIN} />

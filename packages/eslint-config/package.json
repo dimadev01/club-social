@@ -4,10 +4,7 @@
   "private": true,
   "license": "UNLICENSED",
   "author": "Dmitriy Mironov",
-  "exports": {
-    ".": "./index.mjs",
-    "./nest": "./nest.mjs"
-  },
+  "exports": "./index.mjs",
   "devDependencies": {
     "@club-social/prettier-config": "*",
     "@eslint/js": "^9.39.1",

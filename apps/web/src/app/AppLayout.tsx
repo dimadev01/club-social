@@ -1,144 +1,97 @@
-import type { PropsWithChildren } from 'react';
-
-import {
-  ActionIcon,
-  AppShell,
-  Burger,
-  Container,
-  Group,
-  Image,
-  NavLink,
-  ScrollArea,
-  Text,
-  useMantineColorScheme,
-} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import {
-  IconBrandInstagram,
-  IconLogout2,
-  IconMoon,
-  IconSun,
-  IconSunMoon,
-} from '@tabler/icons-react';
-import { NavLink as ReactRouterNavLink } from 'react-router';
+import { HomeOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { Flex, Image, Layout, Menu } from 'antd';
+import { type PropsWithChildren, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import { useLocalStorage } from 'react-use';
 
 import { useAppContext } from '@/app/app.context';
 
-import { APP_ROUTES } from '../app/app.enum';
-import { AppMenu } from './AppMenu';
+import { APP_ROUTES } from './app.enum';
 
 export function AppLayout({ children }: PropsWithChildren) {
   const { session } = useAppContext();
-  const { colorScheme, setColorScheme } = useMantineColorScheme();
+  const [collapsed, setCollapsed] = useLocalStorage(
+    'is-sidebar-collapsed',
+    false,
+  );
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([
+    `/${location.pathname.split('/')[1]}`,
+  ]);
 
   if (!session) {
     throw new Error('Session not found');
   }
 
   return (
-    <AppShell
-      footer={{ height: 60 }}
-      header={{ height: 60 }}
-      layout="alt"
-      navbar={{
-        breakpoint: 'sm',
-        collapsed: {
-          desktop: !desktopOpened,
-          mobile: !mobileOpened,
-        },
-        width: 220,
-      }}
-      padding="md"
-    >
-      <AppShell.Header p="md">
-        <Group h="100%">
-          <Burger
-            hiddenFrom="sm"
-            onClick={toggleMobile}
-            opened={mobileOpened}
-            size="sm"
+    <Layout className="min-h-screen">
+      <Layout.Sider
+        className="sticky start-0 top-0 bottom-0 h-screen overflow-auto"
+        collapsed={collapsed}
+        collapsible
+        onCollapse={setCollapsed}
+        style={{
+          scrollbarGutter: 'stable',
+          scrollbarWidth: 'thin',
+        }}
+        theme="light"
+      >
+        <Flex className="h-full" vertical>
+          <Image
+            alt="Club Social Logo"
+            className="mx-auto max-w-[128px]"
+            preview={false}
+            rootClassName="w-full my-8"
+            src="/club-social-logo.png"
           />
-          <Burger
-            onClick={toggleDesktop}
-            opened={desktopOpened}
-            size="sm"
-            visibleFrom="sm"
+
+          <Menu
+            className="border-e-0"
+            items={[
+              {
+                icon: <HomeOutlined />,
+                key: APP_ROUTES.HOME,
+                label: 'Inicio',
+              },
+              {
+                icon: <UserOutlined />,
+                key: APP_ROUTES.USER_LIST,
+                label: 'Usuarios',
+              },
+            ]}
+            mode="inline"
+            onSelect={({ key }) => {
+              setSelectedKeys([key]);
+              navigate(key);
+            }}
+            selectedKeys={selectedKeys}
           />
-          <div id="breadcrumbs" />
-        </Group>
-      </AppShell.Header>
 
-      <AppShell.Navbar>
-        <AppShell.Section py="md">
-          <Image h={96} mx="auto" src="/club-social-logo.png" w={96} />
-        </AppShell.Section>
-
-        <AppShell.Section p="lg">
-          <Text>Hola</Text>
-          <Text fw="bold" lineClamp={1}>
-            {session.user.email ?? ''}
-          </Text>
-        </AppShell.Section>
-
-        <AppShell.Section component={ScrollArea} grow>
-          <AppMenu />
-        </AppShell.Section>
-        <AppShell.Section>
-          <NavLink
-            component={ReactRouterNavLink}
-            h={48}
-            label="Cerrar sesión"
-            leftSection={<IconLogout2 />}
-            pl="lg"
-            to={APP_ROUTES.LOGOUT}
+          <Menu
+            className="mt-auto border-e-0"
+            items={[
+              {
+                icon: <LogoutOutlined />,
+                key: APP_ROUTES.LOGOUT,
+                label: 'Cerrar sesión',
+              },
+            ]}
+            mode="inline"
+            onSelect={({ key }) => {
+              navigate(key);
+            }}
           />
-        </AppShell.Section>
-      </AppShell.Navbar>
+        </Flex>
+      </Layout.Sider>
 
-      <AppShell.Main>
-        <Container>{children}</Container>
-      </AppShell.Main>
-
-      <AppShell.Footer p="md" withBorder={false}>
-        <Group justify="space-between">
-          <ActionIcon.Group>
-            <ActionIcon variant="transparent">
-              <IconBrandInstagram />
-            </ActionIcon>
-            <ActionIcon variant="transparent">
-              <IconBrandInstagram />
-            </ActionIcon>
-            <ActionIcon variant="transparent">
-              <IconBrandInstagram />
-            </ActionIcon>
-          </ActionIcon.Group>
-          <Group>
-            <ActionIcon.Group>
-              <ActionIcon
-                onClick={() => setColorScheme('light')}
-                variant={colorScheme === 'light' ? 'filled' : 'default'}
-              >
-                <IconSun />
-              </ActionIcon>
-              <ActionIcon
-                onClick={() => setColorScheme('dark')}
-                variant={colorScheme === 'dark' ? 'filled' : 'default'}
-              >
-                <IconMoon />
-              </ActionIcon>
-              <ActionIcon
-                onClick={() => setColorScheme('auto')}
-                variant={colorScheme === 'auto' ? 'filled' : 'default'}
-              >
-                <IconSunMoon />
-              </ActionIcon>
-            </ActionIcon.Group>
-          </Group>
-        </Group>
-      </AppShell.Footer>
-    </AppShell>
+      <Layout>
+        <Layout.Content>{children}</Layout.Content>
+        <Layout.Footer style={{ textAlign: 'center' }}>
+          Club Social Monte Grande ©{new Date().getFullYear()}
+        </Layout.Footer>
+      </Layout>
+    </Layout>
   );
 }

@@ -13,6 +13,7 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/application/shared/logger/logger';
+import { ConfigService } from '@/infrastructure/config/config.service';
 import { TraceService } from '@/infrastructure/trace/trace.service';
 
 @Catch()
@@ -23,6 +24,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     @Inject(APP_LOGGER_PROVIDER)
     private readonly logger: AppLogger,
     private readonly traceService: TraceService,
+    private readonly configService: ConfigService,
   ) {
     super(adapterHost.httpAdapter);
     this.logger.setContext(AllExceptionsFilter.name);
@@ -47,7 +49,9 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
       method: this.catch.name,
     });
 
-    Sentry.captureException(exception);
+    if (!this.configService.isLocal) {
+      Sentry.captureException(exception);
+    }
 
     super.catch(new InternalServerErrorException(), host);
   }

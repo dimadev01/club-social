@@ -20,6 +20,8 @@
   "dictionaryDefinitions": [],
   "dictionaries": [],
   "words": [
+    "antd",
+    "cssinjs",
     "datasource",
     "datatable",
     "dotenvx",
@@ -29,6 +31,7 @@
     "nestjs",
     "neverthrow",
     "postgresql",
+    "Sider",
     "Signups",
     "supabase",
     "Supabase",

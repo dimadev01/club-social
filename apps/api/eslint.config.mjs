@@ -1,4 +1,4 @@
-import config from '@club-social/eslint-config/nest';
+import config from '@club-social/eslint-config';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 
