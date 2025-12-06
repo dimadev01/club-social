@@ -105,6 +105,7 @@ export class UsersController extends BaseController {
       firstName: user.firstName,
       id: user.id.value,
       lastName: user.lastName,
+      name: user.name,
       role: user.role,
     };
   }

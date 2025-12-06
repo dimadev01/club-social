@@ -12,6 +12,11 @@
 // import { useState } from 'react';
 // import { z } from 'zod';
 
+import { useEffect } from 'react';
+
+import { APP_ROUTES } from '@/app/app.enum';
+import { supabase } from '@/shared/lib/supabase';
+
 // import { APP_ROUTES } from '@/app/app.enum';
 // import { supabase } from '@/shared/lib/supabase';
 
@@ -22,6 +27,16 @@
 // type FormSchema = z.infer<typeof _schema>;
 
 export function LoginForm() {
+  useEffect(() => {
+    supabase.auth.signInWithOtp({
+      email: 'dima.dev@icloud.com',
+      options: {
+        emailRedirectTo: APP_ROUTES.HOME,
+        shouldCreateUser: false,
+      },
+    });
+  }, []);
+
   return <div>Login Form</div>;
   // const form = useForm<FormSchema>({
   //   initialValues: {

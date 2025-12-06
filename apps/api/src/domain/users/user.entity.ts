@@ -37,6 +37,10 @@ export class UserEntity extends Entity<UserEntity> {
     return this._lastName;
   }
 
+  public get name(): string {
+    return `${this._firstName} ${this._lastName}`;
+  }
+
   public get role(): UserRole {
     return this._role;
   }

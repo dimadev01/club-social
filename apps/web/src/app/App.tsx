@@ -3,89 +3,108 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { App as AntdApp, ConfigProvider, theme, type ThemeConfig } from 'antd';
 import esEs from 'antd/locale/es_ES';
 import dayjs from 'dayjs';
-import { BrowserRouter } from 'react-router';
-import { useDarkMode } from 'usehooks-ts';
-import 'dayjs/locale/es';
-
-dayjs.locale('es');
-
 import { useMemo } from 'react';
 import { useLocalStorage } from 'react-use';
 
 import { useSupabaseSession } from '@/auth/useSupabaseSession';
 import { usePrefersDarkSchema } from '@/shared/hooks/use-prefers-dark-schema';
 
-import { APP_THEME_MODE, AppContext, type AppThemeMode } from './app.context';
+import {
+  APP_THEME_MODE,
+  type AppAlgorithm,
+  AppContext,
+  type AppThemeMode,
+} from './app.context';
 import { AppRoutes } from './AppRoutes';
+import 'dayjs/locale/es';
 
-const queryClient = new QueryClient();
+dayjs.locale('es');
 
-export function App() {
-  const { isLoading, session } = useSupabaseSession();
-  const { isDarkMode, set: setDarkModeValue } = useDarkMode();
-  const [themeMode, setThemeMode] = useLocalStorage<AppThemeMode>(
-    'theme',
-    APP_THEME_MODE.AUTO,
-  );
-  const userPrefersDarkSchema = usePrefersDarkSchema();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    mutations: {
+      retry: false,
+    },
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
-  const handleSetThemeMode = (value: AppThemeMode) => {
-    setThemeMode(value);
+interface GetAlgorithmParams {
+  prefersDark: boolean;
+  themeMode: AppThemeMode;
+}
 
-    if (value === APP_THEME_MODE.AUTO) {
-      setDarkModeValue(userPrefersDarkSchema);
-    } else {
-      setDarkModeValue(value === APP_THEME_MODE.DARK);
-    }
-  };
-
-  const themeConfig: ThemeConfig = useMemo(
-    () => ({
-      algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
-      components: {
-        Button: {
-          primaryShadow: 'none',
-        },
-        Layout: {
-          footerPadding: 0,
-        },
-      },
-      token: {
-        colorInfo: '#22883e',
-        colorPrimary: '#22883e',
-      },
-      zeroRuntime: true,
-    }),
-    [isDarkMode],
-  );
-
-  if (isLoading) {
-    return <div>Loading...</div>;
+const getAlgorithm = ({
+  prefersDark,
+  themeMode,
+}: GetAlgorithmParams): AppAlgorithm => {
+  if (themeMode === APP_THEME_MODE.AUTO) {
+    return prefersDark ? theme.darkAlgorithm : theme.defaultAlgorithm;
   }
 
+  if (themeMode === APP_THEME_MODE.DARK) {
+    return theme.darkAlgorithm;
+  }
+
+  if (themeMode === APP_THEME_MODE.LIGHT) {
+    return theme.defaultAlgorithm;
+  }
+
+  throw new Error(`Invalid theme mode: ${themeMode}`);
+};
+
+const getThemeConfig = ({
+  algorithm,
+}: {
+  algorithm: AppAlgorithm;
+}): ThemeConfig => ({
+  algorithm,
+  components: {
+    Button: {
+      primaryShadow: 'none',
+    },
+    Layout: {
+      footerPadding: 0,
+    },
+  },
+  token: {
+    colorInfo: '#22883e',
+    colorPrimary: '#22883e',
+  },
+  zeroRuntime: true,
+});
+
+export function App() {
+  const { session } = useSupabaseSession();
+  const prefersDark = usePrefersDarkSchema();
+  const [themeMode = APP_THEME_MODE.AUTO, setThemeMode] =
+    useLocalStorage<AppThemeMode>('theme', APP_THEME_MODE.AUTO);
+
+  const themeConfig: ThemeConfig = useMemo(() => {
+    const algorithm = getAlgorithm({ prefersDark, themeMode });
+
+    return getThemeConfig({ algorithm });
+  }, [themeMode, prefersDark]);
+
   return (
-    <StyleProvider layer>
-      <ConfigProvider locale={esEs} theme={themeConfig}>
-        <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <StyleProvider layer>
+        <ConfigProvider locale={esEs} theme={themeConfig}>
           <AntdApp>
-            <BrowserRouter>
-              <AppContext.Provider
-                value={{
-                  session,
-                  setThemeMode: handleSetThemeMode,
-                  themeMode,
-                }}
-              >
-                <AppRoutes />
-              </AppContext.Provider>
-            </BrowserRouter>
-          </AntdApp>
-          {/* <ReactQueryDevtools
+            <AppContext.Provider value={{ session, setThemeMode, themeMode }}>
+              <AppRoutes />
+            </AppContext.Provider>
+            {/* <ReactQueryDevtools
               buttonPosition="top-right"
               initialIsOpen={false}
-            /> */}
-        </QueryClientProvider>
-      </ConfigProvider>
-    </StyleProvider>
+              /> */}
+          </AntdApp>
+        </ConfigProvider>
+      </StyleProvider>
+    </QueryClientProvider>
   );
 }

@@ -27,8 +27,10 @@ import {
   type AppThemeMode,
   useAppContext,
 } from '@/app/app.context';
+import { useSupabaseSession } from '@/auth/useSupabaseSession';
 
 import { APP_ROUTES } from './app.enum';
+import { AppLoading } from './AppLoading';
 
 const THEME_ICONS: Record<AppThemeMode, React.ReactNode> = {
   [APP_THEME_MODE.AUTO]: <SyncOutlined />,
@@ -37,7 +39,8 @@ const THEME_ICONS: Record<AppThemeMode, React.ReactNode> = {
 } as const;
 
 export function AppLayout({ children }: PropsWithChildren) {
-  const { session, setThemeMode, themeMode } = useAppContext();
+  const { isLoading } = useSupabaseSession();
+  const { setThemeMode, themeMode } = useAppContext();
 
   const { sm } = Grid.useBreakpoint();
 
@@ -52,8 +55,8 @@ export function AppLayout({ children }: PropsWithChildren) {
     `/${location.pathname.split('/')[1]}`,
   ]);
 
-  if (!session) {
-    throw new Error('Session not found');
+  if (isLoading) {
+    return <AppLoading />;
   }
 
   return (

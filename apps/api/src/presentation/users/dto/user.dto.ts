@@ -7,5 +7,6 @@ export class UserResponseDto implements UserDto {
   public firstName: string;
   public id: string;
   public lastName: string;
+  public name: string;
   public role: UserRole;
 }
