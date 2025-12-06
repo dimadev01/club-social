@@ -8,7 +8,6 @@ export interface BaseEntityProps {
   deletedAt: Date | null;
   deletedBy: null | string;
   id: UniqueId;
-  isDeleted: boolean;
   updatedAt: Date | null;
   updatedBy: null | string;
 }
@@ -30,10 +29,6 @@ export abstract class Entity<T> extends AggregateRoot<T> {
     return this._deletedBy;
   }
 
-  public get isDeleted(): boolean {
-    return this._isDeleted;
-  }
-
   public get updatedAt(): Date {
     return new Date(this._updatedAt);
   }
@@ -46,7 +41,6 @@ export abstract class Entity<T> extends AggregateRoot<T> {
   protected _createdBy: string;
   protected _deletedAt: Date | null;
   protected _deletedBy: null | string;
-  protected _isDeleted: boolean;
   protected _updatedAt: Date;
   protected _updatedBy: string;
 
@@ -57,13 +51,11 @@ export abstract class Entity<T> extends AggregateRoot<T> {
     this._createdBy = props?.createdBy ?? 'System';
     this._deletedAt = props?.deletedAt ?? null;
     this._deletedBy = props?.deletedBy ?? null;
-    this._isDeleted = props?.isDeleted ?? false;
     this._updatedAt = props?.updatedAt ?? this._createdAt;
     this._updatedBy = props?.updatedBy ?? this._createdBy;
   }
 
   public delete(deletedBy = 'System'): void {
-    this._isDeleted = true;
     this._deletedAt = new Date();
     this._deletedBy = deletedBy;
     this.markAsUpdated();
@@ -75,7 +67,6 @@ export abstract class Entity<T> extends AggregateRoot<T> {
   }
 
   public restore(by = 'System'): void {
-    this._isDeleted = false;
     this.markAsUpdated(by);
   }
 }

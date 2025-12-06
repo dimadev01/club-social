@@ -4,12 +4,15 @@ import {
   type UseMutationOptions,
   useMutation as useTanstackMutation,
 } from '@tanstack/react-query';
+import { App } from 'antd';
 
 export function useMutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
 >(options: UseMutationOptions<TData, TError, TVariables>) {
+  const { message: messageApi } = App.useApp();
+
   return useTanstackMutation({
     onError: (error) => {
       let message = 'Something went wrong';
@@ -18,7 +21,7 @@ export function useMutation<
         message = error.error.message ?? error.message;
       }
 
-      console.error(message);
+      messageApi.error(message);
     },
     ...options,
   });

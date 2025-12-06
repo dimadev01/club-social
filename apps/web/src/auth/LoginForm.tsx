@@ -29,7 +29,7 @@ import { supabase } from '@/shared/lib/supabase';
 export function LoginForm() {
   useEffect(() => {
     supabase.auth.signInWithOtp({
-      email: 'dima.dev@icloud.com',
+      email: 'info@clubsocialmontegrande.ar',
       options: {
         emailRedirectTo: APP_ROUTES.HOME,
         shouldCreateUser: false,

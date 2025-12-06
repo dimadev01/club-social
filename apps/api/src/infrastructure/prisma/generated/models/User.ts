@@ -30,12 +30,11 @@ export type UserMinAggregateOutputType = {
   email: string | null;
   firstName: string | null;
   lastName: string | null;
-  role: $Enums.Role | null;
+  role: $Enums.UserRole | null;
   createdAt: Date | null;
   createdBy: string | null;
   deletedAt: Date | null;
   deletedBy: string | null;
-  isDeleted: boolean | null;
   updatedAt: Date | null;
   updatedBy: string | null;
 };
@@ -46,12 +45,11 @@ export type UserMaxAggregateOutputType = {
   email: string | null;
   firstName: string | null;
   lastName: string | null;
-  role: $Enums.Role | null;
+  role: $Enums.UserRole | null;
   createdAt: Date | null;
   createdBy: string | null;
   deletedAt: Date | null;
   deletedBy: string | null;
-  isDeleted: boolean | null;
   updatedAt: Date | null;
   updatedBy: string | null;
 };
@@ -67,7 +65,6 @@ export type UserCountAggregateOutputType = {
   createdBy: number;
   deletedAt: number;
   deletedBy: number;
-  isDeleted: number;
   updatedAt: number;
   updatedBy: number;
   _all: number;
@@ -84,7 +81,6 @@ export type UserMinAggregateInputType = {
   createdBy?: true;
   deletedAt?: true;
   deletedBy?: true;
-  isDeleted?: true;
   updatedAt?: true;
   updatedBy?: true;
 };
@@ -100,7 +96,6 @@ export type UserMaxAggregateInputType = {
   createdBy?: true;
   deletedAt?: true;
   deletedBy?: true;
-  isDeleted?: true;
   updatedAt?: true;
   updatedBy?: true;
 };
@@ -116,7 +111,6 @@ export type UserCountAggregateInputType = {
   createdBy?: true;
   deletedAt?: true;
   deletedBy?: true;
-  isDeleted?: true;
   updatedAt?: true;
   updatedBy?: true;
   _all?: true;
@@ -207,12 +201,11 @@ export type UserGroupByOutputType = {
   email: string;
   firstName: string;
   lastName: string;
-  role: $Enums.Role;
+  role: $Enums.UserRole;
   createdAt: Date;
   createdBy: string;
   deletedAt: Date | null;
   deletedBy: string | null;
-  isDeleted: boolean;
   updatedAt: Date;
   updatedBy: string;
   _count: UserCountAggregateOutputType | null;
@@ -241,12 +234,11 @@ export type UserWhereInput = {
   email?: Prisma.StringFilter<'User'> | string;
   firstName?: Prisma.StringFilter<'User'> | string;
   lastName?: Prisma.StringFilter<'User'> | string;
-  role?: Prisma.EnumRoleFilter<'User'> | $Enums.Role;
+  role?: Prisma.EnumUserRoleFilter<'User'> | $Enums.UserRole;
   createdAt?: Prisma.DateTimeFilter<'User'> | Date | string;
   createdBy?: Prisma.StringFilter<'User'> | string;
   deletedAt?: Prisma.DateTimeNullableFilter<'User'> | Date | string | null;
   deletedBy?: Prisma.StringNullableFilter<'User'> | string | null;
-  isDeleted?: Prisma.BoolFilter<'User'> | boolean;
   updatedAt?: Prisma.DateTimeFilter<'User'> | Date | string;
   updatedBy?: Prisma.StringFilter<'User'> | string;
 };
@@ -262,7 +254,6 @@ export type UserOrderByWithRelationInput = {
   createdBy?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
-  isDeleted?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
@@ -277,12 +268,11 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     authId?: Prisma.StringNullableFilter<'User'> | string | null;
     firstName?: Prisma.StringFilter<'User'> | string;
     lastName?: Prisma.StringFilter<'User'> | string;
-    role?: Prisma.EnumRoleFilter<'User'> | $Enums.Role;
+    role?: Prisma.EnumUserRoleFilter<'User'> | $Enums.UserRole;
     createdAt?: Prisma.DateTimeFilter<'User'> | Date | string;
     createdBy?: Prisma.StringFilter<'User'> | string;
     deletedAt?: Prisma.DateTimeNullableFilter<'User'> | Date | string | null;
     deletedBy?: Prisma.StringNullableFilter<'User'> | string | null;
-    isDeleted?: Prisma.BoolFilter<'User'> | boolean;
     updatedAt?: Prisma.DateTimeFilter<'User'> | Date | string;
     updatedBy?: Prisma.StringFilter<'User'> | string;
   },
@@ -300,7 +290,6 @@ export type UserOrderByWithAggregationInput = {
   createdBy?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
-  isDeleted?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
   _count?: Prisma.UserCountOrderByAggregateInput;
@@ -321,7 +310,7 @@ export type UserScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<'User'> | string;
   firstName?: Prisma.StringWithAggregatesFilter<'User'> | string;
   lastName?: Prisma.StringWithAggregatesFilter<'User'> | string;
-  role?: Prisma.EnumRoleWithAggregatesFilter<'User'> | $Enums.Role;
+  role?: Prisma.EnumUserRoleWithAggregatesFilter<'User'> | $Enums.UserRole;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<'User'> | Date | string;
   createdBy?: Prisma.StringWithAggregatesFilter<'User'> | string;
   deletedAt?:
@@ -330,7 +319,6 @@ export type UserScalarWhereWithAggregatesInput = {
     | string
     | null;
   deletedBy?: Prisma.StringNullableWithAggregatesFilter<'User'> | string | null;
-  isDeleted?: Prisma.BoolWithAggregatesFilter<'User'> | boolean;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<'User'> | Date | string;
   updatedBy?: Prisma.StringWithAggregatesFilter<'User'> | string;
 };
@@ -341,12 +329,11 @@ export type UserCreateInput = {
   email: string;
   firstName: string;
   lastName: string;
-  role: $Enums.Role;
+  role: $Enums.UserRole;
   createdAt: Date | string;
   createdBy: string;
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
-  isDeleted: boolean;
   updatedAt: Date | string;
   updatedBy: string;
 };
@@ -357,12 +344,11 @@ export type UserUncheckedCreateInput = {
   email: string;
   firstName: string;
   lastName: string;
-  role: $Enums.Role;
+  role: $Enums.UserRole;
   createdAt: Date | string;
   createdBy: string;
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
-  isDeleted: boolean;
   updatedAt: Date | string;
   updatedBy: string;
 };
@@ -373,7 +359,7 @@ export type UserUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   deletedAt?:
@@ -382,7 +368,6 @@ export type UserUpdateInput = {
     | string
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
 };
@@ -393,7 +378,7 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   deletedAt?:
@@ -402,7 +387,6 @@ export type UserUncheckedUpdateInput = {
     | string
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
 };
@@ -413,12 +397,11 @@ export type UserCreateManyInput = {
   email: string;
   firstName: string;
   lastName: string;
-  role: $Enums.Role;
+  role: $Enums.UserRole;
   createdAt: Date | string;
   createdBy: string;
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
-  isDeleted: boolean;
   updatedAt: Date | string;
   updatedBy: string;
 };
@@ -429,7 +412,7 @@ export type UserUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   deletedAt?:
@@ -438,7 +421,6 @@ export type UserUpdateManyMutationInput = {
     | string
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
 };
@@ -449,7 +431,7 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
-  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role;
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   deletedAt?:
@@ -458,7 +440,6 @@ export type UserUncheckedUpdateManyInput = {
     | string
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
 };
@@ -474,7 +455,6 @@ export type UserCountOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
   deletedBy?: Prisma.SortOrder;
-  isDeleted?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
@@ -490,7 +470,6 @@ export type UserMaxOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
   deletedBy?: Prisma.SortOrder;
-  isDeleted?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
@@ -506,7 +485,6 @@ export type UserMinOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
   deletedBy?: Prisma.SortOrder;
-  isDeleted?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
@@ -519,8 +497,8 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null;
 };
 
-export type EnumRoleFieldUpdateOperationsInput = {
-  set?: $Enums.Role;
+export type EnumUserRoleFieldUpdateOperationsInput = {
+  set?: $Enums.UserRole;
 };
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -529,10 +507,6 @@ export type DateTimeFieldUpdateOperationsInput = {
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null;
-};
-
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean;
 };
 
 export type UserSelect<
@@ -550,7 +524,6 @@ export type UserSelect<
     createdBy?: boolean;
     deletedAt?: boolean;
     deletedBy?: boolean;
-    isDeleted?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
   },
@@ -572,7 +545,6 @@ export type UserSelectCreateManyAndReturn<
     createdBy?: boolean;
     deletedAt?: boolean;
     deletedBy?: boolean;
-    isDeleted?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
   },
@@ -594,7 +566,6 @@ export type UserSelectUpdateManyAndReturn<
     createdBy?: boolean;
     deletedAt?: boolean;
     deletedBy?: boolean;
-    isDeleted?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
   },
@@ -612,7 +583,6 @@ export type UserSelectScalar = {
   createdBy?: boolean;
   deletedAt?: boolean;
   deletedBy?: boolean;
-  isDeleted?: boolean;
   updatedAt?: boolean;
   updatedBy?: boolean;
 };
@@ -631,7 +601,6 @@ export type UserOmit<
   | 'createdBy'
   | 'deletedAt'
   | 'deletedBy'
-  | 'isDeleted'
   | 'updatedAt'
   | 'updatedBy',
   ExtArgs['result']['user']
@@ -650,12 +619,11 @@ export type $UserPayload<
       email: string;
       firstName: string;
       lastName: string;
-      role: $Enums.Role;
+      role: $Enums.UserRole;
       createdAt: Date;
       createdBy: string;
       deletedAt: Date | null;
       deletedBy: string | null;
-      isDeleted: boolean;
       updatedAt: Date;
       updatedBy: string;
     },
@@ -1255,12 +1223,11 @@ export interface UserFieldRefs {
   readonly email: Prisma.FieldRef<'User', 'String'>;
   readonly firstName: Prisma.FieldRef<'User', 'String'>;
   readonly lastName: Prisma.FieldRef<'User', 'String'>;
-  readonly role: Prisma.FieldRef<'User', 'Role'>;
+  readonly role: Prisma.FieldRef<'User', 'UserRole'>;
   readonly createdAt: Prisma.FieldRef<'User', 'DateTime'>;
   readonly createdBy: Prisma.FieldRef<'User', 'String'>;
   readonly deletedAt: Prisma.FieldRef<'User', 'DateTime'>;
   readonly deletedBy: Prisma.FieldRef<'User', 'String'>;
-  readonly isDeleted: Prisma.FieldRef<'User', 'Boolean'>;
   readonly updatedAt: Prisma.FieldRef<'User', 'DateTime'>;
   readonly updatedBy: Prisma.FieldRef<'User', 'String'>;
 }

@@ -8,25 +8,29 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Role {
+enum UserRole {
   ADMIN
   STAFF
   MEMBER
 }
 
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model User {
-  id        String  @id
+  id        String   @id
   authId    String?
-  email     String  @unique
+  email     String   @unique
   firstName String
   lastName  String
-  role      Role
+  role      UserRole
 
   createdAt DateTime
   createdBy String
   deletedAt DateTime?
   deletedBy String?
-  isDeleted Boolean
   updatedAt DateTime
   updatedBy String
 

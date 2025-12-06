@@ -22,13 +22,13 @@ export class PrismaUserRepository implements UserRepository {
 
   public async delete(entity: UserEntity): Promise<void> {
     await this.prismaService.user.delete({
-      where: { id: entity.id.value },
+      where: { deletedAt: null, id: entity.id.value },
     });
   }
 
   public async findOneById(id: UniqueId): Promise<null | UserEntity> {
     const user = await this.prismaService.user.findUnique({
-      where: { id: id.value },
+      where: { deletedAt: null, id: id.value },
     });
 
     if (!user) {
@@ -40,7 +40,7 @@ export class PrismaUserRepository implements UserRepository {
 
   public async findOneByIdOrThrow(id: UniqueId): Promise<UserEntity> {
     const user = await this.prismaService.user.findUniqueOrThrow({
-      where: { id: id.value },
+      where: { deletedAt: null, id: id.value },
     });
 
     return PrismaUserMapper.toDomain(user);

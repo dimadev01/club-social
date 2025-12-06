@@ -6,6 +6,7 @@ export default defineConfig({
   },
   migrations: {
     path: 'migrations',
+    seed: 'tsx src/infrastructure/prisma/prisma.seed.ts',
   },
   schema: 'schema.prisma',
 });

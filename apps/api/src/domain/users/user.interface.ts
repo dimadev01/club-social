@@ -7,7 +7,6 @@ export interface UserInterface {
   email: string;
   firstName: string;
   id: string;
-  isDeleted: boolean;
   lastName: string;
   updatedAt: Date;
   updatedBy: string;
