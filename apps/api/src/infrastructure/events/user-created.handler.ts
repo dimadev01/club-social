@@ -10,7 +10,7 @@ import {
 } from '@/domain/users/user.repository';
 
 import { AppLoggerService } from '../logger/logger.service';
-import { SupabaseRepository } from '../supabase/supabase.repository';
+import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
 export class UserCreatedHandler {
@@ -19,7 +19,7 @@ export class UserCreatedHandler {
     private readonly logger: AppLoggerService,
     @Inject(USERS_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
-    private readonly supabaseRepository: SupabaseRepository,
+    private readonly supabaseRepository: SupabaseService,
   ) {
     this.logger.setContext(UserCreatedHandler.name);
   }

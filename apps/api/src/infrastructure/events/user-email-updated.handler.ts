@@ -1,19 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { APP_LOGGER_PROVIDER } from '@/application/shared/logger/logger';
+import {
+  APP_LOGGER_PROVIDER,
+  type AppLogger,
+} from '@/application/shared/logger/logger';
 import { Guard } from '@/domain/shared/guards';
 import { UserEmailUpdatedEvent } from '@/domain/users/events/user-email-updated.event';
 
-import { AppLoggerService } from '../logger/logger.service';
-import { SupabaseRepository } from '../supabase/supabase.repository';
+import { SupabaseService } from '../supabase/supabase.service';
 
 @Injectable()
 export class UserEmailUpdatedHandler {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
-    private readonly logger: AppLoggerService,
-    private readonly supabaseRepository: SupabaseRepository,
+    private readonly logger: AppLogger,
+    private readonly supabaseRepository: SupabaseService,
   ) {
     this.logger.setContext(UserEmailUpdatedHandler.name);
   }

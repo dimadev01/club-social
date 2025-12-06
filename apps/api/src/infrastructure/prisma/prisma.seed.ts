@@ -4,7 +4,6 @@ import { createClient } from '@supabase/supabase-js';
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 
 import { PrismaClient, UserRole } from '../prisma/generated/client';
-import { Database } from '../supabase/supabase.types';
 
 const prisma = new PrismaClient({
   adapter: new PrismaPg({
@@ -19,7 +18,7 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error('SUPABASE_URL and SUPABASE_KEY must be set');
 }
 
-const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function main() {
   const { data, error } = await supabase.auth.admin.createUser({

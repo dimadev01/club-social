@@ -1,10 +1,10 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
 import { LoginPage } from '@/auth/LoginPage';
 import { LogoutPage } from '@/auth/LogoutPage';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
 import { PublicRoute } from '@/auth/PublicRoute';
-import { useSupabaseSession } from '@/auth/useSupabaseSession';
 import { NotFound } from '@/components/NotFound';
 import { Home } from '@/home/HomePage';
 import { UserDetailPage } from '@/users/UserDetailPage';
@@ -14,7 +14,8 @@ import { APP_ROUTES } from './app.enum';
 import { AppLoading } from './AppLoading';
 
 export function AppRoutes() {
-  const { isLoading } = useSupabaseSession();
+  // const { isLoading } = useSupabaseSession();
+  const { isLoading } = useAuth0();
 
   if (isLoading) {
     return <AppLoading />;
@@ -32,7 +33,6 @@ export function AppRoutes() {
             element={<UserDetailPage />}
             path={`${APP_ROUTES.USER_LIST}/:id`}
           />
-          <Route element={<LogoutPage />} path={APP_ROUTES.LOGOUT} />
         </Route>
 
         {/* Public routes */}
@@ -42,6 +42,7 @@ export function AppRoutes() {
           </Route>
         </Route>
 
+        <Route element={<LogoutPage />} path={APP_ROUTES.LOGOUT} />
         <Route element={<NotFound />} path="*" />
       </Routes>
     </BrowserRouter>

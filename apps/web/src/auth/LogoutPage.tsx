@@ -1,15 +1,14 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect } from 'react';
 
-import { supabase } from '@/shared/lib/supabase';
+import { AppLoading } from '@/app/AppLoading';
 
 export function LogoutPage() {
+  const { logout } = useAuth0();
+
   useEffect(() => {
-    const logout = async () => {
-      await supabase.auth.signOut();
-    };
-
     logout();
-  }, []);
+  }, [logout]);
 
-  return <div>Logging out...</div>;
+  return <AppLoading />;
 }

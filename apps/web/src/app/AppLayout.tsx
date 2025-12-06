@@ -2,14 +2,10 @@ import {
   FilePdfOutlined,
   HomeOutlined,
   LogoutOutlined,
-  MoonOutlined,
-  SunOutlined,
-  SyncOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import {
   Button,
-  Dropdown,
   Flex,
   Grid,
   Image,
@@ -22,25 +18,14 @@ import { type PropsWithChildren, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
-import {
-  APP_THEME_MODE,
-  type AppThemeMode,
-  useAppContext,
-} from '@/app/app.context';
 import { useSupabaseSession } from '@/auth/useSupabaseSession';
+import { MenuThemeSwitcher } from '@/components/MenuThemeSwitcher';
 
 import { APP_ROUTES } from './app.enum';
 import { AppLoading } from './AppLoading';
 
-const THEME_ICONS: Record<AppThemeMode, React.ReactNode> = {
-  [APP_THEME_MODE.AUTO]: <SyncOutlined />,
-  [APP_THEME_MODE.DARK]: <MoonOutlined />,
-  [APP_THEME_MODE.LIGHT]: <SunOutlined />,
-} as const;
-
 export function AppLayout({ children }: PropsWithChildren) {
   const { isLoading } = useSupabaseSession();
-  const { setThemeMode, themeMode } = useAppContext();
 
   const { sm } = Grid.useBreakpoint();
 
@@ -132,36 +117,7 @@ export function AppLayout({ children }: PropsWithChildren) {
             {sm && <Typography.Text>Hecho por D.</Typography.Text>}
 
             <div>
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      icon: <SunOutlined />,
-                      key: APP_THEME_MODE.LIGHT,
-                      label: 'Claro',
-                    },
-                    {
-                      icon: <MoonOutlined />,
-                      key: APP_THEME_MODE.DARK,
-                      label: 'Oscuro',
-                    },
-                    {
-                      icon: <SyncOutlined />,
-                      key: APP_THEME_MODE.AUTO,
-                      label: 'Automático',
-                    },
-                  ],
-                  onClick: ({ key }) => {
-                    setThemeMode(key as AppThemeMode);
-                  },
-                }}
-              >
-                <Button
-                  icon={THEME_ICONS[themeMode]}
-                  size="small"
-                  type="text"
-                />
-              </Dropdown>
+              <MenuThemeSwitcher />
             </div>
           </Flex>
         </Layout.Footer>

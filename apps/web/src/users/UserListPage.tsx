@@ -1,23 +1,33 @@
 import type { PaginatedResponse } from '@club-social/types/shared';
 import type { UserDto } from '@club-social/types/users';
 
-import { EditOutlined, MoreOutlined, UserAddOutlined } from '@ant-design/icons';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { Button, Dropdown, Space, Table, Typography } from 'antd';
+import {
+  FileExcelOutlined,
+  MoreOutlined,
+  UserAddOutlined,
+} from '@ant-design/icons';
+import { keepPreviousData } from '@tanstack/react-query';
+import { App, Button, Dropdown, Space, Table, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 import { Page, PageContent, PageHeader } from '@/components/Page';
-import { $fetch } from '@/shared/lib/api';
+import { $fetch } from '@/shared/lib/fetch';
+import { useQuery } from '@/shared/lib/useQuery';
 
 export function UserListPage() {
+  const navigate = useNavigate();
+  const { message } = App.useApp();
+
   const usersQuery = useQuery({
     placeholderData: keepPreviousData,
     queryFn: () => $fetch<PaginatedResponse<UserDto>>('/users/paginated'),
     queryKey: ['users'],
   });
 
-  const navigate = useNavigate();
+  if (usersQuery.error) {
+    message.error(usersQuery.error.message);
+  }
 
   return (
     <Page>
@@ -35,9 +45,9 @@ export function UserListPage() {
             menu={{
               items: [
                 {
-                  icon: <EditOutlined />,
-                  key: 'edit',
-                  label: 'Editar',
+                  icon: <FileExcelOutlined />,
+                  key: 'export',
+                  label: 'Exportar',
                 },
               ],
             }}

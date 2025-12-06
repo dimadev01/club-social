@@ -8,6 +8,7 @@ import { ConfigModule } from './infrastructure/config/config.module';
 import { EventsModule } from './infrastructure/events/events.module';
 import { LoggerModule } from './infrastructure/logger/logger.module';
 import { TraceModule } from './infrastructure/trace/trace.module';
+import { AuthModule } from './presentation/shared/auth/auth.module';
 import { AllExceptionsFilter } from './presentation/shared/filters/all-exceptions.filter';
 import { UsersModule } from './presentation/users/users.module';
 
@@ -19,6 +20,7 @@ import { UsersModule } from './presentation/users/users.module';
     EventsModule,
     TraceModule,
     LoggerModule,
+    AuthModule,
 
     /**
      * Domain

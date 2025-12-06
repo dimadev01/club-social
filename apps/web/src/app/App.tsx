@@ -1,6 +1,13 @@
 import { StyleProvider } from '@ant-design/cssinjs';
+import { Auth0Provider } from '@auth0/auth0-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { App as AntdApp, ConfigProvider, theme, type ThemeConfig } from 'antd';
+import {
+  Alert,
+  App as AntdApp,
+  ConfigProvider,
+  theme,
+  type ThemeConfig,
+} from 'antd';
 import esEs from 'antd/locale/es_ES';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
@@ -15,8 +22,9 @@ import {
   AppContext,
   type AppThemeMode,
 } from './app.context';
-import { AppRoutes } from './AppRoutes';
 import 'dayjs/locale/es';
+
+import { AppRoutes } from './AppRoutes';
 
 dayjs.locale('es');
 
@@ -95,13 +103,25 @@ export function App() {
       <StyleProvider layer>
         <ConfigProvider locale={esEs} theme={themeConfig}>
           <AntdApp>
-            <AppContext.Provider value={{ session, setThemeMode, themeMode }}>
-              <AppRoutes />
-            </AppContext.Provider>
-            {/* <ReactQueryDevtools
+            <Alert.ErrorBoundary>
+              <Auth0Provider
+                authorizationParams={{
+                  redirect_uri: window.location.origin,
+                }}
+                clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
+                domain={import.meta.env.VITE_AUTH0_DOMAIN}
+              >
+                <AppContext.Provider
+                  value={{ session, setThemeMode, themeMode }}
+                >
+                  <AppRoutes />
+                </AppContext.Provider>
+              </Auth0Provider>
+              {/* <ReactQueryDevtools
               buttonPosition="top-right"
               initialIsOpen={false}
               /> */}
+            </Alert.ErrorBoundary>
           </AntdApp>
         </ConfigProvider>
       </StyleProvider>

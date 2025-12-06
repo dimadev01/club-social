@@ -1,133 +1,116 @@
-// import {
-//   Alert,
-//   Button,
-//   LoadingOverlay,
-//   Stack,
-//   Text,
-//   TextInput,
-// } from '@mantine/core';
-// import { useForm } from '@mantine/form';
-// import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
-// import { zod4Resolver } from 'mantine-form-zod-resolver';
-// import { useState } from 'react';
-// import { z } from 'zod';
-
+import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect } from 'react';
 
-import { APP_ROUTES } from '@/app/app.enum';
-import { supabase } from '@/shared/lib/supabase';
+import { AppLoading } from '@/app/AppLoading';
 
-// import { APP_ROUTES } from '@/app/app.enum';
-// import { supabase } from '@/shared/lib/supabase';
+// interface FormSchema {
+//   email: string;
+// }
 
-// const _schema = z
-//   .object({ email: z.email({ error: 'Email inválido' }) })
-//   .strict();
+// const FormStatus = {
+//   IDLE: 'idle',
+//   SUBMITTING: 'submitting',
+//   SUCCESS: 'success',
+// } as const;
 
-// type FormSchema = z.infer<typeof _schema>;
+// type FormStatus = (typeof FormStatus)[keyof typeof FormStatus];
 
 export function LoginForm() {
-  useEffect(() => {
-    supabase.auth.signInWithOtp({
-      email: 'info@clubsocialmontegrande.ar',
-      options: {
-        emailRedirectTo: APP_ROUTES.HOME,
-        shouldCreateUser: false,
-      },
-    });
-  }, []);
+  // const [formStatus, setFormStatus] = useState<FormStatus>(FormStatus.IDLE);
+  const { loginWithRedirect } = useAuth0();
+  // const { message } = App.useApp();
 
-  return <div>Login Form</div>;
-  // const form = useForm<FormSchema>({
-  //   initialValues: {
-  //     email: '',
-  //   },
-  //   mode: 'uncontrolled',
-  //   validate: zod4Resolver(_schema),
-  // });
+  // const [form] = Form.useForm<FormSchema>();
 
-  // const [successMessage, setSuccessMessage] = useState<null | string>(null);
-  // const [authErrorMessage, setAuthErrorMessage] = useState<null | string>(null);
+  // const onSubmit = async (values: FormSchema) => {
+  //   setFormStatus(FormStatus.SUBMITTING);
 
-  // const onSubmit = async (data: FormSchema) => {
   //   const { error } = await supabase.auth.signInWithOtp({
-  //     email: data.email,
+  //     email: values.email,
   //     options: {
   //       emailRedirectTo: APP_ROUTES.HOME,
   //       shouldCreateUser: false,
   //     },
   //   });
 
-  //   if (error && error.message === 'Signups not allowed for otp') {
-  //     setAuthErrorMessage('No encontramos tu cuenta');
+  //   setFormStatus(error ? FormStatus.IDLE : FormStatus.SUCCESS);
 
-  //     return;
+  //   if (error) {
+  //     message.error(error.message);
   //   }
-
-  //   setSuccessMessage('Te enviamos un link para iniciar sesión');
   // };
 
-  // if (successMessage) {
-  //   return (
-  //     <div className="flex-1">
-  //       <Alert color="green" icon={<IconCheck />} mb="md">
-  //         <Text>{successMessage}</Text>
-  //       </Alert>
+  useEffect(() => {
+    loginWithRedirect();
+  }, [loginWithRedirect]);
 
-  //       <Button
-  //         onClick={() => {
-  //           setSuccessMessage(null);
-  //         }}
-  //       >
-  //         Volver
-  //       </Button>
-  //     </div>
-  //   );
-  // }
+  // const isSubmitting = formStatus === FormStatus.SUBMITTING;
 
-  // if (authErrorMessage) {
-  //   return (
-  //     <div className="flex-1">
-  //       <Alert color="red" icon={<IconAlertCircle />} mb="md">
-  //         <Text>{authErrorMessage}</Text>
-  //       </Alert>
+  return (
+    <AppLoading />
+    // <Flex className="w-full max-w-xs" gap="small" vertical>
+    //   <Image
+    //     alt="Club Social Logo"
+    //     className="mx-auto max-w-[128px]"
+    //     preview={false}
+    //     rootClassName="w-full"
+    //     src="/club-social-logo.png"
+    //   />
 
-  //       <Button
-  //         onClick={() => {
-  //           setAuthErrorMessage(null);
-  //           form.setFieldValue('email', '');
-  //         }}
-  //       >
-  //         Volver
-  //       </Button>
-  //     </div>
-  //   );
-  // }
+    //   {formStatus === FormStatus.SUCCESS && (
+    //     <Alert
+    //       closable={{
+    //         afterClose: () => setFormStatus(FormStatus.IDLE),
+    //         closeIcon: true,
+    //       }}
+    //       description="Le hemos enviado un link para iniciar sesión"
+    //       type="success"
+    //     />
+    //   )}
 
-  // return (
-  //   <div className="flex-1">
-  //     <form className="relative" onSubmit={form.onSubmit(onSubmit)}>
-  //       <LoadingOverlay visible={form.submitting} />
-  //       <Stack>
-  //         <TextInput
-  //           autoFocus
-  //           key={form.key('email')}
-  //           label="Email"
-  //           placeholder="juan.perez@email.com"
-  //           type="email"
-  //           {...form.getInputProps('email')}
-  //         />
+    //   {formStatus !== FormStatus.SUCCESS && (
+    //     <Card
+    //       actions={[
+    //         <Button
+    //           disabled={isSubmitting}
+    //           form="form"
+    //           htmlType="submit"
+    //           icon={<LoginOutlined />}
+    //           loading={isSubmitting}
+    //           type="primary"
+    //         >
+    //           Iniciar sesión
+    //         </Button>,
+    //         <Button onClick={() => loginWithRedirect()}>
+    //           Iniciar sesión con Auth0
+    //         </Button>,
+    //       ]}
+    //     >
+    //       <Form<FormSchema>
+    //         disabled={isSubmitting}
+    //         form={form}
+    //         id="form"
+    //         initialValues={{ email: '' }}
+    //         layout="vertical"
+    //         name="form"
+    //         onFinish={onSubmit}
+    //         scrollToFirstError
+    //       >
+    //         <Form.Item<FormSchema>
+    //           label="Email"
+    //           name="email"
+    //           rules={[{ required: true, type: 'email', whitespace: true }]}
+    //           tooltip="Recibirás un link para iniciar sesión"
+    //         >
+    //           <Input placeholder="juan.perez@example.com" type="email" />
+    //         </Form.Item>
+    //       </Form>
+    //     </Card>
+    //   )}
 
-  //         <Button
-  //           disabled={form.submitting}
-  //           fullWidth
-  //           loading={form.submitting}
-  //           type="submit"
-  //         >
-  //           {form.submitting ? 'Iniciando sesión...' : 'Iniciar sesión'}
-  //         </Button>
-  //       </Stack>
-  //     </form>
-  //   </div>
-  // );
+    //   <Flex justify="end">
+    //     <MenuThemeSwitcher />
+    //   </Flex>
+    // </Flex>
+  );
 }

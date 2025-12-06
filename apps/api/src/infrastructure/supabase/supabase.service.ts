@@ -6,7 +6,6 @@ import {
   type AppLogger,
 } from '@/application/shared/logger/logger';
 import { ConfigService } from '@/infrastructure/config/config.service';
-import { Database } from '@/infrastructure/supabase/supabase.types';
 
 import {
   CreateSupabaseUserParams,
@@ -15,8 +14,8 @@ import {
 } from './supabase-repository.types';
 
 @Injectable()
-export class SupabaseRepository {
-  private readonly supabase: SupabaseClient<Database>;
+export class SupabaseService {
+  private readonly supabase: SupabaseClient;
 
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
@@ -24,7 +23,7 @@ export class SupabaseRepository {
     private readonly configService: ConfigService,
   ) {
     this.logger.setContext(this.constructor.name);
-    this.supabase = createClient<Database>(
+    this.supabase = createClient(
       this.configService.supabaseUrl,
       this.configService.supabaseKey,
     );

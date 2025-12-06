@@ -12,7 +12,7 @@ import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 import { Page, PageContent } from '@/components/Page';
-import { $fetch } from '@/shared/lib/api';
+import { $fetch } from '@/shared/lib/fetch';
 import { useMutation } from '@/shared/lib/useMutation';
 import { useQuery } from '@/shared/lib/useQuery';
 
@@ -77,17 +77,18 @@ export function UserDetailPage() {
     }
   };
 
+  const isLoading =
+    userQuery.isLoading ||
+    createUserMutation.isPending ||
+    updateUserMutation.isPending;
+
   return (
     <Page>
       <PageContent>
         <Card
           actions={[
             <Button
-              disabled={
-                userQuery.isLoading ||
-                createUserMutation.isPending ||
-                updateUserMutation.isPending
-              }
+              disabled={isLoading}
               icon={<CloseOutlined />}
               onClick={() => navigate(-1)}
               type="link"
@@ -95,11 +96,7 @@ export function UserDetailPage() {
               Cancelar
             </Button>,
             <Button
-              disabled={
-                userQuery.isLoading ||
-                createUserMutation.isPending ||
-                updateUserMutation.isPending
-              }
+              disabled={isLoading}
               form="form"
               htmlType="submit"
               icon={<SaveOutlined />}
@@ -123,6 +120,8 @@ export function UserDetailPage() {
           }
         >
           <Form<FormSchema>
+            autoComplete="off"
+            disabled={isLoading}
             form={form}
             id="form"
             initialValues={{ email: '', firstName: '', lastName: '' }}

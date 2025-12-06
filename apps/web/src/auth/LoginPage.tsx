@@ -1,9 +1,10 @@
 import { LoginForm } from '@/auth/LoginForm';
+import { CenteredLayout } from '@/components/CenteredLayout';
 
 export function LoginPage() {
   return (
-    <div className="h-75vh px-md mx-auto w-400">
+    <CenteredLayout>
       <LoginForm />
-    </div>
+    </CenteredLayout>
   );
 }

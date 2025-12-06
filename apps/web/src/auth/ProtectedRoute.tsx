@@ -1,14 +1,14 @@
+import { useAuth0 } from '@auth0/auth0-react';
 import { Navigate, Outlet } from 'react-router';
 
-import { useAppContext } from '@/app/app.context';
 import { AppLayout } from '@/app/AppLayout';
 
 import { APP_ROUTES } from '../app/app.enum';
 
 export function ProtectedRoute() {
-  const { session } = useAppContext();
+  const { isAuthenticated } = useAuth0();
 
-  if (!session) {
+  if (!isAuthenticated) {
     return <Navigate to={APP_ROUTES.LOGIN} />;
   }
 

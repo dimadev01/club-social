@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Request,
 } from '@nestjs/common';
 
 import {
@@ -22,6 +23,7 @@ import {
   USERS_REPOSITORY_PROVIDER,
 } from '@/domain/users/user.repository';
 
+import { type RequestWithUser } from '../shared/auth/request-with-user';
 import { BaseController } from '../shared/controller';
 import { ApiPaginatedResponse } from '../shared/decorators/api-paginated.decorator';
 import { PaginatedDto } from '../shared/dto/paginated.dto';
@@ -76,7 +78,11 @@ export class UsersController extends BaseController {
 
   @ApiPaginatedResponse(UserResponseDto)
   @Get('paginated')
-  public async getPaginated(): Promise<PaginatedDto<UserResponseDto>> {
+  public async getPaginated(
+    @Request() request: RequestWithUser,
+  ): Promise<PaginatedDto<UserResponseDto>> {
+    console.log(request.user);
+
     const users = await this.userRepository.findPaginated({
       page: 1,
       pageSize: 10,
