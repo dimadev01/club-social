@@ -33,6 +33,7 @@ export function UserListPage() {
             },
           ]}
           dataSource={usersQuery.data?.data}
+          rowKey="id"
           showHeader
           title={() => (
             <Flex align="center" gap="small" justify="space-between" wrap>

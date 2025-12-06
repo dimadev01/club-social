@@ -37,7 +37,8 @@
     "Supabase",
     "tabler",
     "tailwindcss",
-    "treeify"
+    "treeify",
+    "usehooks"
   ],
   "ignoreWords": [],
   "import": [],
