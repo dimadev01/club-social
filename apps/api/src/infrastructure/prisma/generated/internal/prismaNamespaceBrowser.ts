@@ -53,9 +53,7 @@ export const JsonNull = runtime.JsonNull;
  */
 export const AnyNull = runtime.AnyNull;
 
-export const ModelName = {
-  User: 'User',
-} as const;
+export const ModelName = {} as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 
@@ -72,42 +70,3 @@ export const TransactionIsolationLevel = {
 
 export type TransactionIsolationLevel =
   (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel];
-
-export const UserScalarFieldEnum = {
-  id: 'id',
-  authId: 'authId',
-  email: 'email',
-  firstName: 'firstName',
-  lastName: 'lastName',
-  role: 'role',
-  createdAt: 'createdAt',
-  createdBy: 'createdBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy',
-  updatedAt: 'updatedAt',
-  updatedBy: 'updatedBy',
-} as const;
-
-export type UserScalarFieldEnum =
-  (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum];
-
-export const SortOrder = {
-  asc: 'asc',
-  desc: 'desc',
-} as const;
-
-export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
-
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive',
-} as const;
-
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last',
-} as const;
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];

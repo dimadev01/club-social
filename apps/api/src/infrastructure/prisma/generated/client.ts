@@ -41,9 +41,3 @@ export type PrismaClient<
     runtime.Types.Extensions.DefaultArgs,
 > = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>;
 export { Prisma };
-
-/**
- * Model User
- *
- */
-export type User = Prisma.UserModel;

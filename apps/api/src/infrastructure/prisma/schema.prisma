@@ -7,33 +7,3 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
-enum UserRole {
-  ADMIN
-  STAFF
-  MEMBER
-}
-
-enum UserStatus {
-  ACTIVE
-  INACTIVE
-}
-
-model User {
-  id        String   @id
-  authId    String?
-  email     String   @unique
-  firstName String
-  lastName  String
-  role      UserRole
-
-  createdAt DateTime
-  createdBy String
-  deletedAt DateTime?
-  deletedBy String?
-  updatedAt DateTime
-  updatedBy String
-
-  @@index([email])
-  @@index([authId])
-}

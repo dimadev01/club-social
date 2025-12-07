@@ -19,7 +19,7 @@ const config: runtime.GetPrismaClientConfig = {
   engineVersion: 'ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba',
   activeProvider: 'postgresql',
   inlineSchema:
-    'generator client {\n  provider     = "prisma-client"\n  output       = "./generated"\n  moduleFormat = "cjs"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nenum UserRole {\n  ADMIN\n  STAFF\n  MEMBER\n}\n\nenum UserStatus {\n  ACTIVE\n  INACTIVE\n}\n\nmodel User {\n  id        String   @id\n  authId    String?\n  email     String   @unique\n  firstName String\n  lastName  String\n  role      UserRole\n\n  createdAt DateTime\n  createdBy String\n  deletedAt DateTime?\n  deletedBy String?\n  updatedAt DateTime\n  updatedBy String\n\n  @@index([email])\n  @@index([authId])\n}\n',
+    'generator client {\n  provider     = "prisma-client"\n  output       = "./generated"\n  moduleFormat = "cjs"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n',
   runtimeDataModel: {
     models: {},
     enums: {},
@@ -27,9 +27,7 @@ const config: runtime.GetPrismaClientConfig = {
   },
 };
 
-config.runtimeDataModel = JSON.parse(
-  '{"models":{"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"authId","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"firstName","kind":"scalar","type":"String"},{"name":"lastName","kind":"scalar","type":"String"},{"name":"role","kind":"enum","type":"UserRole"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"createdBy","kind":"scalar","type":"String"},{"name":"deletedAt","kind":"scalar","type":"DateTime"},{"name":"deletedBy","kind":"scalar","type":"String"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"updatedBy","kind":"scalar","type":"String"}],"dbName":null}},"enums":{},"types":{}}',
-);
+config.runtimeDataModel = JSON.parse('{"models":{},"enums":{},"types":{}}');
 
 async function decodeBase64AsWasm(
   wasmBase64: string,
@@ -224,16 +222,6 @@ export interface PrismaClient<
       }
     >
   >;
-
-  /**
-   * `prisma.user`: Exposes CRUD operations for the **User** model.
-   * Example usage:
-   * ```ts
-   * // Fetch zero or more Users
-   * const users = await prisma.user.findMany()
-   * ```
-   */
-  get user(): Prisma.UserDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {
