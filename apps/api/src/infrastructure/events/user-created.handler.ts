@@ -24,25 +24,12 @@ export class UserCreatedHandler {
   @OnEvent(UserCreatedEvent.name)
   public async handle(event: UserCreatedEvent): Promise<void> {
     this.logger.info({
-      message: 'Creating user in Supabase',
+      message: 'Creating user',
       params: {
         userId: event.user.id.value,
       },
     });
-
-    // const supabaseUser: User = await this.supabaseRepository.createUser({
-    //   email: event.user.email.value,
-    // });
-
-    // event.user.updateAuthId(supabaseUser.id);
 
     await this.userRepository.save(event.user);
-
-    this.logger.info({
-      message: 'User created in Supabase',
-      params: {
-        userId: event.user.id.value,
-      },
-    });
   }
 }

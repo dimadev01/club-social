@@ -11,7 +11,7 @@ import { PublicRoute } from './public-route.decorator';
 export class AuthController {
   public constructor(private readonly betterAuthService: BetterAuthService) {}
 
-  @All('api/auth/*any')
+  @All('auth/*any')
   @PublicRoute()
   public async handle(@Req() request: Request, @Res() response: Response) {
     return toNodeHandler(this.betterAuthService.auth)(request, response);

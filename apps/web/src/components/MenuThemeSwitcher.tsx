@@ -1,4 +1,9 @@
-import { MoonOutlined, SunOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+  InteractionOutlined,
+  MoonOutlined,
+  SunOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { Button, Dropdown } from 'antd';
 
 import {
@@ -8,7 +13,7 @@ import {
 } from '@/app/app.context';
 
 const THEME_ICONS: Record<AppThemeMode, React.ReactNode> = {
-  [APP_THEME_MODE.AUTO]: <SyncOutlined />,
+  [APP_THEME_MODE.AUTO]: <InteractionOutlined />,
   [APP_THEME_MODE.DARK]: <MoonOutlined />,
   [APP_THEME_MODE.LIGHT]: <SunOutlined />,
 } as const;

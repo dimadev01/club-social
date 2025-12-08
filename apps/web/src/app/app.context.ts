@@ -1,5 +1,3 @@
-import type { Session } from '@supabase/supabase-js';
-
 import { type ThemeConfig } from 'antd';
 import { createContext, useContext } from 'react';
 
@@ -16,13 +14,11 @@ export const APP_THEME_MODE = {
 export type AppThemeMode = (typeof APP_THEME_MODE)[keyof typeof APP_THEME_MODE];
 
 interface AppContextType {
-  session: null | Session;
   setThemeMode: (theme: AppThemeMode) => void;
   themeMode: AppThemeMode;
 }
 
 export const AppContext = createContext<AppContextType>({
-  session: null,
   setThemeMode: noop,
   themeMode: APP_THEME_MODE.AUTO,
 });

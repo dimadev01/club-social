@@ -20,7 +20,7 @@ export class UserEmailUpdatedHandler {
   @OnEvent(UserEmailUpdatedEvent.name)
   public async handle(event: UserEmailUpdatedEvent): Promise<void> {
     this.logger.info({
-      message: 'Updating user email in Supabase',
+      message: 'Updating user email',
       params: {
         userId: event.user.id.value,
       },
@@ -28,13 +28,8 @@ export class UserEmailUpdatedHandler {
 
     Guard.string(event.user.authId);
 
-    // await this.supabaseRepository.updateUser({
-    //   email: event.user.email.value,
-    //   id: event.user.authId,
-    // });
-
     this.logger.info({
-      message: 'User email updated in Supabase',
+      message: 'User email updated',
       params: {
         userId: event.user.id.value,
       },

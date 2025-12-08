@@ -1,13 +1,10 @@
 import { magicLinkClient } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
 
-const baseURL = import.meta.env.VITE_API_URL;
-
-if (!baseURL) {
-  throw new Error('VITE_API_URL is not set');
-}
+import { AppConfig } from './app.config';
 
 export const betterAuthClient = createAuthClient({
-  baseURL,
+  basePath: '/auth',
+  baseURL: AppConfig.apiUrl,
   plugins: [magicLinkClient()],
 });

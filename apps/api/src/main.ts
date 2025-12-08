@@ -10,7 +10,7 @@ import { ConfigService } from './infrastructure/config/config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    // bodyParser: false,
+    bodyParser: false,
     bufferLogs: true,
   });
 

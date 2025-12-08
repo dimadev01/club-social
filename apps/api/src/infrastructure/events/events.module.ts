@@ -5,14 +5,13 @@ import { DOMAIN_EVENT_EMITTER_PROVIDER } from '@/domain/shared/events/domain-eve
 import { DomainEventPublisher } from '@/domain/shared/events/domain-event-publisher';
 import { UsersModule } from '@/presentation/users/users.module';
 
-import { SupabaseModule } from '../supabase/supabase.module';
 import { UserCreatedHandler } from './user-created.handler';
 import { UserEmailUpdatedHandler } from './user-email-updated.handler';
 
 @Global()
 @Module({
   exports: [DomainEventPublisher],
-  imports: [EventEmitterModule.forRoot(), UsersModule, SupabaseModule],
+  imports: [EventEmitterModule.forRoot(), UsersModule],
   providers: [
     DomainEventPublisher,
     {

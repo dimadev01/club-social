@@ -18,6 +18,7 @@ export const auth = betterAuth({
       generateId: () => UniqueId.generate().value,
     },
   },
+  basePath: '/auth',
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
   }),

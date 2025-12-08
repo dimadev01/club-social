@@ -13,7 +13,6 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { useLocalStorage } from 'react-use';
 
-import { useSupabaseSession } from '@/auth/useSupabaseSession';
 import { usePrefersDarkSchema } from '@/shared/hooks/use-prefers-dark-schema';
 
 import {
@@ -87,7 +86,6 @@ const getThemeConfig = ({
 });
 
 export function App() {
-  const { session } = useSupabaseSession();
   const prefersDark = usePrefersDarkSchema();
   const [themeMode = APP_THEME_MODE.AUTO, setThemeMode] =
     useLocalStorage<AppThemeMode>('theme', APP_THEME_MODE.AUTO);
@@ -111,9 +109,7 @@ export function App() {
                 clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
                 domain={import.meta.env.VITE_AUTH0_DOMAIN}
               >
-                <AppContext.Provider
-                  value={{ session, setThemeMode, themeMode }}
-                >
+                <AppContext.Provider value={{ setThemeMode, themeMode }}>
                   <AppRoutes />
                 </AppContext.Provider>
               </Auth0Provider>

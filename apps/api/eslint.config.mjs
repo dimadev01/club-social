@@ -5,9 +5,6 @@ import globals from 'globals';
 export default defineConfig(
   config,
   {
-    ignores: ['**/*supabase.types.ts'],
-  },
-  {
     languageOptions: {
       globals: {
         ...globals.node,

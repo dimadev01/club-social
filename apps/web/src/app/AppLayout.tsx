@@ -18,15 +18,11 @@ import { type PropsWithChildren, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
-import { useSupabaseSession } from '@/auth/useSupabaseSession';
 import { MenuThemeSwitcher } from '@/components/MenuThemeSwitcher';
 
 import { APP_ROUTES } from './app.enum';
-import { AppLoading } from './AppLoading';
 
 export function AppLayout({ children }: PropsWithChildren) {
-  const { isLoading } = useSupabaseSession();
-
   const { sm } = Grid.useBreakpoint();
 
   const navigate = useNavigate();
@@ -39,10 +35,6 @@ export function AppLayout({ children }: PropsWithChildren) {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([
     `/${location.pathname.split('/')[1]}`,
   ]);
-
-  if (isLoading) {
-    return <AppLoading />;
-  }
 
   return (
     <Layout className="min-h-screen" hasSider>

@@ -58,14 +58,6 @@ export function LoginForm() {
       email: values.email,
     });
 
-    // const { error } = await supabase.auth.signInWithOtp({
-    //   email: values.email,
-    //   options: {
-    //     emailRedirectTo: APP_ROUTES.HOME,
-    //     shouldCreateUser: false,
-    //   },
-    // });
-
     setFormStatus(error ? FormStatus.IDLE : FormStatus.SUCCESS);
 
     if (error) {
