@@ -16,7 +16,6 @@
   "dependencies": {
     "@ant-design/colors": "^8.0.0",
     "@ant-design/icons": "^6.1.0",
-    "@auth0/auth0-react": "^2.10.0",
     "@better-fetch/fetch": "^1.1.19",
     "@club-social/types": "^0.0.1",
     "@tabler/icons-react": "^3.35.0",
