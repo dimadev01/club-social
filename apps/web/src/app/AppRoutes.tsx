@@ -1,4 +1,3 @@
-import { useAuth0 } from '@auth0/auth0-react';
 import { BrowserRouter, Route, Routes } from 'react-router';
 
 import { LoginPage } from '@/auth/LoginPage';
@@ -7,6 +6,7 @@ import { ProtectedRoute } from '@/auth/ProtectedRoute';
 import { PublicRoute } from '@/auth/PublicRoute';
 import { NotFound } from '@/components/NotFound';
 import { Home } from '@/home/HomePage';
+import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { UserDetailPage } from '@/users/UserDetailPage';
 import { UserListPage } from '@/users/UserListPage';
 
@@ -14,10 +14,9 @@ import { APP_ROUTES } from './app.enum';
 import { AppLoading } from './AppLoading';
 
 export function AppRoutes() {
-  // const { isLoading } = useSupabaseSession();
-  const { isLoading } = useAuth0();
+  const { isPending } = betterAuthClient.useSession();
 
-  if (isLoading) {
+  if (isPending) {
     return <AppLoading />;
   }
 
@@ -33,6 +32,7 @@ export function AppRoutes() {
             element={<UserDetailPage />}
             path={`${APP_ROUTES.USER_LIST}/:id`}
           />
+          <Route element={<LogoutPage />} path={APP_ROUTES.LOGOUT} />
         </Route>
 
         {/* Public routes */}
@@ -42,7 +42,6 @@ export function AppRoutes() {
           </Route>
         </Route>
 
-        <Route element={<LogoutPage />} path={APP_ROUTES.LOGOUT} />
         <Route element={<NotFound />} path="*" />
       </Routes>
     </BrowserRouter>

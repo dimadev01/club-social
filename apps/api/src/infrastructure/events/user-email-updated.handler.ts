@@ -8,14 +8,11 @@ import {
 import { Guard } from '@/domain/shared/guards';
 import { UserEmailUpdatedEvent } from '@/domain/users/events/user-email-updated.event';
 
-import { SupabaseService } from '../supabase/supabase.service';
-
 @Injectable()
 export class UserEmailUpdatedHandler {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     private readonly logger: AppLogger,
-    private readonly supabaseRepository: SupabaseService,
   ) {
     this.logger.setContext(UserEmailUpdatedHandler.name);
   }
@@ -31,10 +28,10 @@ export class UserEmailUpdatedHandler {
 
     Guard.string(event.user.authId);
 
-    await this.supabaseRepository.updateUser({
-      email: event.user.email.value,
-      id: event.user.authId,
-    });
+    // await this.supabaseRepository.updateUser({
+    //   email: event.user.email.value,
+    //   id: event.user.authId,
+    // });
 
     this.logger.info({
       message: 'User email updated in Supabase',

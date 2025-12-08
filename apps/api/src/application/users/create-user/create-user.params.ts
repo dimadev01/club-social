@@ -1,4 +1,4 @@
-import { UserRole } from '@/domain/users/user.enum';
+import { UserRole } from '@club-social/types/users';
 
 export interface CreateUserParams {
   email: string;

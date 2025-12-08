@@ -1,60 +1,35 @@
-import { PrismaPg } from '@prisma/adapter-pg';
-import { createClient } from '@supabase/supabase-js';
+import { UserRole } from '@club-social/types/users';
 
-import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
+import { Guard } from '@/domain/shared/guards';
 
-import { PrismaClient, UserRole } from '../prisma/generated/client';
-
-const prisma = new PrismaClient({
-  adapter: new PrismaPg({
-    connectionString: process.env.DATABASE_URL,
-  }),
-});
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SECRET_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('SUPABASE_URL and SUPABASE_KEY must be set');
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { auth } from '../auth/better-auth.config';
+import { prisma } from './prisma.client';
 
 async function main() {
-  const { data, error } = await supabase.auth.admin.createUser({
-    email: 'info@clubsocialmontegrande.ar',
-    email_confirm: true,
-  });
+  const adminUserEmail = process.env.ADMIN_USER_EMAIL;
+  const adminPassword = process.env.ADMIN_USER_PASSWORD;
 
-  if (error) {
-    console.error(error);
-    throw error;
+  Guard.string(adminUserEmail);
+  Guard.string(adminPassword);
+
+  const usersCount = await prisma.user.count();
+
+  if (usersCount > 0) {
+    return;
   }
 
-  await prisma.user.create({
-    data: {
-      authId: data.user.id,
-      createdAt: new Date(),
-      createdBy: 'System',
-      deletedAt: null,
-      deletedBy: null,
-      email: 'info@clubsocialmontegrande.ar',
-      firstName: 'Admin',
-      id: UniqueId.generate().value,
-      lastName: 'Admin',
+  await auth.api.createUser({
+    body: {
+      data: {
+        firstName: 'Club Social',
+        lastName: 'Monte Grande',
+      },
+      email: adminUserEmail,
+      name: 'Club Social',
+      password: adminPassword,
       role: UserRole.ADMIN,
-      updatedAt: new Date(),
-      updatedBy: 'System',
     },
   });
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+main();

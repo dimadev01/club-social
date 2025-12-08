@@ -10,11 +10,17 @@ import { ConfigService } from './infrastructure/config/config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    // bodyParser: false,
     bufferLogs: true,
   });
 
   app.set('query parser', 'extended');
-  app.enableCors();
+
+  app.enableCors({
+    credentials: true,
+    origin: 'http://localhost:5173',
+  });
+
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   app.useGlobalPipes(

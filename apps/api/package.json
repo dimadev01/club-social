@@ -6,8 +6,7 @@
   "license": "UNLICENSED",
   "author": "Dmitriy Mironov",
   "scripts": {
-    "better-auth:generate": "npx @better-auth/cli generate --config src/infrastructure/auth/better-auth.config.ts",
-    "better-auth:migrate": "npx @better-auth/cli migrate --config src/infrastructure/auth/better-auth.config.ts",
+    "better-auth:generate": "npx @better-auth/cli@latest generate --config src/infrastructure/auth/better-auth.config.ts",
     "build": "nest build",
     "build:sourcemaps": "nest build && npm run sentry:sourcemaps",
     "check-types": "tsc --noEmit",
@@ -18,7 +17,7 @@
     "prisma:new": "dotenvx run -- prisma migrate dev --config src/infrastructure/prisma/prisma.config.ts --schema src/infrastructure/prisma/schema.prisma",
     "prisma:new:create-only": "dotenvx run -- prisma migrate dev --config src/infrastructure/prisma/prisma.config.ts --schema src/infrastructure/prisma/schema.prisma --create-only",
     "prisma:reset": "dotenvx run -- prisma migrate reset --config src/infrastructure/prisma/prisma.config.ts --schema src/infrastructure/prisma/schema.prisma",
-    "prisma:seed": "dotenvx run -- prisma db seed --config src/infrastructure/prisma/prisma.config.ts --schema src/infrastructure/prisma/schema.prisma",
+    "prisma:seed": "dotenvx run -- prisma db seed --config src/infrastructure/prisma/prisma.config.ts",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org dimadev --project club-social ./dist && sentry-cli sourcemaps upload --org dimadev --project club-social ./dist",
     "start": "nest start",
     "start:debug": "nest start --debug --watch",

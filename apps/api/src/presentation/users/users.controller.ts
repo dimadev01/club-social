@@ -1,3 +1,4 @@
+import { UserRole } from '@club-social/types/users';
 import {
   Body,
   Controller,
@@ -17,10 +18,9 @@ import { CreateUserUseCase } from '@/application/users/create-user/create-user.u
 import { UpdateUserUseCase } from '@/application/users/update-user/update-user.use-case';
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/domain/users/user.entity';
-import { UserRole } from '@/domain/users/user.enum';
 import {
+  USER_REPOSITORY_PROVIDER,
   type UserRepository,
-  USERS_REPOSITORY_PROVIDER,
 } from '@/domain/users/user.repository';
 
 import { type RequestWithUser } from '../shared/auth/request-with-user';
@@ -39,7 +39,7 @@ export class UsersController extends BaseController {
     protected readonly logger: AppLogger,
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
-    @Inject(USERS_REPOSITORY_PROVIDER)
+    @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
   ) {
     super(logger);

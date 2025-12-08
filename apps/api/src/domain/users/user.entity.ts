@@ -1,3 +1,5 @@
+import { UserRole } from '@club-social/types/users';
+
 import type { BaseEntityProps } from '@/domain/shared/entity';
 
 import { Entity } from '@/domain/shared/entity';
@@ -8,7 +10,6 @@ import type { Email } from '../shared/value-objects/email/email.vo';
 import { InternalServerError } from '../shared/errors/internal-server.error';
 import { Guard } from '../shared/guards';
 import { ok } from '../shared/result';
-import { UserRole } from '../users/user.enum';
 import { UserCreatedEvent } from './events/user-created.event';
 import { UserEmailUpdatedEvent } from './events/user-email-updated.event';
 

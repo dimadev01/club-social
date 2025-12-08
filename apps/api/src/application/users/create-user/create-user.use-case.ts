@@ -12,8 +12,8 @@ import { err, ok } from '@/domain/shared/result';
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UserEntity } from '@/domain/users/user.entity';
 import {
+  USER_REPOSITORY_PROVIDER,
   type UserRepository,
-  USERS_REPOSITORY_PROVIDER,
 } from '@/domain/users/user.repository';
 
 import type { CreateUserParams } from './create-user.params';
@@ -22,7 +22,7 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    @Inject(USERS_REPOSITORY_PROVIDER)
+    @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
     private readonly eventPublisher: DomainEventPublisher,
   ) {

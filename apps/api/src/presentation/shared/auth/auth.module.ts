@@ -1,26 +1,22 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtModule } from '@nestjs/jwt';
 
-import { ConfigService } from '@/infrastructure/config/config.service';
+import { AUTH_SERVICE_PROVIDER } from '@/infrastructure/auth/auth.service';
+import { BetterAuthService } from '@/infrastructure/auth/better-auth.service';
+import { PrismaModule } from '@/infrastructure/prisma/prisma.module';
 
+import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
 
 @Module({
-  exports: [AuthGuard],
-  imports: [
-    JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: () => ({
-        secret: 'super-secret-jwt-token-with-at-least-32-characters-long',
-        signOptions: {
-          algorithm: 'HS256',
-          expiresIn: '1h',
-        },
-      }),
-    }),
-  ],
+  controllers: [AuthController],
+  imports: [PrismaModule],
   providers: [
+    BetterAuthService,
+    {
+      provide: AUTH_SERVICE_PROVIDER,
+      useClass: BetterAuthService,
+    },
     AuthGuard,
     {
       provide: APP_GUARD,

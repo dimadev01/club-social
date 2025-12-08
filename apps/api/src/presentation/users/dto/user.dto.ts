@@ -1,6 +1,4 @@
-import { UserDto } from '@club-social/types/users';
-
-import { UserRole } from '@/domain/users/user.enum';
+import { UserDto, UserRole } from '@club-social/types/users';
 
 export class UserResponseDto implements UserDto {
   public email: string;

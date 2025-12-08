@@ -14,8 +14,8 @@ import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/domain/users/user.entity';
 import {
+  USER_REPOSITORY_PROVIDER,
   type UserRepository,
-  USERS_REPOSITORY_PROVIDER,
 } from '@/domain/users/user.repository';
 
 import { UpdateUserParams } from './update-user.params';
@@ -24,7 +24,7 @@ export class UpdateUserUseCase extends UseCase<UserEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    @Inject(USERS_REPOSITORY_PROVIDER)
+    @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
     private readonly eventPublisher: DomainEventPublisher,
   ) {

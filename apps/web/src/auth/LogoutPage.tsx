@@ -1,14 +1,12 @@
-import { useAuth0 } from '@auth0/auth0-react';
 import { useEffect } from 'react';
 
 import { AppLoading } from '@/app/AppLoading';
+import { betterAuthClient } from '@/shared/lib/better-auth.client';
 
 export function LogoutPage() {
-  const { logout } = useAuth0();
-
   useEffect(() => {
-    logout();
-  }, [logout]);
+    betterAuthClient.signOut();
+  }, []);
 
   return <AppLoading />;
 }
