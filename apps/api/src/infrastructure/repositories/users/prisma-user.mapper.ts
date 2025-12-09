@@ -1,4 +1,4 @@
-import { UserRole } from '@club-social/types/users';
+import { Role } from '@club-social/types/roles';
 import { Injectable } from '@nestjs/common';
 
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
@@ -16,7 +16,7 @@ export class PrismaUserMapper extends Mapper<UserEntity, UserModel> {
         email: Email.raw({ value: user.email }),
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role as UserRole,
+        role: user.role as Role,
       },
       {
         createdAt: user.createdAt,
@@ -46,7 +46,7 @@ export class PrismaUserMapper extends Mapper<UserEntity, UserModel> {
       image: null,
       lastName: user.lastName,
       name: user.name,
-      role: user.role as UserRole,
+      role: user.role as Role,
       updatedAt: user.updatedAt,
       updatedBy: user.updatedBy,
     };

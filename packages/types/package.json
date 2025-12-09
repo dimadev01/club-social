@@ -4,10 +4,15 @@
   "private": true,
   "license": "MIT",
   "exports": {
+    "./roles": {
+      "types": "./src/roles/index.ts",
+      "require": "./dist/roles/index.js",
+      "import": "./dist/roles/index.mjs"
+    },
     "./users": {
-      "types": "./src/users.ts",
-      "require": "./dist/users.js",
-      "import": "./dist/users.mjs"
+      "types": "./src/users/index.ts",
+      "require": "./dist/users/index.js",
+      "import": "./dist/users/index.mjs"
     },
     "./shared": {
       "types": "./src/shared/index.ts",
@@ -27,5 +32,8 @@
     "@club-social/prettier-config": "*",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "better-auth": "^1.4.6"
   }
 }

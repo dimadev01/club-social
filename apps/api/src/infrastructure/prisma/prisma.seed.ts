@@ -1,4 +1,4 @@
-import { UserRole } from '@club-social/types/users';
+import { Role } from '@club-social/types/roles';
 
 import { Guard } from '@/domain/shared/guards';
 
@@ -31,7 +31,7 @@ async function main() {
       email: adminUserEmail,
       name: 'Club Social',
       password: adminPassword,
-      role: UserRole.ADMIN,
+      role: Role.ADMIN,
     },
   });
 }

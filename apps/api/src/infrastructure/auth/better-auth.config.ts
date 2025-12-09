@@ -1,34 +1,11 @@
-import { rolesStatements, UserRole } from '@club-social/types/users';
+import { adminRole, memberRole, staffRole } from '@club-social/types/roles';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal';
-import {
-  admin as adminPlugin,
-  createAccessControl,
-  magicLink,
-} from 'better-auth/plugins';
-import { adminAc, defaultStatements } from 'better-auth/plugins/admin/access';
+import { admin as adminPlugin, magicLink } from 'better-auth/plugins';
 
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 
 import { prisma } from '../prisma/prisma.client';
-
-export const statements = {
-  ...defaultStatements,
-  ...rolesStatements,
-} as const;
-
-const ac = createAccessControl(statements);
-
-export const adminRole = ac.newRole({
-  ...adminAc.statements,
-  member: ['create', 'read', 'update', 'delete'],
-});
-
-export const staffRole = ac.newRole({
-  member: ['create', 'read', 'update'],
-});
-
-export const memberRole = ac.newRole({});
 
 export const betterAuthOptions = {
   advanced: {
@@ -49,7 +26,6 @@ export const betterAuthOptions = {
   },
   plugins: [
     adminPlugin({
-      adminRoles: [UserRole.ADMIN],
       roles: {
         admin: adminRole,
         member: memberRole,

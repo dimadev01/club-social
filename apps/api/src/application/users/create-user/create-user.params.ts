@@ -1,9 +1,9 @@
-import { UserRole } from '@club-social/types/users';
+import { Role } from '@club-social/types/roles';
 
 export interface CreateUserParams {
   createdBy: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: UserRole;
+  role: Role;
 }

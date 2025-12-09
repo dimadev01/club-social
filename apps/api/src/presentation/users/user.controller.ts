@@ -1,6 +1,6 @@
 import type { IncomingHttpHeaders } from 'http';
 
-import { UserRole } from '@club-social/types/users';
+import { Role } from '@club-social/types/roles';
 import {
   Body,
   Controller,
@@ -75,7 +75,7 @@ export class UsersController extends BaseController {
         email: createUserDto.email,
         firstName: createUserDto.firstName,
         lastName: createUserDto.lastName,
-        role: UserRole.STAFF,
+        role: Role.STAFF,
       }),
     );
 

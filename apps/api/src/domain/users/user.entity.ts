@@ -1,4 +1,4 @@
-import { UserRole } from '@club-social/types/users';
+import { Role } from '@club-social/types/roles';
 
 import type { BaseEntityProps } from '@/domain/shared/entity';
 
@@ -17,7 +17,7 @@ interface UserProps {
   email: Email;
   firstName: string;
   lastName: string;
-  role: UserRole;
+  role: Role;
 }
 
 export class UserEntity extends Entity<UserEntity> {
@@ -37,14 +37,14 @@ export class UserEntity extends Entity<UserEntity> {
     return `${this._firstName} ${this._lastName}`;
   }
 
-  public get role(): UserRole {
+  public get role(): Role {
     return this._role;
   }
 
   private _email: Email;
   private _firstName: string;
   private _lastName: string;
-  private _role: UserRole;
+  private _role: Role;
 
   private constructor(props: UserProps, base?: BaseEntityProps) {
     super(base);
@@ -59,7 +59,7 @@ export class UserEntity extends Entity<UserEntity> {
     Guard.string(props.firstName);
     Guard.string(props.lastName);
 
-    if (props.role === UserRole.ADMIN) {
+    if (props.role === Role.ADMIN) {
       throw new InternalServerError('Admin role is not allowed');
     }
 
