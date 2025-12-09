@@ -1,4 +1,4 @@
-import { CreateUserDto } from '@club-social/types/users';
+import { CreateUserDto } from '@club-social/shared/users';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserRequestDto implements CreateUserDto {

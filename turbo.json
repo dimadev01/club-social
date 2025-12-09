@@ -11,7 +11,7 @@
     "format": {},
     "lint": {},
     "test": {
-      "dependsOn": ["@club-social/types#build"]
+      "dependsOn": ["@club-social/shared#build"]
     }
   }
 }

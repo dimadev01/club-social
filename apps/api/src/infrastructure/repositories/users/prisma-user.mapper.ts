@@ -1,4 +1,4 @@
-import { Role } from '@club-social/types/roles';
+import { Role } from '@club-social/shared/roles';
 import { Injectable } from '@nestjs/common';
 
 import { Email } from '@/domain/shared/value-objects/email/email.vo';

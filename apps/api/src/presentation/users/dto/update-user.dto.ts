@@ -1,4 +1,4 @@
-import { UpdateUserDto } from '@club-social/types/users';
+import { UpdateUserDto } from '@club-social/shared/users';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateUserRequestDto implements UpdateUserDto {

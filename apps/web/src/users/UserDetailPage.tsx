@@ -2,7 +2,7 @@ import type {
   CreateUserDto,
   UpdateUserDto,
   UserDto,
-} from '@club-social/types/users';
+} from '@club-social/shared/users';
 
 import { CloseOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
 import { useQueryClient } from '@tanstack/react-query';

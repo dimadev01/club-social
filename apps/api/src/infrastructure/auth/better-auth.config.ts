@@ -1,4 +1,4 @@
-import { adminRole, memberRole, staffRole } from '@club-social/types/roles';
+import { adminRole, memberRole, staffRole } from '@club-social/shared/roles';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal';
 import { admin as adminPlugin, magicLink } from 'better-auth/plugins';

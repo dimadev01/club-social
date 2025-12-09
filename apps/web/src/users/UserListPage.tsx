@@ -1,5 +1,5 @@
-import type { PaginatedResponse } from '@club-social/types/shared';
-import type { UserDto } from '@club-social/types/users';
+import type { PaginatedResponse } from '@club-social/shared/shared';
+import type { UserDto } from '@club-social/shared/users';
 
 import {
   FileExcelOutlined,

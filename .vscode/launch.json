@@ -25,7 +25,7 @@
     {
       "name": "Types",
       "request": "launch",
-      "cwd": "${workspaceFolder}/packages/types",
+      "cwd": "${workspaceFolder}/packages/shared",
       "type": "node",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],

@@ -1,4 +1,4 @@
-import { Role } from '@club-social/types/roles';
+import { Role } from '@club-social/shared/roles';
 
 import type { BaseEntityProps } from '@/domain/shared/entity';
 

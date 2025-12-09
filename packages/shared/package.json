@@ -1,5 +1,5 @@
 {
-  "name": "@club-social/types",
+  "name": "@club-social/shared",
   "version": "0.0.1",
   "private": true,
   "license": "MIT",
@@ -27,13 +27,13 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix"
   },
+  "dependencies": {
+    "better-auth": "^1.4.6"
+  },
   "devDependencies": {
     "@club-social/eslint-config": "*",
     "@club-social/prettier-config": "*",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"
-  },
-  "dependencies": {
-    "better-auth": "^1.4.6"
   }
 }

@@ -1,4 +1,4 @@
-import { Role } from '@club-social/types/roles';
+import { Role } from '@club-social/shared/roles';
 
 import { Guard } from '@/domain/shared/guards';
 

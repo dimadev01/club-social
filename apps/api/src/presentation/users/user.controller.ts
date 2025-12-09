@@ -1,6 +1,6 @@
 import type { IncomingHttpHeaders } from 'http';
 
-import { Role } from '@club-social/types/roles';
+import { Role } from '@club-social/shared/roles';
 import {
   Body,
   Controller,
