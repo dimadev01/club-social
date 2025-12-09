@@ -16,6 +16,7 @@ export class ConfigService {
   public readonly isProd: boolean;
   public readonly nodeEnv: ConfigTypes['NODE_ENV'];
   public readonly port: number;
+  public readonly trustedOrigins: string[];
 
   public constructor(private readonly config: NestConfigService<ConfigTypes>) {
     this.appDisplayName = 'Club Social API';
@@ -44,5 +45,7 @@ export class ConfigService {
     this.nodeEnv = this.config.getOrThrow<ConfigTypes['NODE_ENV']>('NODE_ENV');
 
     this.port = this.config.getOrThrow<number>('PORT');
+
+    this.trustedOrigins = this.config.getOrThrow<string[]>('TRUSTED_ORIGINS');
   }
 }

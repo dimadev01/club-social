@@ -10,6 +10,7 @@ import { AuthGuard } from './auth.guard';
 
 @Module({
   controllers: [AuthController],
+  exports: [BetterAuthService],
   imports: [PrismaModule],
   providers: [
     BetterAuthService,

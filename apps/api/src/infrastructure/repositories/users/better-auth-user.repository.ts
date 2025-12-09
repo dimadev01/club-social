@@ -8,20 +8,11 @@ import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/domain/users/user.entity';
 import { UserRepository } from '@/domain/users/user.repository';
-import {
-  UserFindManyArgs,
-  UserWhereInput,
-} from '@/infrastructure/prisma/generated/models';
-import { PrismaService } from '@/infrastructure/prisma/prisma.service';
-
-import { PrismaUserMapper } from './prisma-user.mapper';
+import { BetterAuthService } from '@/infrastructure/auth/better-auth.service';
 
 @Injectable()
-export class PrismaUserRepository implements UserRepository {
-  public constructor(
-    private readonly prismaService: PrismaService,
-    private readonly mapper: PrismaUserMapper,
-  ) {}
+export class BetterAuthUserRepository implements UserRepository {
+  public constructor(private readonly betterAuthService: BetterAuthService) {}
 
   public async delete(entity: UserEntity): Promise<void> {
     console.log({ entity });
@@ -32,15 +23,17 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   public async findOneById(id: UniqueId): Promise<null | UserEntity> {
-    const user = await this.prismaService.user.findUnique({
-      where: { deletedAt: null, id: id.value },
-    });
+    console.log({ id });
+    throw new Error('Not implemented');
+    // const user = await this.prismaService.user.findUnique({
+    //   where: { deletedAt: null, id: id.value },
+    // });
 
-    if (!user) {
-      return null;
-    }
+    // if (!user) {
+    //   return null;
+    // }
 
-    return this.mapper.toDomain(user);
+    // return PrismaUserMapper.toDomain(user);
   }
 
   public async findOneByIdOrThrow(id: UniqueId): Promise<UserEntity> {
@@ -56,25 +49,41 @@ export class PrismaUserRepository implements UserRepository {
   public async findPaginated(
     params: PaginatedRequestParams,
   ): Promise<PaginatedResponse<UserEntity>> {
-    const where: UserWhereInput = {
-      deletedAt: null,
-    };
+    console.log({ params });
+    // throw new Error('Not implemented');
 
-    const query: UserFindManyArgs = {
-      skip: (params.page - 1) * params.pageSize,
-      take: params.pageSize,
-      where,
-    };
+    const data = await this.betterAuthService.auth.api.listUsers({
+      query: {},
+    });
 
-    const [users, total] = await Promise.all([
-      this.prismaService.user.findMany(query),
-      this.prismaService.user.count({ where }),
-    ]);
+    console.log({ data });
 
     return {
-      data: users.map((user) => this.mapper.toDomain(user)),
-      total,
+      data: [],
+      total: 0,
     };
+
+    // return {
+    //   data: data.data.map((user) => PrismaUserMapper.toDomain(user)),
+    // };
+
+    // const where: UserWhereInput = {};
+
+    // const query: UserFindManyArgs = {
+    //   skip: (params.page - 1) * params.pageSize,
+    //   take: params.pageSize,
+    //   where,
+    // };
+
+    // const [users, total] = await Promise.all([
+    //   this.prismaService.user.findMany(query),
+    //   this.prismaService.user.count({ where }),
+    // ]);
+
+    // return {
+    //   data: users.map((user) => PrismaUserMapper.toDomain(user)),
+    //   total,
+    // };
   }
 
   public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {

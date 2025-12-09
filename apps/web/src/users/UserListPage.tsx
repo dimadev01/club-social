@@ -20,10 +20,17 @@ export function UserListPage() {
   const { message } = App.useApp();
 
   const usersQuery = useQuery({
+    // enabled: false,
     placeholderData: keepPreviousData,
     queryFn: () => $fetch<PaginatedResponse<UserDto>>('/users/paginated'),
     queryKey: ['users'],
   });
+
+  // const data = betterAuthClient.admin.listUsers({
+  //   query: {},
+  // });
+
+  // console.log({ data });
 
   if (usersQuery.error) {
     message.error(usersQuery.error.message);

@@ -84,12 +84,16 @@ export const UserScalarFieldEnum = {
   image: 'image',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  firstName: 'firstName',
-  lastName: 'lastName',
   role: 'role',
   banned: 'banned',
   banReason: 'banReason',
   banExpires: 'banExpires',
+  createdBy: 'createdBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  updatedBy: 'updatedBy',
 } as const;
 
 export type UserScalarFieldEnum =

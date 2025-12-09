@@ -1,8 +1,11 @@
+import type { IncomingHttpHeaders } from 'http';
+
 import { UserRole } from '@club-social/types/users';
 import {
   Body,
   Controller,
   Get,
+  Headers,
   Inject,
   Param,
   Patch,
@@ -21,6 +24,7 @@ import {
   USER_REPOSITORY_PROVIDER,
   type UserRepository,
 } from '@/domain/users/user.repository';
+import { BetterAuthService } from '@/infrastructure/auth/better-auth.service';
 
 import { BaseController } from '../shared/controller';
 import { ApiPaginatedResponse } from '../shared/decorators/api-paginated.decorator';
@@ -39,6 +43,7 @@ export class UsersController extends BaseController {
     private readonly updateUserUseCase: UpdateUserUseCase,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
+    private readonly betterAuthService: BetterAuthService,
   ) {
     super(logger);
   }
@@ -47,14 +52,16 @@ export class UsersController extends BaseController {
   public async update(
     @Param() request: ParamIdDto,
     @Body() updateUserDto: UpdateUserRequestDto,
+    @Headers() headers: IncomingHttpHeaders,
   ): Promise<void> {
-    this.handleResult(
-      await this.updateUserUseCase.execute({
+    await this.betterAuthService.updateUser(
+      {
         email: updateUserDto.email,
         firstName: updateUserDto.firstName,
         id: request.id,
         lastName: updateUserDto.lastName,
-      }),
+      },
+      headers,
     );
   }
 
@@ -64,6 +71,7 @@ export class UsersController extends BaseController {
   ): Promise<UserResponseDto> {
     const user = this.handleResult(
       await this.createUserUseCase.execute({
+        createdBy: 'System',
         email: createUserDto.email,
         firstName: createUserDto.firstName,
         lastName: createUserDto.lastName,

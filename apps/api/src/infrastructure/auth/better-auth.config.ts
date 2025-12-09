@@ -1,17 +1,36 @@
-import { UserRole } from '@club-social/types/users';
+import { rolesStatements, UserRole } from '@club-social/types/users';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { betterAuth } from 'better-auth/minimal';
-import { admin as adminPlugin, magicLink } from 'better-auth/plugins';
+import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal';
+import {
+  admin as adminPlugin,
+  createAccessControl,
+  magicLink,
+} from 'better-auth/plugins';
+import { adminAc, defaultStatements } from 'better-auth/plugins/admin/access';
 
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 
 import { prisma } from '../prisma/prisma.client';
 
-/**
- * This needs to be named `auth` because the `@better-auth/cli` expects
- * this variable name. See https://www.better-auth.com/docs/concepts/cli
- */
-export const auth = betterAuth({
+export const statements = {
+  ...defaultStatements,
+  ...rolesStatements,
+} as const;
+
+const ac = createAccessControl(statements);
+
+export const adminRole = ac.newRole({
+  ...adminAc.statements,
+  member: ['create', 'read', 'update', 'delete'],
+});
+
+export const staffRole = ac.newRole({
+  member: ['create', 'read', 'update'],
+});
+
+export const memberRole = ac.newRole({});
+
+export const betterAuthOptions = {
   advanced: {
     cookiePrefix: 'cs',
     database: {
@@ -31,6 +50,11 @@ export const auth = betterAuth({
   plugins: [
     adminPlugin({
       adminRoles: [UserRole.ADMIN],
+      roles: {
+        admin: adminRole,
+        member: memberRole,
+        staff: staffRole,
+      },
     }),
     magicLink({
       disableSignUp: true,
@@ -39,9 +63,20 @@ export const auth = betterAuth({
       },
     }),
   ],
-  trustedOrigins: ['http://localhost:5173'],
   user: {
     additionalFields: {
+      createdBy: {
+        required: true,
+        type: 'string',
+      },
+      deletedAt: {
+        required: false,
+        type: 'date',
+      },
+      deletedBy: {
+        required: false,
+        type: 'string',
+      },
       firstName: {
         required: true,
         type: 'string',
@@ -54,6 +89,22 @@ export const auth = betterAuth({
         required: true,
         type: 'string',
       },
+      updatedBy: {
+        required: true,
+        type: 'string',
+      },
     },
   },
-});
+} satisfies BetterAuthOptions;
+
+export const createBetterAuth = (options?: BetterAuthOptions) =>
+  betterAuth({
+    ...betterAuthOptions,
+    ...options,
+  });
+
+/**
+ * This needs to be named `auth` because the `@better-auth/cli` expects
+ * this variable name. See https://www.better-auth.com/docs/concepts/cli
+ */
+export const auth = createBetterAuth();

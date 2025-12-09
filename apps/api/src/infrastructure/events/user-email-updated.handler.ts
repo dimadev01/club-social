@@ -5,7 +5,6 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/application/shared/logger/logger';
-import { Guard } from '@/domain/shared/guards';
 import { UserEmailUpdatedEvent } from '@/domain/users/events/user-email-updated.event';
 
 @Injectable()
@@ -25,8 +24,6 @@ export class UserEmailUpdatedHandler {
         userId: event.user.id.value,
       },
     });
-
-    Guard.string(event.user.authId);
 
     this.logger.info({
       message: 'User email updated',

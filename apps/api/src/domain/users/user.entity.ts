@@ -14,7 +14,6 @@ import { UserCreatedEvent } from './events/user-created.event';
 import { UserEmailUpdatedEvent } from './events/user-email-updated.event';
 
 interface UserProps {
-  authId: null | string;
   email: Email;
   firstName: string;
   lastName: string;
@@ -22,10 +21,6 @@ interface UserProps {
 }
 
 export class UserEntity extends Entity<UserEntity> {
-  public get authId(): null | string {
-    return this._authId;
-  }
-
   public get email(): Email {
     return this._email;
   }
@@ -46,7 +41,6 @@ export class UserEntity extends Entity<UserEntity> {
     return this._role;
   }
 
-  private _authId: null | string;
   private _email: Email;
   private _firstName: string;
   private _lastName: string;
@@ -58,7 +52,6 @@ export class UserEntity extends Entity<UserEntity> {
     this._firstName = props.firstName;
     this._lastName = props.lastName;
     this._email = props.email;
-    this._authId = props.authId;
     this._role = props.role;
   }
 
@@ -71,7 +64,6 @@ export class UserEntity extends Entity<UserEntity> {
     }
 
     const user = new UserEntity({
-      authId: props.authId,
       email: props.email,
       firstName: props.firstName.trim(),
       lastName: props.lastName.trim(),
@@ -85,10 +77,6 @@ export class UserEntity extends Entity<UserEntity> {
 
   public static raw(props: UserProps, base: BaseEntityProps): UserEntity {
     return new UserEntity(props, base);
-  }
-
-  public updateAuthId(id: string) {
-    this._authId = id;
   }
 
   public updateEmail(email: Email) {

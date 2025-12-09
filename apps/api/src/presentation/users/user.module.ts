@@ -4,15 +4,18 @@ import { CreateUserUseCase } from '@/application/users/create-user/create-user.u
 import { UpdateUserUseCase } from '@/application/users/update-user/update-user.use-case';
 import { USER_REPOSITORY_PROVIDER } from '@/domain/users/user.repository';
 import { DatabaseModule } from '@/infrastructure/database/database.module';
+import { PrismaUserMapper } from '@/infrastructure/repositories/users/prisma-user.mapper';
 import { PrismaUserRepository } from '@/infrastructure/repositories/users/prisma-user.repository';
 
-import { UsersController } from './users.controller';
+import { AuthModule } from '../shared/auth/auth.module';
+import { UsersController } from './user.controller';
 
 @Module({
   controllers: [UsersController],
   exports: [USER_REPOSITORY_PROVIDER],
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AuthModule],
   providers: [
+    PrismaUserMapper,
     CreateUserUseCase,
     UpdateUserUseCase,
     {

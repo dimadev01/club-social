@@ -10,6 +10,12 @@ export interface CreateUserDto {
   lastName: string;
 }
 
+export type Statement = Record<string, readonly string[]>;
+
+export const rolesStatements = {
+  member: ['create', 'read', 'update', 'delete'] as const,
+} satisfies Statement;
+
 export interface UpdateUserDto {
   email: string;
   firstName: string;

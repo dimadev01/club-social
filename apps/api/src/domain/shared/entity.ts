@@ -14,7 +14,7 @@ export interface BaseEntityProps {
 
 export abstract class Entity<T> extends AggregateRoot<T> {
   public get createdAt(): Date {
-    return new Date(this._createdAt);
+    return this._createdAt;
   }
 
   public get createdBy(): string {
@@ -22,7 +22,7 @@ export abstract class Entity<T> extends AggregateRoot<T> {
   }
 
   public get deletedAt(): Date | null {
-    return this._deletedAt ? new Date(this._deletedAt) : null;
+    return this._deletedAt;
   }
 
   public get deletedBy(): null | string {
@@ -30,7 +30,7 @@ export abstract class Entity<T> extends AggregateRoot<T> {
   }
 
   public get updatedAt(): Date {
-    return new Date(this._updatedAt);
+    return this._updatedAt;
   }
 
   public get updatedBy(): string {

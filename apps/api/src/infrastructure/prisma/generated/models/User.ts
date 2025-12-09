@@ -32,12 +32,16 @@ export type UserMinAggregateOutputType = {
   image: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  firstName: string | null;
-  lastName: string | null;
   role: string | null;
   banned: boolean | null;
   banReason: string | null;
   banExpires: Date | null;
+  createdBy: string | null;
+  deletedAt: Date | null;
+  deletedBy: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  updatedBy: string | null;
 };
 
 export type UserMaxAggregateOutputType = {
@@ -48,12 +52,16 @@ export type UserMaxAggregateOutputType = {
   image: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
-  firstName: string | null;
-  lastName: string | null;
   role: string | null;
   banned: boolean | null;
   banReason: string | null;
   banExpires: Date | null;
+  createdBy: string | null;
+  deletedAt: Date | null;
+  deletedBy: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  updatedBy: string | null;
 };
 
 export type UserCountAggregateOutputType = {
@@ -64,12 +72,16 @@ export type UserCountAggregateOutputType = {
   image: number;
   createdAt: number;
   updatedAt: number;
-  firstName: number;
-  lastName: number;
   role: number;
   banned: number;
   banReason: number;
   banExpires: number;
+  createdBy: number;
+  deletedAt: number;
+  deletedBy: number;
+  firstName: number;
+  lastName: number;
+  updatedBy: number;
   _all: number;
 };
 
@@ -81,12 +93,16 @@ export type UserMinAggregateInputType = {
   image?: true;
   createdAt?: true;
   updatedAt?: true;
-  firstName?: true;
-  lastName?: true;
   role?: true;
   banned?: true;
   banReason?: true;
   banExpires?: true;
+  createdBy?: true;
+  deletedAt?: true;
+  deletedBy?: true;
+  firstName?: true;
+  lastName?: true;
+  updatedBy?: true;
 };
 
 export type UserMaxAggregateInputType = {
@@ -97,12 +113,16 @@ export type UserMaxAggregateInputType = {
   image?: true;
   createdAt?: true;
   updatedAt?: true;
-  firstName?: true;
-  lastName?: true;
   role?: true;
   banned?: true;
   banReason?: true;
   banExpires?: true;
+  createdBy?: true;
+  deletedAt?: true;
+  deletedBy?: true;
+  firstName?: true;
+  lastName?: true;
+  updatedBy?: true;
 };
 
 export type UserCountAggregateInputType = {
@@ -113,12 +133,16 @@ export type UserCountAggregateInputType = {
   image?: true;
   createdAt?: true;
   updatedAt?: true;
-  firstName?: true;
-  lastName?: true;
   role?: true;
   banned?: true;
   banReason?: true;
   banExpires?: true;
+  createdBy?: true;
+  deletedAt?: true;
+  deletedBy?: true;
+  firstName?: true;
+  lastName?: true;
+  updatedBy?: true;
   _all?: true;
 };
 
@@ -209,12 +233,16 @@ export type UserGroupByOutputType = {
   image: string | null;
   createdAt: Date;
   updatedAt: Date;
-  firstName: string;
-  lastName: string;
   role: string;
   banned: boolean | null;
   banReason: string | null;
   banExpires: Date | null;
+  createdBy: string;
+  deletedAt: Date | null;
+  deletedBy: string | null;
+  firstName: string;
+  lastName: string;
+  updatedBy: string;
   _count: UserCountAggregateOutputType | null;
   _min: UserMinAggregateOutputType | null;
   _max: UserMaxAggregateOutputType | null;
@@ -243,12 +271,16 @@ export type UserWhereInput = {
   image?: Prisma.StringNullableFilter<'User'> | string | null;
   createdAt?: Prisma.DateTimeFilter<'User'> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<'User'> | Date | string;
-  firstName?: Prisma.StringFilter<'User'> | string;
-  lastName?: Prisma.StringFilter<'User'> | string;
   role?: Prisma.StringFilter<'User'> | string;
   banned?: Prisma.BoolNullableFilter<'User'> | boolean | null;
   banReason?: Prisma.StringNullableFilter<'User'> | string | null;
   banExpires?: Prisma.DateTimeNullableFilter<'User'> | Date | string | null;
+  createdBy?: Prisma.StringFilter<'User'> | string;
+  deletedAt?: Prisma.DateTimeNullableFilter<'User'> | Date | string | null;
+  deletedBy?: Prisma.StringNullableFilter<'User'> | string | null;
+  firstName?: Prisma.StringFilter<'User'> | string;
+  lastName?: Prisma.StringFilter<'User'> | string;
+  updatedBy?: Prisma.StringFilter<'User'> | string;
   sessions?: Prisma.SessionListRelationFilter;
   accounts?: Prisma.AccountListRelationFilter;
 };
@@ -261,12 +293,16 @@ export type UserOrderByWithRelationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
-  firstName?: Prisma.SortOrder;
-  lastName?: Prisma.SortOrder;
   role?: Prisma.SortOrder;
   banned?: Prisma.SortOrderInput | Prisma.SortOrder;
   banReason?: Prisma.SortOrderInput | Prisma.SortOrder;
   banExpires?: Prisma.SortOrderInput | Prisma.SortOrder;
+  createdBy?: Prisma.SortOrder;
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
+  firstName?: Prisma.SortOrder;
+  lastName?: Prisma.SortOrder;
+  updatedBy?: Prisma.SortOrder;
   sessions?: Prisma.SessionOrderByRelationAggregateInput;
   accounts?: Prisma.AccountOrderByRelationAggregateInput;
 };
@@ -283,12 +319,16 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     image?: Prisma.StringNullableFilter<'User'> | string | null;
     createdAt?: Prisma.DateTimeFilter<'User'> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<'User'> | Date | string;
-    firstName?: Prisma.StringFilter<'User'> | string;
-    lastName?: Prisma.StringFilter<'User'> | string;
     role?: Prisma.StringFilter<'User'> | string;
     banned?: Prisma.BoolNullableFilter<'User'> | boolean | null;
     banReason?: Prisma.StringNullableFilter<'User'> | string | null;
     banExpires?: Prisma.DateTimeNullableFilter<'User'> | Date | string | null;
+    createdBy?: Prisma.StringFilter<'User'> | string;
+    deletedAt?: Prisma.DateTimeNullableFilter<'User'> | Date | string | null;
+    deletedBy?: Prisma.StringNullableFilter<'User'> | string | null;
+    firstName?: Prisma.StringFilter<'User'> | string;
+    lastName?: Prisma.StringFilter<'User'> | string;
+    updatedBy?: Prisma.StringFilter<'User'> | string;
     sessions?: Prisma.SessionListRelationFilter;
     accounts?: Prisma.AccountListRelationFilter;
   },
@@ -303,12 +343,16 @@ export type UserOrderByWithAggregationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
-  firstName?: Prisma.SortOrder;
-  lastName?: Prisma.SortOrder;
   role?: Prisma.SortOrder;
   banned?: Prisma.SortOrderInput | Prisma.SortOrder;
   banReason?: Prisma.SortOrderInput | Prisma.SortOrder;
   banExpires?: Prisma.SortOrderInput | Prisma.SortOrder;
+  createdBy?: Prisma.SortOrder;
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
+  firstName?: Prisma.SortOrder;
+  lastName?: Prisma.SortOrder;
+  updatedBy?: Prisma.SortOrder;
   _count?: Prisma.UserCountOrderByAggregateInput;
   _max?: Prisma.UserMaxOrderByAggregateInput;
   _min?: Prisma.UserMinOrderByAggregateInput;
@@ -329,8 +373,6 @@ export type UserScalarWhereWithAggregatesInput = {
   image?: Prisma.StringNullableWithAggregatesFilter<'User'> | string | null;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<'User'> | Date | string;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<'User'> | Date | string;
-  firstName?: Prisma.StringWithAggregatesFilter<'User'> | string;
-  lastName?: Prisma.StringWithAggregatesFilter<'User'> | string;
   role?: Prisma.StringWithAggregatesFilter<'User'> | string;
   banned?: Prisma.BoolNullableWithAggregatesFilter<'User'> | boolean | null;
   banReason?: Prisma.StringNullableWithAggregatesFilter<'User'> | string | null;
@@ -339,6 +381,16 @@ export type UserScalarWhereWithAggregatesInput = {
     | Date
     | string
     | null;
+  createdBy?: Prisma.StringWithAggregatesFilter<'User'> | string;
+  deletedAt?:
+    | Prisma.DateTimeNullableWithAggregatesFilter<'User'>
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.StringNullableWithAggregatesFilter<'User'> | string | null;
+  firstName?: Prisma.StringWithAggregatesFilter<'User'> | string;
+  lastName?: Prisma.StringWithAggregatesFilter<'User'> | string;
+  updatedBy?: Prisma.StringWithAggregatesFilter<'User'> | string;
 };
 
 export type UserCreateInput = {
@@ -349,12 +401,16 @@ export type UserCreateInput = {
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  firstName: string;
-  lastName: string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | string | null;
+  createdBy: string;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  firstName: string;
+  lastName: string;
+  updatedBy: string;
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
 };
@@ -367,12 +423,16 @@ export type UserUncheckedCreateInput = {
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  firstName: string;
-  lastName: string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | string | null;
+  createdBy: string;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  firstName: string;
+  lastName: string;
+  updatedBy: string;
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
 };
@@ -385,8 +445,6 @@ export type UserUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.StringFieldUpdateOperationsInput | string;
   banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null;
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -395,6 +453,16 @@ export type UserUpdateInput = {
     | Date
     | string
     | null;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
 };
@@ -407,8 +475,6 @@ export type UserUncheckedUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.StringFieldUpdateOperationsInput | string;
   banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null;
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -417,6 +483,16 @@ export type UserUncheckedUpdateInput = {
     | Date
     | string
     | null;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
 };
@@ -429,12 +505,16 @@ export type UserCreateManyInput = {
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  firstName: string;
-  lastName: string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | string | null;
+  createdBy: string;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  firstName: string;
+  lastName: string;
+  updatedBy: string;
 };
 
 export type UserUpdateManyMutationInput = {
@@ -445,8 +525,6 @@ export type UserUpdateManyMutationInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.StringFieldUpdateOperationsInput | string;
   banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null;
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -455,6 +533,16 @@ export type UserUpdateManyMutationInput = {
     | Date
     | string
     | null;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type UserUncheckedUpdateManyInput = {
@@ -465,8 +553,6 @@ export type UserUncheckedUpdateManyInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.StringFieldUpdateOperationsInput | string;
   banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null;
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -475,6 +561,16 @@ export type UserUncheckedUpdateManyInput = {
     | Date
     | string
     | null;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type UserCountOrderByAggregateInput = {
@@ -485,12 +581,16 @@ export type UserCountOrderByAggregateInput = {
   image?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
-  firstName?: Prisma.SortOrder;
-  lastName?: Prisma.SortOrder;
   role?: Prisma.SortOrder;
   banned?: Prisma.SortOrder;
   banReason?: Prisma.SortOrder;
   banExpires?: Prisma.SortOrder;
+  createdBy?: Prisma.SortOrder;
+  deletedAt?: Prisma.SortOrder;
+  deletedBy?: Prisma.SortOrder;
+  firstName?: Prisma.SortOrder;
+  lastName?: Prisma.SortOrder;
+  updatedBy?: Prisma.SortOrder;
 };
 
 export type UserMaxOrderByAggregateInput = {
@@ -501,12 +601,16 @@ export type UserMaxOrderByAggregateInput = {
   image?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
-  firstName?: Prisma.SortOrder;
-  lastName?: Prisma.SortOrder;
   role?: Prisma.SortOrder;
   banned?: Prisma.SortOrder;
   banReason?: Prisma.SortOrder;
   banExpires?: Prisma.SortOrder;
+  createdBy?: Prisma.SortOrder;
+  deletedAt?: Prisma.SortOrder;
+  deletedBy?: Prisma.SortOrder;
+  firstName?: Prisma.SortOrder;
+  lastName?: Prisma.SortOrder;
+  updatedBy?: Prisma.SortOrder;
 };
 
 export type UserMinOrderByAggregateInput = {
@@ -517,12 +621,16 @@ export type UserMinOrderByAggregateInput = {
   image?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
-  firstName?: Prisma.SortOrder;
-  lastName?: Prisma.SortOrder;
   role?: Prisma.SortOrder;
   banned?: Prisma.SortOrder;
   banReason?: Prisma.SortOrder;
   banExpires?: Prisma.SortOrder;
+  createdBy?: Prisma.SortOrder;
+  deletedAt?: Prisma.SortOrder;
+  deletedBy?: Prisma.SortOrder;
+  firstName?: Prisma.SortOrder;
+  lastName?: Prisma.SortOrder;
+  updatedBy?: Prisma.SortOrder;
 };
 
 export type UserScalarRelationFilter = {
@@ -614,12 +722,16 @@ export type UserCreateWithoutSessionsInput = {
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  firstName: string;
-  lastName: string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | string | null;
+  createdBy: string;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  firstName: string;
+  lastName: string;
+  updatedBy: string;
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
 };
 
@@ -631,12 +743,16 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  firstName: string;
-  lastName: string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | string | null;
+  createdBy: string;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  firstName: string;
+  lastName: string;
+  updatedBy: string;
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
 };
 
@@ -676,8 +792,6 @@ export type UserUpdateWithoutSessionsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.StringFieldUpdateOperationsInput | string;
   banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null;
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -686,6 +800,16 @@ export type UserUpdateWithoutSessionsInput = {
     | Date
     | string
     | null;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
 };
 
@@ -697,8 +821,6 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.StringFieldUpdateOperationsInput | string;
   banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null;
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -707,6 +829,16 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
     | Date
     | string
     | null;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
 };
 
@@ -718,12 +850,16 @@ export type UserCreateWithoutAccountsInput = {
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  firstName: string;
-  lastName: string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | string | null;
+  createdBy: string;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  firstName: string;
+  lastName: string;
+  updatedBy: string;
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
 };
 
@@ -735,12 +871,16 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  firstName: string;
-  lastName: string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | string | null;
+  createdBy: string;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  firstName: string;
+  lastName: string;
+  updatedBy: string;
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
 };
 
@@ -780,8 +920,6 @@ export type UserUpdateWithoutAccountsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.StringFieldUpdateOperationsInput | string;
   banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null;
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -790,6 +928,16 @@ export type UserUpdateWithoutAccountsInput = {
     | Date
     | string
     | null;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
 };
 
@@ -801,8 +949,6 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   role?: Prisma.StringFieldUpdateOperationsInput | string;
   banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null;
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -811,6 +957,16 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
     | Date
     | string
     | null;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
 };
 
@@ -876,12 +1032,16 @@ export type UserSelect<
     image?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    firstName?: boolean;
-    lastName?: boolean;
     role?: boolean;
     banned?: boolean;
     banReason?: boolean;
     banExpires?: boolean;
+    createdBy?: boolean;
+    deletedAt?: boolean;
+    deletedBy?: boolean;
+    firstName?: boolean;
+    lastName?: boolean;
+    updatedBy?: boolean;
     sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>;
     accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
@@ -901,12 +1061,16 @@ export type UserSelectCreateManyAndReturn<
     image?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    firstName?: boolean;
-    lastName?: boolean;
     role?: boolean;
     banned?: boolean;
     banReason?: boolean;
     banExpires?: boolean;
+    createdBy?: boolean;
+    deletedAt?: boolean;
+    deletedBy?: boolean;
+    firstName?: boolean;
+    lastName?: boolean;
+    updatedBy?: boolean;
   },
   ExtArgs['result']['user']
 >;
@@ -923,12 +1087,16 @@ export type UserSelectUpdateManyAndReturn<
     image?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    firstName?: boolean;
-    lastName?: boolean;
     role?: boolean;
     banned?: boolean;
     banReason?: boolean;
     banExpires?: boolean;
+    createdBy?: boolean;
+    deletedAt?: boolean;
+    deletedBy?: boolean;
+    firstName?: boolean;
+    lastName?: boolean;
+    updatedBy?: boolean;
   },
   ExtArgs['result']['user']
 >;
@@ -941,12 +1109,16 @@ export type UserSelectScalar = {
   image?: boolean;
   createdAt?: boolean;
   updatedAt?: boolean;
-  firstName?: boolean;
-  lastName?: boolean;
   role?: boolean;
   banned?: boolean;
   banReason?: boolean;
   banExpires?: boolean;
+  createdBy?: boolean;
+  deletedAt?: boolean;
+  deletedBy?: boolean;
+  firstName?: boolean;
+  lastName?: boolean;
+  updatedBy?: boolean;
 };
 
 export type UserOmit<
@@ -960,12 +1132,16 @@ export type UserOmit<
   | 'image'
   | 'createdAt'
   | 'updatedAt'
-  | 'firstName'
-  | 'lastName'
   | 'role'
   | 'banned'
   | 'banReason'
-  | 'banExpires',
+  | 'banExpires'
+  | 'createdBy'
+  | 'deletedAt'
+  | 'deletedBy'
+  | 'firstName'
+  | 'lastName'
+  | 'updatedBy',
   ExtArgs['result']['user']
 >;
 export type UserInclude<
@@ -1003,12 +1179,16 @@ export type $UserPayload<
       image: string | null;
       createdAt: Date;
       updatedAt: Date;
-      firstName: string;
-      lastName: string;
       role: string;
       banned: boolean | null;
       banReason: string | null;
       banExpires: Date | null;
+      createdBy: string;
+      deletedAt: Date | null;
+      deletedBy: string | null;
+      firstName: string;
+      lastName: string;
+      updatedBy: string;
     },
     ExtArgs['result']['user']
   >;
@@ -1630,12 +1810,16 @@ export interface UserFieldRefs {
   readonly image: Prisma.FieldRef<'User', 'String'>;
   readonly createdAt: Prisma.FieldRef<'User', 'DateTime'>;
   readonly updatedAt: Prisma.FieldRef<'User', 'DateTime'>;
-  readonly firstName: Prisma.FieldRef<'User', 'String'>;
-  readonly lastName: Prisma.FieldRef<'User', 'String'>;
   readonly role: Prisma.FieldRef<'User', 'String'>;
   readonly banned: Prisma.FieldRef<'User', 'Boolean'>;
   readonly banReason: Prisma.FieldRef<'User', 'String'>;
   readonly banExpires: Prisma.FieldRef<'User', 'DateTime'>;
+  readonly createdBy: Prisma.FieldRef<'User', 'String'>;
+  readonly deletedAt: Prisma.FieldRef<'User', 'DateTime'>;
+  readonly deletedBy: Prisma.FieldRef<'User', 'String'>;
+  readonly firstName: Prisma.FieldRef<'User', 'String'>;
+  readonly lastName: Prisma.FieldRef<'User', 'String'>;
+  readonly updatedBy: Prisma.FieldRef<'User', 'String'>;
 }
 
 // Custom InputTypes

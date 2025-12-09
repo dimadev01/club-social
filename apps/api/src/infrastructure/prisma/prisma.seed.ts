@@ -21,8 +21,12 @@ async function main() {
   await auth.api.createUser({
     body: {
       data: {
+        createdBy: 'System',
+        deletedAt: null,
+        deletedBy: null,
         firstName: 'Club Social',
         lastName: 'Monte Grande',
+        updatedBy: 'System',
       },
       email: adminUserEmail,
       name: 'Club Social',
