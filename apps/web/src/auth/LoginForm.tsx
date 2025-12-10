@@ -1,7 +1,6 @@
 import { LoginOutlined } from '@ant-design/icons';
 import { Alert, App, Button, Card, Flex, Form, Image, Input } from 'antd';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useState } from 'react';
 
 import { MenuThemeSwitcher } from '@/components/MenuThemeSwitcher';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
@@ -16,37 +15,11 @@ const FormStatus = {
   SUCCESS: 'success',
 } as const;
 
-type ErrorTypes = Partial<
-  Record<
-    keyof typeof betterAuthClient.$ERROR_CODES,
-    {
-      en: string;
-      es: string;
-    }
-  >
->;
-
 type FormStatus = (typeof FormStatus)[keyof typeof FormStatus];
-
-const errorCodes = {
-  USER_ALREADY_EXISTS: {
-    en: 'user already registered',
-    es: 'usuario ya registrado',
-  },
-} satisfies ErrorTypes;
-
-const getErrorMessage = (code: string, lang: 'en' | 'es') => {
-  if (code in errorCodes) {
-    return errorCodes[code as keyof typeof errorCodes][lang];
-  }
-
-  return '';
-};
 
 export function LoginForm() {
   const [formStatus, setFormStatus] = useState<FormStatus>(FormStatus.IDLE);
   const { message } = App.useApp();
-  const { error } = useParams();
 
   const [form] = Form.useForm<FormSchema>();
 
@@ -64,16 +37,6 @@ export function LoginForm() {
       message.error(error.message);
     }
   };
-
-  useEffect(() => {
-    if (error) {
-      message.error(getErrorMessage(error, 'es'));
-    }
-  }, [error, message]);
-
-  // useEffect(() => {
-  //   loginWithRedirect();
-  // }, [loginWithRedirect]);
 
   const isSubmitting = formStatus === FormStatus.SUBMITTING;
 

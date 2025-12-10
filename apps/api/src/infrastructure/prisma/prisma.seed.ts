@@ -18,22 +18,56 @@ async function main() {
     return;
   }
 
-  await auth.api.createUser({
-    body: {
-      data: {
-        createdBy: 'System',
-        deletedAt: null,
-        deletedBy: null,
-        firstName: 'Club Social',
-        lastName: 'Monte Grande',
-        updatedBy: 'System',
+  await Promise.all([
+    auth.api.createUser({
+      body: {
+        data: {
+          createdBy: 'System',
+          deletedAt: null,
+          deletedBy: null,
+          firstName: 'Club Social',
+          lastName: 'Admin',
+          updatedBy: 'System',
+        },
+        email: adminUserEmail,
+        name: 'Club Social Admin',
+        password: adminPassword,
+        role: Role.ADMIN,
       },
-      email: adminUserEmail,
-      name: 'Club Social',
-      password: adminPassword,
-      role: Role.ADMIN,
-    },
-  });
+    }),
+    auth.api.createUser({
+      body: {
+        data: {
+          createdBy: 'System',
+          deletedAt: null,
+          deletedBy: null,
+          firstName: 'Club Social',
+          lastName: 'Member',
+          updatedBy: 'System',
+        },
+        email: 'member@clubsocialmontegrande.ar',
+        name: 'Member',
+        password: adminPassword,
+        role: Role.MEMBER,
+      },
+    }),
+    auth.api.createUser({
+      body: {
+        data: {
+          createdBy: 'System',
+          deletedAt: null,
+          deletedBy: null,
+          firstName: 'Club Social',
+          lastName: 'Staff',
+          updatedBy: 'System',
+        },
+        email: 'staff@clubsocialmontegrande.ar',
+        name: 'Staff',
+        password: adminPassword,
+        role: Role.STAFF,
+      },
+    }),
+  ]);
 }
 
 main();

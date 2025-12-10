@@ -1,10 +1,12 @@
-import { createAccessControl } from 'better-auth/plugins';
-import { adminAc, defaultStatements } from 'better-auth/plugins/admin/access';
-
 import { Role } from './role.enum';
-import { Action, Resource, RoleStatements, Statement } from './role.types';
+import {
+  Action,
+  Resource,
+  type RoleStatements,
+  type Statement,
+} from './role.types';
 
-const statements = {
+export const statements = {
   [Resource.DUES]: [
     Action.CREATE,
     Action.LIST,
@@ -33,7 +35,7 @@ const statements = {
     Action.UPDATE,
     Action.DELETE,
   ] as const,
-  [Resource.USER]: [
+  [Resource.USERS]: [
     Action.CREATE,
     Action.LIST,
     Action.GET,
@@ -42,7 +44,7 @@ const statements = {
   ] as const,
 } satisfies Statement;
 
-const roleStatements = {
+export const roleStatements = {
   [Role.ADMIN]: {
     [Resource.DUES]: [
       Action.CREATE,
@@ -71,7 +73,7 @@ const roleStatements = {
       Action.UPDATE,
       Action.DELETE,
     ] as const,
-    [Resource.USER]: [
+    [Resource.USERS]: [
       Action.CREATE,
       Action.LIST,
       Action.GET,
@@ -84,7 +86,7 @@ const roleStatements = {
     [Resource.MEMBER]: [],
     [Resource.MOVEMENT]: [],
     [Resource.PAYMENT]: [Action.GET, Action.LIST] as const,
-    [Resource.USER]: [],
+    [Resource.USERS]: [],
   },
   [Role.STAFF]: {
     [Resource.DUES]: [
@@ -115,24 +117,6 @@ const roleStatements = {
       Action.DELETE,
       Action.LIST,
     ] as const,
-    [Resource.USER]: [Action.GET, Action.UPDATE, Action.LIST] as const,
+    [Resource.USERS]: [Action.GET, Action.UPDATE, Action.LIST] as const,
   },
 } satisfies RoleStatements;
-
-const ac = createAccessControl({
-  ...defaultStatements,
-  ...statements,
-});
-
-export const adminRole = ac.newRole({
-  ...adminAc.statements,
-  ...roleStatements.admin,
-});
-
-export const staffRole = ac.newRole({
-  ...roleStatements.staff,
-});
-
-export const memberRole = ac.newRole({
-  ...roleStatements.member,
-});

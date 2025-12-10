@@ -15,7 +15,7 @@ export const Resource = {
   MEMBER: 'member',
   MOVEMENT: 'movement',
   PAYMENT: 'payment',
-  USER: 'user',
+  USERS: 'users',
 } as const;
 
 export type Resource = (typeof Resource)[keyof typeof Resource];

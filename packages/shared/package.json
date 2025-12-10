@@ -27,9 +27,6 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix"
   },
-  "dependencies": {
-    "better-auth": "^1.4.6"
-  },
   "devDependencies": {
     "@club-social/eslint-config": "*",
     "@club-social/prettier-config": "*",
