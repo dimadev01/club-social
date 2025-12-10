@@ -1,9 +1,12 @@
+import type { MenuItemType } from 'antd/es/menu/interface';
+
 import {
   FilePdfOutlined,
   HomeOutlined,
   LogoutOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { Action, Resource } from '@club-social/shared/roles';
 import {
   Button,
   Flex,
@@ -12,18 +15,23 @@ import {
   Layout,
   Menu,
   Space,
+  Spin,
   Typography,
 } from 'antd';
-import { type PropsWithChildren, useState } from 'react';
+import { type PropsWithChildren, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
 import { MenuThemeSwitcher } from '@/components/MenuThemeSwitcher';
+import { betterAuthClient } from '@/shared/lib/better-auth.client';
 
 import { APP_ROUTES } from './app.enum';
 
 export function AppLayout({ children }: PropsWithChildren) {
   const { sm } = Grid.useBreakpoint();
+
+  const [isMenuLoading, setIsMenuLoading] = useState(true);
+  const [menuItems, setMenuItems] = useState<MenuItemType[]>([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,6 +39,104 @@ export function AppLayout({ children }: PropsWithChildren) {
     'is-sidebar-collapsed',
     false,
   );
+
+  useEffect(() => {
+    const getMenuItems = async () => {
+      const items: MenuItemType[] = [
+        {
+          icon: <HomeOutlined />,
+          key: APP_ROUTES.HOME,
+          label: 'Inicio',
+        },
+      ];
+
+      const session = await betterAuthClient.getSession();
+
+      const [
+        hasUsersListPermission,
+        hasDuesListPermission,
+        hasMovementListPermission,
+        hasPaymentListPermission,
+        hasMemberListPermission,
+      ] = await Promise.all([
+        betterAuthClient.admin.hasPermission({
+          permission: {
+            [Resource.USERS]: [Action.LIST],
+          },
+          userId: session.data?.user.id,
+        }),
+        betterAuthClient.admin.hasPermission({
+          permission: {
+            [Resource.DUES]: [Action.LIST],
+          },
+          userId: session.data?.user.id,
+        }),
+        betterAuthClient.admin.hasPermission({
+          permission: {
+            [Resource.MOVEMENTS]: [Action.LIST],
+          },
+          userId: session.data?.user.id,
+        }),
+        betterAuthClient.admin.hasPermission({
+          permission: {
+            [Resource.PAYMENTS]: [Action.LIST],
+          },
+          userId: session.data?.user.id,
+        }),
+        betterAuthClient.admin.hasPermission({
+          permission: {
+            [Resource.MEMBERS]: [Action.LIST],
+          },
+          userId: session.data?.user.id,
+        }),
+      ]);
+
+      if (hasDuesListPermission.data?.success) {
+        items.push({
+          icon: <UserOutlined />,
+          key: APP_ROUTES.DUES_LIST,
+          label: 'Deudas',
+        });
+      }
+
+      if (hasMovementListPermission.data?.success) {
+        items.push({
+          icon: <UserOutlined />,
+          key: APP_ROUTES.MOVEMENT_LIST,
+          label: 'Movimientos',
+        });
+      }
+
+      if (hasPaymentListPermission.data?.success) {
+        items.push({
+          icon: <UserOutlined />,
+          key: APP_ROUTES.PAYMENT_LIST,
+          label: 'Pagos',
+        });
+      }
+
+      if (hasMemberListPermission.data?.success) {
+        items.push({
+          icon: <UserOutlined />,
+          key: APP_ROUTES.MEMBER_LIST,
+          label: 'Miembros',
+        });
+      }
+
+      if (hasUsersListPermission.data?.success) {
+        items.push({
+          icon: <UserOutlined />,
+          key: APP_ROUTES.USER_LIST,
+          label: 'Usuarios',
+        });
+      }
+
+      setMenuItems(items);
+      setIsMenuLoading(false);
+    };
+
+    getMenuItems();
+  }, []);
 
   const [selectedKeys, setSelectedKeys] = useState<string[]>([
     `/${location.pathname.split('/')[1]}`,
@@ -54,27 +160,19 @@ export function AppLayout({ children }: PropsWithChildren) {
             src="/club-social-logo.png"
           />
 
-          <Menu
-            className="border-e-0"
-            items={[
-              {
-                icon: <HomeOutlined />,
-                key: APP_ROUTES.HOME,
-                label: 'Inicio',
-              },
-              {
-                icon: <UserOutlined />,
-                key: APP_ROUTES.USER_LIST,
-                label: 'Usuarios',
-              },
-            ]}
-            mode="inline"
-            onClick={({ key }) => {
-              setSelectedKeys([key]);
-              navigate(key);
-            }}
-            selectedKeys={selectedKeys}
-          />
+          {isMenuLoading && <Spin size="large" />}
+          {!isMenuLoading && (
+            <Menu
+              className="border-e-0"
+              items={menuItems}
+              mode="inline"
+              onClick={({ key }) => {
+                setSelectedKeys([key]);
+                navigate(key);
+              }}
+              selectedKeys={selectedKeys}
+            />
+          )}
 
           <Menu
             className="mt-auto border-e-0"

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { AppLoading } from '@/app/AppLoading';
+import { PageLoader } from '@/components/Page';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 
 export function LogoutPage() {
@@ -8,5 +8,5 @@ export function LogoutPage() {
     betterAuthClient.signOut();
   }, []);
 
-  return <AppLoading />;
+  return <PageLoader />;
 }

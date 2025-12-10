@@ -12,9 +12,9 @@ export type Action = (typeof Action)[keyof typeof Action];
 
 export const Resource = {
   DUES: 'dues',
-  MEMBER: 'member',
-  MOVEMENT: 'movement',
-  PAYMENT: 'payment',
+  MEMBERS: 'members',
+  MOVEMENTS: 'movements',
+  PAYMENTS: 'payments',
   USERS: 'users',
 } as const;
 

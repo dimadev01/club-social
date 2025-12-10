@@ -1,3 +1,4 @@
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Result } from 'antd';
 import { useNavigate } from 'react-router';
 
@@ -10,7 +11,12 @@ export function NotFound() {
     <CenteredLayout>
       <Result
         extra={
-          <Button onClick={() => navigate(-1)} size="large" type="primary">
+          <Button
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(-1)}
+            size="large"
+            type="default"
+          >
             Volver
           </Button>
         }

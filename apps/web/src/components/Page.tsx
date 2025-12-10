@@ -1,11 +1,12 @@
+import type { TitleProps } from 'antd/es/typography/Title';
 import type React from 'react';
 
-import { Flex, type FlexProps } from 'antd';
+import { Flex, type FlexProps, Spin, Typography } from 'antd';
 
 import { cn } from '@/shared/lib/utils';
 
 export function Page({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div className={cn('p-4 md:p-10', className)} {...props} />;
+  return <div className={cn('h-full p-4 md:p-10', className)} {...props} />;
 }
 
 export function PageContent({
@@ -25,5 +26,21 @@ export function PageHeader({ className, ...props }: FlexProps) {
       wrap
       {...props}
     />
+  );
+}
+
+export function PageLoader() {
+  return (
+    <Page className="flex items-center justify-center">
+      <Spin size="large" />
+    </Page>
+  );
+}
+
+export function PageTitle({ children, className, ...props }: TitleProps) {
+  return (
+    <Typography.Title className={cn('mb-0 text-2xl', className)} {...props}>
+      {children}
+    </Typography.Title>
   );
 }

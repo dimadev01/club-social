@@ -13,35 +13,35 @@ export const statements = {
     Action.GET,
     Action.UPDATE,
     Action.DELETE,
-  ] as const,
-  [Resource.MEMBER]: [
+  ],
+  [Resource.MEMBERS]: [
     Action.CREATE,
     Action.LIST,
     Action.GET,
     Action.UPDATE,
     Action.DELETE,
-  ] as const,
-  [Resource.MOVEMENT]: [
+  ],
+  [Resource.MOVEMENTS]: [
     Action.CREATE,
     Action.LIST,
     Action.GET,
     Action.UPDATE,
     Action.DELETE,
-  ] as const,
-  [Resource.PAYMENT]: [
+  ],
+  [Resource.PAYMENTS]: [
     Action.CREATE,
     Action.LIST,
     Action.GET,
     Action.UPDATE,
     Action.DELETE,
-  ] as const,
+  ],
   [Resource.USERS]: [
     Action.CREATE,
     Action.LIST,
     Action.GET,
     Action.UPDATE,
     Action.DELETE,
-  ] as const,
+  ],
 } satisfies Statement;
 
 export const roleStatements = {
@@ -52,40 +52,40 @@ export const roleStatements = {
       Action.GET,
       Action.UPDATE,
       Action.DELETE,
-    ] as const,
-    [Resource.MEMBER]: [
+    ],
+    [Resource.MEMBERS]: [
       Action.CREATE,
       Action.LIST,
       Action.GET,
       Action.UPDATE,
       Action.DELETE,
-    ] as const,
-    [Resource.MOVEMENT]: [
+    ],
+    [Resource.MOVEMENTS]: [
       Action.CREATE,
       Action.LIST,
       Action.GET,
       Action.UPDATE,
-    ] as const,
-    [Resource.PAYMENT]: [
+    ],
+    [Resource.PAYMENTS]: [
       Action.CREATE,
       Action.LIST,
       Action.GET,
       Action.UPDATE,
       Action.DELETE,
-    ] as const,
+    ],
     [Resource.USERS]: [
       Action.CREATE,
       Action.LIST,
       Action.GET,
       Action.UPDATE,
       Action.DELETE,
-    ] as const,
+    ],
   },
   [Role.MEMBER]: {
-    [Resource.DUES]: [Action.GET, Action.LIST] as const,
-    [Resource.MEMBER]: [],
-    [Resource.MOVEMENT]: [],
-    [Resource.PAYMENT]: [Action.GET, Action.LIST] as const,
+    [Resource.DUES]: [Action.GET, Action.LIST],
+    [Resource.MEMBERS]: [],
+    [Resource.MOVEMENTS]: [],
+    [Resource.PAYMENTS]: [Action.GET, Action.LIST],
     [Resource.USERS]: [],
   },
   [Role.STAFF]: {
@@ -95,28 +95,28 @@ export const roleStatements = {
       Action.UPDATE,
       Action.DELETE,
       Action.LIST,
-    ] as const,
-    [Resource.MEMBER]: [
+    ],
+    [Resource.MEMBERS]: [
       Action.GET,
       Action.CREATE,
       Action.UPDATE,
       Action.DELETE,
       Action.LIST,
-    ] as const,
-    [Resource.MOVEMENT]: [
+    ],
+    [Resource.MOVEMENTS]: [
       Action.GET,
       Action.CREATE,
       Action.UPDATE,
       Action.DELETE,
       Action.LIST,
-    ] as const,
-    [Resource.PAYMENT]: [
+    ],
+    [Resource.PAYMENTS]: [
       Action.GET,
       Action.CREATE,
       Action.UPDATE,
       Action.DELETE,
       Action.LIST,
-    ] as const,
-    [Resource.USERS]: [Action.GET, Action.UPDATE, Action.LIST] as const,
+    ],
+    [Resource.USERS]: [Action.GET, Action.UPDATE, Action.LIST],
   },
 } satisfies RoleStatements;

@@ -6,31 +6,29 @@ import {
   MoreOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
+import { Action, Resource } from '@club-social/shared/roles';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Space, Table, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
-import { Page, PageContent, PageHeader } from '@/components/Page';
+import { Page, PageContent, PageHeader, PageTitle } from '@/components/Page';
 import { $fetch } from '@/shared/lib/fetch';
 import { useQuery } from '@/shared/lib/useQuery';
+
+import { useHasPermission } from './use-has-permission';
 
 export function UserListPage() {
   const navigate = useNavigate();
   const { message } = App.useApp();
+  const hasUsersListPermission = useHasPermission(Resource.USERS, Action.LIST);
 
   const usersQuery = useQuery({
-    // enabled: false,
+    enabled: hasUsersListPermission,
     placeholderData: keepPreviousData,
     queryFn: () => $fetch<PaginatedResponse<UserDto>>('/users/paginated'),
     queryKey: ['users'],
   });
-
-  // const data = betterAuthClient.admin.listUsers({
-  //   query: {},
-  // });
-
-  // console.log({ data });
 
   if (usersQuery.error) {
     message.error(usersQuery.error.message);
@@ -39,7 +37,7 @@ export function UserListPage() {
   return (
     <Page>
       <PageHeader>
-        <Typography.Text strong>Usuarios</Typography.Text>
+        <PageTitle>Usuarios</PageTitle>
         <Space.Compact>
           <Button
             icon={<UserAddOutlined />}
