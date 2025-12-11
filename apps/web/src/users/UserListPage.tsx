@@ -6,25 +6,25 @@ import {
   MoreOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
-import { Action, Resource } from '@club-social/shared/roles';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Space, Table, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
+import { NotFound } from '@/components/NotFound';
 import { Page, PageContent, PageHeader, PageTitle } from '@/components/Page';
 import { $fetch } from '@/shared/lib/fetch';
 import { useQuery } from '@/shared/lib/useQuery';
 
-import { useHasPermission } from './use-has-permission';
+import { usePermissions } from './use-permissions';
 
 export function UserListPage() {
   const navigate = useNavigate();
   const { message } = App.useApp();
-  const hasUsersListPermission = useHasPermission(Resource.USERS, Action.LIST);
+  const permissions = usePermissions();
 
   const usersQuery = useQuery({
-    enabled: hasUsersListPermission,
+    enabled: permissions.users.list,
     placeholderData: keepPreviousData,
     queryFn: () => $fetch<PaginatedResponse<UserDto>>('/users/paginated'),
     queryKey: ['users'],
@@ -32,6 +32,10 @@ export function UserListPage() {
 
   if (usersQuery.error) {
     message.error(usersQuery.error.message);
+  }
+
+  if (!permissions.users.list) {
+    return <NotFound />;
   }
 
   return (

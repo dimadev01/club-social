@@ -1,28 +1,16 @@
-import type { Action, Resource } from '@club-social/shared/roles';
-
-import { useEffect, useState } from 'react';
+import type { Action, Resource, Role } from '@club-social/shared/roles';
 
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 
-export function useHasPermission(resource: Resource, action: Action) {
+export function useHasPermission(resource: Resource, action: Action): boolean {
   const { data: session } = betterAuthClient.useSession();
 
-  const [hasPermission, setHasPermission] = useState(false);
+  if (!session?.user.role) {
+    return false;
+  }
 
-  useEffect(() => {
-    const hasPermission = async () => {
-      const { data } = await betterAuthClient.admin.hasPermission({
-        permission: { [resource]: [action] },
-        userId: session?.user.id,
-      });
-
-      console.log({ data });
-
-      setHasPermission(data?.success ?? false);
-    };
-
-    hasPermission();
-  }, [session, resource, action]);
-
-  return hasPermission;
+  return betterAuthClient.admin.checkRolePermission({
+    permission: { [resource]: [action] },
+    role: session.user.role as Role,
+  });
 }

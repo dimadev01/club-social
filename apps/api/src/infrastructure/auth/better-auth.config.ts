@@ -68,7 +68,6 @@ export const betterAuthOptions = {
       },
     }),
   ],
-  session: {},
   user: {
     additionalFields: {
       createdBy: {
