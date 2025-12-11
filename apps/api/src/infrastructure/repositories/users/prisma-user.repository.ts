@@ -11,8 +11,8 @@ import { UserRepository } from '@/domain/users/user.repository';
 import {
   UserFindManyArgs,
   UserWhereInput,
-} from '@/infrastructure/prisma/generated/models';
-import { PrismaService } from '@/infrastructure/prisma/prisma.service';
+} from '@/infrastructure/database/prisma/generated/models';
+import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 
 import { PrismaUserMapper } from './prisma-user.mapper';
 

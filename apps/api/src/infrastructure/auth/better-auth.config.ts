@@ -14,7 +14,7 @@ import {
 
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 
-import { prisma } from '../prisma/prisma.client';
+import { prisma } from '../database/prisma/prisma.client';
 
 const ac = createAccessControl({
   ...defaultStatements,

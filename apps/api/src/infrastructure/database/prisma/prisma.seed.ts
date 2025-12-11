@@ -1,8 +1,8 @@
 import { Role } from '@club-social/shared/roles';
 
 import { Guard } from '@/domain/shared/guards';
+import { auth } from '@/infrastructure/auth/better-auth.config';
 
-import { auth } from '../auth/better-auth.config';
 import { prisma } from './prisma.client';
 
 async function main() {

@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/domain/users/user.entity';
-import { UserModel } from '@/infrastructure/prisma/generated/models';
+import { UserModel } from '@/infrastructure/database/prisma/generated/models';
 
 import { Mapper } from './mapper';
 

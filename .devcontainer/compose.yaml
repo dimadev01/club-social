@@ -8,6 +8,12 @@ services:
       - ../:/workspace:cached
       - node_modules:/workspace/node_modules
 
+  maildev:
+    image: maildev/maildev
+    ports:
+      - '1080:1080'
+      - '1025:1025'
+
   postgres:
     image: postgres:18
     environment:

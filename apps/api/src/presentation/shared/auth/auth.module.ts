@@ -3,7 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 
 import { AUTH_SERVICE_PROVIDER } from '@/infrastructure/auth/auth.service';
 import { BetterAuthService } from '@/infrastructure/auth/better-auth.service';
-import { PrismaModule } from '@/infrastructure/prisma/prisma.module';
+import { PrismaModule } from '@/infrastructure/database/prisma/prisma.module';
 
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
