@@ -8,7 +8,6 @@ import {
 } from '@/application/shared/logger/logger';
 import { UseCase } from '@/application/shared/use-case';
 import { ConflictError } from '@/domain/shared/errors/conflict.error';
-import { DomainEventPublisher } from '@/domain/shared/events/domain-event-publisher';
 import { err, ok } from '@/domain/shared/result';
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
@@ -26,7 +25,6 @@ export class UpdateUserUseCase extends UseCase<UserEntity> {
     protected readonly logger: AppLogger,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
-    private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
   }
@@ -57,9 +55,7 @@ export class UpdateUserUseCase extends UseCase<UserEntity> {
 
     user.updateName(params.firstName, params.lastName);
     user.updateEmail(email.value);
-
-    await this.userRepository.save(user);
-    this.eventPublisher.dispatch(user);
+    user.updateStatus(params.status);
 
     return ok(user);
   }

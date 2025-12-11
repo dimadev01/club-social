@@ -801,6 +801,7 @@ export const UserScalarFieldEnum = {
   deletedBy: 'deletedBy',
   firstName: 'firstName',
   lastName: 'lastName',
+  status: 'status',
   updatedBy: 'updatedBy',
 } as const;
 

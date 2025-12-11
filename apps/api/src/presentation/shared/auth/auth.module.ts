@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 
-import { AUTH_SERVICE_PROVIDER } from '@/infrastructure/auth/auth.service';
 import { BetterAuthService } from '@/infrastructure/auth/better-auth.service';
 import { PrismaModule } from '@/infrastructure/database/prisma/prisma.module';
 
@@ -13,12 +12,8 @@ import { AuthGuard } from './auth.guard';
   exports: [BetterAuthService],
   imports: [PrismaModule],
   providers: [
-    BetterAuthService,
-    {
-      provide: AUTH_SERVICE_PROVIDER,
-      useClass: BetterAuthService,
-    },
     AuthGuard,
+    BetterAuthService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

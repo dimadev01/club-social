@@ -1,6 +1,6 @@
 import type { IncomingHttpHeaders } from 'http';
 
-import { Role } from '@club-social/shared/roles';
+import { UserRole } from '@club-social/shared/users';
 import {
   Body,
   Controller,
@@ -10,7 +10,11 @@ import {
   Param,
   Patch,
   Post,
+  Session,
 } from '@nestjs/common';
+import { fromNodeHeaders } from 'better-auth/node';
+
+import type { AuthSession } from '@/infrastructure/auth/better-auth.types';
 
 import {
   APP_LOGGER_PROVIDER,
@@ -51,18 +55,34 @@ export class UsersController extends BaseController {
   @Patch(':id')
   public async update(
     @Param() request: ParamIdDto,
-    @Body() updateUserDto: UpdateUserRequestDto,
+    @Body() body: UpdateUserRequestDto,
     @Headers() headers: IncomingHttpHeaders,
+    @Session() session: AuthSession,
   ): Promise<void> {
-    await this.betterAuthService.updateUser(
-      {
-        email: updateUserDto.email,
-        firstName: updateUserDto.firstName,
+    const user = this.handleResult(
+      await this.updateUserUseCase.execute({
+        email: body.email,
+        firstName: body.firstName,
         id: request.id,
-        lastName: updateUserDto.lastName,
-      },
-      headers,
+        lastName: body.lastName,
+        status: body.status,
+        updatedBy: session.user.name,
+      }),
     );
+
+    await this.betterAuthService.auth.api.adminUpdateUser({
+      body: {
+        data: {
+          email: user.email.value,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          status: user.status,
+          updatedBy: user.updatedBy,
+        },
+        userId: user.id.value,
+      },
+      headers: fromNodeHeaders(headers),
+    });
   }
 
   @Post()
@@ -75,7 +95,7 @@ export class UsersController extends BaseController {
         email: createUserDto.email,
         firstName: createUserDto.firstName,
         lastName: createUserDto.lastName,
-        role: Role.STAFF,
+        role: UserRole.STAFF,
       }),
     );
 
@@ -115,6 +135,7 @@ export class UsersController extends BaseController {
       lastName: user.lastName,
       name: user.name,
       role: user.role,
+      status: user.status,
     };
   }
 }

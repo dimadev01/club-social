@@ -94,6 +94,10 @@ export const betterAuthOptions = {
         required: true,
         type: 'string',
       },
+      status: {
+        required: true,
+        type: 'string',
+      },
       updatedBy: {
         required: true,
         type: 'string',

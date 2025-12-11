@@ -41,6 +41,7 @@ export type UserMinAggregateOutputType = {
   deletedBy: string | null;
   firstName: string | null;
   lastName: string | null;
+  status: string | null;
   updatedBy: string | null;
 };
 
@@ -61,6 +62,7 @@ export type UserMaxAggregateOutputType = {
   deletedBy: string | null;
   firstName: string | null;
   lastName: string | null;
+  status: string | null;
   updatedBy: string | null;
 };
 
@@ -81,6 +83,7 @@ export type UserCountAggregateOutputType = {
   deletedBy: number;
   firstName: number;
   lastName: number;
+  status: number;
   updatedBy: number;
   _all: number;
 };
@@ -102,6 +105,7 @@ export type UserMinAggregateInputType = {
   deletedBy?: true;
   firstName?: true;
   lastName?: true;
+  status?: true;
   updatedBy?: true;
 };
 
@@ -122,6 +126,7 @@ export type UserMaxAggregateInputType = {
   deletedBy?: true;
   firstName?: true;
   lastName?: true;
+  status?: true;
   updatedBy?: true;
 };
 
@@ -142,6 +147,7 @@ export type UserCountAggregateInputType = {
   deletedBy?: true;
   firstName?: true;
   lastName?: true;
+  status?: true;
   updatedBy?: true;
   _all?: true;
 };
@@ -242,6 +248,7 @@ export type UserGroupByOutputType = {
   deletedBy: string | null;
   firstName: string;
   lastName: string;
+  status: string;
   updatedBy: string;
   _count: UserCountAggregateOutputType | null;
   _min: UserMinAggregateOutputType | null;
@@ -280,6 +287,7 @@ export type UserWhereInput = {
   deletedBy?: Prisma.StringNullableFilter<'User'> | string | null;
   firstName?: Prisma.StringFilter<'User'> | string;
   lastName?: Prisma.StringFilter<'User'> | string;
+  status?: Prisma.StringFilter<'User'> | string;
   updatedBy?: Prisma.StringFilter<'User'> | string;
   sessions?: Prisma.SessionListRelationFilter;
   accounts?: Prisma.AccountListRelationFilter;
@@ -302,6 +310,7 @@ export type UserOrderByWithRelationInput = {
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   firstName?: Prisma.SortOrder;
   lastName?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
   sessions?: Prisma.SessionOrderByRelationAggregateInput;
   accounts?: Prisma.AccountOrderByRelationAggregateInput;
@@ -328,6 +337,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     deletedBy?: Prisma.StringNullableFilter<'User'> | string | null;
     firstName?: Prisma.StringFilter<'User'> | string;
     lastName?: Prisma.StringFilter<'User'> | string;
+    status?: Prisma.StringFilter<'User'> | string;
     updatedBy?: Prisma.StringFilter<'User'> | string;
     sessions?: Prisma.SessionListRelationFilter;
     accounts?: Prisma.AccountListRelationFilter;
@@ -352,6 +362,7 @@ export type UserOrderByWithAggregationInput = {
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   firstName?: Prisma.SortOrder;
   lastName?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
   _count?: Prisma.UserCountOrderByAggregateInput;
   _max?: Prisma.UserMaxOrderByAggregateInput;
@@ -390,6 +401,7 @@ export type UserScalarWhereWithAggregatesInput = {
   deletedBy?: Prisma.StringNullableWithAggregatesFilter<'User'> | string | null;
   firstName?: Prisma.StringWithAggregatesFilter<'User'> | string;
   lastName?: Prisma.StringWithAggregatesFilter<'User'> | string;
+  status?: Prisma.StringWithAggregatesFilter<'User'> | string;
   updatedBy?: Prisma.StringWithAggregatesFilter<'User'> | string;
 };
 
@@ -410,6 +422,7 @@ export type UserCreateInput = {
   deletedBy?: string | null;
   firstName: string;
   lastName: string;
+  status: string;
   updatedBy: string;
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
@@ -432,6 +445,7 @@ export type UserUncheckedCreateInput = {
   deletedBy?: string | null;
   firstName: string;
   lastName: string;
+  status: string;
   updatedBy: string;
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
@@ -462,6 +476,7 @@ export type UserUpdateInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
@@ -492,6 +507,7 @@ export type UserUncheckedUpdateInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
@@ -514,6 +530,7 @@ export type UserCreateManyInput = {
   deletedBy?: string | null;
   firstName: string;
   lastName: string;
+  status: string;
   updatedBy: string;
 };
 
@@ -542,6 +559,7 @@ export type UserUpdateManyMutationInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
@@ -570,6 +588,7 @@ export type UserUncheckedUpdateManyInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
@@ -590,6 +609,7 @@ export type UserCountOrderByAggregateInput = {
   deletedBy?: Prisma.SortOrder;
   firstName?: Prisma.SortOrder;
   lastName?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
 
@@ -610,6 +630,7 @@ export type UserMaxOrderByAggregateInput = {
   deletedBy?: Prisma.SortOrder;
   firstName?: Prisma.SortOrder;
   lastName?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
 
@@ -630,6 +651,7 @@ export type UserMinOrderByAggregateInput = {
   deletedBy?: Prisma.SortOrder;
   firstName?: Prisma.SortOrder;
   lastName?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
 
@@ -731,6 +753,7 @@ export type UserCreateWithoutSessionsInput = {
   deletedBy?: string | null;
   firstName: string;
   lastName: string;
+  status: string;
   updatedBy: string;
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
 };
@@ -752,6 +775,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   deletedBy?: string | null;
   firstName: string;
   lastName: string;
+  status: string;
   updatedBy: string;
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
 };
@@ -809,6 +833,7 @@ export type UserUpdateWithoutSessionsInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
 };
@@ -838,6 +863,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
 };
@@ -859,6 +885,7 @@ export type UserCreateWithoutAccountsInput = {
   deletedBy?: string | null;
   firstName: string;
   lastName: string;
+  status: string;
   updatedBy: string;
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
 };
@@ -880,6 +907,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   deletedBy?: string | null;
   firstName: string;
   lastName: string;
+  status: string;
   updatedBy: string;
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
 };
@@ -937,6 +965,7 @@ export type UserUpdateWithoutAccountsInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
 };
@@ -966,6 +995,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
 };
@@ -1041,6 +1071,7 @@ export type UserSelect<
     deletedBy?: boolean;
     firstName?: boolean;
     lastName?: boolean;
+    status?: boolean;
     updatedBy?: boolean;
     sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>;
     accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>;
@@ -1070,6 +1101,7 @@ export type UserSelectCreateManyAndReturn<
     deletedBy?: boolean;
     firstName?: boolean;
     lastName?: boolean;
+    status?: boolean;
     updatedBy?: boolean;
   },
   ExtArgs['result']['user']
@@ -1096,6 +1128,7 @@ export type UserSelectUpdateManyAndReturn<
     deletedBy?: boolean;
     firstName?: boolean;
     lastName?: boolean;
+    status?: boolean;
     updatedBy?: boolean;
   },
   ExtArgs['result']['user']
@@ -1118,6 +1151,7 @@ export type UserSelectScalar = {
   deletedBy?: boolean;
   firstName?: boolean;
   lastName?: boolean;
+  status?: boolean;
   updatedBy?: boolean;
 };
 
@@ -1141,6 +1175,7 @@ export type UserOmit<
   | 'deletedBy'
   | 'firstName'
   | 'lastName'
+  | 'status'
   | 'updatedBy',
   ExtArgs['result']['user']
 >;
@@ -1188,6 +1223,7 @@ export type $UserPayload<
       deletedBy: string | null;
       firstName: string;
       lastName: string;
+      status: string;
       updatedBy: string;
     },
     ExtArgs['result']['user']
@@ -1819,6 +1855,7 @@ export interface UserFieldRefs {
   readonly deletedBy: Prisma.FieldRef<'User', 'String'>;
   readonly firstName: Prisma.FieldRef<'User', 'String'>;
   readonly lastName: Prisma.FieldRef<'User', 'String'>;
+  readonly status: Prisma.FieldRef<'User', 'String'>;
   readonly updatedBy: Prisma.FieldRef<'User', 'String'>;
 }
 

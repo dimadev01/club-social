@@ -1,5 +1,5 @@
-import { Role } from '@club-social/shared/roles';
-import { UserDto } from '@club-social/shared/users';
+import { UserRole } from '@club-social/shared/users';
+import { UserDto, UserStatus } from '@club-social/shared/users';
 
 export class UserResponseDto implements UserDto {
   public email: string;
@@ -7,5 +7,6 @@ export class UserResponseDto implements UserDto {
   public id: string;
   public lastName: string;
   public name: string;
-  public role: Role;
+  public role: UserRole;
+  public status: UserStatus;
 }

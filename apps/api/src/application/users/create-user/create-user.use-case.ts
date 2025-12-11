@@ -1,3 +1,4 @@
+import { UserStatus } from '@club-social/shared/users';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/domain/shared/result';
@@ -42,10 +43,14 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
     }
 
     const user = UserEntity.create({
+      banExpires: null,
+      banned: false,
+      banReason: null,
       email: email.value,
       firstName: params.firstName,
       lastName: params.lastName,
       role: params.role,
+      status: UserStatus.ACTIVE,
     });
 
     if (user.isErr()) {

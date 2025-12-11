@@ -44,13 +44,11 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   public async findOneByIdOrThrow(id: UniqueId): Promise<UserEntity> {
-    console.log({ id });
-    throw new Error('Not implemented');
-    // const user = await this.prismaService.user.findUniqueOrThrow({
-    //   where: { deletedAt: null, id: id.value },
-    // });
+    const user = await this.prismaService.user.findUniqueOrThrow({
+      where: { deletedAt: null, id: id.value },
+    });
 
-    // return PrismaUserMapper.toDomain(user);
+    return this.mapper.toDomain(user);
   }
 
   public async findPaginated(
@@ -78,17 +76,15 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {
-    console.log({ email });
-    throw new Error('Not implemented');
-    // const user = await this.prismaService.user.findUnique({
-    //   where: { email: email.value },
-    // });
+    const user = await this.prismaService.user.findUnique({
+      where: { deletedAt: null, email: email.value },
+    });
 
-    // if (!user) {
-    //   return null;
-    // }
+    if (!user) {
+      return null;
+    }
 
-    // return PrismaUserMapper.toDomain(user);
+    return this.mapper.toDomain(user);
   }
 
   public async save(entity: UserEntity): Promise<UserEntity> {

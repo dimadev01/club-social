@@ -62,28 +62,6 @@ export class BetterAuthUserRepository implements UserRepository {
       data: [],
       total: 0,
     };
-
-    // return {
-    //   data: data.data.map((user) => PrismaUserMapper.toDomain(user)),
-    // };
-
-    // const where: UserWhereInput = {};
-
-    // const query: UserFindManyArgs = {
-    //   skip: (params.page - 1) * params.pageSize,
-    //   take: params.pageSize,
-    //   where,
-    // };
-
-    // const [users, total] = await Promise.all([
-    //   this.prismaService.user.findMany(query),
-    //   this.prismaService.user.count({ where }),
-    // ]);
-
-    // return {
-    //   data: users.map((user) => PrismaUserMapper.toDomain(user)),
-    //   total,
-    // };
   }
 
   public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {

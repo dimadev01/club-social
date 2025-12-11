@@ -1,4 +1,5 @@
-import { Role } from '@club-social/shared/roles';
+import { UserRole } from '@club-social/shared/users';
+import { UserStatus } from '@club-social/shared/users';
 import { Injectable } from '@nestjs/common';
 
 import { Email } from '@/domain/shared/value-objects/email/email.vo';
@@ -13,10 +14,14 @@ export class PrismaUserMapper extends Mapper<UserEntity, UserModel> {
   public toDomain(user: UserModel): UserEntity {
     return UserEntity.raw(
       {
+        banExpires: user.banExpires,
+        banned: user.banned,
+        banReason: user.banReason,
         email: Email.raw({ value: user.email }),
         firstName: user.firstName,
         lastName: user.lastName,
-        role: user.role as Role,
+        role: user.role as UserRole,
+        status: user.status as UserStatus,
       },
       {
         createdAt: user.createdAt,
@@ -32,9 +37,9 @@ export class PrismaUserMapper extends Mapper<UserEntity, UserModel> {
 
   public toPersistence(user: UserEntity): UserModel {
     return {
-      banExpires: null,
-      banned: false,
-      banReason: null,
+      banExpires: user.banExpires,
+      banned: user.banned,
+      banReason: user.banReason,
       createdAt: user.createdAt,
       createdBy: user.createdBy,
       deletedAt: user.deletedAt,
@@ -46,7 +51,8 @@ export class PrismaUserMapper extends Mapper<UserEntity, UserModel> {
       image: null,
       lastName: user.lastName,
       name: user.name,
-      role: user.role as Role,
+      role: user.role as UserRole,
+      status: user.status,
       updatedAt: user.updatedAt,
       updatedBy: user.updatedBy,
     };

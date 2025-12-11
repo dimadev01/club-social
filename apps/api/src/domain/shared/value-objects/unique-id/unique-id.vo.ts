@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import { ValueObject } from '../value-object.base';
 
 interface Props {
-  value: string;
+  readonly value: string;
 }
 
 export class UniqueId extends ValueObject<Props> {

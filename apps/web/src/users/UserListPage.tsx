@@ -1,11 +1,15 @@
 import type { PaginatedResponse } from '@club-social/shared/shared';
-import type { UserDto } from '@club-social/shared/users';
 
 import {
   FileExcelOutlined,
   MoreOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
+import {
+  type UserDto,
+  UserStatus,
+  UserStatusLabel,
+} from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Space, Table, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
@@ -66,11 +70,11 @@ export function UserListPage() {
         </Space.Compact>
       </PageHeader>
       <PageContent>
-        <Table
+        <Table<UserDto>
           columns={[
             {
               dataIndex: 'id',
-              render: (value, record) => (
+              render: (value: string, record: UserDto) => (
                 <Typography.Text copyable={{ text: record.name }}>
                   <Link to={`${APP_ROUTES.USER_DETAIL.replace(':id', value)}`}>
                     {record.name}
@@ -81,10 +85,16 @@ export function UserListPage() {
             },
             {
               dataIndex: 'email',
-              render: (value) => (
+              render: (value: string) => (
                 <Typography.Text copyable>{value}</Typography.Text>
               ),
               title: 'Email',
+            },
+            {
+              align: 'center',
+              dataIndex: 'status',
+              render: (value: UserStatus) => UserStatusLabel[value],
+              title: 'Estado',
             },
           ]}
           dataSource={usersQuery.data?.data}

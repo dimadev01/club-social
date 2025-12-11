@@ -1,4 +1,4 @@
-import { Role } from '../roles';
+import { UserRole, UserStatus } from './user.enum';
 
 export interface CreateUserDto {
   email: string;
@@ -10,6 +10,7 @@ export interface UpdateUserDto {
   email: string;
   firstName: string;
   lastName: string;
+  status: UserStatus;
 }
 
 export interface UserDto {
@@ -18,5 +19,6 @@ export interface UserDto {
   id: string;
   lastName: string;
   name: string;
-  role: Role;
+  role: UserRole;
+  status: UserStatus;
 }

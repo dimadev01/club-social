@@ -1,4 +1,4 @@
-import { Role } from './role.enum';
+import { UserRole } from '../users';
 import {
   Action,
   Resource,
@@ -45,7 +45,7 @@ export const statements = {
 } satisfies Statement;
 
 export const roleStatements = {
-  [Role.ADMIN]: {
+  [UserRole.ADMIN]: {
     [Resource.DUES]: [
       Action.CREATE,
       Action.LIST,
@@ -81,14 +81,14 @@ export const roleStatements = {
       Action.DELETE,
     ],
   },
-  [Role.MEMBER]: {
+  [UserRole.MEMBER]: {
     [Resource.DUES]: [Action.GET, Action.LIST],
     [Resource.MEMBERS]: [],
     [Resource.MOVEMENTS]: [],
     [Resource.PAYMENTS]: [Action.GET, Action.LIST],
     [Resource.USERS]: [],
   },
-  [Role.STAFF]: {
+  [UserRole.STAFF]: {
     [Resource.DUES]: [
       Action.GET,
       Action.CREATE,

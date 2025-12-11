@@ -1,4 +1,4 @@
-import { Role } from './role.enum';
+import { UserRole } from '../users';
 
 export const Action = {
   CREATE: 'create',
@@ -20,6 +20,6 @@ export const Resource = {
 
 export type Resource = (typeof Resource)[keyof typeof Resource];
 
-export type RoleStatements = Record<Role, Statement>;
+export type RoleStatements = Record<UserRole, Statement>;
 
 export type Statement = Record<Resource, Action[]>;

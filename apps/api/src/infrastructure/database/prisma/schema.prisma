@@ -25,6 +25,7 @@ model User {
   deletedBy     String?
   firstName     String
   lastName      String
+  status        String
   updatedBy     String
   sessions      Session[]
   accounts      Account[]

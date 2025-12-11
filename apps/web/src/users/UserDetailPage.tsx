@@ -1,12 +1,13 @@
-import type {
-  CreateUserDto,
-  UpdateUserDto,
-  UserDto,
-} from '@club-social/shared/users';
-
 import { CloseOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  type CreateUserDto,
+  type UpdateUserDto,
+  type UserDto,
+  UserStatus,
+  UserStatusLabel,
+} from '@club-social/shared/users';
 import { useQueryClient } from '@tanstack/react-query';
-import { App, Button, Card, Form, Input, Skeleton, Space } from 'antd';
+import { App, Button, Card, Form, Input, Select, Skeleton, Space } from 'antd';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -20,6 +21,7 @@ interface FormSchema {
   email: string;
   firstName: string;
   lastName: string;
+  status: UserStatus;
 }
 
 export function UserDetailPage() {
@@ -65,15 +67,25 @@ export function UserDetailPage() {
         email: userQuery.data.email,
         firstName: userQuery.data.firstName,
         lastName: userQuery.data.lastName,
+        status: userQuery.data.status,
       });
     }
   }, [userQuery.data, setFieldsValue]);
 
   const onSubmit = async (values: FormSchema) => {
     if (id) {
-      updateUserMutation.mutate(values);
+      updateUserMutation.mutate({
+        email: values.email,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        status: values.status,
+      });
     } else {
-      createUserMutation.mutate(values);
+      createUserMutation.mutate({
+        email: values.email,
+        firstName: values.firstName,
+        lastName: values.lastName,
+      });
     }
   };
 
@@ -152,6 +164,28 @@ export function UserDetailPage() {
             >
               <Input placeholder="juan.perez@example.com" type="email" />
             </Form.Item>
+
+            {id && (
+              <Form.Item<FormSchema>
+                label="Estado"
+                name="status"
+                rules={[{ required: true }]}
+              >
+                <Select
+                  options={[
+                    {
+                      label: UserStatusLabel[UserStatus.ACTIVE],
+                      value: UserStatus.ACTIVE,
+                    },
+                    {
+                      label: UserStatusLabel[UserStatus.INACTIVE],
+                      value: UserStatus.INACTIVE,
+                    },
+                  ]}
+                  placeholder="Seleccionar estado"
+                />
+              </Form.Item>
+            )}
           </Form>
         </Card>
       </PageContent>

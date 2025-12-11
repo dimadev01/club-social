@@ -1,4 +1,4 @@
-import { Role } from '@club-social/shared/roles';
+import { UserRole, UserStatus } from '@club-social/shared/users';
 
 import { Guard } from '@/domain/shared/guards';
 import { auth } from '@/infrastructure/auth/better-auth.config';
@@ -27,12 +27,13 @@ async function main() {
           deletedBy: null,
           firstName: 'Club Social',
           lastName: 'Admin',
+          status: UserStatus.ACTIVE,
           updatedBy: 'System',
         },
         email: adminUserEmail,
         name: 'Club Social Admin',
         password: adminPassword,
-        role: Role.ADMIN,
+        role: UserRole.ADMIN,
       },
     }),
     auth.api.createUser({
@@ -43,12 +44,13 @@ async function main() {
           deletedBy: null,
           firstName: 'Club Social',
           lastName: 'Member',
+          status: UserStatus.ACTIVE,
           updatedBy: 'System',
         },
         email: 'member@clubsocialmontegrande.ar',
         name: 'Member',
         password: adminPassword,
-        role: Role.MEMBER,
+        role: UserRole.MEMBER,
       },
     }),
     auth.api.createUser({
@@ -59,12 +61,13 @@ async function main() {
           deletedBy: null,
           firstName: 'Club Social',
           lastName: 'Staff',
+          status: UserStatus.ACTIVE,
           updatedBy: 'System',
         },
         email: 'staff@clubsocialmontegrande.ar',
         name: 'Staff',
         password: adminPassword,
-        role: Role.STAFF,
+        role: UserRole.STAFF,
       },
     }),
   ]);

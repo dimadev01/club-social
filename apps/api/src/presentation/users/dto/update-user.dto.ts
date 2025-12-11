@@ -1,5 +1,5 @@
-import { UpdateUserDto } from '@club-social/shared/users';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { UpdateUserDto, UserStatus } from '@club-social/shared/users';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateUserRequestDto implements UpdateUserDto {
   @IsEmail()
@@ -12,4 +12,7 @@ export class UpdateUserRequestDto implements UpdateUserDto {
   @IsNotEmpty()
   @IsString()
   public lastName: string;
+
+  @IsEnum(UserStatus)
+  public status: UserStatus;
 }

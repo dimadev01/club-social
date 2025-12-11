@@ -1,5 +1,3 @@
-import { getSession } from 'better-auth/api';
+import type { auth } from './better-auth.config';
 
-export type UserSession = NonNullable<
-  Awaited<ReturnType<ReturnType<typeof getSession>>>
->;
+export type AuthSession = typeof auth.$Infer.Session;

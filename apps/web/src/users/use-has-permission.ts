@@ -1,4 +1,5 @@
-import type { Action, Resource, Role } from '@club-social/shared/roles';
+import type { Action, Resource } from '@club-social/shared/roles';
+import type { UserRole } from '@club-social/shared/users';
 
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 
@@ -11,6 +12,6 @@ export function useHasPermission(resource: Resource, action: Action): boolean {
 
   return betterAuthClient.admin.checkRolePermission({
     permission: { [resource]: [action] },
-    role: session.user.role as Role,
+    role: session.user.role as UserRole,
   });
 }
