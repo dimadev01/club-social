@@ -44,6 +44,8 @@ export function MenuThemeSwitcher() {
         onClick: ({ key }) => {
           setThemeMode(key as AppThemeMode);
         },
+        selectable: true,
+        selectedKeys: [themeMode],
       }}
     >
       <Button icon={THEME_ICONS[themeMode]} size="small" type="text" />

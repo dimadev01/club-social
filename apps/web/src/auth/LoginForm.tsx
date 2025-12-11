@@ -75,6 +75,8 @@ export function LoginForm() {
               Iniciar sesión
             </Button>,
           ]}
+          extra={<MenuThemeSwitcher />}
+          title="Club Social Monte Grande"
         >
           <Form<FormSchema>
             disabled={isSubmitting}
@@ -97,10 +99,6 @@ export function LoginForm() {
           </Form>
         </Card>
       )}
-
-      <Flex justify="end">
-        <MenuThemeSwitcher />
-      </Flex>
     </Flex>
   );
 }
