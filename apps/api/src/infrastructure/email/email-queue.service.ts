@@ -8,10 +8,10 @@ import { SendMagicLinkParams } from './email.types';
 export class EmailQueueService {
   public constructor(
     @InjectQueue('email')
-    private readonly emailQueue: Queue,
+    private readonly queue: Queue,
   ) {}
 
-  public async enqueueMagicLink(params: SendMagicLinkParams): Promise<void> {
-    await this.emailQueue.add('send-magic-link', params);
+  public async magicLink(params: SendMagicLinkParams): Promise<void> {
+    await this.queue.add('send-magic-link', params);
   }
 }

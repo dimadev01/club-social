@@ -1,18 +1,18 @@
 import { Global, Module } from '@nestjs/common';
 import { fromNodeHeaders } from 'better-auth/node';
 import { Request } from 'express';
-import { ClsModule, ClsService } from 'nestjs-cls';
+import { ClsModule, ClsService as NestJsClsService } from 'nestjs-cls';
 
-import { AppClsService, AsyncLocalStorageStore } from './cls/app-cls.service';
+import { ClsService } from './cls/cls.service';
 
 @Global()
 @Module({
-  exports: [AppClsService],
+  exports: [ClsService],
   imports: [
     ClsModule.forRoot({
       middleware: {
         mount: true,
-        setup: (cls: ClsService<AsyncLocalStorageStore>, req: Request) => {
+        setup: (cls: ClsService, req: Request) => {
           cls.set('headers', fromNodeHeaders(req.headers));
         },
       },
@@ -20,8 +20,8 @@ import { AppClsService, AsyncLocalStorageStore } from './cls/app-cls.service';
   ],
   providers: [
     {
-      provide: AppClsService,
-      useExisting: ClsService,
+      provide: ClsService,
+      useExisting: NestJsClsService,
     },
   ],
 })

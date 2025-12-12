@@ -17,6 +17,7 @@ export class PrismaUserMapper extends Mapper<UserEntity, UserModel> {
         banExpires: user.banExpires,
         banned: user.banned,
         banReason: user.banReason,
+        createdBy: user.createdBy,
         email: Email.raw({ value: user.email }),
         firstName: user.firstName,
         lastName: user.lastName,

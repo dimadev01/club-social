@@ -19,7 +19,7 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
 import { PaginatedDto } from '@/shared/presentation/dto/paginated.dto';
-import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
+import { IdDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateUserUseCase } from '../application/create-user/create-user.use-case';
 import { UpdateUserUseCase } from '../application/update-user/update-user.use-case';
@@ -47,7 +47,7 @@ export class UsersController extends BaseController {
 
   @Patch(':id')
   public async update(
-    @Param() request: ParamIdDto,
+    @Param() request: IdDto,
     @Body() body: UpdateUserRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -66,10 +66,11 @@ export class UsersController extends BaseController {
   @Post()
   public async create(
     @Body() createUserDto: CreateUserRequestDto,
-  ): Promise<UserResponseDto> {
-    const user = this.handleResult(
+    @Session() session: AuthSession,
+  ): Promise<IdDto> {
+    const { id } = this.handleResult(
       await this.createUserUseCase.execute({
-        createdBy: 'System',
+        createdBy: session.user.name,
         email: createUserDto.email,
         firstName: createUserDto.firstName,
         lastName: createUserDto.lastName,
@@ -77,7 +78,7 @@ export class UsersController extends BaseController {
       }),
     );
 
-    return this.toDto(user);
+    return { id: id.value };
   }
 
   @ApiPaginatedResponse(UserResponseDto)
@@ -96,7 +97,7 @@ export class UsersController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() request: ParamIdDto,
+    @Param() request: IdDto,
   ): Promise<null | UserResponseDto> {
     const user = await this.userRepository.findOneById(
       UniqueId.raw({ value: request.id }),

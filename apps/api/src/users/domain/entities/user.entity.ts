@@ -17,6 +17,7 @@ interface UserProps {
   banExpires: Date | null;
   banned: boolean | null;
   banReason: null | string;
+  createdBy: string;
   email: Email;
   firstName: string;
   lastName: string;
@@ -92,9 +93,10 @@ export class UserEntity extends Entity<UserEntity> {
     }
 
     const user = new UserEntity({
-      banExpires: null,
-      banned: false,
-      banReason: null,
+      banExpires: props.banExpires,
+      banned: props.banned,
+      banReason: props.banReason,
+      createdBy: props.createdBy,
       email: props.email,
       firstName: props.firstName.trim(),
       lastName: props.lastName.trim(),

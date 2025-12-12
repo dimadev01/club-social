@@ -142,7 +142,7 @@ export class BetterAuthService {
         magicLink({
           disableSignUp: true,
           sendMagicLink: ({ email, url }) =>
-            this.emailQueueService.enqueueMagicLink({ email, url }),
+            this.emailQueueService.magicLink({ email, url }),
         }),
       ],
       trustedOrigins: this.configService.trustedOrigins,

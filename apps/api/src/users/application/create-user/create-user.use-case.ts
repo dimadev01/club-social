@@ -8,6 +8,7 @@ import {
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { UseCase } from '@/shared/application/use-case';
+import { ConflictError } from '@/shared/domain/errors/conflict.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok } from '@/shared/domain/result';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
@@ -42,10 +43,19 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
       return err(email.error);
     }
 
+    const existingUserByEmail = await this.userRepository.findUniqueByEmail(
+      email.value,
+    );
+
+    if (existingUserByEmail) {
+      return err(new ConflictError('El email ya está en uso'));
+    }
+
     const user = UserEntity.create({
       banExpires: null,
       banned: false,
       banReason: null,
+      createdBy: params.createdBy,
       email: email.value,
       firstName: params.firstName,
       lastName: params.lastName,
@@ -57,7 +67,6 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
       return err(user.error);
     }
 
-    await this.userRepository.save(user.value);
     this.eventPublisher.dispatch(user.value);
 
     return ok(user.value);

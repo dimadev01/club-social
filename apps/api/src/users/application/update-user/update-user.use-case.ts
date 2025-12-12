@@ -55,10 +55,6 @@ export class UpdateUserUseCase extends UseCase<UserEntity> {
       UniqueId.raw({ value: params.id }),
     );
 
-    // user.updateName(params.firstName, params.lastName);
-    // user.updateEmail(email.value);
-    // user.updateStatus(params.status);
-
     user.updateProfile({
       email: email.value,
       firstName: params.firstName,

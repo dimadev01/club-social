@@ -8,7 +8,7 @@ import {
 import { UserUpdatedEvent } from '@/users/domain/events/user-updated.event';
 
 import { BetterAuthService } from '../auth/better-auth/better-auth.service';
-import { AppClsService } from '../storage/cls/app-cls.service';
+import { ClsService } from '../storage/cls/cls.service';
 
 @Injectable()
 export class UserUpdatedHandler {
@@ -16,7 +16,7 @@ export class UserUpdatedHandler {
     @Inject(APP_LOGGER_PROVIDER)
     private readonly logger: AppLogger,
     private readonly betterAuth: BetterAuthService,
-    private readonly clsService: AppClsService,
+    private readonly clsService: ClsService,
   ) {
     this.logger.setContext(UserUpdatedHandler.name);
   }
@@ -25,9 +25,7 @@ export class UserUpdatedHandler {
   public async handle(event: UserUpdatedEvent): Promise<void> {
     this.logger.info({
       message: 'Updating user',
-      params: {
-        userId: event.aggregateId,
-      },
+      userId: event.aggregateId.value,
     });
 
     await this.betterAuth.auth.api.adminUpdateUser({

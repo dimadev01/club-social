@@ -23,14 +23,6 @@ export class PrismaUserRepository implements UserRepository {
     private readonly mapper: PrismaUserMapper,
   ) {}
 
-  public async delete(entity: UserEntity): Promise<void> {
-    console.log({ entity });
-    throw new Error('Not implemented');
-    // await this.prismaService.user.delete({
-    //   where: { deletedAt: null, id: entity.id.value },
-    // });
-  }
-
   public async findOneById(id: UniqueId): Promise<null | UserEntity> {
     const user = await this.prismaService.user.findUnique({
       where: { deletedAt: null, id: id.value },
@@ -85,17 +77,5 @@ export class PrismaUserRepository implements UserRepository {
     }
 
     return this.mapper.toDomain(user);
-  }
-
-  public async save(entity: UserEntity): Promise<UserEntity> {
-    console.log({ entity });
-    throw new Error('Not implemented');
-    // const user = await this.prismaService.user.upsert({
-    //   create: PrismaUserMapper.toPersistence(entity),
-    //   update: PrismaUserMapper.toPersistence(entity),
-    //   where: { id: entity.id.value },
-    // });
-
-    // return PrismaUserMapper.toDomain(user);
   }
 }

@@ -1,5 +1,6 @@
 import { StyleProvider } from '@ant-design/cssinjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   Alert,
   App as AntdApp,
@@ -102,10 +103,10 @@ export function App() {
               <AppContext.Provider value={{ setThemeMode, themeMode }}>
                 <AppRoutes />
               </AppContext.Provider>
-              {/* <ReactQueryDevtools
-              buttonPosition="top-right"
-              initialIsOpen={false}
-              /> */}
+              <ReactQueryDevtools
+                buttonPosition="top-right"
+                initialIsOpen={false}
+              />
             </Alert.ErrorBoundary>
           </AntdApp>
         </ConfigProvider>
