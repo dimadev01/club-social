@@ -1,4 +1,5 @@
 import { roleStatements, statements } from '@club-social/shared/roles';
+import { Injectable } from '@nestjs/common';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal';
 import {
@@ -14,7 +15,9 @@ import {
 
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 
+import { ConfigService } from '../config/config.service';
 import { prisma } from '../database/prisma/prisma.client';
+import { EmailService } from '../email/email.service';
 
 const ac = createAccessControl({
   ...defaultStatements,
@@ -36,7 +39,7 @@ const staffRole = ac.newRole({
   ...roleStatements.staff,
 });
 
-export const betterAuthOptions = {
+export const defaultConfig = {
   advanced: {
     cookiePrefix: 'cs',
     database: {
@@ -59,12 +62,6 @@ export const betterAuthOptions = {
         admin: adminRole,
         member: memberRole,
         staff: staffRole,
-      },
-    }),
-    magicLink({
-      disableSignUp: true,
-      sendMagicLink: async ({ email, token, url }) => {
-        console.log({ email, token, url });
       },
     }),
   ],
@@ -106,14 +103,50 @@ export const betterAuthOptions = {
   },
 } satisfies BetterAuthOptions;
 
-export const createBetterAuth = (options?: BetterAuthOptions) =>
+export const createBetterAuth = (config?: BetterAuthOptions) =>
   betterAuth({
-    ...betterAuthOptions,
-    ...options,
+    ...defaultConfig,
+    ...config,
   });
 
 /**
  * This needs to be named `auth` because the `@better-auth/cli` expects
  * this variable name. See https://www.better-auth.com/docs/concepts/cli
  */
-export const auth = createBetterAuth();
+export const auth = createBetterAuth({
+  plugins: [
+    ...(defaultConfig.plugins ?? []),
+    magicLink({
+      disableSignUp: true,
+      sendMagicLink: async ({ email, url }) => {
+        console.log({ email, url });
+      },
+    }),
+  ],
+});
+
+@Injectable()
+export class BetterAuth {
+  public get auth() {
+    return this._auth;
+  }
+
+  private readonly _auth: typeof auth;
+
+  public constructor(
+    private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
+  ) {
+    this._auth = createBetterAuth({
+      plugins: [
+        ...(defaultConfig.plugins ?? []),
+        magicLink({
+          disableSignUp: true,
+          sendMagicLink: ({ email, url }) =>
+            this.emailService.sendMagicLink({ email, url }),
+        }),
+      ],
+      trustedOrigins: this.configService.trustedOrigins,
+    });
+  }
+}

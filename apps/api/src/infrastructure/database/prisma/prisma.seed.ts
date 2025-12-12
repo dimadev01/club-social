@@ -7,7 +7,7 @@ import { prisma } from './prisma.client';
 
 async function main() {
   const adminUserEmail = process.env.ADMIN_USER_EMAIL;
-  const adminPassword = process.env.ADMIN_USER_PASSWORD;
+  const adminPassword = 'BgW5wWo0ObMmGw2';
 
   Guard.string(adminUserEmail);
   Guard.string(adminPassword);

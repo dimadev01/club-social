@@ -5,7 +5,7 @@ import { Request } from 'express';
 
 import type { AuthSession } from '@/infrastructure/auth/better-auth.types';
 
-import { BetterAuthService } from '@/infrastructure/auth/better-auth.service';
+import { BetterAuth } from '@/infrastructure/auth/better-auth.config';
 
 import { IS_PUBLIC_KEY } from './public-route.decorator';
 
@@ -13,7 +13,7 @@ import { IS_PUBLIC_KEY } from './public-route.decorator';
 export class AuthGuard implements CanActivate {
   public constructor(
     private readonly reflector: Reflector,
-    private readonly authService: BetterAuthService,
+    private readonly betterAuth: BetterAuth,
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -30,7 +30,7 @@ export class AuthGuard implements CanActivate {
       .switchToHttp()
       .getRequest<Request & { session: AuthSession | null }>();
 
-    const session = await this.authService.auth.api.getSession({
+    const session = await this.betterAuth.auth.api.getSession({
       headers: fromNodeHeaders(req.headers),
     });
 
