@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
-} from '@/application/shared/logger/logger';
+} from '@/shared/application/app-logger';
 
 import { EMAIL_PROVIDER_PROVIDER, type EmailProvider } from './email.provider';
 import { SendMagicLinkParams } from './email.types';

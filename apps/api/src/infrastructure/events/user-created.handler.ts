@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { APP_LOGGER_PROVIDER } from '@/application/shared/logger/logger';
-import { UserCreatedEvent } from '@/domain/users/events/user-created.event';
+import { APP_LOGGER_PROVIDER } from '@/shared/application/app-logger';
+import { UserCreatedEvent } from '@/users/domain/events/user-created.event';
 import {
   USER_REPOSITORY_PROVIDER,
   type UserRepository,
-} from '@/domain/users/user.repository';
+} from '@/users/domain/user.repository';
 
 import { AppLoggerService } from '../logger/logger.service';
 

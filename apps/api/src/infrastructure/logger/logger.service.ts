@@ -2,8 +2,8 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 
-import { AppLogger, ErrorLog, Log } from '@/application/shared/logger/logger';
-import { ErrorMapper } from '@/domain/shared/errors/error.mapper';
+import { AppLogger, ErrorLog, Log } from '@/shared/application/app-logger';
+import { ErrorMapper } from '@/shared/domain/errors/error.mapper';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class AppLoggerService implements AppLogger {

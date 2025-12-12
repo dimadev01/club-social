@@ -1,0 +1,18 @@
+import type {
+  PaginatedRepository,
+  ReadableRepository,
+  WritableRepository,
+} from '../../shared/domain/repository';
+import type { Email } from '../../shared/domain/value-objects/email/email.vo';
+
+import { UserEntity } from './entities/user.entity';
+
+export const USER_REPOSITORY_PROVIDER = Symbol('UserRepository');
+
+export interface UserRepository
+  extends
+    PaginatedRepository<UserEntity>,
+    ReadableRepository<UserEntity>,
+    WritableRepository<UserEntity> {
+  findUniqueByEmail(email: Email): Promise<null | UserEntity>;
+}

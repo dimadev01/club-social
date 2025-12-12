@@ -1,14 +1,13 @@
 import { Global, Module } from '@nestjs/common';
 import { EventEmitter2, EventEmitterModule } from '@nestjs/event-emitter';
 
-import { DOMAIN_EVENT_EMITTER_PROVIDER } from '@/domain/shared/events/domain-event-emitter';
-import { DomainEventPublisher } from '@/domain/shared/events/domain-event-publisher';
-import { AuthModule } from '@/presentation/shared/auth/auth.module';
-import { UsersModule } from '@/presentation/users/user.module';
+import { DOMAIN_EVENT_EMITTER_PROVIDER } from '@/shared/domain/events/domain-event-emitter';
+import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
+import { UsersModule } from '@/users/user.module';
 
+import { AuthModule } from '../auth/auth.module';
 import { StorageModule } from '../storage/storage.module';
 import { UserCreatedHandler } from './user-created.handler';
-import { UserEmailUpdatedHandler } from './user-email-updated.handler';
 import { UserUpdatedHandler } from './user-updated.handler';
 
 @Global()
@@ -28,7 +27,6 @@ import { UserUpdatedHandler } from './user-updated.handler';
     },
     UserCreatedHandler,
     UserUpdatedHandler,
-    UserEmailUpdatedHandler,
   ],
 })
 export class EventsModule {}

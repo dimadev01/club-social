@@ -4,10 +4,10 @@ import { Global, Module } from '@nestjs/common';
 import { WinstonModule, utilities as winstonUtilities } from 'nest-winston';
 import * as winston from 'winston';
 
-import { APP_LOGGER_PROVIDER } from '@/application/shared/logger/logger';
 import { ConfigService } from '@/infrastructure/config/config.service';
 import { TraceModule } from '@/infrastructure/trace/trace.module';
 import { TraceService } from '@/infrastructure/trace/trace.service';
+import { APP_LOGGER_PROVIDER } from '@/shared/application/app-logger';
 
 import { AppLoggerService } from './logger.service';
 import { traceIdFormat } from './trace-id.format';

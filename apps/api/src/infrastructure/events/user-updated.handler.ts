@@ -1,14 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { fromNodeHeaders } from 'better-auth/node';
-import { ClsService } from 'nestjs-cls';
 
-import { APP_LOGGER_PROVIDER } from '@/application/shared/logger/logger';
-import { UserUpdatedEvent } from '@/domain/users/events/user-updated.event';
+import { APP_LOGGER_PROVIDER } from '@/shared/application/app-logger';
+import { UserUpdatedEvent } from '@/users/domain/events/user-updated.event';
 
-import { BetterAuthService } from '../auth/better-auth.service';
+import { BetterAuthService } from '../auth/better-auth/better-auth.service';
 import { AppLoggerService } from '../logger/logger.service';
-import { AsyncLocalStorageStore } from '../storage/cls/app-cls.service';
+import { AppClsService } from '../storage/cls/app-cls.service';
 
 @Injectable()
 export class UserUpdatedHandler {
@@ -16,7 +14,7 @@ export class UserUpdatedHandler {
     @Inject(APP_LOGGER_PROVIDER)
     private readonly logger: AppLoggerService,
     private readonly betterAuth: BetterAuthService,
-    private readonly cls: ClsService<AsyncLocalStorageStore>,
+    private readonly clsService: AppClsService,
   ) {
     this.logger.setContext(UserUpdatedHandler.name);
   }
@@ -30,8 +28,6 @@ export class UserUpdatedHandler {
       },
     });
 
-    // await this.userRepository.save(event.changes);
-
     await this.betterAuth.auth.api.adminUpdateUser({
       body: {
         data: {
@@ -43,7 +39,7 @@ export class UserUpdatedHandler {
         },
         userId: event.aggregateId.value,
       },
-      headers: fromNodeHeaders(this.cls.get('headers')),
+      headers: this.clsService.get('headers'),
     });
   }
 }

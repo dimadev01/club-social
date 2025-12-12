@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { createTransport, Transporter } from 'nodemailer';
 
+import { ConfigService } from '@/infrastructure/config/config.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
-} from '@/application/shared/logger/logger';
-import { ConfigService } from '@/infrastructure/config/config.service';
+} from '@/shared/application/app-logger';
 
 import { EmailProvider } from '../email.provider';
 import { SendEmailParams } from '../email.types';
