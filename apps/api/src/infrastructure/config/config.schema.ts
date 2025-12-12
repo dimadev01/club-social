@@ -12,6 +12,8 @@ export const configSchema = z.object({
   ENVIRONMENT: z.enum(['local', 'development', 'production']),
   NODE_ENV: z.enum(['development', 'test', 'production']),
   PORT: z.string().transform(Number),
+  REDIS_HOST: z.string(),
+  REDIS_PORT: z.string().transform(Number),
   RESEND_API_KEY: z.string(),
 });
 

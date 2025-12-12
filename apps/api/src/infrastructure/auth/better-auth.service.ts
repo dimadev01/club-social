@@ -7,7 +7,7 @@ import { CreateUserParams } from '@/application/users/create-user/create-user.pa
 import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 
 import { ConfigService } from '../config/config.service';
-import { type auth, createBetterAuth } from './better-auth.config';
+import { type auth, createBetterAuth } from './better-auth-config.service';
 
 @Injectable()
 export class BetterAuthService {

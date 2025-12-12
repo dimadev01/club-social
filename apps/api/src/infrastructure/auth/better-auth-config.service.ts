@@ -17,7 +17,7 @@ import { UniqueId } from '@/domain/shared/value-objects/unique-id/unique-id.vo';
 
 import { ConfigService } from '../config/config.service';
 import { prisma } from '../database/prisma/prisma.client';
-import { EmailService } from '../email/email.service';
+import { EmailQueueService } from '../email/email-queue.service';
 
 const ac = createAccessControl({
   ...defaultStatements,
@@ -126,7 +126,7 @@ export const auth = createBetterAuth({
 });
 
 @Injectable()
-export class BetterAuth {
+export class BetterAuthConfigService {
   public get auth() {
     return this._auth;
   }
@@ -135,7 +135,7 @@ export class BetterAuth {
 
   public constructor(
     private readonly configService: ConfigService,
-    private readonly emailService: EmailService,
+    private readonly emailSchedulerService: EmailQueueService,
   ) {
     this._auth = createBetterAuth({
       plugins: [
@@ -143,7 +143,7 @@ export class BetterAuth {
         magicLink({
           disableSignUp: true,
           sendMagicLink: ({ email, url }) =>
-            this.emailService.sendMagicLink({ email, url }),
+            this.emailSchedulerService.enqueueMagicLink({ email, url }),
         }),
       ],
       trustedOrigins: this.configService.trustedOrigins,

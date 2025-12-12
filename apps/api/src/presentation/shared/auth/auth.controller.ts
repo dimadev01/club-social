@@ -3,13 +3,13 @@ import type { Request, Response } from 'express';
 import { All, Controller, Req, Res } from '@nestjs/common';
 import { toNodeHandler } from 'better-auth/node';
 
-import { BetterAuth } from '@/infrastructure/auth/better-auth.config';
+import { BetterAuthConfigService } from '@/infrastructure/auth/better-auth-config.service';
 
 import { PublicRoute } from './public-route.decorator';
 
 @Controller()
 export class AuthController {
-  public constructor(private readonly betterAuth: BetterAuth) {}
+  public constructor(private readonly betterAuth: BetterAuthConfigService) {}
 
   @All('auth/*path')
   @PublicRoute()

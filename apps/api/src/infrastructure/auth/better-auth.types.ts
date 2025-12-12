@@ -1,3 +1,3 @@
-import type { auth } from './better-auth.config';
+import type { auth } from './better-auth-config.service';
 
 export type AuthSession = typeof auth.$Infer.Session;

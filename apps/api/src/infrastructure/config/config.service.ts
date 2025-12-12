@@ -17,6 +17,8 @@ export class ConfigService {
   public readonly isProd: boolean;
   public readonly nodeEnv: ConfigTypes['NODE_ENV'];
   public readonly port: number;
+  public readonly redisHost: string;
+  public readonly redisPort: number;
   public readonly resendApiKey: string;
   public readonly trustedOrigins: string[];
 
@@ -50,5 +52,8 @@ export class ConfigService {
 
     this.emailSmtpHost = this.config.getOrThrow<string>('EMAIL_SMTP_HOST');
     this.emailSmtpPort = this.config.getOrThrow<number>('EMAIL_SMTP_PORT');
+
+    this.redisHost = this.config.getOrThrow<string>('REDIS_HOST');
+    this.redisPort = this.config.getOrThrow<number>('REDIS_PORT');
   }
 }
