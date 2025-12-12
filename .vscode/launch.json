@@ -23,7 +23,7 @@
       "console": "integratedTerminal"
     },
     {
-      "name": "Types",
+      "name": "Shared",
       "request": "launch",
       "cwd": "${workspaceFolder}/packages/shared",
       "type": "node",
@@ -35,7 +35,7 @@
   "compounds": [
     {
       "name": "Api & Web",
-      "configurations": ["Api", "Web", "Types"]
+      "configurations": ["Api", "Web", "Shared"]
     }
   ]
 }

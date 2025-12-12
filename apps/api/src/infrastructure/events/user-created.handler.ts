@@ -1,20 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { APP_LOGGER_PROVIDER } from '@/shared/application/app-logger';
+import {
+  APP_LOGGER_PROVIDER,
+  type AppLogger,
+} from '@/shared/application/app-logger';
 import { UserCreatedEvent } from '@/users/domain/events/user-created.event';
 import {
   USER_REPOSITORY_PROVIDER,
   type UserRepository,
 } from '@/users/domain/user.repository';
 
-import { AppLoggerService } from '../logger/logger.service';
-
 @Injectable()
 export class UserCreatedHandler {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
-    private readonly logger: AppLoggerService,
+    private readonly logger: AppLogger,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
   ) {

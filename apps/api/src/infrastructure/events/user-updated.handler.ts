@@ -1,18 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { APP_LOGGER_PROVIDER } from '@/shared/application/app-logger';
+import {
+  APP_LOGGER_PROVIDER,
+  type AppLogger,
+} from '@/shared/application/app-logger';
 import { UserUpdatedEvent } from '@/users/domain/events/user-updated.event';
 
 import { BetterAuthService } from '../auth/better-auth/better-auth.service';
-import { AppLoggerService } from '../logger/logger.service';
 import { AppClsService } from '../storage/cls/app-cls.service';
 
 @Injectable()
 export class UserUpdatedHandler {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
-    private readonly logger: AppLoggerService,
+    private readonly logger: AppLogger,
     private readonly betterAuth: BetterAuthService,
     private readonly clsService: AppClsService,
   ) {
