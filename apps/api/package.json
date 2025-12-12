@@ -49,6 +49,7 @@
   "dependencies": {
     "@club-social/shared": "^0.0.1",
     "@dotenvx/dotenvx": "^1.51.1",
+    "@itgorillaz/configify": "^4.0.1",
     "@logtail/node": "^0.5.6",
     "@logtail/winston": "^0.5.6",
     "@nestjs/bullmq": "^11.0.4",
