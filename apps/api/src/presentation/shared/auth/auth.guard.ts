@@ -5,7 +5,7 @@ import { Request } from 'express';
 
 import type { AuthSession } from '@/infrastructure/auth/better-auth.types';
 
-import { BetterAuthConfigService } from '@/infrastructure/auth/better-auth-config.service';
+import { BetterAuthService } from '@/infrastructure/auth/better-auth.service';
 
 import { IS_PUBLIC_KEY } from './public-route.decorator';
 
@@ -13,7 +13,7 @@ import { IS_PUBLIC_KEY } from './public-route.decorator';
 export class AuthGuard implements CanActivate {
   public constructor(
     private readonly reflector: Reflector,
-    private readonly betterAuth: BetterAuthConfigService,
+    private readonly betterAuth: BetterAuthService,
   ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {

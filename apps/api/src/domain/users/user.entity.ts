@@ -13,6 +13,8 @@ import { Guard } from '../shared/guards';
 import { ok } from '../shared/result';
 import { UserCreatedEvent } from './events/user-created.event';
 import { UserEmailUpdatedEvent } from './events/user-email-updated.event';
+import { UserUpdatedEvent } from './events/user-updated.event';
+import { UpdateUserProfileProps } from './user.interface';
 
 interface UserProps {
   banExpires: Date | null;
@@ -120,6 +122,16 @@ export class UserEntity extends Entity<UserEntity> {
   public updateName(firstName: string, lastName: string) {
     this._firstName = firstName;
     this._lastName = lastName;
+  }
+
+  public updateProfile(props: UpdateUserProfileProps) {
+    this._email = props.email;
+    this._firstName = props.firstName;
+    this._lastName = props.lastName;
+    this._status = props.status;
+    this.markAsUpdated(props.updatedBy);
+
+    this.addEvent(new UserUpdatedEvent(this.id, props));
   }
 
   public updateStatus(status: UserStatus) {

@@ -28,7 +28,7 @@ import {
   USER_REPOSITORY_PROVIDER,
   type UserRepository,
 } from '@/domain/users/user.repository';
-import { BetterAuthConfigService } from '@/infrastructure/auth/better-auth-config.service';
+import { BetterAuthService } from '@/infrastructure/auth/better-auth.service';
 
 import { BaseController } from '../shared/controller';
 import { ApiPaginatedResponse } from '../shared/decorators/api-paginated.decorator';
@@ -47,7 +47,7 @@ export class UsersController extends BaseController {
     private readonly updateUserUseCase: UpdateUserUseCase,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
-    private readonly betterAuth: BetterAuthConfigService,
+    private readonly betterAuth: BetterAuthService,
   ) {
     super(logger);
   }

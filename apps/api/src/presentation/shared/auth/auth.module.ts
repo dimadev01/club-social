@@ -1,20 +1,20 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 
-import { BetterAuthConfigService } from '@/infrastructure/auth/better-auth-config.service';
-import { PrismaModule } from '@/infrastructure/database/prisma/prisma.module';
+import { BetterAuthService } from '@/infrastructure/auth/better-auth.service';
 import { EmailModule } from '@/infrastructure/email/email.module';
 
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
 
+@Global()
 @Module({
   controllers: [AuthController],
-  exports: [BetterAuthConfigService],
-  imports: [PrismaModule, EmailModule],
+  exports: [BetterAuthService],
+  imports: [EmailModule],
   providers: [
+    BetterAuthService,
     AuthGuard,
-    BetterAuthConfigService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

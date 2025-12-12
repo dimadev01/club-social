@@ -1,7 +1,7 @@
 import { UserRole, UserStatus } from '@club-social/shared/users';
 
 import { Guard } from '@/domain/shared/guards';
-import { auth } from '@/infrastructure/auth/better-auth-config.service';
+import { auth } from '@/infrastructure/auth/better-auth.service';
 
 import { prisma } from './prisma.client';
 

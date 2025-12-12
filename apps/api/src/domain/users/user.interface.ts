@@ -1,3 +1,15 @@
+import { UserStatus } from '@club-social/shared/users';
+
+import { Email } from '../shared/value-objects/email/email.vo';
+
+export interface UpdateUserProfileProps {
+  email: Email;
+  firstName: string;
+  lastName: string;
+  status: UserStatus;
+  updatedBy: string;
+}
+
 export interface UserInterface {
   authId: string;
   createdAt: Date;
