@@ -21,6 +21,11 @@ services:
     volumes:
       - redis_data:/data
 
+  redis-insight:
+    image: redis/redisinsight:latest
+    ports:
+      - '5540:5540'
+
   postgres:
     image: postgres:18
     environment:

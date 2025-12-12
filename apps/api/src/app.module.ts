@@ -10,6 +10,7 @@ import { EventsModule } from './infrastructure/events/events.module';
 import { LoggerModule } from './infrastructure/logger/logger.module';
 import { ObservabilityModule } from './infrastructure/observability/observability.module';
 import { StorageModule } from './infrastructure/storage/storage.module';
+import { TraceModule } from './infrastructure/trace/trace.module';
 import { AllExceptionsFilter } from './shared/presentation/filters/all-exceptions.filter';
 import { UsersModule } from './users/user.module';
 
@@ -19,8 +20,8 @@ import { UsersModule } from './users/user.module';
     ObservabilityModule,
     ConfigModule,
     EventsModule,
-    // TraceModule,
     LoggerModule,
+    TraceModule,
     DatabaseModule,
     AuthModule,
     StorageModule,

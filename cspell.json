@@ -17,8 +17,14 @@
     "tsconfig.json",
     "config.toml"
   ],
-  "dictionaryDefinitions": [],
-  "dictionaries": [],
+  "dictionaryDefinitions": [
+    {
+      "name": "custom-dictionary",
+      "path": "./.cspell/custom-dictionary.txt",
+      "addWords": true
+    }
+  ],
+  "dictionaries": ["custom-dictionary"],
   "words": [
     "antd",
     "configify",
@@ -38,7 +44,8 @@
     "tabler",
     "tailwindcss",
     "treeify",
-    "usehooks"
+    "usehooks",
+    "bullmq"
   ],
   "ignoreWords": [],
   "import": [],

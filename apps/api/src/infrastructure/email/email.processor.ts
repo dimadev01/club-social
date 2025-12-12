@@ -10,7 +10,12 @@ import {
 import { EMAIL_PROVIDER_PROVIDER, type EmailProvider } from './email.provider';
 import { SendMagicLinkParams } from './email.types';
 
-@Processor('email')
+@Processor('email', {
+  limiter: {
+    duration: 24 * 60 * 60 * 1_000, // 24 hours,
+    max: 100,
+  },
+})
 export class EmailProcessor extends WorkerHost {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)

@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core';
 import * as Sentry from '@sentry/nestjs';
-import { Request } from 'express';
 
 import { ConfigService } from '@/infrastructure/config/config.service';
+import { TraceService } from '@/infrastructure/trace/trace.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -23,8 +23,8 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     protected readonly adapterHost: HttpAdapterHost,
     @Inject(APP_LOGGER_PROVIDER)
     private readonly logger: AppLogger,
-    // private readonly traceService: TraceService,
     private readonly configService: ConfigService,
+    private readonly traceService: TraceService,
   ) {
     super(adapterHost.httpAdapter);
     this.logger.setContext(AllExceptionsFilter.name);
@@ -37,14 +37,11 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
       return;
     }
 
-    // const traceId = this.traceService.get();
+    const traceId = this.traceService.get();
 
-    const traceId = host.switchToHttp().getRequest<Request>().id;
-    console.log(traceId);
-
-    // if (traceId) {
-    //   Sentry.setTag('traceId', traceId);
-    // }
+    if (traceId) {
+      Sentry.setTag('traceId', traceId);
+    }
 
     this.logger.error({
       error: exception,

@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 
+import { UserCreatedHandler } from '@/infrastructure/events/user-created.handler';
+import { UserUpdatedHandler } from '@/infrastructure/events/user-updated.handler';
+
 import { CreateUserUseCase } from './application/create-user/create-user.use-case';
 import { UpdateUserUseCase } from './application/update-user/update-user.use-case';
 import { USER_REPOSITORY_PROVIDER } from './domain/user.repository';
@@ -19,6 +22,8 @@ import { UsersController } from './presentation/user.controller';
       useClass: PrismaUserRepository,
     },
     PrismaUserMapper,
+    UserCreatedHandler,
+    UserUpdatedHandler,
   ],
 })
 export class UsersModule {}
