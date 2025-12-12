@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Inject,
+  Logger,
   Param,
   Patch,
   Post,
@@ -11,7 +12,6 @@ import {
 } from '@nestjs/common';
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
-import { ConfigService } from '@/infrastructure/config/config.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -35,6 +35,8 @@ import { UserResponseDto } from './dto/user.dto';
 
 @Controller('users')
 export class UsersController extends BaseController {
+  private readonly pinoLogger: Logger = new Logger(UsersController.name);
+
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
@@ -42,7 +44,6 @@ export class UsersController extends BaseController {
     private readonly updateUserUseCase: UpdateUserUseCase,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
-    private readonly config2Service: ConfigService,
   ) {
     super(logger);
   }
@@ -85,7 +86,11 @@ export class UsersController extends BaseController {
   @ApiPaginatedResponse(UserResponseDto)
   @Get('paginated')
   public async getPaginated(): Promise<PaginatedDto<UserResponseDto>> {
-    console.log(this.config2Service);
+    this.pinoLogger.log('Getting paginated users', {
+      page: 1,
+      pageSize: 10,
+    });
+
     const users = await this.userRepository.findPaginated({
       page: 1,
       pageSize: 10,

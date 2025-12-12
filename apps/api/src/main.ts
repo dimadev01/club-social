@@ -3,7 +3,7 @@ import { HttpStatus, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
 import { ConfigService } from './infrastructure/config/config.service';
@@ -21,7 +21,8 @@ async function bootstrap() {
     origin: 'http://localhost:5173',
   });
 
-  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+  app.useLogger(app.get(Logger));
+  // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   app.useGlobalPipes(
     new ValidationPipe({

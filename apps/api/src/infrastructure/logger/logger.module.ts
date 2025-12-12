@@ -2,6 +2,7 @@ import { Logtail } from '@logtail/node';
 import { LogtailTransport } from '@logtail/winston';
 import { Global, Module } from '@nestjs/common';
 import { WinstonModule, utilities as winstonUtilities } from 'nest-winston';
+import { Params, LoggerModule as PinoLoggerModule } from 'nestjs-pino';
 import * as winston from 'winston';
 
 import { ConfigService } from '@/infrastructure/config/config.service';
@@ -16,6 +17,44 @@ import { traceIdFormat } from './trace-id.format';
 @Module({
   exports: [APP_LOGGER_PROVIDER],
   imports: [
+    PinoLoggerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService): Params => {
+        if (configService.isLocal) {
+          return {
+            pinoHttp: {
+              transport: {
+                targets: [
+                  {
+                    level: 'debug',
+                    target: 'pino-pretty',
+                  },
+                ],
+              },
+            },
+          };
+        }
+
+        return {
+          pinoHttp: {
+            transport: {
+              targets: [
+                {
+                  level: 'info',
+                  options: {
+                    options: {
+                      endpoint: configService.betterStackEndpoint,
+                    },
+                    sourceToken: configService.betterStackSourceToken,
+                  },
+                  target: '@logtail/pino',
+                },
+              ],
+            },
+          },
+        };
+      },
+    }),
     WinstonModule.forRootAsync({
       imports: [TraceModule],
       inject: [ConfigService, TraceService],

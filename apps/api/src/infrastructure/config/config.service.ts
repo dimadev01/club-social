@@ -1,7 +1,6 @@
 import { Configuration, Value } from '@itgorillaz/configify';
 import { IsNotEmpty, IsUrl } from 'class-validator';
 
-// @Injectable()
 @Configuration()
 export class ConfigService {
   @IsNotEmpty()
@@ -67,39 +66,4 @@ export class ConfigService {
   public get isProd(): boolean {
     return this.environment === 'production';
   }
-
-  // public constructor(private readonly config: NestConfigService<ConfigTypes>) {
-  //   this.nodeEnv = this.config.getOrThrow<ConfigTypes['NODE_ENV']>('NODE_ENV');
-  //   this.environment =
-  //     this.config.getOrThrow<ConfigTypes['ENVIRONMENT']>('ENVIRONMENT');
-
-  //   this.isDev = this.environment === 'development';
-  //   this.isLocal = this.environment === 'local';
-  //   this.isProd = this.environment === 'production';
-
-  //   this.appDisplayName = 'Club Social API';
-
-  //   this.betterStackEndpoint = this.config.getOrThrow<string>(
-  //     'BETTER_STACK_ENDPOINT',
-  //   );
-  //   this.betterStackSourceToken = this.config.getOrThrow<string>(
-  //     'BETTER_STACK_SOURCE_TOKEN',
-  //   );
-
-  //   this.databaseUrl = this.config.getOrThrow<string>('DATABASE_URL');
-
-  //   this.resendApiKey = this.config.getOrThrow<string>('RESEND_API_KEY');
-
-  //   this.port = this.config.getOrThrow<number>('PORT');
-
-  //   this.trustedOrigins = this.config.getOrThrow<string[]>(
-  //     'BETTER_AUTH_TRUSTED_ORIGINS',
-  //   );
-
-  //   this.emailSmtpHost = this.config.getOrThrow<string>('EMAIL_SMTP_HOST');
-  //   this.emailSmtpPort = this.config.getOrThrow<number>('EMAIL_SMTP_PORT');
-
-  //   this.redisHost = this.config.getOrThrow<string>('REDIS_HOST');
-  //   this.redisPort = this.config.getOrThrow<number>('REDIS_PORT');
-  // }
 }
