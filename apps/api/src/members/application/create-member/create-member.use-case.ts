@@ -83,6 +83,7 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       createdBy: params.createdBy,
       documentID: params.documentID,
       fileStatus: params.fileStatus,
+      maritalStatus: params.maritalStatus,
       nationality: params.nationality,
       phones: params.phones,
       sex: params.sex,

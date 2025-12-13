@@ -53,7 +53,7 @@ export function UserDetailPage() {
     },
   });
 
-  const updateUserMutation = useMutation<UserDto, Error, UpdateUserDto>({
+  const updateUserMutation = useMutation<unknown, Error, UpdateUserDto>({
     mutationFn: (body) => $fetch(`users/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });

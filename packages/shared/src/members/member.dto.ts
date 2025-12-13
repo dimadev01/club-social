@@ -1,6 +1,7 @@
 import { UserStatus } from '../users/user.enum';
 import {
   FileStatus,
+  MaritalStatus,
   MemberCategory,
   MemberNationality,
   MemberSex,
@@ -15,21 +16,22 @@ export interface AddressDto {
 
 export interface CreateMemberDto {
   address: AddressDto | null;
-  birthDate: Date | null;
+  birthDate: null | string;
   category: MemberCategory;
   documentID: null | string;
   email: string;
   fileStatus: FileStatus;
   firstName: string;
   lastName: string;
-  nationality: MemberNationality;
-  phones: null | string[];
-  sex: MemberSex;
+  maritalStatus: MaritalStatus | null;
+  nationality: MemberNationality | null;
+  phones: string[];
+  sex: MemberSex | null;
 }
 
 export interface MemberDto {
   address: AddressDto | null;
-  birthDate: Date | null;
+  birthDate: null | string;
   category: MemberCategory;
   documentID: null | string;
   email: string;
@@ -37,24 +39,26 @@ export interface MemberDto {
   firstName: string;
   id: string;
   lastName: string;
-  nationality: MemberNationality;
-  phones: null | string[];
-  sex: MemberSex;
+  maritalStatus: MaritalStatus | null;
+  nationality: MemberNationality | null;
+  phones: string[];
+  sex: MemberSex | null;
   status: UserStatus;
   userId: string;
 }
 
 export interface UpdateMemberDto {
   address: AddressDto | null;
-  birthDate: Date | null;
+  birthDate: null | string;
   category: MemberCategory;
   documentID: null | string;
   email: string;
   fileStatus: FileStatus;
   firstName: string;
   lastName: string;
-  nationality: MemberNationality;
-  phones: null | string[];
-  sex: MemberSex;
+  maritalStatus: MaritalStatus | null;
+  nationality: MemberNationality | null;
+  phones: string[];
+  sex: MemberSex | null;
   status: UserStatus;
 }

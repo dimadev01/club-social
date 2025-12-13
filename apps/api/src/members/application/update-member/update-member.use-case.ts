@@ -74,6 +74,7 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       fileStatus: params.fileStatus,
       firstName: params.firstName,
       lastName: params.lastName,
+      maritalStatus: params.maritalStatus,
       nationality: params.nationality,
       phones: params.phones,
       sex: params.sex,

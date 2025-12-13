@@ -2,6 +2,7 @@ import {
   AddressDto,
   CreateMemberDto,
   FileStatus,
+  MaritalStatus,
   MemberCategory,
   MemberNationality,
   MemberSex,
@@ -46,7 +47,7 @@ export class CreateMemberRequestDto implements CreateMemberDto {
 
   @IsDateString()
   @IsOptional()
-  public birthDate: Date | null;
+  public birthDate: null | string;
 
   @IsEnum(MemberCategory)
   @IsNotEmpty()
@@ -72,16 +73,19 @@ export class CreateMemberRequestDto implements CreateMemberDto {
   @IsString()
   public lastName: string;
 
+  @IsEnum(MaritalStatus)
+  @IsOptional()
+  public maritalStatus: MaritalStatus | null;
+
   @IsEnum(MemberNationality)
-  @IsNotEmpty()
-  public nationality: MemberNationality;
+  @IsOptional()
+  public nationality: MemberNationality | null;
 
   @IsArray()
-  @IsOptional()
   @IsString({ each: true })
-  public phones: null | string[];
+  public phones: string[];
 
   @IsEnum(MemberSex)
-  @IsNotEmpty()
-  public sex: MemberSex;
+  @IsOptional()
+  public sex: MemberSex | null;
 }

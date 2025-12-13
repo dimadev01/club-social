@@ -1,6 +1,7 @@
 import {
   AddressDto,
   FileStatus,
+  MaritalStatus,
   MemberCategory,
   MemberDto,
   MemberNationality,
@@ -10,7 +11,7 @@ import { UserStatus } from '@club-social/shared/users';
 
 export class MemberResponseDto implements MemberDto {
   public address: AddressDto | null;
-  public birthDate: Date | null;
+  public birthDate: null | string;
   public category: MemberCategory;
   public documentID: null | string;
   public email: string;
@@ -18,9 +19,10 @@ export class MemberResponseDto implements MemberDto {
   public firstName: string;
   public id: string;
   public lastName: string;
-  public nationality: MemberNationality;
-  public phones: null | string[];
-  public sex: MemberSex;
+  public maritalStatus: MaritalStatus | null;
+  public nationality: MemberNationality | null;
+  public phones: string[];
+  public sex: MemberSex | null;
   public status: UserStatus;
   public userId: string;
 }

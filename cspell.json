@@ -25,7 +25,9 @@
     }
   ],
   "dictionaries": ["custom-dictionary"],
-  "words": [
+  "words": [],
+  "ignoreWords": [
+    "Dorrego",
     "antd",
     "configify",
     "cssinjs",
@@ -50,7 +52,6 @@
     "colombia",
     "ukraine"
   ],
-  "ignoreWords": [],
   "import": [],
   "language": "en,es"
 }

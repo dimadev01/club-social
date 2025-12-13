@@ -10,7 +10,7 @@ import {
   APP_THEME_MODE,
   type AppThemeMode,
   useAppContext,
-} from '@/app/app.context';
+} from '@/app/AppContext';
 
 const THEME_ICONS: Record<AppThemeMode, React.ReactNode> = {
   [APP_THEME_MODE.AUTO]: <InteractionOutlined />,

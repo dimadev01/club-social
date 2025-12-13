@@ -69,7 +69,7 @@ export class MembersController extends BaseController {
               zipCode: body.address.zipCode,
             })
           : null,
-        birthDate: body.birthDate,
+        birthDate: body.birthDate ? new Date(body.birthDate) : null,
         category: body.category,
         documentID: body.documentID,
         email: body.email,
@@ -77,6 +77,7 @@ export class MembersController extends BaseController {
         firstName: body.firstName,
         id: request.id,
         lastName: body.lastName,
+        maritalStatus: body.maritalStatus,
         nationality: body.nationality,
         phones: body.phones,
         sex: body.sex,
@@ -101,7 +102,9 @@ export class MembersController extends BaseController {
               zipCode: createMemberDto.address.zipCode,
             })
           : null,
-        birthDate: createMemberDto.birthDate,
+        birthDate: createMemberDto.birthDate
+          ? new Date(createMemberDto.birthDate)
+          : null,
         category: createMemberDto.category,
         createdBy: session.user.name,
         documentID: createMemberDto.documentID,
@@ -109,6 +112,7 @@ export class MembersController extends BaseController {
         fileStatus: createMemberDto.fileStatus,
         firstName: createMemberDto.firstName,
         lastName: createMemberDto.lastName,
+        maritalStatus: createMemberDto.maritalStatus,
         nationality: createMemberDto.nationality,
         phones: createMemberDto.phones,
         sex: createMemberDto.sex,
@@ -168,7 +172,7 @@ export class MembersController extends BaseController {
             zipCode: member.address.zipCode,
           }
         : null,
-      birthDate: member.birthDate,
+      birthDate: member.birthDate ? member.birthDate.toISOString() : null,
       category: member.category,
       documentID: member.documentID,
       email: user.email.value,
@@ -176,6 +180,7 @@ export class MembersController extends BaseController {
       firstName: user.firstName,
       id: member.id.value,
       lastName: user.lastName,
+      maritalStatus: member.maritalStatus,
       nationality: member.nationality,
       phones: member.phones,
       sex: member.sex,

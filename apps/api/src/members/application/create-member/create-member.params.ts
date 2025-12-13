@@ -1,5 +1,6 @@
 import {
   FileStatus,
+  MaritalStatus,
   MemberCategory,
   MemberNationality,
   MemberSex,
@@ -17,7 +18,8 @@ export interface CreateMemberParams {
   fileStatus: FileStatus;
   firstName: string;
   lastName: string;
-  nationality: MemberNationality;
-  phones: null | string[];
-  sex: MemberSex;
+  maritalStatus: MaritalStatus | null;
+  nationality: MemberNationality | null;
+  phones: string[];
+  sex: MemberSex | null;
 }

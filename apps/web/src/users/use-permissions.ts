@@ -6,7 +6,13 @@ import { useHasPermission } from './use-has-permission';
 export const usePermissions = () => {
   return {
     dues: useHasPermission(Resource.DUES, Action.LIST),
-    members: useHasPermission(Resource.MEMBERS, Action.LIST),
+    members: {
+      create: useHasPermission(Resource.MEMBERS, Action.CREATE),
+      delete: useHasPermission(Resource.MEMBERS, Action.DELETE),
+      get: useHasPermission(Resource.MEMBERS, Action.GET),
+      list: useHasPermission(Resource.MEMBERS, Action.LIST),
+      update: useHasPermission(Resource.MEMBERS, Action.UPDATE),
+    } as const,
     movements: useHasPermission(Resource.MOVEMENTS, Action.LIST),
     payments: useHasPermission(Resource.PAYMENTS, Action.LIST),
     users: {

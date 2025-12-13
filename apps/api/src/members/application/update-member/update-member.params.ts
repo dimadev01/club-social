@@ -1,5 +1,6 @@
 import {
   FileStatus,
+  MaritalStatus,
   MemberCategory,
   MemberNationality,
   MemberSex,
@@ -18,9 +19,10 @@ export interface UpdateMemberParams {
   firstName: string;
   id: string;
   lastName: string;
-  nationality: MemberNationality;
-  phones: null | string[];
-  sex: MemberSex;
+  maritalStatus: MaritalStatus | null;
+  nationality: MemberNationality | null;
+  phones: string[];
+  sex: MemberSex | null;
   status: UserStatus;
   updatedBy: string;
 }

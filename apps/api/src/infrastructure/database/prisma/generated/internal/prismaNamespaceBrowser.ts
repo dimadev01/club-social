@@ -152,6 +152,7 @@ export const MemberScalarFieldEnum = {
   userId: 'userId',
   birthDate: 'birthDate',
   category: 'category',
+  maritalStatus: 'maritalStatus',
   documentID: 'documentID',
   fileStatus: 'fileStatus',
   nationality: 'nationality',

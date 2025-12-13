@@ -4,6 +4,7 @@ export const APP_ROUTES = {
   HOME: '/',
   LOGIN: '/auth/login',
   LOGOUT: '/auth/logout',
+  MEMBER_DETAIL: '/members/:id',
   MEMBER_LIST: '/members',
   MEMBER_NEW: '/members/new',
   MOVEMENT_LIST: '/movements',

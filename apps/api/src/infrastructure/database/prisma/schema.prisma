@@ -85,26 +85,27 @@ model Verification {
 }
 
 model Member {
-  id          String    @id
-  userId      String    @unique
-  user        User      @relation(fields: [userId], references: [id])
-  birthDate   DateTime?
-  category    String
-  documentID  String?
-  fileStatus  String
-  nationality String
-  phones      String[]
-  sex         String
-  street      String?
-  cityName    String?
-  stateName   String?
-  zipCode     String?
-  createdAt   DateTime  @default(now())
-  createdBy   String
-  updatedAt   DateTime  @updatedAt
-  updatedBy   String?
-  deletedAt   DateTime?
-  deletedBy   String?
+  id            String    @id
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id])
+  birthDate     DateTime?
+  category      String
+  maritalStatus String?
+  documentID    String?
+  fileStatus    String
+  nationality   String?
+  phones        String[]
+  sex           String?
+  street        String?
+  cityName      String?
+  stateName     String?
+  zipCode       String?
+  createdAt     DateTime  @default(now())
+  createdBy     String
+  updatedAt     DateTime  @updatedAt
+  updatedBy     String?
+  deletedAt     DateTime?
+  deletedBy     String?
 
   @@index([userId])
   @@map("member")

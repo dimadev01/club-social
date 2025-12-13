@@ -1,5 +1,6 @@
 import {
   FileStatus,
+  MaritalStatus,
   MemberCategory,
   MemberNationality,
   MemberSex,
@@ -23,9 +24,10 @@ interface MemberProps {
   createdBy: string;
   documentID: null | string;
   fileStatus: FileStatus;
-  nationality: MemberNationality;
-  phones: null | string[];
-  sex: MemberSex;
+  maritalStatus: MaritalStatus | null;
+  nationality: MemberNationality | null;
+  phones: string[];
+  sex: MemberSex | null;
   userId: UniqueId;
 }
 
@@ -50,15 +52,19 @@ export class MemberEntity extends Entity<MemberEntity> {
     return this._fileStatus;
   }
 
-  public get nationality(): MemberNationality {
+  public get maritalStatus(): MaritalStatus | null {
+    return this._maritalStatus;
+  }
+
+  public get nationality(): MemberNationality | null {
     return this._nationality;
   }
 
-  public get phones(): null | string[] {
+  public get phones(): string[] {
     return this._phones;
   }
 
-  public get sex(): MemberSex {
+  public get sex(): MemberSex | null {
     return this._sex;
   }
 
@@ -71,9 +77,10 @@ export class MemberEntity extends Entity<MemberEntity> {
   private _category: MemberCategory;
   private _documentID: null | string;
   private _fileStatus: FileStatus;
-  private _nationality: MemberNationality;
-  private _phones: null | string[];
-  private _sex: MemberSex;
+  private _maritalStatus: MaritalStatus | null;
+  private _nationality: MemberNationality | null;
+  private _phones: string[];
+  private _sex: MemberSex | null;
   private _userId: UniqueId;
 
   private constructor(props: MemberProps, base?: BaseEntityProps) {
@@ -84,6 +91,7 @@ export class MemberEntity extends Entity<MemberEntity> {
     this._category = props.category;
     this._documentID = props.documentID;
     this._fileStatus = props.fileStatus;
+    this._maritalStatus = props.maritalStatus;
     this._nationality = props.nationality;
     this._phones = props.phones;
     this._sex = props.sex;
@@ -99,6 +107,7 @@ export class MemberEntity extends Entity<MemberEntity> {
       createdBy: props.createdBy,
       documentID: props.documentID,
       fileStatus: props.fileStatus,
+      maritalStatus: props.maritalStatus,
       nationality: props.nationality,
       phones: props.phones,
       sex: props.sex,
@@ -123,6 +132,7 @@ export class MemberEntity extends Entity<MemberEntity> {
     this._category = props.category;
     this._documentID = props.documentID;
     this._fileStatus = props.fileStatus;
+    this._maritalStatus = props.maritalStatus;
     this._nationality = props.nationality;
     this._phones = props.phones;
     this._sex = props.sex;

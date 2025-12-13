@@ -77,7 +77,7 @@ export function AppLayout({ children }: PropsWithChildren) {
     menuItems.push({
       icon: <UserOutlined />,
       key: APP_ROUTES.MEMBER_LIST,
-      label: 'Miembros',
+      label: 'Socios',
     });
   }
 

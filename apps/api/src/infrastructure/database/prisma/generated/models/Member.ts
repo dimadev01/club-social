@@ -29,6 +29,7 @@ export type MemberMinAggregateOutputType = {
   userId: string | null;
   birthDate: Date | null;
   category: string | null;
+  maritalStatus: string | null;
   documentID: string | null;
   fileStatus: string | null;
   nationality: string | null;
@@ -50,6 +51,7 @@ export type MemberMaxAggregateOutputType = {
   userId: string | null;
   birthDate: Date | null;
   category: string | null;
+  maritalStatus: string | null;
   documentID: string | null;
   fileStatus: string | null;
   nationality: string | null;
@@ -71,6 +73,7 @@ export type MemberCountAggregateOutputType = {
   userId: number;
   birthDate: number;
   category: number;
+  maritalStatus: number;
   documentID: number;
   fileStatus: number;
   nationality: number;
@@ -94,6 +97,7 @@ export type MemberMinAggregateInputType = {
   userId?: true;
   birthDate?: true;
   category?: true;
+  maritalStatus?: true;
   documentID?: true;
   fileStatus?: true;
   nationality?: true;
@@ -115,6 +119,7 @@ export type MemberMaxAggregateInputType = {
   userId?: true;
   birthDate?: true;
   category?: true;
+  maritalStatus?: true;
   documentID?: true;
   fileStatus?: true;
   nationality?: true;
@@ -136,6 +141,7 @@ export type MemberCountAggregateInputType = {
   userId?: true;
   birthDate?: true;
   category?: true;
+  maritalStatus?: true;
   documentID?: true;
   fileStatus?: true;
   nationality?: true;
@@ -238,11 +244,12 @@ export type MemberGroupByOutputType = {
   userId: string;
   birthDate: Date | null;
   category: string;
+  maritalStatus: string | null;
   documentID: string | null;
   fileStatus: string;
-  nationality: string;
+  nationality: string | null;
   phones: string[];
-  sex: string;
+  sex: string | null;
   street: string | null;
   cityName: string | null;
   stateName: string | null;
@@ -279,11 +286,12 @@ export type MemberWhereInput = {
   userId?: Prisma.StringFilter<'Member'> | string;
   birthDate?: Prisma.DateTimeNullableFilter<'Member'> | Date | string | null;
   category?: Prisma.StringFilter<'Member'> | string;
+  maritalStatus?: Prisma.StringNullableFilter<'Member'> | string | null;
   documentID?: Prisma.StringNullableFilter<'Member'> | string | null;
   fileStatus?: Prisma.StringFilter<'Member'> | string;
-  nationality?: Prisma.StringFilter<'Member'> | string;
+  nationality?: Prisma.StringNullableFilter<'Member'> | string | null;
   phones?: Prisma.StringNullableListFilter<'Member'>;
-  sex?: Prisma.StringFilter<'Member'> | string;
+  sex?: Prisma.StringNullableFilter<'Member'> | string | null;
   street?: Prisma.StringNullableFilter<'Member'> | string | null;
   cityName?: Prisma.StringNullableFilter<'Member'> | string | null;
   stateName?: Prisma.StringNullableFilter<'Member'> | string | null;
@@ -302,11 +310,12 @@ export type MemberOrderByWithRelationInput = {
   userId?: Prisma.SortOrder;
   birthDate?: Prisma.SortOrderInput | Prisma.SortOrder;
   category?: Prisma.SortOrder;
+  maritalStatus?: Prisma.SortOrderInput | Prisma.SortOrder;
   documentID?: Prisma.SortOrderInput | Prisma.SortOrder;
   fileStatus?: Prisma.SortOrder;
-  nationality?: Prisma.SortOrder;
+  nationality?: Prisma.SortOrderInput | Prisma.SortOrder;
   phones?: Prisma.SortOrder;
-  sex?: Prisma.SortOrder;
+  sex?: Prisma.SortOrderInput | Prisma.SortOrder;
   street?: Prisma.SortOrderInput | Prisma.SortOrder;
   cityName?: Prisma.SortOrderInput | Prisma.SortOrder;
   stateName?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -329,11 +338,12 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<
     NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[];
     birthDate?: Prisma.DateTimeNullableFilter<'Member'> | Date | string | null;
     category?: Prisma.StringFilter<'Member'> | string;
+    maritalStatus?: Prisma.StringNullableFilter<'Member'> | string | null;
     documentID?: Prisma.StringNullableFilter<'Member'> | string | null;
     fileStatus?: Prisma.StringFilter<'Member'> | string;
-    nationality?: Prisma.StringFilter<'Member'> | string;
+    nationality?: Prisma.StringNullableFilter<'Member'> | string | null;
     phones?: Prisma.StringNullableListFilter<'Member'>;
-    sex?: Prisma.StringFilter<'Member'> | string;
+    sex?: Prisma.StringNullableFilter<'Member'> | string | null;
     street?: Prisma.StringNullableFilter<'Member'> | string | null;
     cityName?: Prisma.StringNullableFilter<'Member'> | string | null;
     stateName?: Prisma.StringNullableFilter<'Member'> | string | null;
@@ -354,11 +364,12 @@ export type MemberOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder;
   birthDate?: Prisma.SortOrderInput | Prisma.SortOrder;
   category?: Prisma.SortOrder;
+  maritalStatus?: Prisma.SortOrderInput | Prisma.SortOrder;
   documentID?: Prisma.SortOrderInput | Prisma.SortOrder;
   fileStatus?: Prisma.SortOrder;
-  nationality?: Prisma.SortOrder;
+  nationality?: Prisma.SortOrderInput | Prisma.SortOrder;
   phones?: Prisma.SortOrder;
-  sex?: Prisma.SortOrder;
+  sex?: Prisma.SortOrderInput | Prisma.SortOrder;
   street?: Prisma.SortOrderInput | Prisma.SortOrder;
   cityName?: Prisma.SortOrderInput | Prisma.SortOrder;
   stateName?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -390,14 +401,21 @@ export type MemberScalarWhereWithAggregatesInput = {
     | string
     | null;
   category?: Prisma.StringWithAggregatesFilter<'Member'> | string;
+  maritalStatus?:
+    | Prisma.StringNullableWithAggregatesFilter<'Member'>
+    | string
+    | null;
   documentID?:
     | Prisma.StringNullableWithAggregatesFilter<'Member'>
     | string
     | null;
   fileStatus?: Prisma.StringWithAggregatesFilter<'Member'> | string;
-  nationality?: Prisma.StringWithAggregatesFilter<'Member'> | string;
+  nationality?:
+    | Prisma.StringNullableWithAggregatesFilter<'Member'>
+    | string
+    | null;
   phones?: Prisma.StringNullableListFilter<'Member'>;
-  sex?: Prisma.StringWithAggregatesFilter<'Member'> | string;
+  sex?: Prisma.StringNullableWithAggregatesFilter<'Member'> | string | null;
   street?: Prisma.StringNullableWithAggregatesFilter<'Member'> | string | null;
   cityName?:
     | Prisma.StringNullableWithAggregatesFilter<'Member'>
@@ -430,11 +448,12 @@ export type MemberCreateInput = {
   id: string;
   birthDate?: Date | string | null;
   category: string;
+  maritalStatus?: string | null;
   documentID?: string | null;
   fileStatus: string;
-  nationality: string;
+  nationality?: string | null;
   phones?: Prisma.MemberCreatephonesInput | string[];
-  sex: string;
+  sex?: string | null;
   street?: string | null;
   cityName?: string | null;
   stateName?: string | null;
@@ -453,11 +472,12 @@ export type MemberUncheckedCreateInput = {
   userId: string;
   birthDate?: Date | string | null;
   category: string;
+  maritalStatus?: string | null;
   documentID?: string | null;
   fileStatus: string;
-  nationality: string;
+  nationality?: string | null;
   phones?: Prisma.MemberCreatephonesInput | string[];
-  sex: string;
+  sex?: string | null;
   street?: string | null;
   cityName?: string | null;
   stateName?: string | null;
@@ -478,11 +498,15 @@ export type MemberUpdateInput = {
     | string
     | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
+  maritalStatus?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   documentID?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   fileStatus?: Prisma.StringFieldUpdateOperationsInput | string;
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string;
+  nationality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phones?: Prisma.MemberUpdatephonesInput | string[];
-  sex?: Prisma.StringFieldUpdateOperationsInput | string;
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -509,11 +533,15 @@ export type MemberUncheckedUpdateInput = {
     | string
     | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
+  maritalStatus?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   documentID?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   fileStatus?: Prisma.StringFieldUpdateOperationsInput | string;
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string;
+  nationality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phones?: Prisma.MemberUpdatephonesInput | string[];
-  sex?: Prisma.StringFieldUpdateOperationsInput | string;
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -535,11 +563,12 @@ export type MemberCreateManyInput = {
   userId: string;
   birthDate?: Date | string | null;
   category: string;
+  maritalStatus?: string | null;
   documentID?: string | null;
   fileStatus: string;
-  nationality: string;
+  nationality?: string | null;
   phones?: Prisma.MemberCreatephonesInput | string[];
-  sex: string;
+  sex?: string | null;
   street?: string | null;
   cityName?: string | null;
   stateName?: string | null;
@@ -560,11 +589,15 @@ export type MemberUpdateManyMutationInput = {
     | string
     | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
+  maritalStatus?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   documentID?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   fileStatus?: Prisma.StringFieldUpdateOperationsInput | string;
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string;
+  nationality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phones?: Prisma.MemberUpdatephonesInput | string[];
-  sex?: Prisma.StringFieldUpdateOperationsInput | string;
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -590,11 +623,15 @@ export type MemberUncheckedUpdateManyInput = {
     | string
     | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
+  maritalStatus?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   documentID?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   fileStatus?: Prisma.StringFieldUpdateOperationsInput | string;
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string;
+  nationality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phones?: Prisma.MemberUpdatephonesInput | string[];
-  sex?: Prisma.StringFieldUpdateOperationsInput | string;
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -629,6 +666,7 @@ export type MemberCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder;
   birthDate?: Prisma.SortOrder;
   category?: Prisma.SortOrder;
+  maritalStatus?: Prisma.SortOrder;
   documentID?: Prisma.SortOrder;
   fileStatus?: Prisma.SortOrder;
   nationality?: Prisma.SortOrder;
@@ -651,6 +689,7 @@ export type MemberMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder;
   birthDate?: Prisma.SortOrder;
   category?: Prisma.SortOrder;
+  maritalStatus?: Prisma.SortOrder;
   documentID?: Prisma.SortOrder;
   fileStatus?: Prisma.SortOrder;
   nationality?: Prisma.SortOrder;
@@ -672,6 +711,7 @@ export type MemberMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder;
   birthDate?: Prisma.SortOrder;
   category?: Prisma.SortOrder;
+  maritalStatus?: Prisma.SortOrder;
   documentID?: Prisma.SortOrder;
   fileStatus?: Prisma.SortOrder;
   nationality?: Prisma.SortOrder;
@@ -757,11 +797,12 @@ export type MemberCreateWithoutUserInput = {
   id: string;
   birthDate?: Date | string | null;
   category: string;
+  maritalStatus?: string | null;
   documentID?: string | null;
   fileStatus: string;
-  nationality: string;
+  nationality?: string | null;
   phones?: Prisma.MemberCreatephonesInput | string[];
-  sex: string;
+  sex?: string | null;
   street?: string | null;
   cityName?: string | null;
   stateName?: string | null;
@@ -778,11 +819,12 @@ export type MemberUncheckedCreateWithoutUserInput = {
   id: string;
   birthDate?: Date | string | null;
   category: string;
+  maritalStatus?: string | null;
   documentID?: string | null;
   fileStatus: string;
-  nationality: string;
+  nationality?: string | null;
   phones?: Prisma.MemberCreatephonesInput | string[];
-  sex: string;
+  sex?: string | null;
   street?: string | null;
   cityName?: string | null;
   stateName?: string | null;
@@ -831,11 +873,15 @@ export type MemberUpdateWithoutUserInput = {
     | string
     | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
+  maritalStatus?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   documentID?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   fileStatus?: Prisma.StringFieldUpdateOperationsInput | string;
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string;
+  nationality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phones?: Prisma.MemberUpdatephonesInput | string[];
-  sex?: Prisma.StringFieldUpdateOperationsInput | string;
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -860,11 +906,15 @@ export type MemberUncheckedUpdateWithoutUserInput = {
     | string
     | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
+  maritalStatus?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   documentID?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   fileStatus?: Prisma.StringFieldUpdateOperationsInput | string;
-  nationality?: Prisma.StringFieldUpdateOperationsInput | string;
+  nationality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phones?: Prisma.MemberUpdatephonesInput | string[];
-  sex?: Prisma.StringFieldUpdateOperationsInput | string;
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -890,6 +940,7 @@ export type MemberSelect<
     userId?: boolean;
     birthDate?: boolean;
     category?: boolean;
+    maritalStatus?: boolean;
     documentID?: boolean;
     fileStatus?: boolean;
     nationality?: boolean;
@@ -919,6 +970,7 @@ export type MemberSelectCreateManyAndReturn<
     userId?: boolean;
     birthDate?: boolean;
     category?: boolean;
+    maritalStatus?: boolean;
     documentID?: boolean;
     fileStatus?: boolean;
     nationality?: boolean;
@@ -948,6 +1000,7 @@ export type MemberSelectUpdateManyAndReturn<
     userId?: boolean;
     birthDate?: boolean;
     category?: boolean;
+    maritalStatus?: boolean;
     documentID?: boolean;
     fileStatus?: boolean;
     nationality?: boolean;
@@ -973,6 +1026,7 @@ export type MemberSelectScalar = {
   userId?: boolean;
   birthDate?: boolean;
   category?: boolean;
+  maritalStatus?: boolean;
   documentID?: boolean;
   fileStatus?: boolean;
   nationality?: boolean;
@@ -998,6 +1052,7 @@ export type MemberOmit<
   | 'userId'
   | 'birthDate'
   | 'category'
+  | 'maritalStatus'
   | 'documentID'
   | 'fileStatus'
   | 'nationality'
@@ -1048,11 +1103,12 @@ export type $MemberPayload<
       userId: string;
       birthDate: Date | null;
       category: string;
+      maritalStatus: string | null;
       documentID: string | null;
       fileStatus: string;
-      nationality: string;
+      nationality: string | null;
       phones: string[];
-      sex: string;
+      sex: string | null;
       street: string | null;
       cityName: string | null;
       stateName: string | null;
@@ -1673,6 +1729,7 @@ export interface MemberFieldRefs {
   readonly userId: Prisma.FieldRef<'Member', 'String'>;
   readonly birthDate: Prisma.FieldRef<'Member', 'DateTime'>;
   readonly category: Prisma.FieldRef<'Member', 'String'>;
+  readonly maritalStatus: Prisma.FieldRef<'Member', 'String'>;
   readonly documentID: Prisma.FieldRef<'Member', 'String'>;
   readonly fileStatus: Prisma.FieldRef<'Member', 'String'>;
   readonly nationality: Prisma.FieldRef<'Member', 'String'>;
