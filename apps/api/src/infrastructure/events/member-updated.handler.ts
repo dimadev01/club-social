@@ -3,6 +3,10 @@ import { OnEvent } from '@nestjs/event-emitter';
 
 import { MemberUpdatedEvent } from '@/members/domain/events/member-updated.event';
 import {
+  MEMBER_REPOSITORY_PROVIDER,
+  type MemberRepository,
+} from '@/members/domain/member.repository';
+import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
@@ -17,6 +21,8 @@ export class MemberUpdatedHandler {
     private readonly logger: AppLogger,
     private readonly betterAuth: BetterAuthService,
     private readonly clsService: ClsService,
+    @Inject(MEMBER_REPOSITORY_PROVIDER)
+    private readonly memberRepository: MemberRepository,
   ) {
     this.logger.setContext(MemberUpdatedHandler.name);
   }
@@ -35,11 +41,19 @@ export class MemberUpdatedHandler {
           firstName: event.changes.firstName,
           lastName: event.changes.lastName,
           status: event.changes.status,
+          updatedAt: event.occurredAt,
           updatedBy: event.changes.updatedBy,
         },
-        userId: event.aggregateId.value,
+        userId: event.member.userId.value,
       },
       headers: this.clsService.get('headers'),
+    });
+
+    await this.memberRepository.save(event.member);
+
+    this.logger.info({
+      memberId: event.aggregateId.value,
+      message: 'Member updated',
     });
   }
 }

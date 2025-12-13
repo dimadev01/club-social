@@ -35,6 +35,7 @@ export class UserUpdatedHandler {
           firstName: event.changes.firstName,
           lastName: event.changes.lastName,
           status: event.changes.status,
+          updatedAt: event.occurredAt,
           updatedBy: event.changes.updatedBy,
         },
         userId: event.aggregateId.value,

@@ -130,6 +130,7 @@ export function MemberDetailPage() {
         nationality: memberQuery.data.nationality ?? undefined,
         phones: memberQuery.data.phones ?? [],
         sex: memberQuery.data.sex ?? undefined,
+        status: memberQuery.data.status,
       });
     }
   }, [memberQuery.data, setFieldsValue]);
@@ -138,14 +139,14 @@ export function MemberDetailPage() {
     if (id) {
       updateMemberMutation.mutate({
         address: {
-          cityName: values.address.cityName ?? null,
-          stateName: values.address.stateName ?? null,
-          street: values.address.street ?? null,
-          zipCode: values.address.zipCode ?? null,
+          cityName: values.address.cityName || null,
+          stateName: values.address.stateName || null,
+          street: values.address.street || null,
+          zipCode: values.address.zipCode || null,
         },
         birthDate: values.birthDate ? values.birthDate.toISOString() : null,
         category: values.category,
-        documentID: values.documentID ?? null,
+        documentID: values.documentID || null,
         email: values.email,
         fileStatus: values.fileStatus,
         firstName: values.firstName,
@@ -159,14 +160,14 @@ export function MemberDetailPage() {
     } else {
       createMemberMutation.mutate({
         address: {
-          cityName: values.address.cityName ?? null,
-          stateName: values.address.stateName ?? null,
-          street: values.address.street ?? null,
-          zipCode: values.address.zipCode ?? null,
+          cityName: values.address.cityName || null,
+          stateName: values.address.stateName || null,
+          street: values.address.street || null,
+          zipCode: values.address.zipCode || null,
         },
         birthDate: values.birthDate ? values.birthDate.toISOString() : null,
         category: values.category,
-        documentID: values.documentID ?? null,
+        documentID: values.documentID || null,
         email: values.email,
         fileStatus: values.fileStatus,
         firstName: values.firstName,

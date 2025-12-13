@@ -55,15 +55,13 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       email.value,
     );
 
-    const userId = UniqueId.raw({ value: params.id });
-
-    if (existingUserByEmail && !existingUserByEmail.id.equals(userId)) {
-      return err(new ConflictError('El email ya está en uso'));
-    }
-
     const member = await this.memberRepository.findOneByIdOrThrow(
       UniqueId.raw({ value: params.id }),
     );
+
+    if (existingUserByEmail && !existingUserByEmail.id.equals(member.userId)) {
+      return err(new ConflictError('El email ya está en uso'));
+    }
 
     member.updateProfile({
       address: params.address,

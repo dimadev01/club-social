@@ -39,6 +39,7 @@ export class UserCreatedHandler {
           id: event.user.id.value,
           lastName: event.user.lastName,
           status: event.user.status,
+          updatedAt: event.occurredAt,
           updatedBy: event.user.createdBy,
         },
         email: event.user.email.value,

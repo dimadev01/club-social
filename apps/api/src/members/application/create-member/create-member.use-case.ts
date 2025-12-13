@@ -5,10 +5,6 @@ import type { Result } from '@/shared/domain/result';
 
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import {
-  MEMBER_REPOSITORY_PROVIDER,
-  type MemberRepository,
-} from '@/members/domain/member.repository';
-import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
@@ -29,8 +25,6 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    @Inject(MEMBER_REPOSITORY_PROVIDER)
-    private readonly memberRepository: MemberRepository,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
     private readonly eventPublisher: DomainEventPublisher,
@@ -76,25 +70,27 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       return err(user.error);
     }
 
-    const member = MemberEntity.create({
-      address: params.address,
-      birthDate: params.birthDate,
-      category: params.category,
-      createdBy: params.createdBy,
-      documentID: params.documentID,
-      fileStatus: params.fileStatus,
-      maritalStatus: params.maritalStatus,
-      nationality: params.nationality,
-      phones: params.phones,
-      sex: params.sex,
-      userId: user.value.id,
-    });
+    const member = MemberEntity.create(
+      {
+        address: params.address,
+        birthDate: params.birthDate,
+        category: params.category,
+        createdBy: params.createdBy,
+        documentID: params.documentID,
+        fileStatus: params.fileStatus,
+        maritalStatus: params.maritalStatus,
+        nationality: params.nationality,
+        phones: params.phones,
+        sex: params.sex,
+        userId: user.value.id,
+      },
+      user.value,
+    );
 
     if (member.isErr()) {
       return err(member.error);
     }
 
-    await this.memberRepository.save(member.value);
     this.eventPublisher.dispatch(member.value);
 
     return ok(member.value);

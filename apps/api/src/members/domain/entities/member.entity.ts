@@ -12,6 +12,7 @@ import { Entity } from '@/shared/domain/entity';
 import { ok, Result } from '@/shared/domain/result';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import { UserEntity } from '@/users/domain/entities/user.entity';
 
 import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
@@ -99,7 +100,10 @@ export class MemberEntity extends Entity<MemberEntity> {
     this._createdBy = props.createdBy;
   }
 
-  public static create(props: MemberProps): Result<MemberEntity> {
+  public static create(
+    props: MemberProps,
+    user: UserEntity,
+  ): Result<MemberEntity> {
     const member = new MemberEntity({
       address: props.address,
       birthDate: props.birthDate,
@@ -114,7 +118,7 @@ export class MemberEntity extends Entity<MemberEntity> {
       userId: props.userId,
     });
 
-    member.addEvent(new MemberCreatedEvent(member));
+    member.addEvent(new MemberCreatedEvent(member, user));
 
     return ok(member);
   }
@@ -138,6 +142,6 @@ export class MemberEntity extends Entity<MemberEntity> {
     this._sex = props.sex;
     this.markAsUpdated(props.updatedBy);
 
-    this.addEvent(new MemberUpdatedEvent(this.id, props));
+    this.addEvent(new MemberUpdatedEvent(this, props));
   }
 }
