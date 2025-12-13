@@ -12,8 +12,6 @@ import {
 } from 'better-auth/plugins/admin/access';
 import { createAuthClient } from 'better-auth/react';
 
-import { AppConfig } from './app.config';
-
 const ac = createAccessControl({
   ...defaultStatements,
   ...statements,
@@ -36,7 +34,7 @@ const staffRole = ac.newRole({
 
 export const betterAuthClient = createAuthClient({
   basePath: '/auth',
-  baseURL: AppConfig.apiUrl,
+  baseURL: import.meta.env.VITE_API_URL,
   plugins: [
     magicLinkClient(),
     adminClient({

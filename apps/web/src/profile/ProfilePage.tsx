@@ -1,12 +1,15 @@
-import { SaveOutlined, UserOutlined } from '@ant-design/icons';
-import { App, Button, Card, Form, Input, Space } from 'antd';
+import { MailOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
+import { App, Button, Card, Divider, Form, Input, Space } from 'antd';
 
 import { useUser } from '@/auth/useUser';
 import { Page, PageContent } from '@/components/Page';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 
-interface FormSchema {
+interface EmailFormSchema {
   email: string;
+}
+
+interface ProfileFormSchema {
   firstName: string;
   lastName: string;
 }
@@ -16,9 +19,10 @@ export function ProfilePage() {
 
   const user = useUser();
 
-  const [form] = Form.useForm<FormSchema>();
+  const [profileForm] = Form.useForm<ProfileFormSchema>();
+  const [emailForm] = Form.useForm<EmailFormSchema>();
 
-  const onSubmit = async (values: FormSchema) => {
+  const onSubmitProfile = async (values: ProfileFormSchema) => {
     const { data, error } = await betterAuthClient.updateUser({
       firstName: values.firstName,
       lastName: values.lastName,
@@ -30,20 +34,26 @@ export function ProfilePage() {
     if (error) {
       message.error(error.message);
     } else if (data) {
-      message.success('Perfil actualizado correctamente');
+      message.success('Perfil actualizado');
+    }
+  };
+
+  const onSubmitEmail = async (values: EmailFormSchema) => {
+    if (user.email === values.email) {
+      message.info('El email ingresado es el mismo que el actual');
+
+      return;
     }
 
-    if (user.email !== values.email) {
-      const { data, error } = await betterAuthClient.changeEmail({
-        callbackURL: window.location.origin,
-        newEmail: values.email,
-      });
+    const { data, error } = await betterAuthClient.changeEmail({
+      callbackURL: window.location.origin,
+      newEmail: values.email,
+    });
 
-      if (error) {
-        message.error(error.message);
-      } else if (data) {
-        message.success('Le hemos enviado un link para cambiar su email');
-      }
+    if (error) {
+      message.error(error.message);
+    } else if (data) {
+      message.success('Le hemos enviado un link para cambiar su email');
     }
   };
 
@@ -53,7 +63,7 @@ export function ProfilePage() {
         <Card
           actions={[
             <Button
-              form="form"
+              form="profileForm"
               htmlType="submit"
               icon={<SaveOutlined />}
               type="primary"
@@ -64,39 +74,73 @@ export function ProfilePage() {
           title={
             <Space>
               <UserOutlined />
-              Mi Perfil
+              Mis datos
             </Space>
           }
         >
-          <Form<FormSchema>
+          <Form<ProfileFormSchema>
             autoComplete="off"
-            form={form}
-            id="form"
+            form={profileForm}
+            id="profileForm"
             initialValues={{
-              email: user.email,
               firstName: user.firstName,
               lastName: user.lastName,
             }}
             layout="vertical"
-            name="form"
-            onFinish={onSubmit}
+            name="profileForm"
+            onFinish={onSubmitProfile}
             scrollToFirstError
           >
-            <Form.Item<FormSchema>
+            <Form.Item<ProfileFormSchema>
               label="Nombre"
               name="firstName"
               rules={[{ required: true, whitespace: true }]}
             >
               <Input placeholder="Juan" />
             </Form.Item>
-            <Form.Item<FormSchema>
+            <Form.Item<ProfileFormSchema>
               label="Apellido"
               name="lastName"
               rules={[{ required: true, whitespace: true }]}
             >
               <Input placeholder="Perez" />
             </Form.Item>
-            <Form.Item<FormSchema>
+          </Form>
+        </Card>
+
+        <Divider />
+
+        <Card
+          actions={[
+            <Button
+              form="emailForm"
+              htmlType="submit"
+              icon={<MailOutlined />}
+              type="primary"
+            >
+              Cambiar email
+            </Button>,
+          ]}
+          title={
+            <Space>
+              <MailOutlined />
+              Inicio de sesión
+            </Space>
+          }
+        >
+          <Form<EmailFormSchema>
+            autoComplete="off"
+            form={emailForm}
+            id="emailForm"
+            initialValues={{
+              email: user.email,
+            }}
+            layout="vertical"
+            name="emailForm"
+            onFinish={onSubmitEmail}
+            scrollToFirstError
+          >
+            <Form.Item<EmailFormSchema>
               label="Email"
               name="email"
               rules={[{ required: true, type: 'email', whitespace: true }]}

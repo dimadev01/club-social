@@ -11,8 +11,7 @@ import {
 import esEs from 'antd/locale/es_ES';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
-import { useLocalStorage } from 'react-use';
-import { useMediaQuery } from 'usehooks-ts';
+import { useLocalStorage, useMedia } from 'react-use';
 import 'dayjs/locale/es';
 
 import {
@@ -84,7 +83,7 @@ const getThemeConfig = ({
 });
 
 export function App() {
-  const prefersDark = useMediaQuery('(prefers-color-scheme: dark)');
+  const prefersDark = useMedia('(prefers-color-scheme: dark)');
   const [themeMode = APP_THEME_MODE.AUTO, setThemeMode] =
     useLocalStorage<AppThemeMode>('theme', APP_THEME_MODE.AUTO);
 
