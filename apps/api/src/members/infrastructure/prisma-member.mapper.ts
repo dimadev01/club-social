@@ -1,61 +1,77 @@
-import { UserRole } from '@club-social/shared/users';
-import { UserStatus } from '@club-social/shared/users';
+import {
+  FileStatus,
+  MemberCategory,
+  MemberNationality,
+  MemberSex,
+} from '@club-social/shared/members';
 import { Injectable } from '@nestjs/common';
 
-import { UserModel } from '@/infrastructure/database/prisma/generated/models';
+import { MemberModel } from '@/infrastructure/database/prisma/generated/models';
 import { Mapper } from '@/infrastructure/repositories/mapper';
-import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MemberEntity } from '../domain/entities/member.entity';
 
 @Injectable()
-export class PrismaMemberMapper extends Mapper<MemberEntity, UserModel> {
-  public toDomain(user: UserModel): MemberEntity {
+export class PrismaMemberMapper extends Mapper<MemberEntity, MemberModel> {
+  public toDomain(member: MemberModel): MemberEntity {
+    const address =
+      member.street || member.cityName || member.stateName || member.zipCode
+        ? Address.raw({
+            cityName: member.cityName,
+            stateName: member.stateName,
+            street: member.street,
+            zipCode: member.zipCode,
+          })
+        : null;
+
     return MemberEntity.fromPersistence(
       {
-        banExpires: user.banExpires,
-        banned: user.banned,
-        banReason: user.banReason,
-        createdBy: user.createdBy,
-        email: Email.raw({ value: user.email }),
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role as UserRole,
-        status: user.status as UserStatus,
+        address,
+        birthDate: member.birthDate,
+        category: member.category as MemberCategory,
+        createdBy: member.createdBy,
+        documentID: member.documentID,
+        fileStatus: member.fileStatus as FileStatus,
+        nationality: member.nationality as MemberNationality,
+        phones: member.phones.length > 0 ? member.phones : null,
+        sex: member.sex as MemberSex,
+        userId: UniqueId.raw({ value: member.userId }),
       },
       {
-        createdAt: user.createdAt,
-        createdBy: user.createdBy,
-        deletedAt: user.deletedAt,
-        deletedBy: user.deletedBy,
-        id: UniqueId.raw({ value: user.id }),
-        updatedAt: user.updatedAt,
-        updatedBy: user.updatedBy,
+        createdAt: member.createdAt,
+        createdBy: member.createdBy,
+        deletedAt: member.deletedAt,
+        deletedBy: member.deletedBy,
+        id: UniqueId.raw({ value: member.id }),
+        updatedAt: member.updatedAt,
+        updatedBy: member.updatedBy,
       },
     );
   }
 
-  public toPersistence(member: MemberEntity): UserModel {
+  public toPersistence(member: MemberEntity): MemberModel {
     return {
-      banExpires: member.banExpires,
-      banned: member.banned,
-      banReason: member.banReason,
+      birthDate: member.birthDate,
+      category: member.category,
+      cityName: member.address?.cityName ?? null,
       createdAt: member.createdAt,
       createdBy: member.createdBy,
       deletedAt: member.deletedAt,
       deletedBy: member.deletedBy,
-      email: member.email.value,
-      emailVerified: false,
-      firstName: member.firstName,
+      documentID: member.documentID,
+      fileStatus: member.fileStatus,
       id: member.id.value,
-      image: null,
-      lastName: member.lastName,
-      name: member.name,
-      role: member.role as UserRole,
-      status: member.status,
+      nationality: member.nationality,
+      phones: member.phones ?? [],
+      sex: member.sex,
+      stateName: member.address?.stateName ?? null,
+      street: member.address?.street ?? null,
       updatedAt: member.updatedAt,
       updatedBy: member.updatedBy,
+      userId: member.userId.value,
+      zipCode: member.address?.zipCode ?? null,
     };
   }
 }

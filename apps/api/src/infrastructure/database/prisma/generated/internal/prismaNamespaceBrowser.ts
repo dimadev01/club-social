@@ -58,6 +58,7 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
+  Member: 'Member',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -145,6 +146,31 @@ export const VerificationScalarFieldEnum = {
 
 export type VerificationScalarFieldEnum =
   (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum];
+
+export const MemberScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  birthDate: 'birthDate',
+  category: 'category',
+  documentID: 'documentID',
+  fileStatus: 'fileStatus',
+  nationality: 'nationality',
+  phones: 'phones',
+  sex: 'sex',
+  street: 'street',
+  cityName: 'cityName',
+  stateName: 'stateName',
+  zipCode: 'zipCode',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+} as const;
+
+export type MemberScalarFieldEnum =
+  (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',

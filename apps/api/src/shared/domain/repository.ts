@@ -6,11 +6,11 @@ export interface PaginatedRepository<T> {
 }
 
 export interface ReadableRepository<T> {
+  findManyByIds(ids: UniqueId[]): Promise<T[]>;
   findOneById(id: UniqueId): Promise<null | T>;
   findOneByIdOrThrow(id: UniqueId): Promise<T>;
 }
 
-export interface WritableRepository<T> {
-  delete(entity: T): Promise<void>;
+export interface WriteableRepository<T> {
   save(entity: T): Promise<T>;
 }

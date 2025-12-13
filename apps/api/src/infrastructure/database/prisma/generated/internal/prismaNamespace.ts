@@ -416,6 +416,7 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
+  Member: 'Member',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -437,7 +438,7 @@ export type TypeMap<
     omit: GlobalOmitOptions;
   };
   meta: {
-    modelProps: 'user' | 'session' | 'account' | 'verification';
+    modelProps: 'user' | 'session' | 'account' | 'verification' | 'member';
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -745,6 +746,82 @@ export type TypeMap<
         };
       };
     };
+    Member: {
+      payload: Prisma.$MemberPayload<ExtArgs>;
+      fields: Prisma.MemberFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.MemberFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.MemberFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload>;
+        };
+        findFirst: {
+          args: Prisma.MemberFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.MemberFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload>;
+        };
+        findMany: {
+          args: Prisma.MemberFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload>[];
+        };
+        create: {
+          args: Prisma.MemberCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload>;
+        };
+        createMany: {
+          args: Prisma.MemberCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.MemberCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload>[];
+        };
+        delete: {
+          args: Prisma.MemberDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload>;
+        };
+        update: {
+          args: Prisma.MemberUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload>;
+        };
+        deleteMany: {
+          args: Prisma.MemberDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.MemberUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.MemberUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload>[];
+        };
+        upsert: {
+          args: Prisma.MemberUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MemberPayload>;
+        };
+        aggregate: {
+          args: Prisma.MemberAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMember>;
+        };
+        groupBy: {
+          args: Prisma.MemberGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.MemberGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.MemberCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.MemberCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
   };
 } & {
   other: {
@@ -853,6 +930,31 @@ export const VerificationScalarFieldEnum = {
 
 export type VerificationScalarFieldEnum =
   (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum];
+
+export const MemberScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  birthDate: 'birthDate',
+  category: 'category',
+  documentID: 'documentID',
+  fileStatus: 'fileStatus',
+  nationality: 'nationality',
+  phones: 'phones',
+  sex: 'sex',
+  street: 'street',
+  cityName: 'cityName',
+  stateName: 'stateName',
+  zipCode: 'zipCode',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+} as const;
+
+export type MemberScalarFieldEnum =
+  (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',
@@ -1042,6 +1144,7 @@ export type GlobalOmitConfig = {
   session?: Prisma.SessionOmit;
   account?: Prisma.AccountOmit;
   verification?: Prisma.VerificationOmit;
+  member?: Prisma.MemberOmit;
 };
 
 /* Types for Logging */

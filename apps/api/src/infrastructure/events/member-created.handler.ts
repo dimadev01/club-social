@@ -7,6 +7,10 @@ import {
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import {
+  USER_REPOSITORY_PROVIDER,
+  type UserRepository,
+} from '@/users/domain/user.repository';
 
 import { BetterAuthService } from '../auth/better-auth/better-auth.service';
 import { ClsService } from '../storage/cls/cls.service';
@@ -18,6 +22,8 @@ export class MemberCreatedHandler {
     private readonly logger: AppLogger,
     private readonly betterAuth: BetterAuthService,
     private readonly clsService: ClsService,
+    @Inject(USER_REPOSITORY_PROVIDER)
+    private readonly userRepository: UserRepository,
   ) {
     this.logger.setContext(MemberCreatedHandler.name);
   }
@@ -29,22 +35,26 @@ export class MemberCreatedHandler {
       message: 'Creating member',
     });
 
+    const user = await this.userRepository.findOneByIdOrThrow(
+      event.member.userId,
+    );
+
     await this.betterAuth.auth.api.createUser({
       body: {
         data: {
-          createdBy: event.member.createdBy,
+          createdBy: user.createdBy,
           deletedAt: null,
           deletedBy: null,
-          firstName: event.member.firstName,
-          id: event.member.id.value,
-          lastName: event.member.lastName,
-          status: event.member.status,
-          updatedBy: event.member.createdBy,
+          firstName: user.firstName,
+          id: user.id.value,
+          lastName: user.lastName,
+          status: user.status,
+          updatedBy: user.createdBy,
         },
-        email: event.member.email.value,
-        name: `${event.member.firstName} ${event.member.lastName}`,
+        email: user.email.value,
+        name: `${user.firstName} ${user.lastName}`,
         password: UniqueId.generate().value,
-        role: event.member.role,
+        role: user.role,
       },
       headers: this.clsService.get('headers'),
     });

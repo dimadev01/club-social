@@ -3,6 +3,7 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateUserRequestDto implements CreateUserDto {
   @IsEmail()
+  @IsNotEmpty()
   public email: string;
 
   @IsNotEmpty()

@@ -1,12 +1,26 @@
-import { UserRole } from '@club-social/shared/users';
-import { UserDto, UserStatus } from '@club-social/shared/users';
+import {
+  AddressDto,
+  FileStatus,
+  MemberCategory,
+  MemberDto,
+  MemberNationality,
+  MemberSex,
+} from '@club-social/shared/members';
+import { UserStatus } from '@club-social/shared/users';
 
-export class MemberResponseDto implements UserDto {
+export class MemberResponseDto implements MemberDto {
+  public address: AddressDto | null;
+  public birthDate: Date | null;
+  public category: MemberCategory;
+  public documentID: null | string;
   public email: string;
+  public fileStatus: FileStatus;
   public firstName: string;
   public id: string;
   public lastName: string;
-  public name: string;
-  public role: UserRole;
+  public nationality: MemberNationality;
+  public phones: null | string[];
+  public sex: MemberSex;
   public status: UserStatus;
+  public userId: string;
 }

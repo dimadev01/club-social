@@ -14,6 +14,11 @@
       "require": "./dist/users/index.js",
       "import": "./dist/users/index.mjs"
     },
+    "./members": {
+      "types": "./src/members/index.ts",
+      "require": "./dist/members/index.js",
+      "import": "./dist/members/index.mjs"
+    },
     "./shared": {
       "types": "./src/shared/index.ts",
       "require": "./dist/shared/index.js",

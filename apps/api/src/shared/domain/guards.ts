@@ -22,6 +22,15 @@ export abstract class Guard {
     this.invariant(target, this.isDate, message);
   }
 
+  public static defined<T>(
+    target: null | T | undefined,
+    message = 'Target is null or undefined',
+  ): asserts target is T {
+    if (target === null || target === undefined) {
+      throw new Error(message);
+    }
+  }
+
   public static isArray: TypeGuard<unknown[]> = (
     target: unknown,
   ): target is unknown[] => Array.isArray(target);
@@ -85,7 +94,7 @@ export abstract class Guard {
   public static object(
     target: unknown,
     message = 'Target is not an object',
-  ): asserts target {
+  ): asserts target is object {
     this.invariant(target, this.isObject, message);
   }
 

@@ -23,6 +23,17 @@ export class PrismaUserRepository implements UserRepository {
     private readonly mapper: PrismaUserMapper,
   ) {}
 
+  public async findManyByIds(ids: UniqueId[]): Promise<UserEntity[]> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        deletedAt: null,
+        id: { in: ids.map((id) => id.value) },
+      },
+    });
+
+    return users.map((user) => this.mapper.toDomain(user));
+  }
+
   public async findOneById(id: UniqueId): Promise<null | UserEntity> {
     const user = await this.prismaService.user.findUnique({
       where: { deletedAt: null, id: id.value },

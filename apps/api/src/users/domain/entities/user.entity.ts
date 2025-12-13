@@ -82,6 +82,7 @@ export class UserEntity extends Entity<UserEntity> {
     this._banReason = props.banReason;
     this._banExpires = props.banExpires;
     this._status = props.status;
+    this._createdBy = props.createdBy;
   }
 
   public static create(props: UserProps): Result<UserEntity> {

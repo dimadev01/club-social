@@ -47,7 +47,9 @@ export class UpdateUserUseCase extends UseCase<UserEntity> {
       email.value,
     );
 
-    if (existingUserByEmail && existingUserByEmail.id.value !== params.id) {
+    const userId = UniqueId.raw({ value: params.id });
+
+    if (existingUserByEmail && !existingUserByEmail.id.equals(userId)) {
       return err(new ConflictError('El email ya está en uso'));
     }
 

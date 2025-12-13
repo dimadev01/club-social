@@ -1,107 +1,108 @@
-import { UserRole } from '@club-social/shared/users';
-import { UserStatus } from '@club-social/shared/users';
+import {
+  FileStatus,
+  MemberCategory,
+  MemberNationality,
+  MemberSex,
+} from '@club-social/shared/members';
 
 import type { BaseEntityProps } from '@/shared/domain/entity';
 
 import { Entity } from '@/shared/domain/entity';
-import { InternalServerError } from '@/shared/domain/errors/internal-server.error';
-import { Guard } from '@/shared/domain/guards';
 import { ok, Result } from '@/shared/domain/result';
-import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { Address } from '@/shared/domain/value-objects/address/address.vo';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
 import { UpdateMemberProfileProps } from '../interfaces/member.interface';
 
 interface MemberProps {
-  banExpires: Date | null;
-  banned: boolean | null;
-  banReason: null | string;
+  address: Address | null;
+  birthDate: Date | null;
+  category: MemberCategory;
   createdBy: string;
-  email: Email;
-  firstName: string;
-  lastName: string;
-  role: UserRole;
-  status: UserStatus;
+  documentID: null | string;
+  fileStatus: FileStatus;
+  nationality: MemberNationality;
+  phones: null | string[];
+  sex: MemberSex;
+  userId: UniqueId;
 }
 
 export class MemberEntity extends Entity<MemberEntity> {
-  public get banExpires(): Date | null {
-    return this._banExpires;
+  public get address(): Address | null {
+    return this._address;
   }
 
-  public get banned(): boolean | null {
-    return this._banned;
+  public get birthDate(): Date | null {
+    return this._birthDate;
   }
 
-  public get banReason(): null | string {
-    return this._banReason;
+  public get category(): MemberCategory {
+    return this._category;
   }
 
-  public get email(): Email {
-    return this._email;
+  public get documentID(): null | string {
+    return this._documentID;
   }
 
-  public get firstName(): string {
-    return this._firstName;
+  public get fileStatus(): FileStatus {
+    return this._fileStatus;
   }
 
-  public get lastName(): string {
-    return this._lastName;
+  public get nationality(): MemberNationality {
+    return this._nationality;
   }
 
-  public get name(): string {
-    return `${this._firstName} ${this._lastName}`;
+  public get phones(): null | string[] {
+    return this._phones;
   }
 
-  public get role(): UserRole {
-    return this._role;
+  public get sex(): MemberSex {
+    return this._sex;
   }
 
-  public get status(): UserStatus {
-    return this._status;
+  public get userId(): UniqueId {
+    return this._userId;
   }
 
-  private _banExpires: Date | null;
-  private _banned: boolean | null;
-  private _banReason: null | string;
-  private _email: Email;
-  private _firstName: string;
-  private _lastName: string;
-  private _role: UserRole;
-  private _status: UserStatus;
+  private _address: Address | null;
+  private _birthDate: Date | null;
+  private _category: MemberCategory;
+  private _documentID: null | string;
+  private _fileStatus: FileStatus;
+  private _nationality: MemberNationality;
+  private _phones: null | string[];
+  private _sex: MemberSex;
+  private _userId: UniqueId;
 
   private constructor(props: MemberProps, base?: BaseEntityProps) {
     super(base);
 
-    this._firstName = props.firstName;
-    this._lastName = props.lastName;
-    this._email = props.email;
-    this._role = props.role;
-    this._banned = props.banned;
-    this._banReason = props.banReason;
-    this._banExpires = props.banExpires;
-    this._status = props.status;
+    this._address = props.address;
+    this._birthDate = props.birthDate;
+    this._category = props.category;
+    this._documentID = props.documentID;
+    this._fileStatus = props.fileStatus;
+    this._nationality = props.nationality;
+    this._phones = props.phones;
+    this._sex = props.sex;
+    this._userId = props.userId;
+    this._createdBy = props.createdBy;
   }
 
   public static create(props: MemberProps): Result<MemberEntity> {
-    Guard.string(props.firstName);
-    Guard.string(props.lastName);
-
-    if (props.role === UserRole.ADMIN) {
-      throw new InternalServerError('Admin role is not allowed');
-    }
-
     const member = new MemberEntity({
-      banExpires: props.banExpires,
-      banned: props.banned,
-      banReason: props.banReason,
+      address: props.address,
+      birthDate: props.birthDate,
+      category: props.category,
       createdBy: props.createdBy,
-      email: props.email,
-      firstName: props.firstName.trim(),
-      lastName: props.lastName.trim(),
-      role: props.role,
-      status: props.status,
+      documentID: props.documentID,
+      fileStatus: props.fileStatus,
+      nationality: props.nationality,
+      phones: props.phones,
+      sex: props.sex,
+      userId: props.userId,
     });
 
     member.addEvent(new MemberCreatedEvent(member));
@@ -116,26 +117,17 @@ export class MemberEntity extends Entity<MemberEntity> {
     return new MemberEntity(props, base);
   }
 
-  public updateEmail(email: Email) {
-    this._email = email;
-  }
-
-  public updateName(firstName: string, lastName: string) {
-    this._firstName = firstName;
-    this._lastName = lastName;
-  }
-
   public updateProfile(props: UpdateMemberProfileProps) {
-    this._email = props.email;
-    this._firstName = props.firstName;
-    this._lastName = props.lastName;
-    this._status = props.status;
+    this._address = props.address;
+    this._birthDate = props.birthDate;
+    this._category = props.category;
+    this._documentID = props.documentID;
+    this._fileStatus = props.fileStatus;
+    this._nationality = props.nationality;
+    this._phones = props.phones;
+    this._sex = props.sex;
     this.markAsUpdated(props.updatedBy);
 
     this.addEvent(new MemberUpdatedEvent(this.id, props));
-  }
-
-  public updateStatus(status: UserStatus) {
-    this._status = status;
   }
 }
