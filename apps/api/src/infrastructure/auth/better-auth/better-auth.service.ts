@@ -64,6 +64,7 @@ export const defaultConfig = {
   },
   plugins: [
     adminPlugin({
+      ac,
       roles: {
         admin: adminRole,
         member: memberRole,
