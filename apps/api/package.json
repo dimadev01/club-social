@@ -6,7 +6,7 @@
   "license": "UNLICENSED",
   "author": "Dmitriy Mironov",
   "scripts": {
-    "better-auth:generate": "npx @better-auth/cli@latest generate --config src/infrastructure/auth/better-auth.config.ts",
+    "better-auth:generate": "npx @better-auth/cli@latest generate --config src/infrastructure/auth/better-auth/better-auth.service.ts",
     "build": "nest build",
     "build:sourcemaps": "nest build && npm run sentry:sourcemaps",
     "check-types": "tsc --noEmit",

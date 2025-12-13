@@ -71,37 +71,36 @@ export function UserListPage() {
       </PageHeader>
       <PageContent>
         <Table<UserDto>
-          columns={[
-            {
-              dataIndex: 'id',
-              render: (value: string, record: UserDto) => (
-                <Typography.Text copyable={{ text: record.name }}>
-                  <Link to={`${APP_ROUTES.USER_DETAIL.replace(':id', value)}`}>
-                    {record.name}
-                  </Link>
-                </Typography.Text>
-              ),
-              title: 'Nombre',
-            },
-            {
-              dataIndex: 'email',
-              render: (value: string) => (
-                <Typography.Text copyable>{value}</Typography.Text>
-              ),
-              title: 'Email',
-            },
-            {
-              align: 'center',
-              dataIndex: 'status',
-              render: (value: UserStatus) => UserStatusLabel[value],
-              title: 'Estado',
-            },
-          ]}
           dataSource={usersQuery.data?.data}
           loading={usersQuery.isFetching}
           rowKey="id"
-          showHeader
-        />
+          scroll={{ x: 'max-content', y: 800 }}
+        >
+          <Table.Column<UserDto>
+            dataIndex="id"
+            render={(id: string, record: UserDto) => (
+              <Typography.Text copyable={{ text: id }}>
+                <Link to={`${APP_ROUTES.USER_DETAIL.replace(':id', id)}`}>
+                  {record.name}
+                </Link>
+              </Typography.Text>
+            )}
+            title="Nombre"
+          />
+          <Table.Column<UserDto>
+            dataIndex="email"
+            render={(text) => (
+              <Typography.Text copyable={{ text }}>{text}</Typography.Text>
+            )}
+            title="Email"
+          />
+          <Table.Column<UserDto>
+            align="center"
+            dataIndex="status"
+            render={(value: UserStatus) => UserStatusLabel[value]}
+            title="Estado"
+          />
+        </Table>
       </PageContent>
     </Page>
   );

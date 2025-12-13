@@ -1,5 +1,9 @@
 import { roleStatements, statements } from '@club-social/shared/roles';
-import { adminClient, magicLinkClient } from 'better-auth/client/plugins';
+import {
+  adminClient,
+  inferAdditionalFields,
+  magicLinkClient,
+} from 'better-auth/client/plugins';
 import { createAccessControl } from 'better-auth/plugins/access';
 import {
   adminAc,
@@ -33,7 +37,6 @@ const staffRole = ac.newRole({
 export const betterAuthClient = createAuthClient({
   basePath: '/auth',
   baseURL: AppConfig.apiUrl,
-
   plugins: [
     magicLinkClient(),
     adminClient({
@@ -42,6 +45,37 @@ export const betterAuthClient = createAuthClient({
         admin: adminRole,
         member: memberRole,
         staff: staffRole,
+      },
+    }),
+    inferAdditionalFields({
+      user: {
+        createdBy: {
+          type: 'string',
+        },
+        deletedAt: {
+          type: 'date',
+        },
+        deletedBy: {
+          type: 'string',
+        },
+        firstName: {
+          type: 'string',
+        },
+        lastName: {
+          type: 'string',
+        },
+        role: {
+          type: 'string',
+        },
+        status: {
+          type: 'string',
+        },
+        updatedAt: {
+          type: 'date',
+        },
+        updatedBy: {
+          type: 'string',
+        },
       },
     }),
   ],

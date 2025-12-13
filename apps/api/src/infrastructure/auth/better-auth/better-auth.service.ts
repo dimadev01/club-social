@@ -1,6 +1,8 @@
 import { roleStatements, statements } from '@club-social/shared/roles';
-import { Injectable } from '@nestjs/common';
+import { UserStatus } from '@club-social/shared/users';
+import { Inject, Injectable } from '@nestjs/common';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { APIError, createAuthMiddleware } from 'better-auth/api';
 import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal';
 import {
   admin as adminPlugin,
@@ -16,7 +18,12 @@ import {
 import { ConfigService } from '@/infrastructure/config/config.service';
 import { prisma } from '@/infrastructure/database/prisma/prisma.client';
 import { EmailQueueService } from '@/infrastructure/email/email-queue.service';
+import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import {
+  USER_REPOSITORY_PROVIDER,
+  type UserRepository,
+} from '@/users/domain/user.repository';
 
 const ac = createAccessControl({
   ...defaultStatements,
@@ -63,6 +70,12 @@ export const defaultConfig = {
         staff: staffRole,
       },
     }),
+    magicLink({
+      disableSignUp: true,
+      sendMagicLink: async (data) => {
+        console.log(data);
+      },
+    }),
   ],
   user: {
     additionalFields: {
@@ -94,6 +107,10 @@ export const defaultConfig = {
         required: true,
         type: 'string',
       },
+      updatedAt: {
+        required: true,
+        type: 'date',
+      },
       updatedBy: {
         required: true,
         type: 'string',
@@ -112,17 +129,7 @@ export const createBetterAuth = (config?: BetterAuthOptions) =>
  * This needs to be named `auth` because the `@better-auth/cli` expects
  * this variable name. See https://www.better-auth.com/docs/concepts/cli
  */
-export const auth = createBetterAuth({
-  plugins: [
-    ...(defaultConfig.plugins ?? []),
-    magicLink({
-      disableSignUp: true,
-      sendMagicLink: async ({ email, url }) => {
-        console.log({ email, url });
-      },
-    }),
-  ],
-});
+export const auth = createBetterAuth();
 
 @Injectable()
 export class BetterAuthService {
@@ -135,17 +142,80 @@ export class BetterAuthService {
   public constructor(
     private readonly configService: ConfigService,
     private readonly emailQueueService: EmailQueueService,
+    @Inject(USER_REPOSITORY_PROVIDER)
+    private readonly userRepository: UserRepository,
   ) {
     this._auth = createBetterAuth({
+      emailVerification: {
+        sendVerificationEmail: async (data) => {
+          console.log(data);
+        },
+      },
+      hooks: {
+        before: createAuthMiddleware(async (ctx) => {
+          if (ctx.path === '/sign-in/magic-link') {
+            await this.verifySignIn(ctx.body.email);
+          }
+        }),
+      },
       plugins: [
         ...(defaultConfig.plugins ?? []),
         magicLink({
           disableSignUp: true,
-          sendMagicLink: ({ email, url }) =>
-            this.emailQueueService.magicLink({ email, url }),
+          sendMagicLink: (data) =>
+            this.emailQueueService.magicLink({
+              email: data.email,
+              url: data.url,
+            }),
         }),
       ],
       trustedOrigins: this.configService.trustedOrigins,
+      user: {
+        ...defaultConfig.user,
+        changeEmail: {
+          enabled: true,
+        },
+      },
     });
+  }
+
+  private async verifySignIn(email: string) {
+    const emailResult = Email.create(email);
+
+    if (emailResult.isErr()) {
+      throw new APIError('BAD_REQUEST', {
+        message: emailResult.error.message,
+      });
+    }
+
+    const user = await this.userRepository.findUniqueByEmail(emailResult.value);
+
+    if (!user) {
+      throw new APIError('BAD_REQUEST', {
+        code: 'USER_NOT_FOUND',
+        message: 'Usuario no encontrado',
+      });
+    }
+
+    if (user.deletedAt) {
+      throw new APIError('BAD_REQUEST', {
+        code: 'USER_NOT_FOUND',
+        message: 'Usuario no encontrado',
+      });
+    }
+
+    if (user.status === UserStatus.INACTIVE) {
+      throw new APIError('BAD_REQUEST', {
+        code: 'USER_INACTIVE',
+        message: 'Usuario inactivo',
+      });
+    }
+
+    if (user.banned) {
+      throw new APIError('BAD_REQUEST', {
+        code: 'USER_BANNED',
+        message: 'Usuario inactivo',
+      });
+    }
   }
 }

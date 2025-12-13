@@ -6,6 +6,7 @@ import { ProtectedRoute } from '@/auth/ProtectedRoute';
 import { PublicRoute } from '@/auth/PublicRoute';
 import { NotFound } from '@/components/NotFound';
 import { Home } from '@/home/HomePage';
+import { ProfilePage } from '@/profile/ProfilePage';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { UserDetailPage } from '@/users/UserDetailPage';
 import { UserListPage } from '@/users/UserListPage';
@@ -32,6 +33,7 @@ export function AppRoutes() {
             element={<UserDetailPage />}
             path={`${APP_ROUTES.USER_LIST}/:id`}
           />
+          <Route element={<ProfilePage />} path={APP_ROUTES.PROFILE} />
           <Route element={<LogoutPage />} path={APP_ROUTES.LOGOUT} />
         </Route>
 

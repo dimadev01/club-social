@@ -10,6 +10,7 @@ export const APP_ROUTES = {
   MOVEMENT_NEW: '/movements/new',
   PAYMENT_LIST: '/payments',
   PAYMENT_NEW: '/payments/new',
+  PROFILE: '/profile',
   USER_DETAIL: '/users/:id',
   USER_LIST: '/users',
   USER_NEW: '/users/new',

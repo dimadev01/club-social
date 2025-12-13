@@ -5,12 +5,13 @@ import { BetterAuthService } from '@/infrastructure/auth/better-auth/better-auth
 import { EmailModule } from '@/infrastructure/email/email.module';
 import { AuthController } from '@/shared/presentation/auth/auth.controller';
 import { AuthGuard } from '@/shared/presentation/auth/auth.guard';
+import { UsersModule } from '@/users/user.module';
 
 @Global()
 @Module({
   controllers: [AuthController],
   exports: [BetterAuthService],
-  imports: [EmailModule],
+  imports: [EmailModule, UsersModule],
   providers: [
     BetterAuthService,
     AuthGuard,

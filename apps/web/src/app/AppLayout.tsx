@@ -7,6 +7,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import {
+  Avatar,
   Button,
   Flex,
   Grid,
@@ -20,6 +21,7 @@ import { type PropsWithChildren, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
+import { useUser } from '@/auth/useUser';
 import { MenuThemeSwitcher } from '@/components/MenuThemeSwitcher';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -32,8 +34,10 @@ export function AppLayout({ children }: PropsWithChildren) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useLocalStorage<boolean>(
     'is-sidebar-collapsed',
-    false,
+    true,
   );
+
+  const user = useUser();
 
   const permissions = usePermissions();
 
@@ -107,6 +111,18 @@ export function AppLayout({ children }: PropsWithChildren) {
             src="/club-social-logo.png"
           />
 
+          <Space align="center" className="mb-8 px-6" vertical>
+            <Avatar className="text-center" size="default">
+              {user.firstName.charAt(0)}
+              {user.lastName.charAt(0)}
+            </Avatar>
+            {!collapsed && (
+              <Typography.Text>
+                Hola {user.firstName} {user.lastName}
+              </Typography.Text>
+            )}
+          </Space>
+
           <Menu
             className="border-e-0"
             items={menuItems}
@@ -122,6 +138,11 @@ export function AppLayout({ children }: PropsWithChildren) {
             className="mt-auto border-e-0"
             items={[
               {
+                icon: <UserOutlined />,
+                key: APP_ROUTES.PROFILE,
+                label: 'Mi Perfil',
+              },
+              {
                 icon: <LogoutOutlined />,
                 key: APP_ROUTES.LOGOUT,
                 label: 'Cerrar sesión',
@@ -129,8 +150,10 @@ export function AppLayout({ children }: PropsWithChildren) {
             ]}
             mode="inline"
             onClick={({ key }) => {
+              setSelectedKeys([key]);
               navigate(key);
             }}
+            selectedKeys={selectedKeys}
           />
         </Flex>
       </Layout.Sider>
