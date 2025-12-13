@@ -1,0 +1,81 @@
+import { Injectable } from '@nestjs/common';
+
+import {
+  UserFindManyArgs,
+  UserWhereInput,
+} from '@/infrastructure/database/prisma/generated/models';
+import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import {
+  PaginatedRequestParams,
+  PaginatedResponse,
+} from '@/shared/domain/types';
+import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+import { MemberEntity } from '../domain/entities/member.entity';
+import { MemberRepository } from '../domain/member.repository';
+import { PrismaMemberMapper } from './prisma-member.mapper';
+
+@Injectable()
+export class PrismaMemberRepository implements MemberRepository {
+  public constructor(
+    private readonly prismaService: PrismaService,
+    private readonly mapper: PrismaMemberMapper,
+  ) {}
+
+  public async findOneById(id: UniqueId): Promise<MemberEntity | null> {
+    const user = await this.prismaService.user.findUnique({
+      where: { deletedAt: null, id: id.value },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.mapper.toDomain(user);
+  }
+
+  public async findOneByIdOrThrow(id: UniqueId): Promise<MemberEntity> {
+    const user = await this.prismaService.user.findUniqueOrThrow({
+      where: { deletedAt: null, id: id.value },
+    });
+
+    return this.mapper.toDomain(user);
+  }
+
+  public async findPaginated(
+    params: PaginatedRequestParams,
+  ): Promise<PaginatedResponse<MemberEntity>> {
+    const where: UserWhereInput = {
+      deletedAt: null,
+    };
+
+    const query: UserFindManyArgs = {
+      skip: (params.page - 1) * params.pageSize,
+      take: params.pageSize,
+      where,
+    };
+
+    const [users, total] = await Promise.all([
+      this.prismaService.user.findMany(query),
+      this.prismaService.user.count({ where }),
+    ]);
+
+    return {
+      data: users.map((user) => this.mapper.toDomain(user)),
+      total,
+    };
+  }
+
+  public async findUniqueByEmail(email: Email): Promise<MemberEntity | null> {
+    const user = await this.prismaService.user.findUnique({
+      where: { deletedAt: null, email: email.value },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.mapper.toDomain(user);
+  }
+}

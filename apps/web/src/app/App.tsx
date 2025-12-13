@@ -84,6 +84,7 @@ const getThemeConfig = ({
 
 export function App() {
   const prefersDark = useMedia('(prefers-color-scheme: dark)');
+
   const [themeMode = APP_THEME_MODE.AUTO, setThemeMode] =
     useLocalStorage<AppThemeMode>('theme', APP_THEME_MODE.AUTO);
 
@@ -103,7 +104,7 @@ export function App() {
                 <AppRoutes />
               </AppContext.Provider>
               <ReactQueryDevtools
-                buttonPosition="top-right"
+                buttonPosition="top-left"
                 initialIsOpen={false}
               />
             </Alert.ErrorBoundary>

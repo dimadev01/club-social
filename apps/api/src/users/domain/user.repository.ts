@@ -1,8 +1,8 @@
-import type {
+import {
   PaginatedRepository,
   ReadableRepository,
-} from '../../shared/domain/repository';
-import type { Email } from '../../shared/domain/value-objects/email/email.vo';
+} from '@/shared/domain/repository';
+import { Email } from '@/shared/domain/value-objects/email/email.vo';
 
 import { UserEntity } from './entities/user.entity';
 
