@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { useLocalStorage } from 'react-use';
@@ -35,6 +36,7 @@ export function App() {
           <AppRoutes />
         </AntProvider>
       </AppContext.Provider>
+      <ReactQueryDevtools buttonPosition="top-right" initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

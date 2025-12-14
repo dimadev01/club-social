@@ -19,10 +19,10 @@
       "require": "./dist/members/index.js",
       "import": "./dist/members/index.mjs"
     },
-    "./shared": {
-      "types": "./src/shared/index.ts",
-      "require": "./dist/shared/index.js",
-      "import": "./dist/shared/index.mjs"
+    "./types": {
+      "types": "./src/types/index.ts",
+      "require": "./dist/types/index.js",
+      "import": "./dist/types/index.mjs"
     }
   },
   "scripts": {

@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from '@club-social/shared/shared';
+import type { PaginatedResponse } from '@club-social/shared/types';
 
 import {
   FileExcelOutlined,
@@ -13,6 +13,7 @@ import {
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Space, Typography } from 'antd';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
@@ -23,16 +24,33 @@ import { Page, PageContent, PageHeader, PageTitle } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { usePermissions } from '@/users/use-permissions';
 
+interface TableStatus {
+  page: number;
+  pageSize: number;
+}
+
 export function MemberListPage() {
   const navigate = useNavigate();
   const { message } = App.useApp();
   const permissions = usePermissions();
 
+  const [tableStatus, setTableStatus] = useState<TableStatus>({
+    page: 1,
+    pageSize: 20,
+  });
+
   const membersQuery = useQuery({
     enabled: permissions.members.list,
     placeholderData: keepPreviousData,
-    queryFn: () => $fetch<PaginatedResponse<MemberDto>>('/members/paginated'),
-    queryKey: ['members'],
+    queryFn: () =>
+      $fetch<PaginatedResponse<MemberDto>>('/members/paginated', {
+        query: {
+          page: tableStatus.page,
+          pageSize: tableStatus.pageSize,
+          sort: [],
+        },
+      }),
+    queryKey: ['members', tableStatus],
   });
 
   if (membersQuery.error) {
@@ -75,6 +93,15 @@ export function MemberListPage() {
         <Table<MemberDto>
           dataSource={membersQuery.data?.data}
           loading={membersQuery.isFetching}
+          pagination={{
+            current: tableStatus.page,
+            onChange: (page, pageSize) => {
+              console.log(page, pageSize);
+              setTableStatus({ page, pageSize });
+            },
+            pageSize: tableStatus.pageSize,
+            total: membersQuery.data?.total,
+          }}
           scroll={{ x: 'max-content', y: 800 }}
         >
           <Table.Column<MemberDto>

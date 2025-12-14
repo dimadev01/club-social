@@ -142,6 +142,6 @@ export class MemberEntity extends Entity<MemberEntity> {
     this._sex = props.sex;
     this.markAsUpdated(props.updatedBy);
 
-    this.addEvent(new MemberUpdatedEvent(this, props));
+    this.addEvent(new MemberUpdatedEvent(this));
   }
 }

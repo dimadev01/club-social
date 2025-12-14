@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { MemberCreatedHandler } from '@/infrastructure/events/member-created.handler';
-import { MemberUpdatedHandler } from '@/infrastructure/events/member-updated.handler';
 import { UsersModule } from '@/users/user.module';
 
 import { CreateMemberUseCase } from './application/create-member/create-member.use-case';
@@ -13,7 +11,7 @@ import { MembersController } from './presentation/member.controller';
 
 @Module({
   controllers: [MembersController],
-  exports: [MEMBER_REPOSITORY_PROVIDER],
+  exports: [MEMBER_REPOSITORY_PROVIDER, CreateMemberUseCase],
   imports: [UsersModule],
   providers: [
     CreateMemberUseCase,
@@ -23,8 +21,6 @@ import { MembersController } from './presentation/member.controller';
       useClass: PrismaMemberRepository,
     },
     PrismaMemberMapper,
-    MemberCreatedHandler,
-    MemberUpdatedHandler,
   ],
 })
 export class MembersModule {}

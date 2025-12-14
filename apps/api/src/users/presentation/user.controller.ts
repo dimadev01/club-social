@@ -18,8 +18,8 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
-import { PaginatedDto } from '@/shared/presentation/dto/paginated.dto';
-import { IdDto } from '@/shared/presentation/dto/param-id.dto';
+import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
+import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateUserUseCase } from '../application/create-user/create-user.use-case';
 import { UpdateUserUseCase } from '../application/update-user/update-user.use-case';
@@ -47,7 +47,7 @@ export class UsersController extends BaseController {
 
   @Patch(':id')
   public async update(
-    @Param() request: IdDto,
+    @Param() request: ParamIdDto,
     @Body() body: UpdateUserRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -67,7 +67,7 @@ export class UsersController extends BaseController {
   public async create(
     @Body() createUserDto: CreateUserRequestDto,
     @Session() session: AuthSession,
-  ): Promise<IdDto> {
+  ): Promise<ParamIdDto> {
     const { id } = this.handleResult(
       await this.createUserUseCase.execute({
         createdBy: session.user.name,
@@ -83,10 +83,11 @@ export class UsersController extends BaseController {
 
   @ApiPaginatedResponse(UserResponseDto)
   @Get('paginated')
-  public async getPaginated(): Promise<PaginatedDto<UserResponseDto>> {
+  public async getPaginated(): Promise<PaginatedResponseDto<UserResponseDto>> {
     const users = await this.userRepository.findPaginated({
       page: 1,
       pageSize: 10,
+      sort: [],
     });
 
     return {
@@ -97,7 +98,7 @@ export class UsersController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() request: IdDto,
+    @Param() request: ParamIdDto,
   ): Promise<null | UserResponseDto> {
     const user = await this.userRepository.findOneById(
       UniqueId.raw({ value: request.id }),

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Session,
 } from '@nestjs/common';
 
@@ -19,8 +20,9 @@ import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
-import { PaginatedDto } from '@/shared/presentation/dto/paginated.dto';
-import { IdDto } from '@/shared/presentation/dto/param-id.dto';
+import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
+import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
+import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 import {
   USER_REPOSITORY_PROVIDER,
@@ -55,7 +57,7 @@ export class MembersController extends BaseController {
 
   @Patch(':id')
   public async update(
-    @Param() request: IdDto,
+    @Param() request: ParamIdDto,
     @Body() body: UpdateMemberRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -91,7 +93,7 @@ export class MembersController extends BaseController {
   public async create(
     @Body() createMemberDto: CreateMemberRequestDto,
     @Session() session: AuthSession,
-  ): Promise<IdDto> {
+  ): Promise<ParamIdDto> {
     const { id } = this.handleResult(
       await this.createMemberUseCase.execute({
         address: createMemberDto.address
@@ -124,10 +126,13 @@ export class MembersController extends BaseController {
 
   @ApiPaginatedResponse(MemberResponseDto)
   @Get('paginated')
-  public async getPaginated(): Promise<PaginatedDto<MemberResponseDto>> {
+  public async getPaginated(
+    @Query() query: PaginatedRequestDto,
+  ): Promise<PaginatedResponseDto<MemberResponseDto>> {
     const members = await this.memberRepository.findPaginated({
-      page: 1,
-      pageSize: 10,
+      page: query.page,
+      pageSize: query.pageSize,
+      sort: query.sort,
     });
 
     const users = await this.userRepository.findManyByIds(
@@ -147,7 +152,7 @@ export class MembersController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() request: IdDto,
+    @Param() request: ParamIdDto,
   ): Promise<MemberResponseDto | null> {
     const member = await this.memberRepository.findOneById(
       UniqueId.raw({ value: request.id }),

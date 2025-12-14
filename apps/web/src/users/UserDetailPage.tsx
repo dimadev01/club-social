@@ -1,4 +1,4 @@
-import type { IdDto } from '@club-social/shared/shared';
+import type { ParamId } from '@club-social/shared/types';
 
 import { CloseOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
 import {
@@ -42,7 +42,7 @@ export function UserDetailPage() {
     queryKey: ['users', id],
   });
 
-  const createUserMutation = useMutation<IdDto, Error, CreateUserDto>({
+  const createUserMutation = useMutation<ParamId, Error, CreateUserDto>({
     mutationFn: (body) => $fetch('users', { body }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['users'] });

@@ -65,6 +65,7 @@ export class UpdateUserUseCase extends UseCase<UserEntity> {
       updatedBy: params.updatedBy,
     });
 
+    await this.userRepository.save(user);
     this.eventPublisher.dispatch(user);
 
     return ok(user);

@@ -28,10 +28,10 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    @Inject(MEMBER_REPOSITORY_PROVIDER)
-    private readonly memberRepository: MemberRepository,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
+    @Inject(MEMBER_REPOSITORY_PROVIDER)
+    private readonly memberRepository: MemberRepository,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -63,6 +63,16 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       return err(new ConflictError('El email ya está en uso'));
     }
 
+    const user = await this.userRepository.findOneByIdOrThrow(member.userId);
+
+    user.updateProfile({
+      email: email.value,
+      firstName: params.firstName,
+      lastName: params.lastName,
+      status: params.status,
+      updatedBy: params.updatedBy,
+    });
+
     member.updateProfile({
       address: params.address,
       birthDate: params.birthDate,
@@ -70,16 +80,15 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       documentID: params.documentID,
       email: email.value,
       fileStatus: params.fileStatus,
-      firstName: params.firstName,
-      lastName: params.lastName,
       maritalStatus: params.maritalStatus,
       nationality: params.nationality,
       phones: params.phones,
       sex: params.sex,
-      status: params.status,
       updatedBy: params.updatedBy,
     });
 
+    await this.userRepository.save(user);
+    await this.memberRepository.save(member);
     this.eventPublisher.dispatch(member);
 
     return ok(member);

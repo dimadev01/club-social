@@ -67,6 +67,7 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
       return err(user.error);
     }
 
+    await this.userRepository.save(user.value);
     this.eventPublisher.dispatch(user.value);
 
     return ok(user.value);

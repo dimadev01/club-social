@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from '@club-social/shared/shared';
+import type { PaginatedResponse } from '@club-social/shared/types';
 
 import {
   FileExcelOutlined,

@@ -1,4 +1,4 @@
-import type { IdDto } from '@club-social/shared/shared';
+import type { ParamId } from '@club-social/shared/types';
 
 import {
   CloseOutlined,
@@ -88,7 +88,7 @@ export function MemberDetailPage() {
     queryKey: ['members', id],
   });
 
-  const createMemberMutation = useMutation<IdDto, Error, CreateMemberDto>({
+  const createMemberMutation = useMutation<ParamId, Error, CreateMemberDto>({
     mutationFn: (body) => $fetch('members', { body }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['members'] });

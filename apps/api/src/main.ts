@@ -47,6 +47,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
+  // app.flushLogs();
   await app.listen(configService.port);
 }
 

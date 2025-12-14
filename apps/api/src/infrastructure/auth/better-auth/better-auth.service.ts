@@ -1,6 +1,5 @@
 import { roleStatements, statements } from '@club-social/shared/roles';
-import { UserStatus } from '@club-social/shared/users';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
 import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal';
@@ -18,12 +17,9 @@ import {
 import { ConfigService } from '@/infrastructure/config/config.service';
 import { prisma } from '@/infrastructure/database/prisma/prisma.client';
 import { EmailQueueService } from '@/infrastructure/email/email-queue.service';
-import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { EntityNotFoundError } from '@/shared/domain/errors/entity-not-found.error';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
-import {
-  USER_REPOSITORY_PROVIDER,
-  type UserRepository,
-} from '@/users/domain/user.repository';
+import { VerifySignInUseCase } from '@/users/application/verify-sign-in/verify-sign-in.use-case';
 
 const ac = createAccessControl({
   ...defaultStatements,
@@ -143,8 +139,7 @@ export class BetterAuthService {
   public constructor(
     private readonly configService: ConfigService,
     private readonly emailQueueService: EmailQueueService,
-    @Inject(USER_REPOSITORY_PROVIDER)
-    private readonly userRepository: UserRepository,
+    private readonly verifySignInUseCase: VerifySignInUseCase,
   ) {
     this._auth = createBetterAuth({
       emailVerification: {
@@ -181,41 +176,17 @@ export class BetterAuthService {
   }
 
   private async verifySignIn(email: string) {
-    const emailResult = Email.create(email);
+    const result = await this.verifySignInUseCase.execute(email);
 
-    if (emailResult.isErr()) {
+    if (result.isErr()) {
+      if (result.error instanceof EntityNotFoundError) {
+        throw new APIError('NOT_FOUND', {
+          message: result.error.message,
+        });
+      }
+
       throw new APIError('BAD_REQUEST', {
-        message: emailResult.error.message,
-      });
-    }
-
-    const user = await this.userRepository.findUniqueByEmail(emailResult.value);
-
-    if (!user) {
-      throw new APIError('BAD_REQUEST', {
-        code: 'USER_NOT_FOUND',
-        message: 'Usuario no encontrado',
-      });
-    }
-
-    if (user.deletedAt) {
-      throw new APIError('BAD_REQUEST', {
-        code: 'USER_NOT_FOUND',
-        message: 'Usuario no encontrado',
-      });
-    }
-
-    if (user.status === UserStatus.INACTIVE) {
-      throw new APIError('BAD_REQUEST', {
-        code: 'USER_INACTIVE',
-        message: 'Usuario inactivo',
-      });
-    }
-
-    if (user.banned) {
-      throw new APIError('BAD_REQUEST', {
-        code: 'USER_BANNED',
-        message: 'Usuario inactivo',
+        message: result.error.message,
       });
     }
   }

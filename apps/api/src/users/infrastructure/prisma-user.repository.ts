@@ -1,3 +1,5 @@
+import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
+import { UserRole } from '@club-social/shared/users';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -5,19 +7,15 @@ import {
   UserWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
-import {
-  PaginatedRequestParams,
-  PaginatedResponse,
-} from '@/shared/domain/types';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { UserEntity } from '../domain/entities/user.entity';
-import { UserRepository } from '../domain/user.repository';
+import { UserReadableRepository } from '../domain/user.repository';
 import { PrismaUserMapper } from './prisma-user.mapper';
 
 @Injectable()
-export class PrismaUserRepository implements UserRepository {
+export class PrismaUserRepository implements UserReadableRepository {
   public constructor(
     private readonly prismaService: PrismaService,
     private readonly mapper: PrismaUserMapper,
@@ -55,10 +53,11 @@ export class PrismaUserRepository implements UserRepository {
   }
 
   public async findPaginated(
-    params: PaginatedRequestParams,
+    params: PaginatedRequest,
   ): Promise<PaginatedResponse<UserEntity>> {
     const where: UserWhereInput = {
       deletedAt: null,
+      role: UserRole.STAFF,
     };
 
     const query: UserFindManyArgs = {

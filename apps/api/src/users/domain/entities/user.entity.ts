@@ -4,7 +4,6 @@ import { UserStatus } from '@club-social/shared/users';
 import type { BaseEntityProps } from '@/shared/domain/entity';
 
 import { Entity } from '@/shared/domain/entity';
-import { InternalServerError } from '@/shared/domain/errors/internal-server.error';
 import { Guard } from '@/shared/domain/guards';
 import { ok, Result } from '@/shared/domain/result';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
@@ -89,9 +88,9 @@ export class UserEntity extends Entity<UserEntity> {
     Guard.string(props.firstName);
     Guard.string(props.lastName);
 
-    if (props.role === UserRole.ADMIN) {
-      throw new InternalServerError('Admin role is not allowed');
-    }
+    // if (props.role === UserRole.ADMIN) {
+    //   throw new InternalServerError('Admin role is not allowed');
+    // }
 
     const user = new UserEntity({
       banExpires: props.banExpires,

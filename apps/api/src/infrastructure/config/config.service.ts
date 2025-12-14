@@ -1,8 +1,12 @@
 import { Configuration, Value } from '@itgorillaz/configify';
-import { IsNotEmpty, IsUrl } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsUrl } from 'class-validator';
 
 @Configuration()
 export class ConfigService {
+  @IsEmail()
+  @Value('ADMIN_USER_EMAIL')
+  public readonly adminUserEmail: string;
+
   @IsNotEmpty()
   @Value('APP_DISPLAY_NAME')
   public readonly appDisplayName: string;

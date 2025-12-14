@@ -1,3 +1,4 @@
+import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -5,10 +6,6 @@ import {
   MemberWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
-import {
-  PaginatedRequestParams,
-  PaginatedResponse,
-} from '@/shared/domain/types';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MemberEntity } from '../domain/entities/member.entity';
@@ -54,7 +51,7 @@ export class PrismaMemberRepository implements MemberRepository {
   }
 
   public async findPaginated(
-    params: PaginatedRequestParams,
+    params: PaginatedRequest,
   ): Promise<PaginatedResponse<MemberEntity>> {
     const where: MemberWhereInput = {
       deletedAt: null,

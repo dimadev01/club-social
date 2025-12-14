@@ -5,6 +5,10 @@ import type { Result } from '@/shared/domain/result';
 
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import {
+  MEMBER_REPOSITORY_PROVIDER,
+  type MemberRepository,
+} from '@/members/domain/member.repository';
+import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
@@ -27,6 +31,8 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
     protected readonly logger: AppLogger,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
+    @Inject(MEMBER_REPOSITORY_PROVIDER)
+    private readonly memberRepository: MemberRepository,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -91,6 +97,8 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       return err(member.error);
     }
 
+    await this.userRepository.save(user.value);
+    await this.memberRepository.save(member.value);
     this.eventPublisher.dispatch(member.value);
 
     return ok(member.value);

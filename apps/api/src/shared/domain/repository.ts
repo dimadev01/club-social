@@ -1,8 +1,9 @@
-import type { PaginatedRequestParams, PaginatedResponse } from './types';
+import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
+
 import type { UniqueId } from './value-objects/unique-id/unique-id.vo';
 
 export interface PaginatedRepository<T> {
-  findPaginated(params: PaginatedRequestParams): Promise<PaginatedResponse<T>>;
+  findPaginated(params: PaginatedRequest): Promise<PaginatedResponse<T>>;
 }
 
 export interface ReadableRepository<T> {
