@@ -181,6 +181,7 @@ export class MembersController extends BaseController {
       id: member.id.value,
       lastName: user.lastName,
       maritalStatus: member.maritalStatus,
+      name: user.name,
       nationality: member.nationality,
       phones: member.phones,
       sex: member.sex,

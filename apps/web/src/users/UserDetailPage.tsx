@@ -14,10 +14,10 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
-import { Page, PageContent } from '@/components/Page';
 import { $fetch } from '@/shared/lib/fetch';
 import { useMutation } from '@/shared/lib/useMutation';
 import { useQuery } from '@/shared/lib/useQuery';
+import { Page, PageContent } from '@/ui/Page';
 
 interface FormSchema {
   email: string;

@@ -41,13 +41,13 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
-import { NotFound } from '@/components/NotFound';
-import { Page, PageContent } from '@/components/Page';
-import { Row } from '@/components/Row';
-import { Select } from '@/components/Select';
 import { $fetch } from '@/shared/lib/fetch';
 import { useMutation } from '@/shared/lib/useMutation';
 import { useQuery } from '@/shared/lib/useQuery';
+import { NotFound } from '@/ui/NotFound';
+import { Page, PageContent } from '@/ui/Page';
+import { Row } from '@/ui/Row';
+import { Select } from '@/ui/Select';
 import { usePermissions } from '@/users/use-permissions';
 
 interface FormSchema {
@@ -119,7 +119,7 @@ export function MemberDetailPage() {
           zipCode: memberQuery.data.address?.zipCode ?? '',
         },
         birthDate: memberQuery.data.birthDate
-          ? dayjs(memberQuery.data.birthDate)
+          ? dayjs.utc(memberQuery.data.birthDate)
           : null,
         category: memberQuery.data.category,
         documentID: memberQuery.data.documentID ?? '',
@@ -127,8 +127,9 @@ export function MemberDetailPage() {
         fileStatus: memberQuery.data.fileStatus,
         firstName: memberQuery.data.firstName,
         lastName: memberQuery.data.lastName,
+        maritalStatus: memberQuery.data.maritalStatus ?? undefined,
         nationality: memberQuery.data.nationality ?? undefined,
-        phones: memberQuery.data.phones ?? [],
+        phones: memberQuery.data.phones,
         sex: memberQuery.data.sex ?? undefined,
         status: memberQuery.data.status,
       });
@@ -144,7 +145,9 @@ export function MemberDetailPage() {
           street: values.address.street || null,
           zipCode: values.address.zipCode || null,
         },
-        birthDate: values.birthDate ? values.birthDate.toISOString() : null,
+        birthDate: values.birthDate
+          ? values.birthDate.utc().toISOString()
+          : null,
         category: values.category,
         documentID: values.documentID || null,
         email: values.email,
@@ -165,7 +168,9 @@ export function MemberDetailPage() {
           street: values.address.street || null,
           zipCode: values.address.zipCode || null,
         },
-        birthDate: values.birthDate ? values.birthDate.toISOString() : null,
+        birthDate: values.birthDate
+          ? values.birthDate.utc().toISOString()
+          : null,
         category: values.category,
         documentID: values.documentID || null,
         email: values.email,
@@ -185,8 +190,13 @@ export function MemberDetailPage() {
     createMemberMutation.isPending ||
     updateMemberMutation.isPending;
 
-  if (!permissions.members.create && !id) return <NotFound />;
-  if (!permissions.members.update && id) return <NotFound />; // Or read-only view? Assuming edit rights for now.
+  if (!permissions.members.create && !id) {
+    return <NotFound />;
+  }
+
+  if (!permissions.members.update && id) {
+    return <NotFound />;
+  }
 
   return (
     <Page>
@@ -248,8 +258,9 @@ export function MemberDetailPage() {
               fileStatus: FileStatus.PENDING,
               firstName: '',
               lastName: '',
+              maritalStatus: undefined,
               nationality: undefined,
-              phones: undefined,
+              phones: [],
               sex: undefined,
             }}
             layout="vertical"
@@ -336,7 +347,7 @@ export function MemberDetailPage() {
                       name="documentID"
                       rules={[{ required: false, whitespace: true }]}
                     >
-                      <Input placeholder="1234567890" />
+                      <Input placeholder="12.345.678" />
                     </Form.Item>
 
                     <Form.Item<FormSchema>
@@ -422,7 +433,7 @@ export function MemberDetailPage() {
               <Col md={12} xs={24}>
                 <Space className="flex" size="middle" vertical>
                   <Form.List name="phones">
-                    {(fields, { add, remove }, { errors }) => (
+                    {(fields, { add, remove }) => (
                       <Card
                         extra={
                           <Button
@@ -439,25 +450,25 @@ export function MemberDetailPage() {
                             label={`Teléfono ${index + 1}`}
                             required
                           >
-                            <Form.Item
-                              {...field}
-                              key={field.key}
-                              label={`Teléfono ${index + 1}`}
-                              noStyle
-                              rules={[{ required: true }, { whitespace: true }]}
-                            >
-                              <Space.Compact block>
+                            <Space.Compact block>
+                              <Form.Item
+                                {...field}
+                                key={field.key}
+                                label={`Teléfono ${index + 1}`}
+                                noStyle
+                                rules={[
+                                  { required: true },
+                                  { whitespace: true },
+                                ]}
+                              >
                                 <Input placeholder="+54 9 11 1234-5678" />
-                                <Button
-                                  icon={<DeleteOutlined />}
-                                  onClick={() => remove(field.name)}
-                                />
-                              </Space.Compact>
-                            </Form.Item>
-                            <Form.ErrorList
-                              className="text-red-500"
-                              errors={errors}
-                            />
+                              </Form.Item>
+
+                              <Button
+                                icon={<DeleteOutlined />}
+                                onClick={() => remove(field.name)}
+                              />
+                            </Space.Compact>
                           </Form.Item>
                         ))}
 

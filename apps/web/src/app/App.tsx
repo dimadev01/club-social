@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { useLocalStorage } from 'react-use';
 
 import { AntProvider } from './AntProvider';
@@ -8,6 +9,7 @@ import { AppRoutes } from './AppRoutes';
 import 'dayjs/locale/es';
 
 dayjs.locale('es');
+dayjs.extend(utc);
 
 const queryClient = new QueryClient({
   defaultOptions: {

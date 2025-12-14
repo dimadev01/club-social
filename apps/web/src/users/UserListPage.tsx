@@ -11,14 +11,15 @@ import {
   UserStatusLabel,
 } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Table, Typography } from 'antd';
+import { App, Button, Dropdown, Space, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
-import { NotFound } from '@/components/NotFound';
-import { Page, PageContent, PageHeader, PageTitle } from '@/components/Page';
 import { $fetch } from '@/shared/lib/fetch';
 import { useQuery } from '@/shared/lib/useQuery';
+import { NotFound } from '@/ui/NotFound';
+import { Page, PageContent, PageHeader, PageTitle } from '@/ui/Page';
+import { Table } from '@/ui/Table/Table';
 
 import { usePermissions } from './use-permissions';
 
@@ -73,8 +74,6 @@ export function UserListPage() {
         <Table<UserDto>
           dataSource={usersQuery.data?.data}
           loading={usersQuery.isFetching}
-          rowKey="id"
-          scroll={{ x: 'max-content', y: 800 }}
         >
           <Table.Column<UserDto>
             dataIndex="id"

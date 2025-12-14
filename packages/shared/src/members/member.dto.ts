@@ -40,6 +40,7 @@ export interface MemberDto {
   id: string;
   lastName: string;
   maritalStatus: MaritalStatus | null;
+  name: string;
   nationality: MemberNationality | null;
   phones: string[];
   sex: MemberSex | null;

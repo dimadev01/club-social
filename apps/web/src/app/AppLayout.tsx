@@ -22,7 +22,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
 import { useUser } from '@/auth/useUser';
-import { MenuThemeSwitcher } from '@/components/MenuThemeSwitcher';
+import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
 import { usePermissions } from '@/users/use-permissions';
 
 import { APP_ROUTES } from './app.enum';

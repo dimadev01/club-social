@@ -1,6 +1,6 @@
 import { Spin } from 'antd';
 
-import { CenteredLayout } from '@/components/CenteredLayout';
+import { CenteredLayout } from '@/ui/CenteredLayout';
 
 export function AppLoading() {
   return (

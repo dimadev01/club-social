@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import { PageLoader } from '@/components/Page';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { PageLoader } from '@/ui/Page';
 
 export function LogoutPage() {
   useEffect(() => {

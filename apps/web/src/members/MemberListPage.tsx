@@ -5,17 +5,22 @@ import {
   MoreOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
-import { MemberCategory, type MemberDto } from '@club-social/shared/members';
+import {
+  MemberCategory,
+  MemberCategoryLabel,
+  type MemberDto,
+} from '@club-social/shared/members';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Table, Tag, Typography } from 'antd';
+import { App, Button, Dropdown, Space, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
-import { NotFound } from '@/components/NotFound';
-import { Page, PageContent, PageHeader, PageTitle } from '@/components/Page';
 import { $fetch } from '@/shared/lib/fetch';
 import { useQuery } from '@/shared/lib/useQuery';
+import { NotFound } from '@/ui/NotFound';
+import { Page, PageContent, PageHeader, PageTitle } from '@/ui/Page';
+import { Table } from '@/ui/Table/Table';
 import { usePermissions } from '@/users/use-permissions';
 
 export function MemberListPage() {
@@ -70,31 +75,23 @@ export function MemberListPage() {
         <Table<MemberDto>
           dataSource={membersQuery.data?.data}
           loading={membersQuery.isFetching}
-          rowKey="id"
           scroll={{ x: 'max-content', y: 800 }}
         >
           <Table.Column<MemberDto>
-            dataIndex="firstName"
-            render={(_, record) => (
-              <Typography.Text copyable={{ text: record.id }}>
-                <Link to={`${APP_ROUTES.MEMBER_LIST}/${record.id}`}>
-                  {record.firstName} {record.lastName}
+            dataIndex="id"
+            render={(id, record) => (
+              <Typography.Text copyable={{ text: id }}>
+                <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>
+                  {record.name}
                 </Link>
               </Typography.Text>
             )}
-            title="Nombre"
+            title="Socio"
           />
           <Table.Column<MemberDto>
-            dataIndex="email"
-            render={(text) => (
-              <Typography.Text copyable={{ text }}>{text}</Typography.Text>
-            )}
-            title="Email"
-          />
-          <Table.Column<MemberDto> dataIndex="documentID" title="Documento" />
-          <Table.Column<MemberDto>
+            align="center"
             dataIndex="category"
-            render={(value: MemberCategory) => <Tag>{value}</Tag>}
+            render={(value: MemberCategory) => MemberCategoryLabel[value]}
             title="Categoría"
           />
           <Table.Column<MemberDto>
@@ -102,6 +99,13 @@ export function MemberListPage() {
             dataIndex="status"
             render={(value: UserStatus) => UserStatusLabel[value]}
             title="Estado"
+          />
+          <Table.Column<MemberDto>
+            dataIndex="email"
+            render={(text) => (
+              <Typography.Text copyable={{ text }}>{text}</Typography.Text>
+            )}
+            title="Email"
           />
         </Table>
       </PageContent>

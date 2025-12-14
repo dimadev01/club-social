@@ -76,6 +76,9 @@ export function AntProvider({ children }: { children: React.ReactNode }) {
             optionFilterProp: 'label',
           },
         }}
+        table={{
+          rowKey: 'id',
+        }}
         theme={themeConfig}
       >
         <App>

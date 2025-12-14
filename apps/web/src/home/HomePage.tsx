@@ -1,4 +1,4 @@
-import { Page, PageContent } from '@/components/Page';
+import { Page, PageContent } from '@/ui/Page';
 
 export function Home() {
   return (

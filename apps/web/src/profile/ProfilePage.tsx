@@ -2,8 +2,8 @@ import { MailOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
 import { App, Button, Card, Divider, Form, Input, Space } from 'antd';
 
 import { useUser } from '@/auth/useUser';
-import { Page, PageContent } from '@/components/Page';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { Page, PageContent } from '@/ui/Page';
 
 interface EmailFormSchema {
   email: string;

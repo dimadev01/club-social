@@ -2,8 +2,8 @@ import { LoginOutlined } from '@ant-design/icons';
 import { Alert, App, Button, Card, Flex, Form, Image, Input } from 'antd';
 import { useState } from 'react';
 
-import { MenuThemeSwitcher } from '@/components/MenuThemeSwitcher';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
 
 interface FormSchema {
   email: string;

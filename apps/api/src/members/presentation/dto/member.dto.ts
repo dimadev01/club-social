@@ -20,6 +20,7 @@ export class MemberResponseDto implements MemberDto {
   public id: string;
   public lastName: string;
   public maritalStatus: MaritalStatus | null;
+  public name: string;
   public nationality: MemberNationality | null;
   public phones: string[];
   public sex: MemberSex | null;
