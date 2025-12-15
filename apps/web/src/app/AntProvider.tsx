@@ -1,71 +1,64 @@
 import { StyleProvider } from '@ant-design/cssinjs';
-import { Alert, App, ConfigProvider, theme, type ThemeConfig } from 'antd';
+import {
+  Alert,
+  theme as antTheme,
+  App,
+  ConfigProvider,
+  theme,
+  type ThemeConfig,
+} from 'antd';
 import esEs from 'antd/locale/es_ES';
-import { useMemo } from 'react';
 import { useMedia } from 'react-use';
 
 import {
-  APP_THEME_MODE,
   type AppAlgorithm,
-  type AppThemeMode,
+  AppTheme,
+  AppThemeMode,
   useAppContext,
 } from './AppContext';
 
-interface GetAlgorithmParams {
-  prefersDark: boolean;
-  themeMode: AppThemeMode;
-}
-
-const getAlgorithm = ({
-  prefersDark,
-  themeMode,
-}: GetAlgorithmParams): AppAlgorithm => {
-  if (themeMode === APP_THEME_MODE.AUTO) {
-    return prefersDark ? theme.darkAlgorithm : theme.defaultAlgorithm;
-  }
-
-  if (themeMode === APP_THEME_MODE.DARK) {
-    return theme.darkAlgorithm;
-  }
-
-  if (themeMode === APP_THEME_MODE.LIGHT) {
-    return theme.defaultAlgorithm;
-  }
-
-  throw new Error(`Invalid theme mode: ${themeMode}`);
-};
-
-const getThemeConfig = ({
-  algorithm,
-}: {
-  algorithm: AppAlgorithm;
-}): ThemeConfig => ({
-  algorithm,
-  components: {
-    Button: {
-      primaryShadow: 'none',
-    },
-    Layout: {
-      footerPadding: 0,
-    },
-  },
-  token: {
-    colorInfo: '#22883e',
-    colorPrimary: '#22883e',
-  },
-  zeroRuntime: true,
-});
-
 export function AntProvider({ children }: { children: React.ReactNode }) {
+  const { appThemeMode, setThemeMode } = useAppContext();
   const prefersDark = useMedia('(prefers-color-scheme: dark)');
+  const { token } = theme.useToken();
 
-  const { themeMode } = useAppContext();
+  let algorithm: AppAlgorithm;
 
-  const themeConfig: ThemeConfig = useMemo(() => {
-    const algorithm = getAlgorithm({ prefersDark, themeMode });
+  if (appThemeMode === AppThemeMode.AUTO) {
+    algorithm = prefersDark
+      ? antTheme.darkAlgorithm
+      : antTheme.defaultAlgorithm;
+    setThemeMode(prefersDark ? AppTheme.DARK : AppTheme.LIGHT);
+  } else if (appThemeMode === AppThemeMode.DARK) {
+    algorithm = antTheme.darkAlgorithm;
+    setThemeMode(AppTheme.DARK);
+  } else if (appThemeMode === AppThemeMode.LIGHT) {
+    algorithm = antTheme.defaultAlgorithm;
+    setThemeMode(AppTheme.LIGHT);
+  } else {
+    throw new Error(`Invalid theme mode: ${appThemeMode}`);
+  }
 
-    return getThemeConfig({ algorithm });
-  }, [themeMode, prefersDark]);
+  const themeConfig: ThemeConfig = {
+    algorithm,
+    components: {
+      Button: {
+        primaryShadow: 'none',
+      },
+      Layout: {
+        footerPadding: 0,
+        lightSiderBg: token.Layout?.bodyBg,
+        lightTriggerBg: token.Layout?.bodyBg,
+        siderBg: token.Layout?.bodyBg,
+        triggerBg: token.Layout?.bodyBg,
+      },
+    },
+    token: {
+      colorInfo: '#22883e',
+      colorPrimary: '#22883e',
+    },
+    zeroRuntime: true,
+  };
 
   return (
     <StyleProvider layer>

@@ -1,12 +1,19 @@
 import type { TitleProps } from 'antd/es/typography/Title';
 import type React from 'react';
 
-import { Flex, type FlexProps, Spin, Typography } from 'antd';
+import {
+  Card,
+  type CardProps,
+  Flex,
+  type FlexProps,
+  Spin,
+  Typography,
+} from 'antd';
 
 import { cn } from '@/shared/lib/utils';
 
-export function Page({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div className={cn('h-full p-4 md:p-10', className)} {...props} />;
+export function Page({ className, ...props }: CardProps) {
+  return <Card className={cn('h-full', className)} {...props} />;
 }
 
 export function PageContent({

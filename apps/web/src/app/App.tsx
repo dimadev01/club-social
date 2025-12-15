@@ -5,7 +5,7 @@ import utc from 'dayjs/plugin/utc';
 import { useLocalStorage } from 'react-use';
 
 import { AntProvider } from './AntProvider';
-import { APP_THEME_MODE, AppContext, type AppThemeMode } from './AppContext';
+import { AppContext, AppTheme, AppThemeMode } from './AppContext';
 import { AppRoutes } from './AppRoutes';
 import 'dayjs/locale/es';
 
@@ -26,12 +26,24 @@ const queryClient = new QueryClient({
 });
 
 export function App() {
-  const [themeMode = APP_THEME_MODE.AUTO, setThemeMode] =
-    useLocalStorage<AppThemeMode>('theme', APP_THEME_MODE.AUTO);
+  const [themeMode = AppThemeMode.AUTO, setThemeMode] =
+    useLocalStorage<AppThemeMode>('theme-mode', AppThemeMode.AUTO);
+
+  const [theme = AppTheme.LIGHT, setTheme] = useLocalStorage<AppTheme>(
+    'theme',
+    AppTheme.LIGHT,
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppContext.Provider value={{ setThemeMode, themeMode }}>
+      <AppContext.Provider
+        value={{
+          appThemeMode: themeMode,
+          setAppThemeMode: setThemeMode,
+          setThemeMode: setTheme,
+          themeMode: theme,
+        }}
+      >
         <AntProvider>
           <AppRoutes />
         </AntProvider>

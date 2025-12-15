@@ -9,12 +9,14 @@ import {
 import {
   Avatar,
   Button,
+  ConfigProvider,
   Flex,
   Grid,
   Image,
   Layout,
   Menu,
   Space,
+  theme,
   Typography,
 } from 'antd';
 import { type PropsWithChildren, useState } from 'react';
@@ -26,9 +28,12 @@ import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
 import { usePermissions } from '@/users/use-permissions';
 
 import { APP_ROUTES } from './app.enum';
+import { useAppContext } from './AppContext';
 
 export function AppLayout({ children }: PropsWithChildren) {
   const { sm } = Grid.useBreakpoint();
+  const { themeMode } = useAppContext();
+  const { token } = theme.useToken();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -99,7 +104,7 @@ export function AppLayout({ children }: PropsWithChildren) {
         collapsed={collapsed}
         collapsible
         onCollapse={setCollapsed}
-        theme="light"
+        theme={themeMode}
         zeroWidthTriggerStyle={{ top: 8 }}
       >
         <Flex className="h-full" vertical>
@@ -123,43 +128,56 @@ export function AppLayout({ children }: PropsWithChildren) {
             )}
           </Space>
 
-          <Menu
-            className="border-e-0"
-            items={menuItems}
-            mode="inline"
-            onClick={({ key }) => {
-              setSelectedKeys([key]);
-              navigate(key);
+          <ConfigProvider
+            theme={{
+              components: {
+                Menu: {
+                  darkItemBg: token.Layout?.bodyBg,
+                  itemBg: token.Layout?.bodyBg,
+                },
+              },
             }}
-            selectedKeys={selectedKeys}
-          />
+          >
+            <Menu
+              className="border-e-0"
+              items={menuItems}
+              mode="inline"
+              onClick={({ key }) => {
+                setSelectedKeys([key]);
+                navigate(key);
+              }}
+              selectedKeys={selectedKeys}
+              theme={themeMode}
+            />
 
-          <Menu
-            className="mt-auto border-e-0"
-            items={[
-              {
-                icon: <UserOutlined />,
-                key: APP_ROUTES.PROFILE,
-                label: 'Mi Perfil',
-              },
-              {
-                icon: <LogoutOutlined />,
-                key: APP_ROUTES.LOGOUT,
-                label: 'Cerrar sesión',
-              },
-            ]}
-            mode="inline"
-            onClick={({ key }) => {
-              setSelectedKeys([key]);
-              navigate(key);
-            }}
-            selectedKeys={selectedKeys}
-          />
+            <Menu
+              className="mt-auto border-e-0"
+              items={[
+                {
+                  icon: <UserOutlined />,
+                  key: APP_ROUTES.PROFILE,
+                  label: 'Mi Perfil',
+                },
+                {
+                  icon: <LogoutOutlined />,
+                  key: APP_ROUTES.LOGOUT,
+                  label: 'Cerrar sesión',
+                },
+              ]}
+              mode="inline"
+              onClick={({ key }) => {
+                setSelectedKeys([key]);
+                navigate(key);
+              }}
+              selectedKeys={selectedKeys}
+              theme={themeMode}
+            />
+          </ConfigProvider>
         </Flex>
       </Layout.Sider>
 
       <Layout>
-        <Layout.Content>{children}</Layout.Content>
+        <Layout.Content className="p-4">{children}</Layout.Content>
 
         <Layout.Footer className="p-4">
           <Flex align="center" gap="small" justify="space-between">

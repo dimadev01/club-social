@@ -6,20 +6,17 @@ import {
 } from '@ant-design/icons';
 import { Button, Dropdown } from 'antd';
 
-import {
-  APP_THEME_MODE,
-  type AppThemeMode,
-  useAppContext,
-} from '@/app/AppContext';
+import { AppThemeMode, useAppContext } from '@/app/AppContext';
 
 const THEME_ICONS: Record<AppThemeMode, React.ReactNode> = {
-  [APP_THEME_MODE.AUTO]: <InteractionOutlined />,
-  [APP_THEME_MODE.DARK]: <MoonOutlined />,
-  [APP_THEME_MODE.LIGHT]: <SunOutlined />,
+  [AppThemeMode.AUTO]: <InteractionOutlined />,
+  [AppThemeMode.DARK]: <MoonOutlined />,
+  [AppThemeMode.LIGHT]: <SunOutlined />,
 } as const;
 
 export function MenuThemeSwitcher() {
-  const { setThemeMode, themeMode } = useAppContext();
+  const { appThemeMode: themeMode, setAppThemeMode: setThemeMode } =
+    useAppContext();
 
   return (
     <Dropdown
@@ -27,17 +24,17 @@ export function MenuThemeSwitcher() {
         items: [
           {
             icon: <SunOutlined />,
-            key: APP_THEME_MODE.LIGHT,
+            key: AppThemeMode.LIGHT,
             label: 'Claro',
           },
           {
             icon: <MoonOutlined />,
-            key: APP_THEME_MODE.DARK,
+            key: AppThemeMode.DARK,
             label: 'Oscuro',
           },
           {
             icon: <SyncOutlined />,
-            key: APP_THEME_MODE.AUTO,
+            key: AppThemeMode.AUTO,
             label: 'Automático',
           },
         ],

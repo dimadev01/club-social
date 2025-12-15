@@ -5,22 +5,32 @@ import { noop } from '@/shared/lib/utils';
 
 export type AppAlgorithm = NonNullable<ThemeConfig['algorithm']>;
 
-export const APP_THEME_MODE = {
+export const AppThemeMode = {
   AUTO: 'auto',
   DARK: 'dark',
   LIGHT: 'light',
 } as const;
 
-export type AppThemeMode = (typeof APP_THEME_MODE)[keyof typeof APP_THEME_MODE];
+export type AppTheme = (typeof AppTheme)[keyof typeof AppTheme];
+export type AppThemeMode = (typeof AppThemeMode)[keyof typeof AppThemeMode];
+
+export const AppTheme = {
+  DARK: 'dark',
+  LIGHT: 'light',
+} as const;
 
 interface AppContextType {
-  setThemeMode: (theme: AppThemeMode) => void;
-  themeMode: AppThemeMode;
+  appThemeMode: AppThemeMode;
+  setAppThemeMode: (theme: AppThemeMode) => void;
+  setThemeMode: (theme: 'dark' | 'light') => void;
+  themeMode: 'dark' | 'light';
 }
 
 export const AppContext = createContext<AppContextType>({
+  appThemeMode: AppThemeMode.AUTO,
+  setAppThemeMode: noop,
   setThemeMode: noop,
-  themeMode: APP_THEME_MODE.AUTO,
+  themeMode: 'light',
 });
 
 export const useAppContext = () => {

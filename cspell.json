@@ -24,11 +24,19 @@
       "addWords": true
     }
   ],
-  "dictionaries": ["custom-dictionary"],
+  "dictionaries": [
+    "custom-dictionary"
+  ],
   "words": [],
   "ignoreWords": [
     "Dorrego",
+    "Logtail",
+    "Sider",
+    "Signups",
     "antd",
+    "bulgaria",
+    "bullmq",
+    "colombia",
     "configify",
     "cssinjs",
     "datasource",
@@ -36,21 +44,16 @@
     "dotenvx",
     "itgorillaz",
     "logtail",
-    "Logtail",
     "mantine",
     "nestjs",
     "neverthrow",
     "postgresql",
-    "Sider",
-    "Signups",
+    "sider",
     "tabler",
     "tailwindcss",
     "treeify",
-    "usehooks",
-    "bullmq",
-    "bulgaria",
-    "colombia",
-    "ukraine"
+    "ukraine",
+    "usehooks"
   ],
   "import": [],
   "language": "en,es"

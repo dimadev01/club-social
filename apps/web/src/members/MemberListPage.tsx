@@ -19,7 +19,7 @@ import { APP_ROUTES } from '@/app/app.enum';
 import { $fetch } from '@/shared/lib/fetch';
 import { useQuery } from '@/shared/lib/useQuery';
 import { NotFound } from '@/ui/NotFound';
-import { Page, PageContent, PageHeader, PageTitle } from '@/ui/Page';
+import { Page } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
@@ -54,9 +54,8 @@ export function MemberListPage() {
   }
 
   return (
-    <Page>
-      <PageHeader>
-        <PageTitle>Socios</PageTitle>
+    <Page
+      extra={
         <Space.Compact>
           <Button
             disabled={!permissions.members.create}
@@ -80,53 +79,51 @@ export function MemberListPage() {
             <Button icon={<MoreOutlined />} />
           </Dropdown>
         </Space.Compact>
-      </PageHeader>
-      <PageContent>
-        <Table<MemberDto>
-          dataSource={membersQuery.data?.data}
-          loading={membersQuery.isFetching}
-          pagination={{
-            current: state.page,
-            onChange: (page, pageSize) => {
-              onChange(page, pageSize);
-            },
-            pageSize: state.pageSize,
-            total: membersQuery.data?.total,
-          }}
-          scroll={{ x: 'max-content', y: 800 }}
-        >
-          <Table.Column<MemberDto>
-            dataIndex="id"
-            render={(id, record) => (
-              <Typography.Text copyable={{ text: id }}>
-                <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>
-                  {record.name}
-                </Link>
-              </Typography.Text>
-            )}
-            title="Socio"
-          />
-          <Table.Column<MemberDto>
-            align="center"
-            dataIndex="category"
-            render={(value: MemberCategory) => MemberCategoryLabel[value]}
-            title="Categoría"
-          />
-          <Table.Column<MemberDto>
-            align="center"
-            dataIndex="status"
-            render={(value: UserStatus) => UserStatusLabel[value]}
-            title="Estado"
-          />
-          <Table.Column<MemberDto>
-            dataIndex="email"
-            render={(text) => (
-              <Typography.Text copyable={{ text }}>{text}</Typography.Text>
-            )}
-            title="Email"
-          />
-        </Table>
-      </PageContent>
+      }
+      title="Socios"
+    >
+      <Table<MemberDto>
+        dataSource={membersQuery.data?.data}
+        loading={membersQuery.isFetching}
+        pagination={{
+          current: state.page,
+          onChange: (page, pageSize) => {
+            onChange(page, pageSize);
+          },
+          pageSize: state.pageSize,
+          total: membersQuery.data?.total,
+        }}
+        scroll={{ x: 'max-content', y: 800 }}
+      >
+        <Table.Column<MemberDto>
+          dataIndex="id"
+          render={(id, record) => (
+            <Typography.Text copyable={{ text: id }}>
+              <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>{record.name}</Link>
+            </Typography.Text>
+          )}
+          title="Socio"
+        />
+        <Table.Column<MemberDto>
+          align="center"
+          dataIndex="category"
+          render={(value: MemberCategory) => MemberCategoryLabel[value]}
+          title="Categoría"
+        />
+        <Table.Column<MemberDto>
+          align="center"
+          dataIndex="status"
+          render={(value: UserStatus) => UserStatusLabel[value]}
+          title="Estado"
+        />
+        <Table.Column<MemberDto>
+          dataIndex="email"
+          render={(text) => (
+            <Typography.Text copyable={{ text }}>{text}</Typography.Text>
+          )}
+          title="Email"
+        />
+      </Table>
     </Page>
   );
 }
