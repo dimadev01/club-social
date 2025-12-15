@@ -13,7 +13,6 @@ import {
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Space, Typography } from 'antd';
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
@@ -22,22 +21,15 @@ import { useQuery } from '@/shared/lib/useQuery';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageContent, PageHeader, PageTitle } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
+import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
-
-interface TableStatus {
-  page: number;
-  pageSize: number;
-}
 
 export function MemberListPage() {
   const navigate = useNavigate();
   const { message } = App.useApp();
   const permissions = usePermissions();
 
-  const [tableStatus, setTableStatus] = useState<TableStatus>({
-    page: 1,
-    pageSize: 20,
-  });
+  const { onChange, state } = useTable();
 
   const membersQuery = useQuery({
     enabled: permissions.members.list,
@@ -45,12 +37,12 @@ export function MemberListPage() {
     queryFn: () =>
       $fetch<PaginatedResponse<MemberDto>>('/members/paginated', {
         query: {
-          page: tableStatus.page,
-          pageSize: tableStatus.pageSize,
+          page: state.page,
+          pageSize: state.pageSize,
           sort: [],
         },
       }),
-    queryKey: ['members', tableStatus],
+    queryKey: ['members', state],
   });
 
   if (membersQuery.error) {
@@ -94,12 +86,11 @@ export function MemberListPage() {
           dataSource={membersQuery.data?.data}
           loading={membersQuery.isFetching}
           pagination={{
-            current: tableStatus.page,
+            current: state.page,
             onChange: (page, pageSize) => {
-              console.log(page, pageSize);
-              setTableStatus({ page, pageSize });
+              onChange(page, pageSize);
             },
-            pageSize: tableStatus.pageSize,
+            pageSize: state.pageSize,
             total: membersQuery.data?.total,
           }}
           scroll={{ x: 'max-content', y: 800 }}

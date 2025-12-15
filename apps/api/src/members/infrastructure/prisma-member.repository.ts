@@ -58,6 +58,12 @@ export class PrismaMemberRepository implements MemberRepository {
     };
 
     const query: MemberFindManyArgs = {
+      orderBy: [
+        ...(params.sort?.map(({ field, order }) => ({
+          [field]: order,
+        })) ?? []),
+        { createdAt: 'desc' },
+      ],
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
       where,
