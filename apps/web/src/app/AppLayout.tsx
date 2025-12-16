@@ -4,7 +4,9 @@ import {
   FilePdfOutlined,
   HomeOutlined,
   LogoutOutlined,
+  TeamOutlined,
   UserOutlined,
+  WalletOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
@@ -54,15 +56,15 @@ export function AppLayout({ children }: PropsWithChildren) {
     },
   ];
 
-  if (permissions.dues) {
+  if (permissions.dues.list) {
     menuItems.push({
-      icon: <UserOutlined />,
+      icon: <WalletOutlined />,
       key: APP_ROUTES.DUES_LIST,
       label: 'Deudas',
     });
   }
 
-  if (permissions.movements) {
+  if (permissions.movements.list) {
     menuItems.push({
       icon: <UserOutlined />,
       key: APP_ROUTES.MOVEMENT_LIST,
@@ -70,7 +72,7 @@ export function AppLayout({ children }: PropsWithChildren) {
     });
   }
 
-  if (permissions.payments) {
+  if (permissions.payments.list) {
     menuItems.push({
       icon: <UserOutlined />,
       key: APP_ROUTES.PAYMENT_LIST,
@@ -78,9 +80,9 @@ export function AppLayout({ children }: PropsWithChildren) {
     });
   }
 
-  if (permissions.members) {
+  if (permissions.members.list) {
     menuItems.push({
-      icon: <UserOutlined />,
+      icon: <TeamOutlined />,
       key: APP_ROUTES.MEMBER_LIST,
       label: 'Socios',
     });
@@ -88,7 +90,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   if (permissions.users.list) {
     menuItems.push({
-      icon: <UserOutlined />,
+      icon: <TeamOutlined />,
       key: APP_ROUTES.USER_LIST,
       label: 'Usuarios',
     });
@@ -105,7 +107,6 @@ export function AppLayout({ children }: PropsWithChildren) {
         collapsible
         onCollapse={setCollapsed}
         theme={themeMode}
-        zeroWidthTriggerStyle={{ top: 8 }}
       >
         <Flex className="h-full" vertical>
           <Image

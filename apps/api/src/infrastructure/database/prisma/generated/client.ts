@@ -67,3 +67,13 @@ export type Verification = Prisma.VerificationModel;
  *
  */
 export type Member = Prisma.MemberModel;
+/**
+ * Model Due
+ *
+ */
+export type Due = Prisma.DueModel;
+/**
+ * Model Payment
+ *
+ */
+export type Payment = Prisma.PaymentModel;

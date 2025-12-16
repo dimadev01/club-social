@@ -4,6 +4,8 @@ import { LoginPage } from '@/auth/LoginPage';
 import { LogoutPage } from '@/auth/LogoutPage';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
 import { PublicRoute } from '@/auth/PublicRoute';
+import { DueDetailPage } from '@/dues/DueDetailPage';
+import { DueListPage } from '@/dues/DueListPage';
 import { Home } from '@/home/HomePage';
 import { MemberDetailPage } from '@/members/MemberDetailPage';
 import { MemberListPage } from '@/members/MemberListPage';
@@ -29,18 +31,25 @@ export function AppRoutes() {
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<Home />} path={APP_ROUTES.HOME} />
+
           <Route element={<UserListPage />} path={APP_ROUTES.USER_LIST} />
           <Route element={<UserDetailPage />} path={APP_ROUTES.USER_NEW} />
           <Route
             element={<UserDetailPage />}
             path={`${APP_ROUTES.USER_LIST}/:id`}
           />
+
           <Route element={<MemberListPage />} path={APP_ROUTES.MEMBER_LIST} />
           <Route element={<MemberDetailPage />} path={APP_ROUTES.MEMBER_NEW} />
           <Route
             element={<MemberDetailPage />}
             path={APP_ROUTES.MEMBER_DETAIL}
           />
+
+          <Route element={<DueListPage />} path={APP_ROUTES.DUES_LIST} />
+          <Route element={<DueDetailPage />} path={APP_ROUTES.DUE_NEW} />
+          <Route element={<DueDetailPage />} path={APP_ROUTES.DUE_DETAIL} />
+
           <Route element={<ProfilePage />} path={APP_ROUTES.PROFILE} />
           <Route element={<LogoutPage />} path={APP_ROUTES.LOGOUT} />
         </Route>

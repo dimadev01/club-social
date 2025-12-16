@@ -6,6 +6,7 @@ export const Action = {
   GET: 'get',
   LIST: 'list',
   UPDATE: 'update',
+  VOID: 'void',
 } as const;
 
 export type Action = (typeof Action)[keyof typeof Action];

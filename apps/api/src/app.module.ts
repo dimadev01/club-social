@@ -3,6 +3,7 @@ import { APP_FILTER } from '@nestjs/core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DuesModule } from './dues/due.module';
 import { AuthModule } from './infrastructure/auth/auth.module';
 import { ConfigModule } from './infrastructure/config/config.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
@@ -12,6 +13,7 @@ import { ObservabilityModule } from './infrastructure/observability/observabilit
 import { StorageModule } from './infrastructure/storage/storage.module';
 import { TraceModule } from './infrastructure/trace/trace.module';
 import { MembersModule } from './members/member.module';
+import { PaymentsModule } from './payments/payment.module';
 import { AllExceptionsFilter } from './shared/presentation/filters/all-exceptions.filter';
 import { UsersModule } from './users/user.module';
 
@@ -32,6 +34,8 @@ import { UsersModule } from './users/user.module';
      */
     UsersModule,
     MembersModule,
+    DuesModule,
+    PaymentsModule,
   ],
   providers: [
     AppService,

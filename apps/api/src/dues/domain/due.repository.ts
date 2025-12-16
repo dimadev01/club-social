@@ -1,0 +1,28 @@
+import type {
+  PaginatedRequest,
+  PaginatedResponse,
+} from '@club-social/shared/types';
+
+import {
+  ReadableRepository,
+  WriteableRepository,
+} from '@/shared/domain/repository';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+import { DueEntity } from './entities/due.entity';
+
+export const DUE_REPOSITORY_PROVIDER = Symbol('DueRepository');
+
+export interface DuePaginatedRequest extends PaginatedRequest {
+  category?: string;
+  memberId?: string;
+  status?: string;
+}
+
+export interface DueRepository
+  extends ReadableRepository<DueEntity>, WriteableRepository<DueEntity> {
+  findByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
+  findPaginated(
+    params: DuePaginatedRequest,
+  ): Promise<PaginatedResponse<DueEntity>>;
+}

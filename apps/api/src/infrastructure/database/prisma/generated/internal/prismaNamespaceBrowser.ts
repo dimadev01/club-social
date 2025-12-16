@@ -59,6 +59,8 @@ export const ModelName = {
   Account: 'Account',
   Verification: 'Verification',
   Member: 'Member',
+  Due: 'Due',
+  Payment: 'Payment',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -172,6 +174,45 @@ export const MemberScalarFieldEnum = {
 
 export type MemberScalarFieldEnum =
   (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum];
+
+export const DueScalarFieldEnum = {
+  id: 'id',
+  memberId: 'memberId',
+  amount: 'amount',
+  category: 'category',
+  date: 'date',
+  notes: 'notes',
+  status: 'status',
+  voidReason: 'voidReason',
+  voidedAt: 'voidedAt',
+  voidedBy: 'voidedBy',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+} as const;
+
+export type DueScalarFieldEnum =
+  (typeof DueScalarFieldEnum)[keyof typeof DueScalarFieldEnum];
+
+export const PaymentScalarFieldEnum = {
+  id: 'id',
+  dueId: 'dueId',
+  amount: 'amount',
+  date: 'date',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+} as const;
+
+export type PaymentScalarFieldEnum =
+  (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',

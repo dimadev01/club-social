@@ -23,6 +23,16 @@
       "types": "./src/types/index.ts",
       "require": "./dist/types/index.js",
       "import": "./dist/types/index.mjs"
+    },
+    "./dues": {
+      "types": "./src/dues/index.ts",
+      "require": "./dist/dues/index.js",
+      "import": "./dist/dues/index.mjs"
+    },
+    "./payments": {
+      "types": "./src/payments/index.ts",
+      "require": "./dist/payments/index.js",
+      "import": "./dist/payments/index.mjs"
     }
   },
   "scripts": {
