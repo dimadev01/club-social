@@ -1,37 +1,27 @@
+import type { MemberDto } from '@club-social/shared/members';
 import type { ParamId } from '@club-social/shared/types';
 
 import {
   CloseOutlined,
-  DeleteOutlined,
-  PlusCircleOutlined,
+  DollarOutlined,
+  PlusOutlined,
   SaveOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 import {
-  type CreateMemberDto,
-  FileStatus,
-  FileStatusLabel,
-  MaritalStatus,
-  MaritalStatusLabel,
-  MemberCategory,
-  MemberCategoryLabel,
-  type MemberDto,
-  MemberNationality,
-  MemberNationalityLabel,
-  MemberSex,
-  MemberSexLabel,
-  type UpdateMemberDto,
-} from '@club-social/shared/members';
-import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
+  type CreateDueDto,
+  DueCategory,
+  DueCategoryLabel,
+  type DueDto,
+  type UpdateDueDto,
+} from '@club-social/shared/dues';
 import { useQueryClient } from '@tanstack/react-query';
 import {
   App,
   Button,
   Card,
-  Col,
   DatePicker,
-  Empty,
   Input,
+  InputNumber,
   Skeleton,
   Space,
 } from 'antd';
@@ -41,33 +31,20 @@ import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 import { $fetch } from '@/shared/lib/fetch';
+import { NumberFormat } from '@/shared/lib/number-format';
 import { useMutation } from '@/shared/lib/useMutation';
 import { useQuery } from '@/shared/lib/useQuery';
 import { Form } from '@/ui/Form/Form';
 import { NotFound } from '@/ui/NotFound';
-import { Row } from '@/ui/Row';
 import { Select } from '@/ui/Select';
 import { usePermissions } from '@/users/use-permissions';
 
 interface FormSchema {
-  address: {
-    cityName?: string;
-    stateName?: string;
-    street?: string;
-    zipCode?: string;
-  };
-  birthDate?: dayjs.Dayjs | null;
-  category: MemberCategory;
-  documentID?: string;
-  email: string;
-  fileStatus: FileStatus;
-  firstName: string;
-  lastName: string;
-  maritalStatus?: MaritalStatus;
-  nationality?: MemberNationality;
-  phones: string[];
-  sex?: MemberSex;
-  status: UserStatus;
+  amount: number;
+  category: DueCategory;
+  date: dayjs.Dayjs;
+  memberIds: string[];
+  notes: null | string;
 }
 
 export function DueDetailPage() {
@@ -80,122 +57,106 @@ export function DueDetailPage() {
 
   const [form] = Form.useForm<FormSchema>();
   const { setFieldsValue } = form;
+  const formCategory = Form.useWatch('category', form);
 
-  const memberQuery = useQuery<MemberDto | null>({
-    enabled: !!id && permissions.members.get,
-    queryFn: () => $fetch(`members/${id}`),
-    queryKey: ['members', id],
+  const dueQuery = useQuery<DueDto | null>({
+    enabled: !!id && permissions.dues.get,
+    queryFn: () => $fetch(`dues/${id}`),
+    queryKey: ['dues', id],
   });
 
-  const createMemberMutation = useMutation<ParamId, Error, CreateMemberDto>({
-    mutationFn: (body) => $fetch('members', { body }),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      navigate(`${APP_ROUTES.MEMBER_LIST}/${data.id}`, {
-        replace: true,
-      });
-      message.success('Socio creado correctamente');
+  const membersQuery = useQuery<MemberDto[]>({
+    enabled: permissions.members.list,
+    queryFn: () => $fetch('members'),
+    queryKey: ['members'],
+  });
+
+  const createDueMutation = useMutation<ParamId, Error, CreateDueDto>({
+    mutationFn: (body) => $fetch('/dues', { body }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dues'] });
     },
   });
 
-  const updateMemberMutation = useMutation<unknown, Error, UpdateMemberDto>({
-    mutationFn: (body) => $fetch(`members/${id}`, { body, method: 'PATCH' }),
+  const updateDueMutation = useMutation<unknown, Error, UpdateDueDto>({
+    mutationFn: (body) => $fetch(`dues/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      queryClient.invalidateQueries({ queryKey: ['members', id] });
-      message.success('Socio actualizado correctamente');
+      queryClient.invalidateQueries({ queryKey: ['dues'] });
+      queryClient.invalidateQueries({ queryKey: ['dues', id] });
+      message.success('Cuota actualizada correctamente');
       navigate(-1);
     },
   });
 
   useEffect(() => {
-    if (memberQuery.data) {
+    if (dueQuery.data) {
       setFieldsValue({
-        address: {
-          cityName: memberQuery.data.address?.cityName ?? '',
-          stateName: memberQuery.data.address?.stateName ?? '',
-          street: memberQuery.data.address?.street ?? '',
-          zipCode: memberQuery.data.address?.zipCode ?? '',
-        },
-        birthDate: memberQuery.data.birthDate
-          ? dayjs.utc(memberQuery.data.birthDate)
-          : null,
-        category: memberQuery.data.category,
-        documentID: memberQuery.data.documentID ?? '',
-        email: memberQuery.data.email,
-        fileStatus: memberQuery.data.fileStatus,
-        firstName: memberQuery.data.firstName,
-        lastName: memberQuery.data.lastName,
-        maritalStatus: memberQuery.data.maritalStatus ?? undefined,
-        nationality: memberQuery.data.nationality ?? undefined,
-        phones: memberQuery.data.phones,
-        sex: memberQuery.data.sex ?? undefined,
-        status: memberQuery.data.status,
+        amount: dueQuery.data.amount / 100,
+        category: dueQuery.data.category,
+        date: dayjs.utc(dueQuery.data.date),
+        memberIds: [dueQuery.data.memberId],
+        notes: dueQuery.data.notes,
       });
     }
-  }, [memberQuery.data, setFieldsValue]);
+  }, [dueQuery.data, setFieldsValue]);
 
   const onSubmit = async (values: FormSchema) => {
+    const amountInCents = Math.round(values.amount * 100);
+
     if (id) {
-      updateMemberMutation.mutate({
-        address: {
-          cityName: values.address.cityName || null,
-          stateName: values.address.stateName || null,
-          street: values.address.street || null,
-          zipCode: values.address.zipCode || null,
-        },
-        birthDate: values.birthDate
-          ? values.birthDate.utc().toISOString()
-          : null,
+      updateDueMutation.mutate({
+        amount: amountInCents,
         category: values.category,
-        documentID: values.documentID || null,
-        email: values.email,
-        fileStatus: values.fileStatus,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        maritalStatus: values.maritalStatus ?? null,
-        nationality: values.nationality ?? null,
-        phones: values.phones,
-        sex: values.sex ?? null,
-        status: values.status,
+        date: values.date.utc().toISOString(),
+        notes: values.notes || null,
       });
     } else {
-      createMemberMutation.mutate({
-        address: {
-          cityName: values.address.cityName || null,
-          stateName: values.address.stateName || null,
-          street: values.address.street || null,
-          zipCode: values.address.zipCode || null,
-        },
-        birthDate: values.birthDate
-          ? values.birthDate.utc().toISOString()
-          : null,
-        category: values.category,
-        documentID: values.documentID || null,
-        email: values.email,
-        fileStatus: values.fileStatus,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        maritalStatus: values.maritalStatus ?? null,
-        nationality: values.nationality ?? null,
-        phones: values.phones,
-        sex: values.sex ?? null,
-      });
+      const results = await Promise.allSettled(
+        values.memberIds.map((memberId) =>
+          createDueMutation.mutateAsync({
+            amount: amountInCents,
+            category: values.category,
+            date: values.date.utc().toISOString(),
+            memberId,
+            notes: values.notes || null,
+          }),
+        ),
+      );
+      const successfulResults = results.filter(
+        (result) => result.status === 'fulfilled',
+      );
+      const failedResults = results.filter(
+        (result) => result.status === 'rejected',
+      );
+
+      if (failedResults.length > 0) {
+        message.error('Error al crear las cuotas');
+
+        return;
+      }
+
+      message.success(
+        `${successfulResults.length} cuotas creadas correctamente`,
+      );
+      navigate(APP_ROUTES.DUE_LIST, { replace: true });
     }
   };
 
   const isLoading =
-    memberQuery.isLoading ||
-    createMemberMutation.isPending ||
-    updateMemberMutation.isPending;
+    dueQuery.isLoading ||
+    membersQuery.isLoading ||
+    createDueMutation.isPending ||
+    updateDueMutation.isPending;
 
-  if (!permissions.members.create && !id) {
+  if (!permissions.dues.create && !id) {
     return <NotFound />;
   }
 
-  if (!permissions.members.update && id) {
+  if (!permissions.dues.update && id) {
     return <NotFound />;
   }
+
+  console.log(form.getFieldValue('amount'));
 
   return (
     <Card
@@ -213,26 +174,30 @@ export function DueDetailPage() {
           form="form"
           htmlType="submit"
           icon={<SaveOutlined />}
-          loading={
-            createMemberMutation.isPending || updateMemberMutation.isPending
-          }
+          loading={createDueMutation.isPending || updateDueMutation.isPending}
           type="primary"
         >
-          {id ? 'Actualizar socio' : 'Crear socio'}
+          {id ? 'Actualizar cuota' : 'Crear cuota'}
         </Button>,
+        !id && (
+          <Button
+            disabled={isLoading}
+            htmlType="button"
+            icon={<PlusOutlined />}
+            loading={createDueMutation.isPending}
+            onClick={() => navigate(APP_ROUTES.DUE_NEW)}
+            type="default"
+          >
+            Crear y volver
+          </Button>
+        ),
       ]}
-      loading={memberQuery.isLoading}
+      loading={dueQuery.isLoading}
       title={
         <Space>
-          <UserOutlined />
-          {memberQuery.isLoading && <Skeleton.Input active />}
-          {!memberQuery.isLoading && (
-            <>
-              {id
-                ? `${memberQuery.data?.firstName} ${memberQuery.data?.lastName}`
-                : 'Nuevo socio'}
-            </>
-          )}
+          <DollarOutlined />
+          {dueQuery.isLoading && <Skeleton.Input active />}
+          {!dueQuery.isLoading && <>{id ? 'Editar cuota' : 'Nueva cuota'}</>}
         </Space>
       }
     >
@@ -241,263 +206,83 @@ export function DueDetailPage() {
         form={form}
         id="form"
         initialValues={{
-          address: {
-            cityName: '',
-            stateName: '',
-            street: '',
-            zipCode: '',
-          },
-          birthDate: undefined,
-          category: MemberCategory.MEMBER,
-          documentID: '',
-          email: '',
-          fileStatus: FileStatus.PENDING,
-          firstName: '',
-          lastName: '',
-          maritalStatus: undefined,
-          nationality: undefined,
-          phones: [],
-          sex: undefined,
+          amount: 0,
+          category: DueCategory.MEMBERSHIP,
+          date: dayjs(),
+          memberIds: [],
+          notes: null,
         }}
         name="form"
         onFinish={onSubmit}
       >
-        <Row>
-          <Col md={12} xs={24}>
-            <Space className="flex" size="middle" vertical>
-              <Card title="Datos básicos" type="inner">
-                <Form.Item<FormSchema>
-                  label="Nombre"
-                  name="firstName"
-                  rules={[{ required: true, whitespace: true }]}
-                >
-                  <Input placeholder="Juan" />
-                </Form.Item>
+        <Form.Item<FormSchema>
+          label="Fecha"
+          name="date"
+          rules={[{ message: 'La fecha es requerida', required: true }]}
+        >
+          <DatePicker
+            allowClear={false}
+            className="w-full"
+            format={
+              formCategory === DueCategory.MEMBERSHIP
+                ? 'MMMM YYYY'
+                : 'DD/MM/YYYY'
+            }
+            picker={formCategory === DueCategory.MEMBERSHIP ? 'month' : 'date'}
+          />
+        </Form.Item>
 
-                <Form.Item<FormSchema>
-                  label="Apellido"
-                  name="lastName"
-                  rules={[{ required: true, whitespace: true }]}
-                >
-                  <Input placeholder="Perez" />
-                </Form.Item>
+        <Form.Item<FormSchema>
+          label={id ? 'Socio' : 'Socio/s'}
+          name="memberIds"
+          rules={[
+            { message: 'Debe seleccionar al menos un socio', required: true },
+          ]}
+        >
+          <Select
+            disabled={!!id}
+            loading={membersQuery.isLoading}
+            mode={id ? undefined : 'multiple'}
+            options={(membersQuery.data ?? []).map((member) => ({
+              label: member.name,
+              value: member.id,
+            }))}
+            placeholder="Seleccionar socios"
+          />
+        </Form.Item>
 
-                <Form.Item<FormSchema>
-                  label="Email"
-                  name="email"
-                  rules={[{ required: true, type: 'email', whitespace: true }]}
-                >
-                  <Input placeholder="juan.perez@example.com" type="email" />
-                </Form.Item>
+        <Form.Item<FormSchema>
+          label="Categoría"
+          name="category"
+          rules={[{ message: 'La categoría es requerida', required: true }]}
+        >
+          <Select
+            options={Object.entries(DueCategoryLabel).map(([key, value]) => ({
+              label: value,
+              value: key,
+            }))}
+          />
+        </Form.Item>
 
-                <Form.Item<FormSchema>
-                  label="Categoría"
-                  name="category"
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    options={Object.entries(MemberCategoryLabel).map(
-                      ([key, value]) => ({
-                        label: value,
-                        value: key,
-                      }),
-                    )}
-                  />
-                </Form.Item>
+        <Form.Item<FormSchema>
+          label="Monto"
+          name="amount"
+          rules={[{ message: 'El monto es requerido', required: true }]}
+        >
+          <InputNumber<number>
+            className="w-full"
+            formatter={(value) => NumberFormat.format(Number(value))}
+            min={0}
+            parser={(value) => NumberFormat.parse(String(value))}
+            precision={0}
+            prefix="ARS"
+            step={1000}
+          />
+        </Form.Item>
 
-                {id && (
-                  <Form.Item<FormSchema>
-                    label="Estado"
-                    name="status"
-                    rules={[{ required: true }]}
-                  >
-                    <Select
-                      options={Object.entries(UserStatusLabel).map(
-                        ([key, value]) => ({
-                          label: value,
-                          value: key,
-                        }),
-                      )}
-                    />
-                  </Form.Item>
-                )}
-              </Card>
-              <Card title="Datos adicionales" type="inner">
-                <Form.Item<FormSchema>
-                  label="Fecha de nacimiento"
-                  name="birthDate"
-                  rules={[{ required: false }]}
-                >
-                  <DatePicker className="w-full" format="DD/MM/YYYY" />
-                </Form.Item>
-
-                <Form.Item<FormSchema>
-                  label="Documento de identidad"
-                  name="documentID"
-                  rules={[{ required: false, whitespace: true }]}
-                >
-                  <Input placeholder="12.345.678" />
-                </Form.Item>
-
-                <Form.Item<FormSchema>
-                  label="Ficha"
-                  name="fileStatus"
-                  rules={[{ required: true }]}
-                >
-                  <Select
-                    options={Object.entries(FileStatusLabel).map(
-                      ([key, value]) => ({
-                        label: value,
-                        value: key,
-                      }),
-                    )}
-                  />
-                </Form.Item>
-
-                <Form.Item<FormSchema>
-                  label="Nacionalidad"
-                  name="nationality"
-                  rules={[{ required: false }]}
-                >
-                  <Select
-                    options={Object.entries(MemberNationalityLabel).map(
-                      ([key, value]) => ({
-                        label: value,
-                        value: key,
-                      }),
-                    )}
-                  />
-                </Form.Item>
-
-                <Form.Item<FormSchema>
-                  label="Sexo"
-                  name="sex"
-                  rules={[{ required: false }]}
-                >
-                  <Select
-                    options={Object.entries(MemberSexLabel).map(
-                      ([key, value]) => ({
-                        label: value,
-                        value: key,
-                      }),
-                    )}
-                  />
-                </Form.Item>
-
-                <Form.Item<FormSchema>
-                  label="Estado civil"
-                  name="maritalStatus"
-                  rules={[{ required: false }]}
-                >
-                  <Select
-                    options={Object.entries(MaritalStatusLabel).map(
-                      ([key, value]) => ({
-                        label: value,
-                        value: key,
-                      }),
-                    )}
-                  />
-                </Form.Item>
-
-                {id && (
-                  <Form.Item<FormSchema>
-                    label="Estado"
-                    name="status"
-                    rules={[{ required: false }]}
-                  >
-                    <Select
-                      options={Object.entries(UserStatusLabel).map(
-                        ([key, value]) => ({
-                          label: value,
-                          value: key,
-                        }),
-                      )}
-                    />
-                  </Form.Item>
-                )}
-              </Card>
-            </Space>
-          </Col>
-
-          <Col md={12} xs={24}>
-            <Space className="flex" size="middle" vertical>
-              <Form.List name="phones">
-                {(fields, { add, remove }) => (
-                  <Card
-                    extra={
-                      <Button
-                        icon={<PlusCircleOutlined />}
-                        onClick={() => add()}
-                      />
-                    }
-                    title="Datos de contacto"
-                    type="inner"
-                  >
-                    {fields.map((field, index) => (
-                      <Form.Item
-                        key={field.key}
-                        label={`Teléfono ${index + 1}`}
-                        required
-                      >
-                        <Space.Compact block>
-                          <Form.Item
-                            {...field}
-                            key={field.key}
-                            label={`Teléfono ${index + 1}`}
-                            noStyle
-                            rules={[{ required: true }, { whitespace: true }]}
-                          >
-                            <Input placeholder="+54 9 11 1234-5678" />
-                          </Form.Item>
-
-                          <Button
-                            icon={<DeleteOutlined />}
-                            onClick={() => remove(field.name)}
-                          />
-                        </Space.Compact>
-                      </Form.Item>
-                    ))}
-
-                    {fields.length === 0 && (
-                      <Empty description="No hay teléfonos agregados" />
-                    )}
-                  </Card>
-                )}
-              </Form.List>
-
-              <Card title="Domicilio" type="inner">
-                <Form.Item<FormSchema>
-                  label="Calle"
-                  name={['address', 'street']}
-                  rules={[{ required: false, whitespace: true }]}
-                >
-                  <Input placeholder="Dorrego 264" />
-                </Form.Item>
-                <Form.Item<FormSchema>
-                  label="Ciudad"
-                  name={['address', 'cityName']}
-                  rules={[{ required: false, whitespace: true }]}
-                >
-                  <Input placeholder="Monte Grande" />
-                </Form.Item>
-                <Form.Item<FormSchema>
-                  label="Estado"
-                  name={['address', 'stateName']}
-                  rules={[{ required: false, whitespace: true }]}
-                >
-                  <Input placeholder="Buenos Aires" />
-                </Form.Item>
-                <Form.Item<FormSchema>
-                  label="Código postal"
-                  name={['address', 'zipCode']}
-                  rules={[{ required: false, whitespace: true }]}
-                >
-                  <Input placeholder="1842" />
-                </Form.Item>
-              </Card>
-            </Space>
-          </Col>
-        </Row>
+        <Form.Item<FormSchema> label="Notas" name="notes">
+          <Input.TextArea placeholder="Notas adicionales..." rows={3} />
+        </Form.Item>
       </Form>
     </Card>
   );

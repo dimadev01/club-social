@@ -150,6 +150,17 @@ export class MembersController extends BaseController {
     };
   }
 
+  @Get()
+  public async getAll(): Promise<MemberResponseDto[]> {
+    const data = await this.memberRepository.findAll({ includeUser: true });
+
+    return data.map(({ member, user }) => {
+      Guard.defined(user);
+
+      return this.toDto(member, user);
+    });
+  }
+
   @Get(':id')
   public async getById(
     @Param() request: ParamIdDto,

@@ -3,16 +3,17 @@ import type { PaginatedResponse } from '@club-social/shared/types';
 import {
   FileExcelOutlined,
   MoreOutlined,
-  UserAddOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 import {
-  MemberCategory,
-  MemberCategoryLabel,
-  type MemberDto,
-} from '@club-social/shared/members';
-import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
+  type DueCategory,
+  DueCategoryLabel,
+  type DueDto,
+  type DueStatus,
+  DueStatusLabel,
+} from '@club-social/shared/dues';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Typography } from 'antd';
+import { App, Button, Dropdown, Space, Tag, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
@@ -24,6 +25,28 @@ import { Table } from '@/ui/Table/Table';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
+const formatAmount = (amountInCents: number) => {
+  return new Intl.NumberFormat('es-AR', {
+    currency: 'ARS',
+    style: 'currency',
+  }).format(amountInCents / 100);
+};
+
+const formatDate = (dateString: string) => {
+  return new Intl.DateTimeFormat('es-AR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(new Date(dateString));
+};
+
+const statusColor: Record<DueStatus, string> = {
+  paid: 'success',
+  'partially-paid': 'warning',
+  pending: 'default',
+  voided: 'error',
+};
+
 export function DueListPage() {
   const navigate = useNavigate();
   const { message } = App.useApp();
@@ -31,25 +54,25 @@ export function DueListPage() {
 
   const { onChange, state } = useTable();
 
-  const membersQuery = useQuery({
-    enabled: permissions.members.list,
+  const duesQuery = useQuery({
+    enabled: permissions.dues.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<MemberDto>>('/members/paginated', {
+      $fetch<PaginatedResponse<DueDto>>('/dues/paginated', {
         query: {
           page: state.page,
           pageSize: state.pageSize,
           sort: [],
         },
       }),
-    queryKey: ['members', state],
+    queryKey: ['dues', state],
   });
 
-  if (membersQuery.error) {
-    message.error(membersQuery.error.message);
+  if (duesQuery.error) {
+    message.error(duesQuery.error.message);
   }
 
-  if (!permissions.members.list) {
+  if (!permissions.dues.list) {
     return <NotFound />;
   }
 
@@ -58,12 +81,12 @@ export function DueListPage() {
       extra={
         <Space.Compact>
           <Button
-            disabled={!permissions.members.create}
-            icon={<UserAddOutlined />}
-            onClick={() => navigate(APP_ROUTES.MEMBER_NEW)}
+            disabled={!permissions.dues.create}
+            icon={<PlusOutlined />}
+            onClick={() => navigate(APP_ROUTES.DUE_NEW)}
             type="primary"
           >
-            Nuevo socio
+            Nueva cuota
           </Button>
           <Dropdown
             menu={{
@@ -80,48 +103,64 @@ export function DueListPage() {
           </Dropdown>
         </Space.Compact>
       }
-      title="Socios"
+      title="Cuotas"
     >
-      <Table<MemberDto>
-        dataSource={membersQuery.data?.data}
-        loading={membersQuery.isFetching}
+      <Table<DueDto>
+        dataSource={duesQuery.data?.data}
+        loading={duesQuery.isFetching}
         pagination={{
           current: state.page,
           onChange: (page, pageSize) => {
             onChange(page, pageSize);
           },
           pageSize: state.pageSize,
-          total: membersQuery.data?.total,
+          total: duesQuery.data?.total,
         }}
-        scroll={{ x: 'max-content', y: 800 }}
       >
-        <Table.Column<MemberDto>
+        <Table.Column<DueDto>
           dataIndex="id"
-          render={(id, record) => (
-            <Typography.Text copyable={{ text: id }}>
-              <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>{record.name}</Link>
+          render={(id: string, record) => (
+            <Link to={`${APP_ROUTES.DUE_LIST}/${id}`}>
+              {formatDate(record.date)}
+            </Link>
+          )}
+          title="Fecha"
+        />
+        <Table.Column<DueDto>
+          align="center"
+          dataIndex="category"
+          render={(value: DueCategory) => DueCategoryLabel[value]}
+          title="Categoría"
+        />
+        <Table.Column<DueDto>
+          align="right"
+          dataIndex="amount"
+          render={(amount: number) => formatAmount(amount)}
+          title="Monto"
+        />
+        <Table.Column<DueDto>
+          align="center"
+          dataIndex="status"
+          render={(value: DueStatus) => (
+            <Tag color={statusColor[value]}>{DueStatusLabel[value]}</Tag>
+          )}
+          title="Estado"
+        />
+        <Table.Column<DueDto>
+          dataIndex="memberId"
+          render={(memberId: string) => (
+            <Typography.Text copyable={{ text: memberId }}>
+              <Link to={`${APP_ROUTES.MEMBER_LIST}/${memberId}`}>
+                {memberId.slice(0, 8)}...
+              </Link>
             </Typography.Text>
           )}
           title="Socio"
         />
-        <Table.Column<MemberDto>
-          align="center"
-          dataIndex="category"
-          render={(value: MemberCategory) => MemberCategoryLabel[value]}
-          title="Categoría"
-        />
-        <Table.Column<MemberDto>
-          align="center"
-          dataIndex="status"
-          render={(value: UserStatus) => UserStatusLabel[value]}
-          title="Estado"
-        />
-        <Table.Column<MemberDto>
-          dataIndex="email"
-          render={(text) => (
-            <Typography.Text copyable={{ text }}>{text}</Typography.Text>
-          )}
-          title="Email"
+        <Table.Column<DueDto>
+          dataIndex="notes"
+          render={(notes: null | string) => notes ?? '-'}
+          title="Notas"
         />
       </Table>
     </Page>

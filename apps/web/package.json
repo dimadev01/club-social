@@ -17,6 +17,7 @@
     "@ant-design/icons": "^6.1.0",
     "@better-fetch/fetch": "^1.1.21",
     "@club-social/shared": "^0.0.1",
+    "@internationalized/number": "^3.6.5",
     "@julr/vite-plugin-validate-env": "^2.2.0",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.12",

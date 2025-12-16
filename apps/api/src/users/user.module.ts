@@ -21,6 +21,7 @@ import { UsersController } from './presentation/user.controller';
     USER_REPOSITORY_PROVIDER,
     VerifySignInUseCase,
     CreateUserUseCase,
+    PrismaUserMapper,
   ],
   imports: [],
   providers: [

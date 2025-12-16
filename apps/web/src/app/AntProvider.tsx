@@ -66,6 +66,7 @@ export function AntProvider({ children }: { children: React.ReactNode }) {
         locale={esEs}
         select={{
           showSearch: {
+            filterOption: true,
             optionFilterProp: 'label',
           },
         }}

@@ -6,18 +6,38 @@ import {
   MemberWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { Guard } from '@/shared/domain/guards';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import { PrismaUserMapper } from '@/users/infrastructure/prisma-user.mapper';
 
 import { MemberEntity } from '../domain/entities/member.entity';
 import { MemberRepository } from '../domain/member.repository';
+import { FindMembersModelParams, MemberModel } from '../domain/member.types';
 import { PrismaMemberMapper } from './prisma-member.mapper';
 
 @Injectable()
 export class PrismaMemberRepository implements MemberRepository {
   public constructor(
     private readonly prismaService: PrismaService,
-    private readonly mapper: PrismaMemberMapper,
+    private readonly memberMapper: PrismaMemberMapper,
+    private readonly userMapper: PrismaUserMapper,
   ) {}
+
+  public async findAll(params: FindMembersModelParams): Promise<MemberModel[]> {
+    const members = await this.prismaService.member.findMany({
+      include: { user: params.includeUser },
+      where: { deletedAt: null },
+    });
+
+    return members.map((member) => {
+      Guard.defined(member.user);
+
+      return {
+        member: this.memberMapper.toDomain(member),
+        user: this.userMapper.toDomain(member.user),
+      };
+    });
+  }
 
   public async findManyByIds(ids: UniqueId[]): Promise<MemberEntity[]> {
     const members = await this.prismaService.member.findMany({
@@ -27,7 +47,7 @@ export class PrismaMemberRepository implements MemberRepository {
       },
     });
 
-    return members.map((member) => this.mapper.toDomain(member));
+    return members.map((member) => this.memberMapper.toDomain(member));
   }
 
   public async findOneById(id: UniqueId): Promise<MemberEntity | null> {
@@ -39,7 +59,7 @@ export class PrismaMemberRepository implements MemberRepository {
       return null;
     }
 
-    return this.mapper.toDomain(member);
+    return this.memberMapper.toDomain(member);
   }
 
   public async findOneByIdOrThrow(id: UniqueId): Promise<MemberEntity> {
@@ -47,7 +67,7 @@ export class PrismaMemberRepository implements MemberRepository {
       where: { deletedAt: null, id: id.value },
     });
 
-    return this.mapper.toDomain(member);
+    return this.memberMapper.toDomain(member);
   }
 
   public async findPaginated(
@@ -75,13 +95,13 @@ export class PrismaMemberRepository implements MemberRepository {
     ]);
 
     return {
-      data: members.map((member) => this.mapper.toDomain(member)),
+      data: members.map((member) => this.memberMapper.toDomain(member)),
       total,
     };
   }
 
   public async save(entity: MemberEntity): Promise<MemberEntity> {
-    const data = this.mapper.toPersistence(entity);
+    const data = this.memberMapper.toPersistence(entity);
 
     const member = await this.prismaService.member.upsert({
       create: data,
@@ -89,6 +109,6 @@ export class PrismaMemberRepository implements MemberRepository {
       where: { id: entity.id.value },
     });
 
-    return this.mapper.toDomain(member);
+    return this.memberMapper.toDomain(member);
   }
 }

@@ -9,7 +9,7 @@ export type DueCategory = (typeof DueCategory)[keyof typeof DueCategory];
 export const DueCategoryLabel = {
   [DueCategory.ELECTRICITY]: 'Electricidad',
   [DueCategory.GUEST]: 'Invitado',
-  [DueCategory.MEMBERSHIP]: 'Cuota Social',
+  [DueCategory.MEMBERSHIP]: 'Cuota',
 } as const;
 
 export const DueStatus = {
