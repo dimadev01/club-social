@@ -30,7 +30,7 @@ export function MemberListPage() {
   const { message } = App.useApp();
   const permissions = usePermissions();
 
-  const { onChange, status } = useTable<MemberDto>({
+  const { getSortOrder, onChange, query, state } = useTable<MemberDto>({
     defaultSort: [{ field: 'id', order: 'ascend' }],
   });
 
@@ -40,15 +40,8 @@ export function MemberListPage() {
     enabled: permissions.members.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<MemberDto>>('/members/paginated', {
-        query: {
-          page: status.page,
-          pageSize: status.pageSize,
-          ...status.querySort,
-          ...status.queryFilters,
-        },
-      }),
-    queryKey: ['members', status],
+      $fetch<PaginatedResponse<MemberDto>>('/members/paginated', { query }),
+    queryKey: ['members', state, query],
   });
 
   if (membersList.error) {
@@ -93,8 +86,8 @@ export function MemberListPage() {
         loading={membersList.isFetching}
         onChange={onChange}
         pagination={{
-          current: status.page,
-          pageSize: status.pageSize,
+          current: state.page,
+          pageSize: state.pageSize,
           total: membersList.data?.total,
         }}
         sortDirections={['ascend', 'descend', 'ascend']}
@@ -102,7 +95,7 @@ export function MemberListPage() {
         <Table.Column<MemberDto>
           dataIndex="id"
           defaultFilteredValue={[]}
-          filteredValue={status.filters?.id}
+          filteredValue={state.filters?.id}
           filters={membersQuery.data?.map((member) => ({
             text: `${member.lastName} ${member.firstName}`,
             value: member.id,
@@ -117,13 +110,13 @@ export function MemberListPage() {
             </Typography.Text>
           )}
           sorter
-          sortOrder={status.sort.find((s) => s.field === 'id')?.order}
+          sortOrder={getSortOrder('id')}
           title="Socio"
         />
         <Table.Column<MemberDto>
           align="center"
           dataIndex="category"
-          filteredValue={status.filters?.category}
+          filteredValue={state.filters?.category}
           filterMode="tree"
           filters={Object.entries(MemberCategoryLabel).map(
             ([value, label]) => ({
@@ -138,7 +131,7 @@ export function MemberListPage() {
         <Table.Column<MemberDto>
           align="center"
           dataIndex="status"
-          filterMode="menu"
+          filteredValue={state.filters?.status}
           filters={Object.entries(UserStatusLabel).map(([value, label]) => ({
             text: label,
             value,
@@ -153,7 +146,7 @@ export function MemberListPage() {
             <Typography.Text copyable={{ text }}>{text}</Typography.Text>
           )}
           sorter
-          sortOrder={status.sort.find((s) => s.field === 'email')?.order}
+          sortOrder={getSortOrder('email')}
           title="Email"
         />
       </Table>

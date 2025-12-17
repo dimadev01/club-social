@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { BetterAuthService } from '@/infrastructure/auth/better-auth/better-auth.service';
+import { ClsService } from '@/infrastructure/storage/cls/cls.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -19,6 +20,7 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
     @Inject(APP_LOGGER_PROVIDER)
     private readonly logger: AppLogger,
     private readonly betterAuth: BetterAuthService,
+    private readonly clsService: ClsService,
   ) {
     this.logger.setContext(BetterAuthUserRepository.name);
   }
@@ -63,6 +65,7 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
         password: UniqueId.generate().value,
         role: user.role,
       },
+      headers: this.clsService.get('headers'),
     });
   }
 
@@ -79,6 +82,7 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
         },
         userId: user.id.value,
       },
+      headers: this.clsService.get('headers'),
     });
   }
 }

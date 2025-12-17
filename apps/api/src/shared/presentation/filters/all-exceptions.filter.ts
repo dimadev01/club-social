@@ -37,12 +37,6 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
       return;
     }
 
-    const traceId = this.traceService.get();
-
-    if (traceId) {
-      Sentry.setTag('traceId', traceId);
-    }
-
     this.logger.error({
       error: exception,
       message: 'Unhandled exception',
@@ -50,6 +44,12 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     });
 
     if (!this.configService.isLocal) {
+      const traceId = this.traceService.get();
+
+      if (traceId) {
+        Sentry.setTag('traceId', traceId);
+      }
+
       Sentry.captureException(exception);
     }
 

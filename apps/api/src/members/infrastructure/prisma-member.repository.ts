@@ -87,6 +87,10 @@ export class PrismaMemberRepository implements MemberRepository {
       where.category = { in: params.filters.category };
     }
 
+    if (params.filters?.status) {
+      where.user = { status: { in: params.filters.status } };
+    }
+
     const orderBy: MemberOrderByWithRelationInput[] = [];
 
     params.sort.forEach(({ field, order }) => {

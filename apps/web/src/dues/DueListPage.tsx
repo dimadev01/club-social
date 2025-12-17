@@ -52,20 +52,14 @@ export function DueListPage() {
   const { message } = App.useApp();
   const permissions = usePermissions();
 
-  const { onChange, status } = useTable<DueDto>();
+  const { onChange, query, state } = useTable<DueDto>();
 
   const duesQuery = useQuery({
     enabled: permissions.dues.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<DueDto>>('/dues/paginated', {
-        query: {
-          page: status.page,
-          pageSize: status.pageSize,
-          ...status.querySort,
-        },
-      }),
-    queryKey: ['dues', status],
+      $fetch<PaginatedResponse<DueDto>>('/dues/paginated', { query }),
+    queryKey: ['dues', state, query],
   });
 
   if (duesQuery.error) {
@@ -112,8 +106,8 @@ export function DueListPage() {
         loading={duesQuery.isFetching}
         onChange={onChange}
         pagination={{
-          current: status.page,
-          pageSize: status.pageSize,
+          current: state.page,
+          pageSize: state.pageSize,
           total: duesQuery.data?.total,
         }}
       >
