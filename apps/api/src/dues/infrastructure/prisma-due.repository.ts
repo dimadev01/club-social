@@ -74,9 +74,7 @@ export class PrismaDueRepository implements DueRepository {
 
     const query: DueFindManyArgs = {
       orderBy: [
-        ...(params.sort?.map(({ field, order }) => ({
-          [field]: order,
-        })) ?? []),
+        ...params.sort.map(({ field, order }) => ({ [field]: order })),
         { createdAt: 'desc' },
       ],
       skip: (params.page - 1) * params.pageSize,

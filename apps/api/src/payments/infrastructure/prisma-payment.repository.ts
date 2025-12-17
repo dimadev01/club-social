@@ -75,9 +75,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
     const query: PaymentFindManyArgs = {
       orderBy: [
-        ...(params.sort?.map(({ field, order }) => ({
-          [field]: order,
-        })) ?? []),
+        ...params.sort.map(({ field, order }) => ({ [field]: order })),
         { createdAt: 'desc' },
       ],
       skip: (params.page - 1) * params.pageSize,

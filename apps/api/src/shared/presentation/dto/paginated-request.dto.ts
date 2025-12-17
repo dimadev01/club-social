@@ -1,13 +1,9 @@
-import {
-  PaginatedRequest,
-  PaginatedRequestSort,
-} from '@club-social/shared/types';
+import { PaginatedRequest } from '@club-social/shared/types';
 import { Type } from 'class-transformer';
 import {
   IsArray,
   IsInt,
   IsNumber,
-  IsOptional,
   IsPositive,
   ValidateNested,
 } from 'class-validator';
@@ -28,8 +24,7 @@ export class PaginatedRequestDto implements PaginatedRequest {
   public pageSize: number;
 
   @IsArray()
-  @IsOptional()
   @Type(() => PaginatedRequestSortDto)
   @ValidateNested({ each: true })
-  public sort?: PaginatedRequestSort[];
+  public sort: PaginatedRequestSortDto[];
 }

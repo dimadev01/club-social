@@ -1,4 +1,3 @@
-import type { MemberDto } from '@club-social/shared/members';
 import type { ParamId } from '@club-social/shared/types';
 
 import {
@@ -30,6 +29,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
+import { useMembers } from '@/members/useMembers';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
 import { useMutation } from '@/shared/lib/useMutation';
@@ -65,11 +65,7 @@ export function DueDetailPage() {
     queryKey: ['dues', id],
   });
 
-  const membersQuery = useQuery<MemberDto[]>({
-    enabled: permissions.members.list,
-    queryFn: () => $fetch('members'),
-    queryKey: ['members'],
-  });
+  const membersQuery = useMembers();
 
   const createDueMutation = useMutation<ParamId, Error, CreateDueDto>({
     mutationFn: (body) => $fetch('/dues', { body }),
@@ -169,28 +165,30 @@ export function DueDetailPage() {
         >
           Cancelar
         </Button>,
-        <Button
-          disabled={isLoading}
-          form="form"
-          htmlType="submit"
-          icon={<SaveOutlined />}
-          loading={createDueMutation.isPending || updateDueMutation.isPending}
-          type="primary"
-        >
-          {id ? 'Actualizar cuota' : 'Crear cuota'}
-        </Button>,
-        !id && (
+        <Space.Compact>
+          {!id && (
+            <Button
+              disabled={isLoading}
+              htmlType="button"
+              icon={<PlusOutlined />}
+              loading={createDueMutation.isPending}
+              onClick={() => navigate(APP_ROUTES.DUE_NEW)}
+              type="default"
+            >
+              Crear y volver
+            </Button>
+          )}
           <Button
             disabled={isLoading}
-            htmlType="button"
-            icon={<PlusOutlined />}
-            loading={createDueMutation.isPending}
-            onClick={() => navigate(APP_ROUTES.DUE_NEW)}
-            type="default"
+            form="form"
+            htmlType="submit"
+            icon={<SaveOutlined />}
+            loading={createDueMutation.isPending || updateDueMutation.isPending}
+            type="primary"
           >
-            Crear y volver
+            {id ? 'Actualizar cuota' : 'Crear cuota'}
           </Button>
-        ),
+        </Space.Compact>,
       ]}
       loading={dueQuery.isLoading}
       title={

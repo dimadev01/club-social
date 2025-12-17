@@ -52,7 +52,7 @@ export function DueListPage() {
   const { message } = App.useApp();
   const permissions = usePermissions();
 
-  const { onChange, state } = useTable();
+  const { onChange, status } = useTable<DueDto>();
 
   const duesQuery = useQuery({
     enabled: permissions.dues.list,
@@ -60,12 +60,12 @@ export function DueListPage() {
     queryFn: () =>
       $fetch<PaginatedResponse<DueDto>>('/dues/paginated', {
         query: {
-          page: state.page,
-          pageSize: state.pageSize,
-          sort: [],
+          page: status.page,
+          pageSize: status.pageSize,
+          ...status.sortSerialized,
         },
       }),
-    queryKey: ['dues', state],
+    queryKey: ['dues', status],
   });
 
   if (duesQuery.error) {
@@ -80,14 +80,16 @@ export function DueListPage() {
     <Page
       extra={
         <Space.Compact>
-          <Button
-            disabled={!permissions.dues.create}
-            icon={<PlusOutlined />}
-            onClick={() => navigate(APP_ROUTES.DUE_NEW)}
-            type="primary"
-          >
-            Nueva cuota
-          </Button>
+          {permissions.dues.create && (
+            <Button
+              disabled={!permissions.dues.create}
+              icon={<PlusOutlined />}
+              onClick={() => navigate(APP_ROUTES.DUE_NEW)}
+              type="primary"
+            >
+              Nueva deuda
+            </Button>
+          )}
           <Dropdown
             menu={{
               items: [
@@ -108,12 +110,10 @@ export function DueListPage() {
       <Table<DueDto>
         dataSource={duesQuery.data?.data}
         loading={duesQuery.isFetching}
+        onChange={onChange}
         pagination={{
-          current: state.page,
-          onChange: (page, pageSize) => {
-            onChange(page, pageSize);
-          },
-          pageSize: state.pageSize,
+          current: status.page,
+          pageSize: status.pageSize,
           total: duesQuery.data?.total,
         }}
       >

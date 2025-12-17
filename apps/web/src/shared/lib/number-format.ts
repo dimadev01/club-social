@@ -11,14 +11,7 @@ export const NumberFormat = {
     return formatter({ maximumFractionDigits: fractionDigits }).format(value);
   },
 
-  format(
-    value: number,
-    options: Intl.NumberFormatOptions = {
-      // currency: 'ARS',
-      // maximumFractionDigits: 0,
-      // style: 'currency',
-    },
-  ) {
+  format(value: number, options: Intl.NumberFormatOptions = {}) {
     return formatter(options).format(value);
   },
 

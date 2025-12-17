@@ -1,7 +1,7 @@
 export interface PaginatedRequest {
   page: number;
   pageSize: number;
-  sort?: PaginatedRequestSort[];
+  sort: PaginatedRequestSort[];
 }
 
 export interface PaginatedRequestSort {

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   MemberFindManyArgs,
+  MemberOrderByWithRelationInput,
   MemberWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
@@ -26,6 +27,7 @@ export class PrismaMemberRepository implements MemberRepository {
   public async findAll(params: FindMembersModelParams): Promise<MemberModel[]> {
     const members = await this.prismaService.member.findMany({
       include: { user: params.includeUser },
+      orderBy: [{ user: { lastName: 'asc' } }, { user: { firstName: 'asc' } }],
       where: { deletedAt: null },
     });
 
@@ -77,13 +79,22 @@ export class PrismaMemberRepository implements MemberRepository {
       deletedAt: null,
     };
 
+    const orderBy: MemberOrderByWithRelationInput[] = [];
+    params.sort.forEach(({ field, order }) => {
+      if (field === 'email') {
+        orderBy.push({ user: { email: order } });
+      } else if (field === 'name') {
+        orderBy.push(
+          { user: { lastName: order } },
+          { user: { firstName: order } },
+        );
+      } else {
+        orderBy.push({ [field]: order });
+      }
+    });
+
     const query: MemberFindManyArgs = {
-      orderBy: [
-        ...(params.sort?.map(({ field, order }) => ({
-          [field]: order,
-        })) ?? []),
-        { createdAt: 'desc' },
-      ],
+      orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
       where,
