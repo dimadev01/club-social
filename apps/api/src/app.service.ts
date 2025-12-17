@@ -35,6 +35,7 @@ export class AppService {
 
   public async seed() {
     const { total } = await this.userRepository.findPaginated({
+      filters: {},
       page: 1,
       pageSize: 1,
       sort: [],

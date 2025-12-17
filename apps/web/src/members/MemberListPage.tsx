@@ -31,7 +31,7 @@ export function MemberListPage() {
   const permissions = usePermissions();
 
   const { onChange, status } = useTable<MemberDto>({
-    defaultSort: [{ field: 'name', order: 'ascend' }],
+    defaultSort: [{ field: 'id', order: 'ascend' }],
   });
 
   const membersQuery = useMembers();
@@ -44,7 +44,8 @@ export function MemberListPage() {
         query: {
           page: status.page,
           pageSize: status.pageSize,
-          ...status.sortSerialized,
+          ...status.querySort,
+          ...status.queryFilters,
         },
       }),
     queryKey: ['members', status],
@@ -99,28 +100,31 @@ export function MemberListPage() {
         sortDirections={['ascend', 'descend', 'ascend']}
       >
         <Table.Column<MemberDto>
-          dataIndex="name"
+          dataIndex="id"
+          defaultFilteredValue={[]}
+          filteredValue={status.filters?.id}
           filters={membersQuery.data?.map((member) => ({
             text: `${member.lastName} ${member.firstName}`,
             value: member.id,
           }))}
           filterSearch
           fixed="left"
-          render={(_, record) => (
-            <Typography.Text copyable={{ text: record.id }}>
-              <Link to={`${APP_ROUTES.MEMBER_LIST}/${record.id}`}>
+          render={(id, record) => (
+            <Typography.Text copyable={{ text: id }}>
+              <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>
                 {record.lastName} {record.firstName}
               </Link>
             </Typography.Text>
           )}
           sorter
-          sortOrder={status.sort.find((s) => s.field === 'name')?.order}
+          sortOrder={status.sort.find((s) => s.field === 'id')?.order}
           title="Socio"
         />
         <Table.Column<MemberDto>
           align="center"
           dataIndex="category"
-          filterMode="menu"
+          filteredValue={status.filters?.category}
+          filterMode="tree"
           filters={Object.entries(MemberCategoryLabel).map(
             ([value, label]) => ({
               text: label,

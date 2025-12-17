@@ -88,6 +88,7 @@ export class DuesController extends BaseController {
   ): Promise<PaginatedResponseDto<DueResponseDto>> {
     const dues = await this.dueRepository.findPaginated({
       category: query.category,
+      filters: {},
       memberId: query.memberId,
       page: query.page,
       pageSize: query.pageSize,

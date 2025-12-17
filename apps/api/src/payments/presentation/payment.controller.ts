@@ -89,6 +89,7 @@ export class PaymentsController extends BaseController {
   ): Promise<PaginatedResponseDto<PaymentResponseDto>> {
     const payments = await this.paymentRepository.findPaginated({
       dueId: query.dueId,
+      filters: {},
       page: query.page,
       pageSize: query.pageSize,
       sort: query.sort,

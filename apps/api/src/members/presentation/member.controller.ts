@@ -130,6 +130,7 @@ export class MembersController extends BaseController {
     @Query() query: PaginatedRequestDto,
   ): Promise<PaginatedResponseDto<MemberResponseDto>> {
     const members = await this.memberRepository.findPaginated({
+      filters: query.filters,
       page: query.page,
       pageSize: query.pageSize,
       sort: query.sort,

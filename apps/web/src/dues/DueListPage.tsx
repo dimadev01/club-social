@@ -62,7 +62,7 @@ export function DueListPage() {
         query: {
           page: status.page,
           pageSize: status.pageSize,
-          ...status.sortSerialized,
+          ...status.querySort,
         },
       }),
     queryKey: ['dues', status],

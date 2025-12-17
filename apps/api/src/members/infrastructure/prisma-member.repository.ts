@@ -79,11 +79,20 @@ export class PrismaMemberRepository implements MemberRepository {
       deletedAt: null,
     };
 
+    if (params.filters?.id) {
+      where.id = { in: params.filters.id };
+    }
+
+    if (params.filters?.category) {
+      where.category = { in: params.filters.category };
+    }
+
     const orderBy: MemberOrderByWithRelationInput[] = [];
+
     params.sort.forEach(({ field, order }) => {
       if (field === 'email') {
         orderBy.push({ user: { email: order } });
-      } else if (field === 'name') {
+      } else if (field === 'id') {
         orderBy.push(
           { user: { lastName: order } },
           { user: { firstName: order } },

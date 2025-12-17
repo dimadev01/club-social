@@ -1,4 +1,5 @@
 export interface PaginatedRequest {
+  filters?: Record<string, string[]>;
   page: number;
   pageSize: number;
   sort: PaginatedRequestSort[];
