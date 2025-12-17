@@ -68,6 +68,12 @@ export function useTable<T = unknown>({
     [state.sort],
   );
 
+  // Helper to get filter value for a specific field (returns null for Ant Design compatibility)
+  const getFilterValue = useCallback(
+    (field: string): null | string[] => state.filters[field] ?? null,
+    [state.filters],
+  );
+
   // Clear all filters
   const clearFilters = useCallback(() => {
     const params: Record<string, string> = {
@@ -147,7 +153,15 @@ export function useTable<T = unknown>({
     [setSearchParams, state.page, state.pageSize],
   );
 
-  return { clearFilters, getSortOrder, onChange, query, resetFilters, state };
+  return {
+    clearFilters,
+    getFilterValue,
+    getSortOrder,
+    onChange,
+    query,
+    resetFilters,
+    state,
+  };
 }
 
 // API Query Building

@@ -32,10 +32,17 @@ export function MemberListPage() {
   const { message } = App.useApp();
   const permissions = usePermissions();
 
-  const { clearFilters, getSortOrder, onChange, query, resetFilters, state } =
-    useTable<MemberDto>({
-      defaultSort: [{ field: 'id', order: 'ascend' }],
-    });
+  const {
+    clearFilters,
+    getFilterValue,
+    getSortOrder,
+    onChange,
+    query,
+    resetFilters,
+    state,
+  } = useTable<MemberDto>({
+    defaultSort: [{ field: 'id', order: 'ascend' }],
+  });
 
   const membersQuery = useMembers();
 
@@ -54,8 +61,6 @@ export function MemberListPage() {
   if (!permissions.members.list) {
     return <NotFound />;
   }
-
-  console.log(state);
 
   return (
     <Page
@@ -122,8 +127,7 @@ export function MemberListPage() {
       >
         <Table.Column<MemberDto>
           dataIndex="id"
-          defaultFilteredValue={[]}
-          filteredValue={state.filters?.id}
+          filteredValue={getFilterValue('id')}
           filters={membersQuery.data?.map((member) => ({
             text: `${member.lastName} ${member.firstName}`,
             value: member.id,
@@ -144,7 +148,7 @@ export function MemberListPage() {
         <Table.Column<MemberDto>
           align="center"
           dataIndex="category"
-          filteredValue={state.filters?.category}
+          filteredValue={getFilterValue('category')}
           filterMode="tree"
           filters={Object.entries(MemberCategoryLabel).map(
             ([value, label]) => ({ text: label, value }),
@@ -156,7 +160,7 @@ export function MemberListPage() {
         <Table.Column<MemberDto>
           align="center"
           dataIndex="status"
-          filteredValue={state.filters?.status}
+          filteredValue={getFilterValue('status')}
           filters={Object.entries(UserStatusLabel).map(([value, label]) => ({
             text: label,
             value,
