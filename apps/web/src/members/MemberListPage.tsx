@@ -1,6 +1,8 @@
 import {
+  DeleteOutlined,
   FileExcelOutlined,
   MoreOutlined,
+  RedoOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
 import {
@@ -11,7 +13,7 @@ import {
 import { type PaginatedResponse } from '@club-social/shared/types';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Typography } from 'antd';
+import { App, Button, Dropdown, Flex, Space, Tooltip, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
@@ -30,9 +32,10 @@ export function MemberListPage() {
   const { message } = App.useApp();
   const permissions = usePermissions();
 
-  const { getSortOrder, onChange, query, state } = useTable<MemberDto>({
-    defaultSort: [{ field: 'id', order: 'ascend' }],
-  });
+  const { clearFilters, getSortOrder, onChange, query, resetFilters, state } =
+    useTable<MemberDto>({
+      defaultSort: [{ field: 'id', order: 'ascend' }],
+    });
 
   const membersQuery = useMembers();
 
@@ -51,6 +54,8 @@ export function MemberListPage() {
   if (!permissions.members.list) {
     return <NotFound />;
   }
+
+  console.log(state);
 
   return (
     <Page
@@ -81,6 +86,25 @@ export function MemberListPage() {
       }
       title="Socios"
     >
+      <Flex className="mb-4" justify="end">
+        <Space.Compact size="small">
+          <Tooltip title="Filtros por defecto">
+            <Button
+              icon={<RedoOutlined />}
+              onClick={resetFilters}
+              type="default"
+            />
+          </Tooltip>
+          <Tooltip title="Eliminar filtros">
+            <Button
+              icon={<DeleteOutlined />}
+              onClick={clearFilters}
+              type="default"
+            />
+          </Tooltip>
+        </Space.Compact>
+      </Flex>
+
       <Table<MemberDto>
         dataSource={membersList.data?.data}
         loading={membersList.isFetching}
@@ -88,6 +112,10 @@ export function MemberListPage() {
         pagination={{
           current: state.page,
           pageSize: state.pageSize,
+          showLessItems: true,
+          showQuickJumper: true,
+          showSizeChanger: true,
+          showTotal: (total, range) => `${range[0]}-${range[1]} de ${total}`,
           total: membersList.data?.total,
         }}
         sortDirections={['ascend', 'descend', 'ascend']}
@@ -119,10 +147,7 @@ export function MemberListPage() {
           filteredValue={state.filters?.category}
           filterMode="tree"
           filters={Object.entries(MemberCategoryLabel).map(
-            ([value, label]) => ({
-              text: label,
-              value,
-            }),
+            ([value, label]) => ({ text: label, value }),
           )}
           onFilter={(value, record) => record.category === value}
           render={(value: MemberCategory) => MemberCategoryLabel[value]}

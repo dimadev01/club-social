@@ -12,8 +12,8 @@ import {
 
 import { cn } from '@/shared/lib/utils';
 
-export function Page({ className, ...props }: CardProps) {
-  return <Card className={cn('h-full', className)} {...props} />;
+export function Page({ ...props }: CardProps) {
+  return <Card {...props} />;
 }
 
 export function PageContent({

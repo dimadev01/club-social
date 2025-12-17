@@ -43,21 +43,20 @@ interface TableState {
 export function useTable<T = unknown>({
   defaultFilters,
   defaultPage = 1,
-  defaultPageSize = 20,
+  defaultPageSize = 50,
   defaultSort = [],
 }: TableParams = {}) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Derive state from URL (single source of truth)
-  const state = useMemo<TableState>(
-    () => ({
+  const state = useMemo<TableState>(() => {
+    return {
       filters: parseFilters(searchParams.get('filters'), defaultFilters),
       page: Number(searchParams.get('page')) || defaultPage,
       pageSize: Number(searchParams.get('pageSize')) || defaultPageSize,
       sort: parseSort(searchParams.get('sort'), defaultSort),
-    }),
-    [searchParams, defaultFilters, defaultPage, defaultPageSize, defaultSort],
-  );
+    };
+  }, [searchParams, defaultFilters, defaultPage, defaultPageSize, defaultSort]);
 
   // Build query object for API calls
   const query = useMemo(() => buildApiQuery(state), [state]);
@@ -68,6 +67,38 @@ export function useTable<T = unknown>({
       state.sort.find((s) => s.field === field)?.order,
     [state.sort],
   );
+
+  // Clear all filters
+  const clearFilters = useCallback(() => {
+    const params: Record<string, string> = {
+      page: '1',
+      pageSize: String(state.pageSize),
+    };
+
+    if (state.sort.length > 0) {
+      params.sort = serializeSortToUrl(state.sort);
+    }
+
+    setSearchParams(params);
+  }, [setSearchParams, state.pageSize, state.sort]);
+
+  // Reset filters to defaults
+  const resetFilters = useCallback(() => {
+    const params: Record<string, string> = {
+      page: '1',
+      pageSize: String(state.pageSize),
+    };
+
+    if (state.sort.length > 0) {
+      params.sort = serializeSortToUrl(state.sort);
+    }
+
+    if (defaultFilters && Object.keys(defaultFilters).length > 0) {
+      params.filters = serializeFiltersToUrl(defaultFilters);
+    }
+
+    setSearchParams(params);
+  }, [setSearchParams, state.pageSize, state.sort, defaultFilters]);
 
   // Handle table changes
   const onChange = useCallback(
@@ -116,7 +147,7 @@ export function useTable<T = unknown>({
     [setSearchParams, state.page, state.pageSize],
   );
 
-  return { getSortOrder, onChange, query, state };
+  return { clearFilters, getSortOrder, onChange, query, resetFilters, state };
 }
 
 // API Query Building
