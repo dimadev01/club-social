@@ -36,7 +36,7 @@ import {
   MemberPaginatedModel,
 } from '../domain/member.types';
 import { CreateMemberRequestDto } from './dto/create-member.dto';
-import { MemberDetailResponseDto } from './dto/member-detail.dto';
+import { MemberDetailDto } from './dto/member-detail.dto';
 import { MemberListDto } from './dto/member-list.dto';
 import { MemberPaginatedDto } from './dto/member-paginated.dto';
 import { UpdateMemberRequestDto } from './dto/update-member.dto';
@@ -121,7 +121,7 @@ export class MembersController extends BaseController {
     return { id: id.value };
   }
 
-  @ApiPaginatedResponse(MemberDetailResponseDto)
+  @ApiPaginatedResponse(MemberDetailDto)
   @Get('paginated')
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
@@ -147,9 +147,7 @@ export class MembersController extends BaseController {
   }
 
   @Get(':id')
-  public async getById(
-    @Param() request: ParamIdDto,
-  ): Promise<MemberDetailResponseDto> {
+  public async getById(@Param() request: ParamIdDto): Promise<MemberDetailDto> {
     const model = await this.memberRepository.findOneModel(
       UniqueId.raw({ value: request.id }),
     );
@@ -169,7 +167,7 @@ export class MembersController extends BaseController {
     };
   }
 
-  private toDetailDto(model: MemberDetailModel): MemberDetailResponseDto {
+  private toDetailDto(model: MemberDetailModel): MemberDetailDto {
     return {
       address: model.member.address
         ? {
@@ -182,6 +180,14 @@ export class MembersController extends BaseController {
       birthDate: model.member.birthDate ? model.member.birthDate.value : null,
       category: model.member.category,
       documentID: model.member.documentID,
+      dues: model.dues.map((due) => ({
+        amount: due.amount.toCents(),
+        category: due.category,
+        date: due.date.value,
+        id: due.id.value,
+        notes: due.notes,
+        status: due.status,
+      })),
       email: model.user.email.value,
       fileStatus: model.member.fileStatus,
       firstName: model.user.firstName,

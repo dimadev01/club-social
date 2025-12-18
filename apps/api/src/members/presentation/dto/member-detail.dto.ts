@@ -8,11 +8,14 @@ import {
 } from '@club-social/shared/members';
 import { UserStatus } from '@club-social/shared/users';
 
-export class MemberDetailResponseDto {
+import { MemberDetailDueDto } from './member-detail-due.dto';
+
+export class MemberDetailDto {
   public address: AddressDto | null;
   public birthDate: null | string;
   public category: MemberCategory;
   public documentID: null | string;
+  public dues: MemberDetailDueDto[];
   public email: string;
   public fileStatus: FileStatus;
   public firstName: string;

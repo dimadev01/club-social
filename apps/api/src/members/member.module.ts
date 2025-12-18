@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { DuesModule } from '@/dues/due.module';
 import { UsersModule } from '@/users/user.module';
 
 import { CreateMemberUseCase } from './application/create-member/create-member.use-case';
@@ -12,7 +13,7 @@ import { MembersController } from './presentation/member.controller';
 @Module({
   controllers: [MembersController],
   exports: [MEMBER_REPOSITORY_PROVIDER, CreateMemberUseCase],
-  imports: [UsersModule],
+  imports: [UsersModule, DuesModule],
   providers: [
     CreateMemberUseCase,
     UpdateMemberUseCase,

@@ -98,19 +98,19 @@ export function DueDetailPage() {
   }, [dueQuery.data, setFieldsValue]);
 
   const onSubmit = async (values: FormSchema) => {
-    const amountInCents = Math.round(values.amount * 100);
+    const amount = NumberFormat.toCents(values.amount);
 
     let date: string;
 
     if (formCategory === DueCategory.MEMBERSHIP) {
-      date = DateFormat.date(values.date.startOf('month').toDate());
+      date = DateFormat.isoDate(values.date.startOf('month'));
     } else {
-      date = values.date.startOf('day').toISOString();
+      date = DateFormat.isoDate(values.date.startOf('day'));
     }
 
     if (id) {
       updateDueMutation.mutate({
-        amount: amountInCents,
+        amount,
         category: values.category,
         date,
         notes: values.notes || null,
@@ -119,7 +119,7 @@ export function DueDetailPage() {
       const results = await Promise.allSettled(
         values.memberIds.map((memberId) =>
           createDueMutation.mutateAsync({
-            amount: amountInCents,
+            amount,
             category: values.category,
             date,
             memberId,

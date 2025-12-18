@@ -7,15 +7,15 @@ const formatter = (opts: Intl.NumberFormatOptions) =>
   new Intl.NumberFormat(locale, opts);
 
 export const NumberFormat = {
-  decimal(value: number, fractionDigits = 2) {
+  decimal(value: number, fractionDigits = 2): string {
     return formatter({ maximumFractionDigits: fractionDigits }).format(value);
   },
 
-  format(value: number, options: Intl.NumberFormatOptions = {}) {
+  format(value: number, options: Intl.NumberFormatOptions = {}): string {
     return formatter(options).format(value);
   },
 
-  formatCents(value: number) {
+  formatCents(value: number): string {
     return formatter({
       currency: 'ARS',
       maximumFractionDigits: 0,
@@ -23,7 +23,11 @@ export const NumberFormat = {
     }).format(Math.round(value / 100));
   },
 
-  parse(formatted: string): number {
+  parse(formatted: string): null | number {
     return parser.parse(formatted);
+  },
+
+  toCents(value: number): number {
+    return Math.round(value * 100);
   },
 };

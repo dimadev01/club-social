@@ -1,6 +1,7 @@
 import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
 import { Injectable } from '@nestjs/common';
 
+import { PrismaDueMapper } from '@/dues/infrastructure/prisma-due.mapper';
 import {
   MemberFindManyArgs,
   MemberOrderByWithRelationInput,
@@ -25,6 +26,7 @@ export class PrismaMemberRepository implements MemberRepository {
     private readonly prismaService: PrismaService,
     private readonly memberMapper: PrismaMemberMapper,
     private readonly userMapper: PrismaUserMapper,
+    private readonly dueMapper: PrismaDueMapper,
   ) {}
 
   public async findAll(
@@ -84,7 +86,7 @@ export class PrismaMemberRepository implements MemberRepository {
     }
 
     return {
-      dues: [],
+      dues: member.dues.map((due) => this.dueMapper.toDomain(due)),
       member: this.memberMapper.toDomain(member),
       payments: [],
       user: this.userMapper.toDomain(member.user),

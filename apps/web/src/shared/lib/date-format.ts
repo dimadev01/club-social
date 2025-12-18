@@ -1,27 +1,36 @@
-import dayjs from 'dayjs';
+import dayjs, { type Dayjs } from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/es';
+
+dayjs.extend(relativeTime);
+dayjs.locale('es');
 
 export const DateFormat = {
-  date(value: Date | string): string {
-    return dayjs(value).format('DD/MM/YYYY');
+  date(value: Date | Dayjs | string, format = 'DD/MM/YYYY'): string {
+    return dayjs(value).format(format);
   },
 
-  dateTime(value: Date | string): string {
-    return dayjs(value).format('DD/MM/YYYY HH:mm');
+  dateTime(value: Date | Dayjs | string, format = 'DD/MM/YYYY HH:mm'): string {
+    return dayjs(value).format(format);
   },
 
-  format(value: Date | string, pattern: string): string {
-    return dayjs(value).format(pattern);
+  isoDate(value: Date | Dayjs | string): string {
+    return DateFormat.date(value, 'YYYY-MM-DD');
   },
 
-  monthYear(value: Date | string): string {
+  monthYear(value: Date | Dayjs | string): string {
     return dayjs(value).format('MMMM YYYY');
   },
 
-  relative(value: Date | string): string {
+  parse(value: Date | Dayjs | string): Dayjs {
+    return dayjs(value);
+  },
+
+  relative(value: Date | Dayjs | string): string {
     return dayjs(value).fromNow();
   },
 
-  time(value: Date | string): string {
+  time(value: Date | Dayjs | string): string {
     return dayjs(value).format('HH:mm');
   },
 };
