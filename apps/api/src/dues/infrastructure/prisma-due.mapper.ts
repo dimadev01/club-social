@@ -1,10 +1,10 @@
 import { DueCategory, DueStatus } from '@club-social/shared/dues';
 import { Injectable } from '@nestjs/common';
-import { Decimal } from '@prisma/client/runtime/client';
 
 import { DueModel } from '@/infrastructure/database/prisma/generated/models';
 import { Mapper } from '@/infrastructure/repositories/mapper';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { DueEntity } from '../domain/entities/due.entity';
@@ -14,10 +14,10 @@ export class PrismaDueMapper extends Mapper<DueEntity, DueModel> {
   public toDomain(due: DueModel): DueEntity {
     return DueEntity.fromPersistence(
       {
-        amount: Amount.raw({ cents: due.amount.toNumber() }),
+        amount: Amount.raw({ cents: due.amount }),
         category: due.category as DueCategory,
         createdBy: due.createdBy,
-        date: due.date,
+        date: DateOnly.raw({ value: due.date }),
         memberId: UniqueId.raw({ value: due.memberId }),
         notes: due.notes,
         status: due.status as DueStatus,
@@ -39,11 +39,11 @@ export class PrismaDueMapper extends Mapper<DueEntity, DueModel> {
 
   public toPersistence(due: DueEntity): DueModel {
     return {
-      amount: new Decimal(due.amount.toCents()),
+      amount: due.amount.toCents(),
       category: due.category,
       createdAt: due.createdAt,
       createdBy: due.createdBy,
-      date: due.date,
+      date: due.date.value,
       deletedAt: due.deletedAt,
       deletedBy: due.deletedBy,
       id: due.id.value,

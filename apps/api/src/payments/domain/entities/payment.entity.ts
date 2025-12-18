@@ -1,9 +1,9 @@
-import { Decimal } from '@prisma/client/runtime/client';
-
 import type { BaseEntityProps } from '@/shared/domain/entity';
 
 import { Entity } from '@/shared/domain/entity';
 import { ok, Result } from '@/shared/domain/result';
+import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentCreatedEvent } from '../events/payment-created.event';
@@ -11,19 +11,19 @@ import { PaymentUpdatedEvent } from '../events/payment-updated.event';
 import { UpdatePaymentProps } from '../interfaces/payment.interface';
 
 interface PaymentProps {
-  amount: Decimal;
+  amount: Amount;
   createdBy: string;
-  date: Date;
+  date: DateOnly;
   dueId: UniqueId;
   notes: null | string;
 }
 
 export class PaymentEntity extends Entity<PaymentEntity> {
-  public get amount(): Decimal {
+  public get amount(): Amount {
     return this._amount;
   }
 
-  public get date(): Date {
+  public get date(): DateOnly {
     return this._date;
   }
 
@@ -35,8 +35,8 @@ export class PaymentEntity extends Entity<PaymentEntity> {
     return this._notes;
   }
 
-  private _amount: Decimal;
-  private _date: Date;
+  private _amount: Amount;
+  private _date: DateOnly;
   private _dueId: UniqueId;
   private _notes: null | string;
 

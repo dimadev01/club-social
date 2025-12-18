@@ -10,6 +10,7 @@ import { Injectable } from '@nestjs/common';
 import { MemberModel } from '@/infrastructure/database/prisma/generated/models';
 import { Mapper } from '@/infrastructure/repositories/mapper';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MemberEntity } from '../domain/entities/member.entity';
@@ -30,7 +31,9 @@ export class PrismaMemberMapper extends Mapper<MemberEntity, MemberModel> {
     return MemberEntity.fromPersistence(
       {
         address,
-        birthDate: member.birthDate,
+        birthDate: member.birthDate
+          ? DateOnly.raw({ value: member.birthDate })
+          : null,
         category: member.category as MemberCategory,
         createdBy: member.createdBy,
         documentID: member.documentID,
@@ -55,7 +58,7 @@ export class PrismaMemberMapper extends Mapper<MemberEntity, MemberModel> {
 
   public toPersistence(member: MemberEntity): MemberModel {
     return {
-      birthDate: member.birthDate,
+      birthDate: member.birthDate?.value ?? null,
       category: member.category,
       cityName: member.address?.cityName ?? null,
       createdAt: member.createdAt,

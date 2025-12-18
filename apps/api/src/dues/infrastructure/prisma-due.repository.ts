@@ -1,4 +1,7 @@
-import type { PaginatedResponse } from '@club-social/shared/types';
+import type {
+  PaginatedRequest,
+  PaginatedResponse,
+} from '@club-social/shared/types';
 
 import { Injectable } from '@nestjs/common';
 
@@ -9,7 +12,7 @@ import {
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import { DuePaginatedRequest, DueRepository } from '../domain/due.repository';
+import { DueRepository } from '../domain/due.repository';
 import { DueEntity } from '../domain/entities/due.entity';
 import { PrismaDueMapper } from './prisma-due.mapper';
 
@@ -63,14 +66,23 @@ export class PrismaDueRepository implements DueRepository {
   }
 
   public async findPaginated(
-    params: DuePaginatedRequest,
+    params: PaginatedRequest,
   ): Promise<PaginatedResponse<DueEntity>> {
     const where: DueWhereInput = {
       deletedAt: null,
-      ...(params.category && { category: params.category }),
-      ...(params.memberId && { memberId: params.memberId }),
-      ...(params.status && { status: params.status }),
     };
+
+    if (params.filters?.memberId) {
+      where.memberId = { in: params.filters.memberId };
+    }
+
+    if (params.filters?.category) {
+      where.category = { in: params.filters.category };
+    }
+
+    if (params.filters?.status) {
+      where.status = { in: params.filters.status };
+    }
 
     const query: DueFindManyArgs = {
       orderBy: [

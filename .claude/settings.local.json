@@ -6,7 +6,8 @@
       "Bash(npm run check-types:*)",
       "Bash(tree:*)",
       "Bash(npm run prisma:generate:*)",
-      "Bash(npm run prisma:new:create-only:*)"
+      "Bash(npm run prisma:new:create-only:*)",
+      "Bash(mkdir:*)"
     ]
   },
   "outputStyle": "default"

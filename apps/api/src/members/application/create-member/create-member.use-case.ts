@@ -15,7 +15,8 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { ConflictError } from '@/shared/domain/errors/conflict.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
-import { err, ok } from '@/shared/domain/result';
+import { err, ok, ResultUtils } from '@/shared/domain/result';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 import {
@@ -46,15 +47,19 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       params,
     });
 
-    const email = Email.create(params.email);
+    const results = ResultUtils.combine([
+      Email.create(params.email),
+      params.birthDate ? DateOnly.fromString(params.birthDate) : ok(),
+    ]);
 
-    if (email.isErr()) {
-      return err(email.error);
+    if (results.isErr()) {
+      return err(results.error);
     }
 
-    const existingUserByEmail = await this.userRepository.findUniqueByEmail(
-      email.value,
-    );
+    const [email, birthDate] = results.value;
+
+    const existingUserByEmail =
+      await this.userRepository.findUniqueByEmail(email);
 
     if (existingUserByEmail) {
       return err(new ConflictError('El email ya está en uso'));
@@ -65,7 +70,7 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       banned: false,
       banReason: null,
       createdBy: params.createdBy,
-      email: email.value,
+      email,
       firstName: params.firstName,
       lastName: params.lastName,
       role: UserRole.MEMBER,
@@ -79,7 +84,7 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
     const member = MemberEntity.create(
       {
         address: params.address,
-        birthDate: params.birthDate,
+        birthDate: birthDate ?? null,
         category: params.category,
         createdBy: params.createdBy,
         documentID: params.documentID,

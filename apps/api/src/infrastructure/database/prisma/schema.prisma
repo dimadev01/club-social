@@ -88,7 +88,7 @@ model Member {
   id            String    @id
   userId        String    @unique
   user          User      @relation(fields: [userId], references: [id])
-  birthDate     DateTime?
+  birthDate     String?
   category      String
   maritalStatus String?
   documentID    String?
@@ -116,9 +116,9 @@ model Due {
   id         String    @id
   memberId   String
   member     Member    @relation(fields: [memberId], references: [id])
-  amount     Decimal   @db.Decimal(10, 2)
+  amount     Int
   category   String
-  date       DateTime
+  date       String
   notes      String?
   status     String
   voidReason String?
@@ -135,6 +135,7 @@ model Due {
   @@index([memberId])
   @@index([status])
   @@index([category])
+  @@index([date])
   @@map("due")
 }
 
@@ -142,8 +143,8 @@ model Payment {
   id        String    @id
   dueId     String
   due       Due       @relation(fields: [dueId], references: [id])
-  amount    Decimal   @db.Decimal(10, 2)
-  date      DateTime
+  amount    Int
+  date      String
   notes     String?
   createdAt DateTime  @default(now())
   createdBy String
@@ -153,5 +154,6 @@ model Payment {
   deletedBy String?
 
   @@index([dueId])
+  @@index([date])
   @@map("payment")
 }

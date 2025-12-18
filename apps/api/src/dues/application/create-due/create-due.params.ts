@@ -4,7 +4,7 @@ export interface CreateDueParams {
   amount: number;
   category: DueCategory;
   createdBy: string;
-  date: Date;
+  date: string;
   memberId: string;
   notes: null | string;
 }

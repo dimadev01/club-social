@@ -15,6 +15,14 @@ export const NumberFormat = {
     return formatter(options).format(value);
   },
 
+  formatCents(value: number) {
+    return formatter({
+      currency: 'ARS',
+      maximumFractionDigits: 0,
+      style: 'currency',
+    }).format(Math.round(value / 100));
+  },
+
   parse(formatted: string): number {
     return parser.parse(formatted);
   },

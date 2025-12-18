@@ -27,7 +27,7 @@ export type AggregateMember = {
 export type MemberMinAggregateOutputType = {
   id: string | null;
   userId: string | null;
-  birthDate: Date | null;
+  birthDate: string | null;
   category: string | null;
   maritalStatus: string | null;
   documentID: string | null;
@@ -49,7 +49,7 @@ export type MemberMinAggregateOutputType = {
 export type MemberMaxAggregateOutputType = {
   id: string | null;
   userId: string | null;
-  birthDate: Date | null;
+  birthDate: string | null;
   category: string | null;
   maritalStatus: string | null;
   documentID: string | null;
@@ -242,7 +242,7 @@ export type MemberGroupByArgs<
 export type MemberGroupByOutputType = {
   id: string;
   userId: string;
-  birthDate: Date | null;
+  birthDate: string | null;
   category: string;
   maritalStatus: string | null;
   documentID: string | null;
@@ -284,7 +284,7 @@ export type MemberWhereInput = {
   NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[];
   id?: Prisma.StringFilter<'Member'> | string;
   userId?: Prisma.StringFilter<'Member'> | string;
-  birthDate?: Prisma.DateTimeNullableFilter<'Member'> | Date | string | null;
+  birthDate?: Prisma.StringNullableFilter<'Member'> | string | null;
   category?: Prisma.StringFilter<'Member'> | string;
   maritalStatus?: Prisma.StringNullableFilter<'Member'> | string | null;
   documentID?: Prisma.StringNullableFilter<'Member'> | string | null;
@@ -338,7 +338,7 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<
     AND?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[];
     OR?: Prisma.MemberWhereInput[];
     NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[];
-    birthDate?: Prisma.DateTimeNullableFilter<'Member'> | Date | string | null;
+    birthDate?: Prisma.StringNullableFilter<'Member'> | string | null;
     category?: Prisma.StringFilter<'Member'> | string;
     maritalStatus?: Prisma.StringNullableFilter<'Member'> | string | null;
     documentID?: Prisma.StringNullableFilter<'Member'> | string | null;
@@ -399,8 +399,7 @@ export type MemberScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<'Member'> | string;
   userId?: Prisma.StringWithAggregatesFilter<'Member'> | string;
   birthDate?:
-    | Prisma.DateTimeNullableWithAggregatesFilter<'Member'>
-    | Date
+    | Prisma.StringNullableWithAggregatesFilter<'Member'>
     | string
     | null;
   category?: Prisma.StringWithAggregatesFilter<'Member'> | string;
@@ -449,7 +448,7 @@ export type MemberScalarWhereWithAggregatesInput = {
 
 export type MemberCreateInput = {
   id: string;
-  birthDate?: Date | string | null;
+  birthDate?: string | null;
   category: string;
   maritalStatus?: string | null;
   documentID?: string | null;
@@ -474,7 +473,7 @@ export type MemberCreateInput = {
 export type MemberUncheckedCreateInput = {
   id: string;
   userId: string;
-  birthDate?: Date | string | null;
+  birthDate?: string | null;
   category: string;
   maritalStatus?: string | null;
   documentID?: string | null;
@@ -497,11 +496,7 @@ export type MemberUncheckedCreateInput = {
 
 export type MemberUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  birthDate?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   maritalStatus?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -533,11 +528,7 @@ export type MemberUpdateInput = {
 export type MemberUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   userId?: Prisma.StringFieldUpdateOperationsInput | string;
-  birthDate?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   maritalStatus?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -568,7 +559,7 @@ export type MemberUncheckedUpdateInput = {
 export type MemberCreateManyInput = {
   id: string;
   userId: string;
-  birthDate?: Date | string | null;
+  birthDate?: string | null;
   category: string;
   maritalStatus?: string | null;
   documentID?: string | null;
@@ -590,11 +581,7 @@ export type MemberCreateManyInput = {
 
 export type MemberUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  birthDate?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   maritalStatus?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -624,11 +611,7 @@ export type MemberUpdateManyMutationInput = {
 export type MemberUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   userId?: Prisma.StringFieldUpdateOperationsInput | string;
-  birthDate?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   maritalStatus?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -833,7 +816,7 @@ export type MemberUpdateOneRequiredWithoutDuesNestedInput = {
 
 export type MemberCreateWithoutUserInput = {
   id: string;
-  birthDate?: Date | string | null;
+  birthDate?: string | null;
   category: string;
   maritalStatus?: string | null;
   documentID?: string | null;
@@ -856,7 +839,7 @@ export type MemberCreateWithoutUserInput = {
 
 export type MemberUncheckedCreateWithoutUserInput = {
   id: string;
-  birthDate?: Date | string | null;
+  birthDate?: string | null;
   category: string;
   maritalStatus?: string | null;
   documentID?: string | null;
@@ -907,11 +890,7 @@ export type MemberUpdateToOneWithWhereWithoutUserInput = {
 
 export type MemberUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  birthDate?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   maritalStatus?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -941,11 +920,7 @@ export type MemberUpdateWithoutUserInput = {
 
 export type MemberUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  birthDate?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   maritalStatus?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -975,7 +950,7 @@ export type MemberUncheckedUpdateWithoutUserInput = {
 
 export type MemberCreateWithoutDuesInput = {
   id: string;
-  birthDate?: Date | string | null;
+  birthDate?: string | null;
   category: string;
   maritalStatus?: string | null;
   documentID?: string | null;
@@ -999,7 +974,7 @@ export type MemberCreateWithoutDuesInput = {
 export type MemberUncheckedCreateWithoutDuesInput = {
   id: string;
   userId: string;
-  birthDate?: Date | string | null;
+  birthDate?: string | null;
   category: string;
   maritalStatus?: string | null;
   documentID?: string | null;
@@ -1049,11 +1024,7 @@ export type MemberUpdateToOneWithWhereWithoutDuesInput = {
 
 export type MemberUpdateWithoutDuesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  birthDate?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   maritalStatus?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1084,11 +1055,7 @@ export type MemberUpdateWithoutDuesInput = {
 export type MemberUncheckedUpdateWithoutDuesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   userId?: Prisma.StringFieldUpdateOperationsInput | string;
-  birthDate?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   maritalStatus?:
     | Prisma.NullableStringFieldUpdateOperationsInput
@@ -1328,7 +1295,7 @@ export type $MemberPayload<
     {
       id: string;
       userId: string;
-      birthDate: Date | null;
+      birthDate: string | null;
       category: string;
       maritalStatus: string | null;
       documentID: string | null;
@@ -1965,7 +1932,7 @@ export interface Prisma__MemberClient<
 export interface MemberFieldRefs {
   readonly id: Prisma.FieldRef<'Member', 'String'>;
   readonly userId: Prisma.FieldRef<'Member', 'String'>;
-  readonly birthDate: Prisma.FieldRef<'Member', 'DateTime'>;
+  readonly birthDate: Prisma.FieldRef<'Member', 'String'>;
   readonly category: Prisma.FieldRef<'Member', 'String'>;
   readonly maritalStatus: Prisma.FieldRef<'Member', 'String'>;
   readonly documentID: Prisma.FieldRef<'Member', 'String'>;

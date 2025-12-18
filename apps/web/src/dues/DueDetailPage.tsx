@@ -30,10 +30,11 @@ import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 import { useMembers } from '@/members/useMembers';
+import { useMutation } from '@/shared/hooks/useMutation';
+import { useQuery } from '@/shared/hooks/useQuery';
+import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
-import { useMutation } from '@/shared/lib/useMutation';
-import { useQuery } from '@/shared/lib/useQuery';
 import { Form } from '@/ui/Form/Form';
 import { NotFound } from '@/ui/NotFound';
 import { Select } from '@/ui/Select';
@@ -99,11 +100,19 @@ export function DueDetailPage() {
   const onSubmit = async (values: FormSchema) => {
     const amountInCents = Math.round(values.amount * 100);
 
+    let date: string;
+
+    if (formCategory === DueCategory.MEMBERSHIP) {
+      date = DateFormat.date(values.date.startOf('month').toDate());
+    } else {
+      date = values.date.startOf('day').toISOString();
+    }
+
     if (id) {
       updateDueMutation.mutate({
         amount: amountInCents,
         category: values.category,
-        date: values.date.utc().toISOString(),
+        date,
         notes: values.notes || null,
       });
     } else {
@@ -112,7 +121,7 @@ export function DueDetailPage() {
           createDueMutation.mutateAsync({
             amount: amountInCents,
             category: values.category,
-            date: values.date.utc().toISOString(),
+            date,
             memberId,
             notes: values.notes || null,
           }),
@@ -265,7 +274,20 @@ export function DueDetailPage() {
         <Form.Item<FormSchema>
           label="Monto"
           name="amount"
-          rules={[{ message: 'El monto es requerido', required: true }]}
+          rules={[
+            { message: 'El monto es requerido', required: true },
+            {
+              validator: (_, value) => {
+                if (value < 1) {
+                  return Promise.reject(
+                    new Error('El monto debe ser mayor a 1'),
+                  );
+                }
+
+                return Promise.resolve();
+              },
+            },
+          ]}
         >
           <InputNumber<number>
             className="w-full"

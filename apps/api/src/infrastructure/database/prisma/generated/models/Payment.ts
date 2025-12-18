@@ -27,18 +27,18 @@ export type AggregatePayment = {
 };
 
 export type PaymentAvgAggregateOutputType = {
-  amount: runtime.Decimal | null;
+  amount: number | null;
 };
 
 export type PaymentSumAggregateOutputType = {
-  amount: runtime.Decimal | null;
+  amount: number | null;
 };
 
 export type PaymentMinAggregateOutputType = {
   id: string | null;
   dueId: string | null;
-  amount: runtime.Decimal | null;
-  date: Date | null;
+  amount: number | null;
+  date: string | null;
   notes: string | null;
   createdAt: Date | null;
   createdBy: string | null;
@@ -51,8 +51,8 @@ export type PaymentMinAggregateOutputType = {
 export type PaymentMaxAggregateOutputType = {
   id: string | null;
   dueId: string | null;
-  amount: runtime.Decimal | null;
-  date: Date | null;
+  amount: number | null;
+  date: string | null;
   notes: string | null;
   createdAt: Date | null;
   createdBy: string | null;
@@ -224,8 +224,8 @@ export type PaymentGroupByArgs<
 export type PaymentGroupByOutputType = {
   id: string;
   dueId: string;
-  amount: runtime.Decimal;
-  date: Date;
+  amount: number;
+  date: string;
   notes: string | null;
   createdAt: Date;
   createdBy: string;
@@ -259,13 +259,8 @@ export type PaymentWhereInput = {
   NOT?: Prisma.PaymentWhereInput | Prisma.PaymentWhereInput[];
   id?: Prisma.StringFilter<'Payment'> | string;
   dueId?: Prisma.StringFilter<'Payment'> | string;
-  amount?:
-    | Prisma.DecimalFilter<'Payment'>
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
-  date?: Prisma.DateTimeFilter<'Payment'> | Date | string;
+  amount?: Prisma.IntFilter<'Payment'> | number;
+  date?: Prisma.StringFilter<'Payment'> | string;
   notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
   createdAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
   createdBy?: Prisma.StringFilter<'Payment'> | string;
@@ -298,13 +293,8 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<
     OR?: Prisma.PaymentWhereInput[];
     NOT?: Prisma.PaymentWhereInput | Prisma.PaymentWhereInput[];
     dueId?: Prisma.StringFilter<'Payment'> | string;
-    amount?:
-      | Prisma.DecimalFilter<'Payment'>
-      | runtime.Decimal
-      | runtime.DecimalJsLike
-      | number
-      | string;
-    date?: Prisma.DateTimeFilter<'Payment'> | Date | string;
+    amount?: Prisma.IntFilter<'Payment'> | number;
+    date?: Prisma.StringFilter<'Payment'> | string;
     notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
     createdAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
     createdBy?: Prisma.StringFilter<'Payment'> | string;
@@ -346,13 +336,8 @@ export type PaymentScalarWhereWithAggregatesInput = {
     | Prisma.PaymentScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
   dueId?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
-  amount?:
-    | Prisma.DecimalWithAggregatesFilter<'Payment'>
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
-  date?: Prisma.DateTimeWithAggregatesFilter<'Payment'> | Date | string;
+  amount?: Prisma.IntWithAggregatesFilter<'Payment'> | number;
+  date?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
   notes?: Prisma.StringNullableWithAggregatesFilter<'Payment'> | string | null;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<'Payment'> | Date | string;
   createdBy?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
@@ -374,8 +359,8 @@ export type PaymentScalarWhereWithAggregatesInput = {
 
 export type PaymentCreateInput = {
   id: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  date: Date | string;
+  amount: number;
+  date: string;
   notes?: string | null;
   createdAt?: Date | string;
   createdBy: string;
@@ -389,8 +374,8 @@ export type PaymentCreateInput = {
 export type PaymentUncheckedCreateInput = {
   id: string;
   dueId: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  date: Date | string;
+  amount: number;
+  date: string;
   notes?: string | null;
   createdAt?: Date | string;
   createdBy: string;
@@ -402,13 +387,8 @@ export type PaymentUncheckedCreateInput = {
 
 export type PaymentUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -426,13 +406,8 @@ export type PaymentUpdateInput = {
 export type PaymentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   dueId?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -449,8 +424,8 @@ export type PaymentUncheckedUpdateInput = {
 export type PaymentCreateManyInput = {
   id: string;
   dueId: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  date: Date | string;
+  amount: number;
+  date: string;
   notes?: string | null;
   createdAt?: Date | string;
   createdBy: string;
@@ -462,13 +437,8 @@ export type PaymentCreateManyInput = {
 
 export type PaymentUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -485,13 +455,8 @@ export type PaymentUpdateManyMutationInput = {
 export type PaymentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   dueId?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -661,8 +626,8 @@ export type PaymentUncheckedUpdateManyWithoutDueNestedInput = {
 
 export type PaymentCreateWithoutDueInput = {
   id: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  date: Date | string;
+  amount: number;
+  date: string;
   notes?: string | null;
   createdAt?: Date | string;
   createdBy: string;
@@ -674,8 +639,8 @@ export type PaymentCreateWithoutDueInput = {
 
 export type PaymentUncheckedCreateWithoutDueInput = {
   id: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  date: Date | string;
+  amount: number;
+  date: string;
   notes?: string | null;
   createdAt?: Date | string;
   createdBy: string;
@@ -732,13 +697,8 @@ export type PaymentScalarWhereInput = {
   NOT?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[];
   id?: Prisma.StringFilter<'Payment'> | string;
   dueId?: Prisma.StringFilter<'Payment'> | string;
-  amount?:
-    | Prisma.DecimalFilter<'Payment'>
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
-  date?: Prisma.DateTimeFilter<'Payment'> | Date | string;
+  amount?: Prisma.IntFilter<'Payment'> | number;
+  date?: Prisma.StringFilter<'Payment'> | string;
   notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
   createdAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
   createdBy?: Prisma.StringFilter<'Payment'> | string;
@@ -750,8 +710,8 @@ export type PaymentScalarWhereInput = {
 
 export type PaymentCreateManyDueInput = {
   id: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  date: Date | string;
+  amount: number;
+  date: string;
   notes?: string | null;
   createdAt?: Date | string;
   createdBy: string;
@@ -763,13 +723,8 @@ export type PaymentCreateManyDueInput = {
 
 export type PaymentUpdateWithoutDueInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -785,13 +740,8 @@ export type PaymentUpdateWithoutDueInput = {
 
 export type PaymentUncheckedUpdateWithoutDueInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -807,13 +757,8 @@ export type PaymentUncheckedUpdateWithoutDueInput = {
 
 export type PaymentUncheckedUpdateManyWithoutDueInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -952,8 +897,8 @@ export type $PaymentPayload<
     {
       id: string;
       dueId: string;
-      amount: runtime.Decimal;
-      date: Date;
+      amount: number;
+      date: string;
       notes: string | null;
       createdAt: Date;
       createdBy: string;
@@ -1569,8 +1514,8 @@ export interface Prisma__PaymentClient<
 export interface PaymentFieldRefs {
   readonly id: Prisma.FieldRef<'Payment', 'String'>;
   readonly dueId: Prisma.FieldRef<'Payment', 'String'>;
-  readonly amount: Prisma.FieldRef<'Payment', 'Decimal'>;
-  readonly date: Prisma.FieldRef<'Payment', 'DateTime'>;
+  readonly amount: Prisma.FieldRef<'Payment', 'Int'>;
+  readonly date: Prisma.FieldRef<'Payment', 'String'>;
   readonly notes: Prisma.FieldRef<'Payment', 'String'>;
   readonly createdAt: Prisma.FieldRef<'Payment', 'DateTime'>;
   readonly createdBy: Prisma.FieldRef<'Payment', 'String'>;

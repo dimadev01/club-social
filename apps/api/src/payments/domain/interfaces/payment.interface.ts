@@ -1,8 +1,9 @@
-import { Decimal } from '@prisma/client/runtime/client';
+import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 
 export interface UpdatePaymentProps {
-  amount: Decimal;
-  date: Date;
+  amount: Amount;
+  date: DateOnly;
   notes: null | string;
   updatedBy: string;
 }

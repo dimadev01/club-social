@@ -3,13 +3,12 @@ import {
   FileStatus,
   MaritalStatus,
   MemberCategory,
-  MemberDto,
   MemberNationality,
   MemberSex,
 } from '@club-social/shared/members';
 import { UserStatus } from '@club-social/shared/users';
 
-export class MemberResponseDto implements MemberDto {
+export class MemberDetailResponseDto {
   public address: AddressDto | null;
   public birthDate: null | string;
   public category: MemberCategory;

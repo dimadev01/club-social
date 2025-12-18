@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Inject,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -15,7 +16,6 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
-import { Guard } from '@/shared/domain/guards';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
@@ -23,21 +23,22 @@ import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-pagin
 import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
-import { UserEntity } from '@/users/domain/entities/user.entity';
-import {
-  USER_REPOSITORY_PROVIDER,
-  type UserRepository,
-} from '@/users/domain/user.repository';
 
 import { CreateMemberUseCase } from '../application/create-member/create-member.use-case';
 import { UpdateMemberUseCase } from '../application/update-member/update-member.use-case';
-import { MemberEntity } from '../domain/entities/member.entity';
 import {
   MEMBER_REPOSITORY_PROVIDER,
   type MemberRepository,
 } from '../domain/member.repository';
+import {
+  MemberDetailModel,
+  MemberListModel,
+  MemberPaginatedModel,
+} from '../domain/member.types';
 import { CreateMemberRequestDto } from './dto/create-member.dto';
-import { MemberResponseDto } from './dto/member.dto';
+import { MemberDetailResponseDto } from './dto/member-detail.dto';
+import { MemberListDto } from './dto/member-list.dto';
+import { MemberPaginatedDto } from './dto/member-paginated.dto';
 import { UpdateMemberRequestDto } from './dto/update-member.dto';
 
 @Controller('members')
@@ -49,8 +50,6 @@ export class MembersController extends BaseController {
     private readonly updateMemberUseCase: UpdateMemberUseCase,
     @Inject(MEMBER_REPOSITORY_PROVIDER)
     private readonly memberRepository: MemberRepository,
-    @Inject(USER_REPOSITORY_PROVIDER)
-    private readonly userRepository: UserRepository,
   ) {
     super(logger);
   }
@@ -71,7 +70,7 @@ export class MembersController extends BaseController {
               zipCode: body.address.zipCode,
             })
           : null,
-        birthDate: body.birthDate ? new Date(body.birthDate) : null,
+        birthDate: body.birthDate ? body.birthDate : null,
         category: body.category,
         documentID: body.documentID,
         email: body.email,
@@ -104,9 +103,7 @@ export class MembersController extends BaseController {
               zipCode: createMemberDto.address.zipCode,
             })
           : null,
-        birthDate: createMemberDto.birthDate
-          ? new Date(createMemberDto.birthDate)
-          : null,
+        birthDate: createMemberDto.birthDate ? createMemberDto.birthDate : null,
         category: createMemberDto.category,
         createdBy: session.user.name,
         documentID: createMemberDto.documentID,
@@ -124,86 +121,89 @@ export class MembersController extends BaseController {
     return { id: id.value };
   }
 
-  @ApiPaginatedResponse(MemberResponseDto)
+  @ApiPaginatedResponse(MemberDetailResponseDto)
   @Get('paginated')
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
-  ): Promise<PaginatedResponseDto<MemberResponseDto>> {
-    const members = await this.memberRepository.findPaginated({
+  ): Promise<PaginatedResponseDto<MemberPaginatedDto>> {
+    const data = await this.memberRepository.findPaginatedModel({
       filters: query.filters,
       page: query.page,
       pageSize: query.pageSize,
       sort: query.sort,
     });
 
-    const users = await this.userRepository.findManyByIds(
-      members.data.map((m) => m.userId),
-    );
-
     return {
-      data: members.data.map((member) => {
-        const user = users.find((u) => u.id.equals(member.userId));
-        Guard.defined(user);
-
-        return this.toDto(member, user);
-      }),
-      total: members.total,
+      data: data.data.map((member) => this.toPaginatedDto(member)),
+      total: data.total,
     };
   }
 
   @Get()
-  public async getAll(): Promise<MemberResponseDto[]> {
+  public async getAll(): Promise<MemberListDto[]> {
     const data = await this.memberRepository.findAll({ includeUser: true });
 
-    return data.map(({ member, user }) => {
-      Guard.defined(user);
-
-      return this.toDto(member, user);
-    });
+    return data.map(({ member, user }) => this.toListDto({ member, user }));
   }
 
   @Get(':id')
   public async getById(
     @Param() request: ParamIdDto,
-  ): Promise<MemberResponseDto | null> {
-    const member = await this.memberRepository.findOneById(
+  ): Promise<MemberDetailResponseDto> {
+    const model = await this.memberRepository.findOneModel(
       UniqueId.raw({ value: request.id }),
     );
 
-    if (!member) {
-      return null;
+    if (!model) {
+      throw new NotFoundException('Member not found');
     }
 
-    const user = await this.userRepository.findOneByIdOrThrow(member.userId);
-
-    return this.toDto(member, user);
+    return this.toDetailDto(model);
   }
 
-  private toDto(member: MemberEntity, user: UserEntity): MemberResponseDto {
+  private toListDto(model: MemberListModel): MemberListDto {
     return {
-      address: member.address
+      id: model.member.id.value,
+      name: model.user.name,
+      status: model.user.status,
+    };
+  }
+
+  private toDetailDto(model: MemberDetailModel): MemberDetailResponseDto {
+    return {
+      address: model.member.address
         ? {
-            cityName: member.address.cityName,
-            stateName: member.address.stateName,
-            street: member.address.street,
-            zipCode: member.address.zipCode,
+            cityName: model.member.address.cityName,
+            stateName: model.member.address.stateName,
+            street: model.member.address.street,
+            zipCode: model.member.address.zipCode,
           }
         : null,
-      birthDate: member.birthDate ? member.birthDate.toISOString() : null,
-      category: member.category,
-      documentID: member.documentID,
-      email: user.email.value,
-      fileStatus: member.fileStatus,
-      firstName: user.firstName,
-      id: member.id.value,
-      lastName: user.lastName,
-      maritalStatus: member.maritalStatus,
-      name: user.name,
-      nationality: member.nationality,
-      phones: member.phones,
-      sex: member.sex,
-      status: user.status,
-      userId: member.userId.value,
+      birthDate: model.member.birthDate ? model.member.birthDate.value : null,
+      category: model.member.category,
+      documentID: model.member.documentID,
+      email: model.user.email.value,
+      fileStatus: model.member.fileStatus,
+      firstName: model.user.firstName,
+      id: model.member.id.value,
+      lastName: model.user.lastName,
+      maritalStatus: model.member.maritalStatus,
+      name: model.user.name,
+      nationality: model.member.nationality,
+      phones: model.member.phones,
+      sex: model.member.sex,
+      status: model.user.status,
+      userId: model.member.userId.value,
+    };
+  }
+
+  private toPaginatedDto(model: MemberPaginatedModel): MemberPaginatedDto {
+    return {
+      category: model.member.category,
+      email: model.user.email.value,
+      id: model.member.id.value,
+      name: model.user.name,
+      status: model.user.status,
     };
   }
 }

@@ -50,7 +50,7 @@ export class UserEntity extends Entity<UserEntity> {
   }
 
   public get name(): string {
-    return `${this._firstName} ${this._lastName}`;
+    return `${this._lastName} ${this._firstName}`;
   }
 
   public get role(): UserRole {

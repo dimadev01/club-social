@@ -9,7 +9,6 @@ import {
   Query,
   Session,
 } from '@nestjs/common';
-import { Decimal } from '@prisma/client/runtime/client';
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 import {
@@ -54,9 +53,9 @@ export class PaymentsController extends BaseController {
   ): Promise<ParamIdDto> {
     const { id } = this.handleResult(
       await this.createPaymentUseCase.execute({
-        amount: new Decimal(body.amount),
+        amount: body.amount,
         createdBy: session.user.name,
-        date: new Date(body.date),
+        date: body.date,
         dueId: body.dueId,
         notes: body.notes,
       }),
@@ -73,8 +72,8 @@ export class PaymentsController extends BaseController {
   ): Promise<void> {
     this.handleResult(
       await this.updatePaymentUseCase.execute({
-        amount: new Decimal(body.amount),
-        date: new Date(body.date),
+        amount: body.amount,
+        date: body.date,
         id: request.id,
         notes: body.notes,
         updatedBy: session.user.name,
@@ -118,10 +117,10 @@ export class PaymentsController extends BaseController {
 
   private toDto(payment: PaymentEntity): PaymentResponseDto {
     return {
-      amount: payment.amount.toNumber(),
+      amount: payment.amount.toCents(),
       createdAt: payment.createdAt.toISOString(),
       createdBy: payment.createdBy,
-      date: payment.date.toISOString(),
+      date: payment.date.value,
       dueId: payment.dueId.value,
       id: payment.id.value,
       notes: payment.notes,

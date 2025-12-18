@@ -1,6 +1,5 @@
 import { DueStatus } from '@club-social/shared/dues';
 import { Inject } from '@nestjs/common';
-import { Decimal } from '@prisma/client/runtime/client';
 
 import type { Result } from '@/shared/domain/result';
 
@@ -20,7 +19,9 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
-import { err, ok } from '@/shared/domain/result';
+import { err, ok, ResultUtils } from '@/shared/domain/result';
+import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import type { UpdatePaymentParams } from './update-payment.params';
@@ -58,9 +59,20 @@ export class UpdatePaymentUseCase extends UseCase<PaymentEntity> {
       );
     }
 
+    const results = ResultUtils.combine([
+      Amount.fromCents(params.amount),
+      DateOnly.fromString(params.date),
+    ]);
+
+    if (results.isErr()) {
+      return err(results.error);
+    }
+
+    const [amount, date] = results.value;
+
     payment.update({
-      amount: params.amount,
-      date: params.date,
+      amount,
+      date,
       notes: params.notes,
       updatedBy: params.updatedBy,
     });
@@ -71,14 +83,14 @@ export class UpdatePaymentUseCase extends UseCase<PaymentEntity> {
     const allPayments = await this.paymentRepository.findByDueId(due.id);
     const totalPaid = allPayments.reduce(
       (sum, p) => sum.add(p.amount),
-      new Decimal(0),
+      Amount.raw({ cents: 0 }),
     );
 
     let newStatus: DueStatus;
 
-    if (totalPaid.gte(due.amount.toCents())) {
+    if (totalPaid.isGreaterThanOrEqual(due.amount)) {
       newStatus = DueStatus.PAID;
-    } else if (totalPaid.gt(new Decimal(0))) {
+    } else if (totalPaid.isGreaterThan(Amount.raw({ cents: 0 }))) {
       newStatus = DueStatus.PARTIALLY_PAID;
     } else {
       newStatus = DueStatus.PENDING;

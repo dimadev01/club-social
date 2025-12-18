@@ -1,9 +1,7 @@
-import { Decimal } from '@prisma/client/runtime/client';
-
 export interface CreatePaymentParams {
-  amount: Decimal;
+  amount: number;
   createdBy: string;
-  date: Date;
+  date: string;
   dueId: string;
   notes: null | string;
 }

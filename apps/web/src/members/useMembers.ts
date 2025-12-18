@@ -1,7 +1,7 @@
 import type { MemberDto } from '@club-social/shared/members';
 
+import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
-import { useQuery } from '@/shared/lib/useQuery';
 import { usePermissions } from '@/users/use-permissions';
 
 export function useMembers() {

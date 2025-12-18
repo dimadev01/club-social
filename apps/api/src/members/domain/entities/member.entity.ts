@@ -11,6 +11,7 @@ import type { BaseEntityProps } from '@/shared/domain/entity';
 import { Entity } from '@/shared/domain/entity';
 import { ok, Result } from '@/shared/domain/result';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 
@@ -20,7 +21,7 @@ import { UpdateMemberProfileProps } from '../interfaces/member.interface';
 
 interface MemberProps {
   address: Address | null;
-  birthDate: Date | null;
+  birthDate: DateOnly | null;
   category: MemberCategory;
   createdBy: string;
   documentID: null | string;
@@ -37,7 +38,7 @@ export class MemberEntity extends Entity<MemberEntity> {
     return this._address;
   }
 
-  public get birthDate(): Date | null {
+  public get birthDate(): DateOnly | null {
     return this._birthDate;
   }
 
@@ -74,7 +75,7 @@ export class MemberEntity extends Entity<MemberEntity> {
   }
 
   private _address: Address | null;
-  private _birthDate: Date | null;
+  private _birthDate: DateOnly | null;
   private _category: MemberCategory;
   private _documentID: null | string;
   private _fileStatus: FileStatus;

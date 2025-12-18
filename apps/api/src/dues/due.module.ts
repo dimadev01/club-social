@@ -11,7 +11,7 @@ import { DuesController } from './presentation/due.controller';
 
 @Module({
   controllers: [DuesController],
-  exports: [DUE_REPOSITORY_PROVIDER],
+  exports: [DUE_REPOSITORY_PROVIDER, PrismaDueMapper],
   imports: [MembersModule],
   providers: [
     CreateDueUseCase,

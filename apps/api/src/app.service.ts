@@ -71,7 +71,10 @@ export class AppService {
               zipCode: sample([null, faker.location.zipCode()]),
             }),
           ]),
-          birthDate: sample([null, faker.date.birthdate()]),
+          birthDate: sample([
+            null,
+            faker.date.birthdate().toISOString().split('T')[0],
+          ]),
           category: sample([
             MemberCategory.MEMBER,
             MemberCategory.ADHERENT_MEMBER,

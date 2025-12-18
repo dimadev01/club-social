@@ -13,16 +13,10 @@ import { DueEntity } from './entities/due.entity';
 
 export const DUE_REPOSITORY_PROVIDER = Symbol('DueRepository');
 
-export interface DuePaginatedRequest extends PaginatedRequest {
-  category?: string;
-  memberId?: string;
-  status?: string;
-}
-
 export interface DueRepository
   extends ReadableRepository<DueEntity>, WriteableRepository<DueEntity> {
   findByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
   findPaginated(
-    params: DuePaginatedRequest,
+    params: PaginatedRequest,
   ): Promise<PaginatedResponse<DueEntity>>;
 }

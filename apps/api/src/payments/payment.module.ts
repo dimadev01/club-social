@@ -11,7 +11,7 @@ import { PaymentsController } from './presentation/payment.controller';
 
 @Module({
   controllers: [PaymentsController],
-  exports: [PAYMENT_REPOSITORY_PROVIDER],
+  exports: [PAYMENT_REPOSITORY_PROVIDER, PrismaPaymentMapper],
   imports: [DuesModule],
   providers: [
     CreatePaymentUseCase,

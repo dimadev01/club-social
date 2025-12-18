@@ -15,8 +15,8 @@ import { App, Button, Dropdown, Space, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
+import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
-import { useQuery } from '@/shared/lib/useQuery';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageContent, PageHeader, PageTitle } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';

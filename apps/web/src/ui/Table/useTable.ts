@@ -24,7 +24,7 @@ interface TableParams {
   defaultFilters?: Record<string, string[]>;
   defaultPage?: number;
   defaultPageSize?: number;
-  defaultSort?: SortItem[];
+  defaultSort: SortItem[];
 }
 
 interface TableQuery {
@@ -44,19 +44,20 @@ export function useTable<T = unknown>({
   defaultFilters,
   defaultPage = 1,
   defaultPageSize = 50,
-  defaultSort = [],
-}: TableParams = {}) {
+  defaultSort,
+}: TableParams) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Derive state from URL (single source of truth)
-  const state = useMemo<TableState>(() => {
-    return {
+  const state = useMemo<TableState>(
+    () => ({
       filters: parseFilters(searchParams.get('filters'), defaultFilters),
       page: Number(searchParams.get('page')) || defaultPage,
       pageSize: Number(searchParams.get('pageSize')) || defaultPageSize,
       sort: parseSort(searchParams.get('sort'), defaultSort),
-    };
-  }, [searchParams, defaultFilters, defaultPage, defaultPageSize, defaultSort]);
+    }),
+    [searchParams, defaultFilters, defaultPage, defaultPageSize, defaultSort],
+  );
 
   // Build query object for API calls
   const query = useMemo(() => buildApiQuery(state), [state]);
@@ -118,10 +119,7 @@ export function useTable<T = unknown>({
       const sorterArray = Array.isArray(sorter) ? sorter : [sorter];
       const newSort: SortItem[] = sorterArray
         .filter((s) => s.field !== undefined && s.order !== undefined)
-        .map((s) => ({
-          field: String(s.field),
-          order: s.order as SortOrder,
-        }));
+        .map((s) => ({ field: String(s.field), order: s.order as SortOrder }));
 
       // Normalize filters
       const newFilters = Object.entries(tableFilters).reduce<

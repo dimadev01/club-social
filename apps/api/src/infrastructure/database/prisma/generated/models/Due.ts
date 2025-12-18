@@ -27,19 +27,19 @@ export type AggregateDue = {
 };
 
 export type DueAvgAggregateOutputType = {
-  amount: runtime.Decimal | null;
+  amount: number | null;
 };
 
 export type DueSumAggregateOutputType = {
-  amount: runtime.Decimal | null;
+  amount: number | null;
 };
 
 export type DueMinAggregateOutputType = {
   id: string | null;
   memberId: string | null;
-  amount: runtime.Decimal | null;
+  amount: number | null;
   category: string | null;
-  date: Date | null;
+  date: string | null;
   notes: string | null;
   status: string | null;
   voidReason: string | null;
@@ -56,9 +56,9 @@ export type DueMinAggregateOutputType = {
 export type DueMaxAggregateOutputType = {
   id: string | null;
   memberId: string | null;
-  amount: runtime.Decimal | null;
+  amount: number | null;
   category: string | null;
-  date: Date | null;
+  date: string | null;
   notes: string | null;
   status: string | null;
   voidReason: string | null;
@@ -254,9 +254,9 @@ export type DueGroupByArgs<
 export type DueGroupByOutputType = {
   id: string;
   memberId: string;
-  amount: runtime.Decimal;
+  amount: number;
   category: string;
-  date: Date;
+  date: string;
   notes: string | null;
   status: string;
   voidReason: string | null;
@@ -293,14 +293,9 @@ export type DueWhereInput = {
   NOT?: Prisma.DueWhereInput | Prisma.DueWhereInput[];
   id?: Prisma.StringFilter<'Due'> | string;
   memberId?: Prisma.StringFilter<'Due'> | string;
-  amount?:
-    | Prisma.DecimalFilter<'Due'>
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFilter<'Due'> | number;
   category?: Prisma.StringFilter<'Due'> | string;
-  date?: Prisma.DateTimeFilter<'Due'> | Date | string;
+  date?: Prisma.StringFilter<'Due'> | string;
   notes?: Prisma.StringNullableFilter<'Due'> | string | null;
   status?: Prisma.StringFilter<'Due'> | string;
   voidReason?: Prisma.StringNullableFilter<'Due'> | string | null;
@@ -347,14 +342,9 @@ export type DueWhereUniqueInput = Prisma.AtLeast<
     OR?: Prisma.DueWhereInput[];
     NOT?: Prisma.DueWhereInput | Prisma.DueWhereInput[];
     memberId?: Prisma.StringFilter<'Due'> | string;
-    amount?:
-      | Prisma.DecimalFilter<'Due'>
-      | runtime.Decimal
-      | runtime.DecimalJsLike
-      | number
-      | string;
+    amount?: Prisma.IntFilter<'Due'> | number;
     category?: Prisma.StringFilter<'Due'> | string;
-    date?: Prisma.DateTimeFilter<'Due'> | Date | string;
+    date?: Prisma.StringFilter<'Due'> | string;
     notes?: Prisma.StringNullableFilter<'Due'> | string | null;
     status?: Prisma.StringFilter<'Due'> | string;
     voidReason?: Prisma.StringNullableFilter<'Due'> | string | null;
@@ -409,14 +399,9 @@ export type DueScalarWhereWithAggregatesInput = {
     | Prisma.DueScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<'Due'> | string;
   memberId?: Prisma.StringWithAggregatesFilter<'Due'> | string;
-  amount?:
-    | Prisma.DecimalWithAggregatesFilter<'Due'>
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntWithAggregatesFilter<'Due'> | number;
   category?: Prisma.StringWithAggregatesFilter<'Due'> | string;
-  date?: Prisma.DateTimeWithAggregatesFilter<'Due'> | Date | string;
+  date?: Prisma.StringWithAggregatesFilter<'Due'> | string;
   notes?: Prisma.StringNullableWithAggregatesFilter<'Due'> | string | null;
   status?: Prisma.StringWithAggregatesFilter<'Due'> | string;
   voidReason?: Prisma.StringNullableWithAggregatesFilter<'Due'> | string | null;
@@ -440,9 +425,9 @@ export type DueScalarWhereWithAggregatesInput = {
 
 export type DueCreateInput = {
   id: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  amount: number;
   category: string;
-  date: Date | string;
+  date: string;
   notes?: string | null;
   status: string;
   voidReason?: string | null;
@@ -461,9 +446,9 @@ export type DueCreateInput = {
 export type DueUncheckedCreateInput = {
   id: string;
   memberId: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  amount: number;
   category: string;
-  date: Date | string;
+  date: string;
   notes?: string | null;
   status: string;
   voidReason?: string | null;
@@ -480,14 +465,9 @@ export type DueUncheckedCreateInput = {
 
 export type DueUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -514,14 +494,9 @@ export type DueUpdateInput = {
 export type DueUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -547,9 +522,9 @@ export type DueUncheckedUpdateInput = {
 export type DueCreateManyInput = {
   id: string;
   memberId: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  amount: number;
   category: string;
-  date: Date | string;
+  date: string;
   notes?: string | null;
   status: string;
   voidReason?: string | null;
@@ -565,14 +540,9 @@ export type DueCreateManyInput = {
 
 export type DueUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -597,14 +567,9 @@ export type DueUpdateManyMutationInput = {
 export type DueUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -792,12 +757,12 @@ export type DueUncheckedUpdateManyWithoutMemberNestedInput = {
   deleteMany?: Prisma.DueScalarWhereInput | Prisma.DueScalarWhereInput[];
 };
 
-export type DecimalFieldUpdateOperationsInput = {
-  set?: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string;
-  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string;
+export type IntFieldUpdateOperationsInput = {
+  set?: number;
+  increment?: number;
+  decrement?: number;
+  multiply?: number;
+  divide?: number;
 };
 
 export type DueCreateNestedOneWithoutPaymentsInput = {
@@ -828,9 +793,9 @@ export type DueUpdateOneRequiredWithoutPaymentsNestedInput = {
 
 export type DueCreateWithoutMemberInput = {
   id: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  amount: number;
   category: string;
-  date: Date | string;
+  date: string;
   notes?: string | null;
   status: string;
   voidReason?: string | null;
@@ -847,9 +812,9 @@ export type DueCreateWithoutMemberInput = {
 
 export type DueUncheckedCreateWithoutMemberInput = {
   id: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  amount: number;
   category: string;
-  date: Date | string;
+  date: string;
   notes?: string | null;
   status: string;
   voidReason?: string | null;
@@ -911,14 +876,9 @@ export type DueScalarWhereInput = {
   NOT?: Prisma.DueScalarWhereInput | Prisma.DueScalarWhereInput[];
   id?: Prisma.StringFilter<'Due'> | string;
   memberId?: Prisma.StringFilter<'Due'> | string;
-  amount?:
-    | Prisma.DecimalFilter<'Due'>
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFilter<'Due'> | number;
   category?: Prisma.StringFilter<'Due'> | string;
-  date?: Prisma.DateTimeFilter<'Due'> | Date | string;
+  date?: Prisma.StringFilter<'Due'> | string;
   notes?: Prisma.StringNullableFilter<'Due'> | string | null;
   status?: Prisma.StringFilter<'Due'> | string;
   voidReason?: Prisma.StringNullableFilter<'Due'> | string | null;
@@ -934,9 +894,9 @@ export type DueScalarWhereInput = {
 
 export type DueCreateWithoutPaymentsInput = {
   id: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  amount: number;
   category: string;
-  date: Date | string;
+  date: string;
   notes?: string | null;
   status: string;
   voidReason?: string | null;
@@ -954,9 +914,9 @@ export type DueCreateWithoutPaymentsInput = {
 export type DueUncheckedCreateWithoutPaymentsInput = {
   id: string;
   memberId: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  amount: number;
   category: string;
-  date: Date | string;
+  date: string;
   notes?: string | null;
   status: string;
   voidReason?: string | null;
@@ -1000,14 +960,9 @@ export type DueUpdateToOneWithWhereWithoutPaymentsInput = {
 
 export type DueUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1033,14 +988,9 @@ export type DueUpdateWithoutPaymentsInput = {
 export type DueUncheckedUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1064,9 +1014,9 @@ export type DueUncheckedUpdateWithoutPaymentsInput = {
 
 export type DueCreateManyMemberInput = {
   id: string;
-  amount: runtime.Decimal | runtime.DecimalJsLike | number | string;
+  amount: number;
   category: string;
-  date: Date | string;
+  date: string;
   notes?: string | null;
   status: string;
   voidReason?: string | null;
@@ -1082,14 +1032,9 @@ export type DueCreateManyMemberInput = {
 
 export type DueUpdateWithoutMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1114,14 +1059,9 @@ export type DueUpdateWithoutMemberInput = {
 
 export type DueUncheckedUpdateWithoutMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1146,14 +1086,9 @@ export type DueUncheckedUpdateWithoutMemberInput = {
 
 export type DueUncheckedUpdateManyWithoutMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?:
-    | Prisma.DecimalFieldUpdateOperationsInput
-    | runtime.Decimal
-    | runtime.DecimalJsLike
-    | number
-    | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
-  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1368,9 +1303,9 @@ export type $DuePayload<
     {
       id: string;
       memberId: string;
-      amount: runtime.Decimal;
+      amount: number;
       category: string;
-      date: Date;
+      date: string;
       notes: string | null;
       status: string;
       voidReason: string | null;
@@ -2001,9 +1936,9 @@ export interface Prisma__DueClient<
 export interface DueFieldRefs {
   readonly id: Prisma.FieldRef<'Due', 'String'>;
   readonly memberId: Prisma.FieldRef<'Due', 'String'>;
-  readonly amount: Prisma.FieldRef<'Due', 'Decimal'>;
+  readonly amount: Prisma.FieldRef<'Due', 'Int'>;
   readonly category: Prisma.FieldRef<'Due', 'String'>;
-  readonly date: Prisma.FieldRef<'Due', 'DateTime'>;
+  readonly date: Prisma.FieldRef<'Due', 'String'>;
   readonly notes: Prisma.FieldRef<'Due', 'String'>;
   readonly status: Prisma.FieldRef<'Due', 'String'>;
   readonly voidReason: Prisma.FieldRef<'Due', 'String'>;

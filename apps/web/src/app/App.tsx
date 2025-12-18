@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { useLocalStorage } from 'react-use';
 
@@ -11,6 +12,7 @@ import 'dayjs/locale/es';
 
 dayjs.locale('es');
 dayjs.extend(utc);
+dayjs.extend(relativeTime);
 
 const queryClient = new QueryClient({
   defaultOptions: {

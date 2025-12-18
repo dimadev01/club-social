@@ -6,6 +6,7 @@ import { Entity } from '@/shared/domain/entity';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
 import { err, ok, Result } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { DueCreatedEvent } from '../events/due-created.event';
@@ -16,7 +17,7 @@ interface DueProps {
   amount: Amount;
   category: DueCategory;
   createdBy: string;
-  date: Date;
+  date: DateOnly;
   memberId: UniqueId;
   notes: null | string;
   status: DueStatus;
@@ -34,7 +35,7 @@ export class DueEntity extends Entity<DueEntity> {
     return this._category;
   }
 
-  public get date(): Date {
+  public get date(): DateOnly {
     return this._date;
   }
 
@@ -64,7 +65,7 @@ export class DueEntity extends Entity<DueEntity> {
 
   private _amount: Amount;
   private _category: DueCategory;
-  private _date: Date;
+  private _date: DateOnly;
   private _memberId: UniqueId;
   private _notes: null | string;
   private _status: DueStatus;

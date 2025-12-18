@@ -56,7 +56,7 @@ export class DuesController extends BaseController {
         amount: body.amount,
         category: body.category,
         createdBy: session.user.name,
-        date: new Date(body.date),
+        date: body.date,
         memberId: body.memberId,
         notes: body.notes,
       }),
@@ -87,13 +87,10 @@ export class DuesController extends BaseController {
     @Query() query: DueListRequestDto,
   ): Promise<PaginatedResponseDto<DueResponseDto>> {
     const dues = await this.dueRepository.findPaginated({
-      category: query.category,
-      filters: {},
-      memberId: query.memberId,
+      filters: query.filters,
       page: query.page,
       pageSize: query.pageSize,
       sort: query.sort,
-      status: query.status,
     });
 
     return {
@@ -123,7 +120,7 @@ export class DuesController extends BaseController {
       category: due.category,
       createdAt: due.createdAt.toISOString(),
       createdBy: due.createdBy,
-      date: due.date.toISOString(),
+      date: due.date.value,
       id: due.id.value,
       memberId: due.memberId.value,
       notes: due.notes,

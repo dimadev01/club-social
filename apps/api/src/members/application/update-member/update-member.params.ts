@@ -11,7 +11,7 @@ import { Address } from '@/shared/domain/value-objects/address/address.vo';
 
 export interface UpdateMemberParams {
   address: Address | null;
-  birthDate: Date | null;
+  birthDate: null | string;
   category: MemberCategory;
   documentID: null | string;
   email: string;

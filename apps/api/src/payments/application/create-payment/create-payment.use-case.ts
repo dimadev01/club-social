@@ -1,6 +1,5 @@
 import { DueStatus } from '@club-social/shared/dues';
 import { Inject } from '@nestjs/common';
-import { Decimal } from '@prisma/client/runtime/client';
 
 import type { Result } from '@/shared/domain/result';
 
@@ -19,9 +18,10 @@ import {
 } from '@/shared/application/app-logger';
 import { UseCase } from '@/shared/application/use-case';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
-import { EntityNotFoundError } from '@/shared/domain/errors/entity-not-found.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
-import { err, ok } from '@/shared/domain/result';
+import { err, ok, ResultUtils } from '@/shared/domain/result';
+import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import type { CreatePaymentParams } from './create-payment.params';
@@ -47,13 +47,9 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       params,
     });
 
-    const due = await this.dueRepository.findOneById(
+    const due = await this.dueRepository.findOneByIdOrThrow(
       UniqueId.raw({ value: params.dueId }),
     );
-
-    if (!due) {
-      return err(new EntityNotFoundError('Cuota no encontrada'));
-    }
 
     if (due.status === DueStatus.VOIDED) {
       return err(new ApplicationError('No se puede pagar una cuota anulada'));
@@ -63,10 +59,21 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(new ApplicationError('La cuota ya está pagada'));
     }
 
+    const results = ResultUtils.combine([
+      Amount.fromCents(params.amount),
+      DateOnly.fromString(params.date),
+    ]);
+
+    if (results.isErr()) {
+      return err(results.error);
+    }
+
+    const [amount, date] = results.value;
+
     const payment = PaymentEntity.create({
-      amount: params.amount,
+      amount,
       createdBy: params.createdBy,
-      date: params.date,
+      date,
       dueId: UniqueId.raw({ value: params.dueId }),
       notes: params.notes,
     });
@@ -77,18 +84,17 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
     await this.paymentRepository.save(payment.value);
 
-    // Calculate new due status based on total payments
     const allPayments = await this.paymentRepository.findByDueId(due.id);
     const totalPaid = allPayments.reduce(
       (sum, p) => sum.add(p.amount),
-      new Decimal(0),
+      Amount.raw({ cents: 0 }),
     );
 
     let newStatus: DueStatus;
 
-    if (totalPaid.gte(due.amount.toCents())) {
+    if (totalPaid.isGreaterThanOrEqual(due.amount)) {
       newStatus = DueStatus.PAID;
-    } else if (totalPaid.gt(new Decimal(0))) {
+    } else if (totalPaid.isGreaterThan(Amount.raw({ cents: 0 }))) {
       newStatus = DueStatus.PARTIALLY_PAID;
     } else {
       newStatus = DueStatus.PENDING;

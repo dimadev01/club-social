@@ -40,9 +40,9 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
+import { useMutation } from '@/shared/hooks/useMutation';
+import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
-import { useMutation } from '@/shared/lib/useMutation';
-import { useQuery } from '@/shared/lib/useQuery';
 import { Form } from '@/ui/Form/Form';
 import { NotFound } from '@/ui/NotFound';
 import { Row } from '@/ui/Row';

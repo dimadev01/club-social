@@ -1,9 +1,11 @@
 import type { PaginatedResponse } from '@club-social/shared/types';
 
 import {
+  CloseOutlined,
   FileExcelOutlined,
   MoreOutlined,
   PlusOutlined,
+  RedoOutlined,
 } from '@ant-design/icons';
 import {
   type DueCategory,
@@ -13,46 +15,34 @@ import {
   DueStatusLabel,
 } from '@club-social/shared/dues';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Tag, Typography } from 'antd';
+import { App, Button, Dropdown, Flex, Space, Tooltip, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
+import { useQuery } from '@/shared/hooks/useQuery';
+import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
-import { useQuery } from '@/shared/lib/useQuery';
+import { NumberFormat } from '@/shared/lib/number-format';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
-const formatAmount = (amountInCents: number) => {
-  return new Intl.NumberFormat('es-AR', {
-    currency: 'ARS',
-    style: 'currency',
-  }).format(amountInCents / 100);
-};
-
-const formatDate = (dateString: string) => {
-  return new Intl.DateTimeFormat('es-AR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(dateString));
-};
-
-const statusColor: Record<DueStatus, string> = {
-  paid: 'success',
-  'partially-paid': 'warning',
-  pending: 'default',
-  voided: 'error',
-};
-
 export function DueListPage() {
   const navigate = useNavigate();
   const { message } = App.useApp();
   const permissions = usePermissions();
 
-  const { onChange, query, state } = useTable<DueDto>();
+  const {
+    clearFilters,
+    getFilterValue,
+    getSortOrder,
+    onChange,
+    query,
+    resetFilters,
+    state,
+  } = useTable<DueDto>({ defaultSort: [{ field: 'date', order: 'descend' }] });
 
   const duesQuery = useQuery({
     enabled: permissions.dues.list,
@@ -101,6 +91,24 @@ export function DueListPage() {
       }
       title="Cuotas"
     >
+      <Flex className="mb-4" justify="end">
+        <Space.Compact>
+          <Tooltip title="Filtros por defecto">
+            <Button
+              icon={<RedoOutlined />}
+              onClick={resetFilters}
+              type="default"
+            />
+          </Tooltip>
+          <Tooltip title="Eliminar filtros">
+            <Button
+              icon={<CloseOutlined />}
+              onClick={clearFilters}
+              type="default"
+            />
+          </Tooltip>
+        </Space.Compact>
+      </Flex>
       <Table<DueDto>
         dataSource={duesQuery.data?.data}
         loading={duesQuery.isFetching}
@@ -112,32 +120,49 @@ export function DueListPage() {
         }}
       >
         <Table.Column<DueDto>
-          dataIndex="id"
-          render={(id: string, record) => (
-            <Link to={`${APP_ROUTES.DUE_LIST}/${id}`}>
-              {formatDate(record.date)}
+          dataIndex="createdAt"
+          render={(createdAt: string, record) => (
+            <Link to={`${APP_ROUTES.DUE_LIST}/${record.id}`}>
+              {DateFormat.date(createdAt)}
             </Link>
           )}
+          sorter
+          sortOrder={getSortOrder('createdAt')}
+          title="Fecha de creación"
+        />
+        <Table.Column<DueDto>
+          dataIndex="date"
+          sorter
+          sortOrder={getSortOrder('date')}
           title="Fecha"
         />
         <Table.Column<DueDto>
           align="center"
           dataIndex="category"
+          filteredValue={getFilterValue('category')}
+          filters={Object.entries(DueCategoryLabel).map(([value, label]) => ({
+            text: label,
+            value,
+          }))}
+          onFilter={(value, record) => record.category === value}
           render={(value: DueCategory) => DueCategoryLabel[value]}
           title="Categoría"
         />
         <Table.Column<DueDto>
           align="right"
           dataIndex="amount"
-          render={(amount: number) => formatAmount(amount)}
+          render={(amount: number) => NumberFormat.formatCents(amount)}
           title="Monto"
         />
         <Table.Column<DueDto>
           align="center"
           dataIndex="status"
-          render={(value: DueStatus) => (
-            <Tag color={statusColor[value]}>{DueStatusLabel[value]}</Tag>
-          )}
+          filteredValue={getFilterValue('status')}
+          filters={Object.entries(DueStatusLabel).map(([value, label]) => ({
+            text: label,
+            value,
+          }))}
+          render={(value: DueStatus) => DueStatusLabel[value]}
           title="Estado"
         />
         <Table.Column<DueDto>

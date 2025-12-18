@@ -8,17 +8,14 @@ import {
 } from '@/dues/domain/due.repository';
 import { DueEntity } from '@/dues/domain/entities/due.entity';
 import {
-  MEMBER_REPOSITORY_PROVIDER,
-  type MemberRepository,
-} from '@/members/domain/member.repository';
-import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { UseCase } from '@/shared/application/use-case';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
-import { err, ok } from '@/shared/domain/result';
+import { err, ok, ResultUtils } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import type { CreateDueParams } from './create-due.params';
@@ -29,8 +26,6 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
     protected readonly logger: AppLogger,
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
-    @Inject(MEMBER_REPOSITORY_PROVIDER)
-    private readonly memberRepository: MemberRepository,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -42,17 +37,22 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
       params,
     });
 
-    const amount = Amount.fromCents(params.amount);
+    const results = ResultUtils.combine([
+      Amount.fromCents(params.amount),
+      DateOnly.fromString(params.date),
+    ]);
 
-    if (amount.isErr()) {
-      return err(amount.error);
+    if (results.isErr()) {
+      return err(results.error);
     }
 
+    const [amount, date] = results.value;
+
     const due = DueEntity.create({
-      amount: amount.value,
+      amount,
       category: params.category,
       createdBy: params.createdBy,
-      date: params.date,
+      date,
       memberId: UniqueId.raw({ value: params.memberId }),
       notes: params.notes,
     });

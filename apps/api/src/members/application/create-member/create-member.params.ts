@@ -10,7 +10,7 @@ import { Address } from '@/shared/domain/value-objects/address/address.vo';
 
 export interface CreateMemberParams {
   address: Address | null;
-  birthDate: Date | null;
+  birthDate: null | string;
   category: MemberCategory;
   createdBy: string;
   documentID: null | string;

@@ -1,5 +1,5 @@
 import {
-  DeleteOutlined,
+  CloseOutlined,
   FileExcelOutlined,
   MoreOutlined,
   RedoOutlined,
@@ -17,8 +17,8 @@ import { App, Button, Dropdown, Flex, Space, Tooltip, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
+import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
-import { useQuery } from '@/shared/lib/useQuery';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -92,7 +92,7 @@ export function MemberListPage() {
       title="Socios"
     >
       <Flex className="mb-4" justify="end">
-        <Space.Compact size="small">
+        <Space.Compact>
           <Tooltip title="Filtros por defecto">
             <Button
               icon={<RedoOutlined />}
@@ -102,7 +102,7 @@ export function MemberListPage() {
           </Tooltip>
           <Tooltip title="Eliminar filtros">
             <Button
-              icon={<DeleteOutlined />}
+              icon={<CloseOutlined />}
               onClick={clearFilters}
               type="default"
             />
@@ -129,16 +129,14 @@ export function MemberListPage() {
           dataIndex="id"
           filteredValue={getFilterValue('id')}
           filters={membersQuery.data?.map((member) => ({
-            text: `${member.lastName} ${member.firstName}`,
+            text: member.name,
             value: member.id,
           }))}
           filterSearch
           fixed="left"
           render={(id, record) => (
             <Typography.Text copyable={{ text: id }}>
-              <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>
-                {record.lastName} {record.firstName}
-              </Link>
+              <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>{record.name}</Link>
             </Typography.Text>
           )}
           sorter
