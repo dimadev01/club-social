@@ -17,3 +17,11 @@ export const UserStatusLabel = {
   [UserStatus.ACTIVE]: 'Activo',
   [UserStatus.INACTIVE]: 'Inactivo',
 } as const;
+
+export const UserStatusSort = {
+  [UserStatus.ACTIVE]: 1,
+  [UserStatus.INACTIVE]: 2,
+} as const;
+
+export type UserStatusSort =
+  (typeof UserStatusSort)[keyof typeof UserStatusSort];

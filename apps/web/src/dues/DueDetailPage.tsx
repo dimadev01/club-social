@@ -1,3 +1,4 @@
+import type { MemberSearchResultDto } from '@club-social/shared/members';
 import type { ParamId } from '@club-social/shared/types';
 
 import {
@@ -29,7 +30,8 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
-import { useMembers } from '@/members/useMembers';
+import { MemberSearchSelect } from '@/members/MemberSearchSelect';
+import { useMemberById } from '@/members/useMemberById';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
@@ -66,7 +68,10 @@ export function DueDetailPage() {
     queryKey: ['dues', id],
   });
 
-  const membersQuery = useMembers();
+  const memberQuery = useMemberById({
+    enabled: !!id,
+    memberId: dueQuery.data?.memberId,
+  });
 
   const createDueMutation = useMutation<ParamId, Error, CreateDueDto>({
     mutationFn: (body) => $fetch('/dues', { body }),
@@ -88,7 +93,7 @@ export function DueDetailPage() {
   useEffect(() => {
     if (dueQuery.data) {
       setFieldsValue({
-        amount: dueQuery.data.amount / 100,
+        amount: NumberFormat.fromCents(dueQuery.data.amount),
         category: dueQuery.data.category,
         date: dayjs.utc(dueQuery.data.date),
         memberIds: [dueQuery.data.memberId],
@@ -149,7 +154,7 @@ export function DueDetailPage() {
 
   const isLoading =
     dueQuery.isLoading ||
-    membersQuery.isLoading ||
+    (id && memberQuery.isLoading) ||
     createDueMutation.isPending ||
     updateDueMutation.isPending;
 
@@ -161,7 +166,15 @@ export function DueDetailPage() {
     return <NotFound />;
   }
 
-  console.log(form.getFieldValue('amount'));
+  const memberAdditionalOptions: MemberSearchResultDto[] = memberQuery.data
+    ? [
+        {
+          id: memberQuery.data.id,
+          name: memberQuery.data.name,
+          status: memberQuery.data.status,
+        },
+      ]
+    : [];
 
   return (
     <Card
@@ -230,6 +243,7 @@ export function DueDetailPage() {
           <DatePicker
             allowClear={false}
             className="w-full"
+            disabled={!!id}
             format={
               formCategory === DueCategory.MEMBERSHIP
                 ? 'MMMM YYYY'
@@ -246,15 +260,12 @@ export function DueDetailPage() {
             { message: 'Debe seleccionar al menos un socio', required: true },
           ]}
         >
-          <Select
+          <MemberSearchSelect
+            additionalOptions={memberAdditionalOptions}
             disabled={!!id}
-            loading={membersQuery.isLoading}
+            loading={id ? memberQuery.isLoading : false}
             mode={id ? undefined : 'multiple'}
-            options={(membersQuery.data ?? []).map((member) => ({
-              label: member.name,
-              value: member.id,
-            }))}
-            placeholder="Seleccionar socios"
+            placeholder="Buscar y seleccionar socios..."
           />
         </Form.Item>
 
@@ -264,6 +275,7 @@ export function DueDetailPage() {
           rules={[{ message: 'La categoría es requerida', required: true }]}
         >
           <Select
+            disabled={!!id}
             options={Object.entries(DueCategoryLabel).map(([key, value]) => ({
               label: value,
               value: key,
@@ -278,7 +290,7 @@ export function DueDetailPage() {
             { message: 'El monto es requerido', required: true },
             {
               validator: (_, value) => {
-                if (value < 1) {
+                if (value && value < 1) {
                   return Promise.reject(
                     new Error('El monto debe ser mayor a 1'),
                   );
@@ -291,6 +303,7 @@ export function DueDetailPage() {
         >
           <InputNumber<number>
             className="w-full"
+            disabled={!!id}
             formatter={(value) => NumberFormat.format(Number(value))}
             min={0}
             parser={(value) => NumberFormat.parse(String(value))}

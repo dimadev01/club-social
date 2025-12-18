@@ -25,6 +25,7 @@ import { Table } from '@/ui/Table/Table';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
+import { MemberSearchSelect } from './MemberSearchSelect';
 import { useMembers } from './useMembers';
 
 export function MemberListPage() {
@@ -39,6 +40,7 @@ export function MemberListPage() {
     onChange,
     query,
     resetFilters,
+    setFilter,
     state,
   } = useTable<MemberDto>({
     defaultSort: [{ field: 'id', order: 'ascend' }],
@@ -51,7 +53,7 @@ export function MemberListPage() {
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<PaginatedResponse<MemberDto>>('/members/paginated', { query }),
-    queryKey: ['members', state, query],
+    queryKey: ['members', query],
   });
 
   if (membersList.error) {
@@ -91,7 +93,18 @@ export function MemberListPage() {
       }
       title="Socios"
     >
-      <Flex className="mb-4" justify="end">
+      <Flex className="mb-4" gap="middle" justify="space-between">
+        <MemberSearchSelect
+          allowClear
+          mode="multiple"
+          onChange={(value) =>
+            setFilter('id', value?.length ? (value as string[]) : undefined)
+          }
+          placeholder="Filtrar por socio..."
+          style={{ minWidth: 300 }}
+          value={getFilterValue('id') ?? undefined}
+        />
+
         <Space.Compact>
           <Tooltip title="Filtros por defecto">
             <Button

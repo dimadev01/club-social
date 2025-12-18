@@ -17,6 +17,7 @@ import {
   FindMembersModelParams,
   MemberDetailModel,
   MemberPaginatedModel,
+  MemberSearchParams,
 } from '../domain/member.types';
 import { PrismaMemberMapper } from './prisma-member.mapper';
 
@@ -211,5 +212,37 @@ export class PrismaMemberRepository implements MemberRepository {
     });
 
     return this.memberMapper.toDomain(member);
+  }
+
+  public async search(
+    params: MemberSearchParams,
+  ): Promise<MemberPaginatedModel[]> {
+    const { limit, searchTerm } = params;
+
+    const members = await this.prismaService.member.findMany({
+      include: { user: true },
+      orderBy: [{ user: { lastName: 'asc' } }, { user: { firstName: 'asc' } }],
+      take: limit,
+      where: {
+        deletedAt: null,
+        OR: [
+          {
+            user: {
+              OR: [
+                { firstName: { contains: searchTerm, mode: 'insensitive' } },
+                { lastName: { contains: searchTerm, mode: 'insensitive' } },
+                { email: { contains: searchTerm, mode: 'insensitive' } },
+              ],
+            },
+          },
+          { documentID: { contains: searchTerm, mode: 'insensitive' } },
+        ],
+      },
+    });
+
+    return members.map((member) => ({
+      member: this.memberMapper.toDomain(member),
+      user: this.userMapper.toDomain(member.user),
+    }));
   }
 }

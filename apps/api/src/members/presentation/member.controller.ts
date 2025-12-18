@@ -39,6 +39,8 @@ import { CreateMemberRequestDto } from './dto/create-member.dto';
 import { MemberDetailDto } from './dto/member-detail.dto';
 import { MemberListDto } from './dto/member-list.dto';
 import { MemberPaginatedDto } from './dto/member-paginated.dto';
+import { MemberSearchRequestDto } from './dto/member-search-request.dto';
+import { MemberSearchDto } from './dto/member-search.dto';
 import { UpdateMemberRequestDto } from './dto/update-member.dto';
 
 @Controller('members')
@@ -146,6 +148,18 @@ export class MembersController extends BaseController {
     return data.map(({ member, user }) => this.toListDto({ member, user }));
   }
 
+  @Get('search')
+  public async search(
+    @Query() query: MemberSearchRequestDto,
+  ): Promise<MemberSearchDto[]> {
+    const data = await this.memberRepository.search({
+      limit: query.limit ?? 20,
+      searchTerm: query.q,
+    });
+
+    return data.map((model) => this.toSearchDto(model));
+  }
+
   @Get(':id')
   public async getById(@Param() request: ParamIdDto): Promise<MemberDetailDto> {
     const model = await this.memberRepository.findOneModel(
@@ -206,6 +220,15 @@ export class MembersController extends BaseController {
   private toPaginatedDto(model: MemberPaginatedModel): MemberPaginatedDto {
     return {
       category: model.member.category,
+      email: model.user.email.value,
+      id: model.member.id.value,
+      name: model.user.name,
+      status: model.user.status,
+    };
+  }
+
+  private toSearchDto(model: MemberPaginatedModel): MemberSearchDto {
+    return {
       email: model.user.email.value,
       id: model.member.id.value,
       name: model.user.name,

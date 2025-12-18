@@ -48,6 +48,12 @@ export interface MemberDto {
   userId: string;
 }
 
+export interface MemberSearchResultDto {
+  id: string;
+  name: string;
+  status: UserStatus;
+}
+
 export interface UpdateMemberDto {
   address: AddressDto | null;
   birthDate: null | string;

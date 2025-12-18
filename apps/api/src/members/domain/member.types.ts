@@ -24,3 +24,13 @@ export interface MemberPaginatedModel {
   member: MemberEntity;
   user: UserEntity;
 }
+
+export interface MemberSearchModel {
+  member: MemberEntity;
+  user: UserEntity;
+}
+
+export interface MemberSearchParams {
+  limit: number;
+  searchTerm: string;
+}

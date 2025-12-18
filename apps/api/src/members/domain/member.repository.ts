@@ -13,6 +13,8 @@ import {
   MemberDetailModel,
   MemberListModel,
   MemberPaginatedModel,
+  MemberSearchModel,
+  MemberSearchParams,
 } from './member.types';
 
 export const MEMBER_REPOSITORY_PROVIDER = Symbol('MemberRepository');
@@ -27,4 +29,5 @@ export interface MemberRepository
   findPaginatedModel(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<MemberPaginatedModel>>;
+  search(params: MemberSearchParams): Promise<MemberSearchModel[]>;
 }

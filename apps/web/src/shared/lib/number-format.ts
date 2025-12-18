@@ -23,7 +23,11 @@ export const NumberFormat = {
     }).format(Math.round(value / 100));
   },
 
-  parse(formatted: string): null | number {
+  fromCents(value: number): number {
+    return value / 100;
+  },
+
+  parse(formatted: string): number {
     return parser.parse(formatted);
   },
 

@@ -107,6 +107,36 @@ export function useTable<T = unknown>({
     setSearchParams(params);
   }, [setSearchParams, state.pageSize, state.sort, defaultFilters]);
 
+  // Set a specific filter
+  const setFilter = useCallback(
+    (field: string, values: string[] | undefined) => {
+      let newFilters: Record<string, string[]>;
+
+      if (values && values.length > 0) {
+        newFilters = { ...state.filters, [field]: values };
+      } else {
+        const { [field]: _, ...restFilters } = state.filters;
+        newFilters = restFilters;
+      }
+
+      const params: Record<string, string> = {
+        page: '1',
+        pageSize: String(state.pageSize),
+      };
+
+      if (state.sort.length > 0) {
+        params.sort = serializeSortToUrl(state.sort);
+      }
+
+      if (Object.keys(newFilters).length > 0) {
+        params.filters = serializeFiltersToUrl(newFilters);
+      }
+
+      setSearchParams(params);
+    },
+    [setSearchParams, state.filters, state.pageSize, state.sort],
+  );
+
   // Handle table changes
   const onChange = useCallback(
     (
@@ -158,6 +188,7 @@ export function useTable<T = unknown>({
     onChange,
     query,
     resetFilters,
+    setFilter,
     state,
   };
 }
