@@ -29,7 +29,7 @@ export interface CreateMemberDto {
   sex: MemberSex | null;
 }
 
-export interface MemberDto {
+export interface MemberDetailDto {
   address: AddressDto | null;
   birthDate: null | string;
   category: MemberCategory;
@@ -46,6 +46,14 @@ export interface MemberDto {
   sex: MemberSex | null;
   status: UserStatus;
   userId: string;
+}
+
+export interface MemberListDto {
+  category: MemberCategory;
+  email: string;
+  id: string;
+  name: string;
+  status: UserStatus;
 }
 
 export interface MemberSearchResultDto {

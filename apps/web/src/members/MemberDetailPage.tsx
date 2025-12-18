@@ -15,7 +15,6 @@ import {
   MaritalStatusLabel,
   MemberCategory,
   MemberCategoryLabel,
-  type MemberDto,
   MemberNationality,
   MemberNationalityLabel,
   MemberSex,
@@ -41,13 +40,14 @@ import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
-import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { Form } from '@/ui/Form/Form';
 import { NotFound } from '@/ui/NotFound';
 import { Row } from '@/ui/Row';
 import { Select } from '@/ui/Select';
 import { usePermissions } from '@/users/use-permissions';
+
+import { useMemberById } from './useMemberById';
 
 interface FormSchema {
   address: {
@@ -81,11 +81,7 @@ export function MemberDetailPage() {
   const [form] = Form.useForm<FormSchema>();
   const { setFieldsValue } = form;
 
-  const memberQuery = useQuery<MemberDto | null>({
-    enabled: !!id && permissions.members.get,
-    queryFn: () => $fetch(`members/${id}`),
-    queryKey: ['members', id],
-  });
+  const memberQuery = useMemberById({ memberId: id });
 
   const createMemberMutation = useMutation<ParamId, Error, CreateMemberDto>({
     mutationFn: (body) => $fetch('members', { body }),

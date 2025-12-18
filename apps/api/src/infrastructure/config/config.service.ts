@@ -20,7 +20,7 @@ export class ConfigService {
   public readonly betterStackSourceToken: string;
 
   @IsNotEmpty()
-  @Value('DATABASE_URL')
+  @Value('DATABASE_URI')
   public readonly databaseUrl: string;
 
   @IsNotEmpty()

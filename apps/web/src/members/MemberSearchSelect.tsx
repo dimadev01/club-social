@@ -98,10 +98,12 @@ export function MemberSearchSelect({
     setSearchTerm('');
   }, []);
 
+  const isLoading = loading || isFetching;
+
   return (
     <Select
       {...props}
-      loading={loading || isFetching}
+      loading={isLoading}
       notFoundContent={<>{getNotFoundContent()}</>}
       onClear={handleOnClear}
       options={options}
@@ -112,7 +114,7 @@ export function MemberSearchSelect({
         onSearch: debouncedSearch,
         optionFilterProp: 'searchLabel',
       }}
-      value={value}
+      value={isLoading ? undefined : value}
     />
   );
 }

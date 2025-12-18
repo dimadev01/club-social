@@ -8,12 +8,13 @@ import {
 import {
   MemberCategory,
   MemberCategoryLabel,
-  type MemberDto,
+  type MemberListDto,
 } from '@club-social/shared/members';
 import { type PaginatedResponse } from '@club-social/shared/types';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Flex, Space, Tooltip, Typography } from 'antd';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
@@ -26,7 +27,7 @@ import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
 import { MemberSearchSelect } from './MemberSearchSelect';
-import { useMembers } from './useMembers';
+import { useMembersForSelect } from './useMembersForSelect';
 
 export function MemberListPage() {
   const navigate = useNavigate();
@@ -42,17 +43,21 @@ export function MemberListPage() {
     resetFilters,
     setFilter,
     state,
-  } = useTable<MemberDto>({
+  } = useTable<MemberListDto>({
     defaultSort: [{ field: 'id', order: 'ascend' }],
   });
+  const [initialMemberIds] = useState(getFilterValue('id') ?? []);
 
-  const membersQuery = useMembers();
+  // Only fetch members that were in the URL on initial page load
+  const { data: selectedMembers, isFetching } = useMembersForSelect({
+    memberIds: initialMemberIds,
+  });
 
   const membersList = useQuery({
     enabled: permissions.members.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<MemberDto>>('/members/paginated', { query }),
+      $fetch<PaginatedResponse<MemberListDto>>('/members/paginated', { query }),
     queryKey: ['members', query],
   });
 
@@ -95,13 +100,16 @@ export function MemberListPage() {
     >
       <Flex className="mb-4" gap="middle" justify="space-between">
         <MemberSearchSelect
+          additionalOptions={selectedMembers}
           allowClear
+          className="min-w-xs"
+          disabled={isFetching}
+          loading={isFetching}
           mode="multiple"
           onChange={(value) =>
             setFilter('id', value?.length ? (value as string[]) : undefined)
           }
           placeholder="Filtrar por socio..."
-          style={{ minWidth: 300 }}
           value={getFilterValue('id') ?? undefined}
         />
 
@@ -123,7 +131,7 @@ export function MemberListPage() {
         </Space.Compact>
       </Flex>
 
-      <Table<MemberDto>
+      <Table<MemberListDto>
         dataSource={membersList.data?.data}
         loading={membersList.isFetching}
         onChange={onChange}
@@ -138,14 +146,8 @@ export function MemberListPage() {
         }}
         sortDirections={['ascend', 'descend', 'ascend']}
       >
-        <Table.Column<MemberDto>
+        <Table.Column<MemberListDto>
           dataIndex="id"
-          filteredValue={getFilterValue('id')}
-          filters={membersQuery.data?.map((member) => ({
-            text: member.name,
-            value: member.id,
-          }))}
-          filterSearch
           fixed="left"
           render={(id, record) => (
             <Typography.Text copyable={{ text: id }}>
@@ -156,7 +158,7 @@ export function MemberListPage() {
           sortOrder={getSortOrder('id')}
           title="Socio"
         />
-        <Table.Column<MemberDto>
+        <Table.Column<MemberListDto>
           align="center"
           dataIndex="category"
           filteredValue={getFilterValue('category')}
@@ -168,7 +170,7 @@ export function MemberListPage() {
           render={(value: MemberCategory) => MemberCategoryLabel[value]}
           title="Categoría"
         />
-        <Table.Column<MemberDto>
+        <Table.Column<MemberListDto>
           align="center"
           dataIndex="status"
           filteredValue={getFilterValue('status')}
@@ -180,7 +182,7 @@ export function MemberListPage() {
           render={(value: UserStatus) => UserStatusLabel[value]}
           title="Estado"
         />
-        <Table.Column<MemberDto>
+        <Table.Column<MemberListDto>
           dataIndex="email"
           render={(text) => (
             <Typography.Text copyable={{ text }}>{text}</Typography.Text>

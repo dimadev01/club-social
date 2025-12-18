@@ -10,7 +10,9 @@
       "Bash(mkdir:*)",
       "WebSearch",
       "WebFetch(domain:ant.design)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npx tsc:*)",
+      "mcp__ide__getDiagnostics"
     ]
   },
   "outputStyle": "default"

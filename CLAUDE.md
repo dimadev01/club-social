@@ -265,7 +265,7 @@ When adding types used by both API and web:
 
 Critical environment variables (see `.env.example` files):
 
-- `DATABASE_URL`: PostgreSQL connection string
+- `DATABASE_URI`: PostgreSQL connection string
 - `BETTER_AUTH_SECRET`: Auth encryption secret
 - `BETTER_AUTH_URL`: Backend URL for auth callbacks
 - `BETTER_AUTH_TRUSTED_ORIGINS`: Allowed frontend origins (CORS)

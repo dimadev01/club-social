@@ -1,5 +1,5 @@
 import './sentry';
-import { HttpStatus, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -10,7 +10,6 @@ import { ConfigService } from './infrastructure/config/config.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    // bodyParser: false,
     bufferLogs: true,
   });
 
@@ -47,8 +46,11 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  // app.flushLogs();
   await app.listen(configService.port);
+
+  Logger.log(
+    `🚀 Application is running on: http://localhost:${configService.port}`,
+  );
 }
 
 bootstrap().catch((error: unknown) => {
