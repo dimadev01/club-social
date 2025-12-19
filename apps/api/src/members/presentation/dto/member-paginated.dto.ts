@@ -6,6 +6,7 @@ import { UserStatus } from '@club-social/shared/users';
 
 export class MemberPaginatedDto implements IMemberPaginatedDto {
   public category: MemberCategory;
+  public email: string;
   public id: string;
   public name: string;
   public userStatus: UserStatus;

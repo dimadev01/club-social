@@ -1,4 +1,4 @@
-import type { MemberDetailDto } from '@club-social/shared/members';
+import type { IMemberDetailDto } from '@club-social/shared/members';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -11,7 +11,7 @@ interface UseMemberByIdOptions {
 
 export function getMemberByIdQueryOptions(memberId: string) {
   return {
-    queryFn: () => $fetch<MemberDetailDto>(`/members/${memberId}`),
+    queryFn: () => $fetch<IMemberDetailDto>(`/members/${memberId}`),
     queryKey: ['members', memberId] as const,
   };
 }
@@ -22,7 +22,7 @@ export function useMemberById({
 }: UseMemberByIdOptions) {
   const permissions = usePermissions();
 
-  return useQuery<MemberDetailDto | null>({
+  return useQuery<IMemberDetailDto | null>({
     ...getMemberByIdQueryOptions(memberId ?? ''),
     enabled: enabled && permissions.members.get && !!memberId,
   });

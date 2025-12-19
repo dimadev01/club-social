@@ -1,7 +1,7 @@
 import {
-  AddressDto,
-  CreateMemberDto,
   FileStatus,
+  ICreateMemberDto,
+  IMemberDetailIAddressDto,
   MaritalStatus,
   MemberCategory,
   MemberNationality,
@@ -20,7 +20,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class AddressRequestDto implements AddressDto {
+export class AddressRequestDto implements IMemberDetailIAddressDto {
   @IsOptional()
   @IsString()
   public cityName: null | string;
@@ -38,7 +38,7 @@ export class AddressRequestDto implements AddressDto {
   public zipCode: null | string;
 }
 
-export class CreateMemberRequestDto implements CreateMemberDto {
+export class CreateMemberRequestDto implements ICreateMemberDto {
   @IsObject()
   @IsOptional()
   @Type(() => AddressRequestDto)

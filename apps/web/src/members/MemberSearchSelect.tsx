@@ -1,4 +1,4 @@
-import type { MemberSearchResultDto } from '@club-social/shared/members';
+import type { IMemberSearchResultDto } from '@club-social/shared/members';
 import type { SelectProps } from 'antd';
 import type { BaseOptionType } from 'antd/es/select';
 
@@ -18,7 +18,7 @@ export interface MemberSearchSelectProps extends Omit<
   SelectProps,
   'options' | 'showSearch'
 > {
-  additionalOptions?: MemberSearchResultDto[];
+  additionalOptions?: IMemberSearchResultDto[];
   defaultIds?: string[];
 }
 
@@ -43,7 +43,7 @@ export function MemberSearchSelect({
   }, 300);
 
   const options = useMemo(() => {
-    const resultMap = new Map<string, MemberSearchResultDto>();
+    const resultMap = new Map<string, IMemberSearchResultDto>();
 
     additionalOptions.forEach((opt) => resultMap.set(opt.id, opt));
 

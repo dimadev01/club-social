@@ -1,4 +1,4 @@
-import type { MemberSearchResultDto } from '@club-social/shared/members';
+import type { IMemberSearchResultDto } from '@club-social/shared/members';
 
 import { useQueries } from '@tanstack/react-query';
 
@@ -19,7 +19,7 @@ export function useMembersForSelect({
 
   const queries = useQueries({
     combine: (results) => {
-      const data: MemberSearchResultDto[] = [];
+      const data: IMemberSearchResultDto[] = [];
 
       for (const result of results) {
         if (result.data) {

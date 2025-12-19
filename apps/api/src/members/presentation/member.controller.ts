@@ -175,6 +175,7 @@ export class MembersController extends BaseController {
   private toListDto(model: MemberListModel): MemberPaginatedDto {
     return {
       category: model.member.category,
+      email: model.user.email.value,
       id: model.member.id.value,
       name: model.user.name,
       userStatus: model.user.status,
@@ -220,6 +221,7 @@ export class MembersController extends BaseController {
   private toPaginatedDto(model: MemberPaginatedModel): MemberPaginatedDto {
     return {
       category: model.member.category,
+      email: model.user.email.value,
       id: model.member.id.value,
       name: model.user.name,
       userStatus: model.user.status,

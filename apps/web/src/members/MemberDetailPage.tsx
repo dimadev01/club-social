@@ -8,9 +8,10 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import {
-  type CreateMemberDto,
   FileStatus,
   FileStatusLabel,
+  type ICreateMemberDto,
+  type IUpdateMemberDto,
   MaritalStatus,
   MaritalStatusLabel,
   MemberCategory,
@@ -19,7 +20,6 @@ import {
   MemberNationalityLabel,
   MemberSex,
   MemberSexLabel,
-  type UpdateMemberDto,
 } from '@club-social/shared/members';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { useQueryClient } from '@tanstack/react-query';
@@ -83,7 +83,7 @@ export function MemberDetailPage() {
 
   const memberQuery = useMemberById({ memberId: id });
 
-  const createMemberMutation = useMutation<ParamId, Error, CreateMemberDto>({
+  const createMemberMutation = useMutation<ParamId, Error, ICreateMemberDto>({
     mutationFn: (body) => $fetch('members', { body }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['members'] });
@@ -94,7 +94,7 @@ export function MemberDetailPage() {
     },
   });
 
-  const updateMemberMutation = useMutation<unknown, Error, UpdateMemberDto>({
+  const updateMemberMutation = useMutation<unknown, Error, IUpdateMemberDto>({
     mutationFn: (body) => $fetch(`members/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['members'] });

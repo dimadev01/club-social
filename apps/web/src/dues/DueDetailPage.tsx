@@ -1,4 +1,4 @@
-import type { MemberSearchResultDto } from '@club-social/shared/members';
+import type { IMemberSearchResultDto } from '@club-social/shared/members';
 import type { ParamId } from '@club-social/shared/types';
 
 import {
@@ -11,6 +11,7 @@ import {
   type CreateDueDto,
   DueCategory,
   DueCategoryLabel,
+  DueStatusLabel,
   type IDueDetailDto,
   type IUpdateDueDto,
 } from '@club-social/shared/dues';
@@ -20,10 +21,12 @@ import {
   Button,
   Card,
   DatePicker,
+  Divider,
   Input,
   InputNumber,
   Skeleton,
   Space,
+  Tag,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
@@ -40,7 +43,10 @@ import { NumberFormat } from '@/shared/lib/number-format';
 import { Form } from '@/ui/Form/Form';
 import { NotFound } from '@/ui/NotFound';
 import { Select } from '@/ui/Select';
+import { Table } from '@/ui/Table/Table';
 import { usePermissions } from '@/users/use-permissions';
+
+import { DueStatusColor } from './due.types';
 
 interface FormSchema {
   amount: number;
@@ -161,7 +167,7 @@ export function DueDetailPage() {
     return <NotFound />;
   }
 
-  const memberAdditionalOptions: MemberSearchResultDto[] = memberQuery.data
+  const memberAdditionalOptions: IMemberSearchResultDto[] = memberQuery.data
     ? [
         {
           id: memberQuery.data.id,
@@ -207,6 +213,13 @@ export function DueDetailPage() {
           </Button>
         </Space.Compact>,
       ]}
+      extra={
+        dueQuery.data ? (
+          <Tag color={DueStatusColor[dueQuery.data.status]}>
+            {DueStatusLabel[dueQuery.data.status]}
+          </Tag>
+        ) : null
+      }
       loading={dueQuery.isLoading}
       title={
         <Space>
@@ -311,6 +324,14 @@ export function DueDetailPage() {
           <Input.TextArea placeholder="Notas adicionales..." rows={3} />
         </Form.Item>
       </Form>
+
+      <Divider />
+
+      {dueQuery.data && (
+        <Card title="Pagos" type="inner">
+          <Table dataSource={[]} />
+        </Card>
+      )}
     </Card>
   );
 }

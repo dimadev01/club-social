@@ -1,4 +1,4 @@
-import type { MemberSearchResultDto } from '@club-social/shared/members';
+import type { IMemberSearchResultDto } from '@club-social/shared/members';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -19,10 +19,10 @@ export function useMemberSearch({
 }: UseMemberSearchOptions) {
   const permissions = usePermissions();
 
-  const query = useQuery<MemberSearchResultDto[]>({
+  const query = useQuery<IMemberSearchResultDto[]>({
     enabled: enabled && permissions.members.list && searchTerm.length >= 2,
     queryFn: () =>
-      $fetch<MemberSearchResultDto[]>('/members/search', {
+      $fetch<IMemberSearchResultDto[]>('/members/search', {
         query: { limit: limit + 1, q: searchTerm },
       }),
     queryKey: ['members', 'search', searchTerm, limit],

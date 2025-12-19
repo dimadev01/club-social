@@ -7,15 +7,8 @@ import {
   MemberSex,
 } from './member.enum';
 
-export interface AddressDto {
-  cityName: null | string;
-  stateName: null | string;
-  street: null | string;
-  zipCode: null | string;
-}
-
-export interface CreateMemberDto {
-  address: AddressDto | null;
+export interface ICreateMemberDto {
+  address: IMemberDetailIAddressDto | null;
   birthDate: null | string;
   category: MemberCategory;
   documentID: null | string;
@@ -29,15 +22,8 @@ export interface CreateMemberDto {
   sex: MemberSex | null;
 }
 
-export interface IMemberPaginatedDto {
-  category: MemberCategory;
-  id: string;
-  name: string;
-  userStatus: UserStatus;
-}
-
-export interface MemberDetailDto {
-  address: AddressDto | null;
+export interface IMemberDetailDto {
+  address: IMemberDetailIAddressDto | null;
   birthDate: null | string;
   category: MemberCategory;
   documentID: null | string;
@@ -55,14 +41,29 @@ export interface MemberDetailDto {
   userId: string;
 }
 
-export interface MemberSearchResultDto {
+export interface IMemberDetailIAddressDto {
+  cityName: null | string;
+  stateName: null | string;
+  street: null | string;
+  zipCode: null | string;
+}
+
+export interface IMemberPaginatedDto {
+  category: MemberCategory;
+  email: string;
+  id: string;
+  name: string;
+  userStatus: UserStatus;
+}
+
+export interface IMemberSearchResultDto {
   id: string;
   name: string;
   status: UserStatus;
 }
 
-export interface UpdateMemberDto {
-  address: AddressDto | null;
+export interface IUpdateMemberDto {
+  address: IMemberDetailIAddressDto | null;
   birthDate: null | string;
   category: MemberCategory;
   documentID: null | string;
