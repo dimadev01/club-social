@@ -9,6 +9,7 @@ import {
 } from '@/shared/domain/repository';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
+import { DuePaginatedModel } from './due.types';
 import { DueEntity } from './entities/due.entity';
 
 export const DUE_REPOSITORY_PROVIDER = Symbol('DueRepository');
@@ -19,4 +20,7 @@ export interface DueRepository
   findPaginated(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<DueEntity>>;
+  findPaginatedModel(
+    params: PaginatedRequest,
+  ): Promise<PaginatedResponse<DuePaginatedModel>>;
 }

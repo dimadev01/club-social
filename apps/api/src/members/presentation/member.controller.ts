@@ -175,9 +175,10 @@ export class MembersController extends BaseController {
 
   private toListDto(model: MemberListModel): MemberListDto {
     return {
+      category: model.member.category,
       id: model.member.id.value,
       name: model.user.name,
-      status: model.user.status,
+      userStatus: model.user.status,
     };
   }
 
@@ -223,7 +224,7 @@ export class MembersController extends BaseController {
       email: model.user.email.value,
       id: model.member.id.value,
       name: model.user.name,
-      status: model.user.status,
+      userStatus: model.user.status,
     };
   }
 

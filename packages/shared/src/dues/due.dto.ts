@@ -1,3 +1,4 @@
+import { UserStatus } from '../users';
 import { DueCategory, DueStatus } from './due.enum';
 
 export interface CreateDueDto {
@@ -8,21 +9,27 @@ export interface CreateDueDto {
   notes: null | string;
 }
 
-export interface DueDto {
+export interface IDueDetailDto {
   amount: number;
   category: DueCategory;
   createdAt: string;
-  createdBy: string;
   date: string;
   id: string;
   memberId: string;
+  status: DueStatus;
+}
+
+export interface IDuePaginatedDto {
+  amount: number;
+  category: DueCategory;
+  createdAt: string;
+  date: string;
+  id: string;
+  memberId: string;
+  memberName: string;
+  memberUserStatus: UserStatus;
   notes: null | string;
   status: DueStatus;
-  updatedAt: string;
-  updatedBy: null | string;
-  voidedAt: null | string;
-  voidedBy: null | string;
-  voidReason: null | string;
 }
 
 export interface UpdateDueDto {

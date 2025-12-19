@@ -1,10 +1,13 @@
-import { MemberCategory } from '@club-social/shared/members';
+import {
+  IMemberPaginatedDto,
+  MemberCategory,
+} from '@club-social/shared/members';
 import { UserStatus } from '@club-social/shared/users';
 
-export class MemberPaginatedDto {
+export class MemberPaginatedDto implements IMemberPaginatedDto {
   public category: MemberCategory;
   public email: string;
   public id: string;
   public name: string;
-  public status: UserStatus;
+  public userStatus: UserStatus;
 }

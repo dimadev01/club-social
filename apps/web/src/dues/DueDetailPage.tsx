@@ -11,7 +11,7 @@ import {
   type CreateDueDto,
   DueCategory,
   DueCategoryLabel,
-  type DueDto,
+  type IDuePaginatedDto,
   type UpdateDueDto,
 } from '@club-social/shared/dues';
 import { useQueryClient } from '@tanstack/react-query';
@@ -62,7 +62,7 @@ export function DueDetailPage() {
   const { setFieldsValue } = form;
   const formCategory = Form.useWatch('category', form);
 
-  const dueQuery = useQuery<DueDto | null>({
+  const dueQuery = useQuery<IDuePaginatedDto | null>({
     enabled: !!id && permissions.dues.get,
     queryFn: () => $fetch(`dues/${id}`),
     queryKey: ['dues', id],

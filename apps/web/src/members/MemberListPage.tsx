@@ -5,9 +5,9 @@ import {
   UserAddOutlined,
 } from '@ant-design/icons';
 import {
+  type IMemberPaginatedDto,
   MemberCategory,
   MemberCategoryLabel,
-  type MemberListDto,
 } from '@club-social/shared/members';
 import { type PaginatedResponse } from '@club-social/shared/types';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
@@ -23,10 +23,10 @@ import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { TableActions } from '@/ui/Table/TableActions';
+import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
-import { MemberSearchSelect } from './MemberSearchSelect';
 import { useMembersForSelect } from './useMembersForSelect';
 
 export function MemberListPage() {
@@ -43,9 +43,9 @@ export function MemberListPage() {
     resetFilters,
     setFilter,
     state,
-  } = useTable<MemberListDto>({
+  } = useTable<IMemberPaginatedDto>({
     defaultFilters: {
-      status: [UserStatus.ACTIVE],
+      userStatus: [UserStatus.ACTIVE],
     },
     defaultSort: [{ field: 'id', order: 'ascend' }],
   });
@@ -60,7 +60,9 @@ export function MemberListPage() {
     enabled: permissions.members.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<MemberListDto>>('/members/paginated', { query }),
+      $fetch<PaginatedResponse<IMemberPaginatedDto>>('/members/paginated', {
+        query,
+      }),
     queryKey: ['members', query],
   });
 
@@ -102,24 +104,17 @@ export function MemberListPage() {
       title="Socios"
     >
       <Flex className="mb-4" gap="middle" justify="space-between">
-        <MemberSearchSelect
-          additionalOptions={selectedMembers}
-          allowClear
-          className="min-w-xs"
-          disabled={isFetching}
-          loading={isFetching}
-          mode="multiple"
-          onChange={(value) =>
-            setFilter('id', value?.length ? (value as string[]) : undefined)
-          }
-          placeholder="Filtrar por socio..."
+        <TableMembersSearch
+          isFetching={isFetching}
+          onFilterChange={(value) => setFilter('id', value)}
+          selectedMembers={selectedMembers}
           value={getFilterValue('id') ?? undefined}
         />
 
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </Flex>
 
-      <Table<MemberListDto>
+      <Table<IMemberPaginatedDto>
         dataSource={membersList.data?.data}
         loading={membersList.isFetching}
         onChange={onChange}
@@ -129,7 +124,7 @@ export function MemberListPage() {
           total: membersList.data?.total,
         }}
       >
-        <Table.Column<MemberListDto>
+        <Table.Column<IMemberPaginatedDto>
           dataIndex="id"
           fixed="left"
           render={(id, record) => (
@@ -142,7 +137,7 @@ export function MemberListPage() {
           title="Socio"
           width={200}
         />
-        <Table.Column<MemberListDto>
+        <Table.Column<IMemberPaginatedDto>
           align="center"
           dataIndex="category"
           filteredValue={getFilterValue('category')}
@@ -155,20 +150,20 @@ export function MemberListPage() {
           title="Categoría"
           width={150}
         />
-        <Table.Column<MemberListDto>
+        <Table.Column<IMemberPaginatedDto>
           align="center"
-          dataIndex="status"
-          filteredValue={getFilterValue('status')}
+          dataIndex="userStatus"
+          filteredValue={getFilterValue('userStatus')}
           filters={Object.entries(UserStatusLabel).map(([value, label]) => ({
             text: label,
             value,
           }))}
-          onFilter={(value, record) => record.status === value}
+          onFilter={(value, record) => record.userStatus === value}
           render={(value: UserStatus) => UserStatusLabel[value]}
           title="Estado"
           width={100}
         />
-        <Table.Column<MemberListDto>
+        <Table.Column<IMemberPaginatedDto>
           dataIndex="email"
           render={(text) => (
             <Typography.Text copyable={{ text }}>{text}</Typography.Text>
@@ -177,7 +172,7 @@ export function MemberListPage() {
           sortOrder={getSortOrder('email')}
           title="Email"
         />
-        <Table.Column<MemberListDto>
+        <Table.Column<IMemberPaginatedDto>
           align="center"
           fixed="right"
           render={(_, record) => (

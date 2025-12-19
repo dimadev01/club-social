@@ -27,10 +27,12 @@ import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
 } from '../domain/due.repository';
+import { DuePaginatedModel } from '../domain/due.types';
 import { DueEntity } from '../domain/entities/due.entity';
 import { CreateDueRequestDto } from './dto/create-due.dto';
-import { DueListRequestDto } from './dto/due-list.dto';
-import { DueResponseDto } from './dto/due.dto';
+import { DueDetailDto } from './dto/due-detail.dto';
+import { DueListRequestDto } from './dto/due-paginated-request.dto';
+import { DuePaginatedDto } from './dto/due-paginated.dto';
 import { UpdateDueRequestDto } from './dto/update-due.dto';
 
 @Controller('dues')
@@ -81,12 +83,12 @@ export class DuesController extends BaseController {
     );
   }
 
-  @ApiPaginatedResponse(DueResponseDto)
+  @ApiPaginatedResponse(DuePaginatedDto)
   @Get('paginated')
   public async getPaginated(
     @Query() query: DueListRequestDto,
-  ): Promise<PaginatedResponseDto<DueResponseDto>> {
-    const dues = await this.dueRepository.findPaginated({
+  ): Promise<PaginatedResponseDto<DuePaginatedDto>> {
+    const dues = await this.dueRepository.findPaginatedModel({
       filters: query.filters,
       page: query.page,
       pageSize: query.pageSize,
@@ -94,7 +96,7 @@ export class DuesController extends BaseController {
     });
 
     return {
-      data: dues.data.map((due) => this.toDto(due)),
+      data: dues.data.map((due) => this.toPaginatedModel(due)),
       total: dues.total,
     };
   }
@@ -102,7 +104,7 @@ export class DuesController extends BaseController {
   @Get(':id')
   public async getById(
     @Param() request: ParamIdDto,
-  ): Promise<DueResponseDto | null> {
+  ): Promise<DueDetailDto | null> {
     const due = await this.dueRepository.findOneById(
       UniqueId.raw({ value: request.id }),
     );
@@ -111,25 +113,33 @@ export class DuesController extends BaseController {
       return null;
     }
 
-    return this.toDto(due);
+    return this.toDetailModel(due);
   }
 
-  private toDto(due: DueEntity): DueResponseDto {
+  private toDetailModel(model: DueEntity): DueDetailDto {
     return {
-      amount: due.amount.toCents(),
-      category: due.category,
-      createdAt: due.createdAt.toISOString(),
-      createdBy: due.createdBy,
-      date: due.date.value,
-      id: due.id.value,
-      memberId: due.memberId.value,
-      notes: due.notes,
-      status: due.status,
-      updatedAt: due.updatedAt.toISOString(),
-      updatedBy: due.updatedBy,
-      voidedAt: due.voidedAt ? due.voidedAt.toISOString() : null,
-      voidedBy: due.voidedBy,
-      voidReason: due.voidReason,
+      amount: model.amount.toCents(),
+      category: model.category,
+      createdAt: model.createdAt.toISOString(),
+      date: model.date.value,
+      id: model.id.value,
+      memberId: model.memberId.value,
+      status: model.status,
+    };
+  }
+
+  private toPaginatedModel(model: DuePaginatedModel): DuePaginatedDto {
+    return {
+      amount: model.due.amount.toCents(),
+      category: model.due.category,
+      createdAt: model.due.createdAt.toISOString(),
+      date: model.due.date.value,
+      id: model.due.id.value,
+      memberId: model.due.memberId.value,
+      memberName: model.user.name,
+      memberUserStatus: model.user.status,
+      notes: model.due.notes,
+      status: model.due.status,
     };
   }
 }

@@ -15,5 +15,5 @@
       "mcp__ide__getDiagnostics"
     ]
   },
-  "outputStyle": "Explanatory"
+  "outputStyle": "default"
 }

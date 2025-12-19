@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { PrismaModule } from '@/infrastructure/database/prisma/prisma.module';
+
 import { CreateUserUseCase } from './application/create-user/create-user.use-case';
 import { UpdateUserUseCase } from './application/update-user/update-user.use-case';
 import { VerifySignInUseCase } from './application/verify-sign-in/verify-sign-in.use-case';
@@ -10,7 +12,6 @@ import {
 } from './domain/user.repository';
 import { BetterAuthUserRepository } from './infrastructure/better-auth-user.repository';
 import { CompositeUserRepository } from './infrastructure/composite-user.repository';
-import { PrismaUserMapper } from './infrastructure/prisma-user.mapper';
 import { PrismaUserRepository } from './infrastructure/prisma-user.repository';
 import { UsersController } from './presentation/user.controller';
 
@@ -21,9 +22,8 @@ import { UsersController } from './presentation/user.controller';
     USER_REPOSITORY_PROVIDER,
     VerifySignInUseCase,
     CreateUserUseCase,
-    PrismaUserMapper,
   ],
-  imports: [],
+  imports: [PrismaModule],
   providers: [
     CreateUserUseCase,
     UpdateUserUseCase,
@@ -40,7 +40,6 @@ import { UsersController } from './presentation/user.controller';
       provide: USER_REPOSITORY_PROVIDER,
       useClass: CompositeUserRepository,
     },
-    PrismaUserMapper,
   ],
 })
 export class UsersModule {}

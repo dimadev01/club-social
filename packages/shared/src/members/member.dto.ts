@@ -29,6 +29,13 @@ export interface CreateMemberDto {
   sex: MemberSex | null;
 }
 
+export interface IMemberPaginatedDto {
+  category: MemberCategory;
+  id: string;
+  name: string;
+  userStatus: UserStatus;
+}
+
 export interface MemberDetailDto {
   address: AddressDto | null;
   birthDate: null | string;
@@ -46,14 +53,6 @@ export interface MemberDetailDto {
   sex: MemberSex | null;
   status: UserStatus;
   userId: string;
-}
-
-export interface MemberListDto {
-  category: MemberCategory;
-  email: string;
-  id: string;
-  name: string;
-  status: UserStatus;
 }
 
 export interface MemberSearchResultDto {

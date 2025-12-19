@@ -1,26 +1,23 @@
 import type { PaginatedResponse } from '@club-social/shared/types';
 
 import {
-  CloseOutlined,
   FileExcelOutlined,
   MoreOutlined,
   PlusOutlined,
-  RedoOutlined,
 } from '@ant-design/icons';
 import {
   type DueCategory,
   DueCategoryLabel,
-  type DueDto,
   type DueStatus,
   DueStatusLabel,
+  type IDuePaginatedDto,
 } from '@club-social/shared/dues';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Flex, Space, Tooltip, Typography } from 'antd';
+import { App, Button, Dropdown, Flex, Space } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
-import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
@@ -29,6 +26,8 @@ import { NumberFormat } from '@/shared/lib/number-format';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
+import { TableActions } from '@/ui/Table/TableActions';
+import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -46,7 +45,9 @@ export function DueListPage() {
     resetFilters,
     setFilter,
     state,
-  } = useTable<DueDto>({ defaultSort: [{ field: 'date', order: 'descend' }] });
+  } = useTable<IDuePaginatedDto>({
+    defaultSort: [{ field: 'date', order: 'descend' }],
+  });
 
   const [initialMemberIds] = useState(getFilterValue('memberId') ?? []);
 
@@ -58,7 +59,7 @@ export function DueListPage() {
     enabled: permissions.dues.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<DueDto>>('/dues/paginated', { query }),
+      $fetch<PaginatedResponse<IDuePaginatedDto>>('/dues/paginated', { query }),
     queryKey: ['dues', state, query],
   });
 
@@ -102,39 +103,17 @@ export function DueListPage() {
       title="Cuotas"
     >
       <Flex className="mb-4" gap="middle" justify="space-between">
-        <MemberSearchSelect
-          additionalOptions={selectedMembers}
-          allowClear
-          className="min-w-xs"
-          disabled={isFetching}
-          loading={isFetching}
-          mode="multiple"
-          onChange={(value) =>
-            setFilter('id', value?.length ? (value as string[]) : undefined)
-          }
-          placeholder="Filtrar por socio..."
-          value={getFilterValue('id') ?? undefined}
+        <TableMembersSearch
+          isFetching={isFetching}
+          onFilterChange={(value) => setFilter('memberId', value)}
+          selectedMembers={selectedMembers}
+          value={getFilterValue('memberId') ?? undefined}
         />
 
-        <Space.Compact>
-          <Tooltip title="Filtros por defecto">
-            <Button
-              icon={<RedoOutlined />}
-              onClick={resetFilters}
-              type="default"
-            />
-          </Tooltip>
-          <Tooltip title="Eliminar filtros">
-            <Button
-              icon={<CloseOutlined />}
-              onClick={clearFilters}
-              type="default"
-            />
-          </Tooltip>
-        </Space.Compact>
+        <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </Flex>
 
-      <Table<DueDto>
+      <Table<IDuePaginatedDto>
         dataSource={duesQuery.data?.data}
         loading={duesQuery.isFetching}
         onChange={onChange}
@@ -144,7 +123,7 @@ export function DueListPage() {
           total: duesQuery.data?.total,
         }}
       >
-        <Table.Column<DueDto>
+        <Table.Column<IDuePaginatedDto>
           dataIndex="createdAt"
           render={(createdAt: string, record) => (
             <Link to={`${APP_ROUTES.DUE_LIST}/${record.id}`}>
@@ -153,15 +132,25 @@ export function DueListPage() {
           )}
           sorter
           sortOrder={getSortOrder('createdAt')}
-          title="Fecha de creación"
+          title="Creado el"
+          width={150}
         />
-        <Table.Column<DueDto>
+        <Table.Column<IDuePaginatedDto>
           dataIndex="date"
-          sorter
-          sortOrder={getSortOrder('date')}
+          render={(date: string) => DateFormat.date(date)}
           title="Fecha"
+          width={150}
         />
-        <Table.Column<DueDto>
+        <Table.Column<IDuePaginatedDto>
+          dataIndex="memberId"
+          render={(memberId: string, record: IDuePaginatedDto) => (
+            <Link to={`${APP_ROUTES.MEMBER_LIST}/${memberId}`}>
+              {record.memberName}
+            </Link>
+          )}
+          title="Socio"
+        />
+        <Table.Column<IDuePaginatedDto>
           align="center"
           dataIndex="category"
           filteredValue={getFilterValue('category')}
@@ -172,36 +161,30 @@ export function DueListPage() {
           onFilter={(value, record) => record.category === value}
           render={(value: DueCategory) => DueCategoryLabel[value]}
           title="Categoría"
+          width={150}
         />
-        <Table.Column<DueDto>
+        <Table.Column<IDuePaginatedDto>
           align="right"
           dataIndex="amount"
           render={(amount: number) => NumberFormat.formatCents(amount)}
           title="Monto"
+          width={100}
         />
-        <Table.Column<DueDto>
+        <Table.Column<IDuePaginatedDto>
           align="center"
           dataIndex="status"
           filteredValue={getFilterValue('status')}
+          filterMode="tree"
           filters={Object.entries(DueStatusLabel).map(([value, label]) => ({
             text: label,
             value,
           }))}
           render={(value: DueStatus) => DueStatusLabel[value]}
           title="Estado"
+          width={100}
         />
-        <Table.Column<DueDto>
-          dataIndex="memberId"
-          render={(memberId: string) => (
-            <Typography.Text copyable={{ text: memberId }}>
-              <Link to={`${APP_ROUTES.MEMBER_LIST}/${memberId}`}>
-                {memberId.slice(0, 8)}...
-              </Link>
-            </Typography.Text>
-          )}
-          title="Socio"
-        />
-        <Table.Column<DueDto>
+
+        <Table.Column<IDuePaginatedDto>
           dataIndex="notes"
           render={(notes: null | string) => notes ?? '-'}
           title="Notas"
