@@ -25,6 +25,8 @@ EOF
 
 git config --global core.editor "vim"
 
+npm i -g @anthropic-ai/claude-code
+
 if [ -z "$(git config --local --get user.name)" ]; then
   echo "Please enter your Git name:"
   read git_name

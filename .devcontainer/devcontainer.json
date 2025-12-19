@@ -6,8 +6,8 @@
   "postCreateCommand": ".devcontainer/post-create.sh",
   "forwardPorts": [5173, 3000],
   "features": {
-    "ghcr.io/guiyomh/features/vim:0": {},
-    "ghcr.io/devcontainers-extra/features/claude-code:1": {}
+    "ghcr.io/guiyomh/features/vim:0": {}
+    // "ghcr.io/devcontainers-extra/features/claude-code:1": {}
   },
   "mounts": [
     {
