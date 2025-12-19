@@ -153,13 +153,19 @@ export class DueEntity extends Entity<DueEntity> {
     this.addEvent(new DueUpdatedEvent(this));
   }
 
-  public void(props: VoidDueProps): void {
+  public void(props: VoidDueProps): Result<void> {
+    if (!this.isPending()) {
+      return err(
+        new ApplicationError('Solo se pueden anular cuotas pendientes'),
+      );
+    }
+
     this._status = DueStatus.VOIDED;
     this._voidReason = props.voidReason;
     this._voidedAt = new Date();
     this._voidedBy = props.voidedBy;
     this.markAsUpdated(props.voidedBy);
 
-    this.addEvent(new DueUpdatedEvent(this));
+    return ok();
   }
 }

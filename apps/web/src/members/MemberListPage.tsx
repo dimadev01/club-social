@@ -12,7 +12,7 @@ import {
 import { type PaginatedResponse } from '@club-social/shared/types';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Flex, Space, Typography } from 'antd';
+import { App, Button, Dropdown, Space, Typography } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -20,7 +20,7 @@ import { APP_ROUTES } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
+import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { TableActions } from '@/ui/Table/TableActions';
 import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
@@ -103,7 +103,7 @@ export function MemberListPage() {
       }
       title="Socios"
     >
-      <Flex className="mb-4" gap="middle" justify="space-between">
+      <PageTableActions>
         <TableMembersSearch
           isFetching={isFetching}
           onFilterChange={(value) => setFilter('id', value)}
@@ -112,7 +112,7 @@ export function MemberListPage() {
         />
 
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
-      </Flex>
+      </PageTableActions>
 
       <Table<IMemberPaginatedDto>
         dataSource={membersList.data?.data}
@@ -145,7 +145,6 @@ export function MemberListPage() {
           filters={Object.entries(MemberCategoryLabel).map(
             ([value, label]) => ({ text: label, value }),
           )}
-          onFilter={(value, record) => record.category === value}
           render={(value: MemberCategory) => MemberCategoryLabel[value]}
           title="Categoría"
           width={150}

@@ -23,6 +23,7 @@ import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateDueUseCase } from '../application/create-due/create-due.use-case';
 import { UpdateDueUseCase } from '../application/update-due/update-due.use-case';
+import { VoidDueUseCase } from '../application/void-due/void-due.use-case';
 import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
@@ -34,6 +35,7 @@ import { DueDetailDto } from './dto/due-detail.dto';
 import { DueListRequestDto } from './dto/due-paginated-request.dto';
 import { DuePaginatedDto } from './dto/due-paginated.dto';
 import { UpdateDueDto } from './dto/update-due.dto';
+import { VoidDueRequestDto } from './dto/void-due.dto';
 
 @Controller('dues')
 export class DuesController extends BaseController {
@@ -42,6 +44,7 @@ export class DuesController extends BaseController {
     protected readonly logger: AppLogger,
     private readonly createDueUseCase: CreateDueUseCase,
     private readonly updateDueUseCase: UpdateDueUseCase,
+    private readonly voidDueUseCase: VoidDueUseCase,
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
   ) {
@@ -79,6 +82,21 @@ export class DuesController extends BaseController {
         id: request.id,
         notes: body.notes,
         updatedBy: session.user.name,
+      }),
+    );
+  }
+
+  @Patch(':id/void')
+  public async void(
+    @Param() request: ParamIdDto,
+    @Body() body: VoidDueRequestDto,
+    @Session() session: AuthSession,
+  ): Promise<void> {
+    this.handleResult(
+      await this.voidDueUseCase.execute({
+        id: request.id,
+        voidedBy: session.user.name,
+        voidReason: body.voidReason,
       }),
     );
   }

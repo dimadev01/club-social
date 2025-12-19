@@ -1,4 +1,5 @@
 import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
+import { UserRole } from '@club-social/shared/users';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -60,6 +61,8 @@ export class PrismaUserRepository implements UserReadableRepository {
 
     if (params.filters?.role) {
       where.role = { in: params.filters.role };
+    } else {
+      where.role = UserRole.STAFF;
     }
 
     if (params.filters?.status) {
@@ -67,6 +70,7 @@ export class PrismaUserRepository implements UserReadableRepository {
     }
 
     const query: UserFindManyArgs = {
+      orderBy: params.sort.map(({ field, order }) => ({ [field]: order })),
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
       where,

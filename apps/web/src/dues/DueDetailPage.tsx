@@ -11,9 +11,11 @@ import {
   type CreateDueDto,
   DueCategory,
   DueCategoryLabel,
+  DueStatus,
   DueStatusLabel,
   type IDueDetailDto,
   type IUpdateDueDto,
+  type VoidDueDto,
 } from '@club-social/shared/dues';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -47,6 +49,7 @@ import { Table } from '@/ui/Table/Table';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueStatusColor } from './due.types';
+import { VoidDueButton } from './VoidDueButton';
 
 interface FormSchema {
   amount: number;
@@ -92,6 +95,16 @@ export function DueDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['dues'] });
       queryClient.invalidateQueries({ queryKey: ['dues', id] });
       message.success('Cuota actualizada correctamente');
+      navigate(-1);
+    },
+  });
+
+  const voidDueMutation = useMutation<unknown, Error, VoidDueDto>({
+    mutationFn: (body) => $fetch(`dues/${id}/void`, { body, method: 'PATCH' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dues'] });
+      queryClient.invalidateQueries({ queryKey: ['dues', id] });
+      message.success('Cuota anulada correctamente');
       navigate(-1);
     },
   });
@@ -212,6 +225,13 @@ export function DueDetailPage() {
             {id ? 'Actualizar deuda' : 'Crear deuda'}
           </Button>
         </Space.Compact>,
+        dueQuery.data?.status === DueStatus.PENDING && (
+          <VoidDueButton
+            onConfirm={(reason) => {
+              voidDueMutation.mutate({ voidReason: reason });
+            }}
+          />
+        ),
       ]}
       extra={
         dueQuery.data ? (

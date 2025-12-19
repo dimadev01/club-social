@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Session,
 } from '@nestjs/common';
 
@@ -19,6 +20,7 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
+import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
@@ -85,11 +87,14 @@ export class UsersController extends BaseController {
 
   @ApiPaginatedResponse(UserPaginatedDto)
   @Get('paginated')
-  public async getPaginated(): Promise<PaginatedResponseDto<UserPaginatedDto>> {
+  public async getPaginated(
+    @Query() query: PaginatedRequestDto,
+  ): Promise<PaginatedResponseDto<UserPaginatedDto>> {
     const users = await this.userRepository.findPaginated({
-      page: 1,
-      pageSize: 10,
-      sort: [],
+      filters: query.filters,
+      page: query.page,
+      pageSize: query.pageSize,
+      sort: query.sort,
     });
 
     return {
@@ -117,7 +122,6 @@ export class UsersController extends BaseController {
       firstName: user.firstName,
       id: user.id.value,
       lastName: user.lastName,
-      name: user.name,
       role: user.role,
       status: user.status,
     };
@@ -126,9 +130,7 @@ export class UsersController extends BaseController {
   private toPaginatedDto(user: UserEntity): UserPaginatedDto {
     return {
       email: user.email.value,
-      firstName: user.firstName,
       id: user.id.value,
-      lastName: user.lastName,
       name: user.name,
       role: user.role,
       status: user.status,

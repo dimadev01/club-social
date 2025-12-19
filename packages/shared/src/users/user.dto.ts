@@ -15,17 +15,16 @@ export interface IUpdateUserDto {
 
 export interface IUserDetailDto {
   email: string;
+  firstName: string;
   id: string;
-  name: string;
+  lastName: string;
   role: UserRole;
   status: UserStatus;
 }
 
 export interface IUserPaginatedDto {
   email: string;
-  firstName: string;
   id: string;
-  lastName: string;
   name: string;
   role: UserRole;
   status: UserStatus;

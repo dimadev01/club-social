@@ -44,6 +44,19 @@ export function PageLoader() {
   );
 }
 
+export function PageTableActions({ className, ...props }: FlexProps) {
+  return (
+    <Flex
+      align="center"
+      className={cn('mb-8', className)}
+      gap="middle"
+      justify="space-between"
+      wrap
+      {...props}
+    />
+  );
+}
+
 export function PageTitle({ children, className, ...props }: TitleProps) {
   return (
     <Typography.Title className={cn('mb-0 text-2xl', className)} {...props}>

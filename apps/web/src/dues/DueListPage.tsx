@@ -10,13 +10,13 @@ import {
 import {
   type DueCategory,
   DueCategoryLabel,
-  type DueStatus,
+  DueStatus,
   DueStatusLabel,
   type IDuePaginatedDto,
 } from '@club-social/shared/dues';
 import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Flex, Space, Tooltip } from 'antd';
+import { App, Button, Dropdown, Space, Tooltip } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -27,7 +27,7 @@ import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
+import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { TableActions } from '@/ui/Table/TableActions';
 import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
@@ -49,6 +49,9 @@ export function DueListPage() {
     setFilter,
     state,
   } = useTable<IDuePaginatedDto>({
+    defaultFilters: {
+      status: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID, DueStatus.PAID],
+    },
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
 
@@ -105,16 +108,15 @@ export function DueListPage() {
       }
       title="Deudas"
     >
-      <Flex className="mb-4" gap="middle" justify="space-between">
+      <PageTableActions>
         <TableMembersSearch
           isFetching={isFetching}
           onFilterChange={(value) => setFilter('memberId', value)}
           selectedMembers={selectedMembers}
           value={getFilterValue('memberId') ?? undefined}
         />
-
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
-      </Flex>
+      </PageTableActions>
 
       <Table<IDuePaginatedDto>
         dataSource={duesQuery.data?.data}
@@ -162,7 +164,6 @@ export function DueListPage() {
             text: label,
             value,
           }))}
-          onFilter={(value, record) => record.category === value}
           render={(value: DueCategory) => DueCategoryLabel[value]}
           title="Categoría"
           width={150}
@@ -195,12 +196,11 @@ export function DueListPage() {
             text: label,
             value,
           }))}
-          onFilter={(value, record) => record.userStatus === value}
           render={(value: UserStatus) => UserStatusLabel[value]}
           title="Estado Socio"
           width={150}
         />
-        <Table.Column<IMemberPaginatedDto>
+        <Table.Column<IDuePaginatedDto>
           align="center"
           fixed="right"
           render={(_, record) => (

@@ -14,14 +14,14 @@ import {
   UserStatusLabel,
 } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Flex, Space, Typography } from 'antd';
+import { App, Button, Dropdown, Space, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
+import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { TableActions } from '@/ui/Table/TableActions';
 import { useTable } from '@/ui/Table/useTable';
@@ -96,9 +96,9 @@ export function UserListPage() {
       }
       title="Usuarios"
     >
-      <Flex className="mb-4" gap="middle" justify="end">
+      <PageTableActions justify="end">
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
-      </Flex>
+      </PageTableActions>
 
       <Table<IUserDetailDto>
         dataSource={usersQuery.data?.data}
@@ -142,7 +142,6 @@ export function UserListPage() {
             text: label,
             value,
           }))}
-          onFilter={(value, record) => record.status === value}
           render={(value: UserStatus) => UserStatusLabel[value]}
           title="Estado"
           width={100}
@@ -157,7 +156,6 @@ export function UserListPage() {
               value: UserRole.STAFF,
             },
           ]}
-          onFilter={(value, record) => record.role === value}
           render={(value: UserRole) => UserRoleLabel[value]}
           title="Rol"
           width={100}

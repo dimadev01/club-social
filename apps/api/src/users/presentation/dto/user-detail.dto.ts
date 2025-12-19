@@ -6,7 +6,6 @@ export class UserDetailDto implements IUserDetailDto {
   public firstName: string;
   public id: string;
   public lastName: string;
-  public name: string;
   public role: UserRole;
   public status: UserStatus;
 }
