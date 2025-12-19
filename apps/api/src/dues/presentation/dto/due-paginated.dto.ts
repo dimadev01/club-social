@@ -13,7 +13,6 @@ export class DuePaginatedDto implements IDuePaginatedDto {
   public id: string;
   public memberId: string;
   public memberName: string;
-  public memberUserStatus: UserStatus;
-  public notes: null | string;
   public status: DueStatus;
+  public userStatus: UserStatus;
 }

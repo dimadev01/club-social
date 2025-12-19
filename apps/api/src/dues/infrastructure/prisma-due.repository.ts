@@ -127,18 +127,23 @@ export class PrismaDueRepository implements DueRepository {
       };
     }
 
-    if (params.filters?.memberId) {
-      where.memberId = { in: params.filters.memberId };
+    if (params.filters?.memberId || params.filters?.userStatus) {
+      where.member = {
+        ...(params.filters?.memberId && {
+          id: { in: params.filters.memberId },
+        }),
+        ...(params.filters?.userStatus && {
+          user: { status: { in: params.filters.userStatus } },
+        }),
+      };
     }
 
     if (params.filters?.category) {
       where.category = { in: params.filters.category };
     }
 
-    if (params.filters?.memberUserStatus) {
-      where.member = {
-        user: { status: { in: params.filters.memberUserStatus } },
-      };
+    if (params.filters?.status) {
+      where.status = { in: params.filters.status };
     }
 
     const query = {

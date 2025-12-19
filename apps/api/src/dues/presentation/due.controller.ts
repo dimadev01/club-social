@@ -137,9 +137,8 @@ export class DuesController extends BaseController {
       id: model.due.id.value,
       memberId: model.due.memberId.value,
       memberName: model.user.name,
-      memberUserStatus: model.user.status,
-      notes: model.due.notes,
       status: model.due.status,
+      userStatus: model.user.status,
     };
   }
 }

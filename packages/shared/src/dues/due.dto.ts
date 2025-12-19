@@ -27,9 +27,8 @@ export interface IDuePaginatedDto {
   id: string;
   memberId: string;
   memberName: string;
-  memberUserStatus: UserStatus;
-  notes: null | string;
   status: DueStatus;
+  userStatus: UserStatus;
 }
 
 export interface UpdateDueDto {

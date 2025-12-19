@@ -1,6 +1,8 @@
+import type { IMemberPaginatedDto } from '@club-social/shared/members';
 import type { PaginatedResponse } from '@club-social/shared/types';
 
 import {
+  EyeOutlined,
   FileExcelOutlined,
   MoreOutlined,
   PlusOutlined,
@@ -12,6 +14,7 @@ import {
   DueStatusLabel,
   type IDuePaginatedDto,
 } from '@club-social/shared/dues';
+import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Flex, Space } from 'antd';
 import { useState } from 'react';
@@ -46,7 +49,7 @@ export function DueListPage() {
     setFilter,
     state,
   } = useTable<IDuePaginatedDto>({
-    defaultSort: [{ field: 'date', order: 'descend' }],
+    defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
 
   const [initialMemberIds] = useState(getFilterValue('memberId') ?? []);
@@ -149,6 +152,7 @@ export function DueListPage() {
             </Link>
           )}
           title="Socio"
+          width={200}
         />
         <Table.Column<IDuePaginatedDto>
           align="center"
@@ -183,11 +187,35 @@ export function DueListPage() {
           title="Estado"
           width={100}
         />
-
-        <Table.Column<IDuePaginatedDto>
-          dataIndex="notes"
-          render={(notes: null | string) => notes ?? '-'}
-          title="Notas"
+        <Table.Column<IMemberPaginatedDto>
+          align="center"
+          dataIndex="userStatus"
+          filteredValue={getFilterValue('userStatus')}
+          filters={Object.entries(UserStatusLabel).map(([value, label]) => ({
+            text: label,
+            value,
+          }))}
+          onFilter={(value, record) => record.userStatus === value}
+          render={(value: UserStatus) => UserStatusLabel[value]}
+          title="Estado Socio"
+          width={150}
+        />
+        <Table.Column<IMemberPaginatedDto>
+          align="center"
+          fixed="right"
+          render={(_, record) => (
+            <Space.Compact size="small">
+              <Button
+                icon={<EyeOutlined />}
+                onClick={() =>
+                  navigate(APP_ROUTES.DUE_DETAIL.replace(':id', record.id))
+                }
+                type="text"
+              />
+            </Space.Compact>
+          )}
+          title="Acciones"
+          width={100}
         />
       </Table>
     </Page>
