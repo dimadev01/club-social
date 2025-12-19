@@ -30,7 +30,11 @@ export function MemberSearchSelect({
 }: MemberSearchSelectProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { data: searchResults = [], isFetching } = useMemberSearch({
+  const {
+    data: searchResults = [],
+    hasMore,
+    isFetching,
+  } = useMemberSearch({
     searchTerm,
   });
 
@@ -54,7 +58,9 @@ export function MemberSearchSelect({
       (item) => item.status,
     );
 
-    return Object.entries(groupedByStatus).map(([status, members]) => ({
+    const groupedOptions: SelectProps['options'] = Object.entries(
+      groupedByStatus,
+    ).map(([status, members]) => ({
       label: `${UserStatusLabel[status as UserStatus]} (${members.length})`,
       options: members.map((member) => ({
         label: member.name,
@@ -62,7 +68,17 @@ export function MemberSearchSelect({
       })),
       value: status,
     }));
-  }, [searchResults, additionalOptions]);
+
+    if (hasMore) {
+      groupedOptions.push({
+        label: '20+ resultados, refine su búsqueda...',
+        options: [],
+        value: '__more_group__',
+      });
+    }
+
+    return groupedOptions;
+  }, [searchResults, additionalOptions, hasMore]);
 
   const filterSort = useCallback(
     (optionA: BaseOptionType, optionB: BaseOptionType) => {
@@ -86,14 +102,6 @@ export function MemberSearchSelect({
     return 'No se encontraron resultados';
   };
 
-  const getPlaceholder = () => {
-    if (searchTerm.length > 0) {
-      return searchTerm;
-    }
-
-    return props.placeholder ?? 'Buscar socio por nombre o email...';
-  };
-
   const handleOnClear = useCallback(() => {
     setSearchTerm('');
   }, []);
@@ -107,7 +115,7 @@ export function MemberSearchSelect({
       notFoundContent={<>{getNotFoundContent()}</>}
       onClear={handleOnClear}
       options={options}
-      placeholder={getPlaceholder()}
+      placeholder={props.placeholder ?? 'Buscar socio por nombre o email...'}
       showSearch={{
         filterOption: false,
         filterSort,

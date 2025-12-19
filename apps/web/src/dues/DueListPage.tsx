@@ -16,9 +16,12 @@ import {
 } from '@club-social/shared/dues';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Flex, Space, Tooltip, Typography } from 'antd';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
+import { MemberSearchSelect } from '@/members/MemberSearchSelect';
+import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
@@ -41,8 +44,15 @@ export function DueListPage() {
     onChange,
     query,
     resetFilters,
+    setFilter,
     state,
   } = useTable<DueDto>({ defaultSort: [{ field: 'date', order: 'descend' }] });
+
+  const [initialMemberIds] = useState(getFilterValue('memberId') ?? []);
+
+  const { data: selectedMembers, isFetching } = useMembersForSelect({
+    memberIds: initialMemberIds,
+  });
 
   const duesQuery = useQuery({
     enabled: permissions.dues.list,
@@ -91,7 +101,21 @@ export function DueListPage() {
       }
       title="Cuotas"
     >
-      <Flex className="mb-4" justify="end">
+      <Flex className="mb-4" gap="middle" justify="space-between">
+        <MemberSearchSelect
+          additionalOptions={selectedMembers}
+          allowClear
+          className="min-w-xs"
+          disabled={isFetching}
+          loading={isFetching}
+          mode="multiple"
+          onChange={(value) =>
+            setFilter('id', value?.length ? (value as string[]) : undefined)
+          }
+          placeholder="Filtrar por socio..."
+          value={getFilterValue('id') ?? undefined}
+        />
+
         <Space.Compact>
           <Tooltip title="Filtros por defecto">
             <Button
@@ -109,6 +133,7 @@ export function DueListPage() {
           </Tooltip>
         </Space.Compact>
       </Flex>
+
       <Table<DueDto>
         dataSource={duesQuery.data?.data}
         loading={duesQuery.isFetching}

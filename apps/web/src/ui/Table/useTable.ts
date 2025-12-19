@@ -40,10 +40,12 @@ interface TableState {
   sort: SortItem[];
 }
 
+const DEFAULT_PAGE_SIZE = 20;
+
 export function useTable<T = unknown>({
   defaultFilters,
   defaultPage = 1,
-  defaultPageSize = 50,
+  defaultPageSize = DEFAULT_PAGE_SIZE,
   defaultSort,
 }: TableParams) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -75,9 +77,10 @@ export function useTable<T = unknown>({
     [state.filters],
   );
 
-  // Clear all filters
+  // Clear all filters (uses empty string to indicate explicit clear)
   const clearFilters = useCallback(() => {
     const params: Record<string, string> = {
+      filters: '',
       page: '1',
       pageSize: String(state.pageSize),
     };
@@ -151,16 +154,27 @@ export function useTable<T = unknown>({
         .filter((s) => s.field !== undefined && s.order !== undefined)
         .map((s) => ({ field: String(s.field), order: s.order as SortOrder }));
 
-      // Normalize filters
-      const newFilters = Object.entries(tableFilters).reduce<
+      // Merge table filters with existing external filters
+      // Start with current filters, then update based on tableFilters
+      const tableFilterKeys = Object.keys(tableFilters);
+
+      const newFilters = Object.entries(state.filters).reduce<
         Record<string, string[]>
       >((acc, [key, value]) => {
-        if (value !== null && value.length > 0) {
-          acc[key] = value.map(String);
+        // Preserve external filters (not managed by table columns)
+        if (!tableFilterKeys.includes(key)) {
+          acc[key] = value;
         }
 
         return acc;
       }, {});
+
+      // Add table column filters
+      Object.entries(tableFilters).forEach(([key, value]) => {
+        if (value !== null && value.length > 0) {
+          newFilters[key] = value.map(String);
+        }
+      });
 
       // Build URL params
       const params: Record<string, string> = {
@@ -178,7 +192,7 @@ export function useTable<T = unknown>({
 
       setSearchParams(params);
     },
-    [setSearchParams, state.page, state.pageSize],
+    [setSearchParams, state.filters, state.page, state.pageSize],
   );
 
   return {
@@ -216,8 +230,14 @@ function parseFilters(
   filtersParam: null | string,
   defaultFilters?: Record<string, string[]>,
 ): Record<string, string[]> {
-  if (!filtersParam) {
+  // No param in URL → use defaults (initial page load)
+  if (filtersParam === null) {
     return defaultFilters ?? {};
+  }
+
+  // Empty string → filters were explicitly cleared
+  if (filtersParam === '') {
+    return {};
   }
 
   return filtersParam

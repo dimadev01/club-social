@@ -1,8 +1,7 @@
 import {
-  CloseOutlined,
+  EyeOutlined,
   FileExcelOutlined,
   MoreOutlined,
-  RedoOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
 import {
@@ -13,7 +12,7 @@ import {
 import { type PaginatedResponse } from '@club-social/shared/types';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Flex, Space, Tooltip, Typography } from 'antd';
+import { App, Button, Dropdown, Flex, Space, Typography } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -23,6 +22,7 @@ import { $fetch } from '@/shared/lib/fetch';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
+import { TableActions } from '@/ui/Table/TableActions';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -44,11 +44,14 @@ export function MemberListPage() {
     setFilter,
     state,
   } = useTable<MemberListDto>({
+    defaultFilters: {
+      status: [UserStatus.ACTIVE],
+    },
     defaultSort: [{ field: 'id', order: 'ascend' }],
   });
+
   const [initialMemberIds] = useState(getFilterValue('id') ?? []);
 
-  // Only fetch members that were in the URL on initial page load
   const { data: selectedMembers, isFetching } = useMembersForSelect({
     memberIds: initialMemberIds,
   });
@@ -113,22 +116,7 @@ export function MemberListPage() {
           value={getFilterValue('id') ?? undefined}
         />
 
-        <Space.Compact>
-          <Tooltip title="Filtros por defecto">
-            <Button
-              icon={<RedoOutlined />}
-              onClick={resetFilters}
-              type="default"
-            />
-          </Tooltip>
-          <Tooltip title="Eliminar filtros">
-            <Button
-              icon={<CloseOutlined />}
-              onClick={clearFilters}
-              type="default"
-            />
-          </Tooltip>
-        </Space.Compact>
+        <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </Flex>
 
       <Table<MemberListDto>
@@ -138,25 +126,21 @@ export function MemberListPage() {
         pagination={{
           current: state.page,
           pageSize: state.pageSize,
-          showLessItems: true,
-          showQuickJumper: true,
-          showSizeChanger: true,
-          showTotal: (total, range) => `${range[0]}-${range[1]} de ${total}`,
           total: membersList.data?.total,
         }}
-        sortDirections={['ascend', 'descend', 'ascend']}
       >
         <Table.Column<MemberListDto>
           dataIndex="id"
           fixed="left"
           render={(id, record) => (
-            <Typography.Text copyable={{ text: id }}>
+            <Typography.Text className="line-clamp-1 w-full">
               <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>{record.name}</Link>
             </Typography.Text>
           )}
           sorter
           sortOrder={getSortOrder('id')}
           title="Socio"
+          width={200}
         />
         <Table.Column<MemberListDto>
           align="center"
@@ -169,6 +153,7 @@ export function MemberListPage() {
           onFilter={(value, record) => record.category === value}
           render={(value: MemberCategory) => MemberCategoryLabel[value]}
           title="Categoría"
+          width={150}
         />
         <Table.Column<MemberListDto>
           align="center"
@@ -181,6 +166,7 @@ export function MemberListPage() {
           onFilter={(value, record) => record.status === value}
           render={(value: UserStatus) => UserStatusLabel[value]}
           title="Estado"
+          width={100}
         />
         <Table.Column<MemberListDto>
           dataIndex="email"
@@ -190,6 +176,23 @@ export function MemberListPage() {
           sorter
           sortOrder={getSortOrder('email')}
           title="Email"
+        />
+        <Table.Column<MemberListDto>
+          align="center"
+          fixed="right"
+          render={(_, record) => (
+            <Space.Compact size="small">
+              <Button
+                icon={<EyeOutlined />}
+                onClick={() =>
+                  navigate(APP_ROUTES.MEMBER_DETAIL.replace(':id', record.id))
+                }
+                type="text"
+              />
+            </Space.Compact>
+          )}
+          title="Acciones"
+          width={100}
         />
       </Table>
     </Page>
