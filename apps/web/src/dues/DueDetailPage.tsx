@@ -2,12 +2,6 @@ import type { IMemberSearchResultDto } from '@club-social/shared/members';
 import type { ParamId } from '@club-social/shared/types';
 
 import {
-  CloseOutlined,
-  DollarOutlined,
-  PlusOutlined,
-  SaveOutlined,
-} from '@ant-design/icons';
-import {
   type CreateDueDto,
   DueCategory,
   DueCategoryLabel,
@@ -43,6 +37,9 @@ import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
 import { Form } from '@/ui/Form/Form';
+import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
+import { BackIcon } from '@/ui/Icons/BackIcon';
+import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Select } from '@/ui/Select';
 import { Table } from '@/ui/Table/Table';
@@ -195,7 +192,7 @@ export function DueDetailPage() {
       actions={[
         <Button
           disabled={isLoading}
-          icon={<CloseOutlined />}
+          icon={<BackIcon />}
           onClick={() => navigate(-1)}
           type="link"
         >
@@ -206,7 +203,7 @@ export function DueDetailPage() {
             <Button
               disabled={isLoading}
               htmlType="button"
-              icon={<PlusOutlined />}
+              icon={<AddNewIcon />}
               loading={createDueMutation.isPending}
               onClick={() => navigate(APP_ROUTES.DUE_NEW)}
               type="default"
@@ -218,7 +215,7 @@ export function DueDetailPage() {
             disabled={isLoading}
             form="form"
             htmlType="submit"
-            icon={<SaveOutlined />}
+            icon={<SaveIcon />}
             loading={createDueMutation.isPending || updateDueMutation.isPending}
             type="primary"
           >
@@ -232,7 +229,7 @@ export function DueDetailPage() {
             }}
           />
         ),
-      ]}
+      ].filter(Boolean)}
       extra={
         dueQuery.data ? (
           <Tag color={DueStatusColor[dueQuery.data.status]}>
@@ -243,7 +240,6 @@ export function DueDetailPage() {
       loading={dueQuery.isLoading}
       title={
         <Space>
-          <DollarOutlined />
           {dueQuery.isLoading && <Skeleton.Input active />}
           {!dueQuery.isLoading && <>{id ? 'Editar deuda' : 'Nueva deuda'}</>}
         </Space>

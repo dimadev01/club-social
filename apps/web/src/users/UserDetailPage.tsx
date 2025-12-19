@@ -1,6 +1,5 @@
 import type { ParamId } from '@club-social/shared/types';
 
-import { CloseOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
 import {
   type ICreateUserDto,
   type IUpdateUserDto,
@@ -17,7 +16,8 @@ import { APP_ROUTES } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
-import { Page, PageContent } from '@/ui/Page';
+import { BackIcon } from '@/ui/Icons/BackIcon';
+import { SaveIcon } from '@/ui/Icons/SaveIcon';
 
 interface FormSchema {
   email: string;
@@ -97,100 +97,93 @@ export function UserDetailPage() {
     updateUserMutation.isPending;
 
   return (
-    <Page>
-      <PageContent>
-        <Card
-          actions={[
-            <Button
-              disabled={isLoading}
-              icon={<CloseOutlined />}
-              onClick={() => navigate(-1)}
-              type="link"
-            >
-              Cancelar
-            </Button>,
-            <Button
-              disabled={isLoading}
-              form="form"
-              htmlType="submit"
-              icon={<SaveOutlined />}
-              loading={
-                createUserMutation.isPending || updateUserMutation.isPending
-              }
-              type="primary"
-            >
-              {id ? 'Actualizar usuario' : 'Crear usuario'}
-            </Button>,
-          ]}
-          loading={userQuery.isLoading}
-          title={
-            <Space>
-              <UserOutlined />
-              {userQuery.isLoading && <Skeleton.Input active />}
-              {!userQuery.isLoading && (
-                <>{id ? userQuery.data?.name : 'Nuevo usuario'}</>
-              )}
-            </Space>
-          }
+    <Card
+      actions={[
+        <Button
+          disabled={isLoading}
+          icon={<BackIcon />}
+          onClick={() => navigate(-1)}
+          type="link"
         >
-          <Form<FormSchema>
-            autoComplete="off"
-            disabled={isLoading}
-            form={form}
-            id="form"
-            initialValues={{ email: '', firstName: '', lastName: '' }}
-            layout="vertical"
-            name="form"
-            onFinish={onSubmit}
-            scrollToFirstError
-          >
-            <Form.Item<FormSchema>
-              label="Nombre"
-              name="firstName"
-              rules={[{ required: true, whitespace: true }]}
-            >
-              <Input placeholder="Juan" />
-            </Form.Item>
-            <Form.Item<FormSchema>
-              label="Apellido"
-              name="lastName"
-              rules={[{ required: true, whitespace: true }]}
-            >
-              <Input placeholder="Perez" />
-            </Form.Item>
-            <Form.Item<FormSchema>
-              label="Email"
-              name="email"
-              rules={[{ required: true, type: 'email', whitespace: true }]}
-              tooltip="Será su email de acceso"
-            >
-              <Input placeholder="juan.perez@example.com" type="email" />
-            </Form.Item>
+          Cancelar
+        </Button>,
+        <Button
+          disabled={isLoading}
+          form="form"
+          htmlType="submit"
+          icon={<SaveIcon />}
+          loading={createUserMutation.isPending || updateUserMutation.isPending}
+          type="primary"
+        >
+          {id ? 'Actualizar usuario' : 'Crear usuario'}
+        </Button>,
+      ]}
+      loading={userQuery.isLoading}
+      title={
+        <Space>
+          {userQuery.isLoading && <Skeleton.Input active />}
+          {!userQuery.isLoading && (
+            <>{id ? userQuery.data?.name : 'Nuevo usuario'}</>
+          )}
+        </Space>
+      }
+    >
+      <Form<FormSchema>
+        autoComplete="off"
+        disabled={isLoading}
+        form={form}
+        id="form"
+        initialValues={{ email: '', firstName: '', lastName: '' }}
+        layout="vertical"
+        name="form"
+        onFinish={onSubmit}
+        scrollToFirstError
+      >
+        <Form.Item<FormSchema>
+          label="Nombre"
+          name="firstName"
+          rules={[{ required: true, whitespace: true }]}
+        >
+          <Input placeholder="Juan" />
+        </Form.Item>
+        <Form.Item<FormSchema>
+          label="Apellido"
+          name="lastName"
+          rules={[{ required: true, whitespace: true }]}
+        >
+          <Input placeholder="Perez" />
+        </Form.Item>
+        <Form.Item<FormSchema>
+          label="Email"
+          name="email"
+          rules={[{ required: true, type: 'email', whitespace: true }]}
+          tooltip="Será su email de acceso"
+        >
+          <Input placeholder="juan.perez@example.com" type="email" />
+        </Form.Item>
 
-            {id && (
-              <Form.Item<FormSchema>
-                label="Estado"
-                name="status"
-                rules={[{ required: true }]}
-              >
-                <Select
-                  options={[
-                    {
-                      label: UserStatusLabel[UserStatus.ACTIVE],
-                      value: UserStatus.ACTIVE,
-                    },
-                    {
-                      label: UserStatusLabel[UserStatus.INACTIVE],
-                      value: UserStatus.INACTIVE,
-                    },
-                  ]}
-                  placeholder="Seleccionar estado"
-                />
-              </Form.Item>
-            )}
-          </Form>
-        </Card>
-      </PageContent>
-    </Page>
+        {id && (
+          <Form.Item<FormSchema>
+            label="Estado"
+            name="status"
+            rules={[{ required: true }]}
+          >
+            <Select
+              options={[
+                {
+                  label: UserStatusLabel[UserStatus.ACTIVE],
+                  value: UserStatus.ACTIVE,
+                },
+                {
+                  label: UserStatusLabel[UserStatus.INACTIVE],
+                  value: UserStatus.INACTIVE,
+                },
+              ]}
+              placeholder="Seleccionar estado"
+            />
+          </Form.Item>
+        )}
+      </Form>
+    </Card>
   );
 }

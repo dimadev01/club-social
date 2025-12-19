@@ -2,17 +2,15 @@ import type { MenuItemType } from 'antd/es/menu/interface';
 
 import {
   FilePdfOutlined,
-  HomeOutlined,
-  LogoutOutlined,
-  TeamOutlined,
+  UserAddOutlined,
   UserOutlined,
-  WalletOutlined,
 } from '@ant-design/icons';
 import {
   Avatar,
   Button,
   ConfigProvider,
   Flex,
+  FloatButton,
   Grid,
   Image,
   Layout,
@@ -22,10 +20,17 @@ import {
   Typography,
 } from 'antd';
 import { type PropsWithChildren, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
 import { useUser } from '@/auth/useUser';
+import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
+import { DashboardIcon } from '@/ui/Icons/DashboardIcon';
+import { DuesIcon } from '@/ui/Icons/DuesIcon';
+import { LogoutIcon } from '@/ui/Icons/LogoutIcon';
+import { MovementsIcon } from '@/ui/Icons/MovementsIcon';
+import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
+import { UsersIcon } from '@/ui/Icons/UsersIcon';
 import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -50,7 +55,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   const menuItems: MenuItemType[] = [
     {
-      icon: <HomeOutlined />,
+      icon: <DashboardIcon />,
       key: APP_ROUTES.HOME,
       label: 'Inicio',
     },
@@ -58,7 +63,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   if (permissions.dues.list) {
     menuItems.push({
-      icon: <WalletOutlined />,
+      icon: <DuesIcon />,
       key: APP_ROUTES.DUES_LIST,
       label: 'Deudas',
     });
@@ -66,7 +71,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   if (permissions.movements.list) {
     menuItems.push({
-      icon: <UserOutlined />,
+      icon: <MovementsIcon />,
       key: APP_ROUTES.MOVEMENT_LIST,
       label: 'Movimientos',
     });
@@ -74,7 +79,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   if (permissions.payments.list) {
     menuItems.push({
-      icon: <UserOutlined />,
+      icon: <PaymentsIcon />,
       key: APP_ROUTES.PAYMENT_LIST,
       label: 'Pagos',
     });
@@ -82,7 +87,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   if (permissions.members.list) {
     menuItems.push({
-      icon: <TeamOutlined />,
+      icon: <UsersIcon />,
       key: APP_ROUTES.MEMBER_LIST,
       label: 'Socios',
     });
@@ -90,7 +95,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   if (permissions.users.list) {
     menuItems.push({
-      icon: <TeamOutlined />,
+      icon: <UsersIcon />,
       key: APP_ROUTES.USER_LIST,
       label: 'Usuarios',
     });
@@ -160,7 +165,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                   label: 'Mi Perfil',
                 },
                 {
-                  icon: <LogoutOutlined />,
+                  icon: <LogoutIcon />,
                   key: APP_ROUTES.LOGOUT,
                   label: 'Cerrar sesión',
                 },
@@ -197,6 +202,35 @@ export function AppLayout({ children }: PropsWithChildren) {
             </div>
           </Flex>
         </Layout.Footer>
+
+        <FloatButton.Group icon={<AddNewIcon />} trigger="hover" type="primary">
+          {permissions.members.create && (
+            <Link to={APP_ROUTES.MEMBER_NEW}>
+              <FloatButton
+                icon={<UserAddOutlined />}
+                tooltip={{ placement: 'left', title: 'Nuevo socio' }}
+              />
+            </Link>
+          )}
+
+          {permissions.dues.create && (
+            <Link to={APP_ROUTES.DUES_NEW}>
+              <FloatButton
+                icon={<DuesIcon />}
+                tooltip={{ placement: 'left', title: 'Nueva deuda' }}
+              />
+            </Link>
+          )}
+
+          {permissions.payments.create && (
+            <Link to={APP_ROUTES.PAYMENTS_NEW}>
+              <FloatButton
+                icon={<PaymentsIcon />}
+                tooltip={{ placement: 'left', title: 'Nuevo pago' }}
+              />
+            </Link>
+          )}
+        </FloatButton.Group>
       </Layout>
     </Layout>
   );

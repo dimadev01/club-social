@@ -1,5 +1,4 @@
 import {
-  EyeOutlined,
   FileExcelOutlined,
   MoreOutlined,
   UserAddOutlined,
@@ -12,13 +11,15 @@ import {
 import { type PaginatedResponse } from '@club-social/shared/types';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Typography } from 'antd';
+import { App, Button, Dropdown, Space, Tooltip, Typography } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
+import { DuesIcon } from '@/ui/Icons/DuesIcon';
+import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -176,13 +177,20 @@ export function MemberListPage() {
           fixed="right"
           render={(_, record) => (
             <Space.Compact size="small">
-              <Button
-                icon={<EyeOutlined />}
-                onClick={() =>
-                  navigate(APP_ROUTES.MEMBER_DETAIL.replace(':id', record.id))
-                }
-                type="text"
-              />
+              <Tooltip title="Ver deudas">
+                <Link
+                  to={`${APP_ROUTES.DUES_LIST}?filters=memberId:${encodeURIComponent(record.id)}`}
+                >
+                  <Button icon={<DuesIcon />} type="text" />
+                </Link>
+              </Tooltip>
+              <Tooltip title="Ver pagos">
+                <Link
+                  to={`${APP_ROUTES.PAYMENTS_LIST}?filters=memberId:${encodeURIComponent(record.id)}`}
+                >
+                  <Button icon={<PaymentsIcon />} type="text" />
+                </Link>
+              </Tooltip>
             </Space.Compact>
           )}
           title="Acciones"

@@ -47,10 +47,8 @@ export function AntProvider({ children }: { children: React.ReactNode }) {
       },
       Layout: {
         footerPadding: 0,
-        lightSiderBg: token.Layout?.bodyBg,
-        lightTriggerBg: token.Layout?.bodyBg,
-        siderBg: token.Layout?.bodyBg,
-        triggerBg: token.Layout?.bodyBg,
+        lightSiderBg: token.colorBgLayout,
+        siderBg: token.colorBgLayout,
       },
     },
     token: {

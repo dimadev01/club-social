@@ -1,12 +1,6 @@
 import type { ParamId } from '@club-social/shared/types';
 
-import {
-  CloseOutlined,
-  DeleteOutlined,
-  PlusCircleOutlined,
-  SaveOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined } from '@ant-design/icons';
 import {
   FileStatus,
   FileStatusLabel,
@@ -42,6 +36,9 @@ import { APP_ROUTES } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { Form } from '@/ui/Form/Form';
+import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
+import { BackIcon } from '@/ui/Icons/BackIcon';
+import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Row } from '@/ui/Row';
 import { Select } from '@/ui/Select';
@@ -198,7 +195,7 @@ export function MemberDetailPage() {
       actions={[
         <Button
           disabled={isLoading}
-          icon={<CloseOutlined />}
+          icon={<BackIcon />}
           onClick={() => navigate(-1)}
           type="link"
         >
@@ -208,7 +205,7 @@ export function MemberDetailPage() {
           disabled={isLoading}
           form="form"
           htmlType="submit"
-          icon={<SaveOutlined />}
+          icon={<SaveIcon />}
           loading={
             createMemberMutation.isPending || updateMemberMutation.isPending
           }
@@ -220,7 +217,6 @@ export function MemberDetailPage() {
       loading={memberQuery.isLoading}
       title={
         <Space>
-          <UserOutlined />
           {memberQuery.isLoading && <Skeleton.Input active />}
           {!memberQuery.isLoading && (
             <>
@@ -421,10 +417,7 @@ export function MemberDetailPage() {
                 {(fields, { add, remove }) => (
                   <Card
                     extra={
-                      <Button
-                        icon={<PlusCircleOutlined />}
-                        onClick={() => add()}
-                      />
+                      <Button icon={<AddNewIcon />} onClick={() => add()} />
                     }
                     title="Datos de contacto"
                     type="inner"

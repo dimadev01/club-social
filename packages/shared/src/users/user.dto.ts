@@ -18,6 +18,7 @@ export interface IUserDetailDto {
   firstName: string;
   id: string;
   lastName: string;
+  name: string;
   role: UserRole;
   status: UserStatus;
 }

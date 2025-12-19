@@ -1,8 +1,9 @@
-import { MailOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
+import { MailOutlined, UserOutlined } from '@ant-design/icons';
 import { App, Button, Card, Divider, Form, Input, Space } from 'antd';
 
 import { useUser } from '@/auth/useUser';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { Page, PageContent } from '@/ui/Page';
 
 interface EmailFormSchema {
@@ -65,7 +66,7 @@ export function ProfilePage() {
             <Button
               form="profileForm"
               htmlType="submit"
-              icon={<SaveOutlined />}
+              icon={<SaveIcon />}
               type="primary"
             >
               Actualizar perfil

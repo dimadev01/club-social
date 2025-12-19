@@ -30,7 +30,7 @@ export function VoidDueButton({ onConfirm }: Props) {
             name="reason"
             rules={[{ required: true, whitespace: true }]}
           >
-            <Input.TextArea placeholder="Razón de la anulación" rows={4} />
+            <Input.TextArea placeholder="Razón de la anulación" rows={2} />
           </Form.Item>
         </Form>
       }

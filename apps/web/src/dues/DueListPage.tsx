@@ -5,7 +5,6 @@ import {
   EyeOutlined,
   FileExcelOutlined,
   MoreOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
 import {
   type DueCategory,
@@ -26,6 +25,7 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
+import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -84,7 +84,7 @@ export function DueListPage() {
           {permissions.dues.create && (
             <Button
               disabled={!permissions.dues.create}
-              icon={<PlusOutlined />}
+              icon={<AddNewIcon />}
               onClick={() => navigate(APP_ROUTES.DUE_NEW)}
               type="primary"
             >
