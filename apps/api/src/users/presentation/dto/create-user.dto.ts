@@ -1,7 +1,7 @@
-import { CreateUserDto } from '@club-social/shared/users';
+import { ICreateUserDto } from '@club-social/shared/users';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
-export class CreateUserRequestDto implements CreateUserDto {
+export class CreateUserRequestDto implements ICreateUserDto {
   @IsEmail()
   @IsNotEmpty()
   public email: string;

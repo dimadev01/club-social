@@ -1,7 +1,5 @@
-import { DueCategory, UpdateDueDto } from '@club-social/shared/dues';
+import { IUpdateDueDto } from '@club-social/shared/dues';
 import {
-  IsDateString,
-  IsEnum,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -10,20 +8,12 @@ import {
   IsString,
 } from 'class-validator';
 
-export class UpdateDueRequestDto implements UpdateDueDto {
+export class UpdateDueDto implements IUpdateDueDto {
   @IsInt()
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
   public amount: number;
-
-  @IsEnum(DueCategory)
-  @IsNotEmpty()
-  public category: DueCategory;
-
-  @IsDateString()
-  @IsNotEmpty()
-  public date: string;
 
   @IsOptional()
   @IsString()

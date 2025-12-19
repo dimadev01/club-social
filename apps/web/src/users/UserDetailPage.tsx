@@ -2,9 +2,9 @@ import type { ParamId } from '@club-social/shared/types';
 
 import { CloseOutlined, SaveOutlined, UserOutlined } from '@ant-design/icons';
 import {
-  type CreateUserDto,
-  type UpdateUserDto,
-  type UserDto,
+  type ICreateUserDto,
+  type IUpdateUserDto,
+  type IUserDetailDto,
   UserStatus,
   UserStatusLabel,
 } from '@club-social/shared/users';
@@ -36,13 +36,13 @@ export function UserDetailPage() {
   const [form] = Form.useForm<FormSchema>();
   const { setFieldsValue } = form;
 
-  const userQuery = useQuery<null | UserDto>({
+  const userQuery = useQuery<IUserDetailDto | null>({
     enabled: !!id,
     queryFn: () => $fetch(`users/${id}`),
     queryKey: ['users', id],
   });
 
-  const createUserMutation = useMutation<ParamId, Error, CreateUserDto>({
+  const createUserMutation = useMutation<ParamId, Error, ICreateUserDto>({
     mutationFn: (body) => $fetch('users', { body }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -53,7 +53,7 @@ export function UserDetailPage() {
     },
   });
 
-  const updateUserMutation = useMutation<unknown, Error, UpdateUserDto>({
+  const updateUserMutation = useMutation<unknown, Error, IUpdateUserDto>({
     mutationFn: (body) => $fetch(`users/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });

@@ -33,7 +33,7 @@ import { CreateDueRequestDto } from './dto/create-due.dto';
 import { DueDetailDto } from './dto/due-detail.dto';
 import { DueListRequestDto } from './dto/due-paginated-request.dto';
 import { DuePaginatedDto } from './dto/due-paginated.dto';
-import { UpdateDueRequestDto } from './dto/update-due.dto';
+import { UpdateDueDto } from './dto/update-due.dto';
 
 @Controller('dues')
 export class DuesController extends BaseController {
@@ -70,7 +70,7 @@ export class DuesController extends BaseController {
   @Patch(':id')
   public async update(
     @Param() request: ParamIdDto,
-    @Body() body: UpdateDueRequestDto,
+    @Body() body: UpdateDueDto,
     @Session() session: AuthSession,
   ): Promise<void> {
     this.handleResult(
@@ -124,6 +124,7 @@ export class DuesController extends BaseController {
       date: model.date.value,
       id: model.id.value,
       memberId: model.memberId.value,
+      notes: model.notes,
       status: model.status,
     };
   }

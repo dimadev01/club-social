@@ -37,7 +37,6 @@ import {
 } from '../domain/member.types';
 import { CreateMemberRequestDto } from './dto/create-member.dto';
 import { MemberDetailDto } from './dto/member-detail.dto';
-import { MemberListDto } from './dto/member-list.dto';
 import { MemberPaginatedDto } from './dto/member-paginated.dto';
 import { MemberSearchRequestDto } from './dto/member-search-request.dto';
 import { MemberSearchDto } from './dto/member-search.dto';
@@ -142,7 +141,7 @@ export class MembersController extends BaseController {
   }
 
   @Get()
-  public async getAll(): Promise<MemberListDto[]> {
+  public async getAll(): Promise<MemberPaginatedDto[]> {
     const data = await this.memberRepository.findAll({ includeUser: true });
 
     return data.map(({ member, user }) => this.toListDto({ member, user }));
@@ -173,7 +172,7 @@ export class MembersController extends BaseController {
     return this.toDetailDto(model);
   }
 
-  private toListDto(model: MemberListModel): MemberListDto {
+  private toListDto(model: MemberListModel): MemberPaginatedDto {
     return {
       category: model.member.category,
       id: model.member.id.value,
@@ -221,7 +220,6 @@ export class MembersController extends BaseController {
   private toPaginatedDto(model: MemberPaginatedModel): MemberPaginatedDto {
     return {
       category: model.member.category,
-      email: model.user.email.value,
       id: model.member.id.value,
       name: model.user.name,
       userStatus: model.user.status,

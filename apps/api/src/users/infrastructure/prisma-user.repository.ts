@@ -1,5 +1,4 @@
 import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
-import { UserRole } from '@club-social/shared/users';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -57,8 +56,15 @@ export class PrismaUserRepository implements UserReadableRepository {
   ): Promise<PaginatedResponse<UserEntity>> {
     const where: UserWhereInput = {
       deletedAt: null,
-      role: UserRole.STAFF,
     };
+
+    if (params.filters?.role) {
+      where.role = { in: params.filters.role };
+    }
+
+    if (params.filters?.status) {
+      where.status = { in: params.filters.status };
+    }
 
     const query: UserFindManyArgs = {
       skip: (params.page - 1) * params.pageSize,

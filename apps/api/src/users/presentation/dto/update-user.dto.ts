@@ -1,7 +1,7 @@
-import { UpdateUserDto, UserStatus } from '@club-social/shared/users';
+import { IUpdateUserDto, UserStatus } from '@club-social/shared/users';
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
-export class UpdateUserRequestDto implements UpdateUserDto {
+export class UpdateUserRequestDto implements IUpdateUserDto {
   @IsEmail()
   public email: string;
 

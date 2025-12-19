@@ -11,8 +11,8 @@ import {
   type CreateDueDto,
   DueCategory,
   DueCategoryLabel,
-  type IDuePaginatedDto,
-  type UpdateDueDto,
+  type IDueDetailDto,
+  type IUpdateDueDto,
 } from '@club-social/shared/dues';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -62,7 +62,7 @@ export function DueDetailPage() {
   const { setFieldsValue } = form;
   const formCategory = Form.useWatch('category', form);
 
-  const dueQuery = useQuery<IDuePaginatedDto | null>({
+  const dueQuery = useQuery<IDueDetailDto | null>({
     enabled: !!id && permissions.dues.get,
     queryFn: () => $fetch(`dues/${id}`),
     queryKey: ['dues', id],
@@ -80,7 +80,7 @@ export function DueDetailPage() {
     },
   });
 
-  const updateDueMutation = useMutation<unknown, Error, UpdateDueDto>({
+  const updateDueMutation = useMutation<unknown, Error, IUpdateDueDto>({
     mutationFn: (body) => $fetch(`dues/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['dues'] });
@@ -114,12 +114,7 @@ export function DueDetailPage() {
     }
 
     if (id) {
-      updateDueMutation.mutate({
-        amount,
-        category: values.category,
-        date,
-        notes: values.notes || null,
-      });
+      updateDueMutation.mutate({ amount, notes: values.notes || null });
     } else {
       const results = await Promise.allSettled(
         values.memberIds.map((memberId) =>
@@ -140,13 +135,13 @@ export function DueDetailPage() {
       );
 
       if (failedResults.length > 0) {
-        message.error('Error al crear las cuotas');
+        message.error('Error al crear las deudas');
 
         return;
       }
 
       message.success(
-        `${successfulResults.length} cuotas creadas correctamente`,
+        `${successfulResults.length} deudas creadas correctamente`,
       );
       navigate(APP_ROUTES.DUE_LIST, { replace: true });
     }
@@ -208,7 +203,7 @@ export function DueDetailPage() {
             loading={createDueMutation.isPending || updateDueMutation.isPending}
             type="primary"
           >
-            {id ? 'Actualizar cuota' : 'Crear cuota'}
+            {id ? 'Actualizar deuda' : 'Crear deuda'}
           </Button>
         </Space.Compact>,
       ]}
@@ -217,7 +212,7 @@ export function DueDetailPage() {
         <Space>
           <DollarOutlined />
           {dueQuery.isLoading && <Skeleton.Input active />}
-          {!dueQuery.isLoading && <>{id ? 'Editar cuota' : 'Nueva cuota'}</>}
+          {!dueQuery.isLoading && <>{id ? 'Editar deuda' : 'Nueva deuda'}</>}
         </Space>
       }
     >
@@ -303,7 +298,6 @@ export function DueDetailPage() {
         >
           <InputNumber<number>
             className="w-full"
-            disabled={!!id}
             formatter={(value) => NumberFormat.format(Number(value))}
             min={0}
             parser={(value) => NumberFormat.parse(String(value))}

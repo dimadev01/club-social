@@ -11,5 +11,6 @@ export class DueDetailDto implements IDueDetailDto {
   public date: string;
   public id: string;
   public memberId: string;
+  public notes: null | string;
   public status: DueStatus;
 }

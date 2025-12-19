@@ -16,7 +16,7 @@ import {
 } from '@club-social/shared/dues';
 import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Flex, Space } from 'antd';
+import { App, Button, Dropdown, Flex, Space, Tooltip } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -103,7 +103,7 @@ export function DueListPage() {
           </Dropdown>
         </Space.Compact>
       }
-      title="Cuotas"
+      title="Deudas"
     >
       <Flex className="mb-4" gap="middle" justify="space-between">
         <TableMembersSearch
@@ -205,13 +205,15 @@ export function DueListPage() {
           fixed="right"
           render={(_, record) => (
             <Space.Compact size="small">
-              <Button
-                icon={<EyeOutlined />}
-                onClick={() =>
-                  navigate(APP_ROUTES.DUE_DETAIL.replace(':id', record.id))
-                }
-                type="text"
-              />
+              <Tooltip title="Ver detalle">
+                <Button
+                  icon={<EyeOutlined />}
+                  onClick={() =>
+                    navigate(APP_ROUTES.DUE_DETAIL.replace(':id', record.id))
+                  }
+                  type="text"
+                />
+              </Tooltip>
             </Space.Compact>
           )}
           title="Acciones"

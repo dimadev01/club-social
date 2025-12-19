@@ -13,6 +13,12 @@ export const UserRole = {
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
+export const UserRoleLabel = {
+  [UserRole.ADMIN]: 'Administrador',
+  [UserRole.MEMBER]: 'Socio',
+  [UserRole.STAFF]: 'Staff',
+} as const;
+
 export const UserStatusLabel = {
   [UserStatus.ACTIVE]: 'Activo',
   [UserStatus.INACTIVE]: 'Inactivo',

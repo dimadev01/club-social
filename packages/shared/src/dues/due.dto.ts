@@ -16,6 +16,7 @@ export interface IDueDetailDto {
   date: string;
   id: string;
   memberId: string;
+  notes: null | string;
   status: DueStatus;
 }
 
@@ -31,10 +32,8 @@ export interface IDuePaginatedDto {
   userStatus: UserStatus;
 }
 
-export interface UpdateDueDto {
+export interface IUpdateDueDto {
   amount: number;
-  category: DueCategory;
-  date: string;
   notes: null | string;
 }
 

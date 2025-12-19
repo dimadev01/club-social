@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Inject,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -30,7 +31,8 @@ import {
 } from '../domain/user.repository';
 import { CreateUserRequestDto } from './dto/create-user.dto';
 import { UpdateUserRequestDto } from './dto/update-user.dto';
-import { UserResponseDto } from './dto/user.dto';
+import { UserDetailDto } from './dto/user-detail.dto';
+import { UserPaginatedDto } from './dto/user-paginated.dto';
 
 @Controller('users')
 export class UsersController extends BaseController {
@@ -81,9 +83,9 @@ export class UsersController extends BaseController {
     return { id: id.value };
   }
 
-  @ApiPaginatedResponse(UserResponseDto)
+  @ApiPaginatedResponse(UserPaginatedDto)
   @Get('paginated')
-  public async getPaginated(): Promise<PaginatedResponseDto<UserResponseDto>> {
+  public async getPaginated(): Promise<PaginatedResponseDto<UserPaginatedDto>> {
     const users = await this.userRepository.findPaginated({
       page: 1,
       pageSize: 10,
@@ -91,23 +93,37 @@ export class UsersController extends BaseController {
     });
 
     return {
-      data: users.data.map((user) => this.toDto(user)),
+      data: users.data.map((user) => this.toPaginatedDto(user)),
       total: users.total,
     };
   }
 
   @Get(':id')
-  public async getById(
-    @Param() request: ParamIdDto,
-  ): Promise<null | UserResponseDto> {
+  public async getById(@Param() request: ParamIdDto): Promise<UserDetailDto> {
     const user = await this.userRepository.findOneById(
       UniqueId.raw({ value: request.id }),
     );
 
-    return user ? this.toDto(user) : null;
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return this.toDetailDto(user);
   }
 
-  private toDto(user: UserEntity): UserResponseDto {
+  private toDetailDto(user: UserEntity): UserDetailDto {
+    return {
+      email: user.email.value,
+      firstName: user.firstName,
+      id: user.id.value,
+      lastName: user.lastName,
+      name: user.name,
+      role: user.role,
+      status: user.status,
+    };
+  }
+
+  private toPaginatedDto(user: UserEntity): UserPaginatedDto {
     return {
       email: user.email.value,
       firstName: user.firstName,
