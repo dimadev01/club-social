@@ -33,12 +33,13 @@ import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
-import { DateFormat } from '@/shared/lib/date-format';
+import { DateFormat, DateFormats } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
 import { Card } from '@/ui/Card/Card';
 import { Form } from '@/ui/Form/Form';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
+import { VoidIcon } from '@/ui/Icons/VoidIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Select } from '@/ui/Select';
 import { Table } from '@/ui/Table/Table';
@@ -173,13 +174,15 @@ export function DueDetailPage() {
   }
 
   const isQueryLoading = dueQuery.isLoading || memberQuery.isLoading;
-  const isMutating = createDueMutation.isPending || updateDueMutation.isPending;
-  const isLoading = isQueryLoading || isMutating;
+  const isMutating =
+    createDueMutation.isPending ||
+    updateDueMutation.isPending ||
+    voidDueMutation.isPending;
 
   const canCreate = !id && permissions.dues.create;
   const canUpdate = dueQuery.data?.status === DueStatus.PENDING;
-  const canVoid = dueQuery.data?.status === DueStatus.PENDING;
   const canCreateOrUpdate = canCreate || canUpdate;
+  const canVoid = dueQuery.data?.status === DueStatus.PENDING;
 
   const memberAdditionalOptions: IMemberSearchResultDto[] = memberQuery.data
     ? [
@@ -197,6 +200,7 @@ export function DueDetailPage() {
     if (canVoid) {
       items.push({
         danger: true,
+        icon: <VoidIcon />,
         key: 'void',
         label: 'Anular deuda',
         onClick: () => setIsVoidModalOpen(true),
@@ -224,7 +228,7 @@ export function DueDetailPage() {
           </Button>
         ),
         moreActions.length > 0 && (
-          <Dropdown disabled={isLoading} menu={{ items: moreActions }}>
+          <Dropdown disabled={isMutating} menu={{ items: moreActions }}>
             <Button icon={<MoreOutlined />}>Más opciones</Button>
           </Dropdown>
         ),
@@ -241,7 +245,7 @@ export function DueDetailPage() {
       title={id ? 'Editar deuda' : 'Nueva deuda'}
     >
       <Form<FormSchema>
-        disabled={isLoading}
+        disabled={isMutating}
         form={form}
         id="form"
         initialValues={{
@@ -265,8 +269,9 @@ export function DueDetailPage() {
             disabled={!!id}
             format={
               formCategory === DueCategory.MEMBERSHIP
-                ? 'MMMM YYYY'
-                : 'DD/MM/YYYY'
+                ? // ? 'MMMM YYYY'
+                  DateFormats.monthYear
+                : DateFormats.date
             }
             picker={formCategory === DueCategory.MEMBERSHIP ? 'month' : 'date'}
           />
@@ -326,7 +331,7 @@ export function DueDetailPage() {
         >
           <InputNumber<number>
             className="w-full"
-            disabled={!canUpdate}
+            disabled={!canCreateOrUpdate}
             formatter={(value) => NumberFormat.format(Number(value))}
             min={0}
             parser={(value) => NumberFormat.parse(String(value))}
@@ -337,7 +342,7 @@ export function DueDetailPage() {
 
         <Form.Item<FormSchema> label="Notas" name="notes">
           <Input.TextArea
-            disabled={!canUpdate}
+            disabled={!canCreateOrUpdate}
             placeholder="Notas adicionales..."
             rows={3}
           />

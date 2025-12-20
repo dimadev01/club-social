@@ -5,32 +5,37 @@ import 'dayjs/locale/es';
 dayjs.extend(relativeTime);
 dayjs.locale('es');
 
-export const DATE_FORMATS = {
+export const DateFormats = {
   date: 'DD/MM/YYYY',
   dateTime: 'DD/MM/YYYY HH:mm',
   isoDate: 'YYYY-MM-DD',
   monthYear: 'MMMM YYYY',
   time: 'HH:mm',
-};
+} as const;
+
+export type DateFormats = (typeof DateFormats)[keyof typeof DateFormats];
 
 export const DateFormat = {
-  date(value: Date | Dayjs | string, format = DATE_FORMATS.date): string {
+  date(
+    value: Date | Dayjs | string,
+    format: DateFormats = DateFormats.date,
+  ): string {
     return DateFormat.parse(value).format(format);
   },
 
   dateTime(
     value: Date | Dayjs | string,
-    format = DATE_FORMATS.dateTime,
+    format = DateFormats.dateTime,
   ): string {
     return DateFormat.date(value, format);
   },
 
   isoDate(value: Date | Dayjs | string): string {
-    return DateFormat.date(value, DATE_FORMATS.isoDate);
+    return DateFormat.date(value, DateFormats.isoDate);
   },
 
   monthYear(value: Date | Dayjs | string): string {
-    return DateFormat.date(value, DATE_FORMATS.monthYear);
+    return DateFormat.date(value, DateFormats.monthYear);
   },
 
   parse(value: Date | Dayjs | string): Dayjs {
@@ -42,6 +47,6 @@ export const DateFormat = {
   },
 
   time(value: Date | Dayjs | string): string {
-    return DateFormat.date(value, DATE_FORMATS.time);
+    return DateFormat.date(value, DateFormats.time);
   },
 };

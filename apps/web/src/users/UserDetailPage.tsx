@@ -97,7 +97,6 @@ export function UserDetailPage() {
   const isQueryLoading = userQuery.isLoading;
   const isMutating =
     createUserMutation.isPending || updateUserMutation.isPending;
-  const isLoading = isQueryLoading || isMutating;
 
   const canCreate = !id && permissions.users.create;
   const canUpdate = id && permissions.users.update;
@@ -125,7 +124,7 @@ export function UserDetailPage() {
     >
       <Form<FormSchema>
         autoComplete="off"
-        disabled={isLoading}
+        disabled={isMutating}
         form={form}
         id="form"
         initialValues={{ email: '', firstName: '', lastName: '' }}

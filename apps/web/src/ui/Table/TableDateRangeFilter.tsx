@@ -3,7 +3,7 @@ import type { Dayjs } from 'dayjs';
 import { Card, DatePicker, Space } from 'antd';
 import { useMemo } from 'react';
 
-import { DATE_FORMATS } from '@/shared/lib/date-format';
+import { DateFormats } from '@/shared/lib/date-format';
 
 import { getPresets } from '../DatePicker/datepicker-presets';
 
@@ -29,7 +29,7 @@ export function TableDateRangeFilter({
     <Card size="small" title="Filtro de fecha">
       <Space className="flex-1" vertical>
         <DatePicker.RangePicker
-          format={DATE_FORMATS.date}
+          format={DateFormats.date}
           onChange={(dates) => {
             if (dates && dates[0] && dates[1]) {
               onChange([dates[0], dates[1]]);

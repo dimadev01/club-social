@@ -188,7 +188,6 @@ export function MemberDetailPage() {
   const isQueryLoading = memberQuery.isLoading;
   const isMutating =
     createMemberMutation.isPending || updateMemberMutation.isPending;
-  const isLoading = isQueryLoading || isMutating;
 
   const canCreate = !id && permissions.members.create;
   const canUpdate = id && permissions.members.update;
@@ -215,7 +214,7 @@ export function MemberDetailPage() {
       title={memberQuery.data?.name ?? 'Nuevo socio'}
     >
       <Form<FormSchema>
-        disabled={isLoading}
+        disabled={isMutating}
         form={form}
         id="form"
         initialValues={{
