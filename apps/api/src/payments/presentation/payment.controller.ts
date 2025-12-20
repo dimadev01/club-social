@@ -4,7 +4,6 @@ import {
   Get,
   Inject,
   Param,
-  Patch,
   Post,
   Query,
   Session,
@@ -23,9 +22,7 @@ import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-respon
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePaymentUseCase } from '../application/create-payment/create-payment.use-case';
-import { UpdatePaymentUseCase } from '../application/update-payment/update-payment.use-case';
 import { VoidPaymentUseCase } from '../application/void-payment/void-payment.use-case';
-import { PaymentEntity } from '../domain/entities/payment.entity';
 import {
   PAYMENT_REPOSITORY_PROVIDER,
   type PaymentRepository,
@@ -33,7 +30,6 @@ import {
 import { CreatePaymentRequestDto } from './dto/create-payment.dto';
 import { PaymentDetailDto } from './dto/payment-detail.dto';
 import { PaymentPaginatedDto } from './dto/payment-paginated.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { VoidPaymentRequestDto } from './dto/void-payment.dto';
 
 @Controller('payments')
@@ -42,7 +38,6 @@ export class PaymentsController extends BaseController {
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
     private readonly createPaymentUseCase: CreatePaymentUseCase,
-    private readonly updatePaymentUseCase: UpdatePaymentUseCase,
     private readonly voidPaymentUseCase: VoidPaymentUseCase,
     @Inject(PAYMENT_REPOSITORY_PROVIDER)
     private readonly paymentRepository: PaymentRepository,
@@ -66,23 +61,6 @@ export class PaymentsController extends BaseController {
     );
 
     return { id: id.value };
-  }
-
-  @Patch(':id')
-  public async update(
-    @Param() request: ParamIdDto,
-    @Body() body: UpdatePaymentDto,
-    @Session() session: AuthSession,
-  ): Promise<void> {
-    this.handleResult(
-      await this.updatePaymentUseCase.execute({
-        date: body.date,
-        id: request.id,
-        notes: body.notes,
-        paymentDues: body.paymentDues,
-        updatedBy: session.user.name,
-      }),
-    );
   }
 
   @Post(':id/void')
@@ -113,7 +91,16 @@ export class PaymentsController extends BaseController {
     });
 
     return {
-      data: payments.data.map((payment) => this.toPaginatedDto(payment)),
+      data: payments.data.map((payment) => ({
+        amount: payment.amount.toCents(),
+        createdAt: payment.createdAt.toISOString(),
+        createdBy: payment.createdBy,
+        date: payment.date.value,
+        id: payment.id.value,
+        memberId: '',
+        memberName: '',
+        status: payment.status,
+      })),
       total: payments.total,
     };
   }
@@ -130,23 +117,6 @@ export class PaymentsController extends BaseController {
       return null;
     }
 
-    return this.toDetailDto(payment);
-  }
-
-  private toPaginatedDto(payment: PaymentEntity): PaymentPaginatedDto {
-    return {
-      amount: payment.amount.toCents(),
-      createdAt: payment.createdAt.toISOString(),
-      createdBy: payment.createdBy,
-      date: payment.date.value,
-      id: payment.id.value,
-      memberId: '',
-      memberName: '',
-      status: payment.status,
-    };
-  }
-
-  private toDetailDto(payment: PaymentEntity): PaymentDetailDto {
     return {
       amount: payment.amount.toCents(),
       createdAt: payment.createdAt.toISOString(),

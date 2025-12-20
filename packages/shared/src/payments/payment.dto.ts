@@ -40,12 +40,6 @@ export interface IPaymentPaginatedDto {
   status: PaymentStatus;
 }
 
-export interface IUpdatePaymentDto {
-  date: string;
-  notes: null | string;
-  paymentDues: IPaymentDueItemDto[];
-}
-
 export interface VoidPaymentDto {
   voidReason: string;
 }

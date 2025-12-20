@@ -10,7 +10,6 @@ import {
   type ICreatePaymentDto,
   type IPaymentDetailDto,
   type IPaymentDueItemDto,
-  type IUpdatePaymentDto,
   PaymentStatus,
   PaymentStatusLabel,
   type VoidPaymentDto,
@@ -124,19 +123,6 @@ export function PaymentDetailPage() {
     },
   });
 
-  const updatePaymentMutation = useMutation<unknown, Error, IUpdatePaymentDto>({
-    mutationFn: (body) => $fetch(`payments/${id}`, { body, method: 'PATCH' }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
-      queryClient.invalidateQueries({ queryKey: ['payments', id] });
-      queryClient.invalidateQueries({
-        queryKey: ['dues', 'pending', formMemberId],
-      });
-      message.success('Pago actualizado correctamente');
-      navigate(-1);
-    },
-  });
-
   const voidPaymentMutation = useMutation<unknown, Error, VoidPaymentDto>({
     mutationFn: (body) =>
       $fetch(`payments/${id}/void`, { body, method: 'PATCH' }),
@@ -234,39 +220,24 @@ export function PaymentDetailPage() {
       dueId: pd.dueId,
     }));
 
-    if (id) {
-      updatePaymentMutation.mutate({
-        date,
-        notes: values.notes || null,
-        paymentDues,
-      });
-    } else {
-      createPaymentMutation.mutate({
-        date,
-        notes: values.notes || null,
-        paymentDues,
-        receiptNumber: values.receiptNumber || null,
-      });
-    }
+    createPaymentMutation.mutate({
+      date,
+      notes: values.notes || null,
+      paymentDues,
+      receiptNumber: values.receiptNumber || null,
+    });
   };
 
-  if (!permissions.payments.create && !id) {
-    return <NotFound />;
-  }
-
-  if (!permissions.payments.update && id) {
+  if (!permissions.payments.create) {
     return <NotFound />;
   }
 
   const isQueryLoading = paymentQuery.isLoading;
   const isMutating =
-    createPaymentMutation.isPending ||
-    updatePaymentMutation.isPending ||
-    voidPaymentMutation.isPending;
+    createPaymentMutation.isPending || voidPaymentMutation.isPending;
 
   const canCreate = !id && permissions.payments.create;
-  const canUpdate = paymentQuery.data?.status === PaymentStatus.PAID;
-  const canCreateOrUpdate = canCreate || canUpdate;
+  const canCreateOrUpdate = canCreate;
   const canVoid = paymentQuery.data?.status === PaymentStatus.PAID;
 
   if (id && !isQueryLoading && !paymentQuery.data) {
@@ -303,7 +274,7 @@ export function PaymentDetailPage() {
             loading={isMutating}
             type="primary"
           >
-            {id ? 'Actualizar pago' : 'Crear pago'}
+            Crear pago
           </Button>
         ),
         moreActions.length > 0 && (

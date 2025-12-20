@@ -28,13 +28,7 @@ export const statements = {
     Action.UPDATE,
     Action.VOID,
   ],
-  [Resource.PAYMENTS]: [
-    Action.CREATE,
-    Action.LIST,
-    Action.GET,
-    Action.UPDATE,
-    Action.VOID,
-  ],
+  [Resource.PAYMENTS]: [Action.CREATE, Action.LIST, Action.GET, Action.VOID],
   [Resource.USERS]: [
     Action.CREATE,
     Action.LIST,
@@ -61,13 +55,7 @@ export const roleStatements = {
       Action.UPDATE,
       Action.VOID,
     ],
-    [Resource.PAYMENTS]: [
-      Action.CREATE,
-      Action.LIST,
-      Action.GET,
-      Action.UPDATE,
-      Action.VOID,
-    ],
+    [Resource.PAYMENTS]: [Action.CREATE, Action.LIST, Action.GET, Action.VOID],
     [Resource.USERS]: [Action.CREATE, Action.LIST, Action.GET, Action.UPDATE],
   },
   [UserRole.MEMBER]: {
@@ -93,13 +81,7 @@ export const roleStatements = {
       Action.VOID,
       Action.LIST,
     ],
-    [Resource.PAYMENTS]: [
-      Action.GET,
-      Action.CREATE,
-      Action.UPDATE,
-      Action.VOID,
-      Action.LIST,
-    ],
+    [Resource.PAYMENTS]: [Action.GET, Action.CREATE, Action.VOID, Action.LIST],
     [Resource.USERS]: [Action.GET, Action.UPDATE, Action.LIST],
   },
 } satisfies RoleStatements;

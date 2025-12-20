@@ -128,25 +128,11 @@ export class PrismaPaymentRepository implements PaymentRepository {
       dueId: pd.dueId,
     }));
 
-    const payment = await this.prismaService.payment.upsert({
-      create: {
+    const payment = await this.prismaService.payment.create({
+      data: {
         ...data,
-        paymentDues: {
-          createMany: {
-            data: paymentDues,
-          },
-        },
+        paymentDues: { createMany: { data: paymentDues } },
       },
-      update: {
-        ...data,
-        paymentDues: {
-          createMany: {
-            data: paymentDues,
-          },
-          deleteMany: {},
-        },
-      },
-      where: { id: entity.id.value },
     });
 
     return this.mapper.payment.toDomain(payment);
