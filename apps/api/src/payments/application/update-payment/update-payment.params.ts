@@ -1,7 +1,7 @@
 export interface UpdatePaymentParams {
-  amount: number;
   date: string;
   id: string;
   notes: null | string;
+  paymentDues: { amount: number; dueId: string }[];
   updatedBy: string;
 }

@@ -311,7 +311,7 @@ export type DueWhereInput = {
     Prisma.MemberScalarRelationFilter,
     Prisma.MemberWhereInput
   >;
-  payments?: Prisma.PaymentListRelationFilter;
+  paymentDues?: Prisma.PaymentDueListRelationFilter;
 };
 
 export type DueOrderByWithRelationInput = {
@@ -332,7 +332,7 @@ export type DueOrderByWithRelationInput = {
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   member?: Prisma.MemberOrderByWithRelationInput;
-  payments?: Prisma.PaymentOrderByRelationAggregateInput;
+  paymentDues?: Prisma.PaymentDueOrderByRelationAggregateInput;
 };
 
 export type DueWhereUniqueInput = Prisma.AtLeast<
@@ -360,7 +360,7 @@ export type DueWhereUniqueInput = Prisma.AtLeast<
       Prisma.MemberScalarRelationFilter,
       Prisma.MemberWhereInput
     >;
-    payments?: Prisma.PaymentListRelationFilter;
+    paymentDues?: Prisma.PaymentDueListRelationFilter;
   },
   'id'
 >;
@@ -440,7 +440,7 @@ export type DueCreateInput = {
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
   member: Prisma.MemberCreateNestedOneWithoutDuesInput;
-  payments?: Prisma.PaymentCreateNestedManyWithoutDueInput;
+  paymentDues?: Prisma.PaymentDueCreateNestedManyWithoutDueInput;
 };
 
 export type DueUncheckedCreateInput = {
@@ -460,7 +460,7 @@ export type DueUncheckedCreateInput = {
   updatedBy?: string | null;
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
-  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutDueInput;
+  paymentDues?: Prisma.PaymentDueUncheckedCreateNestedManyWithoutDueInput;
 };
 
 export type DueUpdateInput = {
@@ -488,7 +488,7 @@ export type DueUpdateInput = {
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   member?: Prisma.MemberUpdateOneRequiredWithoutDuesNestedInput;
-  payments?: Prisma.PaymentUpdateManyWithoutDueNestedInput;
+  paymentDues?: Prisma.PaymentDueUpdateManyWithoutDueNestedInput;
 };
 
 export type DueUncheckedUpdateInput = {
@@ -516,7 +516,7 @@ export type DueUncheckedUpdateInput = {
     | string
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  payments?: Prisma.PaymentUncheckedUpdateManyWithoutDueNestedInput;
+  paymentDues?: Prisma.PaymentDueUncheckedUpdateManyWithoutDueNestedInput;
 };
 
 export type DueCreateManyInput = {
@@ -765,29 +765,29 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number;
 };
 
-export type DueCreateNestedOneWithoutPaymentsInput = {
+export type DueCreateNestedOneWithoutPaymentDuesInput = {
   create?: Prisma.XOR<
-    Prisma.DueCreateWithoutPaymentsInput,
-    Prisma.DueUncheckedCreateWithoutPaymentsInput
+    Prisma.DueCreateWithoutPaymentDuesInput,
+    Prisma.DueUncheckedCreateWithoutPaymentDuesInput
   >;
-  connectOrCreate?: Prisma.DueCreateOrConnectWithoutPaymentsInput;
+  connectOrCreate?: Prisma.DueCreateOrConnectWithoutPaymentDuesInput;
   connect?: Prisma.DueWhereUniqueInput;
 };
 
-export type DueUpdateOneRequiredWithoutPaymentsNestedInput = {
+export type DueUpdateOneRequiredWithoutPaymentDuesNestedInput = {
   create?: Prisma.XOR<
-    Prisma.DueCreateWithoutPaymentsInput,
-    Prisma.DueUncheckedCreateWithoutPaymentsInput
+    Prisma.DueCreateWithoutPaymentDuesInput,
+    Prisma.DueUncheckedCreateWithoutPaymentDuesInput
   >;
-  connectOrCreate?: Prisma.DueCreateOrConnectWithoutPaymentsInput;
-  upsert?: Prisma.DueUpsertWithoutPaymentsInput;
+  connectOrCreate?: Prisma.DueCreateOrConnectWithoutPaymentDuesInput;
+  upsert?: Prisma.DueUpsertWithoutPaymentDuesInput;
   connect?: Prisma.DueWhereUniqueInput;
   update?: Prisma.XOR<
     Prisma.XOR<
-      Prisma.DueUpdateToOneWithWhereWithoutPaymentsInput,
-      Prisma.DueUpdateWithoutPaymentsInput
+      Prisma.DueUpdateToOneWithWhereWithoutPaymentDuesInput,
+      Prisma.DueUpdateWithoutPaymentDuesInput
     >,
-    Prisma.DueUncheckedUpdateWithoutPaymentsInput
+    Prisma.DueUncheckedUpdateWithoutPaymentDuesInput
   >;
 };
 
@@ -807,7 +807,7 @@ export type DueCreateWithoutMemberInput = {
   updatedBy?: string | null;
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
-  payments?: Prisma.PaymentCreateNestedManyWithoutDueInput;
+  paymentDues?: Prisma.PaymentDueCreateNestedManyWithoutDueInput;
 };
 
 export type DueUncheckedCreateWithoutMemberInput = {
@@ -826,7 +826,7 @@ export type DueUncheckedCreateWithoutMemberInput = {
   updatedBy?: string | null;
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
-  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutDueInput;
+  paymentDues?: Prisma.PaymentDueUncheckedCreateNestedManyWithoutDueInput;
 };
 
 export type DueCreateOrConnectWithoutMemberInput = {
@@ -892,7 +892,7 @@ export type DueScalarWhereInput = {
   deletedBy?: Prisma.StringNullableFilter<'Due'> | string | null;
 };
 
-export type DueCreateWithoutPaymentsInput = {
+export type DueCreateWithoutPaymentDuesInput = {
   id: string;
   amount: number;
   category: string;
@@ -911,7 +911,7 @@ export type DueCreateWithoutPaymentsInput = {
   member: Prisma.MemberCreateNestedOneWithoutDuesInput;
 };
 
-export type DueUncheckedCreateWithoutPaymentsInput = {
+export type DueUncheckedCreateWithoutPaymentDuesInput = {
   id: string;
   memberId: string;
   amount: number;
@@ -930,35 +930,35 @@ export type DueUncheckedCreateWithoutPaymentsInput = {
   deletedBy?: string | null;
 };
 
-export type DueCreateOrConnectWithoutPaymentsInput = {
+export type DueCreateOrConnectWithoutPaymentDuesInput = {
   where: Prisma.DueWhereUniqueInput;
   create: Prisma.XOR<
-    Prisma.DueCreateWithoutPaymentsInput,
-    Prisma.DueUncheckedCreateWithoutPaymentsInput
+    Prisma.DueCreateWithoutPaymentDuesInput,
+    Prisma.DueUncheckedCreateWithoutPaymentDuesInput
   >;
 };
 
-export type DueUpsertWithoutPaymentsInput = {
+export type DueUpsertWithoutPaymentDuesInput = {
   update: Prisma.XOR<
-    Prisma.DueUpdateWithoutPaymentsInput,
-    Prisma.DueUncheckedUpdateWithoutPaymentsInput
+    Prisma.DueUpdateWithoutPaymentDuesInput,
+    Prisma.DueUncheckedUpdateWithoutPaymentDuesInput
   >;
   create: Prisma.XOR<
-    Prisma.DueCreateWithoutPaymentsInput,
-    Prisma.DueUncheckedCreateWithoutPaymentsInput
+    Prisma.DueCreateWithoutPaymentDuesInput,
+    Prisma.DueUncheckedCreateWithoutPaymentDuesInput
   >;
   where?: Prisma.DueWhereInput;
 };
 
-export type DueUpdateToOneWithWhereWithoutPaymentsInput = {
+export type DueUpdateToOneWithWhereWithoutPaymentDuesInput = {
   where?: Prisma.DueWhereInput;
   data: Prisma.XOR<
-    Prisma.DueUpdateWithoutPaymentsInput,
-    Prisma.DueUncheckedUpdateWithoutPaymentsInput
+    Prisma.DueUpdateWithoutPaymentDuesInput,
+    Prisma.DueUncheckedUpdateWithoutPaymentDuesInput
   >;
 };
 
-export type DueUpdateWithoutPaymentsInput = {
+export type DueUpdateWithoutPaymentDuesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -985,7 +985,7 @@ export type DueUpdateWithoutPaymentsInput = {
   member?: Prisma.MemberUpdateOneRequiredWithoutDuesNestedInput;
 };
 
-export type DueUncheckedUpdateWithoutPaymentsInput = {
+export type DueUncheckedUpdateWithoutPaymentDuesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1054,7 +1054,7 @@ export type DueUpdateWithoutMemberInput = {
     | string
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  payments?: Prisma.PaymentUpdateManyWithoutDueNestedInput;
+  paymentDues?: Prisma.PaymentDueUpdateManyWithoutDueNestedInput;
 };
 
 export type DueUncheckedUpdateWithoutMemberInput = {
@@ -1081,7 +1081,7 @@ export type DueUncheckedUpdateWithoutMemberInput = {
     | string
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  payments?: Prisma.PaymentUncheckedUpdateManyWithoutDueNestedInput;
+  paymentDues?: Prisma.PaymentDueUncheckedUpdateManyWithoutDueNestedInput;
 };
 
 export type DueUncheckedUpdateManyWithoutMemberInput = {
@@ -1115,14 +1115,14 @@ export type DueUncheckedUpdateManyWithoutMemberInput = {
  */
 
 export type DueCountOutputType = {
-  payments: number;
+  paymentDues: number;
 };
 
 export type DueCountOutputTypeSelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  payments?: boolean | DueCountOutputTypeCountPaymentsArgs;
+  paymentDues?: boolean | DueCountOutputTypeCountPaymentDuesArgs;
 };
 
 /**
@@ -1141,11 +1141,11 @@ export type DueCountOutputTypeDefaultArgs<
 /**
  * DueCountOutputType without action
  */
-export type DueCountOutputTypeCountPaymentsArgs<
+export type DueCountOutputTypeCountPaymentDuesArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  where?: Prisma.PaymentWhereInput;
+  where?: Prisma.PaymentDueWhereInput;
 };
 
 export type DueSelect<
@@ -1170,7 +1170,7 @@ export type DueSelect<
     deletedAt?: boolean;
     deletedBy?: boolean;
     member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
-    payments?: boolean | Prisma.Due$paymentsArgs<ExtArgs>;
+    paymentDues?: boolean | Prisma.Due$paymentDuesArgs<ExtArgs>;
     _count?: boolean | Prisma.DueCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['due']
@@ -1274,7 +1274,7 @@ export type DueInclude<
     runtime.Types.Extensions.DefaultArgs,
 > = {
   member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
-  payments?: boolean | Prisma.Due$paymentsArgs<ExtArgs>;
+  paymentDues?: boolean | Prisma.Due$paymentDuesArgs<ExtArgs>;
   _count?: boolean | Prisma.DueCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type DueIncludeCreateManyAndReturn<
@@ -1297,7 +1297,7 @@ export type $DuePayload<
   name: 'Due';
   objects: {
     member: Prisma.$MemberPayload<ExtArgs>;
-    payments: Prisma.$PaymentPayload<ExtArgs>[];
+    paymentDues: Prisma.$PaymentDuePayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1881,11 +1881,11 @@ export interface Prisma__DueClient<
     ExtArgs,
     GlobalOmitOptions
   >;
-  payments<T extends Prisma.Due$paymentsArgs<ExtArgs> = {}>(
-    args?: Prisma.Subset<T, Prisma.Due$paymentsArgs<ExtArgs>>,
+  paymentDues<T extends Prisma.Due$paymentDuesArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Due$paymentDuesArgs<ExtArgs>>,
   ): Prisma.PrismaPromise<
     | runtime.Types.Result.GetResult<
-        Prisma.$PaymentPayload<ExtArgs>,
+        Prisma.$PaymentDuePayload<ExtArgs>,
         T,
         'findMany',
         GlobalOmitOptions
@@ -2399,32 +2399,34 @@ export type DueDeleteManyArgs<
 };
 
 /**
- * Due.payments
+ * Due.paymentDues
  */
-export type Due$paymentsArgs<
+export type Due$paymentDuesArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
-   * Select specific fields to fetch from the Payment
+   * Select specific fields to fetch from the PaymentDue
    */
-  select?: Prisma.PaymentSelect<ExtArgs> | null;
+  select?: Prisma.PaymentDueSelect<ExtArgs> | null;
   /**
-   * Omit specific fields from the Payment
+   * Omit specific fields from the PaymentDue
    */
-  omit?: Prisma.PaymentOmit<ExtArgs> | null;
+  omit?: Prisma.PaymentDueOmit<ExtArgs> | null;
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.PaymentInclude<ExtArgs> | null;
-  where?: Prisma.PaymentWhereInput;
+  include?: Prisma.PaymentDueInclude<ExtArgs> | null;
+  where?: Prisma.PaymentDueWhereInput;
   orderBy?:
-    | Prisma.PaymentOrderByWithRelationInput
-    | Prisma.PaymentOrderByWithRelationInput[];
-  cursor?: Prisma.PaymentWhereUniqueInput;
+    | Prisma.PaymentDueOrderByWithRelationInput
+    | Prisma.PaymentDueOrderByWithRelationInput[];
+  cursor?: Prisma.PaymentDueWhereUniqueInput;
   take?: number;
   skip?: number;
-  distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[];
+  distinct?:
+    | Prisma.PaymentDueScalarFieldEnum
+    | Prisma.PaymentDueScalarFieldEnum[];
 };
 
 /**

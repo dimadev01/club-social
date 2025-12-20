@@ -1,10 +1,9 @@
 import { PaymentStatus } from './payment.enum';
 
 export interface ICreatePaymentDto {
-  amount: number;
   date: string;
-  dueId: string;
   notes: null | string;
+  paymentDues: IPaymentDueItemDto[];
 }
 
 export interface IPaymentDetailDto {
@@ -12,12 +11,23 @@ export interface IPaymentDetailDto {
   createdAt: string;
   createdBy: string;
   date: string;
-  dueId: string;
   id: string;
   notes: null | string;
+  paymentDues: IPaymentDueDetailDto[];
   status: PaymentStatus;
   updatedAt: string;
   updatedBy: null | string;
+}
+
+export interface IPaymentDueDetailDto {
+  amount: number;
+  dueId: string;
+  paymentId: string;
+}
+
+export interface IPaymentDueItemDto {
+  amount: number;
+  dueId: string;
 }
 
 export interface IPaymentPaginatedDto {
@@ -25,13 +35,13 @@ export interface IPaymentPaginatedDto {
   createdAt: string;
   createdBy: string;
   date: string;
-  dueId: string;
   id: string;
+  paymentDues: IPaymentDueDetailDto[];
   status: PaymentStatus;
 }
 
 export interface IUpdatePaymentDto {
-  amount: number;
   date: string;
   notes: null | string;
+  paymentDues: IPaymentDueItemDto[];
 }

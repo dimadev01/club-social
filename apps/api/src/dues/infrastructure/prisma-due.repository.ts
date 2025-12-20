@@ -11,6 +11,7 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { PaymentDueEntity } from '@/payments/domain/entities/payment-due.entity';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -69,43 +70,6 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findPaginated(
     params: PaginatedRequest,
-  ): Promise<PaginatedResponse<DueEntity>> {
-    const where: DueWhereInput = {
-      deletedAt: null,
-    };
-
-    if (params.filters?.memberId) {
-      where.memberId = { in: params.filters.memberId };
-    }
-
-    if (params.filters?.category) {
-      where.category = { in: params.filters.category };
-    }
-
-    if (params.filters?.status) {
-      where.status = { in: params.filters.status };
-    }
-
-    const query: DueFindManyArgs = {
-      orderBy: params.sort.map(({ field, order }) => ({ [field]: order })),
-      skip: (params.page - 1) * params.pageSize,
-      take: params.pageSize,
-      where,
-    };
-
-    const [dues, total] = await Promise.all([
-      this.prismaService.due.findMany(query),
-      this.prismaService.due.count({ where }),
-    ]);
-
-    return {
-      data: dues.map((due) => this.mapper.due.toDomain(due)),
-      total,
-    };
-  }
-
-  public async findPaginatedModel(
-    params: PaginatedRequest,
   ): Promise<PaginatedResponse<DuePaginatedModel>> {
     const where: DueWhereInput = {
       deletedAt: null,
@@ -131,14 +95,11 @@ export class PrismaDueRepository implements DueRepository {
       };
     }
 
-    if (params.filters?.memberId || params.filters?.userStatus) {
+    if (params.filters?.memberId) {
+      where.memberId = { in: params.filters.memberId };
+    } else if (params.filters?.userStatus) {
       where.member = {
-        ...(params.filters?.memberId && {
-          id: { in: params.filters.memberId },
-        }),
-        ...(params.filters?.userStatus && {
-          user: { status: { in: params.filters.userStatus } },
-        }),
+        user: { status: { in: params.filters.userStatus } },
       };
     }
 
@@ -171,6 +132,16 @@ export class PrismaDueRepository implements DueRepository {
       })),
       total,
     };
+  }
+
+  public async findPaymentDuesByDueId(
+    dueId: UniqueId,
+  ): Promise<PaymentDueEntity[]> {
+    const paymentDues = await this.prismaService.paymentDue.findMany({
+      where: { dueId: dueId.value },
+    });
+
+    return paymentDues.map((pd) => this.mapper.paymentDue.toDomain(pd));
   }
 
   public async save(entity: DueEntity): Promise<DueEntity> {

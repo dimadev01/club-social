@@ -113,24 +113,24 @@ model Member {
 }
 
 model Due {
-  id         String    @id
-  memberId   String
-  member     Member    @relation(fields: [memberId], references: [id])
-  amount     Int
-  category   String
-  date       String
-  notes      String?
-  status     String
-  voidReason String?
-  voidedAt   DateTime?
-  voidedBy   String?
-  createdAt  DateTime  @default(now())
-  createdBy  String
-  updatedAt  DateTime  @updatedAt
-  updatedBy  String?
-  deletedAt  DateTime?
-  deletedBy  String?
-  payments   Payment[]
+  id          String       @id
+  memberId    String
+  member      Member       @relation(fields: [memberId], references: [id])
+  amount      Int
+  category    String
+  date        String
+  notes       String?
+  status      String
+  voidReason  String?
+  voidedAt    DateTime?
+  voidedBy    String?
+  createdAt   DateTime     @default(now())
+  createdBy   String
+  updatedAt   DateTime     @updatedAt
+  updatedBy   String?
+  deletedAt   DateTime?
+  deletedBy   String?
+  paymentDues PaymentDue[]
 
   @@index([memberId])
   @@index([status])
@@ -140,24 +140,36 @@ model Due {
 }
 
 model Payment {
-  id         String    @id
-  dueId      String
-  due        Due       @relation(fields: [dueId], references: [id])
-  amount     Int
-  date       String
-  notes      String?
-  status     String
-  voidReason String?
-  voidedAt   DateTime?
-  voidedBy   String?
-  createdAt  DateTime  @default(now())
-  createdBy  String
-  updatedAt  DateTime  @updatedAt
-  updatedBy  String?
-  deletedAt  DateTime?
-  deletedBy  String?
+  id          String       @id
+  amount      Int
+  date        String
+  notes       String?
+  status      String
+  voidReason  String?
+  voidedAt    DateTime?
+  voidedBy    String?
+  createdAt   DateTime     @default(now())
+  createdBy   String
+  updatedAt   DateTime     @updatedAt
+  updatedBy   String?
+  deletedAt   DateTime?
+  deletedBy   String?
+  paymentDues PaymentDue[]
 
-  @@index([dueId])
   @@index([date])
   @@map("payment")
+}
+
+model PaymentDue {
+  // id        String  @id
+  paymentId String
+  payment   Payment @relation(fields: [paymentId], references: [id])
+  dueId     String
+  due       Due     @relation(fields: [dueId], references: [id])
+  amount    Int
+
+  @@id([paymentId, dueId])
+  @@index([paymentId])
+  @@index([dueId])
+  @@map("payment_due")
 }

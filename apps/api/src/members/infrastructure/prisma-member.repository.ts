@@ -74,7 +74,7 @@ export class PrismaMemberRepository implements MemberRepository {
 
   public async findOneModel(id: UniqueId): Promise<MemberDetailModel | null> {
     const member = await this.prismaService.member.findUnique({
-      include: { dues: { include: { payments: true } }, user: true },
+      include: { dues: { include: { paymentDues: true } }, user: true },
       where: { deletedAt: null, id: id.value },
     });
 

@@ -23,6 +23,7 @@ import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePaymentUseCase } from '../application/create-payment/create-payment.use-case';
 import { UpdatePaymentUseCase } from '../application/update-payment/update-payment.use-case';
+import { VoidPaymentUseCase } from '../application/void-payment/void-payment.use-case';
 import { PaymentEntity } from '../domain/entities/payment.entity';
 import {
   PAYMENT_REPOSITORY_PROVIDER,
@@ -30,8 +31,9 @@ import {
 } from '../domain/payment.repository';
 import { CreatePaymentRequestDto } from './dto/create-payment.dto';
 import { PaymentListRequestDto } from './dto/payment-list.dto';
-import { PaymentResponseDto } from './dto/payment.dto';
-import { UpdatePaymentRequestDto } from './dto/update-payment.dto';
+import { PaymentDetailDto } from './dto/payment.dto';
+import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { VoidPaymentRequestDto } from './dto/void-payment.dto';
 
 @Controller('payments')
 export class PaymentsController extends BaseController {
@@ -40,6 +42,7 @@ export class PaymentsController extends BaseController {
     protected readonly logger: AppLogger,
     private readonly createPaymentUseCase: CreatePaymentUseCase,
     private readonly updatePaymentUseCase: UpdatePaymentUseCase,
+    private readonly voidPaymentUseCase: VoidPaymentUseCase,
     @Inject(PAYMENT_REPOSITORY_PROVIDER)
     private readonly paymentRepository: PaymentRepository,
   ) {
@@ -53,11 +56,10 @@ export class PaymentsController extends BaseController {
   ): Promise<ParamIdDto> {
     const { id } = this.handleResult(
       await this.createPaymentUseCase.execute({
-        amount: body.amount,
         createdBy: session.user.name,
         date: body.date,
-        dueId: body.dueId,
         notes: body.notes,
+        paymentDues: body.paymentDues,
       }),
     );
 
@@ -67,28 +69,42 @@ export class PaymentsController extends BaseController {
   @Patch(':id')
   public async update(
     @Param() request: ParamIdDto,
-    @Body() body: UpdatePaymentRequestDto,
+    @Body() body: UpdatePaymentDto,
     @Session() session: AuthSession,
   ): Promise<void> {
     this.handleResult(
       await this.updatePaymentUseCase.execute({
-        amount: body.amount,
         date: body.date,
         id: request.id,
         notes: body.notes,
+        paymentDues: body.paymentDues,
         updatedBy: session.user.name,
       }),
     );
   }
 
-  @ApiPaginatedResponse(PaymentResponseDto)
+  @Post(':id/void')
+  public async void(
+    @Param() request: ParamIdDto,
+    @Body() body: VoidPaymentRequestDto,
+    @Session() session: AuthSession,
+  ): Promise<void> {
+    this.handleResult(
+      await this.voidPaymentUseCase.execute({
+        id: request.id,
+        voidedBy: session.user.name,
+        voidReason: body.voidReason,
+      }),
+    );
+  }
+
+  @ApiPaginatedResponse(PaymentDetailDto)
   @Get('paginated')
   public async getPaginated(
     @Query() query: PaymentListRequestDto,
-  ): Promise<PaginatedResponseDto<PaymentResponseDto>> {
+  ): Promise<PaginatedResponseDto<PaymentDetailDto>> {
     const payments = await this.paymentRepository.findPaginated({
-      dueId: query.dueId,
-      filters: {},
+      filters: query.filters,
       page: query.page,
       pageSize: query.pageSize,
       sort: query.sort,
@@ -103,7 +119,7 @@ export class PaymentsController extends BaseController {
   @Get(':id')
   public async getById(
     @Param() request: ParamIdDto,
-  ): Promise<null | PaymentResponseDto> {
+  ): Promise<null | PaymentDetailDto> {
     const payment = await this.paymentRepository.findOneById(
       UniqueId.raw({ value: request.id }),
     );
@@ -115,15 +131,19 @@ export class PaymentsController extends BaseController {
     return this.toDto(payment);
   }
 
-  private toDto(payment: PaymentEntity): PaymentResponseDto {
+  private toDto(payment: PaymentEntity): PaymentDetailDto {
     return {
       amount: payment.amount.toCents(),
       createdAt: payment.createdAt.toISOString(),
       createdBy: payment.createdBy,
       date: payment.date.value,
-      dueId: payment.dueId.value,
       id: payment.id.value,
       notes: payment.notes,
+      paymentDues: payment.paymentDues.map((pd) => ({
+        amount: pd.amount.toCents(),
+        dueId: pd.dueId.value,
+        paymentId: payment.id.value,
+      })),
       status: payment.status,
       updatedAt: payment.updatedAt.toISOString(),
       updatedBy: payment.updatedBy,

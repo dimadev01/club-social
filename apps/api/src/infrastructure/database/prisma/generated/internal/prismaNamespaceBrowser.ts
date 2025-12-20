@@ -61,6 +61,7 @@ export const ModelName = {
   Member: 'Member',
   Due: 'Due',
   Payment: 'Payment',
+  PaymentDue: 'PaymentDue',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -199,7 +200,6 @@ export type DueScalarFieldEnum =
 
 export const PaymentScalarFieldEnum = {
   id: 'id',
-  dueId: 'dueId',
   amount: 'amount',
   date: 'date',
   notes: 'notes',
@@ -217,6 +217,15 @@ export const PaymentScalarFieldEnum = {
 
 export type PaymentScalarFieldEnum =
   (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum];
+
+export const PaymentDueScalarFieldEnum = {
+  paymentId: 'paymentId',
+  dueId: 'dueId',
+  amount: 'amount',
+} as const;
+
+export type PaymentDueScalarFieldEnum =
+  (typeof PaymentDueScalarFieldEnum)[keyof typeof PaymentDueScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',

@@ -106,7 +106,7 @@ export class DuesController extends BaseController {
   public async getPaginated(
     @Query() query: DueListRequestDto,
   ): Promise<PaginatedResponseDto<DuePaginatedDto>> {
-    const dues = await this.dueRepository.findPaginatedModel({
+    const dues = await this.dueRepository.findPaginated({
       filters: query.filters,
       page: query.page,
       pageSize: query.pageSize,

@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { PrismaModule } from '@/infrastructure/database/prisma/prisma.module';
-
 import { CreateUserUseCase } from './application/create-user/create-user.use-case';
 import { UpdateUserUseCase } from './application/update-user/update-user.use-case';
 import { VerifySignInUseCase } from './application/verify-sign-in/verify-sign-in.use-case';
@@ -23,7 +21,7 @@ import { UsersController } from './presentation/user.controller';
     VerifySignInUseCase,
     CreateUserUseCase,
   ],
-  imports: [PrismaModule],
+  imports: [],
   providers: [
     CreateUserUseCase,
     UpdateUserUseCase,

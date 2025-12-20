@@ -1,4 +1,7 @@
-import type { PaginatedResponse } from '@club-social/shared/types';
+import type {
+  PaginatedRequest,
+  PaginatedResponse,
+} from '@club-social/shared/types';
 
 import { Injectable } from '@nestjs/common';
 
@@ -6,47 +9,35 @@ import {
   PaymentFindManyArgs,
   PaymentWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
+import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
-import {
-  PaymentListParams,
-  PaymentRepository,
-} from '../domain/payment.repository';
-import { PrismaPaymentMapper } from './prisma-payment.mapper';
+import { PaymentRepository } from '../domain/payment.repository';
 
 @Injectable()
 export class PrismaPaymentRepository implements PaymentRepository {
   public constructor(
     private readonly prismaService: PrismaService,
-    private readonly mapper: PrismaPaymentMapper,
+    private readonly mapper: PrismaMappers,
   ) {}
-
-  public async findByDueId(dueId: UniqueId): Promise<PaymentEntity[]> {
-    const payments = await this.prismaService.payment.findMany({
-      where: {
-        deletedAt: null,
-        dueId: dueId.value,
-      },
-    });
-
-    return payments.map((payment) => this.mapper.toDomain(payment));
-  }
 
   public async findManyByIds(ids: UniqueId[]): Promise<PaymentEntity[]> {
     const payments = await this.prismaService.payment.findMany({
+      include: { paymentDues: true },
       where: {
         deletedAt: null,
         id: { in: ids.map((id) => id.value) },
       },
     });
 
-    return payments.map((payment) => this.mapper.toDomain(payment));
+    return payments.map((payment) => this.mapper.payment.toDomain(payment));
   }
 
   public async findOneById(id: UniqueId): Promise<null | PaymentEntity> {
     const payment = await this.prismaService.payment.findUnique({
+      include: { paymentDues: true },
       where: { deletedAt: null, id: id.value },
     });
 
@@ -54,26 +45,33 @@ export class PrismaPaymentRepository implements PaymentRepository {
       return null;
     }
 
-    return this.mapper.toDomain(payment);
+    return this.mapper.payment.toDomain(payment);
   }
 
   public async findOneByIdOrThrow(id: UniqueId): Promise<PaymentEntity> {
     const payment = await this.prismaService.payment.findUniqueOrThrow({
+      include: { paymentDues: true },
       where: { deletedAt: null, id: id.value },
     });
 
-    return this.mapper.toDomain(payment);
+    return this.mapper.payment.toDomain(payment);
   }
 
   public async findPaginated(
-    params: PaymentListParams,
+    params: PaginatedRequest,
   ): Promise<PaginatedResponse<PaymentEntity>> {
     const where: PaymentWhereInput = {
       deletedAt: null,
-      ...(params.dueId && { dueId: params.dueId }),
     };
 
-    const query: PaymentFindManyArgs = {
+    if (params.filters?.memberId) {
+      where.paymentDues = {
+        some: { due: { memberId: { in: params.filters.memberId } } },
+      };
+    }
+
+    const query = {
+      include: { paymentDues: true },
       orderBy: [
         ...params.sort.map(({ field, order }) => ({ [field]: order })),
         { createdAt: 'desc' },
@@ -81,7 +79,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
       where,
-    };
+    } satisfies PaymentFindManyArgs;
 
     const [payments, total] = await Promise.all([
       this.prismaService.payment.findMany(query),
@@ -89,20 +87,35 @@ export class PrismaPaymentRepository implements PaymentRepository {
     ]);
 
     return {
-      data: payments.map((payment) => this.mapper.toDomain(payment)),
+      data: payments.map((payment) => this.mapper.payment.toDomain(payment)),
       total,
     };
   }
 
   public async save(entity: PaymentEntity): Promise<PaymentEntity> {
-    const data = this.mapper.toPersistence(entity);
+    const data = this.mapper.payment.toPersistence(entity);
 
     const payment = await this.prismaService.payment.upsert({
-      create: data,
-      update: data,
+      create: {
+        ...data,
+        paymentDues: {
+          createMany: {
+            data: data.paymentDues ?? [],
+          },
+        },
+      },
+      include: { paymentDues: true },
+      update: {
+        ...data,
+        paymentDues: {
+          createMany: {
+            data: data.paymentDues ?? [],
+          },
+        },
+      },
       where: { id: entity.id.value },
     });
 
-    return this.mapper.toDomain(payment);
+    return this.mapper.payment.toDomain(payment);
   }
 }

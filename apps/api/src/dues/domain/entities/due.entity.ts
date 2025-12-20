@@ -132,6 +132,24 @@ export class DueEntity extends Entity<DueEntity> {
     return this._status === DueStatus.VOIDED;
   }
 
+  public recalculateStatus(totalPaid: Amount, updatedBy = 'System'): void {
+    let newStatus: DueStatus;
+
+    if (totalPaid.isGreaterThanOrEqual(this._amount)) {
+      newStatus = DueStatus.PAID;
+    } else if (totalPaid.isGreaterThan(Amount.raw({ cents: 0 }))) {
+      newStatus = DueStatus.PARTIALLY_PAID;
+    } else {
+      newStatus = DueStatus.PENDING;
+    }
+
+    if (this._status !== newStatus) {
+      this._status = newStatus;
+      this.markAsUpdated(updatedBy);
+      this.addEvent(new DueUpdatedEvent(this));
+    }
+  }
+
   public update(props: UpdateDueProps): Result<void> {
     if (this.isPaid()) {
       return err(new ApplicationError('No se puede editar una cuota paga'));
@@ -148,13 +166,6 @@ export class DueEntity extends Entity<DueEntity> {
     this.addEvent(new DueUpdatedEvent(this));
 
     return ok();
-  }
-
-  public updateStatus(status: DueStatus, updatedBy: string): void {
-    this._status = status;
-    this.markAsUpdated(updatedBy);
-
-    this.addEvent(new DueUpdatedEvent(this));
   }
 
   public void(props: VoidDueProps): Result<void> {

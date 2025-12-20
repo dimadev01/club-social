@@ -419,6 +419,7 @@ export const ModelName = {
   Member: 'Member',
   Due: 'Due',
   Payment: 'Payment',
+  PaymentDue: 'PaymentDue',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -447,7 +448,8 @@ export type TypeMap<
       | 'verification'
       | 'member'
       | 'due'
-      | 'payment';
+      | 'payment'
+      | 'paymentDue';
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -983,6 +985,82 @@ export type TypeMap<
         };
       };
     };
+    PaymentDue: {
+      payload: Prisma.$PaymentDuePayload<ExtArgs>;
+      fields: Prisma.PaymentDueFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.PaymentDueFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.PaymentDueFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload>;
+        };
+        findFirst: {
+          args: Prisma.PaymentDueFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.PaymentDueFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload>;
+        };
+        findMany: {
+          args: Prisma.PaymentDueFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload>[];
+        };
+        create: {
+          args: Prisma.PaymentDueCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload>;
+        };
+        createMany: {
+          args: Prisma.PaymentDueCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.PaymentDueCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload>[];
+        };
+        delete: {
+          args: Prisma.PaymentDueDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload>;
+        };
+        update: {
+          args: Prisma.PaymentDueUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload>;
+        };
+        deleteMany: {
+          args: Prisma.PaymentDueDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.PaymentDueUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.PaymentDueUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload>[];
+        };
+        upsert: {
+          args: Prisma.PaymentDueUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PaymentDuePayload>;
+        };
+        aggregate: {
+          args: Prisma.PaymentDueAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePaymentDue>;
+        };
+        groupBy: {
+          args: Prisma.PaymentDueGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.PaymentDueGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.PaymentDueCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.PaymentDueCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
   };
 } & {
   other: {
@@ -1142,7 +1220,6 @@ export type DueScalarFieldEnum =
 
 export const PaymentScalarFieldEnum = {
   id: 'id',
-  dueId: 'dueId',
   amount: 'amount',
   date: 'date',
   notes: 'notes',
@@ -1160,6 +1237,15 @@ export const PaymentScalarFieldEnum = {
 
 export type PaymentScalarFieldEnum =
   (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum];
+
+export const PaymentDueScalarFieldEnum = {
+  paymentId: 'paymentId',
+  dueId: 'dueId',
+  amount: 'amount',
+} as const;
+
+export type PaymentDueScalarFieldEnum =
+  (typeof PaymentDueScalarFieldEnum)[keyof typeof PaymentDueScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',
@@ -1368,6 +1454,7 @@ export type GlobalOmitConfig = {
   member?: Prisma.MemberOmit;
   due?: Prisma.DueOmit;
   payment?: Prisma.PaymentOmit;
+  paymentDue?: Prisma.PaymentDueOmit;
 };
 
 /* Types for Logging */

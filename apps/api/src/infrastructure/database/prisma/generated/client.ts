@@ -77,3 +77,8 @@ export type Due = Prisma.DueModel;
  *
  */
 export type Payment = Prisma.PaymentModel;
+/**
+ * Model PaymentDue
+ *
+ */
+export type PaymentDue = Prisma.PaymentDueModel;

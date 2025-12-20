@@ -1,24 +1,43 @@
 import { PaymentStatus } from '@club-social/shared/payments';
 import { Injectable } from '@nestjs/common';
 
-import { PaymentModel } from '@/infrastructure/database/prisma/generated/models';
+import {
+  PaymentDueModel,
+  PaymentModel,
+} from '@/infrastructure/database/prisma/generated/models';
 import { Mapper } from '@/infrastructure/repositories/mapper';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
+import { PrismaPaymentDueMapper } from './prisma-payment-due.mapper';
+
+type PaymentModelWithRelations = PaymentModel & {
+  paymentDues?: PaymentDueModel[];
+};
 
 @Injectable()
-export class PrismaPaymentMapper extends Mapper<PaymentEntity, PaymentModel> {
-  public toDomain(payment: PaymentModel): PaymentEntity {
+export class PrismaPaymentMapper extends Mapper<
+  PaymentEntity,
+  PaymentModelWithRelations
+> {
+  public constructor(
+    private readonly paymentDueMapper: PrismaPaymentDueMapper,
+  ) {
+    super();
+  }
+
+  public toDomain(payment: PaymentModelWithRelations): PaymentEntity {
     return PaymentEntity.fromPersistence(
       {
         amount: Amount.raw({ cents: payment.amount }),
         createdBy: payment.createdBy,
         date: DateOnly.raw({ value: payment.date }),
-        dueId: UniqueId.raw({ value: payment.dueId }),
         notes: payment.notes,
+        paymentDues: (payment.paymentDues ?? []).map((pd) =>
+          this.paymentDueMapper.toDomain(pd),
+        ),
         status: payment.status as PaymentStatus,
         voidedAt: payment.voidedAt,
         voidedBy: payment.voidedBy,
@@ -36,7 +55,7 @@ export class PrismaPaymentMapper extends Mapper<PaymentEntity, PaymentModel> {
     );
   }
 
-  public toPersistence(payment: PaymentEntity): PaymentModel {
+  public toPersistence(payment: PaymentEntity): PaymentModelWithRelations {
     return {
       amount: payment.amount.toCents(),
       createdAt: payment.createdAt,
@@ -44,9 +63,11 @@ export class PrismaPaymentMapper extends Mapper<PaymentEntity, PaymentModel> {
       date: payment.date.value,
       deletedAt: payment.deletedAt,
       deletedBy: payment.deletedBy,
-      dueId: payment.dueId.value,
       id: payment.id.value,
       notes: payment.notes,
+      paymentDues: payment.paymentDues.map((pd) =>
+        this.paymentDueMapper.toPersistence(pd),
+      ),
       status: payment.status,
       updatedAt: payment.updatedAt,
       updatedBy: payment.updatedBy,

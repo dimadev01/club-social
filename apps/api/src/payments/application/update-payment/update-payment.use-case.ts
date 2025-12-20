@@ -1,8 +1,8 @@
-import { DueStatus } from '@club-social/shared/dues';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
+import { RecalculateDueService } from '@/dues/application/recalculate-due/recalculate-due.service';
 import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
@@ -35,6 +35,7 @@ export class UpdatePaymentUseCase extends UseCase<PaymentEntity> {
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
     private readonly eventPublisher: DomainEventPublisher,
+    private readonly recalculateDueService: RecalculateDueService,
   ) {
     super(logger);
   }
@@ -51,54 +52,73 @@ export class UpdatePaymentUseCase extends UseCase<PaymentEntity> {
       UniqueId.raw({ value: params.id }),
     );
 
-    const due = await this.dueRepository.findOneByIdOrThrow(payment.dueId);
+    const oldDueIds = payment.affectedDueIds;
 
-    if (due.status === DueStatus.VOIDED) {
+    const newDueIds = params.paymentDues.map((pd) =>
+      UniqueId.raw({ value: pd.dueId }),
+    );
+    const allDueIds = [...new Set([...newDueIds, ...oldDueIds])];
+    const dues = await this.dueRepository.findManyByIds(allDueIds);
+
+    if (dues.length !== allDueIds.length) {
+      return err(new ApplicationError('Una o más cuotas no existen'));
+    }
+
+    const voidedDue = dues.find((due) => due.isVoided());
+
+    if (voidedDue) {
       return err(
         new ApplicationError('No se puede editar un pago de una cuota anulada'),
       );
     }
 
-    const results = ResultUtils.combine([
-      Amount.fromCents(params.amount),
-      DateOnly.fromString(params.date),
-    ]);
+    const dateResult = DateOnly.fromString(params.date);
 
-    if (results.isErr()) {
-      return err(results.error);
+    if (dateResult.isErr()) {
+      return err(dateResult.error);
     }
 
-    const [amount, date] = results.value;
+    const paymentDueResults: Result<{ amount: Amount; dueId: UniqueId }>[] =
+      params.paymentDues.map((pd) => {
+        const amountResult = Amount.fromCents(pd.amount);
 
-    payment.update({
-      amount,
-      date,
+        if (amountResult.isErr()) {
+          return err(amountResult.error);
+        }
+
+        return ok({
+          amount: amountResult.value,
+          dueId: UniqueId.raw({ value: pd.dueId }),
+        });
+      });
+
+    const combinedResult = ResultUtils.combine(paymentDueResults);
+
+    if (combinedResult.isErr()) {
+      return err(combinedResult.error);
+    }
+
+    const paymentDues = combinedResult.value;
+
+    const updateResult = payment.update({
+      date: dateResult.value,
       notes: params.notes,
+      paymentDues: paymentDues,
       updatedBy: params.updatedBy,
     });
 
-    await this.paymentRepository.save(payment);
-
-    // Recalculate due status based on total payments
-    const allPayments = await this.paymentRepository.findByDueId(due.id);
-    const totalPaid = allPayments.reduce(
-      (sum, p) => sum.add(p.amount),
-      Amount.raw({ cents: 0 }),
-    );
-
-    let newStatus: DueStatus;
-
-    if (totalPaid.isGreaterThanOrEqual(due.amount)) {
-      newStatus = DueStatus.PAID;
-    } else if (totalPaid.isGreaterThan(Amount.raw({ cents: 0 }))) {
-      newStatus = DueStatus.PARTIALLY_PAID;
-    } else {
-      newStatus = DueStatus.PENDING;
+    if (updateResult.isErr()) {
+      return err(updateResult.error);
     }
 
-    if (due.status !== newStatus) {
-      due.updateStatus(newStatus, params.updatedBy);
-      await this.dueRepository.save(due);
+    await this.paymentRepository.save(payment);
+
+    const recalculateDuesResult = await ResultUtils.combineAsync(
+      dues.map((due) => this.recalculateDueService.execute(due.id)),
+    );
+
+    if (recalculateDuesResult.isErr()) {
+      return err(recalculateDuesResult.error);
     }
 
     this.eventPublisher.dispatch(payment);
