@@ -33,7 +33,7 @@ export class AppService {
     return 'Hello World!';
   }
 
-  public async seed() {
+  public async seed(): Promise<void> {
     const { total } = await this.userRepository.findPaginated({
       filters: {},
       page: 1,
@@ -45,7 +45,7 @@ export class AppService {
       return;
     }
 
-    return Promise.all([
+    await Promise.all([
       this.createUserUseCase.execute({
         createdBy: 'System',
         email: this.configService.adminUserEmail,

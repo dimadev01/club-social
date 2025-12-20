@@ -19,7 +19,7 @@ export class AppController {
 
   @Post('seed')
   @PublicRoute()
-  public seed() {
+  public async seed(): Promise<void> {
     return this.appService.seed();
   }
 }
