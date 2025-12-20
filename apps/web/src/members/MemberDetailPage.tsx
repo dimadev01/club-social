@@ -20,13 +20,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   App,
   Button,
-  Card,
   Col,
   DatePicker,
   Empty,
   Input,
-  Skeleton,
   Space,
+  Tooltip,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
@@ -34,10 +33,11 @@ import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
+import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
+import { Card } from '@/ui/Card/Card';
 import { Form } from '@/ui/Form/Form';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
-import { BackIcon } from '@/ui/Icons/BackIcon';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Row } from '@/ui/Row';
@@ -138,7 +138,7 @@ export function MemberDetailPage() {
           zipCode: values.address.zipCode || null,
         },
         birthDate: values.birthDate
-          ? values.birthDate.utc().toISOString()
+          ? DateFormat.isoDate(values.birthDate)
           : null,
         category: values.category,
         documentID: values.documentID || null,
@@ -161,7 +161,7 @@ export function MemberDetailPage() {
           zipCode: values.address.zipCode || null,
         },
         birthDate: values.birthDate
-          ? values.birthDate.utc().toISOString()
+          ? DateFormat.isoDate(values.birthDate)
           : null,
         category: values.category,
         documentID: values.documentID || null,
@@ -177,11 +177,6 @@ export function MemberDetailPage() {
     }
   };
 
-  const isLoading =
-    memberQuery.isLoading ||
-    createMemberMutation.isPending ||
-    updateMemberMutation.isPending;
-
   if (!permissions.members.create && !id) {
     return <NotFound />;
   }
@@ -190,43 +185,34 @@ export function MemberDetailPage() {
     return <NotFound />;
   }
 
+  const isQueryLoading = memberQuery.isLoading;
+  const isMutating =
+    createMemberMutation.isPending || updateMemberMutation.isPending;
+  const isLoading = isQueryLoading || isMutating;
+
+  const canCreate = !id && permissions.members.create;
+  const canUpdate = id && permissions.members.update;
+  const canCreateOrUpdate = canCreate || canUpdate;
+
   return (
     <Card
       actions={[
-        <Button
-          disabled={isLoading}
-          icon={<BackIcon />}
-          onClick={() => navigate(-1)}
-          type="link"
-        >
-          Cancelar
-        </Button>,
-        <Button
-          disabled={isLoading}
-          form="form"
-          htmlType="submit"
-          icon={<SaveIcon />}
-          loading={
-            createMemberMutation.isPending || updateMemberMutation.isPending
-          }
-          type="primary"
-        >
-          {id ? 'Actualizar socio' : 'Crear socio'}
-        </Button>,
-      ]}
-      loading={memberQuery.isLoading}
-      title={
-        <Space>
-          {memberQuery.isLoading && <Skeleton.Input active />}
-          {!memberQuery.isLoading && (
-            <>
-              {id
-                ? `${memberQuery.data?.firstName} ${memberQuery.data?.lastName}`
-                : 'Nuevo socio'}
-            </>
-          )}
-        </Space>
-      }
+        canCreateOrUpdate && (
+          <Button
+            disabled={isMutating}
+            form="form"
+            htmlType="submit"
+            icon={<SaveIcon />}
+            loading={isMutating}
+            type="primary"
+          >
+            {id ? 'Actualizar socio' : 'Crear socio'}
+          </Button>
+        ),
+      ].filter(Boolean)}
+      backButton
+      loading={isQueryLoading}
+      title={memberQuery.data?.name ?? 'Nuevo socio'}
     >
       <Form<FormSchema>
         disabled={isLoading}
@@ -257,7 +243,7 @@ export function MemberDetailPage() {
         <Row>
           <Col md={12} xs={24}>
             <Space className="flex" size="middle" vertical>
-              <Card title="Datos básicos" type="inner">
+              <Card size="small" title="Datos básicos" type="inner">
                 <Form.Item<FormSchema>
                   label="Nombre"
                   name="firstName"
@@ -314,7 +300,7 @@ export function MemberDetailPage() {
                   </Form.Item>
                 )}
               </Card>
-              <Card title="Datos adicionales" type="inner">
+              <Card size="small" title="Datos adicionales" type="inner">
                 <Form.Item<FormSchema>
                   label="Fecha de nacimiento"
                   name="birthDate"
@@ -417,8 +403,15 @@ export function MemberDetailPage() {
                 {(fields, { add, remove }) => (
                   <Card
                     extra={
-                      <Button icon={<AddNewIcon />} onClick={() => add()} />
+                      <Tooltip title="Agregar">
+                        <Button
+                          icon={<AddNewIcon />}
+                          onClick={() => add()}
+                          size="small"
+                        />
+                      </Tooltip>
                     }
+                    size="small"
                     title="Datos de contacto"
                     type="inner"
                   >
@@ -454,7 +447,7 @@ export function MemberDetailPage() {
                 )}
               </Form.List>
 
-              <Card title="Domicilio" type="inner">
+              <Card size="small" title="Domicilio" type="inner">
                 <Form.Item<FormSchema>
                   label="Calle"
                   name={['address', 'street']}

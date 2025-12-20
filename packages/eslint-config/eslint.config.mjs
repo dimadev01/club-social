@@ -25,6 +25,7 @@ export default defineConfig(
         {
           args: 'after-used',
           argsIgnorePattern: '^_',
+          caughtErrors: 'none',
           vars: 'all',
           varsIgnorePattern: '^_',
         },

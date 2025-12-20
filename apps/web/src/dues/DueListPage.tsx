@@ -55,7 +55,7 @@ export function DueListPage() {
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
 
-  const { data: selectedMembers, isFetching } = useMembersForSelect({
+  const memberSelectQuery = useMembersForSelect({
     memberIds: getFilterValue('memberId') ?? [],
   });
 
@@ -108,10 +108,12 @@ export function DueListPage() {
     >
       <PageTableActions>
         <TableMembersSearch
-          isFetching={isFetching}
+          isFetching={memberSelectQuery.isFetching}
           onFilterChange={(value) => setFilter('memberId', value)}
-          selectedMembers={selectedMembers}
-          value={getFilterValue('memberId') ?? undefined}
+          selectedMembers={memberSelectQuery.data}
+          value={
+            memberSelectQuery.data?.map((member) => member.id) ?? undefined
+          }
         />
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>

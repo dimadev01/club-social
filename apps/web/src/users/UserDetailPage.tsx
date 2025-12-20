@@ -8,7 +8,7 @@ import {
   UserStatusLabel,
 } from '@club-social/shared/users';
 import { useQueryClient } from '@tanstack/react-query';
-import { App, Button, Card, Form, Input, Select, Skeleton, Space } from 'antd';
+import { App, Button, Form, Input, Select } from 'antd';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -16,8 +16,10 @@ import { APP_ROUTES } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
-import { BackIcon } from '@/ui/Icons/BackIcon';
+import { Card } from '@/ui/Card/Card';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
+
+import { usePermissions } from './use-permissions';
 
 interface FormSchema {
   email: string;
@@ -28,6 +30,7 @@ interface FormSchema {
 
 export function UserDetailPage() {
   const { message } = App.useApp();
+  const permissions = usePermissions();
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -91,42 +94,34 @@ export function UserDetailPage() {
     }
   };
 
-  const isLoading =
-    userQuery.isLoading ||
-    createUserMutation.isPending ||
-    updateUserMutation.isPending;
+  const isQueryLoading = userQuery.isLoading;
+  const isMutating =
+    createUserMutation.isPending || updateUserMutation.isPending;
+  const isLoading = isQueryLoading || isMutating;
+
+  const canCreate = !id && permissions.users.create;
+  const canUpdate = id && permissions.users.update;
+  const canCreateOrUpdate = canCreate || canUpdate;
 
   return (
     <Card
       actions={[
-        <Button
-          disabled={isLoading}
-          icon={<BackIcon />}
-          onClick={() => navigate(-1)}
-          type="link"
-        >
-          Cancelar
-        </Button>,
-        <Button
-          disabled={isLoading}
-          form="form"
-          htmlType="submit"
-          icon={<SaveIcon />}
-          loading={createUserMutation.isPending || updateUserMutation.isPending}
-          type="primary"
-        >
-          {id ? 'Actualizar usuario' : 'Crear usuario'}
-        </Button>,
-      ]}
-      loading={userQuery.isLoading}
-      title={
-        <Space>
-          {userQuery.isLoading && <Skeleton.Input active />}
-          {!userQuery.isLoading && (
-            <>{id ? userQuery.data?.name : 'Nuevo usuario'}</>
-          )}
-        </Space>
-      }
+        canCreateOrUpdate && (
+          <Button
+            disabled={isMutating}
+            form="form"
+            htmlType="submit"
+            icon={<SaveIcon />}
+            loading={isMutating}
+            type="primary"
+          >
+            {id ? 'Actualizar usuario' : 'Crear usuario'}
+          </Button>
+        ),
+      ].filter(Boolean)}
+      backButton
+      loading={isQueryLoading}
+      title={userQuery.data?.name ?? 'Nuevo usuario'}
     >
       <Form<FormSchema>
         autoComplete="off"

@@ -4,7 +4,7 @@ import { DueStatus } from '@club-social/shared/dues';
 
 export const DueStatusColor: Record<DueStatus, TagProps['color']> = {
   [DueStatus.PAID]: 'green',
-  [DueStatus.PARTIALLY_PAID]: 'yellow',
+  [DueStatus.PARTIALLY_PAID]: 'orange',
   [DueStatus.PENDING]: 'blue',
-  [DueStatus.VOIDED]: 'gray',
+  [DueStatus.VOIDED]: 'default',
 } as const;

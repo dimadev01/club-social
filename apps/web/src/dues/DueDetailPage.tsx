@@ -1,6 +1,7 @@
 import type { IMemberSearchResultDto } from '@club-social/shared/members';
 import type { ParamId } from '@club-social/shared/types';
 
+import { MoreOutlined } from '@ant-design/icons';
 import {
   type CreateDueDto,
   DueCategory,
@@ -15,17 +16,16 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   App,
   Button,
-  Card,
   DatePicker,
   Divider,
+  Dropdown,
   Input,
   InputNumber,
-  Skeleton,
-  Space,
+  type MenuProps,
   Tag,
 } from 'antd';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
@@ -36,9 +36,8 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
+import { Card } from '@/ui/Card/Card';
 import { Form } from '@/ui/Form/Form';
-import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
-import { BackIcon } from '@/ui/Icons/BackIcon';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Select } from '@/ui/Select';
@@ -46,7 +45,7 @@ import { Table } from '@/ui/Table/Table';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueStatusColor } from './due.types';
-import { VoidDueButton } from './VoidDueButton';
+import { VoidDueModal } from './VoidDueModal';
 
 interface FormSchema {
   amount: number;
@@ -59,6 +58,8 @@ interface FormSchema {
 export function DueDetailPage() {
   const { message } = App.useApp();
   const permissions = usePermissions();
+
+  const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -163,12 +164,6 @@ export function DueDetailPage() {
     }
   };
 
-  const isLoading =
-    dueQuery.isLoading ||
-    (id && memberQuery.isLoading) ||
-    createDueMutation.isPending ||
-    updateDueMutation.isPending;
-
   if (!permissions.dues.create && !id) {
     return <NotFound />;
   }
@@ -176,6 +171,15 @@ export function DueDetailPage() {
   if (!permissions.dues.update && id) {
     return <NotFound />;
   }
+
+  const isQueryLoading = dueQuery.isLoading || memberQuery.isLoading;
+  const isMutating = createDueMutation.isPending || updateDueMutation.isPending;
+  const isLoading = isQueryLoading || isMutating;
+
+  const canCreate = !id && permissions.dues.create;
+  const canUpdate = dueQuery.data?.status === DueStatus.PENDING;
+  const canVoid = dueQuery.data?.status === DueStatus.PENDING;
+  const canCreateOrUpdate = canCreate || canUpdate;
 
   const memberAdditionalOptions: IMemberSearchResultDto[] = memberQuery.data
     ? [
@@ -187,49 +191,45 @@ export function DueDetailPage() {
       ]
     : [];
 
+  const getMoreActions = () => {
+    const items: MenuProps['items'] = [];
+
+    if (canVoid) {
+      items.push({
+        danger: true,
+        key: 'void',
+        label: 'Anular deuda',
+        onClick: () => setIsVoidModalOpen(true),
+      });
+    }
+
+    return items;
+  };
+
+  const moreActions = getMoreActions();
+
   return (
     <Card
       actions={[
-        <Button
-          disabled={isLoading}
-          icon={<BackIcon />}
-          onClick={() => navigate(-1)}
-          type="link"
-        >
-          Cancelar
-        </Button>,
-        <Space.Compact>
-          {!id && (
-            <Button
-              disabled={isLoading}
-              htmlType="button"
-              icon={<AddNewIcon />}
-              loading={createDueMutation.isPending}
-              onClick={() => navigate(APP_ROUTES.DUE_NEW)}
-              type="default"
-            >
-              Crear y volver
-            </Button>
-          )}
+        canCreateOrUpdate && (
           <Button
-            disabled={isLoading}
+            disabled={isMutating}
             form="form"
             htmlType="submit"
             icon={<SaveIcon />}
-            loading={createDueMutation.isPending || updateDueMutation.isPending}
+            loading={isMutating}
             type="primary"
           >
             {id ? 'Actualizar deuda' : 'Crear deuda'}
           </Button>
-        </Space.Compact>,
-        dueQuery.data?.status === DueStatus.PENDING && (
-          <VoidDueButton
-            onConfirm={(reason) => {
-              voidDueMutation.mutate({ voidReason: reason });
-            }}
-          />
+        ),
+        moreActions.length > 0 && (
+          <Dropdown disabled={isLoading} menu={{ items: moreActions }}>
+            <Button icon={<MoreOutlined />}>Más opciones</Button>
+          </Dropdown>
         ),
       ].filter(Boolean)}
+      backButton
       extra={
         dueQuery.data ? (
           <Tag color={DueStatusColor[dueQuery.data.status]}>
@@ -237,13 +237,8 @@ export function DueDetailPage() {
           </Tag>
         ) : null
       }
-      loading={dueQuery.isLoading}
-      title={
-        <Space>
-          {dueQuery.isLoading && <Skeleton.Input active />}
-          {!dueQuery.isLoading && <>{id ? 'Editar deuda' : 'Nueva deuda'}</>}
-        </Space>
-      }
+      loading={isQueryLoading}
+      title={id ? 'Editar deuda' : 'Nueva deuda'}
     >
       <Form<FormSchema>
         disabled={isLoading}
@@ -331,6 +326,7 @@ export function DueDetailPage() {
         >
           <InputNumber<number>
             className="w-full"
+            disabled={!canUpdate}
             formatter={(value) => NumberFormat.format(Number(value))}
             min={0}
             parser={(value) => NumberFormat.parse(String(value))}
@@ -340,7 +336,11 @@ export function DueDetailPage() {
         </Form.Item>
 
         <Form.Item<FormSchema> label="Notas" name="notes">
-          <Input.TextArea placeholder="Notas adicionales..." rows={3} />
+          <Input.TextArea
+            disabled={!canUpdate}
+            placeholder="Notas adicionales..."
+            rows={3}
+          />
         </Form.Item>
       </Form>
 
@@ -351,6 +351,15 @@ export function DueDetailPage() {
           <Table dataSource={[]} />
         </Card>
       )}
+
+      <VoidDueModal
+        onCancel={() => setIsVoidModalOpen(false)}
+        onConfirm={(reason) => {
+          voidDueMutation.mutate({ voidReason: reason });
+          setIsVoidModalOpen(false);
+        }}
+        open={isVoidModalOpen}
+      />
     </Card>
   );
 }

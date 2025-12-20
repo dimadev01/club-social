@@ -148,7 +148,6 @@ export function useTable<T = unknown>({
       sorter: SorterResult<T> | SorterResult<T>[],
       _extra: TableCurrentDataSource<T>,
     ) => {
-      console.log(tableFilters);
       // Normalize sorter to array
       const sorterArray = Array.isArray(sorter) ? sorter : [sorter];
       const newSort: SortItem[] = sorterArray

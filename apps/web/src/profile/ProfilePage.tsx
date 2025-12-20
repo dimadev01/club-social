@@ -1,10 +1,11 @@
 import { MailOutlined, UserOutlined } from '@ant-design/icons';
-import { App, Button, Card, Divider, Form, Input, Space } from 'antd';
+import { App, Button, Card, Col, Form, Input, Space } from 'antd';
+import { useState } from 'react';
 
 import { useUser } from '@/auth/useUser';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
-import { Page, PageContent } from '@/ui/Page';
+import { Row } from '@/ui/Row';
 
 interface EmailFormSchema {
   email: string;
@@ -23,7 +24,11 @@ export function ProfilePage() {
   const [profileForm] = Form.useForm<ProfileFormSchema>();
   const [emailForm] = Form.useForm<EmailFormSchema>();
 
+  const [isSubmittingProfile, setIsSubmittingProfile] = useState(false);
+  const [isSubmittingEmail, setIsSubmittingEmail] = useState(false);
+
   const onSubmitProfile = async (values: ProfileFormSchema) => {
+    setIsSubmittingProfile(true);
     const { data, error } = await betterAuthClient.updateUser({
       firstName: values.firstName,
       lastName: values.lastName,
@@ -31,6 +36,7 @@ export function ProfilePage() {
       updatedAt: new Date(),
       updatedBy: user.name,
     });
+    setIsSubmittingProfile(false);
 
     if (error) {
       message.error(error.message);
@@ -46,10 +52,12 @@ export function ProfilePage() {
       return;
     }
 
+    setIsSubmittingEmail(true);
     const { data, error } = await betterAuthClient.changeEmail({
       callbackURL: window.location.origin,
       newEmail: values.email,
     });
+    setIsSubmittingEmail(false);
 
     if (error) {
       message.error(error.message);
@@ -59,98 +67,110 @@ export function ProfilePage() {
   };
 
   return (
-    <Page>
-      <PageContent>
-        <Card
-          actions={[
-            <Button
-              form="profileForm"
-              htmlType="submit"
-              icon={<SaveIcon />}
-              type="primary"
-            >
-              Actualizar perfil
-            </Button>,
-          ]}
-          title={
-            <Space>
-              <UserOutlined />
-              Mis datos
-            </Space>
-          }
-        >
-          <Form<ProfileFormSchema>
-            autoComplete="off"
-            form={profileForm}
-            id="profileForm"
-            initialValues={{
-              firstName: user.firstName,
-              lastName: user.lastName,
-            }}
-            layout="vertical"
-            name="profileForm"
-            onFinish={onSubmitProfile}
-            scrollToFirstError
+    <Card title="Perfil">
+      <Row>
+        <Col md={12} xs={24}>
+          <Card
+            actions={[
+              <Button
+                disabled={isSubmittingProfile}
+                form="profileForm"
+                htmlType="submit"
+                icon={<SaveIcon />}
+                loading={isSubmittingProfile}
+                type="primary"
+              >
+                Actualizar perfil
+              </Button>,
+            ]}
+            size="small"
+            title={
+              <Space>
+                <UserOutlined />
+                Mis datos
+              </Space>
+            }
+            type="inner"
           >
-            <Form.Item<ProfileFormSchema>
-              label="Nombre"
-              name="firstName"
-              rules={[{ required: true, whitespace: true }]}
+            <Form<ProfileFormSchema>
+              autoComplete="off"
+              disabled={isSubmittingProfile}
+              form={profileForm}
+              id="profileForm"
+              initialValues={{
+                firstName: user.firstName,
+                lastName: user.lastName,
+              }}
+              layout="vertical"
+              name="profileForm"
+              onFinish={onSubmitProfile}
+              scrollToFirstError
             >
-              <Input placeholder="Juan" />
-            </Form.Item>
-            <Form.Item<ProfileFormSchema>
-              label="Apellido"
-              name="lastName"
-              rules={[{ required: true, whitespace: true }]}
-            >
-              <Input placeholder="Perez" />
-            </Form.Item>
-          </Form>
-        </Card>
+              <Form.Item<ProfileFormSchema>
+                label="Nombre"
+                name="firstName"
+                rules={[{ required: true, whitespace: true }]}
+              >
+                <Input placeholder="Juan" />
+              </Form.Item>
+              <Form.Item<ProfileFormSchema>
+                label="Apellido"
+                name="lastName"
+                rules={[{ required: true, whitespace: true }]}
+              >
+                <Input placeholder="Perez" />
+              </Form.Item>
+            </Form>
+          </Card>
+        </Col>
 
-        <Divider />
-
-        <Card
-          actions={[
-            <Button
-              form="emailForm"
-              htmlType="submit"
-              icon={<MailOutlined />}
-              type="primary"
-            >
-              Cambiar email
-            </Button>,
-          ]}
-          title={
-            <Space>
-              <MailOutlined />
-              Inicio de sesión
-            </Space>
-          }
-        >
-          <Form<EmailFormSchema>
-            autoComplete="off"
-            form={emailForm}
-            id="emailForm"
-            initialValues={{
-              email: user.email,
-            }}
-            layout="vertical"
-            name="emailForm"
-            onFinish={onSubmitEmail}
-            scrollToFirstError
+        <Col md={12} xs={24}>
+          <Card
+            actions={[
+              <Button
+                disabled={isSubmittingEmail}
+                form="emailForm"
+                htmlType="submit"
+                icon={<MailOutlined />}
+                loading={isSubmittingEmail}
+                type="primary"
+              >
+                Cambiar email
+              </Button>,
+            ]}
+            size="small"
+            title={
+              <Space>
+                <MailOutlined />
+                Inicio de sesión
+              </Space>
+            }
+            type="inner"
           >
-            <Form.Item<EmailFormSchema>
-              label="Email"
-              name="email"
-              rules={[{ required: true, type: 'email', whitespace: true }]}
+            <Form<EmailFormSchema>
+              autoComplete="off"
+              disabled={isSubmittingEmail}
+              form={emailForm}
+              id="emailForm"
+              initialValues={{
+                email: user.email,
+              }}
+              layout="vertical"
+              name="emailForm"
+              onFinish={onSubmitEmail}
+              scrollToFirstError
             >
-              <Input placeholder="juan.perez@example.com" type="email" />
-            </Form.Item>
-          </Form>
-        </Card>
-      </PageContent>
-    </Page>
+              <Form.Item<EmailFormSchema>
+                label="Email"
+                name="email"
+                rules={[{ required: true, type: 'email', whitespace: true }]}
+              >
+                <Input placeholder="juan.perez@example.com" type="email" />
+              </Form.Item>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
+    </Card>
   );
 }
