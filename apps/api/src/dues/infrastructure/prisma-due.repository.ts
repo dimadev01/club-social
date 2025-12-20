@@ -3,6 +3,7 @@ import type {
   PaginatedResponse,
 } from '@club-social/shared/types';
 
+import { DueStatus } from '@club-social/shared/dues';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -142,6 +143,20 @@ export class PrismaDueRepository implements DueRepository {
     });
 
     return paymentDues.map((pd) => this.mapper.paymentDue.toDomain(pd));
+  }
+
+  public async findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]> {
+    const dues = await this.prismaService.due.findMany({
+      where: {
+        deletedAt: null,
+        memberId: memberId.value,
+        status: {
+          in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
+        },
+      },
+    });
+
+    return dues.map((due) => this.mapper.due.toDomain(due));
   }
 
   public async save(entity: DueEntity): Promise<DueEntity> {

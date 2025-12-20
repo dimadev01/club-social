@@ -1,4 +1,3 @@
-import type { IMemberPaginatedDto } from '@club-social/shared/members';
 import type { PaginatedResponse } from '@club-social/shared/types';
 
 import {
@@ -119,6 +118,110 @@ export function DueListPage() {
       </PageTableActions>
 
       <Table<IDuePaginatedDto>
+        columns={[
+          {
+            dataIndex: 'createdAt',
+            filterDropdown: (props) => (
+              <TableDateRangeFilterDropdown {...props} format="datetime" />
+            ),
+            filteredValue: getFilterValue('createdAt'),
+            render: (createdAt: string, record) => (
+              <Link to={`${APP_ROUTES.DUE_LIST}/${record.id}`}>
+                {DateFormat.date(createdAt)}
+              </Link>
+            ),
+            sorter: true,
+            sortOrder: getSortOrder('createdAt'),
+            title: 'Creado el',
+            width: 150,
+          },
+          {
+            dataIndex: 'date',
+            filterDropdown: (props) => (
+              <TableDateRangeFilterDropdown {...props} format="date" />
+            ),
+            filteredValue: getFilterValue('date'),
+            render: (date: string) => DateFormat.date(date),
+            title: 'Fecha',
+            width: 150,
+          },
+          {
+            dataIndex: 'memberId',
+            render: (memberId: string, record: IDuePaginatedDto) => (
+              <Link to={`${APP_ROUTES.MEMBER_LIST}/${memberId}`}>
+                {record.memberName}
+              </Link>
+            ),
+            title: 'Socio',
+            width: 200,
+          },
+          {
+            align: 'center',
+            dataIndex: 'category',
+            filteredValue: getFilterValue('category'),
+            filters: Object.entries(DueCategoryLabel).map(([value, label]) => ({
+              text: label,
+              value,
+            })),
+            render: (value: DueCategory) => DueCategoryLabel[value],
+            title: 'Categoría',
+            width: 150,
+          },
+          {
+            align: 'right',
+            dataIndex: 'amount',
+            render: (amount: number) => NumberFormat.formatCents(amount),
+            title: 'Monto',
+            width: 100,
+          },
+          {
+            align: 'center',
+            dataIndex: 'status',
+            filteredValue: getFilterValue('status'),
+            filterMode: 'tree',
+            filters: Object.entries(DueStatusLabel).map(([value, label]) => ({
+              text: label,
+              value,
+            })),
+            render: (value: DueStatus) => DueStatusLabel[value],
+            title: 'Estado',
+            width: 100,
+          },
+          {
+            align: 'center',
+            dataIndex: 'userStatus',
+            filteredValue: getFilterValue('userStatus'),
+            filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
+              text: label,
+              value,
+            })),
+            render: (value: UserStatus) => UserStatusLabel[value],
+            title: 'Estado Socio',
+            width: 150,
+          },
+          {
+            align: 'center',
+            fixed: 'right',
+            render: (_, record) => (
+              <Space.Compact size="small">
+                <Tooltip title="Filtrar por este socio">
+                  <Button
+                    disabled={getFilterValue('memberId')?.includes(
+                      record.memberId,
+                    )}
+                    icon={<FilterOutlined />}
+                    onClick={() => {
+                      setFilter('memberId', [record.memberId]);
+                    }}
+                    type="text"
+                  />
+                </Tooltip>
+              </Space.Compact>
+            ),
+            title: 'Acciones',
+            width: 100,
+          },
+        ]}
         dataSource={duesQuery.data?.data}
         loading={duesQuery.isFetching}
         onChange={onChange}
@@ -127,110 +230,7 @@ export function DueListPage() {
           pageSize: state.pageSize,
           total: duesQuery.data?.total,
         }}
-      >
-        <Table.Column<IDuePaginatedDto>
-          dataIndex="createdAt"
-          filterDropdown={(props) => (
-            <TableDateRangeFilterDropdown {...props} format="datetime" />
-          )}
-          filteredValue={getFilterValue('createdAt')}
-          render={(createdAt: string, record) => (
-            <Link to={`${APP_ROUTES.DUE_LIST}/${record.id}`}>
-              {DateFormat.date(createdAt)}
-            </Link>
-          )}
-          sorter
-          sortOrder={getSortOrder('createdAt')}
-          title="Creado el"
-          width={150}
-        />
-        <Table.Column<IDuePaginatedDto>
-          dataIndex="date"
-          filterDropdown={(props) => (
-            <TableDateRangeFilterDropdown {...props} format="date" />
-          )}
-          filteredValue={getFilterValue('date')}
-          render={(date: string) => DateFormat.date(date)}
-          title="Fecha"
-          width={150}
-        />
-        <Table.Column<IDuePaginatedDto>
-          dataIndex="memberId"
-          render={(memberId: string, record: IDuePaginatedDto) => (
-            <Link to={`${APP_ROUTES.MEMBER_LIST}/${memberId}`}>
-              {record.memberName}
-            </Link>
-          )}
-          title="Socio"
-          width={200}
-        />
-        <Table.Column<IDuePaginatedDto>
-          align="center"
-          dataIndex="category"
-          filteredValue={getFilterValue('category')}
-          filters={Object.entries(DueCategoryLabel).map(([value, label]) => ({
-            text: label,
-            value,
-          }))}
-          render={(value: DueCategory) => DueCategoryLabel[value]}
-          title="Categoría"
-          width={150}
-        />
-        <Table.Column<IDuePaginatedDto>
-          align="right"
-          dataIndex="amount"
-          render={(amount: number) => NumberFormat.formatCents(amount)}
-          title="Monto"
-          width={100}
-        />
-        <Table.Column<IDuePaginatedDto>
-          align="center"
-          dataIndex="status"
-          filteredValue={getFilterValue('status')}
-          filterMode="tree"
-          filters={Object.entries(DueStatusLabel).map(([value, label]) => ({
-            text: label,
-            value,
-          }))}
-          render={(value: DueStatus) => DueStatusLabel[value]}
-          title="Estado"
-          width={100}
-        />
-        <Table.Column<IMemberPaginatedDto>
-          align="center"
-          dataIndex="userStatus"
-          filteredValue={getFilterValue('userStatus')}
-          filters={Object.entries(UserStatusLabel).map(([value, label]) => ({
-            text: label,
-            value,
-          }))}
-          render={(value: UserStatus) => UserStatusLabel[value]}
-          title="Estado Socio"
-          width={150}
-        />
-        <Table.Column<IDuePaginatedDto>
-          align="center"
-          fixed="right"
-          render={(_, record) => (
-            <Space.Compact size="small">
-              <Tooltip title="Filtrar por este socio">
-                <Button
-                  disabled={getFilterValue('memberId')?.includes(
-                    record.memberId,
-                  )}
-                  icon={<FilterOutlined />}
-                  onClick={() => {
-                    setFilter('memberId', [record.memberId]);
-                  }}
-                  type="text"
-                />
-              </Tooltip>
-            </Space.Compact>
-          )}
-          title="Acciones"
-          width={100}
-        />
-      </Table>
+      />
     </Page>
   );
 }

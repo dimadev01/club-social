@@ -2,6 +2,11 @@ import type { ParamId } from '@club-social/shared/types';
 
 import { MoreOutlined } from '@ant-design/icons';
 import {
+  DueCategory,
+  DueCategoryLabel,
+  type IPendingDto,
+} from '@club-social/shared/dues';
+import {
   type ICreatePaymentDto,
   type IPaymentDetailDto,
   type IUpdatePaymentDto,
@@ -30,11 +35,13 @@ import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat, DateFormats } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
+import { NumberFormat } from '@/shared/lib/number-format';
 import { Card } from '@/ui/Card';
 import { Form } from '@/ui/Form';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { VoidIcon } from '@/ui/Icons/VoidIcon';
 import { NotFound } from '@/ui/NotFound';
+import { Table } from '@/ui/Table/Table';
 import { VoidModal } from '@/ui/VoidModal';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -60,10 +67,19 @@ export function PaymentDetailPage() {
   const [form] = Form.useForm<FormSchema>();
   const { setFieldsValue } = form;
 
+  const formMemberId = Form.useWatch('memberId', form);
+
   const paymentQuery = useQuery<IPaymentDetailDto | null>({
     enabled: !!id && permissions.payments.get,
     queryFn: () => $fetch(`payments/${id}`),
     queryKey: ['payments', id],
+  });
+
+  const pendingDuesQuery = useQuery<IPendingDto[]>({
+    enabled: !!formMemberId && permissions.dues.get,
+    queryFn: () =>
+      $fetch('/dues/pending', { query: { memberId: formMemberId } }),
+    queryKey: ['dues', 'pending', formMemberId],
   });
 
   const createPaymentMutation = useMutation<ParamId, Error, ICreatePaymentDto>({
@@ -250,6 +266,40 @@ export function PaymentDetailPage() {
             rows={3}
           />
         </Form.Item>
+
+        <Table
+          columns={[
+            {
+              dataIndex: 'date',
+              render: (date: string) => DateFormat.date(date),
+              title: 'Fecha',
+              width: 100,
+            },
+            {
+              align: 'center',
+              dataIndex: 'category',
+              render: (category: DueCategory) => DueCategoryLabel[category],
+              title: 'Categoría',
+              width: 150,
+            },
+            {
+              dataIndex: 'amount',
+              render: (amount: number) => NumberFormat.formatCents(amount),
+              title: 'Monto',
+              width: 100,
+            },
+            {
+              render: () => (
+                <Form.Item noStyle>
+                  <Input />
+                </Form.Item>
+              ),
+              title: 'Registro',
+            },
+          ]}
+          dataSource={pendingDuesQuery.data}
+          pagination={false}
+        />
       </Form>
 
       <VoidModal

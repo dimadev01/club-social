@@ -32,6 +32,14 @@ export interface IDuePaginatedDto {
   userStatus: UserStatus;
 }
 
+export interface IPendingDto {
+  amount: number;
+  category: DueCategory;
+  date: string;
+  id: string;
+  status: DueStatus;
+}
+
 export interface IUpdateDueDto {
   amount: number;
   notes: null | string;

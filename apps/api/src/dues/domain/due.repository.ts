@@ -22,4 +22,5 @@ export interface DueRepository
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<DuePaginatedModel>>;
   findPaymentDuesByDueId(dueId: UniqueId): Promise<PaymentDueEntity[]>;
+  findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
 }

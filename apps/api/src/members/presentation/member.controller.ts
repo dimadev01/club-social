@@ -30,11 +30,6 @@ import {
   MEMBER_REPOSITORY_PROVIDER,
   type MemberRepository,
 } from '../domain/member.repository';
-import {
-  MemberDetailModel,
-  MemberListModel,
-  MemberPaginatedModel,
-} from '../domain/member.types';
 import { CreateMemberRequestDto } from './dto/create-member.dto';
 import { MemberDetailDto } from './dto/member-detail.dto';
 import { MemberPaginatedDto } from './dto/member-paginated.dto';
@@ -135,7 +130,13 @@ export class MembersController extends BaseController {
     });
 
     return {
-      data: data.data.map((member) => this.toPaginatedDto(member)),
+      data: data.data.map((item) => ({
+        category: item.member.category,
+        email: item.user.email.value,
+        id: item.member.id.value,
+        name: item.user.name,
+        userStatus: item.user.status,
+      })),
       total: data.total,
     };
   }
@@ -144,7 +145,13 @@ export class MembersController extends BaseController {
   public async getAll(): Promise<MemberPaginatedDto[]> {
     const data = await this.memberRepository.findAll({ includeUser: true });
 
-    return data.map(({ member, user }) => this.toListDto({ member, user }));
+    return data.map(({ member, user }) => ({
+      category: member.category,
+      email: user.email.value,
+      id: member.id.value,
+      name: user.name,
+      userStatus: user.status,
+    }));
   }
 
   @Get('search')
@@ -156,7 +163,12 @@ export class MembersController extends BaseController {
       searchTerm: query.q,
     });
 
-    return data.map((model) => this.toSearchDto(model));
+    return data.map(({ member, user }) => ({
+      email: user.email.value,
+      id: member.id.value,
+      name: user.name,
+      status: user.status,
+    }));
   }
 
   @Get(':id')
@@ -169,33 +181,21 @@ export class MembersController extends BaseController {
       throw new NotFoundException('Member not found');
     }
 
-    return this.toDetailDto(model);
-  }
+    const { dues, member, user } = model;
 
-  private toListDto(model: MemberListModel): MemberPaginatedDto {
     return {
-      category: model.member.category,
-      email: model.user.email.value,
-      id: model.member.id.value,
-      name: model.user.name,
-      userStatus: model.user.status,
-    };
-  }
-
-  private toDetailDto(model: MemberDetailModel): MemberDetailDto {
-    return {
-      address: model.member.address
+      address: member.address
         ? {
-            cityName: model.member.address.cityName,
-            stateName: model.member.address.stateName,
-            street: model.member.address.street,
-            zipCode: model.member.address.zipCode,
+            cityName: member.address.cityName,
+            stateName: member.address.stateName,
+            street: member.address.street,
+            zipCode: member.address.zipCode,
           }
         : null,
-      birthDate: model.member.birthDate ? model.member.birthDate.value : null,
-      category: model.member.category,
-      documentID: model.member.documentID,
-      dues: model.dues.map((due) => ({
+      birthDate: member.birthDate ? member.birthDate.value : null,
+      category: member.category,
+      documentID: member.documentID,
+      dues: dues.map((due) => ({
         amount: due.amount.toCents(),
         category: due.category,
         date: due.date.value,
@@ -203,37 +203,18 @@ export class MembersController extends BaseController {
         notes: due.notes,
         status: due.status,
       })),
-      email: model.user.email.value,
-      fileStatus: model.member.fileStatus,
-      firstName: model.user.firstName,
-      id: model.member.id.value,
-      lastName: model.user.lastName,
-      maritalStatus: model.member.maritalStatus,
-      name: model.user.name,
-      nationality: model.member.nationality,
-      phones: model.member.phones,
-      sex: model.member.sex,
-      status: model.user.status,
-      userId: model.member.userId.value,
-    };
-  }
-
-  private toPaginatedDto(model: MemberPaginatedModel): MemberPaginatedDto {
-    return {
-      category: model.member.category,
-      email: model.user.email.value,
-      id: model.member.id.value,
-      name: model.user.name,
-      userStatus: model.user.status,
-    };
-  }
-
-  private toSearchDto(model: MemberPaginatedModel): MemberSearchDto {
-    return {
-      email: model.user.email.value,
-      id: model.member.id.value,
-      name: model.user.name,
-      status: model.user.status,
+      email: user.email.value,
+      fileStatus: member.fileStatus,
+      firstName: user.firstName,
+      id: member.id.value,
+      lastName: user.lastName,
+      maritalStatus: member.maritalStatus,
+      name: user.name,
+      nationality: member.nationality,
+      phones: member.phones,
+      sex: member.sex,
+      status: user.status,
+      userId: member.userId.value,
     };
   }
 }

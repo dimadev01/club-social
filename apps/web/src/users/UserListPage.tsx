@@ -101,6 +101,75 @@ export function UserListPage() {
       </PageTableActions>
 
       <Table<IUserDetailDto>
+        columns={[
+          {
+            dataIndex: 'id',
+            fixed: 'left',
+            render: (id: string, record: IUserDetailDto) => (
+              <Typography.Text className="line-clamp-1 w-full">
+                <Link to={`${APP_ROUTES.USER_DETAIL.replace(':id', id)}`}>
+                  {record.name}
+                </Link>
+              </Typography.Text>
+            ),
+            sorter: true,
+            sortOrder: getSortOrder('id'),
+            title: 'Nombre',
+            width: 200,
+          },
+          {
+            dataIndex: 'email',
+            render: (text) => (
+              <Typography.Text copyable={{ text }}>{text}</Typography.Text>
+            ),
+            sorter: true,
+            sortOrder: getSortOrder('email'),
+            title: 'Email',
+          },
+          {
+            align: 'center',
+            dataIndex: 'status',
+            filteredValue: getFilterValue('status'),
+            filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
+              text: label,
+              value,
+            })),
+            render: (value: UserStatus) => UserStatusLabel[value],
+            title: 'Estado',
+            width: 100,
+          },
+          {
+            align: 'center',
+            dataIndex: 'role',
+            filteredValue: getFilterValue('role'),
+            filters: [
+              {
+                text: UserRoleLabel[UserRole.STAFF],
+                value: UserRole.STAFF,
+              },
+            ],
+            render: (value: UserRole) => UserRoleLabel[value],
+            title: 'Rol',
+            width: 100,
+          },
+          {
+            align: 'center',
+            fixed: 'right',
+            render: (_, record) => (
+              <Space.Compact size="small">
+                <Button
+                  icon={<EyeOutlined />}
+                  onClick={() =>
+                    navigate(APP_ROUTES.USER_DETAIL.replace(':id', record.id))
+                  }
+                  type="text"
+                />
+              </Space.Compact>
+            ),
+            title: 'Acciones',
+            width: 100,
+          },
+        ]}
         dataSource={usersQuery.data?.data}
         loading={usersQuery.isFetching}
         onChange={onChange}
@@ -109,75 +178,7 @@ export function UserListPage() {
           pageSize: state.pageSize,
           total: usersQuery.data?.total,
         }}
-      >
-        <Table.Column<IUserDetailDto>
-          dataIndex="id"
-          fixed="left"
-          render={(id: string, record: IUserDetailDto) => (
-            <Typography.Text className="line-clamp-1 w-full">
-              <Link to={`${APP_ROUTES.USER_DETAIL.replace(':id', id)}`}>
-                {record.name}
-              </Link>
-            </Typography.Text>
-          )}
-          sorter
-          sortOrder={getSortOrder('id')}
-          title="Nombre"
-          width={200}
-        />
-        <Table.Column<IUserDetailDto>
-          dataIndex="email"
-          render={(text) => (
-            <Typography.Text copyable={{ text }}>{text}</Typography.Text>
-          )}
-          sorter
-          sortOrder={getSortOrder('email')}
-          title="Email"
-        />
-        <Table.Column<IUserDetailDto>
-          align="center"
-          dataIndex="status"
-          filteredValue={getFilterValue('status')}
-          filters={Object.entries(UserStatusLabel).map(([value, label]) => ({
-            text: label,
-            value,
-          }))}
-          render={(value: UserStatus) => UserStatusLabel[value]}
-          title="Estado"
-          width={100}
-        />
-        <Table.Column<IUserDetailDto>
-          align="center"
-          dataIndex="role"
-          filteredValue={getFilterValue('role')}
-          filters={[
-            {
-              text: UserRoleLabel[UserRole.STAFF],
-              value: UserRole.STAFF,
-            },
-          ]}
-          render={(value: UserRole) => UserRoleLabel[value]}
-          title="Rol"
-          width={100}
-        />
-        <Table.Column<IUserDetailDto>
-          align="center"
-          fixed="right"
-          render={(_, record) => (
-            <Space.Compact size="small">
-              <Button
-                icon={<EyeOutlined />}
-                onClick={() =>
-                  navigate(APP_ROUTES.USER_DETAIL.replace(':id', record.id))
-                }
-                type="text"
-              />
-            </Space.Compact>
-          )}
-          title="Acciones"
-          width={100}
-        />
-      </Table>
+      />
     </Page>
   );
 }

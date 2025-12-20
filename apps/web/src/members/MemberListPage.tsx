@@ -116,6 +116,81 @@ export function MemberListPage() {
       </PageTableActions>
 
       <Table<IMemberPaginatedDto>
+        columns={[
+          {
+            dataIndex: 'id',
+            fixed: 'left',
+            render: (id, record) => (
+              <Typography.Text className="line-clamp-1 w-full">
+                <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>
+                  {record.name}
+                </Link>
+              </Typography.Text>
+            ),
+            sorter: true,
+            sortOrder: getSortOrder('id'),
+            title: 'Socio',
+            width: 200,
+          },
+          {
+            align: 'center',
+            dataIndex: 'category',
+            filteredValue: getFilterValue('category'),
+            filterMode: 'tree',
+            filters: Object.entries(MemberCategoryLabel).map(
+              ([value, label]) => ({ text: label, value }),
+            ),
+            render: (value: MemberCategory) => MemberCategoryLabel[value],
+            title: 'Categoría',
+            width: 150,
+          },
+          {
+            align: 'center',
+            dataIndex: 'userStatus',
+            filteredValue: getFilterValue('userStatus'),
+            filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
+              text: label,
+              value,
+            })),
+            onFilter: (value, record) => record.userStatus === value,
+            render: (value: UserStatus) => UserStatusLabel[value],
+            title: 'Estado',
+            width: 100,
+          },
+          {
+            dataIndex: 'email',
+            render: (text) => (
+              <Typography.Text copyable={{ text }}>{text}</Typography.Text>
+            ),
+            sorter: true,
+            sortOrder: getSortOrder('email'),
+            title: 'Email',
+          },
+          {
+            align: 'center',
+            fixed: 'right',
+            render: (_, record) => (
+              <Space.Compact size="small">
+                <Tooltip title="Ver deudas">
+                  <Link
+                    to={`${APP_ROUTES.DUES_LIST}?filters=memberId:${encodeURIComponent(record.id)}`}
+                  >
+                    <Button icon={<DuesIcon />} type="text" />
+                  </Link>
+                </Tooltip>
+                <Tooltip title="Ver pagos">
+                  <Link
+                    to={`${APP_ROUTES.PAYMENTS_LIST}?filters=memberId:${encodeURIComponent(record.id)}`}
+                  >
+                    <Button icon={<PaymentsIcon />} type="text" />
+                  </Link>
+                </Tooltip>
+              </Space.Compact>
+            ),
+            title: 'Acciones',
+            width: 100,
+          },
+        ]}
         dataSource={membersList.data?.data}
         loading={membersList.isFetching}
         onChange={onChange}
@@ -124,79 +199,7 @@ export function MemberListPage() {
           pageSize: state.pageSize,
           total: membersList.data?.total,
         }}
-      >
-        <Table.Column<IMemberPaginatedDto>
-          dataIndex="id"
-          fixed="left"
-          render={(id, record) => (
-            <Typography.Text className="line-clamp-1 w-full">
-              <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>{record.name}</Link>
-            </Typography.Text>
-          )}
-          sorter
-          sortOrder={getSortOrder('id')}
-          title="Socio"
-          width={200}
-        />
-        <Table.Column<IMemberPaginatedDto>
-          align="center"
-          dataIndex="category"
-          filteredValue={getFilterValue('category')}
-          filterMode="tree"
-          filters={Object.entries(MemberCategoryLabel).map(
-            ([value, label]) => ({ text: label, value }),
-          )}
-          render={(value: MemberCategory) => MemberCategoryLabel[value]}
-          title="Categoría"
-          width={150}
-        />
-        <Table.Column<IMemberPaginatedDto>
-          align="center"
-          dataIndex="userStatus"
-          filteredValue={getFilterValue('userStatus')}
-          filters={Object.entries(UserStatusLabel).map(([value, label]) => ({
-            text: label,
-            value,
-          }))}
-          onFilter={(value, record) => record.userStatus === value}
-          render={(value: UserStatus) => UserStatusLabel[value]}
-          title="Estado"
-          width={100}
-        />
-        <Table.Column<IMemberPaginatedDto>
-          dataIndex="email"
-          render={(text) => (
-            <Typography.Text copyable={{ text }}>{text}</Typography.Text>
-          )}
-          sorter
-          sortOrder={getSortOrder('email')}
-          title="Email"
-        />
-        <Table.Column<IMemberPaginatedDto>
-          align="center"
-          fixed="right"
-          render={(_, record) => (
-            <Space.Compact size="small">
-              <Tooltip title="Ver deudas">
-                <Link
-                  to={`${APP_ROUTES.DUES_LIST}?filters=memberId:${encodeURIComponent(record.id)}`}
-                >
-                  <Button icon={<DuesIcon />} type="text" />
-                </Link>
-              </Tooltip>
-              <Tooltip title="Ver pagos">
-                <Link
-                  to={`${APP_ROUTES.PAYMENTS_LIST}?filters=memberId:${encodeURIComponent(record.id)}`}
-                >
-                  <Button icon={<PaymentsIcon />} type="text" />
-                </Link>
-              </Tooltip>
-            </Space.Compact>
-          )}
-          title="Acciones"
-          width={100}
-        />
-      </Table>
+      />
     </Page>
   );
 }

@@ -4,7 +4,6 @@ import {
   Controller,
   Get,
   Inject,
-  NotFoundException,
   Param,
   Patch,
   Post,
@@ -17,7 +16,6 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
-import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
 import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
@@ -26,14 +24,12 @@ import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateUserUseCase } from '../application/create-user/create-user.use-case';
 import { UpdateUserUseCase } from '../application/update-user/update-user.use-case';
-import { UserEntity } from '../domain/entities/user.entity';
 import {
   USER_REPOSITORY_PROVIDER,
   type UserRepository,
 } from '../domain/user.repository';
 import { CreateUserRequestDto } from './dto/create-user.dto';
 import { UpdateUserRequestDto } from './dto/update-user.dto';
-import { UserDetailDto } from './dto/user-detail.dto';
 import { UserPaginatedDto } from './dto/user-paginated.dto';
 
 @Controller('users')
@@ -98,43 +94,14 @@ export class UsersController extends BaseController {
     });
 
     return {
-      data: users.data.map((user) => this.toPaginatedDto(user)),
+      data: users.data.map((user) => ({
+        email: user.email.value,
+        id: user.id.value,
+        name: user.name,
+        role: user.role,
+        status: user.status,
+      })),
       total: users.total,
-    };
-  }
-
-  @Get(':id')
-  public async getById(@Param() request: ParamIdDto): Promise<UserDetailDto> {
-    const user = await this.userRepository.findOneById(
-      UniqueId.raw({ value: request.id }),
-    );
-
-    if (!user) {
-      throw new NotFoundException();
-    }
-
-    return this.toDetailDto(user);
-  }
-
-  private toDetailDto(user: UserEntity): UserDetailDto {
-    return {
-      email: user.email.value,
-      firstName: user.firstName,
-      id: user.id.value,
-      lastName: user.lastName,
-      name: user.name,
-      role: user.role,
-      status: user.status,
-    };
-  }
-
-  private toPaginatedDto(user: UserEntity): UserPaginatedDto {
-    return {
-      email: user.email.value,
-      id: user.id.value,
-      name: user.name,
-      role: user.role,
-      status: user.status,
     };
   }
 }
