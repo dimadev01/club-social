@@ -148,6 +148,7 @@ export function useTable<T = unknown>({
       sorter: SorterResult<T> | SorterResult<T>[],
       _extra: TableCurrentDataSource<T>,
     ) => {
+      console.log(tableFilters);
       // Normalize sorter to array
       const sorterArray = Array.isArray(sorter) ? sorter : [sorter];
       const newSort: SortItem[] = sorterArray
@@ -243,7 +244,12 @@ function parseFilters(
   return filtersParam
     .split(';')
     .reduce<Record<string, string[]>>((acc, item) => {
-      const [key, value] = item.split(':');
+      const colonIndex = item.indexOf(':');
+
+      if (colonIndex === -1) return acc;
+
+      const key = item.slice(0, colonIndex);
+      const value = item.slice(colonIndex + 1);
 
       acc[key] = value.split(',');
 
@@ -261,7 +267,14 @@ function parseSort(
   }
 
   return sortParam.split(',').map((item) => {
-    const [field, order] = item.split(':');
+    const colonIndex = item.indexOf(':');
+
+    if (colonIndex === -1) {
+      return { field: item, order: 'ascend' as SortOrder };
+    }
+
+    const field = item.slice(0, colonIndex);
+    const order = item.slice(colonIndex + 1);
 
     return { field, order: order as SortOrder };
   });

@@ -30,6 +30,7 @@ import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { TableActions } from '@/ui/Table/TableActions';
+import { TableDateRangeFilterDropdown } from '@/ui/Table/TableDateRangeFilterDropdown';
 import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
@@ -130,6 +131,10 @@ export function DueListPage() {
       >
         <Table.Column<IDuePaginatedDto>
           dataIndex="createdAt"
+          filterDropdown={(props) => (
+            <TableDateRangeFilterDropdown {...props} format="datetime" />
+          )}
+          filteredValue={getFilterValue('createdAt')}
           render={(createdAt: string, record) => (
             <Link to={`${APP_ROUTES.DUE_LIST}/${record.id}`}>
               {DateFormat.date(createdAt)}
@@ -142,6 +147,10 @@ export function DueListPage() {
         />
         <Table.Column<IDuePaginatedDto>
           dataIndex="date"
+          filterDropdown={(props) => (
+            <TableDateRangeFilterDropdown {...props} format="date" />
+          )}
+          filteredValue={getFilterValue('date')}
           render={(date: string) => DateFormat.date(date)}
           title="Fecha"
           width={150}

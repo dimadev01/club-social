@@ -4,7 +4,6 @@ import {
   theme as antTheme,
   App,
   ConfigProvider,
-  theme,
   type ThemeConfig,
 } from 'antd';
 import esEs from 'antd/locale/es_ES';
@@ -20,7 +19,6 @@ import {
 export function AntProvider({ children }: { children: React.ReactNode }) {
   const { appThemeMode, setThemeMode } = useAppContext();
   const prefersDark = useMedia('(prefers-color-scheme: dark)');
-  const { token } = theme.useToken();
 
   let algorithm: AppAlgorithm;
 
@@ -47,13 +45,12 @@ export function AntProvider({ children }: { children: React.ReactNode }) {
       },
       Layout: {
         footerPadding: 0,
-        lightSiderBg: token.colorBgLayout,
-        siderBg: token.colorBgLayout,
       },
     },
     token: {
       colorInfo: '#22883e',
       colorPrimary: '#22883e',
+      motion: false,
     },
     zeroRuntime: true,
   };

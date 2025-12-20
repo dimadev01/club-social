@@ -11,6 +11,7 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { DueRepository } from '../domain/due.repository';
@@ -111,10 +112,16 @@ export class PrismaDueRepository implements DueRepository {
     };
 
     if (params.filters?.createdAt) {
-      where.createdAt = {
-        gte: params.filters.createdAt[0],
-        lte: params.filters.createdAt[1],
-      };
+      const dateRangeResult = DateRange.fromUserInput(
+        params.filters.createdAt[0],
+        params.filters.createdAt[1],
+      );
+
+      if (dateRangeResult.isErr()) {
+        throw dateRangeResult.error;
+      }
+
+      where.createdAt = dateRangeResult.value.toPrismaFilter();
     }
 
     if (params.filters?.date) {

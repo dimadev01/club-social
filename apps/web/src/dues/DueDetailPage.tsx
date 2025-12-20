@@ -314,7 +314,11 @@ export function DueDetailPage() {
             { message: 'El monto es requerido', required: true },
             {
               validator: (_, value) => {
-                if (value && value < 1) {
+                if (!value) {
+                  return Promise.reject(new Error('El monto es requerido'));
+                }
+
+                if (value < 1) {
                   return Promise.reject(
                     new Error('El monto debe ser mayor a 1'),
                   );
