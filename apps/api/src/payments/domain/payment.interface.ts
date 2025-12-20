@@ -7,6 +7,7 @@ export interface CreatePaymentProps {
   date: DateOnly;
   notes: null | string;
   paymentDues: PaymentDueProps[];
+  receiptNumber: null | string;
 }
 
 export interface PaymentDueProps {

@@ -204,6 +204,7 @@ export const PaymentScalarFieldEnum = {
   date: 'date',
   notes: 'notes',
   status: 'status',
+  receiptNumber: 'receiptNumber',
   voidReason: 'voidReason',
   voidedAt: 'voidedAt',
   voidedBy: 'voidedBy',

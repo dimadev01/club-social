@@ -4,6 +4,7 @@ export interface ICreatePaymentDto {
   date: string;
   notes: null | string;
   paymentDues: IPaymentDueItemDto[];
+  receiptNumber: null | string;
 }
 
 export interface IPaymentDetailDto {

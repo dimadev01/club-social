@@ -9,6 +9,7 @@ import {
 import {
   type ICreatePaymentDto,
   type IPaymentDetailDto,
+  type IPaymentDueItemDto,
   type IUpdatePaymentDto,
   PaymentStatus,
   PaymentStatusLabel,
@@ -19,13 +20,20 @@ import {
   App,
   Button,
   DatePicker,
+  Descriptions,
   Dropdown,
+  Empty,
+  Grid,
   Input,
+  InputNumber,
   type MenuProps,
+  Space,
   Tag,
 } from 'antd';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
+import { difference, differenceBy, orderBy } from 'es-toolkit/array';
+import { flow } from 'es-toolkit/function';
+import { useCallback, useEffect } from 'react';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -47,25 +55,47 @@ import { usePermissions } from '@/users/use-permissions';
 
 import { PaymentStatusColor } from './payment.types';
 
+interface FormPaymentDue {
+  amount: number;
+  dueId: string;
+}
+
 interface FormSchema {
   date: dayjs.Dayjs;
   memberId: string;
   notes: null | string;
+  paymentDues: FormPaymentDue[];
   receiptNumber: null | string;
 }
+
+const calculateFinalPaymentDues = flow(
+  (
+    currentPaymentDues: FormPaymentDue[],
+    newPaymentDuesToAdd: FormPaymentDue[],
+    paymentDuesToRemove: FormPaymentDue[],
+  ) =>
+    differenceBy(
+      [...currentPaymentDues, ...newPaymentDuesToAdd],
+      paymentDuesToRemove,
+      (pd) => pd.dueId,
+    ),
+  (arr) => orderBy(arr, ['dueId'], ['desc']),
+);
 
 export function PaymentDetailPage() {
   const { message } = App.useApp();
   const permissions = usePermissions();
+  const { md } = Grid.useBreakpoint();
 
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
+  const [selectedDueIds, setSelectedDueIds] = useState<string[]>([]);
 
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const [form] = Form.useForm<FormSchema>();
-  const { setFieldsValue } = form;
+  const { getFieldValue, setFieldsValue, setFieldValue } = form;
 
   const formMemberId = Form.useWatch('memberId', form);
 
@@ -86,6 +116,9 @@ export function PaymentDetailPage() {
     mutationFn: (body) => $fetch('/payments', { body }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
+      queryClient.invalidateQueries({
+        queryKey: ['dues', 'pending', formMemberId],
+      });
       message.success('Pago creado correctamente');
       navigate(APP_ROUTES.PAYMENT_LIST, { replace: true });
     },
@@ -96,6 +129,9 @@ export function PaymentDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
       queryClient.invalidateQueries({ queryKey: ['payments', id] });
+      queryClient.invalidateQueries({
+        queryKey: ['dues', 'pending', formMemberId],
+      });
       message.success('Pago actualizado correctamente');
       navigate(-1);
     },
@@ -107,6 +143,9 @@ export function PaymentDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
       queryClient.invalidateQueries({ queryKey: ['payments', id] });
+      queryClient.invalidateQueries({
+        queryKey: ['dues', 'pending', formMemberId],
+      });
       message.success('Pago anulado correctamente');
       navigate(-1);
     },
@@ -123,20 +162,90 @@ export function PaymentDetailPage() {
     }
   }, [paymentQuery.data, setFieldsValue]);
 
+  const handleRowSelectionChange = useCallback(
+    (newSelectedRowKeys: React.Key[]) => {
+      const currentPaymentDues: FormPaymentDue[] = getFieldValue('paymentDues');
+      const currentSelectedRowKeys = currentPaymentDues.map((p) => p.dueId);
+      const pendingDues = pendingDuesQuery.data ?? [];
+
+      // Find newly selected dues (not in current paymentDues)
+      const newSelections = difference(
+        newSelectedRowKeys,
+        currentSelectedRowKeys,
+      ).map(String);
+
+      // Find deselected dues (in current paymentDues but not in newSelectedRowKeys)
+      const deselected = difference(
+        currentSelectedRowKeys,
+        newSelectedRowKeys,
+      ).map(String);
+
+      const newPaymentDuesToAdd: FormPaymentDue[] = [];
+      const paymentDuesToRemove: FormPaymentDue[] = [];
+
+      // Add newly selected dues with full amount
+      newSelections.forEach((dueId) => {
+        const due = pendingDues.find((d) => d.id === dueId);
+
+        if (due) {
+          newPaymentDuesToAdd.push({
+            amount: NumberFormat.fromCents(due.amount),
+            dueId,
+          });
+        }
+      });
+
+      // Remove deselected dues
+      deselected.forEach((dueId) => {
+        const due = pendingDues.find((d) => d.id === dueId);
+
+        if (due) {
+          paymentDuesToRemove.push({
+            amount: NumberFormat.fromCents(due.amount),
+            dueId,
+          });
+        }
+      });
+
+      const finalFormPaymentDues = calculateFinalPaymentDues(
+        currentPaymentDues,
+        newPaymentDuesToAdd,
+        paymentDuesToRemove,
+      );
+
+      setFieldValue('paymentDues', finalFormPaymentDues);
+      setSelectedDueIds(newSelectedRowKeys as string[]);
+    },
+    [pendingDuesQuery.data, getFieldValue, setFieldValue],
+  );
+
   const onSubmit = async (values: FormSchema) => {
+    // Validate at least 1 payment due
+    if (values.paymentDues.length === 0) {
+      message.error('Debe seleccionar al menos una deuda para pagar');
+
+      return;
+    }
+
     const date = DateFormat.isoDate(values.date.startOf('day'));
+
+    const paymentDues: IPaymentDueItemDto[] = values.paymentDues.map((pd) => ({
+      amount: NumberFormat.toCents(pd.amount),
+      dueId: pd.dueId,
+    }));
 
     if (id) {
       updatePaymentMutation.mutate({
         date,
         notes: values.notes || null,
-        paymentDues: [], // TODO: Add payment dues handling
+        paymentDues,
       });
     } else {
       createPaymentMutation.mutate({
         date,
         notes: values.notes || null,
-        paymentDues: [], // TODO: Add payment dues handling
+        paymentDues,
+        receiptNumber: values.receiptNumber || null,
       });
     }
   };
@@ -222,6 +331,7 @@ export function PaymentDetailPage() {
           date: dayjs(),
           memberId: undefined,
           notes: '',
+          paymentDues: [],
           receiptNumber: '',
         }}
         name="form"
@@ -273,33 +383,122 @@ export function PaymentDetailPage() {
               dataIndex: 'date',
               render: (date: string) => DateFormat.date(date),
               title: 'Fecha',
-              width: 100,
+              width: 150,
             },
             {
               align: 'center',
               dataIndex: 'category',
-              render: (category: DueCategory) => DueCategoryLabel[category],
+              render: (category: DueCategory, record: IPendingDto) => {
+                if (category === DueCategory.MEMBERSHIP) {
+                  return `${DueCategoryLabel[category]} (${DateFormat.month(record.date)})`;
+                }
+
+                return DueCategoryLabel[category];
+              },
               title: 'Categoría',
               width: 150,
             },
             {
+              align: 'right',
               dataIndex: 'amount',
               render: (amount: number) => NumberFormat.formatCents(amount),
               title: 'Monto',
-              width: 100,
-            },
-            {
-              render: () => (
-                <Form.Item noStyle>
-                  <Input />
-                </Form.Item>
-              ),
-              title: 'Registro',
             },
           ]}
           dataSource={pendingDuesQuery.data}
           pagination={false}
+          rowSelection={{
+            onChange: handleRowSelectionChange,
+            selectedRowKeys: selectedDueIds,
+            type: 'checkbox',
+          }}
+          size="small"
         />
+
+        <Form.List name="paymentDues">
+          {(fields) => {
+            return (
+              <Card size="small" title="Deudas Seleccionadas" type="inner">
+                {fields.length === 0 && (
+                  <Empty
+                    description="Seleccione deudas de la tabla para registrar pagos"
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  />
+                )}
+
+                {fields.map((field) => {
+                  const paymentDue = form.getFieldValue([
+                    'paymentDues',
+                    field.name,
+                  ]);
+                  const due = pendingDuesQuery.data?.find(
+                    (d) => d.id === paymentDue?.dueId,
+                  );
+
+                  if (!due) {
+                    return null;
+                  }
+
+                  const maxAmount = NumberFormat.fromCents(due.amount);
+
+                  return (
+                    <Card.Grid
+                      className="w-full md:w-1/2 lg:w-1/3"
+                      key={field.key}
+                    >
+                      <Form.Item hidden name={[field.name, 'dueId']} noStyle>
+                        <Input />
+                      </Form.Item>
+                      <Space className="flex" size="middle" vertical>
+                        <Descriptions
+                          bordered
+                          column={1}
+                          layout={md ? 'horizontal' : 'vertical'}
+                          size="small"
+                        >
+                          <Descriptions.Item label="Fecha">
+                            {DateFormat.date(due.date)}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Categoría">
+                            {DueCategoryLabel[due.category]}
+                          </Descriptions.Item>
+                          <Descriptions.Item label="Monto a pagar">
+                            {NumberFormat.formatCents(due.amount)}
+                          </Descriptions.Item>
+                        </Descriptions>
+
+                        <Form.Item
+                          label="Monto a registrar"
+                          name={[field.name, 'amount']}
+                          rules={[
+                            {
+                              message: 'Ingrese el monto a pagar',
+                              required: true,
+                            },
+                          ]}
+                        >
+                          <InputNumber
+                            className="w-full"
+                            formatter={(value) =>
+                              NumberFormat.format(Number(value))
+                            }
+                            max={maxAmount}
+                            min={1}
+                            parser={(value) =>
+                              NumberFormat.parse(String(value))
+                            }
+                            precision={0}
+                            step={1000}
+                          />
+                        </Form.Item>
+                      </Space>
+                    </Card.Grid>
+                  );
+                })}
+              </Card>
+            );
+          }}
+        </Form.List>
       </Form>
 
       <VoidModal

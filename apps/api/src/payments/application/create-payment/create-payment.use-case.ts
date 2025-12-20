@@ -96,6 +96,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       date: dateResult.value,
       notes: params.notes,
       paymentDues,
+      receiptNumber: params.receiptNumber,
     });
 
     if (paymentResult.isErr()) {

@@ -31,6 +31,7 @@ export class PrismaPaymentMapper extends Mapper<
         paymentDues: (payment.paymentDues ?? []).map((pd) =>
           this.paymentDueMapper.toDomain(pd),
         ),
+        receiptNumber: payment.receiptNumber,
         status: payment.status as PaymentStatus,
         voidedAt: payment.voidedAt,
         voidedBy: payment.voidedBy,
@@ -61,6 +62,7 @@ export class PrismaPaymentMapper extends Mapper<
       paymentDues: payment.paymentDues.map((pd) =>
         this.paymentDueMapper.toPersistence(pd),
       ),
+      receiptNumber: payment.receiptNumber,
       status: payment.status,
       updatedAt: payment.updatedAt,
       updatedBy: payment.updatedBy,

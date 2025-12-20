@@ -13,7 +13,8 @@
       "Bash(grep:*)",
       "Bash(npx tsc:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm run lint:*)"
     ]
   },
   "outputStyle": "default"

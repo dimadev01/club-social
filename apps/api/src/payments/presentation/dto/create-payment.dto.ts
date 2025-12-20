@@ -39,4 +39,8 @@ export class CreatePaymentRequestDto implements ICreatePaymentDto {
   @Type(() => PaymentDueItemDto)
   @ValidateNested({ each: true })
   public paymentDues: PaymentDueItemDto[];
+
+  @IsOptional()
+  @IsString()
+  public receiptNumber: null | string;
 }

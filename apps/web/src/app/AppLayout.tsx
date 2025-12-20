@@ -203,7 +203,7 @@ export function AppLayout({ children }: PropsWithChildren) {
           </Flex>
         </Layout.Footer>
 
-        <FloatButton.Group icon={<AddNewIcon />} trigger="hover" type="primary">
+        <FloatButton.Group icon={<AddNewIcon />} trigger="click" type="primary">
           {permissions.members.create && (
             <Link to={APP_ROUTES.MEMBER_NEW}>
               <FloatButton

@@ -123,22 +123,27 @@ export class PrismaPaymentRepository implements PaymentRepository {
   public async save(entity: PaymentEntity): Promise<PaymentEntity> {
     const data = this.mapper.payment.toPersistence(entity);
 
+    const paymentDues = (data.paymentDues ?? []).map((pd) => ({
+      amount: pd.amount,
+      dueId: pd.dueId,
+    }));
+
     const payment = await this.prismaService.payment.upsert({
       create: {
         ...data,
         paymentDues: {
           createMany: {
-            data: data.paymentDues ?? [],
+            data: paymentDues,
           },
         },
       },
-      include: { paymentDues: true },
       update: {
         ...data,
         paymentDues: {
           createMany: {
-            data: data.paymentDues ?? [],
+            data: paymentDues,
           },
+          deleteMany: {},
         },
       },
       where: { id: entity.id.value },

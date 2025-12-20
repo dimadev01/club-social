@@ -19,23 +19,27 @@ export function Card({ backButton, loading, title, ...props }: Props) {
 
   return (
     <AntCard
-      title={
-        <Space>
-          {backButton && (
-            <Tooltip title="Volver">
-              <Button
-                icon={<BackIcon />}
-                onClick={() => navigate(-1)}
-                size="small"
-                type="text"
-              />
-            </Tooltip>
-          )}
-          {loading && <Skeleton.Input active />}
-          {!loading && title}
-        </Space>
-      }
+      {...(title && {
+        title: (
+          <Space>
+            {backButton && (
+              <Tooltip title="Volver">
+                <Button
+                  icon={<BackIcon />}
+                  onClick={() => navigate(-1)}
+                  size="small"
+                  type="text"
+                />
+              </Tooltip>
+            )}
+            {loading && <Skeleton.Input active />}
+            {!loading && title}
+          </Space>
+        ),
+      })}
       {...props}
     />
   );
 }
+
+Card.Grid = AntCard.Grid;

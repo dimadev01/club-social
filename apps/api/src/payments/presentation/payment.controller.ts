@@ -61,6 +61,7 @@ export class PaymentsController extends BaseController {
         date: body.date,
         notes: body.notes,
         paymentDues: body.paymentDues,
+        receiptNumber: body.receiptNumber,
       }),
     );
 

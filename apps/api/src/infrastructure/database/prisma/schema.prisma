@@ -162,7 +162,6 @@ model Payment {
 }
 
 model PaymentDue {
-  // id        String  @id
   paymentId String
   payment   Payment @relation(fields: [paymentId], references: [id])
   dueId     String

@@ -24,6 +24,7 @@ interface PaymentProps {
   date: DateOnly;
   notes: null | string;
   paymentDues: PaymentDueEntity[];
+  receiptNumber: null | string;
   status: PaymentStatus;
   voidedAt: Date | null;
   voidedBy: null | string;
@@ -51,6 +52,10 @@ export class PaymentEntity extends Entity<PaymentEntity> {
     return [...this._paymentDues];
   }
 
+  public get receiptNumber(): null | string {
+    return this._receiptNumber;
+  }
+
   public get status(): PaymentStatus {
     return this._status;
   }
@@ -71,6 +76,7 @@ export class PaymentEntity extends Entity<PaymentEntity> {
   private _date: DateOnly;
   private _notes: null | string;
   private _paymentDues: PaymentDueEntity[];
+  private _receiptNumber: null | string;
   private _status: PaymentStatus;
   private _voidedAt: Date | null;
   private _voidedBy: null | string;
@@ -83,6 +89,7 @@ export class PaymentEntity extends Entity<PaymentEntity> {
     this._date = props.date;
     this._notes = props.notes;
     this._paymentDues = props.paymentDues;
+    this._receiptNumber = props.receiptNumber;
     this._status = props.status;
     this._voidedAt = props.voidedAt;
     this._voidedBy = props.voidedBy;
@@ -126,6 +133,7 @@ export class PaymentEntity extends Entity<PaymentEntity> {
         date: props.date,
         notes: props.notes,
         paymentDues: paymentDues,
+        receiptNumber: props.receiptNumber,
         status: PaymentStatus.PAID,
         voidedAt: null,
         voidedBy: null,

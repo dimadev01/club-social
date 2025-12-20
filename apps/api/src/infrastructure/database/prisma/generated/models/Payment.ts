@@ -40,6 +40,7 @@ export type PaymentMinAggregateOutputType = {
   date: string | null;
   notes: string | null;
   status: string | null;
+  receiptNumber: string | null;
   voidReason: string | null;
   voidedAt: Date | null;
   voidedBy: string | null;
@@ -57,6 +58,7 @@ export type PaymentMaxAggregateOutputType = {
   date: string | null;
   notes: string | null;
   status: string | null;
+  receiptNumber: string | null;
   voidReason: string | null;
   voidedAt: Date | null;
   voidedBy: string | null;
@@ -74,6 +76,7 @@ export type PaymentCountAggregateOutputType = {
   date: number;
   notes: number;
   status: number;
+  receiptNumber: number;
   voidReason: number;
   voidedAt: number;
   voidedBy: number;
@@ -100,6 +103,7 @@ export type PaymentMinAggregateInputType = {
   date?: true;
   notes?: true;
   status?: true;
+  receiptNumber?: true;
   voidReason?: true;
   voidedAt?: true;
   voidedBy?: true;
@@ -117,6 +121,7 @@ export type PaymentMaxAggregateInputType = {
   date?: true;
   notes?: true;
   status?: true;
+  receiptNumber?: true;
   voidReason?: true;
   voidedAt?: true;
   voidedBy?: true;
@@ -134,6 +139,7 @@ export type PaymentCountAggregateInputType = {
   date?: true;
   notes?: true;
   status?: true;
+  receiptNumber?: true;
   voidReason?: true;
   voidedAt?: true;
   voidedBy?: true;
@@ -245,6 +251,7 @@ export type PaymentGroupByOutputType = {
   date: string;
   notes: string | null;
   status: string;
+  receiptNumber: string | null;
   voidReason: string | null;
   voidedAt: Date | null;
   voidedBy: string | null;
@@ -283,6 +290,7 @@ export type PaymentWhereInput = {
   date?: Prisma.StringFilter<'Payment'> | string;
   notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
   status?: Prisma.StringFilter<'Payment'> | string;
+  receiptNumber?: Prisma.StringNullableFilter<'Payment'> | string | null;
   voidReason?: Prisma.StringNullableFilter<'Payment'> | string | null;
   voidedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
   voidedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
@@ -301,6 +309,7 @@ export type PaymentOrderByWithRelationInput = {
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  receiptNumber?: Prisma.SortOrderInput | Prisma.SortOrder;
   voidReason?: Prisma.SortOrderInput | Prisma.SortOrder;
   voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   voidedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -323,6 +332,7 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<
     date?: Prisma.StringFilter<'Payment'> | string;
     notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
     status?: Prisma.StringFilter<'Payment'> | string;
+    receiptNumber?: Prisma.StringNullableFilter<'Payment'> | string | null;
     voidReason?: Prisma.StringNullableFilter<'Payment'> | string | null;
     voidedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
     voidedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
@@ -343,6 +353,7 @@ export type PaymentOrderByWithAggregationInput = {
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  receiptNumber?: Prisma.SortOrderInput | Prisma.SortOrder;
   voidReason?: Prisma.SortOrderInput | Prisma.SortOrder;
   voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   voidedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -372,6 +383,10 @@ export type PaymentScalarWhereWithAggregatesInput = {
   date?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
   notes?: Prisma.StringNullableWithAggregatesFilter<'Payment'> | string | null;
   status?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
+  receiptNumber?:
+    | Prisma.StringNullableWithAggregatesFilter<'Payment'>
+    | string
+    | null;
   voidReason?:
     | Prisma.StringNullableWithAggregatesFilter<'Payment'>
     | string
@@ -409,6 +424,7 @@ export type PaymentCreateInput = {
   date: string;
   notes?: string | null;
   status: string;
+  receiptNumber?: string | null;
   voidReason?: string | null;
   voidedAt?: Date | string | null;
   voidedBy?: string | null;
@@ -427,6 +443,7 @@ export type PaymentUncheckedCreateInput = {
   date: string;
   notes?: string | null;
   status: string;
+  receiptNumber?: string | null;
   voidReason?: string | null;
   voidedAt?: Date | string | null;
   voidedBy?: string | null;
@@ -445,6 +462,10 @@ export type PaymentUpdateInput = {
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -471,6 +492,10 @@ export type PaymentUncheckedUpdateInput = {
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -497,6 +522,7 @@ export type PaymentCreateManyInput = {
   date: string;
   notes?: string | null;
   status: string;
+  receiptNumber?: string | null;
   voidReason?: string | null;
   voidedAt?: Date | string | null;
   voidedBy?: string | null;
@@ -514,6 +540,10 @@ export type PaymentUpdateManyMutationInput = {
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -539,6 +569,10 @@ export type PaymentUncheckedUpdateManyInput = {
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -564,6 +598,7 @@ export type PaymentCountOrderByAggregateInput = {
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  receiptNumber?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrder;
   voidedAt?: Prisma.SortOrder;
   voidedBy?: Prisma.SortOrder;
@@ -585,6 +620,7 @@ export type PaymentMaxOrderByAggregateInput = {
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  receiptNumber?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrder;
   voidedAt?: Prisma.SortOrder;
   voidedBy?: Prisma.SortOrder;
@@ -602,6 +638,7 @@ export type PaymentMinOrderByAggregateInput = {
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  receiptNumber?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrder;
   voidedAt?: Prisma.SortOrder;
   voidedBy?: Prisma.SortOrder;
@@ -654,6 +691,7 @@ export type PaymentCreateWithoutPaymentDuesInput = {
   date: string;
   notes?: string | null;
   status: string;
+  receiptNumber?: string | null;
   voidReason?: string | null;
   voidedAt?: Date | string | null;
   voidedBy?: string | null;
@@ -671,6 +709,7 @@ export type PaymentUncheckedCreateWithoutPaymentDuesInput = {
   date: string;
   notes?: string | null;
   status: string;
+  receiptNumber?: string | null;
   voidReason?: string | null;
   voidedAt?: Date | string | null;
   voidedBy?: string | null;
@@ -716,6 +755,10 @@ export type PaymentUpdateWithoutPaymentDuesInput = {
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -741,6 +784,10 @@ export type PaymentUncheckedUpdateWithoutPaymentDuesInput = {
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -808,6 +855,7 @@ export type PaymentSelect<
     date?: boolean;
     notes?: boolean;
     status?: boolean;
+    receiptNumber?: boolean;
     voidReason?: boolean;
     voidedAt?: boolean;
     voidedBy?: boolean;
@@ -833,6 +881,7 @@ export type PaymentSelectCreateManyAndReturn<
     date?: boolean;
     notes?: boolean;
     status?: boolean;
+    receiptNumber?: boolean;
     voidReason?: boolean;
     voidedAt?: boolean;
     voidedBy?: boolean;
@@ -856,6 +905,7 @@ export type PaymentSelectUpdateManyAndReturn<
     date?: boolean;
     notes?: boolean;
     status?: boolean;
+    receiptNumber?: boolean;
     voidReason?: boolean;
     voidedAt?: boolean;
     voidedBy?: boolean;
@@ -875,6 +925,7 @@ export type PaymentSelectScalar = {
   date?: boolean;
   notes?: boolean;
   status?: boolean;
+  receiptNumber?: boolean;
   voidReason?: boolean;
   voidedAt?: boolean;
   voidedBy?: boolean;
@@ -895,6 +946,7 @@ export type PaymentOmit<
   | 'date'
   | 'notes'
   | 'status'
+  | 'receiptNumber'
   | 'voidReason'
   | 'voidedAt'
   | 'voidedBy'
@@ -937,6 +989,7 @@ export type $PaymentPayload<
       date: string;
       notes: string | null;
       status: string;
+      receiptNumber: string | null;
       voidReason: string | null;
       voidedAt: Date | null;
       voidedBy: string | null;
@@ -1554,6 +1607,7 @@ export interface PaymentFieldRefs {
   readonly date: Prisma.FieldRef<'Payment', 'String'>;
   readonly notes: Prisma.FieldRef<'Payment', 'String'>;
   readonly status: Prisma.FieldRef<'Payment', 'String'>;
+  readonly receiptNumber: Prisma.FieldRef<'Payment', 'String'>;
   readonly voidReason: Prisma.FieldRef<'Payment', 'String'>;
   readonly voidedAt: Prisma.FieldRef<'Payment', 'DateTime'>;
   readonly voidedBy: Prisma.FieldRef<'Payment', 'String'>;
