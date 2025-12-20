@@ -335,7 +335,6 @@ export function DueDetailPage() {
             min={0}
             parser={(value) => NumberFormat.parse(String(value))}
             precision={0}
-            prefix="ARS"
             step={1000}
           />
         </Form.Item>

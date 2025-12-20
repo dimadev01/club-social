@@ -2,8 +2,8 @@ import type { IMemberPaginatedDto } from '@club-social/shared/members';
 import type { PaginatedResponse } from '@club-social/shared/types';
 
 import {
-  EyeOutlined,
   FileExcelOutlined,
+  FilterOutlined,
   MoreOutlined,
 } from '@ant-design/icons';
 import {
@@ -16,7 +16,6 @@ import {
 import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Space, Tooltip } from 'antd';
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
@@ -56,10 +55,8 @@ export function DueListPage() {
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
 
-  const [initialMemberIds] = useState(getFilterValue('memberId') ?? []);
-
   const { data: selectedMembers, isFetching } = useMembersForSelect({
-    memberIds: initialMemberIds,
+    memberIds: getFilterValue('memberId') ?? [],
   });
 
   const duesQuery = useQuery({
@@ -214,12 +211,15 @@ export function DueListPage() {
           fixed="right"
           render={(_, record) => (
             <Space.Compact size="small">
-              <Tooltip title="Ver detalle">
+              <Tooltip title="Filtrar por este socio">
                 <Button
-                  icon={<EyeOutlined />}
-                  onClick={() =>
-                    navigate(APP_ROUTES.DUE_DETAIL.replace(':id', record.id))
-                  }
+                  disabled={getFilterValue('memberId')?.includes(
+                    record.memberId,
+                  )}
+                  icon={<FilterOutlined />}
+                  onClick={() => {
+                    setFilter('memberId', [record.memberId]);
+                  }}
                   type="text"
                 />
               </Tooltip>
