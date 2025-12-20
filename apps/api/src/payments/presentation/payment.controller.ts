@@ -124,6 +124,7 @@ export class PaymentsController extends BaseController {
       dueId: payment.dueId.value,
       id: payment.id.value,
       notes: payment.notes,
+      status: payment.status,
       updatedAt: payment.updatedAt.toISOString(),
       updatedBy: payment.updatedBy,
     };

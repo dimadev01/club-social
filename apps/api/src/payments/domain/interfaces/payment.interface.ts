@@ -7,3 +7,8 @@ export interface UpdatePaymentProps {
   notes: null | string;
   updatedBy: string;
 }
+
+export interface VoidPaymentProps {
+  voidedBy: string;
+  voidReason: string;
+}

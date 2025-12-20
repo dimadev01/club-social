@@ -1,4 +1,4 @@
-import { CreatePaymentDto } from '@club-social/shared/payments';
+import { ICreatePaymentDto } from '@club-social/shared/payments';
 import {
   IsDateString,
   IsNotEmpty,
@@ -9,7 +9,7 @@ import {
   IsUUID,
 } from 'class-validator';
 
-export class CreatePaymentRequestDto implements CreatePaymentDto {
+export class CreatePaymentRequestDto implements ICreatePaymentDto {
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()

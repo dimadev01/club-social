@@ -1,6 +1,6 @@
-import { PaymentDto } from '@club-social/shared/payments';
+import { IPaymentDetailDto, PaymentStatus } from '@club-social/shared/payments';
 
-export class PaymentResponseDto implements PaymentDto {
+export class PaymentResponseDto implements IPaymentDetailDto {
   public amount: number;
   public createdAt: string;
   public createdBy: string;
@@ -8,6 +8,7 @@ export class PaymentResponseDto implements PaymentDto {
   public dueId: string;
   public id: string;
   public notes: null | string;
+  public status: PaymentStatus;
   public updatedAt: string;
   public updatedBy: null | string;
 }

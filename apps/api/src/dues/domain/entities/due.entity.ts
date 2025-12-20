@@ -120,6 +120,10 @@ export class DueEntity extends Entity<DueEntity> {
     return this._status === DueStatus.PAID;
   }
 
+  public isPartiallyPaid(): boolean {
+    return this._status === DueStatus.PARTIALLY_PAID;
+  }
+
   public isPending(): boolean {
     return this._status === DueStatus.PENDING;
   }
@@ -165,6 +169,7 @@ export class DueEntity extends Entity<DueEntity> {
     this._voidedAt = new Date();
     this._voidedBy = props.voidedBy;
     this.markAsUpdated(props.voidedBy);
+    this.addEvent(new DueUpdatedEvent(this));
 
     return ok();
   }

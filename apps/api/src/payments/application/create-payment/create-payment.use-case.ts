@@ -51,11 +51,11 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       UniqueId.raw({ value: params.dueId }),
     );
 
-    if (due.status === DueStatus.VOIDED) {
+    if (due.isVoided()) {
       return err(new ApplicationError('No se puede pagar una cuota anulada'));
     }
 
-    if (due.status === DueStatus.PAID) {
+    if (due.isPaid()) {
       return err(new ApplicationError('La cuota ya está pagada'));
     }
 
@@ -90,18 +90,18 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       Amount.raw({ cents: 0 }),
     );
 
-    let newStatus: DueStatus;
+    let newDueStatus: DueStatus;
 
     if (totalPaid.isGreaterThanOrEqual(due.amount)) {
-      newStatus = DueStatus.PAID;
+      newDueStatus = DueStatus.PAID;
     } else if (totalPaid.isGreaterThan(Amount.raw({ cents: 0 }))) {
-      newStatus = DueStatus.PARTIALLY_PAID;
+      newDueStatus = DueStatus.PARTIALLY_PAID;
     } else {
-      newStatus = DueStatus.PENDING;
+      newDueStatus = DueStatus.PENDING;
     }
 
-    if (due.status !== newStatus) {
-      due.updateStatus(newStatus, params.createdBy);
+    if (due.status !== newDueStatus) {
+      due.updateStatus(newDueStatus, params.createdBy);
       await this.dueRepository.save(due);
     }
 

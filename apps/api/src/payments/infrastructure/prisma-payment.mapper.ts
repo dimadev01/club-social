@@ -1,3 +1,4 @@
+import { PaymentStatus } from '@club-social/shared/payments';
 import { Injectable } from '@nestjs/common';
 
 import { PaymentModel } from '@/infrastructure/database/prisma/generated/models';
@@ -18,6 +19,10 @@ export class PrismaPaymentMapper extends Mapper<PaymentEntity, PaymentModel> {
         date: DateOnly.raw({ value: payment.date }),
         dueId: UniqueId.raw({ value: payment.dueId }),
         notes: payment.notes,
+        status: payment.status as PaymentStatus,
+        voidedAt: payment.voidedAt,
+        voidedBy: payment.voidedBy,
+        voidReason: payment.voidReason,
       },
       {
         createdAt: payment.createdAt,
@@ -42,8 +47,12 @@ export class PrismaPaymentMapper extends Mapper<PaymentEntity, PaymentModel> {
       dueId: payment.dueId.value,
       id: payment.id.value,
       notes: payment.notes,
+      status: payment.status,
       updatedAt: payment.updatedAt,
       updatedBy: payment.updatedBy,
+      voidedAt: payment.voidedAt,
+      voidedBy: payment.voidedBy,
+      voidReason: payment.voidReason,
     };
   }
 }

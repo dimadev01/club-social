@@ -40,6 +40,10 @@ export type PaymentMinAggregateOutputType = {
   amount: number | null;
   date: string | null;
   notes: string | null;
+  status: string | null;
+  voidReason: string | null;
+  voidedAt: Date | null;
+  voidedBy: string | null;
   createdAt: Date | null;
   createdBy: string | null;
   updatedAt: Date | null;
@@ -54,6 +58,10 @@ export type PaymentMaxAggregateOutputType = {
   amount: number | null;
   date: string | null;
   notes: string | null;
+  status: string | null;
+  voidReason: string | null;
+  voidedAt: Date | null;
+  voidedBy: string | null;
   createdAt: Date | null;
   createdBy: string | null;
   updatedAt: Date | null;
@@ -68,6 +76,10 @@ export type PaymentCountAggregateOutputType = {
   amount: number;
   date: number;
   notes: number;
+  status: number;
+  voidReason: number;
+  voidedAt: number;
+  voidedBy: number;
   createdAt: number;
   createdBy: number;
   updatedAt: number;
@@ -91,6 +103,10 @@ export type PaymentMinAggregateInputType = {
   amount?: true;
   date?: true;
   notes?: true;
+  status?: true;
+  voidReason?: true;
+  voidedAt?: true;
+  voidedBy?: true;
   createdAt?: true;
   createdBy?: true;
   updatedAt?: true;
@@ -105,6 +121,10 @@ export type PaymentMaxAggregateInputType = {
   amount?: true;
   date?: true;
   notes?: true;
+  status?: true;
+  voidReason?: true;
+  voidedAt?: true;
+  voidedBy?: true;
   createdAt?: true;
   createdBy?: true;
   updatedAt?: true;
@@ -119,6 +139,10 @@ export type PaymentCountAggregateInputType = {
   amount?: true;
   date?: true;
   notes?: true;
+  status?: true;
+  voidReason?: true;
+  voidedAt?: true;
+  voidedBy?: true;
   createdAt?: true;
   createdBy?: true;
   updatedAt?: true;
@@ -227,6 +251,10 @@ export type PaymentGroupByOutputType = {
   amount: number;
   date: string;
   notes: string | null;
+  status: string;
+  voidReason: string | null;
+  voidedAt: Date | null;
+  voidedBy: string | null;
   createdAt: Date;
   createdBy: string;
   updatedAt: Date;
@@ -262,6 +290,10 @@ export type PaymentWhereInput = {
   amount?: Prisma.IntFilter<'Payment'> | number;
   date?: Prisma.StringFilter<'Payment'> | string;
   notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
+  status?: Prisma.StringFilter<'Payment'> | string;
+  voidReason?: Prisma.StringNullableFilter<'Payment'> | string | null;
+  voidedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
+  voidedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
   createdAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
   createdBy?: Prisma.StringFilter<'Payment'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
@@ -277,6 +309,10 @@ export type PaymentOrderByWithRelationInput = {
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrderInput | Prisma.SortOrder;
+  status?: Prisma.SortOrder;
+  voidReason?: Prisma.SortOrderInput | Prisma.SortOrder;
+  voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  voidedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -296,6 +332,10 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<
     amount?: Prisma.IntFilter<'Payment'> | number;
     date?: Prisma.StringFilter<'Payment'> | string;
     notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
+    status?: Prisma.StringFilter<'Payment'> | string;
+    voidReason?: Prisma.StringNullableFilter<'Payment'> | string | null;
+    voidedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
+    voidedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
     createdAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
     createdBy?: Prisma.StringFilter<'Payment'> | string;
     updatedAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
@@ -313,6 +353,10 @@ export type PaymentOrderByWithAggregationInput = {
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrderInput | Prisma.SortOrder;
+  status?: Prisma.SortOrder;
+  voidReason?: Prisma.SortOrderInput | Prisma.SortOrder;
+  voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  voidedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -339,6 +383,20 @@ export type PaymentScalarWhereWithAggregatesInput = {
   amount?: Prisma.IntWithAggregatesFilter<'Payment'> | number;
   date?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
   notes?: Prisma.StringNullableWithAggregatesFilter<'Payment'> | string | null;
+  status?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
+  voidReason?:
+    | Prisma.StringNullableWithAggregatesFilter<'Payment'>
+    | string
+    | null;
+  voidedAt?:
+    | Prisma.DateTimeNullableWithAggregatesFilter<'Payment'>
+    | Date
+    | string
+    | null;
+  voidedBy?:
+    | Prisma.StringNullableWithAggregatesFilter<'Payment'>
+    | string
+    | null;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<'Payment'> | Date | string;
   createdBy?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<'Payment'> | Date | string;
@@ -362,6 +420,10 @@ export type PaymentCreateInput = {
   amount: number;
   date: string;
   notes?: string | null;
+  status: string;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -377,6 +439,10 @@ export type PaymentUncheckedCreateInput = {
   amount: number;
   date: string;
   notes?: string | null;
+  status: string;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -390,6 +456,14 @@ export type PaymentUpdateInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -409,6 +483,14 @@ export type PaymentUncheckedUpdateInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -427,6 +509,10 @@ export type PaymentCreateManyInput = {
   amount: number;
   date: string;
   notes?: string | null;
+  status: string;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -440,6 +526,14 @@ export type PaymentUpdateManyMutationInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -458,6 +552,14 @@ export type PaymentUncheckedUpdateManyInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -486,6 +588,10 @@ export type PaymentCountOrderByAggregateInput = {
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
+  voidReason?: Prisma.SortOrder;
+  voidedAt?: Prisma.SortOrder;
+  voidedBy?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -504,6 +610,10 @@ export type PaymentMaxOrderByAggregateInput = {
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
+  voidReason?: Prisma.SortOrder;
+  voidedAt?: Prisma.SortOrder;
+  voidedBy?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -518,6 +628,10 @@ export type PaymentMinOrderByAggregateInput = {
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
+  voidReason?: Prisma.SortOrder;
+  voidedAt?: Prisma.SortOrder;
+  voidedBy?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -629,6 +743,10 @@ export type PaymentCreateWithoutDueInput = {
   amount: number;
   date: string;
   notes?: string | null;
+  status: string;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -642,6 +760,10 @@ export type PaymentUncheckedCreateWithoutDueInput = {
   amount: number;
   date: string;
   notes?: string | null;
+  status: string;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -700,6 +822,10 @@ export type PaymentScalarWhereInput = {
   amount?: Prisma.IntFilter<'Payment'> | number;
   date?: Prisma.StringFilter<'Payment'> | string;
   notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
+  status?: Prisma.StringFilter<'Payment'> | string;
+  voidReason?: Prisma.StringNullableFilter<'Payment'> | string | null;
+  voidedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
+  voidedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
   createdAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
   createdBy?: Prisma.StringFilter<'Payment'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
@@ -713,6 +839,10 @@ export type PaymentCreateManyDueInput = {
   amount: number;
   date: string;
   notes?: string | null;
+  status: string;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -726,6 +856,14 @@ export type PaymentUpdateWithoutDueInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -743,6 +881,14 @@ export type PaymentUncheckedUpdateWithoutDueInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -760,6 +906,14 @@ export type PaymentUncheckedUpdateManyWithoutDueInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -782,6 +936,10 @@ export type PaymentSelect<
     amount?: boolean;
     date?: boolean;
     notes?: boolean;
+    status?: boolean;
+    voidReason?: boolean;
+    voidedAt?: boolean;
+    voidedBy?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -803,6 +961,10 @@ export type PaymentSelectCreateManyAndReturn<
     amount?: boolean;
     date?: boolean;
     notes?: boolean;
+    status?: boolean;
+    voidReason?: boolean;
+    voidedAt?: boolean;
+    voidedBy?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -824,6 +986,10 @@ export type PaymentSelectUpdateManyAndReturn<
     amount?: boolean;
     date?: boolean;
     notes?: boolean;
+    status?: boolean;
+    voidReason?: boolean;
+    voidedAt?: boolean;
+    voidedBy?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -841,6 +1007,10 @@ export type PaymentSelectScalar = {
   amount?: boolean;
   date?: boolean;
   notes?: boolean;
+  status?: boolean;
+  voidReason?: boolean;
+  voidedAt?: boolean;
+  voidedBy?: boolean;
   createdAt?: boolean;
   createdBy?: boolean;
   updatedAt?: boolean;
@@ -858,6 +1028,10 @@ export type PaymentOmit<
   | 'amount'
   | 'date'
   | 'notes'
+  | 'status'
+  | 'voidReason'
+  | 'voidedAt'
+  | 'voidedBy'
   | 'createdAt'
   | 'createdBy'
   | 'updatedAt'
@@ -900,6 +1074,10 @@ export type $PaymentPayload<
       amount: number;
       date: string;
       notes: string | null;
+      status: string;
+      voidReason: string | null;
+      voidedAt: Date | null;
+      voidedBy: string | null;
       createdAt: Date;
       createdBy: string;
       updatedAt: Date;
@@ -1517,6 +1695,10 @@ export interface PaymentFieldRefs {
   readonly amount: Prisma.FieldRef<'Payment', 'Int'>;
   readonly date: Prisma.FieldRef<'Payment', 'String'>;
   readonly notes: Prisma.FieldRef<'Payment', 'String'>;
+  readonly status: Prisma.FieldRef<'Payment', 'String'>;
+  readonly voidReason: Prisma.FieldRef<'Payment', 'String'>;
+  readonly voidedAt: Prisma.FieldRef<'Payment', 'DateTime'>;
+  readonly voidedBy: Prisma.FieldRef<'Payment', 'String'>;
   readonly createdAt: Prisma.FieldRef<'Payment', 'DateTime'>;
   readonly createdBy: Prisma.FieldRef<'Payment', 'String'>;
   readonly updatedAt: Prisma.FieldRef<'Payment', 'DateTime'>;

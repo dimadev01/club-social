@@ -1,4 +1,4 @@
-import { UpdatePaymentDto } from '@club-social/shared/payments';
+import { IUpdatePaymentDto } from '@club-social/shared/payments';
 import {
   IsDateString,
   IsNotEmpty,
@@ -8,7 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class UpdatePaymentRequestDto implements UpdatePaymentDto {
+export class UpdatePaymentRequestDto implements IUpdatePaymentDto {
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
