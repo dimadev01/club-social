@@ -15,8 +15,6 @@ export interface IPaymentDetailDto {
   notes: null | string;
   paymentDues: IPaymentDueDetailDto[];
   status: PaymentStatus;
-  updatedAt: string;
-  updatedBy: null | string;
 }
 
 export interface IPaymentDueDetailDto {
@@ -36,7 +34,8 @@ export interface IPaymentPaginatedDto {
   createdBy: string;
   date: string;
   id: string;
-  paymentDues: IPaymentDueDetailDto[];
+  memberId: string;
+  memberName: string;
   status: PaymentStatus;
 }
 
@@ -44,4 +43,8 @@ export interface IUpdatePaymentDto {
   date: string;
   notes: null | string;
   paymentDues: IPaymentDueItemDto[];
+}
+
+export interface VoidPaymentDto {
+  voidReason: string;
 }

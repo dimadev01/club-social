@@ -16,8 +16,9 @@ import { APP_ROUTES } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
-import { Card } from '@/ui/Card/Card';
+import { Card } from '@/ui/Card';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
+import { NotFound } from '@/ui/NotFound';
 
 import { usePermissions } from './use-permissions';
 
@@ -94,6 +95,14 @@ export function UserDetailPage() {
     }
   };
 
+  if (!permissions.users.create && !id) {
+    return <NotFound />;
+  }
+
+  if (!permissions.users.update && id) {
+    return <NotFound />;
+  }
+
   const isQueryLoading = userQuery.isLoading;
   const isMutating =
     createUserMutation.isPending || updateUserMutation.isPending;
@@ -101,6 +110,10 @@ export function UserDetailPage() {
   const canCreate = !id && permissions.users.create;
   const canUpdate = id && permissions.users.update;
   const canCreateOrUpdate = canCreate || canUpdate;
+
+  if (id && !isQueryLoading && !userQuery.data) {
+    return <NotFound />;
+  }
 
   return (
     <Card

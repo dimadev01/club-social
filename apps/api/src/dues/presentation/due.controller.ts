@@ -18,6 +18,7 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
+import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
@@ -32,7 +33,6 @@ import { DuePaginatedModel } from '../domain/due.types';
 import { DueEntity } from '../domain/entities/due.entity';
 import { CreateDueRequestDto } from './dto/create-due.dto';
 import { DueDetailDto } from './dto/due-detail.dto';
-import { DueListRequestDto } from './dto/due-paginated-request.dto';
 import { DuePaginatedDto } from './dto/due-paginated.dto';
 import { UpdateDueDto } from './dto/update-due.dto';
 import { VoidDueRequestDto } from './dto/void-due.dto';
@@ -104,7 +104,7 @@ export class DuesController extends BaseController {
   @ApiPaginatedResponse(DuePaginatedDto)
   @Get('paginated')
   public async getPaginated(
-    @Query() query: DueListRequestDto,
+    @Query() query: PaginatedRequestDto,
   ): Promise<PaginatedResponseDto<DuePaginatedDto>> {
     const dues = await this.dueRepository.findPaginated({
       filters: query.filters,

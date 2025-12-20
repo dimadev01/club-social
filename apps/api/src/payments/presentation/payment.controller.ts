@@ -18,6 +18,7 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
+import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
@@ -30,8 +31,8 @@ import {
   type PaymentRepository,
 } from '../domain/payment.repository';
 import { CreatePaymentRequestDto } from './dto/create-payment.dto';
-import { PaymentListRequestDto } from './dto/payment-list.dto';
-import { PaymentDetailDto } from './dto/payment.dto';
+import { PaymentDetailDto } from './dto/payment-detail.dto';
+import { PaymentPaginatedDto } from './dto/payment-paginated.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { VoidPaymentRequestDto } from './dto/void-payment.dto';
 
@@ -98,11 +99,11 @@ export class PaymentsController extends BaseController {
     );
   }
 
-  @ApiPaginatedResponse(PaymentDetailDto)
+  @ApiPaginatedResponse(PaymentPaginatedDto)
   @Get('paginated')
   public async getPaginated(
-    @Query() query: PaymentListRequestDto,
-  ): Promise<PaginatedResponseDto<PaymentDetailDto>> {
+    @Query() query: PaginatedRequestDto,
+  ): Promise<PaginatedResponseDto<PaymentPaginatedDto>> {
     const payments = await this.paymentRepository.findPaginated({
       filters: query.filters,
       page: query.page,
@@ -111,7 +112,7 @@ export class PaymentsController extends BaseController {
     });
 
     return {
-      data: payments.data.map((payment) => this.toDto(payment)),
+      data: payments.data.map((payment) => this.toPaginatedDto(payment)),
       total: payments.total,
     };
   }
@@ -128,10 +129,23 @@ export class PaymentsController extends BaseController {
       return null;
     }
 
-    return this.toDto(payment);
+    return this.toDetailDto(payment);
   }
 
-  private toDto(payment: PaymentEntity): PaymentDetailDto {
+  private toPaginatedDto(payment: PaymentEntity): PaymentPaginatedDto {
+    return {
+      amount: payment.amount.toCents(),
+      createdAt: payment.createdAt.toISOString(),
+      createdBy: payment.createdBy,
+      date: payment.date.value,
+      id: payment.id.value,
+      memberId: '',
+      memberName: '',
+      status: payment.status,
+    };
+  }
+
+  private toDetailDto(payment: PaymentEntity): PaymentDetailDto {
     return {
       amount: payment.amount.toCents(),
       createdAt: payment.createdAt.toISOString(),
@@ -145,8 +159,6 @@ export class PaymentsController extends BaseController {
         paymentId: payment.id.value,
       })),
       status: payment.status,
-      updatedAt: payment.updatedAt.toISOString(),
-      updatedBy: payment.updatedBy,
     };
   }
 }

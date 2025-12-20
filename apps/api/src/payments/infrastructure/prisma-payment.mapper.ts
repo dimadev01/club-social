@@ -1,10 +1,6 @@
 import { PaymentStatus } from '@club-social/shared/payments';
 import { Injectable } from '@nestjs/common';
 
-import {
-  PaymentDueModel,
-  PaymentModel,
-} from '@/infrastructure/database/prisma/generated/models';
 import { Mapper } from '@/infrastructure/repositories/mapper';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
@@ -12,10 +8,7 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
 import { PrismaPaymentDueMapper } from './prisma-payment-due.mapper';
-
-type PaymentModelWithRelations = PaymentModel & {
-  paymentDues?: PaymentDueModel[];
-};
+import { PaymentModelWithRelations } from './prisma-payment.types';
 
 @Injectable()
 export class PrismaPaymentMapper extends Mapper<

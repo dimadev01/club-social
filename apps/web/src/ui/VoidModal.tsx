@@ -1,7 +1,7 @@
 import { Input, Modal } from 'antd';
 import { useState } from 'react';
 
-import { Form } from '@/ui/Form/Form';
+import { Form } from '@/ui/Form';
 
 interface FormSchema {
   reason: string;
@@ -13,7 +13,7 @@ interface Props {
   open: boolean;
 }
 
-export function VoidDueModal({ onCancel, onConfirm, open }: Props) {
+export function VoidModal({ onCancel, onConfirm, open }: Props) {
   const [form] = Form.useForm<FormSchema>();
   const [confirmLoading, setConfirmLoading] = useState(false);
 

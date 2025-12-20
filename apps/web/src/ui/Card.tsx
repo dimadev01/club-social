@@ -8,7 +8,7 @@ import {
 } from 'antd';
 import { useNavigate } from 'react-router';
 
-import { BackIcon } from '../Icons/BackIcon';
+import { BackIcon } from './Icons/BackIcon';
 
 interface Props extends CardProps {
   backButton?: boolean;

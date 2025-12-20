@@ -13,8 +13,6 @@ export class PaymentDetailDto implements IPaymentDetailDto {
   public notes: null | string;
   public paymentDues: PaymentDetailDueDto[];
   public status: PaymentStatus;
-  public updatedAt: string;
-  public updatedBy: null | string;
 }
 
 export class PaymentDetailDueDto implements IPaymentDueDetailDto {

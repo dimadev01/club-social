@@ -11,6 +11,7 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
@@ -64,18 +65,45 @@ export class PrismaPaymentRepository implements PaymentRepository {
       deletedAt: null,
     };
 
+    if (params.filters?.createdAt) {
+      const dateRangeResult = DateRange.fromUserInput(
+        params.filters.createdAt[0],
+        params.filters.createdAt[1],
+      );
+
+      if (dateRangeResult.isErr()) {
+        throw dateRangeResult.error;
+      }
+
+      where.createdAt = dateRangeResult.value.toPrismaFilter();
+    }
+
+    if (params.filters?.date) {
+      where.date = {
+        gte: params.filters.date[0],
+        lte: params.filters.date[1],
+      };
+    }
+
     if (params.filters?.memberId) {
       where.paymentDues = {
         some: { due: { memberId: { in: params.filters.memberId } } },
       };
     }
 
+    if (params.filters?.status) {
+      where.status = { in: params.filters.status };
+    }
+
     const query = {
-      include: { paymentDues: true },
-      orderBy: [
-        ...params.sort.map(({ field, order }) => ({ [field]: order })),
-        { createdAt: 'desc' },
-      ],
+      include: {
+        paymentDues: {
+          include: {
+            due: { include: { member: { include: { user: true } } } },
+          },
+        },
+      },
+      orderBy: params.sort.map(({ field, order }) => ({ [field]: order })),
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
       where,

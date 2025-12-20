@@ -36,8 +36,8 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat, DateFormats } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
-import { Card } from '@/ui/Card/Card';
-import { Form } from '@/ui/Form/Form';
+import { Card } from '@/ui/Card';
+import { Form } from '@/ui/Form';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { VoidIcon } from '@/ui/Icons/VoidIcon';
 import { NotFound } from '@/ui/NotFound';
@@ -45,8 +45,8 @@ import { Select } from '@/ui/Select';
 import { Table } from '@/ui/Table/Table';
 import { usePermissions } from '@/users/use-permissions';
 
+import { VoidModal } from '../ui/VoidModal';
 import { DueStatusColor } from './due.types';
-import { VoidDueModal } from './VoidDueModal';
 
 interface FormSchema {
   amount: number;
@@ -184,6 +184,10 @@ export function DueDetailPage() {
   const canCreateOrUpdate = canCreate || canUpdate;
   const canVoid = dueQuery.data?.status === DueStatus.PENDING;
 
+  if (id && !isQueryLoading && !dueQuery.data) {
+    return <NotFound />;
+  }
+
   const memberAdditionalOptions: IMemberSearchResultDto[] = memberQuery.data
     ? [
         {
@@ -269,8 +273,7 @@ export function DueDetailPage() {
             disabled={!!id}
             format={
               formCategory === DueCategory.MEMBERSHIP
-                ? // ? 'MMMM YYYY'
-                  DateFormats.monthYear
+                ? DateFormats.monthYear
                 : DateFormats.date
             }
             picker={formCategory === DueCategory.MEMBERSHIP ? 'month' : 'date'}
@@ -357,7 +360,7 @@ export function DueDetailPage() {
         </Card>
       )}
 
-      <VoidDueModal
+      <VoidModal
         onCancel={() => setIsVoidModalOpen(false)}
         onConfirm={(reason) => {
           voidDueMutation.mutate({ voidReason: reason });

@@ -9,6 +9,8 @@ import { DueListPage } from '@/dues/DueListPage';
 import { Home } from '@/home/HomePage';
 import { MemberDetailPage } from '@/members/MemberDetailPage';
 import { MemberListPage } from '@/members/MemberListPage';
+import { PaymentDetailPage } from '@/payments/PaymentDetailPage';
+import { PaymentListPage } from '@/payments/PaymentListPage';
 import { ProfilePage } from '@/profile/ProfilePage';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { NotFound } from '@/ui/NotFound';
@@ -49,6 +51,16 @@ export function AppRoutes() {
           <Route element={<DueListPage />} path={APP_ROUTES.DUES_LIST} />
           <Route element={<DueDetailPage />} path={APP_ROUTES.DUE_NEW} />
           <Route element={<DueDetailPage />} path={APP_ROUTES.DUE_DETAIL} />
+
+          <Route element={<PaymentListPage />} path={APP_ROUTES.PAYMENT_LIST} />
+          <Route
+            element={<PaymentDetailPage />}
+            path={APP_ROUTES.PAYMENT_NEW}
+          />
+          <Route
+            element={<PaymentDetailPage />}
+            path={APP_ROUTES.PAYMENT_DETAIL}
+          />
 
           <Route element={<ProfilePage />} path={APP_ROUTES.PROFILE} />
           <Route element={<LogoutPage />} path={APP_ROUTES.LOGOUT} />

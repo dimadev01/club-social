@@ -35,8 +35,8 @@ import { APP_ROUTES } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
-import { Card } from '@/ui/Card/Card';
-import { Form } from '@/ui/Form/Form';
+import { Card } from '@/ui/Card';
+import { Form } from '@/ui/Form';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
@@ -192,6 +192,10 @@ export function MemberDetailPage() {
   const canCreate = !id && permissions.members.create;
   const canUpdate = id && permissions.members.update;
   const canCreateOrUpdate = canCreate || canUpdate;
+
+  if (id && !isQueryLoading && !memberQuery.data) {
+    return <NotFound />;
+  }
 
   return (
     <Card
