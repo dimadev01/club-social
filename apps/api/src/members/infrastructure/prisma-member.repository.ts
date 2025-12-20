@@ -213,25 +213,31 @@ export class PrismaMemberRepository implements MemberRepository {
   public async search(
     params: MemberSearchParams,
   ): Promise<MemberPaginatedModel[]> {
-    const { limit, searchTerm } = params;
-
     const members = await this.prismaService.member.findMany({
       include: { user: true },
       orderBy: [{ user: { lastName: 'asc' } }, { user: { firstName: 'asc' } }],
-      take: limit,
+      take: params.limit,
       where: {
         deletedAt: null,
         OR: [
           {
             user: {
               OR: [
-                { firstName: { contains: searchTerm, mode: 'insensitive' } },
-                { lastName: { contains: searchTerm, mode: 'insensitive' } },
-                { email: { contains: searchTerm, mode: 'insensitive' } },
+                {
+                  firstName: {
+                    contains: params.searchTerm,
+                    mode: 'insensitive',
+                  },
+                },
+                {
+                  lastName: {
+                    contains: params.searchTerm,
+                    mode: 'insensitive',
+                  },
+                },
               ],
             },
           },
-          { documentID: { contains: searchTerm, mode: 'insensitive' } },
         ],
       },
     });
