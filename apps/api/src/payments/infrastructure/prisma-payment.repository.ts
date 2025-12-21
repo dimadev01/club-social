@@ -122,17 +122,10 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
   public async save(entity: PaymentEntity): Promise<PaymentEntity> {
     const data = this.mapper.payment.toPersistence(entity);
-
-    const paymentDues = (data.paymentDues ?? []).map((pd) => ({
-      amount: pd.amount,
-      dueId: pd.dueId,
-    }));
+    const { paymentDues: _paymentDues, ...paymentData } = data;
 
     const payment = await this.prismaService.payment.create({
-      data: {
-        ...data,
-        paymentDues: { createMany: { data: paymentDues } },
-      },
+      data: paymentData,
     });
 
     return this.mapper.payment.toDomain(payment);

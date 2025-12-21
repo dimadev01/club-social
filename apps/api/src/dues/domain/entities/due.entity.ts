@@ -2,6 +2,7 @@ import { DueCategory, DueStatus } from '@club-social/shared/dues';
 
 import type { BaseEntityProps } from '@/shared/domain/entity';
 
+import { PaymentDueEntity } from '@/payments/domain/entities/payment-due.entity';
 import { Entity } from '@/shared/domain/entity';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
 import { err, ok, Result } from '@/shared/domain/result';
@@ -20,6 +21,7 @@ interface DueProps {
   date: DateOnly;
   memberId: UniqueId;
   notes: null | string;
+  paymentDues: PaymentDueEntity[];
   status: DueStatus;
   voidedAt: Date | null;
   voidedBy: null | string;
@@ -47,6 +49,10 @@ export class DueEntity extends Entity<DueEntity> {
     return this._notes;
   }
 
+  public get paymentDues(): PaymentDueEntity[] {
+    return [...this._paymentDues];
+  }
+
   public get status(): DueStatus {
     return this._status;
   }
@@ -68,6 +74,7 @@ export class DueEntity extends Entity<DueEntity> {
   private _date: DateOnly;
   private _memberId: UniqueId;
   private _notes: null | string;
+  private _paymentDues: PaymentDueEntity[];
   private _status: DueStatus;
   private _voidedAt: Date | null;
   private _voidedBy: null | string;
@@ -81,6 +88,7 @@ export class DueEntity extends Entity<DueEntity> {
     this._date = props.date;
     this._memberId = props.memberId;
     this._notes = props.notes;
+    this._paymentDues = props.paymentDues;
     this._status = props.status;
     this._voidReason = props.voidReason;
     this._voidedAt = props.voidedAt;
@@ -89,7 +97,10 @@ export class DueEntity extends Entity<DueEntity> {
   }
 
   public static create(
-    props: Omit<DueProps, 'status' | 'voidedAt' | 'voidedBy' | 'voidReason'>,
+    props: Omit<
+      DueProps,
+      'paymentDues' | 'status' | 'voidedAt' | 'voidedBy' | 'voidReason'
+    >,
   ): Result<DueEntity> {
     const due = new DueEntity({
       amount: props.amount,
@@ -98,6 +109,7 @@ export class DueEntity extends Entity<DueEntity> {
       date: props.date,
       memberId: props.memberId,
       notes: props.notes,
+      paymentDues: [],
       status: DueStatus.PENDING,
       voidedAt: null,
       voidedBy: null,
@@ -116,6 +128,33 @@ export class DueEntity extends Entity<DueEntity> {
     return new DueEntity(props, base);
   }
 
+  public addPayment(
+    paymentId: UniqueId,
+    amount: Amount,
+    createdBy: string,
+  ): Result<void> {
+    if (this.isVoided()) {
+      return err(
+        new ApplicationError('No se puede agregar un pago a una cuota anulada'),
+      );
+    }
+
+    const paymentDueResult = PaymentDueEntity.create({
+      amount,
+      dueId: this.id,
+      paymentId,
+    });
+
+    if (paymentDueResult.isErr()) {
+      return err(paymentDueResult.error);
+    }
+
+    this._paymentDues.push(paymentDueResult.value);
+    this.recalculateStatusInternal(createdBy);
+
+    return ok();
+  }
+
   public isPaid(): boolean {
     return this._status === DueStatus.PAID;
   }
@@ -130,24 +169,6 @@ export class DueEntity extends Entity<DueEntity> {
 
   public isVoided(): boolean {
     return this._status === DueStatus.VOIDED;
-  }
-
-  public recalculateStatus(totalPaid: Amount, updatedBy = 'System'): void {
-    let newStatus: DueStatus;
-
-    if (totalPaid.isGreaterThanOrEqual(this._amount)) {
-      newStatus = DueStatus.PAID;
-    } else if (totalPaid.isGreaterThan(Amount.raw({ cents: 0 }))) {
-      newStatus = DueStatus.PARTIALLY_PAID;
-    } else {
-      newStatus = DueStatus.PENDING;
-    }
-
-    if (this._status !== newStatus) {
-      this._status = newStatus;
-      this.markAsUpdated(updatedBy);
-      this.addEvent(new DueUpdatedEvent(this));
-    }
   }
 
   public update(props: UpdateDueProps): Result<void> {
@@ -183,5 +204,44 @@ export class DueEntity extends Entity<DueEntity> {
     this.addEvent(new DueUpdatedEvent(this));
 
     return ok();
+  }
+
+  public voidPayment(paymentId: UniqueId, voidedBy: string): Result<void> {
+    const affectedPaymentDues = this._paymentDues.filter(
+      (pd) => pd.paymentId.equals(paymentId) && pd.isActive(),
+    );
+
+    if (affectedPaymentDues.length === 0) {
+      return err(
+        new ApplicationError('No se encontraron pagos activos para anular'),
+      );
+    }
+
+    affectedPaymentDues.forEach((pd) => pd.void());
+    this.recalculateStatusInternal(voidedBy);
+
+    return ok();
+  }
+
+  private recalculateStatusInternal(updatedBy = 'System'): void {
+    const totalPaid = this._paymentDues
+      .filter((pd) => pd.isActive())
+      .reduce((sum, pd) => sum.add(pd.amount), Amount.raw({ cents: 0 }));
+
+    let newStatus: DueStatus;
+
+    if (totalPaid.isGreaterThanOrEqual(this._amount)) {
+      newStatus = DueStatus.PAID;
+    } else if (totalPaid.isGreaterThan(Amount.raw({ cents: 0 }))) {
+      newStatus = DueStatus.PARTIALLY_PAID;
+    } else {
+      newStatus = DueStatus.PENDING;
+    }
+
+    if (this._status !== newStatus) {
+      this._status = newStatus;
+      this.markAsUpdated(updatedBy);
+      this.addEvent(new DueUpdatedEvent(this));
+    }
   }
 }

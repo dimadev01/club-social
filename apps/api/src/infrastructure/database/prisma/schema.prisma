@@ -167,9 +167,11 @@ model PaymentDue {
   dueId     String
   due       Due     @relation(fields: [dueId], references: [id])
   amount    Int
+  status    String
 
   @@id([paymentId, dueId])
   @@index([paymentId])
   @@index([dueId])
+  @@index([status])
   @@map("payment_due")
 }

@@ -1,3 +1,4 @@
+import { PaymentDueStatus } from '@club-social/shared/payments';
 import { Injectable } from '@nestjs/common';
 
 import { PaymentDueModel } from '@/infrastructure/database/prisma/generated/models';
@@ -17,6 +18,7 @@ export class PrismaPaymentDueMapper extends Mapper<
       amount: Amount.raw({ cents: paymentDue.amount }),
       dueId: UniqueId.raw({ value: paymentDue.dueId }),
       paymentId: UniqueId.raw({ value: paymentDue.paymentId }),
+      status: paymentDue.status as PaymentDueStatus,
     });
   }
 
@@ -25,6 +27,7 @@ export class PrismaPaymentDueMapper extends Mapper<
       amount: paymentDue.amount.toCents(),
       dueId: paymentDue.dueId.value,
       paymentId: paymentDue.paymentId.value,
+      status: paymentDue.status,
     };
   }
 }

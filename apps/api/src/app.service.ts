@@ -10,9 +10,11 @@ import { faker } from '@faker-js/faker';
 import { Inject, Injectable } from '@nestjs/common';
 import { sample, times } from 'es-toolkit/compat';
 
+import { BetterAuthService } from './infrastructure/auth/better-auth/better-auth.service';
 import { ConfigService } from './infrastructure/config/config.service';
 import { CreateMemberUseCase } from './members/application/create-member/create-member.use-case';
 import { Address } from './shared/domain/value-objects/address/address.vo';
+import { PublicRoute } from './shared/presentation/decorators/public-route.decorator';
 import { CreateUserUseCase } from './users/application/create-user/create-user.use-case';
 import {
   USER_REPOSITORY_PROVIDER,
@@ -27,12 +29,14 @@ export class AppService {
     private readonly configService: ConfigService,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
+    private readonly betterAuth: BetterAuthService,
   ) {}
 
   public getHello(): string {
     return 'Hello World!';
   }
 
+  @PublicRoute()
   public async seed(): Promise<void> {
     const { total } = await this.userRepository.findPaginated({
       filters: {},

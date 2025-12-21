@@ -2,13 +2,11 @@ import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
-import { RecalculateDueService } from '@/dues/application/recalculate-due/recalculate-due.service';
 import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
 } from '@/dues/domain/due.repository';
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
-import { PaymentDueProps } from '@/payments/domain/payment.interface';
 import {
   PAYMENT_REPOSITORY_PROVIDER,
   type PaymentRepository,
@@ -20,6 +18,7 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
+import { Guard } from '@/shared/domain/guards';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
@@ -36,7 +35,6 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
     private readonly eventPublisher: DomainEventPublisher,
-    private readonly recalculateDueService: RecalculateDueService,
   ) {
     super(logger);
   }
@@ -52,50 +50,24 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     const dueIds = params.paymentDues.map((pd) =>
       UniqueId.raw({ value: pd.dueId }),
     );
+
     const dues = await this.dueRepository.findManyByIds(dueIds);
 
     if (dues.length !== dueIds.length) {
       return err(new ApplicationError('Una o más cuotas no existen'));
     }
 
-    if (dues.some((due) => due.isVoided())) {
-      return err(
-        new ApplicationError('No se puede crear un pago con cuotas anuladas'),
-      );
+    const date = DateOnly.fromString(params.date);
+
+    if (date.isErr()) {
+      return err(date.error);
     }
-
-    const dateResult = DateOnly.fromString(params.date);
-
-    if (dateResult.isErr()) {
-      return err(dateResult.error);
-    }
-
-    const paymentDuesResult: Result<PaymentDueProps[]> = ResultUtils.combine(
-      params.paymentDues.map((pd) => {
-        const amount = Amount.fromCents(pd.amount);
-
-        if (amount.isErr()) {
-          return err(amount.error);
-        }
-
-        return ok({
-          amount: amount.value,
-          dueId: UniqueId.raw({ value: pd.dueId }),
-        });
-      }),
-    );
-
-    if (paymentDuesResult.isErr()) {
-      return err(paymentDuesResult.error);
-    }
-
-    const paymentDues = paymentDuesResult.value;
 
     const paymentResult = PaymentEntity.create({
       createdBy: params.createdBy,
-      date: dateResult.value,
+      date: date.value,
+      dueIds,
       notes: params.notes,
-      paymentDues,
       receiptNumber: params.receiptNumber,
     });
 
@@ -105,17 +77,35 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
     const payment = paymentResult.value;
 
-    await this.paymentRepository.save(payment);
+    const addPaymentResults = ResultUtils.combine(
+      dues.map((due) => {
+        const paymentDueForThisDue = params.paymentDues.find(
+          (pd) => pd.dueId === due.id.value,
+        );
 
-    const recalculateDuesResult = await ResultUtils.combineAsync(
-      dues.map((due) => this.recalculateDueService.execute(due.id)),
+        Guard.defined(paymentDueForThisDue);
+
+        const amount = Amount.fromCents(paymentDueForThisDue.amount);
+
+        if (amount.isErr()) {
+          return err(amount.error);
+        }
+
+        payment.addToTotalAmount(amount.value);
+
+        return due.addPayment(payment.id, amount.value, params.createdBy);
+      }),
     );
 
-    if (recalculateDuesResult.isErr()) {
-      return err(recalculateDuesResult.error);
+    if (addPaymentResults.isErr()) {
+      return err(addPaymentResults.error);
     }
 
+    await this.paymentRepository.save(payment);
+    await Promise.all(dues.map((due) => this.dueRepository.save(due)));
+
     this.eventPublisher.dispatch(payment);
+    dues.forEach((due) => this.eventPublisher.dispatch(due));
 
     return ok(payment);
   }

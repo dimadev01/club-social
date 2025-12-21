@@ -3,7 +3,27 @@
   "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
+  "preset": "ts-jest",
+  "extensionsToTreatAsEsm": [".ts"],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/../src/$1",
+    "^@/test/(.*)$": "<rootDir>/$1"
+  },
   "transform": {
-    "^.+\\.(t|j)s$": "ts-jest"
+    "^.+\\.tsx?$": [
+      "ts-jest",
+      {
+        "useESM": true,
+        "tsconfig": {
+          "baseUrl": "..",
+          "paths": {
+            "@/test/*": ["test/*"],
+            "@/*": ["./src/*"]
+          },
+          "module": "ES2020",
+          "target": "ES2020"
+        }
+      }
+    ]
   }
 }

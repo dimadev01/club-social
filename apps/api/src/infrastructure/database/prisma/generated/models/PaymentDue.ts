@@ -38,18 +38,21 @@ export type PaymentDueMinAggregateOutputType = {
   paymentId: string | null;
   dueId: string | null;
   amount: number | null;
+  status: string | null;
 };
 
 export type PaymentDueMaxAggregateOutputType = {
   paymentId: string | null;
   dueId: string | null;
   amount: number | null;
+  status: string | null;
 };
 
 export type PaymentDueCountAggregateOutputType = {
   paymentId: number;
   dueId: number;
   amount: number;
+  status: number;
   _all: number;
 };
 
@@ -65,18 +68,21 @@ export type PaymentDueMinAggregateInputType = {
   paymentId?: true;
   dueId?: true;
   amount?: true;
+  status?: true;
 };
 
 export type PaymentDueMaxAggregateInputType = {
   paymentId?: true;
   dueId?: true;
   amount?: true;
+  status?: true;
 };
 
 export type PaymentDueCountAggregateInputType = {
   paymentId?: true;
   dueId?: true;
   amount?: true;
+  status?: true;
   _all?: true;
 };
 
@@ -177,6 +183,7 @@ export type PaymentDueGroupByOutputType = {
   paymentId: string;
   dueId: string;
   amount: number;
+  status: string;
   _count: PaymentDueCountAggregateOutputType | null;
   _avg: PaymentDueAvgAggregateOutputType | null;
   _sum: PaymentDueSumAggregateOutputType | null;
@@ -204,6 +211,7 @@ export type PaymentDueWhereInput = {
   paymentId?: Prisma.StringFilter<'PaymentDue'> | string;
   dueId?: Prisma.StringFilter<'PaymentDue'> | string;
   amount?: Prisma.IntFilter<'PaymentDue'> | number;
+  status?: Prisma.StringFilter<'PaymentDue'> | string;
   payment?: Prisma.XOR<
     Prisma.PaymentScalarRelationFilter,
     Prisma.PaymentWhereInput
@@ -215,6 +223,7 @@ export type PaymentDueOrderByWithRelationInput = {
   paymentId?: Prisma.SortOrder;
   dueId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   payment?: Prisma.PaymentOrderByWithRelationInput;
   due?: Prisma.DueOrderByWithRelationInput;
 };
@@ -228,6 +237,7 @@ export type PaymentDueWhereUniqueInput = Prisma.AtLeast<
     paymentId?: Prisma.StringFilter<'PaymentDue'> | string;
     dueId?: Prisma.StringFilter<'PaymentDue'> | string;
     amount?: Prisma.IntFilter<'PaymentDue'> | number;
+    status?: Prisma.StringFilter<'PaymentDue'> | string;
     payment?: Prisma.XOR<
       Prisma.PaymentScalarRelationFilter,
       Prisma.PaymentWhereInput
@@ -241,6 +251,7 @@ export type PaymentDueOrderByWithAggregationInput = {
   paymentId?: Prisma.SortOrder;
   dueId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   _count?: Prisma.PaymentDueCountOrderByAggregateInput;
   _avg?: Prisma.PaymentDueAvgOrderByAggregateInput;
   _max?: Prisma.PaymentDueMaxOrderByAggregateInput;
@@ -259,10 +270,12 @@ export type PaymentDueScalarWhereWithAggregatesInput = {
   paymentId?: Prisma.StringWithAggregatesFilter<'PaymentDue'> | string;
   dueId?: Prisma.StringWithAggregatesFilter<'PaymentDue'> | string;
   amount?: Prisma.IntWithAggregatesFilter<'PaymentDue'> | number;
+  status?: Prisma.StringWithAggregatesFilter<'PaymentDue'> | string;
 };
 
 export type PaymentDueCreateInput = {
   amount: number;
+  status: string;
   payment: Prisma.PaymentCreateNestedOneWithoutPaymentDuesInput;
   due: Prisma.DueCreateNestedOneWithoutPaymentDuesInput;
 };
@@ -271,10 +284,12 @@ export type PaymentDueUncheckedCreateInput = {
   paymentId: string;
   dueId: string;
   amount: number;
+  status: string;
 };
 
 export type PaymentDueUpdateInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   payment?: Prisma.PaymentUpdateOneRequiredWithoutPaymentDuesNestedInput;
   due?: Prisma.DueUpdateOneRequiredWithoutPaymentDuesNestedInput;
 };
@@ -283,22 +298,26 @@ export type PaymentDueUncheckedUpdateInput = {
   paymentId?: Prisma.StringFieldUpdateOperationsInput | string;
   dueId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type PaymentDueCreateManyInput = {
   paymentId: string;
   dueId: string;
   amount: number;
+  status: string;
 };
 
 export type PaymentDueUpdateManyMutationInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type PaymentDueUncheckedUpdateManyInput = {
   paymentId?: Prisma.StringFieldUpdateOperationsInput | string;
   dueId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type PaymentDueListRelationFilter = {
@@ -320,6 +339,7 @@ export type PaymentDueCountOrderByAggregateInput = {
   paymentId?: Prisma.SortOrder;
   dueId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
 };
 
 export type PaymentDueAvgOrderByAggregateInput = {
@@ -330,12 +350,14 @@ export type PaymentDueMaxOrderByAggregateInput = {
   paymentId?: Prisma.SortOrder;
   dueId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
 };
 
 export type PaymentDueMinOrderByAggregateInput = {
   paymentId?: Prisma.SortOrder;
   dueId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
 };
 
 export type PaymentDueSumOrderByAggregateInput = {
@@ -556,12 +578,14 @@ export type PaymentDueUncheckedUpdateManyWithoutPaymentNestedInput = {
 
 export type PaymentDueCreateWithoutDueInput = {
   amount: number;
+  status: string;
   payment: Prisma.PaymentCreateNestedOneWithoutPaymentDuesInput;
 };
 
 export type PaymentDueUncheckedCreateWithoutDueInput = {
   paymentId: string;
   amount: number;
+  status: string;
 };
 
 export type PaymentDueCreateOrConnectWithoutDueInput = {
@@ -614,16 +638,19 @@ export type PaymentDueScalarWhereInput = {
   paymentId?: Prisma.StringFilter<'PaymentDue'> | string;
   dueId?: Prisma.StringFilter<'PaymentDue'> | string;
   amount?: Prisma.IntFilter<'PaymentDue'> | number;
+  status?: Prisma.StringFilter<'PaymentDue'> | string;
 };
 
 export type PaymentDueCreateWithoutPaymentInput = {
   amount: number;
+  status: string;
   due: Prisma.DueCreateNestedOneWithoutPaymentDuesInput;
 };
 
 export type PaymentDueUncheckedCreateWithoutPaymentInput = {
   dueId: string;
   amount: number;
+  status: string;
 };
 
 export type PaymentDueCreateOrConnectWithoutPaymentInput = {
@@ -672,41 +699,49 @@ export type PaymentDueUpdateManyWithWhereWithoutPaymentInput = {
 export type PaymentDueCreateManyDueInput = {
   paymentId: string;
   amount: number;
+  status: string;
 };
 
 export type PaymentDueUpdateWithoutDueInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   payment?: Prisma.PaymentUpdateOneRequiredWithoutPaymentDuesNestedInput;
 };
 
 export type PaymentDueUncheckedUpdateWithoutDueInput = {
   paymentId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type PaymentDueUncheckedUpdateManyWithoutDueInput = {
   paymentId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type PaymentDueCreateManyPaymentInput = {
   dueId: string;
   amount: number;
+  status: string;
 };
 
 export type PaymentDueUpdateWithoutPaymentInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   due?: Prisma.DueUpdateOneRequiredWithoutPaymentDuesNestedInput;
 };
 
 export type PaymentDueUncheckedUpdateWithoutPaymentInput = {
   dueId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type PaymentDueUncheckedUpdateManyWithoutPaymentInput = {
   dueId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type PaymentDueSelect<
@@ -717,6 +752,7 @@ export type PaymentDueSelect<
     paymentId?: boolean;
     dueId?: boolean;
     amount?: boolean;
+    status?: boolean;
     payment?: boolean | Prisma.PaymentDefaultArgs<ExtArgs>;
     due?: boolean | Prisma.DueDefaultArgs<ExtArgs>;
   },
@@ -731,6 +767,7 @@ export type PaymentDueSelectCreateManyAndReturn<
     paymentId?: boolean;
     dueId?: boolean;
     amount?: boolean;
+    status?: boolean;
     payment?: boolean | Prisma.PaymentDefaultArgs<ExtArgs>;
     due?: boolean | Prisma.DueDefaultArgs<ExtArgs>;
   },
@@ -745,6 +782,7 @@ export type PaymentDueSelectUpdateManyAndReturn<
     paymentId?: boolean;
     dueId?: boolean;
     amount?: boolean;
+    status?: boolean;
     payment?: boolean | Prisma.PaymentDefaultArgs<ExtArgs>;
     due?: boolean | Prisma.DueDefaultArgs<ExtArgs>;
   },
@@ -755,13 +793,14 @@ export type PaymentDueSelectScalar = {
   paymentId?: boolean;
   dueId?: boolean;
   amount?: boolean;
+  status?: boolean;
 };
 
 export type PaymentDueOmit<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
-  'paymentId' | 'dueId' | 'amount',
+  'paymentId' | 'dueId' | 'amount' | 'status',
   ExtArgs['result']['paymentDue']
 >;
 export type PaymentDueInclude<
@@ -800,6 +839,7 @@ export type $PaymentDuePayload<
       paymentId: string;
       dueId: string;
       amount: number;
+      status: string;
     },
     ExtArgs['result']['paymentDue']
   >;
@@ -1423,6 +1463,7 @@ export interface PaymentDueFieldRefs {
   readonly paymentId: Prisma.FieldRef<'PaymentDue', 'String'>;
   readonly dueId: Prisma.FieldRef<'PaymentDue', 'String'>;
   readonly amount: Prisma.FieldRef<'PaymentDue', 'Int'>;
+  readonly status: Prisma.FieldRef<'PaymentDue', 'String'>;
 }
 
 // Custom InputTypes

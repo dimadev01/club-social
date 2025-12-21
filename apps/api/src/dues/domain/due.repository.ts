@@ -3,7 +3,6 @@ import type {
   PaginatedResponse,
 } from '@club-social/shared/types';
 
-import { PaymentDueEntity } from '@/payments/domain/entities/payment-due.entity';
 import {
   ReadableRepository,
   WriteableRepository,
@@ -21,6 +20,5 @@ export interface DueRepository
   findPaginated(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<DuePaginatedModel>>;
-  findPaymentDuesByDueId(dueId: UniqueId): Promise<PaymentDueEntity[]>;
   findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
 }

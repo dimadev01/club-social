@@ -2,7 +2,6 @@ import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
-import { RecalculateDueService } from '@/dues/application/recalculate-due/recalculate-due.service';
 import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
@@ -32,7 +31,6 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
     private readonly eventPublisher: DomainEventPublisher,
-    private readonly recalculateDueService: RecalculateDueService,
   ) {
     super(logger);
   }
@@ -64,15 +62,22 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
 
     const dues = await this.dueRepository.findManyByIds(affectedDueIds);
 
-    const recalculateDuesResult = await ResultUtils.combineAsync(
-      dues.map((due) => this.recalculateDueService.execute(due.id)),
+    const voidPaymentResults = ResultUtils.combine(
+      dues.map((due) => due.voidPayment(payment.id, params.voidedBy)),
     );
 
-    if (recalculateDuesResult.isErr()) {
-      return err(recalculateDuesResult.error);
+    if (voidPaymentResults.isErr()) {
+      return err(voidPaymentResults.error);
     }
 
+    await ResultUtils.combineAsync(
+      dues.map((due) =>
+        this.dueRepository.save(due).then((saved) => ok(saved)),
+      ),
+    );
+
     this.eventPublisher.dispatch(payment);
+    dues.forEach((due) => this.eventPublisher.dispatch(due));
 
     return ok(payment);
   }

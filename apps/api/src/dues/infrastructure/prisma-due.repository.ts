@@ -29,6 +29,7 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findByMemberId(memberId: UniqueId): Promise<DueEntity[]> {
     const dues = await this.prismaService.due.findMany({
+      include: { paymentDues: true },
       where: {
         deletedAt: null,
         memberId: memberId.value,
@@ -40,6 +41,7 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findManyByIds(ids: UniqueId[]): Promise<DueEntity[]> {
     const dues = await this.prismaService.due.findMany({
+      include: { paymentDues: true },
       where: {
         deletedAt: null,
         id: { in: ids.map((id) => id.value) },
@@ -51,6 +53,7 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findOneById(id: UniqueId): Promise<DueEntity | null> {
     const due = await this.prismaService.due.findUnique({
+      include: { paymentDues: true },
       where: { deletedAt: null, id: id.value },
     });
 
@@ -63,6 +66,7 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findOneByIdOrThrow(id: UniqueId): Promise<DueEntity> {
     const due = await this.prismaService.due.findUniqueOrThrow({
+      include: { paymentDues: true },
       where: { deletedAt: null, id: id.value },
     });
 
@@ -147,6 +151,7 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]> {
     const dues = await this.prismaService.due.findMany({
+      include: { paymentDues: true },
       where: {
         deletedAt: null,
         memberId: memberId.value,
@@ -161,13 +166,26 @@ export class PrismaDueRepository implements DueRepository {
 
   public async save(entity: DueEntity): Promise<DueEntity> {
     const data = this.mapper.due.toPersistence(entity);
+    const { member: _member, paymentDues, ...dueData } = data;
 
-    const due = await this.prismaService.due.upsert({
-      create: data,
-      update: data,
+    await this.prismaService.due.upsert({
+      create: dueData,
+      update: {
+        ...dueData,
+        paymentDues: {
+          createMany: {
+            data: (paymentDues ?? []).map((pd) => ({
+              amount: pd.amount,
+              paymentId: pd.paymentId,
+              status: pd.status,
+            })),
+            skipDuplicates: true,
+          },
+        },
+      },
       where: { id: entity.id.value },
     });
 
-    return this.mapper.due.toDomain(due);
+    return entity;
   }
 }

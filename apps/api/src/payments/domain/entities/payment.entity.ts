@@ -4,26 +4,21 @@ import type { BaseEntityProps } from '@/shared/domain/entity';
 
 import { Entity } from '@/shared/domain/entity';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
-import { err, ok, Result, ResultUtils } from '@/shared/domain/result';
+import { err, ok, Result } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentCreatedEvent } from '../events/payment-created.event';
 import { PaymentUpdatedEvent } from '../events/payment-updated.event';
-import {
-  CreatePaymentProps,
-  UpdatePaymentProps,
-  VoidPaymentProps,
-} from '../payment.interface';
-import { PaymentDueEntity } from './payment-due.entity';
+import { CreatePaymentProps, VoidPaymentProps } from '../payment.interface';
 
 interface PaymentProps {
   amount: Amount;
   createdBy: string;
   date: DateOnly;
+  dueIds: UniqueId[];
   notes: null | string;
-  paymentDues: PaymentDueEntity[];
   receiptNumber: null | string;
   status: PaymentStatus;
   voidedAt: Date | null;
@@ -33,7 +28,7 @@ interface PaymentProps {
 
 export class PaymentEntity extends Entity<PaymentEntity> {
   public get affectedDueIds(): UniqueId[] {
-    return this._paymentDues.map((pd) => pd.dueId);
+    return [...this._dueIds];
   }
 
   public get amount(): Amount {
@@ -44,12 +39,12 @@ export class PaymentEntity extends Entity<PaymentEntity> {
     return this._date;
   }
 
-  public get notes(): null | string {
-    return this._notes;
+  public get dueIds(): UniqueId[] {
+    return [...this._dueIds];
   }
 
-  public get paymentDues(): PaymentDueEntity[] {
-    return [...this._paymentDues];
+  public get notes(): null | string {
+    return this._notes;
   }
 
   public get receiptNumber(): null | string {
@@ -74,8 +69,8 @@ export class PaymentEntity extends Entity<PaymentEntity> {
 
   private _amount: Amount;
   private _date: DateOnly;
+  private _dueIds: UniqueId[];
   private _notes: null | string;
-  private _paymentDues: PaymentDueEntity[];
   private _receiptNumber: null | string;
   private _status: PaymentStatus;
   private _voidedAt: Date | null;
@@ -87,8 +82,8 @@ export class PaymentEntity extends Entity<PaymentEntity> {
 
     this._amount = props.amount;
     this._date = props.date;
+    this._dueIds = props.dueIds;
     this._notes = props.notes;
-    this._paymentDues = props.paymentDues;
     this._receiptNumber = props.receiptNumber;
     this._status = props.status;
     this._voidedAt = props.voidedAt;
@@ -97,58 +92,18 @@ export class PaymentEntity extends Entity<PaymentEntity> {
   }
 
   public static create(props: CreatePaymentProps): Result<PaymentEntity> {
-    if (props.paymentDues.length === 0) {
-      return err(
-        new ApplicationError('El pago debe tener al menos una cuota asociada'),
-      );
-    }
-
-    const paymentId = UniqueId.generate();
-
-    const paymentDuesResults = ResultUtils.combine(
-      props.paymentDues.map((pd) =>
-        PaymentDueEntity.create({
-          amount: pd.amount,
-          dueId: pd.dueId,
-          paymentId: paymentId,
-        }),
-      ),
-    );
-
-    if (paymentDuesResults.isErr()) {
-      return err(paymentDuesResults.error);
-    }
-
-    const paymentDues = paymentDuesResults.value;
-
-    const totalAmount = paymentDues.reduce(
-      (sum, pd) => sum.add(pd.amount),
-      Amount.raw({ cents: 0 }),
-    );
-
-    const payment = new PaymentEntity(
-      {
-        amount: totalAmount,
-        createdBy: props.createdBy,
-        date: props.date,
-        notes: props.notes,
-        paymentDues: paymentDues,
-        receiptNumber: props.receiptNumber,
-        status: PaymentStatus.PAID,
-        voidedAt: null,
-        voidedBy: null,
-        voidReason: null,
-      },
-      {
-        createdAt: new Date(),
-        createdBy: props.createdBy,
-        deletedAt: null,
-        deletedBy: null,
-        id: paymentId,
-        updatedAt: new Date(),
-        updatedBy: props.createdBy,
-      },
-    );
+    const payment = new PaymentEntity({
+      amount: Amount.raw({ cents: 0 }),
+      createdBy: props.createdBy,
+      date: props.date,
+      dueIds: props.dueIds,
+      notes: props.notes,
+      receiptNumber: props.receiptNumber,
+      status: PaymentStatus.PAID,
+      voidedAt: null,
+      voidedBy: null,
+      voidReason: null,
+    });
 
     payment.addEvent(new PaymentCreatedEvent(payment));
 
@@ -162,55 +117,16 @@ export class PaymentEntity extends Entity<PaymentEntity> {
     return new PaymentEntity(props, base);
   }
 
+  public addToTotalAmount(amount: Amount): void {
+    this._amount = this._amount.add(amount);
+  }
+
   public isPaid(): boolean {
     return this._status === PaymentStatus.PAID;
   }
 
   public isVoided(): boolean {
     return this._status === PaymentStatus.VOIDED;
-  }
-
-  public update(props: UpdatePaymentProps): Result<void> {
-    if (this.isVoided()) {
-      return err(new ApplicationError('No se puede editar un pago anulado'));
-    }
-
-    if (props.paymentDues.length === 0) {
-      return err(
-        new ApplicationError('El pago debe tener al menos una cuota asociada'),
-      );
-    }
-
-    const paymentDues: PaymentDueEntity[] = [];
-
-    for (const pd of props.paymentDues) {
-      const result = PaymentDueEntity.create({
-        amount: pd.amount,
-        dueId: pd.dueId,
-        paymentId: this.id,
-      });
-
-      if (result.isErr()) {
-        return err(result.error);
-      }
-
-      paymentDues.push(result.value);
-    }
-
-    const totalAmount = paymentDues.reduce(
-      (sum, pd) => sum.add(pd.amount),
-      Amount.raw({ cents: 0 }),
-    );
-
-    this._date = props.date;
-    this._notes = props.notes;
-    this._paymentDues = paymentDues;
-    this._amount = totalAmount;
-    this.markAsUpdated(props.updatedBy);
-
-    this.addEvent(new PaymentUpdatedEvent(this));
-
-    return ok();
   }
 
   public void(props: VoidPaymentProps): Result<void> {

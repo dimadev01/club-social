@@ -47,6 +47,9 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
   }
 
   private async createUser(user: UserEntity): Promise<void> {
+    const headers = this.clsService.get('headers');
+    const hasCookies = headers.has('cookie');
+
     await this.betterAuth.auth.api.createUser({
       body: {
         data: {
@@ -65,11 +68,14 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
         password: UniqueId.generate().value,
         role: user.role,
       },
-      headers: this.clsService.get('headers'),
+      headers: hasCookies ? headers : undefined,
     });
   }
 
   private async updateUser(user: UserEntity): Promise<void> {
+    const headers = this.clsService.get('headers');
+    const hasCookies = headers.has('cookie');
+
     await this.betterAuth.auth.api.adminUpdateUser({
       body: {
         data: {
@@ -82,7 +88,7 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
         },
         userId: user.id.value,
       },
-      headers: this.clsService.get('headers'),
+      headers: hasCookies ? headers : undefined,
     });
   }
 }

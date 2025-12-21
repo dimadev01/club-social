@@ -9,6 +9,10 @@ import {
   Session,
 } from '@nestjs/common';
 
+import {
+  DUE_REPOSITORY_PROVIDER,
+  type DueRepository,
+} from '@/dues/domain/due.repository';
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 import {
   APP_LOGGER_PROVIDER,
@@ -41,6 +45,8 @@ export class PaymentsController extends BaseController {
     private readonly voidPaymentUseCase: VoidPaymentUseCase,
     @Inject(PAYMENT_REPOSITORY_PROVIDER)
     private readonly paymentRepository: PaymentRepository,
+    @Inject(DUE_REPOSITORY_PROVIDER)
+    private readonly dueRepository: DueRepository,
   ) {
     super(logger);
   }
@@ -124,9 +130,9 @@ export class PaymentsController extends BaseController {
       date: payment.date.value,
       id: payment.id.value,
       notes: payment.notes,
-      paymentDues: payment.paymentDues.map((pd) => ({
-        amount: pd.amount.toCents(),
-        dueId: pd.dueId.value,
+      paymentDues: payment.affectedDueIds.map((dueId) => ({
+        amount: 0,
+        dueId: dueId.value,
         paymentId: payment.id.value,
       })),
       status: payment.status,

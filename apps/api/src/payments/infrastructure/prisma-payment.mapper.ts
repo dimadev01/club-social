@@ -1,36 +1,29 @@
 import { PaymentStatus } from '@club-social/shared/payments';
 import { Injectable } from '@nestjs/common';
 
+import { PaymentModel } from '@/infrastructure/database/prisma/generated/models';
 import { Mapper } from '@/infrastructure/repositories/mapper';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
-import { PrismaPaymentDueMapper } from './prisma-payment-due.mapper';
 import { PaymentModelWithRelations } from './prisma-payment.types';
 
 @Injectable()
-export class PrismaPaymentMapper extends Mapper<
-  PaymentEntity,
-  PaymentModelWithRelations
-> {
-  public constructor(
-    private readonly paymentDueMapper: PrismaPaymentDueMapper,
-  ) {
-    super();
-  }
-
+export class PrismaPaymentMapper extends Mapper<PaymentEntity, PaymentModel> {
   public toDomain(payment: PaymentModelWithRelations): PaymentEntity {
+    const dueIds = (payment.paymentDues ?? []).map((pd) =>
+      UniqueId.raw({ value: pd.dueId }),
+    );
+
     return PaymentEntity.fromPersistence(
       {
         amount: Amount.raw({ cents: payment.amount }),
         createdBy: payment.createdBy,
         date: DateOnly.raw({ value: payment.date }),
+        dueIds: dueIds,
         notes: payment.notes,
-        paymentDues: (payment.paymentDues ?? []).map((pd) =>
-          this.paymentDueMapper.toDomain(pd),
-        ),
         receiptNumber: payment.receiptNumber,
         status: payment.status as PaymentStatus,
         voidedAt: payment.voidedAt,
@@ -59,9 +52,6 @@ export class PrismaPaymentMapper extends Mapper<
       deletedBy: payment.deletedBy,
       id: payment.id.value,
       notes: payment.notes,
-      paymentDues: payment.paymentDues.map((pd) =>
-        this.paymentDueMapper.toPersistence(pd),
-      ),
       receiptNumber: payment.receiptNumber,
       status: payment.status,
       updatedAt: payment.updatedAt,

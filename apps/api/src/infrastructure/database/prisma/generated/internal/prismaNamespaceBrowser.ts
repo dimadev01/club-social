@@ -223,6 +223,7 @@ export const PaymentDueScalarFieldEnum = {
   paymentId: 'paymentId',
   dueId: 'dueId',
   amount: 'amount',
+  status: 'status',
 } as const;
 
 export type PaymentDueScalarFieldEnum =
