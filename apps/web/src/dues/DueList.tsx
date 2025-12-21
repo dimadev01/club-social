@@ -210,7 +210,12 @@ export function DueList() {
               <Space.Compact size="small">
                 <Tooltip title="Filtrar por este socio">
                   <Link
-                    to={`${appRoutes.dues.list}?filters=memberId:${record.memberId}`}
+                    to={{
+                      pathname: appRoutes.dues.list,
+                      search: new URLSearchParams({
+                        filters: `memberId:${record.memberId}`,
+                      }).toString(),
+                    }}
                   >
                     <Button
                       disabled={getFilterValue('memberId')?.includes(

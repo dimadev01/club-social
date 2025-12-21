@@ -180,7 +180,12 @@ export function PaymentList() {
               <Space.Compact size="small">
                 <Tooltip title="Filtrar por este socio">
                   <Link
-                    to={`${appRoutes.payments.list}?filters=memberId:${record.memberId}`}
+                    to={{
+                      pathname: appRoutes.payments.list,
+                      search: new URLSearchParams({
+                        filters: `memberId:${record.memberId}`,
+                      }).toString(),
+                    }}
                   >
                     <Button
                       disabled={getFilterValue('memberId')?.includes(
