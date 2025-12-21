@@ -1,5 +1,5 @@
 import { DueCategory, DueStatus } from '@club-social/shared/dues';
-import { PaymentDueStatus } from '@club-social/shared/payments';
+import { PaymentDueStatus } from '@club-social/shared/payment-due';
 import { Injectable } from '@nestjs/common';
 
 import { Mapper } from '@/infrastructure/repositories/mapper';

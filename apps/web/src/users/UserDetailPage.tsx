@@ -7,7 +7,6 @@ import {
   UserStatus,
   UserStatusLabel,
 } from '@club-social/shared/users';
-import { useQueryClient } from '@tanstack/react-query';
 import { App, Button, Form, Input, Select } from 'antd';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -36,7 +35,6 @@ export function UserDetailPage() {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const [form] = Form.useForm<FormSchema>();
   const { setFieldsValue } = form;
@@ -50,9 +48,6 @@ export function UserDetailPage() {
   const createUserMutation = useMutation<ParamId, Error, ICreateUserDto>({
     mutationFn: (body) => $fetch('users', { body }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.users.paginated._def,
-      });
       message.success('Usuario creado correctamente');
       navigate(`${APP_ROUTES.USERS_DETAIL.replace(':id', data.id)}`, {
         replace: true,
@@ -63,10 +58,6 @@ export function UserDetailPage() {
   const updateUserMutation = useMutation<unknown, Error, IUpdateUserDto>({
     mutationFn: (body) => $fetch(`users/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKeys.users.detail(id));
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.users.paginated._def,
-      });
       message.success('Usuario actualizado correctamente');
       navigate(-1);
     },

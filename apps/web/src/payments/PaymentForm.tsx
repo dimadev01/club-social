@@ -5,6 +5,7 @@ import {
   DueCategoryLabel,
   type IPendingDueDto,
 } from '@club-social/shared/dues';
+import { useQueries } from '@tanstack/react-query';
 import {
   DatePicker,
   Descriptions,
@@ -18,7 +19,10 @@ import dayjs from 'dayjs';
 import { difference, differenceBy, orderBy } from 'es-toolkit/array';
 import { flow } from 'es-toolkit/function';
 import { useCallback, useState } from 'react';
+import { Link } from 'react-router';
 
+import { appRoutes } from '@/app/app.enum';
+import { getPaymentDuesByDueQueryOptions } from '@/dues/usePaymentDuesByDue';
 import { usePendingDues } from '@/dues/usePendingDues';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
@@ -27,6 +31,7 @@ import { NumberFormat } from '@/shared/lib/number-format';
 import { Card } from '@/ui/Card';
 import { Form } from '@/ui/Form';
 import { Table } from '@/ui/Table/Table';
+import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 
 export type FormInitialValues = Partial<PaymentFormData>;
 
@@ -53,11 +58,11 @@ interface PaymentFormProps {
 const calculateFinalPaymentDues = flow(
   (
     currentPaymentDues: FormPaymentDueData[],
-    newPaymentDuesToAdd: FormPaymentDueData[],
+    paymentDuesToAdd: FormPaymentDueData[],
     paymentDuesToRemove: FormPaymentDueData[],
   ) =>
     differenceBy(
-      [...currentPaymentDues, ...newPaymentDuesToAdd],
+      [...currentPaymentDues, ...paymentDuesToAdd],
       paymentDuesToRemove,
       (pd) => pd.dueId,
     ),
@@ -70,24 +75,57 @@ export function PaymentForm({
   onSubmit,
 }: PaymentFormProps) {
   const { md } = Grid.useBreakpoint();
+  const [form] = Form.useForm<PaymentFormData>();
+  const { getFieldValue, setFieldValue } = form;
+  const formMemberId = Form.useWatch('memberId', form);
+
+  const { data: member, isLoading: isMemberLoading } = useMemberById(
+    initialValues?.memberId,
+  );
+  const { data: pendingDues, isLoading: isPendingDuesLoading } =
+    usePendingDues(formMemberId);
+  const { data: paymentDues, isLoading: isPaymentDuesLoading } = useQueries({
+    combine: (results) => ({
+      data: results
+        .filter((result) => !!result.data)
+        .flatMap((result) => result.data),
+      isFetching: results.some((result) => result.isFetching),
+      isLoading: results.some((result) => result.isLoading),
+    }),
+    queries: (pendingDues ?? []).map((due) =>
+      getPaymentDuesByDueQueryOptions(due.id),
+    ),
+  });
 
   const [selectedDueIds, setSelectedDueIds] = useState<string[]>([]);
 
-  const [form] = Form.useForm<PaymentFormData>();
-  const { getFieldValue, setFieldValue } = form;
+  const getPaidAmountForDue = useCallback(
+    (dueId: string) => {
+      const payments = paymentDues.filter((p) => p.dueId === dueId);
 
-  const formMemberId = Form.useWatch('memberId', form);
+      return payments.reduce((acc, curr) => acc + curr.amount, 0);
+    },
+    [paymentDues],
+  );
 
-  const memberQuery = useMemberById(initialValues?.memberId);
+  const getRemainingAmountForDue = useCallback(
+    (dueId: string) => {
+      const due = pendingDues?.find((d) => d.id === dueId);
 
-  const pendingDuesQuery = usePendingDues(formMemberId);
+      if (!due) {
+        return 0;
+      }
+
+      return due.amount - getPaidAmountForDue(dueId);
+    },
+    [pendingDues, getPaidAmountForDue],
+  );
 
   const handleRowSelectionChange = useCallback(
     (newSelectedRowKeys: React.Key[]) => {
       const currentPaymentDues: FormPaymentDueData[] =
         getFieldValue('paymentDues');
       const currentSelectedRowKeys = currentPaymentDues.map((p) => p.dueId);
-      const pendingDues = pendingDuesQuery.data ?? [];
 
       // Find newly selected dues (not in current paymentDues)
       const newSelections = difference(
@@ -106,26 +144,18 @@ export function PaymentForm({
 
       // Add newly selected dues with full amount
       newSelections.forEach((dueId) => {
-        const due = pendingDues.find((d) => d.id === dueId);
-
-        if (due) {
-          newPaymentDuesToAdd.push({
-            amount: NumberFormat.fromCents(due.amount),
-            dueId,
-          });
-        }
+        newPaymentDuesToAdd.push({
+          amount: NumberFormat.fromCents(getRemainingAmountForDue(dueId)),
+          dueId,
+        });
       });
 
       // Remove deselected dues
       deselected.forEach((dueId) => {
-        const due = pendingDues.find((d) => d.id === dueId);
-
-        if (due) {
-          paymentDuesToRemove.push({
-            amount: NumberFormat.fromCents(due.amount),
-            dueId,
-          });
-        }
+        paymentDuesToRemove.push({
+          amount: NumberFormat.fromCents(getRemainingAmountForDue(dueId)),
+          dueId,
+        });
       });
 
       const finalFormPaymentDues = calculateFinalPaymentDues(
@@ -137,22 +167,25 @@ export function PaymentForm({
       setFieldValue('paymentDues', finalFormPaymentDues);
       setSelectedDueIds(newSelectedRowKeys as string[]);
     },
-    [pendingDuesQuery.data, getFieldValue, setFieldValue],
+    [getFieldValue, setFieldValue, getRemainingAmountForDue],
   );
 
-  const additionalOptions: IMemberSearchResultDto[] = memberQuery.data
+  const additionalOptions: IMemberSearchResultDto[] = member
     ? [
         {
-          id: memberQuery.data.id,
-          name: memberQuery.data.name,
-          status: memberQuery.data.status,
+          id: member.id,
+          name: member.name,
+          status: member.status,
         },
       ]
     : [];
 
+  const isLoading =
+    isMemberLoading || isPendingDuesLoading || isPaymentDuesLoading;
+
   return (
     <Form<PaymentFormData>
-      disabled={disabled}
+      disabled={disabled || isLoading}
       form={form}
       id="form"
       initialValues={initialValues}
@@ -179,7 +212,7 @@ export function PaymentForm({
       >
         <MemberSearchSelect
           additionalOptions={additionalOptions}
-          loading={memberQuery.isLoading}
+          loading={isMemberLoading}
           placeholder="Buscar y seleccionar socio..."
         />
       </Form.Item>
@@ -192,16 +225,19 @@ export function PaymentForm({
         <Input.TextArea placeholder="Notas adicionales..." rows={3} />
       </Form.Item>
 
-      {pendingDuesQuery.data && (
+      {pendingDues && (
         <>
           <Table
             className="mb-6"
             columns={[
               {
                 dataIndex: 'date',
-                render: (date: string) => DateFormat.date(date),
+                render: (date: string, record: IPendingDueDto) => (
+                  <Link to={appRoutes.dues.view(record.id)}>
+                    {DateFormat.date(date)}
+                  </Link>
+                ),
                 title: 'Fecha',
-                width: 150,
               },
               {
                 align: 'center',
@@ -214,16 +250,37 @@ export function PaymentForm({
                   return DueCategoryLabel[category];
                 },
                 title: 'Categoría',
-                width: 150,
+                width: TABLE_COLUMN_WIDTHS.CATEGORY,
               },
               {
                 align: 'right',
                 dataIndex: 'amount',
                 render: (amount: number) => NumberFormat.formatCents(amount),
                 title: 'Monto',
+                width: TABLE_COLUMN_WIDTHS.AMOUNT,
+              },
+              {
+                align: 'right',
+                render: (_, record: IPendingDueDto) => {
+                  return NumberFormat.formatCents(
+                    getPaidAmountForDue(record.id),
+                  );
+                },
+                title: 'Pagado',
+                width: TABLE_COLUMN_WIDTHS.AMOUNT,
+              },
+              {
+                align: 'right',
+                render: (_, record: IPendingDueDto) => {
+                  return NumberFormat.formatCents(
+                    getRemainingAmountForDue(record.id),
+                  );
+                },
+                title: 'Restante',
+                width: TABLE_COLUMN_WIDTHS.AMOUNT,
               },
             ]}
-            dataSource={pendingDuesQuery.data}
+            dataSource={pendingDues}
             pagination={false}
             rowSelection={{
               onChange: handleRowSelectionChange,
@@ -249,15 +306,13 @@ export function PaymentForm({
                       'paymentDues',
                       field.name,
                     ]);
-                    const due = pendingDuesQuery.data?.find(
+                    const due = pendingDues?.find(
                       (d) => d.id === paymentDue?.dueId,
                     );
 
                     if (!due) {
                       return null;
                     }
-
-                    const maxAmount = NumberFormat.fromCents(due.amount);
 
                     return (
                       <Card.Grid
@@ -281,7 +336,9 @@ export function PaymentForm({
                               {DueCategoryLabel[due.category]}
                             </Descriptions.Item>
                             <Descriptions.Item label="Monto a pagar">
-                              {NumberFormat.formatCents(due.amount)}
+                              {NumberFormat.formatCents(
+                                getRemainingAmountForDue(due.id),
+                              )}
                             </Descriptions.Item>
                           </Descriptions>
 
@@ -290,8 +347,9 @@ export function PaymentForm({
                             name={[field.name, 'amount']}
                             rules={[
                               {
-                                message: 'Ingrese el monto a pagar',
-                                required: true,
+                                message: 'El monto debe ser mayor a 1',
+                                min: 1,
+                                type: 'number',
                               },
                             ]}
                           >
@@ -300,8 +358,10 @@ export function PaymentForm({
                               formatter={(value) =>
                                 NumberFormat.format(Number(value))
                               }
-                              max={maxAmount}
-                              min={1}
+                              max={NumberFormat.fromCents(
+                                getRemainingAmountForDue(due.id),
+                              )}
+                              min={0}
                               parser={(value) =>
                                 NumberFormat.parse(String(value))
                               }

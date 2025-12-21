@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
+import { PaymentDueDetailDto } from '@/payment-dues/presentation/dto/payment-due-detail.dto';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -143,6 +144,22 @@ export class DuesController extends BaseController {
       date: due.date.value,
       id: due.id.value,
       status: due.status,
+    }));
+  }
+
+  @Get(':id/payments')
+  public async getPaymentDues(
+    @Param() request: ParamIdDto,
+  ): Promise<PaymentDueDetailDto[]> {
+    const paymentDues = await this.dueRepository.findPaymentDues(
+      UniqueId.raw({ value: request.id }),
+    );
+
+    return paymentDues.map((paymentDue) => ({
+      amount: paymentDue.amount.toCents(),
+      dueId: paymentDue.dueId.value,
+      paymentId: paymentDue.paymentId.value,
+      status: paymentDue.status,
     }));
   }
 

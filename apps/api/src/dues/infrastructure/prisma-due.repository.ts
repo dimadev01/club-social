@@ -51,6 +51,22 @@ export class PrismaDueRepository implements DueRepository {
     return dues.map((due) => this.mapper.due.toDomain(due));
   }
 
+  public async findManyByIdsModels(ids: UniqueId[]): Promise<DueDetailModel[]> {
+    const dues = await this.prismaService.due.findMany({
+      include: { member: { include: { user: true } }, paymentDues: true },
+      where: {
+        deletedAt: null,
+        id: { in: ids.map((id) => id.value) },
+      },
+    });
+
+    return dues.map((due) => ({
+      due: this.mapper.due.toDomain(due),
+      member: this.mapper.member.toDomain(due.member),
+      user: this.mapper.user.toDomain(due.member.user),
+    }));
+  }
+
   public async findOneById(id: UniqueId): Promise<DueEntity | null> {
     const due = await this.prismaService.due.findUnique({
       include: { paymentDues: true },
@@ -75,7 +91,7 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findOneModel(id: UniqueId): Promise<DueDetailModel | null> {
     const due = await this.prismaService.due.findUnique({
-      include: { member: { include: { user: true } } },
+      include: { member: { include: { user: true } }, paymentDues: true },
       where: { deletedAt: null, id: id.value },
     });
 
@@ -156,9 +172,7 @@ export class PrismaDueRepository implements DueRepository {
     };
   }
 
-  public async findPaymentDuesByDueId(
-    dueId: UniqueId,
-  ): Promise<PaymentDueEntity[]> {
+  public async findPaymentDues(dueId: UniqueId): Promise<PaymentDueEntity[]> {
     const paymentDues = await this.prismaService.paymentDue.findMany({
       where: { dueId: dueId.value },
     });

@@ -51,9 +51,9 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       UniqueId.raw({ value: pd.dueId }),
     );
 
-    const dues = await this.dueRepository.findManyByIds(dueIds);
+    const duesModels = await this.dueRepository.findManyByIdsModels(dueIds);
 
-    if (dues.length !== dueIds.length) {
+    if (duesModels.length !== dueIds.length) {
       return err(new ApplicationError('Una o más cuotas no existen'));
     }
 
@@ -79,7 +79,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     const payment = paymentResult.value;
 
     const addPaymentResults = ResultUtils.combine(
-      dues.map((due) => {
+      duesModels.map(({ due }) => {
         const paymentDueForThisDue = params.paymentDues.find(
           (pd) => pd.dueId === due.id.value,
         );
@@ -103,10 +103,12 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     }
 
     await this.paymentRepository.save(payment);
-    await Promise.all(dues.map((due) => this.dueRepository.save(due)));
+    await Promise.all(
+      duesModels.map(({ due }) => this.dueRepository.save(due)),
+    );
 
     this.eventPublisher.dispatch(payment);
-    dues.forEach((due) => this.eventPublisher.dispatch(due));
+    duesModels.forEach(({ due }) => this.eventPublisher.dispatch(due));
 
     return ok(payment);
   }

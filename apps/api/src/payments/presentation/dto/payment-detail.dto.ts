@@ -1,6 +1,7 @@
+import { IPaymentDueDetailDto } from '@club-social/shared/payment-due';
 import {
   IPaymentDetailDto,
-  IPaymentDueDetailDto,
+  PaymentDueStatus,
   PaymentStatus,
 } from '@club-social/shared/payments';
 import { UserStatus } from '@club-social/shared/users';
@@ -23,4 +24,5 @@ export class PaymentDetailDueDto implements IPaymentDueDetailDto {
   public amount: number;
   public dueId: string;
   public paymentId: string;
+  public status: PaymentDueStatus;
 }

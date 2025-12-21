@@ -17,7 +17,6 @@ import {
   MemberSexLabel,
 } from '@club-social/shared/members';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   App,
   Button,
@@ -36,7 +35,6 @@ import { APP_ROUTES } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
-import { queryKeys } from '@/shared/lib/query-keys';
 import { Card } from '@/ui/Card';
 import { Form } from '@/ui/Form';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
@@ -75,19 +73,15 @@ export function MemberDetailPage() {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const [form] = Form.useForm<FormSchema>();
   const { setFieldsValue } = form;
 
-  const memberQuery = useMemberById({ memberId: id });
+  const memberQuery = useMemberById(id);
 
   const createMemberMutation = useMutation<ParamId, Error, ICreateMemberDto>({
     mutationFn: (body) => $fetch('members', { body }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.members.paginated._def,
-      });
       message.success('Socio creado correctamente');
       navigate(`${APP_ROUTES.MEMBERS_LIST}/${data.id}`, {
         replace: true,
@@ -102,10 +96,6 @@ export function MemberDetailPage() {
   >({
     mutationFn: (body) => $fetch(`members/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKeys.members.detail(id));
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.members.paginated._def,
-      });
       message.success('Socio actualizado correctamente');
       navigate(-1);
     },

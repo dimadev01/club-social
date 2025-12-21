@@ -33,6 +33,11 @@
       "types": "./src/payments/index.ts",
       "require": "./dist/payments/index.js",
       "import": "./dist/payments/index.mjs"
+    },
+    "./payment-due": {
+      "types": "./src/payment-due/index.ts",
+      "require": "./dist/payment-due/index.js",
+      "import": "./dist/payment-due/index.mjs"
     }
   },
   "scripts": {

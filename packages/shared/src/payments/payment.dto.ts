@@ -1,3 +1,5 @@
+import type { ICreatePaymentDueItemDto } from '../payment-due';
+
 import { UserStatus } from '../users';
 import { PaymentStatus } from './payment.enum';
 
@@ -5,7 +7,7 @@ export interface ICreatePaymentDto {
   date: string;
   memberId: string;
   notes: null | string;
-  paymentDues: IPaymentDueItemDto[];
+  paymentDues: ICreatePaymentDueItemDto[];
   receiptNumber: null | string;
 }
 
@@ -21,17 +23,6 @@ export interface IPaymentDetailDto {
   receiptNumber: null | string;
   status: PaymentStatus;
   userStatus: UserStatus;
-}
-
-export interface IPaymentDueDetailDto {
-  amount: number;
-  dueId: string;
-  paymentId: string;
-}
-
-export interface IPaymentDueItemDto {
-  amount: number;
-  dueId: string;
 }
 
 export interface IPaymentPaginatedDto {

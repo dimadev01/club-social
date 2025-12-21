@@ -6,6 +6,7 @@ export const queryKeys = createQueryKeyStore({
   dues: {
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
+    payments: (id?: string) => [id],
     pending: (memberId?: string) => [memberId],
   },
 

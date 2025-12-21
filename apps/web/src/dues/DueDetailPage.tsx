@@ -12,7 +12,6 @@ import {
   type IUpdateDueDto,
   type VoidDueDto,
 } from '@club-social/shared/dues';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   App,
   Button,
@@ -64,7 +63,6 @@ export function DueDetailPage() {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const [form] = Form.useForm<FormSchema>();
   const { setFieldsValue } = form;
@@ -79,23 +77,13 @@ export function DueDetailPage() {
   const createDueMutation = useMutation<ParamId, Error, CreateDueDto>({
     mutationFn: (body) => $fetch('/dues', { body }),
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKeys.dues.detail(id));
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.dues.paginated._def,
-      });
-      queryClient.invalidateQueries(
-        queryKeys.dues.pending(dueQuery.data?.memberId),
-      );
+      message.success('Cuota creada correctamente');
     },
   });
 
   const updateDueMutation = useMutation<unknown, Error, IUpdateDueDto>({
     mutationFn: (body) => $fetch(`dues/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKeys.dues.detail(id));
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.dues.paginated._def,
-      });
       message.success('Cuota actualizada correctamente');
       navigate(-1);
     },
@@ -104,10 +92,6 @@ export function DueDetailPage() {
   const voidDueMutation = useMutation<unknown, Error, VoidDueDto>({
     mutationFn: (body) => $fetch(`dues/${id}/void`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries(queryKeys.dues.detail(id));
-      queryClient.invalidateQueries(
-        queryKeys.dues.pending(dueQuery.data?.memberId),
-      );
       message.success('Cuota anulada correctamente');
       navigate(-1);
     },

@@ -1,4 +1,4 @@
-import { PaymentDueStatus } from '@club-social/shared/payments';
+import { PaymentDueStatus } from '@club-social/shared/payment-due';
 
 import { ok, Result } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';

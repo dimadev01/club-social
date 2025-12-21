@@ -1,4 +1,4 @@
-import { PaymentDueStatus } from '@club-social/shared/payments';
+import { PaymentDueStatus } from '@club-social/shared/payment-due';
 import { Injectable } from '@nestjs/common';
 
 import { PaymentDueModel } from '@/infrastructure/database/prisma/generated/models';

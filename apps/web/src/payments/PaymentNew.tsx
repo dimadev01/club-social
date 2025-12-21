@@ -1,7 +1,6 @@
 import type { ICreatePaymentDto } from '@club-social/shared/payments';
 import type { ParamId } from '@club-social/shared/types';
 
-import { useQueryClient } from '@tanstack/react-query';
 import { App, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate, useSearchParams } from 'react-router';
@@ -11,7 +10,6 @@ import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
-import { queryKeys } from '@/shared/lib/query-keys';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
@@ -23,7 +21,6 @@ export function PaymentNew() {
   const { message } = App.useApp();
   const permissions = usePermissions();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
 
   const memberIdFromUrl = searchParams.get('memberId') ?? undefined;
@@ -31,9 +28,6 @@ export function PaymentNew() {
   const createPaymentMutation = useMutation<ParamId, Error, ICreatePaymentDto>({
     mutationFn: (body) => $fetch('/payments', { body }),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.payments.paginated._def,
-      });
       message.success('Pago creado correctamente');
       navigate(APP_ROUTES.PAYMENTS, { replace: true });
     },
@@ -46,26 +40,16 @@ export function PaymentNew() {
       return;
     }
 
-    createPaymentMutation.mutate(
-      {
-        date: DateFormat.isoDate(values.date.startOf('day')),
-        memberId: values.memberId,
-        notes: values.notes,
-        paymentDues: values.paymentDues.map((pd) => ({
-          amount: NumberFormat.toCents(pd.amount),
-          dueId: pd.dueId,
-        })),
-        receiptNumber: values.receiptNumber,
-      },
-      {
-        onSuccess: () => {
-          console.log('invalidating dues pending', values.memberId);
-          queryClient.invalidateQueries(
-            queryKeys.dues.pending(values.memberId),
-          );
-        },
-      },
-    );
+    createPaymentMutation.mutate({
+      date: DateFormat.isoDate(values.date.startOf('day')),
+      memberId: values.memberId,
+      notes: values.notes,
+      paymentDues: values.paymentDues.map((pd) => ({
+        amount: NumberFormat.toCents(pd.amount),
+        dueId: pd.dueId,
+      })),
+      receiptNumber: values.receiptNumber,
+    });
   };
 
   if (!permissions.payments.create) {

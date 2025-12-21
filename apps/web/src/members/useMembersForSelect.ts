@@ -1,5 +1,3 @@
-import type { IMemberSearchResultDto } from '@club-social/shared/members';
-
 import { useQueries } from '@tanstack/react-query';
 
 import { usePermissions } from '@/users/use-permissions';
@@ -18,25 +16,13 @@ export function useMembersForSelect({
   const permissions = usePermissions();
 
   const queries = useQueries({
-    combine: (results) => {
-      const data: IMemberSearchResultDto[] = [];
-
-      for (const result of results) {
-        if (result.data) {
-          data.push({
-            id: result.data.id,
-            name: result.data.name,
-            status: result.data.status,
-          });
-        }
-      }
-
-      return {
-        data,
-        isFetching: results.some((result) => result.isFetching),
-        isLoading: results.some((result) => result.isLoading),
-      };
-    },
+    combine: (results) => ({
+      data: results
+        .filter((result) => !!result.data)
+        .map((result) => result.data),
+      isFetching: results.some((result) => result.isFetching),
+      isLoading: results.some((result) => result.isLoading),
+    }),
     queries: memberIds.map((memberId) => ({
       ...getMemberByIdQueryOptions(memberId),
       enabled: enabled && permissions.members.get && !!memberId,

@@ -3,7 +3,6 @@ import {
   PaymentStatus,
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
-import { useQueryClient } from '@tanstack/react-query';
 import { App, Button, Descriptions, Grid, Tag } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -12,7 +11,6 @@ import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
-import { queryKeys } from '@/shared/lib/query-keys';
 import { Card } from '@/ui/Card';
 import { NotFound } from '@/ui/NotFound';
 import { VoidModal } from '@/ui/VoidModal';
@@ -27,7 +25,6 @@ export function PaymentView() {
   const { id } = useParams();
   const { md } = Grid.useBreakpoint();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
 
@@ -41,10 +38,6 @@ export function PaymentView() {
     mutationFn: (body: IVoidPaymentDto) =>
       $fetch(`payments/${payment?.id}/void`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.payments.paginated._def,
-      });
-      queryClient.invalidateQueries(queryKeys.payments.detail(payment?.id));
       message.success('Pago anulado correctamente');
       navigate(-1);
     },
