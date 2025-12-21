@@ -2,7 +2,7 @@
   "name": "Club Social",
   "service": "dev-container",
   "workspaceFolder": "/workspace",
-  "dockerComposeFile": "compose.yaml",
+  "dockerComposeFile": ["./compose.yaml", "../compose.yaml"],
   "postCreateCommand": ".devcontainer/post-create.sh",
   "forwardPorts": [5173, 3000],
   "features": {

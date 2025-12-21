@@ -15,17 +15,8 @@
     ".env.example",
     ".husky",
     "tsconfig.json",
-    "config.toml"
-  ],
-  "dictionaryDefinitions": [
-    {
-      "name": "custom-dictionary",
-      "path": "./.cspell/custom-dictionary.txt",
-      "addWords": true
-    }
-  ],
-  "dictionaries": [
-    "custom-dictionary"
+    "config.toml",
+    "compose.yaml"
   ],
   "words": [],
   "ignoreWords": [
