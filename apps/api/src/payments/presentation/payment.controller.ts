@@ -4,6 +4,7 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
   Query,
   Session,
@@ -69,7 +70,7 @@ export class PaymentsController extends BaseController {
     return { id: id.value };
   }
 
-  @Post(':id/void')
+  @Patch(':id/void')
   public async void(
     @Param() request: ParamIdDto,
     @Body() body: VoidPaymentRequestDto,

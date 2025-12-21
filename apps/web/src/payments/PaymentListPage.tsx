@@ -125,7 +125,7 @@ export function PaymentListPage() {
             ),
             filteredValue: getFilterValue('createdAt'),
             render: (createdAt: string, record) => (
-              <Link to={`${APP_ROUTES.DUE_LIST}/${record.id}`}>
+              <Link to={APP_ROUTES.PAYMENT_DETAIL.replace(':id', record.id)}>
                 {DateFormat.date(createdAt)}
               </Link>
             ),

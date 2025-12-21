@@ -168,22 +168,35 @@ export class PrismaDueRepository implements DueRepository {
     const data = this.mapper.due.toPersistence(entity);
     const { member: _member, paymentDues, ...dueData } = data;
 
-    await this.prismaService.due.upsert({
-      create: dueData,
-      update: {
-        ...dueData,
-        paymentDues: {
-          createMany: {
-            data: (paymentDues ?? []).map((pd) => ({
+    await this.prismaService.$transaction(async (tx) => {
+      await tx.due.upsert({
+        create: dueData,
+        update: dueData,
+        where: { id: entity.id.value },
+      });
+
+      await Promise.all(
+        (paymentDues ?? []).map((pd) =>
+          tx.paymentDue.upsert({
+            create: {
               amount: pd.amount,
+              dueId: entity.id.value,
               paymentId: pd.paymentId,
               status: pd.status,
-            })),
-            skipDuplicates: true,
-          },
-        },
-      },
-      where: { id: entity.id.value },
+            },
+            update: {
+              amount: pd.amount,
+              status: pd.status,
+            },
+            where: {
+              paymentId_dueId: {
+                dueId: entity.id.value,
+                paymentId: pd.paymentId,
+              },
+            },
+          }),
+        ),
+      );
     });
 
     return entity;

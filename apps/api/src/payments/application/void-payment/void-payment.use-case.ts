@@ -58,8 +58,6 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
       return err(voidResult.error);
     }
 
-    await this.paymentRepository.save(payment);
-
     const dues = await this.dueRepository.findManyByIds(affectedDueIds);
 
     const voidPaymentResults = ResultUtils.combine(
@@ -70,11 +68,8 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
       return err(voidPaymentResults.error);
     }
 
-    await ResultUtils.combineAsync(
-      dues.map((due) =>
-        this.dueRepository.save(due).then((saved) => ok(saved)),
-      ),
-    );
+    await this.paymentRepository.save(payment);
+    await Promise.all(dues.map((due) => this.dueRepository.save(due)));
 
     this.eventPublisher.dispatch(payment);
     dues.forEach((due) => this.eventPublisher.dispatch(due));

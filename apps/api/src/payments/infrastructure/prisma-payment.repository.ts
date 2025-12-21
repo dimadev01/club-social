@@ -124,8 +124,10 @@ export class PrismaPaymentRepository implements PaymentRepository {
     const data = this.mapper.payment.toPersistence(entity);
     const { paymentDues: _paymentDues, ...paymentData } = data;
 
-    const payment = await this.prismaService.payment.create({
-      data: paymentData,
+    const payment = await this.prismaService.payment.upsert({
+      create: paymentData,
+      update: paymentData,
+      where: { id: entity.id.value },
     });
 
     return this.mapper.payment.toDomain(payment);
