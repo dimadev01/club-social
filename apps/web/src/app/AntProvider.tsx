@@ -38,7 +38,7 @@ export function AntProvider({ children }: { children: React.ReactNode }) {
   }
 
   const themeConfig: ThemeConfig = {
-    algorithm,
+    algorithm: [algorithm],
     components: {
       Button: {
         primaryShadow: 'none',

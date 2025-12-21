@@ -181,7 +181,7 @@ export function MemberListPage() {
                 </Tooltip>
                 <Tooltip title="Ver pagos">
                   <Link
-                    to={`${APP_ROUTES.PAYMENTS_LIST}?filters=memberId:${encodeURIComponent(record.id)}`}
+                    to={`${APP_ROUTES.PAYMENTS}?filters=memberId:${encodeURIComponent(record.id)}`}
                   >
                     <Button icon={<PaymentsIcon />} type="text" />
                   </Link>

@@ -63,9 +63,9 @@ export class PaymentsController extends BaseController {
         createdBy: session.user.name,
         date: body.date,
         memberId: body.memberId,
-        notes: body.notes,
+        notes: body.notes || null,
         paymentDues: body.paymentDues,
-        receiptNumber: body.receiptNumber,
+        receiptNumber: body.receiptNumber || null,
       }),
     );
 
@@ -131,12 +131,13 @@ export class PaymentsController extends BaseController {
     return {
       amount: payment.amount.toCents(),
       createdAt: payment.createdAt.toISOString(),
-      createdBy: user.name,
+      createdBy: payment.createdBy,
       date: payment.date.value,
       id: payment.id.value,
       memberId: member.id.value,
       memberName: user.name,
       notes: payment.notes,
+      receiptNumber: payment.receiptNumber,
       status: payment.status,
       userStatus: user.status,
     };

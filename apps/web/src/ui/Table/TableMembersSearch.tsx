@@ -1,6 +1,9 @@
 import type { IMemberSearchResultDto } from '@club-social/shared/members';
 
+import { Grid } from 'antd';
+
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
+import { cn } from '@/shared/lib/utils';
 
 interface Props {
   isFetching: boolean;
@@ -15,11 +18,15 @@ export function TableMembersSearch({
   selectedMembers,
   value,
 }: Props) {
+  const { md } = Grid.useBreakpoint();
+
   return (
     <MemberSearchSelect
       additionalOptions={selectedMembers}
       allowClear
-      className="min-w-xs"
+      className={cn('w-full', {
+        'w-xs': md,
+      })}
       disabled={isFetching}
       loading={isFetching}
       mode="multiple"

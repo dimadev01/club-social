@@ -18,6 +18,7 @@ export interface IPaymentDetailDto {
   memberId: string;
   memberName: string;
   notes: null | string;
+  receiptNumber: null | string;
   status: PaymentStatus;
   userStatus: UserStatus;
 }
@@ -44,6 +45,6 @@ export interface IPaymentPaginatedDto {
   status: PaymentStatus;
 }
 
-export interface VoidPaymentDto {
+export interface IVoidPaymentDto {
   voidReason: string;
 }

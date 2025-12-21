@@ -1,7 +1,7 @@
 import {
   Card as AntCard,
+  type CardProps as AntCardProps,
   Button,
-  type CardProps,
   Skeleton,
   Space,
   Tooltip,
@@ -10,11 +10,11 @@ import { useNavigate } from 'react-router';
 
 import { BackIcon } from './Icons/BackIcon';
 
-interface Props extends CardProps {
+export interface CardProps extends AntCardProps {
   backButton?: boolean;
 }
 
-export function Card({ backButton, loading, title, ...props }: Props) {
+export function Card({ backButton, loading, title, ...props }: CardProps) {
   const navigate = useNavigate();
 
   return (

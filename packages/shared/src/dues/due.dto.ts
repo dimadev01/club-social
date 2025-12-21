@@ -34,7 +34,7 @@ export interface IDuePaginatedDto {
   userStatus: UserStatus;
 }
 
-export interface IPendingDto {
+export interface IPendingDueDto {
   amount: number;
   category: DueCategory;
   date: string;

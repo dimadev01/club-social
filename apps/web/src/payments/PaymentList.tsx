@@ -14,7 +14,7 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Space, Tooltip } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
-import { APP_ROUTES } from '@/app/app.enum';
+import { APP_ROUTES, appRoutes } from '@/app/app.enum';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
@@ -31,7 +31,7 @@ import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
-export function PaymentListPage() {
+export function PaymentList() {
   const navigate = useNavigate();
   const { message } = App.useApp();
   const permissions = usePermissions();
@@ -126,7 +126,7 @@ export function PaymentListPage() {
             ),
             filteredValue: getFilterValue('createdAt'),
             render: (createdAt: string, record) => (
-              <Link to={APP_ROUTES.PAYMENTS_DETAIL.replace(':id', record.id)}>
+              <Link to={appRoutes.payments.view(record.id)}>
                 {DateFormat.date(createdAt)}
               </Link>
             ),

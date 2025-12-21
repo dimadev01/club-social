@@ -72,7 +72,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   if (permissions.payments.list) {
     menuItems.push({
       icon: <PaymentsIcon />,
-      key: APP_ROUTES.PAYMENTS_LIST,
+      key: APP_ROUTES.PAYMENTS,
       label: 'Pagos',
     });
   }

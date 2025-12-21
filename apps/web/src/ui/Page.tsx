@@ -1,16 +1,11 @@
 import type { TitleProps } from 'antd/es/typography/Title';
 import type React from 'react';
 
-import {
-  Card,
-  type CardProps,
-  Flex,
-  type FlexProps,
-  Spin,
-  Typography,
-} from 'antd';
+import { Flex, type FlexProps, Spin, Typography } from 'antd';
 
 import { cn } from '@/shared/lib/utils';
+
+import { Card, type CardProps } from './Card';
 
 export function Page({ ...props }: CardProps) {
   return <Card {...props} />;

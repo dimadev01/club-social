@@ -9,8 +9,9 @@ import { DueListPage } from '@/dues/DueListPage';
 import { Home } from '@/home/HomePage';
 import { MemberDetailPage } from '@/members/MemberDetailPage';
 import { MemberListPage } from '@/members/MemberListPage';
-import { PaymentDetailPage } from '@/payments/PaymentDetailPage';
-import { PaymentListPage } from '@/payments/PaymentListPage';
+import { PaymentList } from '@/payments/PaymentList';
+import { PaymentNew } from '@/payments/PaymentNew';
+import { PaymentView } from '@/payments/PaymentView';
 import { ProfilePage } from '@/profile/ProfilePage';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { NotFound } from '@/ui/NotFound';
@@ -52,18 +53,11 @@ export function AppRoutes() {
           <Route element={<DueDetailPage />} path={APP_ROUTES.DUES_NEW} />
           <Route element={<DueDetailPage />} path={APP_ROUTES.DUES_DETAIL} />
 
-          <Route
-            element={<PaymentListPage />}
-            path={APP_ROUTES.PAYMENTS_LIST}
-          />
-          <Route
-            element={<PaymentDetailPage />}
-            path={APP_ROUTES.PAYMENTS_NEW}
-          />
-          <Route
-            element={<PaymentDetailPage />}
-            path={APP_ROUTES.PAYMENTS_DETAIL}
-          />
+          <Route path={APP_ROUTES.PAYMENTS}>
+            <Route element={<PaymentList />} index />
+            <Route element={<PaymentNew />} path={APP_ROUTES.NEW} />
+            <Route element={<PaymentView />} path={APP_ROUTES.VIEW} />
+          </Route>
 
           <Route element={<ProfilePage />} path={APP_ROUTES.PROFILE} />
           <Route element={<LogoutPage />} path={APP_ROUTES.LOGOUT} />
