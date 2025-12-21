@@ -11,7 +11,7 @@ import {
 import { type PaginatedResponse } from '@club-social/shared/types';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Tooltip, Typography } from 'antd';
+import { Button, Dropdown, Space, Tooltip, Typography } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -33,7 +33,6 @@ import { useMembersForSelect } from './useMembersForSelect';
 
 export function MemberListPage() {
   const navigate = useNavigate();
-  const { message } = App.useApp();
   const permissions = usePermissions();
 
   const {
@@ -54,11 +53,10 @@ export function MemberListPage() {
 
   const [initialMemberIds] = useState(getFilterValue('id') ?? []);
 
-  const { data: selectedMembers, isFetching } = useMembersForSelect({
-    memberIds: initialMemberIds,
-  });
+  const { data: selectedMembers, isLoading: isSelectedMembersLoading } =
+    useMembersForSelect({ memberIds: initialMemberIds });
 
-  const membersList = useQuery({
+  const { data: members, isLoading } = useQuery({
     ...queryKeys.members.paginated(query),
     enabled: permissions.members.list,
     placeholderData: keepPreviousData,
@@ -67,10 +65,6 @@ export function MemberListPage() {
         query,
       }),
   });
-
-  if (membersList.error) {
-    message.error(membersList.error.message);
-  }
 
   if (!permissions.members.list) {
     return <NotFound />;
@@ -107,8 +101,8 @@ export function MemberListPage() {
     >
       <PageTableActions>
         <TableMembersSearch
-          isFetching={isFetching}
-          onFilterChange={(value) => setFilter('id', value)}
+          isLoading={isSelectedMembersLoading}
+          onFilterChange={(value) => setFilter('id', value ?? [])}
           selectedMembers={selectedMembers}
           value={getFilterValue('id') ?? undefined}
         />
@@ -192,13 +186,13 @@ export function MemberListPage() {
             width: 100,
           },
         ]}
-        dataSource={membersList.data?.data}
-        loading={membersList.isFetching}
+        dataSource={members?.data}
+        loading={isLoading}
         onChange={onChange}
         pagination={{
           current: state.page,
           pageSize: state.pageSize,
-          total: membersList.data?.total,
+          total: members?.total,
         }}
       />
     </Page>

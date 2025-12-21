@@ -23,7 +23,7 @@ export interface MemberSearchSelectProps extends Omit<
 }
 
 export function MemberSearchSelect({
-  additionalOptions = [],
+  additionalOptions,
   loading,
   value,
   ...props
@@ -31,12 +31,10 @@ export function MemberSearchSelect({
   const [searchTerm, setSearchTerm] = useState('');
 
   const {
-    data: searchResults = [],
+    data: members,
     hasMore,
     isFetching,
-  } = useMemberSearch({
-    searchTerm,
-  });
+  } = useMemberSearch({ searchTerm });
 
   const debouncedSearch = useDebouncedCallback((value: string) => {
     setSearchTerm(value);
@@ -45,9 +43,9 @@ export function MemberSearchSelect({
   const options = useMemo(() => {
     const resultMap = new Map<string, IMemberSearchResultDto>();
 
-    additionalOptions.forEach((opt) => resultMap.set(opt.id, opt));
+    additionalOptions?.forEach((opt) => resultMap.set(opt.id, opt));
 
-    searchResults.forEach((result) => {
+    members?.forEach((result) => {
       if (!resultMap.has(result.id)) {
         resultMap.set(result.id, result);
       }
@@ -78,7 +76,7 @@ export function MemberSearchSelect({
     }
 
     return groupedOptions;
-  }, [searchResults, additionalOptions, hasMore]);
+  }, [members, additionalOptions, hasMore]);
 
   const filterSort = useCallback(
     (optionA: BaseOptionType, optionB: BaseOptionType) => {

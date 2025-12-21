@@ -5,7 +5,7 @@ import { LogoutPage } from '@/auth/LogoutPage';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
 import { PublicRoute } from '@/auth/PublicRoute';
 import { DueDetailPage } from '@/dues/DueDetailPage';
-import { DueListPage } from '@/dues/DueListPage';
+import { DueList } from '@/dues/DueList';
 import { Home } from '@/home/HomePage';
 import { MemberDetailPage } from '@/members/MemberDetailPage';
 import { MemberListPage } from '@/members/MemberListPage';
@@ -49,7 +49,7 @@ export function AppRoutes() {
             path={APP_ROUTES.MEMBERS_DETAIL}
           />
 
-          <Route element={<DueListPage />} path={APP_ROUTES.DUES_LIST} />
+          <Route element={<DueList />} path={APP_ROUTES.DUES_LIST} />
           <Route element={<DueDetailPage />} path={APP_ROUTES.DUES_NEW} />
           <Route element={<DueDetailPage />} path={APP_ROUTES.DUES_DETAIL} />
 

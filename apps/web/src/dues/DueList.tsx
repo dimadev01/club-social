@@ -15,9 +15,10 @@ import {
 import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Space, Tooltip } from 'antd';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
-import { APP_ROUTES } from '@/app/app.enum';
+import { APP_ROUTES, appRoutes } from '@/app/app.enum';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
@@ -35,7 +36,7 @@ import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
-export function DueListPage() {
+export function DueList() {
   const navigate = useNavigate();
   const { message } = App.useApp();
   const permissions = usePermissions();
@@ -56,9 +57,12 @@ export function DueListPage() {
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
 
-  const memberSelectQuery = useMembersForSelect({
-    memberIds: getFilterValue('memberId') ?? [],
-  });
+  const [filteredMemberIds, setFilteredMemberIds] = useState(
+    getFilterValue('memberId') ?? [],
+  );
+
+  const { data: selectedMembers, isLoading: isSelectedMembersLoading } =
+    useMembersForSelect({ memberIds: filteredMemberIds });
 
   const duesQuery = useQuery({
     ...queryKeys.dues.paginated(query),
@@ -109,12 +113,10 @@ export function DueListPage() {
     >
       <PageTableActions>
         <TableMembersSearch
-          isFetching={memberSelectQuery.isFetching}
+          isLoading={isSelectedMembersLoading}
           onFilterChange={(value) => setFilter('memberId', value)}
-          selectedMembers={memberSelectQuery.data}
-          value={
-            memberSelectQuery.data?.map((member) => member.id) ?? undefined
-          }
+          selectedMembers={selectedMembers}
+          value={getFilterValue('memberId') ?? undefined}
         />
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -207,23 +209,29 @@ export function DueListPage() {
             render: (_, record) => (
               <Space.Compact size="small">
                 <Tooltip title="Filtrar por este socio">
-                  <Button
-                    disabled={getFilterValue('memberId')?.includes(
-                      record.memberId,
-                    )}
-                    icon={<FilterOutlined />}
-                    onClick={() => {
-                      setFilter('memberId', [record.memberId]);
-                    }}
-                    type="text"
-                  />
+                  <Link
+                    to={`${appRoutes.dues.list}?filters=memberId:${record.memberId}`}
+                  >
+                    <Button
+                      disabled={getFilterValue('memberId')?.includes(
+                        record.memberId,
+                      )}
+                      icon={<FilterOutlined />}
+                      onClick={() => setFilteredMemberIds([record.memberId])}
+                      type="text"
+                    />
+                  </Link>
                 </Tooltip>
 
                 <Tooltip title="Nuevo pago">
                   <Link
                     to={`${APP_ROUTES.PAYMENTS_NEW}?memberId=${record.memberId}`}
                   >
-                    <Button icon={<PaymentsIcon />} type="text" />
+                    <Button
+                      icon={<PaymentsIcon />}
+                      onClick={() => setFilteredMemberIds([record.memberId])}
+                      type="text"
+                    />
                   </Link>
                 </Tooltip>
               </Space.Compact>

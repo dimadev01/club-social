@@ -6,14 +6,16 @@ import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { cn } from '@/shared/lib/utils';
 
 interface Props {
-  isFetching: boolean;
+  disabled?: boolean;
+  isLoading: boolean;
   onFilterChange: (value?: string[]) => void;
   selectedMembers: IMemberSearchResultDto[];
   value?: string[];
 }
 
 export function TableMembersSearch({
-  isFetching,
+  disabled,
+  isLoading,
   onFilterChange,
   selectedMembers,
   value,
@@ -24,11 +26,9 @@ export function TableMembersSearch({
     <MemberSearchSelect
       additionalOptions={selectedMembers}
       allowClear
-      className={cn('w-full', {
-        'w-xs': md,
-      })}
-      disabled={isFetching}
-      loading={isFetching}
+      className={cn('min-w-full', { 'min-w-xs': md })}
+      disabled={disabled || isLoading}
+      loading={isLoading}
       mode="multiple"
       onChange={(value) =>
         onFilterChange(value?.length ? (value as string[]) : undefined)

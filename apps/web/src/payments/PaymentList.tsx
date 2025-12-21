@@ -11,7 +11,8 @@ import {
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Tooltip } from 'antd';
+import { Button, Dropdown, Space, Tooltip } from 'antd';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { APP_ROUTES, appRoutes } from '@/app/app.enum';
@@ -33,7 +34,6 @@ import { usePermissions } from '@/users/use-permissions';
 
 export function PaymentList() {
   const navigate = useNavigate();
-  const { message } = App.useApp();
   const permissions = usePermissions();
 
   const {
@@ -52,11 +52,13 @@ export function PaymentList() {
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
 
-  const memberSelectQuery = useMembersForSelect({
-    memberIds: getFilterValue('memberId') ?? [],
-  });
+  const [filteredMemberIds, setFilteredMemberIds] = useState(
+    getFilterValue('memberId') ?? [],
+  );
+  const { data: selectedMembers, isLoading: isSelectedMembersLoading } =
+    useMembersForSelect({ memberIds: filteredMemberIds });
 
-  const paymentsQuery = useQuery({
+  const { data: payments, isLoading } = useQuery({
     ...queryKeys.payments.paginated(query),
     enabled: permissions.payments.list,
     placeholderData: keepPreviousData,
@@ -65,10 +67,6 @@ export function PaymentList() {
         query,
       }),
   });
-
-  if (paymentsQuery.error) {
-    message.error(paymentsQuery.error.message);
-  }
 
   if (!permissions.payments.list) {
     return <NotFound />;
@@ -107,12 +105,10 @@ export function PaymentList() {
     >
       <PageTableActions>
         <TableMembersSearch
-          isFetching={memberSelectQuery.isFetching}
+          isLoading={isSelectedMembersLoading}
           onFilterChange={(value) => setFilter('memberId', value)}
-          selectedMembers={memberSelectQuery.data}
-          value={
-            memberSelectQuery.data?.map((member) => member.id) ?? undefined
-          }
+          selectedMembers={selectedMembers}
+          value={getFilterValue('memberId') ?? undefined}
         />
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -183,16 +179,18 @@ export function PaymentList() {
             render: (_, record) => (
               <Space.Compact size="small">
                 <Tooltip title="Filtrar por este socio">
-                  <Button
-                    disabled={getFilterValue('memberId')?.includes(
-                      record.memberId,
-                    )}
-                    icon={<FilterOutlined />}
-                    onClick={() => {
-                      setFilter('memberId', [record.memberId]);
-                    }}
-                    type="text"
-                  />
+                  <Link
+                    to={`${appRoutes.payments.list}?filters=memberId:${record.memberId}`}
+                  >
+                    <Button
+                      disabled={getFilterValue('memberId')?.includes(
+                        record.memberId,
+                      )}
+                      icon={<FilterOutlined />}
+                      onClick={() => setFilteredMemberIds([record.memberId])}
+                      type="text"
+                    />
+                  </Link>
                 </Tooltip>
               </Space.Compact>
             ),
@@ -200,13 +198,13 @@ export function PaymentList() {
             width: 100,
           },
         ]}
-        dataSource={paymentsQuery.data?.data}
-        loading={paymentsQuery.isFetching}
+        dataSource={payments?.data}
+        loading={isLoading}
         onChange={onChange}
         pagination={{
           current: state.page,
           pageSize: state.pageSize,
-          total: paymentsQuery.data?.total,
+          total: payments?.total,
         }}
       />
     </Page>
