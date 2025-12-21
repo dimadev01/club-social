@@ -4,8 +4,10 @@ import { LoginPage } from '@/auth/LoginPage';
 import { LogoutPage } from '@/auth/LogoutPage';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
 import { PublicRoute } from '@/auth/PublicRoute';
-import { DueDetailPage } from '@/dues/DueDetailPage';
+import { DueEdit } from '@/dues/DueEdit';
 import { DueList } from '@/dues/DueList';
+import { DueNew } from '@/dues/DueNew';
+import { DueView } from '@/dues/DueView';
 import { Home } from '@/home/HomePage';
 import { MemberDetailPage } from '@/members/MemberDetailPage';
 import { MemberListPage } from '@/members/MemberListPage';
@@ -49,9 +51,12 @@ export function AppRoutes() {
             path={APP_ROUTES.MEMBERS_DETAIL}
           />
 
-          <Route element={<DueList />} path={APP_ROUTES.DUES_LIST} />
-          <Route element={<DueDetailPage />} path={APP_ROUTES.DUES_NEW} />
-          <Route element={<DueDetailPage />} path={APP_ROUTES.DUES_DETAIL} />
+          <Route path={APP_ROUTES.DUES}>
+            <Route element={<DueList />} index />
+            <Route element={<DueNew />} path={APP_ROUTES.NEW} />
+            <Route element={<DueView />} path={APP_ROUTES.VIEW} />
+            <Route element={<DueEdit />} path={APP_ROUTES.EDIT} />
+          </Route>
 
           <Route path={APP_ROUTES.PAYMENTS}>
             <Route element={<PaymentList />} index />

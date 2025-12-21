@@ -1,4 +1,5 @@
 export const APP_ROUTES = {
+  DUES: '/dues',
   DUES_DETAIL: '/dues/:id',
   DUES_LIST: '/dues',
   DUES_NEW: '/dues/new',

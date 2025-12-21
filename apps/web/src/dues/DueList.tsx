@@ -18,7 +18,7 @@ import { App, Button, Dropdown, Space, Tooltip } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
-import { APP_ROUTES, appRoutes } from '@/app/app.enum';
+import { appRoutes } from '@/app/app.enum';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
@@ -88,7 +88,7 @@ export function DueList() {
             <Button
               disabled={!permissions.dues.create}
               icon={<AddNewIcon />}
-              onClick={() => navigate(APP_ROUTES.DUES_NEW)}
+              onClick={() => navigate(appRoutes.dues.new)}
               type="primary"
             >
               Nueva deuda
@@ -130,7 +130,7 @@ export function DueList() {
             ),
             filteredValue: getFilterValue('createdAt'),
             render: (createdAt: string, record) => (
-              <Link to={`${APP_ROUTES.DUES_LIST}/${record.id}`}>
+              <Link to={appRoutes.dues.view(record.id)}>
                 {DateFormat.date(createdAt)}
               </Link>
             ),
@@ -152,7 +152,7 @@ export function DueList() {
           {
             dataIndex: 'memberId',
             render: (memberId: string, record: IDuePaginatedDto) => (
-              <Link to={`${APP_ROUTES.MEMBERS_LIST}/${memberId}`}>
+              <Link to={appRoutes.members.view(memberId)}>
                 {record.memberName}
               </Link>
             ),
@@ -230,7 +230,7 @@ export function DueList() {
 
                 <Tooltip title="Nuevo pago">
                   <Link
-                    to={`${APP_ROUTES.PAYMENTS_NEW}?memberId=${record.memberId}`}
+                    to={`${appRoutes.payments.new}?memberId=${record.memberId}`}
                   >
                     <Button
                       icon={<PaymentsIcon />}
