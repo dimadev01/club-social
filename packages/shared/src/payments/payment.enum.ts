@@ -15,7 +15,8 @@ export const PaymentDueStatus = {
   VOIDED: 'voided',
 } as const;
 
-export type PaymentDueStatus = (typeof PaymentDueStatus)[keyof typeof PaymentDueStatus];
+export type PaymentDueStatus =
+  (typeof PaymentDueStatus)[keyof typeof PaymentDueStatus];
 
 export const PaymentDueStatusLabel = {
   [PaymentDueStatus.ACTIVE]: 'Activo',
