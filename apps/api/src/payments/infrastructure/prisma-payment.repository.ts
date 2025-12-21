@@ -16,6 +16,10 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
 import { PaymentRepository } from '../domain/payment.repository';
+import {
+  PaymentDetailModel,
+  PaymentPaginatedModel,
+} from '../domain/payment.types';
 
 @Injectable()
 export class PrismaPaymentRepository implements PaymentRepository {
@@ -58,9 +62,26 @@ export class PrismaPaymentRepository implements PaymentRepository {
     return this.mapper.payment.toDomain(payment);
   }
 
-  public async findPaginated(
+  public async findOneModel(id: UniqueId): Promise<null | PaymentDetailModel> {
+    const payment = await this.prismaService.payment.findUnique({
+      include: { member: { include: { user: true } } },
+      where: { deletedAt: null, id: id.value },
+    });
+
+    if (!payment) {
+      return null;
+    }
+
+    return {
+      member: this.mapper.member.toDomain(payment.member),
+      payment: this.mapper.payment.toDomain(payment),
+      user: this.mapper.user.toDomain(payment.member.user),
+    };
+  }
+
+  public async findPaginatedModel(
     params: PaginatedRequest,
-  ): Promise<PaginatedResponse<PaymentEntity>> {
+  ): Promise<PaginatedResponse<PaymentPaginatedModel>> {
     const where: PaymentWhereInput = {
       deletedAt: null,
     };
@@ -97,11 +118,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
     const query = {
       include: {
-        paymentDues: {
-          include: {
-            due: { include: { member: { include: { user: true } } } },
-          },
-        },
+        member: { include: { user: true } },
       },
       orderBy: params.sort.map(({ field, order }) => ({ [field]: order })),
       skip: (params.page - 1) * params.pageSize,
@@ -115,7 +132,11 @@ export class PrismaPaymentRepository implements PaymentRepository {
     ]);
 
     return {
-      data: payments.map((payment) => this.mapper.payment.toDomain(payment)),
+      data: payments.map((payment) => ({
+        member: this.mapper.member.toDomain(payment.member),
+        payment: this.mapper.payment.toDomain(payment),
+        user: this.mapper.user.toDomain(payment.member.user),
+      })),
       total,
     };
   }

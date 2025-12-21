@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Inject,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -146,16 +147,16 @@ export class DuesController extends BaseController {
   }
 
   @Get(':id')
-  public async getById(
-    @Param() request: ParamIdDto,
-  ): Promise<DueDetailDto | null> {
-    const due = await this.dueRepository.findOneById(
+  public async getById(@Param() request: ParamIdDto): Promise<DueDetailDto> {
+    const data = await this.dueRepository.findOneModel(
       UniqueId.raw({ value: request.id }),
     );
 
-    if (!due) {
-      return null;
+    if (!data) {
+      throw new NotFoundException();
     }
+
+    const { due, member, user } = data;
 
     return {
       amount: due.amount.toCents(),
@@ -163,9 +164,11 @@ export class DuesController extends BaseController {
       createdAt: due.createdAt.toISOString(),
       date: due.date.value,
       id: due.id.value,
-      memberId: due.memberId.value,
+      memberId: member.id.value,
+      memberName: user.name,
       notes: due.notes,
       status: due.status,
+      userStatus: user.status,
     };
   }
 }

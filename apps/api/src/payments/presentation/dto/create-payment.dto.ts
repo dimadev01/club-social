@@ -5,30 +5,23 @@ import {
   IsArray,
   IsDateString,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
 
-export class PaymentDueItemDto {
-  @IsNotEmpty()
-  @IsNumber()
-  @IsPositive()
-  public amount: number;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsUUID()
-  public dueId: string;
-}
+import { PaymentDueItemDto } from './payment-due-item.dto';
 
 export class CreatePaymentRequestDto implements ICreatePaymentDto {
   @IsDateString()
   @IsNotEmpty()
   public date: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsUUID()
+  public memberId: string;
 
   @IsOptional()
   @IsString()

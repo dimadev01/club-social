@@ -18,6 +18,7 @@ import { Link, useNavigate } from 'react-router';
 import { APP_ROUTES } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
 import { NotFound } from '@/ui/NotFound';
@@ -58,13 +59,13 @@ export function MemberListPage() {
   });
 
   const membersList = useQuery({
+    ...queryKeys.members.paginated(query),
     enabled: permissions.members.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<PaginatedResponse<IMemberPaginatedDto>>('/members/paginated', {
         query,
       }),
-    queryKey: ['members', query],
   });
 
   if (membersList.error) {
@@ -82,7 +83,7 @@ export function MemberListPage() {
           <Button
             disabled={!permissions.members.create}
             icon={<UserAddOutlined />}
-            onClick={() => navigate(APP_ROUTES.MEMBER_NEW)}
+            onClick={() => navigate(APP_ROUTES.MEMBERS_NEW)}
             type="primary"
           >
             Nuevo socio
@@ -122,7 +123,7 @@ export function MemberListPage() {
             fixed: 'left',
             render: (id, record) => (
               <Typography.Text className="line-clamp-1 w-full">
-                <Link to={`${APP_ROUTES.MEMBER_LIST}/${id}`}>
+                <Link to={`${APP_ROUTES.MEMBERS_LIST}/${id}`}>
                   {record.name}
                 </Link>
               </Typography.Text>

@@ -200,6 +200,7 @@ export type DueScalarFieldEnum =
 
 export const PaymentScalarFieldEnum = {
   id: 'id',
+  memberId: 'memberId',
   amount: 'amount',
   date: 'date',
   notes: 'notes',

@@ -304,6 +304,7 @@ export type MemberWhereInput = {
   deletedBy?: Prisma.StringNullableFilter<'Member'> | string | null;
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
   dues?: Prisma.DueListRelationFilter;
+  payments?: Prisma.PaymentListRelationFilter;
 };
 
 export type MemberOrderByWithRelationInput = {
@@ -329,6 +330,7 @@ export type MemberOrderByWithRelationInput = {
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   user?: Prisma.UserOrderByWithRelationInput;
   dues?: Prisma.DueOrderByRelationAggregateInput;
+  payments?: Prisma.PaymentOrderByRelationAggregateInput;
 };
 
 export type MemberWhereUniqueInput = Prisma.AtLeast<
@@ -358,6 +360,7 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<
     deletedBy?: Prisma.StringNullableFilter<'Member'> | string | null;
     user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
     dues?: Prisma.DueListRelationFilter;
+    payments?: Prisma.PaymentListRelationFilter;
   },
   'id' | 'userId'
 >;
@@ -468,6 +471,7 @@ export type MemberCreateInput = {
   deletedBy?: string | null;
   user: Prisma.UserCreateNestedOneWithoutMemberInput;
   dues?: Prisma.DueCreateNestedManyWithoutMemberInput;
+  payments?: Prisma.PaymentCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberUncheckedCreateInput = {
@@ -492,6 +496,7 @@ export type MemberUncheckedCreateInput = {
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
   dues?: Prisma.DueUncheckedCreateNestedManyWithoutMemberInput;
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberUpdateInput = {
@@ -523,6 +528,7 @@ export type MemberUpdateInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   user?: Prisma.UserUpdateOneRequiredWithoutMemberNestedInput;
   dues?: Prisma.DueUpdateManyWithoutMemberNestedInput;
+  payments?: Prisma.PaymentUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberUncheckedUpdateInput = {
@@ -554,6 +560,7 @@ export type MemberUncheckedUpdateInput = {
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   dues?: Prisma.DueUncheckedUpdateManyWithoutMemberNestedInput;
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberCreateManyInput = {
@@ -814,6 +821,32 @@ export type MemberUpdateOneRequiredWithoutDuesNestedInput = {
   >;
 };
 
+export type MemberCreateNestedOneWithoutPaymentsInput = {
+  create?: Prisma.XOR<
+    Prisma.MemberCreateWithoutPaymentsInput,
+    Prisma.MemberUncheckedCreateWithoutPaymentsInput
+  >;
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutPaymentsInput;
+  connect?: Prisma.MemberWhereUniqueInput;
+};
+
+export type MemberUpdateOneRequiredWithoutPaymentsNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.MemberCreateWithoutPaymentsInput,
+    Prisma.MemberUncheckedCreateWithoutPaymentsInput
+  >;
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutPaymentsInput;
+  upsert?: Prisma.MemberUpsertWithoutPaymentsInput;
+  connect?: Prisma.MemberWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.MemberUpdateToOneWithWhereWithoutPaymentsInput,
+      Prisma.MemberUpdateWithoutPaymentsInput
+    >,
+    Prisma.MemberUncheckedUpdateWithoutPaymentsInput
+  >;
+};
+
 export type MemberCreateWithoutUserInput = {
   id: string;
   birthDate?: string | null;
@@ -835,6 +868,7 @@ export type MemberCreateWithoutUserInput = {
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
   dues?: Prisma.DueCreateNestedManyWithoutMemberInput;
+  payments?: Prisma.PaymentCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberUncheckedCreateWithoutUserInput = {
@@ -858,6 +892,7 @@ export type MemberUncheckedCreateWithoutUserInput = {
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
   dues?: Prisma.DueUncheckedCreateNestedManyWithoutMemberInput;
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberCreateOrConnectWithoutUserInput = {
@@ -916,6 +951,7 @@ export type MemberUpdateWithoutUserInput = {
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   dues?: Prisma.DueUpdateManyWithoutMemberNestedInput;
+  payments?: Prisma.PaymentUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberUncheckedUpdateWithoutUserInput = {
@@ -946,6 +982,7 @@ export type MemberUncheckedUpdateWithoutUserInput = {
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   dues?: Prisma.DueUncheckedUpdateManyWithoutMemberNestedInput;
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberCreateWithoutDuesInput = {
@@ -969,6 +1006,7 @@ export type MemberCreateWithoutDuesInput = {
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
   user: Prisma.UserCreateNestedOneWithoutMemberInput;
+  payments?: Prisma.PaymentCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberUncheckedCreateWithoutDuesInput = {
@@ -992,6 +1030,7 @@ export type MemberUncheckedCreateWithoutDuesInput = {
   updatedBy?: string | null;
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberCreateOrConnectWithoutDuesInput = {
@@ -1050,6 +1089,7 @@ export type MemberUpdateWithoutDuesInput = {
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   user?: Prisma.UserUpdateOneRequiredWithoutMemberNestedInput;
+  payments?: Prisma.PaymentUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberUncheckedUpdateWithoutDuesInput = {
@@ -1080,6 +1120,145 @@ export type MemberUncheckedUpdateWithoutDuesInput = {
     | string
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutMemberNestedInput;
+};
+
+export type MemberCreateWithoutPaymentsInput = {
+  id: string;
+  birthDate?: string | null;
+  category: string;
+  maritalStatus?: string | null;
+  documentID?: string | null;
+  fileStatus: string;
+  nationality?: string | null;
+  phones?: Prisma.MemberCreatephonesInput | string[];
+  sex?: string | null;
+  street?: string | null;
+  cityName?: string | null;
+  stateName?: string | null;
+  zipCode?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  user: Prisma.UserCreateNestedOneWithoutMemberInput;
+  dues?: Prisma.DueCreateNestedManyWithoutMemberInput;
+};
+
+export type MemberUncheckedCreateWithoutPaymentsInput = {
+  id: string;
+  userId: string;
+  birthDate?: string | null;
+  category: string;
+  maritalStatus?: string | null;
+  documentID?: string | null;
+  fileStatus: string;
+  nationality?: string | null;
+  phones?: Prisma.MemberCreatephonesInput | string[];
+  sex?: string | null;
+  street?: string | null;
+  cityName?: string | null;
+  stateName?: string | null;
+  zipCode?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  dues?: Prisma.DueUncheckedCreateNestedManyWithoutMemberInput;
+};
+
+export type MemberCreateOrConnectWithoutPaymentsInput = {
+  where: Prisma.MemberWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.MemberCreateWithoutPaymentsInput,
+    Prisma.MemberUncheckedCreateWithoutPaymentsInput
+  >;
+};
+
+export type MemberUpsertWithoutPaymentsInput = {
+  update: Prisma.XOR<
+    Prisma.MemberUpdateWithoutPaymentsInput,
+    Prisma.MemberUncheckedUpdateWithoutPaymentsInput
+  >;
+  create: Prisma.XOR<
+    Prisma.MemberCreateWithoutPaymentsInput,
+    Prisma.MemberUncheckedCreateWithoutPaymentsInput
+  >;
+  where?: Prisma.MemberWhereInput;
+};
+
+export type MemberUpdateToOneWithWhereWithoutPaymentsInput = {
+  where?: Prisma.MemberWhereInput;
+  data: Prisma.XOR<
+    Prisma.MemberUpdateWithoutPaymentsInput,
+    Prisma.MemberUncheckedUpdateWithoutPaymentsInput
+  >;
+};
+
+export type MemberUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  category?: Prisma.StringFieldUpdateOperationsInput | string;
+  maritalStatus?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  documentID?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  fileStatus?: Prisma.StringFieldUpdateOperationsInput | string;
+  nationality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  phones?: Prisma.MemberUpdatephonesInput | string[];
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  user?: Prisma.UserUpdateOneRequiredWithoutMemberNestedInput;
+  dues?: Prisma.DueUpdateManyWithoutMemberNestedInput;
+};
+
+export type MemberUncheckedUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  userId?: Prisma.StringFieldUpdateOperationsInput | string;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  category?: Prisma.StringFieldUpdateOperationsInput | string;
+  maritalStatus?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  documentID?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  fileStatus?: Prisma.StringFieldUpdateOperationsInput | string;
+  nationality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  phones?: Prisma.MemberUpdatephonesInput | string[];
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  dues?: Prisma.DueUncheckedUpdateManyWithoutMemberNestedInput;
 };
 
 /**
@@ -1088,6 +1267,7 @@ export type MemberUncheckedUpdateWithoutDuesInput = {
 
 export type MemberCountOutputType = {
   dues: number;
+  payments: number;
 };
 
 export type MemberCountOutputTypeSelect<
@@ -1095,6 +1275,7 @@ export type MemberCountOutputTypeSelect<
     runtime.Types.Extensions.DefaultArgs,
 > = {
   dues?: boolean | MemberCountOutputTypeCountDuesArgs;
+  payments?: boolean | MemberCountOutputTypeCountPaymentsArgs;
 };
 
 /**
@@ -1118,6 +1299,16 @@ export type MemberCountOutputTypeCountDuesArgs<
     runtime.Types.Extensions.DefaultArgs,
 > = {
   where?: Prisma.DueWhereInput;
+};
+
+/**
+ * MemberCountOutputType without action
+ */
+export type MemberCountOutputTypeCountPaymentsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.PaymentWhereInput;
 };
 
 export type MemberSelect<
@@ -1147,6 +1338,7 @@ export type MemberSelect<
     deletedBy?: boolean;
     user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
     dues?: boolean | Prisma.Member$duesArgs<ExtArgs>;
+    payments?: boolean | Prisma.Member$paymentsArgs<ExtArgs>;
     _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['member']
@@ -1267,6 +1459,7 @@ export type MemberInclude<
 > = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
   dues?: boolean | Prisma.Member$duesArgs<ExtArgs>;
+  payments?: boolean | Prisma.Member$paymentsArgs<ExtArgs>;
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type MemberIncludeCreateManyAndReturn<
@@ -1290,6 +1483,7 @@ export type $MemberPayload<
   objects: {
     user: Prisma.$UserPayload<ExtArgs>;
     dues: Prisma.$DuePayload<ExtArgs>[];
+    payments: Prisma.$PaymentPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1888,6 +2082,17 @@ export interface Prisma__MemberClient<
       >
     | Null
   >;
+  payments<T extends Prisma.Member$paymentsArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Member$paymentsArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$PaymentPayload<ExtArgs>,
+        T,
+        'findMany',
+        GlobalOmitOptions
+      >
+    | Null
+  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2431,6 +2636,35 @@ export type Member$duesArgs<
   take?: number;
   skip?: number;
   distinct?: Prisma.DueScalarFieldEnum | Prisma.DueScalarFieldEnum[];
+};
+
+/**
+ * Member.payments
+ */
+export type Member$paymentsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Payment
+   */
+  select?: Prisma.PaymentSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Payment
+   */
+  omit?: Prisma.PaymentOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentInclude<ExtArgs> | null;
+  where?: Prisma.PaymentWhereInput;
+  orderBy?:
+    | Prisma.PaymentOrderByWithRelationInput
+    | Prisma.PaymentOrderByWithRelationInput[];
+  cursor?: Prisma.PaymentWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[];
 };
 
 /**

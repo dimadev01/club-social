@@ -67,6 +67,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       createdBy: params.createdBy,
       date: date.value,
       dueIds,
+      memberId: UniqueId.raw({ value: params.memberId }),
       notes: params.notes,
       receiptNumber: params.receiptNumber,
     });

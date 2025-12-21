@@ -5,10 +5,10 @@ import {
   FilterOutlined,
   MoreOutlined,
 } from '@ant-design/icons';
-import { DueStatus, DueStatusLabel } from '@club-social/shared/dues';
 import {
   type IPaymentPaginatedDto,
   PaymentStatus,
+  PaymentStatusLabel,
 } from '@club-social/shared/payments';
 import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Space, Tooltip } from 'antd';
@@ -20,6 +20,7 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
@@ -56,13 +57,13 @@ export function PaymentListPage() {
   });
 
   const paymentsQuery = useQuery({
+    ...queryKeys.payments.paginated(query),
     enabled: permissions.payments.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IPaymentPaginatedDto>>('/payments/paginated', {
+      $fetch<PaginatedResponse<IPaymentPaginatedDto>>('payments/paginated', {
         query,
       }),
-    queryKey: ['payments', state, query],
   });
 
   if (paymentsQuery.error) {
@@ -81,7 +82,7 @@ export function PaymentListPage() {
             <Button
               disabled={!permissions.payments.create}
               icon={<AddNewIcon />}
-              onClick={() => navigate(APP_ROUTES.PAYMENT_NEW)}
+              onClick={() => navigate(APP_ROUTES.PAYMENTS_NEW)}
               type="primary"
             >
               Nuevo pago
@@ -125,7 +126,7 @@ export function PaymentListPage() {
             ),
             filteredValue: getFilterValue('createdAt'),
             render: (createdAt: string, record) => (
-              <Link to={APP_ROUTES.PAYMENT_DETAIL.replace(':id', record.id)}>
+              <Link to={APP_ROUTES.PAYMENTS_DETAIL.replace(':id', record.id)}>
                 {DateFormat.date(createdAt)}
               </Link>
             ),
@@ -147,7 +148,7 @@ export function PaymentListPage() {
           {
             dataIndex: 'memberId',
             render: (memberId: string, record: IPaymentPaginatedDto) => (
-              <Link to={`${APP_ROUTES.MEMBER_LIST}/${memberId}`}>
+              <Link to={`${APP_ROUTES.MEMBERS_LIST}/${memberId}`}>
                 {record.memberName}
               </Link>
             ),
@@ -166,11 +167,13 @@ export function PaymentListPage() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filterMode: 'tree',
-            filters: Object.entries(DueStatusLabel).map(([value, label]) => ({
-              text: label,
-              value,
-            })),
-            render: (value: DueStatus) => DueStatusLabel[value],
+            filters: Object.entries(PaymentStatusLabel).map(
+              ([value, label]) => ({
+                text: label,
+                value,
+              }),
+            ),
+            render: (value: PaymentStatus) => PaymentStatusLabel[value],
             title: 'Estado',
             width: 100,
           },

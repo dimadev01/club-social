@@ -69,26 +69,26 @@ export function AppLayout({ children }: PropsWithChildren) {
     });
   }
 
-  if (permissions.movements.list) {
-    menuItems.push({
-      icon: <MovementsIcon />,
-      key: APP_ROUTES.MOVEMENT_LIST,
-      label: 'Movimientos',
-    });
-  }
-
   if (permissions.payments.list) {
     menuItems.push({
       icon: <PaymentsIcon />,
-      key: APP_ROUTES.PAYMENT_LIST,
+      key: APP_ROUTES.PAYMENTS_LIST,
       label: 'Pagos',
+    });
+  }
+
+  if (permissions.movements.list) {
+    menuItems.push({
+      icon: <MovementsIcon />,
+      key: APP_ROUTES.MOVEMENTS_LIST,
+      label: 'Movimientos',
     });
   }
 
   if (permissions.members.list) {
     menuItems.push({
       icon: <UsersIcon />,
-      key: APP_ROUTES.MEMBER_LIST,
+      key: APP_ROUTES.MEMBERS_LIST,
       label: 'Socios',
     });
   }
@@ -96,7 +96,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   if (permissions.users.list) {
     menuItems.push({
       icon: <UsersIcon />,
-      key: APP_ROUTES.USER_LIST,
+      key: APP_ROUTES.USERS_LIST,
       label: 'Usuarios',
     });
   }
@@ -205,7 +205,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 
         <FloatButton.Group icon={<AddNewIcon />} trigger="click" type="primary">
           {permissions.members.create && (
-            <Link to={APP_ROUTES.MEMBER_NEW}>
+            <Link to={APP_ROUTES.MEMBERS_NEW}>
               <FloatButton
                 icon={<UserAddOutlined />}
                 tooltip={{ placement: 'left', title: 'Nuevo socio' }}

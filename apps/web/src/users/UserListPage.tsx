@@ -20,6 +20,7 @@ import { Link, useNavigate } from 'react-router';
 import { APP_ROUTES } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -50,13 +51,13 @@ export function UserListPage() {
   });
 
   const usersQuery = useQuery({
+    ...queryKeys.users.paginated(query),
     enabled: permissions.users.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<PaginatedResponse<IUserDetailDto>>('/users/paginated', {
         query,
       }),
-    queryKey: ['users', query],
   });
 
   if (usersQuery.error) {
@@ -74,7 +75,7 @@ export function UserListPage() {
           <Button
             disabled={!permissions.users.create}
             icon={<UserAddOutlined />}
-            onClick={() => navigate(APP_ROUTES.USER_NEW)}
+            onClick={() => navigate(APP_ROUTES.USERS_NEW)}
             type="primary"
           >
             Nuevo usuario
@@ -107,7 +108,7 @@ export function UserListPage() {
             fixed: 'left',
             render: (id: string, record: IUserDetailDto) => (
               <Typography.Text className="line-clamp-1 w-full">
-                <Link to={`${APP_ROUTES.USER_DETAIL.replace(':id', id)}`}>
+                <Link to={`${APP_ROUTES.USERS_DETAIL.replace(':id', id)}`}>
                   {record.name}
                 </Link>
               </Typography.Text>
@@ -160,7 +161,7 @@ export function UserListPage() {
                 <Button
                   icon={<EyeOutlined />}
                   onClick={() =>
-                    navigate(APP_ROUTES.USER_DETAIL.replace(':id', record.id))
+                    navigate(APP_ROUTES.USERS_DETAIL.replace(':id', record.id))
                   }
                   type="text"
                 />

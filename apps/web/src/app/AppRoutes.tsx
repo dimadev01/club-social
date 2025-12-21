@@ -34,32 +34,35 @@ export function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route element={<Home />} path={APP_ROUTES.HOME} />
 
-          <Route element={<UserListPage />} path={APP_ROUTES.USER_LIST} />
-          <Route element={<UserDetailPage />} path={APP_ROUTES.USER_NEW} />
+          <Route element={<UserListPage />} path={APP_ROUTES.USERS_LIST} />
+          <Route element={<UserDetailPage />} path={APP_ROUTES.USERS_NEW} />
           <Route
             element={<UserDetailPage />}
-            path={`${APP_ROUTES.USER_LIST}/:id`}
+            path={`${APP_ROUTES.USERS_LIST}/:id`}
           />
 
-          <Route element={<MemberListPage />} path={APP_ROUTES.MEMBER_LIST} />
-          <Route element={<MemberDetailPage />} path={APP_ROUTES.MEMBER_NEW} />
+          <Route element={<MemberListPage />} path={APP_ROUTES.MEMBERS_LIST} />
+          <Route element={<MemberDetailPage />} path={APP_ROUTES.MEMBERS_NEW} />
           <Route
             element={<MemberDetailPage />}
-            path={APP_ROUTES.MEMBER_DETAIL}
+            path={APP_ROUTES.MEMBERS_DETAIL}
           />
 
           <Route element={<DueListPage />} path={APP_ROUTES.DUES_LIST} />
-          <Route element={<DueDetailPage />} path={APP_ROUTES.DUE_NEW} />
-          <Route element={<DueDetailPage />} path={APP_ROUTES.DUE_DETAIL} />
+          <Route element={<DueDetailPage />} path={APP_ROUTES.DUES_NEW} />
+          <Route element={<DueDetailPage />} path={APP_ROUTES.DUES_DETAIL} />
 
-          <Route element={<PaymentListPage />} path={APP_ROUTES.PAYMENT_LIST} />
           <Route
-            element={<PaymentDetailPage />}
-            path={APP_ROUTES.PAYMENT_NEW}
+            element={<PaymentListPage />}
+            path={APP_ROUTES.PAYMENTS_LIST}
           />
           <Route
             element={<PaymentDetailPage />}
-            path={APP_ROUTES.PAYMENT_DETAIL}
+            path={APP_ROUTES.PAYMENTS_NEW}
+          />
+          <Route
+            element={<PaymentDetailPage />}
+            path={APP_ROUTES.PAYMENTS_DETAIL}
           />
 
           <Route element={<ProfilePage />} path={APP_ROUTES.PROFILE} />

@@ -1,3 +1,4 @@
+import type { IMemberSearchResultDto } from '@club-social/shared/members';
 import type { ParamId } from '@club-social/shared/types';
 
 import { MoreOutlined } from '@ant-design/icons';
@@ -34,15 +35,17 @@ import { difference, differenceBy, orderBy } from 'es-toolkit/array';
 import { flow } from 'es-toolkit/function';
 import { useCallback, useEffect } from 'react';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
+import { useMemberById } from '@/members/useMemberById';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat, DateFormats } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { Card } from '@/ui/Card';
 import { Form } from '@/ui/Form';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
@@ -85,6 +88,8 @@ export function PaymentDetailPage() {
   const { message } = App.useApp();
   const permissions = usePermissions();
   const { md } = Grid.useBreakpoint();
+  const [searchParams] = useSearchParams();
+  const memberIdFromUrl = searchParams.get('memberId');
 
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
   const [selectedDueIds, setSelectedDueIds] = useState<string[]>([]);
@@ -98,28 +103,34 @@ export function PaymentDetailPage() {
 
   const formMemberId = Form.useWatch('memberId', form);
 
-  const paymentQuery = useQuery<IPaymentDetailDto | null>({
-    enabled: !!id && permissions.payments.get,
-    queryFn: () => $fetch(`payments/${id}`),
-    queryKey: ['payments', id],
+  const memberQuery = useMemberById({
+    memberId: formMemberId,
   });
 
-  const pendingDuesQuery = useQuery<IPendingDto[]>({
-    enabled: !!formMemberId && permissions.dues.get,
+  const paymentQuery = useQuery({
+    ...queryKeys.payments.detail(id),
+    enabled: !!id && permissions.payments.get,
+    queryFn: () => $fetch<IPaymentDetailDto>(`payments/${id}`),
+  });
+
+  const pendingDuesQuery = useQuery({
+    ...queryKeys.dues.pending(formMemberId),
+    enabled: !!formMemberId && permissions.dues.get && !id,
     queryFn: () =>
-      $fetch('/dues/pending', { query: { memberId: formMemberId } }),
-    queryKey: ['dues', 'pending', formMemberId],
+      $fetch<IPendingDto[]>(`dues/pending`, {
+        query: { memberId: formMemberId },
+      }),
   });
 
   const createPaymentMutation = useMutation<ParamId, Error, ICreatePaymentDto>({
     mutationFn: (body) => $fetch('/payments', { body }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
       queryClient.invalidateQueries({
-        queryKey: ['dues', 'pending', formMemberId],
+        queryKey: queryKeys.payments.paginated._def,
       });
+      queryClient.invalidateQueries(queryKeys.dues.pending(formMemberId));
       message.success('Pago creado correctamente');
-      navigate(APP_ROUTES.PAYMENT_LIST, { replace: true });
+      navigate(APP_ROUTES.PAYMENTS_LIST, { replace: true });
     },
   });
 
@@ -127,11 +138,10 @@ export function PaymentDetailPage() {
     mutationFn: (body) =>
       $fetch(`payments/${id}/void`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['payments'] });
-      queryClient.invalidateQueries({ queryKey: ['payments', id] });
       queryClient.invalidateQueries({
-        queryKey: ['dues', 'pending', formMemberId],
+        queryKey: queryKeys.payments.paginated._def,
       });
+      queryClient.invalidateQueries(queryKeys.payments.detail(id));
       message.success('Pago anulado correctamente');
       navigate(-1);
     },
@@ -141,7 +151,7 @@ export function PaymentDetailPage() {
     if (paymentQuery.data) {
       setFieldsValue({
         date: dayjs.utc(paymentQuery.data.date),
-        memberId: '', // TODO: Extract from paymentDues when needed
+        memberId: paymentQuery.data.memberId,
         notes: paymentQuery.data.notes,
         receiptNumber: null, // Backend doesn't support this yet
       });
@@ -206,7 +216,6 @@ export function PaymentDetailPage() {
   );
 
   const onSubmit = async (values: FormSchema) => {
-    // Validate at least 1 payment due
     if (values.paymentDues.length === 0) {
       message.error('Debe seleccionar al menos una deuda para pagar');
 
@@ -222,6 +231,7 @@ export function PaymentDetailPage() {
 
     createPaymentMutation.mutate({
       date,
+      memberId: values.memberId,
       notes: values.notes || null,
       paymentDues,
       receiptNumber: values.receiptNumber || null,
@@ -232,7 +242,7 @@ export function PaymentDetailPage() {
     return <NotFound />;
   }
 
-  const isQueryLoading = paymentQuery.isLoading;
+  const isQueryLoading = paymentQuery.isLoading || memberQuery.isLoading;
   const isMutating =
     createPaymentMutation.isPending || voidPaymentMutation.isPending;
 
@@ -261,6 +271,16 @@ export function PaymentDetailPage() {
   };
 
   const moreActions = getMoreActions();
+
+  const additionalOptions: IMemberSearchResultDto[] = memberQuery.data
+    ? [
+        {
+          id: memberQuery.data.id,
+          name: memberQuery.data.name,
+          status: memberQuery.data.status,
+        },
+      ]
+    : [];
 
   return (
     <Card
@@ -300,7 +320,7 @@ export function PaymentDetailPage() {
         id="form"
         initialValues={{
           date: dayjs(),
-          memberId: undefined,
+          memberId: memberIdFromUrl ?? undefined,
           notes: '',
           paymentDues: [],
           receiptNumber: '',
@@ -328,7 +348,9 @@ export function PaymentDetailPage() {
           rules={[{ message: 'Debe seleccionar un socio', required: true }]}
         >
           <MemberSearchSelect
+            additionalOptions={additionalOptions}
             disabled={!!id}
+            loading={isQueryLoading}
             placeholder="Buscar y seleccionar socio..."
           />
         </Form.Item>
@@ -349,6 +371,7 @@ export function PaymentDetailPage() {
         </Form.Item>
 
         <Table
+          className="mb-6"
           columns={[
             {
               dataIndex: 'date',

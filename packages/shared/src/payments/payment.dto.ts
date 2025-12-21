@@ -1,7 +1,9 @@
+import { UserStatus } from '../users';
 import { PaymentStatus } from './payment.enum';
 
 export interface ICreatePaymentDto {
   date: string;
+  memberId: string;
   notes: null | string;
   paymentDues: IPaymentDueItemDto[];
   receiptNumber: null | string;
@@ -13,9 +15,11 @@ export interface IPaymentDetailDto {
   createdBy: string;
   date: string;
   id: string;
+  memberId: string;
+  memberName: string;
   notes: null | string;
-  paymentDues: IPaymentDueDetailDto[];
   status: PaymentStatus;
+  userStatus: UserStatus;
 }
 
 export interface IPaymentDueDetailDto {

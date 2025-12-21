@@ -107,6 +107,7 @@ model Member {
   deletedAt     DateTime?
   deletedBy     String?
   dues          Due[]
+  payments      Payment[]
 
   @@index([userId])
   @@map("member")
@@ -136,11 +137,14 @@ model Due {
   @@index([status])
   @@index([category])
   @@index([date])
+  @@index([createdAt])
   @@map("due")
 }
 
 model Payment {
   id            String       @id
+  memberId    String
+  member      Member       @relation(fields: [memberId], references: [id])
   amount        Int
   date          String
   notes         String?
@@ -158,6 +162,9 @@ model Payment {
   paymentDues   PaymentDue[]
 
   @@index([date])
+  @@index([memberId])
+  @@index([status])
+  @@index([createdAt])
   @@map("payment")
 }
 

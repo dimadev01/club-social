@@ -17,7 +17,7 @@ import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { DueRepository } from '../domain/due.repository';
-import { DuePaginatedModel } from '../domain/due.types';
+import { DueDetailModel, DuePaginatedModel } from '../domain/due.types';
 import { DueEntity } from '../domain/entities/due.entity';
 
 @Injectable()
@@ -71,6 +71,23 @@ export class PrismaDueRepository implements DueRepository {
     });
 
     return this.mapper.due.toDomain(due);
+  }
+
+  public async findOneModel(id: UniqueId): Promise<DueDetailModel | null> {
+    const due = await this.prismaService.due.findUnique({
+      include: { member: { include: { user: true } } },
+      where: { deletedAt: null, id: id.value },
+    });
+
+    if (!due) {
+      return null;
+    }
+
+    return {
+      due: this.mapper.due.toDomain(due),
+      member: this.mapper.member.toDomain(due.member),
+      user: this.mapper.user.toDomain(due.member.user),
+    };
   }
 
   public async findPaginated(

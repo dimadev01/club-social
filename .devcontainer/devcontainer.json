@@ -34,7 +34,8 @@
         "Prisma.prisma",
         "bradlc.vscode-tailwindcss",
         "Orta.vscode-jest",
-        "streetsidesoftware.code-spell-checker-spanish"
+        "streetsidesoftware.code-spell-checker-spanish",
+        "Anthropic.claude-code"
       ]
     }
   },

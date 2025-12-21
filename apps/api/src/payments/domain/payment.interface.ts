@@ -6,6 +6,7 @@ export interface CreatePaymentProps {
   createdBy: string;
   date: DateOnly;
   dueIds: UniqueId[];
+  memberId: UniqueId;
   notes: null | string;
   // paymentDues: PaymentDueProps[];
   receiptNumber: null | string;

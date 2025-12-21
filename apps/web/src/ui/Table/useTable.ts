@@ -12,6 +12,12 @@ import type {
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 
+export interface TableQuery {
+  [key: string]: number | string | string[];
+  page: number;
+  pageSize: number;
+}
+
 // Types
 interface SortItem {
   field: string;
@@ -25,12 +31,6 @@ interface TableParams {
   defaultPage?: number;
   defaultPageSize?: number;
   defaultSort: SortItem[];
-}
-
-interface TableQuery {
-  [key: string]: number | string | string[];
-  page: number;
-  pageSize: number;
 }
 
 interface TableState {

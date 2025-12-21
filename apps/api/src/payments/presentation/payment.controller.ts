@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Inject,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -61,6 +62,7 @@ export class PaymentsController extends BaseController {
       await this.createPaymentUseCase.execute({
         createdBy: session.user.name,
         date: body.date,
+        memberId: body.memberId,
         notes: body.notes,
         paymentDues: body.paymentDues,
         receiptNumber: body.receiptNumber,
@@ -90,7 +92,7 @@ export class PaymentsController extends BaseController {
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
   ): Promise<PaginatedResponseDto<PaymentPaginatedDto>> {
-    const payments = await this.paymentRepository.findPaginated({
+    const data = await this.paymentRepository.findPaginatedModel({
       filters: query.filters,
       page: query.page,
       pageSize: query.pageSize,
@@ -98,45 +100,45 @@ export class PaymentsController extends BaseController {
     });
 
     return {
-      data: payments.data.map((payment) => ({
+      data: data.data.map(({ member, payment, user }) => ({
         amount: payment.amount.toCents(),
         createdAt: payment.createdAt.toISOString(),
-        createdBy: payment.createdBy,
+        createdBy: user.name,
         date: payment.date.value,
         id: payment.id.value,
-        memberId: '',
-        memberName: '',
+        memberId: member.id.value,
+        memberName: user.name,
         status: payment.status,
       })),
-      total: payments.total,
+      total: data.total,
     };
   }
 
   @Get(':id')
   public async getById(
     @Param() request: ParamIdDto,
-  ): Promise<null | PaymentDetailDto> {
-    const payment = await this.paymentRepository.findOneById(
+  ): Promise<PaymentDetailDto> {
+    const data = await this.paymentRepository.findOneModel(
       UniqueId.raw({ value: request.id }),
     );
 
-    if (!payment) {
-      return null;
+    if (!data) {
+      throw new NotFoundException();
     }
+
+    const { member, payment, user } = data;
 
     return {
       amount: payment.amount.toCents(),
       createdAt: payment.createdAt.toISOString(),
-      createdBy: payment.createdBy,
+      createdBy: user.name,
       date: payment.date.value,
       id: payment.id.value,
+      memberId: member.id.value,
+      memberName: user.name,
       notes: payment.notes,
-      paymentDues: payment.affectedDueIds.map((dueId) => ({
-        amount: 0,
-        dueId: dueId.value,
-        paymentId: payment.id.value,
-      })),
       status: payment.status,
+      userStatus: user.status,
     };
   }
 }

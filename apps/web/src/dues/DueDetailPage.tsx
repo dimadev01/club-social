@@ -30,12 +30,12 @@ import { useNavigate, useParams } from 'react-router';
 
 import { APP_ROUTES } from '@/app/app.enum';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
-import { useMemberById } from '@/members/useMemberById';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat, DateFormats } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { Card } from '@/ui/Card';
 import { Form } from '@/ui/Form';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
@@ -71,28 +71,31 @@ export function DueDetailPage() {
   const formCategory = Form.useWatch('category', form);
 
   const dueQuery = useQuery<IDueDetailDto | null>({
+    ...queryKeys.dues.detail(id),
     enabled: !!id && permissions.dues.get,
     queryFn: () => $fetch(`dues/${id}`),
-    queryKey: ['dues', id],
-  });
-
-  const memberQuery = useMemberById({
-    enabled: !!id,
-    memberId: dueQuery.data?.memberId,
   });
 
   const createDueMutation = useMutation<ParamId, Error, CreateDueDto>({
     mutationFn: (body) => $fetch('/dues', { body }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dues'] });
+      queryClient.invalidateQueries(queryKeys.dues.detail(id));
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.dues.paginated._def,
+      });
+      queryClient.invalidateQueries(
+        queryKeys.dues.pending(dueQuery.data?.memberId),
+      );
     },
   });
 
   const updateDueMutation = useMutation<unknown, Error, IUpdateDueDto>({
     mutationFn: (body) => $fetch(`dues/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dues'] });
-      queryClient.invalidateQueries({ queryKey: ['dues', id] });
+      queryClient.invalidateQueries(queryKeys.dues.detail(id));
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.dues.paginated._def,
+      });
       message.success('Cuota actualizada correctamente');
       navigate(-1);
     },
@@ -101,8 +104,10 @@ export function DueDetailPage() {
   const voidDueMutation = useMutation<unknown, Error, VoidDueDto>({
     mutationFn: (body) => $fetch(`dues/${id}/void`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dues'] });
-      queryClient.invalidateQueries({ queryKey: ['dues', id] });
+      queryClient.invalidateQueries(queryKeys.dues.detail(id));
+      queryClient.invalidateQueries(
+        queryKeys.dues.pending(dueQuery.data?.memberId),
+      );
       message.success('Cuota anulada correctamente');
       navigate(-1);
     },
@@ -161,7 +166,7 @@ export function DueDetailPage() {
       message.success(
         `${successfulResults.length} deudas creadas correctamente`,
       );
-      navigate(APP_ROUTES.DUE_LIST, { replace: true });
+      navigate(APP_ROUTES.DUES_LIST, { replace: true });
     }
   };
 
@@ -173,7 +178,7 @@ export function DueDetailPage() {
     return <NotFound />;
   }
 
-  const isQueryLoading = dueQuery.isLoading || memberQuery.isLoading;
+  const isQueryLoading = dueQuery.isLoading;
   const isMutating =
     createDueMutation.isPending ||
     updateDueMutation.isPending ||
@@ -188,12 +193,12 @@ export function DueDetailPage() {
     return <NotFound />;
   }
 
-  const memberAdditionalOptions: IMemberSearchResultDto[] = memberQuery.data
+  const memberAdditionalOptions: IMemberSearchResultDto[] = dueQuery.data
     ? [
         {
-          id: memberQuery.data.id,
-          name: memberQuery.data.name,
-          status: memberQuery.data.status,
+          id: dueQuery.data.memberId,
+          name: dueQuery.data.memberName,
+          status: dueQuery.data.userStatus,
         },
       ]
     : [];
@@ -290,7 +295,7 @@ export function DueDetailPage() {
           <MemberSearchSelect
             additionalOptions={memberAdditionalOptions}
             disabled={!!id}
-            loading={id ? memberQuery.isLoading : false}
+            loading={isQueryLoading}
             mode={id ? undefined : 'multiple'}
             placeholder="Buscar y seleccionar socios..."
           />

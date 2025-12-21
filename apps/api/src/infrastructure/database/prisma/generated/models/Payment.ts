@@ -36,6 +36,7 @@ export type PaymentSumAggregateOutputType = {
 
 export type PaymentMinAggregateOutputType = {
   id: string | null;
+  memberId: string | null;
   amount: number | null;
   date: string | null;
   notes: string | null;
@@ -54,6 +55,7 @@ export type PaymentMinAggregateOutputType = {
 
 export type PaymentMaxAggregateOutputType = {
   id: string | null;
+  memberId: string | null;
   amount: number | null;
   date: string | null;
   notes: string | null;
@@ -72,6 +74,7 @@ export type PaymentMaxAggregateOutputType = {
 
 export type PaymentCountAggregateOutputType = {
   id: number;
+  memberId: number;
   amount: number;
   date: number;
   notes: number;
@@ -99,6 +102,7 @@ export type PaymentSumAggregateInputType = {
 
 export type PaymentMinAggregateInputType = {
   id?: true;
+  memberId?: true;
   amount?: true;
   date?: true;
   notes?: true;
@@ -117,6 +121,7 @@ export type PaymentMinAggregateInputType = {
 
 export type PaymentMaxAggregateInputType = {
   id?: true;
+  memberId?: true;
   amount?: true;
   date?: true;
   notes?: true;
@@ -135,6 +140,7 @@ export type PaymentMaxAggregateInputType = {
 
 export type PaymentCountAggregateInputType = {
   id?: true;
+  memberId?: true;
   amount?: true;
   date?: true;
   notes?: true;
@@ -247,6 +253,7 @@ export type PaymentGroupByArgs<
 
 export type PaymentGroupByOutputType = {
   id: string;
+  memberId: string;
   amount: number;
   date: string;
   notes: string | null;
@@ -286,6 +293,7 @@ export type PaymentWhereInput = {
   OR?: Prisma.PaymentWhereInput[];
   NOT?: Prisma.PaymentWhereInput | Prisma.PaymentWhereInput[];
   id?: Prisma.StringFilter<'Payment'> | string;
+  memberId?: Prisma.StringFilter<'Payment'> | string;
   amount?: Prisma.IntFilter<'Payment'> | number;
   date?: Prisma.StringFilter<'Payment'> | string;
   notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
@@ -300,11 +308,16 @@ export type PaymentWhereInput = {
   updatedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
   deletedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
   deletedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
+  member?: Prisma.XOR<
+    Prisma.MemberScalarRelationFilter,
+    Prisma.MemberWhereInput
+  >;
   paymentDues?: Prisma.PaymentDueListRelationFilter;
 };
 
 export type PaymentOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
+  memberId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -319,6 +332,7 @@ export type PaymentOrderByWithRelationInput = {
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
+  member?: Prisma.MemberOrderByWithRelationInput;
   paymentDues?: Prisma.PaymentDueOrderByRelationAggregateInput;
 };
 
@@ -328,6 +342,7 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<
     AND?: Prisma.PaymentWhereInput | Prisma.PaymentWhereInput[];
     OR?: Prisma.PaymentWhereInput[];
     NOT?: Prisma.PaymentWhereInput | Prisma.PaymentWhereInput[];
+    memberId?: Prisma.StringFilter<'Payment'> | string;
     amount?: Prisma.IntFilter<'Payment'> | number;
     date?: Prisma.StringFilter<'Payment'> | string;
     notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
@@ -342,6 +357,10 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<
     updatedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
     deletedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
     deletedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
+    member?: Prisma.XOR<
+      Prisma.MemberScalarRelationFilter,
+      Prisma.MemberWhereInput
+    >;
     paymentDues?: Prisma.PaymentDueListRelationFilter;
   },
   'id'
@@ -349,6 +368,7 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<
 
 export type PaymentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
+  memberId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -379,6 +399,7 @@ export type PaymentScalarWhereWithAggregatesInput = {
     | Prisma.PaymentScalarWhereWithAggregatesInput
     | Prisma.PaymentScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
+  memberId?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
   amount?: Prisma.IntWithAggregatesFilter<'Payment'> | number;
   date?: Prisma.StringWithAggregatesFilter<'Payment'> | string;
   notes?: Prisma.StringNullableWithAggregatesFilter<'Payment'> | string | null;
@@ -434,11 +455,13 @@ export type PaymentCreateInput = {
   updatedBy?: string | null;
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
+  member: Prisma.MemberCreateNestedOneWithoutPaymentsInput;
   paymentDues?: Prisma.PaymentDueCreateNestedManyWithoutPaymentInput;
 };
 
 export type PaymentUncheckedCreateInput = {
   id: string;
+  memberId: string;
   amount: number;
   date: string;
   notes?: string | null;
@@ -483,11 +506,13 @@ export type PaymentUpdateInput = {
     | string
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  member?: Prisma.MemberUpdateOneRequiredWithoutPaymentsNestedInput;
   paymentDues?: Prisma.PaymentDueUpdateManyWithoutPaymentNestedInput;
 };
 
 export type PaymentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -518,6 +543,7 @@ export type PaymentUncheckedUpdateInput = {
 
 export type PaymentCreateManyInput = {
   id: string;
+  memberId: string;
   amount: number;
   date: string;
   notes?: string | null;
@@ -565,6 +591,7 @@ export type PaymentUpdateManyMutationInput = {
 
 export type PaymentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -592,8 +619,19 @@ export type PaymentUncheckedUpdateManyInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
+export type PaymentListRelationFilter = {
+  every?: Prisma.PaymentWhereInput;
+  some?: Prisma.PaymentWhereInput;
+  none?: Prisma.PaymentWhereInput;
+};
+
+export type PaymentOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder;
+};
+
 export type PaymentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  memberId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
@@ -616,6 +654,7 @@ export type PaymentAvgOrderByAggregateInput = {
 
 export type PaymentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  memberId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
@@ -634,6 +673,7 @@ export type PaymentMaxOrderByAggregateInput = {
 
 export type PaymentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  memberId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
@@ -657,6 +697,100 @@ export type PaymentSumOrderByAggregateInput = {
 export type PaymentScalarRelationFilter = {
   is?: Prisma.PaymentWhereInput;
   isNot?: Prisma.PaymentWhereInput;
+};
+
+export type PaymentCreateNestedManyWithoutMemberInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.PaymentCreateWithoutMemberInput,
+        Prisma.PaymentUncheckedCreateWithoutMemberInput
+      >
+    | Prisma.PaymentCreateWithoutMemberInput[]
+    | Prisma.PaymentUncheckedCreateWithoutMemberInput[];
+  connectOrCreate?:
+    | Prisma.PaymentCreateOrConnectWithoutMemberInput
+    | Prisma.PaymentCreateOrConnectWithoutMemberInput[];
+  createMany?: Prisma.PaymentCreateManyMemberInputEnvelope;
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[];
+};
+
+export type PaymentUncheckedCreateNestedManyWithoutMemberInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.PaymentCreateWithoutMemberInput,
+        Prisma.PaymentUncheckedCreateWithoutMemberInput
+      >
+    | Prisma.PaymentCreateWithoutMemberInput[]
+    | Prisma.PaymentUncheckedCreateWithoutMemberInput[];
+  connectOrCreate?:
+    | Prisma.PaymentCreateOrConnectWithoutMemberInput
+    | Prisma.PaymentCreateOrConnectWithoutMemberInput[];
+  createMany?: Prisma.PaymentCreateManyMemberInputEnvelope;
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[];
+};
+
+export type PaymentUpdateManyWithoutMemberNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.PaymentCreateWithoutMemberInput,
+        Prisma.PaymentUncheckedCreateWithoutMemberInput
+      >
+    | Prisma.PaymentCreateWithoutMemberInput[]
+    | Prisma.PaymentUncheckedCreateWithoutMemberInput[];
+  connectOrCreate?:
+    | Prisma.PaymentCreateOrConnectWithoutMemberInput
+    | Prisma.PaymentCreateOrConnectWithoutMemberInput[];
+  upsert?:
+    | Prisma.PaymentUpsertWithWhereUniqueWithoutMemberInput
+    | Prisma.PaymentUpsertWithWhereUniqueWithoutMemberInput[];
+  createMany?: Prisma.PaymentCreateManyMemberInputEnvelope;
+  set?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[];
+  disconnect?:
+    | Prisma.PaymentWhereUniqueInput
+    | Prisma.PaymentWhereUniqueInput[];
+  delete?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[];
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[];
+  update?:
+    | Prisma.PaymentUpdateWithWhereUniqueWithoutMemberInput
+    | Prisma.PaymentUpdateWithWhereUniqueWithoutMemberInput[];
+  updateMany?:
+    | Prisma.PaymentUpdateManyWithWhereWithoutMemberInput
+    | Prisma.PaymentUpdateManyWithWhereWithoutMemberInput[];
+  deleteMany?:
+    | Prisma.PaymentScalarWhereInput
+    | Prisma.PaymentScalarWhereInput[];
+};
+
+export type PaymentUncheckedUpdateManyWithoutMemberNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.PaymentCreateWithoutMemberInput,
+        Prisma.PaymentUncheckedCreateWithoutMemberInput
+      >
+    | Prisma.PaymentCreateWithoutMemberInput[]
+    | Prisma.PaymentUncheckedCreateWithoutMemberInput[];
+  connectOrCreate?:
+    | Prisma.PaymentCreateOrConnectWithoutMemberInput
+    | Prisma.PaymentCreateOrConnectWithoutMemberInput[];
+  upsert?:
+    | Prisma.PaymentUpsertWithWhereUniqueWithoutMemberInput
+    | Prisma.PaymentUpsertWithWhereUniqueWithoutMemberInput[];
+  createMany?: Prisma.PaymentCreateManyMemberInputEnvelope;
+  set?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[];
+  disconnect?:
+    | Prisma.PaymentWhereUniqueInput
+    | Prisma.PaymentWhereUniqueInput[];
+  delete?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[];
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[];
+  update?:
+    | Prisma.PaymentUpdateWithWhereUniqueWithoutMemberInput
+    | Prisma.PaymentUpdateWithWhereUniqueWithoutMemberInput[];
+  updateMany?:
+    | Prisma.PaymentUpdateManyWithWhereWithoutMemberInput
+    | Prisma.PaymentUpdateManyWithWhereWithoutMemberInput[];
+  deleteMany?:
+    | Prisma.PaymentScalarWhereInput
+    | Prisma.PaymentScalarWhereInput[];
 };
 
 export type PaymentCreateNestedOneWithoutPaymentDuesInput = {
@@ -685,6 +819,109 @@ export type PaymentUpdateOneRequiredWithoutPaymentDuesNestedInput = {
   >;
 };
 
+export type PaymentCreateWithoutMemberInput = {
+  id: string;
+  amount: number;
+  date: string;
+  notes?: string | null;
+  status: string;
+  receiptNumber?: string | null;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  paymentDues?: Prisma.PaymentDueCreateNestedManyWithoutPaymentInput;
+};
+
+export type PaymentUncheckedCreateWithoutMemberInput = {
+  id: string;
+  amount: number;
+  date: string;
+  notes?: string | null;
+  status: string;
+  receiptNumber?: string | null;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+  paymentDues?: Prisma.PaymentDueUncheckedCreateNestedManyWithoutPaymentInput;
+};
+
+export type PaymentCreateOrConnectWithoutMemberInput = {
+  where: Prisma.PaymentWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.PaymentCreateWithoutMemberInput,
+    Prisma.PaymentUncheckedCreateWithoutMemberInput
+  >;
+};
+
+export type PaymentCreateManyMemberInputEnvelope = {
+  data:
+    | Prisma.PaymentCreateManyMemberInput
+    | Prisma.PaymentCreateManyMemberInput[];
+  skipDuplicates?: boolean;
+};
+
+export type PaymentUpsertWithWhereUniqueWithoutMemberInput = {
+  where: Prisma.PaymentWhereUniqueInput;
+  update: Prisma.XOR<
+    Prisma.PaymentUpdateWithoutMemberInput,
+    Prisma.PaymentUncheckedUpdateWithoutMemberInput
+  >;
+  create: Prisma.XOR<
+    Prisma.PaymentCreateWithoutMemberInput,
+    Prisma.PaymentUncheckedCreateWithoutMemberInput
+  >;
+};
+
+export type PaymentUpdateWithWhereUniqueWithoutMemberInput = {
+  where: Prisma.PaymentWhereUniqueInput;
+  data: Prisma.XOR<
+    Prisma.PaymentUpdateWithoutMemberInput,
+    Prisma.PaymentUncheckedUpdateWithoutMemberInput
+  >;
+};
+
+export type PaymentUpdateManyWithWhereWithoutMemberInput = {
+  where: Prisma.PaymentScalarWhereInput;
+  data: Prisma.XOR<
+    Prisma.PaymentUpdateManyMutationInput,
+    Prisma.PaymentUncheckedUpdateManyWithoutMemberInput
+  >;
+};
+
+export type PaymentScalarWhereInput = {
+  AND?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[];
+  OR?: Prisma.PaymentScalarWhereInput[];
+  NOT?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[];
+  id?: Prisma.StringFilter<'Payment'> | string;
+  memberId?: Prisma.StringFilter<'Payment'> | string;
+  amount?: Prisma.IntFilter<'Payment'> | number;
+  date?: Prisma.StringFilter<'Payment'> | string;
+  notes?: Prisma.StringNullableFilter<'Payment'> | string | null;
+  status?: Prisma.StringFilter<'Payment'> | string;
+  receiptNumber?: Prisma.StringNullableFilter<'Payment'> | string | null;
+  voidReason?: Prisma.StringNullableFilter<'Payment'> | string | null;
+  voidedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
+  voidedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
+  createdAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
+  createdBy?: Prisma.StringFilter<'Payment'> | string;
+  updatedAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
+  updatedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
+  deletedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
+  deletedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
+};
+
 export type PaymentCreateWithoutPaymentDuesInput = {
   id: string;
   amount: number;
@@ -701,10 +938,12 @@ export type PaymentCreateWithoutPaymentDuesInput = {
   updatedBy?: string | null;
   deletedAt?: Date | string | null;
   deletedBy?: string | null;
+  member: Prisma.MemberCreateNestedOneWithoutPaymentsInput;
 };
 
 export type PaymentUncheckedCreateWithoutPaymentDuesInput = {
   id: string;
+  memberId: string;
   amount: number;
   date: string;
   notes?: string | null;
@@ -776,9 +1015,118 @@ export type PaymentUpdateWithoutPaymentDuesInput = {
     | string
     | null;
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  member?: Prisma.MemberUpdateOneRequiredWithoutPaymentsNestedInput;
 };
 
 export type PaymentUncheckedUpdateWithoutPaymentDuesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberId?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+};
+
+export type PaymentCreateManyMemberInput = {
+  id: string;
+  amount: number;
+  date: string;
+  notes?: string | null;
+  status: string;
+  receiptNumber?: string | null;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
+};
+
+export type PaymentUpdateWithoutMemberInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  paymentDues?: Prisma.PaymentDueUpdateManyWithoutPaymentNestedInput;
+};
+
+export type PaymentUncheckedUpdateWithoutMemberInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  paymentDues?: Prisma.PaymentDueUncheckedUpdateManyWithoutPaymentNestedInput;
+};
+
+export type PaymentUncheckedUpdateManyWithoutMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -851,6 +1199,7 @@ export type PaymentSelect<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    memberId?: boolean;
     amount?: boolean;
     date?: boolean;
     notes?: boolean;
@@ -865,6 +1214,7 @@ export type PaymentSelect<
     updatedBy?: boolean;
     deletedAt?: boolean;
     deletedBy?: boolean;
+    member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
     paymentDues?: boolean | Prisma.Payment$paymentDuesArgs<ExtArgs>;
     _count?: boolean | Prisma.PaymentCountOutputTypeDefaultArgs<ExtArgs>;
   },
@@ -877,6 +1227,7 @@ export type PaymentSelectCreateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    memberId?: boolean;
     amount?: boolean;
     date?: boolean;
     notes?: boolean;
@@ -891,6 +1242,7 @@ export type PaymentSelectCreateManyAndReturn<
     updatedBy?: boolean;
     deletedAt?: boolean;
     deletedBy?: boolean;
+    member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['payment']
 >;
@@ -901,6 +1253,7 @@ export type PaymentSelectUpdateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    memberId?: boolean;
     amount?: boolean;
     date?: boolean;
     notes?: boolean;
@@ -915,12 +1268,14 @@ export type PaymentSelectUpdateManyAndReturn<
     updatedBy?: boolean;
     deletedAt?: boolean;
     deletedBy?: boolean;
+    member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['payment']
 >;
 
 export type PaymentSelectScalar = {
   id?: boolean;
+  memberId?: boolean;
   amount?: boolean;
   date?: boolean;
   notes?: boolean;
@@ -942,6 +1297,7 @@ export type PaymentOmit<
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
   | 'id'
+  | 'memberId'
   | 'amount'
   | 'date'
   | 'notes'
@@ -962,17 +1318,22 @@ export type PaymentInclude<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
+  member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
   paymentDues?: boolean | Prisma.Payment$paymentDuesArgs<ExtArgs>;
   _count?: boolean | Prisma.PaymentCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type PaymentIncludeCreateManyAndReturn<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
-> = {};
+> = {
+  member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
+};
 export type PaymentIncludeUpdateManyAndReturn<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
-> = {};
+> = {
+  member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
+};
 
 export type $PaymentPayload<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
@@ -980,11 +1341,13 @@ export type $PaymentPayload<
 > = {
   name: 'Payment';
   objects: {
+    member: Prisma.$MemberPayload<ExtArgs>;
     paymentDues: Prisma.$PaymentDuePayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
+      memberId: string;
       amount: number;
       date: string;
       notes: string | null;
@@ -1549,6 +1912,20 @@ export interface Prisma__PaymentClient<
   GlobalOmitOptions = {},
 > extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: 'PrismaPromise';
+  member<T extends Prisma.MemberDefaultArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.MemberDefaultArgs<ExtArgs>>,
+  ): Prisma.Prisma__MemberClient<
+    | runtime.Types.Result.GetResult<
+        Prisma.$MemberPayload<ExtArgs>,
+        T,
+        'findUniqueOrThrow',
+        GlobalOmitOptions
+      >
+    | Null,
+    Null,
+    ExtArgs,
+    GlobalOmitOptions
+  >;
   paymentDues<T extends Prisma.Payment$paymentDuesArgs<ExtArgs> = {}>(
     args?: Prisma.Subset<T, Prisma.Payment$paymentDuesArgs<ExtArgs>>,
   ): Prisma.PrismaPromise<
@@ -1603,6 +1980,7 @@ export interface Prisma__PaymentClient<
  */
 export interface PaymentFieldRefs {
   readonly id: Prisma.FieldRef<'Payment', 'String'>;
+  readonly memberId: Prisma.FieldRef<'Payment', 'String'>;
   readonly amount: Prisma.FieldRef<'Payment', 'Int'>;
   readonly date: Prisma.FieldRef<'Payment', 'String'>;
   readonly notes: Prisma.FieldRef<'Payment', 'String'>;
@@ -1898,6 +2276,10 @@ export type PaymentCreateManyAndReturnArgs<
    */
   data: Prisma.PaymentCreateManyInput | Prisma.PaymentCreateManyInput[];
   skipDuplicates?: boolean;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentIncludeCreateManyAndReturn<ExtArgs> | null;
 };
 
 /**
@@ -1986,6 +2368,10 @@ export type PaymentUpdateManyAndReturnArgs<
    * Limit how many Payments to update.
    */
   limit?: number;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentIncludeUpdateManyAndReturn<ExtArgs> | null;
 };
 
 /**

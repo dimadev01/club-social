@@ -5,6 +5,7 @@ import {
   FileStatus,
   FileStatusLabel,
   type ICreateMemberDto,
+  type IMemberDetailDto,
   type IUpdateMemberDto,
   MaritalStatus,
   MaritalStatusLabel,
@@ -35,6 +36,7 @@ import { APP_ROUTES } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { Card } from '@/ui/Card';
 import { Form } from '@/ui/Form';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
@@ -83,19 +85,27 @@ export function MemberDetailPage() {
   const createMemberMutation = useMutation<ParamId, Error, ICreateMemberDto>({
     mutationFn: (body) => $fetch('members', { body }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      navigate(`${APP_ROUTES.MEMBER_LIST}/${data.id}`, {
-        replace: true,
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.members.paginated._def,
       });
       message.success('Socio creado correctamente');
+      navigate(`${APP_ROUTES.MEMBERS_LIST}/${data.id}`, {
+        replace: true,
+      });
     },
   });
 
-  const updateMemberMutation = useMutation<unknown, Error, IUpdateMemberDto>({
+  const updateMemberMutation = useMutation<
+    IMemberDetailDto,
+    Error,
+    IUpdateMemberDto
+  >({
     mutationFn: (body) => $fetch(`members/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      queryClient.invalidateQueries({ queryKey: ['members', id] });
+      queryClient.invalidateQueries(queryKeys.members.detail(id));
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.members.paginated._def,
+      });
       message.success('Socio actualizado correctamente');
       navigate(-1);
     },

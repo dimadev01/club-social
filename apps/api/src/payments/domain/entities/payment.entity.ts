@@ -18,6 +18,7 @@ interface PaymentProps {
   createdBy: string;
   date: DateOnly;
   dueIds: UniqueId[];
+  memberId: UniqueId;
   notes: null | string;
   receiptNumber: null | string;
   status: PaymentStatus;
@@ -41,6 +42,10 @@ export class PaymentEntity extends Entity<PaymentEntity> {
 
   public get dueIds(): UniqueId[] {
     return [...this._dueIds];
+  }
+
+  public get memberId(): UniqueId {
+    return this._memberId;
   }
 
   public get notes(): null | string {
@@ -70,6 +75,7 @@ export class PaymentEntity extends Entity<PaymentEntity> {
   private _amount: Amount;
   private _date: DateOnly;
   private _dueIds: UniqueId[];
+  private _memberId: UniqueId;
   private _notes: null | string;
   private _receiptNumber: null | string;
   private _status: PaymentStatus;
@@ -81,6 +87,7 @@ export class PaymentEntity extends Entity<PaymentEntity> {
     super(base);
 
     this._amount = props.amount;
+    this._memberId = props.memberId;
     this._date = props.date;
     this._dueIds = props.dueIds;
     this._notes = props.notes;
@@ -97,6 +104,7 @@ export class PaymentEntity extends Entity<PaymentEntity> {
       createdBy: props.createdBy,
       date: props.date,
       dueIds: props.dueIds,
+      memberId: props.memberId,
       notes: props.notes,
       receiptNumber: props.receiptNumber,
       status: PaymentStatus.PAID,

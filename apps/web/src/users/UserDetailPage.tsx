@@ -16,6 +16,7 @@ import { APP_ROUTES } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { Card } from '@/ui/Card';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
@@ -41,27 +42,31 @@ export function UserDetailPage() {
   const { setFieldsValue } = form;
 
   const userQuery = useQuery<IUserDetailDto | null>({
-    enabled: !!id,
+    ...queryKeys.users.detail(id),
+    enabled: !!id && permissions.users.get,
     queryFn: () => $fetch(`users/${id}`),
-    queryKey: ['users', id],
   });
 
   const createUserMutation = useMutation<ParamId, Error, ICreateUserDto>({
     mutationFn: (body) => $fetch('users', { body }),
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      navigate(`${APP_ROUTES.USER_DETAIL.replace(':id', data.id)}`, {
-        replace: true,
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.users.paginated._def,
       });
       message.success('Usuario creado correctamente');
+      navigate(`${APP_ROUTES.USERS_DETAIL.replace(':id', data.id)}`, {
+        replace: true,
+      });
     },
   });
 
   const updateUserMutation = useMutation<unknown, Error, IUpdateUserDto>({
     mutationFn: (body) => $fetch(`users/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      queryClient.invalidateQueries({ queryKey: ['users', id] });
+      queryClient.invalidateQueries(queryKeys.users.detail(id));
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.users.paginated._def,
+      });
       message.success('Usuario actualizado correctamente');
       navigate(-1);
     },

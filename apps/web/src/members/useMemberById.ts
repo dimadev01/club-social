@@ -2,6 +2,7 @@ import type { IMemberDetailDto } from '@club-social/shared/members';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { usePermissions } from '@/users/use-permissions';
 
 interface UseMemberByIdOptions {
@@ -11,8 +12,8 @@ interface UseMemberByIdOptions {
 
 export function getMemberByIdQueryOptions(memberId: string) {
   return {
+    ...queryKeys.members.detail(memberId),
     queryFn: () => $fetch<IMemberDetailDto>(`/members/${memberId}`),
-    queryKey: ['members', memberId] as const,
   };
 }
 

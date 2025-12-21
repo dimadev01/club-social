@@ -16,8 +16,10 @@ export interface IDueDetailDto {
   date: string;
   id: string;
   memberId: string;
+  memberName: string;
   notes: null | string;
   status: DueStatus;
+  userStatus: UserStatus;
 }
 
 export interface IDuePaginatedDto {

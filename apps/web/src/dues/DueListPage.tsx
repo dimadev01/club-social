@@ -23,7 +23,9 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
+import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -59,11 +61,11 @@ export function DueListPage() {
   });
 
   const duesQuery = useQuery({
+    ...queryKeys.dues.paginated(query),
     enabled: permissions.dues.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<PaginatedResponse<IDuePaginatedDto>>('/dues/paginated', { query }),
-    queryKey: ['dues', state, query],
   });
 
   if (duesQuery.error) {
@@ -82,7 +84,7 @@ export function DueListPage() {
             <Button
               disabled={!permissions.dues.create}
               icon={<AddNewIcon />}
-              onClick={() => navigate(APP_ROUTES.DUE_NEW)}
+              onClick={() => navigate(APP_ROUTES.DUES_NEW)}
               type="primary"
             >
               Nueva deuda
@@ -126,7 +128,7 @@ export function DueListPage() {
             ),
             filteredValue: getFilterValue('createdAt'),
             render: (createdAt: string, record) => (
-              <Link to={`${APP_ROUTES.DUE_LIST}/${record.id}`}>
+              <Link to={`${APP_ROUTES.DUES_LIST}/${record.id}`}>
                 {DateFormat.date(createdAt)}
               </Link>
             ),
@@ -148,7 +150,7 @@ export function DueListPage() {
           {
             dataIndex: 'memberId',
             render: (memberId: string, record: IDuePaginatedDto) => (
-              <Link to={`${APP_ROUTES.MEMBER_LIST}/${memberId}`}>
+              <Link to={`${APP_ROUTES.MEMBERS_LIST}/${memberId}`}>
                 {record.memberName}
               </Link>
             ),
@@ -215,6 +217,14 @@ export function DueListPage() {
                     }}
                     type="text"
                   />
+                </Tooltip>
+
+                <Tooltip title="Nuevo pago">
+                  <Link
+                    to={`${APP_ROUTES.PAYMENTS_NEW}?memberId=${record.memberId}`}
+                  >
+                    <Button icon={<PaymentsIcon />} type="text" />
+                  </Link>
                 </Tooltip>
               </Space.Compact>
             ),

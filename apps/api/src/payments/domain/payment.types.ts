@@ -1,16 +1,16 @@
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 
-import { DueEntity } from './entities/due.entity';
+import { PaymentEntity } from './entities/payment.entity';
 
-export interface DueDetailModel {
-  due: DueEntity;
+export interface PaymentDetailModel {
   member: MemberEntity;
+  payment: PaymentEntity;
   user: UserEntity;
 }
 
-export interface DuePaginatedModel {
-  due: DueEntity;
+export interface PaymentPaginatedModel {
   member: MemberEntity;
+  payment: PaymentEntity;
   user: UserEntity;
 }
