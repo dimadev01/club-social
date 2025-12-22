@@ -110,7 +110,7 @@ export class UsersController extends BaseController {
 
   @Get(':id')
   public async get(@Param() request: ParamIdDto): Promise<UserDetailDto> {
-    const user = await this.userRepository.findOneById(
+    const user = await this.userRepository.findUniqueById(
       UniqueId.raw({ value: request.id }),
     );
 

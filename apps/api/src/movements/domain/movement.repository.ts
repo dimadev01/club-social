@@ -1,0 +1,18 @@
+import {
+  PaginatedRepository,
+  ReadableRepository,
+  WriteableRepository,
+} from '@/shared/domain/repository';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+import { MovementEntity } from './entities/movement.entity';
+
+export const MOVEMENT_REPOSITORY_PROVIDER = Symbol('MovementRepository');
+
+export interface MovementRepository
+  extends
+    PaginatedRepository<MovementEntity>,
+    ReadableRepository<MovementEntity>,
+    WriteableRepository<MovementEntity> {
+  findByPaymentId(paymentId: UniqueId): Promise<MovementEntity | null>;
+}

@@ -7,9 +7,9 @@ export interface PaginatedRepository<T> {
 }
 
 export interface ReadableRepository<T> {
-  findManyByIds(ids: UniqueId[]): Promise<T[]>;
-  findOneById(id: UniqueId): Promise<null | T>;
-  findOneByIdOrThrow(id: UniqueId): Promise<T>;
+  findUniqueById(id: UniqueId): Promise<null | T>;
+  findUniqueByIds(ids: UniqueId[]): Promise<T[]>;
+  findUniqueOrThrow(id: UniqueId): Promise<T>;
 }
 
 export interface WriteableRepository<T> {

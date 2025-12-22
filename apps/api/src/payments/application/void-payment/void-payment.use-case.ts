@@ -43,7 +43,7 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
       params,
     });
 
-    const payment = await this.paymentRepository.findOneByIdOrThrow(
+    const payment = await this.paymentRepository.findUniqueOrThrow(
       UniqueId.raw({ value: params.id }),
     );
 
@@ -58,7 +58,7 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
       return err(voidResult.error);
     }
 
-    const dues = await this.dueRepository.findManyByIds(affectedDueIds);
+    const dues = await this.dueRepository.findUniqueByIds(affectedDueIds);
 
     const voidPaymentResults = ResultUtils.combine(
       dues.map((due) => due.voidPayment(payment.id, params.voidedBy)),

@@ -28,40 +28,6 @@ export class PrismaPaymentRepository implements PaymentRepository {
     private readonly mapper: PrismaMappers,
   ) {}
 
-  public async findManyByIds(ids: UniqueId[]): Promise<PaymentEntity[]> {
-    const payments = await this.prismaService.payment.findMany({
-      include: { paymentDues: true },
-      where: {
-        deletedAt: null,
-        id: { in: ids.map((id) => id.value) },
-      },
-    });
-
-    return payments.map((payment) => this.mapper.payment.toDomain(payment));
-  }
-
-  public async findOneById(id: UniqueId): Promise<null | PaymentEntity> {
-    const payment = await this.prismaService.payment.findUnique({
-      include: { paymentDues: true },
-      where: { deletedAt: null, id: id.value },
-    });
-
-    if (!payment) {
-      return null;
-    }
-
-    return this.mapper.payment.toDomain(payment);
-  }
-
-  public async findOneByIdOrThrow(id: UniqueId): Promise<PaymentEntity> {
-    const payment = await this.prismaService.payment.findUniqueOrThrow({
-      include: { paymentDues: true },
-      where: { deletedAt: null, id: id.value },
-    });
-
-    return this.mapper.payment.toDomain(payment);
-  }
-
   public async findOneModel(id: UniqueId): Promise<null | PaymentDetailModel> {
     const payment = await this.prismaService.payment.findUnique({
       include: { member: { include: { user: true } } },
@@ -139,6 +105,40 @@ export class PrismaPaymentRepository implements PaymentRepository {
       })),
       total,
     };
+  }
+
+  public async findUniqueById(id: UniqueId): Promise<null | PaymentEntity> {
+    const payment = await this.prismaService.payment.findUnique({
+      include: { paymentDues: true },
+      where: { deletedAt: null, id: id.value },
+    });
+
+    if (!payment) {
+      return null;
+    }
+
+    return this.mapper.payment.toDomain(payment);
+  }
+
+  public async findUniqueByIds(ids: UniqueId[]): Promise<PaymentEntity[]> {
+    const payments = await this.prismaService.payment.findMany({
+      include: { paymentDues: true },
+      where: {
+        deletedAt: null,
+        id: { in: ids.map((id) => id.value) },
+      },
+    });
+
+    return payments.map((payment) => this.mapper.payment.toDomain(payment));
+  }
+
+  public async findUniqueOrThrow(id: UniqueId): Promise<PaymentEntity> {
+    const payment = await this.prismaService.payment.findUniqueOrThrow({
+      include: { paymentDues: true },
+      where: { deletedAt: null, id: id.value },
+    });
+
+    return this.mapper.payment.toDomain(payment);
   }
 
   public async save(entity: PaymentEntity): Promise<PaymentEntity> {

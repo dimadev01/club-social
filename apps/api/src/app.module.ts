@@ -13,6 +13,7 @@ import { ObservabilityModule } from './infrastructure/observability/observabilit
 import { StorageModule } from './infrastructure/storage/storage.module';
 import { TraceModule } from './infrastructure/trace/trace.module';
 import { MembersModule } from './members/member.module';
+import { MovementsModule } from './movements/movement.module';
 import { PaymentsModule } from './payments/payment.module';
 import { AllExceptionsFilter } from './shared/presentation/filters/all-exceptions.filter';
 import { UsersModule } from './users/user.module';
@@ -36,6 +37,7 @@ import { UsersModule } from './users/user.module';
     MembersModule,
     DuesModule,
     PaymentsModule,
+    MovementsModule,
   ],
   providers: [
     AppService,

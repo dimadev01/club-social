@@ -31,7 +31,7 @@ export class VoidDueUseCase extends UseCase {
       params,
     });
 
-    const due = await this.dueRepository.findOneByIdOrThrow(
+    const due = await this.dueRepository.findUniqueOrThrow(
       UniqueId.raw({ value: params.id }),
     );
 

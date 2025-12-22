@@ -38,6 +38,11 @@
       "types": "./src/payment-due/index.ts",
       "require": "./dist/payment-due/index.js",
       "import": "./dist/payment-due/index.mjs"
+    },
+    "./movements": {
+      "types": "./src/movements/index.ts",
+      "require": "./dist/movements/index.js",
+      "import": "./dist/movements/index.mjs"
     }
   },
   "scripts": {

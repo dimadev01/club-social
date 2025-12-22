@@ -21,37 +21,6 @@ export class PrismaUserRepository implements UserReadableRepository {
     private readonly mapper: PrismaMappers,
   ) {}
 
-  public async findManyByIds(ids: UniqueId[]): Promise<UserEntity[]> {
-    const users = await this.prismaService.user.findMany({
-      where: {
-        deletedAt: null,
-        id: { in: ids.map((id) => id.value) },
-      },
-    });
-
-    return users.map((user) => this.mapper.user.toDomain(user));
-  }
-
-  public async findOneById(id: UniqueId): Promise<null | UserEntity> {
-    const user = await this.prismaService.user.findUnique({
-      where: { deletedAt: null, id: id.value },
-    });
-
-    if (!user) {
-      return null;
-    }
-
-    return this.mapper.user.toDomain(user);
-  }
-
-  public async findOneByIdOrThrow(id: UniqueId): Promise<UserEntity> {
-    const user = await this.prismaService.user.findUniqueOrThrow({
-      where: { deletedAt: null, id: id.value },
-    });
-
-    return this.mapper.user.toDomain(user);
-  }
-
   public async findPaginated(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<UserEntity>> {
@@ -95,6 +64,37 @@ export class PrismaUserRepository implements UserReadableRepository {
     if (!user) {
       return null;
     }
+
+    return this.mapper.user.toDomain(user);
+  }
+
+  public async findUniqueById(id: UniqueId): Promise<null | UserEntity> {
+    const user = await this.prismaService.user.findUnique({
+      where: { deletedAt: null, id: id.value },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.mapper.user.toDomain(user);
+  }
+
+  public async findUniqueByIds(ids: UniqueId[]): Promise<UserEntity[]> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        deletedAt: null,
+        id: { in: ids.map((id) => id.value) },
+      },
+    });
+
+    return users.map((user) => this.mapper.user.toDomain(user));
+  }
+
+  public async findUniqueOrThrow(id: UniqueId): Promise<UserEntity> {
+    const user = await this.prismaService.user.findUniqueOrThrow({
+      where: { deletedAt: null, id: id.value },
+    });
 
     return this.mapper.user.toDomain(user);
   }

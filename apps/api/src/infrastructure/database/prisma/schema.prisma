@@ -182,3 +182,31 @@ model PaymentDue {
   @@index([status])
   @@map("payment_due")
 }
+
+model Movement {
+  id          String    @id
+  type        String
+  category    String
+  amount      Int
+  date        String
+  description String?
+  status      String
+  voidReason  String?
+  voidedAt    DateTime?
+  voidedBy    String?
+  paymentId   String?
+  createdAt   DateTime  @default(now())
+  createdBy   String
+  updatedAt   DateTime  @updatedAt
+  updatedBy   String?
+  deletedAt   DateTime?
+  deletedBy   String?
+
+  @@index([type])
+  @@index([category])
+  @@index([status])
+  @@index([date])
+  @@index([createdAt])
+  @@index([paymentId])
+  @@map("movement")
+}

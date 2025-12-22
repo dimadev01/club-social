@@ -420,6 +420,7 @@ export const ModelName = {
   Due: 'Due',
   Payment: 'Payment',
   PaymentDue: 'PaymentDue',
+  Movement: 'Movement',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -449,7 +450,8 @@ export type TypeMap<
       | 'member'
       | 'due'
       | 'payment'
-      | 'paymentDue';
+      | 'paymentDue'
+      | 'movement';
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -1061,6 +1063,82 @@ export type TypeMap<
         };
       };
     };
+    Movement: {
+      payload: Prisma.$MovementPayload<ExtArgs>;
+      fields: Prisma.MovementFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.MovementFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.MovementFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload>;
+        };
+        findFirst: {
+          args: Prisma.MovementFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.MovementFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload>;
+        };
+        findMany: {
+          args: Prisma.MovementFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload>[];
+        };
+        create: {
+          args: Prisma.MovementCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload>;
+        };
+        createMany: {
+          args: Prisma.MovementCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.MovementCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload>[];
+        };
+        delete: {
+          args: Prisma.MovementDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload>;
+        };
+        update: {
+          args: Prisma.MovementUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload>;
+        };
+        deleteMany: {
+          args: Prisma.MovementDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.MovementUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.MovementUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload>[];
+        };
+        upsert: {
+          args: Prisma.MovementUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MovementPayload>;
+        };
+        aggregate: {
+          args: Prisma.MovementAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMovement>;
+        };
+        groupBy: {
+          args: Prisma.MovementGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.MovementGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.MovementCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.MovementCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
   };
 } & {
   other: {
@@ -1249,6 +1327,29 @@ export const PaymentDueScalarFieldEnum = {
 
 export type PaymentDueScalarFieldEnum =
   (typeof PaymentDueScalarFieldEnum)[keyof typeof PaymentDueScalarFieldEnum];
+
+export const MovementScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  category: 'category',
+  amount: 'amount',
+  date: 'date',
+  description: 'description',
+  status: 'status',
+  voidReason: 'voidReason',
+  voidedAt: 'voidedAt',
+  voidedBy: 'voidedBy',
+  paymentId: 'paymentId',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+} as const;
+
+export type MovementScalarFieldEnum =
+  (typeof MovementScalarFieldEnum)[keyof typeof MovementScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',
@@ -1458,6 +1559,7 @@ export type GlobalOmitConfig = {
   due?: Prisma.DueOmit;
   payment?: Prisma.PaymentOmit;
   paymentDue?: Prisma.PaymentDueOmit;
+  movement?: Prisma.MovementOmit;
 };
 
 /* Types for Logging */

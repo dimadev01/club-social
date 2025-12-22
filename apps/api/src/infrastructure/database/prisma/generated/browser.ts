@@ -56,3 +56,8 @@ export type Payment = Prisma.PaymentModel;
  *
  */
 export type PaymentDue = Prisma.PaymentDueModel;
+/**
+ * Model Movement
+ *
+ */
+export type Movement = Prisma.MovementModel;

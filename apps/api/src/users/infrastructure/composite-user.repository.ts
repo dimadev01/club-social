@@ -22,18 +22,6 @@ export class CompositeUserRepository implements UserRepository {
     private readonly userWriteableRepository: UserWriteableRepository,
   ) {}
 
-  public async findManyByIds(ids: UniqueId[]): Promise<UserEntity[]> {
-    return this.userReadableRepository.findManyByIds(ids);
-  }
-
-  public async findOneById(id: UniqueId): Promise<null | UserEntity> {
-    return this.userReadableRepository.findOneById(id);
-  }
-
-  public async findOneByIdOrThrow(id: UniqueId): Promise<UserEntity> {
-    return this.userReadableRepository.findOneByIdOrThrow(id);
-  }
-
   public async findPaginated(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<UserEntity>> {
@@ -42,6 +30,18 @@ export class CompositeUserRepository implements UserRepository {
 
   public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {
     return this.userReadableRepository.findUniqueByEmail(email);
+  }
+
+  public async findUniqueById(id: UniqueId): Promise<null | UserEntity> {
+    return this.userReadableRepository.findUniqueById(id);
+  }
+
+  public async findUniqueByIds(ids: UniqueId[]): Promise<UserEntity[]> {
+    return this.userReadableRepository.findUniqueByIds(ids);
+  }
+
+  public async findUniqueOrThrow(id: UniqueId): Promise<UserEntity> {
+    return this.userReadableRepository.findUniqueOrThrow(id);
   }
 
   public async save(entity: UserEntity): Promise<UserEntity> {

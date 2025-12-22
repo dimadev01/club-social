@@ -62,6 +62,7 @@ export const ModelName = {
   Due: 'Due',
   Payment: 'Payment',
   PaymentDue: 'PaymentDue',
+  Movement: 'Movement',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -229,6 +230,29 @@ export const PaymentDueScalarFieldEnum = {
 
 export type PaymentDueScalarFieldEnum =
   (typeof PaymentDueScalarFieldEnum)[keyof typeof PaymentDueScalarFieldEnum];
+
+export const MovementScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  category: 'category',
+  amount: 'amount',
+  date: 'date',
+  description: 'description',
+  status: 'status',
+  voidReason: 'voidReason',
+  voidedAt: 'voidedAt',
+  voidedBy: 'voidedBy',
+  paymentId: 'paymentId',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+} as const;
+
+export type MovementScalarFieldEnum =
+  (typeof MovementScalarFieldEnum)[keyof typeof MovementScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',

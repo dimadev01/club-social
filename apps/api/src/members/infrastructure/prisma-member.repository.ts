@@ -41,37 +41,6 @@ export class PrismaMemberRepository implements MemberRepository {
     }));
   }
 
-  public async findManyByIds(ids: UniqueId[]): Promise<MemberEntity[]> {
-    const members = await this.prismaService.member.findMany({
-      where: {
-        deletedAt: null,
-        id: { in: ids.map((id) => id.value) },
-      },
-    });
-
-    return members.map((member) => this.mapper.member.toDomain(member));
-  }
-
-  public async findOneById(id: UniqueId): Promise<MemberEntity | null> {
-    const member = await this.prismaService.member.findUnique({
-      where: { deletedAt: null, id: id.value },
-    });
-
-    if (!member) {
-      return null;
-    }
-
-    return this.mapper.member.toDomain(member);
-  }
-
-  public async findOneByIdOrThrow(id: UniqueId): Promise<MemberEntity> {
-    const member = await this.prismaService.member.findUniqueOrThrow({
-      where: { deletedAt: null, id: id.value },
-    });
-
-    return this.mapper.member.toDomain(member);
-  }
-
   public async findOneModel(id: UniqueId): Promise<MemberDetailModel | null> {
     const member = await this.prismaService.member.findUnique({
       include: { dues: { include: { paymentDues: true } }, user: true },
@@ -196,6 +165,37 @@ export class PrismaMemberRepository implements MemberRepository {
       })),
       total,
     };
+  }
+
+  public async findUniqueById(id: UniqueId): Promise<MemberEntity | null> {
+    const member = await this.prismaService.member.findUnique({
+      where: { deletedAt: null, id: id.value },
+    });
+
+    if (!member) {
+      return null;
+    }
+
+    return this.mapper.member.toDomain(member);
+  }
+
+  public async findUniqueByIds(ids: UniqueId[]): Promise<MemberEntity[]> {
+    const members = await this.prismaService.member.findMany({
+      where: {
+        deletedAt: null,
+        id: { in: ids.map((id) => id.value) },
+      },
+    });
+
+    return members.map((member) => this.mapper.member.toDomain(member));
+  }
+
+  public async findUniqueOrThrow(id: UniqueId): Promise<MemberEntity> {
+    const member = await this.prismaService.member.findUniqueOrThrow({
+      where: { deletedAt: null, id: id.value },
+    });
+
+    return this.mapper.member.toDomain(member);
   }
 
   public async save(entity: MemberEntity): Promise<MemberEntity> {
