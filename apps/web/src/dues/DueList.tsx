@@ -129,6 +129,7 @@ export function DueList() {
               <TableDateRangeFilterDropdown {...props} format="datetime" />
             ),
             filteredValue: getFilterValue('createdAt'),
+
             render: (createdAt: string, record) => (
               <Link to={appRoutes.dues.view(record.id)}>
                 {DateFormat.date(createdAt)}
@@ -163,6 +164,7 @@ export function DueList() {
             align: 'center',
             dataIndex: 'category',
             filteredValue: getFilterValue('category'),
+
             filters: Object.entries(DueCategoryLabel).map(([value, label]) => ({
               text: label,
               value,
@@ -183,6 +185,7 @@ export function DueList() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filterMode: 'tree',
+
             filters: Object.entries(DueStatusLabel).map(([value, label]) => ({
               text: label,
               value,
@@ -195,6 +198,7 @@ export function DueList() {
             align: 'center',
             dataIndex: 'userStatus',
             filteredValue: getFilterValue('userStatus'),
+
             filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
               text: label,
               value,

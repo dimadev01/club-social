@@ -128,6 +128,7 @@ export function UserListPage() {
           {
             align: 'center',
             dataIndex: 'status',
+
             filteredValue: getFilterValue('status'),
             filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
               text: label,
@@ -140,6 +141,7 @@ export function UserListPage() {
           {
             align: 'center',
             dataIndex: 'role',
+
             filteredValue: getFilterValue('role'),
             filters: [
               {

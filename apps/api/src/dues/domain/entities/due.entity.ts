@@ -94,6 +94,7 @@ export class DueEntity extends Entity<DueEntity> {
     this._voidedAt = props.voidedAt;
     this._voidedBy = props.voidedBy;
     this._createdBy = props.createdBy;
+    this._updatedBy = props.createdBy;
   }
 
   public static create(

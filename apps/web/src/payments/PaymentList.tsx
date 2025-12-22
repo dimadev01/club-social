@@ -120,6 +120,7 @@ export function PaymentList() {
             filterDropdown: (props) => (
               <TableDateRangeFilterDropdown {...props} format="datetime" />
             ),
+
             filteredValue: getFilterValue('createdAt'),
             render: (createdAt: string, record) => (
               <Link to={appRoutes.payments.view(record.id)}>
@@ -136,6 +137,7 @@ export function PaymentList() {
             filterDropdown: (props) => (
               <TableDateRangeFilterDropdown {...props} format="date" />
             ),
+
             filteredValue: getFilterValue('date'),
             render: (date: string) => DateFormat.date(date),
             title: 'Fecha',
@@ -161,6 +163,7 @@ export function PaymentList() {
           {
             align: 'center',
             dataIndex: 'status',
+
             filteredValue: getFilterValue('status'),
             filterMode: 'tree',
             filters: Object.entries(PaymentStatusLabel).map(

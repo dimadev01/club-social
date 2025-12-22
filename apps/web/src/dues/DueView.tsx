@@ -32,11 +32,7 @@ export function DueView() {
 
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
 
-  const { data: due, error, isLoading } = useDue(id);
-
-  if (error) {
-    console.error(error);
-  }
+  const { data: due, isLoading } = useDue(id);
 
   const voidDueMutation = useMutation<unknown, Error, VoidDueDto>({
     mutationFn: (body) => $fetch(`dues/${id}/void`, { body, method: 'PATCH' }),

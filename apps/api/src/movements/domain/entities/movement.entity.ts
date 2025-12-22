@@ -18,6 +18,7 @@ import { CreateMovementProps, VoidMovementProps } from '../movement.interface';
 interface MovementProps {
   amount: Amount;
   category: MovementCategory;
+  createdBy: string;
   date: DateOnly;
   description: null | string;
   paymentId: null | UniqueId;
@@ -101,12 +102,15 @@ export class MovementEntity extends Entity<MovementEntity> {
     this._voidReason = props.voidReason;
     this._voidedAt = props.voidedAt;
     this._voidedBy = props.voidedBy;
+    this._createdBy = props.createdBy;
+    this._updatedBy = props.createdBy;
   }
 
   public static create(props: CreateMovementProps): Result<MovementEntity> {
     const movement = new MovementEntity({
       amount: props.amount,
       category: props.category,
+      createdBy: props.createdBy,
       date: props.date,
       description: props.description,
       paymentId: props.paymentId,

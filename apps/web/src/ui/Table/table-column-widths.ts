@@ -1,5 +1,8 @@
 export const TABLE_COLUMN_WIDTHS = {
-  AMOUNT: 100,
-  CATEGORY: 150,
+  AMOUNT: 150,
+  CATEGORY: 100,
   DATE: 150,
+  STATUS: 100,
 } as const;
+
+export const TABLE_DESCRIPTION_MAX_LENGTH = 50;

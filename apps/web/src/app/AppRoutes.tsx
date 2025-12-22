@@ -13,6 +13,9 @@ import { MemberEdit } from '@/members/MemberEdit';
 import { MemberListPage } from '@/members/MemberList';
 import { MemberNew } from '@/members/MemberNew';
 import { MemberView } from '@/members/MemberView';
+import { MovementList } from '@/movements/MovementList';
+import { MovementNew } from '@/movements/MovementNew';
+import { MovementView } from '@/movements/MovementView';
 import { PaymentList } from '@/payments/PaymentList';
 import { PaymentNew } from '@/payments/PaymentNew';
 import { PaymentView } from '@/payments/PaymentView';
@@ -60,6 +63,12 @@ export function AppRoutes() {
             <Route element={<DueNew />} path={appRoutes.generic.new} />
             <Route element={<DueView />} path={appRoutes.generic.view} />
             <Route element={<DueEdit />} path={appRoutes.generic.edit} />
+          </Route>
+
+          <Route path={appRoutes.movements.list}>
+            <Route element={<MovementList />} index />
+            <Route element={<MovementNew />} path={appRoutes.generic.new} />
+            <Route element={<MovementView />} path={appRoutes.generic.view} />
           </Route>
 
           <Route path={appRoutes.payments.list}>

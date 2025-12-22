@@ -27,11 +27,7 @@ export function PaymentView() {
 
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
 
-  const { data: payment, error, isLoading } = usePayment(id);
-
-  if (error) {
-    console.error(error);
-  }
+  const { data: payment, isLoading } = usePayment(id);
 
   const voidPayment = useMutation({
     mutationFn: (body: IVoidPaymentDto) =>

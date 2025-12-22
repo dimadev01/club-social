@@ -15,6 +15,11 @@ export const queryKeys = createQueryKeyStore({
     paginated: (query?: TableQuery) => [query],
   },
 
+  movements: {
+    detail: (id?: string) => [id],
+    paginated: (query?: TableQuery) => [query],
+  },
+
   payments: {
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],

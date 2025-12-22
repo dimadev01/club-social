@@ -1,87 +1,34 @@
 import { UserRole } from '../users';
-import {
-  Action,
-  Resource,
-  type RoleStatements,
-  type Statement,
-} from './role.types';
+import { Resource, type RoleStatements, type Statement } from './role.types';
 
 export const statements = {
-  [Resource.DUES]: [
-    Action.CREATE,
-    Action.LIST,
-    Action.GET,
-    Action.UPDATE,
-    Action.VOID,
-  ],
-  [Resource.MEMBERS]: [
-    Action.CREATE,
-    Action.LIST,
-    Action.GET,
-    Action.UPDATE,
-    Action.VOID,
-  ],
-  [Resource.MOVEMENTS]: [
-    Action.CREATE,
-    Action.LIST,
-    Action.GET,
-    Action.UPDATE,
-    Action.VOID,
-  ],
-  [Resource.PAYMENTS]: [Action.CREATE, Action.LIST, Action.GET, Action.VOID],
-  [Resource.USERS]: [
-    Action.CREATE,
-    Action.LIST,
-    Action.GET,
-    Action.UPDATE,
-    Action.VOID,
-  ],
+  [Resource.DUES]: ['create', 'list', 'get', 'update', 'void'],
+  [Resource.MEMBERS]: ['create', 'list', 'get', 'update', 'void'],
+  [Resource.MOVEMENTS]: ['create', 'list', 'get', 'void'],
+  [Resource.PAYMENTS]: ['create', 'list', 'get', 'void'],
+  [Resource.USERS]: ['create', 'list', 'get', 'update', 'void'],
 } satisfies Statement;
 
 export const roleStatements = {
   [UserRole.ADMIN]: {
-    [Resource.DUES]: [
-      Action.CREATE,
-      Action.LIST,
-      Action.GET,
-      Action.UPDATE,
-      Action.VOID,
-    ],
-    [Resource.MEMBERS]: [Action.CREATE, Action.LIST, Action.GET, Action.UPDATE],
-    [Resource.MOVEMENTS]: [
-      Action.CREATE,
-      Action.LIST,
-      Action.GET,
-      Action.UPDATE,
-      Action.VOID,
-    ],
-    [Resource.PAYMENTS]: [Action.CREATE, Action.LIST, Action.GET, Action.VOID],
-    [Resource.USERS]: [Action.CREATE, Action.LIST, Action.GET, Action.UPDATE],
+    [Resource.DUES]: ['create', 'list', 'get', 'update', 'void'],
+    [Resource.MEMBERS]: ['create', 'list', 'get', 'update', 'void'],
+    [Resource.MOVEMENTS]: ['create', 'list', 'get', 'void'],
+    [Resource.PAYMENTS]: ['create', 'list', 'get', 'void'],
+    [Resource.USERS]: ['create', 'list', 'get', 'update', 'void'],
   },
   [UserRole.MEMBER]: {
-    [Resource.DUES]: [Action.GET, Action.LIST],
+    [Resource.DUES]: ['get', 'list'],
     [Resource.MEMBERS]: [],
     [Resource.MOVEMENTS]: [],
-    [Resource.PAYMENTS]: [Action.GET, Action.LIST],
+    [Resource.PAYMENTS]: ['get', 'list'],
     [Resource.USERS]: [],
   },
   [UserRole.STAFF]: {
-    [Resource.DUES]: [
-      Action.GET,
-      Action.CREATE,
-      Action.UPDATE,
-      Action.VOID,
-      Action.LIST,
-    ],
-    [Resource.MEMBERS]: [Action.GET, Action.CREATE, Action.UPDATE, Action.LIST],
-    [Resource.MOVEMENTS]: [
-      Action.GET,
-      Action.CREATE,
-      Action.UPDATE,
-      Action.VOID,
-      Action.LIST,
-    ],
-    [Resource.PAYMENTS]: [Action.GET, Action.CREATE, Action.VOID, Action.LIST],
-    [Resource.USERS]: [Action.GET, Action.UPDATE, Action.LIST],
+    [Resource.DUES]: ['get', 'create', 'update', 'void', 'list'],
+    [Resource.MEMBERS]: ['get', 'create', 'update', 'list'],
+    [Resource.MOVEMENTS]: ['get', 'create', 'void', 'list'],
+    [Resource.PAYMENTS]: ['get', 'create', 'void', 'list'],
+    [Resource.USERS]: ['get', 'update', 'list'],
   },
 } satisfies RoleStatements;

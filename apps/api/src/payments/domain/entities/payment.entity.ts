@@ -96,6 +96,8 @@ export class PaymentEntity extends Entity<PaymentEntity> {
     this._voidedAt = props.voidedAt;
     this._voidedBy = props.voidedBy;
     this._voidReason = props.voidReason;
+    this._createdBy = props.createdBy;
+    this._updatedBy = props.createdBy;
   }
 
   public static create(props: CreatePaymentProps): Result<PaymentEntity> {

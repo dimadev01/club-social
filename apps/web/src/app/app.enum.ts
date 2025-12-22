@@ -24,8 +24,10 @@ export const appRoutes = {
     view: (id?: string) => `/members/${id}`,
   } as const,
   movements: {
+    edit: (id?: string) => `/movements/${id}/edit`,
     list: '/movements',
     new: '/movements/new',
+    view: (id?: string) => `/movements/${id}`,
   } as const,
   notFound: '*',
   payments: {

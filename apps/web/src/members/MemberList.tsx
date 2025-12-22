@@ -128,6 +128,7 @@ export function MemberListPage() {
           {
             align: 'center',
             dataIndex: 'category',
+
             filteredValue: getFilterValue('category'),
             filterMode: 'tree',
             filters: Object.entries(MemberCategoryLabel).map(
@@ -140,6 +141,7 @@ export function MemberListPage() {
           {
             align: 'center',
             dataIndex: 'userStatus',
+
             filteredValue: getFilterValue('userStatus'),
             filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
               text: label,

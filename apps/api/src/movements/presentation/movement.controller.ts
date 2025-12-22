@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 
 import type { AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
-import type { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
 import {
   APP_LOGGER_PROVIDER,
@@ -23,9 +22,7 @@ import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
 import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-
-import type { CreateMovementRequestDto } from './dto/create-movement.dto';
-import type { VoidMovementRequestDto } from './dto/void-movement.dto';
+import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateMovementUseCase } from '../application/create-movement/create-movement.use-case';
 import { VoidMovementUseCase } from '../application/void-movement/void-movement.use-case';
@@ -33,7 +30,9 @@ import {
   MOVEMENT_REPOSITORY_PROVIDER,
   type MovementRepository,
 } from '../domain/movement.repository';
+import { CreateMovementRequestDto } from './dto/create-movement.dto';
 import { MovementDetailDto } from './dto/movement-detail.dto';
+import { VoidMovementRequestDto } from './dto/void-movement.dto';
 
 @Controller('movements')
 export class MovementsController extends BaseController {
@@ -53,18 +52,18 @@ export class MovementsController extends BaseController {
     @Body() body: CreateMovementRequestDto,
     @Session() session: AuthSession,
   ): Promise<ParamIdDto> {
-    const movement = this.handleResult(
+    const { id } = this.handleResult(
       await this.createMovementUseCase.execute({
         amount: body.amount,
         category: body.category,
         createdBy: session.user.name,
         date: body.date,
-        description: body.description,
+        description: body.description || null,
         type: body.type,
       }),
     );
 
-    return { id: movement.id.value };
+    return { id: id.value };
   }
 
   @ApiPaginatedResponse(MovementDetailDto)
