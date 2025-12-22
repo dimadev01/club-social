@@ -3,7 +3,7 @@ import {
   PaymentStatus,
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
-import { App, Button, Descriptions, Grid, Tag } from 'antd';
+import { App, Button, Descriptions, Grid } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -16,7 +16,6 @@ import { NotFound } from '@/ui/NotFound';
 import { VoidModal } from '@/ui/VoidModal';
 import { usePermissions } from '@/users/use-permissions';
 
-import { PaymentStatusColor } from './payment.types';
 import { usePayment } from './usePayment';
 
 export function PaymentView() {
@@ -87,9 +86,7 @@ export function PaymentView() {
           {NumberFormat.formatCents(payment.amount)}
         </Descriptions.Item>
         <Descriptions.Item label="Estado">
-          <Tag color={PaymentStatusColor[payment.status]}>
-            {PaymentStatusLabel[payment.status]}
-          </Tag>
+          {PaymentStatusLabel[payment.status]}
         </Descriptions.Item>
         {payment.notes && (
           <Descriptions.Item label="Notas" span={2}>

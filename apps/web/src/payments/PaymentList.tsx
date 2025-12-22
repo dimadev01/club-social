@@ -15,7 +15,7 @@ import { Button, Dropdown, Space, Tooltip } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
-import { APP_ROUTES, appRoutes } from '@/app/app.enum';
+import { appRoutes } from '@/app/app.enum';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
@@ -80,7 +80,7 @@ export function PaymentList() {
             <Button
               disabled={!permissions.payments.create}
               icon={<AddNewIcon />}
-              onClick={() => navigate(APP_ROUTES.PAYMENTS_NEW)}
+              onClick={() => navigate(appRoutes.payments.new)}
               type="primary"
             >
               Nuevo pago
@@ -144,7 +144,7 @@ export function PaymentList() {
           {
             dataIndex: 'memberId',
             render: (memberId: string, record: IPaymentPaginatedDto) => (
-              <Link to={`${APP_ROUTES.MEMBERS_LIST}/${memberId}`}>
+              <Link to={appRoutes.members.view(memberId)}>
                 {record.memberName}
               </Link>
             ),

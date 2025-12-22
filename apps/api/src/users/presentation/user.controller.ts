@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Inject,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -16,6 +17,7 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
 import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
@@ -30,6 +32,7 @@ import {
 } from '../domain/user.repository';
 import { CreateUserRequestDto } from './dto/create-user.dto';
 import { UpdateUserRequestDto } from './dto/update-user.dto';
+import { UserDetailDto } from './dto/user-detail.dto';
 import { UserPaginatedDto } from './dto/user-paginated.dto';
 
 @Controller('users')
@@ -102,6 +105,27 @@ export class UsersController extends BaseController {
         status: user.status,
       })),
       total: users.total,
+    };
+  }
+
+  @Get(':id')
+  public async get(@Param() request: ParamIdDto): Promise<UserDetailDto> {
+    const user = await this.userRepository.findOneById(
+      UniqueId.raw({ value: request.id }),
+    );
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return {
+      email: user.email.value,
+      firstName: user.firstName,
+      id: user.id.value,
+      lastName: user.lastName,
+      name: user.name,
+      role: user.role,
+      status: user.status,
     };
   }
 }

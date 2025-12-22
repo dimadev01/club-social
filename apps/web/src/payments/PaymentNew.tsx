@@ -5,7 +5,7 @@ import { App, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate, useSearchParams } from 'react-router';
 
-import { APP_ROUTES } from '@/app/app.enum';
+import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
@@ -29,7 +29,7 @@ export function PaymentNew() {
     mutationFn: (body) => $fetch('/payments', { body }),
     onSuccess: () => {
       message.success('Pago creado correctamente');
-      navigate(APP_ROUTES.PAYMENTS, { replace: true });
+      navigate(appRoutes.payments.list, { replace: true });
     },
   });
 

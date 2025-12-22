@@ -17,7 +17,7 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { App, Button, Dropdown, Space, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
-import { APP_ROUTES } from '@/app/app.enum';
+import { appRoutes } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
@@ -75,7 +75,7 @@ export function UserListPage() {
           <Button
             disabled={!permissions.users.create}
             icon={<UserAddOutlined />}
-            onClick={() => navigate(APP_ROUTES.USERS_NEW)}
+            onClick={() => navigate(appRoutes.users.new)}
             type="primary"
           >
             Nuevo usuario
@@ -108,9 +108,7 @@ export function UserListPage() {
             fixed: 'left',
             render: (id: string, record: IUserDetailDto) => (
               <Typography.Text className="line-clamp-1 w-full">
-                <Link to={`${APP_ROUTES.USERS_DETAIL.replace(':id', id)}`}>
-                  {record.name}
-                </Link>
+                <Link to={appRoutes.users.view(id)}>{record.name}</Link>
               </Typography.Text>
             ),
             sorter: true,
@@ -160,9 +158,7 @@ export function UserListPage() {
               <Space.Compact size="small">
                 <Button
                   icon={<EyeOutlined />}
-                  onClick={() =>
-                    navigate(APP_ROUTES.USERS_DETAIL.replace(':id', record.id))
-                  }
+                  onClick={() => navigate(appRoutes.users.view(record.id))}
                   type="text"
                 />
               </Space.Compact>

@@ -15,7 +15,7 @@ import { Button, Dropdown, Space, Tooltip, Typography } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
-import { APP_ROUTES } from '@/app/app.enum';
+import { appRoutes } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
@@ -77,7 +77,7 @@ export function MemberListPage() {
           <Button
             disabled={!permissions.members.create}
             icon={<UserAddOutlined />}
-            onClick={() => navigate(APP_ROUTES.MEMBERS_NEW)}
+            onClick={() => navigate(appRoutes.members.new)}
             type="primary"
           >
             Nuevo socio
@@ -117,9 +117,7 @@ export function MemberListPage() {
             fixed: 'left',
             render: (id, record) => (
               <Typography.Text className="line-clamp-1 w-full">
-                <Link to={`${APP_ROUTES.MEMBERS_LIST}/${id}`}>
-                  {record.name}
-                </Link>
+                <Link to={appRoutes.members.view(id)}>{record.name}</Link>
               </Typography.Text>
             ),
             sorter: true,
@@ -168,14 +166,24 @@ export function MemberListPage() {
               <Space.Compact size="small">
                 <Tooltip title="Ver deudas">
                   <Link
-                    to={`${APP_ROUTES.DUES_LIST}?filters=memberId:${encodeURIComponent(record.id)}`}
+                    to={{
+                      pathname: appRoutes.dues.list,
+                      search: new URLSearchParams({
+                        filters: `memberId:${record.id}`,
+                      }).toString(),
+                    }}
                   >
                     <Button icon={<DuesIcon />} type="text" />
                   </Link>
                 </Tooltip>
                 <Tooltip title="Ver pagos">
                   <Link
-                    to={`${APP_ROUTES.PAYMENTS}?filters=memberId:${encodeURIComponent(record.id)}`}
+                    to={{
+                      pathname: appRoutes.payments.list,
+                      search: new URLSearchParams({
+                        filters: `memberId:${record.id}`,
+                      }).toString(),
+                    }}
                   >
                     <Button icon={<PaymentsIcon />} type="text" />
                   </Link>

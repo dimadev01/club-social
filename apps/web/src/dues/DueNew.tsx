@@ -6,7 +6,7 @@ import { App, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router';
 
-import { APP_ROUTES } from '@/app/app.enum';
+import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
@@ -71,7 +71,7 @@ export function DueNew() {
       );
     }
 
-    navigate(APP_ROUTES.DUES_LIST, { replace: true });
+    navigate(appRoutes.dues.list, { replace: true });
   };
 
   if (!permissions.dues.create) {

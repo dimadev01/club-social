@@ -19,6 +19,7 @@ export function Card({ backButton, loading, title, ...props }: CardProps) {
 
   return (
     <AntCard
+      loading={loading}
       {...(title && {
         title: (
           <Space>

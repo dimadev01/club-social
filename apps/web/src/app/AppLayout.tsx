@@ -34,7 +34,7 @@ import { UsersIcon } from '@/ui/Icons/UsersIcon';
 import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
 import { usePermissions } from '@/users/use-permissions';
 
-import { APP_ROUTES } from './app.enum';
+import { appRoutes } from './app.enum';
 import { useAppContext } from './AppContext';
 
 export function AppLayout({ children }: PropsWithChildren) {
@@ -56,7 +56,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   const menuItems: MenuItemType[] = [
     {
       icon: <DashboardIcon />,
-      key: APP_ROUTES.HOME,
+      key: appRoutes.home,
       label: 'Inicio',
     },
   ];
@@ -64,7 +64,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   if (permissions.dues.list) {
     menuItems.push({
       icon: <DuesIcon />,
-      key: APP_ROUTES.DUES_LIST,
+      key: appRoutes.dues.list,
       label: 'Deudas',
     });
   }
@@ -72,7 +72,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   if (permissions.payments.list) {
     menuItems.push({
       icon: <PaymentsIcon />,
-      key: APP_ROUTES.PAYMENTS,
+      key: appRoutes.payments.list,
       label: 'Pagos',
     });
   }
@@ -80,7 +80,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   if (permissions.movements.list) {
     menuItems.push({
       icon: <MovementsIcon />,
-      key: APP_ROUTES.MOVEMENTS_LIST,
+      key: appRoutes.movements.list,
       label: 'Movimientos',
     });
   }
@@ -88,7 +88,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   if (permissions.members.list) {
     menuItems.push({
       icon: <UsersIcon />,
-      key: APP_ROUTES.MEMBERS_LIST,
+      key: appRoutes.members.list,
       label: 'Socios',
     });
   }
@@ -96,7 +96,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   if (permissions.users.list) {
     menuItems.push({
       icon: <UsersIcon />,
-      key: APP_ROUTES.USERS_LIST,
+      key: appRoutes.users.list,
       label: 'Usuarios',
     });
   }
@@ -161,12 +161,12 @@ export function AppLayout({ children }: PropsWithChildren) {
               items={[
                 {
                   icon: <UserOutlined />,
-                  key: APP_ROUTES.PROFILE,
+                  key: appRoutes.profile,
                   label: 'Mi Perfil',
                 },
                 {
                   icon: <LogoutIcon />,
-                  key: APP_ROUTES.LOGOUT,
+                  key: appRoutes.auth.logout,
                   label: 'Cerrar sesión',
                 },
               ]}
@@ -205,7 +205,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 
         <FloatButton.Group icon={<AddNewIcon />} trigger="click" type="primary">
           {permissions.members.create && (
-            <Link to={APP_ROUTES.MEMBERS_NEW}>
+            <Link to={appRoutes.members.new}>
               <FloatButton
                 icon={<UserAddOutlined />}
                 tooltip={{ placement: 'left', title: 'Nuevo socio' }}
@@ -214,7 +214,7 @@ export function AppLayout({ children }: PropsWithChildren) {
           )}
 
           {permissions.dues.create && (
-            <Link to={APP_ROUTES.DUES_NEW}>
+            <Link to={appRoutes.dues.new}>
               <FloatButton
                 icon={<DuesIcon />}
                 tooltip={{ placement: 'left', title: 'Nueva deuda' }}
@@ -223,7 +223,7 @@ export function AppLayout({ children }: PropsWithChildren) {
           )}
 
           {permissions.payments.create && (
-            <Link to={APP_ROUTES.PAYMENTS_NEW}>
+            <Link to={appRoutes.payments.new}>
               <FloatButton
                 icon={<PaymentsIcon />}
                 tooltip={{ placement: 'left', title: 'Nuevo pago' }}
