@@ -9,9 +9,7 @@ import {
 } from '@club-social/shared/audit-logs';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Col, Descriptions, Grid, Tag, Typography } from 'antd';
-import { Link } from 'react-router';
 
-import { appRoutes } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
@@ -73,11 +71,7 @@ export function AuditLogsList() {
               <TableDateRangeFilterDropdown {...props} format="datetime" />
             ),
             filteredValue: getFilterValue('createdAt'),
-            render: (createdAt: string, record) => (
-              <Link to={appRoutes.movements.view(record.id)}>
-                {DateFormat.date(createdAt)}
-              </Link>
-            ),
+            render: (createdAt: string) => DateFormat.date(createdAt),
             sorter: true,
             sortOrder: getSortOrder('createdAt'),
             title: 'Creado el',
@@ -163,10 +157,7 @@ export function AuditLogsList() {
                       }
 
                       return {
-                        children:
-                          typeof value === 'object' && value !== null
-                            ? JSON.stringify(value, null, 2)
-                            : String(value ?? '-'),
+                        children: newData,
                         key,
                         label: key,
                       };

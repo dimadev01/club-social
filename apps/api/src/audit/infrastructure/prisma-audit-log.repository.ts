@@ -12,6 +12,7 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
+import { DateRange } from '@/shared/domain/value-objects/date-range';
 
 import { AuditLogRepository } from '../domain/audit-log.repository';
 import { AuditLogEntity } from '../domain/entities/audit-log.entity';
@@ -32,6 +33,19 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
   ): Promise<PaginatedResponse<AuditLogEntity>> {
     const where: AuditLogWhereInput = {};
 
+    if (params.filters?.createdAt) {
+      const dateRangeResult = DateRange.fromUserInput(
+        params.filters.createdAt[0],
+        params.filters.createdAt[1],
+      );
+
+      if (dateRangeResult.isErr()) {
+        throw dateRangeResult.error;
+      }
+
+      where.createdAt = dateRangeResult.value.toPrismaFilter();
+    }
+
     if (params.filters?.entity) {
       where.entity = { in: params.filters.entity as AuditEntity[] };
     }
@@ -44,11 +58,12 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
       orderBy: params.sort.map(({ field, order }) => ({ [field]: order })),
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
+      where,
     } satisfies AuditLogFindManyArgs;
 
     const [data, total] = await Promise.all([
       this.prisma.auditLog.findMany(query),
-      this.prisma.auditLog.count({ where: params.filters }),
+      this.prisma.auditLog.count({ where }),
     ]);
 
     return {
