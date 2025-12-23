@@ -21,3 +21,7 @@ export interface PaymentPaginatedModel {
   payment: PaymentEntity;
   user: UserEntity;
 }
+
+export interface PaymentPaginatedSummaryModel {
+  totalAmount: number;
+}

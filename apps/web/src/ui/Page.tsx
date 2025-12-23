@@ -45,7 +45,6 @@ export function PageTableActions({ className, ...props }: FlexProps) {
       align="center"
       className={cn('mb-8', className)}
       gap="middle"
-      justify="space-between"
       wrap
       {...props}
     />

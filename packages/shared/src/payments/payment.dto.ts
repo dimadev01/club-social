@@ -41,6 +41,10 @@ export interface IPaymentPaginatedDto {
   status: PaymentStatus;
 }
 
+export interface IPaymentPaginatedSummaryDto {
+  totalAmount: number;
+}
+
 export interface IVoidPaymentDto {
   voidReason: string;
 }

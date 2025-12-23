@@ -33,7 +33,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "npm-check-updates": "^19.2.0",
-    "turbo": "^2.7.0"
+    "turbo": "^2.7.1"
   },
   "packageManager": "npm@11.7.0"
 }

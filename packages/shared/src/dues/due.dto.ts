@@ -40,6 +40,10 @@ export interface IDuePaginatedDto {
   userStatus: UserStatus;
 }
 
+export interface IDuePaginatedSummaryDto {
+  totalAmount: number;
+}
+
 export interface IPendingDueDto {
   amount: number;
   category: DueCategory;

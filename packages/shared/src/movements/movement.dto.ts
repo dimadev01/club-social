@@ -42,6 +42,12 @@ export interface IMovementPaginatedDto {
   type: MovementType;
 }
 
+export interface IMovementPaginatedSummaryDto {
+  totalAmount: number;
+  totalAmountInflow: number;
+  totalAmountOutflow: number;
+}
+
 export interface IUpdateMovementDto {
   amount?: number;
   description?: null | string;

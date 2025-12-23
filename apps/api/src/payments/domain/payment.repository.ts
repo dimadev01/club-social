@@ -12,13 +12,14 @@ import {
   PaymentDetailModel,
   PaymentDueDetailModel,
   PaymentPaginatedModel,
+  PaymentPaginatedSummaryModel,
 } from './payment.types';
 
 export const PAYMENT_REPOSITORY_PROVIDER = Symbol('PaymentRepository');
 
 export interface PaymentRepository
   extends
-    PaginatedRepository<PaymentPaginatedModel>,
+    PaginatedRepository<PaymentPaginatedModel, PaymentPaginatedSummaryModel>,
     ReadableRepository<PaymentEntity>,
     WriteableRepository<PaymentEntity> {
   findForExport(params: ExportRequest): Promise<PaymentPaginatedModel[]>;

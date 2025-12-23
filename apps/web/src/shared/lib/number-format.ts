@@ -18,7 +18,9 @@ export const NumberFormat = {
   formatCents(value: number): string {
     return formatter({
       currency: 'ARS',
+      currencySign: 'standard',
       maximumFractionDigits: 0,
+      signDisplay: 'auto',
       style: 'currency',
     }).format(Math.round(value / 100));
   },

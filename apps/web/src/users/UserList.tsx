@@ -1,11 +1,6 @@
 import type { PaginatedResponse } from '@club-social/shared/types';
 
-import {
-  EyeOutlined,
-  FileExcelOutlined,
-  MoreOutlined,
-  UserAddOutlined,
-} from '@ant-design/icons';
+import { EyeOutlined, UserAddOutlined } from '@ant-design/icons';
 import {
   type IUserDetailDto,
   UserRole,
@@ -14,7 +9,7 @@ import {
   UserStatusLabel,
 } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Typography } from 'antd';
+import { Button, Space, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
@@ -31,7 +26,6 @@ import { usePermissions } from './use-permissions';
 
 export function UserListPage() {
   const navigate = useNavigate();
-  const { message } = App.useApp();
   const permissions = usePermissions();
 
   const {
@@ -50,7 +44,7 @@ export function UserListPage() {
     defaultSort: [{ field: 'id', order: 'ascend' }],
   });
 
-  const usersQuery = useQuery({
+  const { data: users, isLoading } = useQuery({
     ...queryKeys.users.paginated(query),
     enabled: permissions.users.list,
     placeholderData: keepPreviousData,
@@ -59,10 +53,6 @@ export function UserListPage() {
         query,
       }),
   });
-
-  if (usersQuery.error) {
-    message.error(usersQuery.error.message);
-  }
 
   if (!permissions.users.list) {
     return <NotFound />;
@@ -80,19 +70,6 @@ export function UserListPage() {
           >
             Nuevo usuario
           </Button>
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  icon: <FileExcelOutlined />,
-                  key: 'export',
-                  label: 'Exportar',
-                },
-              ],
-            }}
-          >
-            <Button icon={<MoreOutlined />} />
-          </Dropdown>
         </Space.Compact>
       }
       title="Usuarios"
@@ -169,13 +146,13 @@ export function UserListPage() {
             width: 100,
           },
         ]}
-        dataSource={usersQuery.data?.data}
-        loading={usersQuery.isFetching}
+        dataSource={users?.data}
+        loading={isLoading}
         onChange={onChange}
         pagination={{
           current: state.page,
           pageSize: state.pageSize,
-          total: usersQuery.data?.total,
+          total: users?.total,
         }}
       />
     </Page>

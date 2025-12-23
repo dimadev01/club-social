@@ -22,6 +22,7 @@ import {
   PaymentDetailModel,
   PaymentDueDetailModel,
   PaymentPaginatedModel,
+  PaymentPaginatedSummaryModel,
 } from '../domain/payment.types';
 
 @Injectable()
@@ -68,7 +69,9 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
   public async findPaginated(
     params: PaginatedRequest,
-  ): Promise<PaginatedResponse<PaymentPaginatedModel>> {
+  ): Promise<
+    PaginatedResponse<PaymentPaginatedModel, PaymentPaginatedSummaryModel>
+  > {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
@@ -81,9 +84,10 @@ export class PrismaPaymentRepository implements PaymentRepository {
       where,
     } satisfies PaymentFindManyArgs;
 
-    const [payments, total] = await Promise.all([
+    const [payments, total, totalAmount] = await Promise.all([
       this.prismaService.payment.findMany(query),
       this.prismaService.payment.count({ where }),
+      this.prismaService.payment.aggregate({ _sum: { amount: true }, where }),
     ]);
 
     return {
@@ -92,6 +96,9 @@ export class PrismaPaymentRepository implements PaymentRepository {
         payment: this.mapper.payment.toDomain(payment),
         user: this.mapper.user.toDomain(payment.member.user),
       })),
+      summary: {
+        totalAmount: totalAmount._sum.amount ?? 0,
+      },
       total,
     };
   }
@@ -193,6 +200,12 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
     if (params.filters?.status) {
       where.status = { in: params.filters.status };
+    }
+
+    if (params.filters?.dueCategory) {
+      where.paymentDues = {
+        some: { due: { category: { in: params.filters.dueCategory } } },
+      };
     }
 
     const orderBy: PaymentOrderByWithRelationInput[] = [];

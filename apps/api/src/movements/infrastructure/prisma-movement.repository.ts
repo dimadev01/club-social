@@ -4,9 +4,11 @@ import type {
   PaginatedResponse,
 } from '@club-social/shared/types';
 
+import { MovementType } from '@club-social/shared/movements';
 import { Injectable } from '@nestjs/common';
 
 import {
+  MovementFindManyArgs,
   MovementOrderByWithRelationInput,
   MovementWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
@@ -17,6 +19,7 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MovementEntity } from '../domain/entities/movement.entity';
 import { MovementRepository } from '../domain/movement.repository';
+import { MovementPaginatedSummaryModel } from '../domain/movement.types';
 
 @Injectable()
 export class PrismaMovementRepository implements MovementRepository {
@@ -51,21 +54,41 @@ export class PrismaMovementRepository implements MovementRepository {
 
   public async findPaginated(
     params: PaginatedRequest,
-  ): Promise<PaginatedResponse<MovementEntity>> {
+  ): Promise<PaginatedResponse<MovementEntity, MovementPaginatedSummaryModel>> {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
-    const [movements, total] = await Promise.all([
-      this.prismaService.movement.findMany({
-        orderBy,
-        skip: (params.page - 1) * params.pageSize,
-        take: params.pageSize,
-        where,
-      }),
-      this.prismaService.movement.count({ where }),
-    ]);
+    const query = {
+      orderBy,
+      skip: (params.page - 1) * params.pageSize,
+      take: params.pageSize,
+      where,
+    } satisfies MovementFindManyArgs;
+
+    const [movements, total, totalAmountInflow, totalAmountOutflow] =
+      await Promise.all([
+        this.prismaService.movement.findMany(query),
+        this.prismaService.movement.count({ where }),
+        this.prismaService.movement.aggregate({
+          _sum: { amount: true },
+          where: { ...where, type: MovementType.INFLOW },
+        }),
+        this.prismaService.movement.aggregate({
+          _sum: { amount: true },
+          where: { ...where, type: MovementType.OUTFLOW },
+        }),
+      ]);
+
+    const totalInflow = totalAmountInflow._sum.amount ?? 0;
+    const totalOutflow = totalAmountOutflow._sum.amount ?? 0;
+    const totalAmount = totalInflow - totalOutflow;
 
     return {
       data: movements.map((m) => this.mapper.movement.toDomain(m)),
+      summary: {
+        totalAmount,
+        totalAmountInflow: totalInflow,
+        totalAmountOutflow: totalOutflow,
+      },
       total,
     };
   }

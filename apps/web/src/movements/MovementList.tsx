@@ -3,6 +3,7 @@ import type { PaginatedResponse } from '@club-social/shared/types';
 import { FileExcelOutlined, MoreOutlined } from '@ant-design/icons';
 import {
   type IMovementPaginatedDto,
+  type IMovementPaginatedSummaryDto,
   MovementCategory,
   MovementCategoryLabel,
   MovementStatus,
@@ -10,7 +11,7 @@ import {
   MovementType,
 } from '@club-social/shared/movements';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Tooltip } from 'antd';
+import { Button, Dropdown, Space, Tooltip } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
@@ -35,7 +36,6 @@ import { usePermissions } from '@/users/use-permissions';
 
 export function MovementList() {
   const navigate = useNavigate();
-  const { message } = App.useApp();
   const permissions = usePermissions();
 
   const {
@@ -54,22 +54,20 @@ export function MovementList() {
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
 
-  const movementsQuery = useQuery({
+  const { data: movements, isLoading } = useQuery({
     ...queryKeys.movements.paginated(query),
     enabled: permissions.movements.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IMovementPaginatedDto>>('/movements', { query }),
+      $fetch<
+        PaginatedResponse<IMovementPaginatedDto, IMovementPaginatedSummaryDto>
+      >('/movements', { query }),
   });
 
   const { exportData, isExporting } = useExport({
     endpoint: '/movements/export',
     filename: `movimientos-${DateFormat.isoDate(new Date())}.csv`,
   });
-
-  if (movementsQuery.error) {
-    message.error(movementsQuery.error.message);
-  }
 
   if (!permissions.movements.list) {
     return <NotFound />;
@@ -211,14 +209,43 @@ export function MovementList() {
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
         ]}
-        dataSource={movementsQuery.data?.data}
-        loading={movementsQuery.isFetching}
+        dataSource={movements?.data}
+        loading={isLoading}
         onChange={onChange}
         pagination={{
           current: state.page,
           pageSize: state.pageSize,
-          total: movementsQuery.data?.total,
+          total: movements?.total,
         }}
+        summary={() => (
+          <>
+            <Table.Summary.Row>
+              <Table.Summary.Cell
+                align="right"
+                colSpan={5}
+                index={0}
+                rowSpan={2}
+              >
+                Totales
+              </Table.Summary.Cell>
+              <Table.Summary.Cell align="right" colSpan={1} index={1}>
+                {NumberFormat.formatCents(
+                  movements?.summary?.totalAmountInflow ?? 0,
+                )}
+              </Table.Summary.Cell>
+              <Table.Summary.Cell align="right" colSpan={1} index={2}>
+                {NumberFormat.formatCents(
+                  movements?.summary?.totalAmountOutflow ?? 0,
+                )}
+              </Table.Summary.Cell>
+            </Table.Summary.Row>
+            <Table.Summary.Row>
+              <Table.Summary.Cell align="center" colSpan={2} index={1}>
+                {NumberFormat.formatCents(movements?.summary?.totalAmount ?? 0)}
+              </Table.Summary.Cell>
+            </Table.Summary.Row>
+          </>
+        )}
       />
     </Page>
   );

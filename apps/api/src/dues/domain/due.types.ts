@@ -17,6 +17,10 @@ export interface DuePaginatedModel {
   user: UserEntity;
 }
 
+export interface DuePaginatedSummaryModel {
+  totalAmount: number;
+}
+
 export interface PaymentDueDetailModel {
   payment: PaymentEntity;
   paymentDue: PaymentDueEntity;

@@ -5,13 +5,15 @@ import {
   FilterOutlined,
   MoreOutlined,
 } from '@ant-design/icons';
+import { DueCategoryLabel } from '@club-social/shared/dues';
 import {
   type IPaymentPaginatedDto,
+  type IPaymentPaginatedSummaryDto,
   PaymentStatus,
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Dropdown, Space, Tooltip } from 'antd';
+import { Button, Dropdown, Grid, Space, Tooltip } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -23,9 +25,11 @@ import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { cn } from '@/shared/lib/utils';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
+import { Select } from '@/ui/Select';
 import { Table } from '@/ui/Table/Table';
 import { TableActions } from '@/ui/Table/TableActions';
 import { TableDateRangeFilterDropdown } from '@/ui/Table/TableDateRangeFilterDropdown';
@@ -36,6 +40,7 @@ import { usePermissions } from '@/users/use-permissions';
 export function PaymentList() {
   const navigate = useNavigate();
   const permissions = usePermissions();
+  const { md } = Grid.useBreakpoint();
 
   const {
     clearFilters,
@@ -71,9 +76,9 @@ export function PaymentList() {
     enabled: permissions.payments.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IPaymentPaginatedDto>>('payments/paginated', {
-        query,
-      }),
+      $fetch<
+        PaginatedResponse<IPaymentPaginatedDto, IPaymentPaginatedSummaryDto>
+      >('payments/paginated', { query }),
   });
 
   if (!permissions.payments.list) {
@@ -119,6 +124,17 @@ export function PaymentList() {
           onFilterChange={(value) => setFilter('memberId', value)}
           selectedMembers={selectedMembers}
           value={getFilterValue('memberId') ?? undefined}
+        />
+        <Select
+          className={cn('min-w-full', { 'min-w-xs': md })}
+          mode="multiple"
+          onChange={(value) => setFilter('dueCategory', value)}
+          options={Object.entries(DueCategoryLabel).map(([value, label]) => ({
+            label,
+            value,
+          }))}
+          placeholder="Filtrar por categoría de deuda"
+          value={getFilterValue('dueCategory') ?? undefined}
         />
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -223,6 +239,16 @@ export function PaymentList() {
           pageSize: state.pageSize,
           total: payments?.total,
         }}
+        summary={() => (
+          <Table.Summary.Row>
+            <Table.Summary.Cell align="right" colSpan={1} index={0}>
+              Total
+            </Table.Summary.Cell>
+            <Table.Summary.Cell colSpan={5} index={1}>
+              {NumberFormat.formatCents(payments?.summary?.totalAmount ?? 0)}
+            </Table.Summary.Cell>
+          </Table.Summary.Row>
+        )}
       />
     </Page>
   );

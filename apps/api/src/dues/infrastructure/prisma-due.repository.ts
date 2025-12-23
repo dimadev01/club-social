@@ -21,6 +21,7 @@ import { DueRepository } from '../domain/due.repository';
 import {
   DueDetailModel,
   DuePaginatedModel,
+  DuePaginatedSummaryModel,
   PaymentDueDetailModel,
 } from '../domain/due.types';
 import { DueEntity } from '../domain/entities/due.entity';
@@ -97,7 +98,7 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findPaginated(
     params: PaginatedRequest,
-  ): Promise<PaginatedResponse<DuePaginatedModel>> {
+  ): Promise<PaginatedResponse<DuePaginatedModel, DuePaginatedSummaryModel>> {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
@@ -108,9 +109,10 @@ export class PrismaDueRepository implements DueRepository {
       where,
     } satisfies DueFindManyArgs;
 
-    const [dues, total] = await Promise.all([
+    const [dues, total, totalAmount] = await Promise.all([
       this.prismaService.due.findMany(query),
       this.prismaService.due.count({ where }),
+      this.prismaService.due.aggregate({ _sum: { amount: true }, where }),
     ]);
 
     return {
@@ -119,6 +121,9 @@ export class PrismaDueRepository implements DueRepository {
         member: this.mapper.member.toDomain(due.member),
         user: this.mapper.user.toDomain(due.member.user),
       })),
+      summary: {
+        totalAmount: totalAmount._sum.amount ?? 0,
+      },
       total,
     };
   }

@@ -1,9 +1,15 @@
 import { PaginatedResponse } from '@club-social/shared/types';
 import { ApiHideProperty } from '@nestjs/swagger';
 
-export class PaginatedResponseDto<T> implements PaginatedResponse<T> {
+export class PaginatedResponseDto<
+  T,
+  TSummary = never,
+> implements PaginatedResponse<T, TSummary> {
   @ApiHideProperty()
   public data: T[];
+
+  @ApiHideProperty()
+  public summary?: TSummary;
 
   public total: number;
 }

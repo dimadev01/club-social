@@ -11,10 +11,11 @@ import {
   DueStatus,
   DueStatusLabel,
   type IDuePaginatedDto,
+  type IDuePaginatedSummaryDto,
 } from '@club-social/shared/dues';
 import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { App, Button, Dropdown, Space, Tooltip } from 'antd';
+import { Button, Dropdown, Space, Tooltip } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -39,7 +40,6 @@ import { usePermissions } from '@/users/use-permissions';
 
 export function DueList() {
   const navigate = useNavigate();
-  const { message } = App.useApp();
   const permissions = usePermissions();
 
   const {
@@ -71,17 +71,16 @@ export function DueList() {
   const { data: selectedMembers, isLoading: isSelectedMembersLoading } =
     useMembersForSelect({ memberIds: filteredMemberIds });
 
-  const duesQuery = useQuery({
+  const { data: dues, isLoading } = useQuery({
     ...queryKeys.dues.paginated(query),
     enabled: permissions.dues.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IDuePaginatedDto>>('/dues/paginated', { query }),
+      $fetch<PaginatedResponse<IDuePaginatedDto, IDuePaginatedSummaryDto>>(
+        '/dues/paginated',
+        { query },
+      ),
   });
-
-  if (duesQuery.error) {
-    message.error(duesQuery.error.message);
-  }
 
   if (!permissions.dues.list) {
     return <NotFound />;
@@ -255,14 +254,24 @@ export function DueList() {
             width: 100,
           },
         ]}
-        dataSource={duesQuery.data?.data}
-        loading={duesQuery.isFetching}
+        dataSource={dues?.data}
+        loading={isLoading}
         onChange={onChange}
         pagination={{
           current: state.page,
           pageSize: state.pageSize,
-          total: duesQuery.data?.total,
+          total: dues?.total,
         }}
+        summary={() => (
+          <Table.Summary.Row>
+            <Table.Summary.Cell align="right" colSpan={1} index={0}>
+              Total
+            </Table.Summary.Cell>
+            <Table.Summary.Cell colSpan={7} index={1}>
+              {NumberFormat.formatCents(dues?.summary?.totalAmount ?? 0)}
+            </Table.Summary.Cell>
+          </Table.Summary.Row>
+        )}
       />
     </Page>
   );
