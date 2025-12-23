@@ -1,4 +1,5 @@
 export const TABLE_COLUMN_WIDTHS = {
+  ACTIONS: 100,
   AMOUNT: 150,
   CATEGORY: 100,
   DATE: 150,

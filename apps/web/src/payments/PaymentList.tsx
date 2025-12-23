@@ -31,6 +31,7 @@ import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Select } from '@/ui/Select';
 import { Table } from '@/ui/Table/Table';
+import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { TableActions } from '@/ui/Table/TableActions';
 import { TableDateRangeFilterDropdown } from '@/ui/Table/TableDateRangeFilterDropdown';
 import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
@@ -146,8 +147,8 @@ export function PaymentList() {
             filterDropdown: (props) => (
               <TableDateRangeFilterDropdown {...props} format="datetime" />
             ),
-
             filteredValue: getFilterValue('createdAt'),
+            fixed: 'left',
             render: (createdAt: string, record) => (
               <Link to={appRoutes.payments.view(record.id)}>
                 {DateFormat.date(createdAt)}
@@ -156,7 +157,7 @@ export function PaymentList() {
             sorter: true,
             sortOrder: getSortOrder('createdAt'),
             title: 'Creado el',
-            width: 150,
+            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           {
             dataIndex: 'date',
@@ -167,7 +168,7 @@ export function PaymentList() {
             filteredValue: getFilterValue('date'),
             render: (date: string) => DateFormat.date(date),
             title: 'Fecha',
-            width: 150,
+            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           {
             dataIndex: 'memberId',
@@ -177,14 +178,13 @@ export function PaymentList() {
               </Link>
             ),
             title: 'Socio',
-            width: 200,
           },
           {
             align: 'right',
             dataIndex: 'amount',
             render: (amount: number) => NumberFormat.formatCents(amount),
             title: 'Monto',
-            width: 100,
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
             align: 'center',
@@ -199,10 +199,11 @@ export function PaymentList() {
             ),
             render: (value: PaymentStatus) => PaymentStatusLabel[value],
             title: 'Estado',
-            width: 100,
+            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
             align: 'center',
+            fixed: 'right',
             fixed: 'right',
             render: (_, record) => (
               <Space.Compact size="small">
@@ -228,7 +229,7 @@ export function PaymentList() {
               </Space.Compact>
             ),
             title: 'Acciones',
-            width: 100,
+            width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
         ]}
         dataSource={payments?.data}
@@ -245,7 +246,7 @@ export function PaymentList() {
               Total
             </Table.Summary.Cell>
             <Table.Summary.Cell colSpan={5} index={1}>
-              {NumberFormat.formatCents(payments?.summary?.totalAmount ?? 0)}
+              {NumberFormat.formatCents(payments?.extra?.totalAmount ?? 0)}
             </Table.Summary.Cell>
           </Table.Summary.Row>
         )}

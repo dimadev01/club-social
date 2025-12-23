@@ -1,6 +1,6 @@
 import type { PaginatedResponse } from '@club-social/shared/types';
 
-import { EyeOutlined, UserAddOutlined } from '@ant-design/icons';
+import { UserAddOutlined } from '@ant-design/icons';
 import {
   type IUserDetailDto,
   UserRole,
@@ -19,6 +19,7 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
+import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { TableActions } from '@/ui/Table/TableActions';
 import { useTable } from '@/ui/Table/useTable';
 
@@ -91,7 +92,6 @@ export function UserListPage() {
             sorter: true,
             sortOrder: getSortOrder('id'),
             title: 'Nombre',
-            width: 200,
           },
           {
             dataIndex: 'email',
@@ -101,11 +101,11 @@ export function UserListPage() {
             sorter: true,
             sortOrder: getSortOrder('email'),
             title: 'Email',
+            width: 300,
           },
           {
             align: 'center',
             dataIndex: 'status',
-
             filteredValue: getFilterValue('status'),
             filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
               text: label,
@@ -113,12 +113,11 @@ export function UserListPage() {
             })),
             render: (value: UserStatus) => UserStatusLabel[value],
             title: 'Estado',
-            width: 100,
+            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
             align: 'center',
             dataIndex: 'role',
-
             filteredValue: getFilterValue('role'),
             filters: [
               {
@@ -128,21 +127,6 @@ export function UserListPage() {
             ],
             render: (value: UserRole) => UserRoleLabel[value],
             title: 'Rol',
-            width: 100,
-          },
-          {
-            align: 'center',
-            fixed: 'right',
-            render: (_, record) => (
-              <Space.Compact size="small">
-                <Button
-                  icon={<EyeOutlined />}
-                  onClick={() => navigate(appRoutes.users.view(record.id))}
-                  type="text"
-                />
-              </Space.Compact>
-            ),
-            title: 'Acciones',
             width: 100,
           },
         ]}

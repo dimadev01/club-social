@@ -146,7 +146,7 @@ export function AuditLogsList() {
                   items={Object.entries(record.newData ?? {}).map(
                     ([key, value]) => {
                       const oldData = record.oldData?.[key];
-                      const newData = String(value);
+                      const newData = String(value ?? '-');
 
                       if (oldData && String(oldData) !== newData) {
                         return {

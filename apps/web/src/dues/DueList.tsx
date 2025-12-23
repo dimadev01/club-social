@@ -32,6 +32,7 @@ import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
+import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { TableActions } from '@/ui/Table/TableActions';
 import { TableDateRangeFilterDropdown } from '@/ui/Table/TableDateRangeFilterDropdown';
 import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
@@ -137,6 +138,7 @@ export function DueList() {
               <TableDateRangeFilterDropdown {...props} format="datetime" />
             ),
             filteredValue: getFilterValue('createdAt'),
+            fixed: 'left',
             render: (createdAt: string, record) => (
               <Link to={appRoutes.dues.view(record.id)}>
                 {DateFormat.date(createdAt)}
@@ -145,7 +147,7 @@ export function DueList() {
             sorter: true,
             sortOrder: getSortOrder('createdAt'),
             title: 'Creado el',
-            width: 150,
+            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           {
             dataIndex: 'date',
@@ -155,7 +157,7 @@ export function DueList() {
             filteredValue: getFilterValue('date'),
             render: (date: string) => DateFormat.date(date),
             title: 'Fecha',
-            width: 150,
+            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           {
             dataIndex: 'memberId',
@@ -165,27 +167,25 @@ export function DueList() {
               </Link>
             ),
             title: 'Socio',
-            width: 200,
           },
           {
             align: 'center',
             dataIndex: 'category',
             filteredValue: getFilterValue('category'),
-
             filters: Object.entries(DueCategoryLabel).map(([value, label]) => ({
               text: label,
               value,
             })),
             render: (value: DueCategory) => DueCategoryLabel[value],
             title: 'Categoría',
-            width: 150,
+            width: TABLE_COLUMN_WIDTHS.CATEGORY,
           },
           {
             align: 'right',
             dataIndex: 'amount',
             render: (amount: number) => NumberFormat.formatCents(amount),
             title: 'Monto',
-            width: 100,
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
             align: 'center',
@@ -198,7 +198,7 @@ export function DueList() {
             })),
             render: (value: DueStatus) => DueStatusLabel[value],
             title: 'Estado',
-            width: 100,
+            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
             align: 'center',
@@ -210,7 +210,7 @@ export function DueList() {
             })),
             render: (value: UserStatus) => UserStatusLabel[value],
             title: 'Estado Socio',
-            width: 150,
+            width: TABLE_COLUMN_WIDTHS.STATUS + 50,
           },
           {
             align: 'center',
@@ -242,6 +242,7 @@ export function DueList() {
                     to={`${appRoutes.payments.new}?memberId=${record.memberId}`}
                   >
                     <Button
+                      disabled={record.status === DueStatus.PAID}
                       icon={<PaymentsIcon />}
                       onClick={() => setFilteredMemberIds([record.memberId])}
                       type="text"
@@ -251,7 +252,7 @@ export function DueList() {
               </Space.Compact>
             ),
             title: 'Acciones',
-            width: 100,
+            width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
         ]}
         dataSource={dues?.data}
