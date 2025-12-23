@@ -43,6 +43,11 @@
       "types": "./src/movements/index.ts",
       "require": "./dist/movements/index.js",
       "import": "./dist/movements/index.mjs"
+    },
+    "./audit": {
+      "types": "./src/audit/index.ts",
+      "require": "./dist/audit/index.js",
+      "import": "./dist/audit/index.mjs"
     }
   },
   "scripts": {

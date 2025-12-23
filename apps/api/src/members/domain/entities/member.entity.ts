@@ -131,7 +131,36 @@ export class MemberEntity extends Entity<MemberEntity> {
     return new MemberEntity(props, base);
   }
 
+  public clone(): MemberEntity {
+    return MemberEntity.fromPersistence(
+      {
+        address: this._address,
+        birthDate: this._birthDate,
+        category: this._category,
+        createdBy: this._createdBy,
+        documentID: this._documentID,
+        fileStatus: this._fileStatus,
+        maritalStatus: this._maritalStatus,
+        nationality: this._nationality,
+        phones: [...this._phones],
+        sex: this._sex,
+        userId: this._userId,
+      },
+      {
+        createdAt: this._createdAt,
+        createdBy: this._createdBy,
+        deletedAt: this._deletedAt,
+        deletedBy: this._deletedBy,
+        id: this._id,
+        updatedAt: this._updatedAt,
+        updatedBy: this._updatedBy,
+      },
+    );
+  }
+
   public updateProfile(props: UpdateMemberProfileProps) {
+    const oldMember = this.clone();
+
     this._address = props.address;
     this._birthDate = props.birthDate;
     this._category = props.category;
@@ -143,6 +172,6 @@ export class MemberEntity extends Entity<MemberEntity> {
     this._sex = props.sex;
     this.markAsUpdated(props.updatedBy);
 
-    this.addEvent(new MemberUpdatedEvent(this));
+    this.addEvent(new MemberUpdatedEvent(oldMember, this));
   }
 }

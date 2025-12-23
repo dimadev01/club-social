@@ -421,6 +421,7 @@ export const ModelName = {
   Payment: 'Payment',
   PaymentDue: 'PaymentDue',
   Movement: 'Movement',
+  AuditLog: 'AuditLog',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -451,7 +452,8 @@ export type TypeMap<
       | 'due'
       | 'payment'
       | 'paymentDue'
-      | 'movement';
+      | 'movement'
+      | 'auditLog';
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -1139,6 +1141,82 @@ export type TypeMap<
         };
       };
     };
+    AuditLog: {
+      payload: Prisma.$AuditLogPayload<ExtArgs>;
+      fields: Prisma.AuditLogFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.AuditLogFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.AuditLogFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>;
+        };
+        findFirst: {
+          args: Prisma.AuditLogFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.AuditLogFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>;
+        };
+        findMany: {
+          args: Prisma.AuditLogFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[];
+        };
+        create: {
+          args: Prisma.AuditLogCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>;
+        };
+        createMany: {
+          args: Prisma.AuditLogCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.AuditLogCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[];
+        };
+        delete: {
+          args: Prisma.AuditLogDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>;
+        };
+        update: {
+          args: Prisma.AuditLogUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>;
+        };
+        deleteMany: {
+          args: Prisma.AuditLogDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.AuditLogUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.AuditLogUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[];
+        };
+        upsert: {
+          args: Prisma.AuditLogUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>;
+        };
+        aggregate: {
+          args: Prisma.AuditLogAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAuditLog>;
+        };
+        groupBy: {
+          args: Prisma.AuditLogGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AuditLogGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.AuditLogCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.AuditLogCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
   };
 } & {
   other: {
@@ -1351,12 +1429,35 @@ export const MovementScalarFieldEnum = {
 export type MovementScalarFieldEnum =
   (typeof MovementScalarFieldEnum)[keyof typeof MovementScalarFieldEnum];
 
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  entity: 'entity',
+  entityId: 'entityId',
+  action: 'action',
+  message: 'message',
+  oldData: 'oldData',
+  newData: 'newData',
+} as const;
+
+export type AuditLogScalarFieldEnum =
+  (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum];
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc',
 } as const;
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+} as const;
+
+export type NullableJsonNullValueInput =
+  (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput];
 
 export const QueryMode = {
   default: 'default',
@@ -1371,6 +1472,15 @@ export const NullsOrder = {
 } as const;
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull,
+} as const;
+
+export type JsonNullValueFilter =
+  (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
 
 /**
  * Field references
@@ -1430,6 +1540,54 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<
   $PrismaModel,
   'Int[]'
+>;
+
+/**
+ * Reference to a field of type 'AuditEntity'
+ */
+export type EnumAuditEntityFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'AuditEntity'
+>;
+
+/**
+ * Reference to a field of type 'AuditEntity[]'
+ */
+export type ListEnumAuditEntityFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'AuditEntity[]'
+>;
+
+/**
+ * Reference to a field of type 'AuditAction'
+ */
+export type EnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'AuditAction'
+>;
+
+/**
+ * Reference to a field of type 'AuditAction[]'
+ */
+export type ListEnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'AuditAction[]'
+>;
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'Json'
+>;
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'QueryMode'
 >;
 
 /**
@@ -1560,6 +1718,7 @@ export type GlobalOmitConfig = {
   payment?: Prisma.PaymentOmit;
   paymentDue?: Prisma.PaymentDueOmit;
   movement?: Prisma.MovementOmit;
+  auditLog?: Prisma.AuditLogOmit;
 };
 
 /* Types for Logging */

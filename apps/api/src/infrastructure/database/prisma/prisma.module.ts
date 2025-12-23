@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { PrismaAuditLogMapper } from '@/audit/infrastructure/prisma-audit-log.mapper';
 import { PrismaDueMapper } from '@/dues/infrastructure/prisma-due.mapper';
 import { PrismaMemberMapper } from '@/members/infrastructure/prisma-member.mapper';
 import { PrismaMovementMapper } from '@/movements/infrastructure/prisma-movement.mapper';
@@ -20,6 +21,7 @@ import { PrismaService } from './prisma.service';
     PrismaPaymentDueMapper,
     PrismaPaymentMapper,
     PrismaUserMapper,
+    PrismaAuditLogMapper,
     PrismaMappers,
     PrismaService,
   ],

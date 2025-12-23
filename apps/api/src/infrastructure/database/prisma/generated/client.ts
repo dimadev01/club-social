@@ -87,3 +87,8 @@ export type PaymentDue = Prisma.PaymentDueModel;
  *
  */
 export type Movement = Prisma.MovementModel;
+/**
+ * Model AuditLog
+ *
+ */
+export type AuditLog = Prisma.AuditLogModel;

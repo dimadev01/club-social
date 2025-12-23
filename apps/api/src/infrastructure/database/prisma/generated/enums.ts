@@ -8,5 +8,21 @@
  * 🟢 You can import this file directly.
  */
 
-// This file is empty because there are no enums in the schema.
-export {};
+export const AuditEntity = {
+  USER: 'USER',
+  MEMBER: 'MEMBER',
+  DUE: 'DUE',
+  MOVEMENT: 'MOVEMENT',
+  PAYMENT: 'PAYMENT',
+} as const;
+
+export type AuditEntity = (typeof AuditEntity)[keyof typeof AuditEntity];
+
+export const AuditAction = {
+  CREATED: 'CREATED',
+  UPDATED: 'UPDATED',
+  VOIDED: 'VOIDED',
+  DELETED: 'DELETED',
+} as const;
+
+export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

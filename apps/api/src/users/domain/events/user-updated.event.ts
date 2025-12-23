@@ -1,13 +1,12 @@
 import { DomainEvent } from '@/shared/domain/events/domain-event';
-import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import { UpdateUserProfileProps } from '../interfaces/user.interface';
+import { UserEntity } from '../entities/user.entity';
 
 export class UserUpdatedEvent extends DomainEvent {
   public constructor(
-    protected readonly userId: UniqueId,
-    public readonly changes: UpdateUserProfileProps,
+    public readonly oldUser: UserEntity,
+    public readonly user: UserEntity,
   ) {
-    super(userId);
+    super(user.id);
   }
 }

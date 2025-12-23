@@ -156,6 +156,33 @@ export class DueEntity extends Entity<DueEntity> {
     return ok();
   }
 
+  public clone(): DueEntity {
+    return DueEntity.fromPersistence(
+      {
+        amount: this._amount,
+        category: this._category,
+        createdBy: this._createdBy,
+        date: this._date,
+        memberId: this._memberId,
+        notes: this._notes,
+        paymentDues: [...this._paymentDues],
+        status: this._status,
+        voidedAt: this._voidedAt,
+        voidedBy: this._voidedBy,
+        voidReason: this._voidReason,
+      },
+      {
+        createdAt: this._createdAt,
+        createdBy: this._createdBy,
+        deletedAt: this._deletedAt,
+        deletedBy: this._deletedBy,
+        id: this._id,
+        updatedAt: this._updatedAt,
+        updatedBy: this._updatedBy,
+      },
+    );
+  }
+
   public isPaid(): boolean {
     return this._status === DueStatus.PAID;
   }
@@ -181,11 +208,13 @@ export class DueEntity extends Entity<DueEntity> {
       return err(new ApplicationError('No se puede editar una cuota anulada'));
     }
 
+    const oldDue = this.clone();
+
     this._amount = props.amount;
     this._notes = props.notes;
     this.markAsUpdated(props.updatedBy);
 
-    this.addEvent(new DueUpdatedEvent(this));
+    this.addEvent(new DueUpdatedEvent(oldDue, this));
 
     return ok();
   }
@@ -197,12 +226,14 @@ export class DueEntity extends Entity<DueEntity> {
       );
     }
 
+    const oldDue = this.clone();
+
     this._status = DueStatus.VOIDED;
     this._voidReason = props.voidReason;
     this._voidedAt = new Date();
     this._voidedBy = props.voidedBy;
     this.markAsUpdated(props.voidedBy);
-    this.addEvent(new DueUpdatedEvent(this));
+    this.addEvent(new DueUpdatedEvent(oldDue, this));
 
     return ok();
   }
@@ -240,9 +271,10 @@ export class DueEntity extends Entity<DueEntity> {
     }
 
     if (this._status !== newStatus) {
+      const oldDue = this.clone();
       this._status = newStatus;
       this.markAsUpdated(updatedBy);
-      this.addEvent(new DueUpdatedEvent(this));
+      this.addEvent(new DueUpdatedEvent(oldDue, this));
     }
   }
 }

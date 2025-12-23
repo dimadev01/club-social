@@ -9,6 +9,7 @@ import {
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { UseCase } from '@/shared/application/use-case';
+import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, type Result } from '@/shared/domain/result';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -21,6 +22,7 @@ export class VoidDueUseCase extends UseCase {
     protected readonly logger: AppLogger,
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
+    private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
   }
@@ -45,6 +47,7 @@ export class VoidDueUseCase extends UseCase {
     }
 
     await this.dueRepository.save(due);
+    this.eventPublisher.dispatch(due);
 
     return ok();
   }

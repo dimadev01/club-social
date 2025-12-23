@@ -116,6 +116,31 @@ export class UserEntity extends Entity<UserEntity> {
     return new UserEntity(props, base);
   }
 
+  public clone(): UserEntity {
+    return UserEntity.fromPersistence(
+      {
+        banExpires: this._banExpires,
+        banned: this._banned,
+        banReason: this._banReason,
+        createdBy: this._createdBy,
+        email: this._email,
+        firstName: this._firstName,
+        lastName: this._lastName,
+        role: this._role,
+        status: this._status,
+      },
+      {
+        createdAt: this._createdAt,
+        createdBy: this._createdBy,
+        deletedAt: this._deletedAt,
+        deletedBy: this._deletedBy,
+        id: this._id,
+        updatedAt: this._updatedAt,
+        updatedBy: this._updatedBy,
+      },
+    );
+  }
+
   public updateEmail(email: Email) {
     this._email = email;
   }
@@ -126,13 +151,15 @@ export class UserEntity extends Entity<UserEntity> {
   }
 
   public updateProfile(props: UpdateUserProfileProps) {
+    const oldUser = this.clone();
+
     this._email = props.email;
     this._firstName = props.firstName;
     this._lastName = props.lastName;
     this._status = props.status;
     this.markAsUpdated(props.updatedBy);
 
-    this.addEvent(new UserUpdatedEvent(this.id, props));
+    this.addEvent(new UserUpdatedEvent(oldUser, this));
   }
 
   public updateStatus(status: UserStatus) {

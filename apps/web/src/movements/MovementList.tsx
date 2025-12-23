@@ -230,12 +230,12 @@ export function MovementList() {
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={1}>
                 {NumberFormat.formatCents(
-                  movements?.summary?.totalAmountInflow ?? 0,
+                  movements?.summary?.totalAmountOutflow ?? 0,
                 )}
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={2}>
                 {NumberFormat.formatCents(
-                  movements?.summary?.totalAmountOutflow ?? 0,
+                  movements?.summary?.totalAmountInflow ?? 0,
                 )}
               </Table.Summary.Cell>
             </Table.Summary.Row>

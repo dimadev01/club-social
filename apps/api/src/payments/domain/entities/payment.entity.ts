@@ -131,6 +131,33 @@ export class PaymentEntity extends Entity<PaymentEntity> {
     this._amount = this._amount.add(amount);
   }
 
+  public clone(): PaymentEntity {
+    return PaymentEntity.fromPersistence(
+      {
+        amount: this._amount,
+        createdBy: this._createdBy,
+        date: this._date,
+        dueIds: [...this._dueIds],
+        memberId: this._memberId,
+        notes: this._notes,
+        receiptNumber: this._receiptNumber,
+        status: this._status,
+        voidedAt: this._voidedAt,
+        voidedBy: this._voidedBy,
+        voidReason: this._voidReason,
+      },
+      {
+        createdAt: this._createdAt,
+        createdBy: this._createdBy,
+        deletedAt: this._deletedAt,
+        deletedBy: this._deletedBy,
+        id: this._id,
+        updatedAt: this._updatedAt,
+        updatedBy: this._updatedBy,
+      },
+    );
+  }
+
   public isPaid(): boolean {
     return this._status === PaymentStatus.PAID;
   }
@@ -144,13 +171,15 @@ export class PaymentEntity extends Entity<PaymentEntity> {
       return err(new ApplicationError('No se puede anular un pago anulado'));
     }
 
+    const oldPayment = this.clone();
+
     this._status = PaymentStatus.VOIDED;
     this._voidReason = props.voidReason;
     this._voidedAt = new Date();
     this._voidedBy = props.voidedBy;
 
     this.markAsUpdated(props.voidedBy);
-    this.addEvent(new PaymentUpdatedEvent(this));
+    this.addEvent(new PaymentUpdatedEvent(oldPayment, this));
 
     return ok();
   }

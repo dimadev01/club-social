@@ -133,6 +133,33 @@ export class MovementEntity extends Entity<MovementEntity> {
     return new MovementEntity(props, base);
   }
 
+  public clone(): MovementEntity {
+    return MovementEntity.fromPersistence(
+      {
+        amount: this._amount,
+        category: this._category,
+        createdBy: this._createdBy,
+        date: this._date,
+        description: this._description,
+        paymentId: this._paymentId,
+        status: this._status,
+        type: this._type,
+        voidedAt: this._voidedAt,
+        voidedBy: this._voidedBy,
+        voidReason: this._voidReason,
+      },
+      {
+        createdAt: this._createdAt,
+        createdBy: this._createdBy,
+        deletedAt: this._deletedAt,
+        deletedBy: this._deletedBy,
+        id: this._id,
+        updatedAt: this._updatedAt,
+        updatedBy: this._updatedBy,
+      },
+    );
+  }
+
   public isInflow(): boolean {
     return this._type === MovementType.INFLOW;
   }
@@ -156,13 +183,15 @@ export class MovementEntity extends Entity<MovementEntity> {
       );
     }
 
+    const oldMovement = this.clone();
+
     this._status = MovementStatus.VOIDED;
     this._voidReason = props.voidReason;
     this._voidedAt = new Date();
     this._voidedBy = props.voidedBy;
 
     this.markAsUpdated(props.voidedBy);
-    this.addEvent(new MovementUpdatedEvent(this));
+    this.addEvent(new MovementUpdatedEvent(oldMovement, this));
 
     return ok();
   }

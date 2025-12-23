@@ -3,6 +3,7 @@ import { APP_FILTER } from '@nestjs/core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuditModule } from './audit/audit.module';
 import { DuesModule } from './dues/due.module';
 import { AuthModule } from './infrastructure/auth/auth.module';
 import { ConfigModule } from './infrastructure/config/config.module';
@@ -40,6 +41,7 @@ import { UsersModule } from './users/user.module';
     DuesModule,
     PaymentsModule,
     MovementsModule,
+    AuditModule,
   ],
   providers: [
     AppService,

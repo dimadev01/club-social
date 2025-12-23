@@ -63,6 +63,7 @@ export const ModelName = {
   Payment: 'Payment',
   PaymentDue: 'PaymentDue',
   Movement: 'Movement',
+  AuditLog: 'AuditLog',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -254,12 +255,35 @@ export const MovementScalarFieldEnum = {
 export type MovementScalarFieldEnum =
   (typeof MovementScalarFieldEnum)[keyof typeof MovementScalarFieldEnum];
 
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  entity: 'entity',
+  entityId: 'entityId',
+  action: 'action',
+  message: 'message',
+  oldData: 'oldData',
+  newData: 'newData',
+} as const;
+
+export type AuditLogScalarFieldEnum =
+  (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum];
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc',
 } as const;
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+} as const;
+
+export type NullableJsonNullValueInput =
+  (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput];
 
 export const QueryMode = {
   default: 'default',
@@ -274,3 +298,12 @@ export const NullsOrder = {
 } as const;
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull',
+} as const;
+
+export type JsonNullValueFilter =
+  (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];

@@ -210,3 +210,36 @@ model Movement {
   @@index([paymentId])
   @@map("movement")
 }
+
+model AuditLog {
+  id        String      @id
+  createdAt DateTime    @default(now())
+  createdBy String
+
+  entity    AuditEntity
+  entityId  String
+  action    AuditAction
+
+  message   String?
+  oldData   Json?
+  newData   Json?
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_log")
+}
+
+enum AuditEntity {
+  USER
+  MEMBER
+  DUE
+  MOVEMENT
+  PAYMENT
+}
+
+enum AuditAction {
+  CREATED
+  UPDATED
+  VOIDED
+  DELETED
+}
