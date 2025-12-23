@@ -10,9 +10,9 @@ export interface PaginatedRequestSort {
   order: SortOrder;
 }
 
-export interface PaginatedResponse<T, TSummary = never> {
+export interface PaginatedResponse<T, TExtra = never> {
   data: T[];
-  summary?: TSummary;
+  extra?: TExtra;
   total: number;
 }
 

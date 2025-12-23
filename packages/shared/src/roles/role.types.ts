@@ -12,6 +12,7 @@ export const Action = {
 export type Action = (typeof Action)[keyof typeof Action];
 
 export const Resource = {
+  AUDIT_LOGS: 'audit-logs',
   DUES: 'dues',
   MEMBERS: 'members',
   MOVEMENTS: 'movements',

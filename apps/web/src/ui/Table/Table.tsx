@@ -19,7 +19,10 @@ export function Table<RecordType>({
             }
           : false
       }
-      scroll={{ x: 'max-content', y: 800 }}
+      scroll={{
+        x: 'max-content',
+        y: 800,
+      }}
       sortDirections={['ascend', 'descend', 'ascend']}
       {...props}
     />

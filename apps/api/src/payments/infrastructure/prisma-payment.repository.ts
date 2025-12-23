@@ -21,8 +21,8 @@ import { PaymentRepository } from '../domain/payment.repository';
 import {
   PaymentDetailModel,
   PaymentDueDetailModel,
+  PaymentPaginatedExtraModel,
   PaymentPaginatedModel,
-  PaymentPaginatedSummaryModel,
 } from '../domain/payment.types';
 
 @Injectable()
@@ -70,7 +70,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
   public async findPaginated(
     params: PaginatedRequest,
   ): Promise<
-    PaginatedResponse<PaymentPaginatedModel, PaymentPaginatedSummaryModel>
+    PaginatedResponse<PaymentPaginatedModel, PaymentPaginatedExtraModel>
   > {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
@@ -96,7 +96,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
         payment: this.mapper.payment.toDomain(payment),
         user: this.mapper.user.toDomain(payment.member.user),
       })),
-      summary: {
+      extra: {
         totalAmount: totalAmount._sum.amount ?? 0,
       },
       total,

@@ -5,6 +5,9 @@ import { useHasPermission } from './use-has-permission';
 
 export const usePermissions = () => {
   return {
+    auditLogs: {
+      list: useHasPermission(Resource.AUDIT_LOGS, Action.LIST),
+    } as const,
     dues: {
       create: useHasPermission(Resource.DUES, Action.CREATE),
       get: useHasPermission(Resource.DUES, Action.GET),

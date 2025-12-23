@@ -11,14 +11,14 @@ export interface DueDetailModel {
   user: UserEntity;
 }
 
+export interface DuePaginatedExtraModel {
+  totalAmount: number;
+}
+
 export interface DuePaginatedModel {
   due: DueEntity;
   member: MemberEntity;
   user: UserEntity;
-}
-
-export interface DuePaginatedSummaryModel {
-  totalAmount: number;
 }
 
 export interface PaymentDueDetailModel {

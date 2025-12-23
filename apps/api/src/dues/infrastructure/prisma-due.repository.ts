@@ -20,8 +20,8 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { DueRepository } from '../domain/due.repository';
 import {
   DueDetailModel,
+  DuePaginatedExtraModel,
   DuePaginatedModel,
-  DuePaginatedSummaryModel,
   PaymentDueDetailModel,
 } from '../domain/due.types';
 import { DueEntity } from '../domain/entities/due.entity';
@@ -98,7 +98,7 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findPaginated(
     params: PaginatedRequest,
-  ): Promise<PaginatedResponse<DuePaginatedModel, DuePaginatedSummaryModel>> {
+  ): Promise<PaginatedResponse<DuePaginatedModel, DuePaginatedExtraModel>> {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
@@ -121,7 +121,7 @@ export class PrismaDueRepository implements DueRepository {
         member: this.mapper.member.toDomain(due.member),
         user: this.mapper.user.toDomain(due.member.user),
       })),
-      summary: {
+      extra: {
         totalAmount: totalAmount._sum.amount ?? 0,
       },
       total,

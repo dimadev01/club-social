@@ -40,7 +40,7 @@ export interface IDuePaginatedDto {
   userStatus: UserStatus;
 }
 
-export interface IDuePaginatedSummaryDto {
+export interface IDuePaginatedExtraDto {
   totalAmount: number;
 }
 

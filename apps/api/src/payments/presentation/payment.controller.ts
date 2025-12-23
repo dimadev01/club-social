@@ -39,7 +39,7 @@ import {
 } from '../domain/payment.repository';
 import { CreatePaymentRequestDto } from './dto/create-payment.dto';
 import { PaymentDetailDto } from './dto/payment-detail.dto';
-import { PaymentPaginatedSummaryDto } from './dto/payment-paginated-summary.dto';
+import { PaymentPaginatedExtraDto } from './dto/payment-paginated-summary.dto';
 import { PaymentPaginatedDto } from './dto/payment-paginated.dto';
 import { VoidPaymentRequestDto } from './dto/void-payment.dto';
 
@@ -96,7 +96,7 @@ export class PaymentsController extends BaseController {
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
   ): Promise<
-    PaginatedResponseDto<PaymentPaginatedDto, PaymentPaginatedSummaryDto>
+    PaginatedResponseDto<PaymentPaginatedDto, PaymentPaginatedExtraDto>
   > {
     const data = await this.paymentRepository.findPaginated({
       filters: query.filters,
@@ -116,8 +116,8 @@ export class PaymentsController extends BaseController {
         memberName: user.name,
         status: payment.status,
       })),
-      summary: {
-        totalAmount: data.summary?.totalAmount ?? 0,
+      extra: {
+        totalAmount: data.extra?.totalAmount ?? 0,
       },
       total: data.total,
     };

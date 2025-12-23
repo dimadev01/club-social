@@ -9,8 +9,8 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import {
   DueDetailModel,
+  DuePaginatedExtraModel,
   DuePaginatedModel,
-  DuePaginatedSummaryModel,
   PaymentDueDetailModel,
 } from './due.types';
 import { DueEntity } from './entities/due.entity';
@@ -19,7 +19,7 @@ export const DUE_REPOSITORY_PROVIDER = Symbol('DueRepository');
 
 export interface DueRepository
   extends
-    PaginatedRepository<DuePaginatedModel, DuePaginatedSummaryModel>,
+    PaginatedRepository<DuePaginatedModel, DuePaginatedExtraModel>,
     ReadableRepository<DueEntity>,
     WriteableRepository<DueEntity> {
   findByMemberId(memberId: UniqueId): Promise<DueEntity[]>;

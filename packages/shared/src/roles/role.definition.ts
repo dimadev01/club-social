@@ -2,6 +2,7 @@ import { UserRole } from '../users';
 import { Resource, type RoleStatements, type Statement } from './role.types';
 
 export const statements = {
+  [Resource.AUDIT_LOGS]: ['list'],
   [Resource.DUES]: ['create', 'list', 'get', 'update', 'void'],
   [Resource.MEMBERS]: ['create', 'list', 'get', 'update', 'void'],
   [Resource.MOVEMENTS]: ['create', 'list', 'get', 'void'],
@@ -11,6 +12,7 @@ export const statements = {
 
 export const roleStatements = {
   [UserRole.ADMIN]: {
+    [Resource.AUDIT_LOGS]: ['list'],
     [Resource.DUES]: ['create', 'list', 'get', 'update', 'void'],
     [Resource.MEMBERS]: ['create', 'list', 'get', 'update', 'void'],
     [Resource.MOVEMENTS]: ['create', 'list', 'get', 'void'],
@@ -18,6 +20,7 @@ export const roleStatements = {
     [Resource.USERS]: ['create', 'list', 'get', 'update', 'void'],
   },
   [UserRole.MEMBER]: {
+    [Resource.AUDIT_LOGS]: [],
     [Resource.DUES]: ['get', 'list'],
     [Resource.MEMBERS]: [],
     [Resource.MOVEMENTS]: [],
@@ -25,6 +28,7 @@ export const roleStatements = {
     [Resource.USERS]: [],
   },
   [UserRole.STAFF]: {
+    [Resource.AUDIT_LOGS]: [],
     [Resource.DUES]: ['get', 'create', 'update', 'void', 'list'],
     [Resource.MEMBERS]: ['get', 'create', 'update', 'list'],
     [Resource.MOVEMENTS]: ['get', 'create', 'void', 'list'],

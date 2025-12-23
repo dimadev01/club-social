@@ -3,7 +3,7 @@ import type { PaginatedResponse } from '@club-social/shared/types';
 import { FileExcelOutlined, MoreOutlined } from '@ant-design/icons';
 import {
   type IMovementPaginatedDto,
-  type IMovementPaginatedSummaryDto,
+  type IMovementPaginatedExtraDto,
   MovementCategory,
   MovementCategoryLabel,
   MovementStatus,
@@ -60,7 +60,7 @@ export function MovementList() {
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<
-        PaginatedResponse<IMovementPaginatedDto, IMovementPaginatedSummaryDto>
+        PaginatedResponse<IMovementPaginatedDto, IMovementPaginatedExtraDto>
       >('/movements', { query }),
   });
 
@@ -230,18 +230,18 @@ export function MovementList() {
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={1}>
                 {NumberFormat.formatCents(
-                  movements?.summary?.totalAmountOutflow ?? 0,
+                  movements?.extra?.totalAmountOutflow ?? 0,
                 )}
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={2}>
                 {NumberFormat.formatCents(
-                  movements?.summary?.totalAmountInflow ?? 0,
+                  movements?.extra?.totalAmountInflow ?? 0,
                 )}
               </Table.Summary.Cell>
             </Table.Summary.Row>
             <Table.Summary.Row>
               <Table.Summary.Cell align="center" colSpan={2} index={1}>
-                {NumberFormat.formatCents(movements?.summary?.totalAmount ?? 0)}
+                {NumberFormat.formatCents(movements?.extra?.totalAmount ?? 0)}
               </Table.Summary.Cell>
             </Table.Summary.Row>
           </>

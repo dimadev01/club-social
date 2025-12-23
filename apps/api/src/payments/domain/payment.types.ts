@@ -16,12 +16,12 @@ export interface PaymentDueDetailModel {
   paymentDue: PaymentDueEntity;
 }
 
+export interface PaymentPaginatedExtraModel {
+  totalAmount: number;
+}
+
 export interface PaymentPaginatedModel {
   member: MemberEntity;
   payment: PaymentEntity;
   user: UserEntity;
-}
-
-export interface PaymentPaginatedSummaryModel {
-  totalAmount: number;
 }

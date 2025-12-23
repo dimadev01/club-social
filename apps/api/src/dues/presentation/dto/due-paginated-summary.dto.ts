@@ -1,5 +1,5 @@
-import { IDuePaginatedSummaryDto } from '@club-social/shared/dues';
+import { IDuePaginatedExtraDto } from '@club-social/shared/dues';
 
-export class DuePaginatedSummaryDto implements IDuePaginatedSummaryDto {
+export class DuePaginatedExtraDto implements IDuePaginatedExtraDto {
   public totalAmount: number;
 }

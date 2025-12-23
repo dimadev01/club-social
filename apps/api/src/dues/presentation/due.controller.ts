@@ -41,7 +41,7 @@ import {
 } from '../domain/due.repository';
 import { CreateDueRequestDto } from './dto/create-due.dto';
 import { DueDetailDto } from './dto/due-detail.dto';
-import { DuePaginatedSummaryDto } from './dto/due-paginated-summary.dto';
+import { DuePaginatedExtraDto } from './dto/due-paginated-summary.dto';
 import { DuePaginatedDto } from './dto/due-paginated.dto';
 import { PendingDueDto } from './dto/pending-due.dto';
 import { UpdateDueDto } from './dto/update-due.dto';
@@ -167,7 +167,7 @@ export class DuesController extends BaseController {
   @Get('paginated')
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
-  ): Promise<PaginatedResponseDto<DuePaginatedDto, DuePaginatedSummaryDto>> {
+  ): Promise<PaginatedResponseDto<DuePaginatedDto, DuePaginatedExtraDto>> {
     const dues = await this.dueRepository.findPaginated({
       filters: query.filters,
       page: query.page,
@@ -187,8 +187,8 @@ export class DuesController extends BaseController {
         status: due.status,
         userStatus: user.status,
       })),
-      summary: {
-        totalAmount: dues.summary?.totalAmount ?? 0,
+      extra: {
+        totalAmount: dues.extra?.totalAmount ?? 0,
       },
       total: dues.total,
     };

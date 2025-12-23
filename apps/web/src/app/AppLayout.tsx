@@ -25,6 +25,7 @@ import { useLocalStorage } from 'react-use';
 
 import { useUser } from '@/auth/useUser';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
+import { AuditLogsIcon } from '@/ui/Icons/AuditLogsIcon';
 import { DashboardIcon } from '@/ui/Icons/DashboardIcon';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { LogoutIcon } from '@/ui/Icons/LogoutIcon';
@@ -99,6 +100,14 @@ export function AppLayout({ children }: PropsWithChildren) {
       key: appRoutes.users.list,
       label: 'Usuarios',
     });
+
+    if (permissions.auditLogs.list) {
+      menuItems.push({
+        icon: <AuditLogsIcon />,
+        key: appRoutes.auditLogs.list,
+        label: 'Auditoría',
+      });
+    }
   }
 
   const [selectedKeys, setSelectedKeys] = useState<string[]>([

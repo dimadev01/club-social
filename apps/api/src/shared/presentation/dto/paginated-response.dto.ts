@@ -9,7 +9,7 @@ export class PaginatedResponseDto<
   public data: T[];
 
   @ApiHideProperty()
-  public summary?: TSummary;
+  public extra?: TSummary;
 
   public total: number;
 }

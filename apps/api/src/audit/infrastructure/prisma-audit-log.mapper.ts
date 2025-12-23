@@ -1,6 +1,6 @@
 import type { InputJsonValue } from '@prisma/client/runtime/client';
 
-import { AuditAction, AuditEntity } from '@club-social/shared/audit';
+import { AuditAction, AuditEntity } from '@club-social/shared/audit-logs';
 import { Injectable } from '@nestjs/common';
 
 import {

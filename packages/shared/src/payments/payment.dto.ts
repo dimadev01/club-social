@@ -41,7 +41,7 @@ export interface IPaymentPaginatedDto {
   status: PaymentStatus;
 }
 
-export interface IPaymentPaginatedSummaryDto {
+export interface IPaymentPaginatedExtraDto {
   totalAmount: number;
 }
 

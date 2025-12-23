@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
+import { AuditLogsList } from '@/audit-logs/AuditLogsList';
 import { LoginPage } from '@/auth/LoginPage';
 import { LogoutPage } from '@/auth/LogoutPage';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
@@ -75,6 +76,10 @@ export function AppRoutes() {
             <Route element={<PaymentList />} index />
             <Route element={<PaymentNew />} path={appRoutes.generic.new} />
             <Route element={<PaymentView />} path={appRoutes.generic.view} />
+          </Route>
+
+          <Route path={appRoutes.auditLogs.list}>
+            <Route element={<AuditLogsList />} index />
           </Route>
 
           <Route element={<ProfilePage />} path={appRoutes.profile} />

@@ -8,7 +8,7 @@ import {
 import { DueCategoryLabel } from '@club-social/shared/dues';
 import {
   type IPaymentPaginatedDto,
-  type IPaymentPaginatedSummaryDto,
+  type IPaymentPaginatedExtraDto,
   PaymentStatus,
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
@@ -77,7 +77,7 @@ export function PaymentList() {
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<
-        PaginatedResponse<IPaymentPaginatedDto, IPaymentPaginatedSummaryDto>
+        PaginatedResponse<IPaymentPaginatedDto, IPaymentPaginatedExtraDto>
       >('payments/paginated', { query }),
   });
 

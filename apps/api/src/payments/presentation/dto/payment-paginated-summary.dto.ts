@@ -1,5 +1,5 @@
-import { IPaymentPaginatedSummaryDto } from '@club-social/shared/payments';
+import { IPaymentPaginatedExtraDto } from '@club-social/shared/payments';
 
-export class PaymentPaginatedSummaryDto implements IPaymentPaginatedSummaryDto {
+export class PaymentPaginatedExtraDto implements IPaymentPaginatedExtraDto {
   public totalAmount: number;
 }

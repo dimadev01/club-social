@@ -1,5 +1,11 @@
+import { AuditAction, AuditEntity } from '@club-social/shared/audit-logs';
+import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
 import { Inject, Injectable } from '@nestjs/common';
 
+import {
+  AuditLogFindManyArgs,
+  AuditLogWhereInput,
+} from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import {
@@ -19,6 +25,36 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     private readonly mappers: PrismaMappers,
   ) {
     this.logger.setContext(PrismaAuditLogRepository.name);
+  }
+
+  public async findPaginated(
+    params: PaginatedRequest,
+  ): Promise<PaginatedResponse<AuditLogEntity>> {
+    const where: AuditLogWhereInput = {};
+
+    if (params.filters?.entity) {
+      where.entity = { in: params.filters.entity as AuditEntity[] };
+    }
+
+    if (params.filters?.action) {
+      where.action = { in: params.filters.action as AuditAction[] };
+    }
+
+    const query = {
+      orderBy: params.sort.map(({ field, order }) => ({ [field]: order })),
+      skip: (params.page - 1) * params.pageSize,
+      take: params.pageSize,
+    } satisfies AuditLogFindManyArgs;
+
+    const [data, total] = await Promise.all([
+      this.prisma.auditLog.findMany(query),
+      this.prisma.auditLog.count({ where: params.filters }),
+    ]);
+
+    return {
+      data: data.map((data) => this.mappers.auditLog.toDomain(data)),
+      total,
+    };
   }
 
   public async save(auditLog: AuditLogEntity): Promise<void> {

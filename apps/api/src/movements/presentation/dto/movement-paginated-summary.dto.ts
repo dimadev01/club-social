@@ -1,6 +1,6 @@
-import { IMovementPaginatedSummaryDto } from '@club-social/shared/movements';
+import { IMovementPaginatedExtraDto } from '@club-social/shared/movements';
 
-export class MovementPaginatedSummaryDto implements IMovementPaginatedSummaryDto {
+export class MovementPaginatedExtraDto implements IMovementPaginatedExtraDto {
   public totalAmount: number;
   public totalAmountInflow: number;
   public totalAmountOutflow: number;

@@ -1,4 +1,4 @@
-import { AuditAction, AuditEntity } from '@club-social/shared/audit';
+import { AuditAction, AuditEntity } from '@club-social/shared/audit-logs';
 
 import { CreateAuditLogProps } from '../interfaces/audit-log.interface';
 

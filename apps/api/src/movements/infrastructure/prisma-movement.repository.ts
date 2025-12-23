@@ -19,7 +19,7 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MovementEntity } from '../domain/entities/movement.entity';
 import { MovementRepository } from '../domain/movement.repository';
-import { MovementPaginatedSummaryModel } from '../domain/movement.types';
+import { MovementPaginatedExtraModel } from '../domain/movement.types';
 
 @Injectable()
 export class PrismaMovementRepository implements MovementRepository {
@@ -54,7 +54,7 @@ export class PrismaMovementRepository implements MovementRepository {
 
   public async findPaginated(
     params: PaginatedRequest,
-  ): Promise<PaginatedResponse<MovementEntity, MovementPaginatedSummaryModel>> {
+  ): Promise<PaginatedResponse<MovementEntity, MovementPaginatedExtraModel>> {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
@@ -84,7 +84,7 @@ export class PrismaMovementRepository implements MovementRepository {
 
     return {
       data: movements.map((m) => this.mapper.movement.toDomain(m)),
-      summary: {
+      extra: {
         totalAmount,
         totalAmountInflow: totalInflow,
         totalAmountOutflow: totalOutflow,

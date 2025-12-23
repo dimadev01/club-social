@@ -1,4 +1,4 @@
-import { AuditAction, AuditEntity } from '@club-social/shared/audit';
+import { AuditAction, AuditEntity } from '@club-social/shared/audit-logs';
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 

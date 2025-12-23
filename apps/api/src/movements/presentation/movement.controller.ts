@@ -39,7 +39,7 @@ import {
 } from '../domain/movement.repository';
 import { CreateMovementRequestDto } from './dto/create-movement.dto';
 import { MovementDetailDto } from './dto/movement-detail.dto';
-import { MovementPaginatedSummaryDto } from './dto/movement-paginated-summary.dto';
+import { MovementPaginatedExtraDto } from './dto/movement-paginated-summary.dto';
 import { MovementPaginatedDto } from './dto/movement-paginated.dto';
 import { VoidMovementRequestDto } from './dto/void-movement.dto';
 
@@ -119,7 +119,7 @@ export class MovementsController extends BaseController {
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
   ): Promise<
-    PaginatedResponseDto<MovementPaginatedDto, MovementPaginatedSummaryDto>
+    PaginatedResponseDto<MovementPaginatedDto, MovementPaginatedExtraDto>
   > {
     const result = await this.movementRepository.findPaginated({
       filters: query.filters,
@@ -140,10 +140,10 @@ export class MovementsController extends BaseController {
         status: movement.status,
         type: movement.type,
       })),
-      summary: {
-        totalAmount: result.summary?.totalAmount ?? 0,
-        totalAmountInflow: result.summary?.totalAmountInflow ?? 0,
-        totalAmountOutflow: result.summary?.totalAmountOutflow ?? 0,
+      extra: {
+        totalAmount: result.extra?.totalAmount ?? 0,
+        totalAmountInflow: result.extra?.totalAmountInflow ?? 0,
+        totalAmountOutflow: result.extra?.totalAmountOutflow ?? 0,
       },
       total: result.total,
     };

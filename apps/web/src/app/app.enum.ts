@@ -1,4 +1,7 @@
 export const appRoutes = {
+  auditLogs: {
+    list: '/audit-logs',
+  } as const,
   auth: {
     login: '/auth/login',
     logout: '/auth/logout',

@@ -11,7 +11,7 @@ import {
   DueStatus,
   DueStatusLabel,
   type IDuePaginatedDto,
-  type IDuePaginatedSummaryDto,
+  type IDuePaginatedExtraDto,
 } from '@club-social/shared/dues';
 import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
@@ -76,7 +76,7 @@ export function DueList() {
     enabled: permissions.dues.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IDuePaginatedDto, IDuePaginatedSummaryDto>>(
+      $fetch<PaginatedResponse<IDuePaginatedDto, IDuePaginatedExtraDto>>(
         '/dues/paginated',
         { query },
       ),
@@ -268,7 +268,7 @@ export function DueList() {
               Total
             </Table.Summary.Cell>
             <Table.Summary.Cell colSpan={7} index={1}>
-              {NumberFormat.formatCents(dues?.summary?.totalAmount ?? 0)}
+              {NumberFormat.formatCents(dues?.extra?.totalAmount ?? 0)}
             </Table.Summary.Cell>
           </Table.Summary.Row>
         )}

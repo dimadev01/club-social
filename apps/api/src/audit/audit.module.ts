@@ -4,8 +4,10 @@ import { AUDIT_LOG_REPOSITORY_PROVIDER } from './domain/audit-log.repository';
 import { AuditEventHandler } from './infrastructure/events/audit-event.handler';
 import { PrismaAuditLogMapper } from './infrastructure/prisma-audit-log.mapper';
 import { PrismaAuditLogRepository } from './infrastructure/prisma-audit-log.repository';
+import { AuditLogController } from './presentation/audit-log.controller';
 
 @Module({
+  controllers: [AuditLogController],
   providers: [
     AuditEventHandler,
     PrismaAuditLogMapper,
