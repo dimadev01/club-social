@@ -1,18 +1,24 @@
+import type { Response } from 'express';
+
+import { MovementType } from '@club-social/shared/movements';
 import {
   Body,
   Controller,
   Get,
+  Header,
   Inject,
   NotFoundException,
   Param,
   Patch,
   Post,
   Query,
+  Res,
   Session,
 } from '@nestjs/common';
 
 import type { AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 
+import { CsvService } from '@/infrastructure/csv/csv.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -20,6 +26,7 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
+import { ExportRequestDto } from '@/shared/presentation/dto/export-request.dto';
 import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
@@ -32,6 +39,7 @@ import {
 } from '../domain/movement.repository';
 import { CreateMovementRequestDto } from './dto/create-movement.dto';
 import { MovementDetailDto } from './dto/movement-detail.dto';
+import { MovementPaginatedDto } from './dto/movement-paginated.dto';
 import { VoidMovementRequestDto } from './dto/void-movement.dto';
 
 @Controller('movements')
@@ -43,6 +51,7 @@ export class MovementsController extends BaseController {
     @Inject(MOVEMENT_REPOSITORY_PROVIDER)
     private readonly movementRepository: MovementRepository,
     private readonly voidMovementUseCase: VoidMovementUseCase,
+    private readonly csvService: CsvService,
   ) {
     super(logger);
   }
@@ -66,11 +75,49 @@ export class MovementsController extends BaseController {
     return { id: id.value };
   }
 
-  @ApiPaginatedResponse(MovementDetailDto)
+  @Get('export')
+  @Header('Content-Type', 'text/csv; charset=utf-8')
+  public async export(
+    @Query() query: ExportRequestDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const data = await this.movementRepository.findForExport({
+      filters: query.filters,
+      sort: query.sort,
+    });
+
+    const stream = this.csvService.generateStream(data, [
+      { accessor: (row) => row.id.value, header: 'ID' },
+      { accessor: (row) => row.createdAt.toISOString(), header: 'Creado el' },
+      { accessor: (row) => row.date.value, header: 'Fecha' },
+      { accessor: (row) => row.category, header: 'Categoría' },
+      { accessor: (row) => row.status, header: 'Estado' },
+      { accessor: (row) => row.description, header: 'Descripción' },
+      {
+        accessor: (row) =>
+          row.type === MovementType.OUTFLOW ? row.amount.toDollars() : null,
+        header: 'Egreso',
+      },
+      {
+        accessor: (row) =>
+          row.type === MovementType.INFLOW ? row.amount.toDollars() : null,
+        header: 'Ingreso',
+      },
+    ]);
+
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${query.filename}"`,
+    );
+
+    stream.pipe(res);
+  }
+
+  @ApiPaginatedResponse(MovementPaginatedDto)
   @Get()
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
-  ): Promise<PaginatedResponseDto<MovementDetailDto>> {
+  ): Promise<PaginatedResponseDto<MovementPaginatedDto>> {
     const result = await this.movementRepository.findPaginated({
       filters: query.filters,
       page: query.page,
@@ -83,18 +130,12 @@ export class MovementsController extends BaseController {
         amount: movement.amount.toCents(),
         category: movement.category,
         createdAt: movement.createdAt.toISOString(),
-        createdBy: movement.createdBy,
         date: movement.date.value,
         description: movement.description,
         id: movement.id.value,
         paymentId: movement.paymentId?.value ?? null,
         status: movement.status,
         type: movement.type,
-        updatedAt: movement.updatedAt.toISOString(),
-        updatedBy: movement.updatedBy,
-        voidedAt: movement.voidedAt?.toISOString() ?? null,
-        voidedBy: movement.voidedBy,
-        voidReason: movement.voidReason,
       })),
       total: result.total,
     };

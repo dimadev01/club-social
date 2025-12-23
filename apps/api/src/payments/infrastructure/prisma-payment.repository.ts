@@ -1,4 +1,5 @@
 import type {
+  ExportRequest,
   PaginatedRequest,
   PaginatedResponse,
 } from '@club-social/shared/types';
@@ -7,6 +8,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   PaymentFindManyArgs,
+  PaymentOrderByWithRelationInput,
   PaymentWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
@@ -29,6 +31,24 @@ export class PrismaPaymentRepository implements PaymentRepository {
     private readonly mapper: PrismaMappers,
   ) {}
 
+  public async findForExport(
+    params: ExportRequest,
+  ): Promise<PaymentPaginatedModel[]> {
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
+
+    const payments = await this.prismaService.payment.findMany({
+      include: { member: { include: { user: true } } },
+      orderBy,
+      where,
+    });
+
+    return payments.map((payment) => ({
+      member: this.mapper.member.toDomain(payment.member),
+      payment: this.mapper.payment.toDomain(payment),
+      user: this.mapper.user.toDomain(payment.member.user),
+    }));
+  }
+
   public async findOneModel(id: UniqueId): Promise<null | PaymentDetailModel> {
     const payment = await this.prismaService.payment.findUnique({
       include: { member: { include: { user: true } } },
@@ -46,48 +66,16 @@ export class PrismaPaymentRepository implements PaymentRepository {
     };
   }
 
-  public async findPaginatedModel(
+  public async findPaginated(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<PaymentPaginatedModel>> {
-    const where: PaymentWhereInput = {
-      deletedAt: null,
-    };
-
-    if (params.filters?.createdAt) {
-      const dateRangeResult = DateRange.fromUserInput(
-        params.filters.createdAt[0],
-        params.filters.createdAt[1],
-      );
-
-      if (dateRangeResult.isErr()) {
-        throw dateRangeResult.error;
-      }
-
-      where.createdAt = dateRangeResult.value.toPrismaFilter();
-    }
-
-    if (params.filters?.date) {
-      where.date = {
-        gte: params.filters.date[0],
-        lte: params.filters.date[1],
-      };
-    }
-
-    if (params.filters?.memberId) {
-      where.paymentDues = {
-        some: { due: { memberId: { in: params.filters.memberId } } },
-      };
-    }
-
-    if (params.filters?.status) {
-      where.status = { in: params.filters.status };
-    }
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
       include: {
         member: { include: { user: true } },
       },
-      orderBy: params.sort.map(({ field, order }) => ({ [field]: order })),
+      orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
       where,
@@ -167,5 +155,52 @@ export class PrismaPaymentRepository implements PaymentRepository {
     });
 
     return this.mapper.payment.toDomain(payment);
+  }
+
+  private buildWhereAndOrderBy(params: ExportRequest): {
+    orderBy: PaymentOrderByWithRelationInput[];
+    where: PaymentWhereInput;
+  } {
+    const where: PaymentWhereInput = {
+      deletedAt: null,
+    };
+
+    if (params.filters?.createdAt) {
+      const dateRangeResult = DateRange.fromUserInput(
+        params.filters.createdAt[0],
+        params.filters.createdAt[1],
+      );
+
+      if (dateRangeResult.isErr()) {
+        throw dateRangeResult.error;
+      }
+
+      where.createdAt = dateRangeResult.value.toPrismaFilter();
+    }
+
+    if (params.filters?.date) {
+      where.date = {
+        gte: params.filters.date[0],
+        lte: params.filters.date[1],
+      };
+    }
+
+    if (params.filters?.memberId) {
+      where.paymentDues = {
+        some: { due: { memberId: { in: params.filters.memberId } } },
+      };
+    }
+
+    if (params.filters?.status) {
+      where.status = { in: params.filters.status };
+    }
+
+    const orderBy: PaymentOrderByWithRelationInput[] = [];
+
+    params.sort.forEach(({ field, order }) => {
+      orderBy.push({ [field]: order });
+    });
+
+    return { orderBy, where };
   }
 }

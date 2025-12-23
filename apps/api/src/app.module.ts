@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { DuesModule } from './dues/due.module';
 import { AuthModule } from './infrastructure/auth/auth.module';
 import { ConfigModule } from './infrastructure/config/config.module';
+import { CsvModule } from './infrastructure/csv/csv.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
 import { EventsModule } from './infrastructure/events/events.module';
 import { LoggerModule } from './infrastructure/logger/logger.module';
@@ -23,6 +24,7 @@ import { UsersModule } from './users/user.module';
   imports: [
     ObservabilityModule,
     ConfigModule,
+    CsvModule,
     EventsModule,
     LoggerModule,
     TraceModule,

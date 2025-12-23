@@ -1,17 +1,23 @@
+import type { Response } from 'express';
+
+import { PaymentStatusLabel } from '@club-social/shared/payments';
 import {
   Body,
   Controller,
   Get,
+  Header,
   Inject,
   NotFoundException,
   Param,
   Patch,
   Post,
   Query,
+  Res,
   Session,
 } from '@nestjs/common';
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
+import { CsvService } from '@/infrastructure/csv/csv.service';
 import { PaymentDueDetailWithDueDto } from '@/payment-dues/presentation/dto/payment-due-detail.dto';
 import {
   APP_LOGGER_PROVIDER,
@@ -20,6 +26,7 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
+import { ExportRequestDto } from '@/shared/presentation/dto/export-request.dto';
 import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
@@ -44,6 +51,7 @@ export class PaymentsController extends BaseController {
     private readonly voidPaymentUseCase: VoidPaymentUseCase,
     @Inject(PAYMENT_REPOSITORY_PROVIDER)
     private readonly paymentRepository: PaymentRepository,
+    private readonly csvService: CsvService,
   ) {
     super(logger);
   }
@@ -87,7 +95,7 @@ export class PaymentsController extends BaseController {
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
   ): Promise<PaginatedResponseDto<PaymentPaginatedDto>> {
-    const data = await this.paymentRepository.findPaginatedModel({
+    const data = await this.paymentRepository.findPaginated({
       filters: query.filters,
       page: query.page,
       pageSize: query.pageSize,
@@ -107,6 +115,40 @@ export class PaymentsController extends BaseController {
       })),
       total: data.total,
     };
+  }
+
+  @Get('export')
+  @Header('Content-Type', 'text/csv; charset=utf-8')
+  public async export(
+    @Query() query: ExportRequestDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const data = await this.paymentRepository.findForExport({
+      filters: query.filters,
+      sort: query.sort,
+    });
+
+    const stream = this.csvService.generateStream(data, [
+      { accessor: (row) => row.payment.id.value, header: 'ID' },
+      {
+        accessor: (row) => row.payment.createdAt.toISOString(),
+        header: 'Creado el',
+      },
+      { accessor: (row) => row.payment.date.value, header: 'Fecha' },
+      { accessor: (row) => row.user.name, header: 'Socio' },
+      { accessor: (row) => row.payment.amount.toDollars(), header: 'Monto' },
+      {
+        accessor: (row) => PaymentStatusLabel[row.payment.status],
+        header: 'Estado',
+      },
+    ]);
+
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${query.filename}"`,
+    );
+
+    stream.pipe(res);
   }
 
   @Get(':id')

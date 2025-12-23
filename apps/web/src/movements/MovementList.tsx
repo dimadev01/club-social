@@ -14,6 +14,7 @@ import { App, Button, Dropdown, Space, Tooltip } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
+import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
@@ -39,6 +40,7 @@ export function MovementList() {
 
   const {
     clearFilters,
+    exportQuery,
     getFilterValue,
     getSortOrder,
     onChange,
@@ -58,6 +60,11 @@ export function MovementList() {
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<PaginatedResponse<IMovementPaginatedDto>>('/movements', { query }),
+  });
+
+  const { exportData, isExporting } = useExport({
+    endpoint: '/movements/export',
+    filename: `movimientos-${DateFormat.isoDate(new Date())}.csv`,
   });
 
   if (movementsQuery.error) {
@@ -85,9 +92,11 @@ export function MovementList() {
             menu={{
               items: [
                 {
+                  disabled: isExporting,
                   icon: <FileExcelOutlined />,
                   key: 'export',
                   label: 'Exportar',
+                  onClick: () => exportData(exportQuery),
                 },
               ],
             }}
@@ -157,18 +166,24 @@ export function MovementList() {
           },
           {
             dataIndex: 'description',
-            render: (notes: null | string) => {
+            render: (notes: null | string, record) => {
               if (!notes) {
                 return '-';
               }
 
               if (notes.length <= TABLE_DESCRIPTION_MAX_LENGTH) {
-                return notes;
+                return (
+                  <Link to={appRoutes.payments.view(record.paymentId ?? '')}>
+                    {notes}
+                  </Link>
+                );
               }
 
               return (
                 <Tooltip title={notes}>
-                  {notes.substring(0, TABLE_DESCRIPTION_MAX_LENGTH)}...
+                  <Link to={appRoutes.payments.view(record.paymentId ?? '')}>
+                    {notes.substring(0, TABLE_DESCRIPTION_MAX_LENGTH)}...
+                  </Link>
                 </Tooltip>
               );
             },

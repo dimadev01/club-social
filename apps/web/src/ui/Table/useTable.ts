@@ -12,6 +12,8 @@ import type {
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 
+export type ExportQuery = Record<string, string | string[]>;
+
 export interface TableQuery {
   [key: string]: number | string | string[];
   page: number;
@@ -63,6 +65,9 @@ export function useTable<T = unknown>({
 
   // Build query object for API calls
   const query = useMemo(() => buildApiQuery(state), [state]);
+
+  // Build export query (without pagination)
+  const exportQuery = useMemo(() => buildExportQuery(state), [state]);
 
   // Helper to get sort order for a specific field
   const getSortOrder = useCallback(
@@ -197,6 +202,7 @@ export function useTable<T = unknown>({
 
   return {
     clearFilters,
+    exportQuery,
     getFilterValue,
     getSortOrder,
     onChange,
@@ -213,6 +219,22 @@ function buildApiQuery(state: TableState): TableQuery {
     page: state.page,
     pageSize: state.pageSize,
   };
+
+  state.sort.forEach((s, i) => {
+    query[`sort[${i}][field]`] = s.field;
+    query[`sort[${i}][order]`] = s.order;
+  });
+
+  Object.entries(state.filters).forEach(([key, value]) => {
+    query[`filters[${key}]`] = value;
+  });
+
+  return query;
+}
+
+// Export Query Building (without pagination)
+function buildExportQuery(state: TableState): ExportQuery {
+  const query: ExportQuery = {};
 
   state.sort.forEach((s, i) => {
     query[`sort[${i}][field]`] = s.field;

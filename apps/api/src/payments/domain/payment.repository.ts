@@ -1,9 +1,7 @@
-import type {
-  PaginatedRequest,
-  PaginatedResponse,
-} from '@club-social/shared/types';
+import { ExportRequest } from '@club-social/shared/types';
 
 import {
+  PaginatedRepository,
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
@@ -20,11 +18,10 @@ export const PAYMENT_REPOSITORY_PROVIDER = Symbol('PaymentRepository');
 
 export interface PaymentRepository
   extends
+    PaginatedRepository<PaymentPaginatedModel>,
     ReadableRepository<PaymentEntity>,
     WriteableRepository<PaymentEntity> {
+  findForExport(params: ExportRequest): Promise<PaymentPaginatedModel[]>;
   findOneModel(id: UniqueId): Promise<null | PaymentDetailModel>;
-  findPaginatedModel(
-    params: PaginatedRequest,
-  ): Promise<PaginatedResponse<PaymentPaginatedModel>>;
   findPaymentDuesModel(paymentId: UniqueId): Promise<PaymentDueDetailModel[]>;
 }

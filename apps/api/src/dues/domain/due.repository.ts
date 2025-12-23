@@ -1,9 +1,7 @@
-import type {
-  PaginatedRequest,
-  PaginatedResponse,
-} from '@club-social/shared/types';
+import { ExportRequest } from '@club-social/shared/types';
 
 import {
+  PaginatedRepository,
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
@@ -19,13 +17,14 @@ import { DueEntity } from './entities/due.entity';
 export const DUE_REPOSITORY_PROVIDER = Symbol('DueRepository');
 
 export interface DueRepository
-  extends ReadableRepository<DueEntity>, WriteableRepository<DueEntity> {
+  extends
+    PaginatedRepository<DuePaginatedModel>,
+    ReadableRepository<DueEntity>,
+    WriteableRepository<DueEntity> {
   findByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
+  findForExport(params: ExportRequest): Promise<DuePaginatedModel[]>;
   findManyByIdsModels(ids: UniqueId[]): Promise<DueDetailModel[]>;
   findOneModel(id: UniqueId): Promise<DueDetailModel | null>;
-  findPaginated(
-    params: PaginatedRequest,
-  ): Promise<PaginatedResponse<DuePaginatedModel>>;
   findPaymentDuesModel(dueId: UniqueId): Promise<PaymentDueDetailModel[]>;
   findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
 }

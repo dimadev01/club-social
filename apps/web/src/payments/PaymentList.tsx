@@ -17,6 +17,7 @@ import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
+import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
@@ -38,6 +39,7 @@ export function PaymentList() {
 
   const {
     clearFilters,
+    exportQuery,
     getFilterValue,
     getSortOrder,
     onChange,
@@ -55,6 +57,12 @@ export function PaymentList() {
   const [filteredMemberIds, setFilteredMemberIds] = useState(
     getFilterValue('memberId') ?? [],
   );
+
+  const { exportData, isExporting } = useExport({
+    endpoint: '/payments/export',
+    filename: `pagos-${DateFormat.isoDate(new Date())}.csv`,
+  });
+
   const { data: selectedMembers, isLoading: isSelectedMembersLoading } =
     useMembersForSelect({ memberIds: filteredMemberIds });
 
@@ -90,9 +98,11 @@ export function PaymentList() {
             menu={{
               items: [
                 {
+                  disabled: isExporting,
                   icon: <FileExcelOutlined />,
                   key: 'export',
                   label: 'Exportar',
+                  onClick: () => exportData(exportQuery),
                 },
               ],
             }}
@@ -163,7 +173,6 @@ export function PaymentList() {
           {
             align: 'center',
             dataIndex: 'status',
-
             filteredValue: getFilterValue('status'),
             filterMode: 'tree',
             filters: Object.entries(PaymentStatusLabel).map(

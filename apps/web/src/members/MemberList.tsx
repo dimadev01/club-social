@@ -16,7 +16,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
+import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
+import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
@@ -37,6 +39,7 @@ export function MemberListPage() {
 
   const {
     clearFilters,
+    exportQuery,
     getFilterValue,
     getSortOrder,
     onChange,
@@ -52,6 +55,11 @@ export function MemberListPage() {
   });
 
   const [initialMemberIds] = useState(getFilterValue('id') ?? []);
+
+  const { exportData, isExporting } = useExport({
+    endpoint: '/members/export',
+    filename: `socios-${DateFormat.isoDate(new Date())}.csv`,
+  });
 
   const { data: selectedMembers, isLoading: isSelectedMembersLoading } =
     useMembersForSelect({ memberIds: initialMemberIds });
@@ -70,6 +78,8 @@ export function MemberListPage() {
     return <NotFound />;
   }
 
+  console.log(getFilterValue('userStatus'));
+
   return (
     <Page
       extra={
@@ -86,14 +96,16 @@ export function MemberListPage() {
             menu={{
               items: [
                 {
+                  disabled: isExporting,
                   icon: <FileExcelOutlined />,
                   key: 'export',
                   label: 'Exportar',
+                  onClick: () => exportData(exportQuery),
                 },
               ],
             }}
           >
-            <Button icon={<MoreOutlined />} />
+            <Button icon={<MoreOutlined />} loading={isExporting} />
           </Dropdown>
         </Space.Compact>
       }
@@ -128,7 +140,6 @@ export function MemberListPage() {
           {
             align: 'center',
             dataIndex: 'category',
-
             filteredValue: getFilterValue('category'),
             filterMode: 'tree',
             filters: Object.entries(MemberCategoryLabel).map(
@@ -141,7 +152,6 @@ export function MemberListPage() {
           {
             align: 'center',
             dataIndex: 'userStatus',
-
             filteredValue: getFilterValue('userStatus'),
             filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
               text: label,

@@ -13,18 +13,18 @@ export const UserRole = {
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
-export const UserRoleLabel = {
+export const UserRoleLabel: Record<UserRole, string> = {
   [UserRole.ADMIN]: 'Administrador',
   [UserRole.MEMBER]: 'Socio',
   [UserRole.STAFF]: 'Staff',
 } as const;
 
-export const UserStatusLabel = {
+export const UserStatusLabel: Record<UserStatus, string> = {
   [UserStatus.ACTIVE]: 'Activo',
   [UserStatus.INACTIVE]: 'Inactivo',
 } as const;
 
-export const UserStatusSort = {
+export const UserStatusSort: Record<UserStatus, number> = {
   [UserStatus.ACTIVE]: 1,
   [UserStatus.INACTIVE]: 2,
 } as const;

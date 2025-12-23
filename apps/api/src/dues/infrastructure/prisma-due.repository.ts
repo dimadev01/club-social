@@ -1,4 +1,5 @@
 import type {
+  ExportRequest,
   PaginatedRequest,
   PaginatedResponse,
 } from '@club-social/shared/types';
@@ -8,6 +9,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   DueFindManyArgs,
+  DueOrderByWithRelationInput,
   DueWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
@@ -40,6 +42,24 @@ export class PrismaDueRepository implements DueRepository {
     });
 
     return dues.map((due) => this.mapper.due.toDomain(due));
+  }
+
+  public async findForExport(
+    params: ExportRequest,
+  ): Promise<DuePaginatedModel[]> {
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
+
+    const dues = await this.prismaService.due.findMany({
+      include: { member: { include: { user: true } }, paymentDues: true },
+      orderBy,
+      where,
+    });
+
+    return dues.map((due) => ({
+      due: this.mapper.due.toDomain(due),
+      member: this.mapper.member.toDomain(due.member),
+      user: this.mapper.user.toDomain(due.member.user),
+    }));
   }
 
   public async findManyByIdsModels(ids: UniqueId[]): Promise<DueDetailModel[]> {
@@ -78,49 +98,11 @@ export class PrismaDueRepository implements DueRepository {
   public async findPaginated(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<DuePaginatedModel>> {
-    const where: DueWhereInput = {
-      deletedAt: null,
-    };
-
-    if (params.filters?.createdAt) {
-      const dateRangeResult = DateRange.fromUserInput(
-        params.filters.createdAt[0],
-        params.filters.createdAt[1],
-      );
-
-      if (dateRangeResult.isErr()) {
-        throw dateRangeResult.error;
-      }
-
-      where.createdAt = dateRangeResult.value.toPrismaFilter();
-    }
-
-    if (params.filters?.date) {
-      where.date = {
-        gte: params.filters.date[0],
-        lte: params.filters.date[1],
-      };
-    }
-
-    if (params.filters?.memberId) {
-      where.memberId = { in: params.filters.memberId };
-    } else if (params.filters?.userStatus) {
-      where.member = {
-        user: { status: { in: params.filters.userStatus } },
-      };
-    }
-
-    if (params.filters?.category) {
-      where.category = { in: params.filters.category };
-    }
-
-    if (params.filters?.status) {
-      where.status = { in: params.filters.status };
-    }
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
       include: { member: { include: { user: true } } },
-      orderBy: params.sort.map(({ field, order }) => ({ [field]: order })),
+      orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
       where,
@@ -240,5 +222,58 @@ export class PrismaDueRepository implements DueRepository {
     });
 
     return entity;
+  }
+
+  private buildWhereAndOrderBy(params: ExportRequest): {
+    orderBy: DueOrderByWithRelationInput[];
+    where: DueWhereInput;
+  } {
+    const where: DueWhereInput = {
+      deletedAt: null,
+    };
+
+    if (params.filters?.createdAt) {
+      const dateRangeResult = DateRange.fromUserInput(
+        params.filters.createdAt[0],
+        params.filters.createdAt[1],
+      );
+
+      if (dateRangeResult.isErr()) {
+        throw dateRangeResult.error;
+      }
+
+      where.createdAt = dateRangeResult.value.toPrismaFilter();
+    }
+
+    if (params.filters?.date) {
+      where.date = {
+        gte: params.filters.date[0],
+        lte: params.filters.date[1],
+      };
+    }
+
+    if (params.filters?.memberId) {
+      where.memberId = { in: params.filters.memberId };
+    } else if (params.filters?.userStatus) {
+      where.member = {
+        user: { status: { in: params.filters.userStatus } },
+      };
+    }
+
+    if (params.filters?.category) {
+      where.category = { in: params.filters.category };
+    }
+
+    if (params.filters?.status) {
+      where.status = { in: params.filters.status };
+    }
+
+    const orderBy: DueOrderByWithRelationInput[] = [];
+
+    params.sort.forEach(({ field, order }) => {
+      orderBy.push({ [field]: order });
+    });
+
+    return { orderBy, where };
   }
 }

@@ -1,17 +1,24 @@
+import type { Response } from 'express';
+
+import { MemberCategoryLabel } from '@club-social/shared/members';
+import { UserStatusLabel } from '@club-social/shared/users';
 import {
   Body,
   Controller,
   Get,
+  Header,
   Inject,
   NotFoundException,
   Param,
   Patch,
   Post,
   Query,
+  Res,
   Session,
 } from '@nestjs/common';
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
+import { CsvService } from '@/infrastructure/csv/csv.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -20,6 +27,7 @@ import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
+import { ExportRequestDto } from '@/shared/presentation/dto/export-request.dto';
 import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
@@ -46,6 +54,7 @@ export class MembersController extends BaseController {
     private readonly updateMemberUseCase: UpdateMemberUseCase,
     @Inject(MEMBER_REPOSITORY_PROVIDER)
     private readonly memberRepository: MemberRepository,
+    private readonly csvService: CsvService,
   ) {
     super(logger);
   }
@@ -117,12 +126,45 @@ export class MembersController extends BaseController {
     return { id: id.value };
   }
 
+  @Get('export')
+  @Header('Content-Type', 'text/csv; charset=utf-8')
+  public async export(
+    @Query() query: ExportRequestDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const data = await this.memberRepository.findForExport({
+      filters: query.filters,
+      sort: query.sort,
+    });
+
+    const stream = this.csvService.generateStream(data, [
+      { accessor: (row) => row.member.id.value, header: 'ID' },
+      { accessor: (row) => row.user.name, header: 'Nombre' },
+      {
+        accessor: (row) => MemberCategoryLabel[row.member.category],
+        header: 'Categoría',
+      },
+      {
+        accessor: (row) => UserStatusLabel[row.user.status],
+        header: 'Estado',
+      },
+      { accessor: (row) => row.user.email.value, header: 'Email' },
+    ]);
+
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${query.filename}"`,
+    );
+
+    stream.pipe(res);
+  }
+
   @ApiPaginatedResponse(MemberDetailDto)
   @Get('paginated')
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
   ): Promise<PaginatedResponseDto<MemberPaginatedDto>> {
-    const data = await this.memberRepository.findPaginatedModel({
+    const data = await this.memberRepository.findPaginated({
       filters: query.filters,
       page: query.page,
       pageSize: query.pageSize,

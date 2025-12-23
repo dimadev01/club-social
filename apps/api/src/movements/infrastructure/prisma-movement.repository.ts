@@ -1,4 +1,5 @@
 import type {
+  ExportRequest,
   PaginatedRequest,
   PaginatedResponse,
 } from '@club-social/shared/types';
@@ -37,46 +38,21 @@ export class PrismaMovementRepository implements MovementRepository {
     return movement ? this.mapper.movement.toDomain(movement) : null;
   }
 
+  public async findForExport(params: ExportRequest): Promise<MovementEntity[]> {
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
+
+    const movements = await this.prismaService.movement.findMany({
+      orderBy,
+      where,
+    });
+
+    return movements.map((m) => this.mapper.movement.toDomain(m));
+  }
+
   public async findPaginated(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<MovementEntity>> {
-    const where: MovementWhereInput = { deletedAt: null };
-
-    if (params.filters?.createdAt) {
-      const dateRangeResult = DateRange.fromUserInput(
-        params.filters.createdAt[0],
-        params.filters.createdAt[1],
-      );
-
-      if (dateRangeResult.isErr()) {
-        throw dateRangeResult.error;
-      }
-
-      where.createdAt = dateRangeResult.value.toPrismaFilter();
-    }
-
-    if (params.filters?.date) {
-      where.date = {
-        gte: params.filters.date[0],
-        lte: params.filters.date[1],
-      };
-    }
-
-    if (params.filters?.type) {
-      where.type = { in: params.filters.type };
-    }
-
-    if (params.filters?.category) {
-      where.category = { in: params.filters.category };
-    }
-
-    if (params.filters?.status) {
-      where.status = { in: params.filters.status };
-    }
-
-    const orderBy: MovementOrderByWithRelationInput[] = params.sort.map(
-      ({ field, order }) => ({ [field]: order }),
-    );
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const [movements, total] = await Promise.all([
       this.prismaService.movement.findMany({
@@ -131,5 +107,50 @@ export class PrismaMovementRepository implements MovementRepository {
     });
 
     return this.mapper.movement.toDomain(movement);
+  }
+
+  private buildWhereAndOrderBy(params: ExportRequest): {
+    orderBy: MovementOrderByWithRelationInput[];
+    where: MovementWhereInput;
+  } {
+    const where: MovementWhereInput = { deletedAt: null };
+
+    if (params.filters?.createdAt) {
+      const dateRangeResult = DateRange.fromUserInput(
+        params.filters.createdAt[0],
+        params.filters.createdAt[1],
+      );
+
+      if (dateRangeResult.isErr()) {
+        throw dateRangeResult.error;
+      }
+
+      where.createdAt = dateRangeResult.value.toPrismaFilter();
+    }
+
+    if (params.filters?.date) {
+      where.date = {
+        gte: params.filters.date[0],
+        lte: params.filters.date[1],
+      };
+    }
+
+    if (params.filters?.type) {
+      where.type = { in: params.filters.type };
+    }
+
+    if (params.filters?.category) {
+      where.category = { in: params.filters.category };
+    }
+
+    if (params.filters?.status) {
+      where.status = { in: params.filters.status };
+    }
+
+    const orderBy: MovementOrderByWithRelationInput[] = params.sort.map(
+      ({ field, order }) => ({ [field]: order }),
+    );
+
+    return { orderBy, where };
   }
 }

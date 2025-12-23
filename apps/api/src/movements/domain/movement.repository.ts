@@ -1,3 +1,5 @@
+import { ExportRequest } from '@club-social/shared/types';
+
 import {
   PaginatedRepository,
   ReadableRepository,
@@ -15,4 +17,5 @@ export interface MovementRepository
     ReadableRepository<MovementEntity>,
     WriteableRepository<MovementEntity> {
   findByPaymentId(paymentId: UniqueId): Promise<MovementEntity | null>;
+  findForExport(params: ExportRequest): Promise<MovementEntity[]>;
 }

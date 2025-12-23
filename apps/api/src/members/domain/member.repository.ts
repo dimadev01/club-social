@@ -1,4 +1,4 @@
-import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
+import { ExportRequest } from '@club-social/shared/types';
 
 import {
   PaginatedRepository,
@@ -21,13 +21,11 @@ export const MEMBER_REPOSITORY_PROVIDER = Symbol('MemberRepository');
 
 export interface MemberRepository
   extends
-    PaginatedRepository<MemberEntity>,
+    PaginatedRepository<MemberPaginatedModel>,
     ReadableRepository<MemberEntity>,
     WriteableRepository<MemberEntity> {
   findAll(params: FindMembersModelParams): Promise<MemberListModel[]>;
+  findForExport(params: ExportRequest): Promise<MemberPaginatedModel[]>;
   findOneModel(id: UniqueId): Promise<MemberDetailModel | null>;
-  findPaginatedModel(
-    params: PaginatedRequest,
-  ): Promise<PaginatedResponse<MemberPaginatedModel>>;
   search(params: MemberSearchParams): Promise<MemberSearchModel[]>;
 }

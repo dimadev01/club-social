@@ -1,4 +1,8 @@
-import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
+import {
+  ExportRequest,
+  PaginatedRequest,
+  PaginatedResponse,
+} from '@club-social/shared/types';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -41,6 +45,23 @@ export class PrismaMemberRepository implements MemberRepository {
     }));
   }
 
+  public async findForExport(
+    params: ExportRequest,
+  ): Promise<MemberPaginatedModel[]> {
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
+
+    const members = await this.prismaService.member.findMany({
+      include: { user: true },
+      orderBy,
+      where,
+    });
+
+    return members.map((member) => ({
+      member: this.mapper.member.toDomain(member),
+      user: this.mapper.user.toDomain(member.user),
+    }));
+  }
+
   public async findOneModel(id: UniqueId): Promise<MemberDetailModel | null> {
     const member = await this.prismaService.member.findUnique({
       include: { dues: { include: { paymentDues: true } }, user: true },
@@ -61,89 +82,8 @@ export class PrismaMemberRepository implements MemberRepository {
 
   public async findPaginated(
     params: PaginatedRequest,
-  ): Promise<PaginatedResponse<MemberEntity>> {
-    const where: MemberWhereInput = {
-      deletedAt: null,
-    };
-
-    if (params.filters?.id) {
-      where.id = { in: params.filters.id };
-    }
-
-    if (params.filters?.category) {
-      where.category = { in: params.filters.category };
-    }
-
-    if (params.filters?.status) {
-      where.user = { status: { in: params.filters.status } };
-    }
-
-    const orderBy: MemberOrderByWithRelationInput[] = [];
-
-    params.sort.forEach(({ field, order }) => {
-      if (field === 'email') {
-        orderBy.push({ user: { email: order } });
-      } else if (field === 'id') {
-        orderBy.push(
-          { user: { lastName: order } },
-          { user: { firstName: order } },
-        );
-      } else {
-        orderBy.push({ [field]: order });
-      }
-    });
-
-    const query: MemberFindManyArgs = {
-      orderBy,
-      skip: (params.page - 1) * params.pageSize,
-      take: params.pageSize,
-      where,
-    };
-
-    const [members, total] = await Promise.all([
-      this.prismaService.member.findMany(query),
-      this.prismaService.member.count({ where }),
-    ]);
-
-    return {
-      data: members.map((member) => this.mapper.member.toDomain(member)),
-      total,
-    };
-  }
-
-  public async findPaginatedModel(
-    params: PaginatedRequest,
   ): Promise<PaginatedResponse<MemberPaginatedModel>> {
-    const where: MemberWhereInput = {
-      deletedAt: null,
-    };
-
-    if (params.filters?.id) {
-      where.id = { in: params.filters.id };
-    }
-
-    if (params.filters?.category) {
-      where.category = { in: params.filters.category };
-    }
-
-    if (params.filters?.status) {
-      where.user = { status: { in: params.filters.status } };
-    }
-
-    const orderBy: MemberOrderByWithRelationInput[] = [];
-
-    params.sort.forEach(({ field, order }) => {
-      if (field === 'email') {
-        orderBy.push({ user: { email: order } });
-      } else if (field === 'id') {
-        orderBy.push(
-          { user: { lastName: order } },
-          { user: { firstName: order } },
-        );
-      } else {
-        orderBy.push({ [field]: order });
-      }
-    });
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
       include: { user: true },
@@ -246,5 +186,43 @@ export class PrismaMemberRepository implements MemberRepository {
       member: this.mapper.member.toDomain(member),
       user: this.mapper.user.toDomain(member.user),
     }));
+  }
+
+  private buildWhereAndOrderBy(params: ExportRequest): {
+    orderBy: MemberOrderByWithRelationInput[];
+    where: MemberWhereInput;
+  } {
+    const where: MemberWhereInput = {
+      deletedAt: null,
+    };
+
+    if (params.filters?.id) {
+      where.id = { in: params.filters.id };
+    }
+
+    if (params.filters?.category) {
+      where.category = { in: params.filters.category };
+    }
+
+    if (params.filters?.userStatus) {
+      where.user = { status: { in: params.filters.userStatus } };
+    }
+
+    const orderBy: MemberOrderByWithRelationInput[] = [];
+
+    params.sort.forEach(({ field, order }) => {
+      if (field === 'email') {
+        orderBy.push({ user: { email: order } });
+      } else if (field === 'id') {
+        orderBy.push(
+          { user: { lastName: order } },
+          { user: { firstName: order } },
+        );
+      } else {
+        orderBy.push({ [field]: order });
+      }
+    });
+
+    return { orderBy, where };
   }
 }

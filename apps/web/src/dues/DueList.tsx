@@ -20,6 +20,7 @@ import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
+import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
@@ -43,6 +44,7 @@ export function DueList() {
 
   const {
     clearFilters,
+    exportQuery,
     getFilterValue,
     getSortOrder,
     onChange,
@@ -60,6 +62,11 @@ export function DueList() {
   const [filteredMemberIds, setFilteredMemberIds] = useState(
     getFilterValue('memberId') ?? [],
   );
+
+  const { exportData, isExporting } = useExport({
+    endpoint: '/dues/export',
+    filename: `deudas-${DateFormat.isoDate(new Date())}.csv`,
+  });
 
   const { data: selectedMembers, isLoading: isSelectedMembersLoading } =
     useMembersForSelect({ memberIds: filteredMemberIds });
@@ -98,9 +105,11 @@ export function DueList() {
             menu={{
               items: [
                 {
+                  disabled: isExporting,
                   icon: <FileExcelOutlined />,
                   key: 'export',
                   label: 'Exportar',
+                  onClick: () => exportData(exportQuery),
                 },
               ],
             }}
@@ -129,7 +138,6 @@ export function DueList() {
               <TableDateRangeFilterDropdown {...props} format="datetime" />
             ),
             filteredValue: getFilterValue('createdAt'),
-
             render: (createdAt: string, record) => (
               <Link to={appRoutes.dues.view(record.id)}>
                 {DateFormat.date(createdAt)}
@@ -185,7 +193,6 @@ export function DueList() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filterMode: 'tree',
-
             filters: Object.entries(DueStatusLabel).map(([value, label]) => ({
               text: label,
               value,
@@ -198,7 +205,6 @@ export function DueList() {
             align: 'center',
             dataIndex: 'userStatus',
             filteredValue: getFilterValue('userStatus'),
-
             filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
               text: label,
               value,

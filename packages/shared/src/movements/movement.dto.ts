@@ -37,6 +37,7 @@ export interface IMovementPaginatedDto {
   date: string;
   description: null | string;
   id: string;
+  paymentId: null | string;
   status: MovementStatus;
   type: MovementType;
 }
