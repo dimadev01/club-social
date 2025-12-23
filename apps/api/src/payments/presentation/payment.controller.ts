@@ -11,11 +11,8 @@ import {
   Session,
 } from '@nestjs/common';
 
-import {
-  DUE_REPOSITORY_PROVIDER,
-  type DueRepository,
-} from '@/dues/domain/due.repository';
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
+import { PaymentDueDetailWithDueDto } from '@/payment-dues/presentation/dto/payment-due-detail.dto';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -47,8 +44,6 @@ export class PaymentsController extends BaseController {
     private readonly voidPaymentUseCase: VoidPaymentUseCase,
     @Inject(PAYMENT_REPOSITORY_PROVIDER)
     private readonly paymentRepository: PaymentRepository,
-    @Inject(DUE_REPOSITORY_PROVIDER)
-    private readonly dueRepository: DueRepository,
   ) {
     super(logger);
   }
@@ -139,7 +134,32 @@ export class PaymentsController extends BaseController {
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
       status: payment.status,
+      updatedAt: payment.updatedAt.toISOString(),
+      updatedBy: payment.updatedBy ?? null,
       userStatus: user.status,
+      voidedAt: payment.voidedAt?.toISOString() ?? null,
+      voidedBy: payment.voidedBy ?? null,
+      voidReason: payment.voidReason ?? null,
     };
+  }
+
+  @Get(':id/dues')
+  public async getPaymentDues(
+    @Param() request: ParamIdDto,
+  ): Promise<PaymentDueDetailWithDueDto[]> {
+    const data = await this.paymentRepository.findPaymentDuesModel(
+      UniqueId.raw({ value: request.id }),
+    );
+
+    return data.map(({ due, paymentDue }) => ({
+      amount: paymentDue.amount.toCents(),
+      dueAmount: due.amount.toCents(),
+      dueCategory: due.category,
+      dueDate: due.date.value,
+      dueId: due.id.value,
+      dueStatus: due.status,
+      paymentId: paymentDue.paymentId.value,
+      status: paymentDue.status,
+    }));
   }
 }

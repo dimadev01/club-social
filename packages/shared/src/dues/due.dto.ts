@@ -13,13 +13,19 @@ export interface IDueDetailDto {
   amount: number;
   category: DueCategory;
   createdAt: string;
+  createdBy: string;
   date: string;
   id: string;
   memberId: string;
   memberName: string;
   notes: null | string;
   status: DueStatus;
+  updatedAt: string;
+  updatedBy: string;
   userStatus: UserStatus;
+  voidedAt: null | string;
+  voidedBy: null | string;
+  voidReason: null | string;
 }
 
 export interface IDuePaginatedDto {

@@ -12,12 +12,15 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
-import { PaymentDueEntity } from '@/payments/domain/entities/payment-due.entity';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { DueRepository } from '../domain/due.repository';
-import { DueDetailModel, DuePaginatedModel } from '../domain/due.types';
+import {
+  DueDetailModel,
+  DuePaginatedModel,
+  PaymentDueDetailModel,
+} from '../domain/due.types';
 import { DueEntity } from '../domain/entities/due.entity';
 
 @Injectable()
@@ -138,12 +141,18 @@ export class PrismaDueRepository implements DueRepository {
     };
   }
 
-  public async findPaymentDues(dueId: UniqueId): Promise<PaymentDueEntity[]> {
+  public async findPaymentDuesModel(
+    dueId: UniqueId,
+  ): Promise<PaymentDueDetailModel[]> {
     const paymentDues = await this.prismaService.paymentDue.findMany({
+      include: { payment: true },
       where: { dueId: dueId.value },
     });
 
-    return paymentDues.map((pd) => this.mapper.paymentDue.toDomain(pd));
+    return paymentDues.map((pd) => ({
+      payment: this.mapper.payment.toDomain(pd.payment),
+      paymentDue: this.mapper.paymentDue.toDomain(pd),
+    }));
   }
 
   public async findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]> {

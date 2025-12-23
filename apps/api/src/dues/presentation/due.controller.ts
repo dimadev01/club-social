@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
-import { PaymentDueDetailDto } from '@/payment-dues/presentation/dto/payment-due-detail.dto';
+import { PaymentDueDetailWithPaymentDto } from '@/payment-dues/presentation/dto/payment-due-detail.dto';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -150,15 +150,19 @@ export class DuesController extends BaseController {
   @Get(':id/payments')
   public async getPaymentDues(
     @Param() request: ParamIdDto,
-  ): Promise<PaymentDueDetailDto[]> {
-    const paymentDues = await this.dueRepository.findPaymentDues(
+  ): Promise<PaymentDueDetailWithPaymentDto[]> {
+    const data = await this.dueRepository.findPaymentDuesModel(
       UniqueId.raw({ value: request.id }),
     );
 
-    return paymentDues.map((paymentDue) => ({
+    return data.map(({ payment, paymentDue }) => ({
       amount: paymentDue.amount.toCents(),
       dueId: paymentDue.dueId.value,
-      paymentId: paymentDue.paymentId.value,
+      paymentAmount: payment.amount.toCents(),
+      paymentDate: payment.date.value,
+      paymentId: payment.id.value,
+      paymentReceiptNumber: payment.receiptNumber,
+      paymentStatus: payment.status,
       status: paymentDue.status,
     }));
   }
@@ -179,13 +183,19 @@ export class DuesController extends BaseController {
       amount: due.amount.toCents(),
       category: due.category,
       createdAt: due.createdAt.toISOString(),
+      createdBy: due.createdBy,
       date: due.date.value,
       id: due.id.value,
       memberId: member.id.value,
       memberName: user.name,
       notes: due.notes,
       status: due.status,
+      updatedAt: due.updatedAt.toISOString(),
+      updatedBy: due.updatedBy,
       userStatus: user.status,
+      voidedAt: due.voidedAt?.toISOString() ?? null,
+      voidedBy: due.voidedBy ?? null,
+      voidReason: due.voidReason ?? null,
     };
   }
 }

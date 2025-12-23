@@ -3,14 +3,17 @@ import type {
   PaginatedResponse,
 } from '@club-social/shared/types';
 
-import { PaymentDueEntity } from '@/payments/domain/entities/payment-due.entity';
 import {
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import { DueDetailModel, DuePaginatedModel } from './due.types';
+import {
+  DueDetailModel,
+  DuePaginatedModel,
+  PaymentDueDetailModel,
+} from './due.types';
 import { DueEntity } from './entities/due.entity';
 
 export const DUE_REPOSITORY_PROVIDER = Symbol('DueRepository');
@@ -23,6 +26,6 @@ export interface DueRepository
   findPaginated(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<DuePaginatedModel>>;
-  findPaymentDues(dueId: UniqueId): Promise<PaymentDueEntity[]>;
+  findPaymentDuesModel(dueId: UniqueId): Promise<PaymentDueDetailModel[]>;
   findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
 }

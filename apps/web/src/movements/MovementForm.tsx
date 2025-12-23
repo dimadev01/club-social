@@ -2,7 +2,7 @@ import type dayjs from 'dayjs';
 
 import {
   MovementCategory,
-  MovementCategoryLabel,
+  MovementCategoryOptions,
   MovementType,
   MovementTypeLabel,
 } from '@club-social/shared/movements';
@@ -75,14 +75,7 @@ export function MovementForm({
         name="category"
         rules={[{ message: 'La categoría es requerida', required: true }]}
       >
-        <Select
-          options={Object.entries(MovementCategoryLabel).map(
-            ([key, value]) => ({
-              label: value,
-              value: key,
-            }),
-          )}
-        />
+        <Select options={MovementCategoryOptions} />
       </Form.Item>
 
       <Form.Item<MovementFormData>

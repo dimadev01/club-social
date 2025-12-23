@@ -18,6 +18,7 @@ import { PaymentEntity } from '../domain/entities/payment.entity';
 import { PaymentRepository } from '../domain/payment.repository';
 import {
   PaymentDetailModel,
+  PaymentDueDetailModel,
   PaymentPaginatedModel,
 } from '../domain/payment.types';
 
@@ -105,6 +106,20 @@ export class PrismaPaymentRepository implements PaymentRepository {
       })),
       total,
     };
+  }
+
+  public async findPaymentDuesModel(
+    paymentId: UniqueId,
+  ): Promise<PaymentDueDetailModel[]> {
+    const paymentDues = await this.prismaService.paymentDue.findMany({
+      include: { due: true },
+      where: { paymentId: paymentId.value },
+    });
+
+    return paymentDues.map((pd) => ({
+      due: this.mapper.due.toDomain(pd.due),
+      paymentDue: this.mapper.paymentDue.toDomain(pd),
+    }));
   }
 
   public async findUniqueById(id: UniqueId): Promise<null | PaymentEntity> {

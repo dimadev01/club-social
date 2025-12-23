@@ -14,6 +14,7 @@ import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
 import { Card } from '@/ui/Card';
+import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NotFound } from '@/ui/NotFound';
 import { VoidModal } from '@/ui/VoidModal';
 import { usePermissions } from '@/users/use-permissions';
@@ -96,35 +97,7 @@ export function MovementView() {
 
       <Divider />
 
-      <Descriptions
-        column={md ? 2 : 1}
-        layout={md ? 'horizontal' : 'vertical'}
-        size="small"
-      >
-        <Descriptions.Item label="Creado por">
-          {movement.createdBy}
-        </Descriptions.Item>
-        <Descriptions.Item label="Creado el">
-          {DateFormat.dateTime(movement.createdAt)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Actualizado por">
-          {movement.updatedBy}
-        </Descriptions.Item>
-        <Descriptions.Item label="Actualizado el">
-          {DateFormat.dateTime(movement.updatedAt)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Anulado por">
-          {movement.voidedBy ?? '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label="Anulado el">
-          {movement.voidedAt ? DateFormat.dateTime(movement.voidedAt) : '-'}
-        </Descriptions.Item>
-        {movement.voidReason && (
-          <Descriptions.Item label="Razón de anulación" span={2}>
-            {movement.voidReason}
-          </Descriptions.Item>
-        )}
-      </Descriptions>
+      <DescriptionsAudit {...movement} />
 
       <VoidModal
         onCancel={() => setIsVoidModalOpen(false)}

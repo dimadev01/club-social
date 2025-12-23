@@ -47,7 +47,7 @@ export class PaymentDueEntity {
       amount: props.amount,
       dueId: props.dueId,
       paymentId: props.paymentId,
-      status: PaymentDueStatus.ACTIVE,
+      status: PaymentDueStatus.REGISTERED,
     });
 
     return ok(paymentDue);
@@ -58,7 +58,7 @@ export class PaymentDueEntity {
   }
 
   public isActive(): boolean {
-    return this._status === PaymentDueStatus.ACTIVE;
+    return this._status === PaymentDueStatus.REGISTERED;
   }
 
   public isVoided(): boolean {

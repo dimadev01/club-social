@@ -1,12 +1,18 @@
+import type { IPaymentDueDetailWithPaymentDto } from '@club-social/shared/payment-due';
+
 import {
   DueCategoryLabel,
   DueStatus,
   DueStatusLabel,
   type VoidDueDto,
 } from '@club-social/shared/dues';
-import { App, Button, Descriptions, Divider, Grid, Tag } from 'antd';
+import {
+  PaymentStatus,
+  PaymentStatusLabel,
+} from '@club-social/shared/payments';
+import { App, Button, Descriptions, Divider, Grid } from 'antd';
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
@@ -14,14 +20,18 @@ import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
 import { Card } from '@/ui/Card';
+import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { EditIcon } from '@/ui/Icons/EditIcon';
+import { NavigateMember } from '@/ui/NavigateMember';
+import { NavigatePayment } from '@/ui/NavigatePayment';
 import { NotFound } from '@/ui/NotFound';
 import { Table } from '@/ui/Table/Table';
+import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { VoidModal } from '@/ui/VoidModal';
 import { usePermissions } from '@/users/use-permissions';
 
-import { DueStatusColor } from './due.types';
 import { useDue } from './useDue';
+import { usePaymentDuesByDue } from './usePaymentDuesByDue';
 
 export function DueView() {
   const permissions = usePermissions();
@@ -33,6 +43,9 @@ export function DueView() {
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
 
   const { data: due, isLoading } = useDue(id);
+
+  const { data: paymentDues, isLoading: isPaymentDuesLoading } =
+    usePaymentDuesByDue(id);
 
   const voidDueMutation = useMutation<unknown, Error, VoidDueDto>({
     mutationFn: (body) => $fetch(`dues/${id}/void`, { body, method: 'PATCH' }),
@@ -90,33 +103,66 @@ export function DueView() {
           {DateFormat.date(due.date)}
         </Descriptions.Item>
         <Descriptions.Item label="Socio">
-          <Link to={appRoutes.members.view(due.memberId)}>
-            {due.memberName}
-          </Link>
-        </Descriptions.Item>
-        <Descriptions.Item label="Categoría">
-          {DueCategoryLabel[due.category]}
+          <NavigateMember id={due.memberId} name={due.memberName} />
         </Descriptions.Item>
         <Descriptions.Item label="Monto">
           {NumberFormat.formatCents(due.amount)}
         </Descriptions.Item>
-        <Descriptions.Item label="Estado">
-          <Tag color={DueStatusColor[due.status]}>
-            {DueStatusLabel[due.status]}
-          </Tag>
+        <Descriptions.Item label="Categoría">
+          {DueCategoryLabel[due.category]}
         </Descriptions.Item>
-        {due.notes && (
-          <Descriptions.Item label="Notas" span={2}>
-            {due.notes}
-          </Descriptions.Item>
-        )}
+        <Descriptions.Item label="Estado" span="filled">
+          {DueStatusLabel[due.status]}
+        </Descriptions.Item>
+        <Descriptions.Item label="Notas" span="filled">
+          {due.notes ?? '-'}
+        </Descriptions.Item>
       </Descriptions>
 
       <Divider />
 
-      <Card title="Pagos" type="inner">
-        <Table dataSource={[]} />
-      </Card>
+      <DescriptionsAudit {...due} />
+
+      <Divider />
+
+      <Table<IPaymentDueDetailWithPaymentDto>
+        columns={[
+          {
+            dataIndex: 'paymentId',
+            render: (paymentId: string, record) => (
+              <NavigatePayment date={record.paymentDate} id={paymentId} />
+            ),
+            title: 'Fecha',
+          },
+          {
+            align: 'right',
+            dataIndex: 'paymentAmount',
+            render: (paymentAmount: number) =>
+              NumberFormat.formatCents(paymentAmount),
+            title: 'Monto',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+          {
+            dataIndex: 'paymentReceiptNumber',
+            render: (paymentReceiptNumber: null | string) =>
+              paymentReceiptNumber ?? '-',
+            title: 'Recibo',
+            width: 100,
+          },
+          {
+            align: 'center',
+            dataIndex: 'paymentStatus',
+            render: (paymentStatus: PaymentStatus) =>
+              PaymentStatusLabel[paymentStatus],
+            title: 'Estado',
+            width: TABLE_COLUMN_WIDTHS.STATUS,
+          },
+        ]}
+        dataSource={paymentDues}
+        loading={isPaymentDuesLoading}
+        pagination={false}
+        size="small"
+      />
 
       <VoidModal
         onCancel={() => setIsVoidModalOpen(false)}

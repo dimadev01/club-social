@@ -1,4 +1,4 @@
-import type { IPaymentDueDetailDto } from '@club-social/shared/payment-due';
+import type { IPaymentDueDetailWithPaymentDto } from '@club-social/shared/payment-due';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -8,7 +8,8 @@ import { usePermissions } from '@/users/use-permissions';
 export function getPaymentDuesByDueQueryOptions(dueId: string) {
   return {
     ...queryKeys.dues.payments(dueId),
-    queryFn: () => $fetch<IPaymentDueDetailDto[]>(`dues/${dueId}/payments`),
+    queryFn: () =>
+      $fetch<IPaymentDueDetailWithPaymentDto[]>(`dues/${dueId}/payments`),
   };
 }
 

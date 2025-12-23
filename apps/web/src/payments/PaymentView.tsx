@@ -1,18 +1,30 @@
+import { type DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
+import {
+  type IPaymentDueDetailWithDueDto,
+  type PaymentDueStatus,
+  PaymentDueStatusLabel,
+} from '@club-social/shared/payment-due';
 import {
   type IVoidPaymentDto,
   PaymentStatus,
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
-import { App, Button, Descriptions, Grid } from 'antd';
+import { App, Button, Descriptions, Divider, Grid } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
+import { usePaymentDuesByPayment } from '@/dues/usePaymentDuesByPayment';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { NumberFormat } from '@/shared/lib/number-format';
 import { Card } from '@/ui/Card';
+import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
+import { NavigateDue } from '@/ui/NavigateDue';
+import { NavigateMember } from '@/ui/NavigateMember';
 import { NotFound } from '@/ui/NotFound';
+import { Table } from '@/ui/Table/Table';
+import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { VoidModal } from '@/ui/VoidModal';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -28,6 +40,9 @@ export function PaymentView() {
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
 
   const { data: payment, isLoading } = usePayment(id);
+
+  const { data: paymentDues, isLoading: isPaymentDuesLoading } =
+    usePaymentDuesByPayment(id);
 
   const voidPayment = useMutation({
     mutationFn: (body: IVoidPaymentDto) =>
@@ -76,26 +91,69 @@ export function PaymentView() {
           {DateFormat.date(payment.date)}
         </Descriptions.Item>
         <Descriptions.Item label="Socio">
-          {payment.memberName}
+          <NavigateMember id={payment.memberId} name={payment.memberName} />
         </Descriptions.Item>
-        <Descriptions.Item label="Monto total">
+        <Descriptions.Item label="Monto">
           {NumberFormat.formatCents(payment.amount)}
         </Descriptions.Item>
         <Descriptions.Item label="Estado">
           {PaymentStatusLabel[payment.status]}
         </Descriptions.Item>
-        {payment.notes && (
-          <Descriptions.Item label="Notas" span={2}>
-            {payment.notes}
-          </Descriptions.Item>
-        )}
-        <Descriptions.Item label="Creado el">
-          {DateFormat.dateTime(payment.createdAt)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Creado por">
-          {payment.createdBy}
+        <Descriptions.Item label="Notas">
+          {payment.notes ?? '-'}
         </Descriptions.Item>
       </Descriptions>
+
+      <Divider />
+
+      <DescriptionsAudit {...payment} />
+
+      <Divider />
+
+      <Table<IPaymentDueDetailWithDueDto>
+        columns={[
+          {
+            dataIndex: 'dueId',
+            render: (dueId: string, record) => (
+              <NavigateDue date={record.dueDate} id={dueId} />
+            ),
+            title: 'Fecha',
+          },
+          {
+            align: 'center',
+            dataIndex: 'dueCategory',
+            render: (dueCategory: DueCategory) => DueCategoryLabel[dueCategory],
+            title: 'Categoría',
+            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+          },
+
+          {
+            align: 'center',
+            dataIndex: 'status',
+            render: (status: PaymentDueStatus) => PaymentDueStatusLabel[status],
+            title: 'Estado',
+            width: TABLE_COLUMN_WIDTHS.STATUS,
+          },
+          {
+            align: 'right',
+            dataIndex: 'dueAmount',
+            render: (dueAmount: number) => NumberFormat.formatCents(dueAmount),
+            title: 'Monto deuda',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+          {
+            align: 'right',
+            dataIndex: 'amount',
+            render: (amount: number) => NumberFormat.formatCents(amount),
+            title: 'Monto pago',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+        ]}
+        dataSource={paymentDues}
+        loading={isPaymentDuesLoading}
+        pagination={false}
+        size="small"
+      />
 
       <VoidModal
         onCancel={() => setIsVoidModalOpen(false)}

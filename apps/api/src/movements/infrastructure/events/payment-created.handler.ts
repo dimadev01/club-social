@@ -53,9 +53,7 @@ export class PaymentCreatedHandler {
         category: MovementCategory.MEMBERSHIP_FEE,
         createdBy: event.payment.createdBy,
         date: event.payment.date,
-        description: `Pago automático - Recibo #${
-          event.payment.receiptNumber ?? 'N/A'
-        }`,
+        description: 'Entrada automática',
         paymentId: event.payment.id,
         type: MovementType.INFLOW,
       });

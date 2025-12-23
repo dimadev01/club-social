@@ -23,6 +23,7 @@ export class PrismaMovementMapper extends Mapper<
       {
         amount: Amount.raw({ cents: model.amount }),
         category: model.category as MovementCategory,
+        createdBy: model.createdBy,
         date: DateOnly.raw({ value: model.date }),
         description: model.description,
         paymentId: model.paymentId

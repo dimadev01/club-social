@@ -250,7 +250,7 @@ export function PaymentForm({
                   return DueCategoryLabel[category];
                 },
                 title: 'Categoría',
-                width: TABLE_COLUMN_WIDTHS.CATEGORY,
+                width: TABLE_COLUMN_WIDTHS.CATEGORY + 50,
               },
               {
                 align: 'right',

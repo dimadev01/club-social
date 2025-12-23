@@ -22,7 +22,12 @@ export interface IPaymentDetailDto {
   notes: null | string;
   receiptNumber: null | string;
   status: PaymentStatus;
+  updatedAt: string;
+  updatedBy: string;
   userStatus: UserStatus;
+  voidedAt: null | string;
+  voidedBy: null | string;
+  voidReason: null | string;
 }
 
 export interface IPaymentPaginatedDto {

@@ -11,21 +11,38 @@ export const MovementTypeLabel = {
 } as const;
 
 export const MovementCategory = {
+  BUFFET: 'buffet',
+  COURT_RENTAL: 'court-rental',
+  EMPLOYEE: 'employee',
+  FAIR: 'fair',
   MEMBERSHIP_FEE: 'membership-fee',
   OTHER: 'other',
-  SALARY: 'salary',
+  PARKING: 'parking',
+  PROFESSIONAL_SERVICES: 'professional-services',
   UTILITIES: 'utilities',
 } as const;
 
 export type MovementCategory =
   (typeof MovementCategory)[keyof typeof MovementCategory];
 
-export const MovementCategoryLabel = {
+export const MovementCategoryLabel: Record<MovementCategory, string> = {
+  [MovementCategory.BUFFET]: 'Buffet',
+  [MovementCategory.COURT_RENTAL]: 'Alquiler de Cancha',
+  [MovementCategory.EMPLOYEE]: 'Empleados',
+  [MovementCategory.FAIR]: 'Feria',
   [MovementCategory.MEMBERSHIP_FEE]: 'Cuota',
   [MovementCategory.OTHER]: 'Otro',
-  [MovementCategory.SALARY]: 'Salario',
+  [MovementCategory.PARKING]: 'Estacionamiento',
+  [MovementCategory.PROFESSIONAL_SERVICES]: 'Honorarios',
   [MovementCategory.UTILITIES]: 'Servicios',
 } as const;
+
+export const MovementCategoryOptions = Object.entries(MovementCategoryLabel)
+  .map(([key, value]) => ({
+    label: value,
+    value: key,
+  }))
+  .sort((a, b) => a.label.localeCompare(b.label));
 
 export const MovementStatus = {
   REGISTERED: 'registered',
