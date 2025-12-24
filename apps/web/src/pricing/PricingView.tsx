@@ -1,12 +1,13 @@
 import { DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { MemberCategoryLabel } from '@club-social/shared/members';
-import { Button, Descriptions, Divider, Grid } from 'antd';
+import { Button, Divider } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { DateFormat } from '@/shared/lib/date-format';
 import { Card } from '@/ui/Card';
+import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
@@ -17,7 +18,6 @@ import { usePricing } from './usePricing';
 export function PricingView() {
   const permissions = usePermissions();
   const { id } = useParams();
-  const { md } = Grid.useBreakpoint();
   const navigate = useNavigate();
 
   const { data: pricing, isLoading } = usePricing(id);
@@ -48,26 +48,31 @@ export function PricingView() {
       title="Detalle de precio"
     >
       <Descriptions
-        bordered
-        column={md ? 2 : 1}
-        layout={md ? 'horizontal' : 'vertical'}
-      >
-        <Descriptions.Item label="Vigente desde">
-          {DateFormat.date(pricing.effectiveFrom)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Vigente hasta">
-          {pricing.effectiveTo ? DateFormat.date(pricing.effectiveTo) : '-'}
-        </Descriptions.Item>
-        <Descriptions.Item label="Tipo de deuda">
-          {DueCategoryLabel[pricing.dueCategory]}
-        </Descriptions.Item>
-        <Descriptions.Item label="Categoría de socio">
-          {MemberCategoryLabel[pricing.memberCategory]}
-        </Descriptions.Item>
-        <Descriptions.Item label="Monto">
-          {NumberFormat.formatCents(pricing.amount)}
-        </Descriptions.Item>
-      </Descriptions>
+        items={[
+          {
+            children: DateFormat.date(pricing.effectiveFrom),
+            label: 'Vigente desde',
+          },
+          {
+            children: pricing.effectiveTo
+              ? DateFormat.date(pricing.effectiveTo)
+              : '-',
+            label: 'Vigente hasta',
+          },
+          {
+            children: DueCategoryLabel[pricing.dueCategory],
+            label: 'Tipo de deuda',
+          },
+          {
+            children: MemberCategoryLabel[pricing.memberCategory],
+            label: 'Categoría de socio',
+          },
+          {
+            children: NumberFormat.formatCents(pricing.amount),
+            label: 'Monto',
+          },
+        ]}
+      />
 
       <Divider />
 

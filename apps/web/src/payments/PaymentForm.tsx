@@ -7,15 +7,7 @@ import {
 } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { useQueries } from '@tanstack/react-query';
-import {
-  DatePicker,
-  Descriptions,
-  Empty,
-  Grid,
-  Input,
-  InputNumber,
-  Space,
-} from 'antd';
+import { DatePicker, Empty, Input, InputNumber, Space } from 'antd';
 import dayjs from 'dayjs';
 import { difference, differenceBy, orderBy } from 'es-toolkit/array';
 import { flow } from 'es-toolkit/function';
@@ -29,6 +21,7 @@ import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { DateFormat, DateFormats } from '@/shared/lib/date-format';
 import { Card } from '@/ui/Card';
+import { Descriptions } from '@/ui/Descriptions';
 import { Form } from '@/ui/Form/Form';
 import { Table } from '@/ui/Table/Table';
 import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
@@ -74,7 +67,6 @@ export function PaymentForm({
   initialValues,
   onSubmit,
 }: PaymentFormProps) {
-  const { md } = Grid.useBreakpoint();
   const [form] = Form.useForm<PaymentFormData>();
   const { getFieldValue, setFieldValue } = form;
   const formMemberId = Form.useWatch('memberId', form);
@@ -173,6 +165,7 @@ export function PaymentForm({
   const additionalOptions: IMemberSearchResultDto[] = member
     ? [
         {
+          category: member.category,
           id: member.id,
           name: member.name,
           status: member.status,
@@ -322,25 +315,25 @@ export function PaymentForm({
                         <Form.Item hidden name={[field.name, 'dueId']} noStyle>
                           <Input />
                         </Form.Item>
-                        <Space className="flex" size="middle" vertical>
+                        <Space className="flex" vertical>
                           <Descriptions
-                            bordered
-                            column={1}
-                            layout={md ? 'horizontal' : 'vertical'}
-                            size="small"
-                          >
-                            <Descriptions.Item label="Fecha">
-                              {DateFormat.date(due.date)}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Categoría">
-                              {DueCategoryLabel[due.category]}
-                            </Descriptions.Item>
-                            <Descriptions.Item label="Monto a pagar">
-                              {NumberFormat.formatCents(
-                                getRemainingAmountForDue(due.id),
-                              )}
-                            </Descriptions.Item>
-                          </Descriptions>
+                            items={[
+                              {
+                                children: DateFormat.date(due.date),
+                                label: 'Fecha',
+                              },
+                              {
+                                children: DueCategoryLabel[due.category],
+                                label: 'Categoría',
+                              },
+                              {
+                                children: NumberFormat.formatCents(
+                                  getRemainingAmountForDue(due.id),
+                                ),
+                                label: 'Monto a pagar',
+                              },
+                            ]}
+                          />
 
                           <Form.Item
                             label="Monto a registrar"

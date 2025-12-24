@@ -11,7 +11,7 @@ import {
   PaymentStatus,
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
-import { App, Button, Descriptions, Divider, Grid } from 'antd';
+import { App, Button, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -20,6 +20,7 @@ import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
+import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NavigateMember } from '@/ui/NavigateMember';
 import { NavigatePayment } from '@/ui/NavigatePayment';
@@ -37,7 +38,6 @@ export function DueView() {
   const permissions = usePermissions();
   const { message } = App.useApp();
   const { id } = useParams();
-  const { md } = Grid.useBreakpoint();
   const navigate = useNavigate();
 
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
@@ -94,29 +94,35 @@ export function DueView() {
       title="Detalle de deuda"
     >
       <Descriptions
-        bordered
-        column={md ? 2 : 1}
-        layout={md ? 'horizontal' : 'vertical'}
-      >
-        <Descriptions.Item label="Fecha">
-          {DateFormat.date(due.date)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Socio">
-          <NavigateMember id={due.memberId} name={due.memberName} />
-        </Descriptions.Item>
-        <Descriptions.Item label="Monto">
-          {NumberFormat.formatCents(due.amount)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Categoría">
-          {DueCategoryLabel[due.category]}
-        </Descriptions.Item>
-        <Descriptions.Item label="Estado" span="filled">
-          {DueStatusLabel[due.status]}
-        </Descriptions.Item>
-        <Descriptions.Item label="Notas" span="filled">
-          {due.notes ?? '-'}
-        </Descriptions.Item>
-      </Descriptions>
+        items={[
+          {
+            children: DateFormat.date(due.date),
+            label: 'Fecha',
+          },
+          {
+            children: (
+              <NavigateMember id={due.memberId} name={due.memberName} />
+            ),
+            label: 'Socio',
+          },
+          {
+            children: NumberFormat.formatCents(due.amount),
+            label: 'Monto',
+          },
+          {
+            children: DueCategoryLabel[due.category],
+            label: 'Categoría',
+          },
+          {
+            children: DueStatusLabel[due.status],
+            label: 'Estado',
+          },
+          {
+            children: due.notes ?? '-',
+            label: 'Notas',
+          },
+        ]}
+      />
 
       <Divider />
 

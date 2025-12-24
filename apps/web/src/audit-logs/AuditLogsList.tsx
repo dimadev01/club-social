@@ -8,12 +8,13 @@ import {
   type IAuditLogPaginatedDto,
 } from '@club-social/shared/audit-logs';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Col, Descriptions, Grid, Tag, Typography } from 'antd';
+import { Col, Tag, Typography } from 'antd';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { Descriptions } from '@/ui/Descriptions';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Row } from '@/ui/Row';
@@ -26,7 +27,6 @@ import { usePermissions } from '@/users/use-permissions';
 
 export function AuditLogsList() {
   const permissions = usePermissions();
-  const { md } = Grid.useBreakpoint();
 
   const {
     clearFilters,
@@ -133,8 +133,6 @@ export function AuditLogsList() {
                       label: key,
                     }),
                   )}
-                  layout={md ? 'horizontal' : 'vertical'}
-                  size="small"
                   title="Datos antiguos"
                 />
               </Col>
@@ -162,8 +160,6 @@ export function AuditLogsList() {
                       };
                     },
                   )}
-                  layout={md ? 'horizontal' : 'vertical'}
-                  size="small"
                   title="Datos nuevos"
                 />
               </Col>

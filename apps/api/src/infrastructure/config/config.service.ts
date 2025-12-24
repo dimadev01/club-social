@@ -1,5 +1,11 @@
 import { Configuration, Value } from '@itgorillaz/configify';
-import { IsEmail, IsNotEmpty, IsUrl } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 @Configuration()
 export class ConfigService {
@@ -11,51 +17,55 @@ export class ConfigService {
   @Value('APP_DISPLAY_NAME')
   public readonly appDisplayName: string;
 
+  @IsString()
+  @Value('APP_DOMAIN')
+  public readonly appDomain: string;
+
   @IsUrl()
   @Value('BETTER_STACK_ENDPOINT')
   public readonly betterStackEndpoint: string;
 
-  @IsNotEmpty()
+  @IsString()
   @Value('BETTER_STACK_SOURCE_TOKEN')
   public readonly betterStackSourceToken: string;
 
-  @IsNotEmpty()
+  @IsString()
   @Value('DATABASE_URI')
   public readonly databaseUrl: string;
 
-  @IsNotEmpty()
+  @IsString()
   @Value('EMAIL_SMTP_HOST')
   public readonly emailSmtpHost: string;
 
-  @IsNotEmpty()
+  @IsNumber()
   @Value('EMAIL_SMTP_PORT', { parse: Number })
   public readonly emailSmtpPort: number;
 
-  @IsNotEmpty()
+  @IsString()
   @Value('ENVIRONMENT')
   public readonly environment: string;
 
-  @IsNotEmpty()
+  @IsString()
   @Value('NODE_ENV')
   public readonly nodeEnv: string;
 
-  @IsNotEmpty()
+  @IsNumber()
   @Value('PORT', { parse: Number })
   public readonly port: number;
 
-  @IsNotEmpty()
+  @IsString()
   @Value('REDIS_HOST')
   public readonly redisHost: string;
 
-  @IsNotEmpty()
+  @IsNumber()
   @Value('REDIS_PORT', { parse: Number })
   public readonly redisPort: number;
 
-  @IsNotEmpty()
+  @IsString()
   @Value('RESEND_API_KEY')
   public readonly resendApiKey: string;
 
-  @IsNotEmpty()
+  @IsString({ each: true })
   @Value('BETTER_AUTH_TRUSTED_ORIGINS', { parse: (value) => value.split(',') })
   public readonly trustedOrigins: string[];
 

@@ -6,7 +6,7 @@ import {
   MovementStatusLabel,
   MovementTypeLabel,
 } from '@club-social/shared/movements';
-import { App, Button, Descriptions, Divider, Grid } from 'antd';
+import { App, Button, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -14,6 +14,7 @@ import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
+import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
@@ -26,7 +27,6 @@ export function MovementView() {
   const permissions = usePermissions();
   const { message } = App.useApp();
   const { id } = useParams();
-  const { md } = Grid.useBreakpoint();
   const navigate = useNavigate();
 
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
@@ -72,30 +72,33 @@ export function MovementView() {
       title="Detalle de movimiento"
     >
       <Descriptions
-        bordered
-        column={md ? 2 : 1}
-        layout={md ? 'horizontal' : 'vertical'}
-      >
-        <Descriptions.Item label="Fecha">
-          {DateFormat.date(movement.date)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Tipo">
-          {MovementTypeLabel[movement.type]}
-        </Descriptions.Item>
-        <Descriptions.Item label="Categoría">
-          {MovementCategoryLabel[movement.category]}
-        </Descriptions.Item>
-        <Descriptions.Item label="Monto">
-          {NumberFormat.formatCents(movement.amount)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Estado" span="filled">
-          {MovementStatusLabel[movement.status]}
-        </Descriptions.Item>
-        <Descriptions.Item label="Descripción" span="filled">
-          {movement.description ?? '-'}
-        </Descriptions.Item>
-      </Descriptions>
-
+        items={[
+          {
+            children: DateFormat.date(movement.date),
+            label: 'Fecha',
+          },
+          {
+            children: MovementCategoryLabel[movement.category],
+            label: 'Categoría',
+          },
+          {
+            children: MovementTypeLabel[movement.type],
+            label: 'Tipo',
+          },
+          {
+            children: NumberFormat.formatCents(movement.amount),
+            label: 'Monto',
+          },
+          {
+            children: MovementStatusLabel[movement.status],
+            label: 'Estado',
+          },
+          {
+            children: movement.description ?? '-',
+            label: 'Descripción',
+          },
+        ]}
+      />
       <Divider />
 
       <DescriptionsAudit {...movement} />

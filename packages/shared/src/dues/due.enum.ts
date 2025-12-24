@@ -18,6 +18,13 @@ export const DueCategorySort = {
   [DueCategory.MEMBERSHIP]: 1,
 } as const;
 
+export const DueCategoryOptions = Object.entries(DueCategoryLabel).map(
+  ([value, label]) => ({
+    label,
+    value,
+  }),
+);
+
 export const DueStatus = {
   PAID: 'paid',
   PARTIALLY_PAID: 'partially-paid',

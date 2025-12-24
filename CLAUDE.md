@@ -157,7 +157,7 @@ module/
 **Auth**: Better Auth integration for authentication
 
 - Service in `infrastructure/auth/better-auth/`
-- Configuration: `BETTER_AUTH_SECRET`, `API_URL`, `BETTER_AUTH_TRUSTED_ORIGINS`
+- Configuration: `BETTER_AUTH_SECRET`, `APP_API_URL`, `BETTER_AUTH_TRUSTED_ORIGINS`
 
 **Database**: Prisma with PostgreSQL
 
@@ -267,7 +267,7 @@ Critical environment variables (see `.env.example` files):
 
 - `DATABASE_URI`: PostgreSQL connection string
 - `BETTER_AUTH_SECRET`: Auth encryption secret
-- `API_URL`: Backend URL for auth callbacks
+- `APP_API_URL`: Backend URL for auth callbacks
 - `BETTER_AUTH_TRUSTED_ORIGINS`: Allowed frontend origins (CORS)
 - `SENTRY_DSN`: Error tracking endpoint
 - `BETTER_STACK_SOURCE_TOKEN`: Logging service token

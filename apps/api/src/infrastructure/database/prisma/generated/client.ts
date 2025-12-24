@@ -63,6 +63,11 @@ export type Account = Prisma.AccountModel;
  */
 export type Verification = Prisma.VerificationModel;
 /**
+ * Model Passkey
+ *
+ */
+export type Passkey = Prisma.PasskeyModel;
+/**
  * Model Member
  *
  */

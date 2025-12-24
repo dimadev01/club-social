@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
+    "@better-auth/passkey": "^1.4.9",
     "@better-fetch/fetch": "^1.1.21",
     "@club-social/shared": "^0.0.1",
     "@julr/vite-plugin-validate-env": "^2.2.0",

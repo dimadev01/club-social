@@ -1,7 +1,19 @@
-import { LoginOutlined } from '@ant-design/icons';
-import { Alert, App, Button, Card, Flex, Form, Image, Input } from 'antd';
+import { KeyOutlined, MailOutlined } from '@ant-design/icons';
+import {
+  Alert,
+  App,
+  Button,
+  Card,
+  Divider,
+  Flex,
+  Form,
+  Image,
+  Input,
+  Space,
+} from 'antd';
 import { useState } from 'react';
 
+import { useMutation } from '@/shared/hooks/useMutation';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
 
@@ -9,38 +21,46 @@ interface FormSchema {
   email: string;
 }
 
-const FormStatus = {
-  IDLE: 'idle',
-  SUBMITTING: 'submitting',
-  SUCCESS: 'success',
+const LoginMode = {
+  MAGIC_LINK_SENT: 'magic-link-sent',
 } as const;
 
-type FormStatus = (typeof FormStatus)[keyof typeof FormStatus];
+type LoginMode = (typeof LoginMode)[keyof typeof LoginMode];
 
 export function LoginForm() {
-  const [formStatus, setFormStatus] = useState<FormStatus>(FormStatus.IDLE);
   const { message } = App.useApp();
-
+  const [mode, setMode] = useState<LoginMode | null>(null);
   const [form] = Form.useForm<FormSchema>();
 
-  const onSubmit = async (values: FormSchema) => {
-    setFormStatus(FormStatus.SUBMITTING);
+  const singInMagicLinkMutation = useMutation({
+    mutationFn: (values: FormSchema) =>
+      betterAuthClient.signIn.magicLink({
+        callbackURL: window.location.origin,
+        email: values.email,
+      }),
+    onSuccess: ({ data, error }) => {
+      if (data) {
+        setMode(LoginMode.MAGIC_LINK_SENT);
+      }
 
-    const { error } = await betterAuthClient.signIn.magicLink({
-      callbackURL: window.location.origin,
-      email: values.email,
-    });
+      if (error) {
+        message.error('Error al iniciar sesión con email');
+      }
+    },
+  });
 
-    setFormStatus(error ? FormStatus.IDLE : FormStatus.SUCCESS);
+  const signInPasskeyMutation = useMutation({
+    mutationFn: () => betterAuthClient.signIn.passkey(),
+    onSuccess: ({ error }) => {
+      if (error) {
+        message.error('Error al iniciar sesión con passkey');
+      }
+    },
+  });
 
-    if (error) {
-      message.error(error.message);
-    }
+  const onSubmit = (values: FormSchema) => {
+    singInMagicLinkMutation.mutate(values);
   };
-
-  const isSubmitting = formStatus === FormStatus.SUBMITTING;
-  const isSuccess = formStatus === FormStatus.SUCCESS;
-  const isIdle = formStatus === FormStatus.IDLE;
 
   return (
     <Flex className="w-full max-w-xs" gap="small" vertical>
@@ -52,36 +72,21 @@ export function LoginForm() {
         src="/club-social-logo.png"
       />
 
-      {isSuccess && (
+      {mode === LoginMode.MAGIC_LINK_SENT && (
         <Alert
           closable={{
             closeIcon: true,
-            onClose: () => setFormStatus(FormStatus.IDLE),
+            onClose: () => setMode(null),
           }}
           description="Le hemos enviado un link para iniciar sesión"
           type="success"
         />
       )}
 
-      {isIdle && (
-        <Card
-          actions={[
-            <Button
-              disabled={isSubmitting}
-              form="form"
-              htmlType="submit"
-              icon={<LoginOutlined />}
-              loading={isSubmitting}
-              type="primary"
-            >
-              Iniciar sesión
-            </Button>,
-          ]}
-          extra={<MenuThemeSwitcher />}
-          title="Club Social Monte Grande"
-        >
+      {mode === null && (
+        <Card extra={<MenuThemeSwitcher />} title="Club Social Monte Grande">
           <Form<FormSchema>
-            disabled={isSubmitting}
+            disabled={singInMagicLinkMutation.isPending}
             form={form}
             id="form"
             initialValues={{ email: 'info@clubsocialmontegrande.ar' }}
@@ -99,6 +104,32 @@ export function LoginForm() {
               <Input placeholder="juan.perez@example.com" type="email" />
             </Form.Item>
           </Form>
+
+          <Divider />
+
+          <Space.Compact block vertical>
+            <Button
+              block
+              disabled={singInMagicLinkMutation.isPending}
+              form="form"
+              htmlType="submit"
+              icon={<MailOutlined />}
+              loading={singInMagicLinkMutation.isPending}
+              type="default"
+            >
+              Iniciar sesión con email
+            </Button>
+            <Button
+              block
+              disabled={signInPasskeyMutation.isPending}
+              icon={<KeyOutlined />}
+              loading={signInPasskeyMutation.isPending}
+              onClick={() => signInPasskeyMutation.mutate()}
+              type="default"
+            >
+              Iniciar sesión con passkey
+            </Button>
+          </Space.Compact>
         </Card>
       )}
     </Flex>

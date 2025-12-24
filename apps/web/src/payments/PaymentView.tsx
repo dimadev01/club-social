@@ -10,7 +10,7 @@ import {
   PaymentStatus,
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
-import { App, Button, Descriptions, Divider, Grid } from 'antd';
+import { App, Button, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -19,6 +19,7 @@ import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
+import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NavigateDue } from '@/ui/NavigateDue';
 import { NavigateMember } from '@/ui/NavigateMember';
@@ -35,7 +36,6 @@ export function PaymentView() {
   const permissions = usePermissions();
   const { message } = App.useApp();
   const { id } = useParams();
-  const { md } = Grid.useBreakpoint();
   const navigate = useNavigate();
 
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
@@ -84,26 +84,31 @@ export function PaymentView() {
       title="Detalle de pago"
     >
       <Descriptions
-        bordered
-        column={md ? 2 : 1}
-        layout={md ? 'horizontal' : 'vertical'}
-      >
-        <Descriptions.Item label="Fecha">
-          {DateFormat.date(payment.date)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Socio">
-          <NavigateMember id={payment.memberId} name={payment.memberName} />
-        </Descriptions.Item>
-        <Descriptions.Item label="Monto">
-          {NumberFormat.formatCents(payment.amount)}
-        </Descriptions.Item>
-        <Descriptions.Item label="Estado">
-          {PaymentStatusLabel[payment.status]}
-        </Descriptions.Item>
-        <Descriptions.Item label="Notas">
-          {payment.notes ?? '-'}
-        </Descriptions.Item>
-      </Descriptions>
+        items={[
+          {
+            children: DateFormat.date(payment.date),
+            label: 'Fecha',
+          },
+          {
+            children: (
+              <NavigateMember id={payment.memberId} name={payment.memberName} />
+            ),
+            label: 'Socio',
+          },
+          {
+            children: NumberFormat.formatCents(payment.amount),
+            label: 'Monto',
+          },
+          {
+            children: PaymentStatusLabel[payment.status],
+            label: 'Estado',
+          },
+          {
+            children: payment.notes ?? '-',
+            label: 'Notas',
+          },
+        ]}
+      />
 
       <Divider />
 

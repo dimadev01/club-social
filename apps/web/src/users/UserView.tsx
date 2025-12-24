@@ -1,9 +1,10 @@
 import { UserStatusLabel } from '@club-social/shared/users';
-import { Button, Descriptions, Grid } from 'antd';
+import { Button } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { Card } from '@/ui/Card';
+import { Descriptions } from '@/ui/Descriptions';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 
@@ -13,7 +14,6 @@ import { useUser } from './useUser';
 export function UserView() {
   const permissions = usePermissions();
   const { id } = useParams();
-  const { md } = Grid.useBreakpoint();
   const navigate = useNavigate();
 
   const { data: user, isLoading } = useUser(id);
@@ -44,17 +44,25 @@ export function UserView() {
       title={user.name}
     >
       <Descriptions
-        colon={!!md}
-        column={md ? 2 : 1}
-        layout={md ? 'horizontal' : 'vertical'}
-      >
-        <Descriptions.Item label="Nombre">{user.firstName}</Descriptions.Item>
-        <Descriptions.Item label="Apellido">{user.lastName}</Descriptions.Item>
-        <Descriptions.Item label="Email">{user.email}</Descriptions.Item>
-        <Descriptions.Item label="Estado">
-          {UserStatusLabel[user.status]}
-        </Descriptions.Item>
-      </Descriptions>
+        items={[
+          {
+            children: user.firstName,
+            label: 'Nombre',
+          },
+          {
+            children: user.lastName,
+            label: 'Apellido',
+          },
+          {
+            children: user.email,
+            label: 'Email',
+          },
+          {
+            children: UserStatusLabel[user.status],
+            label: 'Estado',
+          },
+        ]}
+      />
     </Page>
   );
 }

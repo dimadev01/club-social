@@ -58,6 +58,7 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
+  Passkey: 'Passkey',
   Member: 'Member',
   Due: 'Due',
   Payment: 'Payment',
@@ -152,6 +153,23 @@ export const VerificationScalarFieldEnum = {
 
 export type VerificationScalarFieldEnum =
   (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum];
+
+export const PasskeyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  publicKey: 'publicKey',
+  userId: 'userId',
+  credentialID: 'credentialID',
+  counter: 'counter',
+  deviceType: 'deviceType',
+  backedUp: 'backedUp',
+  transports: 'transports',
+  createdAt: 'createdAt',
+  aaguid: 'aaguid',
+} as const;
+
+export type PasskeyScalarFieldEnum =
+  (typeof PasskeyScalarFieldEnum)[keyof typeof PasskeyScalarFieldEnum];
 
 export const MemberScalarFieldEnum = {
   id: 'id',

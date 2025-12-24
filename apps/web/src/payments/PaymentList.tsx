@@ -1,7 +1,7 @@
 import type { PaginatedResponse } from '@club-social/shared/types';
 
 import { FilterOutlined, MoreOutlined } from '@ant-design/icons';
-import { DueCategoryLabel } from '@club-social/shared/dues';
+import { DueCategoryOptions } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import {
   type IPaymentPaginatedDto,
@@ -10,14 +10,7 @@ import {
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
 import { keepPreviousData } from '@tanstack/react-query';
-import {
-  Button,
-  Dropdown,
-  Grid,
-  Space,
-  type TableColumnType,
-  Tooltip,
-} from 'antd';
+import { Button, Dropdown, Space, type TableColumnType, Tooltip } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -28,7 +21,6 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { cn } from '@/shared/lib/utils';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
@@ -44,7 +36,6 @@ import { usePermissions } from '@/users/use-permissions';
 export function PaymentList() {
   const navigate = useNavigate();
   const permissions = usePermissions();
-  const { md } = Grid.useBreakpoint();
 
   const {
     clearFilters,
@@ -128,13 +119,10 @@ export function PaymentList() {
           value={getFilterValue('memberId') ?? undefined}
         />
         <Select
-          className={cn('min-w-full', { 'min-w-xs': md })}
+          className="min-w-full md:min-w-xs"
           mode="multiple"
           onChange={(value) => setFilter('dueCategory', value)}
-          options={Object.entries(DueCategoryLabel).map(([value, label]) => ({
-            label,
-            value,
-          }))}
+          options={DueCategoryOptions}
           placeholder="Filtrar por categoría de deuda"
           value={getFilterValue('dueCategory') ?? undefined}
         />

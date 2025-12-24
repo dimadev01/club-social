@@ -757,14 +757,6 @@ export type DueUncheckedUpdateManyWithoutMemberNestedInput = {
   deleteMany?: Prisma.DueScalarWhereInput | Prisma.DueScalarWhereInput[];
 };
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number;
-  increment?: number;
-  decrement?: number;
-  multiply?: number;
-  divide?: number;
-};
-
 export type DueCreateNestedOneWithoutPaymentDuesInput = {
   create?: Prisma.XOR<
     Prisma.DueCreateWithoutPaymentDuesInput,

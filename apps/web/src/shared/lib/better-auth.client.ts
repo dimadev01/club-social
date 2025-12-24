@@ -1,3 +1,4 @@
+import { passkeyClient } from '@better-auth/passkey/client';
 import { roleStatements, statements } from '@club-social/shared/roles';
 import {
   adminClient,
@@ -34,7 +35,7 @@ const staffRole = ac.newRole({
 
 export const betterAuthClient = createAuthClient({
   basePath: '/auth',
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_APP_API_URL,
   plugins: [
     magicLinkClient(),
     adminClient({
@@ -45,6 +46,7 @@ export const betterAuthClient = createAuthClient({
         staff: staffRole,
       },
     }),
+    passkeyClient(),
     inferAdditionalFields({
       user: {
         createdBy: {

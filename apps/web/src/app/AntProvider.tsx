@@ -65,6 +65,9 @@ export function AntProvider({ children }: { children: React.ReactNode }) {
             optionFilterProp: 'label',
           },
         }}
+        space={{
+          size: 'middle',
+        }}
         table={{
           rowKey: 'id',
         }}

@@ -73,7 +73,7 @@ export function MemberForm({
     >
       <Row>
         <Col md={12} xs={24}>
-          <Space className="flex" size="middle" vertical>
+          <Space className="flex" vertical>
             <Card size="small" title="Datos básicos" type="inner">
               <Form.Item<MemberFormData>
                 label="Nombre"
@@ -205,7 +205,7 @@ export function MemberForm({
         </Col>
 
         <Col md={12} xs={24}>
-          <Space className="flex" size="middle" vertical>
+          <Space className="flex" vertical>
             <Form.List name="phones">
               {(fields, { add, remove }) => (
                 <Card

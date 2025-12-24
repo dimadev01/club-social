@@ -1,3 +1,4 @@
+import { passkey } from '@better-auth/passkey';
 import { roleStatements, statements } from '@club-social/shared/roles';
 import { UserStatus } from '@club-social/shared/users';
 import { Inject, Injectable } from '@nestjs/common';
@@ -72,6 +73,7 @@ export const defaultConfig = {
         console.log(data);
       },
     }),
+    passkey(),
   ],
   user: {
     additionalFields: {
@@ -157,6 +159,10 @@ export class BetterAuthService {
           disableSignUp: true,
           sendMagicLink: (data) =>
             this.sendMagicLink({ email: data.email, url: data.url }),
+        }),
+        passkey({
+          rpID: this.configService.appDomain,
+          rpName: this.configService.appDisplayName,
         }),
       ],
       trustedOrigins: this.configService.trustedOrigins,
