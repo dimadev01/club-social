@@ -16,7 +16,8 @@
       "Bash(find:*)",
       "Bash(npm run lint:*)",
       "Bash(dotenvx run:*)",
-      "Bash(npx prisma migrate dev:*)"
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(turbo build:*)"
     ]
   },
   "outputStyle": "default"

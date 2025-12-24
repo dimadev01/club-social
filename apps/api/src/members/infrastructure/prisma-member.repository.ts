@@ -3,17 +3,20 @@ import {
   ExportRequest,
   PaginatedRequest,
   PaginatedResponse,
+  SortOrder,
 } from '@club-social/shared/types';
 import { Injectable } from '@nestjs/common';
 
 import {
-  MemberFindManyArgs,
+  MemberGetPayload,
   MemberOrderByWithRelationInput,
   MemberWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+type MemberWithUser = MemberGetPayload<{ include: { user: true } }>;
 
 import { MemberEntity } from '../domain/entities/member.entity';
 import { MemberRepository } from '../domain/member.repository';
@@ -86,28 +89,36 @@ export class PrismaMemberRepository implements MemberRepository {
   > {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
-    const query = {
-      include: {
-        dues: {
-          where: {
-            deletedAt: null,
-            status: {
-              in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
-            },
-          },
-        },
-        user: true,
-      },
-      orderBy,
-      skip: (params.page - 1) * params.pageSize,
-      take: params.pageSize,
-      where,
-    } satisfies MemberFindManyArgs;
+    // Check if sorting by a due category field
+    const dueSortField = this.extractDueSortField(params);
 
-    const [members, total] = await Promise.all([
-      this.prismaService.member.findMany(query),
-      this.prismaService.member.count({ where }),
-    ]);
+    let members: MemberWithUser[];
+    let total: number;
+
+    if (dueSortField) {
+      // Sorting by due amount - use aggregation-based sorting
+      const result = await this.findPaginatedByDueSort({
+        category: dueSortField.category,
+        order: dueSortField.order,
+        page: params.page,
+        pageSize: params.pageSize,
+        where,
+      });
+      members = result.members;
+      total = result.total;
+    } else {
+      // Standard Prisma sorting
+      [members, total] = await Promise.all([
+        this.prismaService.member.findMany({
+          include: { user: true },
+          orderBy,
+          skip: (params.page - 1) * params.pageSize,
+          take: params.pageSize,
+          where,
+        }),
+        this.prismaService.member.count({ where }),
+      ]);
+    }
 
     const duesByMemberAndCategory = await this.fetchDueAggregates(
       members.map((m) => m.id),
@@ -275,6 +286,26 @@ export class PrismaMemberRepository implements MemberRepository {
     return totals;
   }
 
+  private extractDueSortField(
+    params: PaginatedRequest,
+  ): null | { category: DueCategory; order: SortOrder } {
+    const dueSortFieldMap: Record<string, DueCategory> = {
+      electricityTotalDueAmount: DueCategory.ELECTRICITY,
+      guestTotalDueAmount: DueCategory.GUEST,
+      memberShipTotalDueAmount: DueCategory.MEMBERSHIP,
+    };
+
+    for (const sort of params.sort) {
+      const category = dueSortFieldMap[sort.field];
+
+      if (category) {
+        return { category, order: sort.order };
+      }
+    }
+
+    return null;
+  }
+
   private async fetchDueAggregates(
     memberIds: string[],
   ): Promise<Map<string, Map<DueCategory, number>>> {
@@ -312,5 +343,70 @@ export class PrismaMemberRepository implements MemberRepository {
     });
 
     return duesByMemberAndCategory;
+  }
+
+  private async findPaginatedByDueSort(params: {
+    category: DueCategory;
+    order: SortOrder;
+    page: number;
+    pageSize: number;
+    where: MemberWhereInput;
+  }): Promise<{ members: MemberWithUser[]; total: number }> {
+    // Get all matching member IDs
+    const allMembers = await this.prismaService.member.findMany({
+      select: { id: true },
+      where: params.where,
+    });
+
+    const allMemberIds = allMembers.map((m) => m.id);
+    const totalMembersCount = allMemberIds.length;
+
+    // Aggregate dues by category and sort
+    const dues = await this.prismaService.due.groupBy({
+      _sum: { amount: true },
+      by: ['memberId'],
+      orderBy: {
+        _sum: { amount: params.order },
+      },
+      where: {
+        category: params.category,
+        deletedAt: null,
+        memberId: { in: allMemberIds },
+        status: {
+          in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
+        },
+      },
+    });
+
+    // Get sorted member IDs from dues aggregation
+    const sortedMemberIdsFromDues = dues.map((d) => d.memberId);
+
+    // Members with no dues go at the end
+    const membersWithNoDues = allMemberIds.filter(
+      (id) => !sortedMemberIdsFromDues.includes(id),
+    );
+    const sortedMemberIds = [...sortedMemberIdsFromDues, ...membersWithNoDues];
+
+    // Paginate on the sorted list
+    const paginatedMemberIdsToFetch = sortedMemberIds.slice(
+      (params.page - 1) * params.pageSize,
+      params.page * params.pageSize,
+    );
+
+    // Fetch the members for this page
+    const fetchedMembers = await this.prismaService.member.findMany({
+      include: { user: true },
+      where: { id: { in: paginatedMemberIdsToFetch } },
+    });
+
+    // Re-sort to match the order (Prisma returns in arbitrary order)
+    const memberMap = new Map<string, MemberWithUser>(
+      fetchedMembers.map((m) => [m.id, m]),
+    );
+    const members = paginatedMemberIdsToFetch.map(
+      (id) => memberMap.get(id) as MemberWithUser,
+    );
+
+    return { members, total: totalMembersCount };
   }
 }
