@@ -6,7 +6,6 @@ import {
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
-import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 
 import { PricingEntity } from './entities/pricing.entity';
 import {
@@ -28,7 +27,6 @@ export interface PricingRepository
   findOneActive(
     dueCategory: DueCategory,
     memberCategory: MemberCategory,
-    date: DateOnly,
   ): Promise<null | PricingEntity>;
   findOverlapping(
     params: FindOverlappingPricingParams,

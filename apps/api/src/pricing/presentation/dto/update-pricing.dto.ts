@@ -4,7 +4,6 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsPositive,
 } from 'class-validator';
 
@@ -16,6 +15,5 @@ export class UpdatePricingRequestDto implements IUpdatePricingDto {
   public amount: number;
 
   @IsDateString()
-  @IsOptional()
-  public effectiveTo: null | string;
+  public effectiveFrom: string;
 }

@@ -2,6 +2,11 @@ import { AuditAction, AuditEntity } from '@club-social/shared/audit-logs';
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
+import {
+  AUDIT_LOG_REPOSITORY_PROVIDER,
+  type AuditLogRepository,
+} from '@/audit/domain/audit-log.repository';
+import { AuditLogEntity } from '@/audit/domain/entities/audit-log.entity';
 import { DueEntity } from '@/dues/domain/entities/due.entity';
 import { DueCreatedEvent } from '@/dues/domain/events/due-created.event';
 import { DueUpdatedEvent } from '@/dues/domain/events/due-updated.event';
@@ -24,12 +29,6 @@ import {
 import { UserEntity } from '@/users/domain/entities/user.entity';
 import { UserCreatedEvent } from '@/users/domain/events/user-created.event';
 import { UserUpdatedEvent } from '@/users/domain/events/user-updated.event';
-
-import {
-  AUDIT_LOG_REPOSITORY_PROVIDER,
-  type AuditLogRepository,
-} from '../../domain/audit-log.repository';
-import { AuditLogEntity } from '../../domain/entities/audit-log.entity';
 
 @Injectable()
 export class AuditEventHandler {

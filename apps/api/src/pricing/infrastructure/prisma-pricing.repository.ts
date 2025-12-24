@@ -61,21 +61,27 @@ export class PrismaPricingRepository implements PricingRepository {
       },
     });
 
-    if (!pricing) {
-      return null;
-    }
-
-    return this.mapper.toDomain(pricing);
+    return pricing ? this.mapper.toDomain(pricing) : null;
   }
 
   public async findOverlapping(
     params: FindOverlappingPricingParams,
   ): Promise<PricingEntity[]> {
+    // Find all pricings for the same category pair that would overlap with the new pricing
+    // New pricing range: [effectiveFrom, infinity]
+    // Existing pricing range: [effectiveFrom, effectiveTo or infinity]
+    // Overlap exists if: existing.effectiveFrom < new.infinity AND new.effectiveFrom < existing.effectiveTo
+    // Since new.effectiveTo is always null (infinity), this simplifies to:
+    // - existing.effectiveFrom is any date (could be before or after new.effectiveFrom)
+    // - AND (existing.effectiveTo is null OR existing.effectiveTo >= new.effectiveFrom)
     const where: PricingWhereInput = {
       deletedAt: null,
       dueCategory: params.dueCategory,
-      effectiveFrom: { gte: params.effectiveFrom.value },
       memberCategory: params.memberCategory,
+      OR: [
+        { effectiveTo: null },
+        { effectiveTo: { gte: params.effectiveFrom.value } },
+      ],
     };
 
     if (params.excludeId) {
@@ -83,6 +89,7 @@ export class PrismaPricingRepository implements PricingRepository {
     }
 
     const prices = await this.prismaService.pricing.findMany({
+      orderBy: { effectiveFrom: 'asc' },
       where,
     });
 

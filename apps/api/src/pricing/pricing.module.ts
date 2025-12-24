@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { CreatePricingUseCase } from './application/create-pricing/create-pricing.use-case';
 import { FindActivePricingUseCase } from './application/find-active-pricing/find-active-pricing.use-case';
-import { GetPricingHistoryUseCase } from './application/get-pricing-history/get-pricing-history.use-case';
 import { UpdatePricingUseCase } from './application/update-pricing/update-pricing.use-case';
 import { PRICING_REPOSITORY_PROVIDER } from './domain/pricing.repository';
 import { PrismaPricingMapper } from './infrastructure/prisma-pricing.mapper';
@@ -16,7 +15,6 @@ import { PricingController } from './presentation/pricing.controller';
   providers: [
     CreatePricingUseCase,
     FindActivePricingUseCase,
-    GetPricingHistoryUseCase,
     UpdatePricingUseCase,
     PrismaPricingMapper,
     {

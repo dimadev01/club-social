@@ -12,7 +12,6 @@ import {
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { UseCase } from '@/shared/application/use-case';
-import { ApplicationError } from '@/shared/domain/errors/application.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
@@ -50,21 +49,6 @@ export class CreatePricingUseCase extends UseCase<PricingEntity> {
 
     const [amount, effectiveFrom] = results.value;
 
-    // Check for overlapping pricing
-    const overlapping = await this.pricingRepository.findOverlapping({
-      dueCategory: params.dueCategory,
-      effectiveFrom,
-      memberCategory: params.memberCategory,
-    });
-
-    if (overlapping.length > 0) {
-      return err(
-        new ApplicationError(
-          `Overlapping pricing rules exist for ${params.dueCategory} / ${params.memberCategory}`,
-        ),
-      );
-    }
-
     const pricing = PricingEntity.create({
       amount,
       createdBy: params.createdBy,
@@ -77,15 +61,27 @@ export class CreatePricingUseCase extends UseCase<PricingEntity> {
       return err(pricing.error);
     }
 
-    const activePricing = await this.pricingRepository.findUniqueActive(
-      params.dueCategory,
-      params.memberCategory,
-    );
+    // Find all prices that would overlap with the new pricing
+    const overlapping = await this.pricingRepository.findOverlapping({
+      dueCategory: params.dueCategory,
+      effectiveFrom,
+      memberCategory: params.memberCategory,
+    });
 
-    if (activePricing) {
-      activePricing.close(effectiveFrom, params.createdBy);
-      await this.pricingRepository.save(activePricing);
-      this.eventPublisher.dispatch(activePricing);
+    // Handle overlapping prices:
+    // 1. Prices that start before new pricing: close them one day before new pricing starts
+    // 2. Prices that start on or after new pricing: delete them (they're superseded)
+    for (const existing of overlapping) {
+      if (existing.effectiveFrom.isBefore(effectiveFrom)) {
+        // Existing pricing starts before new one - close it one day before new pricing
+        existing.close(effectiveFrom.subtractDays(1), params.createdBy);
+      } else {
+        // Existing pricing starts on or after new one - mark it as deleted (superseded)
+        existing.delete(params.createdBy);
+      }
+
+      await this.pricingRepository.save(existing);
+      this.eventPublisher.dispatch(existing);
     }
 
     await this.pricingRepository.save(pricing.value);

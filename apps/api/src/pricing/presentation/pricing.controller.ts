@@ -1,5 +1,3 @@
-import { DueCategory } from '@club-social/shared/dues';
-import { MemberCategory } from '@club-social/shared/members';
 import {
   Body,
   Controller,
@@ -27,7 +25,6 @@ import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePricingUseCase } from '../application/create-pricing/create-pricing.use-case';
 import { FindActivePricingUseCase } from '../application/find-active-pricing/find-active-pricing.use-case';
-import { GetPricingHistoryUseCase } from '../application/get-pricing-history/get-pricing-history.use-case';
 import { UpdatePricingUseCase } from '../application/update-pricing/update-pricing.use-case';
 import { PricingEntity } from '../domain/entities/pricing.entity';
 import {
@@ -40,6 +37,7 @@ import { PricingDetailDto } from './dto/pricing.dto';
 import { UpdatePricingRequestDto } from './dto/update-pricing.dto';
 
 @Controller('pricing')
+@PublicRoute()
 export class PricingController extends BaseController {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
@@ -47,7 +45,6 @@ export class PricingController extends BaseController {
     private readonly createPricingUseCase: CreatePricingUseCase,
     private readonly updatePricingUseCase: UpdatePricingUseCase,
     private readonly findActivePricingUseCase: FindActivePricingUseCase,
-    private readonly getPricingHistoryUseCase: GetPricingHistoryUseCase,
     @Inject(PRICING_REPOSITORY_PROVIDER)
     private readonly pricingRepository: PricingRepository,
   ) {
@@ -62,7 +59,7 @@ export class PricingController extends BaseController {
     const { id } = this.handleResult(
       await this.createPricingUseCase.execute({
         amount: body.amount,
-        createdBy: session.user.name,
+        createdBy: session?.user.name ?? 'System',
         dueCategory: body.dueCategory,
         effectiveFrom: body.effectiveFrom,
         memberCategory: body.memberCategory,
@@ -81,45 +78,25 @@ export class PricingController extends BaseController {
     this.handleResult(
       await this.updatePricingUseCase.execute({
         amount: body.amount,
+        effectiveFrom: body.effectiveFrom,
         id: request.id,
-        updatedBy: session.user.name,
+        updatedBy: session?.user.name ?? 'System',
       }),
     );
   }
 
   @Get('active')
-  @PublicRoute()
   public async getActive(
     @Query() query: FindActivePricingRequestDto,
   ): Promise<null | PricingDetailDto> {
     const pricing = this.handleResult(
       await this.findActivePricingUseCase.execute({
-        date: query.date,
         dueCategory: query.dueCategory,
         memberCategory: query.memberCategory,
       }),
     );
 
-    if (!pricing) {
-      return null;
-    }
-
-    return this.mapPricingToDto(pricing);
-  }
-
-  @Get('history')
-  public async getHistory(
-    @Query('dueCategory') dueCategory: string,
-    @Query('memberCategory') memberCategory: string,
-  ): Promise<PricingDetailDto[]> {
-    const prices = this.handleResult(
-      await this.getPricingHistoryUseCase.execute({
-        dueCategory: dueCategory as DueCategory,
-        memberCategory: memberCategory as MemberCategory,
-      }),
-    );
-
-    return prices.map((pricing) => this.mapPricingToDto(pricing));
+    return pricing ? this.mapPricingToDto(pricing) : null;
   }
 
   @Get('paginated')

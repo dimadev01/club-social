@@ -12,8 +12,7 @@ import {
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { UseCase } from '@/shared/application/use-case';
-import { err, ok } from '@/shared/domain/result';
-import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
+import { ok } from '@/shared/domain/result';
 
 import type { FindActivePricingParams } from './find-active-pricing.params';
 
@@ -30,18 +29,9 @@ export class FindActivePricingUseCase extends UseCase<null | PricingEntity> {
   public async execute(
     params: FindActivePricingParams,
   ): Promise<Result<null | PricingEntity>> {
-    const dateResult = DateOnly.fromString(params.date);
-
-    if (dateResult.isErr()) {
-      return err(dateResult.error);
-    }
-
-    const date = dateResult.value;
-
     const pricing = await this.pricingRepository.findOneActive(
       params.dueCategory,
       params.memberCategory,
-      date,
     );
 
     return ok(pricing);

@@ -11,6 +11,7 @@ import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 
 import { PricingCreatedEvent } from '../events/pricing-created.event';
 import { PricingUpdatedEvent } from '../events/pricing-updated.event';
+import { UpdatePricingProps } from '../interfaces/pricing.interface';
 
 interface PricingProps {
   amount: Amount;
@@ -63,10 +64,6 @@ export class PricingEntity extends Entity<PricingEntity> {
   public static create(
     props: Omit<PricingProps, 'effectiveTo'>,
   ): Result<PricingEntity> {
-    if (props.effectiveFrom.isBefore(DateOnly.today())) {
-      return err(new ApplicationError('effectiveFrom must be in the future'));
-    }
-
     const pricing = new PricingEntity({
       amount: props.amount,
       createdBy: props.createdBy,
@@ -127,25 +124,16 @@ export class PricingEntity extends Entity<PricingEntity> {
     return isAfterOrEqualStart && isBeforeEnd;
   }
 
-  public update(props: {
-    amount: Amount;
-    effectiveTo: DateOnly | null;
-    updatedBy: string;
-  }): Result<void> {
-    if (
-      props.effectiveTo !== null &&
-      this._effectiveFrom.isAfter(props.effectiveTo)
-    ) {
+  public update(props: UpdatePricingProps): Result<void> {
+    if (this._effectiveTo !== null) {
       return err(
-        new ApplicationError(
-          'effectiveFrom must be before or equal to effectiveTo',
-        ),
+        new ApplicationError('No se puede actualizar un precio cerrado'),
       );
     }
 
     const oldPricing = this.clone();
     this._amount = props.amount;
-    this._effectiveTo = props.effectiveTo;
+    this._effectiveFrom = props.effectiveFrom;
     this.markAsUpdated(props.updatedBy);
     this.addEvent(new PricingUpdatedEvent(oldPricing, this));
 

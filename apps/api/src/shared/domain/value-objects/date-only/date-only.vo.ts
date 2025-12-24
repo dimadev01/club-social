@@ -90,12 +90,27 @@ export class DateOnly extends ValueObject<Props> {
     return this.value < other.value;
   }
 
+  public isInTheFuture(): boolean {
+    return this.isAfter(DateOnly.today());
+  }
+
+  public isInThePast(): boolean {
+    return this.isBefore(DateOnly.today());
+  }
+
   public isSameOrAfter(other: DateOnly): boolean {
     return this.value >= other.value;
   }
 
   public isSameOrBefore(other: DateOnly): boolean {
     return this.value <= other.value;
+  }
+
+  public subtractDays(days: number): DateOnly {
+    const date = new Date(this.value);
+    date.setDate(date.getDate() - days);
+
+    return new DateOnly({ value: date.toISOString().split('T')[0] });
   }
 
   /**

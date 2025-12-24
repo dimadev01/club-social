@@ -9,7 +9,6 @@ export interface ICreatePricingDto {
 }
 
 export interface IFindActivePricingDto {
-  date: string;
   dueCategory: DueCategory;
   memberCategory: MemberCategory;
 }
@@ -29,5 +28,5 @@ export interface IPricingDetailDto {
 
 export interface IUpdatePricingDto {
   amount: number;
-  effectiveTo: null | string;
+  effectiveFrom: null | string;
 }
