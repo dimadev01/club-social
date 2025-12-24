@@ -69,6 +69,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@internationalized/number": "^3.6.5"
+    "@internationalized/number": "^3.6.5",
+    "dayjs": "^1.11.19"
   }
 }
