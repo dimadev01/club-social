@@ -4,7 +4,7 @@ import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import {
   type MemberCategory,
-  MemberCategoryLabel,
+  MemberCategoryOptions,
 } from '@club-social/shared/members';
 import { DatePicker, InputNumber } from 'antd';
 
@@ -84,13 +84,7 @@ export function PricingForm({
           { message: 'La categoría de socio es requerida', required: true },
         ]}
       >
-        <Select
-          disabled={isEditMode}
-          options={Object.entries(MemberCategoryLabel).map(([key, value]) => ({
-            label: value,
-            value: key,
-          }))}
-        />
+        <Select disabled={isEditMode} options={MemberCategoryOptions} />
       </Form.Item>
 
       <Form.Item<PricingFormData>

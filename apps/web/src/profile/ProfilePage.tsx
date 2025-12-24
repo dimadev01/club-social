@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { useSessionUser } from '@/auth/useUser';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
-import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { Row } from '@/ui/Row';
 
 interface EmailFormSchema {
@@ -76,7 +75,6 @@ export function ProfilePage() {
                 disabled={isSubmittingProfile}
                 form="profileForm"
                 htmlType="submit"
-                icon={<SaveIcon />}
                 loading={isSubmittingProfile}
                 type="primary"
               >

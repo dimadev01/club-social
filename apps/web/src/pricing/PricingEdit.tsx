@@ -8,7 +8,6 @@ import { useNavigate, useParams } from 'react-router';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
-import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
@@ -61,7 +60,6 @@ export function PricingEdit() {
           disabled={isMutating}
           form="form"
           htmlType="submit"
-          icon={<SaveIcon />}
           loading={isMutating}
           type="primary"
         >

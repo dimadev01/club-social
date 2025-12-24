@@ -21,7 +21,6 @@ import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { EditIcon } from '@/ui/Icons/EditIcon';
 import { NavigateMember } from '@/ui/NavigateMember';
 import { NavigatePayment } from '@/ui/NavigatePayment';
 import { NotFound } from '@/ui/NotFound';
@@ -73,7 +72,6 @@ export function DueView() {
         canEdit && (
           <Button
             disabled={isMutating}
-            icon={<EditIcon />}
             onClick={() => navigate(appRoutes.dues.edit(id))}
             type="primary"
           >

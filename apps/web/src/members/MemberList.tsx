@@ -1,14 +1,11 @@
-import {
-  FileExcelOutlined,
-  MoreOutlined,
-  UserAddOutlined,
-} from '@ant-design/icons';
+import { MoreOutlined } from '@ant-design/icons';
 import { NumberFormat } from '@club-social/shared/lib';
 import {
   type IMemberPaginatedDto,
   type IMemberPaginatedExtraDto,
   MemberCategory,
   MemberCategoryLabel,
+  MemberCategoryOptions,
 } from '@club-social/shared/members';
 import { type PaginatedResponse } from '@club-social/shared/types';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
@@ -90,7 +87,6 @@ export function MemberListPage() {
         <Space.Compact>
           <Button
             disabled={!permissions.members.create}
-            icon={<UserAddOutlined />}
             onClick={() => navigate(appRoutes.members.new)}
             type="primary"
           >
@@ -101,7 +97,6 @@ export function MemberListPage() {
               items: [
                 {
                   disabled: isExporting,
-                  icon: <FileExcelOutlined />,
                   key: 'export',
                   label: 'Exportar',
                   onClick: () => exportData(exportQuery),
@@ -145,9 +140,10 @@ export function MemberListPage() {
             dataIndex: 'category',
             filteredValue: getFilterValue('category'),
             filterMode: 'tree',
-            filters: Object.entries(MemberCategoryLabel).map(
-              ([value, label]) => ({ text: label, value }),
-            ),
+            filters: MemberCategoryOptions.map(({ label, value }) => ({
+              text: label,
+              value,
+            })),
             render: (value: MemberCategory) => MemberCategoryLabel[value],
             title: 'Categoría',
             width: TABLE_COLUMN_WIDTHS.CATEGORY,

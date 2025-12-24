@@ -21,18 +21,10 @@ export function TableActions({
   return (
     <Space.Compact className={cn('ml-auto', className)} {...props}>
       <Tooltip title="Filtros por defecto">
-        <Button
-          icon={<FilterResetIcon />}
-          onClick={resetFilters}
-          type="default"
-        />
+        <Button icon={<FilterResetIcon />} onClick={resetFilters} type="text" />
       </Tooltip>
       <Tooltip title="Eliminar filtros">
-        <Button
-          icon={<FilterClearIcon />}
-          onClick={clearFilters}
-          type="default"
-        />
+        <Button icon={<FilterClearIcon />} onClick={clearFilters} type="text" />
       </Tooltip>
     </Space.Compact>
   );

@@ -5,7 +5,6 @@ import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
-import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 
@@ -59,7 +58,6 @@ export function UserEdit() {
           disabled={isMutating}
           form="form"
           htmlType="submit"
-          icon={<SaveIcon />}
           loading={isMutating}
           type="primary"
         >

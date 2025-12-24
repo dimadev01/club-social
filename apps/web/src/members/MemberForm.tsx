@@ -7,7 +7,7 @@ import {
   MaritalStatus,
   MaritalStatusLabel,
   MemberCategory,
-  MemberCategoryLabel,
+  MemberCategoryOptions,
   MemberNationality,
   MemberNationalityLabel,
   MemberSex,
@@ -104,14 +104,7 @@ export function MemberForm({
                 name="category"
                 rules={[{ required: true }]}
               >
-                <Select
-                  options={Object.entries(MemberCategoryLabel).map(
-                    ([key, value]) => ({
-                      label: value,
-                      value: key,
-                    }),
-                  )}
-                />
+                <Select options={MemberCategoryOptions} />
               </Form.Item>
 
               {isEditMode && (

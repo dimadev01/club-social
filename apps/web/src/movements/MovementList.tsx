@@ -1,6 +1,6 @@
 import type { PaginatedResponse } from '@club-social/shared/types';
 
-import { FileExcelOutlined, MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined } from '@ant-design/icons';
 import { NumberFormat } from '@club-social/shared/lib';
 import {
   type IMovementPaginatedDto,
@@ -21,7 +21,6 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -79,7 +78,6 @@ export function MovementList() {
         <Space.Compact>
           {permissions.movements.create && (
             <Button
-              icon={<AddNewIcon />}
               onClick={() => navigate(appRoutes.movements.new)}
               type="primary"
             >
@@ -91,7 +89,6 @@ export function MovementList() {
               items: [
                 {
                   disabled: isExporting,
-                  icon: <FileExcelOutlined />,
                   key: 'export',
                   label: 'Exportar',
                   onClick: () => exportData(exportQuery),

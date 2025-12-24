@@ -5,6 +5,7 @@ import { NumberFormat } from '@club-social/shared/lib';
 import {
   type MemberCategory,
   MemberCategoryLabel,
+  MemberCategoryOptions,
 } from '@club-social/shared/members';
 import { type IPricingPaginatedDto } from '@club-social/shared/pricing';
 import { keepPreviousData } from '@tanstack/react-query';
@@ -16,7 +17,6 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -62,7 +62,6 @@ export function PricingList() {
           {permissions.pricing.create && (
             <Button
               disabled={!permissions.pricing.create}
-              icon={<AddNewIcon />}
               onClick={() => navigate(appRoutes.pricing.new)}
               type="primary"
             >
@@ -120,12 +119,11 @@ export function PricingList() {
             align: 'center',
             dataIndex: 'memberCategory',
             filteredValue: getFilterValue('memberCategory'),
-            filters: Object.entries(MemberCategoryLabel).map(
-              ([value, label]) => ({
-                text: label,
-                value,
-              }),
-            ),
+            filterMode: 'tree',
+            filters: MemberCategoryOptions.map(({ label, value }) => ({
+              text: label,
+              value,
+            })),
             render: (memberCategory: MemberCategory) =>
               MemberCategoryLabel[memberCategory],
             title: 'Categoría de socio',

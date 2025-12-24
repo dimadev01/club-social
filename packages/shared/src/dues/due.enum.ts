@@ -12,6 +12,12 @@ export const DueCategoryLabel = {
   [DueCategory.MEMBERSHIP]: 'Cuota',
 } as const;
 
+export const DueCategorySort = {
+  [DueCategory.ELECTRICITY]: 2,
+  [DueCategory.GUEST]: 3,
+  [DueCategory.MEMBERSHIP]: 1,
+} as const;
+
 export const DueStatus = {
   PAID: 'paid',
   PARTIALLY_PAID: 'partially-paid',

@@ -1,6 +1,5 @@
 import type { PaginatedResponse } from '@club-social/shared/types';
 
-import { UserAddOutlined } from '@ant-design/icons';
 import {
   type IUserDetailDto,
   UserRole,
@@ -65,7 +64,6 @@ export function UserListPage() {
         <Space.Compact>
           <Button
             disabled={!permissions.users.create}
-            icon={<UserAddOutlined />}
             onClick={() => navigate(appRoutes.users.new)}
             type="primary"
           >

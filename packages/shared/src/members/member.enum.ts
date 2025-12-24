@@ -15,6 +15,21 @@ export const MemberCategoryLabel = {
   [MemberCategory.PRE_CADET]: 'Pre-cadete',
 } as const;
 
+export const MemberCategorySort = {
+  [MemberCategory.ADHERENT_MEMBER]: 4,
+  [MemberCategory.CADET]: 2,
+  [MemberCategory.MEMBER]: 1,
+  [MemberCategory.PRE_CADET]: 3,
+} as const;
+
+export const MemberCategoryOptions = Object.entries(MemberCategoryLabel)
+  .map(([key, value]) => ({ label: value, value: key }))
+  .sort(
+    (a, b) =>
+      MemberCategorySort[a.value as MemberCategory] -
+      MemberCategorySort[b.value as MemberCategory],
+  );
+
 export const FileStatus = {
   COMPLETED: 'completed',
   PENDING: 'pending',

@@ -1,10 +1,6 @@
 import type { PaginatedResponse } from '@club-social/shared/types';
 
-import {
-  FileExcelOutlined,
-  FilterOutlined,
-  MoreOutlined,
-} from '@ant-design/icons';
+import { FilterOutlined, MoreOutlined } from '@ant-design/icons';
 import { DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import {
@@ -33,7 +29,6 @@ import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { cn } from '@/shared/lib/utils';
-import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
@@ -101,7 +96,6 @@ export function PaymentList() {
           {permissions.payments.create && (
             <Button
               disabled={!permissions.payments.create}
-              icon={<AddNewIcon />}
               onClick={() => navigate(appRoutes.payments.new)}
               type="primary"
             >
@@ -113,7 +107,6 @@ export function PaymentList() {
               items: [
                 {
                   disabled: isExporting,
-                  icon: <FileExcelOutlined />,
                   key: 'export',
                   label: 'Exportar',
                   onClick: () => exportData(exportQuery),

@@ -201,7 +201,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       </Layout.Sider>
 
       <Layout>
-        <Layout.Content className="p-4">{children}</Layout.Content>
+        <Layout.Content className="p-4 xl:px-10">{children}</Layout.Content>
 
         <Layout.Footer className="p-4">
           <Flex align="center" gap="small" justify="space-between">

@@ -12,7 +12,6 @@ import { useNavigate, useParams } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { DateFormat } from '@/shared/lib/date-format';
 import { Card } from '@/ui/Card';
-import { EditIcon } from '@/ui/Icons/EditIcon';
 import { NotFound } from '@/ui/NotFound';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -41,7 +40,6 @@ export function MemberView() {
       actions={[
         canEdit && (
           <Button
-            icon={<EditIcon />}
             onClick={() => navigate(appRoutes.members.edit(id))}
             type="primary"
           >

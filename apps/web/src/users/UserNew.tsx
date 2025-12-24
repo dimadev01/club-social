@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
-import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 
@@ -48,7 +47,6 @@ export function UserNew() {
           disabled={isMutating}
           form="form"
           htmlType="submit"
-          icon={<SaveIcon />}
           loading={isMutating}
           type="primary"
         >

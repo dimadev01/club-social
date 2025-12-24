@@ -5,11 +5,11 @@ export function Row(props: RowProps) {
     <AntRow
       gutter={[
         {
-          sm: 16,
+          md: 16,
           xs: 8,
         },
         {
-          sm: 16,
+          md: 16,
           xs: 8,
         },
       ]}

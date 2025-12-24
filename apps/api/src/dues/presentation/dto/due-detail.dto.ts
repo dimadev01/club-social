@@ -3,6 +3,7 @@ import {
   DueStatus,
   IDueDetailDto,
 } from '@club-social/shared/dues';
+import { MemberCategory } from '@club-social/shared/members';
 import { UserStatus } from '@club-social/shared/users';
 
 export class DueDetailDto implements IDueDetailDto {
@@ -12,6 +13,7 @@ export class DueDetailDto implements IDueDetailDto {
   public createdBy: string;
   public date: string;
   public id: string;
+  public memberCategory: MemberCategory;
   public memberId: string;
   public memberName: string;
   public notes: null | string;

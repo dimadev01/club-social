@@ -1,3 +1,4 @@
+import { MemberCategory } from '../members';
 import { UserStatus } from '../users';
 import { DueCategory, DueStatus } from './due.enum';
 
@@ -16,6 +17,7 @@ export interface IDueDetailDto {
   createdBy: string;
   date: string;
   id: string;
+  memberCategory: MemberCategory;
   memberId: string;
   memberName: string;
   notes: null | string;

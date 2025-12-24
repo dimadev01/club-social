@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { Card } from '@/ui/Card';
-import { EditIcon } from '@/ui/Icons/EditIcon';
 import { NotFound } from '@/ui/NotFound';
 
 import { usePermissions } from './use-permissions';
@@ -33,7 +32,6 @@ export function UserView() {
       actions={[
         canEdit && (
           <Button
-            icon={<EditIcon />}
             onClick={() => navigate(appRoutes.users.edit(id))}
             type="primary"
           >

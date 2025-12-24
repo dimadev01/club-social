@@ -249,6 +249,7 @@ export class DuesController extends BaseController {
       createdBy: due.createdBy,
       date: due.date.value,
       id: due.id.value,
+      memberCategory: member.category,
       memberId: member.id.value,
       memberName: user.name,
       notes: due.notes,

@@ -8,7 +8,6 @@ import { appRoutes } from '@/app/app.enum';
 import { DateFormat } from '@/shared/lib/date-format';
 import { Card } from '@/ui/Card';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { EditIcon } from '@/ui/Icons/EditIcon';
 import { NotFound } from '@/ui/NotFound';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -37,7 +36,6 @@ export function PricingView() {
       actions={[
         canEdit && (
           <Button
-            icon={<EditIcon />}
             onClick={() => navigate(appRoutes.pricing.edit(id))}
             type="primary"
           >
