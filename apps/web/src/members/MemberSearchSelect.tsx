@@ -14,17 +14,17 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { useMemberSearch } from './useMemberSearch';
 
-export interface MemberSearchSelectProps extends Omit<
-  SelectProps,
-  'options' | 'showSearch'
-> {
+export interface MemberSearchSelectProps extends SelectProps {
   additionalOptions?: IMemberSearchResultDto[];
   defaultIds?: string[];
+  onMembersChange?: (members?: IMemberSearchResultDto[]) => void;
 }
 
 export function MemberSearchSelect({
   additionalOptions,
   loading,
+  onChange,
+  onMembersChange,
   value,
   ...props
 }: MemberSearchSelectProps) {
@@ -111,6 +111,13 @@ export function MemberSearchSelect({
       {...props}
       loading={isLoading}
       notFoundContent={<>{getNotFoundContent()}</>}
+      onChange={(value) => {
+        onChange?.(value);
+
+        onMembersChange?.(
+          members?.filter((member) => value.includes(member.id)),
+        );
+      }}
       onClear={handleOnClear}
       options={options}
       placeholder={props.placeholder ?? 'Buscar socio por nombre o email...'}

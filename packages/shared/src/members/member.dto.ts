@@ -66,6 +66,7 @@ export interface IMemberPaginatedExtraDto {
 }
 
 export interface IMemberSearchResultDto {
+  category: MemberCategory;
   id: string;
   name: string;
   status: UserStatus;

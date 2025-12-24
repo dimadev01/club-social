@@ -4,8 +4,10 @@ import type dayjs from 'dayjs';
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { DatePicker, Input, InputNumber } from 'antd';
+import { useEffect, useState } from 'react';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
+import { useActivePricing } from '@/pricing/useActivePricing';
 import { DateFormats } from '@/shared/lib/date-format';
 import { Form } from '@/ui/Form';
 import { Select } from '@/ui/Select';
@@ -37,8 +39,24 @@ export function DueForm({
   mode,
   onSubmit,
 }: DueFormProps) {
+  const [selectedFirstMember, setSelectedFirstMember] =
+    useState<IMemberSearchResultDto>();
+
   const [form] = Form.useForm<DueFormData>();
+  const { setFieldValue } = form;
   const formCategory = Form.useWatch('category', form);
+
+  const { data: activePricing, isLoading: isActivePricingLoading } =
+    useActivePricing({
+      dueCategory: formCategory,
+      memberCategory: selectedFirstMember?.category,
+    });
+
+  useEffect(() => {
+    if (activePricing) {
+      setFieldValue('amount', NumberFormat.fromCents(activePricing.amount));
+    }
+  }, [activePricing, setFieldValue]);
 
   const isEditMode = mode === 'edit';
 
@@ -81,6 +99,11 @@ export function DueForm({
           disabled={isEditMode}
           loading={loading}
           mode={isEditMode ? undefined : 'multiple'}
+          onMembersChange={(data) => {
+            if (!selectedFirstMember && data?.[0]) {
+              setSelectedFirstMember(data[0]);
+            }
+          }}
           placeholder="Buscar y seleccionar socios..."
         />
       </Form.Item>
@@ -112,6 +135,7 @@ export function DueForm({
       >
         <InputNumber<number>
           className="w-full"
+          disabled={isActivePricingLoading}
           formatter={(value) => NumberFormat.format(Number(value))}
           min={0}
           parser={(value) => NumberFormat.parse(String(value))}

@@ -1,3 +1,6 @@
+import type { DueCategory } from '@club-social/shared/dues';
+import type { MemberCategory } from '@club-social/shared/members';
+
 import { createQueryKeyStore } from '@lukemorales/query-key-factory';
 
 import type { TableQuery } from '@/ui/Table/useTable';
@@ -27,6 +30,10 @@ export const queryKeys = createQueryKeyStore({
   },
 
   pricing: {
+    active: (dueCategory?: DueCategory, memberCategory?: MemberCategory) => [
+      dueCategory,
+      memberCategory,
+    ],
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
   },

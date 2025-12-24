@@ -220,6 +220,7 @@ export class MembersController extends BaseController {
     });
 
     return data.map(({ member, user }) => ({
+      category: member.category,
       email: user.email.value,
       id: member.id.value,
       name: user.name,
