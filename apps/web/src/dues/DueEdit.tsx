@@ -2,12 +2,13 @@ import type { IUpdateDueDto } from '@club-social/shared/dues';
 
 import { DueStatus, DueStatusLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
-import { App, Button } from 'antd';
+import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
@@ -66,15 +67,9 @@ export function DueEdit() {
   return (
     <Page
       actions={[
-        <Button
-          disabled={isMutating}
-          form="form"
-          htmlType="submit"
-          loading={isMutating}
-          type="primary"
-        >
+        <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Actualizar deuda
-        </Button>,
+        </FormSubmitButton>,
       ]}
       backButton
       extra={DueStatusLabel[due.status]}

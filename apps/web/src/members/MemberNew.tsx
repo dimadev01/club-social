@@ -2,13 +2,14 @@ import type { ICreateMemberDto } from '@club-social/shared/members';
 import type { ParamId } from '@club-social/shared/types';
 
 import { FileStatus, MemberCategory } from '@club-social/shared/members';
-import { App, Button } from 'antd';
+import { App } from 'antd';
 import { useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
+import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
@@ -59,15 +60,9 @@ export function MemberNew() {
   return (
     <Page
       actions={[
-        <Button
-          disabled={isMutating}
-          form="form"
-          htmlType="submit"
-          loading={isMutating}
-          type="primary"
-        >
+        <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Crear socio
-        </Button>,
+        </FormSubmitButton>,
       ]}
       backButton
       title="Nuevo socio"

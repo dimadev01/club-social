@@ -16,6 +16,7 @@ import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NotFound } from '@/ui/NotFound';
+import { Page } from '@/ui/Page';
 import { VoidModal } from '@/ui/VoidModal';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -54,7 +55,7 @@ export function MovementView() {
     permissions.movements.void && movement.status === MovementStatus.REGISTERED;
 
   return (
-    <Card
+    <Page
       actions={[
         canVoid && (
           <Button
@@ -107,6 +108,6 @@ export function MovementView() {
         }}
         open={isVoidModalOpen}
       />
-    </Card>
+    </Page>
   );
 }

@@ -1,10 +1,11 @@
 import type { IUpdateUserDto } from '@club-social/shared/users';
 
-import { App, Button } from 'antd';
+import { App } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 
@@ -54,15 +55,9 @@ export function UserEdit() {
   return (
     <Page
       actions={[
-        <Button
-          disabled={isMutating}
-          form="form"
-          htmlType="submit"
-          loading={isMutating}
-          type="primary"
-        >
+        <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Actualizar usuario
-        </Button>,
+        </FormSubmitButton>,
       ]}
       backButton
       title={user.name}

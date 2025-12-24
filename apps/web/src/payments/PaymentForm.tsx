@@ -29,7 +29,7 @@ import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { DateFormat, DateFormats } from '@/shared/lib/date-format';
 import { Card } from '@/ui/Card';
-import { Form } from '@/ui/Form';
+import { Form } from '@/ui/Form/Form';
 import { Table } from '@/ui/Table/Table';
 import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 

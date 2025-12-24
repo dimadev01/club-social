@@ -1,13 +1,14 @@
 import type { IUpdatePricingDto } from '@club-social/shared/pricing';
 
 import { NumberFormat } from '@club-social/shared/lib';
-import { App, Button } from 'antd';
+import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
+import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
@@ -56,15 +57,9 @@ export function PricingEdit() {
   return (
     <Page
       actions={[
-        <Button
-          disabled={isMutating}
-          form="form"
-          htmlType="submit"
-          loading={isMutating}
-          type="primary"
-        >
+        <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Actualizar precio
-        </Button>,
+        </FormSubmitButton>,
       ]}
       backButton
       title="Editar precio"

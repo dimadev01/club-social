@@ -9,6 +9,7 @@ import { DateFormat } from '@/shared/lib/date-format';
 import { Card } from '@/ui/Card';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NotFound } from '@/ui/NotFound';
+import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
 import { usePricing } from './usePricing';
@@ -32,7 +33,7 @@ export function PricingView() {
   const canEdit = permissions.pricing.update && pricing.effectiveTo === null;
 
   return (
-    <Card
+    <Page
       actions={[
         canEdit && (
           <Button
@@ -51,17 +52,20 @@ export function PricingView() {
         column={md ? 2 : 1}
         layout={md ? 'horizontal' : 'vertical'}
       >
-        <Descriptions.Item label="Fecha">
+        <Descriptions.Item label="Vigente desde">
           {DateFormat.date(pricing.effectiveFrom)}
         </Descriptions.Item>
-        <Descriptions.Item label="Monto">
-          {NumberFormat.formatCents(pricing.amount)}
+        <Descriptions.Item label="Vigente hasta">
+          {pricing.effectiveTo ? DateFormat.date(pricing.effectiveTo) : '-'}
         </Descriptions.Item>
         <Descriptions.Item label="Tipo de deuda">
           {DueCategoryLabel[pricing.dueCategory]}
         </Descriptions.Item>
         <Descriptions.Item label="Categoría de socio">
           {MemberCategoryLabel[pricing.memberCategory]}
+        </Descriptions.Item>
+        <Descriptions.Item label="Monto">
+          {NumberFormat.formatCents(pricing.amount)}
         </Descriptions.Item>
       </Descriptions>
 
@@ -74,6 +78,6 @@ export function PricingView() {
         updatedAt={pricing.updatedAt}
         updatedBy={pricing.updatedBy}
       />
-    </Card>
+    </Page>
   );
 }

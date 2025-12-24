@@ -17,7 +17,7 @@ import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { Button, Col, DatePicker, Empty, Input, Space, Tooltip } from 'antd';
 
 import { Card } from '@/ui/Card';
-import { Form } from '@/ui/Form';
+import { Form } from '@/ui/Form/Form';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { Row } from '@/ui/Row';
 import { Select } from '@/ui/Select';

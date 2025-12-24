@@ -1,12 +1,13 @@
 import type { ParamId } from '@club-social/shared/types';
 import type { ICreateUserDto } from '@club-social/shared/users';
 
-import { App, Button } from 'antd';
+import { App } from 'antd';
 import { useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 
@@ -43,15 +44,9 @@ export function UserNew() {
   return (
     <Page
       actions={[
-        <Button
-          disabled={isMutating}
-          form="form"
-          htmlType="submit"
-          loading={isMutating}
-          type="primary"
-        >
+        <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Crear usuario
-        </Button>,
+        </FormSubmitButton>,
       ]}
       backButton
       title="Nuevo usuario"

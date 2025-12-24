@@ -13,6 +13,7 @@ import { appRoutes } from '@/app/app.enum';
 import { DateFormat } from '@/shared/lib/date-format';
 import { Card } from '@/ui/Card';
 import { NotFound } from '@/ui/NotFound';
+import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
 import { useMemberById } from './useMemberById';
@@ -36,7 +37,7 @@ export function MemberView() {
   const canEdit = permissions.members.update;
 
   return (
-    <Card
+    <Page
       actions={[
         canEdit && (
           <Button
@@ -110,6 +111,6 @@ export function MemberView() {
             : '-'}
         </Descriptions.Item>
       </Descriptions>
-    </Card>
+    </Page>
   );
 }

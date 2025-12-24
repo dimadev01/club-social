@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { Card } from '@/ui/Card';
 import { NotFound } from '@/ui/NotFound';
+import { Page } from '@/ui/Page';
 
 import { usePermissions } from './use-permissions';
 import { useUser } from './useUser';
@@ -28,7 +29,7 @@ export function UserView() {
   const canEdit = permissions.users.update;
 
   return (
-    <Card
+    <Page
       actions={[
         canEdit && (
           <Button
@@ -54,6 +55,6 @@ export function UserView() {
           {UserStatusLabel[user.status]}
         </Descriptions.Item>
       </Descriptions>
-    </Card>
+    </Page>
   );
 }

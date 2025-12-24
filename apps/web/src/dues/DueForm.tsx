@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useActivePricing } from '@/pricing/useActivePricing';
 import { DateFormats } from '@/shared/lib/date-format';
-import { Form } from '@/ui/Form';
+import { Form } from '@/ui/Form/Form';
 import { Select } from '@/ui/Select';
 
 export interface DueFormData {

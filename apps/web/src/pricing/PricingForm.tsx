@@ -9,7 +9,7 @@ import {
 import { DatePicker, InputNumber } from 'antd';
 
 import { DateFormats } from '@/shared/lib/date-format';
-import { Form } from '@/ui/Form';
+import { Form } from '@/ui/Form/Form';
 import { Select } from '@/ui/Select';
 
 export interface PricingFormData {
@@ -55,7 +55,6 @@ export function PricingForm({
         <DatePicker
           allowClear={false}
           className="w-full"
-          disabled={isEditMode}
           format={DateFormats.date}
           picker="date"
         />

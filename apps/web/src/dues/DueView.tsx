@@ -24,6 +24,7 @@ import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NavigateMember } from '@/ui/NavigateMember';
 import { NavigatePayment } from '@/ui/NavigatePayment';
 import { NotFound } from '@/ui/NotFound';
+import { Page } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { VoidModal } from '@/ui/VoidModal';
@@ -67,7 +68,7 @@ export function DueView() {
   const canVoid = permissions.dues.void && due.status === DueStatus.PENDING;
 
   return (
-    <Card
+    <Page
       actions={[
         canEdit && (
           <Button
@@ -170,6 +171,6 @@ export function DueView() {
         }}
         open={isVoidModalOpen}
       />
-    </Card>
+    </Page>
   );
 }

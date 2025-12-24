@@ -10,7 +10,7 @@ import {
 import { DatePicker, Input, InputNumber } from 'antd';
 
 import { DateFormats } from '@/shared/lib/date-format';
-import { Form } from '@/ui/Form';
+import { Form } from '@/ui/Form/Form';
 import { Select } from '@/ui/Select';
 
 export interface MovementFormData {

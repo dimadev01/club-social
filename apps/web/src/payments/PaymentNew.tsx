@@ -2,7 +2,7 @@ import type { ICreatePaymentDto } from '@club-social/shared/payments';
 import type { ParamId } from '@club-social/shared/types';
 
 import { NumberFormat } from '@club-social/shared/lib';
-import { App, Button } from 'antd';
+import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate, useSearchParams } from 'react-router';
 
@@ -10,6 +10,7 @@ import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
+import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
@@ -60,15 +61,9 @@ export function PaymentNew() {
   return (
     <Page
       actions={[
-        <Button
-          disabled={isMutating}
-          form="form"
-          htmlType="submit"
-          loading={isMutating}
-          type="primary"
-        >
+        <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Crear pago
-        </Button>,
+        </FormSubmitButton>,
       ]}
       backButton
       title="Nuevo pago"

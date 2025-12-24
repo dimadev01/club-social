@@ -23,6 +23,7 @@ import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NavigateDue } from '@/ui/NavigateDue';
 import { NavigateMember } from '@/ui/NavigateMember';
 import { NotFound } from '@/ui/NotFound';
+import { Page } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { VoidModal } from '@/ui/VoidModal';
@@ -66,7 +67,7 @@ export function PaymentView() {
     permissions.payments.void && payment.status === PaymentStatus.PAID;
 
   return (
-    <Card
+    <Page
       actions={[
         canVoid && (
           <Button
@@ -163,6 +164,6 @@ export function PaymentView() {
         }}
         open={isVoidModalOpen}
       />
-    </Card>
+    </Page>
   );
 }
