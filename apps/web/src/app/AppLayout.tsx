@@ -23,7 +23,7 @@ import { type PropsWithChildren, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
-import { useUser } from '@/auth/useUser';
+import { useSessionUser } from '@/auth/useUser';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { AuditLogsIcon } from '@/ui/Icons/AuditLogsIcon';
 import { DashboardIcon } from '@/ui/Icons/DashboardIcon';
@@ -31,6 +31,7 @@ import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { LogoutIcon } from '@/ui/Icons/LogoutIcon';
 import { MovementsIcon } from '@/ui/Icons/MovementsIcon';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
+import { PricingIcon } from '@/ui/Icons/PricesIcon';
 import { UsersIcon } from '@/ui/Icons/UsersIcon';
 import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
 import { usePermissions } from '@/users/use-permissions';
@@ -50,7 +51,7 @@ export function AppLayout({ children }: PropsWithChildren) {
     true,
   );
 
-  const user = useUser();
+  const user = useSessionUser();
 
   const permissions = usePermissions();
 
@@ -100,6 +101,14 @@ export function AppLayout({ children }: PropsWithChildren) {
       key: appRoutes.users.list,
       label: 'Usuarios',
     });
+
+    if (permissions.pricing.list) {
+      menuItems.push({
+        icon: <PricingIcon />,
+        key: appRoutes.pricing.list,
+        label: 'Precios',
+      });
+    }
 
     if (permissions.auditLogs.list) {
       menuItems.push({

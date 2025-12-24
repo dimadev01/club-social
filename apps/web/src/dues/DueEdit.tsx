@@ -4,12 +4,10 @@ import { DueStatus, DueStatusLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { App, Button } from 'antd';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
-import { Form } from '@/ui/Form';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
@@ -24,9 +22,6 @@ export function DueEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [form] = Form.useForm<DueFormData>();
-  const { setFieldsValue } = form;
-
   const { data: due, isLoading } = useDue(id);
 
   const updateDueMutation = useMutation<unknown, Error, IUpdateDueDto>({
@@ -36,18 +31,6 @@ export function DueEdit() {
       navigate(-1);
     },
   });
-
-  useEffect(() => {
-    if (due) {
-      setFieldsValue({
-        amount: NumberFormat.fromCents(due.amount),
-        category: due.category,
-        date: dayjs.utc(due.date),
-        memberIds: [due.memberId],
-        notes: due.notes,
-      });
-    }
-  }, [due, setFieldsValue]);
 
   const handleSubmit = (values: DueFormData) => {
     const amount = NumberFormat.toCents(values.amount);

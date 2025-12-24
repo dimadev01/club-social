@@ -18,7 +18,6 @@ import {
 } from '@/shared/application/app-logger';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
-import { PublicRoute } from '@/shared/presentation/decorators/public-route.decorator';
 import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
@@ -37,7 +36,6 @@ import { PricingDetailDto } from './dto/pricing.dto';
 import { UpdatePricingRequestDto } from './dto/update-pricing.dto';
 
 @Controller('pricing')
-@PublicRoute()
 export class PricingController extends BaseController {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
@@ -59,7 +57,7 @@ export class PricingController extends BaseController {
     const { id } = this.handleResult(
       await this.createPricingUseCase.execute({
         amount: body.amount,
-        createdBy: session?.user.name ?? 'System',
+        createdBy: session.user.name,
         dueCategory: body.dueCategory,
         effectiveFrom: body.effectiveFrom,
         memberCategory: body.memberCategory,
@@ -80,7 +78,7 @@ export class PricingController extends BaseController {
         amount: body.amount,
         effectiveFrom: body.effectiveFrom,
         id: request.id,
-        updatedBy: session?.user.name ?? 'System',
+        updatedBy: session.user.name,
       }),
     );
   }

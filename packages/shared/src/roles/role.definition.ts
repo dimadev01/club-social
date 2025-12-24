@@ -7,6 +7,7 @@ export const statements = {
   [Resource.MEMBERS]: ['create', 'list', 'get', 'update', 'void'],
   [Resource.MOVEMENTS]: ['create', 'list', 'get', 'void'],
   [Resource.PAYMENTS]: ['create', 'list', 'get', 'void'],
+  [Resource.PRICING]: ['create', 'list', 'get', 'update'],
   [Resource.USERS]: ['create', 'list', 'get', 'update', 'void'],
 } satisfies Statement;
 
@@ -17,6 +18,7 @@ export const roleStatements = {
     [Resource.MEMBERS]: ['create', 'list', 'get', 'update', 'void'],
     [Resource.MOVEMENTS]: ['create', 'list', 'get', 'void'],
     [Resource.PAYMENTS]: ['create', 'list', 'get', 'void'],
+    [Resource.PRICING]: ['create', 'list', 'get', 'update'],
     [Resource.USERS]: ['create', 'list', 'get', 'update', 'void'],
   },
   [UserRole.MEMBER]: {
@@ -25,6 +27,7 @@ export const roleStatements = {
     [Resource.MEMBERS]: [],
     [Resource.MOVEMENTS]: [],
     [Resource.PAYMENTS]: ['get', 'list'],
+    [Resource.PRICING]: [],
     [Resource.USERS]: [],
   },
   [UserRole.STAFF]: {
@@ -33,6 +36,7 @@ export const roleStatements = {
     [Resource.MEMBERS]: ['get', 'create', 'update', 'list'],
     [Resource.MOVEMENTS]: ['get', 'create', 'void', 'list'],
     [Resource.PAYMENTS]: ['get', 'create', 'void', 'list'],
-    [Resource.USERS]: ['get', 'update', 'list'],
+    [Resource.PRICING]: ['get', 'create', 'update', 'list'],
+    [Resource.USERS]: [],
   },
 } satisfies RoleStatements;

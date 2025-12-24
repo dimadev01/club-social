@@ -81,7 +81,6 @@ export function AuditLogsList() {
             dataIndex: 'createdBy',
             render: (createdBy: string) => createdBy,
             title: 'Creado por',
-            width: 200,
           },
           {
             align: 'center',
@@ -94,7 +93,7 @@ export function AuditLogsList() {
             })),
             render: (entity: AuditEntity) => AuditEntityLabel[entity],
             title: 'Entidad',
-            width: 150,
+            width: TABLE_COLUMN_WIDTHS.CATEGORY,
           },
           {
             align: 'center',
@@ -107,7 +106,7 @@ export function AuditLogsList() {
             })),
             render: (action: AuditAction) => AuditActionLabel[action],
             title: 'Acción',
-            width: 150,
+            width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
           {
             dataIndex: 'id',

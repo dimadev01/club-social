@@ -2,7 +2,7 @@ import { MailOutlined, UserOutlined } from '@ant-design/icons';
 import { App, Button, Card, Col, Form, Input, Space } from 'antd';
 import { useState } from 'react';
 
-import { useUser } from '@/auth/useUser';
+import { useSessionUser } from '@/auth/useUser';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { Row } from '@/ui/Row';
@@ -19,7 +19,7 @@ interface ProfileFormSchema {
 export function ProfilePage() {
   const { message } = App.useApp();
 
-  const user = useUser();
+  const user = useSessionUser();
 
   const [profileForm] = Form.useForm<ProfileFormSchema>();
   const [emailForm] = Form.useForm<EmailFormSchema>();

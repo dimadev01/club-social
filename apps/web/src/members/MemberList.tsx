@@ -139,7 +139,6 @@ export function MemberListPage() {
             sorter: true,
             sortOrder: getSortOrder('id'),
             title: 'Socio',
-            width: 200,
           },
           {
             align: 'center',
@@ -151,7 +150,7 @@ export function MemberListPage() {
             ),
             render: (value: MemberCategory) => MemberCategoryLabel[value],
             title: 'Categoría',
-            width: 150,
+            width: TABLE_COLUMN_WIDTHS.CATEGORY,
           },
           {
             align: 'center',
@@ -164,7 +163,7 @@ export function MemberListPage() {
             onFilter: (value, record) => record.userStatus === value,
             render: (value: UserStatus) => UserStatusLabel[value],
             title: 'Estado',
-            width: 100,
+            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
             dataIndex: 'email',
@@ -234,7 +233,7 @@ export function MemberListPage() {
               </Space.Compact>
             ),
             title: 'Acciones',
-            width: 100,
+            width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
         ]}
         dataSource={members?.data}

@@ -1,9 +1,20 @@
 import { Action } from '@club-social/shared/roles';
 import { Resource } from '@club-social/shared/roles';
+import { UserRole } from '@club-social/shared/users';
+
+import { useSessionUser } from '@/auth/useUser';
 
 import { useHasPermission } from './use-has-permission';
 
 export const usePermissions = () => {
+  const { role } = useSessionUser();
+
+  const isAdmin = role === UserRole.ADMIN;
+  const isStaff = role === UserRole.STAFF;
+  // const isMember = role === UserRole.MEMBER;
+
+  const canListAll = isAdmin || isStaff;
+
   return {
     auditLogs: {
       list: useHasPermission(Resource.AUDIT_LOGS, Action.LIST),
@@ -12,6 +23,7 @@ export const usePermissions = () => {
       create: useHasPermission(Resource.DUES, Action.CREATE),
       get: useHasPermission(Resource.DUES, Action.GET),
       list: useHasPermission(Resource.DUES, Action.LIST),
+      listAll: useHasPermission(Resource.DUES, Action.LIST) && canListAll,
       update: useHasPermission(Resource.DUES, Action.UPDATE),
       void: useHasPermission(Resource.DUES, Action.VOID),
     } as const,
@@ -33,9 +45,16 @@ export const usePermissions = () => {
       create: useHasPermission(Resource.PAYMENTS, Action.CREATE),
       get: useHasPermission(Resource.PAYMENTS, Action.GET),
       list: useHasPermission(Resource.PAYMENTS, Action.LIST),
+      listAll: useHasPermission(Resource.PAYMENTS, Action.LIST) && canListAll,
       update: useHasPermission(Resource.PAYMENTS, Action.UPDATE),
       void: useHasPermission(Resource.PAYMENTS, Action.VOID),
     },
+    pricing: {
+      create: useHasPermission(Resource.PRICING, Action.CREATE),
+      get: useHasPermission(Resource.PRICING, Action.GET),
+      list: useHasPermission(Resource.PRICING, Action.LIST),
+      update: useHasPermission(Resource.PRICING, Action.UPDATE),
+    } as const,
     users: {
       create: useHasPermission(Resource.USERS, Action.CREATE),
       delete: useHasPermission(Resource.USERS, Action.DELETE),

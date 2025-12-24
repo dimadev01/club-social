@@ -5,14 +5,15 @@ import { DateFormat } from '@/shared/lib/date-format';
 interface Props {
   createdAt: string;
   createdBy: string;
+  showVoidInfo?: boolean;
   updatedAt: string;
   updatedBy: string;
-  voidedAt: null | string;
-  voidedBy: null | string;
-  voidReason: null | string;
+  voidedAt?: null | string;
+  voidedBy?: null | string;
+  voidReason?: null | string;
 }
 
-export function DescriptionsAudit(props: Props) {
+export function DescriptionsAudit({ showVoidInfo = true, ...props }: Props) {
   const { md } = Grid.useBreakpoint();
 
   return (
@@ -33,15 +34,19 @@ export function DescriptionsAudit(props: Props) {
       <Descriptions.Item label="Actualizado el">
         {DateFormat.dateTime(props.updatedAt)}
       </Descriptions.Item>
-      <Descriptions.Item label="Anulado por">
-        {props.voidedBy ?? '-'}
-      </Descriptions.Item>
-      <Descriptions.Item label="Anulado el">
-        {props.voidedAt ? DateFormat.dateTime(props.voidedAt) : '-'}
-      </Descriptions.Item>
-      <Descriptions.Item label="Razón de anulación">
-        {props.voidReason ?? '-'}
-      </Descriptions.Item>
+      {showVoidInfo && (
+        <>
+          <Descriptions.Item label="Anulado por">
+            {props.voidedBy ?? '-'}
+          </Descriptions.Item>
+          <Descriptions.Item label="Anulado el">
+            {props.voidedAt ? DateFormat.dateTime(props.voidedAt) : '-'}
+          </Descriptions.Item>
+          <Descriptions.Item label="Razón de anulación">
+            {props.voidReason ?? '-'}
+          </Descriptions.Item>
+        </>
+      )}
     </Descriptions>
   );
 }

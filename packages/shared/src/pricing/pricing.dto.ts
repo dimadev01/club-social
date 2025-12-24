@@ -26,6 +26,17 @@ export interface IPricingDetailDto {
   updatedBy: string;
 }
 
+export interface IPricingPaginatedDto {
+  amount: number;
+  createdAt: string;
+  createdBy: string;
+  dueCategory: DueCategory;
+  effectiveFrom: string;
+  effectiveTo: null | string;
+  id: string;
+  memberCategory: MemberCategory;
+}
+
 export interface IUpdatePricingDto {
   amount: number;
   effectiveFrom: null | string;

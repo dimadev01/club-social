@@ -1,5 +1,5 @@
 import { useSession } from './useSession';
 
-export function useUser() {
+export function useSessionUser() {
   return useSession().user;
 }

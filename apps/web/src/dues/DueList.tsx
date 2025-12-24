@@ -16,7 +16,7 @@ import {
 import { NumberFormat } from '@club-social/shared/lib';
 import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Dropdown, Space, Tooltip } from 'antd';
+import { Button, Dropdown, Space, type TableColumnType, Tooltip } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -121,12 +121,15 @@ export function DueList() {
       title="Deudas"
     >
       <PageTableActions>
-        <TableMembersSearch
-          isLoading={isSelectedMembersLoading}
-          onFilterChange={(value) => setFilter('memberId', value)}
-          selectedMembers={selectedMembers}
-          value={getFilterValue('memberId') ?? undefined}
-        />
+        {permissions.dues.listAll && (
+          <TableMembersSearch
+            isLoading={isSelectedMembersLoading}
+            onFilterChange={(value) => setFilter('memberId', value)}
+            selectedMembers={selectedMembers}
+            value={getFilterValue('memberId') ?? undefined}
+          />
+        )}
+
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
@@ -157,17 +160,20 @@ export function DueList() {
             filteredValue: getFilterValue('date'),
             render: (date: string) => DateFormat.date(date),
             title: 'Fecha',
-            width: TABLE_COLUMN_WIDTHS.DATE,
           },
-          {
-            dataIndex: 'memberId',
-            render: (memberId: string, record: IDuePaginatedDto) => (
-              <Link to={appRoutes.members.view(memberId)}>
-                {record.memberName}
-              </Link>
-            ),
-            title: 'Socio',
-          },
+          ...(permissions.dues.listAll
+            ? [
+                {
+                  dataIndex: 'memberId',
+                  render: (memberId: string, record: IDuePaginatedDto) => (
+                    <Link to={appRoutes.members.view(memberId)}>
+                      {record.memberName}
+                    </Link>
+                  ),
+                  title: 'Socio',
+                } satisfies TableColumnType<IDuePaginatedDto>,
+              ]
+            : []),
           {
             align: 'center',
             dataIndex: 'category',
@@ -200,60 +206,70 @@ export function DueList() {
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },
-          {
-            align: 'center',
-            dataIndex: 'userStatus',
-            filteredValue: getFilterValue('userStatus'),
-            filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
-              text: label,
-              value,
-            })),
-            render: (value: UserStatus) => UserStatusLabel[value],
-            title: 'Estado Socio',
-            width: TABLE_COLUMN_WIDTHS.STATUS + 50,
-          },
-          {
-            align: 'center',
-            fixed: 'right',
-            render: (_, record) => (
-              <Space.Compact size="small">
-                <Tooltip title="Filtrar por este socio">
-                  <Link
-                    to={{
-                      pathname: appRoutes.dues.list,
-                      search: new URLSearchParams({
-                        filters: `memberId:${record.memberId}`,
-                      }).toString(),
-                    }}
-                  >
-                    <Button
-                      disabled={getFilterValue('memberId')?.includes(
-                        record.memberId,
-                      )}
-                      icon={<FilterOutlined />}
-                      onClick={() => setFilteredMemberIds([record.memberId])}
-                      type="text"
-                    />
-                  </Link>
-                </Tooltip>
+          ...(permissions.dues.listAll
+            ? [
+                {
+                  align: 'center',
+                  dataIndex: 'userStatus',
+                  filteredValue: getFilterValue('userStatus'),
+                  filters: Object.entries(UserStatusLabel).map(
+                    ([value, label]) => ({
+                      text: label,
+                      value,
+                    }),
+                  ),
+                  render: (value: UserStatus) => UserStatusLabel[value],
+                  title: 'Estado Socio',
+                  width: TABLE_COLUMN_WIDTHS.STATUS,
+                } satisfies TableColumnType<IDuePaginatedDto>,
+                {
+                  align: 'center',
+                  fixed: 'right',
+                  render: (_, record) => (
+                    <Space.Compact size="small">
+                      <Tooltip title="Filtrar por este socio">
+                        <Link
+                          to={{
+                            pathname: appRoutes.dues.list,
+                            search: new URLSearchParams({
+                              filters: `memberId:${record.memberId}`,
+                            }).toString(),
+                          }}
+                        >
+                          <Button
+                            disabled={getFilterValue('memberId')?.includes(
+                              record.memberId,
+                            )}
+                            icon={<FilterOutlined />}
+                            onClick={() =>
+                              setFilteredMemberIds([record.memberId])
+                            }
+                            type="text"
+                          />
+                        </Link>
+                      </Tooltip>
 
-                <Tooltip title="Nuevo pago">
-                  <Link
-                    to={`${appRoutes.payments.new}?memberId=${record.memberId}`}
-                  >
-                    <Button
-                      disabled={record.status === DueStatus.PAID}
-                      icon={<PaymentsIcon />}
-                      onClick={() => setFilteredMemberIds([record.memberId])}
-                      type="text"
-                    />
-                  </Link>
-                </Tooltip>
-              </Space.Compact>
-            ),
-            title: 'Acciones',
-            width: TABLE_COLUMN_WIDTHS.ACTIONS,
-          },
+                      <Tooltip title="Nuevo pago">
+                        <Link
+                          to={`${appRoutes.payments.new}?memberId=${record.memberId}`}
+                        >
+                          <Button
+                            disabled={record.status === DueStatus.PAID}
+                            icon={<PaymentsIcon />}
+                            onClick={() =>
+                              setFilteredMemberIds([record.memberId])
+                            }
+                            type="text"
+                          />
+                        </Link>
+                      </Tooltip>
+                    </Space.Compact>
+                  ),
+                  title: 'Acciones',
+                  width: TABLE_COLUMN_WIDTHS.ACTIONS,
+                } satisfies TableColumnType<IDuePaginatedDto>,
+              ]
+            : []),
         ]}
         dataSource={dues?.data}
         loading={isLoading}

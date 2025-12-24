@@ -1,7 +1,6 @@
 import type { IUpdateUserDto } from '@club-social/shared/users';
 
-import { App, Button, Form } from 'antd';
-import { useEffect } from 'react';
+import { App, Button } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
@@ -20,9 +19,6 @@ export function UserEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [form] = Form.useForm<UserFormData>();
-  const { setFieldsValue } = form;
-
   const { data: user, isLoading } = useUser(id);
 
   const updateUserMutation = useMutation<unknown, Error, IUpdateUserDto>({
@@ -32,17 +28,6 @@ export function UserEdit() {
       navigate(-1);
     },
   });
-
-  useEffect(() => {
-    if (user) {
-      setFieldsValue({
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        status: user.status,
-      });
-    }
-  }, [user, setFieldsValue]);
 
   const handleSubmit = (values: UserFormData) => {
     updateUserMutation.mutate({

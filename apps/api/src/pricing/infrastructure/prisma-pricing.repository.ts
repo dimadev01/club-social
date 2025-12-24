@@ -100,6 +100,15 @@ export class PrismaPricingRepository implements PricingRepository {
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<PricingPaginatedModel, never>> {
     const where: PricingWhereInput = { deletedAt: null };
+
+    if (params.filters?.dueCategory) {
+      where.dueCategory = { in: params.filters.dueCategory };
+    }
+
+    if (params.filters?.memberCategory) {
+      where.memberCategory = { in: params.filters.memberCategory };
+    }
+
     const orderBy: PricingOrderByWithRelationInput[] = [
       { dueCategory: 'asc' },
       { memberCategory: 'asc' },

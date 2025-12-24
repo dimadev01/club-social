@@ -5,13 +5,11 @@ import type {
 
 import { App, Button } from 'antd';
 import dayjs from 'dayjs';
-import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
-import { Form } from '@/ui/Form';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
@@ -26,9 +24,6 @@ export function MemberEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [form] = Form.useForm<MemberFormData>();
-  const { setFieldsValue } = form;
-
   const { data: member, isLoading } = useMemberById(id);
 
   const updateMemberMutation = useMutation<
@@ -42,31 +37,6 @@ export function MemberEdit() {
       navigate(-1);
     },
   });
-
-  useEffect(() => {
-    if (member) {
-      setFieldsValue({
-        address: {
-          cityName: member.address?.cityName ?? '',
-          stateName: member.address?.stateName ?? '',
-          street: member.address?.street ?? '',
-          zipCode: member.address?.zipCode ?? '',
-        },
-        birthDate: member.birthDate ? dayjs.utc(member.birthDate) : null,
-        category: member.category,
-        documentID: member.documentID ?? '',
-        email: member.email,
-        fileStatus: member.fileStatus,
-        firstName: member.firstName,
-        lastName: member.lastName,
-        maritalStatus: member.maritalStatus ?? undefined,
-        nationality: member.nationality ?? undefined,
-        phones: member.phones,
-        sex: member.sex ?? undefined,
-        status: member.status,
-      });
-    }
-  }, [member, setFieldsValue]);
 
   const handleSubmit = (values: MemberFormData) => {
     updateMemberMutation.mutate({

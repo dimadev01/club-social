@@ -14,7 +14,14 @@ import {
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Dropdown, Grid, Space, Tooltip } from 'antd';
+import {
+  Button,
+  Dropdown,
+  Grid,
+  Space,
+  type TableColumnType,
+  Tooltip,
+} from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -169,17 +176,20 @@ export function PaymentList() {
             filteredValue: getFilterValue('date'),
             render: (date: string) => DateFormat.date(date),
             title: 'Fecha',
-            width: TABLE_COLUMN_WIDTHS.DATE,
           },
-          {
-            dataIndex: 'memberId',
-            render: (memberId: string, record: IPaymentPaginatedDto) => (
-              <Link to={appRoutes.members.view(memberId)}>
-                {record.memberName}
-              </Link>
-            ),
-            title: 'Socio',
-          },
+          ...(permissions.payments.listAll
+            ? [
+                {
+                  dataIndex: 'memberId',
+                  render: (memberId: string, record: IPaymentPaginatedDto) => (
+                    <Link to={appRoutes.members.view(memberId)}>
+                      {record.memberName}
+                    </Link>
+                  ),
+                  title: 'Socio',
+                } satisfies TableColumnType<IPaymentPaginatedDto>,
+              ]
+            : []),
           {
             align: 'right',
             dataIndex: 'amount',
@@ -202,47 +212,53 @@ export function PaymentList() {
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },
-          {
-            align: 'center',
-            fixed: 'right',
-            render: (_, record) => (
-              <Space.Compact size="small">
-                <Tooltip title="Filtrar por este socio">
-                  <Link
-                    to={{
-                      pathname: appRoutes.payments.list,
-                      search: new URLSearchParams({
-                        filters: `memberId:${record.memberId}`,
-                      }).toString(),
-                    }}
-                  >
-                    <Button
-                      disabled={getFilterValue('memberId')?.includes(
-                        record.memberId,
-                      )}
-                      icon={<FilterOutlined />}
-                      onClick={() => setFilteredMemberIds([record.memberId])}
-                      type="text"
-                    />
-                  </Link>
-                </Tooltip>
-                <Tooltip title="Ver deudas">
-                  <Link
-                    to={{
-                      pathname: appRoutes.dues.list,
-                      search: new URLSearchParams({
-                        filters: `memberId:${record.memberId}`,
-                      }).toString(),
-                    }}
-                  >
-                    <Button icon={<DuesIcon />} type="text" />
-                  </Link>
-                </Tooltip>
-              </Space.Compact>
-            ),
-            title: 'Acciones',
-            width: TABLE_COLUMN_WIDTHS.ACTIONS,
-          },
+          ...(permissions.payments.listAll
+            ? [
+                {
+                  align: 'center',
+                  fixed: 'right',
+                  render: (_, record) => (
+                    <Space.Compact size="small">
+                      <Tooltip title="Filtrar por este socio">
+                        <Link
+                          to={{
+                            pathname: appRoutes.payments.list,
+                            search: new URLSearchParams({
+                              filters: `memberId:${record.memberId}`,
+                            }).toString(),
+                          }}
+                        >
+                          <Button
+                            disabled={getFilterValue('memberId')?.includes(
+                              record.memberId,
+                            )}
+                            icon={<FilterOutlined />}
+                            onClick={() =>
+                              setFilteredMemberIds([record.memberId])
+                            }
+                            type="text"
+                          />
+                        </Link>
+                      </Tooltip>
+                      <Tooltip title="Ver deudas">
+                        <Link
+                          to={{
+                            pathname: appRoutes.dues.list,
+                            search: new URLSearchParams({
+                              filters: `memberId:${record.memberId}`,
+                            }).toString(),
+                          }}
+                        >
+                          <Button icon={<DuesIcon />} type="text" />
+                        </Link>
+                      </Tooltip>
+                    </Space.Compact>
+                  ),
+                  title: 'Acciones',
+                  width: TABLE_COLUMN_WIDTHS.ACTIONS,
+                } satisfies TableColumnType<IPaymentPaginatedDto>,
+              ]
+            : []),
         ]}
         dataSource={payments?.data}
         loading={isLoading}

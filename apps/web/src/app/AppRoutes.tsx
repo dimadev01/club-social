@@ -20,6 +20,10 @@ import { MovementView } from '@/movements/MovementView';
 import { PaymentList } from '@/payments/PaymentList';
 import { PaymentNew } from '@/payments/PaymentNew';
 import { PaymentView } from '@/payments/PaymentView';
+import { PricingEdit } from '@/pricing/PricingEdit';
+import { PricingList } from '@/pricing/PricingList';
+import { PricingNew } from '@/pricing/PricingNew';
+import { PricingView } from '@/pricing/PricingView';
 import { ProfilePage } from '@/profile/ProfilePage';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { NotFound } from '@/ui/NotFound';
@@ -76,6 +80,13 @@ export function AppRoutes() {
             <Route element={<PaymentList />} index />
             <Route element={<PaymentNew />} path={appRoutes.generic.new} />
             <Route element={<PaymentView />} path={appRoutes.generic.view} />
+          </Route>
+
+          <Route path={appRoutes.pricing.list}>
+            <Route element={<PricingList />} index />
+            <Route element={<PricingNew />} path={appRoutes.generic.new} />
+            <Route element={<PricingEdit />} path={appRoutes.generic.edit} />
+            <Route element={<PricingView />} path={appRoutes.generic.view} />
           </Route>
 
           <Route path={appRoutes.auditLogs.list}>

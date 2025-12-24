@@ -17,6 +17,7 @@ export const Resource = {
   MEMBERS: 'members',
   MOVEMENTS: 'movements',
   PAYMENTS: 'payments',
+  PRICING: 'pricing',
   USERS: 'users',
 } as const;
 
