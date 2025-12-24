@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { CreateUserUseCase } from './application/create-user/create-user.use-case';
 import { UpdateUserUseCase } from './application/update-user/update-user.use-case';
-import { VerifySignInUseCase } from './application/verify-sign-in/verify-sign-in.use-case';
 import {
   USER_READABLE_REPOSITORY_PROVIDER,
   USER_REPOSITORY_PROVIDER,
@@ -18,14 +17,12 @@ import { UsersController } from './presentation/user.controller';
   exports: [
     USER_READABLE_REPOSITORY_PROVIDER,
     USER_REPOSITORY_PROVIDER,
-    VerifySignInUseCase,
     CreateUserUseCase,
   ],
   imports: [],
   providers: [
     CreateUserUseCase,
     UpdateUserUseCase,
-    VerifySignInUseCase,
     {
       provide: USER_READABLE_REPOSITORY_PROVIDER,
       useClass: PrismaUserRepository,

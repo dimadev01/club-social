@@ -1,5 +1,6 @@
 import { roleStatements, statements } from '@club-social/shared/roles';
-import { Injectable } from '@nestjs/common';
+import { UserStatus } from '@club-social/shared/users';
+import { Inject, Injectable } from '@nestjs/common';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
 import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal';
@@ -17,14 +18,15 @@ import {
 import { ConfigService } from '@/infrastructure/config/config.service';
 import { prisma } from '@/infrastructure/database/prisma/prisma.client';
 import { EmailQueueService } from '@/infrastructure/email/email-queue.service';
-import { EntityNotFoundError } from '@/shared/domain/errors/entity-not-found.error';
+import { SendMagicLinkParams } from '@/infrastructure/email/email.types';
+import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
-import { VerifySignInUseCase } from '@/users/application/verify-sign-in/verify-sign-in.use-case';
+import {
+  USER_READABLE_REPOSITORY_PROVIDER,
+  type UserReadableRepository,
+} from '@/users/domain/user.repository';
 
-const ac = createAccessControl({
-  ...defaultStatements,
-  ...statements,
-});
+const ac = createAccessControl({ ...defaultStatements, ...statements });
 
 const adminRole = ac.newRole({
   ...adminAc.statements,
@@ -36,10 +38,7 @@ const memberRole = ac.newRole({
   ...roleStatements.member,
 });
 
-const staffRole = ac.newRole({
-  ...userAc.statements,
-  ...roleStatements.staff,
-});
+const staffRole = ac.newRole({ ...userAc.statements, ...roleStatements.staff });
 
 export const defaultConfig = {
   advanced: {
@@ -117,10 +116,7 @@ export const defaultConfig = {
 } satisfies BetterAuthOptions;
 
 export const createBetterAuth = (config?: BetterAuthOptions) =>
-  betterAuth({
-    ...defaultConfig,
-    ...config,
-  });
+  betterAuth({ ...defaultConfig, ...config });
 
 /**
  * This needs to be named `auth` because the `@better-auth/cli` expects
@@ -134,12 +130,13 @@ export class BetterAuthService {
     return this._auth;
   }
 
-  private readonly _auth: typeof auth;
+  private readonly _auth;
 
   public constructor(
     private readonly configService: ConfigService,
     private readonly emailQueueService: EmailQueueService,
-    private readonly verifySignInUseCase: VerifySignInUseCase,
+    @Inject(USER_READABLE_REPOSITORY_PROVIDER)
+    private readonly userRepository: UserReadableRepository,
   ) {
     this._auth = createBetterAuth({
       emailVerification: {
@@ -159,10 +156,7 @@ export class BetterAuthService {
         magicLink({
           disableSignUp: true,
           sendMagicLink: (data) =>
-            this.emailQueueService.magicLink({
-              email: data.email,
-              url: data.url,
-            }),
+            this.sendMagicLink({ email: data.email, url: data.url }),
         }),
       ],
       trustedOrigins: this.configService.trustedOrigins,
@@ -175,19 +169,36 @@ export class BetterAuthService {
     });
   }
 
+  private async sendMagicLink(data: SendMagicLinkParams) {
+    return this.emailQueueService.magicLink({
+      email: data.email,
+      url: data.url,
+    });
+  }
+
   private async verifySignIn(email: string) {
-    const result = await this.verifySignInUseCase.execute(email);
+    const emailResult = Email.create(email);
 
-    if (result.isErr()) {
-      if (result.error instanceof EntityNotFoundError) {
-        throw new APIError('NOT_FOUND', {
-          message: result.error.message,
-        });
-      }
+    if (emailResult.isErr()) {
+      throw new APIError('BAD_REQUEST', { message: emailResult.error.message });
+    }
 
-      throw new APIError('BAD_REQUEST', {
-        message: result.error.message,
-      });
+    const user = await this.userRepository.findUniqueByEmail(emailResult.value);
+
+    if (!user) {
+      throw new APIError('NOT_FOUND', { message: 'Usuario no encontrado' });
+    }
+
+    if (user.deletedAt) {
+      throw new APIError('NOT_FOUND', { message: 'Usuario no encontrado' });
+    }
+
+    if (user.status === UserStatus.INACTIVE) {
+      throw new APIError('NOT_FOUND', { message: 'Usuario inactivo' });
+    }
+
+    if (user.banned) {
+      throw new APIError('NOT_FOUND', { message: 'Usuario inactivo' });
     }
   }
 }

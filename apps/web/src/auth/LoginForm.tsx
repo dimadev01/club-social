@@ -39,6 +39,8 @@ export function LoginForm() {
   };
 
   const isSubmitting = formStatus === FormStatus.SUBMITTING;
+  const isSuccess = formStatus === FormStatus.SUCCESS;
+  const isIdle = formStatus === FormStatus.IDLE;
 
   return (
     <Flex className="w-full max-w-xs" gap="small" vertical>
@@ -50,18 +52,18 @@ export function LoginForm() {
         src="/club-social-logo.png"
       />
 
-      {formStatus === FormStatus.SUCCESS && (
+      {isSuccess && (
         <Alert
           closable={{
-            afterClose: () => setFormStatus(FormStatus.IDLE),
             closeIcon: true,
+            onClose: () => setFormStatus(FormStatus.IDLE),
           }}
           description="Le hemos enviado un link para iniciar sesión"
           type="success"
         />
       )}
 
-      {formStatus !== FormStatus.SUCCESS && (
+      {isIdle && (
         <Card
           actions={[
             <Button
