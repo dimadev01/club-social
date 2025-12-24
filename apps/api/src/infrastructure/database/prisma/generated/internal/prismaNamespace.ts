@@ -422,6 +422,7 @@ export const ModelName = {
   PaymentDue: 'PaymentDue',
   Movement: 'Movement',
   AuditLog: 'AuditLog',
+  Pricing: 'Pricing',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -453,7 +454,8 @@ export type TypeMap<
       | 'payment'
       | 'paymentDue'
       | 'movement'
-      | 'auditLog';
+      | 'auditLog'
+      | 'pricing';
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -1217,6 +1219,82 @@ export type TypeMap<
         };
       };
     };
+    Pricing: {
+      payload: Prisma.$PricingPayload<ExtArgs>;
+      fields: Prisma.PricingFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.PricingFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.PricingFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload>;
+        };
+        findFirst: {
+          args: Prisma.PricingFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.PricingFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload>;
+        };
+        findMany: {
+          args: Prisma.PricingFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload>[];
+        };
+        create: {
+          args: Prisma.PricingCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload>;
+        };
+        createMany: {
+          args: Prisma.PricingCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.PricingCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload>[];
+        };
+        delete: {
+          args: Prisma.PricingDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload>;
+        };
+        update: {
+          args: Prisma.PricingUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload>;
+        };
+        deleteMany: {
+          args: Prisma.PricingDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.PricingUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.PricingUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload>[];
+        };
+        upsert: {
+          args: Prisma.PricingUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPayload>;
+        };
+        aggregate: {
+          args: Prisma.PricingAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePricing>;
+        };
+        groupBy: {
+          args: Prisma.PricingGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.PricingGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.PricingCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.PricingCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
   };
 } & {
   other: {
@@ -1443,6 +1521,24 @@ export const AuditLogScalarFieldEnum = {
 
 export type AuditLogScalarFieldEnum =
   (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum];
+
+export const PricingScalarFieldEnum = {
+  id: 'id',
+  dueCategory: 'dueCategory',
+  memberCategory: 'memberCategory',
+  amount: 'amount',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+} as const;
+
+export type PricingScalarFieldEnum =
+  (typeof PricingScalarFieldEnum)[keyof typeof PricingScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',
@@ -1719,6 +1815,7 @@ export type GlobalOmitConfig = {
   paymentDue?: Prisma.PaymentDueOmit;
   movement?: Prisma.MovementOmit;
   auditLog?: Prisma.AuditLogOmit;
+  pricing?: Prisma.PricingOmit;
 };
 
 /* Types for Logging */

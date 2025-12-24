@@ -14,6 +14,7 @@ export const AuditEntity = {
   DUE: 'DUE',
   MOVEMENT: 'MOVEMENT',
   PAYMENT: 'PAYMENT',
+  PRICING: 'PRICING',
 } as const;
 
 export type AuditEntity = (typeof AuditEntity)[keyof typeof AuditEntity];

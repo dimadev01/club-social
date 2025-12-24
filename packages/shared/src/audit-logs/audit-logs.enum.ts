@@ -19,6 +19,7 @@ export const AuditEntity = {
   MEMBER: 'MEMBER',
   MOVEMENT: 'MOVEMENT',
   PAYMENT: 'PAYMENT',
+  PRICING: 'PRICING',
   USER: 'USER',
 } as const;
 
@@ -29,5 +30,6 @@ export const AuditEntityLabel: Record<AuditEntity, string> = {
   [AuditEntity.MEMBER]: 'Socio',
   [AuditEntity.MOVEMENT]: 'Movimiento',
   [AuditEntity.PAYMENT]: 'Pago',
+  [AuditEntity.PRICING]: 'Precio',
   [AuditEntity.USER]: 'Usuario',
 } as const;

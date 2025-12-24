@@ -284,7 +284,7 @@ export type AuditLogScalarWhereWithAggregatesInput = {
 };
 
 export type AuditLogCreateInput = {
-  id?: string;
+  id: string;
   createdAt?: Date | string;
   createdBy: string;
   entity: $Enums.AuditEntity;
@@ -296,7 +296,7 @@ export type AuditLogCreateInput = {
 };
 
 export type AuditLogUncheckedCreateInput = {
-  id?: string;
+  id: string;
   createdAt?: Date | string;
   createdBy: string;
   entity: $Enums.AuditEntity;
@@ -340,7 +340,7 @@ export type AuditLogUncheckedUpdateInput = {
 };
 
 export type AuditLogCreateManyInput = {
-  id?: string;
+  id: string;
   createdAt?: Date | string;
   createdBy: string;
   entity: $Enums.AuditEntity;

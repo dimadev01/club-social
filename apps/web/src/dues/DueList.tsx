@@ -141,7 +141,7 @@ export function DueList() {
             fixed: 'left',
             render: (createdAt: string, record) => (
               <Link to={appRoutes.dues.view(record.id)}>
-                {DateFormat.date(createdAt)}
+                {DateFormat.dateTime(createdAt)}
               </Link>
             ),
             sorter: true,

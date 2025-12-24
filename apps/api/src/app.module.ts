@@ -17,6 +17,7 @@ import { TraceModule } from './infrastructure/trace/trace.module';
 import { MembersModule } from './members/member.module';
 import { MovementsModule } from './movements/movement.module';
 import { PaymentsModule } from './payments/payment.module';
+import { PricingModule } from './pricing/pricing.module';
 import { AllExceptionsFilter } from './shared/presentation/filters/all-exceptions.filter';
 import { UsersModule } from './users/user.module';
 
@@ -40,6 +41,7 @@ import { UsersModule } from './users/user.module';
     MembersModule,
     DuesModule,
     PaymentsModule,
+    PricingModule,
     MovementsModule,
     AuditModule,
   ],

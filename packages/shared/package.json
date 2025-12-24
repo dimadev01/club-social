@@ -49,6 +49,11 @@
       "require": "./dist/audit-logs/index.js",
       "import": "./dist/audit-logs/index.mjs"
     },
+    "./pricing": {
+      "types": "./src/pricing/index.ts",
+      "require": "./dist/pricing/index.js",
+      "import": "./dist/pricing/index.mjs"
+    },
     "./lib": {
       "types": "./src/lib/index.ts",
       "require": "./dist/lib/index.js",
@@ -62,14 +67,14 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix"
   },
+  "dependencies": {
+    "@internationalized/number": "^3.6.5",
+    "dayjs": "^1.11.19"
+  },
   "devDependencies": {
     "@club-social/eslint-config": "*",
     "@club-social/prettier-config": "*",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"
-  },
-  "dependencies": {
-    "@internationalized/number": "^3.6.5",
-    "dayjs": "^1.11.19"
   }
 }

@@ -1,0 +1,78 @@
+import { Inject } from '@nestjs/common';
+
+import type { Result } from '@/shared/domain/result';
+
+import {
+  PRICING_REPOSITORY_PROVIDER,
+  type PricingRepository,
+} from '@/pricing/domain/pricing.repository';
+import {
+  APP_LOGGER_PROVIDER,
+  type AppLogger,
+} from '@/shared/application/app-logger';
+import { UseCase } from '@/shared/application/use-case';
+import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
+import { err, ok, ResultUtils } from '@/shared/domain/result';
+import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+import type { UpdatePricingParams } from './update-pricing.params';
+
+export class UpdatePricingUseCase extends UseCase<void> {
+  public constructor(
+    @Inject(APP_LOGGER_PROVIDER)
+    protected readonly logger: AppLogger,
+    @Inject(PRICING_REPOSITORY_PROVIDER)
+    private readonly pricingRepository: PricingRepository,
+    private readonly eventPublisher: DomainEventPublisher,
+  ) {
+    super(logger);
+  }
+
+  public async execute(params: UpdatePricingParams): Promise<Result<void>> {
+    this.logger.info({
+      message: 'Updating pricing rule',
+      params,
+    });
+
+    const results = ResultUtils.combine([Amount.fromCents(params.amount)]);
+
+    if (results.isErr()) {
+      return err(results.error);
+    }
+
+    const [amount] = results.value;
+
+    const pricing = await this.pricingRepository.findUniqueOrThrow(
+      UniqueId.raw({ value: params.id }),
+    );
+
+    // Check for overlapping pricing with new effectiveTo
+    const overlapping = await this.pricingRepository.findOverlapping({
+      dueCategory: pricing.dueCategory,
+      effectiveFrom: pricing.effectiveFrom,
+      memberCategory: pricing.memberCategory,
+    });
+
+    if (overlapping.length > 0) {
+      return err(
+        new Error('Updated effectiveTo creates overlapping pricing rules'),
+      );
+    }
+
+    const updateResult = pricing.update({
+      amount,
+      effectiveTo: null,
+      updatedBy: params.updatedBy,
+    });
+
+    if (updateResult.isErr()) {
+      return err(updateResult.error);
+    }
+
+    await this.pricingRepository.save(pricing);
+    this.eventPublisher.dispatch(pricing);
+
+    return ok();
+  }
+}

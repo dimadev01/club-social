@@ -66,3 +66,8 @@ export type Movement = Prisma.MovementModel;
  *
  */
 export type AuditLog = Prisma.AuditLogModel;
+/**
+ * Model Pricing
+ *
+ */
+export type Pricing = Prisma.PricingModel;

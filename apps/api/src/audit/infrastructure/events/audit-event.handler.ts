@@ -14,6 +14,9 @@ import { MovementUpdatedEvent } from '@/movements/domain/events/movement-updated
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import { PaymentCreatedEvent } from '@/payments/domain/events/payment-created.event';
 import { PaymentUpdatedEvent } from '@/payments/domain/events/payment-updated.event';
+import { PricingEntity } from '@/pricing/domain/entities/pricing.entity';
+import { PricingCreatedEvent } from '@/pricing/domain/events/pricing-created.event';
+import { PricingUpdatedEvent } from '@/pricing/domain/events/pricing-updated.event';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -62,7 +65,7 @@ export class AuditEventHandler {
 
     await this.createAuditLog({
       action,
-      createdBy: event.due.updatedBy ?? 'System',
+      createdBy: event.due.updatedBy,
       entity: AuditEntity.DUE,
       entityId: event.due.id.value,
       message,
@@ -89,7 +92,7 @@ export class AuditEventHandler {
   public async handleMemberUpdated(event: MemberUpdatedEvent): Promise<void> {
     await this.createAuditLog({
       action: AuditAction.UPDATED,
-      createdBy: event.member.updatedBy ?? 'System',
+      createdBy: event.member.updatedBy,
       entity: AuditEntity.MEMBER,
       entityId: event.member.id.value,
       message: 'Member updated',
@@ -127,7 +130,7 @@ export class AuditEventHandler {
 
     await this.createAuditLog({
       action,
-      createdBy: event.movement.updatedBy ?? 'System',
+      createdBy: event.movement.updatedBy,
       entity: AuditEntity.MOVEMENT,
       entityId: event.movement.id.value,
       message,
@@ -161,12 +164,39 @@ export class AuditEventHandler {
 
     await this.createAuditLog({
       action,
-      createdBy: event.payment.updatedBy ?? 'System',
+      createdBy: event.payment.updatedBy,
       entity: AuditEntity.PAYMENT,
       entityId: event.payment.id.value,
       message,
       newData: this.serializePayment(event.payment),
       oldData: this.serializePayment(event.oldPayment),
+    });
+  }
+
+  // Pricing Events
+  @OnEvent(PricingCreatedEvent.name)
+  public async handlePricingCreated(event: PricingCreatedEvent): Promise<void> {
+    await this.createAuditLog({
+      action: AuditAction.CREATED,
+      createdBy: event.pricing.createdBy,
+      entity: AuditEntity.PRICING,
+      entityId: event.pricing.id.value,
+      message: 'Pricing created',
+      newData: this.serializePricing(event.pricing),
+      oldData: null,
+    });
+  }
+
+  @OnEvent(PricingUpdatedEvent.name)
+  public async handlePricingUpdated(event: PricingUpdatedEvent): Promise<void> {
+    await this.createAuditLog({
+      action: AuditAction.UPDATED,
+      createdBy: event.pricing.updatedBy,
+      entity: AuditEntity.PRICING,
+      entityId: event.pricing.id.value,
+      message: 'Pricing updated',
+      newData: this.serializePricing(event.pricing),
+      oldData: this.serializePricing(event.oldPricing),
     });
   }
 
@@ -188,7 +218,7 @@ export class AuditEventHandler {
   public async handleUserUpdated(event: UserUpdatedEvent): Promise<void> {
     await this.createAuditLog({
       action: AuditAction.UPDATED,
-      createdBy: event.user.updatedBy ?? 'System',
+      createdBy: event.user.updatedBy,
       entity: AuditEntity.USER,
       entityId: event.user.id.value,
       message: 'User updated',
@@ -316,6 +346,23 @@ export class AuditEventHandler {
       voidedAt: payment.voidedAt,
       voidedBy: payment.voidedBy,
       voidReason: payment.voidReason,
+    };
+  }
+
+  private serializePricing(pricing: PricingEntity): Record<string, unknown> {
+    return {
+      amount: pricing.amount.toCents(),
+      createdAt: pricing.createdAt,
+      createdBy: pricing.createdBy,
+      deletedAt: pricing.deletedAt,
+      deletedBy: pricing.deletedBy,
+      dueCategory: pricing.dueCategory,
+      effectiveFrom: pricing.effectiveFrom.value,
+      effectiveTo: pricing.effectiveTo?.value ?? null,
+      id: pricing.id.value,
+      memberCategory: pricing.memberCategory,
+      updatedAt: pricing.updatedAt,
+      updatedBy: pricing.updatedBy,
     };
   }
 

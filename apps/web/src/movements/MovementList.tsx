@@ -119,7 +119,7 @@ export function MovementList() {
             filteredValue: getFilterValue('createdAt'),
             render: (createdAt: string, record) => (
               <Link to={appRoutes.movements.view(record.id)}>
-                {DateFormat.date(createdAt)}
+                {DateFormat.dateTime(createdAt)}
               </Link>
             ),
             sorter: true,

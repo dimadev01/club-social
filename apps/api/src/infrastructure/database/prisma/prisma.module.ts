@@ -6,6 +6,7 @@ import { PrismaMemberMapper } from '@/members/infrastructure/prisma-member.mappe
 import { PrismaMovementMapper } from '@/movements/infrastructure/prisma-movement.mapper';
 import { PrismaPaymentDueMapper } from '@/payments/infrastructure/prisma-payment-due.mapper';
 import { PrismaPaymentMapper } from '@/payments/infrastructure/prisma-payment.mapper';
+import { PrismaPricingMapper } from '@/pricing/infrastructure/prisma-pricing.mapper';
 import { PrismaUserMapper } from '@/users/infrastructure/prisma-user.mapper';
 
 import { PrismaMappers } from './prisma.mappers';
@@ -20,6 +21,7 @@ import { PrismaService } from './prisma.service';
     PrismaMovementMapper,
     PrismaPaymentDueMapper,
     PrismaPaymentMapper,
+    PrismaPricingMapper,
     PrismaUserMapper,
     PrismaAuditLogMapper,
     PrismaMappers,

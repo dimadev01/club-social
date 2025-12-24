@@ -17,4 +17,5 @@ export type * from './models/Payment.js';
 export type * from './models/PaymentDue.js';
 export type * from './models/Movement.js';
 export type * from './models/AuditLog.js';
+export type * from './models/Pricing.js';
 export type * from './commonInputTypes.js';

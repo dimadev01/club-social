@@ -152,7 +152,7 @@ export function PaymentList() {
             fixed: 'left',
             render: (createdAt: string, record) => (
               <Link to={appRoutes.payments.view(record.id)}>
-                {DateFormat.date(createdAt)}
+                {DateFormat.dateTime(createdAt)}
               </Link>
             ),
             sorter: true,

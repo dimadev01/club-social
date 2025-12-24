@@ -71,7 +71,7 @@ export function AuditLogsList() {
               <TableDateRangeFilterDropdown {...props} format="datetime" />
             ),
             filteredValue: getFilterValue('createdAt'),
-            render: (createdAt: string) => DateFormat.date(createdAt),
+            render: (createdAt: string) => DateFormat.dateTime(createdAt),
             sorter: true,
             sortOrder: getSortOrder('createdAt'),
             title: 'Creado el',
@@ -145,10 +145,10 @@ export function AuditLogsList() {
                   column={1}
                   items={Object.entries(record.newData ?? {}).map(
                     ([key, value]) => {
-                      const oldData = record.oldData?.[key];
+                      const oldData = String(record.oldData?.[key] ?? '-');
                       const newData = String(value ?? '-');
 
-                      if (oldData && String(oldData) !== newData) {
+                      if (record.oldData && oldData !== newData) {
                         return {
                           children: <Tag color="green">{newData}</Tag>,
                           key,

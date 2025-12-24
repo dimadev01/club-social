@@ -64,6 +64,7 @@ export const ModelName = {
   PaymentDue: 'PaymentDue',
   Movement: 'Movement',
   AuditLog: 'AuditLog',
+  Pricing: 'Pricing',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -269,6 +270,24 @@ export const AuditLogScalarFieldEnum = {
 
 export type AuditLogScalarFieldEnum =
   (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum];
+
+export const PricingScalarFieldEnum = {
+  id: 'id',
+  dueCategory: 'dueCategory',
+  memberCategory: 'memberCategory',
+  amount: 'amount',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
+} as const;
+
+export type PricingScalarFieldEnum =
+  (typeof PricingScalarFieldEnum)[keyof typeof PricingScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',
