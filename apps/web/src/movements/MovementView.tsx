@@ -1,3 +1,4 @@
+import { NumberFormat } from '@club-social/shared/lib';
 import {
   type IVoidMovementDto,
   MovementCategoryLabel,
@@ -12,7 +13,6 @@ import { useNavigate, useParams } from 'react-router';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
-import { NumberFormat } from '@/shared/lib/number-format';
 import { Card } from '@/ui/Card';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NotFound } from '@/ui/NotFound';

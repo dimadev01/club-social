@@ -2,6 +2,7 @@ import type { CreateDueDto } from '@club-social/shared/dues';
 import type { ParamId } from '@club-social/shared/types';
 
 import { DueCategory } from '@club-social/shared/dues';
+import { NumberFormat } from '@club-social/shared/lib';
 import { App, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router';
@@ -10,7 +11,6 @@ import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
-import { NumberFormat } from '@/shared/lib/number-format';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';

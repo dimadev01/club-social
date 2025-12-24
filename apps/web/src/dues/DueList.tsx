@@ -13,6 +13,7 @@ import {
   type IDuePaginatedDto,
   type IDuePaginatedExtraDto,
 } from '@club-social/shared/dues';
+import { NumberFormat } from '@club-social/shared/lib';
 import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Button, Dropdown, Space, Tooltip } from 'antd';
@@ -25,7 +26,6 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
-import { NumberFormat } from '@/shared/lib/number-format';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';

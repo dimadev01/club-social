@@ -1,6 +1,7 @@
 import type { PaginatedResponse } from '@club-social/shared/types';
 
 import { FileExcelOutlined, MoreOutlined } from '@ant-design/icons';
+import { NumberFormat } from '@club-social/shared/lib';
 import {
   type IMovementPaginatedDto,
   type IMovementPaginatedExtraDto,
@@ -19,7 +20,6 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
-import { NumberFormat } from '@/shared/lib/number-format';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { NotFound } from '@/ui/NotFound';

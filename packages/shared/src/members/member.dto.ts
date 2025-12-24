@@ -50,10 +50,19 @@ export interface IMemberDetailIAddressDto {
 
 export interface IMemberPaginatedDto {
   category: MemberCategory;
+  electricityTotalDueAmount: number;
   email: string;
+  guestTotalDueAmount: number;
   id: string;
+  memberShipTotalDueAmount: number;
   name: string;
   userStatus: UserStatus;
+}
+
+export interface IMemberPaginatedExtraDto {
+  electricityTotalDueAmount: number;
+  guestTotalDueAmount: number;
+  memberShipTotalDueAmount: number;
 }
 
 export interface IMemberSearchResultDto {

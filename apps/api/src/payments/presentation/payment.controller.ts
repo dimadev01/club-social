@@ -39,8 +39,10 @@ import {
 } from '../domain/payment.repository';
 import { CreatePaymentRequestDto } from './dto/create-payment.dto';
 import { PaymentDetailDto } from './dto/payment-detail.dto';
-import { PaymentPaginatedExtraDto } from './dto/payment-paginated-summary.dto';
-import { PaymentPaginatedDto } from './dto/payment-paginated.dto';
+import {
+  PaymentPaginatedDto,
+  PaymentPaginatedExtraDto,
+} from './dto/payment-paginated.dto';
 import { VoidPaymentRequestDto } from './dto/void-payment.dto';
 
 @Controller('payments')

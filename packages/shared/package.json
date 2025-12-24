@@ -48,6 +48,11 @@
       "types": "./src/audit-logs/index.ts",
       "require": "./dist/audit-logs/index.js",
       "import": "./dist/audit-logs/index.mjs"
+    },
+    "./lib": {
+      "types": "./src/lib/index.ts",
+      "require": "./dist/lib/index.js",
+      "import": "./dist/lib/index.mjs"
     }
   },
   "scripts": {
@@ -62,5 +67,8 @@
     "@club-social/prettier-config": "*",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@internationalized/number": "^3.6.5"
   }
 }

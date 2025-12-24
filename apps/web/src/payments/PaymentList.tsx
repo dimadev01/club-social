@@ -6,6 +6,7 @@ import {
   MoreOutlined,
 } from '@ant-design/icons';
 import { DueCategoryLabel } from '@club-social/shared/dues';
+import { NumberFormat } from '@club-social/shared/lib';
 import {
   type IPaymentPaginatedDto,
   type IPaymentPaginatedExtraDto,
@@ -23,10 +24,10 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
-import { NumberFormat } from '@/shared/lib/number-format';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { cn } from '@/shared/lib/utils';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
+import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Select } from '@/ui/Select';
@@ -204,7 +205,6 @@ export function PaymentList() {
           {
             align: 'center',
             fixed: 'right',
-            fixed: 'right',
             render: (_, record) => (
               <Space.Compact size="small">
                 <Tooltip title="Filtrar por este socio">
@@ -224,6 +224,18 @@ export function PaymentList() {
                       onClick={() => setFilteredMemberIds([record.memberId])}
                       type="text"
                     />
+                  </Link>
+                </Tooltip>
+                <Tooltip title="Ver deudas">
+                  <Link
+                    to={{
+                      pathname: appRoutes.dues.list,
+                      search: new URLSearchParams({
+                        filters: `memberId:${record.memberId}`,
+                      }).toString(),
+                    }}
+                  >
+                    <Button icon={<DuesIcon />} type="text" />
                   </Link>
                 </Tooltip>
               </Space.Compact>

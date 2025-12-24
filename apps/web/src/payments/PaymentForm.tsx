@@ -5,6 +5,7 @@ import {
   DueCategoryLabel,
   type IPendingDueDto,
 } from '@club-social/shared/dues';
+import { NumberFormat } from '@club-social/shared/lib';
 import { useQueries } from '@tanstack/react-query';
 import {
   DatePicker,
@@ -27,7 +28,6 @@ import { usePendingDues } from '@/dues/usePendingDues';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { DateFormat, DateFormats } from '@/shared/lib/date-format';
-import { NumberFormat } from '@/shared/lib/number-format';
 import { Card } from '@/ui/Card';
 import { Form } from '@/ui/Form';
 import { Table } from '@/ui/Table/Table';

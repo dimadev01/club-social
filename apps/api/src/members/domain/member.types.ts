@@ -20,8 +20,17 @@ export interface MemberListModel {
   user: UserEntity;
 }
 
+export interface MemberPaginatedExtraModel {
+  electricityTotalDueAmount: number;
+  guestTotalDueAmount: number;
+  memberShipTotalDueAmount: number;
+}
+
 export interface MemberPaginatedModel {
+  electricityTotalDueAmount: number;
+  guestTotalDueAmount: number;
   member: MemberEntity;
+  memberShipTotalDueAmount: number;
   user: UserEntity;
 }
 

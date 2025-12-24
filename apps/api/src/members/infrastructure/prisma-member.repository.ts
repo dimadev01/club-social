@@ -1,3 +1,4 @@
+import { DueCategory, DueStatus } from '@club-social/shared/dues';
 import {
   ExportRequest,
   PaginatedRequest,
@@ -17,9 +18,10 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { MemberEntity } from '../domain/entities/member.entity';
 import { MemberRepository } from '../domain/member.repository';
 import {
-  FindMembersModelParams,
   MemberDetailModel,
+  MemberPaginatedExtraModel,
   MemberPaginatedModel,
+  MemberSearchModel,
   MemberSearchParams,
 } from '../domain/member.types';
 
@@ -29,21 +31,6 @@ export class PrismaMemberRepository implements MemberRepository {
     private readonly prismaService: PrismaService,
     private readonly mapper: PrismaMappers,
   ) {}
-
-  public async findAll(
-    params: FindMembersModelParams,
-  ): Promise<MemberPaginatedModel[]> {
-    const members = await this.prismaService.member.findMany({
-      include: { user: params.includeUser },
-      orderBy: [{ user: { lastName: 'asc' } }, { user: { firstName: 'asc' } }],
-      where: { deletedAt: null },
-    });
-
-    return members.map((member) => ({
-      member: this.mapper.member.toDomain(member),
-      user: this.mapper.user.toDomain(member.user),
-    }));
-  }
 
   public async findForExport(
     params: ExportRequest,
@@ -56,10 +43,22 @@ export class PrismaMemberRepository implements MemberRepository {
       where,
     });
 
-    return members.map((member) => ({
-      member: this.mapper.member.toDomain(member),
-      user: this.mapper.user.toDomain(member.user),
-    }));
+    const duesByMemberAndCategory = await this.fetchDueAggregates(
+      members.map((m) => m.id),
+    );
+
+    return members.map((member) => {
+      const memberDues = duesByMemberAndCategory.get(member.id);
+
+      return {
+        electricityTotalDueAmount:
+          memberDues?.get(DueCategory.ELECTRICITY) ?? 0,
+        guestTotalDueAmount: memberDues?.get(DueCategory.GUEST) ?? 0,
+        member: this.mapper.member.toDomain(member),
+        memberShipTotalDueAmount: memberDues?.get(DueCategory.MEMBERSHIP) ?? 0,
+        user: this.mapper.user.toDomain(member.user),
+      };
+    });
   }
 
   public async findOneModel(id: UniqueId): Promise<MemberDetailModel | null> {
@@ -82,11 +81,23 @@ export class PrismaMemberRepository implements MemberRepository {
 
   public async findPaginated(
     params: PaginatedRequest,
-  ): Promise<PaginatedResponse<MemberPaginatedModel>> {
+  ): Promise<
+    PaginatedResponse<MemberPaginatedModel, MemberPaginatedExtraModel>
+  > {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
-      include: { user: true },
+      include: {
+        dues: {
+          where: {
+            deletedAt: null,
+            status: {
+              in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
+            },
+          },
+        },
+        user: true,
+      },
       orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
@@ -98,11 +109,31 @@ export class PrismaMemberRepository implements MemberRepository {
       this.prismaService.member.count({ where }),
     ]);
 
+    const duesByMemberAndCategory = await this.fetchDueAggregates(
+      members.map((m) => m.id),
+    );
+
+    const totals = this.calculateTotalsByCategory(duesByMemberAndCategory);
+
     return {
-      data: members.map((member) => ({
-        member: this.mapper.member.toDomain(member),
-        user: this.mapper.user.toDomain(member.user),
-      })),
+      data: members.map((member) => {
+        const memberDues = duesByMemberAndCategory.get(member.id);
+
+        return {
+          electricityTotalDueAmount:
+            memberDues?.get(DueCategory.ELECTRICITY) ?? 0,
+          guestTotalDueAmount: memberDues?.get(DueCategory.GUEST) ?? 0,
+          member: this.mapper.member.toDomain(member),
+          memberShipTotalDueAmount:
+            memberDues?.get(DueCategory.MEMBERSHIP) ?? 0,
+          user: this.mapper.user.toDomain(member.user),
+        };
+      }),
+      extra: {
+        electricityTotalDueAmount: totals[DueCategory.ELECTRICITY],
+        guestTotalDueAmount: totals[DueCategory.GUEST],
+        memberShipTotalDueAmount: totals[DueCategory.MEMBERSHIP],
+      },
       total,
     };
   }
@@ -152,7 +183,7 @@ export class PrismaMemberRepository implements MemberRepository {
 
   public async search(
     params: MemberSearchParams,
-  ): Promise<MemberPaginatedModel[]> {
+  ): Promise<MemberSearchModel[]> {
     const members = await this.prismaService.member.findMany({
       include: { user: true },
       orderBy: [{ user: { lastName: 'asc' } }, { user: { firstName: 'asc' } }],
@@ -224,5 +255,62 @@ export class PrismaMemberRepository implements MemberRepository {
     });
 
     return { orderBy, where };
+  }
+
+  private calculateTotalsByCategory(
+    duesByMemberAndCategory: Map<string, Map<DueCategory, number>>,
+  ): Record<DueCategory, number> {
+    const totals: Record<DueCategory, number> = {
+      [DueCategory.ELECTRICITY]: 0,
+      [DueCategory.GUEST]: 0,
+      [DueCategory.MEMBERSHIP]: 0,
+    };
+
+    duesByMemberAndCategory.forEach((categoryMap) => {
+      categoryMap.forEach((amount, category) => {
+        totals[category] += amount;
+      });
+    });
+
+    return totals;
+  }
+
+  private async fetchDueAggregates(
+    memberIds: string[],
+  ): Promise<Map<string, Map<DueCategory, number>>> {
+    const dueAggregates = await this.prismaService.due.groupBy({
+      _sum: { amount: true },
+      by: ['memberId', 'category'],
+      where: {
+        deletedAt: null,
+        memberId: { in: memberIds },
+        status: {
+          in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
+        },
+      },
+    });
+
+    // Build lookup map: memberId -> category -> amount
+    const duesByMemberAndCategory = new Map<string, Map<DueCategory, number>>();
+
+    dueAggregates.forEach((aggregate) => {
+      if (!duesByMemberAndCategory.has(aggregate.memberId)) {
+        duesByMemberAndCategory.set(
+          aggregate.memberId,
+          new Map<DueCategory, number>(),
+        );
+      }
+
+      const memberDuesMap = duesByMemberAndCategory.get(aggregate.memberId);
+
+      if (memberDuesMap) {
+        memberDuesMap.set(
+          aggregate.category as DueCategory,
+          aggregate._sum.amount ?? 0,
+        );
+      }
+    });
+
+    return duesByMemberAndCategory;
   }
 }

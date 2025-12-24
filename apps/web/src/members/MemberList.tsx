@@ -3,8 +3,10 @@ import {
   MoreOutlined,
   UserAddOutlined,
 } from '@ant-design/icons';
+import { NumberFormat } from '@club-social/shared/lib';
 import {
   type IMemberPaginatedDto,
+  type IMemberPaginatedExtraDto,
   MemberCategory,
   MemberCategoryLabel,
 } from '@club-social/shared/members';
@@ -26,6 +28,7 @@ import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
+import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { TableActions } from '@/ui/Table/TableActions';
 import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
 import { useTable } from '@/ui/Table/useTable';
@@ -69,16 +72,17 @@ export function MemberListPage() {
     enabled: permissions.members.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IMemberPaginatedDto>>('/members/paginated', {
-        query,
-      }),
+      $fetch<PaginatedResponse<IMemberPaginatedDto, IMemberPaginatedExtraDto>>(
+        '/members/paginated',
+        {
+          query,
+        },
+      ),
   });
 
   if (!permissions.members.list) {
     return <NotFound />;
   }
-
-  console.log(getFilterValue('userStatus'));
 
   return (
     <Page
@@ -172,6 +176,29 @@ export function MemberListPage() {
             title: 'Email',
           },
           {
+            align: 'right',
+            dataIndex: 'memberShipTotalDueAmount',
+            render: (amount: number) => NumberFormat.formatCents(amount),
+            sorter: true,
+            sortOrder: getSortOrder('memberShipTotalDueAmount'),
+            title: 'Deuda cuota',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+          {
+            align: 'right',
+            dataIndex: 'electricityTotalDueAmount',
+            render: (amount: number) => NumberFormat.formatCents(amount),
+            title: 'Deuda luz',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+          {
+            align: 'right',
+            dataIndex: 'guestTotalDueAmount',
+            render: (amount: number) => NumberFormat.formatCents(amount),
+            title: 'Deuda invitado',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+          {
             align: 'center',
             fixed: 'right',
             render: (_, record) => (
@@ -214,6 +241,29 @@ export function MemberListPage() {
           pageSize: state.pageSize,
           total: members?.total,
         }}
+        summary={() => (
+          <Table.Summary.Row>
+            <Table.Summary.Cell align="right" colSpan={4} index={0}>
+              Total
+            </Table.Summary.Cell>
+            <Table.Summary.Cell align="right" colSpan={1} index={1}>
+              {NumberFormat.formatCents(
+                members?.extra?.memberShipTotalDueAmount ?? 0,
+              )}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell align="right" colSpan={1} index={2}>
+              {NumberFormat.formatCents(
+                members?.extra?.electricityTotalDueAmount ?? 0,
+              )}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell align="right" colSpan={1} index={3}>
+              {NumberFormat.formatCents(
+                members?.extra?.guestTotalDueAmount ?? 0,
+              )}
+            </Table.Summary.Cell>
+            <Table.Summary.Cell colSpan={1} index={4} />
+          </Table.Summary.Row>
+        )}
       />
     </Page>
   );

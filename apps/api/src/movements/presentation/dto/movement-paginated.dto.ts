@@ -1,5 +1,6 @@
 import {
   IMovementPaginatedDto,
+  IMovementPaginatedExtraDto,
   MovementCategory,
   MovementStatus,
   MovementType,
@@ -15,4 +16,10 @@ export class MovementPaginatedDto implements IMovementPaginatedDto {
   public paymentId: null | string;
   public status: MovementStatus;
   public type: MovementType;
+}
+
+export class MovementPaginatedExtraDto implements IMovementPaginatedExtraDto {
+  public totalAmount: number;
+  public totalAmountInflow: number;
+  public totalAmountOutflow: number;
 }

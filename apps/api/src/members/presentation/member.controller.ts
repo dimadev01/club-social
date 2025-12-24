@@ -1,5 +1,6 @@
 import type { Response } from 'express';
 
+import { NumberFormat } from '@club-social/shared/lib';
 import { MemberCategoryLabel } from '@club-social/shared/members';
 import { UserStatusLabel } from '@club-social/shared/users';
 import {
@@ -40,7 +41,10 @@ import {
 } from '../domain/member.repository';
 import { CreateMemberRequestDto } from './dto/create-member.dto';
 import { MemberDetailDto } from './dto/member-detail.dto';
-import { MemberPaginatedDto } from './dto/member-paginated.dto';
+import {
+  MemberPaginatedDto,
+  MemberPaginatedExtraDto,
+} from './dto/member-paginated.dto';
 import { MemberSearchRequestDto } from './dto/member-search-request.dto';
 import { MemberSearchDto } from './dto/member-search.dto';
 import { UpdateMemberRequestDto } from './dto/update-member.dto';
@@ -149,6 +153,19 @@ export class MembersController extends BaseController {
         header: 'Estado',
       },
       { accessor: (row) => row.user.email.value, header: 'Email' },
+      {
+        accessor: (row) => NumberFormat.fromCents(row.memberShipTotalDueAmount),
+        header: 'Deuda cuota',
+      },
+      {
+        accessor: (row) =>
+          NumberFormat.fromCents(row.electricityTotalDueAmount),
+        header: 'Deuda luz',
+      },
+      {
+        accessor: (row) => NumberFormat.fromCents(row.guestTotalDueAmount),
+        header: 'Deuda invitado',
+      },
     ]);
 
     res.setHeader(
@@ -163,7 +180,9 @@ export class MembersController extends BaseController {
   @Get('paginated')
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
-  ): Promise<PaginatedResponseDto<MemberPaginatedDto>> {
+  ): Promise<
+    PaginatedResponseDto<MemberPaginatedDto, MemberPaginatedExtraDto>
+  > {
     const data = await this.memberRepository.findPaginated({
       filters: query.filters,
       page: query.page,
@@ -174,26 +193,21 @@ export class MembersController extends BaseController {
     return {
       data: data.data.map((item) => ({
         category: item.member.category,
+        electricityTotalDueAmount: item.electricityTotalDueAmount,
         email: item.user.email.value,
+        guestTotalDueAmount: item.guestTotalDueAmount,
         id: item.member.id.value,
+        memberShipTotalDueAmount: item.memberShipTotalDueAmount,
         name: item.user.name,
         userStatus: item.user.status,
       })),
+      extra: {
+        electricityTotalDueAmount: data.extra?.electricityTotalDueAmount ?? 0,
+        guestTotalDueAmount: data.extra?.guestTotalDueAmount ?? 0,
+        memberShipTotalDueAmount: data.extra?.memberShipTotalDueAmount ?? 0,
+      },
       total: data.total,
     };
-  }
-
-  @Get()
-  public async getAll(): Promise<MemberPaginatedDto[]> {
-    const data = await this.memberRepository.findAll({ includeUser: true });
-
-    return data.map(({ member, user }) => ({
-      category: member.category,
-      email: user.email.value,
-      id: member.id.value,
-      name: user.name,
-      userStatus: user.status,
-    }));
   }
 
   @Get('search')

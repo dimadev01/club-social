@@ -1,21 +1,20 @@
 import type { IUpdateDueDto } from '@club-social/shared/dues';
 
 import { DueStatus, DueStatusLabel } from '@club-social/shared/dues';
-import { App, Button, Tag } from 'antd';
+import { NumberFormat } from '@club-social/shared/lib';
+import { App, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
-import { NumberFormat } from '@/shared/lib/number-format';
 import { Form } from '@/ui/Form';
 import { SaveIcon } from '@/ui/Icons/SaveIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
-import { DueStatusColor } from './due.types';
 import { DueForm, type DueFormData } from './DueForm';
 import { useDue } from './useDue';
 
@@ -96,11 +95,7 @@ export function DueEdit() {
         </Button>,
       ]}
       backButton
-      extra={
-        <Tag color={DueStatusColor[due.status]}>
-          {DueStatusLabel[due.status]}
-        </Tag>
-      }
+      extra={DueStatusLabel[due.status]}
       title="Editar deuda"
     >
       <DueForm

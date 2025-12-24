@@ -41,8 +41,7 @@ import {
 } from '../domain/due.repository';
 import { CreateDueRequestDto } from './dto/create-due.dto';
 import { DueDetailDto } from './dto/due-detail.dto';
-import { DuePaginatedExtraDto } from './dto/due-paginated-summary.dto';
-import { DuePaginatedDto } from './dto/due-paginated.dto';
+import { DuePaginatedDto, DuePaginatedExtraDto } from './dto/due-paginated.dto';
 import { PendingDueDto } from './dto/pending-due.dto';
 import { UpdateDueDto } from './dto/update-due.dto';
 import { VoidDueRequestDto } from './dto/void-due.dto';

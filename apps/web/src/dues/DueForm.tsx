@@ -2,11 +2,11 @@ import type { IMemberSearchResultDto } from '@club-social/shared/members';
 import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
+import { NumberFormat } from '@club-social/shared/lib';
 import { DatePicker, Input, InputNumber } from 'antd';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { DateFormats } from '@/shared/lib/date-format';
-import { NumberFormat } from '@/shared/lib/number-format';
 import { Form } from '@/ui/Form';
 import { Select } from '@/ui/Select';
 
