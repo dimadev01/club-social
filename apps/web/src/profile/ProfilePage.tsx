@@ -6,6 +6,7 @@ import { useSessionUser } from '@/auth/useUser';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { Descriptions } from '@/ui/Descriptions';
 
 interface EmailFormSchema {
@@ -26,8 +27,8 @@ export function ProfilePage() {
   const [emailForm] = Form.useForm<EmailFormSchema>();
 
   const { data: passkeys, refetch: refetchPasskeys } = useQuery({
+    ...queryKeys.passkeys.list,
     queryFn: () => betterAuthClient.passkey.listUserPasskeys(),
-    queryKey: ['passkeys'],
   });
 
   const submitProfileMutation = useMutation({

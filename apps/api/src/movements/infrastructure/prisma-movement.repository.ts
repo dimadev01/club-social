@@ -4,7 +4,7 @@ import type {
   PaginatedResponse,
 } from '@club-social/shared/types';
 
-import { MovementType } from '@club-social/shared/movements';
+import { MovementStatus, MovementType } from '@club-social/shared/movements';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -18,8 +18,15 @@ import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MovementEntity } from '../domain/entities/movement.entity';
-import { MovementRepository } from '../domain/movement.repository';
-import { MovementPaginatedExtraModel } from '../domain/movement.types';
+import {
+  GetMovementStatisticsParams,
+  MovementRepository,
+} from '../domain/movement.repository';
+import {
+  MovementBalanceModel,
+  MovementPaginatedExtraModel,
+  MovementStatisticsModel,
+} from '../domain/movement.types';
 
 @Injectable()
 export class PrismaMovementRepository implements MovementRepository {
@@ -118,6 +125,69 @@ export class PrismaMovementRepository implements MovementRepository {
     });
 
     return this.mapper.movement.toDomain(movement);
+  }
+
+  public async getGlobalBalance(): Promise<MovementBalanceModel> {
+    const where: MovementWhereInput = {
+      deletedAt: null,
+      status: MovementStatus.REGISTERED,
+    };
+
+    const [inflowSum, outflowSum] = await Promise.all([
+      this.prismaService.movement.aggregate({
+        _sum: { amount: true },
+        where: { ...where, type: MovementType.INFLOW },
+      }),
+      this.prismaService.movement.aggregate({
+        _sum: { amount: true },
+        where: { ...where, type: MovementType.OUTFLOW },
+      }),
+    ]);
+
+    const totalInflow = inflowSum._sum.amount ?? 0;
+    const totalOutflow = outflowSum._sum.amount ?? 0;
+    const balance = totalInflow - totalOutflow;
+
+    return {
+      balance,
+    };
+  }
+
+  public async getStatistics(
+    params: GetMovementStatisticsParams,
+  ): Promise<MovementStatisticsModel> {
+    const where: MovementWhereInput = {
+      deletedAt: null,
+      status: MovementStatus.REGISTERED,
+    };
+
+    if (params.dateRange) {
+      where.date = {
+        gte: params.dateRange[0],
+        lte: params.dateRange[1],
+      };
+    }
+
+    const [inflowSum, outflowSum] = await Promise.all([
+      this.prismaService.movement.aggregate({
+        _sum: { amount: true },
+        where: { ...where, type: MovementType.INFLOW },
+      }),
+      this.prismaService.movement.aggregate({
+        _sum: { amount: true },
+        where: { ...where, type: MovementType.OUTFLOW },
+      }),
+    ]);
+
+    const totalInflow = inflowSum._sum.amount ?? 0;
+    const totalOutflow = outflowSum._sum.amount ?? 0;
+    const balance = totalInflow - totalOutflow;
+
+    return {
+      balance,
+      totalInflow,
+      totalOutflow,
+    };
   }
 
   public async save(entity: MovementEntity): Promise<MovementEntity> {

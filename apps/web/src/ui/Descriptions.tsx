@@ -5,16 +5,20 @@ import { Descriptions as AntdDescriptions, Grid } from 'antd';
 export function Descriptions({
   bordered = true,
   column = 1,
+  layout,
   size = 'small',
   ...props
 }: DescriptionsProps & { bordered?: boolean }) {
-  const { md } = Grid.useBreakpoint();
+  const { md, sm } = Grid.useBreakpoint();
+  console.log({ md, sm });
+
+  const descriptionsLayout = layout ?? (sm ? 'horizontal' : 'vertical');
 
   return (
     <AntdDescriptions
       bordered={bordered}
       column={column}
-      layout={md ? 'horizontal' : 'vertical'}
+      layout={descriptionsLayout}
       size={size}
       {...props}
     />

@@ -8,9 +8,17 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MovementEntity } from './entities/movement.entity';
-import { MovementPaginatedExtraModel } from './movement.types';
+import {
+  MovementBalanceModel,
+  MovementPaginatedExtraModel,
+  MovementStatisticsModel,
+} from './movement.types';
 
 export const MOVEMENT_REPOSITORY_PROVIDER = Symbol('MovementRepository');
+
+export interface GetMovementStatisticsParams {
+  dateRange?: [string, string];
+}
 
 export interface MovementRepository
   extends
@@ -19,4 +27,8 @@ export interface MovementRepository
     WriteableRepository<MovementEntity> {
   findByPaymentId(paymentId: UniqueId): Promise<MovementEntity | null>;
   findForExport(params: ExportRequest): Promise<MovementEntity[]>;
+  getGlobalBalance(): Promise<MovementBalanceModel>;
+  getStatistics(
+    params: GetMovementStatisticsParams,
+  ): Promise<MovementStatisticsModel>;
 }

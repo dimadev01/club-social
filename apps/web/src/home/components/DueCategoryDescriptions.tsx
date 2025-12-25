@@ -1,36 +1,50 @@
 import type { IPaymentStatisticsDto } from '@club-social/shared/payments';
 
-import { type DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
+import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
+import { Grid, Skeleton } from 'antd';
 
+import { CategoryIconMap } from '@/dues/DueCategoryIconMap';
 import { Descriptions } from '@/ui/Descriptions';
 
 interface Props {
   category: DueCategory;
   data?: IPaymentStatisticsDto;
+  loading?: boolean;
 }
 
-export function DueCategoryDescriptions({ category, data }: Props) {
+export function DueCategoryDescriptions({ category, data, loading }: Props) {
+  const { lg } = Grid.useBreakpoint();
+
+  const skeletonOrValue = <T extends React.ReactNode>(value: T) =>
+    loading ? <Skeleton.Button active block /> : value;
+
   return (
     <Descriptions
+      extra={CategoryIconMap[category]}
       items={[
         {
-          children: data?.categories[category].count ?? 0,
+          children: skeletonOrValue(data?.categories[category].count ?? 0),
           label: 'Cantidad',
         },
         {
-          children: NumberFormat.formatCurrencyCents(
-            data?.categories[category].amount ?? 0,
+          children: skeletonOrValue(
+            NumberFormat.formatCurrencyCents(
+              data?.categories[category].amount ?? 0,
+            ),
           ),
           label: 'Total',
         },
         {
-          children: NumberFormat.formatCurrencyCents(
-            data?.categories[category].average ?? 0,
+          children: skeletonOrValue(
+            NumberFormat.formatCurrencyCents(
+              data?.categories[category].average ?? 0,
+            ),
           ),
           label: 'Promedio',
         },
       ]}
+      layout={lg ? 'horizontal' : 'vertical'}
       title={DueCategoryLabel[category]}
     />
   );

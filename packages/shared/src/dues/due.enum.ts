@@ -19,10 +19,11 @@ export const DueCategorySort = {
 } as const;
 
 export const DueCategoryOptions = Object.entries(DueCategoryLabel).map(
-  ([value, label]) => ({
-    label,
-    value,
-  }),
+  ([value, label]) => ({ label, value }),
+);
+
+export const DueCategorySorted = Object.values(DueCategory).sort(
+  (a, b) => DueCategorySort[a] - DueCategorySort[b],
 );
 
 export const DueStatus = {

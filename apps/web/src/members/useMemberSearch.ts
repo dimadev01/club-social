@@ -2,6 +2,7 @@ import type { IMemberSearchResultDto } from '@club-social/shared/members';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { usePermissions } from '@/users/use-permissions';
 
 const DEFAULT_LIMIT = 20;
@@ -20,13 +21,12 @@ export function useMemberSearch({
   const permissions = usePermissions();
 
   const query = useQuery<IMemberSearchResultDto[]>({
+    ...queryKeys.members.search(searchTerm),
     enabled: enabled && permissions.members.list && searchTerm.length >= 2,
     queryFn: () =>
       $fetch<IMemberSearchResultDto[]>('/members/search', {
         query: { limit: limit + 1, q: searchTerm },
       }),
-    queryKey: ['members', 'search', searchTerm, limit],
-    staleTime: 30_000,
   });
 
   const hasMore = (query.data?.length ?? 0) > limit;

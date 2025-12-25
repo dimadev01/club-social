@@ -42,6 +42,7 @@ import {
 import { CreateDueRequestDto } from './dto/create-due.dto';
 import { DueDetailDto } from './dto/due-detail.dto';
 import { DuePaginatedDto, DuePaginatedExtraDto } from './dto/due-paginated.dto';
+import { DuePendingStatisticsDto } from './dto/due-pending-statistics.dto';
 import { PendingDueDto } from './dto/pending-due.dto';
 import { UpdateDueDto } from './dto/update-due.dto';
 import { VoidDueRequestDto } from './dto/void-due.dto';
@@ -190,6 +191,16 @@ export class DuesController extends BaseController {
         totalAmount: dues.extra?.totalAmount ?? 0,
       },
       total: dues.total,
+    };
+  }
+
+  @Get('pending-statistics')
+  public async getPendingStatistics(): Promise<DuePendingStatisticsDto> {
+    const data = await this.dueRepository.getPendingStatistics();
+
+    return {
+      categories: data.categories,
+      total: data.total,
     };
   }
 

@@ -18,7 +18,10 @@
     "config.toml",
     "compose.yaml"
   ],
-  "words": [],
+  "words": [
+    "Egresos",
+    "Idcard"
+  ],
   "ignoreWords": [
     "Dorrego",
     "Logtail",

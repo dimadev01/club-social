@@ -43,6 +43,11 @@ import {
   MovementPaginatedDto,
   MovementPaginatedExtraDto,
 } from './dto/movement-paginated.dto';
+import {
+  MovementBalanceDto,
+  MovementStatisticsDto,
+  MovementStatisticsQueryDto,
+} from './dto/movement-statistics.dto';
 import { VoidMovementRequestDto } from './dto/void-movement.dto';
 
 @Controller('movements')
@@ -148,6 +153,30 @@ export class MovementsController extends BaseController {
         totalAmountOutflow: result.extra?.totalAmountOutflow ?? 0,
       },
       total: result.total,
+    };
+  }
+
+  @Get('statistics')
+  public async getStatistics(
+    @Query() query: MovementStatisticsQueryDto,
+  ): Promise<MovementStatisticsDto> {
+    const data = await this.movementRepository.getStatistics({
+      dateRange: query.dateRange,
+    });
+
+    return {
+      balance: data.balance,
+      totalInflow: data.totalInflow,
+      totalOutflow: data.totalOutflow,
+    };
+  }
+
+  @Get('balance')
+  public async getGlobalBalance(): Promise<MovementBalanceDto> {
+    const data = await this.movementRepository.getGlobalBalance();
+
+    return {
+      balance: data.balance,
     };
   }
 

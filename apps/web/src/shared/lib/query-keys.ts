@@ -6,22 +6,34 @@ import { createQueryKeyStore } from '@lukemorales/query-key-factory';
 import type { UsePaymentStatisticsQuery } from '@/home/usePaymentStatistics';
 import type { TableQuery } from '@/ui/Table/useTable';
 
+export interface UseMovementStatisticsQuery {
+  dateRange?: [string, string];
+}
+
 export const queryKeys = createQueryKeyStore({
   dues: {
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
     payments: (id?: string) => [id],
     pending: (memberId?: string) => [memberId],
+    pendingStatistics: () => [undefined],
   },
 
   members: {
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
+    search: (query?: string) => [query],
   },
 
   movements: {
+    balance: () => [undefined],
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
+    statistics: (query?: UseMovementStatisticsQuery) => [query],
+  },
+
+  passkeys: {
+    list: null,
   },
 
   payments: {
