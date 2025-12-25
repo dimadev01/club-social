@@ -96,7 +96,7 @@ export function PaymentView() {
             label: 'Socio',
           },
           {
-            children: NumberFormat.formatCents(payment.amount),
+            children: NumberFormat.formatCurrencyCents(payment.amount),
             label: 'Monto',
           },
           {
@@ -143,14 +143,16 @@ export function PaymentView() {
           {
             align: 'right',
             dataIndex: 'dueAmount',
-            render: (dueAmount: number) => NumberFormat.formatCents(dueAmount),
+            render: (dueAmount: number) =>
+              NumberFormat.formatCurrencyCents(dueAmount),
             title: 'Monto deuda',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) => NumberFormat.formatCents(amount),
+            render: (amount: number) =>
+              NumberFormat.formatCurrencyCents(amount),
             title: 'Monto pago',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },

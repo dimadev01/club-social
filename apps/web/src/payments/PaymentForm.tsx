@@ -248,14 +248,15 @@ export function PaymentForm({
               {
                 align: 'right',
                 dataIndex: 'amount',
-                render: (amount: number) => NumberFormat.formatCents(amount),
+                render: (amount: number) =>
+                  NumberFormat.formatCurrencyCents(amount),
                 title: 'Monto',
                 width: TABLE_COLUMN_WIDTHS.AMOUNT,
               },
               {
                 align: 'right',
                 render: (_, record: IPendingDueDto) => {
-                  return NumberFormat.formatCents(
+                  return NumberFormat.formatCurrencyCents(
                     getPaidAmountForDue(record.id),
                   );
                 },
@@ -265,7 +266,7 @@ export function PaymentForm({
               {
                 align: 'right',
                 render: (_, record: IPendingDueDto) => {
-                  return NumberFormat.formatCents(
+                  return NumberFormat.formatCurrencyCents(
                     getRemainingAmountForDue(record.id),
                   );
                 },
@@ -327,7 +328,7 @@ export function PaymentForm({
                                 label: 'Categoría',
                               },
                               {
-                                children: NumberFormat.formatCents(
+                                children: NumberFormat.formatCurrencyCents(
                                   getRemainingAmountForDue(due.id),
                                 ),
                                 label: 'Monto a pagar',

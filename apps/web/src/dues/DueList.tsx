@@ -182,7 +182,8 @@ export function DueList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) => NumberFormat.formatCents(amount),
+            render: (amount: number) =>
+              NumberFormat.formatCurrencyCents(amount),
             title: 'Monto',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -278,7 +279,7 @@ export function DueList() {
               Total
             </Table.Summary.Cell>
             <Table.Summary.Cell colSpan={7} index={1}>
-              {NumberFormat.formatCents(dues?.extra?.totalAmount ?? 0)}
+              {NumberFormat.formatCurrencyCents(dues?.extra?.totalAmount ?? 0)}
             </Table.Summary.Cell>
           </Table.Summary.Row>
         )}

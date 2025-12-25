@@ -86,7 +86,7 @@ export function MovementView() {
             label: 'Tipo',
           },
           {
-            children: NumberFormat.formatCents(movement.amount),
+            children: NumberFormat.formatCurrencyCents(movement.amount),
             label: 'Monto',
           },
           {

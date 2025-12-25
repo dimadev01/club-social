@@ -132,7 +132,8 @@ export function PricingList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) => NumberFormat.formatCents(amount),
+            render: (amount: number) =>
+              NumberFormat.formatCurrencyCents(amount),
             title: 'Monto',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },

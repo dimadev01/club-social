@@ -106,7 +106,7 @@ export function DueView() {
             label: 'Socio',
           },
           {
-            children: NumberFormat.formatCents(due.amount),
+            children: NumberFormat.formatCurrencyCents(due.amount),
             label: 'Monto',
           },
           {
@@ -143,7 +143,7 @@ export function DueView() {
             align: 'right',
             dataIndex: 'paymentAmount',
             render: (paymentAmount: number) =>
-              NumberFormat.formatCents(paymentAmount),
+              NumberFormat.formatCurrencyCents(paymentAmount),
             title: 'Monto',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },

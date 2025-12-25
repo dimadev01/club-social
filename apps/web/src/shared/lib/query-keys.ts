@@ -3,6 +3,7 @@ import type { MemberCategory } from '@club-social/shared/members';
 
 import { createQueryKeyStore } from '@lukemorales/query-key-factory';
 
+import type { UsePaymentStatisticsQuery } from '@/home/usePaymentStatistics';
 import type { TableQuery } from '@/ui/Table/useTable';
 
 export const queryKeys = createQueryKeyStore({
@@ -27,6 +28,7 @@ export const queryKeys = createQueryKeyStore({
     detail: (id?: string) => [id],
     dues: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
+    statistics: (query?: UsePaymentStatisticsQuery) => [query],
   },
 
   pricing: {

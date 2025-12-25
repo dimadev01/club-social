@@ -15,14 +15,18 @@ export const NumberFormat = {
     return formatter(options).format(value);
   },
 
-  formatCents(value: number): string {
+  formatCurrency(value: number): string {
     return formatter({
       currency: 'ARS',
       currencySign: 'standard',
       maximumFractionDigits: 0,
       signDisplay: 'auto',
       style: 'currency',
-    }).format(Math.round(value / 100));
+    }).format(value);
+  },
+
+  formatCurrencyCents(value: number): string {
+    return NumberFormat.formatCurrency(Math.round(value / 100));
   },
 
   fromCents(value: number): number {

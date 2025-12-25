@@ -1,3 +1,5 @@
+import { DueCategory } from '@club-social/shared/dues';
+
 import { DueEntity } from '@/dues/domain/entities/due.entity';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import { UserEntity } from '@/users/domain/entities/user.entity';
@@ -24,4 +26,17 @@ export interface PaymentPaginatedModel {
   member: MemberEntity;
   payment: PaymentEntity;
   user: UserEntity;
+}
+
+export interface PaymentStatisticsCategoryItemModel {
+  amount: number;
+  average: number;
+  count: number;
+}
+
+export interface PaymentStatisticsModel {
+  average: number;
+  categories: Record<DueCategory, PaymentStatisticsCategoryItemModel>;
+  count: number;
+  total: number;
 }

@@ -43,6 +43,8 @@ import {
   PaymentPaginatedDto,
   PaymentPaginatedExtraDto,
 } from './dto/payment-paginated.dto';
+import { PaymentStatisticsQueryDto } from './dto/payment-statistics-query.dto';
+import { PaymentStatisticsDto } from './dto/payment-statistics.dto';
 import { VoidPaymentRequestDto } from './dto/void-payment.dto';
 
 @Controller('payments')
@@ -121,6 +123,22 @@ export class PaymentsController extends BaseController {
       extra: {
         totalAmount: data.extra?.totalAmount ?? 0,
       },
+      total: data.total,
+    };
+  }
+
+  @Get('statistics')
+  public async getStatistics(
+    @Query() query: PaymentStatisticsQueryDto,
+  ): Promise<PaymentStatisticsDto> {
+    const data = await this.paymentRepository.getStatistics({
+      dateRange: query.dateRange,
+    });
+
+    return {
+      average: data.average,
+      categories: data.categories,
+      count: data.count,
       total: data.total,
     };
   }

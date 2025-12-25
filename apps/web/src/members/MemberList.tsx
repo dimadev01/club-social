@@ -173,7 +173,8 @@ export function MemberListPage() {
           {
             align: 'right',
             dataIndex: 'memberShipTotalDueAmount',
-            render: (amount: number) => NumberFormat.formatCents(amount),
+            render: (amount: number) =>
+              NumberFormat.formatCurrencyCents(amount),
             sorter: true,
             sortOrder: getSortOrder('memberShipTotalDueAmount'),
             title: 'Deuda cuota',
@@ -182,7 +183,8 @@ export function MemberListPage() {
           {
             align: 'right',
             dataIndex: 'electricityTotalDueAmount',
-            render: (amount: number) => NumberFormat.formatCents(amount),
+            render: (amount: number) =>
+              NumberFormat.formatCurrencyCents(amount),
             sorter: true,
             sortOrder: getSortOrder('electricityTotalDueAmount'),
             title: 'Deuda luz',
@@ -191,7 +193,8 @@ export function MemberListPage() {
           {
             align: 'right',
             dataIndex: 'guestTotalDueAmount',
-            render: (amount: number) => NumberFormat.formatCents(amount),
+            render: (amount: number) =>
+              NumberFormat.formatCurrencyCents(amount),
             sorter: true,
             sortOrder: getSortOrder('guestTotalDueAmount'),
             title: 'Deuda invitado',
@@ -246,17 +249,17 @@ export function MemberListPage() {
               Total
             </Table.Summary.Cell>
             <Table.Summary.Cell align="right" colSpan={1} index={1}>
-              {NumberFormat.formatCents(
+              {NumberFormat.formatCurrencyCents(
                 members?.extra?.memberShipTotalDueAmount ?? 0,
               )}
             </Table.Summary.Cell>
             <Table.Summary.Cell align="right" colSpan={1} index={2}>
-              {NumberFormat.formatCents(
+              {NumberFormat.formatCurrencyCents(
                 members?.extra?.electricityTotalDueAmount ?? 0,
               )}
             </Table.Summary.Cell>
             <Table.Summary.Cell align="right" colSpan={1} index={3}>
-              {NumberFormat.formatCents(
+              {NumberFormat.formatCurrencyCents(
                 members?.extra?.guestTotalDueAmount ?? 0,
               )}
             </Table.Summary.Cell>

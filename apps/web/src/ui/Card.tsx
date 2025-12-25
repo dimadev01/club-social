@@ -2,7 +2,6 @@ import {
   Card as AntCard,
   type CardProps as AntCardProps,
   Button,
-  Skeleton,
   Space,
   Tooltip,
 } from 'antd';
@@ -14,7 +13,12 @@ export interface CardProps extends AntCardProps {
   backButton?: boolean;
 }
 
-export function Card({ backButton, loading, title, ...props }: CardProps) {
+export function Card({
+  backButton = false,
+  loading,
+  title,
+  ...props
+}: CardProps) {
   const navigate = useNavigate();
 
   return (
@@ -33,8 +37,11 @@ export function Card({ backButton, loading, title, ...props }: CardProps) {
                 />
               </Tooltip>
             )}
-            {loading && <Skeleton.Input active />}
-            {!loading && title}
+
+            {title}
+            {/* {loading && loadingTitle && <Skeleton.Input active />}
+            {loading && !loadingTitle && title}
+            {!loading && title} */}
           </Space>
         ),
       })}

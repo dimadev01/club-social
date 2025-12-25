@@ -49,6 +49,7 @@ export function MemberView() {
         ),
       ].filter(Boolean)}
       backButton
+      loading={isLoading}
       title={member.name}
     >
       <Descriptions

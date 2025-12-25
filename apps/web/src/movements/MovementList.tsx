@@ -190,7 +190,7 @@ export function MovementList() {
             dataIndex: 'amount',
             render: (amount: number, record: IMovementPaginatedDto) =>
               record.type === MovementType.OUTFLOW
-                ? NumberFormat.formatCents(amount)
+                ? NumberFormat.formatCurrencyCents(amount)
                 : '',
             title: 'Egreso',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
@@ -200,7 +200,7 @@ export function MovementList() {
             dataIndex: 'amount',
             render: (amount: number, record: IMovementPaginatedDto) =>
               record.type === MovementType.INFLOW
-                ? NumberFormat.formatCents(amount)
+                ? NumberFormat.formatCurrencyCents(amount)
                 : '',
             title: 'Ingreso',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
@@ -226,19 +226,21 @@ export function MovementList() {
                 Totales
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={1}>
-                {NumberFormat.formatCents(
+                {NumberFormat.formatCurrencyCents(
                   movements?.extra?.totalAmountOutflow ?? 0,
                 )}
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={2}>
-                {NumberFormat.formatCents(
+                {NumberFormat.formatCurrencyCents(
                   movements?.extra?.totalAmountInflow ?? 0,
                 )}
               </Table.Summary.Cell>
             </Table.Summary.Row>
             <Table.Summary.Row>
               <Table.Summary.Cell align="center" colSpan={2} index={1}>
-                {NumberFormat.formatCents(movements?.extra?.totalAmount ?? 0)}
+                {NumberFormat.formatCurrencyCents(
+                  movements?.extra?.totalAmount ?? 0,
+                )}
               </Table.Summary.Cell>
             </Table.Summary.Row>
           </>

@@ -174,7 +174,8 @@ export function PaymentList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) => NumberFormat.formatCents(amount),
+            render: (amount: number) =>
+              NumberFormat.formatCurrencyCents(amount),
             title: 'Monto',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -255,7 +256,9 @@ export function PaymentList() {
               Total
             </Table.Summary.Cell>
             <Table.Summary.Cell colSpan={5} index={1}>
-              {NumberFormat.formatCents(payments?.extra?.totalAmount ?? 0)}
+              {NumberFormat.formatCurrencyCents(
+                payments?.extra?.totalAmount ?? 0,
+              )}
             </Table.Summary.Cell>
           </Table.Summary.Row>
         )}
