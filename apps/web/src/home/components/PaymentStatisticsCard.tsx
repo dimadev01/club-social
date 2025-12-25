@@ -22,30 +22,37 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
 
   return (
     <Card size="small" title="Pagos en el período" type="inner">
-      <Card.Grid className="w-full md:w-1/3">
+      <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">
         <Statistic
           loading={isLoading}
-          title="Cantidad"
-          value={statistics?.count}
+          title="Pagos realizados"
+          value={statistics?.paymentsCount}
         />
       </Card.Grid>
-      <Card.Grid className="w-full md:w-1/3">
+      <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">
         <Statistic
           loading={isLoading}
-          title="Total"
-          value={NumberFormat.formatCurrencyCents(statistics?.total ?? 0)}
+          title="Deudas pagas"
+          value={statistics?.paymentDuesCount}
         />
       </Card.Grid>
-      <Card.Grid className="w-full md:w-1/3">
+      <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">
         <Statistic
           loading={isLoading}
-          title="Promedio"
+          title="Total de pagos"
+          value={NumberFormat.formatCurrencyCents(statistics?.totalAmount ?? 0)}
+        />
+      </Card.Grid>
+      <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">
+        <Statistic
+          loading={isLoading}
+          title="Promedio de pago"
           value={NumberFormat.formatCurrencyCents(statistics?.average ?? 0)}
         />
       </Card.Grid>
 
       {DueCategorySorted.map((category) => (
-        <Card.Grid className="w-full md:w-1/3" key={category}>
+        <Card.Grid className="w-full sm:w-1/2 lg:w-1/3" key={category}>
           <DueCategoryDescriptions
             category={category}
             data={statistics}

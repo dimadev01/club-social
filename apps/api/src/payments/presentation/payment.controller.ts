@@ -32,6 +32,7 @@ import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-respon
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePaymentUseCase } from '../application/create-payment/create-payment.use-case';
+import { FindPaymentsStatisticsUseCase } from '../application/find-payments-statistics/find-payments-statistics.use-case';
 import { VoidPaymentUseCase } from '../application/void-payment/void-payment.use-case';
 import {
   PAYMENT_REPOSITORY_PROVIDER,
@@ -57,6 +58,7 @@ export class PaymentsController extends BaseController {
     @Inject(PAYMENT_REPOSITORY_PROVIDER)
     private readonly paymentRepository: PaymentRepository,
     private readonly csvService: CsvService,
+    private readonly findPaymentsStatisticsUseCase: FindPaymentsStatisticsUseCase,
   ) {
     super(logger);
   }
@@ -131,15 +133,18 @@ export class PaymentsController extends BaseController {
   public async getStatistics(
     @Query() query: PaymentStatisticsQueryDto,
   ): Promise<PaymentStatisticsDto> {
-    const data = await this.paymentRepository.getStatistics({
-      dateRange: query.dateRange,
-    });
+    const data = this.handleResult(
+      await this.findPaymentsStatisticsUseCase.execute({
+        dateRange: query.dateRange,
+      }),
+    );
 
     return {
       average: data.average,
       categories: data.categories,
-      count: data.count,
-      total: data.total,
+      paymentDuesCount: data.paymentDuesCount,
+      paymentsCount: data.paymentsCount,
+      totalAmount: data.totalAmount,
     };
   }
 

@@ -10,10 +10,6 @@ export type DueModelWithRelations = DueModel & {
   member?: MemberModelWithRelations;
 };
 
-export interface GetPaymentStatisticsParams {
-  dateRange?: [string, string];
-}
-
 export type MemberModelWithRelations = MemberModel & {
   user?: UserModel;
 };

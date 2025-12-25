@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { PublicRoute } from './shared/presentation/decorators/public-route.decorator';
 
 @Controller()
+@PublicRoute()
 export class AppController {
   public constructor(private readonly appService: AppService) {}
 
@@ -18,8 +19,12 @@ export class AppController {
   }
 
   @Post('seed')
-  @PublicRoute()
   public async seed(): Promise<void> {
     return this.appService.seed();
+  }
+
+  @Post('clear')
+  public async clear(): Promise<void> {
+    return this.appService.clear();
   }
 }

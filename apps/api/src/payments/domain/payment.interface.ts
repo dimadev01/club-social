@@ -8,7 +8,6 @@ export interface CreatePaymentProps {
   dueIds: UniqueId[];
   memberId: UniqueId;
   notes: null | string;
-  // paymentDues: PaymentDueProps[];
   receiptNumber: null | string;
 }
 

@@ -1,7 +1,3 @@
-export interface MovementBalanceModel {
-  balance: number;
-}
-
 export interface MovementPaginatedExtraModel {
   totalAmount: number;
   totalAmountInflow: number;
@@ -10,6 +6,7 @@ export interface MovementPaginatedExtraModel {
 
 export interface MovementStatisticsModel {
   balance: number;
+  cumulativeTotal: number;
   totalInflow: number;
   totalOutflow: number;
 }

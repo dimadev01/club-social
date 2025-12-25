@@ -5,9 +5,9 @@ import {
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
+import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import { GetPaymentStatisticsParams } from '../infrastructure/prisma-payment.types';
 import { PaymentEntity } from './entities/payment.entity';
 import {
   PaymentDetailModel,
@@ -25,9 +25,9 @@ export interface PaymentRepository
     ReadableRepository<PaymentEntity>,
     WriteableRepository<PaymentEntity> {
   findForExport(params: ExportRequest): Promise<PaymentPaginatedModel[]>;
+  findForStatistics(
+    params: FindForStatisticsParams,
+  ): Promise<PaymentStatisticsModel[]>;
   findOneModel(id: UniqueId): Promise<null | PaymentDetailModel>;
   findPaymentDuesModel(paymentId: UniqueId): Promise<PaymentDueDetailModel[]>;
-  getStatistics(
-    params: GetPaymentStatisticsParams,
-  ): Promise<PaymentStatisticsModel>;
 }

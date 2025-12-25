@@ -4,6 +4,7 @@ export interface IMovementBalanceDto {
 
 export interface IMovementStatisticsDto {
   balance: number;
+  total: number;
   totalInflow: number;
   totalOutflow: number;
 }

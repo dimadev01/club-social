@@ -11,9 +11,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { sample, times } from 'es-toolkit/compat';
 
 import { ConfigService } from './infrastructure/config/config.service';
+import { PrismaService } from './infrastructure/database/prisma/prisma.service';
 import { CreateMemberUseCase } from './members/application/create-member/create-member.use-case';
 import { Address } from './shared/domain/value-objects/address/address.vo';
-import { PublicRoute } from './shared/presentation/decorators/public-route.decorator';
 import { CreateUserUseCase } from './users/application/create-user/create-user.use-case';
 import {
   USER_REPOSITORY_PROVIDER,
@@ -26,15 +26,29 @@ export class AppService {
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly createMemberUseCase: CreateMemberUseCase,
     private readonly configService: ConfigService,
+    private readonly prismaService: PrismaService,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
   ) {}
+
+  public async clear(): Promise<void> {
+    await this.prismaService.movement.deleteMany({});
+    await this.prismaService.member.deleteMany({});
+    await this.prismaService.payment.deleteMany({});
+    await this.prismaService.due.deleteMany({});
+    await this.prismaService.user.deleteMany({});
+    await this.prismaService.session.deleteMany({});
+    await this.prismaService.account.deleteMany({});
+    await this.prismaService.verification.deleteMany({});
+    await this.prismaService.passkey.deleteMany({});
+    await this.prismaService.pricing.deleteMany({});
+    await this.prismaService.auditLog.deleteMany({});
+  }
 
   public getHello(): string {
     return 'Hello World!';
   }
 
-  @PublicRoute()
   public async seed(): Promise<void> {
     const { total } = await this.userRepository.findPaginated({
       filters: {},

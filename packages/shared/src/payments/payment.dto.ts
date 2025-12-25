@@ -1,5 +1,6 @@
 import type { ICreatePaymentDueItemDto } from '../payment-due';
 
+import { DueCategory } from '../dues';
 import { UserStatus } from '../users';
 import { PaymentStatus } from './payment.enum';
 
@@ -43,6 +44,24 @@ export interface IPaymentPaginatedDto {
 
 export interface IPaymentPaginatedExtraDto {
   totalAmount: number;
+}
+
+export interface IPaymentStatisticsByCategoryItemDto {
+  amount: number;
+  average: number;
+  count: number;
+}
+
+export interface IPaymentStatisticsDto {
+  average: number;
+  categories: Record<DueCategory, IPaymentStatisticsByCategoryItemDto>;
+  paymentDuesCount: number;
+  paymentsCount: number;
+  totalAmount: number;
+}
+
+export interface IPaymentStatisticsQueryDto {
+  dateRange?: [string, string];
 }
 
 export interface IVoidPaymentDto {

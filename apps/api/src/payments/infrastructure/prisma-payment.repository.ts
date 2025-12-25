@@ -4,11 +4,9 @@ import type {
   PaginatedResponse,
 } from '@club-social/shared/types';
 
-import { DueCategory } from '@club-social/shared/dues';
 import { PaymentDueStatus } from '@club-social/shared/payment-due';
 import { PaymentStatus } from '@club-social/shared/payments';
 import { Injectable } from '@nestjs/common';
-import { groupBy, sumBy } from 'es-toolkit/compat';
 
 import {
   PaymentDueWhereInput,
@@ -19,6 +17,7 @@ import {
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { Guard } from '@/shared/domain/guards';
+import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -29,10 +28,8 @@ import {
   PaymentDueDetailModel,
   PaymentPaginatedExtraModel,
   PaymentPaginatedModel,
-  PaymentStatisticsCategoryItemModel,
   PaymentStatisticsModel,
 } from '../domain/payment.types';
-import { GetPaymentStatisticsParams } from './prisma-payment.types';
 
 @Injectable()
 export class PrismaPaymentRepository implements PaymentRepository {
@@ -56,6 +53,38 @@ export class PrismaPaymentRepository implements PaymentRepository {
       member: this.mapper.member.toDomain(payment.member),
       payment: this.mapper.payment.toDomain(payment),
       user: this.mapper.user.toDomain(payment.member.user),
+    }));
+  }
+
+  public async findForStatistics(
+    params: FindForStatisticsParams,
+  ): Promise<PaymentStatisticsModel[]> {
+    const where: PaymentDueWhereInput = {
+      payment: {
+        deletedAt: null,
+        status: PaymentStatus.PAID,
+      },
+      status: PaymentDueStatus.REGISTERED,
+    };
+
+    if (params.dateRange) {
+      Guard.defined(where.payment);
+
+      where.payment.date = {
+        gte: params.dateRange[0],
+        lte: params.dateRange[1],
+      };
+    }
+
+    const paymentDues = await this.prismaService.paymentDue.findMany({
+      include: { due: true, payment: true },
+      where: where,
+    });
+
+    return paymentDues.map((paymentDue) => ({
+      due: this.mapper.due.toDomain(paymentDue.due),
+      payment: this.mapper.payment.toDomain(paymentDue.payment),
+      paymentDue: this.mapper.paymentDue.toDomain(paymentDue),
     }));
   }
 
@@ -158,67 +187,6 @@ export class PrismaPaymentRepository implements PaymentRepository {
     });
 
     return this.mapper.payment.toDomain(payment);
-  }
-
-  public async getStatistics(
-    params: GetPaymentStatisticsParams,
-  ): Promise<PaymentStatisticsModel> {
-    const paymentDueWhere: PaymentDueWhereInput = {
-      payment: {
-        deletedAt: null,
-        status: PaymentStatus.PAID,
-      },
-      status: PaymentDueStatus.REGISTERED,
-    };
-
-    if (params.dateRange) {
-      Guard.defined(paymentDueWhere.payment);
-
-      paymentDueWhere.payment.date = {
-        gte: params.dateRange[0],
-        lte: params.dateRange[1],
-      };
-    }
-
-    const paymentDues = await this.prismaService.paymentDue.findMany({
-      include: {
-        due: { select: { category: true } },
-        payment: { select: { date: true, id: true } },
-      },
-      where: paymentDueWhere,
-    });
-
-    const uniquePaymentIds = new Set(paymentDues.map((pd) => pd.payment.id));
-    const totalAmount = sumBy(paymentDues, (pd) => pd.amount);
-    const paymentCount = uniquePaymentIds.size;
-
-    const paymentDuesByCategory = groupBy(paymentDues, (pd) => pd.due.category);
-
-    const categories = Object.values(DueCategory).reduce(
-      (acc, category) => {
-        const items = paymentDuesByCategory[category];
-        acc[category] = items
-          ? {
-              amount: sumBy(items, (pd) => pd.amount),
-              average: sumBy(items, (pd) => pd.amount) / items.length,
-              count: items.length,
-            }
-          : { amount: 0, average: 0, count: 0 };
-
-        return acc;
-      },
-      {} as Record<DueCategory, PaymentStatisticsCategoryItemModel>,
-    );
-
-    const average =
-      paymentCount > 0 ? Math.round(totalAmount / paymentCount) : 0;
-
-    return {
-      average,
-      categories,
-      count: paymentCount,
-      total: totalAmount,
-    };
   }
 
   public async save(entity: PaymentEntity): Promise<PaymentEntity> {

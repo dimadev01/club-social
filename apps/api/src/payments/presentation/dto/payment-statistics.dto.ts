@@ -14,6 +14,7 @@ export class PaymentStatisticsByCategoryItemDto implements IPaymentStatisticsByC
 export class PaymentStatisticsDto implements IPaymentStatisticsDto {
   public average: number;
   public categories: Record<DueCategory, PaymentStatisticsByCategoryItemDto>;
-  public count: number;
-  public total: number;
+  public paymentDuesCount: number;
+  public paymentsCount: number;
+  public totalAmount: number;
 }

@@ -12,6 +12,7 @@ export class MovementBalanceDto implements IMovementBalanceDto {
 
 export class MovementStatisticsDto implements IMovementStatisticsDto {
   public balance: number;
+  public total: number;
   public totalInflow: number;
   public totalOutflow: number;
 }
