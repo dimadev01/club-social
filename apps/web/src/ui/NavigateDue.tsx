@@ -1,7 +1,7 @@
+import { DateFormat } from '@club-social/shared/lib';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
-import { DateFormat } from '@/shared/lib/date-format';
 
 interface Props {
   date: string;

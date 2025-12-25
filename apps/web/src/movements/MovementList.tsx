@@ -2,11 +2,14 @@ import type { PaginatedResponse } from '@club-social/shared/types';
 
 import { MoreOutlined } from '@ant-design/icons';
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormat } from '@club-social/shared/lib';
 import {
   type IMovementPaginatedDto,
   type IMovementPaginatedExtraDto,
   MovementCategory,
   MovementCategoryLabel,
+  MovementMode,
+  MovementModeLabel,
   MovementStatus,
   MovementStatusLabel,
   MovementType,
@@ -18,7 +21,6 @@ import { Link, useNavigate } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
-import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { NotFound } from '@/ui/NotFound';
@@ -147,6 +149,17 @@ export function MovementList() {
             render: (value: MovementCategory) => MovementCategoryLabel[value],
             title: 'Categoría',
             width: TABLE_COLUMN_WIDTHS.CATEGORY,
+          },
+          {
+            align: 'center',
+            dataIndex: 'mode',
+            filteredValue: getFilterValue('mode'),
+            filters: Object.entries(MovementModeLabel).map(
+              ([value, label]) => ({ text: label, value }),
+            ),
+            render: (value: MovementMode) => MovementModeLabel[value],
+            title: 'Modo',
+            width: 125,
           },
           {
             align: 'center',

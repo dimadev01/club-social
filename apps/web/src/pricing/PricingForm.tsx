@@ -2,13 +2,13 @@ import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormats } from '@club-social/shared/lib';
 import {
   type MemberCategory,
   MemberCategoryOptions,
 } from '@club-social/shared/members';
 import { DatePicker, InputNumber } from 'antd';
 
-import { DateFormats } from '@/shared/lib/date-format';
 import { Form } from '@/ui/Form/Form';
 import { Select } from '@/ui/Select';
 

@@ -53,3 +53,15 @@ export const MovementStatusLabel = {
   [MovementStatus.REGISTERED]: 'Registrado',
   [MovementStatus.VOIDED]: 'Anulado',
 } as const;
+
+export const MovementMode = {
+  AUTOMATIC: 'automatic',
+  MANUAL: 'manual',
+} as const;
+
+export type MovementMode = (typeof MovementMode)[keyof typeof MovementMode];
+
+export const MovementModeLabel = {
+  [MovementMode.AUTOMATIC]: 'Automático',
+  [MovementMode.MANUAL]: 'Manual',
+} as const;

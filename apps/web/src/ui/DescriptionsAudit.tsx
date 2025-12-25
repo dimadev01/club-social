@@ -1,4 +1,4 @@
-import { DateFormat } from '@/shared/lib/date-format';
+import { DateFormat } from '@club-social/shared/lib';
 
 import { Descriptions } from './Descriptions';
 

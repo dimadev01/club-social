@@ -2,6 +2,7 @@ import {
   IMovementPaginatedDto,
   IMovementPaginatedExtraDto,
   MovementCategory,
+  MovementMode,
   MovementStatus,
   MovementType,
 } from '@club-social/shared/movements';
@@ -13,6 +14,7 @@ export class MovementPaginatedDto implements IMovementPaginatedDto {
   public date: string;
   public description: null | string;
   public id: string;
+  public mode: MovementMode;
   public paymentId: null | string;
   public status: MovementStatus;
   public type: MovementType;

@@ -2,13 +2,13 @@ import type { ICreatePaymentDto } from '@club-social/shared/payments';
 import type { ParamId } from '@club-social/shared/types';
 
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormat } from '@club-social/shared/lib';
 import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate, useSearchParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
-import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';

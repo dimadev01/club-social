@@ -216,32 +216,6 @@ export type IntWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedIntFilter<$PrismaModel>;
 };
 
-export type EnumAuditEntityFilter<$PrismaModel = never> = {
-  equals?:
-    | $Enums.AuditEntity
-    | Prisma.EnumAuditEntityFieldRefInput<$PrismaModel>;
-  in?:
-    | $Enums.AuditEntity[]
-    | Prisma.ListEnumAuditEntityFieldRefInput<$PrismaModel>;
-  notIn?:
-    | $Enums.AuditEntity[]
-    | Prisma.ListEnumAuditEntityFieldRefInput<$PrismaModel>;
-  not?: Prisma.NestedEnumAuditEntityFilter<$PrismaModel> | $Enums.AuditEntity;
-};
-
-export type EnumAuditActionFilter<$PrismaModel = never> = {
-  equals?:
-    | $Enums.AuditAction
-    | Prisma.EnumAuditActionFieldRefInput<$PrismaModel>;
-  in?:
-    | $Enums.AuditAction[]
-    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
-  notIn?:
-    | $Enums.AuditAction[]
-    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
-  not?: Prisma.NestedEnumAuditActionFilter<$PrismaModel> | $Enums.AuditAction;
-};
-
 export type JsonNullableFilter<$PrismaModel = never> =
   | Prisma.PatchUndefined<
       Prisma.Either<
@@ -284,42 +258,6 @@ export type JsonNullableFilterBase<$PrismaModel = never> = {
     | runtime.InputJsonValue
     | Prisma.JsonFieldRefInput<$PrismaModel>
     | Prisma.JsonNullValueFilter;
-};
-
-export type EnumAuditEntityWithAggregatesFilter<$PrismaModel = never> = {
-  equals?:
-    | $Enums.AuditEntity
-    | Prisma.EnumAuditEntityFieldRefInput<$PrismaModel>;
-  in?:
-    | $Enums.AuditEntity[]
-    | Prisma.ListEnumAuditEntityFieldRefInput<$PrismaModel>;
-  notIn?:
-    | $Enums.AuditEntity[]
-    | Prisma.ListEnumAuditEntityFieldRefInput<$PrismaModel>;
-  not?:
-    | Prisma.NestedEnumAuditEntityWithAggregatesFilter<$PrismaModel>
-    | $Enums.AuditEntity;
-  _count?: Prisma.NestedIntFilter<$PrismaModel>;
-  _min?: Prisma.NestedEnumAuditEntityFilter<$PrismaModel>;
-  _max?: Prisma.NestedEnumAuditEntityFilter<$PrismaModel>;
-};
-
-export type EnumAuditActionWithAggregatesFilter<$PrismaModel = never> = {
-  equals?:
-    | $Enums.AuditAction
-    | Prisma.EnumAuditActionFieldRefInput<$PrismaModel>;
-  in?:
-    | $Enums.AuditAction[]
-    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
-  notIn?:
-    | $Enums.AuditAction[]
-    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
-  not?:
-    | Prisma.NestedEnumAuditActionWithAggregatesFilter<$PrismaModel>
-    | $Enums.AuditAction;
-  _count?: Prisma.NestedIntFilter<$PrismaModel>;
-  _min?: Prisma.NestedEnumAuditActionFilter<$PrismaModel>;
-  _max?: Prisma.NestedEnumAuditActionFilter<$PrismaModel>;
 };
 
 export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
@@ -587,68 +525,6 @@ export type NestedFloatFilter<$PrismaModel = never> = {
   gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
   gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
   not?: Prisma.NestedFloatFilter<$PrismaModel> | number;
-};
-
-export type NestedEnumAuditEntityFilter<$PrismaModel = never> = {
-  equals?:
-    | $Enums.AuditEntity
-    | Prisma.EnumAuditEntityFieldRefInput<$PrismaModel>;
-  in?:
-    | $Enums.AuditEntity[]
-    | Prisma.ListEnumAuditEntityFieldRefInput<$PrismaModel>;
-  notIn?:
-    | $Enums.AuditEntity[]
-    | Prisma.ListEnumAuditEntityFieldRefInput<$PrismaModel>;
-  not?: Prisma.NestedEnumAuditEntityFilter<$PrismaModel> | $Enums.AuditEntity;
-};
-
-export type NestedEnumAuditActionFilter<$PrismaModel = never> = {
-  equals?:
-    | $Enums.AuditAction
-    | Prisma.EnumAuditActionFieldRefInput<$PrismaModel>;
-  in?:
-    | $Enums.AuditAction[]
-    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
-  notIn?:
-    | $Enums.AuditAction[]
-    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
-  not?: Prisma.NestedEnumAuditActionFilter<$PrismaModel> | $Enums.AuditAction;
-};
-
-export type NestedEnumAuditEntityWithAggregatesFilter<$PrismaModel = never> = {
-  equals?:
-    | $Enums.AuditEntity
-    | Prisma.EnumAuditEntityFieldRefInput<$PrismaModel>;
-  in?:
-    | $Enums.AuditEntity[]
-    | Prisma.ListEnumAuditEntityFieldRefInput<$PrismaModel>;
-  notIn?:
-    | $Enums.AuditEntity[]
-    | Prisma.ListEnumAuditEntityFieldRefInput<$PrismaModel>;
-  not?:
-    | Prisma.NestedEnumAuditEntityWithAggregatesFilter<$PrismaModel>
-    | $Enums.AuditEntity;
-  _count?: Prisma.NestedIntFilter<$PrismaModel>;
-  _min?: Prisma.NestedEnumAuditEntityFilter<$PrismaModel>;
-  _max?: Prisma.NestedEnumAuditEntityFilter<$PrismaModel>;
-};
-
-export type NestedEnumAuditActionWithAggregatesFilter<$PrismaModel = never> = {
-  equals?:
-    | $Enums.AuditAction
-    | Prisma.EnumAuditActionFieldRefInput<$PrismaModel>;
-  in?:
-    | $Enums.AuditAction[]
-    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
-  notIn?:
-    | $Enums.AuditAction[]
-    | Prisma.ListEnumAuditActionFieldRefInput<$PrismaModel>;
-  not?:
-    | Prisma.NestedEnumAuditActionWithAggregatesFilter<$PrismaModel>
-    | $Enums.AuditAction;
-  _count?: Prisma.NestedIntFilter<$PrismaModel>;
-  _min?: Prisma.NestedEnumAuditActionFilter<$PrismaModel>;
-  _max?: Prisma.NestedEnumAuditActionFilter<$PrismaModel>;
 };
 
 export type NestedJsonNullableFilter<$PrismaModel = never> =

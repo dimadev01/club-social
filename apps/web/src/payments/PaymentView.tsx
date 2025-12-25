@@ -1,5 +1,6 @@
 import { type DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormat } from '@club-social/shared/lib';
 import {
   type IPaymentDueDetailWithDueDto,
   type PaymentDueStatus,
@@ -16,7 +17,6 @@ import { useNavigate, useParams } from 'react-router';
 
 import { usePaymentDuesByPayment } from '@/dues/usePaymentDuesByPayment';
 import { useMutation } from '@/shared/hooks/useMutation';
-import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';

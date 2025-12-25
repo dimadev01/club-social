@@ -1,5 +1,6 @@
 import {
   MovementCategory,
+  MovementMode,
   MovementStatus,
   MovementType,
 } from '@club-social/shared/movements';
@@ -21,6 +22,7 @@ interface MovementProps {
   createdBy: string;
   date: DateOnly;
   description: null | string;
+  mode: MovementMode;
   paymentId: null | UniqueId;
   status: MovementStatus;
   type: MovementType;
@@ -44,6 +46,10 @@ export class MovementEntity extends Entity<MovementEntity> {
 
   public get description(): null | string {
     return this._description;
+  }
+
+  public get mode(): MovementMode {
+    return this._mode;
   }
 
   public get paymentId(): null | UniqueId {
@@ -71,31 +77,25 @@ export class MovementEntity extends Entity<MovementEntity> {
   }
 
   private _amount: Amount;
-
   private _category: MovementCategory;
-
   private _date: DateOnly;
-
   private _description: null | string;
-
+  private _mode: MovementMode;
   private _paymentId: null | UniqueId;
-
   private _status: MovementStatus;
-
   private _type: MovementType;
-
   private _voidedAt: Date | null;
-
   private _voidedBy: null | string;
-
   private _voidReason: null | string;
 
   private constructor(props: MovementProps, base?: BaseEntityProps) {
     super(base);
+
     this._amount = props.amount;
     this._category = props.category;
     this._date = props.date;
     this._description = props.description;
+    this._mode = props.mode;
     this._paymentId = props.paymentId;
     this._status = props.status;
     this._type = props.type;
@@ -113,6 +113,7 @@ export class MovementEntity extends Entity<MovementEntity> {
       createdBy: props.createdBy,
       date: props.date,
       description: props.description,
+      mode: props.mode,
       paymentId: props.paymentId,
       status: MovementStatus.REGISTERED,
       type: props.type,
@@ -141,6 +142,7 @@ export class MovementEntity extends Entity<MovementEntity> {
         createdBy: this._createdBy,
         date: this._date,
         description: this._description,
+        mode: this._mode,
         paymentId: this._paymentId,
         status: this._status,
         type: this._type,

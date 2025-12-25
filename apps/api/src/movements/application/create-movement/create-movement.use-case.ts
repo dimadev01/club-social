@@ -1,3 +1,4 @@
+import { MovementMode } from '@club-social/shared/movements';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
@@ -52,6 +53,7 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
       createdBy: params.createdBy,
       date,
       description: params.description,
+      mode: MovementMode.MANUAL,
       paymentId: null,
       type: params.type,
     });

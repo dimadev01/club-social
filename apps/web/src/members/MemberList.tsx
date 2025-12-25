@@ -1,5 +1,6 @@
 import { MoreOutlined } from '@ant-design/icons';
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormat } from '@club-social/shared/lib';
 import {
   type IMemberPaginatedDto,
   type IMemberPaginatedExtraDto,
@@ -17,7 +18,6 @@ import { Link, useNavigate } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
-import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';

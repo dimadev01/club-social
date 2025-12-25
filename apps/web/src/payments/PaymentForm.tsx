@@ -6,6 +6,7 @@ import {
   type IPendingDueDto,
 } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormat, DateFormats } from '@club-social/shared/lib';
 import { useQueries } from '@tanstack/react-query';
 import { DatePicker, Empty, Input, InputNumber, Space } from 'antd';
 import dayjs from 'dayjs';
@@ -19,7 +20,6 @@ import { getPaymentDuesByDueQueryOptions } from '@/dues/usePaymentDuesByDue';
 import { usePendingDues } from '@/dues/usePendingDues';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
-import { DateFormat, DateFormats } from '@/shared/lib/date-format';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { Form } from '@/ui/Form/Form';

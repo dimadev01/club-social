@@ -1,13 +1,13 @@
 import type { ICreateMemberDto } from '@club-social/shared/members';
 import type { ParamId } from '@club-social/shared/types';
 
+import { DateFormat } from '@club-social/shared/lib';
 import { FileStatus, MemberCategory } from '@club-social/shared/members';
 import { App } from 'antd';
 import { useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
-import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';

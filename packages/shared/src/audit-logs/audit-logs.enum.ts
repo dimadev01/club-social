@@ -1,8 +1,8 @@
 export const AuditAction = {
-  CREATED: 'CREATED',
-  DELETED: 'DELETED',
-  UPDATED: 'UPDATED',
-  VOIDED: 'VOIDED',
+  CREATED: 'created',
+  DELETED: 'deleted',
+  UPDATED: 'updated',
+  VOIDED: 'voided',
 } as const;
 
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];
@@ -15,12 +15,12 @@ export const AuditActionLabel: Record<AuditAction, string> = {
 } as const;
 
 export const AuditEntity = {
-  DUE: 'DUE',
-  MEMBER: 'MEMBER',
-  MOVEMENT: 'MOVEMENT',
-  PAYMENT: 'PAYMENT',
-  PRICING: 'PRICING',
-  USER: 'USER',
+  DUE: 'due',
+  MEMBER: 'member',
+  MOVEMENT: 'movement',
+  PAYMENT: 'payment',
+  PRICING: 'pricing',
+  USER: 'user',
 } as const;
 
 export type AuditEntity = (typeof AuditEntity)[keyof typeof AuditEntity];

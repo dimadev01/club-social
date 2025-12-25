@@ -212,6 +212,7 @@ model Movement {
   date        String
   description String?
   status      String
+  mode        String
   voidReason  String?
   voidedAt    DateTime?
   voidedBy    String?
@@ -237,9 +238,9 @@ model AuditLog {
   createdAt DateTime    @default(now())
   createdBy String
 
-  entity    AuditEntity
+  entity    String
   entityId  String
-  action    AuditAction
+  action    String
 
   message   String?
   oldData   Json?
@@ -270,20 +271,4 @@ model Pricing {
   @@index([effectiveTo])
   @@index([dueCategory, memberCategory, effectiveFrom, effectiveTo])
   @@map("pricing")
-}
-
-enum AuditEntity {
-  USER
-  MEMBER
-  DUE
-  MOVEMENT
-  PAYMENT
-  PRICING
-}
-
-enum AuditAction {
-  CREATED
-  UPDATED
-  VOIDED
-  DELETED
 }

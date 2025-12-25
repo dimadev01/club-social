@@ -1,9 +1,8 @@
 import type { FilterDropdownProps } from 'antd/es/table/interface';
 import type { Dayjs } from 'dayjs';
 
+import { DateFormat } from '@club-social/shared/lib';
 import { useMemo } from 'react';
-
-import { DateFormat } from '@/shared/lib/date-format';
 
 import { TableDateRangeFilter } from './TableDateRangeFilter';
 

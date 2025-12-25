@@ -1,5 +1,6 @@
 import {
   MovementCategory,
+  MovementMode,
   MovementStatus,
   MovementType,
 } from '@club-social/shared/movements';
@@ -26,6 +27,7 @@ export class PrismaMovementMapper extends Mapper<
         createdBy: model.createdBy,
         date: DateOnly.raw({ value: model.date }),
         description: model.description,
+        mode: model.mode as MovementMode,
         paymentId: model.paymentId
           ? UniqueId.raw({ value: model.paymentId })
           : null,
@@ -58,6 +60,7 @@ export class PrismaMovementMapper extends Mapper<
       deletedBy: entity.deletedBy,
       description: entity.description,
       id: entity.id.value,
+      mode: entity.mode,
       paymentId: entity.paymentId?.value ?? null,
       status: entity.status,
       type: entity.type,

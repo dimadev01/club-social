@@ -1,7 +1,9 @@
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormat } from '@club-social/shared/lib';
 import {
   type IVoidMovementDto,
   MovementCategoryLabel,
+  MovementModeLabel,
   MovementStatus,
   MovementStatusLabel,
   MovementTypeLabel,
@@ -11,7 +13,6 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
-import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
@@ -92,6 +93,10 @@ export function MovementView() {
           {
             children: MovementStatusLabel[movement.status],
             label: 'Estado',
+          },
+          {
+            children: MovementModeLabel[movement.mode],
+            label: 'Modo',
           },
           {
             children: movement.description ?? '-',

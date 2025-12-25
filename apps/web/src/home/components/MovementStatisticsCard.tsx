@@ -1,7 +1,8 @@
 import type { Dayjs } from 'dayjs';
 
-import { NumberFormat } from '@club-social/shared/lib';
-import { Statistic } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
+import { Space, Statistic, Tooltip } from 'antd';
 
 import { Card } from '@/ui/Card';
 
@@ -39,14 +40,34 @@ export function MovementStatisticsCard({ dateRange }: Props) {
       <Card.Grid className="w-full md:w-1/3">
         <Statistic
           loading={isLoading}
-          title="Balance"
+          title={
+            <Space>
+              Balance
+              <Tooltip title="Diferencia entre ingresos y egresos para el período filtrado">
+                <InfoCircleOutlined />
+              </Tooltip>
+            </Space>
+          }
           value={NumberFormat.formatCurrencyCents(statistics?.balance ?? 0)}
         />
       </Card.Grid>
       <Card.Grid className="w-full">
         <Statistic
           loading={isLoading}
-          title="Total"
+          title={
+            dateRange ? (
+              <Space>
+                Total acumulado
+                <Tooltip
+                  title={`Incluye saldo de caja al ${DateFormat.parse(dateRange[1]).subtract(1, 'day').format(DateFormats.date)}`}
+                >
+                  <InfoCircleOutlined />
+                </Tooltip>
+              </Space>
+            ) : (
+              'Total acumulado'
+            )
+          }
           value={NumberFormat.formatCurrencyCents(statistics?.total ?? 0)}
         />
       </Card.Grid>

@@ -1587,6 +1587,7 @@ export const MovementScalarFieldEnum = {
   date: 'date',
   description: 'description',
   status: 'status',
+  mode: 'mode',
   voidReason: 'voidReason',
   voidedAt: 'voidedAt',
   voidedBy: 'voidedBy',
@@ -1731,38 +1732,6 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<
   $PrismaModel,
   'Int[]'
->;
-
-/**
- * Reference to a field of type 'AuditEntity'
- */
-export type EnumAuditEntityFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  'AuditEntity'
->;
-
-/**
- * Reference to a field of type 'AuditEntity[]'
- */
-export type ListEnumAuditEntityFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  'AuditEntity[]'
->;
-
-/**
- * Reference to a field of type 'AuditAction'
- */
-export type EnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  'AuditAction'
->;
-
-/**
- * Reference to a field of type 'AuditAction[]'
- */
-export type ListEnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  'AuditAction[]'
 >;
 
 /**

@@ -1,4 +1,8 @@
-import { MovementCategory, MovementType } from '@club-social/shared/movements';
+import {
+  MovementCategory,
+  MovementMode,
+  MovementType,
+} from '@club-social/shared/movements';
 
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
@@ -10,6 +14,7 @@ export interface CreateMovementProps {
   createdBy: string;
   date: DateOnly;
   description: null | string;
+  mode: MovementMode;
   paymentId: null | UniqueId;
   type: MovementType;
 }

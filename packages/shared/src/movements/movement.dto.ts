@@ -1,5 +1,6 @@
 import {
   MovementCategory,
+  MovementMode,
   MovementStatus,
   MovementType,
 } from './movement.enum';
@@ -20,6 +21,7 @@ export interface IMovementDetailDto {
   date: string;
   description: null | string;
   id: string;
+  mode: MovementMode;
   paymentId: null | string;
   status: MovementStatus;
   type: MovementType;
@@ -37,6 +39,7 @@ export interface IMovementPaginatedDto {
   date: string;
   description: null | string;
   id: string;
+  mode: MovementMode;
   paymentId: null | string;
   status: MovementStatus;
   type: MovementType;

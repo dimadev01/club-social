@@ -10,6 +10,7 @@ import {
   type IDuePaginatedExtraDto,
 } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormat } from '@club-social/shared/lib';
 import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Button, Dropdown, Space, type TableColumnType, Tooltip } from 'antd';
@@ -20,7 +21,6 @@ import { appRoutes } from '@/app/app.enum';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
-import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';

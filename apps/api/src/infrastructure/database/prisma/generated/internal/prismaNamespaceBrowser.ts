@@ -259,6 +259,7 @@ export const MovementScalarFieldEnum = {
   date: 'date',
   description: 'description',
   status: 'status',
+  mode: 'mode',
   voidReason: 'voidReason',
   voidedAt: 'voidedAt',
   voidedBy: 'voidedBy',

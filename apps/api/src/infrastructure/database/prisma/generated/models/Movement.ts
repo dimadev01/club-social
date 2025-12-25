@@ -42,6 +42,7 @@ export type MovementMinAggregateOutputType = {
   date: string | null;
   description: string | null;
   status: string | null;
+  mode: string | null;
   voidReason: string | null;
   voidedAt: Date | null;
   voidedBy: string | null;
@@ -62,6 +63,7 @@ export type MovementMaxAggregateOutputType = {
   date: string | null;
   description: string | null;
   status: string | null;
+  mode: string | null;
   voidReason: string | null;
   voidedAt: Date | null;
   voidedBy: string | null;
@@ -82,6 +84,7 @@ export type MovementCountAggregateOutputType = {
   date: number;
   description: number;
   status: number;
+  mode: number;
   voidReason: number;
   voidedAt: number;
   voidedBy: number;
@@ -111,6 +114,7 @@ export type MovementMinAggregateInputType = {
   date?: true;
   description?: true;
   status?: true;
+  mode?: true;
   voidReason?: true;
   voidedAt?: true;
   voidedBy?: true;
@@ -131,6 +135,7 @@ export type MovementMaxAggregateInputType = {
   date?: true;
   description?: true;
   status?: true;
+  mode?: true;
   voidReason?: true;
   voidedAt?: true;
   voidedBy?: true;
@@ -151,6 +156,7 @@ export type MovementCountAggregateInputType = {
   date?: true;
   description?: true;
   status?: true;
+  mode?: true;
   voidReason?: true;
   voidedAt?: true;
   voidedBy?: true;
@@ -265,6 +271,7 @@ export type MovementGroupByOutputType = {
   date: string;
   description: string | null;
   status: string;
+  mode: string;
   voidReason: string | null;
   voidedAt: Date | null;
   voidedBy: string | null;
@@ -306,6 +313,7 @@ export type MovementWhereInput = {
   date?: Prisma.StringFilter<'Movement'> | string;
   description?: Prisma.StringNullableFilter<'Movement'> | string | null;
   status?: Prisma.StringFilter<'Movement'> | string;
+  mode?: Prisma.StringFilter<'Movement'> | string;
   voidReason?: Prisma.StringNullableFilter<'Movement'> | string | null;
   voidedAt?: Prisma.DateTimeNullableFilter<'Movement'> | Date | string | null;
   voidedBy?: Prisma.StringNullableFilter<'Movement'> | string | null;
@@ -326,6 +334,7 @@ export type MovementOrderByWithRelationInput = {
   date?: Prisma.SortOrder;
   description?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  mode?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrderInput | Prisma.SortOrder;
   voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   voidedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -350,6 +359,7 @@ export type MovementWhereUniqueInput = Prisma.AtLeast<
     date?: Prisma.StringFilter<'Movement'> | string;
     description?: Prisma.StringNullableFilter<'Movement'> | string | null;
     status?: Prisma.StringFilter<'Movement'> | string;
+    mode?: Prisma.StringFilter<'Movement'> | string;
     voidReason?: Prisma.StringNullableFilter<'Movement'> | string | null;
     voidedAt?: Prisma.DateTimeNullableFilter<'Movement'> | Date | string | null;
     voidedBy?: Prisma.StringNullableFilter<'Movement'> | string | null;
@@ -376,6 +386,7 @@ export type MovementOrderByWithAggregationInput = {
   date?: Prisma.SortOrder;
   description?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  mode?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrderInput | Prisma.SortOrder;
   voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   voidedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -411,6 +422,7 @@ export type MovementScalarWhereWithAggregatesInput = {
     | string
     | null;
   status?: Prisma.StringWithAggregatesFilter<'Movement'> | string;
+  mode?: Prisma.StringWithAggregatesFilter<'Movement'> | string;
   voidReason?:
     | Prisma.StringNullableWithAggregatesFilter<'Movement'>
     | string
@@ -454,6 +466,7 @@ export type MovementCreateInput = {
   date: string;
   description?: string | null;
   status: string;
+  mode: string;
   voidReason?: string | null;
   voidedAt?: Date | string | null;
   voidedBy?: string | null;
@@ -474,6 +487,7 @@ export type MovementUncheckedCreateInput = {
   date: string;
   description?: string | null;
   status: string;
+  mode: string;
   voidReason?: string | null;
   voidedAt?: Date | string | null;
   voidedBy?: string | null;
@@ -494,6 +508,7 @@ export type MovementUpdateInput = {
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  mode?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -522,6 +537,7 @@ export type MovementUncheckedUpdateInput = {
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  mode?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -550,6 +566,7 @@ export type MovementCreateManyInput = {
   date: string;
   description?: string | null;
   status: string;
+  mode: string;
   voidReason?: string | null;
   voidedAt?: Date | string | null;
   voidedBy?: string | null;
@@ -570,6 +587,7 @@ export type MovementUpdateManyMutationInput = {
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  mode?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -598,6 +616,7 @@ export type MovementUncheckedUpdateManyInput = {
   date?: Prisma.StringFieldUpdateOperationsInput | string;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  mode?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -626,6 +645,7 @@ export type MovementCountOrderByAggregateInput = {
   date?: Prisma.SortOrder;
   description?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  mode?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrder;
   voidedAt?: Prisma.SortOrder;
   voidedBy?: Prisma.SortOrder;
@@ -650,6 +670,7 @@ export type MovementMaxOrderByAggregateInput = {
   date?: Prisma.SortOrder;
   description?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  mode?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrder;
   voidedAt?: Prisma.SortOrder;
   voidedBy?: Prisma.SortOrder;
@@ -670,6 +691,7 @@ export type MovementMinOrderByAggregateInput = {
   date?: Prisma.SortOrder;
   description?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  mode?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrder;
   voidedAt?: Prisma.SortOrder;
   voidedBy?: Prisma.SortOrder;
@@ -698,6 +720,7 @@ export type MovementSelect<
     date?: boolean;
     description?: boolean;
     status?: boolean;
+    mode?: boolean;
     voidReason?: boolean;
     voidedAt?: boolean;
     voidedBy?: boolean;
@@ -724,6 +747,7 @@ export type MovementSelectCreateManyAndReturn<
     date?: boolean;
     description?: boolean;
     status?: boolean;
+    mode?: boolean;
     voidReason?: boolean;
     voidedAt?: boolean;
     voidedBy?: boolean;
@@ -750,6 +774,7 @@ export type MovementSelectUpdateManyAndReturn<
     date?: boolean;
     description?: boolean;
     status?: boolean;
+    mode?: boolean;
     voidReason?: boolean;
     voidedAt?: boolean;
     voidedBy?: boolean;
@@ -772,6 +797,7 @@ export type MovementSelectScalar = {
   date?: boolean;
   description?: boolean;
   status?: boolean;
+  mode?: boolean;
   voidReason?: boolean;
   voidedAt?: boolean;
   voidedBy?: boolean;
@@ -795,6 +821,7 @@ export type MovementOmit<
   | 'date'
   | 'description'
   | 'status'
+  | 'mode'
   | 'voidReason'
   | 'voidedAt'
   | 'voidedBy'
@@ -823,6 +850,7 @@ export type $MovementPayload<
       date: string;
       description: string | null;
       status: string;
+      mode: string;
       voidReason: string | null;
       voidedAt: Date | null;
       voidedBy: string | null;
@@ -1432,6 +1460,7 @@ export interface MovementFieldRefs {
   readonly date: Prisma.FieldRef<'Movement', 'String'>;
   readonly description: Prisma.FieldRef<'Movement', 'String'>;
   readonly status: Prisma.FieldRef<'Movement', 'String'>;
+  readonly mode: Prisma.FieldRef<'Movement', 'String'>;
   readonly voidReason: Prisma.FieldRef<'Movement', 'String'>;
   readonly voidedAt: Prisma.FieldRef<'Movement', 'DateTime'>;
   readonly voidedBy: Prisma.FieldRef<'Movement', 'String'>;

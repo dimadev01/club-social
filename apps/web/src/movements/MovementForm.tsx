@@ -1,6 +1,7 @@
 import type dayjs from 'dayjs';
 
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormats } from '@club-social/shared/lib';
 import {
   MovementCategory,
   MovementCategoryOptions,
@@ -9,7 +10,6 @@ import {
 } from '@club-social/shared/movements';
 import { DatePicker, Input, InputNumber } from 'antd';
 
-import { DateFormats } from '@/shared/lib/date-format';
 import { Form } from '@/ui/Form/Form';
 import { Select } from '@/ui/Select';
 

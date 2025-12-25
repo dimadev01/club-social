@@ -3,12 +3,12 @@ import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormats } from '@club-social/shared/lib';
 import { DatePicker, Input, InputNumber } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useActivePricing } from '@/pricing/useActivePricing';
-import { DateFormats } from '@/shared/lib/date-format';
 import { Form } from '@/ui/Form/Form';
 import { Select } from '@/ui/Select';
 

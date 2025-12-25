@@ -2,6 +2,7 @@ import type { PaginatedResponse } from '@club-social/shared/types';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormat } from '@club-social/shared/lib';
 import {
   type MemberCategory,
   MemberCategoryLabel,
@@ -14,7 +15,6 @@ import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
-import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { NotFound } from '@/ui/NotFound';

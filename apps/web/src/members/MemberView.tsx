@@ -1,3 +1,4 @@
+import { DateFormat } from '@club-social/shared/lib';
 import {
   FileStatusLabel,
   MaritalStatusLabel,
@@ -10,7 +11,6 @@ import { Button } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
-import { DateFormat } from '@/shared/lib/date-format';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { NotFound } from '@/ui/NotFound';

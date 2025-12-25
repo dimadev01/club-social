@@ -1,9 +1,8 @@
 import type { Dayjs } from 'dayjs';
 
+import { DateFormats } from '@club-social/shared/lib';
 import { Card, DatePicker, Space } from 'antd';
 import { useMemo } from 'react';
-
-import { DateFormats } from '@/shared/lib/date-format';
 
 import { getPresets } from '../DatePicker/datepicker-presets';
 

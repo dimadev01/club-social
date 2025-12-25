@@ -7,11 +7,11 @@ import {
   AuditEntityLabel,
   type IAuditLogPaginatedDto,
 } from '@club-social/shared/audit-logs';
+import { DateFormat } from '@club-social/shared/lib';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Col, Tag, Typography } from 'antd';
 
 import { useQuery } from '@/shared/hooks/useQuery';
-import { DateFormat } from '@/shared/lib/date-format';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { Descriptions } from '@/ui/Descriptions';

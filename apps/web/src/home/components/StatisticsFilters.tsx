@@ -1,8 +1,8 @@
 import type { Dayjs } from 'dayjs';
 
+import { DateFormats } from '@club-social/shared/lib';
 import { DatePicker } from 'antd';
 
-import { DateFormats } from '@/shared/lib/date-format';
 import { getPresets } from '@/ui/DatePicker/datepicker-presets';
 
 interface StatisticsFiltersProps {

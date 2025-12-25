@@ -15,6 +15,7 @@ import {
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { FindForStatisticsParams } from '@/shared/domain/repository-types';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -73,7 +74,7 @@ export class PrismaMovementRepository implements MovementRepository {
       };
     }
 
-    const results = await Promise.all([
+    const [inflowSum, outflowSum] = await Promise.all([
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
         where: { ...where, type: MovementType.INFLOW },
@@ -83,7 +84,6 @@ export class PrismaMovementRepository implements MovementRepository {
         where: { ...where, type: MovementType.OUTFLOW },
       }),
     ]);
-    const [inflowSum, outflowSum] = results;
 
     const totalInflow = inflowSum._sum.amount ?? 0;
     const totalOutflow = outflowSum._sum.amount ?? 0;
@@ -92,11 +92,13 @@ export class PrismaMovementRepository implements MovementRepository {
     let cumulativeTotal = balance;
 
     if (params.includePreviousBalance && params.dateRange) {
+      const to = DateOnly.raw({ value: params.dateRange[0] }).subtractDays(1);
+
       const { balance: previousBalance } = await this.findForStatistics({
-        dateRange: [SYSTEM_START_DATE, params.dateRange[0]],
+        dateRange: [SYSTEM_START_DATE, to.value],
         includePreviousBalance: false,
       });
-      cumulativeTotal = previousBalance + balance;
+      cumulativeTotal += previousBalance;
     }
 
     return {
@@ -223,6 +225,10 @@ export class PrismaMovementRepository implements MovementRepository {
 
     if (params.filters?.status) {
       where.status = { in: params.filters.status };
+    }
+
+    if (params.filters?.mode) {
+      where.mode = { in: params.filters.mode };
     }
 
     const orderBy: MovementOrderByWithRelationInput[] = params.sort.map(

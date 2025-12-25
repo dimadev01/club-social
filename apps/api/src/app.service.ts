@@ -32,17 +32,18 @@ export class AppService {
   ) {}
 
   public async clear(): Promise<void> {
+    await this.prismaService.auditLog.deleteMany({});
     await this.prismaService.movement.deleteMany({});
-    await this.prismaService.member.deleteMany({});
+    await this.prismaService.paymentDue.deleteMany({});
     await this.prismaService.payment.deleteMany({});
     await this.prismaService.due.deleteMany({});
-    await this.prismaService.user.deleteMany({});
+    await this.prismaService.pricing.deleteMany({});
+    await this.prismaService.member.deleteMany({});
     await this.prismaService.session.deleteMany({});
     await this.prismaService.account.deleteMany({});
     await this.prismaService.verification.deleteMany({});
     await this.prismaService.passkey.deleteMany({});
-    await this.prismaService.pricing.deleteMany({});
-    await this.prismaService.auditLog.deleteMany({});
+    await this.prismaService.user.deleteMany({});
   }
 
   public getHello(): string {
