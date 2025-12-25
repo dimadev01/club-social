@@ -19,6 +19,10 @@ export function Home() {
 
   return (
     <Page
+      classNames={{
+        header:
+          '[&>.ant-card-head-wrapper]:flex-wrap [&>.ant-card-head-wrapper]:gap-2 [&>.ant-card-head-wrapper]:py-2',
+      }}
       extra={
         <StatisticsFilters
           onChange={(dates) => setDateRange(dates)}

@@ -11,7 +11,6 @@ import {
   DueDetailModel,
   DuePaginatedExtraModel,
   DuePaginatedModel,
-  DuePendingStatisticsModel,
   PaymentDueDetailModel,
 } from './due.types';
 import { DueEntity } from './entities/due.entity';
@@ -28,6 +27,6 @@ export interface DueRepository
   findManyByIdsModels(ids: UniqueId[]): Promise<DueDetailModel[]>;
   findOneModel(id: UniqueId): Promise<DueDetailModel | null>;
   findPaymentDuesModel(dueId: UniqueId): Promise<PaymentDueDetailModel[]>;
+  findPending(): Promise<DueEntity[]>;
   findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
-  getPendingStatistics(): Promise<DuePendingStatisticsModel>;
 }

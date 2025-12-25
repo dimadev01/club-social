@@ -39,14 +39,14 @@ export function MovementStatisticsCard({ dateRange }: Props) {
       <Card.Grid className="w-full md:w-1/3">
         <Statistic
           loading={isLoading}
-          title="Balance período"
+          title="Balance"
           value={NumberFormat.formatCurrencyCents(statistics?.balance ?? 0)}
         />
       </Card.Grid>
       <Card.Grid className="w-full">
         <Statistic
           loading={isLoading}
-          title="Saldo Total"
+          title="Total"
           value={NumberFormat.formatCurrencyCents(statistics?.total ?? 0)}
         />
       </Card.Grid>

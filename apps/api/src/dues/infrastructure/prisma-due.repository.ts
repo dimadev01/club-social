@@ -4,9 +4,8 @@ import type {
   PaginatedResponse,
 } from '@club-social/shared/types';
 
-import { DueCategory, DueStatus } from '@club-social/shared/dues';
+import { DueStatus } from '@club-social/shared/dues';
 import { Injectable } from '@nestjs/common';
-import { sumBy } from 'es-toolkit/compat';
 
 import {
   DueFindManyArgs,
@@ -23,7 +22,6 @@ import {
   DueDetailModel,
   DuePaginatedExtraModel,
   DuePaginatedModel,
-  DuePendingStatisticsModel,
   PaymentDueDetailModel,
 } from '../domain/due.types';
 import { DueEntity } from '../domain/entities/due.entity';
@@ -144,6 +142,19 @@ export class PrismaDueRepository implements DueRepository {
     }));
   }
 
+  public async findPending(): Promise<DueEntity[]> {
+    const dues = await this.prismaService.due.findMany({
+      where: {
+        deletedAt: null,
+        status: {
+          in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
+        },
+      },
+    });
+
+    return dues.map((due) => this.mapper.due.toDomain(due));
+  }
+
   public async findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]> {
     const dues = await this.prismaService.due.findMany({
       include: { paymentDues: true },
@@ -191,37 +202,6 @@ export class PrismaDueRepository implements DueRepository {
     });
 
     return this.mapper.due.toDomain(due);
-  }
-
-  public async getPendingStatistics(): Promise<DuePendingStatisticsModel> {
-    const where: DueWhereInput = {
-      deletedAt: null,
-      status: {
-        in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
-      },
-    };
-
-    const dues = await this.prismaService.due.findMany({
-      select: { amount: true, category: true },
-      where,
-    });
-
-    const total = sumBy(dues, (due) => due.amount);
-
-    const categories = Object.values(DueCategory).reduce(
-      (acc, category) => {
-        const categoryDues = dues.filter((due) => due.category === category);
-        acc[category] = sumBy(categoryDues, (due) => due.amount);
-
-        return acc;
-      },
-      {} as Record<DueCategory, number>,
-    );
-
-    return {
-      categories,
-      total,
-    };
   }
 
   public async save(entity: DueEntity): Promise<DueEntity> {

@@ -1,6 +1,10 @@
 import type { Response } from 'express';
 
-import { DueCategoryLabel, DueStatusLabel } from '@club-social/shared/dues';
+import {
+  DueCategory,
+  DueCategoryLabel,
+  DueStatusLabel,
+} from '@club-social/shared/dues';
 import { UserStatusLabel } from '@club-social/shared/users';
 import {
   Body,
@@ -16,6 +20,7 @@ import {
   Res,
   Session,
 } from '@nestjs/common';
+import { sumBy } from 'es-toolkit/compat';
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 import { CsvService } from '@/infrastructure/csv/csv.service';
@@ -196,11 +201,22 @@ export class DuesController extends BaseController {
 
   @Get('pending-statistics')
   public async getPendingStatistics(): Promise<DuePendingStatisticsDto> {
-    const data = await this.dueRepository.getPendingStatistics();
+    const dues = await this.dueRepository.findPending();
+
+    const categories = Object.values(DueCategory).reduce(
+      (acc, category) => {
+        const items = dues.filter((due) => due.category === category);
+        acc[category] = sumBy(items, (due) => due.amount.toCents());
+
+        return acc;
+      },
+      {} as Record<DueCategory, number>,
+    );
+    const total = sumBy(dues, (due) => due.amount.toCents());
 
     return {
-      categories: data.categories,
-      total: data.total,
+      categories,
+      total,
     };
   }
 

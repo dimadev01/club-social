@@ -1,5 +1,3 @@
-import { DueCategory } from '@club-social/shared/dues';
-
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import { PaymentDueEntity } from '@/payments/domain/entities/payment-due.entity';
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
@@ -21,11 +19,6 @@ export interface DuePaginatedModel {
   due: DueEntity;
   member: MemberEntity;
   user: UserEntity;
-}
-
-export interface DuePendingStatisticsModel {
-  categories: Record<DueCategory, number>;
-  total: number;
 }
 
 export interface PaymentDueDetailModel {
