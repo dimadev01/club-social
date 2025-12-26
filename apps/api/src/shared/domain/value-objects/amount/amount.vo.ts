@@ -109,6 +109,14 @@ export class Amount extends ValueObject<Props> {
     return this.cents <= other.cents;
   }
 
+  public isNegative(): boolean {
+    return this.cents < 0;
+  }
+
+  public isPositive(): boolean {
+    return this.cents > 0;
+  }
+
   public isZero(): boolean {
     return this.cents === 0;
   }
