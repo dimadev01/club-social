@@ -17,6 +17,7 @@ import {
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
+import { Guard } from '@/shared/domain/guards';
 
 @Injectable()
 export class PaymentCreatedHandler {
@@ -52,16 +53,20 @@ export class PaymentCreatedHandler {
         return;
       }
 
-      const movementResult = MovementEntity.create({
-        amount: event.payment.amount,
-        category: MovementCategory.MEMBERSHIP_FEE,
-        createdBy: event.payment.createdBy,
-        date: event.payment.date,
-        mode: MovementMode.AUTOMATIC,
-        notes: 'Entrada automática',
-        paymentId: event.payment.id,
-        type: MovementType.INFLOW,
-      });
+      Guard.string(event.payment.createdBy);
+
+      const movementResult = MovementEntity.create(
+        {
+          amount: event.payment.amount,
+          category: MovementCategory.MEMBERSHIP_FEE,
+          date: event.payment.date,
+          mode: MovementMode.AUTOMATIC,
+          notes: 'Entrada automática',
+          paymentId: event.payment.id,
+          type: MovementType.INFLOW,
+        },
+        event.payment.createdBy,
+      );
 
       if (movementResult.isErr()) {
         this.logger.error({

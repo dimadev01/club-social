@@ -195,10 +195,6 @@ export class BetterAuthService {
       throw new APIError('NOT_FOUND', { message: 'Usuario no encontrado' });
     }
 
-    if (user.deletedAt) {
-      throw new APIError('NOT_FOUND', { message: 'Usuario no encontrado' });
-    }
-
     if (user.status === UserStatus.INACTIVE) {
       throw new APIError('NOT_FOUND', { message: 'Usuario inactivo' });
     }

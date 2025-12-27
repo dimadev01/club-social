@@ -60,9 +60,6 @@ export class PrismaDueMapper {
   }
 
   public toUpdateInput(due: DueEntity): DueUpdateInput {
-    Guard.string(due.createdBy);
-    Guard.string(due.updatedBy);
-
     return {
       amount: due.amount.toCents(),
       category: due.category,
@@ -70,6 +67,7 @@ export class PrismaDueMapper {
       id: due.id.value,
       notes: due.notes,
       status: due.status,
+      updatedBy: due.updatedBy,
       voidedAt: due.voidedAt,
       voidedBy: due.voidedBy,
       voidReason: due.voidReason,

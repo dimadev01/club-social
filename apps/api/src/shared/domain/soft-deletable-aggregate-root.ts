@@ -1,20 +1,38 @@
-import { AuditedAggregateRoot } from './audited-aggregate-root';
+import { AuditedAggregateRoot, AuditMeta } from './audited-aggregate-root';
+import { UniqueId } from './value-objects/unique-id/unique-id.vo';
 
 export interface SoftDeleteMeta {
-  deletedAt?: Date;
-  deletedBy?: string;
+  deletedAt?: Date | null;
+  deletedBy?: null | string;
 }
 
 export abstract class SoftDeletableAggregateRoot extends AuditedAggregateRoot {
-  protected deleted: SoftDeleteMeta = {};
+  public get deletedAt(): Date | null | undefined {
+    return this._deleted.deletedAt;
+  }
+
+  public get deletedBy(): null | string | undefined {
+    return this._deleted.deletedBy;
+  }
+
+  protected _deleted: SoftDeleteMeta = {};
+
+  protected constructor(
+    id?: UniqueId,
+    audit: AuditMeta = {},
+    deleted: SoftDeleteMeta = {},
+  ) {
+    super(id, audit);
+    this._deleted = deleted;
+  }
 
   public delete(by: string, at: Date): void {
-    this.deleted = { deletedAt: at, deletedBy: by };
+    this._deleted = { deletedAt: at, deletedBy: by };
   }
 
   public restore(by: string, at: Date): void {
-    this.deleted = {};
+    this._deleted = {};
 
-    this.audit = { ...this.audit, updatedAt: at, updatedBy: by };
+    this._audit = { ...this._audit, updatedAt: at, updatedBy: by };
   }
 }

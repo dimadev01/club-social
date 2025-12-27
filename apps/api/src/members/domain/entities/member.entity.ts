@@ -102,10 +102,9 @@ export class MemberEntity extends AuditedAggregateRoot {
   public static create(
     props: MemberProps,
     user: UserEntity,
-    createdBy: string,
   ): Result<MemberEntity> {
     const member = new MemberEntity(props, {
-      audit: { createdBy },
+      audit: { createdBy: user.createdBy },
       id: UniqueId.generate(),
     });
 

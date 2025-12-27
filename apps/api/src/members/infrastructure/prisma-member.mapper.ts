@@ -82,9 +82,6 @@ export class PrismaMemberMapper {
   }
 
   public toUpdateInput(member: MemberEntity): MemberUpdateInput {
-    Guard.string(member.createdBy);
-    Guard.string(member.updatedBy);
-
     return {
       birthDate: member.birthDate?.value ?? null,
       category: member.category,
@@ -98,7 +95,6 @@ export class PrismaMemberMapper {
       sex: member.sex,
       stateName: member.address?.stateName ?? null,
       street: member.address?.street ?? null,
-      updatedAt: member.updatedAt ?? new Date(),
       updatedBy: member.updatedBy,
       zipCode: member.address?.zipCode ?? null,
     };

@@ -131,7 +131,7 @@ export class DuesController extends BaseController {
     const stream = this.csvService.generateStream(data, [
       { accessor: (row) => row.due.id.value, header: 'ID' },
       {
-        accessor: (row) => row.due.createdAt.toISOString(),
+        accessor: (row) => row.due.createdAt?.toISOString() ?? '',
         header: 'Creado el',
       },
       {
@@ -184,7 +184,7 @@ export class DuesController extends BaseController {
       data: dues.data.map(({ due, member, user }) => ({
         amount: due.amount.toCents(),
         category: due.category,
-        createdAt: due.createdAt.toISOString(),
+        createdAt: due.createdAt?.toISOString() ?? '',
         date: due.date.value,
         id: due.id.value,
         memberId: member.id.value,
@@ -272,8 +272,8 @@ export class DuesController extends BaseController {
     return {
       amount: due.amount.toCents(),
       category: due.category,
-      createdAt: due.createdAt.toISOString(),
-      createdBy: due.createdBy,
+      createdAt: due.createdAt?.toISOString() ?? '',
+      createdBy: due.createdBy ?? '',
       date: due.date.value,
       id: due.id.value,
       memberCategory: member.category,
@@ -281,7 +281,7 @@ export class DuesController extends BaseController {
       memberName: user.name,
       notes: due.notes,
       status: due.status,
-      updatedAt: due.updatedAt.toISOString(),
+      updatedAt: due.updatedAt?.toISOString() ?? '',
       updatedBy: due.updatedBy,
       userStatus: user.status,
       voidedAt: due.voidedAt?.toISOString() ?? null,

@@ -1,4 +1,5 @@
 import {
+  MemberLedgerEntrySource,
   MemberLedgerEntryStatus,
   MemberLedgerEntryType,
 } from '@club-social/shared/members';
@@ -72,14 +73,17 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(date.error);
     }
 
-    const payment = PaymentEntity.create({
-      createdBy: params.createdBy,
-      date: date.value,
-      dueIds: dues.map((due) => due.id),
-      memberId: UniqueId.raw({ value: params.memberId }),
-      notes: params.notes,
-      receiptNumber: params.receiptNumber,
-    });
+    const payment = PaymentEntity.create(
+      {
+        amount: dues.reduce((acc, due) => acc.add(due.amount), Amount.ZERO),
+        date: date.value,
+        dueIds: dues.map((due) => due.id),
+        memberId: UniqueId.raw({ value: params.memberId }),
+        notes: params.notes,
+        receiptNumber: params.receiptNumber,
+      },
+      params.createdBy,
+    );
 
     if (payment.isErr()) {
       return err(payment.error);
@@ -99,17 +103,20 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
           return err(amount.error);
         }
 
-        const memberLedgerEntry = MemberLedgerEntryEntity.create({
-          amount: amount.value,
-          createdBy: params.createdBy,
-          date: date.value,
-          memberId: UniqueId.raw({ value: params.memberId }),
-          notes: params.notes,
-          paymentId: payment.value.id,
-          reversalOfId: null,
-          status: MemberLedgerEntryStatus.POSTED,
-          type: MemberLedgerEntryType.PAYMENT_CREDIT,
-        });
+        const memberLedgerEntry = MemberLedgerEntryEntity.create(
+          {
+            amount: amount.value,
+            date: date.value,
+            memberId: UniqueId.raw({ value: params.memberId }),
+            notes: params.notes,
+            paymentId: payment.value.id,
+            reversalOfId: null,
+            source: MemberLedgerEntrySource.PAYMENT,
+            status: MemberLedgerEntryStatus.POSTED,
+            type: MemberLedgerEntryType.PAYMENT_CREDIT,
+          },
+          params.createdBy,
+        );
 
         if (memberLedgerEntry.isErr()) {
           return err(memberLedgerEntry.error);

@@ -12,5 +12,5 @@ export class PricingDetailDto implements IPricingDetailDto {
   public id: string;
   public memberCategory: MemberCategory;
   public updatedAt: string;
-  public updatedBy: string;
+  public updatedBy?: null | string;
 }

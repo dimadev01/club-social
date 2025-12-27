@@ -175,15 +175,13 @@ export class PrismaMovementRepository implements MovementRepository {
   }
 
   public async save(entity: MovementEntity): Promise<void> {
-    const where = { id: entity.id.value };
-
-    const movementCreate = this.mapper.movement.toCreateInput(entity);
-    const movementUpdate = this.mapper.movement.toUpdateInput(entity);
+    const create = this.mapper.movement.toCreateInput(entity);
+    const update = this.mapper.movement.toUpdateInput(entity);
 
     await this.prismaService.movement.upsert({
-      create: movementCreate,
-      update: movementUpdate,
-      where,
+      create,
+      update,
+      where: { id: entity.id.value },
     });
   }
 

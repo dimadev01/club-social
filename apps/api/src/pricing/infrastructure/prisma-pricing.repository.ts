@@ -181,11 +181,12 @@ export class PrismaPricingRepository implements PricingRepository {
   }
 
   public async save(entity: PricingEntity): Promise<void> {
-    const data = this.mapper.toPersistence(entity);
+    const create = this.mapper.toCreateInput(entity);
+    const update = this.mapper.toUpdateInput(entity);
 
     await this.prismaService.pricing.upsert({
-      create: data,
-      update: data,
+      create,
+      update,
       where: { id: entity.id.value },
     });
   }

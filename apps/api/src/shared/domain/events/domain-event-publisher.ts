@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { Entity } from '@/shared/domain/entity';
 import {
   DOMAIN_EVENT_EMITTER_PROVIDER,
   type DomainEventEmitter,
 } from '@/shared/domain/events/domain-event-emitter';
+
+import { AggregateRoot } from '../aggregate-root';
 
 @Injectable()
 export class DomainEventPublisher {
@@ -13,7 +14,7 @@ export class DomainEventPublisher {
     private readonly emitter: DomainEventEmitter,
   ) {}
 
-  public dispatch(aggregate: Entity<unknown>): void {
+  public dispatch(aggregate: AggregateRoot): void {
     const events = aggregate.pullEvents();
 
     for (const event of events) {

@@ -1,7 +1,7 @@
 import { UserRole } from '@club-social/shared/users';
 import { UserStatus } from '@club-social/shared/users';
 
-import { PersistenceMeta } from '@/shared/domain/persistence-meta';
+import { SoftDeletablePersistenceMeta } from '@/shared/domain/persistence-meta';
 import { ok, Result } from '@/shared/domain/result';
 import { SoftDeletableAggregateRoot } from '@/shared/domain/soft-deletable-aggregate-root';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
@@ -67,8 +67,8 @@ export class UserEntity extends SoftDeletableAggregateRoot {
   private _role: UserRole;
   private _status: UserStatus;
 
-  private constructor(props: UserProps, meta?: PersistenceMeta) {
-    super(meta?.id, meta?.audit);
+  private constructor(props: UserProps, meta?: SoftDeletablePersistenceMeta) {
+    super(meta?.id, meta?.audit, meta?.deleted);
 
     this._firstName = props.firstName;
     this._lastName = props.lastName;
@@ -96,7 +96,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
 
   public static fromPersistence(
     props: UserProps,
-    meta: PersistenceMeta,
+    meta: SoftDeletablePersistenceMeta,
   ): UserEntity {
     return new UserEntity(props, meta);
   }
@@ -115,6 +115,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
       },
       {
         audit: { ...this._audit },
+        deleted: { ...this._deleted },
         id: this.id,
       },
     );

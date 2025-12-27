@@ -1,17 +1,16 @@
 import { DueCategory } from '@club-social/shared/dues';
 import { MemberCategory } from '@club-social/shared/members';
 
-import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
-import { PersistenceMeta } from '@/shared/domain/persistence-meta';
+import { SoftDeletablePersistenceMeta } from '@/shared/domain/persistence-meta';
 import { err, ok, Result } from '@/shared/domain/result';
+import { SoftDeletableAggregateRoot } from '@/shared/domain/soft-deletable-aggregate-root';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PricingCreatedEvent } from '../events/pricing-created.event';
 import { PricingUpdatedEvent } from '../events/pricing-updated.event';
-import { UpdatePricingProps } from '../interfaces/pricing.interface';
 
 interface PricingProps {
   amount: Amount;
@@ -21,7 +20,7 @@ interface PricingProps {
   memberCategory: MemberCategory;
 }
 
-export class PricingEntity extends AuditedAggregateRoot {
+export class PricingEntity extends SoftDeletableAggregateRoot {
   public get amount(): Amount {
     return this._amount;
   }
@@ -48,8 +47,11 @@ export class PricingEntity extends AuditedAggregateRoot {
   private _effectiveTo: DateOnly | null;
   private _memberCategory: MemberCategory;
 
-  private constructor(props: PricingProps, meta?: PersistenceMeta) {
-    super(meta?.id, meta?.audit);
+  private constructor(
+    props: PricingProps,
+    meta?: SoftDeletablePersistenceMeta,
+  ) {
+    super(meta?.id, meta?.audit, meta?.deleted);
 
     this._amount = props.amount;
     this._dueCategory = props.dueCategory;
@@ -83,7 +85,7 @@ export class PricingEntity extends AuditedAggregateRoot {
 
   public static fromPersistence(
     props: PricingProps,
-    meta: PersistenceMeta,
+    meta: SoftDeletablePersistenceMeta,
   ): PricingEntity {
     return new PricingEntity(props, meta);
   }
@@ -99,6 +101,7 @@ export class PricingEntity extends AuditedAggregateRoot {
       },
       {
         audit: { ...this._audit },
+        deleted: { ...this._deleted },
         id: this.id,
       },
     );
@@ -121,7 +124,11 @@ export class PricingEntity extends AuditedAggregateRoot {
     return isAfterOrEqualStart && isBeforeEnd;
   }
 
-  public update(props: UpdatePricingProps): Result<void> {
+  public update(props: {
+    amount: Amount;
+    effectiveFrom: DateOnly;
+    updatedBy: string;
+  }): Result<void> {
     if (this._effectiveTo !== null) {
       return err(
         new ApplicationError('No se puede actualizar un precio cerrado'),
@@ -129,8 +136,10 @@ export class PricingEntity extends AuditedAggregateRoot {
     }
 
     const oldPricing = this.clone();
+
     this._amount = props.amount;
     this._effectiveFrom = props.effectiveFrom;
+
     this.markAsUpdated(props.updatedBy);
     this.addEvent(new PricingUpdatedEvent(oldPricing, this));
 

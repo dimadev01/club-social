@@ -47,16 +47,18 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
 
     const [amount, date] = results.value;
 
-    const movementResult = MovementEntity.create({
-      amount,
-      category: params.category,
-      createdBy: params.createdBy,
-      date,
-      mode: MovementMode.MANUAL,
-      notes: params.notes,
-      paymentId: null,
-      type: params.type,
-    });
+    const movementResult = MovementEntity.create(
+      {
+        amount,
+        category: params.category,
+        date,
+        mode: MovementMode.MANUAL,
+        notes: params.notes,
+        paymentId: null,
+        type: params.type,
+      },
+      params.createdBy,
+    );
 
     if (movementResult.isErr()) {
       return err(movementResult.error);

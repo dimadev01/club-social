@@ -8,6 +8,8 @@ interface Props {
 }
 
 export class Amount extends ValueObject<Props> {
+  public static readonly ZERO = new Amount({ cents: 0 });
+
   public get cents(): number {
     return this.props.cents;
   }

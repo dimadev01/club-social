@@ -192,15 +192,13 @@ export class PrismaPaymentRepository implements PaymentRepository {
   }
 
   public async save(entity: PaymentEntity): Promise<void> {
-    const where = { id: entity.id.value };
-
-    const paymentCreate = this.mapper.payment.toCreateInput(entity);
-    const paymentUpdate = this.mapper.payment.toUpdateInput(entity);
+    const create = this.mapper.payment.toCreateInput(entity);
+    const update = this.mapper.payment.toUpdateInput(entity);
 
     await this.prismaService.payment.upsert({
-      create: paymentCreate,
-      update: paymentUpdate,
-      where,
+      create,
+      update,
+      where: { id: entity.id.value },
     });
   }
 

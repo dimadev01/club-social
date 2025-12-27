@@ -7,7 +7,7 @@ interface Props {
   createdBy: string;
   showVoidInfo?: boolean;
   updatedAt: string;
-  updatedBy: string;
+  updatedBy?: null | string;
   voidedAt?: null | string;
   voidedBy?: null | string;
   voidReason?: null | string;

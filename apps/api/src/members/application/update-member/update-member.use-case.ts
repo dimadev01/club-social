@@ -83,7 +83,6 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       birthDate: birthDate ?? null,
       category: params.category,
       documentID: params.documentID,
-      email,
       fileStatus: params.fileStatus,
       maritalStatus: params.maritalStatus,
       nationality: params.nationality,

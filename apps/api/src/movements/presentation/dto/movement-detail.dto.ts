@@ -19,7 +19,7 @@ export class MovementDetailDto implements IMovementDetailDto {
   public status: MovementStatus;
   public type: MovementType;
   public updatedAt: string;
-  public updatedBy: string;
+  public updatedBy?: null | string;
   public voidedAt: null | string;
   public voidedBy: null | string;
   public voidReason: null | string;

@@ -77,9 +77,6 @@ export class PrismaMemberLedgerEntryMapper {
   public toUpdateInput(
     memberLedgerEntry: MemberLedgerEntryEntity,
   ): MemberLedgerEntryUpdateInput {
-    Guard.string(memberLedgerEntry.createdBy);
-    Guard.string(memberLedgerEntry.updatedBy);
-
     return {
       amount: memberLedgerEntry.amount.toCents(),
       date: memberLedgerEntry.date?.value ?? '',
@@ -88,7 +85,6 @@ export class PrismaMemberLedgerEntryMapper {
       source: memberLedgerEntry.source,
       status: memberLedgerEntry.status,
       type: memberLedgerEntry.type,
-      updatedAt: memberLedgerEntry.updatedAt ?? new Date(),
       updatedBy: memberLedgerEntry.updatedBy,
     };
   }

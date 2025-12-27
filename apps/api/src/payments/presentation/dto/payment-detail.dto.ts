@@ -15,7 +15,7 @@ export class PaymentDetailDto implements IPaymentDetailDto {
   public receiptNumber: null | string;
   public status: PaymentStatus;
   public updatedAt: string;
-  public updatedBy: string;
+  public updatedBy?: null | string;
   public userStatus: UserStatus;
   public voidedAt: null | string;
   public voidedBy: null | string;

@@ -95,7 +95,10 @@ export class MovementsController extends BaseController {
 
     const stream = this.csvService.generateStream(data, [
       { accessor: (row) => row.id.value, header: 'ID' },
-      { accessor: (row) => row.createdAt.toISOString(), header: 'Creado el' },
+      {
+        accessor: (row) => row.createdAt?.toISOString() ?? '',
+        header: 'Creado el',
+      },
       { accessor: (row) => row.date.value, header: 'Fecha' },
       { accessor: (row) => row.category, header: 'Categoría' },
       { accessor: (row) => row.status, header: 'Estado' },
@@ -138,7 +141,7 @@ export class MovementsController extends BaseController {
       data: result.data.map((movement) => ({
         amount: movement.amount.toCents(),
         category: movement.category,
-        createdAt: movement.createdAt.toISOString(),
+        createdAt: movement.createdAt?.toISOString() ?? '',
         date: movement.date.value,
         id: movement.id.value,
         mode: movement.mode,
@@ -188,8 +191,8 @@ export class MovementsController extends BaseController {
     return {
       amount: movement.amount.toCents(),
       category: movement.category,
-      createdAt: movement.createdAt.toISOString(),
-      createdBy: movement.createdBy,
+      createdAt: movement.createdAt?.toISOString() ?? '',
+      createdBy: movement.createdBy ?? '',
       date: movement.date.value,
       id: movement.id.value,
       mode: movement.mode,
@@ -197,7 +200,7 @@ export class MovementsController extends BaseController {
       paymentId: movement.paymentId?.value ?? null,
       status: movement.status,
       type: movement.type,
-      updatedAt: movement.updatedAt.toISOString(),
+      updatedAt: movement.updatedAt?.toISOString() ?? '',
       updatedBy: movement.updatedBy,
       voidedAt: movement.voidedAt?.toISOString() ?? null,
       voidedBy: movement.voidedBy,

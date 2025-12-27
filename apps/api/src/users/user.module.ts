@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { CreateUserUseCase } from './application/create-user/create-user.use-case';
-import { UpdateUserUseCase } from './application/update-user/update-user.use-case';
+import { CreateUserUseCase } from './application/create-user.use-case';
+import { UpdateUserUseCase } from './application/update-user.use-case';
 import {
   USER_READABLE_REPOSITORY_PROVIDER,
   USER_REPOSITORY_PROVIDER,

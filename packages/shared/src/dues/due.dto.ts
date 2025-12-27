@@ -23,7 +23,7 @@ export interface IDueDetailDto {
   notes: null | string;
   status: DueStatus;
   updatedAt: string;
-  updatedBy: string;
+  updatedBy?: null | string;
   userStatus: UserStatus;
   voidedAt: null | string;
   voidedBy: null | string;

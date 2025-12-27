@@ -184,15 +184,13 @@ export class PrismaMemberRepository implements MemberRepository {
   }
 
   public async save(entity: MemberEntity): Promise<void> {
-    const where = { id: entity.id.value };
-
-    const memberCreate = this.mapper.member.toCreateInput(entity);
-    const memberUpdate = this.mapper.member.toUpdateInput(entity);
+    const create = this.mapper.member.toCreateInput(entity);
+    const update = this.mapper.member.toUpdateInput(entity);
 
     await this.prismaService.member.upsert({
-      create: memberCreate,
-      update: memberUpdate,
-      where,
+      create,
+      update,
+      where: { id: entity.id.value },
     });
   }
 

@@ -78,6 +78,7 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
         createdBy: data.createdBy,
         entity: data.entity as AuditEntity,
         entityId: data.entityId,
+        id: data.id,
         message: data.message,
         newData: data.newData as Record<string, unknown>,
         oldData: data.oldData as Record<string, unknown>,

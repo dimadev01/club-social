@@ -1,3 +1,10 @@
+import {
+  FileStatus,
+  MaritalStatus,
+  MemberCategory,
+  MemberNationality,
+  MemberSex,
+} from '@club-social/shared/members';
 import { UserRole, UserStatus } from '@club-social/shared/users';
 import { Inject } from '@nestjs/common';
 
@@ -16,6 +23,7 @@ import { UseCase } from '@/shared/application/use-case';
 import { ConflictError } from '@/shared/domain/errors/conflict.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
+import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UserEntity } from '@/users/domain/entities/user.entity';
@@ -24,7 +32,21 @@ import {
   type UserRepository,
 } from '@/users/domain/user.repository';
 
-import type { CreateMemberParams } from './create-member.params';
+export interface CreateMemberParams {
+  address: Address | null;
+  birthDate: null | string;
+  category: MemberCategory;
+  createdBy: string;
+  documentID: null | string;
+  email: string;
+  fileStatus: FileStatus;
+  firstName: string;
+  lastName: string;
+  maritalStatus: MaritalStatus | null;
+  nationality: MemberNationality | null;
+  phones: string[];
+  sex: MemberSex | null;
+}
 
 export class CreateMemberUseCase extends UseCase<MemberEntity> {
   public constructor(
@@ -65,17 +87,19 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       return err(new ConflictError('El email ya está en uso'));
     }
 
-    const user = UserEntity.create({
-      banExpires: null,
-      banned: false,
-      banReason: null,
-      createdBy: params.createdBy,
-      email,
-      firstName: params.firstName,
-      lastName: params.lastName,
-      role: UserRole.MEMBER,
-      status: UserStatus.ACTIVE,
-    });
+    const user = UserEntity.create(
+      {
+        banExpires: null,
+        banned: false,
+        banReason: null,
+        email,
+        firstName: params.firstName,
+        lastName: params.lastName,
+        role: UserRole.MEMBER,
+        status: UserStatus.ACTIVE,
+      },
+      params.createdBy,
+    );
 
     if (user.isErr()) {
       return err(user.error);
@@ -86,7 +110,6 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
         address: params.address,
         birthDate: birthDate ?? null,
         category: params.category,
-        createdBy: params.createdBy,
         documentID: params.documentID,
         fileStatus: params.fileStatus,
         maritalStatus: params.maritalStatus,

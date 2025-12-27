@@ -23,7 +23,7 @@ export interface IPricingDetailDto {
   id: string;
   memberCategory: MemberCategory;
   updatedAt: string;
-  updatedBy: string;
+  updatedBy?: null | string;
 }
 
 export interface IPricingPaginatedDto {

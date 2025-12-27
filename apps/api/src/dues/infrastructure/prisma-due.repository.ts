@@ -215,18 +215,16 @@ export class PrismaDueRepository implements DueRepository {
   }
 
   public async save(entity: DueEntity): Promise<void> {
-    const where = { id: entity.id.value };
-
-    const dueCreate = this.mapper.due.toCreateInput(entity);
-    const dueUpdate = this.mapper.due.toUpdateInput(entity);
+    const create = this.mapper.due.toCreateInput(entity);
+    const update = this.mapper.due.toUpdateInput(entity);
 
     const settlementUpserts = this.mapper.dueSettlement.toUpserts(entity);
 
     await this.prismaService.$transaction(async (tx) => {
       await tx.due.upsert({
-        create: dueCreate,
-        update: dueUpdate,
-        where,
+        create,
+        update,
+        where: { id: entity.id.value },
       });
 
       for (const settlementUpsert of settlementUpserts) {

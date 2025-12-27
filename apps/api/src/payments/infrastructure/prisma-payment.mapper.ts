@@ -64,9 +64,6 @@ export class PrismaPaymentMapper {
   }
 
   public toUpdateInput(payment: PaymentEntity): PaymentUpdateInput {
-    Guard.string(payment.createdBy);
-    Guard.string(payment.updatedBy);
-
     return {
       amount: payment.amount.toCents(),
       date: payment.date.value,
@@ -74,7 +71,6 @@ export class PrismaPaymentMapper {
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
       status: payment.status,
-      updatedAt: payment.updatedAt ?? new Date(),
       updatedBy: payment.updatedBy,
       voidedAt: payment.voidedAt,
       voidedBy: payment.voidedBy,

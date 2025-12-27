@@ -71,31 +71,7 @@ export class PrismaMovementMapper {
     );
   }
 
-  public toPersistence(entity: MovementEntity): MovementModel {
-    return {
-      amount: entity.amount.toCents(),
-      category: entity.category,
-      createdAt: entity.createdAt ?? new Date(),
-      createdBy: entity.createdBy ?? '',
-      date: entity.date.value,
-      id: entity.id.value,
-      mode: entity.mode,
-      notes: entity.notes,
-      paymentId: entity.paymentId?.value ?? null,
-      status: entity.status,
-      type: entity.type,
-      updatedAt: entity.updatedAt ?? new Date(),
-      updatedBy: entity.updatedBy,
-      voidedAt: entity.voidedAt,
-      voidedBy: entity.voidedBy,
-      voidReason: entity.voidReason,
-    };
-  }
-
   public toUpdateInput(entity: MovementEntity): MovementUpdateInput {
-    Guard.string(entity.createdBy);
-    Guard.string(entity.updatedBy);
-
     return {
       amount: entity.amount.toCents(),
       category: entity.category,
@@ -105,7 +81,6 @@ export class PrismaMovementMapper {
       notes: entity.notes,
       status: entity.status,
       type: entity.type,
-      updatedAt: entity.updatedAt ?? new Date(),
       updatedBy: entity.updatedBy,
       voidedAt: entity.voidedAt,
       voidedBy: entity.voidedBy,

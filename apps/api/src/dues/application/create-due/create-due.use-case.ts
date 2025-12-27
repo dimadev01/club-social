@@ -48,14 +48,16 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
 
     const [amount, date] = results.value;
 
-    const due = DueEntity.create({
-      amount,
-      category: params.category,
-      createdBy: params.createdBy,
-      date,
-      memberId: UniqueId.raw({ value: params.memberId }),
-      notes: params.notes,
-    });
+    const due = DueEntity.create(
+      {
+        amount,
+        category: params.category,
+        date,
+        memberId: UniqueId.raw({ value: params.memberId }),
+        notes: params.notes,
+      },
+      params.createdBy,
+    );
 
     if (due.isErr()) {
       return err(due.error);

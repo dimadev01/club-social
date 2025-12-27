@@ -24,7 +24,7 @@ export interface IPaymentDetailDto {
   receiptNumber: null | string;
   status: PaymentStatus;
   updatedAt: string;
-  updatedBy: string;
+  updatedBy?: string | null;
   userStatus: UserStatus;
   voidedAt: null | string;
   voidedBy: null | string;

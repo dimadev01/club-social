@@ -1,3 +1,4 @@
+import { UserStatus } from '@club-social/shared/users';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
@@ -18,7 +19,14 @@ import {
   type UserRepository,
 } from '@/users/domain/user.repository';
 
-import { UpdateUserParams } from './update-user.params';
+export interface UpdateUserParams {
+  email: string;
+  firstName: string;
+  id: string;
+  lastName: string;
+  status: UserStatus;
+  updatedBy: string;
+}
 
 export class UpdateUserUseCase extends UseCase<UserEntity> {
   public constructor(

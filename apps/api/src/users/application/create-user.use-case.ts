@@ -1,4 +1,4 @@
-import { UserStatus } from '@club-social/shared/users';
+import { UserRole, UserStatus } from '@club-social/shared/users';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
@@ -18,7 +18,13 @@ import {
   type UserRepository,
 } from '@/users/domain/user.repository';
 
-import type { CreateUserParams } from './create-user.params';
+export interface CreateUserParams {
+  createdBy: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+}
 
 export class CreateUserUseCase extends UseCase<UserEntity> {
   public constructor(
@@ -51,17 +57,19 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
       return err(new ConflictError('El email ya está en uso'));
     }
 
-    const user = UserEntity.create({
-      banExpires: null,
-      banned: false,
-      banReason: null,
-      createdBy: params.createdBy,
-      email: email.value,
-      firstName: params.firstName,
-      lastName: params.lastName,
-      role: params.role,
-      status: UserStatus.ACTIVE,
-    });
+    const user = UserEntity.create(
+      {
+        banExpires: null,
+        banned: false,
+        banReason: null,
+        email: email.value,
+        firstName: params.firstName,
+        lastName: params.lastName,
+        role: params.role,
+        status: UserStatus.ACTIVE,
+      },
+      params.createdBy,
+    );
 
     if (user.isErr()) {
       return err(user.error);

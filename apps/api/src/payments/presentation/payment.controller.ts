@@ -114,7 +114,7 @@ export class PaymentsController extends BaseController {
     return {
       data: data.data.map(({ member, payment, user }) => ({
         amount: payment.amount.toCents(),
-        createdAt: payment.createdAt.toISOString(),
+        createdAt: payment.createdAt?.toISOString() ?? '',
         createdBy: user.name,
         date: payment.date.value,
         id: payment.id.value,
@@ -162,7 +162,7 @@ export class PaymentsController extends BaseController {
     const stream = this.csvService.generateStream(data, [
       { accessor: (row) => row.payment.id.value, header: 'ID' },
       {
-        accessor: (row) => row.payment.createdAt.toISOString(),
+        accessor: (row) => row.payment.createdAt?.toISOString() ?? '',
         header: 'Creado el',
       },
       { accessor: (row) => row.payment.date.value, header: 'Fecha' },
@@ -198,8 +198,8 @@ export class PaymentsController extends BaseController {
 
     return {
       amount: payment.amount.toCents(),
-      createdAt: payment.createdAt.toISOString(),
-      createdBy: payment.createdBy,
+      createdAt: payment.createdAt?.toISOString() ?? '',
+      createdBy: payment.createdBy ?? '',
       date: payment.date.value,
       id: payment.id.value,
       memberId: member.id.value,
@@ -207,8 +207,8 @@ export class PaymentsController extends BaseController {
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
       status: payment.status,
-      updatedAt: payment.updatedAt.toISOString(),
-      updatedBy: payment.updatedBy ?? null,
+      updatedAt: payment.updatedAt?.toISOString() ?? '',
+      updatedBy: payment.updatedBy,
       userStatus: user.status,
       voidedAt: payment.voidedAt?.toISOString() ?? null,
       voidedBy: payment.voidedBy ?? null,

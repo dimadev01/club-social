@@ -78,7 +78,7 @@ export class UpdatePricingUseCase extends UseCase<void> {
         existing.close(effectiveFrom.subtractDays(1), params.updatedBy);
       } else {
         // Existing pricing starts on or after updated one - mark it as deleted
-        existing.delete(params.updatedBy);
+        existing.delete(params.updatedBy, new Date());
       }
 
       await this.pricingRepository.save(existing);

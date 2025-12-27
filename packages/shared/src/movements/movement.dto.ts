@@ -26,7 +26,7 @@ export interface IMovementDetailDto {
   status: MovementStatus;
   type: MovementType;
   updatedAt: string;
-  updatedBy: string;
+  updatedBy?: string | null;
   voidedAt: null | string;
   voidedBy: null | string;
   voidReason: null | string;

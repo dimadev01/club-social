@@ -24,8 +24,8 @@ import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request
 import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
 
-import { CreateUserUseCase } from '../application/create-user/create-user.use-case';
-import { UpdateUserUseCase } from '../application/update-user/update-user.use-case';
+import { CreateUserUseCase } from '../application/create-user.use-case';
+import { UpdateUserUseCase } from '../application/update-user.use-case';
 import {
   USER_REPOSITORY_PROVIDER,
   type UserRepository,

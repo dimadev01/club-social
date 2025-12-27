@@ -16,6 +16,7 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
+import { Guard } from '@/shared/domain/guards';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
@@ -32,7 +33,8 @@ import {
 } from '../domain/pricing.repository';
 import { CreatePricingRequestDto } from './dto/create-pricing.dto';
 import { FindActivePricingRequestDto } from './dto/find-active-pricing.dto';
-import { PricingDetailDto } from './dto/pricing.dto';
+import { PricingDetailDto } from './dto/pricing-detail.dto';
+import { PricingPaginatedDto } from './dto/pricing-paginated.dto';
 import { UpdatePricingRequestDto } from './dto/update-pricing.dto';
 
 @Controller('pricing')
@@ -94,13 +96,13 @@ export class PricingController extends BaseController {
       }),
     );
 
-    return pricing ? this.mapPricingToDto(pricing) : null;
+    return pricing ? this.toDetailDto(pricing) : null;
   }
 
   @Get('paginated')
   public async getPaginated(
     @Query() query: PaginatedRequestDto,
-  ): Promise<PaginatedResponseDto<PricingDetailDto>> {
+  ): Promise<PaginatedResponseDto<PricingPaginatedDto>> {
     const result = await this.pricingRepository.findPaginated({
       filters: query.filters,
       page: query.page,
@@ -109,7 +111,16 @@ export class PricingController extends BaseController {
     });
 
     return {
-      data: result.data.map((item) => this.mapPricingToDto(item.pricing)),
+      data: result.data.map((item) => ({
+        amount: item.pricing.amount.toCents(),
+        createdAt: item.pricing.createdAt?.toISOString() ?? '',
+        createdBy: item.pricing.createdBy ?? '',
+        dueCategory: item.pricing.dueCategory,
+        effectiveFrom: item.pricing.effectiveFrom.value,
+        effectiveTo: item.pricing.effectiveTo?.value ?? null,
+        id: item.pricing.id.value,
+        memberCategory: item.pricing.memberCategory,
+      })),
       total: result.total,
     };
   }
@@ -122,10 +133,14 @@ export class PricingController extends BaseController {
       UniqueId.raw({ value: request.id }),
     );
 
-    return this.mapPricingToDto(pricing);
+    return this.toDetailDto(pricing);
   }
 
-  private mapPricingToDto(pricing: PricingEntity): PricingDetailDto {
+  private toDetailDto(pricing: PricingEntity): PricingDetailDto {
+    Guard.string(pricing.createdAt);
+    Guard.string(pricing.createdBy);
+    Guard.string(pricing.updatedAt);
+
     return {
       amount: pricing.amount.toCents(),
       createdAt: pricing.createdAt.toISOString(),

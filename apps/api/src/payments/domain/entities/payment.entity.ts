@@ -1,7 +1,5 @@
 import { PaymentStatus } from '@club-social/shared/payments';
 
-import type { BaseEntityProps } from '@/shared/domain/aggregate-root';
-
 import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
 import { PersistenceMeta } from '@/shared/domain/persistence-meta';
@@ -132,13 +130,9 @@ export class PaymentEntity extends AuditedAggregateRoot {
 
   public static fromPersistence(
     props: PaymentProps,
-    base: BaseEntityProps,
+    meta: PersistenceMeta,
   ): PaymentEntity {
-    return new PaymentEntity(props, base);
-  }
-
-  public addToTotalAmount(amount: Amount): void {
-    this._amount = this._amount.add(amount);
+    return new PaymentEntity(props, meta);
   }
 
   public clone(): PaymentEntity {

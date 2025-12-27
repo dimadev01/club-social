@@ -316,6 +316,8 @@ export const PricingScalarFieldEnum = {
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedBy: 'deletedBy',
 } as const;
 
 export type PricingScalarFieldEnum =

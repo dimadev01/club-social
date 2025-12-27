@@ -10,7 +10,6 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { DueCreatedEvent } from '../events/due-created.event';
 import { DueUpdatedEvent } from '../events/due-updated.event';
-import { UpdateDueProps, VoidDueProps } from '../interfaces/due.interface';
 import { DueSettlementEntity } from './due-settlement.entity';
 
 interface DueProps {
@@ -50,7 +49,7 @@ export class DueEntity extends AuditedAggregateRoot {
   public get settledAmount(): Amount {
     return this._settlements
       .filter((s) => s.isApplied())
-      .reduce((sum, s) => sum.add(s.amount), Amount.raw({ cents: 0 }));
+      .reduce((sum, s) => sum.add(s.amount), Amount.ZERO);
   }
 
   public get settlements(): DueSettlementEntity[] {
@@ -220,7 +219,11 @@ export class DueEntity extends AuditedAggregateRoot {
     return this._status === DueStatus.VOIDED;
   }
 
-  public update(props: UpdateDueProps): Result<void> {
+  public update(props: {
+    amount: Amount;
+    notes: null | string;
+    updatedBy: string;
+  }): Result<void> {
     if (this.isPaid()) {
       return err(new ApplicationError('No se puede editar una cuota paga'));
     }
@@ -241,7 +244,7 @@ export class DueEntity extends AuditedAggregateRoot {
     return ok();
   }
 
-  public void(props: VoidDueProps): Result<void> {
+  public void(props: { voidedBy: string; voidReason: string }): Result<void> {
     if (!this.isPending()) {
       return err(
         new ApplicationError('Solo se pueden anular cuotas pendientes'),
@@ -267,7 +270,7 @@ export class DueEntity extends AuditedAggregateRoot {
 
     if (totalSettled.isGreaterThanOrEqual(this._amount)) {
       newStatus = DueStatus.PAID;
-    } else if (totalSettled.isGreaterThan(Amount.raw({ cents: 0 }))) {
+    } else if (totalSettled.isGreaterThan(Amount.ZERO)) {
       newStatus = DueStatus.PARTIALLY_PAID;
     } else {
       newStatus = DueStatus.PENDING;

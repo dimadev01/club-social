@@ -29,6 +29,10 @@ export class PrismaUserMapper {
           updatedAt: user.updatedAt,
           updatedBy: user.updatedBy,
         },
+        deleted: {
+          deletedAt: user.deletedAt,
+          deletedBy: user.deletedBy,
+        },
         id: UniqueId.raw({ value: user.id }),
       },
     );

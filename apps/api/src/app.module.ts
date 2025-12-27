@@ -14,11 +14,11 @@ import { LoggerModule } from './infrastructure/logger/logger.module';
 import { ObservabilityModule } from './infrastructure/observability/observability.module';
 import { StorageModule } from './infrastructure/storage/storage.module';
 import { TraceModule } from './infrastructure/trace/trace.module';
-import { AllExceptionsFilter } from './kernel/presentation/filters/all-exceptions.filter';
 import { MembersModule } from './members/member.module';
 import { MovementsModule } from './movements/movement.module';
 import { PaymentsModule } from './payments/payment.module';
 import { PricingModule } from './pricing/pricing.module';
+import { AllExceptionsFilter } from './shared/presentation/filters/all-exceptions.filter';
 import { UsersModule } from './users/user.module';
 
 @Module({

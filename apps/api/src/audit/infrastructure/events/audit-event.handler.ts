@@ -61,7 +61,8 @@ export class AuditEventHandler {
 
   @OnEvent(DueUpdatedEvent.name)
   public async handleDueUpdated(event: DueUpdatedEvent): Promise<void> {
-    Guard.string(event.due.updatedBy);
+    Guard.string(event.due.createdBy);
+
     const action = event.due.isVoided()
       ? AuditAction.VOIDED
       : AuditAction.UPDATED;
@@ -69,7 +70,7 @@ export class AuditEventHandler {
 
     await this.createAuditLog({
       action,
-      createdBy: event.due.updatedBy,
+      createdBy: event.due.createdBy,
       entity: AuditEntity.DUE,
       entityId: event.due.id.value,
       message,
@@ -96,11 +97,11 @@ export class AuditEventHandler {
 
   @OnEvent(MemberUpdatedEvent.name)
   public async handleMemberUpdated(event: MemberUpdatedEvent): Promise<void> {
-    Guard.string(event.member.updatedBy);
+    Guard.string(event.member.createdBy);
 
     await this.createAuditLog({
       action: AuditAction.UPDATED,
-      createdBy: event.member.updatedBy,
+      createdBy: event.member.createdBy,
       entity: AuditEntity.MEMBER,
       entityId: event.member.id.value,
       message: 'Member updated',
@@ -131,7 +132,7 @@ export class AuditEventHandler {
   public async handleMovementUpdated(
     event: MovementUpdatedEvent,
   ): Promise<void> {
-    Guard.string(event.movement.updatedBy);
+    Guard.string(event.movement.createdBy);
 
     const action = event.movement.isVoided()
       ? AuditAction.VOIDED
@@ -142,7 +143,7 @@ export class AuditEventHandler {
 
     await this.createAuditLog({
       action,
-      createdBy: event.movement.updatedBy,
+      createdBy: event.movement.createdBy,
       entity: AuditEntity.MOVEMENT,
       entityId: event.movement.id.value,
       message,
@@ -169,7 +170,7 @@ export class AuditEventHandler {
 
   @OnEvent(PaymentUpdatedEvent.name)
   public async handlePaymentUpdated(event: PaymentUpdatedEvent): Promise<void> {
-    Guard.string(event.payment.updatedBy);
+    Guard.string(event.payment.createdBy);
 
     const action = event.payment.isVoided()
       ? AuditAction.VOIDED
@@ -180,7 +181,7 @@ export class AuditEventHandler {
 
     await this.createAuditLog({
       action,
-      createdBy: event.payment.updatedBy,
+      createdBy: event.payment.createdBy,
       entity: AuditEntity.PAYMENT,
       entityId: event.payment.id.value,
       message,
@@ -207,11 +208,11 @@ export class AuditEventHandler {
 
   @OnEvent(PricingUpdatedEvent.name)
   public async handlePricingUpdated(event: PricingUpdatedEvent): Promise<void> {
-    Guard.string(event.pricing.updatedBy);
+    Guard.string(event.pricing.createdBy);
 
     await this.createAuditLog({
       action: AuditAction.UPDATED,
-      createdBy: event.pricing.updatedBy,
+      createdBy: event.pricing.createdBy,
       entity: AuditEntity.PRICING,
       entityId: event.pricing.id.value,
       message: 'Pricing updated',
@@ -238,11 +239,11 @@ export class AuditEventHandler {
 
   @OnEvent(UserUpdatedEvent.name)
   public async handleUserUpdated(event: UserUpdatedEvent): Promise<void> {
-    Guard.string(event.user.updatedBy);
+    Guard.string(event.user.createdBy);
 
     await this.createAuditLog({
       action: AuditAction.UPDATED,
-      createdBy: event.user.updatedBy,
+      createdBy: event.user.createdBy,
       entity: AuditEntity.USER,
       entityId: event.user.id.value,
       message: 'User updated',
@@ -378,6 +379,8 @@ export class AuditEventHandler {
       amount: pricing.amount.toCents(),
       createdAt: pricing.createdAt,
       createdBy: pricing.createdBy,
+      deletedAt: pricing.deletedAt,
+      deletedBy: pricing.deletedBy,
       dueCategory: pricing.dueCategory,
       effectiveFrom: pricing.effectiveFrom.value,
       effectiveTo: pricing.effectiveTo?.value ?? null,
@@ -395,6 +398,8 @@ export class AuditEventHandler {
       banReason: user.banReason,
       createdAt: user.createdAt,
       createdBy: user.createdBy,
+      deletedAt: user.deletedAt,
+      deletedBy: user.deletedBy,
       email: user.email.value,
       firstName: user.firstName,
       id: user.id.value,

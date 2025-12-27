@@ -49,13 +49,15 @@ export class CreatePricingUseCase extends UseCase<PricingEntity> {
 
     const [amount, effectiveFrom] = results.value;
 
-    const pricing = PricingEntity.create({
-      amount,
-      createdBy: params.createdBy,
-      dueCategory: params.dueCategory,
-      effectiveFrom,
-      memberCategory: params.memberCategory,
-    });
+    const pricing = PricingEntity.create(
+      {
+        amount,
+        dueCategory: params.dueCategory,
+        effectiveFrom,
+        memberCategory: params.memberCategory,
+      },
+      params.createdBy,
+    );
 
     if (pricing.isErr()) {
       return err(pricing.error);
@@ -77,7 +79,7 @@ export class CreatePricingUseCase extends UseCase<PricingEntity> {
         existing.close(effectiveFrom.subtractDays(1), params.createdBy);
       } else {
         // Existing pricing starts on or after new one - mark it as deleted (superseded)
-        existing.delete(params.createdBy);
+        existing.delete(params.createdBy, new Date());
       }
 
       await this.pricingRepository.save(existing);
