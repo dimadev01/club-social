@@ -1,4 +1,4 @@
-import type { ICreatePaymentDueItemDto } from '../payment-due';
+import type { ICreatePaymentDueDto } from '../payment-due';
 
 import { DueCategory } from '../dues';
 import { UserStatus } from '../users';
@@ -8,7 +8,7 @@ export interface ICreatePaymentDto {
   date: string;
   memberId: string;
   notes: null | string;
-  paymentDues: ICreatePaymentDueItemDto[];
+  paymentDues: ICreatePaymentDueDto[];
   receiptNumber: null | string;
 }
 

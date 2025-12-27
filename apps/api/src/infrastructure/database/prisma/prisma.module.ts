@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
 import { PrismaAuditLogMapper } from '@/audit/infrastructure/prisma-audit-log.mapper';
+import { PrismaDueSettlementMapper } from '@/dues/infrastructure/prisma-due-settlement.mapper';
 import { PrismaDueMapper } from '@/dues/infrastructure/prisma-due.mapper';
 import { PrismaMemberMapper } from '@/members/infrastructure/prisma-member.mapper';
 import { PrismaMovementMapper } from '@/movements/infrastructure/prisma-movement.mapper';
-import { PrismaPaymentDueMapper } from '@/payments/infrastructure/prisma-payment-due.mapper';
 import { PrismaPaymentMapper } from '@/payments/infrastructure/prisma-payment.mapper';
 import { PrismaPricingMapper } from '@/pricing/infrastructure/prisma-pricing.mapper';
 import { PrismaUserMapper } from '@/users/infrastructure/prisma-user.mapper';
@@ -19,7 +19,7 @@ import { PrismaService } from './prisma.service';
     PrismaDueMapper,
     PrismaMemberMapper,
     PrismaMovementMapper,
-    PrismaPaymentDueMapper,
+    PrismaDueSettlementMapper,
     PrismaPaymentMapper,
     PrismaPricingMapper,
     PrismaUserMapper,

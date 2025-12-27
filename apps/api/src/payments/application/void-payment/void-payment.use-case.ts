@@ -17,7 +17,7 @@ import {
 } from '@/shared/application/app-logger';
 import { UseCase } from '@/shared/application/use-case';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
-import { err, ok, ResultUtils } from '@/shared/domain/result';
+import { err, ok } from '@/shared/domain/result';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import type { VoidPaymentParams } from './void-payment.params';
@@ -60,13 +60,13 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
 
     const dues = await this.dueRepository.findUniqueByIds(affectedDueIds);
 
-    const voidPaymentResults = ResultUtils.combine(
-      dues.map((due) => due.voidPayment(payment.id, params.voidedBy)),
-    );
+    // const voidPaymentResults = ResultUtils.combine(
+    //   dues.map((due) => due.voidPayment(payment.id, params.voidedBy)),
+    // );
 
-    if (voidPaymentResults.isErr()) {
-      return err(voidPaymentResults.error);
-    }
+    // if (voidPaymentResults.isErr()) {
+    //   return err(voidPaymentResults.error);
+    // }
 
     await this.paymentRepository.save(payment);
     await Promise.all(dues.map((due) => this.dueRepository.save(due)));

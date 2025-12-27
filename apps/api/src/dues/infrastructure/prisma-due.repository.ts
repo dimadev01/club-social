@@ -14,6 +14,7 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { Guard } from '@/shared/domain/guards';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -33,11 +34,20 @@ export class PrismaDueRepository implements DueRepository {
     private readonly mapper: PrismaMappers,
   ) {}
 
+  public async findByManyIds(ids: UniqueId[]): Promise<DueEntity[]> {
+    const dues = await this.prismaService.due.findMany({
+      where: {
+        id: { in: ids.map((id) => id.value) },
+      },
+    });
+
+    return dues.map((due) => this.mapper.due.toDomain(due));
+  }
+
   public async findByMemberId(memberId: UniqueId): Promise<DueEntity[]> {
     const dues = await this.prismaService.due.findMany({
-      include: { paymentDues: true },
+      include: { settlements: true },
       where: {
-        deletedAt: null,
         memberId: memberId.value,
       },
     });
@@ -51,7 +61,7 @@ export class PrismaDueRepository implements DueRepository {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const dues = await this.prismaService.due.findMany({
-      include: { member: { include: { user: true } }, paymentDues: true },
+      include: { member: { include: { user: true } }, settlements: true },
       orderBy,
       where,
     });
@@ -65,9 +75,8 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findManyByIdsModels(ids: UniqueId[]): Promise<DueDetailModel[]> {
     const dues = await this.prismaService.due.findMany({
-      include: { member: { include: { user: true } }, paymentDues: true },
+      include: { member: { include: { user: true } }, settlements: true },
       where: {
-        deletedAt: null,
         id: { in: ids.map((id) => id.value) },
       },
     });
@@ -81,8 +90,8 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findOneModel(id: UniqueId): Promise<DueDetailModel | null> {
     const due = await this.prismaService.due.findUnique({
-      include: { member: { include: { user: true } }, paymentDues: true },
-      where: { deletedAt: null, id: id.value },
+      include: { member: { include: { user: true } }, settlements: true },
+      where: { id: id.value },
     });
 
     if (!due) {
@@ -128,24 +137,9 @@ export class PrismaDueRepository implements DueRepository {
     };
   }
 
-  public async findPaymentDuesModel(
-    dueId: UniqueId,
-  ): Promise<PaymentDueDetailModel[]> {
-    const paymentDues = await this.prismaService.paymentDue.findMany({
-      include: { payment: true },
-      where: { dueId: dueId.value },
-    });
-
-    return paymentDues.map((pd) => ({
-      payment: this.mapper.payment.toDomain(pd.payment),
-      paymentDue: this.mapper.paymentDue.toDomain(pd),
-    }));
-  }
-
   public async findPending(): Promise<DueEntity[]> {
     const dues = await this.prismaService.due.findMany({
       where: {
-        deletedAt: null,
         status: {
           in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
         },
@@ -157,9 +151,8 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]> {
     const dues = await this.prismaService.due.findMany({
-      include: { paymentDues: true },
+      include: { settlements: true },
       where: {
-        deletedAt: null,
         memberId: memberId.value,
         status: {
           in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
@@ -170,10 +163,28 @@ export class PrismaDueRepository implements DueRepository {
     return dues.map((due) => this.mapper.due.toDomain(due));
   }
 
+  public async findSettlementsModel(
+    dueId: UniqueId,
+  ): Promise<PaymentDueDetailModel[]> {
+    const settlements = await this.prismaService.dueSettlement.findMany({
+      include: { payment: true },
+      where: { dueId: dueId.value },
+    });
+
+    return settlements.map((settlement) => {
+      Guard.defined(settlement.payment);
+
+      return {
+        payment: this.mapper.payment.toDomain(settlement.payment),
+        settlement: this.mapper.dueSettlement.toDomain(settlement),
+      };
+    });
+  }
+
   public async findUniqueById(id: UniqueId): Promise<DueEntity | null> {
     const due = await this.prismaService.due.findUnique({
-      include: { paymentDues: true },
-      where: { deletedAt: null, id: id.value },
+      include: { settlements: true },
+      where: { id: id.value },
     });
 
     if (!due) {
@@ -185,9 +196,8 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findUniqueByIds(ids: UniqueId[]): Promise<DueEntity[]> {
     const dues = await this.prismaService.due.findMany({
-      include: { paymentDues: true },
+      include: { settlements: true },
       where: {
-        deletedAt: null,
         id: { in: ids.map((id) => id.value) },
       },
     });
@@ -197,58 +207,43 @@ export class PrismaDueRepository implements DueRepository {
 
   public async findUniqueOrThrow(id: UniqueId): Promise<DueEntity> {
     const due = await this.prismaService.due.findUniqueOrThrow({
-      include: { paymentDues: true },
-      where: { deletedAt: null, id: id.value },
+      include: { settlements: true },
+      where: { id: id.value },
     });
 
     return this.mapper.due.toDomain(due);
   }
 
-  public async save(entity: DueEntity): Promise<DueEntity> {
-    const data = this.mapper.due.toPersistence(entity);
-    const { member: _member, paymentDues, ...dueData } = data;
+  public async save(entity: DueEntity): Promise<void> {
+    const where = { id: entity.id.value };
+
+    const dueCreate = this.mapper.due.toCreateInput(entity);
+    const dueUpdate = this.mapper.due.toUpdateInput(entity);
+
+    const settlementUpserts = this.mapper.dueSettlement.toUpserts(entity);
 
     await this.prismaService.$transaction(async (tx) => {
       await tx.due.upsert({
-        create: dueData,
-        update: dueData,
-        where: { id: entity.id.value },
+        create: dueCreate,
+        update: dueUpdate,
+        where,
       });
 
-      await Promise.all(
-        (paymentDues ?? []).map((pd) =>
-          tx.paymentDue.upsert({
-            create: {
-              amount: pd.amount,
-              dueId: entity.id.value,
-              paymentId: pd.paymentId,
-              status: pd.status,
-            },
-            update: {
-              amount: pd.amount,
-              status: pd.status,
-            },
-            where: {
-              paymentId_dueId: {
-                dueId: entity.id.value,
-                paymentId: pd.paymentId,
-              },
-            },
-          }),
-        ),
-      );
+      for (const settlementUpsert of settlementUpserts) {
+        await tx.dueSettlement.upsert({
+          create: settlementUpsert.create,
+          update: settlementUpsert.update,
+          where: settlementUpsert.where,
+        });
+      }
     });
-
-    return entity;
   }
 
   private buildWhereAndOrderBy(params: ExportRequest): {
     orderBy: DueOrderByWithRelationInput[];
     where: DueWhereInput;
   } {
-    const where: DueWhereInput = {
-      deletedAt: null,
-    };
+    const where: DueWhereInput = {};
 
     if (params.filters?.createdAt) {
       const dateRangeResult = DateRange.fromUserInput(

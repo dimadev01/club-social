@@ -72,9 +72,9 @@ export class PaymentsController extends BaseController {
       await this.createPaymentUseCase.execute({
         createdBy: session.user.name,
         date: body.date,
+        dues: body.paymentDues,
         memberId: body.memberId,
         notes: body.notes || null,
-        paymentDues: body.paymentDues,
         receiptNumber: body.receiptNumber || null,
       }),
     );
@@ -224,15 +224,15 @@ export class PaymentsController extends BaseController {
       UniqueId.raw({ value: request.id }),
     );
 
-    return data.map(({ due, paymentDue }) => ({
-      amount: paymentDue.amount.toCents(),
+    return data.map(({ due, dueSettlement }) => ({
+      amount: dueSettlement.amount.toCents(),
       dueAmount: due.amount.toCents(),
       dueCategory: due.category,
       dueDate: due.date.value,
       dueId: due.id.value,
       dueStatus: due.status,
-      paymentId: paymentDue.paymentId.value,
-      status: paymentDue.status,
+      paymentId: dueSettlement.paymentId?.value ?? null,
+      status: dueSettlement.status,
     }));
   }
 }

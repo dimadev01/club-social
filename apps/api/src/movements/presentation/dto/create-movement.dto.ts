@@ -29,7 +29,7 @@ export class CreateMovementRequestDto implements ICreateMovementDto {
 
   @IsOptional()
   @IsString()
-  public description: null | string;
+  public notes: null | string;
 
   @IsEnum(MovementType)
   @IsNotEmpty()

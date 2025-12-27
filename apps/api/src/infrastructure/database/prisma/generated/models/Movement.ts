@@ -40,7 +40,7 @@ export type MovementMinAggregateOutputType = {
   category: string | null;
   amount: number | null;
   date: string | null;
-  description: string | null;
+  notes: string | null;
   status: string | null;
   mode: string | null;
   voidReason: string | null;
@@ -51,8 +51,6 @@ export type MovementMinAggregateOutputType = {
   createdBy: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
 };
 
 export type MovementMaxAggregateOutputType = {
@@ -61,7 +59,7 @@ export type MovementMaxAggregateOutputType = {
   category: string | null;
   amount: number | null;
   date: string | null;
-  description: string | null;
+  notes: string | null;
   status: string | null;
   mode: string | null;
   voidReason: string | null;
@@ -72,8 +70,6 @@ export type MovementMaxAggregateOutputType = {
   createdBy: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
 };
 
 export type MovementCountAggregateOutputType = {
@@ -82,7 +78,7 @@ export type MovementCountAggregateOutputType = {
   category: number;
   amount: number;
   date: number;
-  description: number;
+  notes: number;
   status: number;
   mode: number;
   voidReason: number;
@@ -93,8 +89,6 @@ export type MovementCountAggregateOutputType = {
   createdBy: number;
   updatedAt: number;
   updatedBy: number;
-  deletedAt: number;
-  deletedBy: number;
   _all: number;
 };
 
@@ -112,7 +106,7 @@ export type MovementMinAggregateInputType = {
   category?: true;
   amount?: true;
   date?: true;
-  description?: true;
+  notes?: true;
   status?: true;
   mode?: true;
   voidReason?: true;
@@ -123,8 +117,6 @@ export type MovementMinAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
 };
 
 export type MovementMaxAggregateInputType = {
@@ -133,7 +125,7 @@ export type MovementMaxAggregateInputType = {
   category?: true;
   amount?: true;
   date?: true;
-  description?: true;
+  notes?: true;
   status?: true;
   mode?: true;
   voidReason?: true;
@@ -144,8 +136,6 @@ export type MovementMaxAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
 };
 
 export type MovementCountAggregateInputType = {
@@ -154,7 +144,7 @@ export type MovementCountAggregateInputType = {
   category?: true;
   amount?: true;
   date?: true;
-  description?: true;
+  notes?: true;
   status?: true;
   mode?: true;
   voidReason?: true;
@@ -165,8 +155,6 @@ export type MovementCountAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
   _all?: true;
 };
 
@@ -269,7 +257,7 @@ export type MovementGroupByOutputType = {
   category: string;
   amount: number;
   date: string;
-  description: string | null;
+  notes: string | null;
   status: string;
   mode: string;
   voidReason: string | null;
@@ -280,8 +268,6 @@ export type MovementGroupByOutputType = {
   createdBy: string;
   updatedAt: Date;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
   _count: MovementCountAggregateOutputType | null;
   _avg: MovementAvgAggregateOutputType | null;
   _sum: MovementSumAggregateOutputType | null;
@@ -311,7 +297,7 @@ export type MovementWhereInput = {
   category?: Prisma.StringFilter<'Movement'> | string;
   amount?: Prisma.IntFilter<'Movement'> | number;
   date?: Prisma.StringFilter<'Movement'> | string;
-  description?: Prisma.StringNullableFilter<'Movement'> | string | null;
+  notes?: Prisma.StringNullableFilter<'Movement'> | string | null;
   status?: Prisma.StringFilter<'Movement'> | string;
   mode?: Prisma.StringFilter<'Movement'> | string;
   voidReason?: Prisma.StringNullableFilter<'Movement'> | string | null;
@@ -322,8 +308,10 @@ export type MovementWhereInput = {
   createdBy?: Prisma.StringFilter<'Movement'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Movement'> | Date | string;
   updatedBy?: Prisma.StringNullableFilter<'Movement'> | string | null;
-  deletedAt?: Prisma.DateTimeNullableFilter<'Movement'> | Date | string | null;
-  deletedBy?: Prisma.StringNullableFilter<'Movement'> | string | null;
+  payment?: Prisma.XOR<
+    Prisma.PaymentNullableScalarRelationFilter,
+    Prisma.PaymentWhereInput
+  > | null;
 };
 
 export type MovementOrderByWithRelationInput = {
@@ -332,7 +320,7 @@ export type MovementOrderByWithRelationInput = {
   category?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
-  description?: Prisma.SortOrderInput | Prisma.SortOrder;
+  notes?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
   mode?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -343,8 +331,7 @@ export type MovementOrderByWithRelationInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
+  payment?: Prisma.PaymentOrderByWithRelationInput;
 };
 
 export type MovementWhereUniqueInput = Prisma.AtLeast<
@@ -357,7 +344,7 @@ export type MovementWhereUniqueInput = Prisma.AtLeast<
     category?: Prisma.StringFilter<'Movement'> | string;
     amount?: Prisma.IntFilter<'Movement'> | number;
     date?: Prisma.StringFilter<'Movement'> | string;
-    description?: Prisma.StringNullableFilter<'Movement'> | string | null;
+    notes?: Prisma.StringNullableFilter<'Movement'> | string | null;
     status?: Prisma.StringFilter<'Movement'> | string;
     mode?: Prisma.StringFilter<'Movement'> | string;
     voidReason?: Prisma.StringNullableFilter<'Movement'> | string | null;
@@ -368,12 +355,10 @@ export type MovementWhereUniqueInput = Prisma.AtLeast<
     createdBy?: Prisma.StringFilter<'Movement'> | string;
     updatedAt?: Prisma.DateTimeFilter<'Movement'> | Date | string;
     updatedBy?: Prisma.StringNullableFilter<'Movement'> | string | null;
-    deletedAt?:
-      | Prisma.DateTimeNullableFilter<'Movement'>
-      | Date
-      | string
-      | null;
-    deletedBy?: Prisma.StringNullableFilter<'Movement'> | string | null;
+    payment?: Prisma.XOR<
+      Prisma.PaymentNullableScalarRelationFilter,
+      Prisma.PaymentWhereInput
+    > | null;
   },
   'id'
 >;
@@ -384,7 +369,7 @@ export type MovementOrderByWithAggregationInput = {
   category?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
-  description?: Prisma.SortOrderInput | Prisma.SortOrder;
+  notes?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
   mode?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -395,8 +380,6 @@ export type MovementOrderByWithAggregationInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.MovementCountOrderByAggregateInput;
   _avg?: Prisma.MovementAvgOrderByAggregateInput;
   _max?: Prisma.MovementMaxOrderByAggregateInput;
@@ -417,10 +400,7 @@ export type MovementScalarWhereWithAggregatesInput = {
   category?: Prisma.StringWithAggregatesFilter<'Movement'> | string;
   amount?: Prisma.IntWithAggregatesFilter<'Movement'> | number;
   date?: Prisma.StringWithAggregatesFilter<'Movement'> | string;
-  description?:
-    | Prisma.StringNullableWithAggregatesFilter<'Movement'>
-    | string
-    | null;
+  notes?: Prisma.StringNullableWithAggregatesFilter<'Movement'> | string | null;
   status?: Prisma.StringWithAggregatesFilter<'Movement'> | string;
   mode?: Prisma.StringWithAggregatesFilter<'Movement'> | string;
   voidReason?:
@@ -447,15 +427,6 @@ export type MovementScalarWhereWithAggregatesInput = {
     | Prisma.StringNullableWithAggregatesFilter<'Movement'>
     | string
     | null;
-  deletedAt?:
-    | Prisma.DateTimeNullableWithAggregatesFilter<'Movement'>
-    | Date
-    | string
-    | null;
-  deletedBy?:
-    | Prisma.StringNullableWithAggregatesFilter<'Movement'>
-    | string
-    | null;
 };
 
 export type MovementCreateInput = {
@@ -464,19 +435,17 @@ export type MovementCreateInput = {
   category: string;
   amount: number;
   date: string;
-  description?: string | null;
+  notes?: string | null;
   status: string;
   mode: string;
   voidReason?: string | null;
   voidedAt?: Date | string | null;
   voidedBy?: string | null;
-  paymentId?: string | null;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
+  payment?: Prisma.PaymentCreateNestedOneWithoutMovementsInput;
 };
 
 export type MovementUncheckedCreateInput = {
@@ -485,7 +454,7 @@ export type MovementUncheckedCreateInput = {
   category: string;
   amount: number;
   date: string;
-  description?: string | null;
+  notes?: string | null;
   status: string;
   mode: string;
   voidReason?: string | null;
@@ -496,8 +465,6 @@ export type MovementUncheckedCreateInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
 };
 
 export type MovementUpdateInput = {
@@ -506,7 +473,7 @@ export type MovementUpdateInput = {
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   mode?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -516,17 +483,11 @@ export type MovementUpdateInput = {
     | string
     | null;
   voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  payment?: Prisma.PaymentUpdateOneWithoutMovementsNestedInput;
 };
 
 export type MovementUncheckedUpdateInput = {
@@ -535,7 +496,7 @@ export type MovementUncheckedUpdateInput = {
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   mode?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -550,12 +511,6 @@ export type MovementUncheckedUpdateInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type MovementCreateManyInput = {
@@ -564,7 +519,7 @@ export type MovementCreateManyInput = {
   category: string;
   amount: number;
   date: string;
-  description?: string | null;
+  notes?: string | null;
   status: string;
   mode: string;
   voidReason?: string | null;
@@ -575,8 +530,6 @@ export type MovementCreateManyInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
 };
 
 export type MovementUpdateManyMutationInput = {
@@ -585,7 +538,7 @@ export type MovementUpdateManyMutationInput = {
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   mode?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -595,17 +548,10 @@ export type MovementUpdateManyMutationInput = {
     | string
     | null;
   voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type MovementUncheckedUpdateManyInput = {
@@ -614,7 +560,7 @@ export type MovementUncheckedUpdateManyInput = {
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   mode?: Prisma.StringFieldUpdateOperationsInput | string;
   voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -629,12 +575,16 @@ export type MovementUncheckedUpdateManyInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+};
+
+export type MovementListRelationFilter = {
+  every?: Prisma.MovementWhereInput;
+  some?: Prisma.MovementWhereInput;
+  none?: Prisma.MovementWhereInput;
+};
+
+export type MovementOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder;
 };
 
 export type MovementCountOrderByAggregateInput = {
@@ -643,7 +593,7 @@ export type MovementCountOrderByAggregateInput = {
   category?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
-  description?: Prisma.SortOrder;
+  notes?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   mode?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrder;
@@ -654,8 +604,6 @@ export type MovementCountOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type MovementAvgOrderByAggregateInput = {
@@ -668,7 +616,7 @@ export type MovementMaxOrderByAggregateInput = {
   category?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
-  description?: Prisma.SortOrder;
+  notes?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   mode?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrder;
@@ -679,8 +627,6 @@ export type MovementMaxOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type MovementMinOrderByAggregateInput = {
@@ -689,7 +635,7 @@ export type MovementMinOrderByAggregateInput = {
   category?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
-  description?: Prisma.SortOrder;
+  notes?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   mode?: Prisma.SortOrder;
   voidReason?: Prisma.SortOrder;
@@ -700,12 +646,289 @@ export type MovementMinOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type MovementSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder;
+};
+
+export type MovementCreateNestedManyWithoutPaymentInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.MovementCreateWithoutPaymentInput,
+        Prisma.MovementUncheckedCreateWithoutPaymentInput
+      >
+    | Prisma.MovementCreateWithoutPaymentInput[]
+    | Prisma.MovementUncheckedCreateWithoutPaymentInput[];
+  connectOrCreate?:
+    | Prisma.MovementCreateOrConnectWithoutPaymentInput
+    | Prisma.MovementCreateOrConnectWithoutPaymentInput[];
+  createMany?: Prisma.MovementCreateManyPaymentInputEnvelope;
+  connect?: Prisma.MovementWhereUniqueInput | Prisma.MovementWhereUniqueInput[];
+};
+
+export type MovementUncheckedCreateNestedManyWithoutPaymentInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.MovementCreateWithoutPaymentInput,
+        Prisma.MovementUncheckedCreateWithoutPaymentInput
+      >
+    | Prisma.MovementCreateWithoutPaymentInput[]
+    | Prisma.MovementUncheckedCreateWithoutPaymentInput[];
+  connectOrCreate?:
+    | Prisma.MovementCreateOrConnectWithoutPaymentInput
+    | Prisma.MovementCreateOrConnectWithoutPaymentInput[];
+  createMany?: Prisma.MovementCreateManyPaymentInputEnvelope;
+  connect?: Prisma.MovementWhereUniqueInput | Prisma.MovementWhereUniqueInput[];
+};
+
+export type MovementUpdateManyWithoutPaymentNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.MovementCreateWithoutPaymentInput,
+        Prisma.MovementUncheckedCreateWithoutPaymentInput
+      >
+    | Prisma.MovementCreateWithoutPaymentInput[]
+    | Prisma.MovementUncheckedCreateWithoutPaymentInput[];
+  connectOrCreate?:
+    | Prisma.MovementCreateOrConnectWithoutPaymentInput
+    | Prisma.MovementCreateOrConnectWithoutPaymentInput[];
+  upsert?:
+    | Prisma.MovementUpsertWithWhereUniqueWithoutPaymentInput
+    | Prisma.MovementUpsertWithWhereUniqueWithoutPaymentInput[];
+  createMany?: Prisma.MovementCreateManyPaymentInputEnvelope;
+  set?: Prisma.MovementWhereUniqueInput | Prisma.MovementWhereUniqueInput[];
+  disconnect?:
+    | Prisma.MovementWhereUniqueInput
+    | Prisma.MovementWhereUniqueInput[];
+  delete?: Prisma.MovementWhereUniqueInput | Prisma.MovementWhereUniqueInput[];
+  connect?: Prisma.MovementWhereUniqueInput | Prisma.MovementWhereUniqueInput[];
+  update?:
+    | Prisma.MovementUpdateWithWhereUniqueWithoutPaymentInput
+    | Prisma.MovementUpdateWithWhereUniqueWithoutPaymentInput[];
+  updateMany?:
+    | Prisma.MovementUpdateManyWithWhereWithoutPaymentInput
+    | Prisma.MovementUpdateManyWithWhereWithoutPaymentInput[];
+  deleteMany?:
+    | Prisma.MovementScalarWhereInput
+    | Prisma.MovementScalarWhereInput[];
+};
+
+export type MovementUncheckedUpdateManyWithoutPaymentNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.MovementCreateWithoutPaymentInput,
+        Prisma.MovementUncheckedCreateWithoutPaymentInput
+      >
+    | Prisma.MovementCreateWithoutPaymentInput[]
+    | Prisma.MovementUncheckedCreateWithoutPaymentInput[];
+  connectOrCreate?:
+    | Prisma.MovementCreateOrConnectWithoutPaymentInput
+    | Prisma.MovementCreateOrConnectWithoutPaymentInput[];
+  upsert?:
+    | Prisma.MovementUpsertWithWhereUniqueWithoutPaymentInput
+    | Prisma.MovementUpsertWithWhereUniqueWithoutPaymentInput[];
+  createMany?: Prisma.MovementCreateManyPaymentInputEnvelope;
+  set?: Prisma.MovementWhereUniqueInput | Prisma.MovementWhereUniqueInput[];
+  disconnect?:
+    | Prisma.MovementWhereUniqueInput
+    | Prisma.MovementWhereUniqueInput[];
+  delete?: Prisma.MovementWhereUniqueInput | Prisma.MovementWhereUniqueInput[];
+  connect?: Prisma.MovementWhereUniqueInput | Prisma.MovementWhereUniqueInput[];
+  update?:
+    | Prisma.MovementUpdateWithWhereUniqueWithoutPaymentInput
+    | Prisma.MovementUpdateWithWhereUniqueWithoutPaymentInput[];
+  updateMany?:
+    | Prisma.MovementUpdateManyWithWhereWithoutPaymentInput
+    | Prisma.MovementUpdateManyWithWhereWithoutPaymentInput[];
+  deleteMany?:
+    | Prisma.MovementScalarWhereInput
+    | Prisma.MovementScalarWhereInput[];
+};
+
+export type MovementCreateWithoutPaymentInput = {
+  id: string;
+  type: string;
+  category: string;
+  amount: number;
+  date: string;
+  notes?: string | null;
+  status: string;
+  mode: string;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+};
+
+export type MovementUncheckedCreateWithoutPaymentInput = {
+  id: string;
+  type: string;
+  category: string;
+  amount: number;
+  date: string;
+  notes?: string | null;
+  status: string;
+  mode: string;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+};
+
+export type MovementCreateOrConnectWithoutPaymentInput = {
+  where: Prisma.MovementWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.MovementCreateWithoutPaymentInput,
+    Prisma.MovementUncheckedCreateWithoutPaymentInput
+  >;
+};
+
+export type MovementCreateManyPaymentInputEnvelope = {
+  data:
+    | Prisma.MovementCreateManyPaymentInput
+    | Prisma.MovementCreateManyPaymentInput[];
+  skipDuplicates?: boolean;
+};
+
+export type MovementUpsertWithWhereUniqueWithoutPaymentInput = {
+  where: Prisma.MovementWhereUniqueInput;
+  update: Prisma.XOR<
+    Prisma.MovementUpdateWithoutPaymentInput,
+    Prisma.MovementUncheckedUpdateWithoutPaymentInput
+  >;
+  create: Prisma.XOR<
+    Prisma.MovementCreateWithoutPaymentInput,
+    Prisma.MovementUncheckedCreateWithoutPaymentInput
+  >;
+};
+
+export type MovementUpdateWithWhereUniqueWithoutPaymentInput = {
+  where: Prisma.MovementWhereUniqueInput;
+  data: Prisma.XOR<
+    Prisma.MovementUpdateWithoutPaymentInput,
+    Prisma.MovementUncheckedUpdateWithoutPaymentInput
+  >;
+};
+
+export type MovementUpdateManyWithWhereWithoutPaymentInput = {
+  where: Prisma.MovementScalarWhereInput;
+  data: Prisma.XOR<
+    Prisma.MovementUpdateManyMutationInput,
+    Prisma.MovementUncheckedUpdateManyWithoutPaymentInput
+  >;
+};
+
+export type MovementScalarWhereInput = {
+  AND?: Prisma.MovementScalarWhereInput | Prisma.MovementScalarWhereInput[];
+  OR?: Prisma.MovementScalarWhereInput[];
+  NOT?: Prisma.MovementScalarWhereInput | Prisma.MovementScalarWhereInput[];
+  id?: Prisma.StringFilter<'Movement'> | string;
+  type?: Prisma.StringFilter<'Movement'> | string;
+  category?: Prisma.StringFilter<'Movement'> | string;
+  amount?: Prisma.IntFilter<'Movement'> | number;
+  date?: Prisma.StringFilter<'Movement'> | string;
+  notes?: Prisma.StringNullableFilter<'Movement'> | string | null;
+  status?: Prisma.StringFilter<'Movement'> | string;
+  mode?: Prisma.StringFilter<'Movement'> | string;
+  voidReason?: Prisma.StringNullableFilter<'Movement'> | string | null;
+  voidedAt?: Prisma.DateTimeNullableFilter<'Movement'> | Date | string | null;
+  voidedBy?: Prisma.StringNullableFilter<'Movement'> | string | null;
+  paymentId?: Prisma.StringNullableFilter<'Movement'> | string | null;
+  createdAt?: Prisma.DateTimeFilter<'Movement'> | Date | string;
+  createdBy?: Prisma.StringFilter<'Movement'> | string;
+  updatedAt?: Prisma.DateTimeFilter<'Movement'> | Date | string;
+  updatedBy?: Prisma.StringNullableFilter<'Movement'> | string | null;
+};
+
+export type MovementCreateManyPaymentInput = {
+  id: string;
+  type: string;
+  category: string;
+  amount: number;
+  date: string;
+  notes?: string | null;
+  status: string;
+  mode: string;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+};
+
+export type MovementUpdateWithoutPaymentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  type?: Prisma.StringFieldUpdateOperationsInput | string;
+  category?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  mode?: Prisma.StringFieldUpdateOperationsInput | string;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+};
+
+export type MovementUncheckedUpdateWithoutPaymentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  type?: Prisma.StringFieldUpdateOperationsInput | string;
+  category?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  mode?: Prisma.StringFieldUpdateOperationsInput | string;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+};
+
+export type MovementUncheckedUpdateManyWithoutPaymentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  type?: Prisma.StringFieldUpdateOperationsInput | string;
+  category?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  mode?: Prisma.StringFieldUpdateOperationsInput | string;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type MovementSelect<
@@ -718,7 +941,7 @@ export type MovementSelect<
     category?: boolean;
     amount?: boolean;
     date?: boolean;
-    description?: boolean;
+    notes?: boolean;
     status?: boolean;
     mode?: boolean;
     voidReason?: boolean;
@@ -729,8 +952,7 @@ export type MovementSelect<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
+    payment?: boolean | Prisma.Movement$paymentArgs<ExtArgs>;
   },
   ExtArgs['result']['movement']
 >;
@@ -745,7 +967,7 @@ export type MovementSelectCreateManyAndReturn<
     category?: boolean;
     amount?: boolean;
     date?: boolean;
-    description?: boolean;
+    notes?: boolean;
     status?: boolean;
     mode?: boolean;
     voidReason?: boolean;
@@ -756,8 +978,7 @@ export type MovementSelectCreateManyAndReturn<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
+    payment?: boolean | Prisma.Movement$paymentArgs<ExtArgs>;
   },
   ExtArgs['result']['movement']
 >;
@@ -772,7 +993,7 @@ export type MovementSelectUpdateManyAndReturn<
     category?: boolean;
     amount?: boolean;
     date?: boolean;
-    description?: boolean;
+    notes?: boolean;
     status?: boolean;
     mode?: boolean;
     voidReason?: boolean;
@@ -783,8 +1004,7 @@ export type MovementSelectUpdateManyAndReturn<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
+    payment?: boolean | Prisma.Movement$paymentArgs<ExtArgs>;
   },
   ExtArgs['result']['movement']
 >;
@@ -795,7 +1015,7 @@ export type MovementSelectScalar = {
   category?: boolean;
   amount?: boolean;
   date?: boolean;
-  description?: boolean;
+  notes?: boolean;
   status?: boolean;
   mode?: boolean;
   voidReason?: boolean;
@@ -806,8 +1026,6 @@ export type MovementSelectScalar = {
   createdBy?: boolean;
   updatedAt?: boolean;
   updatedBy?: boolean;
-  deletedAt?: boolean;
-  deletedBy?: boolean;
 };
 
 export type MovementOmit<
@@ -819,7 +1037,7 @@ export type MovementOmit<
   | 'category'
   | 'amount'
   | 'date'
-  | 'description'
+  | 'notes'
   | 'status'
   | 'mode'
   | 'voidReason'
@@ -829,18 +1047,36 @@ export type MovementOmit<
   | 'createdAt'
   | 'createdBy'
   | 'updatedAt'
-  | 'updatedBy'
-  | 'deletedAt'
-  | 'deletedBy',
+  | 'updatedBy',
   ExtArgs['result']['movement']
 >;
+export type MovementInclude<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  payment?: boolean | Prisma.Movement$paymentArgs<ExtArgs>;
+};
+export type MovementIncludeCreateManyAndReturn<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  payment?: boolean | Prisma.Movement$paymentArgs<ExtArgs>;
+};
+export type MovementIncludeUpdateManyAndReturn<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  payment?: boolean | Prisma.Movement$paymentArgs<ExtArgs>;
+};
 
 export type $MovementPayload<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
   name: 'Movement';
-  objects: {};
+  objects: {
+    payment: Prisma.$PaymentPayload<ExtArgs> | null;
+  };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
@@ -848,7 +1084,7 @@ export type $MovementPayload<
       category: string;
       amount: number;
       date: string;
-      description: string | null;
+      notes: string | null;
       status: string;
       mode: string;
       voidReason: string | null;
@@ -859,8 +1095,6 @@ export type $MovementPayload<
       createdBy: string;
       updatedAt: Date;
       updatedBy: string | null;
-      deletedAt: Date | null;
-      deletedBy: string | null;
     },
     ExtArgs['result']['movement']
   >;
@@ -1411,6 +1645,19 @@ export interface Prisma__MovementClient<
   GlobalOmitOptions = {},
 > extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: 'PrismaPromise';
+  payment<T extends Prisma.Movement$paymentArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Movement$paymentArgs<ExtArgs>>,
+  ): Prisma.Prisma__PaymentClient<
+    runtime.Types.Result.GetResult<
+      Prisma.$PaymentPayload<ExtArgs>,
+      T,
+      'findUniqueOrThrow',
+      GlobalOmitOptions
+    > | null,
+    null,
+    ExtArgs,
+    GlobalOmitOptions
+  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1458,7 +1705,7 @@ export interface MovementFieldRefs {
   readonly category: Prisma.FieldRef<'Movement', 'String'>;
   readonly amount: Prisma.FieldRef<'Movement', 'Int'>;
   readonly date: Prisma.FieldRef<'Movement', 'String'>;
-  readonly description: Prisma.FieldRef<'Movement', 'String'>;
+  readonly notes: Prisma.FieldRef<'Movement', 'String'>;
   readonly status: Prisma.FieldRef<'Movement', 'String'>;
   readonly mode: Prisma.FieldRef<'Movement', 'String'>;
   readonly voidReason: Prisma.FieldRef<'Movement', 'String'>;
@@ -1469,8 +1716,6 @@ export interface MovementFieldRefs {
   readonly createdBy: Prisma.FieldRef<'Movement', 'String'>;
   readonly updatedAt: Prisma.FieldRef<'Movement', 'DateTime'>;
   readonly updatedBy: Prisma.FieldRef<'Movement', 'String'>;
-  readonly deletedAt: Prisma.FieldRef<'Movement', 'DateTime'>;
-  readonly deletedBy: Prisma.FieldRef<'Movement', 'String'>;
 }
 
 // Custom InputTypes
@@ -1489,6 +1734,10 @@ export type MovementFindUniqueArgs<
    * Omit specific fields from the Movement
    */
   omit?: Prisma.MovementOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
   /**
    * Filter, which Movement to fetch.
    */
@@ -1511,6 +1760,10 @@ export type MovementFindUniqueOrThrowArgs<
    */
   omit?: Prisma.MovementOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
+  /**
    * Filter, which Movement to fetch.
    */
   where: Prisma.MovementWhereUniqueInput;
@@ -1531,6 +1784,10 @@ export type MovementFindFirstArgs<
    * Omit specific fields from the Movement
    */
   omit?: Prisma.MovementOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
   /**
    * Filter, which Movement to fetch.
    */
@@ -1585,6 +1842,10 @@ export type MovementFindFirstOrThrowArgs<
    */
   omit?: Prisma.MovementOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
+  /**
    * Filter, which Movement to fetch.
    */
   where?: Prisma.MovementWhereInput;
@@ -1638,6 +1899,10 @@ export type MovementFindManyArgs<
    */
   omit?: Prisma.MovementOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
+  /**
    * Filter, which Movements to fetch.
    */
   where?: Prisma.MovementWhereInput;
@@ -1686,6 +1951,10 @@ export type MovementCreateArgs<
    */
   omit?: Prisma.MovementOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
+  /**
    * The data needed to create a Movement.
    */
   data: Prisma.XOR<
@@ -1728,6 +1997,10 @@ export type MovementCreateManyAndReturnArgs<
    */
   data: Prisma.MovementCreateManyInput | Prisma.MovementCreateManyInput[];
   skipDuplicates?: boolean;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementIncludeCreateManyAndReturn<ExtArgs> | null;
 };
 
 /**
@@ -1745,6 +2018,10 @@ export type MovementUpdateArgs<
    * Omit specific fields from the Movement
    */
   omit?: Prisma.MovementOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
   /**
    * The data needed to update a Movement.
    */
@@ -1812,6 +2089,10 @@ export type MovementUpdateManyAndReturnArgs<
    * Limit how many Movements to update.
    */
   limit?: number;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementIncludeUpdateManyAndReturn<ExtArgs> | null;
 };
 
 /**
@@ -1829,6 +2110,10 @@ export type MovementUpsertArgs<
    * Omit specific fields from the Movement
    */
   omit?: Prisma.MovementOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
   /**
    * The filter to search for the Movement to update in case it exists.
    */
@@ -1865,6 +2150,10 @@ export type MovementDeleteArgs<
    */
   omit?: Prisma.MovementOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
+  /**
    * Filter which Movement to delete.
    */
   where: Prisma.MovementWhereUniqueInput;
@@ -1888,6 +2177,28 @@ export type MovementDeleteManyArgs<
 };
 
 /**
+ * Movement.payment
+ */
+export type Movement$paymentArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Payment
+   */
+  select?: Prisma.PaymentSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Payment
+   */
+  omit?: Prisma.PaymentOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentInclude<ExtArgs> | null;
+  where?: Prisma.PaymentWhereInput;
+};
+
+/**
  * Movement without action
  */
 export type MovementDefaultArgs<
@@ -1902,4 +2213,8 @@ export type MovementDefaultArgs<
    * Omit specific fields from the Movement
    */
   omit?: Prisma.MovementOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
 };

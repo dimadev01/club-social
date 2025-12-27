@@ -49,8 +49,6 @@ export type PaymentMinAggregateOutputType = {
   createdBy: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
 };
 
 export type PaymentMaxAggregateOutputType = {
@@ -68,8 +66,6 @@ export type PaymentMaxAggregateOutputType = {
   createdBy: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
 };
 
 export type PaymentCountAggregateOutputType = {
@@ -87,8 +83,6 @@ export type PaymentCountAggregateOutputType = {
   createdBy: number;
   updatedAt: number;
   updatedBy: number;
-  deletedAt: number;
-  deletedBy: number;
   _all: number;
 };
 
@@ -115,8 +109,6 @@ export type PaymentMinAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
 };
 
 export type PaymentMaxAggregateInputType = {
@@ -134,8 +126,6 @@ export type PaymentMaxAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
 };
 
 export type PaymentCountAggregateInputType = {
@@ -153,8 +143,6 @@ export type PaymentCountAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
   _all?: true;
 };
 
@@ -266,8 +254,6 @@ export type PaymentGroupByOutputType = {
   createdBy: string;
   updatedAt: Date;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
   _count: PaymentCountAggregateOutputType | null;
   _avg: PaymentAvgAggregateOutputType | null;
   _sum: PaymentSumAggregateOutputType | null;
@@ -306,13 +292,13 @@ export type PaymentWhereInput = {
   createdBy?: Prisma.StringFilter<'Payment'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
   updatedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
-  deletedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
-  deletedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
   member?: Prisma.XOR<
     Prisma.MemberScalarRelationFilter,
     Prisma.MemberWhereInput
   >;
-  paymentDues?: Prisma.PaymentDueListRelationFilter;
+  ledgerEntries?: Prisma.MemberLedgerEntryListRelationFilter;
+  settlements?: Prisma.DueSettlementListRelationFilter;
+  movements?: Prisma.MovementListRelationFilter;
 };
 
 export type PaymentOrderByWithRelationInput = {
@@ -330,10 +316,10 @@ export type PaymentOrderByWithRelationInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   member?: Prisma.MemberOrderByWithRelationInput;
-  paymentDues?: Prisma.PaymentDueOrderByRelationAggregateInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryOrderByRelationAggregateInput;
+  settlements?: Prisma.DueSettlementOrderByRelationAggregateInput;
+  movements?: Prisma.MovementOrderByRelationAggregateInput;
 };
 
 export type PaymentWhereUniqueInput = Prisma.AtLeast<
@@ -355,13 +341,13 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<
     createdBy?: Prisma.StringFilter<'Payment'> | string;
     updatedAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
     updatedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
-    deletedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
-    deletedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
     member?: Prisma.XOR<
       Prisma.MemberScalarRelationFilter,
       Prisma.MemberWhereInput
     >;
-    paymentDues?: Prisma.PaymentDueListRelationFilter;
+    ledgerEntries?: Prisma.MemberLedgerEntryListRelationFilter;
+    settlements?: Prisma.DueSettlementListRelationFilter;
+    movements?: Prisma.MovementListRelationFilter;
   },
   'id'
 >;
@@ -381,8 +367,6 @@ export type PaymentOrderByWithAggregationInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.PaymentCountOrderByAggregateInput;
   _avg?: Prisma.PaymentAvgOrderByAggregateInput;
   _max?: Prisma.PaymentMaxOrderByAggregateInput;
@@ -428,15 +412,6 @@ export type PaymentScalarWhereWithAggregatesInput = {
     | Prisma.StringNullableWithAggregatesFilter<'Payment'>
     | string
     | null;
-  deletedAt?:
-    | Prisma.DateTimeNullableWithAggregatesFilter<'Payment'>
-    | Date
-    | string
-    | null;
-  deletedBy?:
-    | Prisma.StringNullableWithAggregatesFilter<'Payment'>
-    | string
-    | null;
 };
 
 export type PaymentCreateInput = {
@@ -453,10 +428,10 @@ export type PaymentCreateInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   member: Prisma.MemberCreateNestedOneWithoutPaymentsInput;
-  paymentDues?: Prisma.PaymentDueCreateNestedManyWithoutPaymentInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryCreateNestedManyWithoutPaymentInput;
+  settlements?: Prisma.DueSettlementCreateNestedManyWithoutPaymentInput;
+  movements?: Prisma.MovementCreateNestedManyWithoutPaymentInput;
 };
 
 export type PaymentUncheckedCreateInput = {
@@ -474,9 +449,9 @@ export type PaymentUncheckedCreateInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
-  paymentDues?: Prisma.PaymentDueUncheckedCreateNestedManyWithoutPaymentInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutPaymentInput;
+  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutPaymentInput;
+  movements?: Prisma.MovementUncheckedCreateNestedManyWithoutPaymentInput;
 };
 
 export type PaymentUpdateInput = {
@@ -500,14 +475,10 @@ export type PaymentUpdateInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   member?: Prisma.MemberUpdateOneRequiredWithoutPaymentsNestedInput;
-  paymentDues?: Prisma.PaymentDueUpdateManyWithoutPaymentNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUpdateManyWithoutPaymentNestedInput;
+  settlements?: Prisma.DueSettlementUpdateManyWithoutPaymentNestedInput;
+  movements?: Prisma.MovementUpdateManyWithoutPaymentNestedInput;
 };
 
 export type PaymentUncheckedUpdateInput = {
@@ -532,13 +503,9 @@ export type PaymentUncheckedUpdateInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  paymentDues?: Prisma.PaymentDueUncheckedUpdateManyWithoutPaymentNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutPaymentNestedInput;
+  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutPaymentNestedInput;
+  movements?: Prisma.MovementUncheckedUpdateManyWithoutPaymentNestedInput;
 };
 
 export type PaymentCreateManyInput = {
@@ -556,8 +523,6 @@ export type PaymentCreateManyInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
 };
 
 export type PaymentUpdateManyMutationInput = {
@@ -581,12 +546,6 @@ export type PaymentUpdateManyMutationInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type PaymentUncheckedUpdateManyInput = {
@@ -611,12 +570,6 @@ export type PaymentUncheckedUpdateManyInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type PaymentListRelationFilter = {
@@ -627,6 +580,11 @@ export type PaymentListRelationFilter = {
 
 export type PaymentOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder;
+};
+
+export type PaymentNullableScalarRelationFilter = {
+  is?: Prisma.PaymentWhereInput | null;
+  isNot?: Prisma.PaymentWhereInput | null;
 };
 
 export type PaymentCountOrderByAggregateInput = {
@@ -644,8 +602,6 @@ export type PaymentCountOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type PaymentAvgOrderByAggregateInput = {
@@ -667,8 +623,6 @@ export type PaymentMaxOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type PaymentMinOrderByAggregateInput = {
@@ -686,17 +640,10 @@ export type PaymentMinOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type PaymentSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder;
-};
-
-export type PaymentScalarRelationFilter = {
-  is?: Prisma.PaymentWhereInput;
-  isNot?: Prisma.PaymentWhereInput;
 };
 
 export type PaymentCreateNestedManyWithoutMemberInput = {
@@ -793,29 +740,87 @@ export type PaymentUncheckedUpdateManyWithoutMemberNestedInput = {
     | Prisma.PaymentScalarWhereInput[];
 };
 
-export type PaymentCreateNestedOneWithoutPaymentDuesInput = {
+export type PaymentCreateNestedOneWithoutLedgerEntriesInput = {
   create?: Prisma.XOR<
-    Prisma.PaymentCreateWithoutPaymentDuesInput,
-    Prisma.PaymentUncheckedCreateWithoutPaymentDuesInput
+    Prisma.PaymentCreateWithoutLedgerEntriesInput,
+    Prisma.PaymentUncheckedCreateWithoutLedgerEntriesInput
   >;
-  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutPaymentDuesInput;
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutLedgerEntriesInput;
   connect?: Prisma.PaymentWhereUniqueInput;
 };
 
-export type PaymentUpdateOneRequiredWithoutPaymentDuesNestedInput = {
+export type PaymentUpdateOneWithoutLedgerEntriesNestedInput = {
   create?: Prisma.XOR<
-    Prisma.PaymentCreateWithoutPaymentDuesInput,
-    Prisma.PaymentUncheckedCreateWithoutPaymentDuesInput
+    Prisma.PaymentCreateWithoutLedgerEntriesInput,
+    Prisma.PaymentUncheckedCreateWithoutLedgerEntriesInput
   >;
-  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutPaymentDuesInput;
-  upsert?: Prisma.PaymentUpsertWithoutPaymentDuesInput;
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutLedgerEntriesInput;
+  upsert?: Prisma.PaymentUpsertWithoutLedgerEntriesInput;
+  disconnect?: Prisma.PaymentWhereInput | boolean;
+  delete?: Prisma.PaymentWhereInput | boolean;
   connect?: Prisma.PaymentWhereUniqueInput;
   update?: Prisma.XOR<
     Prisma.XOR<
-      Prisma.PaymentUpdateToOneWithWhereWithoutPaymentDuesInput,
-      Prisma.PaymentUpdateWithoutPaymentDuesInput
+      Prisma.PaymentUpdateToOneWithWhereWithoutLedgerEntriesInput,
+      Prisma.PaymentUpdateWithoutLedgerEntriesInput
     >,
-    Prisma.PaymentUncheckedUpdateWithoutPaymentDuesInput
+    Prisma.PaymentUncheckedUpdateWithoutLedgerEntriesInput
+  >;
+};
+
+export type PaymentCreateNestedOneWithoutSettlementsInput = {
+  create?: Prisma.XOR<
+    Prisma.PaymentCreateWithoutSettlementsInput,
+    Prisma.PaymentUncheckedCreateWithoutSettlementsInput
+  >;
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutSettlementsInput;
+  connect?: Prisma.PaymentWhereUniqueInput;
+};
+
+export type PaymentUpdateOneWithoutSettlementsNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.PaymentCreateWithoutSettlementsInput,
+    Prisma.PaymentUncheckedCreateWithoutSettlementsInput
+  >;
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutSettlementsInput;
+  upsert?: Prisma.PaymentUpsertWithoutSettlementsInput;
+  disconnect?: Prisma.PaymentWhereInput | boolean;
+  delete?: Prisma.PaymentWhereInput | boolean;
+  connect?: Prisma.PaymentWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.PaymentUpdateToOneWithWhereWithoutSettlementsInput,
+      Prisma.PaymentUpdateWithoutSettlementsInput
+    >,
+    Prisma.PaymentUncheckedUpdateWithoutSettlementsInput
+  >;
+};
+
+export type PaymentCreateNestedOneWithoutMovementsInput = {
+  create?: Prisma.XOR<
+    Prisma.PaymentCreateWithoutMovementsInput,
+    Prisma.PaymentUncheckedCreateWithoutMovementsInput
+  >;
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutMovementsInput;
+  connect?: Prisma.PaymentWhereUniqueInput;
+};
+
+export type PaymentUpdateOneWithoutMovementsNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.PaymentCreateWithoutMovementsInput,
+    Prisma.PaymentUncheckedCreateWithoutMovementsInput
+  >;
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutMovementsInput;
+  upsert?: Prisma.PaymentUpsertWithoutMovementsInput;
+  disconnect?: Prisma.PaymentWhereInput | boolean;
+  delete?: Prisma.PaymentWhereInput | boolean;
+  connect?: Prisma.PaymentWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.PaymentUpdateToOneWithWhereWithoutMovementsInput,
+      Prisma.PaymentUpdateWithoutMovementsInput
+    >,
+    Prisma.PaymentUncheckedUpdateWithoutMovementsInput
   >;
 };
 
@@ -833,9 +838,9 @@ export type PaymentCreateWithoutMemberInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
-  paymentDues?: Prisma.PaymentDueCreateNestedManyWithoutPaymentInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryCreateNestedManyWithoutPaymentInput;
+  settlements?: Prisma.DueSettlementCreateNestedManyWithoutPaymentInput;
+  movements?: Prisma.MovementCreateNestedManyWithoutPaymentInput;
 };
 
 export type PaymentUncheckedCreateWithoutMemberInput = {
@@ -852,9 +857,9 @@ export type PaymentUncheckedCreateWithoutMemberInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
-  paymentDues?: Prisma.PaymentDueUncheckedCreateNestedManyWithoutPaymentInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutPaymentInput;
+  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutPaymentInput;
+  movements?: Prisma.MovementUncheckedCreateNestedManyWithoutPaymentInput;
 };
 
 export type PaymentCreateOrConnectWithoutMemberInput = {
@@ -918,11 +923,9 @@ export type PaymentScalarWhereInput = {
   createdBy?: Prisma.StringFilter<'Payment'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Payment'> | Date | string;
   updatedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
-  deletedAt?: Prisma.DateTimeNullableFilter<'Payment'> | Date | string | null;
-  deletedBy?: Prisma.StringNullableFilter<'Payment'> | string | null;
 };
 
-export type PaymentCreateWithoutPaymentDuesInput = {
+export type PaymentCreateWithoutLedgerEntriesInput = {
   id: string;
   amount: number;
   date: string;
@@ -936,12 +939,12 @@ export type PaymentCreateWithoutPaymentDuesInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   member: Prisma.MemberCreateNestedOneWithoutPaymentsInput;
+  settlements?: Prisma.DueSettlementCreateNestedManyWithoutPaymentInput;
+  movements?: Prisma.MovementCreateNestedManyWithoutPaymentInput;
 };
 
-export type PaymentUncheckedCreateWithoutPaymentDuesInput = {
+export type PaymentUncheckedCreateWithoutLedgerEntriesInput = {
   id: string;
   memberId: string;
   amount: number;
@@ -956,39 +959,39 @@ export type PaymentUncheckedCreateWithoutPaymentDuesInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
+  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutPaymentInput;
+  movements?: Prisma.MovementUncheckedCreateNestedManyWithoutPaymentInput;
 };
 
-export type PaymentCreateOrConnectWithoutPaymentDuesInput = {
+export type PaymentCreateOrConnectWithoutLedgerEntriesInput = {
   where: Prisma.PaymentWhereUniqueInput;
   create: Prisma.XOR<
-    Prisma.PaymentCreateWithoutPaymentDuesInput,
-    Prisma.PaymentUncheckedCreateWithoutPaymentDuesInput
+    Prisma.PaymentCreateWithoutLedgerEntriesInput,
+    Prisma.PaymentUncheckedCreateWithoutLedgerEntriesInput
   >;
 };
 
-export type PaymentUpsertWithoutPaymentDuesInput = {
+export type PaymentUpsertWithoutLedgerEntriesInput = {
   update: Prisma.XOR<
-    Prisma.PaymentUpdateWithoutPaymentDuesInput,
-    Prisma.PaymentUncheckedUpdateWithoutPaymentDuesInput
+    Prisma.PaymentUpdateWithoutLedgerEntriesInput,
+    Prisma.PaymentUncheckedUpdateWithoutLedgerEntriesInput
   >;
   create: Prisma.XOR<
-    Prisma.PaymentCreateWithoutPaymentDuesInput,
-    Prisma.PaymentUncheckedCreateWithoutPaymentDuesInput
+    Prisma.PaymentCreateWithoutLedgerEntriesInput,
+    Prisma.PaymentUncheckedCreateWithoutLedgerEntriesInput
   >;
   where?: Prisma.PaymentWhereInput;
 };
 
-export type PaymentUpdateToOneWithWhereWithoutPaymentDuesInput = {
+export type PaymentUpdateToOneWithWhereWithoutLedgerEntriesInput = {
   where?: Prisma.PaymentWhereInput;
   data: Prisma.XOR<
-    Prisma.PaymentUpdateWithoutPaymentDuesInput,
-    Prisma.PaymentUncheckedUpdateWithoutPaymentDuesInput
+    Prisma.PaymentUpdateWithoutLedgerEntriesInput,
+    Prisma.PaymentUncheckedUpdateWithoutLedgerEntriesInput
   >;
 };
 
-export type PaymentUpdateWithoutPaymentDuesInput = {
+export type PaymentUpdateWithoutLedgerEntriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1009,16 +1012,12 @@ export type PaymentUpdateWithoutPaymentDuesInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   member?: Prisma.MemberUpdateOneRequiredWithoutPaymentsNestedInput;
+  settlements?: Prisma.DueSettlementUpdateManyWithoutPaymentNestedInput;
+  movements?: Prisma.MovementUpdateManyWithoutPaymentNestedInput;
 };
 
-export type PaymentUncheckedUpdateWithoutPaymentDuesInput = {
+export type PaymentUncheckedUpdateWithoutLedgerEntriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1040,12 +1039,244 @@ export type PaymentUncheckedUpdateWithoutPaymentDuesInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
+  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutPaymentNestedInput;
+  movements?: Prisma.MovementUncheckedUpdateManyWithoutPaymentNestedInput;
+};
+
+export type PaymentCreateWithoutSettlementsInput = {
+  id: string;
+  amount: number;
+  date: string;
+  notes?: string | null;
+  status: string;
+  receiptNumber?: string | null;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  member: Prisma.MemberCreateNestedOneWithoutPaymentsInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryCreateNestedManyWithoutPaymentInput;
+  movements?: Prisma.MovementCreateNestedManyWithoutPaymentInput;
+};
+
+export type PaymentUncheckedCreateWithoutSettlementsInput = {
+  id: string;
+  memberId: string;
+  amount: number;
+  date: string;
+  notes?: string | null;
+  status: string;
+  receiptNumber?: string | null;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutPaymentInput;
+  movements?: Prisma.MovementUncheckedCreateNestedManyWithoutPaymentInput;
+};
+
+export type PaymentCreateOrConnectWithoutSettlementsInput = {
+  where: Prisma.PaymentWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.PaymentCreateWithoutSettlementsInput,
+    Prisma.PaymentUncheckedCreateWithoutSettlementsInput
+  >;
+};
+
+export type PaymentUpsertWithoutSettlementsInput = {
+  update: Prisma.XOR<
+    Prisma.PaymentUpdateWithoutSettlementsInput,
+    Prisma.PaymentUncheckedUpdateWithoutSettlementsInput
+  >;
+  create: Prisma.XOR<
+    Prisma.PaymentCreateWithoutSettlementsInput,
+    Prisma.PaymentUncheckedCreateWithoutSettlementsInput
+  >;
+  where?: Prisma.PaymentWhereInput;
+};
+
+export type PaymentUpdateToOneWithWhereWithoutSettlementsInput = {
+  where?: Prisma.PaymentWhereInput;
+  data: Prisma.XOR<
+    Prisma.PaymentUpdateWithoutSettlementsInput,
+    Prisma.PaymentUncheckedUpdateWithoutSettlementsInput
+  >;
+};
+
+export type PaymentUpdateWithoutSettlementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
     | string
     | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  member?: Prisma.MemberUpdateOneRequiredWithoutPaymentsNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUpdateManyWithoutPaymentNestedInput;
+  movements?: Prisma.MovementUpdateManyWithoutPaymentNestedInput;
+};
+
+export type PaymentUncheckedUpdateWithoutSettlementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberId?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutPaymentNestedInput;
+  movements?: Prisma.MovementUncheckedUpdateManyWithoutPaymentNestedInput;
+};
+
+export type PaymentCreateWithoutMovementsInput = {
+  id: string;
+  amount: number;
+  date: string;
+  notes?: string | null;
+  status: string;
+  receiptNumber?: string | null;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  member: Prisma.MemberCreateNestedOneWithoutPaymentsInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryCreateNestedManyWithoutPaymentInput;
+  settlements?: Prisma.DueSettlementCreateNestedManyWithoutPaymentInput;
+};
+
+export type PaymentUncheckedCreateWithoutMovementsInput = {
+  id: string;
+  memberId: string;
+  amount: number;
+  date: string;
+  notes?: string | null;
+  status: string;
+  receiptNumber?: string | null;
+  voidReason?: string | null;
+  voidedAt?: Date | string | null;
+  voidedBy?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutPaymentInput;
+  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutPaymentInput;
+};
+
+export type PaymentCreateOrConnectWithoutMovementsInput = {
+  where: Prisma.PaymentWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.PaymentCreateWithoutMovementsInput,
+    Prisma.PaymentUncheckedCreateWithoutMovementsInput
+  >;
+};
+
+export type PaymentUpsertWithoutMovementsInput = {
+  update: Prisma.XOR<
+    Prisma.PaymentUpdateWithoutMovementsInput,
+    Prisma.PaymentUncheckedUpdateWithoutMovementsInput
+  >;
+  create: Prisma.XOR<
+    Prisma.PaymentCreateWithoutMovementsInput,
+    Prisma.PaymentUncheckedCreateWithoutMovementsInput
+  >;
+  where?: Prisma.PaymentWhereInput;
+};
+
+export type PaymentUpdateToOneWithWhereWithoutMovementsInput = {
+  where?: Prisma.PaymentWhereInput;
+  data: Prisma.XOR<
+    Prisma.PaymentUpdateWithoutMovementsInput,
+    Prisma.PaymentUncheckedUpdateWithoutMovementsInput
+  >;
+};
+
+export type PaymentUpdateWithoutMovementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  member?: Prisma.MemberUpdateOneRequiredWithoutPaymentsNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUpdateManyWithoutPaymentNestedInput;
+  settlements?: Prisma.DueSettlementUpdateManyWithoutPaymentNestedInput;
+};
+
+export type PaymentUncheckedUpdateWithoutMovementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberId?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  receiptNumber?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  voidReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  voidedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  voidedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutPaymentNestedInput;
+  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutPaymentNestedInput;
 };
 
 export type PaymentCreateManyMemberInput = {
@@ -1062,8 +1293,6 @@ export type PaymentCreateManyMemberInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
 };
 
 export type PaymentUpdateWithoutMemberInput = {
@@ -1087,13 +1316,9 @@ export type PaymentUpdateWithoutMemberInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  paymentDues?: Prisma.PaymentDueUpdateManyWithoutPaymentNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUpdateManyWithoutPaymentNestedInput;
+  settlements?: Prisma.DueSettlementUpdateManyWithoutPaymentNestedInput;
+  movements?: Prisma.MovementUpdateManyWithoutPaymentNestedInput;
 };
 
 export type PaymentUncheckedUpdateWithoutMemberInput = {
@@ -1117,13 +1342,9 @@ export type PaymentUncheckedUpdateWithoutMemberInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  paymentDues?: Prisma.PaymentDueUncheckedUpdateManyWithoutPaymentNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutPaymentNestedInput;
+  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutPaymentNestedInput;
+  movements?: Prisma.MovementUncheckedUpdateManyWithoutPaymentNestedInput;
 };
 
 export type PaymentUncheckedUpdateManyWithoutMemberInput = {
@@ -1147,12 +1368,6 @@ export type PaymentUncheckedUpdateManyWithoutMemberInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 /**
@@ -1160,14 +1375,18 @@ export type PaymentUncheckedUpdateManyWithoutMemberInput = {
  */
 
 export type PaymentCountOutputType = {
-  paymentDues: number;
+  ledgerEntries: number;
+  settlements: number;
+  movements: number;
 };
 
 export type PaymentCountOutputTypeSelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  paymentDues?: boolean | PaymentCountOutputTypeCountPaymentDuesArgs;
+  ledgerEntries?: boolean | PaymentCountOutputTypeCountLedgerEntriesArgs;
+  settlements?: boolean | PaymentCountOutputTypeCountSettlementsArgs;
+  movements?: boolean | PaymentCountOutputTypeCountMovementsArgs;
 };
 
 /**
@@ -1186,11 +1405,31 @@ export type PaymentCountOutputTypeDefaultArgs<
 /**
  * PaymentCountOutputType without action
  */
-export type PaymentCountOutputTypeCountPaymentDuesArgs<
+export type PaymentCountOutputTypeCountLedgerEntriesArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  where?: Prisma.PaymentDueWhereInput;
+  where?: Prisma.MemberLedgerEntryWhereInput;
+};
+
+/**
+ * PaymentCountOutputType without action
+ */
+export type PaymentCountOutputTypeCountSettlementsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.DueSettlementWhereInput;
+};
+
+/**
+ * PaymentCountOutputType without action
+ */
+export type PaymentCountOutputTypeCountMovementsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.MovementWhereInput;
 };
 
 export type PaymentSelect<
@@ -1212,10 +1451,10 @@ export type PaymentSelect<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
     member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
-    paymentDues?: boolean | Prisma.Payment$paymentDuesArgs<ExtArgs>;
+    ledgerEntries?: boolean | Prisma.Payment$ledgerEntriesArgs<ExtArgs>;
+    settlements?: boolean | Prisma.Payment$settlementsArgs<ExtArgs>;
+    movements?: boolean | Prisma.Payment$movementsArgs<ExtArgs>;
     _count?: boolean | Prisma.PaymentCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['payment']
@@ -1240,8 +1479,6 @@ export type PaymentSelectCreateManyAndReturn<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
     member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['payment']
@@ -1266,8 +1503,6 @@ export type PaymentSelectUpdateManyAndReturn<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
     member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['payment']
@@ -1288,8 +1523,6 @@ export type PaymentSelectScalar = {
   createdBy?: boolean;
   updatedAt?: boolean;
   updatedBy?: boolean;
-  deletedAt?: boolean;
-  deletedBy?: boolean;
 };
 
 export type PaymentOmit<
@@ -1309,9 +1542,7 @@ export type PaymentOmit<
   | 'createdAt'
   | 'createdBy'
   | 'updatedAt'
-  | 'updatedBy'
-  | 'deletedAt'
-  | 'deletedBy',
+  | 'updatedBy',
   ExtArgs['result']['payment']
 >;
 export type PaymentInclude<
@@ -1319,7 +1550,9 @@ export type PaymentInclude<
     runtime.Types.Extensions.DefaultArgs,
 > = {
   member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
-  paymentDues?: boolean | Prisma.Payment$paymentDuesArgs<ExtArgs>;
+  ledgerEntries?: boolean | Prisma.Payment$ledgerEntriesArgs<ExtArgs>;
+  settlements?: boolean | Prisma.Payment$settlementsArgs<ExtArgs>;
+  movements?: boolean | Prisma.Payment$movementsArgs<ExtArgs>;
   _count?: boolean | Prisma.PaymentCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type PaymentIncludeCreateManyAndReturn<
@@ -1342,7 +1575,9 @@ export type $PaymentPayload<
   name: 'Payment';
   objects: {
     member: Prisma.$MemberPayload<ExtArgs>;
-    paymentDues: Prisma.$PaymentDuePayload<ExtArgs>[];
+    ledgerEntries: Prisma.$MemberLedgerEntryPayload<ExtArgs>[];
+    settlements: Prisma.$DueSettlementPayload<ExtArgs>[];
+    movements: Prisma.$MovementPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1360,8 +1595,6 @@ export type $PaymentPayload<
       createdBy: string;
       updatedAt: Date;
       updatedBy: string | null;
-      deletedAt: Date | null;
-      deletedBy: string | null;
     },
     ExtArgs['result']['payment']
   >;
@@ -1926,11 +2159,33 @@ export interface Prisma__PaymentClient<
     ExtArgs,
     GlobalOmitOptions
   >;
-  paymentDues<T extends Prisma.Payment$paymentDuesArgs<ExtArgs> = {}>(
-    args?: Prisma.Subset<T, Prisma.Payment$paymentDuesArgs<ExtArgs>>,
+  ledgerEntries<T extends Prisma.Payment$ledgerEntriesArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Payment$ledgerEntriesArgs<ExtArgs>>,
   ): Prisma.PrismaPromise<
     | runtime.Types.Result.GetResult<
-        Prisma.$PaymentDuePayload<ExtArgs>,
+        Prisma.$MemberLedgerEntryPayload<ExtArgs>,
+        T,
+        'findMany',
+        GlobalOmitOptions
+      >
+    | Null
+  >;
+  settlements<T extends Prisma.Payment$settlementsArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Payment$settlementsArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$DueSettlementPayload<ExtArgs>,
+        T,
+        'findMany',
+        GlobalOmitOptions
+      >
+    | Null
+  >;
+  movements<T extends Prisma.Payment$movementsArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Payment$movementsArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$MovementPayload<ExtArgs>,
         T,
         'findMany',
         GlobalOmitOptions
@@ -1993,8 +2248,6 @@ export interface PaymentFieldRefs {
   readonly createdBy: Prisma.FieldRef<'Payment', 'String'>;
   readonly updatedAt: Prisma.FieldRef<'Payment', 'DateTime'>;
   readonly updatedBy: Prisma.FieldRef<'Payment', 'String'>;
-  readonly deletedAt: Prisma.FieldRef<'Payment', 'DateTime'>;
-  readonly deletedBy: Prisma.FieldRef<'Payment', 'String'>;
 }
 
 // Custom InputTypes
@@ -2456,34 +2709,94 @@ export type PaymentDeleteManyArgs<
 };
 
 /**
- * Payment.paymentDues
+ * Payment.ledgerEntries
  */
-export type Payment$paymentDuesArgs<
+export type Payment$ledgerEntriesArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
-   * Select specific fields to fetch from the PaymentDue
+   * Select specific fields to fetch from the MemberLedgerEntry
    */
-  select?: Prisma.PaymentDueSelect<ExtArgs> | null;
+  select?: Prisma.MemberLedgerEntrySelect<ExtArgs> | null;
   /**
-   * Omit specific fields from the PaymentDue
+   * Omit specific fields from the MemberLedgerEntry
    */
-  omit?: Prisma.PaymentDueOmit<ExtArgs> | null;
+  omit?: Prisma.MemberLedgerEntryOmit<ExtArgs> | null;
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.PaymentDueInclude<ExtArgs> | null;
-  where?: Prisma.PaymentDueWhereInput;
+  include?: Prisma.MemberLedgerEntryInclude<ExtArgs> | null;
+  where?: Prisma.MemberLedgerEntryWhereInput;
   orderBy?:
-    | Prisma.PaymentDueOrderByWithRelationInput
-    | Prisma.PaymentDueOrderByWithRelationInput[];
-  cursor?: Prisma.PaymentDueWhereUniqueInput;
+    | Prisma.MemberLedgerEntryOrderByWithRelationInput
+    | Prisma.MemberLedgerEntryOrderByWithRelationInput[];
+  cursor?: Prisma.MemberLedgerEntryWhereUniqueInput;
   take?: number;
   skip?: number;
   distinct?:
-    | Prisma.PaymentDueScalarFieldEnum
-    | Prisma.PaymentDueScalarFieldEnum[];
+    | Prisma.MemberLedgerEntryScalarFieldEnum
+    | Prisma.MemberLedgerEntryScalarFieldEnum[];
+};
+
+/**
+ * Payment.settlements
+ */
+export type Payment$settlementsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the DueSettlement
+   */
+  select?: Prisma.DueSettlementSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the DueSettlement
+   */
+  omit?: Prisma.DueSettlementOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DueSettlementInclude<ExtArgs> | null;
+  where?: Prisma.DueSettlementWhereInput;
+  orderBy?:
+    | Prisma.DueSettlementOrderByWithRelationInput
+    | Prisma.DueSettlementOrderByWithRelationInput[];
+  cursor?: Prisma.DueSettlementWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?:
+    | Prisma.DueSettlementScalarFieldEnum
+    | Prisma.DueSettlementScalarFieldEnum[];
+};
+
+/**
+ * Payment.movements
+ */
+export type Payment$movementsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Movement
+   */
+  select?: Prisma.MovementSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Movement
+   */
+  omit?: Prisma.MovementOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MovementInclude<ExtArgs> | null;
+  where?: Prisma.MovementWhereInput;
+  orderBy?:
+    | Prisma.MovementOrderByWithRelationInput
+    | Prisma.MovementOrderByWithRelationInput[];
+  cursor?: Prisma.MovementWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.MovementScalarFieldEnum | Prisma.MovementScalarFieldEnum[];
 };
 
 /**

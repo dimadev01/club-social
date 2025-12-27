@@ -1,80 +1,80 @@
 import { DueCategory, DueStatus } from '@club-social/shared/dues';
-import { PaymentDueStatus } from '@club-social/shared/payment-due';
 import { Injectable } from '@nestjs/common';
 
-import { Mapper } from '@/infrastructure/repositories/mapper';
-import { PaymentDueEntity } from '@/payments/domain/entities/payment-due.entity';
-import { PrismaPaymentDueMapper } from '@/payments/infrastructure/prisma-payment-due.mapper';
+import {
+  DueCreateInput,
+  DueModel,
+  DueUpdateInput,
+} from '@/infrastructure/database/prisma/generated/models';
+import { Guard } from '@/shared/domain/guards';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { DueEntity } from '../domain/entities/due.entity';
-import { DueModelWithRelations } from './prisma-due.types';
+import { PrismaDueSettlementMapper } from './prisma-due-settlement.mapper';
 
 @Injectable()
-export class PrismaDueMapper extends Mapper<DueEntity, DueModelWithRelations> {
+export class PrismaDueMapper {
   public constructor(
-    private readonly paymentDueMapper: PrismaPaymentDueMapper,
-  ) {
-    super();
+    private readonly prismaDueSettlementMapper: PrismaDueSettlementMapper,
+  ) {}
+
+  public toCreateInput(due: DueEntity): DueCreateInput {
+    Guard.string(due.createdBy);
+
+    return {
+      amount: due.amount.toCents(),
+      category: due.category,
+      createdBy: due.createdBy,
+      date: due.date.value,
+      id: due.id.value,
+      member: { connect: { id: due.memberId.value } },
+      notes: due.notes,
+      status: due.status,
+      voidedAt: due.voidedAt,
+      voidedBy: due.voidedBy,
+      voidReason: due.voidReason,
+    };
   }
 
-  public toDomain(due: DueModelWithRelations): DueEntity {
+  public toDomain(due: DueModel): DueEntity {
     return DueEntity.fromPersistence(
       {
         amount: Amount.raw({ cents: due.amount }),
         category: due.category as DueCategory,
-        createdBy: due.createdBy,
         date: DateOnly.raw({ value: due.date }),
         memberId: UniqueId.raw({ value: due.memberId }),
         notes: due.notes,
-        paymentDues: (due.paymentDues ?? []).map((pd) =>
-          PaymentDueEntity.fromPersistence({
-            amount: Amount.raw({ cents: pd.amount }),
-            dueId: UniqueId.raw({ value: pd.dueId }),
-            paymentId: UniqueId.raw({ value: pd.paymentId }),
-            status: pd.status as PaymentDueStatus,
-          }),
-        ),
+        settlements: [],
         status: due.status as DueStatus,
         voidedAt: due.voidedAt,
         voidedBy: due.voidedBy,
         voidReason: due.voidReason,
       },
       {
-        createdAt: due.createdAt,
-        createdBy: due.createdBy,
-        deletedAt: due.deletedAt,
-        deletedBy: due.deletedBy,
+        audit: {
+          createdAt: due.createdAt,
+          createdBy: due.createdBy,
+          updatedAt: due.updatedAt,
+          updatedBy: due.updatedBy,
+        },
         id: UniqueId.raw({ value: due.id }),
-        updatedAt: due.updatedAt,
-        updatedBy: due.updatedBy,
       },
     );
   }
 
-  public toPersistence(due: DueEntity): DueModelWithRelations {
+  public toUpdateInput(due: DueEntity): DueUpdateInput {
+    Guard.string(due.createdBy);
+    Guard.string(due.updatedBy);
+
     return {
       amount: due.amount.toCents(),
       category: due.category,
-      createdAt: due.createdAt,
-      createdBy: due.createdBy,
       date: due.date.value,
-      deletedAt: due.deletedAt,
-      deletedBy: due.deletedBy,
       id: due.id.value,
-      memberId: due.memberId.value,
       notes: due.notes,
-      paymentDues: due.paymentDues.map((pd) => ({
-        amount: pd.amount.toCents(),
-        dueId: pd.dueId.value,
-        paymentId: pd.paymentId.value,
-        status: pd.status,
-      })),
       status: due.status,
-      updatedAt: due.updatedAt,
-      updatedBy: due.updatedBy,
       voidedAt: due.voidedAt,
       voidedBy: due.voidedBy,
       voidReason: due.voidReason,

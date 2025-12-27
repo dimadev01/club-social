@@ -1,10 +1,8 @@
 import { DueCategory, DueStatus } from '@club-social/shared/dues';
 
-import type { BaseEntityProps } from '@/shared/domain/entity';
-
-import { PaymentDueEntity } from '@/payments/domain/entities/payment-due.entity';
-import { Entity } from '@/shared/domain/entity';
+import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
+import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { err, ok, Result } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
@@ -13,22 +11,22 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { DueCreatedEvent } from '../events/due-created.event';
 import { DueUpdatedEvent } from '../events/due-updated.event';
 import { UpdateDueProps, VoidDueProps } from '../interfaces/due.interface';
+import { DueSettlementEntity } from './due-settlement.entity';
 
 interface DueProps {
   amount: Amount;
   category: DueCategory;
-  createdBy: string;
   date: DateOnly;
   memberId: UniqueId;
   notes: null | string;
-  paymentDues: PaymentDueEntity[];
+  settlements: DueSettlementEntity[];
   status: DueStatus;
   voidedAt: Date | null;
   voidedBy: null | string;
   voidReason: null | string;
 }
 
-export class DueEntity extends Entity<DueEntity> {
+export class DueEntity extends AuditedAggregateRoot {
   public get amount(): Amount {
     return this._amount;
   }
@@ -49,8 +47,14 @@ export class DueEntity extends Entity<DueEntity> {
     return this._notes;
   }
 
-  public get paymentDues(): PaymentDueEntity[] {
-    return [...this._paymentDues];
+  public get settledAmount(): Amount {
+    return this._settlements
+      .filter((s) => s.isApplied())
+      .reduce((sum, s) => sum.add(s.amount), Amount.raw({ cents: 0 }));
+  }
+
+  public get settlements(): DueSettlementEntity[] {
+    return [...this._settlements];
   }
 
   public get status(): DueStatus {
@@ -74,48 +78,52 @@ export class DueEntity extends Entity<DueEntity> {
   private _date: DateOnly;
   private _memberId: UniqueId;
   private _notes: null | string;
-  private _paymentDues: PaymentDueEntity[];
+  private _settlements: DueSettlementEntity[];
   private _status: DueStatus;
   private _voidedAt: Date | null;
   private _voidedBy: null | string;
   private _voidReason: null | string;
 
-  private constructor(props: DueProps, base?: BaseEntityProps) {
-    super(base);
+  private constructor(props: DueProps, meta?: PersistenceMeta) {
+    super(meta?.id, meta?.audit);
 
     this._amount = props.amount;
     this._category = props.category;
     this._date = props.date;
     this._memberId = props.memberId;
     this._notes = props.notes;
-    this._paymentDues = props.paymentDues;
+    this._settlements = props.settlements;
     this._status = props.status;
     this._voidReason = props.voidReason;
     this._voidedAt = props.voidedAt;
     this._voidedBy = props.voidedBy;
-    this._createdBy = props.createdBy;
-    this._updatedBy = props.createdBy;
   }
 
   public static create(
     props: Omit<
       DueProps,
-      'paymentDues' | 'status' | 'voidedAt' | 'voidedBy' | 'voidReason'
+      'settlements' | 'status' | 'voidedAt' | 'voidedBy' | 'voidReason'
     >,
+    createdBy: string,
   ): Result<DueEntity> {
-    const due = new DueEntity({
-      amount: props.amount,
-      category: props.category,
-      createdBy: props.createdBy,
-      date: props.date,
-      memberId: props.memberId,
-      notes: props.notes,
-      paymentDues: [],
-      status: DueStatus.PENDING,
-      voidedAt: null,
-      voidedBy: null,
-      voidReason: null,
-    });
+    const due = new DueEntity(
+      {
+        amount: props.amount,
+        category: props.category,
+        date: props.date,
+        memberId: props.memberId,
+        notes: props.notes,
+        settlements: [],
+        status: DueStatus.PENDING,
+        voidedAt: null,
+        voidedBy: null,
+        voidReason: null,
+      },
+      {
+        audit: { createdBy },
+        id: UniqueId.generate(),
+      },
+    );
 
     due.addEvent(new DueCreatedEvent(due));
 
@@ -124,34 +132,53 @@ export class DueEntity extends Entity<DueEntity> {
 
   public static fromPersistence(
     props: DueProps,
-    base: BaseEntityProps,
+    meta: PersistenceMeta,
   ): DueEntity {
-    return new DueEntity(props, base);
+    return new DueEntity(props, meta);
   }
 
-  public addPayment(
-    paymentId: UniqueId,
-    amount: Amount,
-    createdBy: string,
-  ): Result<void> {
+  public applySettlement(params: {
+    amount: Amount;
+    createdBy: string;
+    memberLedgerEntryId: UniqueId;
+    paymentId: UniqueId;
+  }): Result<void> {
     if (this.isVoided()) {
       return err(
-        new ApplicationError('No se puede agregar un pago a una cuota anulada'),
+        new ApplicationError('No se puede imputar un pago a una cuota anulada'),
       );
     }
 
-    const paymentDueResult = PaymentDueEntity.create({
-      amount,
-      dueId: this.id,
-      paymentId,
-    });
-
-    if (paymentDueResult.isErr()) {
-      return err(paymentDueResult.error);
+    if (this.isPaid()) {
+      return err(
+        new ApplicationError('No se puede imputar un pago a una cuota ya paga'),
+      );
     }
 
-    this._paymentDues.push(paymentDueResult.value);
-    this.recalculateStatusInternal(createdBy);
+    if (params.amount.isNegative()) {
+      return err(new ApplicationError('El monto a imputar debe ser positivo'));
+    }
+
+    if (this.settledAmount.add(params.amount).isGreaterThan(this._amount)) {
+      return err(
+        new ApplicationError('El monto imputado excede el total de la cuota'),
+      );
+    }
+
+    const dueSettlement = DueSettlementEntity.create({
+      amount: params.amount,
+      dueId: this.id,
+      memberLedgerEntryId: params.memberLedgerEntryId,
+      paymentId: params.paymentId,
+    });
+
+    if (dueSettlement.isErr()) {
+      return err(dueSettlement.error);
+    }
+
+    this._settlements.push(dueSettlement.value);
+
+    this.recalculateStatusInternal(params.createdBy);
 
     return ok();
   }
@@ -161,24 +188,18 @@ export class DueEntity extends Entity<DueEntity> {
       {
         amount: this._amount,
         category: this._category,
-        createdBy: this._createdBy,
         date: this._date,
         memberId: this._memberId,
         notes: this._notes,
-        paymentDues: [...this._paymentDues],
+        settlements: [...this._settlements],
         status: this._status,
         voidedAt: this._voidedAt,
         voidedBy: this._voidedBy,
         voidReason: this._voidReason,
       },
       {
-        createdAt: this._createdAt,
-        createdBy: this._createdBy,
-        deletedAt: this._deletedAt,
-        deletedBy: this._deletedBy,
-        id: this._id,
-        updatedAt: this._updatedAt,
-        updatedBy: this._updatedBy,
+        audit: { ...this._audit },
+        id: this.id,
       },
     );
   }
@@ -212,6 +233,7 @@ export class DueEntity extends Entity<DueEntity> {
 
     this._amount = props.amount;
     this._notes = props.notes;
+
     this.markAsUpdated(props.updatedBy);
 
     this.addEvent(new DueUpdatedEvent(oldDue, this));
@@ -238,33 +260,14 @@ export class DueEntity extends Entity<DueEntity> {
     return ok();
   }
 
-  public voidPayment(paymentId: UniqueId, voidedBy: string): Result<void> {
-    const affectedPaymentDues = this._paymentDues.filter(
-      (pd) => pd.paymentId.equals(paymentId) && pd.isActive(),
-    );
-
-    if (affectedPaymentDues.length === 0) {
-      return err(
-        new ApplicationError('No se encontraron pagos activos para anular'),
-      );
-    }
-
-    affectedPaymentDues.forEach((pd) => pd.void());
-    this.recalculateStatusInternal(voidedBy);
-
-    return ok();
-  }
-
   private recalculateStatusInternal(updatedBy = 'System'): void {
-    const totalPaid = this._paymentDues
-      .filter((pd) => pd.isActive())
-      .reduce((sum, pd) => sum.add(pd.amount), Amount.raw({ cents: 0 }));
+    const totalSettled = this.settledAmount;
 
     let newStatus: DueStatus;
 
-    if (totalPaid.isGreaterThanOrEqual(this._amount)) {
+    if (totalSettled.isGreaterThanOrEqual(this._amount)) {
       newStatus = DueStatus.PAID;
-    } else if (totalPaid.isGreaterThan(Amount.raw({ cents: 0 }))) {
+    } else if (totalSettled.isGreaterThan(Amount.raw({ cents: 0 }))) {
       newStatus = DueStatus.PARTIALLY_PAID;
     } else {
       newStatus = DueStatus.PENDING;

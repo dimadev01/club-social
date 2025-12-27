@@ -43,7 +43,7 @@ export function MovementNew() {
       amount,
       category: values.category,
       date,
-      description: values.description || null,
+      notes: values.notes || null,
       type: values.type,
     });
   };
@@ -70,7 +70,7 @@ export function MovementNew() {
           amount: 0,
           category: MovementCategory.OTHER,
           date: dayjs(),
-          description: null,
+          notes: null,
           type: MovementType.OUTFLOW,
         }}
         onSubmit={handleSubmit}

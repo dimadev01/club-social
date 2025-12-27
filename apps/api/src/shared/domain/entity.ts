@@ -1,72 +1,15 @@
-import type { UniqueId } from './value-objects/unique-id/unique-id.vo';
+import { UniqueId } from './value-objects/unique-id/unique-id.vo';
 
-import { AggregateRoot } from './aggregate-root';
-
-export interface BaseEntityProps {
-  createdAt: Date | null;
-  createdBy: null | string;
-  deletedAt: Date | null;
-  deletedBy: null | string;
-  id: UniqueId;
-  updatedAt: Date | null;
-  updatedBy: null | string;
-}
-
-export abstract class Entity<T> extends AggregateRoot<T> {
-  public get createdAt(): Date {
-    return this._createdAt;
+export abstract class Entity {
+  public get id(): UniqueId {
+    return this._id;
   }
 
-  public get createdBy(): string {
-    return this._createdBy;
-  }
+  protected constructor(
+    protected readonly _id: UniqueId = UniqueId.generate(),
+  ) {}
 
-  public get deletedAt(): Date | null {
-    return this._deletedAt;
-  }
-
-  public get deletedBy(): null | string {
-    return this._deletedBy;
-  }
-
-  public get updatedAt(): Date {
-    return this._updatedAt;
-  }
-
-  public get updatedBy(): string {
-    return this._updatedBy;
-  }
-
-  protected _createdAt: Date;
-  protected _createdBy: string;
-  protected _deletedAt: Date | null;
-  protected _deletedBy: null | string;
-  protected _updatedAt: Date;
-  protected _updatedBy: string;
-
-  protected constructor(props?: BaseEntityProps) {
-    super(props?.id);
-
-    this._createdAt = props?.createdAt ?? new Date();
-    this._createdBy = props?.createdBy ?? 'System';
-    this._deletedAt = props?.deletedAt ?? null;
-    this._deletedBy = props?.deletedBy ?? null;
-    this._updatedAt = props?.updatedAt ?? this._createdAt;
-    this._updatedBy = props?.updatedBy ?? this._createdBy;
-  }
-
-  public delete(deletedBy = 'System'): void {
-    this._deletedAt = new Date();
-    this._deletedBy = deletedBy;
-    this.markAsUpdated();
-  }
-
-  public markAsUpdated(updatedBy = 'System'): void {
-    this._updatedAt = new Date();
-    this._updatedBy = updatedBy;
-  }
-
-  public restore(by = 'System'): void {
-    this.markAsUpdated(by);
+  public equals(other?: Entity): boolean {
+    return !!other && this._id.equals(other._id);
   }
 }

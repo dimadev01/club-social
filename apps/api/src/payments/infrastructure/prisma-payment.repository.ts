@@ -9,7 +9,7 @@ import { PaymentStatus } from '@club-social/shared/payments';
 import { Injectable } from '@nestjs/common';
 
 import {
-  PaymentDueWhereInput,
+  DueSettlementWhereInput,
   PaymentFindManyArgs,
   PaymentOrderByWithRelationInput,
   PaymentWhereInput,
@@ -59,7 +59,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
   public async findForStatistics(
     params: FindForStatisticsParams,
   ): Promise<PaymentStatisticsModel[]> {
-    const where: PaymentDueWhereInput = {
+    const where: DueSettlementWhereInput = {
       payment: {
         deletedAt: null,
         status: PaymentStatus.PAID,
@@ -76,16 +76,20 @@ export class PrismaPaymentRepository implements PaymentRepository {
       };
     }
 
-    const paymentDues = await this.prismaService.paymentDue.findMany({
+    const settlements = await this.prismaService.dueSettlement.findMany({
       include: { due: true, payment: true },
       where: where,
     });
 
-    return paymentDues.map((paymentDue) => ({
-      due: this.mapper.due.toDomain(paymentDue.due),
-      payment: this.mapper.payment.toDomain(paymentDue.payment),
-      paymentDue: this.mapper.paymentDue.toDomain(paymentDue),
-    }));
+    return settlements.map((paymentDue) => {
+      Guard.defined(paymentDue.payment);
+
+      return {
+        due: this.mapper.due.toDomain(paymentDue.due),
+        dueSettlement: this.mapper.dueSettlement.toDomain(paymentDue),
+        payment: this.mapper.payment.toDomain(paymentDue.payment),
+      };
+    });
   }
 
   public async findOneModel(id: UniqueId): Promise<null | PaymentDetailModel> {
@@ -144,20 +148,20 @@ export class PrismaPaymentRepository implements PaymentRepository {
   public async findPaymentDuesModel(
     paymentId: UniqueId,
   ): Promise<PaymentDueDetailModel[]> {
-    const paymentDues = await this.prismaService.paymentDue.findMany({
+    const settlements = await this.prismaService.dueSettlement.findMany({
       include: { due: true },
       where: { paymentId: paymentId.value },
     });
 
-    return paymentDues.map((pd) => ({
-      due: this.mapper.due.toDomain(pd.due),
-      paymentDue: this.mapper.paymentDue.toDomain(pd),
+    return settlements.map((settlement) => ({
+      due: this.mapper.due.toDomain(settlement.due),
+      dueSettlement: this.mapper.dueSettlement.toDomain(settlement),
     }));
   }
 
   public async findUniqueById(id: UniqueId): Promise<null | PaymentEntity> {
     const payment = await this.prismaService.payment.findUnique({
-      include: { paymentDues: true },
+      include: { settlements: true },
       where: { deletedAt: null, id: id.value },
     });
 
@@ -170,7 +174,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
   public async findUniqueByIds(ids: UniqueId[]): Promise<PaymentEntity[]> {
     const payments = await this.prismaService.payment.findMany({
-      include: { paymentDues: true },
+      include: { settlements: true },
       where: {
         deletedAt: null,
         id: { in: ids.map((id) => id.value) },
@@ -182,24 +186,21 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
   public async findUniqueOrThrow(id: UniqueId): Promise<PaymentEntity> {
     const payment = await this.prismaService.payment.findUniqueOrThrow({
-      include: { paymentDues: true },
+      include: { settlements: true },
       where: { deletedAt: null, id: id.value },
     });
 
     return this.mapper.payment.toDomain(payment);
   }
 
-  public async save(entity: PaymentEntity): Promise<PaymentEntity> {
+  public async save(entity: PaymentEntity): Promise<void> {
     const data = this.mapper.payment.toPersistence(entity);
-    const { paymentDues: _paymentDues, ...paymentData } = data;
 
-    const payment = await this.prismaService.payment.upsert({
-      create: paymentData,
-      update: paymentData,
+    await this.prismaService.payment.upsert({
+      create: data,
+      update: data,
       where: { id: entity.id.value },
     });
-
-    return this.mapper.payment.toDomain(payment);
   }
 
   private buildWhereAndOrderBy(params: ExportRequest): {
@@ -231,7 +232,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
     }
 
     if (params.filters?.memberId) {
-      where.paymentDues = {
+      where.settlements = {
         some: { due: { memberId: { in: params.filters.memberId } } },
       };
     }
@@ -241,7 +242,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
     }
 
     if (params.filters?.dueCategory) {
-      where.paymentDues = {
+      where.settlements = {
         some: { due: { category: { in: params.filters.dueCategory } } },
       };
     }

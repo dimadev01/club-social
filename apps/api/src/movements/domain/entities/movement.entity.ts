@@ -5,24 +5,24 @@ import {
   MovementType,
 } from '@club-social/shared/movements';
 
-import { BaseEntityProps, Entity } from '@/shared/domain/entity';
+import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
+import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { err, ok, Result } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import { StrictOmit } from '@/shared/types/type-utils';
 
 import { MovementCreatedEvent } from '../events/movement-created.event';
 import { MovementUpdatedEvent } from '../events/movement-updated.event';
-import { CreateMovementProps, VoidMovementProps } from '../movement.interface';
 
 interface MovementProps {
   amount: Amount;
   category: MovementCategory;
-  createdBy: string;
   date: DateOnly;
-  description: null | string;
   mode: MovementMode;
+  notes: null | string;
   paymentId: null | UniqueId;
   status: MovementStatus;
   type: MovementType;
@@ -31,7 +31,7 @@ interface MovementProps {
   voidReason: null | string;
 }
 
-export class MovementEntity extends Entity<MovementEntity> {
+export class MovementEntity extends AuditedAggregateRoot {
   public get amount(): Amount {
     return this._amount;
   }
@@ -44,12 +44,12 @@ export class MovementEntity extends Entity<MovementEntity> {
     return this._date;
   }
 
-  public get description(): null | string {
-    return this._description;
-  }
-
   public get mode(): MovementMode {
     return this._mode;
+  }
+
+  public get notes(): null | string {
+    return this._notes;
   }
 
   public get paymentId(): null | UniqueId {
@@ -79,8 +79,8 @@ export class MovementEntity extends Entity<MovementEntity> {
   private _amount: Amount;
   private _category: MovementCategory;
   private _date: DateOnly;
-  private _description: null | string;
   private _mode: MovementMode;
+  private _notes: null | string;
   private _paymentId: null | UniqueId;
   private _status: MovementStatus;
   private _type: MovementType;
@@ -88,13 +88,13 @@ export class MovementEntity extends Entity<MovementEntity> {
   private _voidedBy: null | string;
   private _voidReason: null | string;
 
-  private constructor(props: MovementProps, base?: BaseEntityProps) {
-    super(base);
+  private constructor(props: MovementProps, meta?: PersistenceMeta) {
+    super(meta?.id, meta?.audit);
 
     this._amount = props.amount;
     this._category = props.category;
     this._date = props.date;
-    this._description = props.description;
+    this._notes = props.notes;
     this._mode = props.mode;
     this._paymentId = props.paymentId;
     this._status = props.status;
@@ -102,25 +102,34 @@ export class MovementEntity extends Entity<MovementEntity> {
     this._voidReason = props.voidReason;
     this._voidedAt = props.voidedAt;
     this._voidedBy = props.voidedBy;
-    this._createdBy = props.createdBy;
-    this._updatedBy = props.createdBy;
   }
 
-  public static create(props: CreateMovementProps): Result<MovementEntity> {
-    const movement = new MovementEntity({
-      amount: props.amount,
-      category: props.category,
-      createdBy: props.createdBy,
-      date: props.date,
-      description: props.description,
-      mode: props.mode,
-      paymentId: props.paymentId,
-      status: MovementStatus.REGISTERED,
-      type: props.type,
-      voidedAt: null,
-      voidedBy: null,
-      voidReason: null,
-    });
+  public static create(
+    props: StrictOmit<
+      MovementProps,
+      'status' | 'voidedAt' | 'voidedBy' | 'voidReason'
+    >,
+    createdBy: string,
+  ): Result<MovementEntity> {
+    const movement = new MovementEntity(
+      {
+        amount: props.amount,
+        category: props.category,
+        date: props.date,
+        mode: props.mode,
+        notes: props.notes,
+        paymentId: props.paymentId,
+        status: MovementStatus.REGISTERED,
+        type: props.type,
+        voidedAt: null,
+        voidedBy: null,
+        voidReason: null,
+      },
+      {
+        audit: { createdBy },
+        id: UniqueId.generate(),
+      },
+    );
 
     movement.addEvent(new MovementCreatedEvent(movement));
 
@@ -129,9 +138,9 @@ export class MovementEntity extends Entity<MovementEntity> {
 
   public static fromPersistence(
     props: MovementProps,
-    base: BaseEntityProps,
+    meta: PersistenceMeta,
   ): MovementEntity {
-    return new MovementEntity(props, base);
+    return new MovementEntity(props, meta);
   }
 
   public clone(): MovementEntity {
@@ -139,10 +148,9 @@ export class MovementEntity extends Entity<MovementEntity> {
       {
         amount: this._amount,
         category: this._category,
-        createdBy: this._createdBy,
         date: this._date,
-        description: this._description,
         mode: this._mode,
+        notes: this._notes,
         paymentId: this._paymentId,
         status: this._status,
         type: this._type,
@@ -151,13 +159,8 @@ export class MovementEntity extends Entity<MovementEntity> {
         voidReason: this._voidReason,
       },
       {
-        createdAt: this._createdAt,
-        createdBy: this._createdBy,
-        deletedAt: this._deletedAt,
-        deletedBy: this._deletedBy,
-        id: this._id,
-        updatedAt: this._updatedAt,
-        updatedBy: this._updatedBy,
+        audit: { ...this._audit },
+        id: this.id,
       },
     );
   }
@@ -178,7 +181,7 @@ export class MovementEntity extends Entity<MovementEntity> {
     return this._status === MovementStatus.VOIDED;
   }
 
-  public void(props: VoidMovementProps): Result<void> {
+  public void(props: { voidedBy: string; voidReason: string }): Result<void> {
     if (this.isVoided()) {
       return err(
         new ApplicationError('No se puede anular un movimiento anulado'),

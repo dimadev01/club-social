@@ -12,9 +12,9 @@ export class MovementDetailDto implements IMovementDetailDto {
   public createdAt: string;
   public createdBy: string;
   public date: string;
-  public description: null | string;
   public id: string;
   public mode: MovementMode;
+  public notes: null | string;
   public paymentId: null | string;
   public status: MovementStatus;
   public type: MovementType;

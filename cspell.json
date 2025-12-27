@@ -22,7 +22,8 @@
     "aaguid",
     "egresos",
     "Egresos",
-    "Idcard"
+    "Idcard",
+    "Upserts"
   ],
   "ignoreWords": [
     "Dorrego",

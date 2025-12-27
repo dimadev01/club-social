@@ -41,8 +41,12 @@ export class FindPaymentsStatisticsUseCase extends UseCase<IPaymentStatisticsDto
         const items = paymentDues.filter((pd) => pd.due.category === category);
 
         if (items.length > 0) {
-          const amount = sumBy(items, (pd) => pd.paymentDue.amount.toCents());
-          const average = meanBy(items, (pd) => pd.paymentDue.amount.toCents());
+          const amount = sumBy(items, (pd) =>
+            pd.dueSettlement.amount.toCents(),
+          );
+          const average = meanBy(items, (pd) =>
+            pd.dueSettlement.amount.toCents(),
+          );
           const count = items.length;
 
           acc[category] = { amount, average, count };
@@ -63,7 +67,7 @@ export class FindPaymentsStatisticsUseCase extends UseCase<IPaymentStatisticsDto
       pd.payment.amount.toCents(),
     );
     const totalAmount = sumBy(paymentDues, (pd) =>
-      pd.paymentDue.amount.toCents(),
+      pd.dueSettlement.amount.toCents(),
     );
     const paymentsCount = uniquePaymentDuesByPayment.length;
     const paymentDuesCount = paymentDues.length;

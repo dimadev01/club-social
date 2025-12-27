@@ -17,7 +17,7 @@ export interface MovementFormData {
   amount: number;
   category: MovementCategory;
   date: dayjs.Dayjs;
-  description: null | string;
+  notes: null | string;
   type: MovementType;
 }
 

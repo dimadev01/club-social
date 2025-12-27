@@ -9,7 +9,7 @@ export interface ICreateMovementDto {
   amount: number;
   category: MovementCategory;
   date: string;
-  description: null | string;
+  notes: null | string;
   type: MovementType;
 }
 
@@ -19,9 +19,9 @@ export interface IMovementDetailDto {
   createdAt: string;
   createdBy: string;
   date: string;
-  description: null | string;
   id: string;
   mode: MovementMode;
+  notes: null | string;
   paymentId: null | string;
   status: MovementStatus;
   type: MovementType;
@@ -37,9 +37,9 @@ export interface IMovementPaginatedDto {
   category: MovementCategory;
   createdAt: string;
   date: string;
-  description: null | string;
   id: string;
   mode: MovementMode;
+  notes: null | string;
   paymentId: null | string;
   status: MovementStatus;
   type: MovementType;
@@ -53,7 +53,7 @@ export interface IMovementPaginatedExtraDto {
 
 export interface IUpdateMovementDto {
   amount?: number;
-  description?: null | string;
+  notes?: null | string;
 }
 
 export interface IVoidMovementDto {

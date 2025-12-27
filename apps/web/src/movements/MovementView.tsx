@@ -99,8 +99,8 @@ export function MovementView() {
             label: 'Modo',
           },
           {
-            children: movement.description ?? '-',
-            label: 'Descripción',
+            children: movement.notes ?? '-',
+            label: 'Notas',
           },
         ]}
       />

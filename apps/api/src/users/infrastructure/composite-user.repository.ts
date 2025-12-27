@@ -44,7 +44,7 @@ export class CompositeUserRepository implements UserRepository {
     return this.userReadableRepository.findUniqueOrThrow(id);
   }
 
-  public async save(entity: UserEntity): Promise<UserEntity> {
-    return this.userWriteableRepository.save(entity);
+  public async save(entity: UserEntity): Promise<void> {
+    await this.userWriteableRepository.save(entity);
   }
 }

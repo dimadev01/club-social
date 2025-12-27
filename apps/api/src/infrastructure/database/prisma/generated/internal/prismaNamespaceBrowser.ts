@@ -60,9 +60,10 @@ export const ModelName = {
   Verification: 'Verification',
   Passkey: 'Passkey',
   Member: 'Member',
+  MemberLedgerEntry: 'MemberLedgerEntry',
   Due: 'Due',
+  DueSettlement: 'DueSettlement',
   Payment: 'Payment',
-  PaymentDue: 'PaymentDue',
   Movement: 'Movement',
   AuditLog: 'AuditLog',
   Pricing: 'Pricing',
@@ -190,12 +191,30 @@ export const MemberScalarFieldEnum = {
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy',
 } as const;
 
 export type MemberScalarFieldEnum =
   (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum];
+
+export const MemberLedgerEntryScalarFieldEnum = {
+  id: 'id',
+  memberId: 'memberId',
+  amount: 'amount',
+  type: 'type',
+  notes: 'notes',
+  date: 'date',
+  status: 'status',
+  source: 'source',
+  paymentId: 'paymentId',
+  reversalOfId: 'reversalOfId',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+} as const;
+
+export type MemberLedgerEntryScalarFieldEnum =
+  (typeof MemberLedgerEntryScalarFieldEnum)[keyof typeof MemberLedgerEntryScalarFieldEnum];
 
 export const DueScalarFieldEnum = {
   id: 'id',
@@ -212,12 +231,22 @@ export const DueScalarFieldEnum = {
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy',
 } as const;
 
 export type DueScalarFieldEnum =
   (typeof DueScalarFieldEnum)[keyof typeof DueScalarFieldEnum];
+
+export const DueSettlementScalarFieldEnum = {
+  id: 'id',
+  dueId: 'dueId',
+  memberLedgerEntryId: 'memberLedgerEntryId',
+  amount: 'amount',
+  paymentId: 'paymentId',
+  status: 'status',
+} as const;
+
+export type DueSettlementScalarFieldEnum =
+  (typeof DueSettlementScalarFieldEnum)[keyof typeof DueSettlementScalarFieldEnum];
 
 export const PaymentScalarFieldEnum = {
   id: 'id',
@@ -234,22 +263,10 @@ export const PaymentScalarFieldEnum = {
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy',
 } as const;
 
 export type PaymentScalarFieldEnum =
   (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum];
-
-export const PaymentDueScalarFieldEnum = {
-  paymentId: 'paymentId',
-  dueId: 'dueId',
-  amount: 'amount',
-  status: 'status',
-} as const;
-
-export type PaymentDueScalarFieldEnum =
-  (typeof PaymentDueScalarFieldEnum)[keyof typeof PaymentDueScalarFieldEnum];
 
 export const MovementScalarFieldEnum = {
   id: 'id',
@@ -257,7 +274,7 @@ export const MovementScalarFieldEnum = {
   category: 'category',
   amount: 'amount',
   date: 'date',
-  description: 'description',
+  notes: 'notes',
   status: 'status',
   mode: 'mode',
   voidReason: 'voidReason',
@@ -268,8 +285,6 @@ export const MovementScalarFieldEnum = {
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy',
 } as const;
 
 export type MovementScalarFieldEnum =
@@ -301,8 +316,6 @@ export const PricingScalarFieldEnum = {
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
-  deletedAt: 'deletedAt',
-  deletedBy: 'deletedBy',
 } as const;
 
 export type PricingScalarFieldEnum =

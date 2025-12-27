@@ -22,11 +22,12 @@ export interface DueRepository
     PaginatedRepository<DuePaginatedModel, DuePaginatedExtraModel>,
     ReadableRepository<DueEntity>,
     WriteableRepository<DueEntity> {
+  findByManyIds(ids: UniqueId[]): Promise<DueEntity[]>;
   findByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
   findForExport(params: ExportRequest): Promise<DuePaginatedModel[]>;
   findManyByIdsModels(ids: UniqueId[]): Promise<DueDetailModel[]>;
   findOneModel(id: UniqueId): Promise<DueDetailModel | null>;
-  findPaymentDuesModel(dueId: UniqueId): Promise<PaymentDueDetailModel[]>;
   findPending(): Promise<DueEntity[]>;
   findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
+  findSettlementsModel(dueId: UniqueId): Promise<PaymentDueDetailModel[]>;
 }

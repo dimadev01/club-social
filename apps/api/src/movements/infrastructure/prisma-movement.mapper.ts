@@ -26,8 +26,8 @@ export class PrismaMovementMapper extends Mapper<
         category: model.category as MovementCategory,
         createdBy: model.createdBy,
         date: DateOnly.raw({ value: model.date }),
-        description: model.description,
         mode: model.mode as MovementMode,
+        notes: model.notes,
         paymentId: model.paymentId
           ? UniqueId.raw({ value: model.paymentId })
           : null,
@@ -58,9 +58,9 @@ export class PrismaMovementMapper extends Mapper<
       date: entity.date.value,
       deletedAt: entity.deletedAt,
       deletedBy: entity.deletedBy,
-      description: entity.description,
       id: entity.id.value,
       mode: entity.mode,
+      notes: entity.notes,
       paymentId: entity.paymentId?.value ?? null,
       status: entity.status,
       type: entity.type,

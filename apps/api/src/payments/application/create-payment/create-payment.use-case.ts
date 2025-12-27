@@ -1,3 +1,8 @@
+import {
+  MemberLedgerEntryStatus,
+  MemberLedgerEntryType,
+} from '@club-social/shared/members';
+import { ICreatePaymentDueDto } from '@club-social/shared/payment-due';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
@@ -6,6 +11,7 @@ import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
 } from '@/dues/domain/due.repository';
+import { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import {
   PAYMENT_REPOSITORY_PROVIDER,
@@ -24,7 +30,14 @@ import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import type { CreatePaymentParams } from './create-payment.params';
+interface Params {
+  createdBy: string;
+  date: string;
+  dues: ICreatePaymentDueDto[];
+  memberId: string;
+  notes: null | string;
+  receiptNumber: null | string;
+}
 
 export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
   public constructor(
@@ -39,21 +52,17 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     super(logger);
   }
 
-  public async execute(
-    params: CreatePaymentParams,
-  ): Promise<Result<PaymentEntity>> {
+  public async execute(params: Params): Promise<Result<PaymentEntity>> {
     this.logger.info({
       message: 'Creating payment',
       params,
     });
 
-    const dueIds = params.paymentDues.map((pd) =>
-      UniqueId.raw({ value: pd.dueId }),
+    const dues = await this.dueRepository.findByManyIds(
+      params.dues.map((pd) => UniqueId.raw({ value: pd.dueId })),
     );
 
-    const duesModels = await this.dueRepository.findManyByIdsModels(dueIds);
-
-    if (duesModels.length !== dueIds.length) {
+    if (dues.length !== params.dues.length) {
       return err(new ApplicationError('Una o más cuotas no existen'));
     }
 
@@ -63,24 +72,22 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(date.error);
     }
 
-    const paymentResult = PaymentEntity.create({
+    const payment = PaymentEntity.create({
       createdBy: params.createdBy,
       date: date.value,
-      dueIds,
+      dueIds: dues.map((due) => due.id),
       memberId: UniqueId.raw({ value: params.memberId }),
       notes: params.notes,
       receiptNumber: params.receiptNumber,
     });
 
-    if (paymentResult.isErr()) {
-      return err(paymentResult.error);
+    if (payment.isErr()) {
+      return err(payment.error);
     }
 
-    const payment = paymentResult.value;
-
-    const addPaymentResults = ResultUtils.combine(
-      duesModels.map(({ due }) => {
-        const paymentDueForThisDue = params.paymentDues.find(
+    const dueSettlements = ResultUtils.combine(
+      dues.map((due) => {
+        const paymentDueForThisDue = params.dues.find(
           (pd) => pd.dueId === due.id.value,
         );
 
@@ -92,24 +99,41 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
           return err(amount.error);
         }
 
-        payment.addToTotalAmount(amount.value);
+        const memberLedgerEntry = MemberLedgerEntryEntity.create({
+          amount: amount.value,
+          createdBy: params.createdBy,
+          date: date.value,
+          memberId: UniqueId.raw({ value: params.memberId }),
+          notes: params.notes,
+          paymentId: payment.value.id,
+          reversalOfId: null,
+          status: MemberLedgerEntryStatus.POSTED,
+          type: MemberLedgerEntryType.PAYMENT_CREDIT,
+        });
 
-        return due.addPayment(payment.id, amount.value, params.createdBy);
+        if (memberLedgerEntry.isErr()) {
+          return err(memberLedgerEntry.error);
+        }
+
+        return due.applySettlement({
+          amount: amount.value,
+          createdBy: params.createdBy,
+          memberLedgerEntryId: memberLedgerEntry.value.id,
+          paymentId: payment.value.id,
+        });
       }),
     );
 
-    if (addPaymentResults.isErr()) {
-      return err(addPaymentResults.error);
+    if (dueSettlements.isErr()) {
+      return err(dueSettlements.error);
     }
 
-    await this.paymentRepository.save(payment);
-    await Promise.all(
-      duesModels.map(({ due }) => this.dueRepository.save(due)),
-    );
+    await this.paymentRepository.save(payment.value);
+    await Promise.all(dues.map((due) => this.dueRepository.save(due)));
 
-    this.eventPublisher.dispatch(payment);
-    duesModels.forEach(({ due }) => this.eventPublisher.dispatch(due));
+    this.eventPublisher.dispatch(payment.value);
+    dues.forEach((due) => this.eventPublisher.dispatch(due));
 
-    return ok(payment);
+    return ok(payment.value);
   }
 }

@@ -424,7 +424,7 @@ export type UserCreateInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
@@ -449,7 +449,7 @@ export type UserUncheckedCreateInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
@@ -540,7 +540,7 @@ export type UserCreateManyInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
@@ -815,7 +815,7 @@ export type UserCreateWithoutSessionsInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
@@ -839,7 +839,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
@@ -955,7 +955,7 @@ export type UserCreateWithoutAccountsInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
@@ -979,7 +979,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
@@ -1095,7 +1095,7 @@ export type UserCreateWithoutPasskeysInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
@@ -1119,7 +1119,7 @@ export type UserUncheckedCreateWithoutPasskeysInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
@@ -1235,7 +1235,7 @@ export type UserCreateWithoutMemberInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;
@@ -1259,7 +1259,7 @@ export type UserUncheckedCreateWithoutMemberInput = {
   emailVerified?: boolean;
   image?: string | null;
   createdAt?: Date | string;
-  updatedAt: Date | string;
+  updatedAt?: Date | string;
   role: string;
   banned?: boolean | null;
   banReason?: string | null;

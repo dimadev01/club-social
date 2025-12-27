@@ -1,7 +1,7 @@
 import {
   DueModel,
+  DueSettlementModel,
   MemberModel,
-  PaymentDueModel,
   PaymentModel,
   UserModel,
 } from '@/infrastructure/database/prisma/generated/models';
@@ -14,7 +14,7 @@ export type MemberModelWithRelations = MemberModel & {
   user?: UserModel;
 };
 
-export type PaymentDueModelWithRelations = PaymentDueModel & {
+export type PaymentDueModelWithRelations = DueSettlementModel & {
   due?: DueModelWithRelations;
 };
 

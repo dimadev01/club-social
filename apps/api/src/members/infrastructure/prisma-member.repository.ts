@@ -66,7 +66,7 @@ export class PrismaMemberRepository implements MemberRepository {
 
   public async findOneModel(id: UniqueId): Promise<MemberDetailModel | null> {
     const member = await this.prismaService.member.findUnique({
-      include: { dues: { include: { paymentDues: true } }, user: true },
+      include: { dues: { include: { settlements: true } }, user: true },
       where: { deletedAt: null, id: id.value },
     });
 
@@ -180,16 +180,14 @@ export class PrismaMemberRepository implements MemberRepository {
     return this.mapper.member.toDomain(member);
   }
 
-  public async save(entity: MemberEntity): Promise<MemberEntity> {
+  public async save(entity: MemberEntity): Promise<void> {
     const data = this.mapper.member.toPersistence(entity);
 
-    const member = await this.prismaService.member.upsert({
+    await this.prismaService.member.upsert({
       create: data,
       update: data,
       where: { id: entity.id.value },
     });
-
-    return this.mapper.member.toDomain(member);
   }
 
   public async search(

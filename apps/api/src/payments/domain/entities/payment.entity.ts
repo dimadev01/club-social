@@ -1,21 +1,22 @@
 import { PaymentStatus } from '@club-social/shared/payments';
 
-import type { BaseEntityProps } from '@/shared/domain/entity';
+import type { BaseEntityProps } from '@/shared/domain/aggregate-root';
 
-import { Entity } from '@/shared/domain/entity';
+import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
+import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { err, ok, Result } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import { StrictOmit } from '@/shared/types/type-utils';
 
 import { PaymentCreatedEvent } from '../events/payment-created.event';
 import { PaymentUpdatedEvent } from '../events/payment-updated.event';
-import { CreatePaymentProps, VoidPaymentProps } from '../payment.interface';
+import { VoidPaymentProps } from '../payment.interface';
 
 interface PaymentProps {
   amount: Amount;
-  createdBy: string;
   date: DateOnly;
   dueIds: UniqueId[];
   memberId: UniqueId;
@@ -27,7 +28,7 @@ interface PaymentProps {
   voidReason: null | string;
 }
 
-export class PaymentEntity extends Entity<PaymentEntity> {
+export class PaymentEntity extends AuditedAggregateRoot {
   public get affectedDueIds(): UniqueId[] {
     return [...this._dueIds];
   }
@@ -83,8 +84,8 @@ export class PaymentEntity extends Entity<PaymentEntity> {
   private _voidedBy: null | string;
   private _voidReason: null | string;
 
-  private constructor(props: PaymentProps, base?: BaseEntityProps) {
-    super(base);
+  private constructor(props: PaymentProps, meta?: PersistenceMeta) {
+    super(meta?.id, meta?.audit);
 
     this._amount = props.amount;
     this._memberId = props.memberId;
@@ -96,24 +97,33 @@ export class PaymentEntity extends Entity<PaymentEntity> {
     this._voidedAt = props.voidedAt;
     this._voidedBy = props.voidedBy;
     this._voidReason = props.voidReason;
-    this._createdBy = props.createdBy;
-    this._updatedBy = props.createdBy;
   }
 
-  public static create(props: CreatePaymentProps): Result<PaymentEntity> {
-    const payment = new PaymentEntity({
-      amount: Amount.raw({ cents: 0 }),
-      createdBy: props.createdBy,
-      date: props.date,
-      dueIds: props.dueIds,
-      memberId: props.memberId,
-      notes: props.notes,
-      receiptNumber: props.receiptNumber,
-      status: PaymentStatus.PAID,
-      voidedAt: null,
-      voidedBy: null,
-      voidReason: null,
-    });
+  public static create(
+    props: StrictOmit<
+      PaymentProps,
+      'status' | 'voidedAt' | 'voidedBy' | 'voidReason'
+    >,
+    createdBy: string,
+  ): Result<PaymentEntity> {
+    const payment = new PaymentEntity(
+      {
+        amount: props.amount,
+        date: props.date,
+        dueIds: props.dueIds,
+        memberId: props.memberId,
+        notes: props.notes,
+        receiptNumber: props.receiptNumber,
+        status: PaymentStatus.PAID,
+        voidedAt: null,
+        voidedBy: null,
+        voidReason: null,
+      },
+      {
+        audit: { createdBy },
+        id: UniqueId.generate(),
+      },
+    );
 
     payment.addEvent(new PaymentCreatedEvent(payment));
 
@@ -135,7 +145,6 @@ export class PaymentEntity extends Entity<PaymentEntity> {
     return PaymentEntity.fromPersistence(
       {
         amount: this._amount,
-        createdBy: this._createdBy,
         date: this._date,
         dueIds: [...this._dueIds],
         memberId: this._memberId,
@@ -147,13 +156,8 @@ export class PaymentEntity extends Entity<PaymentEntity> {
         voidReason: this._voidReason,
       },
       {
-        createdAt: this._createdAt,
-        createdBy: this._createdBy,
-        deletedAt: this._deletedAt,
-        deletedBy: this._deletedBy,
-        id: this._id,
-        updatedAt: this._updatedAt,
-        updatedBy: this._updatedBy,
+        audit: { ...this._audit },
+        id: this.id,
       },
     );
   }

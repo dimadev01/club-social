@@ -1,8 +1,8 @@
+import { DueSettlementEntity } from '@/dues/domain/entities/due-settlement.entity';
 import { DueEntity } from '@/dues/domain/entities/due.entity';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 
-import { PaymentDueEntity } from './entities/payment-due.entity';
 import { PaymentEntity } from './entities/payment.entity';
 
 export interface PaymentDetailModel {
@@ -13,7 +13,7 @@ export interface PaymentDetailModel {
 
 export interface PaymentDueDetailModel {
   due: DueEntity;
-  paymentDue: PaymentDueEntity;
+  dueSettlement: DueSettlementEntity;
 }
 
 export interface PaymentPaginatedExtraModel {
@@ -28,6 +28,6 @@ export interface PaymentPaginatedModel {
 
 export interface PaymentStatisticsModel {
   due: DueEntity;
+  dueSettlement: DueSettlementEntity;
   payment: PaymentEntity;
-  paymentDue: PaymentDueEntity;
 }

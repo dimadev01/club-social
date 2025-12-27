@@ -73,20 +73,25 @@ export type Passkey = Prisma.PasskeyModel;
  */
 export type Member = Prisma.MemberModel;
 /**
+ * Model MemberLedgerEntry
+ *
+ */
+export type MemberLedgerEntry = Prisma.MemberLedgerEntryModel;
+/**
  * Model Due
  *
  */
 export type Due = Prisma.DueModel;
 /**
+ * Model DueSettlement
+ *
+ */
+export type DueSettlement = Prisma.DueSettlementModel;
+/**
  * Model Payment
  *
  */
 export type Payment = Prisma.PaymentModel;
-/**
- * Model PaymentDue
- *
- */
-export type PaymentDue = Prisma.PaymentDueModel;
 /**
  * Model Movement
  *

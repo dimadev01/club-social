@@ -49,8 +49,6 @@ export type DueMinAggregateOutputType = {
   createdBy: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
 };
 
 export type DueMaxAggregateOutputType = {
@@ -68,8 +66,6 @@ export type DueMaxAggregateOutputType = {
   createdBy: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
 };
 
 export type DueCountAggregateOutputType = {
@@ -87,8 +83,6 @@ export type DueCountAggregateOutputType = {
   createdBy: number;
   updatedAt: number;
   updatedBy: number;
-  deletedAt: number;
-  deletedBy: number;
   _all: number;
 };
 
@@ -115,8 +109,6 @@ export type DueMinAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
 };
 
 export type DueMaxAggregateInputType = {
@@ -134,8 +126,6 @@ export type DueMaxAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
 };
 
 export type DueCountAggregateInputType = {
@@ -153,8 +143,6 @@ export type DueCountAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
   _all?: true;
 };
 
@@ -266,8 +254,6 @@ export type DueGroupByOutputType = {
   createdBy: string;
   updatedAt: Date;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
   _count: DueCountAggregateOutputType | null;
   _avg: DueAvgAggregateOutputType | null;
   _sum: DueSumAggregateOutputType | null;
@@ -305,13 +291,11 @@ export type DueWhereInput = {
   createdBy?: Prisma.StringFilter<'Due'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Due'> | Date | string;
   updatedBy?: Prisma.StringNullableFilter<'Due'> | string | null;
-  deletedAt?: Prisma.DateTimeNullableFilter<'Due'> | Date | string | null;
-  deletedBy?: Prisma.StringNullableFilter<'Due'> | string | null;
   member?: Prisma.XOR<
     Prisma.MemberScalarRelationFilter,
     Prisma.MemberWhereInput
   >;
-  paymentDues?: Prisma.PaymentDueListRelationFilter;
+  settlements?: Prisma.DueSettlementListRelationFilter;
 };
 
 export type DueOrderByWithRelationInput = {
@@ -329,10 +313,8 @@ export type DueOrderByWithRelationInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   member?: Prisma.MemberOrderByWithRelationInput;
-  paymentDues?: Prisma.PaymentDueOrderByRelationAggregateInput;
+  settlements?: Prisma.DueSettlementOrderByRelationAggregateInput;
 };
 
 export type DueWhereUniqueInput = Prisma.AtLeast<
@@ -354,13 +336,11 @@ export type DueWhereUniqueInput = Prisma.AtLeast<
     createdBy?: Prisma.StringFilter<'Due'> | string;
     updatedAt?: Prisma.DateTimeFilter<'Due'> | Date | string;
     updatedBy?: Prisma.StringNullableFilter<'Due'> | string | null;
-    deletedAt?: Prisma.DateTimeNullableFilter<'Due'> | Date | string | null;
-    deletedBy?: Prisma.StringNullableFilter<'Due'> | string | null;
     member?: Prisma.XOR<
       Prisma.MemberScalarRelationFilter,
       Prisma.MemberWhereInput
     >;
-    paymentDues?: Prisma.PaymentDueListRelationFilter;
+    settlements?: Prisma.DueSettlementListRelationFilter;
   },
   'id'
 >;
@@ -380,8 +360,6 @@ export type DueOrderByWithAggregationInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.DueCountOrderByAggregateInput;
   _avg?: Prisma.DueAvgOrderByAggregateInput;
   _max?: Prisma.DueMaxOrderByAggregateInput;
@@ -415,12 +393,6 @@ export type DueScalarWhereWithAggregatesInput = {
   createdBy?: Prisma.StringWithAggregatesFilter<'Due'> | string;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<'Due'> | Date | string;
   updatedBy?: Prisma.StringNullableWithAggregatesFilter<'Due'> | string | null;
-  deletedAt?:
-    | Prisma.DateTimeNullableWithAggregatesFilter<'Due'>
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.StringNullableWithAggregatesFilter<'Due'> | string | null;
 };
 
 export type DueCreateInput = {
@@ -437,10 +409,8 @@ export type DueCreateInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   member: Prisma.MemberCreateNestedOneWithoutDuesInput;
-  paymentDues?: Prisma.PaymentDueCreateNestedManyWithoutDueInput;
+  settlements?: Prisma.DueSettlementCreateNestedManyWithoutDueInput;
 };
 
 export type DueUncheckedCreateInput = {
@@ -458,9 +428,7 @@ export type DueUncheckedCreateInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
-  paymentDues?: Prisma.PaymentDueUncheckedCreateNestedManyWithoutDueInput;
+  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutDueInput;
 };
 
 export type DueUpdateInput = {
@@ -481,14 +449,8 @@ export type DueUpdateInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   member?: Prisma.MemberUpdateOneRequiredWithoutDuesNestedInput;
-  paymentDues?: Prisma.PaymentDueUpdateManyWithoutDueNestedInput;
+  settlements?: Prisma.DueSettlementUpdateManyWithoutDueNestedInput;
 };
 
 export type DueUncheckedUpdateInput = {
@@ -510,13 +472,7 @@ export type DueUncheckedUpdateInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  paymentDues?: Prisma.PaymentDueUncheckedUpdateManyWithoutDueNestedInput;
+  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutDueNestedInput;
 };
 
 export type DueCreateManyInput = {
@@ -534,8 +490,6 @@ export type DueCreateManyInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
 };
 
 export type DueUpdateManyMutationInput = {
@@ -556,12 +510,6 @@ export type DueUpdateManyMutationInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type DueUncheckedUpdateManyInput = {
@@ -583,12 +531,6 @@ export type DueUncheckedUpdateManyInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type DueListRelationFilter = {
@@ -616,8 +558,6 @@ export type DueCountOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type DueAvgOrderByAggregateInput = {
@@ -639,8 +579,6 @@ export type DueMaxOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type DueMinOrderByAggregateInput = {
@@ -658,8 +596,6 @@ export type DueMinOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type DueSumOrderByAggregateInput = {
@@ -757,29 +693,29 @@ export type DueUncheckedUpdateManyWithoutMemberNestedInput = {
   deleteMany?: Prisma.DueScalarWhereInput | Prisma.DueScalarWhereInput[];
 };
 
-export type DueCreateNestedOneWithoutPaymentDuesInput = {
+export type DueCreateNestedOneWithoutSettlementsInput = {
   create?: Prisma.XOR<
-    Prisma.DueCreateWithoutPaymentDuesInput,
-    Prisma.DueUncheckedCreateWithoutPaymentDuesInput
+    Prisma.DueCreateWithoutSettlementsInput,
+    Prisma.DueUncheckedCreateWithoutSettlementsInput
   >;
-  connectOrCreate?: Prisma.DueCreateOrConnectWithoutPaymentDuesInput;
+  connectOrCreate?: Prisma.DueCreateOrConnectWithoutSettlementsInput;
   connect?: Prisma.DueWhereUniqueInput;
 };
 
-export type DueUpdateOneRequiredWithoutPaymentDuesNestedInput = {
+export type DueUpdateOneRequiredWithoutSettlementsNestedInput = {
   create?: Prisma.XOR<
-    Prisma.DueCreateWithoutPaymentDuesInput,
-    Prisma.DueUncheckedCreateWithoutPaymentDuesInput
+    Prisma.DueCreateWithoutSettlementsInput,
+    Prisma.DueUncheckedCreateWithoutSettlementsInput
   >;
-  connectOrCreate?: Prisma.DueCreateOrConnectWithoutPaymentDuesInput;
-  upsert?: Prisma.DueUpsertWithoutPaymentDuesInput;
+  connectOrCreate?: Prisma.DueCreateOrConnectWithoutSettlementsInput;
+  upsert?: Prisma.DueUpsertWithoutSettlementsInput;
   connect?: Prisma.DueWhereUniqueInput;
   update?: Prisma.XOR<
     Prisma.XOR<
-      Prisma.DueUpdateToOneWithWhereWithoutPaymentDuesInput,
-      Prisma.DueUpdateWithoutPaymentDuesInput
+      Prisma.DueUpdateToOneWithWhereWithoutSettlementsInput,
+      Prisma.DueUpdateWithoutSettlementsInput
     >,
-    Prisma.DueUncheckedUpdateWithoutPaymentDuesInput
+    Prisma.DueUncheckedUpdateWithoutSettlementsInput
   >;
 };
 
@@ -797,9 +733,7 @@ export type DueCreateWithoutMemberInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
-  paymentDues?: Prisma.PaymentDueCreateNestedManyWithoutDueInput;
+  settlements?: Prisma.DueSettlementCreateNestedManyWithoutDueInput;
 };
 
 export type DueUncheckedCreateWithoutMemberInput = {
@@ -816,9 +750,7 @@ export type DueUncheckedCreateWithoutMemberInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
-  paymentDues?: Prisma.PaymentDueUncheckedCreateNestedManyWithoutDueInput;
+  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutDueInput;
 };
 
 export type DueCreateOrConnectWithoutMemberInput = {
@@ -880,11 +812,9 @@ export type DueScalarWhereInput = {
   createdBy?: Prisma.StringFilter<'Due'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Due'> | Date | string;
   updatedBy?: Prisma.StringNullableFilter<'Due'> | string | null;
-  deletedAt?: Prisma.DateTimeNullableFilter<'Due'> | Date | string | null;
-  deletedBy?: Prisma.StringNullableFilter<'Due'> | string | null;
 };
 
-export type DueCreateWithoutPaymentDuesInput = {
+export type DueCreateWithoutSettlementsInput = {
   id: string;
   amount: number;
   category: string;
@@ -898,12 +828,10 @@ export type DueCreateWithoutPaymentDuesInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   member: Prisma.MemberCreateNestedOneWithoutDuesInput;
 };
 
-export type DueUncheckedCreateWithoutPaymentDuesInput = {
+export type DueUncheckedCreateWithoutSettlementsInput = {
   id: string;
   memberId: string;
   amount: number;
@@ -918,39 +846,37 @@ export type DueUncheckedCreateWithoutPaymentDuesInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
 };
 
-export type DueCreateOrConnectWithoutPaymentDuesInput = {
+export type DueCreateOrConnectWithoutSettlementsInput = {
   where: Prisma.DueWhereUniqueInput;
   create: Prisma.XOR<
-    Prisma.DueCreateWithoutPaymentDuesInput,
-    Prisma.DueUncheckedCreateWithoutPaymentDuesInput
+    Prisma.DueCreateWithoutSettlementsInput,
+    Prisma.DueUncheckedCreateWithoutSettlementsInput
   >;
 };
 
-export type DueUpsertWithoutPaymentDuesInput = {
+export type DueUpsertWithoutSettlementsInput = {
   update: Prisma.XOR<
-    Prisma.DueUpdateWithoutPaymentDuesInput,
-    Prisma.DueUncheckedUpdateWithoutPaymentDuesInput
+    Prisma.DueUpdateWithoutSettlementsInput,
+    Prisma.DueUncheckedUpdateWithoutSettlementsInput
   >;
   create: Prisma.XOR<
-    Prisma.DueCreateWithoutPaymentDuesInput,
-    Prisma.DueUncheckedCreateWithoutPaymentDuesInput
+    Prisma.DueCreateWithoutSettlementsInput,
+    Prisma.DueUncheckedCreateWithoutSettlementsInput
   >;
   where?: Prisma.DueWhereInput;
 };
 
-export type DueUpdateToOneWithWhereWithoutPaymentDuesInput = {
+export type DueUpdateToOneWithWhereWithoutSettlementsInput = {
   where?: Prisma.DueWhereInput;
   data: Prisma.XOR<
-    Prisma.DueUpdateWithoutPaymentDuesInput,
-    Prisma.DueUncheckedUpdateWithoutPaymentDuesInput
+    Prisma.DueUpdateWithoutSettlementsInput,
+    Prisma.DueUncheckedUpdateWithoutSettlementsInput
   >;
 };
 
-export type DueUpdateWithoutPaymentDuesInput = {
+export type DueUpdateWithoutSettlementsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -968,16 +894,10 @@ export type DueUpdateWithoutPaymentDuesInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   member?: Prisma.MemberUpdateOneRequiredWithoutDuesNestedInput;
 };
 
-export type DueUncheckedUpdateWithoutPaymentDuesInput = {
+export type DueUncheckedUpdateWithoutSettlementsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -996,12 +916,6 @@ export type DueUncheckedUpdateWithoutPaymentDuesInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type DueCreateManyMemberInput = {
@@ -1018,8 +932,6 @@ export type DueCreateManyMemberInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
 };
 
 export type DueUpdateWithoutMemberInput = {
@@ -1040,13 +952,7 @@ export type DueUpdateWithoutMemberInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  paymentDues?: Prisma.PaymentDueUpdateManyWithoutDueNestedInput;
+  settlements?: Prisma.DueSettlementUpdateManyWithoutDueNestedInput;
 };
 
 export type DueUncheckedUpdateWithoutMemberInput = {
@@ -1067,13 +973,7 @@ export type DueUncheckedUpdateWithoutMemberInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  paymentDues?: Prisma.PaymentDueUncheckedUpdateManyWithoutDueNestedInput;
+  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutDueNestedInput;
 };
 
 export type DueUncheckedUpdateManyWithoutMemberInput = {
@@ -1094,12 +994,6 @@ export type DueUncheckedUpdateManyWithoutMemberInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 /**
@@ -1107,14 +1001,14 @@ export type DueUncheckedUpdateManyWithoutMemberInput = {
  */
 
 export type DueCountOutputType = {
-  paymentDues: number;
+  settlements: number;
 };
 
 export type DueCountOutputTypeSelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  paymentDues?: boolean | DueCountOutputTypeCountPaymentDuesArgs;
+  settlements?: boolean | DueCountOutputTypeCountSettlementsArgs;
 };
 
 /**
@@ -1133,11 +1027,11 @@ export type DueCountOutputTypeDefaultArgs<
 /**
  * DueCountOutputType without action
  */
-export type DueCountOutputTypeCountPaymentDuesArgs<
+export type DueCountOutputTypeCountSettlementsArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
-  where?: Prisma.PaymentDueWhereInput;
+  where?: Prisma.DueSettlementWhereInput;
 };
 
 export type DueSelect<
@@ -1159,10 +1053,8 @@ export type DueSelect<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
     member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
-    paymentDues?: boolean | Prisma.Due$paymentDuesArgs<ExtArgs>;
+    settlements?: boolean | Prisma.Due$settlementsArgs<ExtArgs>;
     _count?: boolean | Prisma.DueCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['due']
@@ -1187,8 +1079,6 @@ export type DueSelectCreateManyAndReturn<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
     member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['due']
@@ -1213,8 +1103,6 @@ export type DueSelectUpdateManyAndReturn<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
     member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['due']
@@ -1235,8 +1123,6 @@ export type DueSelectScalar = {
   createdBy?: boolean;
   updatedAt?: boolean;
   updatedBy?: boolean;
-  deletedAt?: boolean;
-  deletedBy?: boolean;
 };
 
 export type DueOmit<
@@ -1256,9 +1142,7 @@ export type DueOmit<
   | 'createdAt'
   | 'createdBy'
   | 'updatedAt'
-  | 'updatedBy'
-  | 'deletedAt'
-  | 'deletedBy',
+  | 'updatedBy',
   ExtArgs['result']['due']
 >;
 export type DueInclude<
@@ -1266,7 +1150,7 @@ export type DueInclude<
     runtime.Types.Extensions.DefaultArgs,
 > = {
   member?: boolean | Prisma.MemberDefaultArgs<ExtArgs>;
-  paymentDues?: boolean | Prisma.Due$paymentDuesArgs<ExtArgs>;
+  settlements?: boolean | Prisma.Due$settlementsArgs<ExtArgs>;
   _count?: boolean | Prisma.DueCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type DueIncludeCreateManyAndReturn<
@@ -1289,7 +1173,7 @@ export type $DuePayload<
   name: 'Due';
   objects: {
     member: Prisma.$MemberPayload<ExtArgs>;
-    paymentDues: Prisma.$PaymentDuePayload<ExtArgs>[];
+    settlements: Prisma.$DueSettlementPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1307,8 +1191,6 @@ export type $DuePayload<
       createdBy: string;
       updatedAt: Date;
       updatedBy: string | null;
-      deletedAt: Date | null;
-      deletedBy: string | null;
     },
     ExtArgs['result']['due']
   >;
@@ -1873,11 +1755,11 @@ export interface Prisma__DueClient<
     ExtArgs,
     GlobalOmitOptions
   >;
-  paymentDues<T extends Prisma.Due$paymentDuesArgs<ExtArgs> = {}>(
-    args?: Prisma.Subset<T, Prisma.Due$paymentDuesArgs<ExtArgs>>,
+  settlements<T extends Prisma.Due$settlementsArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Due$settlementsArgs<ExtArgs>>,
   ): Prisma.PrismaPromise<
     | runtime.Types.Result.GetResult<
-        Prisma.$PaymentDuePayload<ExtArgs>,
+        Prisma.$DueSettlementPayload<ExtArgs>,
         T,
         'findMany',
         GlobalOmitOptions
@@ -1940,8 +1822,6 @@ export interface DueFieldRefs {
   readonly createdBy: Prisma.FieldRef<'Due', 'String'>;
   readonly updatedAt: Prisma.FieldRef<'Due', 'DateTime'>;
   readonly updatedBy: Prisma.FieldRef<'Due', 'String'>;
-  readonly deletedAt: Prisma.FieldRef<'Due', 'DateTime'>;
-  readonly deletedBy: Prisma.FieldRef<'Due', 'String'>;
 }
 
 // Custom InputTypes
@@ -2391,34 +2271,34 @@ export type DueDeleteManyArgs<
 };
 
 /**
- * Due.paymentDues
+ * Due.settlements
  */
-export type Due$paymentDuesArgs<
+export type Due$settlementsArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
   /**
-   * Select specific fields to fetch from the PaymentDue
+   * Select specific fields to fetch from the DueSettlement
    */
-  select?: Prisma.PaymentDueSelect<ExtArgs> | null;
+  select?: Prisma.DueSettlementSelect<ExtArgs> | null;
   /**
-   * Omit specific fields from the PaymentDue
+   * Omit specific fields from the DueSettlement
    */
-  omit?: Prisma.PaymentDueOmit<ExtArgs> | null;
+  omit?: Prisma.DueSettlementOmit<ExtArgs> | null;
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.PaymentDueInclude<ExtArgs> | null;
-  where?: Prisma.PaymentDueWhereInput;
+  include?: Prisma.DueSettlementInclude<ExtArgs> | null;
+  where?: Prisma.DueSettlementWhereInput;
   orderBy?:
-    | Prisma.PaymentDueOrderByWithRelationInput
-    | Prisma.PaymentDueOrderByWithRelationInput[];
-  cursor?: Prisma.PaymentDueWhereUniqueInput;
+    | Prisma.DueSettlementOrderByWithRelationInput
+    | Prisma.DueSettlementOrderByWithRelationInput[];
+  cursor?: Prisma.DueSettlementWhereUniqueInput;
   take?: number;
   skip?: number;
   distinct?:
-    | Prisma.PaymentDueScalarFieldEnum
-    | Prisma.PaymentDueScalarFieldEnum[];
+    | Prisma.DueSettlementScalarFieldEnum
+    | Prisma.DueSettlementScalarFieldEnum[];
 };
 
 /**

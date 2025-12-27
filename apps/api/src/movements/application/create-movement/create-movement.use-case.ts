@@ -52,8 +52,8 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
       category: params.category,
       createdBy: params.createdBy,
       date,
-      description: params.description,
       mode: MovementMode.MANUAL,
+      notes: params.notes,
       paymentId: null,
       type: params.type,
     });

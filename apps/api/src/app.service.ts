@@ -34,7 +34,7 @@ export class AppService {
   public async clear(): Promise<void> {
     await this.prismaService.auditLog.deleteMany({});
     await this.prismaService.movement.deleteMany({});
-    await this.prismaService.paymentDue.deleteMany({});
+    await this.prismaService.dueSettlement.deleteMany({});
     await this.prismaService.payment.deleteMany({});
     await this.prismaService.due.deleteMany({});
     await this.prismaService.pricing.deleteMany({});

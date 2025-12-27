@@ -57,8 +57,8 @@ export class PaymentCreatedHandler {
         category: MovementCategory.MEMBERSHIP_FEE,
         createdBy: event.payment.createdBy,
         date: event.payment.date,
-        description: 'Entrada automática',
         mode: MovementMode.AUTOMATIC,
+        notes: 'Entrada automática',
         paymentId: event.payment.id,
         type: MovementType.INFLOW,
       });

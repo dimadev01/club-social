@@ -1,7 +1,7 @@
 import { Controller, Get, Post } from '@nestjs/common';
 
 import { AppService } from './app.service';
-import { PublicRoute } from './shared/presentation/decorators/public-route.decorator';
+import { PublicRoute } from './kernel/presentation/decorators/public-route.decorator';
 
 @Controller()
 @PublicRoute()

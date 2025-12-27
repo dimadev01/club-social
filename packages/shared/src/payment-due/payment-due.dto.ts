@@ -1,8 +1,7 @@
-import { DueCategory, DueStatus } from '../dues';
+import { DueCategory, DueSettlementStatus, DueStatus } from '../dues';
 import { PaymentStatus } from '../payments';
-import { PaymentDueStatus } from './payment-due.enum';
 
-export interface ICreatePaymentDueItemDto {
+export interface ICreatePaymentDueDto {
   amount: number;
   dueId: string;
 }
@@ -11,7 +10,7 @@ export interface IPaymentDueDetailDto {
   amount: number;
   dueId: string;
   paymentId: string;
-  status: PaymentDueStatus;
+  status: DueSettlementStatus;
 }
 
 export interface IPaymentDueDetailWithDueDto {
@@ -21,8 +20,8 @@ export interface IPaymentDueDetailWithDueDto {
   dueDate: string;
   dueId: string;
   dueStatus: DueStatus;
-  paymentId: string;
-  status: PaymentDueStatus;
+  paymentId: null | string;
+  status: DueSettlementStatus;
 }
 
 export interface IPaymentDueDetailWithPaymentDto {
@@ -30,8 +29,8 @@ export interface IPaymentDueDetailWithPaymentDto {
   dueId: string;
   paymentAmount: number;
   paymentDate: string;
-  paymentId: string;
+  paymentId: null | string;
   paymentReceiptNumber: null | string;
   paymentStatus: PaymentStatus;
-  status: PaymentDueStatus;
+  status: DueSettlementStatus;
 }

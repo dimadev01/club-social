@@ -25,7 +25,7 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
     this.logger.setContext(BetterAuthUserRepository.name);
   }
 
-  public async save(user: UserEntity): Promise<UserEntity> {
+  public async save(user: UserEntity): Promise<void> {
     const events = user.pullEvents();
 
     const hasCreatedEvent = events.some(
@@ -36,14 +36,14 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
     );
 
     if (hasCreatedEvent) {
-      await this.createUser(user);
-    } else if (hasUpdatedEvent) {
-      await this.updateUser(user);
-    } else {
-      throw new InternalServerError('No event found to save user');
+      return this.createUser(user);
     }
 
-    return user;
+    if (hasUpdatedEvent) {
+      await this.updateUser(user);
+    }
+
+    throw new InternalServerError('No event found to save user');
   }
 
   private async createUser(user: UserEntity): Promise<void> {

@@ -180,7 +180,7 @@ export class PrismaPricingRepository implements PricingRepository {
     return this.mapper.toDomain(pricing);
   }
 
-  public async save(entity: PricingEntity): Promise<PricingEntity> {
+  public async save(entity: PricingEntity): Promise<void> {
     const data = this.mapper.toPersistence(entity);
 
     await this.prismaService.pricing.upsert({
@@ -188,7 +188,5 @@ export class PrismaPricingRepository implements PricingRepository {
       update: data,
       where: { id: entity.id.value },
     });
-
-    return entity;
   }
 }

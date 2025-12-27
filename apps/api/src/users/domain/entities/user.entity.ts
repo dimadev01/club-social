@@ -1,22 +1,19 @@
 import { UserRole } from '@club-social/shared/users';
 import { UserStatus } from '@club-social/shared/users';
 
-import type { BaseEntityProps } from '@/shared/domain/entity';
-
-import { Entity } from '@/shared/domain/entity';
-import { Guard } from '@/shared/domain/guards';
+import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { ok, Result } from '@/shared/domain/result';
+import { SoftDeletableAggregateRoot } from '@/shared/domain/soft-deletable-aggregate-root';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
-import { UpdateUserProfileProps } from '../interfaces/user.interface';
 
 interface UserProps {
   banExpires: Date | null;
   banned: boolean | null;
   banReason: null | string;
-  createdBy: string;
   email: Email;
   firstName: string;
   lastName: string;
@@ -24,7 +21,7 @@ interface UserProps {
   status: UserStatus;
 }
 
-export class UserEntity extends Entity<UserEntity> {
+export class UserEntity extends SoftDeletableAggregateRoot {
   public get banExpires(): Date | null {
     return this._banExpires;
   }
@@ -70,8 +67,8 @@ export class UserEntity extends Entity<UserEntity> {
   private _role: UserRole;
   private _status: UserStatus;
 
-  private constructor(props: UserProps, base?: BaseEntityProps) {
-    super(base);
+  private constructor(props: UserProps, meta?: PersistenceMeta) {
+    super(meta?.id, meta?.audit);
 
     this._firstName = props.firstName;
     this._lastName = props.lastName;
@@ -81,27 +78,15 @@ export class UserEntity extends Entity<UserEntity> {
     this._banReason = props.banReason;
     this._banExpires = props.banExpires;
     this._status = props.status;
-    this._createdBy = props.createdBy;
   }
 
-  public static create(props: UserProps): Result<UserEntity> {
-    Guard.string(props.firstName);
-    Guard.string(props.lastName);
-
-    // if (props.role === UserRole.ADMIN) {
-    //   throw new InternalServerError('Admin role is not allowed');
-    // }
-
-    const user = new UserEntity({
-      banExpires: props.banExpires,
-      banned: props.banned,
-      banReason: props.banReason,
-      createdBy: props.createdBy,
-      email: props.email,
-      firstName: props.firstName.trim(),
-      lastName: props.lastName.trim(),
-      role: props.role,
-      status: props.status,
+  public static create(
+    props: UserProps,
+    createdBy: string,
+  ): Result<UserEntity> {
+    const user = new UserEntity(props, {
+      audit: { createdBy },
+      id: UniqueId.generate(),
     });
 
     user.addEvent(new UserCreatedEvent(user));
@@ -111,9 +96,9 @@ export class UserEntity extends Entity<UserEntity> {
 
   public static fromPersistence(
     props: UserProps,
-    base: BaseEntityProps,
+    meta: PersistenceMeta,
   ): UserEntity {
-    return new UserEntity(props, base);
+    return new UserEntity(props, meta);
   }
 
   public clone(): UserEntity {
@@ -122,7 +107,6 @@ export class UserEntity extends Entity<UserEntity> {
         banExpires: this._banExpires,
         banned: this._banned,
         banReason: this._banReason,
-        createdBy: this._createdBy,
         email: this._email,
         firstName: this._firstName,
         lastName: this._lastName,
@@ -130,13 +114,8 @@ export class UserEntity extends Entity<UserEntity> {
         status: this._status,
       },
       {
-        createdAt: this._createdAt,
-        createdBy: this._createdBy,
-        deletedAt: this._deletedAt,
-        deletedBy: this._deletedBy,
-        id: this._id,
-        updatedAt: this._updatedAt,
-        updatedBy: this._updatedBy,
+        audit: { ...this._audit },
+        id: this.id,
       },
     );
   }
@@ -150,15 +129,21 @@ export class UserEntity extends Entity<UserEntity> {
     this._lastName = lastName;
   }
 
-  public updateProfile(props: UpdateUserProfileProps) {
+  public updateProfile(props: {
+    email: Email;
+    firstName: string;
+    lastName: string;
+    status: UserStatus;
+    updatedBy: string;
+  }) {
     const oldUser = this.clone();
 
     this._email = props.email;
     this._firstName = props.firstName;
     this._lastName = props.lastName;
     this._status = props.status;
-    this.markAsUpdated(props.updatedBy);
 
+    this.markAsUpdated(props.updatedBy);
     this.addEvent(new UserUpdatedEvent(oldUser, this));
   }
 

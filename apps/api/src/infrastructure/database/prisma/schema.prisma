@@ -15,7 +15,7 @@ model User {
   emailVerified Boolean   @default(false)
   image         String?
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime
+  updatedAt     DateTime  @updatedAt
   role          String
   banned        Boolean?  @default(false)
   banReason     String?
@@ -105,55 +105,90 @@ model Passkey {
 }
 
 model Member {
-  id                  String              @id
-  userId              String              @unique
-  user                User                @relation(fields: [userId], references: [id])
-  birthDate           String?
-  category            String
-  maritalStatus       String?
-  documentID          String?
-  fileStatus          String
-  nationality         String?
-  phones              String[]
-  sex                 String?
-  street              String?
-  cityName            String?
-  stateName           String?
-  zipCode             String?
-  createdAt           DateTime            @default(now())
-  createdBy           String
-  updatedAt           DateTime            @updatedAt
-  updatedBy           String?
-  deletedAt           DateTime?
-  deletedBy           String?
-  dues                Due[]
-  payments            Payment[]
-  memberLedgerEntries MemberLedgerEntry[]
+  id            String   @id
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  birthDate     String?
+  category      String
+  maritalStatus String?
+  documentID    String?
+  fileStatus    String
+  nationality   String?
+  phones        String[]
+  sex           String?
+  street        String?
+  cityName      String?
+  stateName     String?
+  zipCode       String?
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  dues          Due[]
+  payments      Payment[]
+  ledgerEntries MemberLedgerEntry[]
 
   @@index([userId])
   @@map("member")
 }
 
+model MemberLedgerEntry {
+  id String @id
+
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
+
+  amount Int
+  type   String
+  notes  String?
+  date   String
+  status String
+  source String
+
+  paymentId String?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  reversalOfId String?
+  reversalOf   MemberLedgerEntry?  @relation("LedgerReversal", fields: [reversalOfId], references: [id])
+  reversals    MemberLedgerEntry[] @relation("LedgerReversal")
+
+  settlements DueSettlement[]
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  @@index([memberId])
+  @@index([date])
+  @@index([paymentId])
+  @@index([type])
+  @@map("member_ledger_entry")
+}
+
 model Due {
-  id             String          @id
-  memberId       String
-  member         Member          @relation(fields: [memberId], references: [id])
-  amount         Int
-  category       String
-  date           String
-  notes          String?
-  status         String
-  voidReason     String?
-  voidedAt       DateTime?
-  voidedBy       String?
-  createdAt      DateTime        @default(now())
-  createdBy      String
-  updatedAt      DateTime        @updatedAt
-  updatedBy      String?
-  deletedAt      DateTime?
-  deletedBy      String?
-  paymentDues    PaymentDue[]
-  dueSettlements DueSettlement[]
+  id String @id
+
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
+
+  amount     Int
+  category   String
+  date       String
+  notes      String?
+  status     String
+  voidReason String?
+  voidedAt   DateTime?
+  voidedBy   String?
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  settlements DueSettlement[]
 
   @@index([memberId])
   @@index([status])
@@ -163,27 +198,52 @@ model Due {
   @@map("due")
 }
 
+model DueSettlement {
+  id String @id
+
+  dueId String
+  due   Due    @relation(fields: [dueId], references: [id])
+
+  memberLedgerEntryId String
+  memberLedgerEntry   MemberLedgerEntry @relation(fields: [memberLedgerEntryId], references: [id])
+
+  amount Int
+
+  paymentId String?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  status String
+
+  @@unique([dueId, memberLedgerEntryId])
+  @@index([dueId])
+  @@index([memberLedgerEntryId])
+  @@index([paymentId])
+  @@map("due_settlement")
+}
+
 model Payment {
-  id                  String              @id
-  memberId            String
-  member              Member              @relation(fields: [memberId], references: [id])
-  amount              Int
-  date                String
-  notes               String?
-  status              String
-  receiptNumber       String?
-  voidReason          String?
-  voidedAt            DateTime?
-  voidedBy            String?
-  createdAt           DateTime            @default(now())
-  createdBy           String
-  updatedAt           DateTime            @updatedAt
-  updatedBy           String?
-  deletedAt           DateTime?
-  deletedBy           String?
-  paymentDues         PaymentDue[]
-  memberLedgerEntries MemberLedgerEntry[]
-  dueSettlements      DueSettlement[]
+  id String @id
+
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
+
+  amount        Int
+  date          String
+  notes         String?
+  status        String
+  receiptNumber String?
+  voidReason    String?
+  voidedAt      DateTime?
+  voidedBy      String?
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  ledgerEntries MemberLedgerEntry[]
+  settlements   DueSettlement[]
+  movements     Movement[]
 
   @@index([date])
   @@index([memberId])
@@ -192,40 +252,26 @@ model Payment {
   @@map("payment")
 }
 
-model PaymentDue {
-  paymentId String
-  payment   Payment @relation(fields: [paymentId], references: [id])
-  dueId     String
-  due       Due     @relation(fields: [dueId], references: [id])
-  amount    Int
-  status    String
-
-  @@id([paymentId, dueId])
-  @@index([paymentId])
-  @@index([dueId])
-  @@index([status])
-  @@map("payment_due")
-}
-
 model Movement {
-  id          String    @id
-  type        String
-  category    String
-  amount      Int
-  date        String
-  description String?
-  status      String
-  mode        String
-  voidReason  String?
-  voidedAt    DateTime?
-  voidedBy    String?
-  paymentId   String?
-  createdAt   DateTime  @default(now())
-  createdBy   String
-  updatedAt   DateTime  @updatedAt
-  updatedBy   String?
-  deletedAt   DateTime?
-  deletedBy   String?
+  id         String    @id
+  type       String
+  category   String
+  amount     Int
+  date       String
+  notes      String?
+  status     String
+  mode       String
+  voidReason String?
+  voidedAt   DateTime?
+  voidedBy   String?
+
+  paymentId String?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
 
   @@index([type])
   @@index([category])
@@ -255,18 +301,17 @@ model AuditLog {
 }
 
 model Pricing {
-  id             String    @id
+  id             String  @id
   dueCategory    String
   memberCategory String
   amount         Int
   effectiveFrom  String
   effectiveTo    String?
-  createdAt      DateTime  @default(now())
-  createdBy      String
-  updatedAt      DateTime  @updatedAt
-  updatedBy      String?
-  deletedAt      DateTime?
-  deletedBy      String?
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
 
   @@index([dueCategory])
   @@index([memberCategory])
@@ -274,64 +319,4 @@ model Pricing {
   @@index([effectiveTo])
   @@index([dueCategory, memberCategory, effectiveFrom, effectiveTo])
   @@map("pricing")
-}
-
-model MemberLedgerEntry {
-  id       String @id
-  memberId String
-  member   Member @relation(fields: [memberId], references: [id])
-
-  // signed: +credit, -debit
-  amount Int
-
-  type        String // e.g. TOP_UP, DUE_PAYMENT, ADJUSTMENT, REFUND, VOID_REVERSAL
-  description String?
-  date        String? // if you keep date as string in your domain
-  status      String
-
-  paymentId String?
-  payment   Payment? @relation(fields: [paymentId], references: [id])
-
-  reversalOfId String?
-  reversalOf   MemberLedgerEntry?  @relation("LedgerReversal", fields: [reversalOfId], references: [id])
-  reversals    MemberLedgerEntry[] @relation("LedgerReversal")
-
-  settlements DueSettlement[]
-
-  createdAt DateTime @default(now())
-  createdBy String
-  updatedAt DateTime @updatedAt
-  updatedBy String?
-
-  @@index([memberId])
-  @@index([paymentId])
-  @@index([type])
-  @@map("member_ledger_entry")
-}
-
-model DueSettlement {
-  id String @id
-
-  dueId String
-  due   Due    @relation(fields: [dueId], references: [id])
-
-  ledgerEntryId String
-  ledgerEntry   MemberLedgerEntry @relation(fields: [ledgerEntryId], references: [id])
-
-  // allocation amount (positive)
-  amount Int
-
-  paymentId String?
-  payment   Payment? @relation(fields: [paymentId], references: [id])
-
-  status String @default("APPLIED") // optional
-
-  createdAt DateTime @default(now())
-  createdBy String
-
-  @@unique([dueId, ledgerEntryId]) // optional; depends if you want multiple rows per pair
-  @@index([dueId])
-  @@index([ledgerEntryId])
-  @@index([paymentId])
-  @@map("due_settlement")
 }

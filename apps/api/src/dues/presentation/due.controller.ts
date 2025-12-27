@@ -241,19 +241,19 @@ export class DuesController extends BaseController {
   public async getPaymentDues(
     @Param() request: ParamIdDto,
   ): Promise<PaymentDueDetailWithPaymentDto[]> {
-    const data = await this.dueRepository.findPaymentDuesModel(
+    const data = await this.dueRepository.findSettlementsModel(
       UniqueId.raw({ value: request.id }),
     );
 
-    return data.map(({ payment, paymentDue }) => ({
-      amount: paymentDue.amount.toCents(),
-      dueId: paymentDue.dueId.value,
+    return data.map(({ payment, settlement }) => ({
+      amount: settlement.amount.toCents(),
+      dueId: settlement.dueId.value,
       paymentAmount: payment.amount.toCents(),
       paymentDate: payment.date.value,
-      paymentId: payment.id.value,
+      paymentId: settlement.paymentId?.value ?? '',
       paymentReceiptNumber: payment.receiptNumber,
       paymentStatus: payment.status,
-      status: paymentDue.status,
+      status: settlement.status,
     }));
   }
 

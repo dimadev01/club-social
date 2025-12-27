@@ -6,9 +6,8 @@ import {
   MemberSex,
 } from '@club-social/shared/members';
 
-import type { BaseEntityProps } from '@/shared/domain/entity';
-
-import { Entity } from '@/shared/domain/entity';
+import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
+import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { ok, Result } from '@/shared/domain/result';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
@@ -17,13 +16,11 @@ import { UserEntity } from '@/users/domain/entities/user.entity';
 
 import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
-import { UpdateMemberProfileProps } from '../interfaces/member.interface';
 
 interface MemberProps {
   address: Address | null;
   birthDate: DateOnly | null;
   category: MemberCategory;
-  createdBy: string;
   documentID: null | string;
   fileStatus: FileStatus;
   maritalStatus: MaritalStatus | null;
@@ -33,7 +30,7 @@ interface MemberProps {
   userId: UniqueId;
 }
 
-export class MemberEntity extends Entity<MemberEntity> {
+export class MemberEntity extends AuditedAggregateRoot {
   public get address(): Address | null {
     return this._address;
   }
@@ -82,11 +79,13 @@ export class MemberEntity extends Entity<MemberEntity> {
   private _maritalStatus: MaritalStatus | null;
   private _nationality: MemberNationality | null;
   private _phones: string[];
+
   private _sex: MemberSex | null;
+
   private _userId: UniqueId;
 
-  private constructor(props: MemberProps, base?: BaseEntityProps) {
-    super(base);
+  private constructor(props: MemberProps, meta?: PersistenceMeta) {
+    super(meta?.id, meta?.audit);
 
     this._address = props.address;
     this._birthDate = props.birthDate;
@@ -98,25 +97,16 @@ export class MemberEntity extends Entity<MemberEntity> {
     this._phones = props.phones;
     this._sex = props.sex;
     this._userId = props.userId;
-    this._createdBy = props.createdBy;
   }
 
   public static create(
     props: MemberProps,
     user: UserEntity,
+    createdBy: string,
   ): Result<MemberEntity> {
-    const member = new MemberEntity({
-      address: props.address,
-      birthDate: props.birthDate,
-      category: props.category,
-      createdBy: props.createdBy,
-      documentID: props.documentID,
-      fileStatus: props.fileStatus,
-      maritalStatus: props.maritalStatus,
-      nationality: props.nationality,
-      phones: props.phones,
-      sex: props.sex,
-      userId: props.userId,
+    const member = new MemberEntity(props, {
+      audit: { createdBy },
+      id: UniqueId.generate(),
     });
 
     member.addEvent(new MemberCreatedEvent(member, user));
@@ -126,9 +116,9 @@ export class MemberEntity extends Entity<MemberEntity> {
 
   public static fromPersistence(
     props: MemberProps,
-    base: BaseEntityProps,
+    meta: PersistenceMeta,
   ): MemberEntity {
-    return new MemberEntity(props, base);
+    return new MemberEntity(props, meta);
   }
 
   public clone(): MemberEntity {
@@ -137,7 +127,6 @@ export class MemberEntity extends Entity<MemberEntity> {
         address: this._address,
         birthDate: this._birthDate,
         category: this._category,
-        createdBy: this._createdBy,
         documentID: this._documentID,
         fileStatus: this._fileStatus,
         maritalStatus: this._maritalStatus,
@@ -147,18 +136,24 @@ export class MemberEntity extends Entity<MemberEntity> {
         userId: this._userId,
       },
       {
-        createdAt: this._createdAt,
-        createdBy: this._createdBy,
-        deletedAt: this._deletedAt,
-        deletedBy: this._deletedBy,
-        id: this._id,
-        updatedAt: this._updatedAt,
-        updatedBy: this._updatedBy,
+        audit: { ...this._audit },
+        id: this.id,
       },
     );
   }
 
-  public updateProfile(props: UpdateMemberProfileProps) {
+  public updateProfile(props: {
+    address: Address | null;
+    birthDate: DateOnly | null;
+    category: MemberCategory;
+    documentID: null | string;
+    fileStatus: FileStatus;
+    maritalStatus: MaritalStatus | null;
+    nationality: MemberNationality | null;
+    phones: string[];
+    sex: MemberSex | null;
+    updatedBy: string;
+  }) {
     const oldMember = this.clone();
 
     this._address = props.address;
@@ -170,8 +165,8 @@ export class MemberEntity extends Entity<MemberEntity> {
     this._nationality = props.nationality;
     this._phones = props.phones;
     this._sex = props.sex;
-    this.markAsUpdated(props.updatedBy);
 
+    this.markAsUpdated(props.updatedBy);
     this.addEvent(new MemberUpdatedEvent(oldMember, this));
   }
 }

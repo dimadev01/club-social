@@ -1,13 +1,13 @@
 import { DueCategory } from '@club-social/shared/dues';
 import { MemberCategory } from '@club-social/shared/members';
 
-import type { BaseEntityProps } from '@/shared/domain/entity';
-
-import { Entity } from '@/shared/domain/entity';
+import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
+import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { err, ok, Result } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PricingCreatedEvent } from '../events/pricing-created.event';
 import { PricingUpdatedEvent } from '../events/pricing-updated.event';
@@ -15,14 +15,13 @@ import { UpdatePricingProps } from '../interfaces/pricing.interface';
 
 interface PricingProps {
   amount: Amount;
-  createdBy: string;
   dueCategory: DueCategory;
   effectiveFrom: DateOnly;
   effectiveTo: DateOnly | null;
   memberCategory: MemberCategory;
 }
 
-export class PricingEntity extends Entity<PricingEntity> {
+export class PricingEntity extends AuditedAggregateRoot {
   public get amount(): Amount {
     return this._amount;
   }
@@ -49,29 +48,33 @@ export class PricingEntity extends Entity<PricingEntity> {
   private _effectiveTo: DateOnly | null;
   private _memberCategory: MemberCategory;
 
-  private constructor(props: PricingProps, base?: BaseEntityProps) {
-    super(base);
+  private constructor(props: PricingProps, meta?: PersistenceMeta) {
+    super(meta?.id, meta?.audit);
 
     this._amount = props.amount;
-    this._createdBy = props.createdBy;
     this._dueCategory = props.dueCategory;
     this._effectiveFrom = props.effectiveFrom;
     this._effectiveTo = props.effectiveTo;
     this._memberCategory = props.memberCategory;
-    this._updatedBy = props.createdBy;
   }
 
   public static create(
     props: Omit<PricingProps, 'effectiveTo'>,
+    createdBy: string,
   ): Result<PricingEntity> {
-    const pricing = new PricingEntity({
-      amount: props.amount,
-      createdBy: props.createdBy,
-      dueCategory: props.dueCategory,
-      effectiveFrom: props.effectiveFrom,
-      effectiveTo: null,
-      memberCategory: props.memberCategory,
-    });
+    const pricing = new PricingEntity(
+      {
+        amount: props.amount,
+        dueCategory: props.dueCategory,
+        effectiveFrom: props.effectiveFrom,
+        effectiveTo: null,
+        memberCategory: props.memberCategory,
+      },
+      {
+        audit: { createdBy },
+        id: UniqueId.generate(),
+      },
+    );
 
     pricing.addEvent(new PricingCreatedEvent(pricing));
 
@@ -80,29 +83,23 @@ export class PricingEntity extends Entity<PricingEntity> {
 
   public static fromPersistence(
     props: PricingProps,
-    base: BaseEntityProps,
+    meta: PersistenceMeta,
   ): PricingEntity {
-    return new PricingEntity(props, base);
+    return new PricingEntity(props, meta);
   }
 
   public clone(): PricingEntity {
     return PricingEntity.fromPersistence(
       {
         amount: this._amount,
-        createdBy: this._createdBy,
         dueCategory: this._dueCategory,
         effectiveFrom: this._effectiveFrom,
         effectiveTo: this._effectiveTo,
         memberCategory: this._memberCategory,
       },
       {
-        createdAt: this._createdAt,
-        createdBy: this._createdBy,
-        deletedAt: this._deletedAt,
-        deletedBy: this._deletedBy,
-        id: this._id,
-        updatedAt: this._updatedAt,
-        updatedBy: this._updatedBy,
+        audit: { ...this._audit },
+        id: this.id,
       },
     );
   }

@@ -5,6 +5,6 @@ export interface CreateMovementParams {
   category: MovementCategory;
   createdBy: string;
   date: string;
-  description: null | string;
+  notes: null | string;
   type: MovementType;
 }

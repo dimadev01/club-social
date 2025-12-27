@@ -42,8 +42,6 @@ export type MemberMinAggregateOutputType = {
   createdBy: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
 };
 
 export type MemberMaxAggregateOutputType = {
@@ -64,8 +62,6 @@ export type MemberMaxAggregateOutputType = {
   createdBy: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
 };
 
 export type MemberCountAggregateOutputType = {
@@ -87,8 +83,6 @@ export type MemberCountAggregateOutputType = {
   createdBy: number;
   updatedAt: number;
   updatedBy: number;
-  deletedAt: number;
-  deletedBy: number;
   _all: number;
 };
 
@@ -110,8 +104,6 @@ export type MemberMinAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
 };
 
 export type MemberMaxAggregateInputType = {
@@ -132,8 +124,6 @@ export type MemberMaxAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
 };
 
 export type MemberCountAggregateInputType = {
@@ -155,8 +145,6 @@ export type MemberCountAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
-  deletedAt?: true;
-  deletedBy?: true;
   _all?: true;
 };
 
@@ -258,8 +246,6 @@ export type MemberGroupByOutputType = {
   createdBy: string;
   updatedAt: Date;
   updatedBy: string | null;
-  deletedAt: Date | null;
-  deletedBy: string | null;
   _count: MemberCountAggregateOutputType | null;
   _min: MemberMinAggregateOutputType | null;
   _max: MemberMaxAggregateOutputType | null;
@@ -300,11 +286,10 @@ export type MemberWhereInput = {
   createdBy?: Prisma.StringFilter<'Member'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Member'> | Date | string;
   updatedBy?: Prisma.StringNullableFilter<'Member'> | string | null;
-  deletedAt?: Prisma.DateTimeNullableFilter<'Member'> | Date | string | null;
-  deletedBy?: Prisma.StringNullableFilter<'Member'> | string | null;
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
   dues?: Prisma.DueListRelationFilter;
   payments?: Prisma.PaymentListRelationFilter;
+  ledgerEntries?: Prisma.MemberLedgerEntryListRelationFilter;
 };
 
 export type MemberOrderByWithRelationInput = {
@@ -326,11 +311,10 @@ export type MemberOrderByWithRelationInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   user?: Prisma.UserOrderByWithRelationInput;
   dues?: Prisma.DueOrderByRelationAggregateInput;
   payments?: Prisma.PaymentOrderByRelationAggregateInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryOrderByRelationAggregateInput;
 };
 
 export type MemberWhereUniqueInput = Prisma.AtLeast<
@@ -356,11 +340,10 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<
     createdBy?: Prisma.StringFilter<'Member'> | string;
     updatedAt?: Prisma.DateTimeFilter<'Member'> | Date | string;
     updatedBy?: Prisma.StringNullableFilter<'Member'> | string | null;
-    deletedAt?: Prisma.DateTimeNullableFilter<'Member'> | Date | string | null;
-    deletedBy?: Prisma.StringNullableFilter<'Member'> | string | null;
     user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>;
     dues?: Prisma.DueListRelationFilter;
     payments?: Prisma.PaymentListRelationFilter;
+    ledgerEntries?: Prisma.MemberLedgerEntryListRelationFilter;
   },
   'id' | 'userId'
 >;
@@ -384,8 +367,6 @@ export type MemberOrderByWithAggregationInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.MemberCountOrderByAggregateInput;
   _max?: Prisma.MemberMaxOrderByAggregateInput;
   _min?: Prisma.MemberMinOrderByAggregateInput;
@@ -438,15 +419,6 @@ export type MemberScalarWhereWithAggregatesInput = {
     | Prisma.StringNullableWithAggregatesFilter<'Member'>
     | string
     | null;
-  deletedAt?:
-    | Prisma.DateTimeNullableWithAggregatesFilter<'Member'>
-    | Date
-    | string
-    | null;
-  deletedBy?:
-    | Prisma.StringNullableWithAggregatesFilter<'Member'>
-    | string
-    | null;
 };
 
 export type MemberCreateInput = {
@@ -467,11 +439,10 @@ export type MemberCreateInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   user: Prisma.UserCreateNestedOneWithoutMemberInput;
   dues?: Prisma.DueCreateNestedManyWithoutMemberInput;
   payments?: Prisma.PaymentCreateNestedManyWithoutMemberInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberUncheckedCreateInput = {
@@ -493,10 +464,9 @@ export type MemberUncheckedCreateInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   dues?: Prisma.DueUncheckedCreateNestedManyWithoutMemberInput;
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMemberInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberUpdateInput = {
@@ -520,15 +490,10 @@ export type MemberUpdateInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   user?: Prisma.UserUpdateOneRequiredWithoutMemberNestedInput;
   dues?: Prisma.DueUpdateManyWithoutMemberNestedInput;
   payments?: Prisma.PaymentUpdateManyWithoutMemberNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberUncheckedUpdateInput = {
@@ -553,14 +518,9 @@ export type MemberUncheckedUpdateInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   dues?: Prisma.DueUncheckedUpdateManyWithoutMemberNestedInput;
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutMemberNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberCreateManyInput = {
@@ -582,8 +542,6 @@ export type MemberCreateManyInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
 };
 
 export type MemberUpdateManyMutationInput = {
@@ -607,12 +565,6 @@ export type MemberUpdateManyMutationInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type MemberUncheckedUpdateManyInput = {
@@ -637,12 +589,6 @@ export type MemberUncheckedUpdateManyInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type MemberNullableScalarRelationFilter = {
@@ -677,8 +623,6 @@ export type MemberCountOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type MemberMaxOrderByAggregateInput = {
@@ -699,8 +643,6 @@ export type MemberMaxOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type MemberMinOrderByAggregateInput = {
@@ -721,8 +663,6 @@ export type MemberMinOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
-  deletedAt?: Prisma.SortOrder;
-  deletedBy?: Prisma.SortOrder;
 };
 
 export type MemberScalarRelationFilter = {
@@ -795,6 +735,32 @@ export type MemberUpdatephonesInput = {
   push?: string | string[];
 };
 
+export type MemberCreateNestedOneWithoutLedgerEntriesInput = {
+  create?: Prisma.XOR<
+    Prisma.MemberCreateWithoutLedgerEntriesInput,
+    Prisma.MemberUncheckedCreateWithoutLedgerEntriesInput
+  >;
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutLedgerEntriesInput;
+  connect?: Prisma.MemberWhereUniqueInput;
+};
+
+export type MemberUpdateOneRequiredWithoutLedgerEntriesNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.MemberCreateWithoutLedgerEntriesInput,
+    Prisma.MemberUncheckedCreateWithoutLedgerEntriesInput
+  >;
+  connectOrCreate?: Prisma.MemberCreateOrConnectWithoutLedgerEntriesInput;
+  upsert?: Prisma.MemberUpsertWithoutLedgerEntriesInput;
+  connect?: Prisma.MemberWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.MemberUpdateToOneWithWhereWithoutLedgerEntriesInput,
+      Prisma.MemberUpdateWithoutLedgerEntriesInput
+    >,
+    Prisma.MemberUncheckedUpdateWithoutLedgerEntriesInput
+  >;
+};
+
 export type MemberCreateNestedOneWithoutDuesInput = {
   create?: Prisma.XOR<
     Prisma.MemberCreateWithoutDuesInput,
@@ -865,10 +831,9 @@ export type MemberCreateWithoutUserInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   dues?: Prisma.DueCreateNestedManyWithoutMemberInput;
   payments?: Prisma.PaymentCreateNestedManyWithoutMemberInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberUncheckedCreateWithoutUserInput = {
@@ -889,10 +854,9 @@ export type MemberUncheckedCreateWithoutUserInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   dues?: Prisma.DueUncheckedCreateNestedManyWithoutMemberInput;
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMemberInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberCreateOrConnectWithoutUserInput = {
@@ -944,14 +908,9 @@ export type MemberUpdateWithoutUserInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   dues?: Prisma.DueUpdateManyWithoutMemberNestedInput;
   payments?: Prisma.PaymentUpdateManyWithoutMemberNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberUncheckedUpdateWithoutUserInput = {
@@ -975,12 +934,133 @@ export type MemberUncheckedUpdateWithoutUserInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
+  dues?: Prisma.DueUncheckedUpdateManyWithoutMemberNestedInput;
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutMemberNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutMemberNestedInput;
+};
+
+export type MemberCreateWithoutLedgerEntriesInput = {
+  id: string;
+  birthDate?: string | null;
+  category: string;
+  maritalStatus?: string | null;
+  documentID?: string | null;
+  fileStatus: string;
+  nationality?: string | null;
+  phones?: Prisma.MemberCreatephonesInput | string[];
+  sex?: string | null;
+  street?: string | null;
+  cityName?: string | null;
+  stateName?: string | null;
+  zipCode?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  user: Prisma.UserCreateNestedOneWithoutMemberInput;
+  dues?: Prisma.DueCreateNestedManyWithoutMemberInput;
+  payments?: Prisma.PaymentCreateNestedManyWithoutMemberInput;
+};
+
+export type MemberUncheckedCreateWithoutLedgerEntriesInput = {
+  id: string;
+  userId: string;
+  birthDate?: string | null;
+  category: string;
+  maritalStatus?: string | null;
+  documentID?: string | null;
+  fileStatus: string;
+  nationality?: string | null;
+  phones?: Prisma.MemberCreatephonesInput | string[];
+  sex?: string | null;
+  street?: string | null;
+  cityName?: string | null;
+  stateName?: string | null;
+  zipCode?: string | null;
+  createdAt?: Date | string;
+  createdBy: string;
+  updatedAt?: Date | string;
+  updatedBy?: string | null;
+  dues?: Prisma.DueUncheckedCreateNestedManyWithoutMemberInput;
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMemberInput;
+};
+
+export type MemberCreateOrConnectWithoutLedgerEntriesInput = {
+  where: Prisma.MemberWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.MemberCreateWithoutLedgerEntriesInput,
+    Prisma.MemberUncheckedCreateWithoutLedgerEntriesInput
+  >;
+};
+
+export type MemberUpsertWithoutLedgerEntriesInput = {
+  update: Prisma.XOR<
+    Prisma.MemberUpdateWithoutLedgerEntriesInput,
+    Prisma.MemberUncheckedUpdateWithoutLedgerEntriesInput
+  >;
+  create: Prisma.XOR<
+    Prisma.MemberCreateWithoutLedgerEntriesInput,
+    Prisma.MemberUncheckedCreateWithoutLedgerEntriesInput
+  >;
+  where?: Prisma.MemberWhereInput;
+};
+
+export type MemberUpdateToOneWithWhereWithoutLedgerEntriesInput = {
+  where?: Prisma.MemberWhereInput;
+  data: Prisma.XOR<
+    Prisma.MemberUpdateWithoutLedgerEntriesInput,
+    Prisma.MemberUncheckedUpdateWithoutLedgerEntriesInput
+  >;
+};
+
+export type MemberUpdateWithoutLedgerEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  category?: Prisma.StringFieldUpdateOperationsInput | string;
+  maritalStatus?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  documentID?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  fileStatus?: Prisma.StringFieldUpdateOperationsInput | string;
+  nationality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  phones?: Prisma.MemberUpdatephonesInput | string[];
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  user?: Prisma.UserUpdateOneRequiredWithoutMemberNestedInput;
+  dues?: Prisma.DueUpdateManyWithoutMemberNestedInput;
+  payments?: Prisma.PaymentUpdateManyWithoutMemberNestedInput;
+};
+
+export type MemberUncheckedUpdateWithoutLedgerEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  userId?: Prisma.StringFieldUpdateOperationsInput | string;
+  birthDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  category?: Prisma.StringFieldUpdateOperationsInput | string;
+  maritalStatus?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  documentID?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  fileStatus?: Prisma.StringFieldUpdateOperationsInput | string;
+  nationality?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  phones?: Prisma.MemberUpdatephonesInput | string[];
+  sex?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  street?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   dues?: Prisma.DueUncheckedUpdateManyWithoutMemberNestedInput;
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutMemberNestedInput;
 };
@@ -1003,10 +1083,9 @@ export type MemberCreateWithoutDuesInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   user: Prisma.UserCreateNestedOneWithoutMemberInput;
   payments?: Prisma.PaymentCreateNestedManyWithoutMemberInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberUncheckedCreateWithoutDuesInput = {
@@ -1028,9 +1107,8 @@ export type MemberUncheckedCreateWithoutDuesInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutMemberInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberCreateOrConnectWithoutDuesInput = {
@@ -1082,14 +1160,9 @@ export type MemberUpdateWithoutDuesInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   user?: Prisma.UserUpdateOneRequiredWithoutMemberNestedInput;
   payments?: Prisma.PaymentUpdateManyWithoutMemberNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberUncheckedUpdateWithoutDuesInput = {
@@ -1114,13 +1187,8 @@ export type MemberUncheckedUpdateWithoutDuesInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutMemberNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberCreateWithoutPaymentsInput = {
@@ -1141,10 +1209,9 @@ export type MemberCreateWithoutPaymentsInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   user: Prisma.UserCreateNestedOneWithoutMemberInput;
   dues?: Prisma.DueCreateNestedManyWithoutMemberInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberUncheckedCreateWithoutPaymentsInput = {
@@ -1166,9 +1233,8 @@ export type MemberUncheckedCreateWithoutPaymentsInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
   dues?: Prisma.DueUncheckedCreateNestedManyWithoutMemberInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutMemberInput;
 };
 
 export type MemberCreateOrConnectWithoutPaymentsInput = {
@@ -1220,14 +1286,9 @@ export type MemberUpdateWithoutPaymentsInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   user?: Prisma.UserUpdateOneRequiredWithoutMemberNestedInput;
   dues?: Prisma.DueUpdateManyWithoutMemberNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUpdateManyWithoutMemberNestedInput;
 };
 
 export type MemberUncheckedUpdateWithoutPaymentsInput = {
@@ -1252,13 +1313,8 @@ export type MemberUncheckedUpdateWithoutPaymentsInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   dues?: Prisma.DueUncheckedUpdateManyWithoutMemberNestedInput;
+  ledgerEntries?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutMemberNestedInput;
 };
 
 /**
@@ -1268,6 +1324,7 @@ export type MemberUncheckedUpdateWithoutPaymentsInput = {
 export type MemberCountOutputType = {
   dues: number;
   payments: number;
+  ledgerEntries: number;
 };
 
 export type MemberCountOutputTypeSelect<
@@ -1276,6 +1333,7 @@ export type MemberCountOutputTypeSelect<
 > = {
   dues?: boolean | MemberCountOutputTypeCountDuesArgs;
   payments?: boolean | MemberCountOutputTypeCountPaymentsArgs;
+  ledgerEntries?: boolean | MemberCountOutputTypeCountLedgerEntriesArgs;
 };
 
 /**
@@ -1311,6 +1369,16 @@ export type MemberCountOutputTypeCountPaymentsArgs<
   where?: Prisma.PaymentWhereInput;
 };
 
+/**
+ * MemberCountOutputType without action
+ */
+export type MemberCountOutputTypeCountLedgerEntriesArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.MemberLedgerEntryWhereInput;
+};
+
 export type MemberSelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
@@ -1334,11 +1402,10 @@ export type MemberSelect<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
     user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
     dues?: boolean | Prisma.Member$duesArgs<ExtArgs>;
     payments?: boolean | Prisma.Member$paymentsArgs<ExtArgs>;
+    ledgerEntries?: boolean | Prisma.Member$ledgerEntriesArgs<ExtArgs>;
     _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['member']
@@ -1367,8 +1434,6 @@ export type MemberSelectCreateManyAndReturn<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
     user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['member']
@@ -1397,8 +1462,6 @@ export type MemberSelectUpdateManyAndReturn<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
-    deletedAt?: boolean;
-    deletedBy?: boolean;
     user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['member']
@@ -1423,8 +1486,6 @@ export type MemberSelectScalar = {
   createdBy?: boolean;
   updatedAt?: boolean;
   updatedBy?: boolean;
-  deletedAt?: boolean;
-  deletedBy?: boolean;
 };
 
 export type MemberOmit<
@@ -1448,9 +1509,7 @@ export type MemberOmit<
   | 'createdAt'
   | 'createdBy'
   | 'updatedAt'
-  | 'updatedBy'
-  | 'deletedAt'
-  | 'deletedBy',
+  | 'updatedBy',
   ExtArgs['result']['member']
 >;
 export type MemberInclude<
@@ -1460,6 +1519,7 @@ export type MemberInclude<
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
   dues?: boolean | Prisma.Member$duesArgs<ExtArgs>;
   payments?: boolean | Prisma.Member$paymentsArgs<ExtArgs>;
+  ledgerEntries?: boolean | Prisma.Member$ledgerEntriesArgs<ExtArgs>;
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type MemberIncludeCreateManyAndReturn<
@@ -1484,6 +1544,7 @@ export type $MemberPayload<
     user: Prisma.$UserPayload<ExtArgs>;
     dues: Prisma.$DuePayload<ExtArgs>[];
     payments: Prisma.$PaymentPayload<ExtArgs>[];
+    ledgerEntries: Prisma.$MemberLedgerEntryPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1505,8 +1566,6 @@ export type $MemberPayload<
       createdBy: string;
       updatedAt: Date;
       updatedBy: string | null;
-      deletedAt: Date | null;
-      deletedBy: string | null;
     },
     ExtArgs['result']['member']
   >;
@@ -2093,6 +2152,17 @@ export interface Prisma__MemberClient<
       >
     | Null
   >;
+  ledgerEntries<T extends Prisma.Member$ledgerEntriesArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Member$ledgerEntriesArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$MemberLedgerEntryPayload<ExtArgs>,
+        T,
+        'findMany',
+        GlobalOmitOptions
+      >
+    | Null
+  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2153,8 +2223,6 @@ export interface MemberFieldRefs {
   readonly createdBy: Prisma.FieldRef<'Member', 'String'>;
   readonly updatedAt: Prisma.FieldRef<'Member', 'DateTime'>;
   readonly updatedBy: Prisma.FieldRef<'Member', 'String'>;
-  readonly deletedAt: Prisma.FieldRef<'Member', 'DateTime'>;
-  readonly deletedBy: Prisma.FieldRef<'Member', 'String'>;
 }
 
 // Custom InputTypes
@@ -2665,6 +2733,37 @@ export type Member$paymentsArgs<
   take?: number;
   skip?: number;
   distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[];
+};
+
+/**
+ * Member.ledgerEntries
+ */
+export type Member$ledgerEntriesArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the MemberLedgerEntry
+   */
+  select?: Prisma.MemberLedgerEntrySelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the MemberLedgerEntry
+   */
+  omit?: Prisma.MemberLedgerEntryOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MemberLedgerEntryInclude<ExtArgs> | null;
+  where?: Prisma.MemberLedgerEntryWhereInput;
+  orderBy?:
+    | Prisma.MemberLedgerEntryOrderByWithRelationInput
+    | Prisma.MemberLedgerEntryOrderByWithRelationInput[];
+  cursor?: Prisma.MemberLedgerEntryWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?:
+    | Prisma.MemberLedgerEntryScalarFieldEnum
+    | Prisma.MemberLedgerEntryScalarFieldEnum[];
 };
 
 /**
