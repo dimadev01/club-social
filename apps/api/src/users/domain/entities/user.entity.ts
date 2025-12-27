@@ -5,6 +5,7 @@ import { SoftDeletablePersistenceMeta } from '@/shared/domain/persistence-meta';
 import { ok, Result } from '@/shared/domain/result';
 import { SoftDeletableAggregateRoot } from '@/shared/domain/soft-deletable-aggregate-root';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { UserCreatedEvent } from '../events/user-created.event';
@@ -15,8 +16,7 @@ interface UserProps {
   banned: boolean | null;
   banReason: null | string;
   email: Email;
-  firstName: string;
-  lastName: string;
+  name: Name;
   role: UserRole;
   status: UserStatus;
 }
@@ -38,16 +38,8 @@ export class UserEntity extends SoftDeletableAggregateRoot {
     return this._email;
   }
 
-  public get firstName(): string {
-    return this._firstName;
-  }
-
-  public get lastName(): string {
-    return this._lastName;
-  }
-
-  public get name(): string {
-    return `${this._lastName} ${this._firstName}`;
+  public get name(): Name {
+    return this._name;
   }
 
   public get role(): UserRole {
@@ -62,16 +54,14 @@ export class UserEntity extends SoftDeletableAggregateRoot {
   private _banned: boolean | null;
   private _banReason: null | string;
   private _email: Email;
-  private _firstName: string;
-  private _lastName: string;
+  private _name: Name;
   private _role: UserRole;
   private _status: UserStatus;
 
   private constructor(props: UserProps, meta?: SoftDeletablePersistenceMeta) {
     super(meta?.id, meta?.audit, meta?.deleted);
 
-    this._firstName = props.firstName;
-    this._lastName = props.lastName;
+    this._name = props.name;
     this._email = props.email;
     this._role = props.role;
     this._banned = props.banned;
@@ -108,8 +98,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
         banned: this._banned,
         banReason: this._banReason,
         email: this._email,
-        firstName: this._firstName,
-        lastName: this._lastName,
+        name: this._name,
         role: this._role,
         status: this._status,
       },
@@ -125,23 +114,20 @@ export class UserEntity extends SoftDeletableAggregateRoot {
     this._email = email;
   }
 
-  public updateName(firstName: string, lastName: string) {
-    this._firstName = firstName;
-    this._lastName = lastName;
+  public updateName(name: Name) {
+    this._name = name;
   }
 
   public updateProfile(props: {
     email: Email;
-    firstName: string;
-    lastName: string;
+    name: Name;
     status: UserStatus;
     updatedBy: string;
   }) {
     const oldUser = this.clone();
 
     this._email = props.email;
-    this._firstName = props.firstName;
-    this._lastName = props.lastName;
+    this._name = props.name;
     this._status = props.status;
 
     this.markAsUpdated(props.updatedBy);

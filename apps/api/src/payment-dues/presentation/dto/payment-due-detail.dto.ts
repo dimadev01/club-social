@@ -1,13 +1,13 @@
 import {
+  IPaymentDueDetailDto,
+  IPaymentDueDetailWithDueDto,
+  IPaymentDueDetailWithPaymentDto,
+} from '@club-social/shared/due-settlements';
+import {
   DueCategory,
   DueSettlementStatus,
   DueStatus,
 } from '@club-social/shared/dues';
-import {
-  IPaymentDueDetailDto,
-  IPaymentDueDetailWithDueDto,
-  IPaymentDueDetailWithPaymentDto,
-} from '@club-social/shared/payment-due';
 import { PaymentStatus } from '@club-social/shared/payments';
 
 export class PaymentDueDetailDto implements IPaymentDueDetailDto {

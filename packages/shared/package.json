@@ -34,10 +34,10 @@
       "require": "./dist/payments/index.js",
       "import": "./dist/payments/index.mjs"
     },
-    "./payment-due": {
-      "types": "./src/payment-due/index.ts",
-      "require": "./dist/payment-due/index.js",
-      "import": "./dist/payment-due/index.mjs"
+    "./due-settlements": {
+      "types": "./src/due-settlements/index.ts",
+      "require": "./dist/due-settlements/index.js",
+      "import": "./dist/due-settlements/index.mjs"
     },
     "./movements": {
       "types": "./src/movements/index.ts",

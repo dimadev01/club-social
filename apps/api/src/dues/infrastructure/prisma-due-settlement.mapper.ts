@@ -5,6 +5,7 @@ import {
   DueSettlementCreateInput,
   DueSettlementModel,
   DueSettlementUpdateInput,
+  DueSettlementWhereUniqueInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -31,38 +32,32 @@ export class PrismaDueSettlementMapper {
   public toUpserts(due: DueEntity): {
     create: DueSettlementCreateInput;
     update: DueSettlementUpdateInput;
-    where: {
-      dueId_memberLedgerEntryId: { dueId: string; memberLedgerEntryId: string };
-    };
+    where: DueSettlementWhereUniqueInput;
   }[] {
-    return due.settlements.map((settlement) => {
-      return {
-        create: {
-          amount: settlement.amount.toCents(),
-          due: { connect: { id: due.id.value } },
-          id: settlement.id.value,
-          memberLedgerEntry: {
-            connect: { id: settlement.memberLedgerEntryId.value },
-          },
-          status: settlement.status,
-          ...(settlement.paymentId
-            ? { payment: { connect: { id: settlement.paymentId.value } } }
-            : {}),
+    return due.settlements.map((settlement) => ({
+      create: {
+        amount: settlement.amount.toCents(),
+        due: { connect: { id: due.id.value } },
+        id: settlement.id.value,
+        memberLedgerEntry: {
+          connect: { id: settlement.memberLedgerEntryId.value },
         },
-        update: {
-          amount: settlement.amount.toCents(),
-          status: settlement.status,
-          ...(settlement.paymentId
-            ? { payment: { connect: { id: settlement.paymentId.value } } }
-            : { payment: { disconnect: true } }),
-        },
-        where: {
-          dueId_memberLedgerEntryId: {
-            dueId: due.id.value,
-            memberLedgerEntryId: settlement.memberLedgerEntryId.value,
-          },
-        },
-      };
-    });
+        status: settlement.status,
+        ...(settlement.paymentId
+          ? { payment: { connect: { id: settlement.paymentId.value } } }
+          : {}),
+      },
+      update: {
+        amount: settlement.amount.toCents(),
+        status: settlement.status,
+        ...(settlement.paymentId
+          ? { payment: { connect: { id: settlement.paymentId.value } } }
+          : { payment: { disconnect: true } }),
+      },
+      where: {
+        dueId: due.id.value,
+        memberLedgerEntryId: settlement.memberLedgerEntryId.value,
+      },
+    }));
   }
 }

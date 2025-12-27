@@ -100,7 +100,7 @@ export class UsersController extends BaseController {
       data: users.data.map((user) => ({
         email: user.email.value,
         id: user.id.value,
-        name: user.name,
+        name: user.name.fullName,
         role: user.role,
         status: user.status,
       })),
@@ -120,10 +120,10 @@ export class UsersController extends BaseController {
 
     return {
       email: user.email.value,
-      firstName: user.firstName,
+      firstName: user.name.firstName,
       id: user.id.value,
-      lastName: user.lastName,
-      name: user.name,
+      lastName: user.name.lastName,
+      name: user.name.fullName,
       role: user.role,
       status: user.status,
     };

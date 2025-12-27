@@ -81,6 +81,7 @@ export class MemberLedgerEntryEntity extends AuditedAggregateRoot {
     this._reversalOfId = props.reversalOfId;
     this._status = props.status;
     this._type = props.type;
+    this._source = props.source;
   }
 
   public static create(

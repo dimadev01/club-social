@@ -20,6 +20,10 @@ export const appRoutes = {
   home: '/',
   login: '/auth/login',
   logout: '/auth/logout',
+  memberLedger: {
+    list: '/member-ledger',
+    view: (id?: string) => `/member-ledger/${id}`,
+  } as const,
   members: {
     edit: (id?: string) => `/members/${id}/edit`,
     list: '/members',

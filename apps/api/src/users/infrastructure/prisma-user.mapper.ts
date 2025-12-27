@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { UserModel } from '@/infrastructure/database/prisma/generated/models';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { UserEntity } from '../domain/entities/user.entity';
@@ -17,8 +18,7 @@ export class PrismaUserMapper {
         banned: user.banned,
         banReason: user.banReason,
         email: Email.raw({ value: user.email }),
-        firstName: user.firstName,
-        lastName: user.lastName,
+        name: Name.raw({ firstName: user.firstName, lastName: user.lastName }),
         role: user.role as UserRole,
         status: user.status as UserStatus,
       },

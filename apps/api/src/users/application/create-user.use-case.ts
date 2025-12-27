@@ -12,6 +12,7 @@ import { ConflictError } from '@/shared/domain/errors/conflict.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok } from '@/shared/domain/result';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 import {
   USER_REPOSITORY_PROVIDER,
@@ -57,14 +58,22 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
       return err(new ConflictError('El email ya está en uso'));
     }
 
+    const name = Name.create({
+      firstName: params.firstName,
+      lastName: params.lastName,
+    });
+
+    if (name.isErr()) {
+      return err(name.error);
+    }
+
     const user = UserEntity.create(
       {
         banExpires: null,
         banned: false,
         banReason: null,
         email: email.value,
-        firstName: params.firstName,
-        lastName: params.lastName,
+        name: name.value,
         role: params.role,
         status: UserStatus.ACTIVE,
       },

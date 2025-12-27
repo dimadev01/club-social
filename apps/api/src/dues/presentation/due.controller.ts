@@ -139,7 +139,7 @@ export class DuesController extends BaseController {
         header: 'Fecha',
       },
       {
-        accessor: (row) => row.user.name,
+        accessor: (row) => row.user.name.fullName,
         header: 'Socio',
       },
       {
@@ -188,7 +188,7 @@ export class DuesController extends BaseController {
         date: due.date.value,
         id: due.id.value,
         memberId: member.id.value,
-        memberName: user.name,
+        memberName: user.name.fullName,
         status: due.status,
         userStatus: user.status,
       })),
@@ -278,7 +278,7 @@ export class DuesController extends BaseController {
       id: due.id.value,
       memberCategory: member.category,
       memberId: member.id.value,
-      memberName: user.name,
+      memberName: user.name.fullName,
       notes: due.notes,
       status: due.status,
       updatedAt: due.updatedAt?.toISOString() ?? '',

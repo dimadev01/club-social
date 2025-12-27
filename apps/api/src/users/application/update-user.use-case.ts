@@ -12,6 +12,7 @@ import { ConflictError } from '@/shared/domain/errors/conflict.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok } from '@/shared/domain/result';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 import {
@@ -65,10 +66,18 @@ export class UpdateUserUseCase extends UseCase<UserEntity> {
       UniqueId.raw({ value: params.id }),
     );
 
-    user.updateProfile({
-      email: email.value,
+    const name = Name.create({
       firstName: params.firstName,
       lastName: params.lastName,
+    });
+
+    if (name.isErr()) {
+      return err(name.error);
+    }
+
+    user.updateProfile({
+      email: email.value,
+      name: name.value,
       status: params.status,
       updatedBy: params.updatedBy,
     });

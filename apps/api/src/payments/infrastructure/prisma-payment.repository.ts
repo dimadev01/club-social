@@ -4,7 +4,7 @@ import type {
   PaginatedResponse,
 } from '@club-social/shared/types';
 
-import { PaymentDueStatus } from '@club-social/shared/payment-due';
+import { DueSettlementStatus } from '@club-social/shared/dues';
 import { PaymentStatus } from '@club-social/shared/payments';
 import { Injectable } from '@nestjs/common';
 
@@ -63,7 +63,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
       payment: {
         status: PaymentStatus.PAID,
       },
-      status: PaymentDueStatus.REGISTERED,
+      status: DueSettlementStatus.APPLIED,
     };
 
     if (params.dateRange) {

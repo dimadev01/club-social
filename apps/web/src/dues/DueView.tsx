@@ -1,4 +1,4 @@
-import type { IPaymentDueDetailWithPaymentDto } from '@club-social/shared/payment-due';
+import type { IPaymentDueDetailWithPaymentDto } from '@club-social/shared/due-settlements';
 
 import {
   DueCategoryLabel,

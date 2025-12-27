@@ -1,4 +1,4 @@
-import type { ICreatePaymentDueDto } from '../payment-due';
+import type { ICreatePaymentDueDto } from '../due-settlements';
 
 import { DueCategory } from '../dues';
 import { UserStatus } from '../users';
@@ -24,7 +24,7 @@ export interface IPaymentDetailDto {
   receiptNumber: null | string;
   status: PaymentStatus;
   updatedAt: string;
-  updatedBy?: string | null;
+  updatedBy?: null | string;
   userStatus: UserStatus;
   voidedAt: null | string;
   voidedBy: null | string;

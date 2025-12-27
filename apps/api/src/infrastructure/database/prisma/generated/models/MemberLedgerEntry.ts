@@ -320,7 +320,10 @@ export type MemberLedgerEntryWhereInput = {
     Prisma.MemberLedgerEntryWhereInput
   > | null;
   reversals?: Prisma.MemberLedgerEntryListRelationFilter;
-  settlements?: Prisma.DueSettlementListRelationFilter;
+  settlement?: Prisma.XOR<
+    Prisma.DueSettlementNullableScalarRelationFilter,
+    Prisma.DueSettlementWhereInput
+  > | null;
 };
 
 export type MemberLedgerEntryOrderByWithRelationInput = {
@@ -342,7 +345,7 @@ export type MemberLedgerEntryOrderByWithRelationInput = {
   payment?: Prisma.PaymentOrderByWithRelationInput;
   reversalOf?: Prisma.MemberLedgerEntryOrderByWithRelationInput;
   reversals?: Prisma.MemberLedgerEntryOrderByRelationAggregateInput;
-  settlements?: Prisma.DueSettlementOrderByRelationAggregateInput;
+  settlement?: Prisma.DueSettlementOrderByWithRelationInput;
 };
 
 export type MemberLedgerEntryWhereUniqueInput = Prisma.AtLeast<
@@ -390,7 +393,10 @@ export type MemberLedgerEntryWhereUniqueInput = Prisma.AtLeast<
       Prisma.MemberLedgerEntryWhereInput
     > | null;
     reversals?: Prisma.MemberLedgerEntryListRelationFilter;
-    settlements?: Prisma.DueSettlementListRelationFilter;
+    settlement?: Prisma.XOR<
+      Prisma.DueSettlementNullableScalarRelationFilter,
+      Prisma.DueSettlementWhereInput
+    > | null;
   },
   'id'
 >;
@@ -475,7 +481,7 @@ export type MemberLedgerEntryCreateInput = {
   payment?: Prisma.PaymentCreateNestedOneWithoutLedgerEntriesInput;
   reversalOf?: Prisma.MemberLedgerEntryCreateNestedOneWithoutReversalsInput;
   reversals?: Prisma.MemberLedgerEntryCreateNestedManyWithoutReversalOfInput;
-  settlements?: Prisma.DueSettlementCreateNestedManyWithoutMemberLedgerEntryInput;
+  settlement?: Prisma.DueSettlementCreateNestedOneWithoutMemberLedgerEntryInput;
 };
 
 export type MemberLedgerEntryUncheckedCreateInput = {
@@ -494,7 +500,7 @@ export type MemberLedgerEntryUncheckedCreateInput = {
   updatedAt?: Date | string;
   updatedBy?: string | null;
   reversals?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutReversalOfInput;
-  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutMemberLedgerEntryInput;
+  settlement?: Prisma.DueSettlementUncheckedCreateNestedOneWithoutMemberLedgerEntryInput;
 };
 
 export type MemberLedgerEntryUpdateInput = {
@@ -513,7 +519,7 @@ export type MemberLedgerEntryUpdateInput = {
   payment?: Prisma.PaymentUpdateOneWithoutLedgerEntriesNestedInput;
   reversalOf?: Prisma.MemberLedgerEntryUpdateOneWithoutReversalsNestedInput;
   reversals?: Prisma.MemberLedgerEntryUpdateManyWithoutReversalOfNestedInput;
-  settlements?: Prisma.DueSettlementUpdateManyWithoutMemberLedgerEntryNestedInput;
+  settlement?: Prisma.DueSettlementUpdateOneWithoutMemberLedgerEntryNestedInput;
 };
 
 export type MemberLedgerEntryUncheckedUpdateInput = {
@@ -535,7 +541,7 @@ export type MemberLedgerEntryUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   reversals?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutReversalOfNestedInput;
-  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutMemberLedgerEntryNestedInput;
+  settlement?: Prisma.DueSettlementUncheckedUpdateOneWithoutMemberLedgerEntryNestedInput;
 };
 
 export type MemberLedgerEntryCreateManyInput = {
@@ -916,29 +922,29 @@ export type MemberLedgerEntryUncheckedUpdateManyWithoutReversalOfNestedInput = {
     | Prisma.MemberLedgerEntryScalarWhereInput[];
 };
 
-export type MemberLedgerEntryCreateNestedOneWithoutSettlementsInput = {
+export type MemberLedgerEntryCreateNestedOneWithoutSettlementInput = {
   create?: Prisma.XOR<
-    Prisma.MemberLedgerEntryCreateWithoutSettlementsInput,
-    Prisma.MemberLedgerEntryUncheckedCreateWithoutSettlementsInput
+    Prisma.MemberLedgerEntryCreateWithoutSettlementInput,
+    Prisma.MemberLedgerEntryUncheckedCreateWithoutSettlementInput
   >;
-  connectOrCreate?: Prisma.MemberLedgerEntryCreateOrConnectWithoutSettlementsInput;
+  connectOrCreate?: Prisma.MemberLedgerEntryCreateOrConnectWithoutSettlementInput;
   connect?: Prisma.MemberLedgerEntryWhereUniqueInput;
 };
 
-export type MemberLedgerEntryUpdateOneRequiredWithoutSettlementsNestedInput = {
+export type MemberLedgerEntryUpdateOneRequiredWithoutSettlementNestedInput = {
   create?: Prisma.XOR<
-    Prisma.MemberLedgerEntryCreateWithoutSettlementsInput,
-    Prisma.MemberLedgerEntryUncheckedCreateWithoutSettlementsInput
+    Prisma.MemberLedgerEntryCreateWithoutSettlementInput,
+    Prisma.MemberLedgerEntryUncheckedCreateWithoutSettlementInput
   >;
-  connectOrCreate?: Prisma.MemberLedgerEntryCreateOrConnectWithoutSettlementsInput;
-  upsert?: Prisma.MemberLedgerEntryUpsertWithoutSettlementsInput;
+  connectOrCreate?: Prisma.MemberLedgerEntryCreateOrConnectWithoutSettlementInput;
+  upsert?: Prisma.MemberLedgerEntryUpsertWithoutSettlementInput;
   connect?: Prisma.MemberLedgerEntryWhereUniqueInput;
   update?: Prisma.XOR<
     Prisma.XOR<
-      Prisma.MemberLedgerEntryUpdateToOneWithWhereWithoutSettlementsInput,
-      Prisma.MemberLedgerEntryUpdateWithoutSettlementsInput
+      Prisma.MemberLedgerEntryUpdateToOneWithWhereWithoutSettlementInput,
+      Prisma.MemberLedgerEntryUpdateWithoutSettlementInput
     >,
-    Prisma.MemberLedgerEntryUncheckedUpdateWithoutSettlementsInput
+    Prisma.MemberLedgerEntryUncheckedUpdateWithoutSettlementInput
   >;
 };
 
@@ -1067,7 +1073,7 @@ export type MemberLedgerEntryCreateWithoutMemberInput = {
   payment?: Prisma.PaymentCreateNestedOneWithoutLedgerEntriesInput;
   reversalOf?: Prisma.MemberLedgerEntryCreateNestedOneWithoutReversalsInput;
   reversals?: Prisma.MemberLedgerEntryCreateNestedManyWithoutReversalOfInput;
-  settlements?: Prisma.DueSettlementCreateNestedManyWithoutMemberLedgerEntryInput;
+  settlement?: Prisma.DueSettlementCreateNestedOneWithoutMemberLedgerEntryInput;
 };
 
 export type MemberLedgerEntryUncheckedCreateWithoutMemberInput = {
@@ -1085,7 +1091,7 @@ export type MemberLedgerEntryUncheckedCreateWithoutMemberInput = {
   updatedAt?: Date | string;
   updatedBy?: string | null;
   reversals?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutReversalOfInput;
-  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutMemberLedgerEntryInput;
+  settlement?: Prisma.DueSettlementUncheckedCreateNestedOneWithoutMemberLedgerEntryInput;
 };
 
 export type MemberLedgerEntryCreateOrConnectWithoutMemberInput = {
@@ -1173,7 +1179,7 @@ export type MemberLedgerEntryCreateWithoutReversalsInput = {
   member: Prisma.MemberCreateNestedOneWithoutLedgerEntriesInput;
   payment?: Prisma.PaymentCreateNestedOneWithoutLedgerEntriesInput;
   reversalOf?: Prisma.MemberLedgerEntryCreateNestedOneWithoutReversalsInput;
-  settlements?: Prisma.DueSettlementCreateNestedManyWithoutMemberLedgerEntryInput;
+  settlement?: Prisma.DueSettlementCreateNestedOneWithoutMemberLedgerEntryInput;
 };
 
 export type MemberLedgerEntryUncheckedCreateWithoutReversalsInput = {
@@ -1191,7 +1197,7 @@ export type MemberLedgerEntryUncheckedCreateWithoutReversalsInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
-  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutMemberLedgerEntryInput;
+  settlement?: Prisma.DueSettlementUncheckedCreateNestedOneWithoutMemberLedgerEntryInput;
 };
 
 export type MemberLedgerEntryCreateOrConnectWithoutReversalsInput = {
@@ -1217,7 +1223,7 @@ export type MemberLedgerEntryCreateWithoutReversalOfInput = {
   member: Prisma.MemberCreateNestedOneWithoutLedgerEntriesInput;
   payment?: Prisma.PaymentCreateNestedOneWithoutLedgerEntriesInput;
   reversals?: Prisma.MemberLedgerEntryCreateNestedManyWithoutReversalOfInput;
-  settlements?: Prisma.DueSettlementCreateNestedManyWithoutMemberLedgerEntryInput;
+  settlement?: Prisma.DueSettlementCreateNestedOneWithoutMemberLedgerEntryInput;
 };
 
 export type MemberLedgerEntryUncheckedCreateWithoutReversalOfInput = {
@@ -1235,7 +1241,7 @@ export type MemberLedgerEntryUncheckedCreateWithoutReversalOfInput = {
   updatedAt?: Date | string;
   updatedBy?: string | null;
   reversals?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutReversalOfInput;
-  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutMemberLedgerEntryInput;
+  settlement?: Prisma.DueSettlementUncheckedCreateNestedOneWithoutMemberLedgerEntryInput;
 };
 
 export type MemberLedgerEntryCreateOrConnectWithoutReversalOfInput = {
@@ -1288,7 +1294,7 @@ export type MemberLedgerEntryUpdateWithoutReversalsInput = {
   member?: Prisma.MemberUpdateOneRequiredWithoutLedgerEntriesNestedInput;
   payment?: Prisma.PaymentUpdateOneWithoutLedgerEntriesNestedInput;
   reversalOf?: Prisma.MemberLedgerEntryUpdateOneWithoutReversalsNestedInput;
-  settlements?: Prisma.DueSettlementUpdateManyWithoutMemberLedgerEntryNestedInput;
+  settlement?: Prisma.DueSettlementUpdateOneWithoutMemberLedgerEntryNestedInput;
 };
 
 export type MemberLedgerEntryUncheckedUpdateWithoutReversalsInput = {
@@ -1309,7 +1315,7 @@ export type MemberLedgerEntryUncheckedUpdateWithoutReversalsInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutMemberLedgerEntryNestedInput;
+  settlement?: Prisma.DueSettlementUncheckedUpdateOneWithoutMemberLedgerEntryNestedInput;
 };
 
 export type MemberLedgerEntryUpsertWithWhereUniqueWithoutReversalOfInput = {
@@ -1340,7 +1346,7 @@ export type MemberLedgerEntryUpdateManyWithWhereWithoutReversalOfInput = {
   >;
 };
 
-export type MemberLedgerEntryCreateWithoutSettlementsInput = {
+export type MemberLedgerEntryCreateWithoutSettlementInput = {
   id: string;
   amount: number;
   type: string;
@@ -1358,7 +1364,7 @@ export type MemberLedgerEntryCreateWithoutSettlementsInput = {
   reversals?: Prisma.MemberLedgerEntryCreateNestedManyWithoutReversalOfInput;
 };
 
-export type MemberLedgerEntryUncheckedCreateWithoutSettlementsInput = {
+export type MemberLedgerEntryUncheckedCreateWithoutSettlementInput = {
   id: string;
   memberId: string;
   amount: number;
@@ -1376,35 +1382,35 @@ export type MemberLedgerEntryUncheckedCreateWithoutSettlementsInput = {
   reversals?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutReversalOfInput;
 };
 
-export type MemberLedgerEntryCreateOrConnectWithoutSettlementsInput = {
+export type MemberLedgerEntryCreateOrConnectWithoutSettlementInput = {
   where: Prisma.MemberLedgerEntryWhereUniqueInput;
   create: Prisma.XOR<
-    Prisma.MemberLedgerEntryCreateWithoutSettlementsInput,
-    Prisma.MemberLedgerEntryUncheckedCreateWithoutSettlementsInput
+    Prisma.MemberLedgerEntryCreateWithoutSettlementInput,
+    Prisma.MemberLedgerEntryUncheckedCreateWithoutSettlementInput
   >;
 };
 
-export type MemberLedgerEntryUpsertWithoutSettlementsInput = {
+export type MemberLedgerEntryUpsertWithoutSettlementInput = {
   update: Prisma.XOR<
-    Prisma.MemberLedgerEntryUpdateWithoutSettlementsInput,
-    Prisma.MemberLedgerEntryUncheckedUpdateWithoutSettlementsInput
+    Prisma.MemberLedgerEntryUpdateWithoutSettlementInput,
+    Prisma.MemberLedgerEntryUncheckedUpdateWithoutSettlementInput
   >;
   create: Prisma.XOR<
-    Prisma.MemberLedgerEntryCreateWithoutSettlementsInput,
-    Prisma.MemberLedgerEntryUncheckedCreateWithoutSettlementsInput
+    Prisma.MemberLedgerEntryCreateWithoutSettlementInput,
+    Prisma.MemberLedgerEntryUncheckedCreateWithoutSettlementInput
   >;
   where?: Prisma.MemberLedgerEntryWhereInput;
 };
 
-export type MemberLedgerEntryUpdateToOneWithWhereWithoutSettlementsInput = {
+export type MemberLedgerEntryUpdateToOneWithWhereWithoutSettlementInput = {
   where?: Prisma.MemberLedgerEntryWhereInput;
   data: Prisma.XOR<
-    Prisma.MemberLedgerEntryUpdateWithoutSettlementsInput,
-    Prisma.MemberLedgerEntryUncheckedUpdateWithoutSettlementsInput
+    Prisma.MemberLedgerEntryUpdateWithoutSettlementInput,
+    Prisma.MemberLedgerEntryUncheckedUpdateWithoutSettlementInput
   >;
 };
 
-export type MemberLedgerEntryUpdateWithoutSettlementsInput = {
+export type MemberLedgerEntryUpdateWithoutSettlementInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1422,7 +1428,7 @@ export type MemberLedgerEntryUpdateWithoutSettlementsInput = {
   reversals?: Prisma.MemberLedgerEntryUpdateManyWithoutReversalOfNestedInput;
 };
 
-export type MemberLedgerEntryUncheckedUpdateWithoutSettlementsInput = {
+export type MemberLedgerEntryUncheckedUpdateWithoutSettlementInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
@@ -1458,7 +1464,7 @@ export type MemberLedgerEntryCreateWithoutPaymentInput = {
   member: Prisma.MemberCreateNestedOneWithoutLedgerEntriesInput;
   reversalOf?: Prisma.MemberLedgerEntryCreateNestedOneWithoutReversalsInput;
   reversals?: Prisma.MemberLedgerEntryCreateNestedManyWithoutReversalOfInput;
-  settlements?: Prisma.DueSettlementCreateNestedManyWithoutMemberLedgerEntryInput;
+  settlement?: Prisma.DueSettlementCreateNestedOneWithoutMemberLedgerEntryInput;
 };
 
 export type MemberLedgerEntryUncheckedCreateWithoutPaymentInput = {
@@ -1476,7 +1482,7 @@ export type MemberLedgerEntryUncheckedCreateWithoutPaymentInput = {
   updatedAt?: Date | string;
   updatedBy?: string | null;
   reversals?: Prisma.MemberLedgerEntryUncheckedCreateNestedManyWithoutReversalOfInput;
-  settlements?: Prisma.DueSettlementUncheckedCreateNestedManyWithoutMemberLedgerEntryInput;
+  settlement?: Prisma.DueSettlementUncheckedCreateNestedOneWithoutMemberLedgerEntryInput;
 };
 
 export type MemberLedgerEntryCreateOrConnectWithoutPaymentInput = {
@@ -1553,7 +1559,7 @@ export type MemberLedgerEntryUpdateWithoutMemberInput = {
   payment?: Prisma.PaymentUpdateOneWithoutLedgerEntriesNestedInput;
   reversalOf?: Prisma.MemberLedgerEntryUpdateOneWithoutReversalsNestedInput;
   reversals?: Prisma.MemberLedgerEntryUpdateManyWithoutReversalOfNestedInput;
-  settlements?: Prisma.DueSettlementUpdateManyWithoutMemberLedgerEntryNestedInput;
+  settlement?: Prisma.DueSettlementUpdateOneWithoutMemberLedgerEntryNestedInput;
 };
 
 export type MemberLedgerEntryUncheckedUpdateWithoutMemberInput = {
@@ -1574,7 +1580,7 @@ export type MemberLedgerEntryUncheckedUpdateWithoutMemberInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   reversals?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutReversalOfNestedInput;
-  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutMemberLedgerEntryNestedInput;
+  settlement?: Prisma.DueSettlementUncheckedUpdateOneWithoutMemberLedgerEntryNestedInput;
 };
 
 export type MemberLedgerEntryUncheckedUpdateManyWithoutMemberInput = {
@@ -1627,7 +1633,7 @@ export type MemberLedgerEntryUpdateWithoutReversalOfInput = {
   member?: Prisma.MemberUpdateOneRequiredWithoutLedgerEntriesNestedInput;
   payment?: Prisma.PaymentUpdateOneWithoutLedgerEntriesNestedInput;
   reversals?: Prisma.MemberLedgerEntryUpdateManyWithoutReversalOfNestedInput;
-  settlements?: Prisma.DueSettlementUpdateManyWithoutMemberLedgerEntryNestedInput;
+  settlement?: Prisma.DueSettlementUpdateOneWithoutMemberLedgerEntryNestedInput;
 };
 
 export type MemberLedgerEntryUncheckedUpdateWithoutReversalOfInput = {
@@ -1645,7 +1651,7 @@ export type MemberLedgerEntryUncheckedUpdateWithoutReversalOfInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   reversals?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutReversalOfNestedInput;
-  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutMemberLedgerEntryNestedInput;
+  settlement?: Prisma.DueSettlementUncheckedUpdateOneWithoutMemberLedgerEntryNestedInput;
 };
 
 export type MemberLedgerEntryUncheckedUpdateManyWithoutReversalOfInput = {
@@ -1695,7 +1701,7 @@ export type MemberLedgerEntryUpdateWithoutPaymentInput = {
   member?: Prisma.MemberUpdateOneRequiredWithoutLedgerEntriesNestedInput;
   reversalOf?: Prisma.MemberLedgerEntryUpdateOneWithoutReversalsNestedInput;
   reversals?: Prisma.MemberLedgerEntryUpdateManyWithoutReversalOfNestedInput;
-  settlements?: Prisma.DueSettlementUpdateManyWithoutMemberLedgerEntryNestedInput;
+  settlement?: Prisma.DueSettlementUpdateOneWithoutMemberLedgerEntryNestedInput;
 };
 
 export type MemberLedgerEntryUncheckedUpdateWithoutPaymentInput = {
@@ -1716,7 +1722,7 @@ export type MemberLedgerEntryUncheckedUpdateWithoutPaymentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   reversals?: Prisma.MemberLedgerEntryUncheckedUpdateManyWithoutReversalOfNestedInput;
-  settlements?: Prisma.DueSettlementUncheckedUpdateManyWithoutMemberLedgerEntryNestedInput;
+  settlement?: Prisma.DueSettlementUncheckedUpdateOneWithoutMemberLedgerEntryNestedInput;
 };
 
 export type MemberLedgerEntryUncheckedUpdateManyWithoutPaymentInput = {
@@ -1744,7 +1750,6 @@ export type MemberLedgerEntryUncheckedUpdateManyWithoutPaymentInput = {
 
 export type MemberLedgerEntryCountOutputType = {
   reversals: number;
-  settlements: number;
 };
 
 export type MemberLedgerEntryCountOutputTypeSelect<
@@ -1752,7 +1757,6 @@ export type MemberLedgerEntryCountOutputTypeSelect<
     runtime.Types.Extensions.DefaultArgs,
 > = {
   reversals?: boolean | MemberLedgerEntryCountOutputTypeCountReversalsArgs;
-  settlements?: boolean | MemberLedgerEntryCountOutputTypeCountSettlementsArgs;
 };
 
 /**
@@ -1778,16 +1782,6 @@ export type MemberLedgerEntryCountOutputTypeCountReversalsArgs<
   where?: Prisma.MemberLedgerEntryWhereInput;
 };
 
-/**
- * MemberLedgerEntryCountOutputType without action
- */
-export type MemberLedgerEntryCountOutputTypeCountSettlementsArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  where?: Prisma.DueSettlementWhereInput;
-};
-
 export type MemberLedgerEntrySelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
@@ -1811,7 +1805,7 @@ export type MemberLedgerEntrySelect<
     payment?: boolean | Prisma.MemberLedgerEntry$paymentArgs<ExtArgs>;
     reversalOf?: boolean | Prisma.MemberLedgerEntry$reversalOfArgs<ExtArgs>;
     reversals?: boolean | Prisma.MemberLedgerEntry$reversalsArgs<ExtArgs>;
-    settlements?: boolean | Prisma.MemberLedgerEntry$settlementsArgs<ExtArgs>;
+    settlement?: boolean | Prisma.MemberLedgerEntry$settlementArgs<ExtArgs>;
     _count?:
       | boolean
       | Prisma.MemberLedgerEntryCountOutputTypeDefaultArgs<ExtArgs>;
@@ -1916,7 +1910,7 @@ export type MemberLedgerEntryInclude<
   payment?: boolean | Prisma.MemberLedgerEntry$paymentArgs<ExtArgs>;
   reversalOf?: boolean | Prisma.MemberLedgerEntry$reversalOfArgs<ExtArgs>;
   reversals?: boolean | Prisma.MemberLedgerEntry$reversalsArgs<ExtArgs>;
-  settlements?: boolean | Prisma.MemberLedgerEntry$settlementsArgs<ExtArgs>;
+  settlement?: boolean | Prisma.MemberLedgerEntry$settlementArgs<ExtArgs>;
   _count?:
     | boolean
     | Prisma.MemberLedgerEntryCountOutputTypeDefaultArgs<ExtArgs>;
@@ -1948,7 +1942,7 @@ export type $MemberLedgerEntryPayload<
     payment: Prisma.$PaymentPayload<ExtArgs> | null;
     reversalOf: Prisma.$MemberLedgerEntryPayload<ExtArgs> | null;
     reversals: Prisma.$MemberLedgerEntryPayload<ExtArgs>[];
-    settlements: Prisma.$DueSettlementPayload<ExtArgs>[];
+    settlement: Prisma.$DueSettlementPayload<ExtArgs> | null;
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -2589,16 +2583,18 @@ export interface Prisma__MemberLedgerEntryClient<
       >
     | Null
   >;
-  settlements<T extends Prisma.MemberLedgerEntry$settlementsArgs<ExtArgs> = {}>(
-    args?: Prisma.Subset<T, Prisma.MemberLedgerEntry$settlementsArgs<ExtArgs>>,
-  ): Prisma.PrismaPromise<
-    | runtime.Types.Result.GetResult<
-        Prisma.$DueSettlementPayload<ExtArgs>,
-        T,
-        'findMany',
-        GlobalOmitOptions
-      >
-    | Null
+  settlement<T extends Prisma.MemberLedgerEntry$settlementArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.MemberLedgerEntry$settlementArgs<ExtArgs>>,
+  ): Prisma.Prisma__DueSettlementClient<
+    runtime.Types.Result.GetResult<
+      Prisma.$DueSettlementPayload<ExtArgs>,
+      T,
+      'findUniqueOrThrow',
+      GlobalOmitOptions
+    > | null,
+    null,
+    ExtArgs,
+    GlobalOmitOptions
   >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3202,9 +3198,9 @@ export type MemberLedgerEntry$reversalsArgs<
 };
 
 /**
- * MemberLedgerEntry.settlements
+ * MemberLedgerEntry.settlement
  */
-export type MemberLedgerEntry$settlementsArgs<
+export type MemberLedgerEntry$settlementArgs<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
@@ -3221,15 +3217,6 @@ export type MemberLedgerEntry$settlementsArgs<
    */
   include?: Prisma.DueSettlementInclude<ExtArgs> | null;
   where?: Prisma.DueSettlementWhereInput;
-  orderBy?:
-    | Prisma.DueSettlementOrderByWithRelationInput
-    | Prisma.DueSettlementOrderByWithRelationInput[];
-  cursor?: Prisma.DueSettlementWhereUniqueInput;
-  take?: number;
-  skip?: number;
-  distinct?:
-    | Prisma.DueSettlementScalarFieldEnum
-    | Prisma.DueSettlementScalarFieldEnum[];
 };
 
 /**

@@ -7,11 +7,18 @@ import { CreateMemberUseCase } from './application/create-member/create-member.u
 import { UpdateMemberUseCase } from './application/update-member/update-member.use-case';
 import { MEMBER_REPOSITORY_PROVIDER } from './domain/member.repository';
 import { PrismaMemberRepository } from './infrastructure/prisma-member.repository';
+import { PrismaMemberLedgerRepository } from './ledger/infrastructure/prisma-member-ledger.repository';
+import { MEMBER_LEDGER_REPOSITORY_PROVIDER } from './ledger/member-ledger.repository';
+import { MemberLedgerController } from './ledger/presentation/member-ledger.controller';
 import { MembersController } from './presentation/member.controller';
 
 @Module({
-  controllers: [MembersController],
-  exports: [MEMBER_REPOSITORY_PROVIDER, CreateMemberUseCase],
+  controllers: [MembersController, MemberLedgerController],
+  exports: [
+    MEMBER_REPOSITORY_PROVIDER,
+    MEMBER_LEDGER_REPOSITORY_PROVIDER,
+    CreateMemberUseCase,
+  ],
   imports: [PrismaModule, UsersModule],
   providers: [
     CreateMemberUseCase,
@@ -19,6 +26,10 @@ import { MembersController } from './presentation/member.controller';
     {
       provide: MEMBER_REPOSITORY_PROVIDER,
       useClass: PrismaMemberRepository,
+    },
+    {
+      provide: MEMBER_LEDGER_REPOSITORY_PROVIDER,
+      useClass: PrismaMemberLedgerRepository,
     },
   ],
 })

@@ -154,7 +154,7 @@ model MemberLedgerEntry {
   reversalOf   MemberLedgerEntry?  @relation("LedgerReversal", fields: [reversalOfId], references: [id])
   reversals    MemberLedgerEntry[] @relation("LedgerReversal")
 
-  settlements DueSettlement[]
+  settlement DueSettlement?
 
   createdAt DateTime @default(now())
   createdBy String
@@ -204,7 +204,7 @@ model DueSettlement {
   dueId String
   due   Due    @relation(fields: [dueId], references: [id])
 
-  memberLedgerEntryId String
+  memberLedgerEntryId String            @unique
   memberLedgerEntry   MemberLedgerEntry @relation(fields: [memberLedgerEntryId], references: [id])
 
   amount Int
@@ -214,9 +214,7 @@ model DueSettlement {
 
   status String
 
-  @@unique([dueId, memberLedgerEntryId])
   @@index([dueId])
-  @@index([memberLedgerEntryId])
   @@index([paymentId])
   @@map("due_settlement")
 }

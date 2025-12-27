@@ -6,6 +6,11 @@ export const DueSettlementStatus = {
 export type DueSettlementStatus =
   (typeof DueSettlementStatus)[keyof typeof DueSettlementStatus];
 
+export const DueSettlementStatusLabel = {
+  [DueSettlementStatus.APPLIED]: 'Aplicado',
+  [DueSettlementStatus.VOIDED]: 'Anulado',
+} as const;
+
 export const DueSettlementSource = {
   ADJUSTMENT: 'adjustment',
   PAYMENT: 'payment',

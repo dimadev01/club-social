@@ -222,8 +222,8 @@ export class PrismaDueRepository implements DueRepository {
 
     await this.prismaService.$transaction(async (tx) => {
       await tx.due.upsert({
-        create,
-        update,
+        create: create,
+        update: update,
         where: { id: entity.id.value },
       });
 

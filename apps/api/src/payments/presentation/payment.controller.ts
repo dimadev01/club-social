@@ -115,11 +115,11 @@ export class PaymentsController extends BaseController {
       data: data.data.map(({ member, payment, user }) => ({
         amount: payment.amount.toCents(),
         createdAt: payment.createdAt?.toISOString() ?? '',
-        createdBy: user.name,
+        createdBy: user.name.fullName,
         date: payment.date.value,
         id: payment.id.value,
         memberId: member.id.value,
-        memberName: user.name,
+        memberName: user.name.fullName,
         status: payment.status,
       })),
       extra: {
@@ -166,7 +166,7 @@ export class PaymentsController extends BaseController {
         header: 'Creado el',
       },
       { accessor: (row) => row.payment.date.value, header: 'Fecha' },
-      { accessor: (row) => row.user.name, header: 'Socio' },
+      { accessor: (row) => row.user.name.fullName, header: 'Socio' },
       { accessor: (row) => row.payment.amount.toDollars(), header: 'Monto' },
       {
         accessor: (row) => PaymentStatusLabel[row.payment.status],
@@ -203,7 +203,7 @@ export class PaymentsController extends BaseController {
       date: payment.date.value,
       id: payment.id.value,
       memberId: member.id.value,
-      memberName: user.name,
+      memberName: user.name.fullName,
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
       status: payment.status,

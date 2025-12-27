@@ -143,7 +143,7 @@ export class MembersController extends BaseController {
 
     const stream = this.csvService.generateStream(data, [
       { accessor: (row) => row.member.id.value, header: 'ID' },
-      { accessor: (row) => row.user.name, header: 'Nombre' },
+      { accessor: (row) => row.user.name.fullName, header: 'Nombre' },
       {
         accessor: (row) => MemberCategoryLabel[row.member.category],
         header: 'Categoría',
@@ -198,7 +198,7 @@ export class MembersController extends BaseController {
         guestTotalDueAmount: item.guestTotalDueAmount,
         id: item.member.id.value,
         memberShipTotalDueAmount: item.memberShipTotalDueAmount,
-        name: item.user.name,
+        name: item.user.name.fullName,
         userStatus: item.user.status,
       })),
       extra: {
@@ -223,7 +223,7 @@ export class MembersController extends BaseController {
       category: member.category,
       email: user.email.value,
       id: member.id.value,
-      name: user.name,
+      name: user.name.fullName,
       status: user.status,
     }));
   }
@@ -262,11 +262,11 @@ export class MembersController extends BaseController {
       })),
       email: user.email.value,
       fileStatus: member.fileStatus,
-      firstName: user.firstName,
+      firstName: user.name.firstName,
       id: member.id.value,
-      lastName: user.lastName,
+      lastName: user.name.lastName,
       maritalStatus: member.maritalStatus,
-      name: user.name,
+      name: user.name.fullName,
       nationality: member.nationality,
       phones: member.phones,
       sex: member.sex,

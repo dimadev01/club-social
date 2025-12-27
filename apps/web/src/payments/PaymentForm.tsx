@@ -12,6 +12,7 @@ import { DatePicker, Empty, Input, InputNumber, Space } from 'antd';
 import dayjs from 'dayjs';
 import { difference, differenceBy, orderBy } from 'es-toolkit/array';
 import { flow } from 'es-toolkit/function';
+import { sumBy } from 'es-toolkit/math';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router';
 
@@ -286,8 +287,17 @@ export function PaymentForm({
 
           <Form.List name="paymentDues">
             {(fields) => {
+              const total = sumBy(fields, (field) =>
+                form.getFieldValue(['paymentDues', field.name, 'amount']),
+              );
+
               return (
-                <Card size="small" title="Deudas Seleccionadas" type="inner">
+                <Card
+                  extra={`Total a registrar: ${NumberFormat.formatCurrency(total)}`}
+                  size="small"
+                  title="Deudas Seleccionadas"
+                  type="inner"
+                >
                   {fields.length === 0 && (
                     <Empty
                       description="Seleccione deudas de la tabla para registrar pagos"

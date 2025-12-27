@@ -55,14 +55,14 @@ export function DueList() {
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
 
-  const [filteredMemberIds, setFilteredMemberIds] = useState(
-    getFilterValue('memberId') ?? [],
-  );
-
   const { exportData, isExporting } = useExport({
     endpoint: '/dues/export',
     filename: `deudas-${DateFormat.isoDate(new Date())}.csv`,
   });
+
+  const [filteredMemberIds, setFilteredMemberIds] = useState(
+    getFilterValue('memberId') ?? [],
+  );
 
   const { data: selectedMembers, isLoading: isSelectedMembersLoading } =
     useMembersForSelect({ memberIds: filteredMemberIds });

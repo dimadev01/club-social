@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { DuesModule } from '@/dues/due.module';
+import { MembersModule } from '@/members/member.module';
 
 import { CreatePaymentUseCase } from './application/create-payment/create-payment.use-case';
 import { FindPaymentsStatisticsUseCase } from './application/find-payments-statistics/find-payments-statistics.use-case';
@@ -12,7 +13,7 @@ import { PaymentsController } from './presentation/payment.controller';
 @Module({
   controllers: [PaymentsController],
   exports: [PAYMENT_REPOSITORY_PROVIDER],
-  imports: [DuesModule],
+  imports: [DuesModule, MembersModule],
   providers: [
     CreatePaymentUseCase,
     VoidPaymentUseCase,

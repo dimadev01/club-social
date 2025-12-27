@@ -1,9 +1,9 @@
+import { ICreatePaymentDueDto } from '@club-social/shared/due-settlements';
 import {
   MemberLedgerEntrySource,
   MemberLedgerEntryStatus,
   MemberLedgerEntryType,
 } from '@club-social/shared/members';
-import { ICreatePaymentDueDto } from '@club-social/shared/payment-due';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
@@ -13,6 +13,10 @@ import {
   type DueRepository,
 } from '@/dues/domain/due.repository';
 import { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
+import {
+  MEMBER_LEDGER_REPOSITORY_PROVIDER,
+  type MemberLedgerRepository,
+} from '@/members/ledger/member-ledger.repository';
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import {
   PAYMENT_REPOSITORY_PROVIDER,
@@ -48,6 +52,8 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     private readonly paymentRepository: PaymentRepository,
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
+    @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
+    private readonly memberLedgerRepository: MemberLedgerRepository,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -89,6 +95,29 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(payment.error);
     }
 
+    const memberLedgerEntries: MemberLedgerEntryEntity[] = [];
+
+    const creditEntry = MemberLedgerEntryEntity.create(
+      {
+        amount: payment.value.amount,
+        date: date.value,
+        memberId: UniqueId.raw({ value: params.memberId }),
+        notes: params.notes,
+        paymentId: payment.value.id,
+        reversalOfId: null,
+        source: MemberLedgerEntrySource.PAYMENT,
+        status: MemberLedgerEntryStatus.POSTED,
+        type: MemberLedgerEntryType.DEPOSIT_CREDIT,
+      },
+      params.createdBy,
+    );
+
+    if (creditEntry.isErr()) {
+      return err(creditEntry.error);
+    }
+
+    memberLedgerEntries.push(creditEntry.value);
+
     const dueSettlements = ResultUtils.combine(
       dues.map((due) => {
         const paymentDueForThisDue = params.dues.find(
@@ -97,15 +126,15 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
         Guard.defined(paymentDueForThisDue);
 
-        const amount = Amount.fromCents(paymentDueForThisDue.amount);
+        const paymentDueAmount = Amount.fromCents(paymentDueForThisDue.amount);
 
-        if (amount.isErr()) {
-          return err(amount.error);
+        if (paymentDueAmount.isErr()) {
+          return err(paymentDueAmount.error);
         }
 
-        const memberLedgerEntry = MemberLedgerEntryEntity.create(
+        const debitEntry = MemberLedgerEntryEntity.create(
           {
-            amount: amount.value,
+            amount: paymentDueAmount.value,
             date: date.value,
             memberId: UniqueId.raw({ value: params.memberId }),
             notes: params.notes,
@@ -113,19 +142,21 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
             reversalOfId: null,
             source: MemberLedgerEntrySource.PAYMENT,
             status: MemberLedgerEntryStatus.POSTED,
-            type: MemberLedgerEntryType.PAYMENT_CREDIT,
+            type: MemberLedgerEntryType.DUE_APPLY_DEBIT,
           },
           params.createdBy,
         );
 
-        if (memberLedgerEntry.isErr()) {
-          return err(memberLedgerEntry.error);
+        if (debitEntry.isErr()) {
+          return err(debitEntry.error);
         }
 
+        memberLedgerEntries.push(debitEntry.value);
+
         return due.applySettlement({
-          amount: amount.value,
+          amount: paymentDueAmount.value,
           createdBy: params.createdBy,
-          memberLedgerEntryId: memberLedgerEntry.value.id,
+          memberLedgerEntryId: debitEntry.value.id,
           paymentId: payment.value.id,
         });
       }),
@@ -136,6 +167,11 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     }
 
     await this.paymentRepository.save(payment.value);
+    await Promise.all(
+      memberLedgerEntries.map((entry) =>
+        this.memberLedgerRepository.save(entry),
+      ),
+    );
     await Promise.all(dues.map((due) => this.dueRepository.save(due)));
 
     this.eventPublisher.dispatch(payment.value);

@@ -11,7 +11,6 @@ import { StrictOmit } from '@/shared/types/type-utils';
 
 import { PaymentCreatedEvent } from '../events/payment-created.event';
 import { PaymentUpdatedEvent } from '../events/payment-updated.event';
-import { VoidPaymentProps } from '../payment.interface';
 
 interface PaymentProps {
   amount: Amount;
@@ -164,7 +163,7 @@ export class PaymentEntity extends AuditedAggregateRoot {
     return this._status === PaymentStatus.VOIDED;
   }
 
-  public void(props: VoidPaymentProps): Result<void> {
+  public void(props: { voidedBy: string; voidReason: string }): Result<void> {
     if (this.isVoided()) {
       return err(new ApplicationError('No se puede anular un pago anulado'));
     }

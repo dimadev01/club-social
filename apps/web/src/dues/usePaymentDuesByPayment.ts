@@ -1,4 +1,4 @@
-import type { IPaymentDueDetailWithDueDto } from '@club-social/shared/payment-due';
+import type { IPaymentDueDetailWithDueDto } from '@club-social/shared/due-settlements';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';

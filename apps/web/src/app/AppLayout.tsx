@@ -28,6 +28,7 @@ import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
 import { AuditLogsIcon } from '@/ui/Icons/AuditLogsIcon';
 import { DashboardIcon } from '@/ui/Icons/DashboardIcon';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
+import { LedgerIcon } from '@/ui/Icons/LedgerIcon';
 import { LogoutIcon } from '@/ui/Icons/LogoutIcon';
 import { MovementsIcon } from '@/ui/Icons/MovementsIcon';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
@@ -84,6 +85,14 @@ export function AppLayout({ children }: PropsWithChildren) {
       icon: <MovementsIcon />,
       key: appRoutes.movements.list,
       label: 'Movimientos',
+    });
+  }
+
+  if (permissions.memberLedger.list) {
+    menuItems.push({
+      icon: <LedgerIcon />,
+      key: appRoutes.memberLedger.list,
+      label: 'Libro Mayor',
     });
   }
 

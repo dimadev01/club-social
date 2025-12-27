@@ -26,6 +26,7 @@ import { err, ok, ResultUtils } from '@/shared/domain/result';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 import {
   USER_REPOSITORY_PROVIDER,
@@ -87,14 +88,22 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       return err(new ConflictError('El email ya está en uso'));
     }
 
+    const name = Name.create({
+      firstName: params.firstName,
+      lastName: params.lastName,
+    });
+
+    if (name.isErr()) {
+      return err(name.error);
+    }
+
     const user = UserEntity.create(
       {
         banExpires: null,
         banned: false,
         banReason: null,
         email,
-        firstName: params.firstName,
-        lastName: params.lastName,
+        name: name.value,
         role: UserRole.MEMBER,
         status: UserStatus.ACTIVE,
       },

@@ -259,12 +259,11 @@ export type DueSettlementOrderByWithRelationInput = {
 export type DueSettlementWhereUniqueInput = Prisma.AtLeast<
   {
     id?: string;
-    dueId_memberLedgerEntryId?: Prisma.DueSettlementDueIdMemberLedgerEntryIdCompoundUniqueInput;
+    memberLedgerEntryId?: string;
     AND?: Prisma.DueSettlementWhereInput | Prisma.DueSettlementWhereInput[];
     OR?: Prisma.DueSettlementWhereInput[];
     NOT?: Prisma.DueSettlementWhereInput | Prisma.DueSettlementWhereInput[];
     dueId?: Prisma.StringFilter<'DueSettlement'> | string;
-    memberLedgerEntryId?: Prisma.StringFilter<'DueSettlement'> | string;
     amount?: Prisma.IntFilter<'DueSettlement'> | number;
     paymentId?: Prisma.StringNullableFilter<'DueSettlement'> | string | null;
     status?: Prisma.StringFilter<'DueSettlement'> | string;
@@ -278,7 +277,7 @@ export type DueSettlementWhereUniqueInput = Prisma.AtLeast<
       Prisma.PaymentWhereInput
     > | null;
   },
-  'id' | 'dueId_memberLedgerEntryId'
+  'id' | 'memberLedgerEntryId'
 >;
 
 export type DueSettlementOrderByWithAggregationInput = {
@@ -321,7 +320,7 @@ export type DueSettlementCreateInput = {
   amount: number;
   status: string;
   due: Prisma.DueCreateNestedOneWithoutSettlementsInput;
-  memberLedgerEntry: Prisma.MemberLedgerEntryCreateNestedOneWithoutSettlementsInput;
+  memberLedgerEntry: Prisma.MemberLedgerEntryCreateNestedOneWithoutSettlementInput;
   payment?: Prisma.PaymentCreateNestedOneWithoutSettlementsInput;
 };
 
@@ -339,7 +338,7 @@ export type DueSettlementUpdateInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   due?: Prisma.DueUpdateOneRequiredWithoutSettlementsNestedInput;
-  memberLedgerEntry?: Prisma.MemberLedgerEntryUpdateOneRequiredWithoutSettlementsNestedInput;
+  memberLedgerEntry?: Prisma.MemberLedgerEntryUpdateOneRequiredWithoutSettlementNestedInput;
   payment?: Prisma.PaymentUpdateOneWithoutSettlementsNestedInput;
 };
 
@@ -376,6 +375,11 @@ export type DueSettlementUncheckedUpdateManyInput = {
   status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
+export type DueSettlementNullableScalarRelationFilter = {
+  is?: Prisma.DueSettlementWhereInput | null;
+  isNot?: Prisma.DueSettlementWhereInput | null;
+};
+
 export type DueSettlementListRelationFilter = {
   every?: Prisma.DueSettlementWhereInput;
   some?: Prisma.DueSettlementWhereInput;
@@ -384,11 +388,6 @@ export type DueSettlementListRelationFilter = {
 
 export type DueSettlementOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder;
-};
-
-export type DueSettlementDueIdMemberLedgerEntryIdCompoundUniqueInput = {
-  dueId: string;
-  memberLedgerEntryId: string;
 };
 
 export type DueSettlementCountOrderByAggregateInput = {
@@ -426,116 +425,62 @@ export type DueSettlementSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder;
 };
 
-export type DueSettlementCreateNestedManyWithoutMemberLedgerEntryInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput,
-        Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput
-      >
-    | Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput[]
-    | Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput[];
-  connectOrCreate?:
-    | Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput
-    | Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput[];
-  createMany?: Prisma.DueSettlementCreateManyMemberLedgerEntryInputEnvelope;
-  connect?:
-    | Prisma.DueSettlementWhereUniqueInput
-    | Prisma.DueSettlementWhereUniqueInput[];
+export type DueSettlementCreateNestedOneWithoutMemberLedgerEntryInput = {
+  create?: Prisma.XOR<
+    Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput,
+    Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput
+  >;
+  connectOrCreate?: Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput;
+  connect?: Prisma.DueSettlementWhereUniqueInput;
 };
 
-export type DueSettlementUncheckedCreateNestedManyWithoutMemberLedgerEntryInput =
+export type DueSettlementUncheckedCreateNestedOneWithoutMemberLedgerEntryInput =
   {
-    create?:
-      | Prisma.XOR<
-          Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput,
-          Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput
-        >
-      | Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput[]
-      | Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput[];
-    connectOrCreate?:
-      | Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput
-      | Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput[];
-    createMany?: Prisma.DueSettlementCreateManyMemberLedgerEntryInputEnvelope;
-    connect?:
-      | Prisma.DueSettlementWhereUniqueInput
-      | Prisma.DueSettlementWhereUniqueInput[];
+    create?: Prisma.XOR<
+      Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput,
+      Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput
+    >;
+    connectOrCreate?: Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput;
+    connect?: Prisma.DueSettlementWhereUniqueInput;
   };
 
-export type DueSettlementUpdateManyWithoutMemberLedgerEntryNestedInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput,
-        Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput
-      >
-    | Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput[]
-    | Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput[];
-  connectOrCreate?:
-    | Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput
-    | Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput[];
-  upsert?:
-    | Prisma.DueSettlementUpsertWithWhereUniqueWithoutMemberLedgerEntryInput
-    | Prisma.DueSettlementUpsertWithWhereUniqueWithoutMemberLedgerEntryInput[];
-  createMany?: Prisma.DueSettlementCreateManyMemberLedgerEntryInputEnvelope;
-  set?:
-    | Prisma.DueSettlementWhereUniqueInput
-    | Prisma.DueSettlementWhereUniqueInput[];
-  disconnect?:
-    | Prisma.DueSettlementWhereUniqueInput
-    | Prisma.DueSettlementWhereUniqueInput[];
-  delete?:
-    | Prisma.DueSettlementWhereUniqueInput
-    | Prisma.DueSettlementWhereUniqueInput[];
-  connect?:
-    | Prisma.DueSettlementWhereUniqueInput
-    | Prisma.DueSettlementWhereUniqueInput[];
-  update?:
-    | Prisma.DueSettlementUpdateWithWhereUniqueWithoutMemberLedgerEntryInput
-    | Prisma.DueSettlementUpdateWithWhereUniqueWithoutMemberLedgerEntryInput[];
-  updateMany?:
-    | Prisma.DueSettlementUpdateManyWithWhereWithoutMemberLedgerEntryInput
-    | Prisma.DueSettlementUpdateManyWithWhereWithoutMemberLedgerEntryInput[];
-  deleteMany?:
-    | Prisma.DueSettlementScalarWhereInput
-    | Prisma.DueSettlementScalarWhereInput[];
+export type DueSettlementUpdateOneWithoutMemberLedgerEntryNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput,
+    Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput
+  >;
+  connectOrCreate?: Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput;
+  upsert?: Prisma.DueSettlementUpsertWithoutMemberLedgerEntryInput;
+  disconnect?: Prisma.DueSettlementWhereInput | boolean;
+  delete?: Prisma.DueSettlementWhereInput | boolean;
+  connect?: Prisma.DueSettlementWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.DueSettlementUpdateToOneWithWhereWithoutMemberLedgerEntryInput,
+      Prisma.DueSettlementUpdateWithoutMemberLedgerEntryInput
+    >,
+    Prisma.DueSettlementUncheckedUpdateWithoutMemberLedgerEntryInput
+  >;
 };
 
-export type DueSettlementUncheckedUpdateManyWithoutMemberLedgerEntryNestedInput =
+export type DueSettlementUncheckedUpdateOneWithoutMemberLedgerEntryNestedInput =
   {
-    create?:
-      | Prisma.XOR<
-          Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput,
-          Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput
-        >
-      | Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput[]
-      | Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput[];
-    connectOrCreate?:
-      | Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput
-      | Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput[];
-    upsert?:
-      | Prisma.DueSettlementUpsertWithWhereUniqueWithoutMemberLedgerEntryInput
-      | Prisma.DueSettlementUpsertWithWhereUniqueWithoutMemberLedgerEntryInput[];
-    createMany?: Prisma.DueSettlementCreateManyMemberLedgerEntryInputEnvelope;
-    set?:
-      | Prisma.DueSettlementWhereUniqueInput
-      | Prisma.DueSettlementWhereUniqueInput[];
-    disconnect?:
-      | Prisma.DueSettlementWhereUniqueInput
-      | Prisma.DueSettlementWhereUniqueInput[];
-    delete?:
-      | Prisma.DueSettlementWhereUniqueInput
-      | Prisma.DueSettlementWhereUniqueInput[];
-    connect?:
-      | Prisma.DueSettlementWhereUniqueInput
-      | Prisma.DueSettlementWhereUniqueInput[];
-    update?:
-      | Prisma.DueSettlementUpdateWithWhereUniqueWithoutMemberLedgerEntryInput
-      | Prisma.DueSettlementUpdateWithWhereUniqueWithoutMemberLedgerEntryInput[];
-    updateMany?:
-      | Prisma.DueSettlementUpdateManyWithWhereWithoutMemberLedgerEntryInput
-      | Prisma.DueSettlementUpdateManyWithWhereWithoutMemberLedgerEntryInput[];
-    deleteMany?:
-      | Prisma.DueSettlementScalarWhereInput
-      | Prisma.DueSettlementScalarWhereInput[];
+    create?: Prisma.XOR<
+      Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput,
+      Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput
+    >;
+    connectOrCreate?: Prisma.DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput;
+    upsert?: Prisma.DueSettlementUpsertWithoutMemberLedgerEntryInput;
+    disconnect?: Prisma.DueSettlementWhereInput | boolean;
+    delete?: Prisma.DueSettlementWhereInput | boolean;
+    connect?: Prisma.DueSettlementWhereUniqueInput;
+    update?: Prisma.XOR<
+      Prisma.XOR<
+        Prisma.DueSettlementUpdateToOneWithWhereWithoutMemberLedgerEntryInput,
+        Prisma.DueSettlementUpdateWithoutMemberLedgerEntryInput
+      >,
+      Prisma.DueSettlementUncheckedUpdateWithoutMemberLedgerEntryInput
+    >;
   };
 
 export type DueSettlementCreateNestedManyWithoutDueInput = {
@@ -782,15 +727,7 @@ export type DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput = {
   >;
 };
 
-export type DueSettlementCreateManyMemberLedgerEntryInputEnvelope = {
-  data:
-    | Prisma.DueSettlementCreateManyMemberLedgerEntryInput
-    | Prisma.DueSettlementCreateManyMemberLedgerEntryInput[];
-  skipDuplicates?: boolean;
-};
-
-export type DueSettlementUpsertWithWhereUniqueWithoutMemberLedgerEntryInput = {
-  where: Prisma.DueSettlementWhereUniqueInput;
+export type DueSettlementUpsertWithoutMemberLedgerEntryInput = {
   update: Prisma.XOR<
     Prisma.DueSettlementUpdateWithoutMemberLedgerEntryInput,
     Prisma.DueSettlementUncheckedUpdateWithoutMemberLedgerEntryInput
@@ -799,45 +736,38 @@ export type DueSettlementUpsertWithWhereUniqueWithoutMemberLedgerEntryInput = {
     Prisma.DueSettlementCreateWithoutMemberLedgerEntryInput,
     Prisma.DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput
   >;
+  where?: Prisma.DueSettlementWhereInput;
 };
 
-export type DueSettlementUpdateWithWhereUniqueWithoutMemberLedgerEntryInput = {
-  where: Prisma.DueSettlementWhereUniqueInput;
+export type DueSettlementUpdateToOneWithWhereWithoutMemberLedgerEntryInput = {
+  where?: Prisma.DueSettlementWhereInput;
   data: Prisma.XOR<
     Prisma.DueSettlementUpdateWithoutMemberLedgerEntryInput,
     Prisma.DueSettlementUncheckedUpdateWithoutMemberLedgerEntryInput
   >;
 };
 
-export type DueSettlementUpdateManyWithWhereWithoutMemberLedgerEntryInput = {
-  where: Prisma.DueSettlementScalarWhereInput;
-  data: Prisma.XOR<
-    Prisma.DueSettlementUpdateManyMutationInput,
-    Prisma.DueSettlementUncheckedUpdateManyWithoutMemberLedgerEntryInput
-  >;
+export type DueSettlementUpdateWithoutMemberLedgerEntryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
+  due?: Prisma.DueUpdateOneRequiredWithoutSettlementsNestedInput;
+  payment?: Prisma.PaymentUpdateOneWithoutSettlementsNestedInput;
 };
 
-export type DueSettlementScalarWhereInput = {
-  AND?:
-    | Prisma.DueSettlementScalarWhereInput
-    | Prisma.DueSettlementScalarWhereInput[];
-  OR?: Prisma.DueSettlementScalarWhereInput[];
-  NOT?:
-    | Prisma.DueSettlementScalarWhereInput
-    | Prisma.DueSettlementScalarWhereInput[];
-  id?: Prisma.StringFilter<'DueSettlement'> | string;
-  dueId?: Prisma.StringFilter<'DueSettlement'> | string;
-  memberLedgerEntryId?: Prisma.StringFilter<'DueSettlement'> | string;
-  amount?: Prisma.IntFilter<'DueSettlement'> | number;
-  paymentId?: Prisma.StringNullableFilter<'DueSettlement'> | string | null;
-  status?: Prisma.StringFilter<'DueSettlement'> | string;
+export type DueSettlementUncheckedUpdateWithoutMemberLedgerEntryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  dueId?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type DueSettlementCreateWithoutDueInput = {
   id: string;
   amount: number;
   status: string;
-  memberLedgerEntry: Prisma.MemberLedgerEntryCreateNestedOneWithoutSettlementsInput;
+  memberLedgerEntry: Prisma.MemberLedgerEntryCreateNestedOneWithoutSettlementInput;
   payment?: Prisma.PaymentCreateNestedOneWithoutSettlementsInput;
 };
 
@@ -892,12 +822,28 @@ export type DueSettlementUpdateManyWithWhereWithoutDueInput = {
   >;
 };
 
+export type DueSettlementScalarWhereInput = {
+  AND?:
+    | Prisma.DueSettlementScalarWhereInput
+    | Prisma.DueSettlementScalarWhereInput[];
+  OR?: Prisma.DueSettlementScalarWhereInput[];
+  NOT?:
+    | Prisma.DueSettlementScalarWhereInput
+    | Prisma.DueSettlementScalarWhereInput[];
+  id?: Prisma.StringFilter<'DueSettlement'> | string;
+  dueId?: Prisma.StringFilter<'DueSettlement'> | string;
+  memberLedgerEntryId?: Prisma.StringFilter<'DueSettlement'> | string;
+  amount?: Prisma.IntFilter<'DueSettlement'> | number;
+  paymentId?: Prisma.StringNullableFilter<'DueSettlement'> | string | null;
+  status?: Prisma.StringFilter<'DueSettlement'> | string;
+};
+
 export type DueSettlementCreateWithoutPaymentInput = {
   id: string;
   amount: number;
   status: string;
   due: Prisma.DueCreateNestedOneWithoutSettlementsInput;
-  memberLedgerEntry: Prisma.MemberLedgerEntryCreateNestedOneWithoutSettlementsInput;
+  memberLedgerEntry: Prisma.MemberLedgerEntryCreateNestedOneWithoutSettlementInput;
 };
 
 export type DueSettlementUncheckedCreateWithoutPaymentInput = {
@@ -951,38 +897,6 @@ export type DueSettlementUpdateManyWithWhereWithoutPaymentInput = {
   >;
 };
 
-export type DueSettlementCreateManyMemberLedgerEntryInput = {
-  id: string;
-  dueId: string;
-  amount: number;
-  paymentId?: string | null;
-  status: string;
-};
-
-export type DueSettlementUpdateWithoutMemberLedgerEntryInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?: Prisma.IntFieldUpdateOperationsInput | number;
-  status?: Prisma.StringFieldUpdateOperationsInput | string;
-  due?: Prisma.DueUpdateOneRequiredWithoutSettlementsNestedInput;
-  payment?: Prisma.PaymentUpdateOneWithoutSettlementsNestedInput;
-};
-
-export type DueSettlementUncheckedUpdateWithoutMemberLedgerEntryInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string;
-  dueId?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?: Prisma.IntFieldUpdateOperationsInput | number;
-  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  status?: Prisma.StringFieldUpdateOperationsInput | string;
-};
-
-export type DueSettlementUncheckedUpdateManyWithoutMemberLedgerEntryInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string;
-  dueId?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?: Prisma.IntFieldUpdateOperationsInput | number;
-  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  status?: Prisma.StringFieldUpdateOperationsInput | string;
-};
-
 export type DueSettlementCreateManyDueInput = {
   id: string;
   memberLedgerEntryId: string;
@@ -995,7 +909,7 @@ export type DueSettlementUpdateWithoutDueInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  memberLedgerEntry?: Prisma.MemberLedgerEntryUpdateOneRequiredWithoutSettlementsNestedInput;
+  memberLedgerEntry?: Prisma.MemberLedgerEntryUpdateOneRequiredWithoutSettlementNestedInput;
   payment?: Prisma.PaymentUpdateOneWithoutSettlementsNestedInput;
 };
 
@@ -1028,7 +942,7 @@ export type DueSettlementUpdateWithoutPaymentInput = {
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   due?: Prisma.DueUpdateOneRequiredWithoutSettlementsNestedInput;
-  memberLedgerEntry?: Prisma.MemberLedgerEntryUpdateOneRequiredWithoutSettlementsNestedInput;
+  memberLedgerEntry?: Prisma.MemberLedgerEntryUpdateOneRequiredWithoutSettlementNestedInput;
 };
 
 export type DueSettlementUncheckedUpdateWithoutPaymentInput = {

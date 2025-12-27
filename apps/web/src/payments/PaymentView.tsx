@@ -1,11 +1,12 @@
-import { type DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
+import { type IPaymentDueDetailWithDueDto } from '@club-social/shared/due-settlements';
+import {
+  type DueCategory,
+  DueCategoryLabel,
+  DueSettlementStatus,
+  DueSettlementStatusLabel,
+} from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
-import {
-  type IPaymentDueDetailWithDueDto,
-  type PaymentDueStatus,
-  PaymentDueStatusLabel,
-} from '@club-social/shared/payment-due';
 import {
   type IVoidPaymentDto,
   PaymentStatus,
@@ -136,7 +137,8 @@ export function PaymentView() {
           {
             align: 'center',
             dataIndex: 'status',
-            render: (status: PaymentDueStatus) => PaymentDueStatusLabel[status],
+            render: (status: DueSettlementStatus) =>
+              DueSettlementStatusLabel[status],
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },

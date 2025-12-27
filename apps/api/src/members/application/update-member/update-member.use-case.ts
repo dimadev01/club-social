@@ -17,6 +17,7 @@ import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publis
 import { err, ok, ResultUtils } from '@/shared/domain/result';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import {
   USER_REPOSITORY_PROVIDER,
@@ -70,10 +71,18 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
 
     const user = await this.userRepository.findUniqueOrThrow(member.userId);
 
-    user.updateProfile({
-      email,
+    const name = Name.create({
       firstName: params.firstName,
       lastName: params.lastName,
+    });
+
+    if (name.isErr()) {
+      return err(name.error);
+    }
+
+    user.updateProfile({
+      email,
+      name: name.value,
       status: params.status,
       updatedBy: params.updatedBy,
     });

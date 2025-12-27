@@ -1,5 +1,5 @@
+import { IPaymentDueDetailDto } from '@club-social/shared/due-settlements';
 import { DueSettlementStatus } from '@club-social/shared/dues';
-import { IPaymentDueDetailDto } from '@club-social/shared/payment-due';
 import { IPaymentDetailDto, PaymentStatus } from '@club-social/shared/payments';
 import { UserStatus } from '@club-social/shared/users';
 

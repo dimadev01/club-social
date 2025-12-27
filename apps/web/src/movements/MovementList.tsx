@@ -8,8 +8,6 @@ import {
   type IMovementPaginatedExtraDto,
   MovementCategory,
   MovementCategoryLabel,
-  MovementMode,
-  MovementModeLabel,
   MovementStatus,
   MovementStatusLabel,
   MovementType,
@@ -149,17 +147,6 @@ export function MovementList() {
             render: (value: MovementCategory) => MovementCategoryLabel[value],
             title: 'Categoría',
             width: TABLE_COLUMN_WIDTHS.CATEGORY,
-          },
-          {
-            align: 'center',
-            dataIndex: 'mode',
-            filteredValue: getFilterValue('mode'),
-            filters: Object.entries(MovementModeLabel).map(
-              ([value, label]) => ({ text: label, value }),
-            ),
-            render: (value: MovementMode) => MovementModeLabel[value],
-            title: 'Modo',
-            width: 125,
           },
           {
             align: 'center',
