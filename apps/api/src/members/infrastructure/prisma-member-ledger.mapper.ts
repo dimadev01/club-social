@@ -1,11 +1,16 @@
 import {
+  MemberLedgerEntrySource,
   MemberLedgerEntryStatus,
   MemberLedgerEntryType,
 } from '@club-social/shared/members';
 import { Injectable } from '@nestjs/common';
 
-import { MemberLedgerEntryModel } from '@/infrastructure/database/prisma/generated/models';
-import { Mapper } from '@/infrastructure/repositories/mapper';
+import {
+  MemberLedgerEntryCreateInput,
+  MemberLedgerEntryModel,
+  MemberLedgerEntryUpdateInput,
+} from '@/infrastructure/database/prisma/generated/models';
+import { Guard } from '@/shared/domain/guards';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -13,17 +18,37 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { MemberLedgerEntryEntity } from '../ledger/domain/member-ledger-entry.entity';
 
 @Injectable()
-export class PrismaMemberLedgerEntryMapper extends Mapper<
-  MemberLedgerEntryEntity,
-  MemberLedgerEntryModel
-> {
+export class PrismaMemberLedgerEntryMapper {
+  public toCreateInput(
+    memberLedgerEntry: MemberLedgerEntryEntity,
+  ): MemberLedgerEntryCreateInput {
+    Guard.string(memberLedgerEntry.createdBy);
+
+    return {
+      amount: memberLedgerEntry.amount.toCents(),
+      createdBy: memberLedgerEntry.createdBy,
+      date: memberLedgerEntry.date?.value ?? '',
+      id: memberLedgerEntry.id.value,
+      member: { connect: { id: memberLedgerEntry.memberId.value } },
+      notes: memberLedgerEntry.notes,
+      payment: memberLedgerEntry.paymentId
+        ? { connect: { id: memberLedgerEntry.paymentId.value } }
+        : undefined,
+      reversalOf: memberLedgerEntry.reversalOfId
+        ? { connect: { id: memberLedgerEntry.reversalOfId.value } }
+        : undefined,
+      source: memberLedgerEntry.source,
+      status: memberLedgerEntry.status,
+      type: memberLedgerEntry.type,
+    };
+  }
+
   public toDomain(
     memberLedgerEntry: MemberLedgerEntryModel,
   ): MemberLedgerEntryEntity {
     return MemberLedgerEntryEntity.fromPersistence(
       {
         amount: Amount.raw({ cents: memberLedgerEntry.amount }),
-        createdBy: memberLedgerEntry.createdBy,
         date: DateOnly.raw({ value: memberLedgerEntry.date }),
         memberId: UniqueId.raw({ value: memberLedgerEntry.memberId }),
         notes: memberLedgerEntry.notes,
@@ -33,37 +58,37 @@ export class PrismaMemberLedgerEntryMapper extends Mapper<
         reversalOfId: memberLedgerEntry.reversalOfId
           ? UniqueId.raw({ value: memberLedgerEntry.reversalOfId })
           : null,
+        source: memberLedgerEntry.source as MemberLedgerEntrySource,
         status: memberLedgerEntry.status as MemberLedgerEntryStatus,
         type: memberLedgerEntry.type as MemberLedgerEntryType,
       },
       {
-        createdAt: memberLedgerEntry.createdAt,
-        createdBy: memberLedgerEntry.createdBy,
-        deletedAt: null,
-        deletedBy: null,
+        audit: {
+          createdAt: memberLedgerEntry.createdAt,
+          createdBy: memberLedgerEntry.createdBy,
+          updatedAt: memberLedgerEntry.updatedAt,
+          updatedBy: memberLedgerEntry.updatedBy,
+        },
         id: UniqueId.raw({ value: memberLedgerEntry.id }),
-        updatedAt: memberLedgerEntry.updatedAt,
-        updatedBy: memberLedgerEntry.updatedBy,
       },
     );
   }
 
-  public toPersistence(
+  public toUpdateInput(
     memberLedgerEntry: MemberLedgerEntryEntity,
-  ): MemberLedgerEntryModel {
+  ): MemberLedgerEntryUpdateInput {
+    Guard.string(memberLedgerEntry.createdBy);
+    Guard.string(memberLedgerEntry.updatedBy);
+
     return {
       amount: memberLedgerEntry.amount.toCents(),
-      createdAt: memberLedgerEntry.createdAt,
-      createdBy: memberLedgerEntry.createdBy,
-      date: memberLedgerEntry.date?.value ?? null,
+      date: memberLedgerEntry.date?.value ?? '',
       id: memberLedgerEntry.id.value,
-      memberId: memberLedgerEntry.memberId.value,
       notes: memberLedgerEntry.notes,
-      paymentId: memberLedgerEntry.paymentId?.value ?? null,
-      reversalOfId: memberLedgerEntry.reversalOfId?.value ?? null,
+      source: memberLedgerEntry.source,
       status: memberLedgerEntry.status,
       type: memberLedgerEntry.type,
-      updatedAt: memberLedgerEntry.updatedAt,
+      updatedAt: memberLedgerEntry.updatedAt ?? new Date(),
       updatedBy: memberLedgerEntry.updatedBy,
     };
   }

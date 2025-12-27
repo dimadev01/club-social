@@ -12,14 +12,9 @@ import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { DueEntity } from '../domain/entities/due.entity';
-import { PrismaDueSettlementMapper } from './prisma-due-settlement.mapper';
 
 @Injectable()
 export class PrismaDueMapper {
-  public constructor(
-    private readonly prismaDueSettlementMapper: PrismaDueSettlementMapper,
-  ) {}
-
   public toCreateInput(due: DueEntity): DueCreateInput {
     Guard.string(due.createdBy);
 

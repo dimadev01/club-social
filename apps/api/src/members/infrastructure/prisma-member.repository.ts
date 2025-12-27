@@ -17,6 +17,9 @@ import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 type MemberWithUser = MemberGetPayload<{ include: { user: true } }>;
+type MemberWithUserAndDues = MemberGetPayload<{
+  include: { dues: { include: { settlements: true } }; user: true };
+}>;
 
 import { MemberEntity } from '../domain/entities/member.entity';
 import { MemberRepository } from '../domain/member.repository';
@@ -65,10 +68,11 @@ export class PrismaMemberRepository implements MemberRepository {
   }
 
   public async findOneModel(id: UniqueId): Promise<MemberDetailModel | null> {
-    const member = await this.prismaService.member.findUnique({
-      include: { dues: { include: { settlements: true } }, user: true },
-      where: { deletedAt: null, id: id.value },
-    });
+    const member: MemberWithUserAndDues | null =
+      await this.prismaService.member.findUnique({
+        include: { dues: { include: { settlements: true } }, user: true },
+        where: { id: id.value },
+      });
 
     if (!member) {
       return null;
@@ -151,7 +155,7 @@ export class PrismaMemberRepository implements MemberRepository {
 
   public async findUniqueById(id: UniqueId): Promise<MemberEntity | null> {
     const member = await this.prismaService.member.findUnique({
-      where: { deletedAt: null, id: id.value },
+      where: { id: id.value },
     });
 
     if (!member) {
@@ -164,7 +168,6 @@ export class PrismaMemberRepository implements MemberRepository {
   public async findUniqueByIds(ids: UniqueId[]): Promise<MemberEntity[]> {
     const members = await this.prismaService.member.findMany({
       where: {
-        deletedAt: null,
         id: { in: ids.map((id) => id.value) },
       },
     });
@@ -174,19 +177,22 @@ export class PrismaMemberRepository implements MemberRepository {
 
   public async findUniqueOrThrow(id: UniqueId): Promise<MemberEntity> {
     const member = await this.prismaService.member.findUniqueOrThrow({
-      where: { deletedAt: null, id: id.value },
+      where: { id: id.value },
     });
 
     return this.mapper.member.toDomain(member);
   }
 
   public async save(entity: MemberEntity): Promise<void> {
-    const data = this.mapper.member.toPersistence(entity);
+    const where = { id: entity.id.value };
+
+    const memberCreate = this.mapper.member.toCreateInput(entity);
+    const memberUpdate = this.mapper.member.toUpdateInput(entity);
 
     await this.prismaService.member.upsert({
-      create: data,
-      update: data,
-      where: { id: entity.id.value },
+      create: memberCreate,
+      update: memberUpdate,
+      where,
     });
   }
 
@@ -198,7 +204,6 @@ export class PrismaMemberRepository implements MemberRepository {
       orderBy: [{ user: { lastName: 'asc' } }, { user: { firstName: 'asc' } }],
       take: params.limit,
       where: {
-        deletedAt: null,
         OR: [
           {
             user: {
@@ -232,9 +237,7 @@ export class PrismaMemberRepository implements MemberRepository {
     orderBy: MemberOrderByWithRelationInput[];
     where: MemberWhereInput;
   } {
-    const where: MemberWhereInput = {
-      deletedAt: null,
-    };
+    const where: MemberWhereInput = {};
 
     if (params.filters?.id) {
       where.id = { in: params.filters.id };
@@ -311,7 +314,6 @@ export class PrismaMemberRepository implements MemberRepository {
       _sum: { amount: true },
       by: ['memberId', 'category'],
       where: {
-        deletedAt: null,
         memberId: { in: memberIds },
         status: {
           in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
@@ -332,7 +334,7 @@ export class PrismaMemberRepository implements MemberRepository {
 
       const memberDuesMap = duesByMemberAndCategory.get(aggregate.memberId);
 
-      if (memberDuesMap) {
+      if (memberDuesMap && aggregate._sum) {
         memberDuesMap.set(
           aggregate.category as DueCategory,
           aggregate._sum.amount ?? 0,
@@ -368,7 +370,6 @@ export class PrismaMemberRepository implements MemberRepository {
       },
       where: {
         category: params.category,
-        deletedAt: null,
         memberId: { in: allMemberIds },
         status: {
           in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],

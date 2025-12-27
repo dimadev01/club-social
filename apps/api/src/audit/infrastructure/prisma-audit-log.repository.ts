@@ -3,10 +3,10 @@ import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
+  AuditLogCreateInput,
   AuditLogFindManyArgs,
   AuditLogWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
-import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import {
   APP_LOGGER_PROVIDER,
@@ -14,8 +14,10 @@ import {
 } from '@/shared/application/app-logger';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 
-import { AuditLogRepository } from '../domain/audit-log.repository';
-import { AuditLogEntity } from '../domain/entities/audit-log.entity';
+import {
+  AuditLogEntry,
+  AuditLogRepository,
+} from '../domain/audit-log.repository';
 
 @Injectable()
 export class PrismaAuditLogRepository implements AuditLogRepository {
@@ -23,14 +25,17 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     @Inject(APP_LOGGER_PROVIDER)
     private readonly logger: AppLogger,
     private readonly prisma: PrismaService,
-    private readonly mappers: PrismaMappers,
   ) {
     this.logger.setContext(PrismaAuditLogRepository.name);
   }
 
+  public async append(entry: AuditLogCreateInput): Promise<void> {
+    await this.prisma.auditLog.create({ data: entry });
+  }
+
   public async findPaginated(
     params: PaginatedRequest,
-  ): Promise<PaginatedResponse<AuditLogEntity>> {
+  ): Promise<PaginatedResponse<AuditLogEntry>> {
     const where: AuditLogWhereInput = {};
 
     if (params.filters?.createdAt) {
@@ -67,14 +72,17 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
     ]);
 
     return {
-      data: data.map((data) => this.mappers.auditLog.toDomain(data)),
+      data: data.map((data) => ({
+        action: data.action as AuditAction,
+        createdAt: data.createdAt,
+        createdBy: data.createdBy,
+        entity: data.entity as AuditEntity,
+        entityId: data.entityId,
+        message: data.message,
+        newData: data.newData as Record<string, unknown>,
+        oldData: data.oldData as Record<string, unknown>,
+      })),
       total,
     };
-  }
-
-  public async save(auditLog: AuditLogEntity): Promise<void> {
-    const data = this.mappers.auditLog.toPersistence(auditLog);
-
-    await this.prisma.auditLog.create({ data });
   }
 }

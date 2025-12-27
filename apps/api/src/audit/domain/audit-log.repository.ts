@@ -1,6 +1,8 @@
 import { AuditAction, AuditEntity } from '@club-social/shared/audit-logs';
 import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
 
+import { AuditLogCreateInput } from '@/infrastructure/database/prisma/generated/models';
+
 export const AUDIT_LOG_REPOSITORY_PROVIDER = Symbol(
   'AUDIT_LOG_REPOSITORY_PROVIDER',
 );
@@ -16,7 +18,7 @@ export interface AuditLogEntry {
 }
 
 export interface AuditLogRepository {
-  append(entry: AuditLogEntry): Promise<void>;
+  append(entry: AuditLogCreateInput): Promise<void>;
   findPaginated(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<AuditLogEntry>>;

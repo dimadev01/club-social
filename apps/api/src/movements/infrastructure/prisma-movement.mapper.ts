@@ -6,8 +6,12 @@ import {
 } from '@club-social/shared/movements';
 import { Injectable } from '@nestjs/common';
 
-import { MovementModel } from '@/infrastructure/database/prisma/generated/models';
-import { Mapper } from '@/infrastructure/repositories/mapper';
+import {
+  MovementCreateInput,
+  MovementModel,
+  MovementUpdateInput,
+} from '@/infrastructure/database/prisma/generated/models';
+import { Guard } from '@/shared/domain/guards';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -15,16 +19,34 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { MovementEntity } from '../domain/entities/movement.entity';
 
 @Injectable()
-export class PrismaMovementMapper extends Mapper<
-  MovementEntity,
-  MovementModel
-> {
+export class PrismaMovementMapper {
+  public toCreateInput(entity: MovementEntity): MovementCreateInput {
+    Guard.string(entity.createdBy);
+
+    return {
+      amount: entity.amount.toCents(),
+      category: entity.category,
+      createdBy: entity.createdBy,
+      date: entity.date.value,
+      id: entity.id.value,
+      mode: entity.mode,
+      notes: entity.notes,
+      payment: entity.paymentId
+        ? { connect: { id: entity.paymentId.value } }
+        : undefined,
+      status: entity.status,
+      type: entity.type,
+      voidedAt: entity.voidedAt,
+      voidedBy: entity.voidedBy,
+      voidReason: entity.voidReason,
+    };
+  }
+
   public toDomain(model: MovementModel): MovementEntity {
     return MovementEntity.fromPersistence(
       {
         amount: Amount.raw({ cents: model.amount }),
         category: model.category as MovementCategory,
-        createdBy: model.createdBy,
         date: DateOnly.raw({ value: model.date }),
         mode: model.mode as MovementMode,
         notes: model.notes,
@@ -38,13 +60,13 @@ export class PrismaMovementMapper extends Mapper<
         voidReason: model.voidReason,
       },
       {
-        createdAt: model.createdAt,
-        createdBy: model.createdBy,
-        deletedAt: model.deletedAt,
-        deletedBy: model.deletedBy,
+        audit: {
+          createdAt: model.createdAt,
+          createdBy: model.createdBy,
+          updatedAt: model.updatedAt,
+          updatedBy: model.updatedBy,
+        },
         id: UniqueId.raw({ value: model.id }),
-        updatedAt: model.updatedAt,
-        updatedBy: model.updatedBy,
       },
     );
   }
@@ -53,18 +75,37 @@ export class PrismaMovementMapper extends Mapper<
     return {
       amount: entity.amount.toCents(),
       category: entity.category,
-      createdAt: entity.createdAt,
-      createdBy: entity.createdBy,
+      createdAt: entity.createdAt ?? new Date(),
+      createdBy: entity.createdBy ?? '',
       date: entity.date.value,
-      deletedAt: entity.deletedAt,
-      deletedBy: entity.deletedBy,
       id: entity.id.value,
       mode: entity.mode,
       notes: entity.notes,
       paymentId: entity.paymentId?.value ?? null,
       status: entity.status,
       type: entity.type,
-      updatedAt: entity.updatedAt,
+      updatedAt: entity.updatedAt ?? new Date(),
+      updatedBy: entity.updatedBy,
+      voidedAt: entity.voidedAt,
+      voidedBy: entity.voidedBy,
+      voidReason: entity.voidReason,
+    };
+  }
+
+  public toUpdateInput(entity: MovementEntity): MovementUpdateInput {
+    Guard.string(entity.createdBy);
+    Guard.string(entity.updatedBy);
+
+    return {
+      amount: entity.amount.toCents(),
+      category: entity.category,
+      date: entity.date.value,
+      id: entity.id.value,
+      mode: entity.mode,
+      notes: entity.notes,
+      status: entity.status,
+      type: entity.type,
+      updatedAt: entity.updatedAt ?? new Date(),
       updatedBy: entity.updatedBy,
       voidedAt: entity.voidedAt,
       voidedBy: entity.voidedBy,

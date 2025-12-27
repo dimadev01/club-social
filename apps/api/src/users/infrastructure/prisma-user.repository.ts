@@ -24,9 +24,7 @@ export class PrismaUserRepository implements UserReadableRepository {
   public async findPaginated(
     params: PaginatedRequest,
   ): Promise<PaginatedResponse<UserEntity>> {
-    const where: UserWhereInput = {
-      deletedAt: null,
-    };
+    const where: UserWhereInput = {};
 
     if (params.filters?.role) {
       where.role = { in: params.filters.role };
@@ -58,7 +56,7 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {
     const user = await this.prismaService.user.findUnique({
-      where: { deletedAt: null, email: email.value },
+      where: { email: email.value },
     });
 
     if (!user) {
@@ -70,7 +68,7 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findUniqueById(id: UniqueId): Promise<null | UserEntity> {
     const user = await this.prismaService.user.findUnique({
-      where: { deletedAt: null, id: id.value },
+      where: { id: id.value },
     });
 
     if (!user) {
@@ -83,7 +81,6 @@ export class PrismaUserRepository implements UserReadableRepository {
   public async findUniqueByIds(ids: UniqueId[]): Promise<UserEntity[]> {
     const users = await this.prismaService.user.findMany({
       where: {
-        deletedAt: null,
         id: { in: ids.map((id) => id.value) },
       },
     });
@@ -93,7 +90,7 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findUniqueOrThrow(id: UniqueId): Promise<UserEntity> {
     const user = await this.prismaService.user.findUniqueOrThrow({
-      where: { deletedAt: null, id: id.value },
+      where: { id: id.value },
     });
 
     return this.mapper.user.toDomain(user);

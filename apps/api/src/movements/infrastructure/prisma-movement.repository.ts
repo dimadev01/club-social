@@ -40,7 +40,6 @@ export class PrismaMovementRepository implements MovementRepository {
   ): Promise<MovementEntity | null> {
     const movement = await this.prismaService.movement.findFirst({
       where: {
-        deletedAt: null,
         paymentId: paymentId.value,
       },
     });
@@ -63,7 +62,6 @@ export class PrismaMovementRepository implements MovementRepository {
     params: FindForStatisticsParams,
   ): Promise<MovementStatisticsModel> {
     const where: MovementWhereInput = {
-      deletedAt: null,
       status: MovementStatus.REGISTERED,
     };
 
@@ -152,7 +150,7 @@ export class PrismaMovementRepository implements MovementRepository {
 
   public async findUniqueById(id: UniqueId): Promise<MovementEntity | null> {
     const movement = await this.prismaService.movement.findUnique({
-      where: { deletedAt: null, id: id.value },
+      where: { id: id.value },
     });
 
     return movement ? this.mapper.movement.toDomain(movement) : null;
@@ -161,7 +159,6 @@ export class PrismaMovementRepository implements MovementRepository {
   public async findUniqueByIds(ids: UniqueId[]): Promise<MovementEntity[]> {
     const movements = await this.prismaService.movement.findMany({
       where: {
-        deletedAt: null,
         id: { in: ids.map((id) => id.value) },
       },
     });
@@ -171,19 +168,22 @@ export class PrismaMovementRepository implements MovementRepository {
 
   public async findUniqueOrThrow(id: UniqueId): Promise<MovementEntity> {
     const movement = await this.prismaService.movement.findUniqueOrThrow({
-      where: { deletedAt: null, id: id.value },
+      where: { id: id.value },
     });
 
     return this.mapper.movement.toDomain(movement);
   }
 
   public async save(entity: MovementEntity): Promise<void> {
-    const data = this.mapper.movement.toPersistence(entity);
+    const where = { id: entity.id.value };
+
+    const movementCreate = this.mapper.movement.toCreateInput(entity);
+    const movementUpdate = this.mapper.movement.toUpdateInput(entity);
 
     await this.prismaService.movement.upsert({
-      create: data,
-      update: data,
-      where: { id: entity.id.value },
+      create: movementCreate,
+      update: movementUpdate,
+      where,
     });
   }
 
@@ -191,7 +191,7 @@ export class PrismaMovementRepository implements MovementRepository {
     orderBy: MovementOrderByWithRelationInput[];
     where: MovementWhereInput;
   } {
-    const where: MovementWhereInput = { deletedAt: null };
+    const where: MovementWhereInput = {};
 
     if (params.filters?.createdAt) {
       const dateRangeResult = DateRange.fromUserInput(

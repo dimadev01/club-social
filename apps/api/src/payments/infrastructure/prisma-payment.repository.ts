@@ -61,7 +61,6 @@ export class PrismaPaymentRepository implements PaymentRepository {
   ): Promise<PaymentStatisticsModel[]> {
     const where: DueSettlementWhereInput = {
       payment: {
-        deletedAt: null,
         status: PaymentStatus.PAID,
       },
       status: PaymentDueStatus.REGISTERED,
@@ -95,7 +94,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
   public async findOneModel(id: UniqueId): Promise<null | PaymentDetailModel> {
     const payment = await this.prismaService.payment.findUnique({
       include: { member: { include: { user: true } } },
-      where: { deletedAt: null, id: id.value },
+      where: { id: id.value },
     });
 
     if (!payment) {
@@ -162,7 +161,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
   public async findUniqueById(id: UniqueId): Promise<null | PaymentEntity> {
     const payment = await this.prismaService.payment.findUnique({
       include: { settlements: true },
-      where: { deletedAt: null, id: id.value },
+      where: { id: id.value },
     });
 
     if (!payment) {
@@ -176,7 +175,6 @@ export class PrismaPaymentRepository implements PaymentRepository {
     const payments = await this.prismaService.payment.findMany({
       include: { settlements: true },
       where: {
-        deletedAt: null,
         id: { in: ids.map((id) => id.value) },
       },
     });
@@ -187,19 +185,22 @@ export class PrismaPaymentRepository implements PaymentRepository {
   public async findUniqueOrThrow(id: UniqueId): Promise<PaymentEntity> {
     const payment = await this.prismaService.payment.findUniqueOrThrow({
       include: { settlements: true },
-      where: { deletedAt: null, id: id.value },
+      where: { id: id.value },
     });
 
     return this.mapper.payment.toDomain(payment);
   }
 
   public async save(entity: PaymentEntity): Promise<void> {
-    const data = this.mapper.payment.toPersistence(entity);
+    const where = { id: entity.id.value };
+
+    const paymentCreate = this.mapper.payment.toCreateInput(entity);
+    const paymentUpdate = this.mapper.payment.toUpdateInput(entity);
 
     await this.prismaService.payment.upsert({
-      create: data,
-      update: data,
-      where: { id: entity.id.value },
+      create: paymentCreate,
+      update: paymentUpdate,
+      where,
     });
   }
 
@@ -207,9 +208,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
     orderBy: PaymentOrderByWithRelationInput[];
     where: PaymentWhereInput;
   } {
-    const where: PaymentWhereInput = {
-      deletedAt: null,
-    };
+    const where: PaymentWhereInput = {};
 
     if (params.filters?.createdAt) {
       const dateRangeResult = DateRange.fromUserInput(

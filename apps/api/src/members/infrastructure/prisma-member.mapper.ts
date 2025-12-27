@@ -7,8 +7,12 @@ import {
 } from '@club-social/shared/members';
 import { Injectable } from '@nestjs/common';
 
-import { MemberModel } from '@/infrastructure/database/prisma/generated/models';
-import { Mapper } from '@/infrastructure/repositories/mapper';
+import {
+  MemberCreateInput,
+  MemberModel,
+  MemberUpdateInput,
+} from '@/infrastructure/database/prisma/generated/models';
+import { Guard } from '@/shared/domain/guards';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -16,7 +20,29 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { MemberEntity } from '../domain/entities/member.entity';
 
 @Injectable()
-export class PrismaMemberMapper extends Mapper<MemberEntity, MemberModel> {
+export class PrismaMemberMapper {
+  public toCreateInput(member: MemberEntity): MemberCreateInput {
+    Guard.string(member.createdBy);
+
+    return {
+      birthDate: member.birthDate?.value ?? null,
+      category: member.category,
+      cityName: member.address?.cityName ?? null,
+      createdBy: member.createdBy,
+      documentID: member.documentID,
+      fileStatus: member.fileStatus,
+      id: member.id.value,
+      maritalStatus: member.maritalStatus,
+      nationality: member.nationality,
+      phones: member.phones,
+      sex: member.sex,
+      stateName: member.address?.stateName ?? null,
+      street: member.address?.street ?? null,
+      user: { connect: { id: member.userId.value } },
+      zipCode: member.address?.zipCode ?? null,
+    };
+  }
+
   public toDomain(member: MemberModel): MemberEntity {
     const address =
       member.street || member.cityName || member.stateName || member.zipCode
@@ -35,7 +61,6 @@ export class PrismaMemberMapper extends Mapper<MemberEntity, MemberModel> {
           ? DateOnly.raw({ value: member.birthDate })
           : null,
         category: member.category as MemberCategory,
-        createdBy: member.createdBy,
         documentID: member.documentID,
         fileStatus: member.fileStatus as FileStatus,
         maritalStatus: member.maritalStatus as MaritalStatus | null,
@@ -45,26 +70,25 @@ export class PrismaMemberMapper extends Mapper<MemberEntity, MemberModel> {
         userId: UniqueId.raw({ value: member.userId }),
       },
       {
-        createdAt: member.createdAt,
-        createdBy: member.createdBy,
-        deletedAt: member.deletedAt,
-        deletedBy: member.deletedBy,
+        audit: {
+          createdAt: member.createdAt,
+          createdBy: member.createdBy,
+          updatedAt: member.updatedAt,
+          updatedBy: member.updatedBy,
+        },
         id: UniqueId.raw({ value: member.id }),
-        updatedAt: member.updatedAt,
-        updatedBy: member.updatedBy,
       },
     );
   }
 
-  public toPersistence(member: MemberEntity): MemberModel {
+  public toUpdateInput(member: MemberEntity): MemberUpdateInput {
+    Guard.string(member.createdBy);
+    Guard.string(member.updatedBy);
+
     return {
       birthDate: member.birthDate?.value ?? null,
       category: member.category,
       cityName: member.address?.cityName ?? null,
-      createdAt: member.createdAt,
-      createdBy: member.createdBy,
-      deletedAt: member.deletedAt,
-      deletedBy: member.deletedBy,
       documentID: member.documentID,
       fileStatus: member.fileStatus,
       id: member.id.value,
@@ -74,9 +98,8 @@ export class PrismaMemberMapper extends Mapper<MemberEntity, MemberModel> {
       sex: member.sex,
       stateName: member.address?.stateName ?? null,
       street: member.address?.street ?? null,
-      updatedAt: member.updatedAt,
+      updatedAt: member.updatedAt ?? new Date(),
       updatedBy: member.updatedBy,
-      userId: member.userId.value,
       zipCode: member.address?.zipCode ?? null,
     };
   }

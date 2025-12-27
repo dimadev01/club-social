@@ -52,12 +52,17 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
   }
 
   public async save(entity: MemberLedgerEntryEntity): Promise<void> {
-    const data = this.mapper.memberLedgerEntry.toPersistence(entity);
+    const where = { id: entity.id.value };
+
+    const ledgerEntryCreate =
+      this.mapper.memberLedgerEntry.toCreateInput(entity);
+    const ledgerEntryUpdate =
+      this.mapper.memberLedgerEntry.toUpdateInput(entity);
 
     await this.prismaService.memberLedgerEntry.upsert({
-      create: data,
-      update: data,
-      where: { id: entity.id.value },
+      create: ledgerEntryCreate,
+      update: ledgerEntryUpdate,
+      where,
     });
   }
 }

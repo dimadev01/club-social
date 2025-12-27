@@ -1,8 +1,11 @@
 import { PaymentStatus } from '@club-social/shared/payments';
 import { Injectable } from '@nestjs/common';
 
-import { PaymentModel } from '@/infrastructure/database/prisma/generated/models';
-import { Mapper } from '@/infrastructure/repositories/mapper';
+import {
+  PaymentCreateInput,
+  PaymentUpdateInput,
+} from '@/infrastructure/database/prisma/generated/models';
+import { Guard } from '@/shared/domain/guards';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -11,7 +14,25 @@ import { PaymentEntity } from '../domain/entities/payment.entity';
 import { PaymentModelWithRelations } from './prisma-payment.types';
 
 @Injectable()
-export class PrismaPaymentMapper extends Mapper<PaymentEntity, PaymentModel> {
+export class PrismaPaymentMapper {
+  public toCreateInput(payment: PaymentEntity): PaymentCreateInput {
+    Guard.string(payment.createdBy);
+
+    return {
+      amount: payment.amount.toCents(),
+      createdBy: payment.createdBy,
+      date: payment.date.value,
+      id: payment.id.value,
+      member: { connect: { id: payment.memberId.value } },
+      notes: payment.notes,
+      receiptNumber: payment.receiptNumber,
+      status: payment.status,
+      voidedAt: payment.voidedAt,
+      voidedBy: payment.voidedBy,
+      voidReason: payment.voidReason,
+    };
+  }
+
   public toDomain(payment: PaymentModelWithRelations): PaymentEntity {
     const dueIds = (payment.paymentDues ?? []).map((pd) =>
       UniqueId.raw({ value: pd.dueId }),
@@ -20,7 +41,6 @@ export class PrismaPaymentMapper extends Mapper<PaymentEntity, PaymentModel> {
     return PaymentEntity.fromPersistence(
       {
         amount: Amount.raw({ cents: payment.amount }),
-        createdBy: payment.createdBy,
         date: DateOnly.raw({ value: payment.date }),
         dueIds,
         memberId: UniqueId.raw({ value: payment.memberId }),
@@ -32,31 +52,29 @@ export class PrismaPaymentMapper extends Mapper<PaymentEntity, PaymentModel> {
         voidReason: payment.voidReason,
       },
       {
-        createdAt: payment.createdAt,
-        createdBy: payment.createdBy,
-        deletedAt: payment.deletedAt,
-        deletedBy: payment.deletedBy,
+        audit: {
+          createdAt: payment.createdAt,
+          createdBy: payment.createdBy,
+          updatedAt: payment.updatedAt,
+          updatedBy: payment.updatedBy,
+        },
         id: UniqueId.raw({ value: payment.id }),
-        updatedAt: payment.updatedAt,
-        updatedBy: payment.updatedBy,
       },
     );
   }
 
-  public toPersistence(payment: PaymentEntity): PaymentModelWithRelations {
+  public toUpdateInput(payment: PaymentEntity): PaymentUpdateInput {
+    Guard.string(payment.createdBy);
+    Guard.string(payment.updatedBy);
+
     return {
       amount: payment.amount.toCents(),
-      createdAt: payment.createdAt,
-      createdBy: payment.createdBy,
       date: payment.date.value,
-      deletedAt: payment.deletedAt,
-      deletedBy: payment.deletedBy,
       id: payment.id.value,
-      memberId: payment.memberId.value,
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
       status: payment.status,
-      updatedAt: payment.updatedAt,
+      updatedAt: payment.updatedAt ?? new Date(),
       updatedBy: payment.updatedBy,
       voidedAt: payment.voidedAt,
       voidedBy: payment.voidedBy,

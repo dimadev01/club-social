@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaAuditLogMapper } from '@/audit/infrastructure/prisma-audit-log.mapper';
 import { PrismaDueSettlementMapper } from '@/dues/infrastructure/prisma-due-settlement.mapper';
 import { PrismaDueMapper } from '@/dues/infrastructure/prisma-due.mapper';
 import { PrismaMemberLedgerEntryMapper } from '@/members/infrastructure/prisma-member-ledger.mapper';
@@ -19,6 +18,5 @@ export class PrismaMappers {
     public readonly movement: PrismaMovementMapper,
     public readonly payment: PrismaPaymentMapper,
     public readonly user: PrismaUserMapper,
-    public readonly auditLog: PrismaAuditLogMapper,
   ) {}
 }
