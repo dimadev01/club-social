@@ -293,6 +293,7 @@ export class PrismaDueRepository implements DueRepository {
       date: due.date,
       dueSettlements: due.settlements.map((settlement) => ({
         amount: settlement.amount,
+        dueId: settlement.dueId,
         memberLedgerEntry: {
           date: settlement.memberLedgerEntry.date,
           id: settlement.memberLedgerEntry.id,

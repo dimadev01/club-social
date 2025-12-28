@@ -20,7 +20,7 @@ import {
   Res,
   Session,
 } from '@nestjs/common';
-import { flatMap, meanBy, sumBy } from 'es-toolkit/compat';
+import { flatMap, meanBy, sumBy, uniqBy } from 'es-toolkit/compat';
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 import { CsvService } from '@/infrastructure/csv/csv.service';
@@ -75,7 +75,7 @@ export class PaymentsController extends BaseController {
       await this.createPaymentUseCase.execute({
         createdBy: session.user.name,
         date: body.date,
-        dues: body.paymentDues,
+        dues: body.dues,
         memberId: body.memberId,
         notes: body.notes || null,
         receiptNumber: body.receiptNumber || null,
@@ -139,18 +139,21 @@ export class PaymentsController extends BaseController {
   public async getStatistics(
     @Query() query: GetPaymentStatisticsRequestDto,
   ): Promise<PaymentStatisticsResponseDto> {
-    const data = await this.paymentRepository.findForStatistics({
+    const payments = await this.paymentRepository.findForStatistics({
       dateRange: query.dateRange,
     });
+    const dueSettlements = flatMap(payments, (s) => s.dueSettlements);
 
-    const total = sumBy(data, (s) => s.amount);
-    const count = data.length;
-    const dueSettlementsCount = sumBy(data, (s) => s.dueSettlements.length);
-    const average = meanBy(data, (s) => s.amount);
-    const dueSettlements = flatMap(data, (s) => s.dueSettlements);
+    const total = sumBy(payments, (s) => s.amount);
+    const count = payments.length;
+
+    const uniqueDues = uniqBy(dueSettlements, (ds) => ds.due.id);
+    const paidDuesCount = uniqueDues.length;
+
+    const average = meanBy(payments, (s) => s.amount);
     const categories = Object.values(DueCategory).reduce(
       (acc, category) => {
-        const dueSettlementsInCategory = dueSettlements.filter(
+        const dueSettlementsInCategory = uniqueDues.filter(
           (ds) => ds.due.category === category,
         );
 
@@ -172,7 +175,7 @@ export class PaymentsController extends BaseController {
       average,
       categories,
       count,
-      dueSettlementsCount,
+      paidDuesCount,
       total,
     };
   }
@@ -245,6 +248,7 @@ export class PaymentsController extends BaseController {
         due: {
           amount: settlement.due.amount,
           category: settlement.due.category,
+          id: settlement.due.id,
         },
         memberLedgerEntry: {
           date: settlement.memberLedgerEntry.date,

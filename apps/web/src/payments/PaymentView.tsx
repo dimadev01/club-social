@@ -21,6 +21,7 @@ import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
+import { NavigateToDue } from '@/ui/NavigateDue';
 import { NavigateToMember } from '@/ui/NavigateMember';
 import { NavigateMemberLedgerEntry } from '@/ui/NavigateMemberLedgerEntry';
 import { NotFound } from '@/ui/NotFound';
@@ -154,8 +155,8 @@ export function PaymentView() {
           {
             align: 'right',
             dataIndex: ['due', 'amount'],
-            render: (dueAmount: number) =>
-              NumberFormat.formatCurrencyCents(dueAmount),
+            render: (amount: number) =>
+              NumberFormat.formatCurrencyCents(amount),
             title: 'Monto deuda',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -167,11 +168,23 @@ export function PaymentView() {
             title: 'Monto pago',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
+          {
+            align: 'center',
+            dataIndex: ['due', 'id'],
+            render: (dueId: string) => (
+              <NavigateToDue formatDate={false} id={dueId}>
+                Ver deuda
+              </NavigateToDue>
+            ),
+            title: 'Deuda',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
         ]}
         dataSource={payment.settlements}
         loading={isLoading}
         pagination={false}
         size="small"
+        title={() => 'Deudas pagas'}
       />
 
       <VoidModal

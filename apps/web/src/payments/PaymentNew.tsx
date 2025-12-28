@@ -15,7 +15,7 @@ import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
-import { PaymentForm, type PaymentFormData } from './PaymentForm';
+import { PaymentForm, type PaymentFormSchema } from './PaymentForm';
 
 export function PaymentNew() {
   const { message } = App.useApp();
@@ -37,8 +37,8 @@ export function PaymentNew() {
     },
   });
 
-  const handleSubmit = (values: PaymentFormData) => {
-    if (values.paymentDues.length === 0) {
+  const handleSubmit = (values: PaymentFormSchema) => {
+    if (values.dues.length === 0) {
       message.error('Debe seleccionar al menos una deuda para pagar');
 
       return;
@@ -46,12 +46,12 @@ export function PaymentNew() {
 
     createPaymentMutation.mutate({
       date: DateFormat.isoDate(values.date.startOf('day')),
+      dues: values.dues.map((due) => ({
+        amount: NumberFormat.toCents(due.amount),
+        dueId: due.dueId,
+      })),
       memberId: values.memberId,
       notes: values.notes,
-      paymentDues: values.paymentDues.map((pd) => ({
-        amount: NumberFormat.toCents(pd.amount),
-        dueId: pd.dueId,
-      })),
       receiptNumber: values.receiptNumber,
     });
   };
@@ -76,9 +76,9 @@ export function PaymentNew() {
         disabled={isMutating}
         initialValues={{
           date: dayjs(),
+          dues: [],
           memberId: memberIdFromUrl,
           notes: '',
-          paymentDues: [],
           receiptNumber: '',
         }}
         mode="create"

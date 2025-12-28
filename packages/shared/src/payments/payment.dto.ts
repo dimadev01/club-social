@@ -1,14 +1,17 @@
-import type { ICreatePaymentDueDto } from '../due-settlements';
-
 import { DueCategory, DueSettlementStatus } from '../dues';
 import { PaymentStatus } from './payment.enum';
 
 export interface CreatePaymentDto {
   date: string;
+  dues: CreatePaymentDueDto[];
   memberId: string;
   notes: null | string;
-  paymentDues: ICreatePaymentDueDto[];
   receiptNumber: null | string;
+}
+
+export interface CreatePaymentDueDto {
+  amount: number;
+  dueId: string;
 }
 
 export interface GetPaymentStatisticsDto {
@@ -43,6 +46,7 @@ export interface PaymentDueSettlementDto {
 export interface PaymentDueSettlementDueDto {
   amount: number;
   category: DueCategory;
+  id: string;
 }
 
 export interface PaymentMemberDto {
@@ -80,7 +84,7 @@ export interface PaymentStatisticsDto {
   average: number;
   categories: Record<DueCategory, PaymentStatisticsCategoryDto>;
   count: number;
-  dueSettlementsCount: number;
+  paidDuesCount: number;
   total: number;
 }
 

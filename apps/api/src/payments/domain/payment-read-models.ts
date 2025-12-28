@@ -43,6 +43,7 @@ interface PaymentDueSettlement {
 interface PaymentDueSettlementDue {
   amount: number;
   category: DueCategory;
+  id: string;
 }
 
 interface PaymentDueSettlementMemberLedgerEntry {
@@ -62,4 +63,5 @@ interface PaymentStatisticsDueSettlement {
 
 interface PaymentStatisticsDueSettlementDue {
   category: DueCategory;
+  id: string;
 }

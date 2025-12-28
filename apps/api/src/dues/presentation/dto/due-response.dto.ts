@@ -25,7 +25,7 @@ export class DueResponseDto implements DueDto {
   public id: string;
   public member: DueMemberResponseDto;
   public notes: null | string;
-  public settlements: DueSettlementDto[];
+  public settlements: DueSettlementResponseDto[];
   public status: DueStatus;
   public updatedAt: string;
   public updatedBy: null | string;
@@ -45,6 +45,7 @@ export class DueSettlementPaymentResponseDto implements DueSettlementPaymentDto 
 
 export class DueSettlementResponseDto implements DueSettlementDto {
   public amount: number;
+  public dueId: string;
   public memberLedgerEntry: DueSettlementMemberLedgerEntryResponseDto;
   public payment: DueSettlementPaymentResponseDto | null;
   public status: DueSettlementStatus;

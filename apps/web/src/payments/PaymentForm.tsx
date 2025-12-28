@@ -10,14 +10,14 @@ import { DateFormat, DateFormats } from '@club-social/shared/lib';
 import { useQueries } from '@tanstack/react-query';
 import { DatePicker, Empty, Input, InputNumber, Space } from 'antd';
 import dayjs from 'dayjs';
-import { difference, differenceBy, orderBy } from 'es-toolkit/array';
+import { difference, differenceBy, flatMap, orderBy } from 'es-toolkit/array';
 import { flow } from 'es-toolkit/function';
 import { sumBy } from 'es-toolkit/math';
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
-import { getPaymentDuesByDueQueryOptions } from '@/dues/usePaymentDuesByDue';
+import { getDueQueryOptions } from '@/dues/useDue';
 import { usePendingDues } from '@/dues/usePendingDues';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
@@ -27,17 +27,17 @@ import { Form } from '@/ui/Form/Form';
 import { Table } from '@/ui/Table/Table';
 import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 
-export type FormInitialValues = Partial<PaymentFormData>;
+export type FormInitialValues = Partial<PaymentFormSchema>;
 
-export interface PaymentFormData {
+export interface PaymentFormSchema {
   date: dayjs.Dayjs;
+  dues: FormDueToPaySchema[];
   memberId: string;
   notes: string;
-  paymentDues: FormPaymentDueData[];
   receiptNumber: string;
 }
 
-interface FormPaymentDueData {
+interface FormDueToPaySchema {
   amount: number;
   dueId: string;
 }
@@ -46,18 +46,18 @@ interface PaymentFormProps {
   disabled?: boolean;
   initialValues?: FormInitialValues;
   mode: 'create' | 'edit';
-  onSubmit: (data: PaymentFormData) => void;
+  onSubmit: (data: PaymentFormSchema) => void;
 }
 
 const calculateFinalPaymentDues = flow(
   (
-    currentPaymentDues: FormPaymentDueData[],
-    paymentDuesToAdd: FormPaymentDueData[],
-    paymentDuesToRemove: FormPaymentDueData[],
+    currentFormDues: FormDueToPaySchema[],
+    formDuesToAdd: FormDueToPaySchema[],
+    formDuesToRemove: FormDueToPaySchema[],
   ) =>
     differenceBy(
-      [...currentPaymentDues, ...paymentDuesToAdd],
-      paymentDuesToRemove,
+      [...currentFormDues, ...formDuesToAdd],
+      formDuesToRemove,
       (pd) => pd.dueId,
     ),
   (arr) => orderBy(arr, ['dueId'], ['desc']),
@@ -68,7 +68,7 @@ export function PaymentForm({
   initialValues,
   onSubmit,
 }: PaymentFormProps) {
-  const [form] = Form.useForm<PaymentFormData>();
+  const [form] = Form.useForm<PaymentFormSchema>();
   const { getFieldValue, setFieldValue } = form;
   const formMemberId = Form.useWatch('memberId', form);
 
@@ -77,7 +77,8 @@ export function PaymentForm({
   );
   const { data: pendingDues, isLoading: isPendingDuesLoading } =
     usePendingDues(formMemberId);
-  const { data: paymentDues, isLoading: isPaymentDuesLoading } = useQueries({
+
+  const { data: dues, isLoading: isLoadingDues } = useQueries({
     combine: (results) => ({
       data: results
         .filter((result) => !!result.data)
@@ -85,20 +86,21 @@ export function PaymentForm({
       isFetching: results.some((result) => result.isFetching),
       isLoading: results.some((result) => result.isLoading),
     }),
-    queries: (pendingDues ?? []).map((due) =>
-      getPaymentDuesByDueQueryOptions(due.id),
-    ),
+    queries: (pendingDues ?? []).map((due) => getDueQueryOptions(due.id)),
   });
 
   const [selectedDueIds, setSelectedDueIds] = useState<string[]>([]);
 
   const getPaidAmountForDue = useCallback(
     (dueId: string) => {
-      const payments = paymentDues.filter((p) => p.dueId === dueId);
+      const dueSettlements = flatMap(dues, (due) => due.settlements);
+      const dueSettlementsForDue = dueSettlements.filter(
+        (ds) => ds.dueId === dueId,
+      );
 
-      return payments.reduce((acc, curr) => acc + curr.amount, 0);
+      return sumBy(dueSettlementsForDue, (p) => p.amount);
     },
-    [paymentDues],
+    [dues],
   );
 
   const getRemainingAmountForDue = useCallback(
@@ -116,8 +118,7 @@ export function PaymentForm({
 
   const handleRowSelectionChange = useCallback(
     (newSelectedRowKeys: React.Key[]) => {
-      const currentPaymentDues: FormPaymentDueData[] =
-        getFieldValue('paymentDues');
+      const currentPaymentDues: FormDueToPaySchema[] = getFieldValue('dues');
       const currentSelectedRowKeys = currentPaymentDues.map((p) => p.dueId);
 
       // Find newly selected dues (not in current paymentDues)
@@ -132,8 +133,8 @@ export function PaymentForm({
         newSelectedRowKeys,
       ).map(String);
 
-      const newPaymentDuesToAdd: FormPaymentDueData[] = [];
-      const paymentDuesToRemove: FormPaymentDueData[] = [];
+      const newPaymentDuesToAdd: FormDueToPaySchema[] = [];
+      const paymentDuesToRemove: FormDueToPaySchema[] = [];
 
       // Add newly selected dues with full amount
       newSelections.forEach((dueId) => {
@@ -157,7 +158,7 @@ export function PaymentForm({
         paymentDuesToRemove,
       );
 
-      setFieldValue('paymentDues', finalFormPaymentDues);
+      setFieldValue('dues', finalFormPaymentDues);
       setSelectedDueIds(newSelectedRowKeys as string[]);
     },
     [getFieldValue, setFieldValue, getRemainingAmountForDue],
@@ -174,11 +175,10 @@ export function PaymentForm({
       ]
     : [];
 
-  const isLoading =
-    isMemberLoading || isPendingDuesLoading || isPaymentDuesLoading;
+  const isLoading = isMemberLoading || isPendingDuesLoading || isLoadingDues;
 
   return (
-    <Form<PaymentFormData>
+    <Form<PaymentFormSchema>
       disabled={disabled || isLoading}
       form={form}
       id="form"
@@ -186,7 +186,7 @@ export function PaymentForm({
       name="form"
       onFinish={onSubmit}
     >
-      <Form.Item<PaymentFormData>
+      <Form.Item<PaymentFormSchema>
         label="Fecha"
         name="date"
         rules={[{ message: 'La fecha es requerida', required: true }]}
@@ -199,7 +199,7 @@ export function PaymentForm({
         />
       </Form.Item>
 
-      <Form.Item<PaymentFormData>
+      <Form.Item<PaymentFormSchema>
         label="Socio"
         name="memberId"
         rules={[{ message: 'Debe seleccionar un socio', required: true }]}
@@ -211,11 +211,14 @@ export function PaymentForm({
         />
       </Form.Item>
 
-      <Form.Item<PaymentFormData> label="Número de recibo" name="receiptNumber">
+      <Form.Item<PaymentFormSchema>
+        label="Número de recibo"
+        name="receiptNumber"
+      >
         <Input placeholder="Número de recibo (opcional)" />
       </Form.Item>
 
-      <Form.Item<PaymentFormData> label="Notas" name="notes">
+      <Form.Item<PaymentFormSchema> label="Notas" name="notes">
         <Input.TextArea placeholder="Notas adicionales..." rows={3} />
       </Form.Item>
 
@@ -285,10 +288,10 @@ export function PaymentForm({
             size="small"
           />
 
-          <Form.List name="paymentDues">
+          <Form.List name="dues">
             {(fields) => {
               const total = sumBy(fields, (field) =>
-                form.getFieldValue(['paymentDues', field.name, 'amount']),
+                form.getFieldValue(['dues', field.name, 'amount']),
               );
 
               return (
@@ -306,12 +309,10 @@ export function PaymentForm({
                   )}
 
                   {fields.map((field) => {
-                    const paymentDue = form.getFieldValue([
-                      'paymentDues',
-                      field.name,
-                    ]);
+                    const formDue = form.getFieldValue(['dues', field.name]);
+
                     const due = pendingDues?.find(
-                      (d) => d.id === paymentDue?.dueId,
+                      (d) => d.id === formDue?.dueId,
                     );
 
                     if (!due) {

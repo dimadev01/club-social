@@ -130,6 +130,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
         amount: settlement.amount,
         due: {
           category: settlement.due.category as DueCategory,
+          id: settlement.due.id,
         },
       })),
     }));
@@ -270,6 +271,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
         due: {
           amount: settlement.due.amount,
           category: settlement.due.category as DueCategory,
+          id: settlement.due.id,
         },
         memberLedgerEntry: {
           date: settlement.memberLedgerEntry.date,

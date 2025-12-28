@@ -1,10 +1,10 @@
-import { ICreatePaymentDueDto } from '@club-social/shared/due-settlements';
 import {
   MemberLedgerEntrySource,
   MemberLedgerEntryStatus,
   MemberLedgerEntryType,
 } from '@club-social/shared/members';
 import { Inject } from '@nestjs/common';
+import { sumBy } from 'es-toolkit/compat';
 
 import type { Result } from '@/shared/domain/result';
 
@@ -35,10 +35,15 @@ import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-interface Params {
+interface CreatePaymentDueParams {
+  amount: number;
+  dueId: string;
+}
+
+interface CreatePaymentParams {
   createdBy: string;
   date: string;
-  dues: ICreatePaymentDueDto[];
+  dues: CreatePaymentDueParams[];
   memberId: string;
   notes: null | string;
   receiptNumber: null | string;
@@ -59,12 +64,17 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     super(logger);
   }
 
-  public async execute(params: Params): Promise<Result<PaymentEntity>> {
+  public async execute(
+    params: CreatePaymentParams,
+  ): Promise<Result<PaymentEntity>> {
     this.logger.info({
       message: 'Creating payment',
       params,
     });
 
+    /**
+     * Validation that ensure the dues exist
+     */
     const dues = await this.dueRepository.findByIds(
       params.dues.map((pd) => UniqueId.raw({ value: pd.dueId })),
     );
@@ -73,16 +83,21 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(new ApplicationError('Una o más cuotas no existen'));
     }
 
-    const date = DateOnly.fromString(params.date);
+    const results = ResultUtils.combine([
+      Amount.fromCents(sumBy(params.dues, (pd) => pd.amount)),
+      DateOnly.fromString(params.date),
+    ]);
 
-    if (date.isErr()) {
-      return err(date.error);
+    if (results.isErr()) {
+      return err(results.error);
     }
+
+    const [paymentAmount, paymentDate] = results.value;
 
     const payment = PaymentEntity.create(
       {
-        amount: dues.reduce((acc, due) => acc.add(due.amount), Amount.ZERO),
-        date: date.value,
+        amount: paymentAmount,
+        date: paymentDate,
         memberId: UniqueId.raw({ value: params.memberId }),
         notes: params.notes,
         receiptNumber: params.receiptNumber,
@@ -99,7 +114,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     const creditEntry = MemberLedgerEntryEntity.create(
       {
         amount: payment.value.amount,
-        date: date.value,
+        date: paymentDate,
         memberId: UniqueId.raw({ value: params.memberId }),
         notes: params.notes,
         paymentId: payment.value.id,
@@ -119,22 +134,20 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
     const dueSettlements = ResultUtils.combine(
       dues.map((due) => {
-        const paymentDueForThisDue = params.dues.find(
-          (pd) => pd.dueId === due.id.value,
-        );
+        const dueInParams = params.dues.find((pd) => pd.dueId === due.id.value);
 
-        Guard.defined(paymentDueForThisDue);
+        Guard.defined(dueInParams); // It should never happen because we validated the dues exist
 
-        const paymentDueAmount = Amount.fromCents(paymentDueForThisDue.amount);
+        const amount = Amount.fromCents(dueInParams.amount);
 
-        if (paymentDueAmount.isErr()) {
-          return err(paymentDueAmount.error);
+        if (amount.isErr()) {
+          return err(amount.error);
         }
 
         const debitEntry = MemberLedgerEntryEntity.create(
           {
-            amount: paymentDueAmount.value,
-            date: date.value,
+            amount: amount.value,
+            date: paymentDate,
             memberId: UniqueId.raw({ value: params.memberId }),
             notes: params.notes,
             paymentId: payment.value.id,
@@ -153,7 +166,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         memberLedgerEntries.push(debitEntry.value);
 
         return due.applySettlement({
-          amount: paymentDueAmount.value,
+          amount: amount.value,
           createdBy: params.createdBy,
           memberLedgerEntryId: debitEntry.value.id,
           paymentId: payment.value.id,

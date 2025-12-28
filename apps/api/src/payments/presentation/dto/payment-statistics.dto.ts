@@ -15,6 +15,6 @@ export class PaymentStatisticsResponseDto implements PaymentStatisticsDto {
   public average: number;
   public categories: Record<DueCategory, PaymentStatisticsCategoryResponseDto>;
   public count: number;
-  public dueSettlementsCount: number;
+  public paidDuesCount: number;
   public total: number;
 }

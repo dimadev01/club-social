@@ -40,6 +40,7 @@ interface DueMember {
 
 interface DueSettlement {
   amount: number;
+  dueId: string;
   memberLedgerEntry: DueSettlementMemberLedgerEntry;
   payment: DueSettlementPayment | null;
   status: DueSettlementStatus;

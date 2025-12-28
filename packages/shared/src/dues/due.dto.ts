@@ -57,6 +57,7 @@ export interface DuePendingStatisticsDto {
 
 export interface DueSettlementDto {
   amount: number;
+  dueId: string;
   memberLedgerEntry: DueSettlementMemberLedgerEntryDto;
   payment: DueSettlementPaymentDto | null;
   status: DueSettlementStatus;

@@ -34,7 +34,7 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
         <Statistic
           loading={isLoading}
           title="Deudas pagas"
-          value={statistics?.dueSettlementsCount}
+          value={statistics?.paidDuesCount}
         />
       </Card.Grid>
       <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">
