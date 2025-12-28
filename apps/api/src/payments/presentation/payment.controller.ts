@@ -1,7 +1,11 @@
 import type { Response } from 'express';
 
+import { DueCategory } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
-import { PaymentStatusLabel } from '@club-social/shared/payments';
+import {
+  PaymentStatisticsCategoryDto,
+  PaymentStatusLabel,
+} from '@club-social/shared/payments';
 import {
   Body,
   Controller,
@@ -16,6 +20,7 @@ import {
   Res,
   Session,
 } from '@nestjs/common';
+import { flatMap, meanBy, sumBy } from 'es-toolkit/compat';
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 import { CsvService } from '@/infrastructure/csv/csv.service';
@@ -32,7 +37,6 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePaymentUseCase } from '../application/create-payment/create-payment.use-case';
-import { FindPaymentsStatisticsUseCase } from '../application/find-payments-statistics/find-payments-statistics.use-case';
 import { VoidPaymentUseCase } from '../application/void-payment/void-payment.use-case';
 import {
   PAYMENT_REPOSITORY_PROVIDER,
@@ -44,7 +48,7 @@ import {
   PaymentPaginatedResponseDto,
 } from './dto/payment-paginated.dto';
 import { PaymentResponseDto } from './dto/payment-response.dto';
-import { PaymentStatisticsQueryDto } from './dto/payment-statistics-query.dto';
+import { GetPaymentStatisticsRequestDto } from './dto/payment-statistics-query.dto';
 import { PaymentStatisticsResponseDto } from './dto/payment-statistics.dto';
 import { VoidPaymentRequestDto } from './dto/void-payment.dto';
 
@@ -53,12 +57,11 @@ export class PaymentsController extends BaseController {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    private readonly createPaymentUseCase: CreatePaymentUseCase,
-    private readonly voidPaymentUseCase: VoidPaymentUseCase,
     @Inject(PAYMENT_REPOSITORY_PROVIDER)
     private readonly paymentRepository: PaymentRepository,
+    private readonly createPaymentUseCase: CreatePaymentUseCase,
+    private readonly voidPaymentUseCase: VoidPaymentUseCase,
     private readonly csvService: CsvService,
-    private readonly findPaymentsStatisticsUseCase: FindPaymentsStatisticsUseCase,
   ) {
     super(logger);
   }
@@ -134,15 +137,44 @@ export class PaymentsController extends BaseController {
 
   @Get('statistics')
   public async getStatistics(
-    @Query() query: PaymentStatisticsQueryDto,
+    @Query() query: GetPaymentStatisticsRequestDto,
   ): Promise<PaymentStatisticsResponseDto> {
-    const data = this.handleResult(
-      await this.findPaymentsStatisticsUseCase.execute({
-        dateRange: query.dateRange,
-      }),
+    const data = await this.paymentRepository.findForStatistics({
+      dateRange: query.dateRange,
+    });
+
+    const total = sumBy(data, (s) => s.amount);
+    const count = data.length;
+    const dueSettlementsCount = sumBy(data, (s) => s.dueSettlements.length);
+    const average = meanBy(data, (s) => s.amount);
+    const dueSettlements = flatMap(data, (s) => s.dueSettlements);
+    const categories = Object.values(DueCategory).reduce(
+      (acc, category) => {
+        const dueSettlementsInCategory = dueSettlements.filter(
+          (ds) => ds.due.category === category,
+        );
+
+        if (dueSettlementsInCategory.length > 0) {
+          const amount = sumBy(dueSettlementsInCategory, (ds) => ds.amount);
+          const average = meanBy(dueSettlementsInCategory, (pd) => pd.amount);
+          const count = dueSettlementsInCategory.length;
+          acc[category] = { amount, average, count };
+        } else {
+          acc[category] = { amount: 0, average: 0, count: 0 };
+        }
+
+        return acc;
+      },
+      {} as Record<DueCategory, PaymentStatisticsCategoryDto>,
     );
 
-    return data;
+    return {
+      average,
+      categories,
+      count,
+      dueSettlementsCount,
+      total,
+    };
   }
 
   @Get('export')
@@ -197,7 +229,7 @@ export class PaymentsController extends BaseController {
     return {
       amount: payment.amount,
       createdAt: payment.createdAt?.toISOString() ?? '',
-      createdBy: payment.createdBy ?? '',
+      createdBy: payment.createdBy,
       date: payment.date,
       id: payment.id,
       member: {
@@ -208,8 +240,20 @@ export class PaymentsController extends BaseController {
       memberName: payment.member.name,
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
+      settlements: payment.dueSettlements.map((settlement) => ({
+        amount: settlement.amount,
+        due: {
+          amount: settlement.due.amount,
+          category: settlement.due.category,
+        },
+        memberLedgerEntry: {
+          date: settlement.memberLedgerEntry.date,
+          id: settlement.memberLedgerEntry.id,
+        },
+        status: settlement.status,
+      })),
       status: payment.status,
-      updatedAt: payment.updatedAt?.toISOString() ?? '',
+      updatedAt: payment.updatedAt.toISOString(),
       updatedBy: payment.updatedBy,
       voidedAt: payment.voidedAt?.toISOString() ?? null,
       voidedBy: payment.voidedBy ?? null,

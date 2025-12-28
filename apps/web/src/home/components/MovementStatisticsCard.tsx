@@ -5,6 +5,7 @@ import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { Space, Statistic, Tooltip } from 'antd';
 
 import { Card } from '@/ui/Card';
+import { MovementsIcon } from '@/ui/Icons/MovementsIcon';
 
 import { useMovementStatistics } from '../useMovementStatistics';
 
@@ -20,7 +21,12 @@ export function MovementStatisticsCard({ dateRange }: Props) {
   });
 
   return (
-    <Card size="small" title="Movimientos en el período" type="inner">
+    <Card
+      extra={<MovementsIcon />}
+      size="small"
+      title="Movimientos"
+      type="inner"
+    >
       <Card.Grid className="w-full md:w-1/3">
         <Statistic
           loading={isLoading}

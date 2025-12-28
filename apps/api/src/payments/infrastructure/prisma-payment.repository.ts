@@ -63,33 +63,17 @@ export class PrismaPaymentRepository implements PaymentRepository {
     id: UniqueId,
   ): Promise<null | PaymentReadModel> {
     const payment = await this.prismaService.payment.findUnique({
-      include: { member: { include: { user: true } } },
+      include: {
+        member: { include: { user: true } },
+        settlements: {
+          include: { due: true, memberLedgerEntry: true },
+          orderBy: { memberLedgerEntry: { date: 'desc' } },
+        },
+      },
       where: { id: id.value },
     });
 
-    if (!payment) {
-      return null;
-    }
-
-    return {
-      amount: payment.amount,
-      createdAt: payment.createdAt,
-      createdBy: payment.createdBy,
-      date: payment.date,
-      id: payment.id,
-      member: {
-        id: payment.member.id,
-        name: payment.member.user.name,
-      },
-      notes: payment.notes,
-      receiptNumber: payment.receiptNumber,
-      status: payment.status as PaymentStatus,
-      updatedAt: payment.updatedAt,
-      updatedBy: payment.updatedBy,
-      voidedAt: payment.voidedAt,
-      voidedBy: payment.voidedBy,
-      voidReason: payment.voidReason,
-    };
+    return payment ? this.toReadModel(payment) : null;
   }
 
   public async findByIds(ids: UniqueId[]): Promise<PaymentEntity[]> {
@@ -142,7 +126,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
     return payments.map((payment) => ({
       amount: payment.amount,
-      settlements: payment.settlements.map((settlement) => ({
+      dueSettlements: payment.settlements.map((settlement) => ({
         amount: settlement.amount,
         due: {
           category: settlement.due.category as DueCategory,
@@ -265,6 +249,47 @@ export class PrismaPaymentRepository implements PaymentRepository {
         name: payment.member.user.name,
       },
       status: payment.status as PaymentStatus,
+    };
+  }
+
+  private toReadModel(
+    payment: PaymentGetPayload<{
+      include: {
+        member: { include: { user: true } };
+        settlements: { include: { due: true; memberLedgerEntry: true } };
+      };
+    }>,
+  ): PaymentReadModel {
+    return {
+      amount: payment.amount,
+      createdAt: payment.createdAt,
+      createdBy: payment.createdBy,
+      date: payment.date,
+      dueSettlements: payment.settlements.map((settlement) => ({
+        amount: settlement.amount,
+        due: {
+          amount: settlement.due.amount,
+          category: settlement.due.category as DueCategory,
+        },
+        memberLedgerEntry: {
+          date: settlement.memberLedgerEntry.date,
+          id: settlement.memberLedgerEntry.id,
+        },
+        status: settlement.status as DueSettlementStatus,
+      })),
+      id: payment.id,
+      member: {
+        id: payment.member.id,
+        name: payment.member.user.name,
+      },
+      notes: payment.notes,
+      receiptNumber: payment.receiptNumber,
+      status: payment.status as PaymentStatus,
+      updatedAt: payment.updatedAt,
+      updatedBy: payment.updatedBy,
+      voidedAt: payment.voidedAt,
+      voidedBy: payment.voidedBy,
+      voidReason: payment.voidReason,
     };
   }
 }

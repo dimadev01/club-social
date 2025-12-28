@@ -5,6 +5,7 @@ import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { Statistic } from 'antd';
 
 import { Card } from '@/ui/Card';
+import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
 
 import { usePaymentStatistics } from '../usePaymentStatistics';
 import { DueCategoryDescriptions } from './DueCategoryDescriptions';
@@ -21,7 +22,7 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
   });
 
   return (
-    <Card size="small" title="Pagos en el período" type="inner">
+    <Card extra={<PaymentsIcon />} size="small" title="Pagos" type="inner">
       <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">
         <Statistic
           loading={isLoading}

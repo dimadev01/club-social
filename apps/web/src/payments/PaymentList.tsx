@@ -22,7 +22,7 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
-import { NavigateToPayment } from '@/ui/NavigatePayment';
+import { NavigateToPayment } from '@/ui/NavigateToPayment';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Select } from '@/ui/Select';

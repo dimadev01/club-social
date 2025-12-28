@@ -1,4 +1,3 @@
-import { type IPaymentDueDetailWithDueDto } from '@club-social/shared/due-settlements';
 import {
   type DueCategory,
   DueCategoryLabel,
@@ -8,22 +7,22 @@ import {
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
 import {
-  type IVoidPaymentDto,
+  type PaymentDueSettlementDto,
   PaymentStatus,
   PaymentStatusLabel,
+  type VoidPaymentDto,
 } from '@club-social/shared/payments';
 import { App, Button, Col, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { usePaymentDuesByPayment } from '@/dues/usePaymentDuesByPayment';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { NavigateDue } from '@/ui/NavigateDue';
-import { NavigateMember } from '@/ui/NavigateMember';
+import { NavigateToMember } from '@/ui/NavigateMember';
+import { NavigateMemberLedgerEntry } from '@/ui/NavigateMemberLedgerEntry';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { Row } from '@/ui/Row';
@@ -44,11 +43,8 @@ export function PaymentView() {
 
   const { data: payment, isLoading } = usePayment(id);
 
-  const { data: paymentDues, isLoading: isPaymentDuesLoading } =
-    usePaymentDuesByPayment(id);
-
   const voidPayment = useMutation({
-    mutationFn: (body: IVoidPaymentDto) =>
+    mutationFn: (body: VoidPaymentDto) =>
       $fetch(`payments/${payment?.id}/void`, { body, method: 'PATCH' }),
     onSuccess: () => {
       message.success('Pago anulado correctamente');
@@ -95,10 +91,9 @@ export function PaymentView() {
               },
               {
                 children: (
-                  <NavigateMember
-                    id={payment.memberId}
-                    name={payment.memberName}
-                  />
+                  <NavigateToMember id={payment.member.id}>
+                    {payment.member.name}
+                  </NavigateToMember>
                 ),
                 label: 'Socio',
               },
@@ -128,18 +123,21 @@ export function PaymentView() {
 
       <Divider />
 
-      <Table<IPaymentDueDetailWithDueDto>
+      <Table<PaymentDueSettlementDto>
         columns={[
           {
-            dataIndex: 'dueId',
-            render: (dueId: string, record) => (
-              <NavigateDue date={record.dueDate} id={dueId} />
+            dataIndex: ['memberLedgerEntry', 'date'],
+            render: (date: string, record: PaymentDueSettlementDto) => (
+              <NavigateMemberLedgerEntry
+                date={date}
+                id={record.memberLedgerEntry.id}
+              />
             ),
             title: 'Fecha',
           },
           {
             align: 'center',
-            dataIndex: 'dueCategory',
+            dataIndex: ['due', 'category'],
             render: (dueCategory: DueCategory) => DueCategoryLabel[dueCategory],
             title: 'Categoría',
             width: TABLE_COLUMN_WIDTHS.CATEGORY,
@@ -155,7 +153,7 @@ export function PaymentView() {
           },
           {
             align: 'right',
-            dataIndex: 'dueAmount',
+            dataIndex: ['due', 'amount'],
             render: (dueAmount: number) =>
               NumberFormat.formatCurrencyCents(dueAmount),
             title: 'Monto deuda',
@@ -170,8 +168,8 @@ export function PaymentView() {
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
         ]}
-        dataSource={paymentDues}
-        loading={isPaymentDuesLoading}
+        dataSource={payment.settlements}
+        loading={isLoading}
         pagination={false}
         size="small"
       />

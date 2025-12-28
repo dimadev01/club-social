@@ -1,9 +1,9 @@
 import type { ICreatePaymentDueDto } from '../due-settlements';
 
-import { DueCategory } from '../dues';
+import { DueCategory, DueSettlementStatus } from '../dues';
 import { PaymentStatus } from './payment.enum';
 
-export interface ICreatePaymentDto {
+export interface CreatePaymentDto {
   date: string;
   memberId: string;
   notes: null | string;
@@ -11,18 +11,8 @@ export interface ICreatePaymentDto {
   receiptNumber: null | string;
 }
 
-export interface IPaymentStatisticsByCategoryItemDto {
-  amount: number;
-  average: number;
-  count: number;
-}
-
-export interface IPaymentStatisticsQueryDto {
+export interface GetPaymentStatisticsDto {
   dateRange?: [string, string];
-}
-
-export interface IVoidPaymentDto {
-  voidReason: string;
 }
 
 export interface PaymentDto {
@@ -32,10 +22,9 @@ export interface PaymentDto {
   date: string;
   id: string;
   member: PaymentMemberDto;
-  memberId: string;
-  memberName: string;
   notes: null | string;
   receiptNumber: null | string;
+  settlements: PaymentDueSettlementDto[];
   status: PaymentStatus;
   updatedAt: string;
   updatedBy?: null | string;
@@ -44,9 +33,26 @@ export interface PaymentDto {
   voidReason: null | string;
 }
 
+export interface PaymentDueSettlementDto {
+  amount: number;
+  due: PaymentDueSettlementDueDto;
+  memberLedgerEntry: PaymentMemberLedgerEntryDto;
+  status: DueSettlementStatus;
+}
+
+export interface PaymentDueSettlementDueDto {
+  amount: number;
+  category: DueCategory;
+}
+
 export interface PaymentMemberDto {
   id: string;
   name: string;
+}
+
+export interface PaymentMemberLedgerEntryDto {
+  date: string;
+  id: string;
 }
 
 export interface PaymentPaginatedDto {
@@ -64,10 +70,20 @@ export interface PaymentPaginatedExtraDto {
   totalAmount: number;
 }
 
-export interface PaymentStatistics {
+export interface PaymentStatisticsCategoryDto {
+  amount: number;
   average: number;
-  categories: Record<DueCategory, IPaymentStatisticsByCategoryItemDto>;
+  count: number;
+}
+
+export interface PaymentStatisticsDto {
+  average: number;
+  categories: Record<DueCategory, PaymentStatisticsCategoryDto>;
   count: number;
   dueSettlementsCount: number;
   total: number;
+}
+
+export interface VoidPaymentDto {
+  voidReason: string;
 }

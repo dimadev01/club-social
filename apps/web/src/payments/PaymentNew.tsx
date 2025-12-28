@@ -1,4 +1,4 @@
-import type { ICreatePaymentDto } from '@club-social/shared/payments';
+import type { CreatePaymentDto } from '@club-social/shared/payments';
 import type { ParamIdDto } from '@club-social/shared/types';
 
 import { NumberFormat } from '@club-social/shared/lib';
@@ -28,7 +28,7 @@ export function PaymentNew() {
   const createPaymentMutation = useMutation<
     ParamIdDto,
     Error,
-    ICreatePaymentDto
+    CreatePaymentDto
   >({
     mutationFn: (body) => $fetch('/payments', { body }),
     onSuccess: () => {

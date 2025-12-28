@@ -20,10 +20,10 @@ export interface DueReadModel {
   createdAt: Date;
   createdBy: string;
   date: string;
+  dueSettlements: DueSettlement[];
   id: string;
   member: DueMember;
   notes: null | string;
-  settlements: DueSettlement[];
   status: DueStatus;
   updatedAt: Date;
   updatedBy: null | string;

@@ -270,7 +270,7 @@ export class DuesController extends BaseController {
         status: due.member.status,
       },
       notes: due.notes,
-      settlements: due.settlements.map((settlement) => ({
+      settlements: due.dueSettlements.map((settlement) => ({
         amount: settlement.amount,
         memberLedgerEntry: {
           date: settlement.memberLedgerEntry.date,

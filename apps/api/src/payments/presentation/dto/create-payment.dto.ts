@@ -1,4 +1,4 @@
-import { ICreatePaymentDto } from '@club-social/shared/payments';
+import { CreatePaymentDto } from '@club-social/shared/payments';
 import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
@@ -13,7 +13,7 @@ import {
 
 import { PaymentDueItemDto } from './payment-due-item.dto';
 
-export class CreatePaymentRequestDto implements ICreatePaymentDto {
+export class CreatePaymentRequestDto implements CreatePaymentDto {
   @IsDateString()
   @IsNotEmpty()
   public date: string;

@@ -67,7 +67,10 @@ export class PrismaDueRepository implements DueRepository {
     const due = await this.prismaService.due.findUnique({
       include: {
         member: { include: { user: true } },
-        settlements: { include: { memberLedgerEntry: true, payment: true } },
+        settlements: {
+          include: { memberLedgerEntry: true, payment: true },
+          orderBy: { memberLedgerEntry: { date: 'desc' } },
+        },
       },
       where: { id: id.value },
     });
@@ -288,6 +291,15 @@ export class PrismaDueRepository implements DueRepository {
       createdAt: due.createdAt,
       createdBy: due.createdBy,
       date: due.date,
+      dueSettlements: due.settlements.map((settlement) => ({
+        amount: settlement.amount,
+        memberLedgerEntry: {
+          date: settlement.memberLedgerEntry.date,
+          id: settlement.memberLedgerEntry.id,
+        },
+        payment: settlement.payment ? { id: settlement.payment.id } : null,
+        status: settlement.status as DueSettlementStatus,
+      })),
       id: due.id,
       member: {
         id: due.member.id,
@@ -298,15 +310,6 @@ export class PrismaDueRepository implements DueRepository {
         status: due.member.status as MemberStatus,
       },
       notes: due.notes,
-      settlements: due.settlements.map((settlement) => ({
-        amount: settlement.amount,
-        memberLedgerEntry: {
-          date: settlement.memberLedgerEntry.date,
-          id: settlement.memberLedgerEntry.id,
-        },
-        payment: settlement.payment ? { id: settlement.payment.id } : null,
-        status: settlement.status as DueSettlementStatus,
-      })),
       status: due.status as DueStatus,
       updatedAt: due.updatedAt,
       updatedBy: due.updatedBy,

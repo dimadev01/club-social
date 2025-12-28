@@ -6,6 +6,6 @@ interface Props extends Omit<LinkProps, 'to'> {
   id: string;
 }
 
-export function NavigateMember({ id, ...props }: Props) {
+export function NavigateToMember({ id, ...props }: Props) {
   return <Link to={appRoutes.members.view(id)} {...props} />;
 }

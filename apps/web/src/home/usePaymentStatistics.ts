@@ -1,4 +1,4 @@
-import type { PaymentStatistics } from '@club-social/shared/payments';
+import type { PaymentStatisticsDto } from '@club-social/shared/payments';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -12,7 +12,7 @@ export function usePaymentStatistics(query: UsePaymentStatisticsQuery) {
   return useQuery({
     ...queryKeys.payments.statistics(query),
     queryFn: () =>
-      $fetch<PaymentStatistics>('payments/statistics', {
+      $fetch<PaymentStatisticsDto>('payments/statistics', {
         query: {
           dateRange: query.dateRange,
         },

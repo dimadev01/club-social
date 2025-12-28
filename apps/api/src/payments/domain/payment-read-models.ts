@@ -1,4 +1,4 @@
-import { DueCategory } from '@club-social/shared/dues';
+import { DueCategory, DueSettlementStatus } from '@club-social/shared/dues';
 import { PaymentStatus } from '@club-social/shared/payments';
 
 export interface PaymentPaginatedExtraReadModel {
@@ -15,6 +15,7 @@ export interface PaymentReadModel {
   createdAt: Date;
   createdBy: string;
   date: string;
+  dueSettlements: PaymentDueSettlement[];
   id: string;
   member: PaymentMember;
   notes: null | string;
@@ -29,7 +30,24 @@ export interface PaymentReadModel {
 
 export interface PaymentStatisticsReadModel {
   amount: number;
-  settlements: PaymentStatisticsDueSettlement[];
+  dueSettlements: PaymentStatisticsDueSettlement[];
+}
+
+interface PaymentDueSettlement {
+  amount: number;
+  due: PaymentDueSettlementDue;
+  memberLedgerEntry: PaymentDueSettlementMemberLedgerEntry;
+  status: DueSettlementStatus;
+}
+
+interface PaymentDueSettlementDue {
+  amount: number;
+  category: DueCategory;
+}
+
+interface PaymentDueSettlementMemberLedgerEntry {
+  date: string;
+  id: string;
 }
 
 interface PaymentMember {

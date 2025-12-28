@@ -20,9 +20,9 @@ import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { NavigateMember } from '@/ui/NavigateMember';
+import { NavigateToMember } from '@/ui/NavigateMember';
 import { NavigateMemberLedgerEntry } from '@/ui/NavigateMemberLedgerEntry';
-import { NavigateToPayment } from '@/ui/NavigatePayment';
+import { NavigateToPayment } from '@/ui/NavigateToPayment';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { Row } from '@/ui/Row';
@@ -99,9 +99,9 @@ export function DueView() {
               },
               {
                 children: (
-                  <NavigateMember id={due.member.id}>
+                  <NavigateToMember id={due.member.id}>
                     {due.member.name}
-                  </NavigateMember>
+                  </NavigateToMember>
                 ),
                 label: 'Socio',
               },
@@ -178,7 +178,7 @@ export function DueView() {
         loading={isLoading}
         pagination={false}
         size="small"
-        title={() => 'Movimientos de cuenta corriente'}
+        title={() => 'Movimientos'}
       />
 
       <VoidModal

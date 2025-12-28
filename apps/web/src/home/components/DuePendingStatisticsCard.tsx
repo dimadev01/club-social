@@ -4,6 +4,7 @@ import { Statistic } from 'antd';
 
 import { CategoryIconMap } from '@/dues/DueCategoryIconMap';
 import { Card } from '@/ui/Card';
+import { DuesIcon } from '@/ui/Icons/DuesIcon';
 
 import { useDuePendingStatistics } from '../useDuePendingStatistics';
 
@@ -11,7 +12,12 @@ export function DuePendingStatisticsCard() {
   const { data, isLoading } = useDuePendingStatistics();
 
   return (
-    <Card size="small" title="Deudas pendientes de pago" type="inner">
+    <Card
+      extra={<DuesIcon />}
+      size="small"
+      title="Deudas pendientes"
+      type="inner"
+    >
       {DueCategorySorted.map((category) => (
         <Card.Grid className="w-full md:w-1/3" key={category}>
           <Statistic
