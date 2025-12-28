@@ -1,13 +1,19 @@
 import {
-  IMovementPaginatedDto,
-  IMovementPaginatedExtraDto,
   MovementCategory,
   MovementMode,
+  MovementPaginatedDto,
+  MovementPaginatedExtraDto,
   MovementStatus,
   MovementType,
 } from '@club-social/shared/movements';
 
-export class MovementPaginatedDto implements IMovementPaginatedDto {
+export class MovementPaginatedExtraResponseDto implements MovementPaginatedExtraDto {
+  public totalAmount: number;
+  public totalAmountInflow: number;
+  public totalAmountOutflow: number;
+}
+
+export class MovementPaginatedResponseDto implements MovementPaginatedDto {
   public amount: number;
   public category: MovementCategory;
   public createdAt: string;
@@ -18,10 +24,4 @@ export class MovementPaginatedDto implements IMovementPaginatedDto {
   public paymentId: null | string;
   public status: MovementStatus;
   public type: MovementType;
-}
-
-export class MovementPaginatedExtraDto implements IMovementPaginatedExtraDto {
-  public totalAmount: number;
-  public totalAmountInflow: number;
-  public totalAmountOutflow: number;
 }

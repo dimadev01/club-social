@@ -4,11 +4,17 @@ import type {
   PaginatedDataResultDto,
 } from '@club-social/shared/types';
 
-import { MovementStatus, MovementType } from '@club-social/shared/movements';
+import {
+  MovementCategory,
+  MovementMode,
+  MovementStatus,
+  MovementType,
+} from '@club-social/shared/movements';
 import { Injectable } from '@nestjs/common';
 
 import {
   MovementFindManyArgs,
+  MovementModel,
   MovementOrderByWithRelationInput,
   MovementWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
@@ -20,11 +26,13 @@ import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MovementEntity } from '../domain/entities/movement.entity';
-import { MovementRepository } from '../domain/movement.repository';
 import {
-  MovementPaginatedExtraModel,
-  MovementStatisticsModel,
-} from '../domain/movement.types';
+  MovementPaginatedExtraReadModel,
+  MovementPaginatedReadModel,
+  MovementReadModel,
+} from '../domain/movement-read-models';
+import { MovementRepository } from '../domain/movement.repository';
+import { MovementStatisticsModel } from '../domain/movement.types';
 
 const SYSTEM_START_DATE = '2022-01-01';
 
@@ -51,6 +59,16 @@ export class PrismaMovementRepository implements MovementRepository {
     return this.mapper.movement.toDomain(movement);
   }
 
+  public async findByIdReadModel(
+    id: UniqueId,
+  ): Promise<MovementReadModel | null> {
+    const movement = await this.prismaService.movement.findUnique({
+      where: { id: id.value },
+    });
+
+    return movement ? this.toReadModel(movement) : null;
+  }
+
   public async findByIds(ids: UniqueId[]): Promise<MovementEntity[]> {
     const movements = await this.prismaService.movement.findMany({
       where: {
@@ -73,7 +91,9 @@ export class PrismaMovementRepository implements MovementRepository {
     return movement ? this.mapper.movement.toDomain(movement) : null;
   }
 
-  public async findForExport(params: ExportDataDto): Promise<MovementEntity[]> {
+  public async findForExport(
+    params: ExportDataDto,
+  ): Promise<MovementPaginatedReadModel[]> {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const movements = await this.prismaService.movement.findMany({
@@ -81,7 +101,7 @@ export class PrismaMovementRepository implements MovementRepository {
       where,
     });
 
-    return movements.map((m) => this.mapper.movement.toDomain(m));
+    return movements.map((m) => this.toReadModel(m));
   }
 
   public async findForStatistics(
@@ -136,7 +156,10 @@ export class PrismaMovementRepository implements MovementRepository {
   public async findPaginated(
     params: GetPaginatedDataDto,
   ): Promise<
-    PaginatedDataResultDto<MovementEntity, MovementPaginatedExtraModel>
+    PaginatedDataResultDto<
+      MovementPaginatedReadModel,
+      MovementPaginatedExtraReadModel
+    >
   > {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
@@ -166,7 +189,7 @@ export class PrismaMovementRepository implements MovementRepository {
     const totalAmount = totalInflow - totalOutflow;
 
     return {
-      data: movements.map((m) => this.mapper.movement.toDomain(m)),
+      data: movements.map((m) => this.toReadModel(m)),
       extra: {
         totalAmount,
         totalAmountInflow: totalInflow,
@@ -237,5 +260,26 @@ export class PrismaMovementRepository implements MovementRepository {
     );
 
     return { orderBy, where };
+  }
+
+  private toReadModel(model: MovementModel): MovementReadModel {
+    return {
+      amount: model.amount,
+      category: model.category as MovementCategory,
+      createdAt: model.createdAt,
+      createdBy: model.createdBy,
+      date: model.date,
+      id: model.id,
+      mode: model.mode as MovementMode,
+      notes: model.notes,
+      paymentId: model.paymentId,
+      status: model.status as MovementStatus,
+      type: model.type as MovementType,
+      updatedAt: model.updatedAt,
+      updatedBy: model.updatedBy,
+      voidedAt: model.voidedAt,
+      voidedBy: model.voidedBy,
+      voidReason: model.voidReason,
+    };
   }
 }

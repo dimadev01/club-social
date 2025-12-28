@@ -5,7 +5,7 @@ import {
   MovementType,
 } from './movement.enum';
 
-export interface ICreateMovementDto {
+export interface CreateMovementDto {
   amount: number;
   category: MovementCategory;
   date: string;
@@ -13,7 +13,7 @@ export interface ICreateMovementDto {
   type: MovementType;
 }
 
-export interface IMovementDetailDto {
+export interface MovementDto {
   amount: number;
   category: MovementCategory;
   createdAt: string;
@@ -32,7 +32,7 @@ export interface IMovementDetailDto {
   voidReason: null | string;
 }
 
-export interface IMovementPaginatedDto {
+export interface MovementPaginatedDto {
   amount: number;
   category: MovementCategory;
   createdAt: string;
@@ -45,17 +45,17 @@ export interface IMovementPaginatedDto {
   type: MovementType;
 }
 
-export interface IMovementPaginatedExtraDto {
+export interface MovementPaginatedExtraDto {
   totalAmount: number;
   totalAmountInflow: number;
   totalAmountOutflow: number;
 }
 
-export interface IUpdateMovementDto {
+export interface UpdateMovementDto {
   amount?: number;
   notes?: null | string;
 }
 
-export interface IVoidMovementDto {
+export interface VoidMovementDto {
   voidReason: string;
 }

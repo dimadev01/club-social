@@ -1,25 +1,25 @@
 import type {
-  IMovementBalanceDto,
-  IMovementStatisticsDto,
-  IMovementStatisticsQueryDto,
+  MovementBalanceDto,
+  MovementStatisticsDto,
+  MovementStatisticsQueryDto,
 } from '@club-social/shared/movements';
 
 import { IsArray, IsDateString, IsOptional } from 'class-validator';
 
-export class MovementBalanceDto implements IMovementBalanceDto {
+export class MovementBalanceResponseDto implements MovementBalanceDto {
   public balance: number;
 }
 
-export class MovementStatisticsDto implements IMovementStatisticsDto {
-  public balance: number;
-  public total: number;
-  public totalInflow: number;
-  public totalOutflow: number;
-}
-
-export class MovementStatisticsQueryDto implements IMovementStatisticsQueryDto {
+export class MovementStatisticsQueryRequestDto implements MovementStatisticsQueryDto {
   @IsArray()
   @IsDateString({}, { each: true })
   @IsOptional()
   public dateRange?: [string, string];
+}
+
+export class MovementStatisticsResponseDto implements MovementStatisticsDto {
+  public balance: number;
+  public total: number;
+  public totalInflow: number;
+  public totalOutflow: number;
 }

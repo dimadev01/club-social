@@ -1,14 +1,14 @@
-export interface IMovementBalanceDto {
+export interface MovementBalanceDto {
   balance: number;
 }
 
-export interface IMovementStatisticsDto {
+export interface MovementStatisticsDto {
   balance: number;
   total: number;
   totalInflow: number;
   totalOutflow: number;
 }
 
-export interface IMovementStatisticsQueryDto {
+export interface MovementStatisticsQueryDto {
   dateRange?: [string, string];
 }

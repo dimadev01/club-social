@@ -1,12 +1,12 @@
 import {
-  IMovementDetailDto,
   MovementCategory,
+  MovementDto,
   MovementMode,
   MovementStatus,
   MovementType,
 } from '@club-social/shared/movements';
 
-export class MovementDetailDto implements IMovementDetailDto {
+export class MovementResponseDto implements MovementDto {
   public amount: number;
   public category: MovementCategory;
   public createdAt: string;

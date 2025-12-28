@@ -1,5 +1,6 @@
 import type { Response } from 'express';
 
+import { NumberFormat } from '@club-social/shared/lib';
 import { MovementType } from '@club-social/shared/movements';
 import {
   Body,
@@ -38,14 +39,14 @@ import {
   type MovementRepository,
 } from '../domain/movement.repository';
 import { CreateMovementRequestDto } from './dto/create-movement.dto';
-import { MovementDetailDto } from './dto/movement-detail.dto';
+import { MovementResponseDto } from './dto/movement-detail.dto';
 import {
-  MovementPaginatedDto,
-  MovementPaginatedExtraDto,
+  MovementPaginatedExtraResponseDto,
+  MovementPaginatedResponseDto,
 } from './dto/movement-paginated.dto';
 import {
-  MovementStatisticsDto,
-  MovementStatisticsQueryDto,
+  MovementStatisticsQueryRequestDto,
+  MovementStatisticsResponseDto,
 } from './dto/movement-statistics.dto';
 import { VoidMovementRequestDto } from './dto/void-movement.dto';
 
@@ -94,23 +95,27 @@ export class MovementsController extends BaseController {
     });
 
     const stream = this.csvService.generateStream(data, [
-      { accessor: (row) => row.id.value, header: 'ID' },
+      { accessor: (row) => row.id, header: 'ID' },
       {
-        accessor: (row) => row.createdAt?.toISOString() ?? '',
+        accessor: (row) => row.createdAt.toISOString(),
         header: 'Creado el',
       },
-      { accessor: (row) => row.date.value, header: 'Fecha' },
+      { accessor: (row) => row.date, header: 'Fecha' },
       { accessor: (row) => row.category, header: 'Categoría' },
       { accessor: (row) => row.status, header: 'Estado' },
       { accessor: (row) => row.notes, header: 'Descripción' },
       {
         accessor: (row) =>
-          row.type === MovementType.OUTFLOW ? row.amount.toDollars() : null,
+          row.type === MovementType.OUTFLOW
+            ? NumberFormat.fromCents(row.amount)
+            : null,
         header: 'Egreso',
       },
       {
         accessor: (row) =>
-          row.type === MovementType.INFLOW ? row.amount.toDollars() : null,
+          row.type === MovementType.INFLOW
+            ? NumberFormat.fromCents(row.amount)
+            : null,
         header: 'Ingreso',
       },
     ]);
@@ -123,12 +128,15 @@ export class MovementsController extends BaseController {
     stream.pipe(res);
   }
 
-  @ApiPaginatedResponse(MovementPaginatedDto)
+  @ApiPaginatedResponse(MovementPaginatedResponseDto)
   @Get()
   public async getPaginated(
     @Query() query: GetPaginatedDataRequestDto,
   ): Promise<
-    PaginatedDataResponseDto<MovementPaginatedDto, MovementPaginatedExtraDto>
+    PaginatedDataResponseDto<
+      MovementPaginatedResponseDto,
+      MovementPaginatedExtraResponseDto
+    >
   > {
     const result = await this.movementRepository.findPaginated({
       filters: query.filters,
@@ -139,14 +147,14 @@ export class MovementsController extends BaseController {
 
     return {
       data: result.data.map((movement) => ({
-        amount: movement.amount.toCents(),
+        amount: movement.amount,
         category: movement.category,
-        createdAt: movement.createdAt?.toISOString() ?? '',
-        date: movement.date.value,
-        id: movement.id.value,
+        createdAt: movement.createdAt.toISOString(),
+        date: movement.date,
+        id: movement.id,
         mode: movement.mode,
         notes: movement.notes,
-        paymentId: movement.paymentId?.value ?? null,
+        paymentId: movement.paymentId,
         status: movement.status,
         type: movement.type,
       })),
@@ -161,8 +169,8 @@ export class MovementsController extends BaseController {
 
   @Get('statistics')
   public async getStatistics(
-    @Query() query: MovementStatisticsQueryDto,
-  ): Promise<MovementStatisticsDto> {
+    @Query() query: MovementStatisticsQueryRequestDto,
+  ): Promise<MovementStatisticsResponseDto> {
     const data = await this.movementRepository.findForStatistics({
       dateRange: query.dateRange,
       includePreviousBalance: !!query.dateRange,
@@ -179,30 +187,30 @@ export class MovementsController extends BaseController {
   @Get(':id')
   public async getById(
     @Param() params: ParamIdRequestDto,
-  ): Promise<MovementDetailDto> {
-    const movement = await this.movementRepository.findById(
+  ): Promise<MovementResponseDto> {
+    const movement = await this.movementRepository.findByIdReadModel(
       UniqueId.raw({ value: params.id }),
     );
 
     if (!movement) {
-      throw new NotFoundException('Movimiento no encontrado');
+      throw new NotFoundException();
     }
 
     return {
-      amount: movement.amount.toCents(),
+      amount: movement.amount,
       category: movement.category,
-      createdAt: movement.createdAt?.toISOString() ?? '',
-      createdBy: movement.createdBy ?? '',
-      date: movement.date.value,
-      id: movement.id.value,
+      createdAt: movement.createdAt.toISOString(),
+      createdBy: movement.createdBy,
+      date: movement.date,
+      id: movement.id,
       mode: movement.mode,
       notes: movement.notes,
-      paymentId: movement.paymentId?.value ?? null,
+      paymentId: movement.paymentId,
       status: movement.status,
       type: movement.type,
-      updatedAt: movement.updatedAt?.toISOString() ?? '',
+      updatedAt: movement.updatedAt.toISOString(),
       updatedBy: movement.updatedBy,
-      voidedAt: movement.voidedAt?.toISOString() ?? null,
+      voidedAt: movement.voidedAt ? movement.voidedAt.toISOString() : null,
       voidedBy: movement.voidedBy,
       voidReason: movement.voidReason,
     };

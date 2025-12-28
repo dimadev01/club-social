@@ -1,5 +1,5 @@
 import {
-  ICreateMovementDto,
+  CreateMovementDto,
   MovementCategory,
   MovementType,
 } from '@club-social/shared/movements';
@@ -13,7 +13,7 @@ import {
   Min,
 } from 'class-validator';
 
-export class CreateMovementRequestDto implements ICreateMovementDto {
+export class CreateMovementRequestDto implements CreateMovementDto {
   @IsInt()
   @IsNotEmpty()
   @Min(0)
