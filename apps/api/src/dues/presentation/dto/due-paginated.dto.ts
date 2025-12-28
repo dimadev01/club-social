@@ -1,12 +1,16 @@
 import {
   DueCategory,
+  DuePaginatedDto,
+  DuePaginatedExtraDto,
   DueStatus,
-  IDuePaginatedDto,
-  IDuePaginatedExtraDto,
 } from '@club-social/shared/dues';
-import { UserStatus } from '@club-social/shared/users';
+import { MemberStatus } from '@club-social/shared/members';
 
-export class DuePaginatedDto implements IDuePaginatedDto {
+export class DuePaginatedExtraResponseDto implements DuePaginatedExtraDto {
+  public totalAmount: number;
+}
+
+export class DuePaginatedResponseDto implements DuePaginatedDto {
   public amount: number;
   public category: DueCategory;
   public createdAt: string;
@@ -14,10 +18,6 @@ export class DuePaginatedDto implements IDuePaginatedDto {
   public id: string;
   public memberId: string;
   public memberName: string;
+  public memberStatus: MemberStatus;
   public status: DueStatus;
-  public userStatus: UserStatus;
-}
-
-export class DuePaginatedExtraDto implements IDuePaginatedExtraDto {
-  public totalAmount: number;
 }

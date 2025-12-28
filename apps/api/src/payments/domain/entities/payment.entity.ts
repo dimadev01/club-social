@@ -15,7 +15,6 @@ import { PaymentUpdatedEvent } from '../events/payment-updated.event';
 interface PaymentProps {
   amount: Amount;
   date: DateOnly;
-  dueIds: UniqueId[];
   memberId: UniqueId;
   notes: null | string;
   receiptNumber: null | string;
@@ -26,20 +25,12 @@ interface PaymentProps {
 }
 
 export class PaymentEntity extends AuditedAggregateRoot {
-  public get affectedDueIds(): UniqueId[] {
-    return [...this._dueIds];
-  }
-
   public get amount(): Amount {
     return this._amount;
   }
 
   public get date(): DateOnly {
     return this._date;
-  }
-
-  public get dueIds(): UniqueId[] {
-    return [...this._dueIds];
   }
 
   public get memberId(): UniqueId {
@@ -72,7 +63,6 @@ export class PaymentEntity extends AuditedAggregateRoot {
 
   private _amount: Amount;
   private _date: DateOnly;
-  private _dueIds: UniqueId[];
   private _memberId: UniqueId;
   private _notes: null | string;
   private _receiptNumber: null | string;
@@ -87,7 +77,6 @@ export class PaymentEntity extends AuditedAggregateRoot {
     this._amount = props.amount;
     this._memberId = props.memberId;
     this._date = props.date;
-    this._dueIds = props.dueIds;
     this._notes = props.notes;
     this._receiptNumber = props.receiptNumber;
     this._status = props.status;
@@ -107,7 +96,6 @@ export class PaymentEntity extends AuditedAggregateRoot {
       {
         amount: props.amount,
         date: props.date,
-        dueIds: props.dueIds,
         memberId: props.memberId,
         notes: props.notes,
         receiptNumber: props.receiptNumber,
@@ -139,7 +127,6 @@ export class PaymentEntity extends AuditedAggregateRoot {
       {
         amount: this._amount,
         date: this._date,
-        dueIds: [...this._dueIds],
         memberId: this._memberId,
         notes: this._notes,
         receiptNumber: this._receiptNumber,

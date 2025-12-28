@@ -4,6 +4,7 @@ import {
   MemberCategory,
   MemberNationality,
   MemberSex,
+  MemberStatus,
 } from '@club-social/shared/members';
 import { Injectable } from '@nestjs/common';
 
@@ -37,6 +38,7 @@ export class PrismaMemberMapper {
       phones: member.phones,
       sex: member.sex,
       stateName: member.address?.stateName ?? null,
+      status: member.status,
       street: member.address?.street ?? null,
       user: { connect: { id: member.userId.value } },
       zipCode: member.address?.zipCode ?? null,
@@ -67,6 +69,7 @@ export class PrismaMemberMapper {
         nationality: member.nationality as MemberNationality | null,
         phones: member.phones,
         sex: member.sex as MemberSex,
+        status: member.status as MemberStatus,
         userId: UniqueId.raw({ value: member.userId }),
       },
       {
@@ -94,6 +97,7 @@ export class PrismaMemberMapper {
       phones: member.phones,
       sex: member.sex,
       stateName: member.address?.stateName ?? null,
+      status: member.status,
       street: member.address?.street ?? null,
       updatedBy: member.updatedBy,
       zipCode: member.address?.zipCode ?? null,

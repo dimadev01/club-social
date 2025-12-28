@@ -19,9 +19,9 @@ import {
 import { Guard } from '@/shared/domain/guards';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
-import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
-import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
+import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
+import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
+import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePricingUseCase } from '../application/create-pricing/create-pricing.use-case';
 import { FindActivePricingUseCase } from '../application/find-active-pricing/find-active-pricing.use-case';
@@ -55,7 +55,7 @@ export class PricingController extends BaseController {
   public async create(
     @Body() body: CreatePricingRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdDto> {
+  ): Promise<ParamIdRequestDto> {
     const { id } = this.handleResult(
       await this.createPricingUseCase.execute({
         amount: body.amount,
@@ -71,7 +71,7 @@ export class PricingController extends BaseController {
 
   @Patch(':id')
   public async update(
-    @Param() request: ParamIdDto,
+    @Param() request: ParamIdRequestDto,
     @Body() body: UpdatePricingRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -101,8 +101,8 @@ export class PricingController extends BaseController {
 
   @Get('paginated')
   public async getPaginated(
-    @Query() query: PaginatedRequestDto,
-  ): Promise<PaginatedResponseDto<PricingPaginatedDto>> {
+    @Query() query: GetPaginatedDataRequestDto,
+  ): Promise<PaginatedDataResponseDto<PricingPaginatedDto>> {
     const result = await this.pricingRepository.findPaginated({
       filters: query.filters,
       page: query.page,
@@ -127,9 +127,9 @@ export class PricingController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() request: ParamIdDto,
+    @Param() request: ParamIdRequestDto,
   ): Promise<PricingDetailDto> {
-    const pricing = await this.pricingRepository.findUniqueOrThrow(
+    const pricing = await this.pricingRepository.findByIdOrThrow(
       UniqueId.raw({ value: request.id }),
     );
 

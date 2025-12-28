@@ -1,10 +1,10 @@
 import {
   DueCategory,
   DueStatus,
-  IPendingDueDto,
+  PendingDueDto,
 } from '@club-social/shared/dues';
 
-export class PendingDueDto implements IPendingDueDto {
+export class PendingDueResponseDto implements PendingDueDto {
   public amount: number;
   public category: DueCategory;
   public date: string;

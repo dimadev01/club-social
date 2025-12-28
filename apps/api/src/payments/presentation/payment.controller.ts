@@ -1,5 +1,6 @@
 import type { Response } from 'express';
 
+import { NumberFormat } from '@club-social/shared/lib';
 import { PaymentStatusLabel } from '@club-social/shared/payments';
 import {
   Body,
@@ -18,7 +19,6 @@ import {
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 import { CsvService } from '@/infrastructure/csv/csv.service';
-import { PaymentDueDetailWithDueDto } from '@/payment-dues/presentation/dto/payment-due-detail.dto';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -26,10 +26,10 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
-import { ExportRequestDto } from '@/shared/presentation/dto/export-request.dto';
-import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
-import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
+import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
+import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
+import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
+import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePaymentUseCase } from '../application/create-payment/create-payment.use-case';
 import { FindPaymentsStatisticsUseCase } from '../application/find-payments-statistics/find-payments-statistics.use-case';
@@ -39,13 +39,13 @@ import {
   type PaymentRepository,
 } from '../domain/payment.repository';
 import { CreatePaymentRequestDto } from './dto/create-payment.dto';
-import { PaymentDetailDto } from './dto/payment-detail.dto';
 import {
-  PaymentPaginatedDto,
-  PaymentPaginatedExtraDto,
+  PaymentPaginatedExtraResponseDto,
+  PaymentPaginatedResponseDto,
 } from './dto/payment-paginated.dto';
+import { PaymentResponseDto } from './dto/payment-response.dto';
 import { PaymentStatisticsQueryDto } from './dto/payment-statistics-query.dto';
-import { PaymentStatisticsDto } from './dto/payment-statistics.dto';
+import { PaymentStatisticsResponseDto } from './dto/payment-statistics.dto';
 import { VoidPaymentRequestDto } from './dto/void-payment.dto';
 
 @Controller('payments')
@@ -67,7 +67,7 @@ export class PaymentsController extends BaseController {
   public async create(
     @Body() body: CreatePaymentRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdDto> {
+  ): Promise<ParamIdRequestDto> {
     const { id } = this.handleResult(
       await this.createPaymentUseCase.execute({
         createdBy: session.user.name,
@@ -84,7 +84,7 @@ export class PaymentsController extends BaseController {
 
   @Patch(':id/void')
   public async void(
-    @Param() request: ParamIdDto,
+    @Param() request: ParamIdRequestDto,
     @Body() body: VoidPaymentRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -97,12 +97,15 @@ export class PaymentsController extends BaseController {
     );
   }
 
-  @ApiPaginatedResponse(PaymentPaginatedDto)
+  @ApiPaginatedResponse(PaymentPaginatedResponseDto)
   @Get('paginated')
   public async getPaginated(
-    @Query() query: PaginatedRequestDto,
+    @Query() query: GetPaginatedDataRequestDto,
   ): Promise<
-    PaginatedResponseDto<PaymentPaginatedDto, PaymentPaginatedExtraDto>
+    PaginatedDataResponseDto<
+      PaymentPaginatedResponseDto,
+      PaymentPaginatedExtraResponseDto
+    >
   > {
     const data = await this.paymentRepository.findPaginated({
       filters: query.filters,
@@ -112,14 +115,14 @@ export class PaymentsController extends BaseController {
     });
 
     return {
-      data: data.data.map(({ member, payment, user }) => ({
-        amount: payment.amount.toCents(),
-        createdAt: payment.createdAt?.toISOString() ?? '',
-        createdBy: user.name.fullName,
-        date: payment.date.value,
-        id: payment.id.value,
-        memberId: member.id.value,
-        memberName: user.name.fullName,
+      data: data.data.map((payment) => ({
+        amount: payment.amount,
+        createdAt: payment.createdAt.toISOString(),
+        createdBy: payment.createdBy,
+        date: payment.date,
+        id: payment.id,
+        memberId: payment.member.id,
+        memberName: payment.member.name,
         status: payment.status,
       })),
       extra: {
@@ -132,44 +135,41 @@ export class PaymentsController extends BaseController {
   @Get('statistics')
   public async getStatistics(
     @Query() query: PaymentStatisticsQueryDto,
-  ): Promise<PaymentStatisticsDto> {
+  ): Promise<PaymentStatisticsResponseDto> {
     const data = this.handleResult(
       await this.findPaymentsStatisticsUseCase.execute({
         dateRange: query.dateRange,
       }),
     );
 
-    return {
-      average: data.average,
-      categories: data.categories,
-      paymentDuesCount: data.paymentDuesCount,
-      paymentsCount: data.paymentsCount,
-      totalAmount: data.totalAmount,
-    };
+    return data;
   }
 
   @Get('export')
   @Header('Content-Type', 'text/csv; charset=utf-8')
   public async export(
-    @Query() query: ExportRequestDto,
+    @Query() query: ExportDataRequestDto,
     @Res() res: Response,
   ): Promise<void> {
-    const data = await this.paymentRepository.findForExport({
+    const payments = await this.paymentRepository.findForExport({
       filters: query.filters,
       sort: query.sort,
     });
 
-    const stream = this.csvService.generateStream(data, [
-      { accessor: (row) => row.payment.id.value, header: 'ID' },
+    const stream = this.csvService.generateStream(payments, [
+      { accessor: (row) => row.id, header: 'ID' },
       {
-        accessor: (row) => row.payment.createdAt?.toISOString() ?? '',
+        accessor: (row) => row.createdAt?.toISOString() ?? '',
         header: 'Creado el',
       },
-      { accessor: (row) => row.payment.date.value, header: 'Fecha' },
-      { accessor: (row) => row.user.name.fullName, header: 'Socio' },
-      { accessor: (row) => row.payment.amount.toDollars(), header: 'Monto' },
+      { accessor: (row) => row.date, header: 'Fecha' },
+      { accessor: (row) => row.member.name, header: 'Socio' },
       {
-        accessor: (row) => PaymentStatusLabel[row.payment.status],
+        accessor: (row) => NumberFormat.fromCents(row.amount),
+        header: 'Monto',
+      },
+      {
+        accessor: (row) => PaymentStatusLabel[row.status],
         header: 'Estado',
       },
     ]);
@@ -184,55 +184,36 @@ export class PaymentsController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() request: ParamIdDto,
-  ): Promise<PaymentDetailDto> {
-    const data = await this.paymentRepository.findOneModel(
+    @Param() request: ParamIdRequestDto,
+  ): Promise<PaymentResponseDto> {
+    const payment = await this.paymentRepository.findByIdReadModel(
       UniqueId.raw({ value: request.id }),
     );
 
-    if (!data) {
+    if (!payment) {
       throw new NotFoundException();
     }
 
-    const { member, payment, user } = data;
-
     return {
-      amount: payment.amount.toCents(),
+      amount: payment.amount,
       createdAt: payment.createdAt?.toISOString() ?? '',
       createdBy: payment.createdBy ?? '',
-      date: payment.date.value,
-      id: payment.id.value,
-      memberId: member.id.value,
-      memberName: user.name.fullName,
+      date: payment.date,
+      id: payment.id,
+      member: {
+        id: payment.member.id,
+        name: payment.member.name,
+      },
+      memberId: payment.member.id,
+      memberName: payment.member.name,
       notes: payment.notes,
       receiptNumber: payment.receiptNumber,
       status: payment.status,
       updatedAt: payment.updatedAt?.toISOString() ?? '',
       updatedBy: payment.updatedBy,
-      userStatus: user.status,
       voidedAt: payment.voidedAt?.toISOString() ?? null,
       voidedBy: payment.voidedBy ?? null,
       voidReason: payment.voidReason ?? null,
     };
-  }
-
-  @Get(':id/dues')
-  public async getPaymentDues(
-    @Param() request: ParamIdDto,
-  ): Promise<PaymentDueDetailWithDueDto[]> {
-    const data = await this.paymentRepository.findPaymentDuesModel(
-      UniqueId.raw({ value: request.id }),
-    );
-
-    return data.map(({ due, dueSettlement }) => ({
-      amount: dueSettlement.amount.toCents(),
-      dueAmount: due.amount.toCents(),
-      dueCategory: due.category,
-      dueDate: due.date.value,
-      dueId: due.id.value,
-      dueStatus: due.status,
-      paymentId: dueSettlement.paymentId?.value ?? null,
-      status: dueSettlement.status,
-    }));
   }
 }

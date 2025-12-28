@@ -1,4 +1,4 @@
-import type { IDueDetailDto } from '@club-social/shared/dues';
+import type { DueDto } from '@club-social/shared/dues';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -11,6 +11,6 @@ export function useDue(id?: string) {
   return useQuery({
     ...queryKeys.dues.detail(id),
     enabled: !!id && permissions.dues.get,
-    queryFn: () => $fetch<IDueDetailDto>(`dues/${id}`),
+    queryFn: () => $fetch<DueDto>(`dues/${id}`),
   });
 }

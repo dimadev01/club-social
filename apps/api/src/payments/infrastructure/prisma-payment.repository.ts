@@ -1,97 +1,67 @@
 import type {
-  ExportRequest,
-  PaginatedRequest,
-  PaginatedResponse,
+  ExportDataDto,
+  GetPaginatedDataDto,
+  PaginatedDataResultDto,
 } from '@club-social/shared/types';
 
-import { DueSettlementStatus } from '@club-social/shared/dues';
+import { DueCategory, DueSettlementStatus } from '@club-social/shared/dues';
 import { PaymentStatus } from '@club-social/shared/payments';
 import { Injectable } from '@nestjs/common';
 
 import {
-  DueSettlementWhereInput,
   PaymentFindManyArgs,
+  PaymentGetPayload,
   PaymentOrderByWithRelationInput,
   PaymentWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
-import { Guard } from '@/shared/domain/guards';
 import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
-import { PaymentRepository } from '../domain/payment.repository';
 import {
-  PaymentDetailModel,
-  PaymentDueDetailModel,
-  PaymentPaginatedExtraModel,
-  PaymentPaginatedModel,
-  PaymentStatisticsModel,
-} from '../domain/payment.types';
+  PaymentPaginatedExtraReadModel,
+  PaymentPaginatedReadModel,
+  PaymentReadModel,
+  PaymentStatisticsReadModel,
+} from '../domain/payment-read-models';
+import { PaymentRepository } from '../domain/payment.repository';
+import { PrismaPaymentMapper } from './prisma-payment.mapper';
 
 @Injectable()
 export class PrismaPaymentRepository implements PaymentRepository {
   public constructor(
     private readonly prismaService: PrismaService,
     private readonly mapper: PrismaMappers,
+    private readonly paymentMapper: PrismaPaymentMapper,
   ) {}
 
-  public async findForExport(
-    params: ExportRequest,
-  ): Promise<PaymentPaginatedModel[]> {
-    const { orderBy, where } = this.buildWhereAndOrderBy(params);
-
-    const payments = await this.prismaService.payment.findMany({
-      include: { member: { include: { user: true } } },
-      orderBy,
-      where,
+  public async findById(id: UniqueId): Promise<null | PaymentEntity> {
+    const payment = await this.prismaService.payment.findUnique({
+      where: { id: id.value },
     });
 
-    return payments.map((payment) => ({
-      member: this.mapper.member.toDomain(payment.member),
-      payment: this.mapper.payment.toDomain(payment),
-      user: this.mapper.user.toDomain(payment.member.user),
-    }));
-  }
-
-  public async findForStatistics(
-    params: FindForStatisticsParams,
-  ): Promise<PaymentStatisticsModel[]> {
-    const where: DueSettlementWhereInput = {
-      payment: {
-        status: PaymentStatus.PAID,
-      },
-      status: DueSettlementStatus.APPLIED,
-    };
-
-    if (params.dateRange) {
-      Guard.defined(where.payment);
-
-      where.payment.date = {
-        gte: params.dateRange[0],
-        lte: params.dateRange[1],
-      };
+    if (!payment) {
+      return null;
     }
 
-    const settlements = await this.prismaService.dueSettlement.findMany({
-      include: { due: true, payment: true },
-      where: where,
-    });
-
-    return settlements.map((paymentDue) => {
-      Guard.defined(paymentDue.payment);
-
-      return {
-        due: this.mapper.due.toDomain(paymentDue.due),
-        dueSettlement: this.mapper.dueSettlement.toDomain(paymentDue),
-        payment: this.mapper.payment.toDomain(paymentDue.payment),
-      };
-    });
+    return this.paymentMapper.toDomain(payment);
   }
 
-  public async findOneModel(id: UniqueId): Promise<null | PaymentDetailModel> {
+  public async findByIdOrThrow(id: UniqueId): Promise<PaymentEntity> {
+    const payment = await this.prismaService.payment.findUniqueOrThrow({
+      include: { settlements: true },
+      where: { id: id.value },
+    });
+
+    return this.paymentMapper.toDomain(payment);
+  }
+
+  public async findByIdReadModel(
+    id: UniqueId,
+  ): Promise<null | PaymentReadModel> {
     const payment = await this.prismaService.payment.findUnique({
       include: { member: { include: { user: true } } },
       where: { id: id.value },
@@ -102,23 +72,97 @@ export class PrismaPaymentRepository implements PaymentRepository {
     }
 
     return {
-      member: this.mapper.member.toDomain(payment.member),
-      payment: this.mapper.payment.toDomain(payment),
-      user: this.mapper.user.toDomain(payment.member.user),
+      amount: payment.amount,
+      createdAt: payment.createdAt,
+      createdBy: payment.createdBy,
+      date: payment.date,
+      id: payment.id,
+      member: {
+        id: payment.member.id,
+        name: payment.member.user.name,
+      },
+      notes: payment.notes,
+      receiptNumber: payment.receiptNumber,
+      status: payment.status as PaymentStatus,
+      updatedAt: payment.updatedAt,
+      updatedBy: payment.updatedBy,
+      voidedAt: payment.voidedAt,
+      voidedBy: payment.voidedBy,
+      voidReason: payment.voidReason,
     };
   }
 
+  public async findByIds(ids: UniqueId[]): Promise<PaymentEntity[]> {
+    const payments = await this.prismaService.payment.findMany({
+      where: {
+        id: { in: ids.map((id) => id.value) },
+      },
+    });
+
+    return payments.map((payment) => this.paymentMapper.toDomain(payment));
+  }
+
+  public async findForExport(
+    params: ExportDataDto,
+  ): Promise<PaymentPaginatedReadModel[]> {
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
+
+    const payments = await this.prismaService.payment.findMany({
+      include: { member: { include: { user: true } } },
+      orderBy,
+      where,
+    });
+
+    return payments.map((payment) => this.toPaginatedReadModel(payment));
+  }
+
+  public async findForStatistics(
+    params: FindForStatisticsParams,
+  ): Promise<PaymentStatisticsReadModel[]> {
+    const where: PaymentWhereInput = {
+      settlements: {
+        every: {
+          status: DueSettlementStatus.APPLIED,
+        },
+      },
+      status: PaymentStatus.PAID,
+    };
+
+    if (params.dateRange) {
+      where.date = {
+        gte: params.dateRange[0],
+        lte: params.dateRange[1],
+      };
+    }
+
+    const payments = await this.prismaService.payment.findMany({
+      include: { settlements: { include: { due: true } } },
+      where,
+    });
+
+    return payments.map((payment) => ({
+      amount: payment.amount,
+      settlements: payment.settlements.map((settlement) => ({
+        amount: settlement.amount,
+        due: {
+          category: settlement.due.category as DueCategory,
+        },
+      })),
+    }));
+  }
+
   public async findPaginated(
-    params: PaginatedRequest,
+    params: GetPaginatedDataDto,
   ): Promise<
-    PaginatedResponse<PaymentPaginatedModel, PaymentPaginatedExtraModel>
+    PaginatedDataResultDto<
+      PaymentPaginatedReadModel,
+      PaymentPaginatedExtraReadModel
+    >
   > {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
-      include: {
-        member: { include: { user: true } },
-      },
+      include: { member: { include: { user: true } } },
       orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
@@ -132,63 +176,12 @@ export class PrismaPaymentRepository implements PaymentRepository {
     ]);
 
     return {
-      data: payments.map((payment) => ({
-        member: this.mapper.member.toDomain(payment.member),
-        payment: this.mapper.payment.toDomain(payment),
-        user: this.mapper.user.toDomain(payment.member.user),
-      })),
+      data: payments.map((payment) => this.toPaginatedReadModel(payment)),
       extra: {
         totalAmount: totalAmount._sum.amount ?? 0,
       },
       total,
     };
-  }
-
-  public async findPaymentDuesModel(
-    paymentId: UniqueId,
-  ): Promise<PaymentDueDetailModel[]> {
-    const settlements = await this.prismaService.dueSettlement.findMany({
-      include: { due: true },
-      where: { paymentId: paymentId.value },
-    });
-
-    return settlements.map((settlement) => ({
-      due: this.mapper.due.toDomain(settlement.due),
-      dueSettlement: this.mapper.dueSettlement.toDomain(settlement),
-    }));
-  }
-
-  public async findUniqueById(id: UniqueId): Promise<null | PaymentEntity> {
-    const payment = await this.prismaService.payment.findUnique({
-      include: { settlements: true },
-      where: { id: id.value },
-    });
-
-    if (!payment) {
-      return null;
-    }
-
-    return this.mapper.payment.toDomain(payment);
-  }
-
-  public async findUniqueByIds(ids: UniqueId[]): Promise<PaymentEntity[]> {
-    const payments = await this.prismaService.payment.findMany({
-      include: { settlements: true },
-      where: {
-        id: { in: ids.map((id) => id.value) },
-      },
-    });
-
-    return payments.map((payment) => this.mapper.payment.toDomain(payment));
-  }
-
-  public async findUniqueOrThrow(id: UniqueId): Promise<PaymentEntity> {
-    const payment = await this.prismaService.payment.findUniqueOrThrow({
-      include: { settlements: true },
-      where: { id: id.value },
-    });
-
-    return this.mapper.payment.toDomain(payment);
   }
 
   public async save(entity: PaymentEntity): Promise<void> {
@@ -202,7 +195,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
     });
   }
 
-  private buildWhereAndOrderBy(params: ExportRequest): {
+  private buildWhereAndOrderBy(params: ExportDataDto): {
     orderBy: PaymentOrderByWithRelationInput[];
     where: PaymentWhereInput;
   } {
@@ -218,7 +211,10 @@ export class PrismaPaymentRepository implements PaymentRepository {
         throw dateRangeResult.error;
       }
 
-      where.createdAt = dateRangeResult.value.toPrismaFilter();
+      where.createdAt = {
+        gte: dateRangeResult.value.start,
+        lt: dateRangeResult.value.end,
+      };
     }
 
     if (params.filters?.date) {
@@ -251,5 +247,24 @@ export class PrismaPaymentRepository implements PaymentRepository {
     });
 
     return { orderBy, where };
+  }
+
+  private toPaginatedReadModel(
+    payment: PaymentGetPayload<{
+      include: { member: { include: { user: true } } };
+    }>,
+  ): PaymentPaginatedReadModel {
+    return {
+      amount: payment.amount,
+      createdAt: payment.createdAt,
+      createdBy: payment.createdBy,
+      date: payment.date,
+      id: payment.id,
+      member: {
+        id: payment.member.id,
+        name: payment.member.user.name,
+      },
+      status: payment.status as PaymentStatus,
+    };
   }
 }

@@ -65,7 +65,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       params,
     });
 
-    const dues = await this.dueRepository.findByManyIds(
+    const dues = await this.dueRepository.findByIds(
       params.dues.map((pd) => UniqueId.raw({ value: pd.dueId })),
     );
 
@@ -83,7 +83,6 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       {
         amount: dues.reduce((acc, due) => acc.add(due.amount), Amount.ZERO),
         date: date.value,
-        dueIds: dues.map((due) => due.id),
         memberId: UniqueId.raw({ value: params.memberId }),
         notes: params.notes,
         receiptNumber: params.receiptNumber,

@@ -47,7 +47,7 @@ export class UpdatePricingUseCase extends UseCase<void> {
 
     const [amount, effectiveFrom] = results.value;
 
-    const pricing = await this.pricingRepository.findUniqueOrThrow(
+    const pricing = await this.pricingRepository.findByIdOrThrow(
       UniqueId.raw({ value: params.id }),
     );
 

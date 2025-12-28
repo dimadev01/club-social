@@ -36,7 +36,7 @@ export class UpdateDueUseCase extends UseCase<DueEntity> {
       params,
     });
 
-    const due = await this.dueRepository.findUniqueOrThrow(
+    const due = await this.dueRepository.findByIdOrThrow(
       UniqueId.raw({ value: params.id }),
     );
 

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   DueCreateInput,
-  DueModel,
+  DueGetPayload,
   DueUpdateInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { Guard } from '@/shared/domain/guards';
@@ -12,9 +12,14 @@ import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { DueEntity } from '../domain/entities/due.entity';
+import { PrismaDueSettlementMapper } from './prisma-due-settlement.mapper';
 
 @Injectable()
 export class PrismaDueMapper {
+  public constructor(
+    private readonly dueSettlementMapper: PrismaDueSettlementMapper,
+  ) {}
+
   public toCreateInput(due: DueEntity): DueCreateInput {
     Guard.string(due.createdBy);
 
@@ -33,7 +38,9 @@ export class PrismaDueMapper {
     };
   }
 
-  public toDomain(due: DueModel): DueEntity {
+  public toDomain(
+    due: DueGetPayload<{ include: { settlements: true } }>,
+  ): DueEntity {
     return DueEntity.fromPersistence(
       {
         amount: Amount.raw({ cents: due.amount }),
@@ -41,7 +48,9 @@ export class PrismaDueMapper {
         date: DateOnly.raw({ value: due.date }),
         memberId: UniqueId.raw({ value: due.memberId }),
         notes: due.notes,
-        settlements: [],
+        settlements: due.settlements.map((settlement) =>
+          this.dueSettlementMapper.toDomain(settlement),
+        ),
         status: due.status as DueStatus,
         voidedAt: due.voidedAt,
         voidedBy: due.voidedBy,

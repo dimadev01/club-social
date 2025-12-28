@@ -125,17 +125,6 @@ export class DateRange extends ValueObject<Props> {
     );
   }
 
-  /**
-   * Returns Prisma filter object for date range queries using half-open interval
-   * Use gte (>=) for start and lt (<) for end
-   */
-  public toPrismaFilter(): { gte: Date; lt: Date } {
-    return {
-      gte: this.start,
-      lt: this.end,
-    };
-  }
-
   public toString(): string {
     return `[${this.start.toISOString()}, ${this.end.toISOString()})`;
   }

@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from '@club-social/shared/types';
+import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
@@ -73,7 +73,7 @@ export function MemberLedgerList() {
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<
-        PaginatedResponse<
+        PaginatedDataResultDto<
           IMemberLedgerEntryPaginatedDto,
           IMemberLedgerEntryPaginatedExtraDto
         >

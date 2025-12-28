@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from '@club-social/shared/types';
+import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import {
   type IUserDetailDto,
@@ -49,7 +49,7 @@ export function UserListPage() {
     enabled: permissions.users.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IUserDetailDto>>('/users/paginated', {
+      $fetch<PaginatedDataResultDto<IUserDetailDto>>('/users/paginated', {
         query,
       }),
   });

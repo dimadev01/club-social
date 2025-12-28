@@ -1,5 +1,5 @@
 import type { ICreateMovementDto } from '@club-social/shared/movements';
-import type { ParamId } from '@club-social/shared/types';
+import type { ParamIdDto } from '@club-social/shared/types';
 
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
@@ -24,7 +24,7 @@ export function MovementNew() {
   const navigate = useNavigate();
 
   const createMovementMutation = useMutation<
-    ParamId,
+    ParamIdDto,
     Error,
     ICreateMovementDto
   >({

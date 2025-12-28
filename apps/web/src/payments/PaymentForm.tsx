@@ -3,7 +3,7 @@ import type { IMemberSearchResultDto } from '@club-social/shared/members';
 import {
   DueCategory,
   DueCategoryLabel,
-  type IPendingDueDto,
+  type PendingDueDto,
 } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat, DateFormats } from '@club-social/shared/lib';
@@ -226,7 +226,7 @@ export function PaymentForm({
             columns={[
               {
                 dataIndex: 'date',
-                render: (date: string, record: IPendingDueDto) => (
+                render: (date: string, record: PendingDueDto) => (
                   <Link to={appRoutes.dues.view(record.id)}>
                     {DateFormat.date(date)}
                   </Link>
@@ -236,7 +236,7 @@ export function PaymentForm({
               {
                 align: 'center',
                 dataIndex: 'category',
-                render: (category: DueCategory, record: IPendingDueDto) => {
+                render: (category: DueCategory, record: PendingDueDto) => {
                   if (category === DueCategory.MEMBERSHIP) {
                     return `${DueCategoryLabel[category]} (${DateFormat.month(record.date)})`;
                   }
@@ -256,7 +256,7 @@ export function PaymentForm({
               },
               {
                 align: 'right',
-                render: (_, record: IPendingDueDto) => {
+                render: (_, record: PendingDueDto) => {
                   return NumberFormat.formatCurrencyCents(
                     getPaidAmountForDue(record.id),
                   );
@@ -266,7 +266,7 @@ export function PaymentForm({
               },
               {
                 align: 'right',
-                render: (_, record: IPendingDueDto) => {
+                render: (_, record: PendingDueDto) => {
                   return NumberFormat.formatCurrencyCents(
                     getRemainingAmountForDue(record.id),
                   );

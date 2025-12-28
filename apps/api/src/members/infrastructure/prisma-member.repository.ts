@@ -1,8 +1,8 @@
 import { DueCategory, DueStatus } from '@club-social/shared/dues';
 import {
-  ExportRequest,
-  PaginatedRequest,
-  PaginatedResponse,
+  ExportDataDto,
+  GetPaginatedDataDto,
+  PaginatedDataResultDto,
   SortOrder,
 } from '@club-social/shared/types';
 import { Injectable } from '@nestjs/common';
@@ -38,8 +38,38 @@ export class PrismaMemberRepository implements MemberRepository {
     private readonly mapper: PrismaMappers,
   ) {}
 
+  public async findById(id: UniqueId): Promise<MemberEntity | null> {
+    const member = await this.prismaService.member.findUnique({
+      where: { id: id.value },
+    });
+
+    if (!member) {
+      return null;
+    }
+
+    return this.mapper.member.toDomain(member);
+  }
+
+  public async findByIdOrThrow(id: UniqueId): Promise<MemberEntity> {
+    const member = await this.prismaService.member.findUniqueOrThrow({
+      where: { id: id.value },
+    });
+
+    return this.mapper.member.toDomain(member);
+  }
+
+  public async findByIds(ids: UniqueId[]): Promise<MemberEntity[]> {
+    const members = await this.prismaService.member.findMany({
+      where: {
+        id: { in: ids.map((id) => id.value) },
+      },
+    });
+
+    return members.map((member) => this.mapper.member.toDomain(member));
+  }
+
   public async findForExport(
-    params: ExportRequest,
+    params: ExportDataDto,
   ): Promise<MemberPaginatedModel[]> {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
@@ -87,9 +117,9 @@ export class PrismaMemberRepository implements MemberRepository {
   }
 
   public async findPaginated(
-    params: PaginatedRequest,
+    params: GetPaginatedDataDto,
   ): Promise<
-    PaginatedResponse<MemberPaginatedModel, MemberPaginatedExtraModel>
+    PaginatedDataResultDto<MemberPaginatedModel, MemberPaginatedExtraModel>
   > {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
@@ -153,36 +183,6 @@ export class PrismaMemberRepository implements MemberRepository {
     };
   }
 
-  public async findUniqueById(id: UniqueId): Promise<MemberEntity | null> {
-    const member = await this.prismaService.member.findUnique({
-      where: { id: id.value },
-    });
-
-    if (!member) {
-      return null;
-    }
-
-    return this.mapper.member.toDomain(member);
-  }
-
-  public async findUniqueByIds(ids: UniqueId[]): Promise<MemberEntity[]> {
-    const members = await this.prismaService.member.findMany({
-      where: {
-        id: { in: ids.map((id) => id.value) },
-      },
-    });
-
-    return members.map((member) => this.mapper.member.toDomain(member));
-  }
-
-  public async findUniqueOrThrow(id: UniqueId): Promise<MemberEntity> {
-    const member = await this.prismaService.member.findUniqueOrThrow({
-      where: { id: id.value },
-    });
-
-    return this.mapper.member.toDomain(member);
-  }
-
   public async save(entity: MemberEntity): Promise<void> {
     const create = this.mapper.member.toCreateInput(entity);
     const update = this.mapper.member.toUpdateInput(entity);
@@ -231,7 +231,7 @@ export class PrismaMemberRepository implements MemberRepository {
     }));
   }
 
-  private buildWhereAndOrderBy(params: ExportRequest): {
+  private buildWhereAndOrderBy(params: ExportDataDto): {
     orderBy: MemberOrderByWithRelationInput[];
     where: MemberWhereInput;
   } {
@@ -245,8 +245,8 @@ export class PrismaMemberRepository implements MemberRepository {
       where.category = { in: params.filters.category };
     }
 
-    if (params.filters?.userStatus) {
-      where.user = { status: { in: params.filters.userStatus } };
+    if (params.filters?.status) {
+      where.status = { in: params.filters.status };
     }
 
     const orderBy: MemberOrderByWithRelationInput[] = [];
@@ -286,7 +286,7 @@ export class PrismaMemberRepository implements MemberRepository {
   }
 
   private extractDueSortField(
-    params: PaginatedRequest,
+    params: GetPaginatedDataDto,
   ): null | { category: DueCategory; order: SortOrder } {
     const dueSortFieldMap: Record<string, DueCategory> = {
       electricityTotalDueAmount: DueCategory.ELECTRICITY,

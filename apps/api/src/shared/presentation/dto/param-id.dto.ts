@@ -1,7 +1,7 @@
-import { ParamId } from '@club-social/shared/types';
+import { ParamIdDto } from '@club-social/shared/types';
 import { IsUUID } from 'class-validator';
 
-export class ParamIdDto implements ParamId {
+export class ParamIdRequestDto implements ParamIdDto {
   @IsUUID()
   public id: string;
 }

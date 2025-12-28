@@ -1,9 +1,9 @@
 import type {
   DueCategory,
-  IDuePendingStatisticsDto,
+  DuePendingStatisticsDto,
 } from '@club-social/shared/dues';
 
-export class DuePendingStatisticsDto implements IDuePendingStatisticsDto {
+export class DuePendingStatisticsResponseDto implements DuePendingStatisticsDto {
   public categories: Record<DueCategory, number>;
   public total: number;
 }

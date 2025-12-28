@@ -1,7 +1,7 @@
 import type {
-  ExportRequest,
-  PaginatedRequest,
-  PaginatedResponse,
+  ExportDataDto,
+  GetPaginatedDataDto,
+  PaginatedDataResultDto,
 } from '@club-social/shared/types';
 
 import { MovementStatus, MovementType } from '@club-social/shared/movements';
@@ -35,6 +35,32 @@ export class PrismaMovementRepository implements MovementRepository {
     private readonly mapper: PrismaMappers,
   ) {}
 
+  public async findById(id: UniqueId): Promise<MovementEntity | null> {
+    const movement = await this.prismaService.movement.findUnique({
+      where: { id: id.value },
+    });
+
+    return movement ? this.mapper.movement.toDomain(movement) : null;
+  }
+
+  public async findByIdOrThrow(id: UniqueId): Promise<MovementEntity> {
+    const movement = await this.prismaService.movement.findUniqueOrThrow({
+      where: { id: id.value },
+    });
+
+    return this.mapper.movement.toDomain(movement);
+  }
+
+  public async findByIds(ids: UniqueId[]): Promise<MovementEntity[]> {
+    const movements = await this.prismaService.movement.findMany({
+      where: {
+        id: { in: ids.map((id) => id.value) },
+      },
+    });
+
+    return movements.map((m) => this.mapper.movement.toDomain(m));
+  }
+
   public async findByPaymentId(
     paymentId: UniqueId,
   ): Promise<MovementEntity | null> {
@@ -47,7 +73,7 @@ export class PrismaMovementRepository implements MovementRepository {
     return movement ? this.mapper.movement.toDomain(movement) : null;
   }
 
-  public async findForExport(params: ExportRequest): Promise<MovementEntity[]> {
+  public async findForExport(params: ExportDataDto): Promise<MovementEntity[]> {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const movements = await this.prismaService.movement.findMany({
@@ -108,8 +134,10 @@ export class PrismaMovementRepository implements MovementRepository {
   }
 
   public async findPaginated(
-    params: PaginatedRequest,
-  ): Promise<PaginatedResponse<MovementEntity, MovementPaginatedExtraModel>> {
+    params: GetPaginatedDataDto,
+  ): Promise<
+    PaginatedDataResultDto<MovementEntity, MovementPaginatedExtraModel>
+  > {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
@@ -148,32 +176,6 @@ export class PrismaMovementRepository implements MovementRepository {
     };
   }
 
-  public async findUniqueById(id: UniqueId): Promise<MovementEntity | null> {
-    const movement = await this.prismaService.movement.findUnique({
-      where: { id: id.value },
-    });
-
-    return movement ? this.mapper.movement.toDomain(movement) : null;
-  }
-
-  public async findUniqueByIds(ids: UniqueId[]): Promise<MovementEntity[]> {
-    const movements = await this.prismaService.movement.findMany({
-      where: {
-        id: { in: ids.map((id) => id.value) },
-      },
-    });
-
-    return movements.map((m) => this.mapper.movement.toDomain(m));
-  }
-
-  public async findUniqueOrThrow(id: UniqueId): Promise<MovementEntity> {
-    const movement = await this.prismaService.movement.findUniqueOrThrow({
-      where: { id: id.value },
-    });
-
-    return this.mapper.movement.toDomain(movement);
-  }
-
   public async save(entity: MovementEntity): Promise<void> {
     const create = this.mapper.movement.toCreateInput(entity);
     const update = this.mapper.movement.toUpdateInput(entity);
@@ -185,7 +187,7 @@ export class PrismaMovementRepository implements MovementRepository {
     });
   }
 
-  private buildWhereAndOrderBy(params: ExportRequest): {
+  private buildWhereAndOrderBy(params: ExportDataDto): {
     orderBy: MovementOrderByWithRelationInput[];
     where: MovementWhereInput;
   } {
@@ -201,7 +203,10 @@ export class PrismaMovementRepository implements MovementRepository {
         throw dateRangeResult.error;
       }
 
-      where.createdAt = dateRangeResult.value.toPrismaFilter();
+      where.createdAt = {
+        gte: dateRangeResult.value.start,
+        lt: dateRangeResult.value.end,
+      };
     }
 
     if (params.filters?.date) {

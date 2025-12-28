@@ -28,10 +28,10 @@ import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
-import { ExportRequestDto } from '@/shared/presentation/dto/export-request.dto';
-import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
-import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
+import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
+import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
+import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
+import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateMemberUseCase } from '../application/create-member/create-member.use-case';
 import { UpdateMemberUseCase } from '../application/update-member/update-member.use-case';
@@ -65,7 +65,7 @@ export class MembersController extends BaseController {
 
   @Patch(':id')
   public async update(
-    @Param() request: ParamIdDto,
+    @Param() request: ParamIdRequestDto,
     @Body() body: UpdateMemberRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -101,7 +101,7 @@ export class MembersController extends BaseController {
   public async create(
     @Body() createMemberDto: CreateMemberRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdDto> {
+  ): Promise<ParamIdRequestDto> {
     const { id } = this.handleResult(
       await this.createMemberUseCase.execute({
         address: createMemberDto.address
@@ -133,7 +133,7 @@ export class MembersController extends BaseController {
   @Get('export')
   @Header('Content-Type', 'text/csv; charset=utf-8')
   public async export(
-    @Query() query: ExportRequestDto,
+    @Query() query: ExportDataRequestDto,
     @Res() res: Response,
   ): Promise<void> {
     const data = await this.memberRepository.findForExport({
@@ -179,9 +179,9 @@ export class MembersController extends BaseController {
   @ApiPaginatedResponse(MemberDetailDto)
   @Get('paginated')
   public async getPaginated(
-    @Query() query: PaginatedRequestDto,
+    @Query() query: GetPaginatedDataRequestDto,
   ): Promise<
-    PaginatedResponseDto<MemberPaginatedDto, MemberPaginatedExtraDto>
+    PaginatedDataResponseDto<MemberPaginatedDto, MemberPaginatedExtraDto>
   > {
     const data = await this.memberRepository.findPaginated({
       filters: query.filters,
@@ -229,7 +229,9 @@ export class MembersController extends BaseController {
   }
 
   @Get(':id')
-  public async getById(@Param() request: ParamIdDto): Promise<MemberDetailDto> {
+  public async getById(
+    @Param() request: ParamIdRequestDto,
+  ): Promise<MemberDetailDto> {
     const model = await this.memberRepository.findOneModel(
       UniqueId.raw({ value: request.id }),
     );

@@ -1,12 +1,12 @@
-import type { PaginatedResponse } from '@club-social/shared/types';
+import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { FilterOutlined, MoreOutlined } from '@ant-design/icons';
 import { DueCategoryOptions } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
 import {
-  type IPaymentPaginatedDto,
-  type IPaymentPaginatedExtraDto,
+  type PaymentPaginatedDto,
+  type PaymentPaginatedExtraDto,
   PaymentStatus,
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
@@ -22,6 +22,7 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
+import { NavigateToPayment } from '@/ui/NavigatePayment';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Select } from '@/ui/Select';
@@ -47,7 +48,7 @@ export function PaymentList() {
     resetFilters,
     setFilter,
     state,
-  } = useTable<IPaymentPaginatedDto>({
+  } = useTable<PaymentPaginatedDto>({
     defaultFilters: {
       status: [PaymentStatus.PAID],
     },
@@ -72,7 +73,7 @@ export function PaymentList() {
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<
-        PaginatedResponse<IPaymentPaginatedDto, IPaymentPaginatedExtraDto>
+        PaginatedDataResultDto<PaymentPaginatedDto, PaymentPaginatedExtraDto>
       >('payments/paginated', { query }),
   });
 
@@ -129,7 +130,7 @@ export function PaymentList() {
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
-      <Table<IPaymentPaginatedDto>
+      <Table<PaymentPaginatedDto>
         columns={[
           {
             dataIndex: 'createdAt',
@@ -139,9 +140,7 @@ export function PaymentList() {
             filteredValue: getFilterValue('createdAt'),
             fixed: 'left',
             render: (createdAt: string, record) => (
-              <Link to={appRoutes.payments.view(record.id)}>
-                {DateFormat.dateTime(createdAt)}
-              </Link>
+              <NavigateToPayment id={record.id}>{createdAt}</NavigateToPayment>
             ),
             sorter: true,
             sortOrder: getSortOrder('createdAt'),
@@ -157,18 +156,19 @@ export function PaymentList() {
             filteredValue: getFilterValue('date'),
             render: (date: string) => DateFormat.date(date),
             title: 'Fecha',
+            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           ...(permissions.payments.listAll
             ? [
                 {
                   dataIndex: 'memberId',
-                  render: (memberId: string, record: IPaymentPaginatedDto) => (
+                  render: (memberId: string, record: PaymentPaginatedDto) => (
                     <Link to={appRoutes.members.view(memberId)}>
                       {record.memberName}
                     </Link>
                   ),
                   title: 'Socio',
-                } satisfies TableColumnType<IPaymentPaginatedDto>,
+                } satisfies TableColumnType<PaymentPaginatedDto>,
               ]
             : []),
           {
@@ -238,7 +238,7 @@ export function PaymentList() {
                   ),
                   title: 'Acciones',
                   width: TABLE_COLUMN_WIDTHS.ACTIONS,
-                } satisfies TableColumnType<IPaymentPaginatedDto>,
+                } satisfies TableColumnType<PaymentPaginatedDto>,
               ]
             : []),
         ]}

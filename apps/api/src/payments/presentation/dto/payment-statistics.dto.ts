@@ -1,6 +1,6 @@
 import type {
   IPaymentStatisticsByCategoryItemDto,
-  IPaymentStatisticsDto,
+  PaymentStatistics,
 } from '@club-social/shared/payments';
 
 import { DueCategory } from '@club-social/shared/dues';
@@ -11,10 +11,10 @@ export class PaymentStatisticsByCategoryItemDto implements IPaymentStatisticsByC
   public count: number;
 }
 
-export class PaymentStatisticsDto implements IPaymentStatisticsDto {
+export class PaymentStatisticsResponseDto implements PaymentStatistics {
   public average: number;
   public categories: Record<DueCategory, PaymentStatisticsByCategoryItemDto>;
-  public paymentDuesCount: number;
-  public paymentsCount: number;
-  public totalAmount: number;
+  public count: number;
+  public dueSettlementsCount: number;
+  public total: number;
 }

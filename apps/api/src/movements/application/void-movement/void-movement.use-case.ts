@@ -29,7 +29,7 @@ export class VoidMovementUseCase extends UseCase {
   public async execute(params: VoidMovementParams): Promise<Result> {
     this.logger.info({ message: 'Voiding movement', params });
 
-    const movement = await this.movementRepository.findUniqueOrThrow(
+    const movement = await this.movementRepository.findByIdOrThrow(
       UniqueId.raw({ value: params.id }),
     );
 

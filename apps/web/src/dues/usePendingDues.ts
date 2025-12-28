@@ -1,4 +1,4 @@
-import type { IPendingDueDto } from '@club-social/shared/dues';
+import type { PendingDueDto } from '@club-social/shared/dues';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -12,6 +12,6 @@ export function usePendingDues(memberId?: string, enabled = true) {
     ...queryKeys.dues.pending(memberId),
     enabled: enabled && !!memberId && permissions.dues.get,
     queryFn: () =>
-      $fetch<IPendingDueDto[]>(`dues/pending`, { query: { memberId } }),
+      $fetch<PendingDueDto[]>(`dues/pending`, { query: { memberId } }),
   });
 }

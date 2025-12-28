@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from '@club-social/shared/types';
+import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
@@ -46,9 +46,12 @@ export function PricingList() {
     enabled: permissions.pricing.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IPricingPaginatedDto>>('/pricing/paginated', {
-        query,
-      }),
+      $fetch<PaginatedDataResultDto<IPricingPaginatedDto>>(
+        '/pricing/paginated',
+        {
+          query,
+        },
+      ),
   });
 
   if (!permissions.pricing.list) {

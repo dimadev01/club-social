@@ -1,5 +1,8 @@
 import { AuditAction, AuditEntity } from '@club-social/shared/audit-logs';
-import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
+import {
+  GetPaginatedDataDto,
+  PaginatedDataResultDto,
+} from '@club-social/shared/types';
 import { Inject, Injectable } from '@nestjs/common';
 
 import {
@@ -34,8 +37,8 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
   }
 
   public async findPaginated(
-    params: PaginatedRequest,
-  ): Promise<PaginatedResponse<AuditLogEntry>> {
+    params: GetPaginatedDataDto,
+  ): Promise<PaginatedDataResultDto<AuditLogEntry>> {
     const where: AuditLogWhereInput = {};
 
     if (params.filters?.createdAt) {
@@ -48,7 +51,10 @@ export class PrismaAuditLogRepository implements AuditLogRepository {
         throw dateRangeResult.error;
       }
 
-      where.createdAt = dateRangeResult.value.toPrismaFilter();
+      where.createdAt = {
+        gte: dateRangeResult.value.start,
+        lt: dateRangeResult.value.end,
+      };
     }
 
     if (params.filters?.entity) {

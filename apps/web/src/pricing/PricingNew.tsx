@@ -1,5 +1,5 @@
 import type { ICreatePricingDto } from '@club-social/shared/pricing';
-import type { ParamId } from '@club-social/shared/types';
+import type { ParamIdDto } from '@club-social/shared/types';
 
 import { DueCategory } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
@@ -24,7 +24,11 @@ export function PricingNew() {
   const permissions = usePermissions();
   const navigate = useNavigate();
 
-  const createPricingMutation = useMutation<ParamId, Error, ICreatePricingDto>({
+  const createPricingMutation = useMutation<
+    ParamIdDto,
+    Error,
+    ICreatePricingDto
+  >({
     mutationFn: (body) => $fetch('/pricing', { body, method: 'POST' }),
     onSuccess: () => {
       message.success('Precio creado correctamente');

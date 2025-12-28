@@ -18,9 +18,9 @@ import {
 } from '@/shared/application/app-logger';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
-import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
-import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
+import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
+import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
+import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
 
 import {
   MEMBER_LEDGER_REPOSITORY_PROVIDER,
@@ -46,9 +46,9 @@ export class MemberLedgerController extends BaseController {
   @ApiPaginatedResponse(MemberLedgerEntryPaginatedDto)
   @Get()
   public async getPaginated(
-    @Query() query: PaginatedRequestDto,
+    @Query() query: GetPaginatedDataRequestDto,
   ): Promise<
-    PaginatedResponseDto<
+    PaginatedDataResponseDto<
       MemberLedgerEntryPaginatedDto,
       MemberLedgerEntryPaginatedExtraDto
     >
@@ -85,7 +85,7 @@ export class MemberLedgerController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() params: ParamIdDto,
+    @Param() params: ParamIdRequestDto,
   ): Promise<MemberLedgerEntryDetailDto> {
     const entry = await this.memberLedgerRepository.findDetailById(params.id);
 

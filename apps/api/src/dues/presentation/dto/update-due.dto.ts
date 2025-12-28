@@ -1,4 +1,4 @@
-import { IUpdateDueDto } from '@club-social/shared/dues';
+import { UpdateDueDto } from '@club-social/shared/dues';
 import {
   IsInt,
   IsNotEmpty,
@@ -8,7 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class UpdateDueDto implements IUpdateDueDto {
+export class UpdateDueRequestDto implements UpdateDueDto {
   @IsInt()
   @IsNotEmpty()
   @IsNumber()

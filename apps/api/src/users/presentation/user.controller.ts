@@ -20,9 +20,9 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
-import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
-import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
+import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
+import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
+import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateUserUseCase } from '../application/create-user.use-case';
 import { UpdateUserUseCase } from '../application/update-user.use-case';
@@ -50,7 +50,7 @@ export class UsersController extends BaseController {
 
   @Patch(':id')
   public async update(
-    @Param() request: ParamIdDto,
+    @Param() request: ParamIdRequestDto,
     @Body() body: UpdateUserRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -70,7 +70,7 @@ export class UsersController extends BaseController {
   public async create(
     @Body() createUserDto: CreateUserRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdDto> {
+  ): Promise<ParamIdRequestDto> {
     const { id } = this.handleResult(
       await this.createUserUseCase.execute({
         createdBy: session.user.name,
@@ -87,8 +87,8 @@ export class UsersController extends BaseController {
   @ApiPaginatedResponse(UserPaginatedDto)
   @Get('paginated')
   public async getPaginated(
-    @Query() query: PaginatedRequestDto,
-  ): Promise<PaginatedResponseDto<UserPaginatedDto>> {
+    @Query() query: GetPaginatedDataRequestDto,
+  ): Promise<PaginatedDataResponseDto<UserPaginatedDto>> {
     const users = await this.userRepository.findPaginated({
       filters: query.filters,
       page: query.page,
@@ -109,8 +109,10 @@ export class UsersController extends BaseController {
   }
 
   @Get(':id')
-  public async get(@Param() request: ParamIdDto): Promise<UserDetailDto> {
-    const user = await this.userRepository.findUniqueById(
+  public async get(
+    @Param() request: ParamIdRequestDto,
+  ): Promise<UserDetailDto> {
+    const user = await this.userRepository.findById(
       UniqueId.raw({ value: request.id }),
     );
 

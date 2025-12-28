@@ -1,4 +1,4 @@
-import { ExportRequest } from '@club-social/shared/types';
+import { ExportDataDto } from '@club-social/shared/types';
 
 import {
   PaginatedRepository,
@@ -23,7 +23,7 @@ export interface MemberRepository
     PaginatedRepository<MemberPaginatedModel, MemberPaginatedExtraModel>,
     ReadableRepository<MemberEntity>,
     WriteableRepository<MemberEntity> {
-  findForExport(params: ExportRequest): Promise<MemberPaginatedModel[]>;
+  findForExport(params: ExportDataDto): Promise<MemberPaginatedModel[]>;
   findOneModel(id: UniqueId): Promise<MemberDetailModel | null>;
   search(params: MemberSearchParams): Promise<MemberSearchModel[]>;
 }

@@ -1,4 +1,7 @@
-import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
+import {
+  GetPaginatedDataDto,
+  PaginatedDataResultDto,
+} from '@club-social/shared/types';
 import { UserRole } from '@club-social/shared/users';
 import { Injectable } from '@nestjs/common';
 
@@ -21,9 +24,39 @@ export class PrismaUserRepository implements UserReadableRepository {
     private readonly mapper: PrismaMappers,
   ) {}
 
+  public async findById(id: UniqueId): Promise<null | UserEntity> {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: id.value },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return this.mapper.user.toDomain(user);
+  }
+
+  public async findByIdOrThrow(id: UniqueId): Promise<UserEntity> {
+    const user = await this.prismaService.user.findUniqueOrThrow({
+      where: { id: id.value },
+    });
+
+    return this.mapper.user.toDomain(user);
+  }
+
+  public async findByIds(ids: UniqueId[]): Promise<UserEntity[]> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        id: { in: ids.map((id) => id.value) },
+      },
+    });
+
+    return users.map((user) => this.mapper.user.toDomain(user));
+  }
+
   public async findPaginated(
-    params: PaginatedRequest,
-  ): Promise<PaginatedResponse<UserEntity>> {
+    params: GetPaginatedDataDto,
+  ): Promise<PaginatedDataResultDto<UserEntity>> {
     const where: UserWhereInput = {};
 
     if (params.filters?.role) {
@@ -62,36 +95,6 @@ export class PrismaUserRepository implements UserReadableRepository {
     if (!user) {
       return null;
     }
-
-    return this.mapper.user.toDomain(user);
-  }
-
-  public async findUniqueById(id: UniqueId): Promise<null | UserEntity> {
-    const user = await this.prismaService.user.findUnique({
-      where: { id: id.value },
-    });
-
-    if (!user) {
-      return null;
-    }
-
-    return this.mapper.user.toDomain(user);
-  }
-
-  public async findUniqueByIds(ids: UniqueId[]): Promise<UserEntity[]> {
-    const users = await this.prismaService.user.findMany({
-      where: {
-        id: { in: ids.map((id) => id.value) },
-      },
-    });
-
-    return users.map((user) => this.mapper.user.toDomain(user));
-  }
-
-  public async findUniqueOrThrow(id: UniqueId): Promise<UserEntity> {
-    const user = await this.prismaService.user.findUniqueOrThrow({
-      where: { id: id.value },
-    });
 
     return this.mapper.user.toDomain(user);
   }

@@ -8,7 +8,7 @@ import {
   MemberCategoryLabel,
   MemberCategoryOptions,
 } from '@club-social/shared/members';
-import { type PaginatedResponse } from '@club-social/shared/types';
+import { type PaginatedDataResultDto } from '@club-social/shared/types';
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Button, Dropdown, Space, Tooltip, Typography } from 'antd';
@@ -69,12 +69,11 @@ export function MemberListPage() {
     enabled: permissions.members.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IMemberPaginatedDto, IMemberPaginatedExtraDto>>(
-        '/members/paginated',
-        {
-          query,
-        },
-      ),
+      $fetch<
+        PaginatedDataResultDto<IMemberPaginatedDto, IMemberPaginatedExtraDto>
+      >('/members/paginated', {
+        query,
+      }),
   });
 
   if (!permissions.members.list) {

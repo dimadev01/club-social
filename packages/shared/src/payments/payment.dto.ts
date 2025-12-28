@@ -1,7 +1,6 @@
 import type { ICreatePaymentDueDto } from '../due-settlements';
 
 import { DueCategory } from '../dues';
-import { UserStatus } from '../users';
 import { PaymentStatus } from './payment.enum';
 
 export interface ICreatePaymentDto {
@@ -12,52 +11,10 @@ export interface ICreatePaymentDto {
   receiptNumber: null | string;
 }
 
-export interface IPaymentDetailDto {
-  amount: number;
-  createdAt: string;
-  createdBy: string;
-  date: string;
-  id: string;
-  memberId: string;
-  memberName: string;
-  notes: null | string;
-  receiptNumber: null | string;
-  status: PaymentStatus;
-  updatedAt: string;
-  updatedBy?: null | string;
-  userStatus: UserStatus;
-  voidedAt: null | string;
-  voidedBy: null | string;
-  voidReason: null | string;
-}
-
-export interface IPaymentPaginatedDto {
-  amount: number;
-  createdAt: string;
-  createdBy: string;
-  date: string;
-  id: string;
-  memberId: string;
-  memberName: string;
-  status: PaymentStatus;
-}
-
-export interface IPaymentPaginatedExtraDto {
-  totalAmount: number;
-}
-
 export interface IPaymentStatisticsByCategoryItemDto {
   amount: number;
   average: number;
   count: number;
-}
-
-export interface IPaymentStatisticsDto {
-  average: number;
-  categories: Record<DueCategory, IPaymentStatisticsByCategoryItemDto>;
-  paymentDuesCount: number;
-  paymentsCount: number;
-  totalAmount: number;
 }
 
 export interface IPaymentStatisticsQueryDto {
@@ -66,4 +23,51 @@ export interface IPaymentStatisticsQueryDto {
 
 export interface IVoidPaymentDto {
   voidReason: string;
+}
+
+export interface PaymentDto {
+  amount: number;
+  createdAt: string;
+  createdBy: string;
+  date: string;
+  id: string;
+  member: PaymentMemberDto;
+  memberId: string;
+  memberName: string;
+  notes: null | string;
+  receiptNumber: null | string;
+  status: PaymentStatus;
+  updatedAt: string;
+  updatedBy?: null | string;
+  voidedAt: null | string;
+  voidedBy: null | string;
+  voidReason: null | string;
+}
+
+export interface PaymentMemberDto {
+  id: string;
+  name: string;
+}
+
+export interface PaymentPaginatedDto {
+  amount: number;
+  createdAt: string;
+  createdBy: string;
+  date: string;
+  id: string;
+  memberId: string;
+  memberName: string;
+  status: PaymentStatus;
+}
+
+export interface PaymentPaginatedExtraDto {
+  totalAmount: number;
+}
+
+export interface PaymentStatistics {
+  average: number;
+  categories: Record<DueCategory, IPaymentStatisticsByCategoryItemDto>;
+  count: number;
+  dueSettlementsCount: number;
+  total: number;
 }

@@ -1,10 +1,10 @@
 import { DueCategory } from '@club-social/shared/dues';
 import {
   IPaymentStatisticsByCategoryItemDto,
-  IPaymentStatisticsDto,
+  PaymentStatistics,
 } from '@club-social/shared/payments';
 import { Inject, Injectable } from '@nestjs/common';
-import { meanBy, sumBy, uniqBy } from 'es-toolkit/compat';
+import { flatMap, meanBy, sumBy } from 'es-toolkit/compat';
 
 import {
   PAYMENT_REPOSITORY_PROVIDER,
@@ -19,7 +19,7 @@ import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { ok, Result } from '@/shared/domain/result';
 
 @Injectable()
-export class FindPaymentsStatisticsUseCase extends UseCase<IPaymentStatisticsDto> {
+export class FindPaymentsStatisticsUseCase extends UseCase<PaymentStatistics> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
@@ -31,24 +31,28 @@ export class FindPaymentsStatisticsUseCase extends UseCase<IPaymentStatisticsDto
 
   public async execute(
     params: FindForStatisticsParams,
-  ): Promise<Result<IPaymentStatisticsDto>> {
-    const paymentDues = await this.paymentRepository.findForStatistics({
+  ): Promise<Result<PaymentStatistics>> {
+    const data = await this.paymentRepository.findForStatistics({
       dateRange: params.dateRange,
     });
 
+    const total = sumBy(data, (s) => s.amount);
+    const count = data.length;
+    const dueSettlementsCount = sumBy(data, (s) => s.settlements.length);
+    const average = meanBy(data, (s) => s.amount);
+
+    const dueSettlements = flatMap(data, (s) => s.settlements);
+
     const categories = Object.values(DueCategory).reduce(
       (acc, category) => {
-        const items = paymentDues.filter((pd) => pd.due.category === category);
+        const dueSettlementsInCategory = dueSettlements.filter(
+          (ds) => ds.due.category === category,
+        );
 
-        if (items.length > 0) {
-          const amount = sumBy(items, (pd) =>
-            pd.dueSettlement.amount.toCents(),
-          );
-          const average = meanBy(items, (pd) =>
-            pd.dueSettlement.amount.toCents(),
-          );
-          const count = items.length;
-
+        if (dueSettlementsInCategory.length > 0) {
+          const amount = sumBy(dueSettlementsInCategory, (ds) => ds.amount);
+          const average = meanBy(dueSettlementsInCategory, (pd) => pd.amount);
+          const count = dueSettlementsInCategory.length;
           acc[category] = { amount, average, count };
         } else {
           acc[category] = { amount: 0, average: 0, count: 0 };
@@ -59,25 +63,6 @@ export class FindPaymentsStatisticsUseCase extends UseCase<IPaymentStatisticsDto
       {} as Record<DueCategory, IPaymentStatisticsByCategoryItemDto>,
     );
 
-    const uniquePaymentDuesByPayment = uniqBy(
-      paymentDues,
-      (pd) => pd.payment.id.value,
-    );
-    const average = meanBy(uniquePaymentDuesByPayment, (pd) =>
-      pd.payment.amount.toCents(),
-    );
-    const totalAmount = sumBy(paymentDues, (pd) =>
-      pd.dueSettlement.amount.toCents(),
-    );
-    const paymentsCount = uniquePaymentDuesByPayment.length;
-    const paymentDuesCount = paymentDues.length;
-
-    return ok({
-      average,
-      categories,
-      paymentDuesCount,
-      paymentsCount,
-      totalAmount,
-    });
+    return ok({ average, categories, count, dueSettlementsCount, total });
   }
 }

@@ -26,10 +26,10 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
-import { ExportRequestDto } from '@/shared/presentation/dto/export-request.dto';
-import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
-import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
+import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
+import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
+import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
+import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateMovementUseCase } from '../application/create-movement/create-movement.use-case';
 import { VoidMovementUseCase } from '../application/void-movement/void-movement.use-case';
@@ -67,7 +67,7 @@ export class MovementsController extends BaseController {
   public async create(
     @Body() body: CreateMovementRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdDto> {
+  ): Promise<ParamIdRequestDto> {
     const { id } = this.handleResult(
       await this.createMovementUseCase.execute({
         amount: body.amount,
@@ -85,7 +85,7 @@ export class MovementsController extends BaseController {
   @Get('export')
   @Header('Content-Type', 'text/csv; charset=utf-8')
   public async export(
-    @Query() query: ExportRequestDto,
+    @Query() query: ExportDataRequestDto,
     @Res() res: Response,
   ): Promise<void> {
     const data = await this.movementRepository.findForExport({
@@ -126,9 +126,9 @@ export class MovementsController extends BaseController {
   @ApiPaginatedResponse(MovementPaginatedDto)
   @Get()
   public async getPaginated(
-    @Query() query: PaginatedRequestDto,
+    @Query() query: GetPaginatedDataRequestDto,
   ): Promise<
-    PaginatedResponseDto<MovementPaginatedDto, MovementPaginatedExtraDto>
+    PaginatedDataResponseDto<MovementPaginatedDto, MovementPaginatedExtraDto>
   > {
     const result = await this.movementRepository.findPaginated({
       filters: query.filters,
@@ -178,9 +178,9 @@ export class MovementsController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() params: ParamIdDto,
+    @Param() params: ParamIdRequestDto,
   ): Promise<MovementDetailDto> {
-    const movement = await this.movementRepository.findUniqueById(
+    const movement = await this.movementRepository.findById(
       UniqueId.raw({ value: params.id }),
     );
 
@@ -210,7 +210,7 @@ export class MovementsController extends BaseController {
 
   @Patch(':id/void')
   public async void(
-    @Param() params: ParamIdDto,
+    @Param() params: ParamIdRequestDto,
     @Body() body: VoidMovementRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {

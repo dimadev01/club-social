@@ -1,6 +1,6 @@
 import type { PaginatedRequestSort } from './paginated-types';
 
-export interface ExportRequest {
+export interface ExportDataDto {
   filters?: Record<string, string[]>;
   sort: PaginatedRequestSort[];
 }

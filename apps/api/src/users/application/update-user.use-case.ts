@@ -62,7 +62,7 @@ export class UpdateUserUseCase extends UseCase<UserEntity> {
       return err(new ConflictError('El email ya está en uso'));
     }
 
-    const user = await this.userRepository.findUniqueOrThrow(
+    const user = await this.userRepository.findByIdOrThrow(
       UniqueId.raw({ value: params.id }),
     );
 

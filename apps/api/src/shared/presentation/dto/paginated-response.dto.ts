@@ -1,12 +1,12 @@
-import { PaginatedResponse } from '@club-social/shared/types';
+import { PaginatedDataResultDto } from '@club-social/shared/types';
 import { ApiHideProperty } from '@nestjs/swagger';
 
-export class PaginatedResponseDto<
-  T,
+export class PaginatedDataResponseDto<
+  TData,
   TSummary = never,
-> implements PaginatedResponse<T, TSummary> {
+> implements PaginatedDataResultDto<TData, TSummary> {
   @ApiHideProperty()
-  public data: T[];
+  public data: TData[];
 
   @ApiHideProperty()
   public extra?: TSummary;

@@ -1,3 +1,15 @@
+export const MemberStatus = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+} as const;
+
+export type MemberStatus = (typeof MemberStatus)[keyof typeof MemberStatus];
+
+export const MemberStatusLabel = {
+  [MemberStatus.ACTIVE]: 'Activo',
+  [MemberStatus.INACTIVE]: 'Inactivo',
+} as const;
+
 export const MemberCategory = {
   ADHERENT_MEMBER: 'adherent-member',
   CADET: 'cadet',

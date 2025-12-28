@@ -7,6 +7,7 @@ import { CreatePaymentUseCase } from './application/create-payment/create-paymen
 import { FindPaymentsStatisticsUseCase } from './application/find-payments-statistics/find-payments-statistics.use-case';
 import { VoidPaymentUseCase } from './application/void-payment/void-payment.use-case';
 import { PAYMENT_REPOSITORY_PROVIDER } from './domain/payment.repository';
+import { PrismaPaymentMapper } from './infrastructure/prisma-payment.mapper';
 import { PrismaPaymentRepository } from './infrastructure/prisma-payment.repository';
 import { PaymentsController } from './presentation/payment.controller';
 
@@ -18,6 +19,7 @@ import { PaymentsController } from './presentation/payment.controller';
     CreatePaymentUseCase,
     VoidPaymentUseCase,
     FindPaymentsStatisticsUseCase,
+    PrismaPaymentMapper,
     {
       provide: PAYMENT_REPOSITORY_PROVIDER,
       useClass: PrismaPaymentRepository,

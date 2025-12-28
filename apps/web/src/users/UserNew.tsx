@@ -1,4 +1,4 @@
-import type { ParamId } from '@club-social/shared/types';
+import type { ParamIdDto } from '@club-social/shared/types';
 import type { ICreateUserDto } from '@club-social/shared/users';
 
 import { App } from 'antd';
@@ -19,7 +19,7 @@ export function UserNew() {
   const permissions = usePermissions();
   const navigate = useNavigate();
 
-  const createUserMutation = useMutation<ParamId, Error, ICreateUserDto>({
+  const createUserMutation = useMutation<ParamIdDto, Error, ICreateUserDto>({
     mutationFn: (body) => $fetch('users', { body }),
     onSuccess: (data) => {
       message.success('Usuario creado correctamente');

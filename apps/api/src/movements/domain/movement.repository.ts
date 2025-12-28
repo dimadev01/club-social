@@ -1,4 +1,4 @@
-import { ExportRequest } from '@club-social/shared/types';
+import { ExportDataDto } from '@club-social/shared/types';
 
 import {
   PaginatedRepository,
@@ -22,7 +22,7 @@ export interface MovementRepository
     ReadableRepository<MovementEntity>,
     WriteableRepository<MovementEntity> {
   findByPaymentId(paymentId: UniqueId): Promise<MovementEntity | null>;
-  findForExport(params: ExportRequest): Promise<MovementEntity[]>;
+  findForExport(params: ExportDataDto): Promise<MovementEntity[]>;
   findForStatistics(
     params: FindForStatisticsParams,
   ): Promise<MovementStatisticsModel>;

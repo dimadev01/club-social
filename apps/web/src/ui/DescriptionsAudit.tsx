@@ -34,7 +34,7 @@ export function DescriptionsAudit({ showVoidInfo = true, ...props }: Props) {
           children: DateFormat.dateTime(props.updatedAt),
           label: 'Actualizado el',
         },
-        ...(showVoidInfo
+        ...(showVoidInfo && props.voidedAt
           ? [
               {
                 children: props.voidedBy ?? '-',

@@ -120,6 +120,7 @@ model Member {
   cityName      String?
   stateName     String?
   zipCode       String?
+  status        String
 
   createdAt DateTime @default(now())
   createdBy String
@@ -141,9 +142,9 @@ model MemberLedgerEntry {
   member   Member @relation(fields: [memberId], references: [id])
 
   amount Int
+  date   String
   type   String
   notes  String?
-  date   String
   status String
   source String
 
@@ -201,18 +202,17 @@ model Due {
 model DueSettlement {
   id String @id
 
+  amount Int
+  status String
+
   dueId String
   due   Due    @relation(fields: [dueId], references: [id])
 
   memberLedgerEntryId String            @unique
   memberLedgerEntry   MemberLedgerEntry @relation(fields: [memberLedgerEntryId], references: [id])
 
-  amount Int
-
   paymentId String?
   payment   Payment? @relation(fields: [paymentId], references: [id])
-
-  status String
 
   @@index([dueId])
   @@index([paymentId])

@@ -31,6 +31,10 @@ export const DateFormat = {
     return DateFormat.date(value, format);
   },
 
+  format(value: Date | Dayjs | string, format: DateFormats): string {
+    return DateFormat.date(value, format);
+  },
+
   isoDate(value: Date | Dayjs | string): string {
     return DateFormat.date(value, DateFormats.isoDate);
   },

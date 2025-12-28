@@ -12,7 +12,7 @@ import {
   PaymentStatus,
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
-import { App, Button, Divider } from 'antd';
+import { App, Button, Col, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -26,6 +26,7 @@ import { NavigateDue } from '@/ui/NavigateDue';
 import { NavigateMember } from '@/ui/NavigateMember';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
+import { Row } from '@/ui/Row';
 import { Table } from '@/ui/Table/Table';
 import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { VoidModal } from '@/ui/VoidModal';
@@ -84,36 +85,46 @@ export function PaymentView() {
       backButton
       title="Detalle de pago"
     >
-      <Descriptions
-        items={[
-          {
-            children: DateFormat.date(payment.date),
-            label: 'Fecha',
-          },
-          {
-            children: (
-              <NavigateMember id={payment.memberId} name={payment.memberName} />
-            ),
-            label: 'Socio',
-          },
-          {
-            children: NumberFormat.formatCurrencyCents(payment.amount),
-            label: 'Monto',
-          },
-          {
-            children: PaymentStatusLabel[payment.status],
-            label: 'Estado',
-          },
-          {
-            children: payment.notes ?? '-',
-            label: 'Notas',
-          },
-        ]}
-      />
-
-      <Divider />
-
-      <DescriptionsAudit {...payment} />
+      <Row>
+        <Col md={12} xs={24}>
+          <Descriptions
+            items={[
+              {
+                children: DateFormat.date(payment.date),
+                label: 'Fecha',
+              },
+              {
+                children: (
+                  <NavigateMember
+                    id={payment.memberId}
+                    name={payment.memberName}
+                  />
+                ),
+                label: 'Socio',
+              },
+              {
+                children: NumberFormat.formatCurrencyCents(payment.amount),
+                label: 'Monto',
+              },
+              {
+                children: PaymentStatusLabel[payment.status],
+                label: 'Estado',
+              },
+              {
+                children: payment.receiptNumber ?? '-',
+                label: 'Número de recibo',
+              },
+              {
+                children: payment.notes ?? '-',
+                label: 'Notas',
+              },
+            ]}
+          />
+        </Col>
+        <Col md={12} xs={24}>
+          <DescriptionsAudit {...payment} />
+        </Col>
+      </Row>
 
       <Divider />
 

@@ -1,5 +1,5 @@
 import type { CreateDueDto } from '@club-social/shared/dues';
-import type { ParamId } from '@club-social/shared/types';
+import type { ParamIdDto } from '@club-social/shared/types';
 
 import { DueCategory } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
@@ -23,7 +23,7 @@ export function DueNew() {
   const permissions = usePermissions();
   const navigate = useNavigate();
 
-  const createDueMutation = useMutation<ParamId, Error, CreateDueDto>({
+  const createDueMutation = useMutation<ParamIdDto, Error, CreateDueDto>({
     mutationFn: (body) => $fetch('/dues', { body }),
   });
 

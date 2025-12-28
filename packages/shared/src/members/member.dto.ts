@@ -5,6 +5,7 @@ import {
   MemberCategory,
   MemberNationality,
   MemberSex,
+  MemberStatus,
 } from './member.enum';
 
 export interface ICreateMemberDto {
@@ -69,7 +70,7 @@ export interface IMemberSearchResultDto {
   category: MemberCategory;
   id: string;
   name: string;
-  status: UserStatus;
+  status: MemberStatus;
 }
 
 export interface IUpdateMemberDto {
@@ -85,5 +86,5 @@ export interface IUpdateMemberDto {
   nationality: MemberNationality | null;
   phones: string[];
   sex: MemberSex | null;
-  status: UserStatus;
+  status: MemberStatus;
 }

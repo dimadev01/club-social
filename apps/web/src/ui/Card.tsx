@@ -26,7 +26,7 @@ export function Card({
       loading={loading}
       {...(title && {
         title: (
-          <Space>
+          <Space size="small">
             {backButton && (
               <Tooltip title="Volver">
                 <Button
@@ -39,9 +39,6 @@ export function Card({
             )}
 
             {title}
-            {/* {loading && loadingTitle && <Skeleton.Input active />}
-            {loading && !loadingTitle && title}
-            {!loading && title} */}
           </Space>
         ),
       })}

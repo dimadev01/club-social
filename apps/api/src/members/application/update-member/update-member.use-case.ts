@@ -61,7 +61,7 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
     const existingUserByEmail =
       await this.userRepository.findUniqueByEmail(email);
 
-    const member = await this.memberRepository.findUniqueOrThrow(
+    const member = await this.memberRepository.findByIdOrThrow(
       UniqueId.raw({ value: params.id }),
     );
 
@@ -69,7 +69,7 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       return err(new ConflictError('El email ya está en uso'));
     }
 
-    const user = await this.userRepository.findUniqueOrThrow(member.userId);
+    const user = await this.userRepository.findByIdOrThrow(member.userId);
 
     const name = Name.create({
       firstName: params.firstName,

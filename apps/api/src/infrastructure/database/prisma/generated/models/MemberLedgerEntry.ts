@@ -38,9 +38,9 @@ export type MemberLedgerEntryMinAggregateOutputType = {
   id: string | null;
   memberId: string | null;
   amount: number | null;
+  date: string | null;
   type: string | null;
   notes: string | null;
-  date: string | null;
   status: string | null;
   source: string | null;
   paymentId: string | null;
@@ -55,9 +55,9 @@ export type MemberLedgerEntryMaxAggregateOutputType = {
   id: string | null;
   memberId: string | null;
   amount: number | null;
+  date: string | null;
   type: string | null;
   notes: string | null;
-  date: string | null;
   status: string | null;
   source: string | null;
   paymentId: string | null;
@@ -72,9 +72,9 @@ export type MemberLedgerEntryCountAggregateOutputType = {
   id: number;
   memberId: number;
   amount: number;
+  date: number;
   type: number;
   notes: number;
-  date: number;
   status: number;
   source: number;
   paymentId: number;
@@ -98,9 +98,9 @@ export type MemberLedgerEntryMinAggregateInputType = {
   id?: true;
   memberId?: true;
   amount?: true;
+  date?: true;
   type?: true;
   notes?: true;
-  date?: true;
   status?: true;
   source?: true;
   paymentId?: true;
@@ -115,9 +115,9 @@ export type MemberLedgerEntryMaxAggregateInputType = {
   id?: true;
   memberId?: true;
   amount?: true;
+  date?: true;
   type?: true;
   notes?: true;
-  date?: true;
   status?: true;
   source?: true;
   paymentId?: true;
@@ -132,9 +132,9 @@ export type MemberLedgerEntryCountAggregateInputType = {
   id?: true;
   memberId?: true;
   amount?: true;
+  date?: true;
   type?: true;
   notes?: true;
-  date?: true;
   status?: true;
   source?: true;
   paymentId?: true;
@@ -249,9 +249,9 @@ export type MemberLedgerEntryGroupByOutputType = {
   id: string;
   memberId: string;
   amount: number;
+  date: string;
   type: string;
   notes: string | null;
-  date: string;
   status: string;
   source: string;
   paymentId: string | null;
@@ -293,9 +293,9 @@ export type MemberLedgerEntryWhereInput = {
   id?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   memberId?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   amount?: Prisma.IntFilter<'MemberLedgerEntry'> | number;
+  date?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   type?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   notes?: Prisma.StringNullableFilter<'MemberLedgerEntry'> | string | null;
-  date?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   status?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   source?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   paymentId?: Prisma.StringNullableFilter<'MemberLedgerEntry'> | string | null;
@@ -330,9 +330,9 @@ export type MemberLedgerEntryOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
   memberId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
+  date?: Prisma.SortOrder;
   type?: Prisma.SortOrder;
   notes?: Prisma.SortOrderInput | Prisma.SortOrder;
-  date?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   source?: Prisma.SortOrder;
   paymentId?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -360,9 +360,9 @@ export type MemberLedgerEntryWhereUniqueInput = Prisma.AtLeast<
       | Prisma.MemberLedgerEntryWhereInput[];
     memberId?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
     amount?: Prisma.IntFilter<'MemberLedgerEntry'> | number;
+    date?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
     type?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
     notes?: Prisma.StringNullableFilter<'MemberLedgerEntry'> | string | null;
-    date?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
     status?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
     source?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
     paymentId?:
@@ -405,9 +405,9 @@ export type MemberLedgerEntryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
   memberId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
+  date?: Prisma.SortOrder;
   type?: Prisma.SortOrder;
   notes?: Prisma.SortOrderInput | Prisma.SortOrder;
-  date?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   source?: Prisma.SortOrder;
   paymentId?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -434,12 +434,12 @@ export type MemberLedgerEntryScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<'MemberLedgerEntry'> | string;
   memberId?: Prisma.StringWithAggregatesFilter<'MemberLedgerEntry'> | string;
   amount?: Prisma.IntWithAggregatesFilter<'MemberLedgerEntry'> | number;
+  date?: Prisma.StringWithAggregatesFilter<'MemberLedgerEntry'> | string;
   type?: Prisma.StringWithAggregatesFilter<'MemberLedgerEntry'> | string;
   notes?:
     | Prisma.StringNullableWithAggregatesFilter<'MemberLedgerEntry'>
     | string
     | null;
-  date?: Prisma.StringWithAggregatesFilter<'MemberLedgerEntry'> | string;
   status?: Prisma.StringWithAggregatesFilter<'MemberLedgerEntry'> | string;
   source?: Prisma.StringWithAggregatesFilter<'MemberLedgerEntry'> | string;
   paymentId?:
@@ -468,9 +468,9 @@ export type MemberLedgerEntryScalarWhereWithAggregatesInput = {
 export type MemberLedgerEntryCreateInput = {
   id: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   createdAt?: Date | string;
@@ -488,9 +488,9 @@ export type MemberLedgerEntryUncheckedCreateInput = {
   id: string;
   memberId: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   paymentId?: string | null;
@@ -506,9 +506,9 @@ export type MemberLedgerEntryUncheckedCreateInput = {
 export type MemberLedgerEntryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -526,9 +526,9 @@ export type MemberLedgerEntryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -548,9 +548,9 @@ export type MemberLedgerEntryCreateManyInput = {
   id: string;
   memberId: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   paymentId?: string | null;
@@ -564,9 +564,9 @@ export type MemberLedgerEntryCreateManyInput = {
 export type MemberLedgerEntryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -579,9 +579,9 @@ export type MemberLedgerEntryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -614,9 +614,9 @@ export type MemberLedgerEntryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   memberId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
+  date?: Prisma.SortOrder;
   type?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
-  date?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   source?: Prisma.SortOrder;
   paymentId?: Prisma.SortOrder;
@@ -635,9 +635,9 @@ export type MemberLedgerEntryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   memberId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
+  date?: Prisma.SortOrder;
   type?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
-  date?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   source?: Prisma.SortOrder;
   paymentId?: Prisma.SortOrder;
@@ -652,9 +652,9 @@ export type MemberLedgerEntryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   memberId?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
+  date?: Prisma.SortOrder;
   type?: Prisma.SortOrder;
   notes?: Prisma.SortOrder;
-  date?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   source?: Prisma.SortOrder;
   paymentId?: Prisma.SortOrder;
@@ -1061,9 +1061,9 @@ export type MemberLedgerEntryUncheckedUpdateManyWithoutPaymentNestedInput = {
 export type MemberLedgerEntryCreateWithoutMemberInput = {
   id: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   createdAt?: Date | string;
@@ -1079,9 +1079,9 @@ export type MemberLedgerEntryCreateWithoutMemberInput = {
 export type MemberLedgerEntryUncheckedCreateWithoutMemberInput = {
   id: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   paymentId?: string | null;
@@ -1148,9 +1148,9 @@ export type MemberLedgerEntryScalarWhereInput = {
   id?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   memberId?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   amount?: Prisma.IntFilter<'MemberLedgerEntry'> | number;
+  date?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   type?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   notes?: Prisma.StringNullableFilter<'MemberLedgerEntry'> | string | null;
-  date?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   status?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   source?: Prisma.StringFilter<'MemberLedgerEntry'> | string;
   paymentId?: Prisma.StringNullableFilter<'MemberLedgerEntry'> | string | null;
@@ -1167,9 +1167,9 @@ export type MemberLedgerEntryScalarWhereInput = {
 export type MemberLedgerEntryCreateWithoutReversalsInput = {
   id: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   createdAt?: Date | string;
@@ -1186,9 +1186,9 @@ export type MemberLedgerEntryUncheckedCreateWithoutReversalsInput = {
   id: string;
   memberId: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   paymentId?: string | null;
@@ -1211,9 +1211,9 @@ export type MemberLedgerEntryCreateOrConnectWithoutReversalsInput = {
 export type MemberLedgerEntryCreateWithoutReversalOfInput = {
   id: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   createdAt?: Date | string;
@@ -1230,9 +1230,9 @@ export type MemberLedgerEntryUncheckedCreateWithoutReversalOfInput = {
   id: string;
   memberId: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   paymentId?: string | null;
@@ -1282,9 +1282,9 @@ export type MemberLedgerEntryUpdateToOneWithWhereWithoutReversalsInput = {
 export type MemberLedgerEntryUpdateWithoutReversalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1301,9 +1301,9 @@ export type MemberLedgerEntryUncheckedUpdateWithoutReversalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1349,9 +1349,9 @@ export type MemberLedgerEntryUpdateManyWithWhereWithoutReversalOfInput = {
 export type MemberLedgerEntryCreateWithoutSettlementInput = {
   id: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   createdAt?: Date | string;
@@ -1368,9 +1368,9 @@ export type MemberLedgerEntryUncheckedCreateWithoutSettlementInput = {
   id: string;
   memberId: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   paymentId?: string | null;
@@ -1413,9 +1413,9 @@ export type MemberLedgerEntryUpdateToOneWithWhereWithoutSettlementInput = {
 export type MemberLedgerEntryUpdateWithoutSettlementInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1432,9 +1432,9 @@ export type MemberLedgerEntryUncheckedUpdateWithoutSettlementInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1452,9 +1452,9 @@ export type MemberLedgerEntryUncheckedUpdateWithoutSettlementInput = {
 export type MemberLedgerEntryCreateWithoutPaymentInput = {
   id: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   createdAt?: Date | string;
@@ -1471,9 +1471,9 @@ export type MemberLedgerEntryUncheckedCreateWithoutPaymentInput = {
   id: string;
   memberId: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   reversalOfId?: string | null;
@@ -1531,9 +1531,9 @@ export type MemberLedgerEntryUpdateManyWithWhereWithoutPaymentInput = {
 export type MemberLedgerEntryCreateManyMemberInput = {
   id: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   paymentId?: string | null;
@@ -1547,9 +1547,9 @@ export type MemberLedgerEntryCreateManyMemberInput = {
 export type MemberLedgerEntryUpdateWithoutMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1565,9 +1565,9 @@ export type MemberLedgerEntryUpdateWithoutMemberInput = {
 export type MemberLedgerEntryUncheckedUpdateWithoutMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1586,9 +1586,9 @@ export type MemberLedgerEntryUncheckedUpdateWithoutMemberInput = {
 export type MemberLedgerEntryUncheckedUpdateManyWithoutMemberInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1606,9 +1606,9 @@ export type MemberLedgerEntryCreateManyReversalOfInput = {
   id: string;
   memberId: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   paymentId?: string | null;
@@ -1621,9 +1621,9 @@ export type MemberLedgerEntryCreateManyReversalOfInput = {
 export type MemberLedgerEntryUpdateWithoutReversalOfInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1640,9 +1640,9 @@ export type MemberLedgerEntryUncheckedUpdateWithoutReversalOfInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1658,9 +1658,9 @@ export type MemberLedgerEntryUncheckedUpdateManyWithoutReversalOfInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -1674,9 +1674,9 @@ export type MemberLedgerEntryCreateManyPaymentInput = {
   id: string;
   memberId: string;
   amount: number;
+  date: string;
   type: string;
   notes?: string | null;
-  date: string;
   status: string;
   source: string;
   reversalOfId?: string | null;
@@ -1689,9 +1689,9 @@ export type MemberLedgerEntryCreateManyPaymentInput = {
 export type MemberLedgerEntryUpdateWithoutPaymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1708,9 +1708,9 @@ export type MemberLedgerEntryUncheckedUpdateWithoutPaymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   reversalOfId?:
@@ -1729,9 +1729,9 @@ export type MemberLedgerEntryUncheckedUpdateManyWithoutPaymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   memberId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  date?: Prisma.StringFieldUpdateOperationsInput | string;
   type?: Prisma.StringFieldUpdateOperationsInput | string;
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  date?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
   source?: Prisma.StringFieldUpdateOperationsInput | string;
   reversalOfId?:
@@ -1790,9 +1790,9 @@ export type MemberLedgerEntrySelect<
     id?: boolean;
     memberId?: boolean;
     amount?: boolean;
+    date?: boolean;
     type?: boolean;
     notes?: boolean;
-    date?: boolean;
     status?: boolean;
     source?: boolean;
     paymentId?: boolean;
@@ -1821,9 +1821,9 @@ export type MemberLedgerEntrySelectCreateManyAndReturn<
     id?: boolean;
     memberId?: boolean;
     amount?: boolean;
+    date?: boolean;
     type?: boolean;
     notes?: boolean;
-    date?: boolean;
     status?: boolean;
     source?: boolean;
     paymentId?: boolean;
@@ -1847,9 +1847,9 @@ export type MemberLedgerEntrySelectUpdateManyAndReturn<
     id?: boolean;
     memberId?: boolean;
     amount?: boolean;
+    date?: boolean;
     type?: boolean;
     notes?: boolean;
-    date?: boolean;
     status?: boolean;
     source?: boolean;
     paymentId?: boolean;
@@ -1869,9 +1869,9 @@ export type MemberLedgerEntrySelectScalar = {
   id?: boolean;
   memberId?: boolean;
   amount?: boolean;
+  date?: boolean;
   type?: boolean;
   notes?: boolean;
-  date?: boolean;
   status?: boolean;
   source?: boolean;
   paymentId?: boolean;
@@ -1889,9 +1889,9 @@ export type MemberLedgerEntryOmit<
   | 'id'
   | 'memberId'
   | 'amount'
+  | 'date'
   | 'type'
   | 'notes'
-  | 'date'
   | 'status'
   | 'source'
   | 'paymentId'
@@ -1949,9 +1949,9 @@ export type $MemberLedgerEntryPayload<
       id: string;
       memberId: string;
       amount: number;
+      date: string;
       type: string;
       notes: string | null;
-      date: string;
       status: string;
       source: string;
       paymentId: string | null;
@@ -2641,9 +2641,9 @@ export interface MemberLedgerEntryFieldRefs {
   readonly id: Prisma.FieldRef<'MemberLedgerEntry', 'String'>;
   readonly memberId: Prisma.FieldRef<'MemberLedgerEntry', 'String'>;
   readonly amount: Prisma.FieldRef<'MemberLedgerEntry', 'Int'>;
+  readonly date: Prisma.FieldRef<'MemberLedgerEntry', 'String'>;
   readonly type: Prisma.FieldRef<'MemberLedgerEntry', 'String'>;
   readonly notes: Prisma.FieldRef<'MemberLedgerEntry', 'String'>;
-  readonly date: Prisma.FieldRef<'MemberLedgerEntry', 'String'>;
   readonly status: Prisma.FieldRef<'MemberLedgerEntry', 'String'>;
   readonly source: Prisma.FieldRef<'MemberLedgerEntry', 'String'>;
   readonly paymentId: Prisma.FieldRef<'MemberLedgerEntry', 'String'>;

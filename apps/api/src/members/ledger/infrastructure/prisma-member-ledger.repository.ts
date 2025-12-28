@@ -1,6 +1,6 @@
 import type {
-  PaginatedRequest,
-  PaginatedResponse,
+  GetPaginatedDataDto,
+  PaginatedDataResultDto,
 } from '@club-social/shared/types';
 
 import {
@@ -49,6 +49,37 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     private readonly mapper: PrismaMappers,
   ) {}
 
+  public async findById(id: UniqueId): Promise<MemberLedgerEntryEntity | null> {
+    const memberLedgerEntry =
+      await this.prismaService.memberLedgerEntry.findUnique({
+        where: { id: id.value },
+      });
+
+    return memberLedgerEntry
+      ? this.mapper.memberLedgerEntry.toDomain(memberLedgerEntry)
+      : null;
+  }
+
+  public async findByIdOrThrow(id: UniqueId): Promise<MemberLedgerEntryEntity> {
+    const memberLedgerEntry =
+      await this.prismaService.memberLedgerEntry.findUniqueOrThrow({
+        where: { id: id.value },
+      });
+
+    return this.mapper.memberLedgerEntry.toDomain(memberLedgerEntry);
+  }
+
+  public async findByIds(ids: UniqueId[]): Promise<MemberLedgerEntryEntity[]> {
+    const memberLedgerEntries =
+      await this.prismaService.memberLedgerEntry.findMany({
+        where: { id: { in: ids.map((id) => id.value) } },
+      });
+
+    return memberLedgerEntries.map((memberLedgerEntry) =>
+      this.mapper.memberLedgerEntry.toDomain(memberLedgerEntry),
+    );
+  }
+
   public async findDetailById(
     id: string,
   ): Promise<MemberLedgerEntryDetailReadModel | null> {
@@ -81,9 +112,9 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
   }
 
   public async findPaginated(
-    params: PaginatedRequest,
+    params: GetPaginatedDataDto,
   ): Promise<
-    PaginatedResponse<
+    PaginatedDataResultDto<
       MemberLedgerEntryPaginatedModel,
       MemberLedgerEntryPaginatedExtraModel
     >
@@ -157,43 +188,6 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     };
   }
 
-  public async findUniqueById(
-    id: UniqueId,
-  ): Promise<MemberLedgerEntryEntity | null> {
-    const memberLedgerEntry =
-      await this.prismaService.memberLedgerEntry.findUnique({
-        where: { id: id.value },
-      });
-
-    return memberLedgerEntry
-      ? this.mapper.memberLedgerEntry.toDomain(memberLedgerEntry)
-      : null;
-  }
-
-  public async findUniqueByIds(
-    ids: UniqueId[],
-  ): Promise<MemberLedgerEntryEntity[]> {
-    const memberLedgerEntries =
-      await this.prismaService.memberLedgerEntry.findMany({
-        where: { id: { in: ids.map((id) => id.value) } },
-      });
-
-    return memberLedgerEntries.map((memberLedgerEntry) =>
-      this.mapper.memberLedgerEntry.toDomain(memberLedgerEntry),
-    );
-  }
-
-  public async findUniqueOrThrow(
-    id: UniqueId,
-  ): Promise<MemberLedgerEntryEntity> {
-    const memberLedgerEntry =
-      await this.prismaService.memberLedgerEntry.findUniqueOrThrow({
-        where: { id: id.value },
-      });
-
-    return this.mapper.memberLedgerEntry.toDomain(memberLedgerEntry);
-  }
-
   public async save(entity: MemberLedgerEntryEntity): Promise<void> {
     const create = this.mapper.memberLedgerEntry.toCreateInput(entity);
     const update = this.mapper.memberLedgerEntry.toUpdateInput(entity);
@@ -205,7 +199,7 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     });
   }
 
-  private buildWhereAndOrderBy(params: PaginatedRequest): {
+  private buildWhereAndOrderBy(params: GetPaginatedDataDto): {
     orderBy: MemberLedgerEntryOrderByWithRelationInput[];
     where: MemberLedgerEntryWhereInput;
   } {
@@ -217,9 +211,14 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
         params.filters.createdAt[1],
       );
 
-      if (dateRangeResult.isOk()) {
-        where.createdAt = dateRangeResult.value.toPrismaFilter();
+      if (dateRangeResult.isErr()) {
+        throw dateRangeResult.error;
       }
+
+      where.createdAt = {
+        gte: dateRangeResult.value.start,
+        lt: dateRangeResult.value.end,
+      };
     }
 
     if (params.filters?.date) {

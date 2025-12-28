@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from '@club-social/shared/types';
+import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { MoreOutlined } from '@ant-design/icons';
 import { NumberFormat } from '@club-social/shared/lib';
@@ -59,7 +59,10 @@ export function MovementList() {
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<
-        PaginatedResponse<IMovementPaginatedDto, IMovementPaginatedExtraDto>
+        PaginatedDataResultDto<
+          IMovementPaginatedDto,
+          IMovementPaginatedExtraDto
+        >
       >('/movements', { query }),
   });
 
@@ -160,7 +163,7 @@ export function MovementList() {
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
-            dataIndex: 'description',
+            dataIndex: 'notes',
             render: (notes: null | string, record) => {
               if (!notes) {
                 return '-';
@@ -182,7 +185,7 @@ export function MovementList() {
                 </Tooltip>
               );
             },
-            title: 'Descripción',
+            title: 'Notas',
             width: 300,
           },
           {

@@ -1,5 +1,5 @@
 import type { ICreateMemberDto } from '@club-social/shared/members';
-import type { ParamId } from '@club-social/shared/types';
+import type { ParamIdDto } from '@club-social/shared/types';
 
 import { DateFormat } from '@club-social/shared/lib';
 import { FileStatus, MemberCategory } from '@club-social/shared/members';
@@ -21,13 +21,15 @@ export function MemberNew() {
   const permissions = usePermissions();
   const navigate = useNavigate();
 
-  const createMemberMutation = useMutation<ParamId, Error, ICreateMemberDto>({
-    mutationFn: (body) => $fetch('members', { body }),
-    onSuccess: (data) => {
-      message.success('Socio creado correctamente');
-      navigate(appRoutes.members.view(data.id), { replace: true });
+  const createMemberMutation = useMutation<ParamIdDto, Error, ICreateMemberDto>(
+    {
+      mutationFn: (body) => $fetch('members', { body }),
+      onSuccess: (data) => {
+        message.success('Socio creado correctamente');
+        navigate(appRoutes.members.view(data.id), { replace: true });
+      },
     },
-  });
+  );
 
   const handleSubmit = (values: MemberFormData) => {
     createMemberMutation.mutate({

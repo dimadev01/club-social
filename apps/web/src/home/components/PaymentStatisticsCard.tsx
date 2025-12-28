@@ -26,21 +26,21 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
         <Statistic
           loading={isLoading}
           title="Pagos realizados"
-          value={statistics?.paymentsCount}
+          value={statistics?.count}
         />
       </Card.Grid>
       <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">
         <Statistic
           loading={isLoading}
           title="Deudas pagas"
-          value={statistics?.paymentDuesCount}
+          value={statistics?.dueSettlementsCount}
         />
       </Card.Grid>
       <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">
         <Statistic
           loading={isLoading}
           title="Total de pagos"
-          value={NumberFormat.formatCurrencyCents(statistics?.totalAmount ?? 0)}
+          value={NumberFormat.formatCurrencyCents(statistics?.total ?? 0)}
         />
       </Card.Grid>
       <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">

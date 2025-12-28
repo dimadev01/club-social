@@ -1,10 +1,14 @@
 import {
-  IPaymentPaginatedDto,
-  IPaymentPaginatedExtraDto,
+  PaymentPaginatedDto,
+  PaymentPaginatedExtraDto,
   PaymentStatus,
 } from '@club-social/shared/payments';
 
-export class PaymentPaginatedDto implements IPaymentPaginatedDto {
+export class PaymentPaginatedExtraResponseDto implements PaymentPaginatedExtraDto {
+  public totalAmount: number;
+}
+
+export class PaymentPaginatedResponseDto implements PaymentPaginatedDto {
   public amount: number;
   public createdAt: string;
   public createdBy: string;
@@ -13,8 +17,4 @@ export class PaymentPaginatedDto implements IPaymentPaginatedDto {
   public memberId: string;
   public memberName: string;
   public status: PaymentStatus;
-}
-
-export class PaymentPaginatedExtraDto implements IPaymentPaginatedExtraDto {
-  public totalAmount: number;
 }

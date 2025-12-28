@@ -1,12 +1,11 @@
-import { Link } from 'react-router';
+import { Link, type LinkProps } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 
-interface Props {
+interface Props extends Omit<LinkProps, 'to'> {
   id: string;
-  name: string;
 }
 
-export function NavigateMember({ id, name }: Props) {
-  return <Link to={appRoutes.members.view(id)}>{name}</Link>;
+export function NavigateMember({ id, ...props }: Props) {
+  return <Link to={appRoutes.members.view(id)} {...props} />;
 }

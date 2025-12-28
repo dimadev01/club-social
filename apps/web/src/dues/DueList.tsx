@@ -1,17 +1,17 @@
-import type { PaginatedResponse } from '@club-social/shared/types';
+import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { FilterOutlined, MoreOutlined } from '@ant-design/icons';
 import {
   type DueCategory,
   DueCategoryLabel,
+  type DuePaginatedDto,
+  type DuePaginatedExtraDto,
   DueStatus,
   DueStatusLabel,
-  type IDuePaginatedDto,
-  type IDuePaginatedExtraDto,
 } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
-import { type UserStatus, UserStatusLabel } from '@club-social/shared/users';
+import { MemberStatus, MemberStatusLabel } from '@club-social/shared/members';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Button, Dropdown, Space, type TableColumnType, Tooltip } from 'antd';
 import { useState } from 'react';
@@ -48,9 +48,9 @@ export function DueList() {
     resetFilters,
     setFilter,
     state,
-  } = useTable<IDuePaginatedDto>({
+  } = useTable<DuePaginatedDto>({
     defaultFilters: {
-      status: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID, DueStatus.PAID],
+      status: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
     },
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
@@ -72,7 +72,7 @@ export function DueList() {
     enabled: permissions.dues.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IDuePaginatedDto, IDuePaginatedExtraDto>>(
+      $fetch<PaginatedDataResultDto<DuePaginatedDto, DuePaginatedExtraDto>>(
         '/dues/paginated',
         { query },
       ),
@@ -126,7 +126,7 @@ export function DueList() {
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
-      <Table<IDuePaginatedDto>
+      <Table<DuePaginatedDto>
         columns={[
           {
             dataIndex: 'createdAt',
@@ -158,13 +158,13 @@ export function DueList() {
             ? [
                 {
                   dataIndex: 'memberId',
-                  render: (memberId: string, record: IDuePaginatedDto) => (
+                  render: (memberId: string, record: DuePaginatedDto) => (
                     <Link to={appRoutes.members.view(memberId)}>
                       {record.memberName}
                     </Link>
                   ),
                   title: 'Socio',
-                } satisfies TableColumnType<IDuePaginatedDto>,
+                } satisfies TableColumnType<DuePaginatedDto>,
               ]
             : []),
           {
@@ -204,18 +204,18 @@ export function DueList() {
             ? [
                 {
                   align: 'center',
-                  dataIndex: 'userStatus',
-                  filteredValue: getFilterValue('userStatus'),
-                  filters: Object.entries(UserStatusLabel).map(
+                  dataIndex: 'memberStatus',
+                  filteredValue: getFilterValue('memberStatus'),
+                  filters: Object.entries(MemberStatusLabel).map(
                     ([value, label]) => ({
                       text: label,
                       value,
                     }),
                   ),
-                  render: (value: UserStatus) => UserStatusLabel[value],
+                  render: (value: MemberStatus) => MemberStatusLabel[value],
                   title: 'Estado Socio',
                   width: TABLE_COLUMN_WIDTHS.STATUS,
-                } satisfies TableColumnType<IDuePaginatedDto>,
+                } satisfies TableColumnType<DuePaginatedDto>,
                 {
                   align: 'center',
                   fixed: 'right',
@@ -261,7 +261,7 @@ export function DueList() {
                   ),
                   title: 'Acciones',
                   width: TABLE_COLUMN_WIDTHS.ACTIONS,
-                } satisfies TableColumnType<IDuePaginatedDto>,
+                } satisfies TableColumnType<DuePaginatedDto>,
               ]
             : []),
         ]}

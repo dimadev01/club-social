@@ -1,3 +1,3 @@
-export interface ParamId {
+export interface ParamIdDto {
   id: string;
 }

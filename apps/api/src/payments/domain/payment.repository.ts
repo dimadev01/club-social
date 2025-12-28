@@ -1,4 +1,4 @@
-import { ExportRequest } from '@club-social/shared/types';
+import { ExportDataDto } from '@club-social/shared/types';
 
 import {
   PaginatedRepository,
@@ -10,24 +10,25 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from './entities/payment.entity';
 import {
-  PaymentDetailModel,
-  PaymentDueDetailModel,
-  PaymentPaginatedExtraModel,
-  PaymentPaginatedModel,
-  PaymentStatisticsModel,
-} from './payment.types';
+  PaymentPaginatedExtraReadModel,
+  PaymentPaginatedReadModel,
+  PaymentReadModel,
+  PaymentStatisticsReadModel,
+} from './payment-read-models';
 
 export const PAYMENT_REPOSITORY_PROVIDER = Symbol('PaymentRepository');
 
 export interface PaymentRepository
   extends
-    PaginatedRepository<PaymentPaginatedModel, PaymentPaginatedExtraModel>,
+    PaginatedRepository<
+      PaymentPaginatedReadModel,
+      PaymentPaginatedExtraReadModel
+    >,
     ReadableRepository<PaymentEntity>,
     WriteableRepository<PaymentEntity> {
-  findForExport(params: ExportRequest): Promise<PaymentPaginatedModel[]>;
+  findByIdReadModel(id: UniqueId): Promise<null | PaymentReadModel>;
+  findForExport(params: ExportDataDto): Promise<PaymentPaginatedReadModel[]>;
   findForStatistics(
     params: FindForStatisticsParams,
-  ): Promise<PaymentStatisticsModel[]>;
-  findOneModel(id: UniqueId): Promise<null | PaymentDetailModel>;
-  findPaymentDuesModel(paymentId: UniqueId): Promise<PaymentDueDetailModel[]>;
+  ): Promise<PaymentStatisticsReadModel[]>;
 }

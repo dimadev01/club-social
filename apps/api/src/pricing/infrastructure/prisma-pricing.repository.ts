@@ -1,6 +1,6 @@
 import type {
-  PaginatedRequest,
-  PaginatedResponse,
+  GetPaginatedDataDto,
+  PaginatedDataResultDto,
 } from '@club-social/shared/types';
 
 import { DueCategory } from '@club-social/shared/dues';
@@ -39,6 +39,37 @@ export class PrismaPricingRepository implements PricingRepository {
         deletedAt: null,
         dueCategory,
         memberCategory,
+      },
+    });
+
+    return prices.map((pricing) => this.mapper.toDomain(pricing));
+  }
+
+  public async findById(id: UniqueId): Promise<null | PricingEntity> {
+    const pricing = await this.prismaService.pricing.findUnique({
+      where: { deletedAt: null, id: id.value },
+    });
+
+    if (!pricing) {
+      return null;
+    }
+
+    return this.mapper.toDomain(pricing);
+  }
+
+  public async findByIdOrThrow(id: UniqueId): Promise<PricingEntity> {
+    const pricing = await this.prismaService.pricing.findUniqueOrThrow({
+      where: { deletedAt: null, id: id.value },
+    });
+
+    return this.mapper.toDomain(pricing);
+  }
+
+  public async findByIds(ids: UniqueId[]): Promise<PricingEntity[]> {
+    const prices = await this.prismaService.pricing.findMany({
+      where: {
+        deletedAt: null,
+        id: { in: ids.map((id) => id.value) },
       },
     });
 
@@ -97,8 +128,8 @@ export class PrismaPricingRepository implements PricingRepository {
   }
 
   public async findPaginated(
-    params: PaginatedRequest,
-  ): Promise<PaginatedResponse<PricingPaginatedModel, never>> {
+    params: GetPaginatedDataDto,
+  ): Promise<PaginatedDataResultDto<PricingPaginatedModel, never>> {
     const where: PricingWhereInput = { deletedAt: null };
 
     if (params.filters?.dueCategory) {
@@ -147,37 +178,6 @@ export class PrismaPricingRepository implements PricingRepository {
     });
 
     return pricing ? this.mapper.toDomain(pricing) : null;
-  }
-
-  public async findUniqueById(id: UniqueId): Promise<null | PricingEntity> {
-    const pricing = await this.prismaService.pricing.findUnique({
-      where: { deletedAt: null, id: id.value },
-    });
-
-    if (!pricing) {
-      return null;
-    }
-
-    return this.mapper.toDomain(pricing);
-  }
-
-  public async findUniqueByIds(ids: UniqueId[]): Promise<PricingEntity[]> {
-    const prices = await this.prismaService.pricing.findMany({
-      where: {
-        deletedAt: null,
-        id: { in: ids.map((id) => id.value) },
-      },
-    });
-
-    return prices.map((pricing) => this.mapper.toDomain(pricing));
-  }
-
-  public async findUniqueOrThrow(id: UniqueId): Promise<PricingEntity> {
-    const pricing = await this.prismaService.pricing.findUniqueOrThrow({
-      where: { deletedAt: null, id: id.value },
-    });
-
-    return this.mapper.toDomain(pricing);
   }
 
   public async save(entity: PricingEntity): Promise<void> {

@@ -1,4 +1,7 @@
-import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
+import {
+  GetPaginatedDataDto,
+  PaginatedDataResultDto,
+} from '@club-social/shared/types';
 import { Inject, Injectable } from '@nestjs/common';
 
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
@@ -22,26 +25,26 @@ export class CompositeUserRepository implements UserRepository {
     private readonly userWriteableRepository: UserWriteableRepository,
   ) {}
 
+  public async findById(id: UniqueId): Promise<null | UserEntity> {
+    return this.userReadableRepository.findById(id);
+  }
+
+  public async findByIdOrThrow(id: UniqueId): Promise<UserEntity> {
+    return this.userReadableRepository.findByIdOrThrow(id);
+  }
+
+  public async findByIds(ids: UniqueId[]): Promise<UserEntity[]> {
+    return this.userReadableRepository.findByIds(ids);
+  }
+
   public async findPaginated(
-    params: PaginatedRequest,
-  ): Promise<PaginatedResponse<UserEntity>> {
+    params: GetPaginatedDataDto,
+  ): Promise<PaginatedDataResultDto<UserEntity>> {
     return this.userReadableRepository.findPaginated(params);
   }
 
   public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {
     return this.userReadableRepository.findUniqueByEmail(email);
-  }
-
-  public async findUniqueById(id: UniqueId): Promise<null | UserEntity> {
-    return this.userReadableRepository.findUniqueById(id);
-  }
-
-  public async findUniqueByIds(ids: UniqueId[]): Promise<UserEntity[]> {
-    return this.userReadableRepository.findUniqueByIds(ids);
-  }
-
-  public async findUniqueOrThrow(id: UniqueId): Promise<UserEntity> {
-    return this.userReadableRepository.findUniqueOrThrow(id);
   }
 
   public async save(entity: UserEntity): Promise<void> {

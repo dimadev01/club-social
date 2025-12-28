@@ -5,7 +5,8 @@ import {
   DueCategoryLabel,
   DueStatusLabel,
 } from '@club-social/shared/dues';
-import { UserStatusLabel } from '@club-social/shared/users';
+import { NumberFormat } from '@club-social/shared/lib';
+import { MemberStatusLabel } from '@club-social/shared/members';
 import {
   Body,
   Controller,
@@ -24,7 +25,6 @@ import { sumBy } from 'es-toolkit/compat';
 
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 import { CsvService } from '@/infrastructure/csv/csv.service';
-import { PaymentDueDetailWithPaymentDto } from '@/payment-dues/presentation/dto/payment-due-detail.dto';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -32,10 +32,10 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
-import { ExportRequestDto } from '@/shared/presentation/dto/export-request.dto';
-import { PaginatedRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
-import { PaginatedResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdDto } from '@/shared/presentation/dto/param-id.dto';
+import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
+import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
+import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
+import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateDueUseCase } from '../application/create-due/create-due.use-case';
 import { UpdateDueUseCase } from '../application/update-due/update-due.use-case';
@@ -45,11 +45,14 @@ import {
   type DueRepository,
 } from '../domain/due.repository';
 import { CreateDueRequestDto } from './dto/create-due.dto';
-import { DueDetailDto } from './dto/due-detail.dto';
-import { DuePaginatedDto, DuePaginatedExtraDto } from './dto/due-paginated.dto';
-import { DuePendingStatisticsDto } from './dto/due-pending-statistics.dto';
-import { PendingDueDto } from './dto/pending-due.dto';
-import { UpdateDueDto } from './dto/update-due.dto';
+import {
+  DuePaginatedExtraResponseDto,
+  DuePaginatedResponseDto,
+} from './dto/due-paginated.dto';
+import { DuePendingStatisticsResponseDto } from './dto/due-pending-statistics.dto';
+import { DueResponseDto } from './dto/due-response.dto';
+import { PendingDueResponseDto } from './dto/pending-due.dto';
+import { UpdateDueRequestDto } from './dto/update-due.dto';
 import { VoidDueRequestDto } from './dto/void-due.dto';
 
 @Controller('dues')
@@ -71,7 +74,7 @@ export class DuesController extends BaseController {
   public async create(
     @Body() body: CreateDueRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdDto> {
+  ): Promise<ParamIdRequestDto> {
     const { id } = this.handleResult(
       await this.createDueUseCase.execute({
         amount: body.amount,
@@ -88,8 +91,8 @@ export class DuesController extends BaseController {
 
   @Patch(':id')
   public async update(
-    @Param() request: ParamIdDto,
-    @Body() body: UpdateDueDto,
+    @Param() request: ParamIdRequestDto,
+    @Body() body: UpdateDueRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
     this.handleResult(
@@ -104,7 +107,7 @@ export class DuesController extends BaseController {
 
   @Patch(':id/void')
   public async void(
-    @Param() request: ParamIdDto,
+    @Param() request: ParamIdRequestDto,
     @Body() body: VoidDueRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -120,42 +123,42 @@ export class DuesController extends BaseController {
   @Get('export')
   @Header('Content-Type', 'text/csv; charset=utf-8')
   public async export(
-    @Query() query: ExportRequestDto,
+    @Query() query: ExportDataRequestDto,
     @Res() res: Response,
   ): Promise<void> {
-    const data = await this.dueRepository.findForExport({
+    const dues = await this.dueRepository.findForExport({
       filters: query.filters,
       sort: query.sort,
     });
 
-    const stream = this.csvService.generateStream(data, [
-      { accessor: (row) => row.due.id.value, header: 'ID' },
+    const stream = this.csvService.generateStream(dues, [
+      { accessor: (row) => row.id, header: 'ID' },
       {
-        accessor: (row) => row.due.createdAt?.toISOString() ?? '',
+        accessor: (row) => row.createdAt.toISOString(),
         header: 'Creado el',
       },
       {
-        accessor: (row) => row.due.date.value,
+        accessor: (row) => row.date,
         header: 'Fecha',
       },
       {
-        accessor: (row) => row.user.name.fullName,
+        accessor: (row) => row.member.name,
         header: 'Socio',
       },
       {
-        accessor: (row) => DueCategoryLabel[row.due.category],
+        accessor: (row) => DueCategoryLabel[row.category],
         header: 'Categoría',
       },
       {
-        accessor: (row) => row.due.amount.toDollars(),
+        accessor: (row) => NumberFormat.fromCents(row.amount),
         header: 'Monto',
       },
       {
-        accessor: (row) => DueStatusLabel[row.due.status],
+        accessor: (row) => DueStatusLabel[row.status],
         header: 'Estado',
       },
       {
-        accessor: (row) => UserStatusLabel[row.user.status],
+        accessor: (row) => MemberStatusLabel[row.member.status],
         header: 'Estado Socio',
       },
     ]);
@@ -168,12 +171,17 @@ export class DuesController extends BaseController {
     stream.pipe(res);
   }
 
-  @ApiPaginatedResponse(DuePaginatedDto)
+  @ApiPaginatedResponse(DuePaginatedResponseDto)
   @Get('paginated')
   public async getPaginated(
-    @Query() query: PaginatedRequestDto,
-  ): Promise<PaginatedResponseDto<DuePaginatedDto, DuePaginatedExtraDto>> {
-    const dues = await this.dueRepository.findPaginated({
+    @Query() query: GetPaginatedDataRequestDto,
+  ): Promise<
+    PaginatedDataResponseDto<
+      DuePaginatedResponseDto,
+      DuePaginatedExtraResponseDto
+    >
+  > {
+    const data = await this.dueRepository.findPaginated({
       filters: query.filters,
       page: query.page,
       pageSize: query.pageSize,
@@ -181,26 +189,26 @@ export class DuesController extends BaseController {
     });
 
     return {
-      data: dues.data.map(({ due, member, user }) => ({
-        amount: due.amount.toCents(),
+      data: data.data.map((due) => ({
+        amount: due.amount,
         category: due.category,
-        createdAt: due.createdAt?.toISOString() ?? '',
-        date: due.date.value,
-        id: due.id.value,
-        memberId: member.id.value,
-        memberName: user.name.fullName,
+        createdAt: due.createdAt.toISOString(),
+        date: due.date,
+        id: due.id,
+        memberId: due.member.id,
+        memberName: due.member.name,
+        memberStatus: due.member.status,
         status: due.status,
-        userStatus: user.status,
       })),
       extra: {
-        totalAmount: dues.extra?.totalAmount ?? 0,
+        totalAmount: data.extra?.totalAmount ?? 0,
       },
-      total: dues.total,
+      total: data.total,
     };
   }
 
   @Get('pending-statistics')
-  public async getPendingStatistics(): Promise<DuePendingStatisticsDto> {
+  public async getPendingStatistics(): Promise<DuePendingStatisticsResponseDto> {
     const dues = await this.dueRepository.findPending();
 
     const categories = Object.values(DueCategory).reduce(
@@ -223,7 +231,7 @@ export class DuesController extends BaseController {
   @Get('pending')
   public async getPending(
     @Query('memberId') memberId: string,
-  ): Promise<PendingDueDto[]> {
+  ): Promise<PendingDueResponseDto[]> {
     const dues = await this.dueRepository.findPendingByMemberId(
       UniqueId.raw({ value: memberId }),
     );
@@ -237,56 +245,46 @@ export class DuesController extends BaseController {
     }));
   }
 
-  @Get(':id/payments')
-  public async getPaymentDues(
-    @Param() request: ParamIdDto,
-  ): Promise<PaymentDueDetailWithPaymentDto[]> {
-    const data = await this.dueRepository.findSettlementsModel(
-      UniqueId.raw({ value: request.id }),
-    );
-
-    return data.map(({ payment, settlement }) => ({
-      amount: settlement.amount.toCents(),
-      dueId: settlement.dueId.value,
-      paymentAmount: payment.amount.toCents(),
-      paymentDate: payment.date.value,
-      paymentId: settlement.paymentId?.value ?? '',
-      paymentReceiptNumber: payment.receiptNumber,
-      paymentStatus: payment.status,
-      status: settlement.status,
-    }));
-  }
-
   @Get(':id')
-  public async getById(@Param() request: ParamIdDto): Promise<DueDetailDto> {
-    const data = await this.dueRepository.findOneModel(
+  public async getById(
+    @Param() request: ParamIdRequestDto,
+  ): Promise<DueResponseDto> {
+    const due = await this.dueRepository.findByIdReadModel(
       UniqueId.raw({ value: request.id }),
     );
 
-    if (!data) {
+    if (!due) {
       throw new NotFoundException();
     }
 
-    const { due, member, user } = data;
-
     return {
-      amount: due.amount.toCents(),
+      amount: due.amount,
       category: due.category,
-      createdAt: due.createdAt?.toISOString() ?? '',
-      createdBy: due.createdBy ?? '',
-      date: due.date.value,
-      id: due.id.value,
-      memberCategory: member.category,
-      memberId: member.id.value,
-      memberName: user.name.fullName,
+      createdAt: due.createdAt.toISOString(),
+      createdBy: due.createdBy,
+      date: due.date,
+      id: due.id,
+      member: {
+        id: due.member.id,
+        name: due.member.name,
+        status: due.member.status,
+      },
       notes: due.notes,
+      settlements: due.settlements.map((settlement) => ({
+        amount: settlement.amount,
+        memberLedgerEntry: {
+          date: settlement.memberLedgerEntry.date,
+          id: settlement.memberLedgerEntry.id,
+        },
+        payment: settlement.payment ? { id: settlement.payment.id } : null,
+        status: settlement.status,
+      })),
       status: due.status,
-      updatedAt: due.updatedAt?.toISOString() ?? '',
+      updatedAt: due.updatedAt.toISOString(),
       updatedBy: due.updatedBy,
-      userStatus: user.status,
-      voidedAt: due.voidedAt?.toISOString() ?? null,
-      voidedBy: due.voidedBy ?? null,
-      voidReason: due.voidReason ?? null,
+      voidedAt: due.voidedAt ? due.voidedAt.toISOString() : null,
+      voidedBy: due.voidedBy,
+      voidReason: due.voidReason,
     };
   }
 }

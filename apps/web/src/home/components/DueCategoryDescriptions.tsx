@@ -1,4 +1,4 @@
-import type { IPaymentStatisticsDto } from '@club-social/shared/payments';
+import type { PaymentStatistics } from '@club-social/shared/payments';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
@@ -9,7 +9,7 @@ import { Descriptions } from '@/ui/Descriptions';
 
 interface Props {
   category: DueCategory;
-  data?: IPaymentStatisticsDto;
+  data?: PaymentStatistics;
   loading?: boolean;
 }
 

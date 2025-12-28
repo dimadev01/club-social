@@ -1,4 +1,4 @@
-import { PaginatedRequest } from '@club-social/shared/types';
+import { GetPaginatedDataDto } from '@club-social/shared/types';
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
@@ -12,7 +12,7 @@ import {
 
 import { PaginatedRequestSortDto } from './paginated-request-sort.dto';
 
-export class PaginatedRequestDto implements PaginatedRequest {
+export class GetPaginatedDataRequestDto implements GetPaginatedDataDto {
   @IsObject()
   @IsOptional()
   @Transform(({ value }) =>

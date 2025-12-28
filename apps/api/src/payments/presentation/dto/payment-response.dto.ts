@@ -1,26 +1,28 @@
 import {
-  DueCategory,
-  DueStatus,
-  IDueDetailDto,
-} from '@club-social/shared/dues';
-import { MemberCategory } from '@club-social/shared/members';
-import { UserStatus } from '@club-social/shared/users';
+  PaymentDto,
+  PaymentMemberDto,
+  PaymentStatus,
+} from '@club-social/shared/payments';
 
-export class DueDetailDto implements IDueDetailDto {
+export class PaymentMemberResponseDto implements PaymentMemberDto {
+  public id: string;
+  public name: string;
+}
+
+export class PaymentResponseDto implements PaymentDto {
   public amount: number;
-  public category: DueCategory;
   public createdAt: string;
   public createdBy: string;
   public date: string;
   public id: string;
-  public memberCategory: MemberCategory;
+  public member: PaymentMemberResponseDto;
   public memberId: string;
   public memberName: string;
   public notes: null | string;
-  public status: DueStatus;
+  public receiptNumber: null | string;
+  public status: PaymentStatus;
   public updatedAt: string;
   public updatedBy?: null | string;
-  public userStatus: UserStatus;
   public voidedAt: null | string;
   public voidedBy: null | string;
   public voidReason: null | string;

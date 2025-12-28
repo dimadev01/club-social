@@ -1592,6 +1592,7 @@ export const MemberScalarFieldEnum = {
   cityName: 'cityName',
   stateName: 'stateName',
   zipCode: 'zipCode',
+  status: 'status',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',
@@ -1605,9 +1606,9 @@ export const MemberLedgerEntryScalarFieldEnum = {
   id: 'id',
   memberId: 'memberId',
   amount: 'amount',
+  date: 'date',
   type: 'type',
   notes: 'notes',
-  date: 'date',
   status: 'status',
   source: 'source',
   paymentId: 'paymentId',
@@ -1643,11 +1644,11 @@ export type DueScalarFieldEnum =
 
 export const DueSettlementScalarFieldEnum = {
   id: 'id',
+  amount: 'amount',
+  status: 'status',
   dueId: 'dueId',
   memberLedgerEntryId: 'memberLedgerEntryId',
-  amount: 'amount',
   paymentId: 'paymentId',
-  status: 'status',
 } as const;
 
 export type DueSettlementScalarFieldEnum =

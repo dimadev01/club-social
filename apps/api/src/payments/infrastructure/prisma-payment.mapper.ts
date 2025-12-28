@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   PaymentCreateInput,
+  PaymentModel,
   PaymentUpdateInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { Guard } from '@/shared/domain/guards';
@@ -11,7 +12,6 @@ import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
-import { PaymentModelWithRelations } from './prisma-payment.types';
 
 @Injectable()
 export class PrismaPaymentMapper {
@@ -33,16 +33,11 @@ export class PrismaPaymentMapper {
     };
   }
 
-  public toDomain(payment: PaymentModelWithRelations): PaymentEntity {
-    const dueIds = (payment.paymentDues ?? []).map((pd) =>
-      UniqueId.raw({ value: pd.dueId }),
-    );
-
+  public toDomain(payment: PaymentModel): PaymentEntity {
     return PaymentEntity.fromPersistence(
       {
         amount: Amount.raw({ cents: payment.amount }),
         date: DateOnly.raw({ value: payment.date }),
-        dueIds,
         memberId: UniqueId.raw({ value: payment.memberId }),
         notes: payment.notes,
         receiptNumber: payment.receiptNumber,

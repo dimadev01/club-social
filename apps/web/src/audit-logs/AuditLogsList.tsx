@@ -1,4 +1,4 @@
-import type { PaginatedResponse } from '@club-social/shared/types';
+import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import {
   AuditAction,
@@ -45,7 +45,7 @@ export function AuditLogsList() {
     enabled: permissions.auditLogs.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedResponse<IAuditLogPaginatedDto>>(
+      $fetch<PaginatedDataResultDto<IAuditLogPaginatedDto>>(
         '/audit-logs/paginated',
         {
           query,

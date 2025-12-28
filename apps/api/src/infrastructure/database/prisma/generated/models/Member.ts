@@ -38,6 +38,7 @@ export type MemberMinAggregateOutputType = {
   cityName: string | null;
   stateName: string | null;
   zipCode: string | null;
+  status: string | null;
   createdAt: Date | null;
   createdBy: string | null;
   updatedAt: Date | null;
@@ -58,6 +59,7 @@ export type MemberMaxAggregateOutputType = {
   cityName: string | null;
   stateName: string | null;
   zipCode: string | null;
+  status: string | null;
   createdAt: Date | null;
   createdBy: string | null;
   updatedAt: Date | null;
@@ -79,6 +81,7 @@ export type MemberCountAggregateOutputType = {
   cityName: number;
   stateName: number;
   zipCode: number;
+  status: number;
   createdAt: number;
   createdBy: number;
   updatedAt: number;
@@ -100,6 +103,7 @@ export type MemberMinAggregateInputType = {
   cityName?: true;
   stateName?: true;
   zipCode?: true;
+  status?: true;
   createdAt?: true;
   createdBy?: true;
   updatedAt?: true;
@@ -120,6 +124,7 @@ export type MemberMaxAggregateInputType = {
   cityName?: true;
   stateName?: true;
   zipCode?: true;
+  status?: true;
   createdAt?: true;
   createdBy?: true;
   updatedAt?: true;
@@ -141,6 +146,7 @@ export type MemberCountAggregateInputType = {
   cityName?: true;
   stateName?: true;
   zipCode?: true;
+  status?: true;
   createdAt?: true;
   createdBy?: true;
   updatedAt?: true;
@@ -242,6 +248,7 @@ export type MemberGroupByOutputType = {
   cityName: string | null;
   stateName: string | null;
   zipCode: string | null;
+  status: string;
   createdAt: Date;
   createdBy: string;
   updatedAt: Date;
@@ -282,6 +289,7 @@ export type MemberWhereInput = {
   cityName?: Prisma.StringNullableFilter<'Member'> | string | null;
   stateName?: Prisma.StringNullableFilter<'Member'> | string | null;
   zipCode?: Prisma.StringNullableFilter<'Member'> | string | null;
+  status?: Prisma.StringFilter<'Member'> | string;
   createdAt?: Prisma.DateTimeFilter<'Member'> | Date | string;
   createdBy?: Prisma.StringFilter<'Member'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Member'> | Date | string;
@@ -307,6 +315,7 @@ export type MemberOrderByWithRelationInput = {
   cityName?: Prisma.SortOrderInput | Prisma.SortOrder;
   stateName?: Prisma.SortOrderInput | Prisma.SortOrder;
   zipCode?: Prisma.SortOrderInput | Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -336,6 +345,7 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<
     cityName?: Prisma.StringNullableFilter<'Member'> | string | null;
     stateName?: Prisma.StringNullableFilter<'Member'> | string | null;
     zipCode?: Prisma.StringNullableFilter<'Member'> | string | null;
+    status?: Prisma.StringFilter<'Member'> | string;
     createdAt?: Prisma.DateTimeFilter<'Member'> | Date | string;
     createdBy?: Prisma.StringFilter<'Member'> | string;
     updatedAt?: Prisma.DateTimeFilter<'Member'> | Date | string;
@@ -363,6 +373,7 @@ export type MemberOrderByWithAggregationInput = {
   cityName?: Prisma.SortOrderInput | Prisma.SortOrder;
   stateName?: Prisma.SortOrderInput | Prisma.SortOrder;
   zipCode?: Prisma.SortOrderInput | Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -412,6 +423,7 @@ export type MemberScalarWhereWithAggregatesInput = {
     | string
     | null;
   zipCode?: Prisma.StringNullableWithAggregatesFilter<'Member'> | string | null;
+  status?: Prisma.StringWithAggregatesFilter<'Member'> | string;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<'Member'> | Date | string;
   createdBy?: Prisma.StringWithAggregatesFilter<'Member'> | string;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<'Member'> | Date | string;
@@ -435,6 +447,7 @@ export type MemberCreateInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -460,6 +473,7 @@ export type MemberUncheckedCreateInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -486,6 +500,7 @@ export type MemberUpdateInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -514,6 +529,7 @@ export type MemberUncheckedUpdateInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -538,6 +554,7 @@ export type MemberCreateManyInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -561,6 +578,7 @@ export type MemberUpdateManyMutationInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -585,6 +603,7 @@ export type MemberUncheckedUpdateManyInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -619,6 +638,7 @@ export type MemberCountOrderByAggregateInput = {
   cityName?: Prisma.SortOrder;
   stateName?: Prisma.SortOrder;
   zipCode?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -639,6 +659,7 @@ export type MemberMaxOrderByAggregateInput = {
   cityName?: Prisma.SortOrder;
   stateName?: Prisma.SortOrder;
   zipCode?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -659,6 +680,7 @@ export type MemberMinOrderByAggregateInput = {
   cityName?: Prisma.SortOrder;
   stateName?: Prisma.SortOrder;
   zipCode?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -827,6 +849,7 @@ export type MemberCreateWithoutUserInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -850,6 +873,7 @@ export type MemberUncheckedCreateWithoutUserInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -904,6 +928,7 @@ export type MemberUpdateWithoutUserInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -930,6 +955,7 @@ export type MemberUncheckedUpdateWithoutUserInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -953,6 +979,7 @@ export type MemberCreateWithoutLedgerEntriesInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -977,6 +1004,7 @@ export type MemberUncheckedCreateWithoutLedgerEntriesInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1030,6 +1058,7 @@ export type MemberUpdateWithoutLedgerEntriesInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1057,6 +1086,7 @@ export type MemberUncheckedUpdateWithoutLedgerEntriesInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1079,6 +1109,7 @@ export type MemberCreateWithoutDuesInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1103,6 +1134,7 @@ export type MemberUncheckedCreateWithoutDuesInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1156,6 +1188,7 @@ export type MemberUpdateWithoutDuesInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1183,6 +1216,7 @@ export type MemberUncheckedUpdateWithoutDuesInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1205,6 +1239,7 @@ export type MemberCreateWithoutPaymentsInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1229,6 +1264,7 @@ export type MemberUncheckedCreateWithoutPaymentsInput = {
   cityName?: string | null;
   stateName?: string | null;
   zipCode?: string | null;
+  status: string;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1282,6 +1318,7 @@ export type MemberUpdateWithoutPaymentsInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1309,6 +1346,7 @@ export type MemberUncheckedUpdateWithoutPaymentsInput = {
   cityName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1398,6 +1436,7 @@ export type MemberSelect<
     cityName?: boolean;
     stateName?: boolean;
     zipCode?: boolean;
+    status?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -1430,6 +1469,7 @@ export type MemberSelectCreateManyAndReturn<
     cityName?: boolean;
     stateName?: boolean;
     zipCode?: boolean;
+    status?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -1458,6 +1498,7 @@ export type MemberSelectUpdateManyAndReturn<
     cityName?: boolean;
     stateName?: boolean;
     zipCode?: boolean;
+    status?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -1482,6 +1523,7 @@ export type MemberSelectScalar = {
   cityName?: boolean;
   stateName?: boolean;
   zipCode?: boolean;
+  status?: boolean;
   createdAt?: boolean;
   createdBy?: boolean;
   updatedAt?: boolean;
@@ -1506,6 +1548,7 @@ export type MemberOmit<
   | 'cityName'
   | 'stateName'
   | 'zipCode'
+  | 'status'
   | 'createdAt'
   | 'createdBy'
   | 'updatedAt'
@@ -1562,6 +1605,7 @@ export type $MemberPayload<
       cityName: string | null;
       stateName: string | null;
       zipCode: string | null;
+      status: string;
       createdAt: Date;
       createdBy: string;
       updatedAt: Date;
@@ -2219,6 +2263,7 @@ export interface MemberFieldRefs {
   readonly cityName: Prisma.FieldRef<'Member', 'String'>;
   readonly stateName: Prisma.FieldRef<'Member', 'String'>;
   readonly zipCode: Prisma.FieldRef<'Member', 'String'>;
+  readonly status: Prisma.FieldRef<'Member', 'String'>;
   readonly createdAt: Prisma.FieldRef<'Member', 'DateTime'>;
   readonly createdBy: Prisma.FieldRef<'Member', 'String'>;
   readonly updatedAt: Prisma.FieldRef<'Member', 'DateTime'>;

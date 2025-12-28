@@ -4,6 +4,7 @@ import {
   MemberCategory,
   MemberNationality,
   MemberSex,
+  MemberStatus,
 } from '@club-social/shared/members';
 
 import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
@@ -12,6 +13,7 @@ import { ok, Result } from '@/shared/domain/result';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import { StrictOmit } from '@/shared/types/type-utils';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 
 import { MemberCreatedEvent } from '../events/member-created.event';
@@ -27,6 +29,7 @@ interface MemberProps {
   nationality: MemberNationality | null;
   phones: string[];
   sex: MemberSex | null;
+  status: MemberStatus;
   userId: UniqueId;
 }
 
@@ -67,6 +70,10 @@ export class MemberEntity extends AuditedAggregateRoot {
     return this._sex;
   }
 
+  public get status(): MemberStatus {
+    return this._status;
+  }
+
   public get userId(): UniqueId {
     return this._userId;
   }
@@ -79,9 +86,8 @@ export class MemberEntity extends AuditedAggregateRoot {
   private _maritalStatus: MaritalStatus | null;
   private _nationality: MemberNationality | null;
   private _phones: string[];
-
   private _sex: MemberSex | null;
-
+  private _status: MemberStatus;
   private _userId: UniqueId;
 
   private constructor(props: MemberProps, meta?: PersistenceMeta) {
@@ -96,17 +102,21 @@ export class MemberEntity extends AuditedAggregateRoot {
     this._nationality = props.nationality;
     this._phones = props.phones;
     this._sex = props.sex;
+    this._status = props.status;
     this._userId = props.userId;
   }
 
   public static create(
-    props: MemberProps,
+    props: StrictOmit<MemberProps, 'status'>,
     user: UserEntity,
   ): Result<MemberEntity> {
-    const member = new MemberEntity(props, {
-      audit: { createdBy: user.createdBy },
-      id: UniqueId.generate(),
-    });
+    const member = new MemberEntity(
+      { ...props, status: MemberStatus.ACTIVE },
+      {
+        audit: { createdBy: user.createdBy },
+        id: UniqueId.generate(),
+      },
+    );
 
     member.addEvent(new MemberCreatedEvent(member, user));
 
@@ -132,6 +142,7 @@ export class MemberEntity extends AuditedAggregateRoot {
         nationality: this._nationality,
         phones: [...this._phones],
         sex: this._sex,
+        status: this._status,
         userId: this._userId,
       },
       {

@@ -1,4 +1,4 @@
-import type { IPaymentDetailDto } from '@club-social/shared/payments';
+import type { PaymentDto } from '@club-social/shared/payments';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -11,6 +11,6 @@ export function usePayment(id?: string) {
   return useQuery({
     ...queryKeys.payments.detail(id),
     enabled: !!id && permissions.payments.get,
-    queryFn: () => $fetch<IPaymentDetailDto>(`payments/${id}`),
+    queryFn: () => $fetch<PaymentDto>(`payments/${id}`),
   });
 }

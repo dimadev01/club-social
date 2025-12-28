@@ -1,4 +1,4 @@
-import { ExportRequest } from '@club-social/shared/types';
+import { ExportDataDto } from '@club-social/shared/types';
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
@@ -11,7 +11,7 @@ import {
 
 import { PaginatedRequestSortDto } from './paginated-request-sort.dto';
 
-export class ExportRequestDto implements ExportRequest {
+export class ExportDataRequestDto implements ExportDataDto {
   @IsNotEmpty()
   @IsString()
   public filename: string;

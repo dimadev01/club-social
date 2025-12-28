@@ -8,7 +8,7 @@ export type MemberLedgerEntryStatus =
   (typeof MemberLedgerEntryStatus)[keyof typeof MemberLedgerEntryStatus];
 
 export const MemberLedgerEntryStatusLabel = {
-  [MemberLedgerEntryStatus.POSTED]: 'Publicado',
+  [MemberLedgerEntryStatus.POSTED]: 'Contabilizado',
   [MemberLedgerEntryStatus.REVERSED]: 'Revertido',
 } as const;
 

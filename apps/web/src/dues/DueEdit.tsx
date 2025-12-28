@@ -1,6 +1,7 @@
-import type { IUpdateDueDto } from '@club-social/shared/dues';
+import type { UpdateDueDto } from '@club-social/shared/dues';
+import type { IMemberSearchResultDto } from '@club-social/shared/members';
 
-import { DueStatus, DueStatusLabel } from '@club-social/shared/dues';
+import { DueStatus } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { App } from 'antd';
 import dayjs from 'dayjs';
@@ -24,7 +25,7 @@ export function DueEdit() {
 
   const { data: due, isLoading } = useDue(id);
 
-  const updateDueMutation = useMutation<unknown, Error, IUpdateDueDto>({
+  const updateDueMutation = useMutation<unknown, Error, UpdateDueDto>({
     mutationFn: (body) => $fetch(`dues/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       message.success('Cuota actualizada correctamente');
@@ -55,12 +56,12 @@ export function DueEdit() {
 
   const isMutating = updateDueMutation.isPending;
 
-  const memberAdditionalOptions = [
+  const memberAdditionalOptions: IMemberSearchResultDto[] = [
     {
-      category: due.memberCategory,
-      id: due.memberId,
-      name: due.memberName,
-      status: due.userStatus,
+      category: due.member.category,
+      id: due.member.id,
+      name: due.member.name,
+      status: due.member.status,
     },
   ];
 
@@ -72,7 +73,6 @@ export function DueEdit() {
         </FormSubmitButton>,
       ]}
       backButton
-      extra={DueStatusLabel[due.status]}
       title="Editar deuda"
     >
       <DueForm
@@ -82,7 +82,7 @@ export function DueEdit() {
           amount: NumberFormat.fromCents(due.amount),
           category: due.category,
           date: dayjs.utc(due.date),
-          memberIds: [due.memberId],
+          memberIds: [due.member.id],
           notes: due.notes,
         }}
         loading={isLoading}

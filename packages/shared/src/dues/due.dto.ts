@@ -1,5 +1,5 @@
-import { MemberCategory } from '../members';
-import { UserStatus } from '../users';
+import { MemberStatus } from '../members';
+import { DueSettlementStatus } from './due-settlement.enum';
 import { DueCategory, DueStatus } from './due.enum';
 
 export interface CreateDueDto {
@@ -10,27 +10,31 @@ export interface CreateDueDto {
   notes: null | string;
 }
 
-export interface IDueDetailDto {
+export interface DueDto {
   amount: number;
   category: DueCategory;
   createdAt: string;
   createdBy: string;
   date: string;
   id: string;
-  memberCategory: MemberCategory;
-  memberId: string;
-  memberName: string;
+  member: DueMemberDto;
   notes: null | string;
+  settlements: DueSettlementDto[];
   status: DueStatus;
   updatedAt: string;
   updatedBy?: null | string;
-  userStatus: UserStatus;
   voidedAt: null | string;
   voidedBy: null | string;
   voidReason: null | string;
 }
 
-export interface IDuePaginatedDto {
+export interface DueMemberDto {
+  id: string;
+  name: string;
+  status: MemberStatus;
+}
+
+export interface DuePaginatedDto {
   amount: number;
   category: DueCategory;
   createdAt: string;
@@ -38,15 +42,36 @@ export interface IDuePaginatedDto {
   id: string;
   memberId: string;
   memberName: string;
+  memberStatus: MemberStatus;
   status: DueStatus;
-  userStatus: UserStatus;
 }
 
-export interface IDuePaginatedExtraDto {
+export interface DuePaginatedExtraDto {
   totalAmount: number;
 }
 
-export interface IPendingDueDto {
+export interface DuePendingStatisticsDto {
+  categories: Record<DueCategory, number>;
+  total: number;
+}
+
+export interface DueSettlementDto {
+  amount: number;
+  memberLedgerEntry: DueSettlementMemberLedgerEntryDto;
+  payment: DueSettlementPaymentDto | null;
+  status: DueSettlementStatus;
+}
+
+export interface DueSettlementMemberLedgerEntryDto {
+  date: string;
+  id: string;
+}
+
+export interface DueSettlementPaymentDto {
+  id: string;
+}
+
+export interface PendingDueDto {
   amount: number;
   category: DueCategory;
   date: string;
@@ -54,7 +79,7 @@ export interface IPendingDueDto {
   status: DueStatus;
 }
 
-export interface IUpdateDueDto {
+export interface UpdateDueDto {
   amount: number;
   notes: null | string;
 }

@@ -1,5 +1,5 @@
 import type { ICreatePaymentDto } from '@club-social/shared/payments';
-import type { ParamId } from '@club-social/shared/types';
+import type { ParamIdDto } from '@club-social/shared/types';
 
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
@@ -25,7 +25,11 @@ export function PaymentNew() {
 
   const memberIdFromUrl = searchParams.get('memberId') ?? undefined;
 
-  const createPaymentMutation = useMutation<ParamId, Error, ICreatePaymentDto>({
+  const createPaymentMutation = useMutation<
+    ParamIdDto,
+    Error,
+    ICreatePaymentDto
+  >({
     mutationFn: (body) => $fetch('/payments', { body }),
     onSuccess: () => {
       message.success('Pago creado correctamente');

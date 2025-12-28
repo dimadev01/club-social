@@ -1,5 +1,8 @@
 import { AuditAction, AuditEntity } from '@club-social/shared/audit-logs';
-import { PaginatedRequest, PaginatedResponse } from '@club-social/shared/types';
+import {
+  GetPaginatedDataDto,
+  PaginatedDataResultDto,
+} from '@club-social/shared/types';
 
 import { AuditLogCreateInput } from '@/infrastructure/database/prisma/generated/models';
 
@@ -21,6 +24,6 @@ export interface AuditLogEntry {
 export interface AuditLogRepository {
   append(entry: AuditLogCreateInput): Promise<void>;
   findPaginated(
-    params: PaginatedRequest,
-  ): Promise<PaginatedResponse<AuditLogEntry>>;
+    params: GetPaginatedDataDto,
+  ): Promise<PaginatedDataResultDto<AuditLogEntry>>;
 }

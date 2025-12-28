@@ -36,29 +36,29 @@ export type DueSettlementSumAggregateOutputType = {
 
 export type DueSettlementMinAggregateOutputType = {
   id: string | null;
+  amount: number | null;
+  status: string | null;
   dueId: string | null;
   memberLedgerEntryId: string | null;
-  amount: number | null;
   paymentId: string | null;
-  status: string | null;
 };
 
 export type DueSettlementMaxAggregateOutputType = {
   id: string | null;
+  amount: number | null;
+  status: string | null;
   dueId: string | null;
   memberLedgerEntryId: string | null;
-  amount: number | null;
   paymentId: string | null;
-  status: string | null;
 };
 
 export type DueSettlementCountAggregateOutputType = {
   id: number;
+  amount: number;
+  status: number;
   dueId: number;
   memberLedgerEntryId: number;
-  amount: number;
   paymentId: number;
-  status: number;
   _all: number;
 };
 
@@ -72,29 +72,29 @@ export type DueSettlementSumAggregateInputType = {
 
 export type DueSettlementMinAggregateInputType = {
   id?: true;
+  amount?: true;
+  status?: true;
   dueId?: true;
   memberLedgerEntryId?: true;
-  amount?: true;
   paymentId?: true;
-  status?: true;
 };
 
 export type DueSettlementMaxAggregateInputType = {
   id?: true;
+  amount?: true;
+  status?: true;
   dueId?: true;
   memberLedgerEntryId?: true;
-  amount?: true;
   paymentId?: true;
-  status?: true;
 };
 
 export type DueSettlementCountAggregateInputType = {
   id?: true;
+  amount?: true;
+  status?: true;
   dueId?: true;
   memberLedgerEntryId?: true;
-  amount?: true;
   paymentId?: true;
-  status?: true;
   _all?: true;
 };
 
@@ -197,11 +197,11 @@ export type DueSettlementGroupByArgs<
 
 export type DueSettlementGroupByOutputType = {
   id: string;
+  amount: number;
+  status: string;
   dueId: string;
   memberLedgerEntryId: string;
-  amount: number;
   paymentId: string | null;
-  status: string;
   _count: DueSettlementCountAggregateOutputType | null;
   _avg: DueSettlementAvgAggregateOutputType | null;
   _sum: DueSettlementSumAggregateOutputType | null;
@@ -228,11 +228,11 @@ export type DueSettlementWhereInput = {
   OR?: Prisma.DueSettlementWhereInput[];
   NOT?: Prisma.DueSettlementWhereInput | Prisma.DueSettlementWhereInput[];
   id?: Prisma.StringFilter<'DueSettlement'> | string;
+  amount?: Prisma.IntFilter<'DueSettlement'> | number;
+  status?: Prisma.StringFilter<'DueSettlement'> | string;
   dueId?: Prisma.StringFilter<'DueSettlement'> | string;
   memberLedgerEntryId?: Prisma.StringFilter<'DueSettlement'> | string;
-  amount?: Prisma.IntFilter<'DueSettlement'> | number;
   paymentId?: Prisma.StringNullableFilter<'DueSettlement'> | string | null;
-  status?: Prisma.StringFilter<'DueSettlement'> | string;
   due?: Prisma.XOR<Prisma.DueScalarRelationFilter, Prisma.DueWhereInput>;
   memberLedgerEntry?: Prisma.XOR<
     Prisma.MemberLedgerEntryScalarRelationFilter,
@@ -246,11 +246,11 @@ export type DueSettlementWhereInput = {
 
 export type DueSettlementOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
+  amount?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   dueId?: Prisma.SortOrder;
   memberLedgerEntryId?: Prisma.SortOrder;
-  amount?: Prisma.SortOrder;
   paymentId?: Prisma.SortOrderInput | Prisma.SortOrder;
-  status?: Prisma.SortOrder;
   due?: Prisma.DueOrderByWithRelationInput;
   memberLedgerEntry?: Prisma.MemberLedgerEntryOrderByWithRelationInput;
   payment?: Prisma.PaymentOrderByWithRelationInput;
@@ -263,10 +263,10 @@ export type DueSettlementWhereUniqueInput = Prisma.AtLeast<
     AND?: Prisma.DueSettlementWhereInput | Prisma.DueSettlementWhereInput[];
     OR?: Prisma.DueSettlementWhereInput[];
     NOT?: Prisma.DueSettlementWhereInput | Prisma.DueSettlementWhereInput[];
-    dueId?: Prisma.StringFilter<'DueSettlement'> | string;
     amount?: Prisma.IntFilter<'DueSettlement'> | number;
-    paymentId?: Prisma.StringNullableFilter<'DueSettlement'> | string | null;
     status?: Prisma.StringFilter<'DueSettlement'> | string;
+    dueId?: Prisma.StringFilter<'DueSettlement'> | string;
+    paymentId?: Prisma.StringNullableFilter<'DueSettlement'> | string | null;
     due?: Prisma.XOR<Prisma.DueScalarRelationFilter, Prisma.DueWhereInput>;
     memberLedgerEntry?: Prisma.XOR<
       Prisma.MemberLedgerEntryScalarRelationFilter,
@@ -282,11 +282,11 @@ export type DueSettlementWhereUniqueInput = Prisma.AtLeast<
 
 export type DueSettlementOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
+  amount?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   dueId?: Prisma.SortOrder;
   memberLedgerEntryId?: Prisma.SortOrder;
-  amount?: Prisma.SortOrder;
   paymentId?: Prisma.SortOrderInput | Prisma.SortOrder;
-  status?: Prisma.SortOrder;
   _count?: Prisma.DueSettlementCountOrderByAggregateInput;
   _avg?: Prisma.DueSettlementAvgOrderByAggregateInput;
   _max?: Prisma.DueSettlementMaxOrderByAggregateInput;
@@ -303,16 +303,16 @@ export type DueSettlementScalarWhereWithAggregatesInput = {
     | Prisma.DueSettlementScalarWhereWithAggregatesInput
     | Prisma.DueSettlementScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<'DueSettlement'> | string;
+  amount?: Prisma.IntWithAggregatesFilter<'DueSettlement'> | number;
+  status?: Prisma.StringWithAggregatesFilter<'DueSettlement'> | string;
   dueId?: Prisma.StringWithAggregatesFilter<'DueSettlement'> | string;
   memberLedgerEntryId?:
     | Prisma.StringWithAggregatesFilter<'DueSettlement'>
     | string;
-  amount?: Prisma.IntWithAggregatesFilter<'DueSettlement'> | number;
   paymentId?:
     | Prisma.StringNullableWithAggregatesFilter<'DueSettlement'>
     | string
     | null;
-  status?: Prisma.StringWithAggregatesFilter<'DueSettlement'> | string;
 };
 
 export type DueSettlementCreateInput = {
@@ -326,11 +326,11 @@ export type DueSettlementCreateInput = {
 
 export type DueSettlementUncheckedCreateInput = {
   id: string;
+  amount: number;
+  status: string;
   dueId: string;
   memberLedgerEntryId: string;
-  amount: number;
   paymentId?: string | null;
-  status: string;
 };
 
 export type DueSettlementUpdateInput = {
@@ -344,20 +344,20 @@ export type DueSettlementUpdateInput = {
 
 export type DueSettlementUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   dueId?: Prisma.StringFieldUpdateOperationsInput | string;
   memberLedgerEntryId?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type DueSettlementCreateManyInput = {
   id: string;
+  amount: number;
+  status: string;
   dueId: string;
   memberLedgerEntryId: string;
-  amount: number;
   paymentId?: string | null;
-  status: string;
 };
 
 export type DueSettlementUpdateManyMutationInput = {
@@ -368,11 +368,11 @@ export type DueSettlementUpdateManyMutationInput = {
 
 export type DueSettlementUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  amount?: Prisma.IntFieldUpdateOperationsInput | number;
+  status?: Prisma.StringFieldUpdateOperationsInput | string;
   dueId?: Prisma.StringFieldUpdateOperationsInput | string;
   memberLedgerEntryId?: Prisma.StringFieldUpdateOperationsInput | string;
-  amount?: Prisma.IntFieldUpdateOperationsInput | number;
   paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  status?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type DueSettlementNullableScalarRelationFilter = {
@@ -392,11 +392,11 @@ export type DueSettlementOrderByRelationAggregateInput = {
 
 export type DueSettlementCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  amount?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   dueId?: Prisma.SortOrder;
   memberLedgerEntryId?: Prisma.SortOrder;
-  amount?: Prisma.SortOrder;
   paymentId?: Prisma.SortOrder;
-  status?: Prisma.SortOrder;
 };
 
 export type DueSettlementAvgOrderByAggregateInput = {
@@ -405,20 +405,20 @@ export type DueSettlementAvgOrderByAggregateInput = {
 
 export type DueSettlementMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  amount?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   dueId?: Prisma.SortOrder;
   memberLedgerEntryId?: Prisma.SortOrder;
-  amount?: Prisma.SortOrder;
   paymentId?: Prisma.SortOrder;
-  status?: Prisma.SortOrder;
 };
 
 export type DueSettlementMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  amount?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   dueId?: Prisma.SortOrder;
   memberLedgerEntryId?: Prisma.SortOrder;
-  amount?: Prisma.SortOrder;
   paymentId?: Prisma.SortOrder;
-  status?: Prisma.SortOrder;
 };
 
 export type DueSettlementSumOrderByAggregateInput = {
@@ -713,10 +713,10 @@ export type DueSettlementCreateWithoutMemberLedgerEntryInput = {
 
 export type DueSettlementUncheckedCreateWithoutMemberLedgerEntryInput = {
   id: string;
-  dueId: string;
   amount: number;
-  paymentId?: string | null;
   status: string;
+  dueId: string;
+  paymentId?: string | null;
 };
 
 export type DueSettlementCreateOrConnectWithoutMemberLedgerEntryInput = {
@@ -757,10 +757,10 @@ export type DueSettlementUpdateWithoutMemberLedgerEntryInput = {
 
 export type DueSettlementUncheckedUpdateWithoutMemberLedgerEntryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  dueId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
-  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  dueId?: Prisma.StringFieldUpdateOperationsInput | string;
+  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type DueSettlementCreateWithoutDueInput = {
@@ -773,10 +773,10 @@ export type DueSettlementCreateWithoutDueInput = {
 
 export type DueSettlementUncheckedCreateWithoutDueInput = {
   id: string;
-  memberLedgerEntryId: string;
   amount: number;
-  paymentId?: string | null;
   status: string;
+  memberLedgerEntryId: string;
+  paymentId?: string | null;
 };
 
 export type DueSettlementCreateOrConnectWithoutDueInput = {
@@ -831,11 +831,11 @@ export type DueSettlementScalarWhereInput = {
     | Prisma.DueSettlementScalarWhereInput
     | Prisma.DueSettlementScalarWhereInput[];
   id?: Prisma.StringFilter<'DueSettlement'> | string;
+  amount?: Prisma.IntFilter<'DueSettlement'> | number;
+  status?: Prisma.StringFilter<'DueSettlement'> | string;
   dueId?: Prisma.StringFilter<'DueSettlement'> | string;
   memberLedgerEntryId?: Prisma.StringFilter<'DueSettlement'> | string;
-  amount?: Prisma.IntFilter<'DueSettlement'> | number;
   paymentId?: Prisma.StringNullableFilter<'DueSettlement'> | string | null;
-  status?: Prisma.StringFilter<'DueSettlement'> | string;
 };
 
 export type DueSettlementCreateWithoutPaymentInput = {
@@ -848,10 +848,10 @@ export type DueSettlementCreateWithoutPaymentInput = {
 
 export type DueSettlementUncheckedCreateWithoutPaymentInput = {
   id: string;
-  dueId: string;
-  memberLedgerEntryId: string;
   amount: number;
   status: string;
+  dueId: string;
+  memberLedgerEntryId: string;
 };
 
 export type DueSettlementCreateOrConnectWithoutPaymentInput = {
@@ -899,10 +899,10 @@ export type DueSettlementUpdateManyWithWhereWithoutPaymentInput = {
 
 export type DueSettlementCreateManyDueInput = {
   id: string;
-  memberLedgerEntryId: string;
   amount: number;
-  paymentId?: string | null;
   status: string;
+  memberLedgerEntryId: string;
+  paymentId?: string | null;
 };
 
 export type DueSettlementUpdateWithoutDueInput = {
@@ -915,26 +915,26 @@ export type DueSettlementUpdateWithoutDueInput = {
 
 export type DueSettlementUncheckedUpdateWithoutDueInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  memberLedgerEntryId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
-  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberLedgerEntryId?: Prisma.StringFieldUpdateOperationsInput | string;
+  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type DueSettlementUncheckedUpdateManyWithoutDueInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  memberLedgerEntryId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
-  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberLedgerEntryId?: Prisma.StringFieldUpdateOperationsInput | string;
+  paymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type DueSettlementCreateManyPaymentInput = {
   id: string;
-  dueId: string;
-  memberLedgerEntryId: string;
   amount: number;
   status: string;
+  dueId: string;
+  memberLedgerEntryId: string;
 };
 
 export type DueSettlementUpdateWithoutPaymentInput = {
@@ -947,18 +947,18 @@ export type DueSettlementUpdateWithoutPaymentInput = {
 
 export type DueSettlementUncheckedUpdateWithoutPaymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  dueId?: Prisma.StringFieldUpdateOperationsInput | string;
-  memberLedgerEntryId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  dueId?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberLedgerEntryId?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type DueSettlementUncheckedUpdateManyWithoutPaymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  dueId?: Prisma.StringFieldUpdateOperationsInput | string;
-  memberLedgerEntryId?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
+  dueId?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberLedgerEntryId?: Prisma.StringFieldUpdateOperationsInput | string;
 };
 
 export type DueSettlementSelect<
@@ -967,11 +967,11 @@ export type DueSettlementSelect<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    amount?: boolean;
+    status?: boolean;
     dueId?: boolean;
     memberLedgerEntryId?: boolean;
-    amount?: boolean;
     paymentId?: boolean;
-    status?: boolean;
     due?: boolean | Prisma.DueDefaultArgs<ExtArgs>;
     memberLedgerEntry?: boolean | Prisma.MemberLedgerEntryDefaultArgs<ExtArgs>;
     payment?: boolean | Prisma.DueSettlement$paymentArgs<ExtArgs>;
@@ -985,11 +985,11 @@ export type DueSettlementSelectCreateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    amount?: boolean;
+    status?: boolean;
     dueId?: boolean;
     memberLedgerEntryId?: boolean;
-    amount?: boolean;
     paymentId?: boolean;
-    status?: boolean;
     due?: boolean | Prisma.DueDefaultArgs<ExtArgs>;
     memberLedgerEntry?: boolean | Prisma.MemberLedgerEntryDefaultArgs<ExtArgs>;
     payment?: boolean | Prisma.DueSettlement$paymentArgs<ExtArgs>;
@@ -1003,11 +1003,11 @@ export type DueSettlementSelectUpdateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    amount?: boolean;
+    status?: boolean;
     dueId?: boolean;
     memberLedgerEntryId?: boolean;
-    amount?: boolean;
     paymentId?: boolean;
-    status?: boolean;
     due?: boolean | Prisma.DueDefaultArgs<ExtArgs>;
     memberLedgerEntry?: boolean | Prisma.MemberLedgerEntryDefaultArgs<ExtArgs>;
     payment?: boolean | Prisma.DueSettlement$paymentArgs<ExtArgs>;
@@ -1017,18 +1017,18 @@ export type DueSettlementSelectUpdateManyAndReturn<
 
 export type DueSettlementSelectScalar = {
   id?: boolean;
+  amount?: boolean;
+  status?: boolean;
   dueId?: boolean;
   memberLedgerEntryId?: boolean;
-  amount?: boolean;
   paymentId?: boolean;
-  status?: boolean;
 };
 
 export type DueSettlementOmit<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
-  'id' | 'dueId' | 'memberLedgerEntryId' | 'amount' | 'paymentId' | 'status',
+  'id' | 'amount' | 'status' | 'dueId' | 'memberLedgerEntryId' | 'paymentId',
   ExtArgs['result']['dueSettlement']
 >;
 export type DueSettlementInclude<
@@ -1069,11 +1069,11 @@ export type $DueSettlementPayload<
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
+      amount: number;
+      status: string;
       dueId: string;
       memberLedgerEntryId: string;
-      amount: number;
       paymentId: string | null;
-      status: string;
     },
     ExtArgs['result']['dueSettlement']
   >;
@@ -1719,11 +1719,11 @@ export interface Prisma__DueSettlementClient<
  */
 export interface DueSettlementFieldRefs {
   readonly id: Prisma.FieldRef<'DueSettlement', 'String'>;
+  readonly amount: Prisma.FieldRef<'DueSettlement', 'Int'>;
+  readonly status: Prisma.FieldRef<'DueSettlement', 'String'>;
   readonly dueId: Prisma.FieldRef<'DueSettlement', 'String'>;
   readonly memberLedgerEntryId: Prisma.FieldRef<'DueSettlement', 'String'>;
-  readonly amount: Prisma.FieldRef<'DueSettlement', 'Int'>;
   readonly paymentId: Prisma.FieldRef<'DueSettlement', 'String'>;
-  readonly status: Prisma.FieldRef<'DueSettlement', 'String'>;
 }
 
 // Custom InputTypes

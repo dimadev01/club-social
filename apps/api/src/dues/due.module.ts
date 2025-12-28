@@ -4,6 +4,7 @@ import { CreateDueUseCase } from './application/create-due/create-due.use-case';
 import { UpdateDueUseCase } from './application/update-due/update-due.use-case';
 import { VoidDueUseCase } from './application/void-due/void-due.use-case';
 import { DUE_REPOSITORY_PROVIDER } from './domain/due.repository';
+import { PrismaDueSettlementMapper } from './infrastructure/prisma-due-settlement.mapper';
 import { PrismaDueMapper } from './infrastructure/prisma-due.mapper';
 import { PrismaDueRepository } from './infrastructure/prisma-due.repository';
 import { DuesController } from './presentation/due.controller';
@@ -17,6 +18,7 @@ import { DuesController } from './presentation/due.controller';
     UpdateDueUseCase,
     VoidDueUseCase,
     PrismaDueMapper,
+    PrismaDueSettlementMapper,
     {
       provide: DUE_REPOSITORY_PROVIDER,
       useClass: PrismaDueRepository,
