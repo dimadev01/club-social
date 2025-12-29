@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   PaymentCreateInput,
-  PaymentModel,
+  PaymentGetPayload,
   PaymentUpdateInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { Guard } from '@/shared/domain/guards';
@@ -33,11 +33,16 @@ export class PrismaPaymentMapper {
     };
   }
 
-  public toDomain(payment: PaymentModel): PaymentEntity {
+  public toDomain(
+    payment: PaymentGetPayload<{ include: { settlements: true } }>,
+  ): PaymentEntity {
     return PaymentEntity.fromPersistence(
       {
         amount: Amount.raw({ cents: payment.amount }),
         date: DateOnly.raw({ value: payment.date }),
+        dueIds: payment.settlements.map((settlement) =>
+          UniqueId.raw({ value: settlement.dueId }),
+        ),
         memberId: UniqueId.raw({ value: payment.memberId }),
         notes: payment.notes,
         receiptNumber: payment.receiptNumber,

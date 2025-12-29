@@ -1,3 +1,5 @@
+import { DateFormat } from '@club-social/shared/lib';
+
 import { ApplicationError } from '../../errors/application.error';
 import { Guard } from '../../guards';
 import { err, ok, Result } from '../../result';
@@ -69,7 +71,7 @@ export class DateOnly extends ValueObject<Props> {
    * Creates a DateOnly for today's date in UTC
    */
   public static today(): DateOnly {
-    const value = new Date().toISOString().split('T')[0];
+    const value = DateFormat.today();
 
     return new DateOnly({ value });
   }

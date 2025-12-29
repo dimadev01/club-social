@@ -1,7 +1,9 @@
 import dayjs, { type Dayjs } from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/es';
+import utc from 'dayjs/plugin/utc';
 
+dayjs.extend(utc);
 dayjs.extend(relativeTime);
 dayjs.locale('es');
 
@@ -57,5 +59,9 @@ export const DateFormat = {
 
   time(value: Date | Dayjs | string): string {
     return DateFormat.date(value, DateFormats.time);
+  },
+
+  today(): string {
+    return DateFormat.date(new Date(), DateFormats.isoDate);
   },
 };

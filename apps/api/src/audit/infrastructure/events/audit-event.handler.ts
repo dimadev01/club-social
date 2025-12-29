@@ -360,6 +360,7 @@ export class AuditEventHandler {
       createdAt: payment.createdAt,
       createdBy: payment.createdBy,
       date: payment.date.value,
+      dueIds: payment.dueIds.map((dueId) => dueId.value),
       id: payment.id.value,
       memberId: payment.memberId.value,
       notes: payment.notes,

@@ -20,6 +20,7 @@ import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { NavigateToMember } from '@/ui/NavigateMember';
 import { NavigateToPayment } from '@/ui/NavigateToPayment';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
@@ -32,7 +33,7 @@ import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
 // Types that represent negative amounts (debits)
-const DEBIT_TYPES: string[] = [
+const DEBIT_TYPES: MemberLedgerEntryType[] = [
   MemberLedgerEntryType.DUE_APPLY_DEBIT,
   MemberLedgerEntryType.BALANCE_APPLY_DEBIT,
   MemberLedgerEntryType.REFUND_DEBIT,
@@ -40,9 +41,10 @@ const DEBIT_TYPES: string[] = [
 ];
 
 // Types that represent positive amounts (credits)
-const CREDIT_TYPES: string[] = [
+const CREDIT_TYPES: MemberLedgerEntryType[] = [
   MemberLedgerEntryType.DEPOSIT_CREDIT,
   MemberLedgerEntryType.ADJUSTMENT_CREDIT,
+  MemberLedgerEntryType.REVERSAL_CREDIT,
 ];
 
 export function MemberLedgerList() {
@@ -58,9 +60,6 @@ export function MemberLedgerList() {
     setFilter,
     state,
   } = useTable<MemberLedgerEntryPaginatedDto>({
-    defaultFilters: {
-      status: [MemberLedgerEntryStatus.POSTED],
-    },
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
 
@@ -131,9 +130,9 @@ export function MemberLedgerList() {
           {
             dataIndex: 'memberFullName',
             render: (memberFullName: string, record) => (
-              <Link to={appRoutes.members.view(record.memberId)}>
+              <NavigateToMember id={record.memberId}>
                 {memberFullName}
-              </Link>
+              </NavigateToMember>
             ),
             title: 'Socio',
           },
@@ -190,7 +189,7 @@ export function MemberLedgerList() {
             filters: Object.entries(MemberLedgerEntryStatusLabel).map(
               ([value, label]) => ({ text: label, value }),
             ),
-            render: (value: keyof typeof MemberLedgerEntryStatusLabel) =>
+            render: (value: MemberLedgerEntryStatus) =>
               MemberLedgerEntryStatusLabel[value],
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,

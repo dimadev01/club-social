@@ -122,4 +122,8 @@ export class MemberLedgerEntryEntity extends AuditedAggregateRoot {
       },
     );
   }
+
+  public reverse() {
+    this._status = MemberLedgerEntryStatus.REVERSED;
+  }
 }

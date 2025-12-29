@@ -2,6 +2,7 @@ import { DueCategory, DueStatus } from '@club-social/shared/dues';
 
 import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
+import { Guard } from '@/shared/domain/guards';
 import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { err, ok, Result } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
@@ -263,7 +264,24 @@ export class DueEntity extends AuditedAggregateRoot {
     return ok();
   }
 
-  private recalculateStatusInternal(updatedBy = 'System'): void {
+  public voidPayment(props: {
+    paymentId: UniqueId;
+    voidedBy: string;
+  }): Result<void> {
+    const settlement = this.settlements.find(
+      (s) => s.paymentId?.value === props.paymentId.value,
+    );
+
+    Guard.defined(settlement);
+
+    settlement.void();
+
+    this.recalculateStatusInternal(props.voidedBy);
+
+    return ok();
+  }
+
+  private recalculateStatusInternal(updatedBy: string): void {
     const totalSettled = this.settledAmount;
 
     let newStatus: DueStatus;

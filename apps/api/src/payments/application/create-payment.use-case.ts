@@ -98,6 +98,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       {
         amount: paymentAmount,
         date: paymentDate,
+        dueIds: dues.map((due) => due.id),
         memberId: UniqueId.raw({ value: params.memberId }),
         notes: params.notes,
         receiptNumber: params.receiptNumber,

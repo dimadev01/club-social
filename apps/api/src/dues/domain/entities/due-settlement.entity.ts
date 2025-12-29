@@ -81,6 +81,10 @@ export class DueSettlementEntity extends Entity {
     return this._status === DueSettlementStatus.APPLIED;
   }
 
+  public isVoided(): boolean {
+    return this._status === DueSettlementStatus.VOIDED;
+  }
+
   public void(): void {
     this._status = DueSettlementStatus.VOIDED;
   }

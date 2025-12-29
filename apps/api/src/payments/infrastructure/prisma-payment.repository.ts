@@ -39,6 +39,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
   public async findById(id: UniqueId): Promise<null | PaymentEntity> {
     const payment = await this.prismaService.payment.findUnique({
+      include: { settlements: true },
       where: { id: id.value },
     });
 
@@ -77,6 +78,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
   public async findByIds(ids: UniqueId[]): Promise<PaymentEntity[]> {
     const payments = await this.prismaService.payment.findMany({
+      include: { settlements: true },
       where: {
         id: { in: ids.map((id) => id.value) },
       },
