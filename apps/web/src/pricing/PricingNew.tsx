@@ -1,4 +1,4 @@
-import type { ICreatePricingDto } from '@club-social/shared/pricing';
+import type { CreatePricingDto } from '@club-social/shared/pricing';
 import type { ParamIdDto } from '@club-social/shared/types';
 
 import { DueCategory } from '@club-social/shared/dues';
@@ -27,7 +27,7 @@ export function PricingNew() {
   const createPricingMutation = useMutation<
     ParamIdDto,
     Error,
-    ICreatePricingDto
+    CreatePricingDto
   >({
     mutationFn: (body) => $fetch('/pricing', { body, method: 'POST' }),
     onSuccess: () => {

@@ -1,4 +1,4 @@
-import type { IUpdatePricingDto } from '@club-social/shared/pricing';
+import type { UpdatePricingDto } from '@club-social/shared/pricing';
 
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
@@ -24,7 +24,7 @@ export function PricingEdit() {
 
   const { data: pricing, isLoading } = usePricing(id);
 
-  const updatePricingMutation = useMutation<unknown, Error, IUpdatePricingDto>({
+  const updatePricingMutation = useMutation<unknown, Error, UpdatePricingDto>({
     mutationFn: (body) => $fetch(`pricing/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       message.success('Precio actualizado correctamente');
