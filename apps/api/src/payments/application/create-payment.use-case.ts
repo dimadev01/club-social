@@ -31,6 +31,10 @@ import { ApplicationError } from '@/shared/domain/errors/application.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { Guard } from '@/shared/domain/guards';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
+import {
+  UNIT_OF_WORK_PROVIDER,
+  type UnitOfWork,
+} from '@/shared/domain/unit-of-work';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
@@ -61,6 +65,8 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
     private readonly memberLedgerRepository: MemberLedgerRepository,
     private readonly eventPublisher: DomainEventPublisher,
+    @Inject(UNIT_OF_WORK_PROVIDER)
+    private readonly unitOfWork: UnitOfWork,
   ) {
     super(logger);
   }
@@ -178,13 +184,19 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       }
     }
 
-    await this.paymentRepository.save(payment.value);
-    await Promise.all(
-      memberLedgerEntries.map((entry) =>
-        this.memberLedgerRepository.save(entry),
-      ),
+    await this.unitOfWork.execute(
+      async ({
+        dues: duesRepo,
+        memberLedger: memberLedgerRepo,
+        payments: paymentsRepo,
+      }) => {
+        await paymentsRepo.save(payment.value);
+        await Promise.all(
+          memberLedgerEntries.map((entry) => memberLedgerRepo.save(entry)),
+        );
+        await Promise.all(dues.map((due) => duesRepo.save(due)));
+      },
     );
-    await Promise.all(dues.map((due) => this.dueRepository.save(due)));
 
     this.eventPublisher.dispatch(payment.value);
     dues.forEach((due) => this.eventPublisher.dispatch(due));

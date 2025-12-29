@@ -15,6 +15,7 @@ import {
   PaymentWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
 import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
@@ -170,11 +171,16 @@ export class PrismaPaymentRepository implements PaymentRepository {
     };
   }
 
-  public async save(entity: PaymentEntity): Promise<void> {
+  public async save(
+    entity: PaymentEntity,
+    tx?: PrismaClientLike,
+  ): Promise<void> {
+    const client = tx ?? this.prismaService;
+
     const create = this.paymentMapper.toCreateInput(entity);
     const update = this.paymentMapper.toUpdateInput(entity);
 
-    await this.prismaService.payment.upsert({
+    await client.payment.upsert({
       create,
       update,
       where: { id: entity.id.value },

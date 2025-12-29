@@ -12,6 +12,7 @@ import {
   MemberLedgerEntryWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -168,11 +169,16 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     };
   }
 
-  public async save(entity: MemberLedgerEntryEntity): Promise<void> {
+  public async save(
+    entity: MemberLedgerEntryEntity,
+    tx?: PrismaClientLike,
+  ): Promise<void> {
+    const client = tx ?? this.prismaService;
+
     const create = this.memberLedgerEntryMapper.toCreateInput(entity);
     const update = this.memberLedgerEntryMapper.toUpdateInput(entity);
 
-    await this.prismaService.memberLedgerEntry.upsert({
+    await client.memberLedgerEntry.upsert({
       create,
       update,
       where: { id: entity.id.value },

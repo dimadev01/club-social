@@ -18,5 +18,5 @@ export interface ReadableRepository<T> {
 }
 
 export interface WriteableRepository<T> {
-  save(entity: T): Promise<void>;
+  save(entity: T, tx?: unknown): Promise<void>;
 }

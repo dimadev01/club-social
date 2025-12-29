@@ -19,6 +19,7 @@ import {
   DueWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -171,27 +172,29 @@ export class PrismaDueRepository implements DueRepository {
     return dues.map((due) => this.dueMapper.toDomain(due));
   }
 
-  public async save(entity: DueEntity): Promise<void> {
+  public async save(entity: DueEntity, tx?: PrismaClientLike): Promise<void> {
+    const client = tx ?? this.prismaService;
+
     const create = this.dueMapper.toCreateInput(entity);
     const update = this.dueMapper.toUpdateInput(entity);
 
     const settlementUpserts = this.dueSettlementMapper.toUpserts(entity);
 
-    await this.prismaService.$transaction(async (tx) => {
-      await tx.due.upsert({
-        create: create,
-        update: update,
-        where: { id: entity.id.value },
-      });
-
-      for (const settlementUpsert of settlementUpserts) {
-        await tx.dueSettlement.upsert({
-          create: settlementUpsert.create,
-          update: settlementUpsert.update,
-          where: settlementUpsert.where,
-        });
-      }
+    await client.due.upsert({
+      create: create,
+      update: update,
+      where: { id: entity.id.value },
     });
+
+    throw new Error('test');
+
+    for (const settlementUpsert of settlementUpserts) {
+      await client.dueSettlement.upsert({
+        create: settlementUpsert.create,
+        update: settlementUpsert.update,
+        where: settlementUpsert.where,
+      });
+    }
   }
 
   private buildWhereAndOrderBy(params: ExportDataDto): {
