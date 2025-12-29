@@ -9,7 +9,7 @@ import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
 import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { err, ok, Result } from '@/shared/domain/result';
-import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { StrictOmit } from '@/shared/types/type-utils';
@@ -18,7 +18,7 @@ import { MovementCreatedEvent } from '../events/movement-created.event';
 import { MovementUpdatedEvent } from '../events/movement-updated.event';
 
 interface MovementProps {
-  amount: Amount;
+  amount: SignedAmount;
   category: MovementCategory;
   date: DateOnly;
   mode: MovementMode;
@@ -32,7 +32,7 @@ interface MovementProps {
 }
 
 export class MovementEntity extends AuditedAggregateRoot {
-  public get amount(): Amount {
+  public get amount(): SignedAmount {
     return this._amount;
   }
 
@@ -76,7 +76,7 @@ export class MovementEntity extends AuditedAggregateRoot {
     return this._voidReason;
   }
 
-  private _amount: Amount;
+  private _amount: SignedAmount;
   private _category: MovementCategory;
   private _date: DateOnly;
   private _mode: MovementMode;
@@ -105,10 +105,7 @@ export class MovementEntity extends AuditedAggregateRoot {
   }
 
   public static create(
-    props: StrictOmit<
-      MovementProps,
-      'status' | 'voidedAt' | 'voidedBy' | 'voidReason'
-    >,
+    props: StrictOmit<MovementProps, 'voidedAt' | 'voidedBy' | 'voidReason'>,
     createdBy: string,
   ): Result<MovementEntity> {
     const movement = new MovementEntity(
@@ -119,7 +116,7 @@ export class MovementEntity extends AuditedAggregateRoot {
         mode: props.mode,
         notes: props.notes,
         paymentId: props.paymentId,
-        status: MovementStatus.REGISTERED,
+        status: props.status,
         type: props.type,
         voidedAt: null,
         voidedBy: null,
@@ -185,6 +182,12 @@ export class MovementEntity extends AuditedAggregateRoot {
     if (this.isVoided()) {
       return err(
         new ApplicationError('No se puede anular un movimiento anulado'),
+      );
+    }
+
+    if (this._mode === MovementMode.AUTOMATIC) {
+      return err(
+        new ApplicationError('No se puede anular un movimiento automático'),
       );
     }
 

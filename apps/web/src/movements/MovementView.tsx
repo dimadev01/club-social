@@ -2,6 +2,7 @@ import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
 import {
   MovementCategoryLabel,
+  MovementMode,
   MovementModeLabel,
   MovementStatus,
   MovementStatusLabel,
@@ -54,7 +55,9 @@ export function MovementView() {
 
   const isMutating = voidMovementMutation.isPending;
   const canVoid =
-    permissions.movements.void && movement.status === MovementStatus.REGISTERED;
+    permissions.movements.void &&
+    movement.status === MovementStatus.REGISTERED &&
+    movement.mode === MovementMode.MANUAL;
 
   return (
     <Page

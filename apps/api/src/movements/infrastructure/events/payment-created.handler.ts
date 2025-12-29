@@ -1,6 +1,7 @@
 import {
   MovementCategory,
   MovementMode,
+  MovementStatus,
   MovementType,
 } from '@club-social/shared/movements';
 import { Inject, Injectable } from '@nestjs/common';
@@ -63,6 +64,7 @@ export class PaymentCreatedHandler {
           mode: MovementMode.AUTOMATIC,
           notes: 'Entrada automática',
           paymentId: event.payment.id,
+          status: MovementStatus.REGISTERED,
           type: MovementType.INFLOW,
         },
         event.payment.createdBy,

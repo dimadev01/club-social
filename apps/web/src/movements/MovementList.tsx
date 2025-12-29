@@ -6,11 +6,12 @@ import { DateFormat } from '@club-social/shared/lib';
 import {
   MovementCategory,
   MovementCategoryLabel,
+  MovementMode,
+  MovementModeLabel,
   type MovementPaginatedDto,
   type MovementPaginatedExtraDto,
   MovementStatus,
   MovementStatusLabel,
-  MovementType,
 } from '@club-social/shared/movements';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Button, Dropdown, Space, Tooltip } from 'antd';
@@ -150,6 +151,17 @@ export function MovementList() {
           },
           {
             align: 'center',
+            dataIndex: 'mode',
+            filteredValue: getFilterValue('mode'),
+            filters: Object.entries(MovementModeLabel).map(
+              ([value, label]) => ({ text: label, value }),
+            ),
+            render: (value: MovementMode) => MovementModeLabel[value],
+            title: 'Modo',
+            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+          },
+          {
+            align: 'center',
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: Object.entries(MovementStatusLabel).map(
@@ -188,20 +200,16 @@ export function MovementList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number, record: MovementPaginatedDto) =>
-              record.type === MovementType.OUTFLOW
-                ? NumberFormat.formatCurrencyCents(amount)
-                : '',
+            render: (amount: number) =>
+              amount < 0 ? NumberFormat.formatCurrencyCents(amount) : '',
             title: 'Egreso',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number, record: MovementPaginatedDto) =>
-              record.type === MovementType.INFLOW
-                ? NumberFormat.formatCurrencyCents(amount)
-                : '',
+            render: (amount: number) =>
+              amount > 0 ? NumberFormat.formatCurrencyCents(amount) : '',
             title: 'Ingreso',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -219,7 +227,7 @@ export function MovementList() {
             <Table.Summary.Row>
               <Table.Summary.Cell
                 align="right"
-                colSpan={5}
+                colSpan={6}
                 index={0}
                 rowSpan={2}
               >

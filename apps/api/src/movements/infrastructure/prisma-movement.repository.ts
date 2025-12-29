@@ -121,11 +121,19 @@ export class PrismaMovementRepository implements MovementRepository {
     const [inflowSum, outflowSum] = await Promise.all([
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
-        where: { ...where, type: MovementType.INFLOW },
+        where: {
+          ...where,
+          status: MovementStatus.REGISTERED,
+          type: MovementType.INFLOW,
+        },
       }),
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
-        where: { ...where, type: MovementType.OUTFLOW },
+        where: {
+          ...where,
+          status: MovementStatus.REGISTERED,
+          type: MovementType.OUTFLOW,
+        },
       }),
     ]);
 
@@ -170,23 +178,30 @@ export class PrismaMovementRepository implements MovementRepository {
       where,
     } satisfies MovementFindManyArgs;
 
-    const [movements, total, totalAmountInflow, totalAmountOutflow] =
-      await Promise.all([
-        this.prismaService.movement.findMany(query),
-        this.prismaService.movement.count({ where }),
-        this.prismaService.movement.aggregate({
-          _sum: { amount: true },
-          where: { ...where, type: MovementType.INFLOW },
-        }),
-        this.prismaService.movement.aggregate({
-          _sum: { amount: true },
-          where: { ...where, type: MovementType.OUTFLOW },
-        }),
-      ]);
+    const [movements, total, inflow, outflow] = await Promise.all([
+      this.prismaService.movement.findMany(query),
+      this.prismaService.movement.count({ where }),
+      this.prismaService.movement.aggregate({
+        _sum: { amount: true },
+        where: {
+          ...where,
+          status: MovementStatus.REGISTERED,
+          type: MovementType.INFLOW,
+        },
+      }),
+      this.prismaService.movement.aggregate({
+        _sum: { amount: true },
+        where: {
+          ...where,
+          status: MovementStatus.REGISTERED,
+          type: MovementType.OUTFLOW,
+        },
+      }),
+    ]);
 
-    const totalInflow = totalAmountInflow._sum.amount ?? 0;
-    const totalOutflow = totalAmountOutflow._sum.amount ?? 0;
-    const totalAmount = totalInflow - totalOutflow;
+    const totalInflow = inflow._sum.amount ?? 0;
+    const totalOutflow = outflow._sum.amount ?? 0;
+    const totalAmount = totalInflow + totalOutflow;
 
     return {
       data: movements.map((m) => this.toReadModel(m)),

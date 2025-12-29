@@ -1,3 +1,8 @@
+import {
+  MovementMode,
+  MovementStatus,
+  MovementType,
+} from '@club-social/shared/movements';
 import { Inject } from '@nestjs/common';
 
 import {
@@ -11,7 +16,10 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, type Result } from '@/shared/domain/result';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+import { MovementEntity } from '../domain/entities/movement.entity';
 
 export interface VoidMovementParams {
   id: string;
@@ -33,11 +41,11 @@ export class VoidMovementUseCase extends UseCase {
   public async execute(params: VoidMovementParams): Promise<Result> {
     this.logger.info({ message: 'Voiding movement', params });
 
-    const movement = await this.movementRepository.findByIdOrThrow(
+    const originalMovement = await this.movementRepository.findByIdOrThrow(
       UniqueId.raw({ value: params.id }),
     );
 
-    const voidResult = movement.void({
+    const voidResult = originalMovement.void({
       voidedBy: params.voidedBy,
       voidReason: params.voidReason,
     });
@@ -46,8 +54,33 @@ export class VoidMovementUseCase extends UseCase {
       return err(voidResult.error);
     }
 
-    await this.movementRepository.save(movement);
-    this.eventPublisher.dispatch(movement);
+    const reversedMovement = MovementEntity.create(
+      {
+        amount:
+          originalMovement.type === MovementType.INFLOW
+            ? originalMovement.amount.toNegative()
+            : originalMovement.amount,
+        category: originalMovement.category,
+        date: DateOnly.today(),
+        mode: MovementMode.AUTOMATIC,
+        notes: originalMovement.notes,
+        paymentId: originalMovement.paymentId,
+        status: MovementStatus.REVERSED,
+        type:
+          originalMovement.type === MovementType.INFLOW
+            ? MovementType.OUTFLOW
+            : MovementType.INFLOW,
+      },
+      params.voidedBy,
+    );
+
+    if (reversedMovement.isErr()) {
+      return err(reversedMovement.error);
+    }
+
+    await this.movementRepository.save(originalMovement);
+    await this.movementRepository.save(reversedMovement.value);
+    this.eventPublisher.dispatch(originalMovement);
 
     return ok();
   }

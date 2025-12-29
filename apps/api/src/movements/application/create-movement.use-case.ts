@@ -1,4 +1,4 @@
-import { MovementMode } from '@club-social/shared/movements';
+import { MovementMode, MovementStatus } from '@club-social/shared/movements';
 import { MovementCategory, MovementType } from '@club-social/shared/movements';
 import { Inject } from '@nestjs/common';
 
@@ -16,7 +16,7 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
-import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 
 export interface CreateMovementParams {
@@ -45,7 +45,7 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
     this.logger.info({ message: 'Creating movement', params });
 
     const results = ResultUtils.combine([
-      Amount.fromCents(params.amount),
+      SignedAmount.fromCents(params.amount),
       DateOnly.fromString(params.date),
     ]);
 
@@ -57,12 +57,14 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
 
     const movementResult = MovementEntity.create(
       {
-        amount,
+        amount:
+          params.type === MovementType.INFLOW ? amount : amount.toNegative(),
         category: params.category,
         date,
         mode: MovementMode.MANUAL,
         notes: params.notes,
         paymentId: null,
+        status: MovementStatus.REGISTERED,
         type: params.type,
       },
       params.createdBy,
