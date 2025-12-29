@@ -9,6 +9,7 @@ import {
 } from './domain/user.repository';
 import { BetterAuthUserRepository } from './infrastructure/better-auth-user.repository';
 import { CompositeUserRepository } from './infrastructure/composite-user.repository';
+import { PrismaUserMapper } from './infrastructure/prisma-user.mapper';
 import { PrismaUserRepository } from './infrastructure/prisma-user.repository';
 import { UsersController } from './presentation/user.controller';
 
@@ -23,6 +24,7 @@ import { UsersController } from './presentation/user.controller';
   providers: [
     CreateUserUseCase,
     UpdateUserUseCase,
+    PrismaUserMapper,
     {
       provide: USER_READABLE_REPOSITORY_PROVIDER,
       useClass: PrismaUserRepository,

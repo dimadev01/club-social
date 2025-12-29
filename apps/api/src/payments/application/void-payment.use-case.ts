@@ -20,7 +20,11 @@ import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publis
 import { err, ok } from '@/shared/domain/result';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import type { VoidPaymentParams } from './void-payment.params';
+export interface VoidPaymentParams {
+  id: string;
+  voidedBy: string;
+  voidReason: string;
+}
 
 export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
   public constructor(

@@ -14,7 +14,6 @@ import {
   MemberLedgerEntryOrderByWithRelationInput,
   MemberLedgerEntryWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
-import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -23,10 +22,11 @@ import type {
   MemberLedgerEntryDetailReadModel,
   MemberLedgerEntryPaginatedExtraModel,
   MemberLedgerEntryPaginatedModel,
-} from '../member-ledger.types';
+} from '../member-ledger-entry-read-models';
 
 import { MemberLedgerEntryEntity } from '../domain/member-ledger-entry.entity';
 import { MemberLedgerRepository } from '../member-ledger.repository';
+import { PrismaMemberLedgerEntryMapper } from './prisma-member-ledger.mapper';
 
 // Types that represent negative amounts (debits)
 const DEBIT_TYPES: string[] = [
@@ -46,7 +46,7 @@ const CREDIT_TYPES: string[] = [
 export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
   public constructor(
     private readonly prismaService: PrismaService,
-    private readonly mapper: PrismaMappers,
+    private readonly memberLedgerEntryMapper: PrismaMemberLedgerEntryMapper,
   ) {}
 
   public async findById(id: UniqueId): Promise<MemberLedgerEntryEntity | null> {
@@ -56,7 +56,7 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
       });
 
     return memberLedgerEntry
-      ? this.mapper.memberLedgerEntry.toDomain(memberLedgerEntry)
+      ? this.memberLedgerEntryMapper.toDomain(memberLedgerEntry)
       : null;
   }
 
@@ -66,7 +66,7 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
         where: { id: id.value },
       });
 
-    return this.mapper.memberLedgerEntry.toDomain(memberLedgerEntry);
+    return this.memberLedgerEntryMapper.toDomain(memberLedgerEntry);
   }
 
   public async findByIds(ids: UniqueId[]): Promise<MemberLedgerEntryEntity[]> {
@@ -76,7 +76,7 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
       });
 
     return memberLedgerEntries.map((memberLedgerEntry) =>
-      this.mapper.memberLedgerEntry.toDomain(memberLedgerEntry),
+      this.memberLedgerEntryMapper.toDomain(memberLedgerEntry),
     );
   }
 
@@ -189,8 +189,8 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
   }
 
   public async save(entity: MemberLedgerEntryEntity): Promise<void> {
-    const create = this.mapper.memberLedgerEntry.toCreateInput(entity);
-    const update = this.mapper.memberLedgerEntry.toUpdateInput(entity);
+    const create = this.memberLedgerEntryMapper.toCreateInput(entity);
+    const update = this.memberLedgerEntryMapper.toUpdateInput(entity);
 
     await this.prismaService.memberLedgerEntry.upsert({
       create,

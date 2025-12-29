@@ -12,7 +12,7 @@ import type {
   MemberLedgerEntryDetailReadModel,
   MemberLedgerEntryPaginatedExtraModel,
   MemberLedgerEntryPaginatedModel,
-} from './member-ledger.types';
+} from './member-ledger-entry-read-models';
 
 import { MemberLedgerEntryEntity } from './domain/member-ledger-entry.entity';
 

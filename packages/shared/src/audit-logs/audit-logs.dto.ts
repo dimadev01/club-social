@@ -1,6 +1,6 @@
 import { AuditAction, AuditEntity } from './audit-logs.enum';
 
-export interface IAuditLogPaginatedDto {
+export interface AuditLogPaginatedDto {
   action: AuditAction;
   createdAt: string;
   createdBy: string;

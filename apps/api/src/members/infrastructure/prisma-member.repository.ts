@@ -20,7 +20,6 @@ import {
   MemberOrderByWithRelationInput,
   MemberWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
-import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -34,6 +33,7 @@ import {
   MemberSearchReadModel,
 } from '../domain/member-read-models';
 import { MemberRepository } from '../domain/member.repository';
+import { PrismaMemberMapper } from './prisma-member.mapper';
 
 type MemberPayload = MemberGetPayload<{ include: { user: true } }>;
 
@@ -41,7 +41,7 @@ type MemberPayload = MemberGetPayload<{ include: { user: true } }>;
 export class PrismaMemberRepository implements MemberRepository {
   public constructor(
     private readonly prismaService: PrismaService,
-    private readonly mapper: PrismaMappers,
+    private readonly memberMapper: PrismaMemberMapper,
   ) {}
 
   public async findById(id: UniqueId): Promise<MemberEntity | null> {
@@ -53,7 +53,7 @@ export class PrismaMemberRepository implements MemberRepository {
       return null;
     }
 
-    return this.mapper.member.toDomain(member);
+    return this.memberMapper.toDomain(member);
   }
 
   public async findByIdOrThrow(id: UniqueId): Promise<MemberEntity> {
@@ -61,7 +61,7 @@ export class PrismaMemberRepository implements MemberRepository {
       where: { id: id.value },
     });
 
-    return this.mapper.member.toDomain(member);
+    return this.memberMapper.toDomain(member);
   }
 
   public async findByIdReadModel(
@@ -87,7 +87,7 @@ export class PrismaMemberRepository implements MemberRepository {
       },
     });
 
-    return members.map((member) => this.mapper.member.toDomain(member));
+    return members.map((member) => this.memberMapper.toDomain(member));
   }
 
   public async findForExport(
@@ -171,8 +171,8 @@ export class PrismaMemberRepository implements MemberRepository {
   }
 
   public async save(entity: MemberEntity): Promise<void> {
-    const create = this.mapper.member.toCreateInput(entity);
-    const update = this.mapper.member.toUpdateInput(entity);
+    const create = this.memberMapper.toCreateInput(entity);
+    const update = this.memberMapper.toUpdateInput(entity);
 
     await this.prismaService.member.upsert({
       create,

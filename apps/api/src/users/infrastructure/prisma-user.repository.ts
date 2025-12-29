@@ -9,19 +9,19 @@ import {
   UserFindManyArgs,
   UserWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
-import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { UserEntity } from '../domain/entities/user.entity';
 import { UserReadableRepository } from '../domain/user.repository';
+import { PrismaUserMapper } from './prisma-user.mapper';
 
 @Injectable()
 export class PrismaUserRepository implements UserReadableRepository {
   public constructor(
     private readonly prismaService: PrismaService,
-    private readonly mapper: PrismaMappers,
+    private readonly userMapper: PrismaUserMapper,
   ) {}
 
   public async findById(id: UniqueId): Promise<null | UserEntity> {
@@ -33,7 +33,7 @@ export class PrismaUserRepository implements UserReadableRepository {
       return null;
     }
 
-    return this.mapper.user.toDomain(user);
+    return this.userMapper.toDomain(user);
   }
 
   public async findByIdOrThrow(id: UniqueId): Promise<UserEntity> {
@@ -41,7 +41,7 @@ export class PrismaUserRepository implements UserReadableRepository {
       where: { id: id.value },
     });
 
-    return this.mapper.user.toDomain(user);
+    return this.userMapper.toDomain(user);
   }
 
   public async findByIds(ids: UniqueId[]): Promise<UserEntity[]> {
@@ -51,7 +51,7 @@ export class PrismaUserRepository implements UserReadableRepository {
       },
     });
 
-    return users.map((user) => this.mapper.user.toDomain(user));
+    return users.map((user) => this.userMapper.toDomain(user));
   }
 
   public async findPaginated(
@@ -82,7 +82,7 @@ export class PrismaUserRepository implements UserReadableRepository {
     ]);
 
     return {
-      data: users.map((user) => this.mapper.user.toDomain(user)),
+      data: users.map((user) => this.userMapper.toDomain(user)),
       total,
     };
   }
@@ -96,6 +96,6 @@ export class PrismaUserRepository implements UserReadableRepository {
       return null;
     }
 
-    return this.mapper.user.toDomain(user);
+    return this.userMapper.toDomain(user);
   }
 }

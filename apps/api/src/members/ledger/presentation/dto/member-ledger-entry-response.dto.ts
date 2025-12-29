@@ -5,7 +5,7 @@ import {
   type MemberLedgerEntryType,
 } from '@club-social/shared/members';
 
-export class MemberLedgerEntryDetailResponseDto implements MemberLedgerEntryDto {
+export class MemberLedgerEntryResponseDto implements MemberLedgerEntryDto {
   public amount: number;
   public createdAt: string;
   public createdBy: string;

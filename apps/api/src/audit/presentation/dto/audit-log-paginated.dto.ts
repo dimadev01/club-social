@@ -1,10 +1,10 @@
 import {
   AuditAction,
   AuditEntity,
-  IAuditLogPaginatedDto,
+  AuditLogPaginatedDto,
 } from '@club-social/shared/audit-logs';
 
-export class AuditLogPaginatedDto implements IAuditLogPaginatedDto {
+export class AuditLogPaginatedResponseDto implements AuditLogPaginatedDto {
   public action: AuditAction;
   public createdAt: string;
   public createdBy: string;

@@ -14,7 +14,6 @@ import {
   PaymentOrderByWithRelationInput,
   PaymentWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
-import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
@@ -35,7 +34,6 @@ import { PrismaPaymentMapper } from './prisma-payment.mapper';
 export class PrismaPaymentRepository implements PaymentRepository {
   public constructor(
     private readonly prismaService: PrismaService,
-    private readonly mapper: PrismaMappers,
     private readonly paymentMapper: PrismaPaymentMapper,
   ) {}
 
@@ -171,8 +169,8 @@ export class PrismaPaymentRepository implements PaymentRepository {
   }
 
   public async save(entity: PaymentEntity): Promise<void> {
-    const create = this.mapper.payment.toCreateInput(entity);
-    const update = this.mapper.payment.toUpdateInput(entity);
+    const create = this.paymentMapper.toCreateInput(entity);
+    const update = this.paymentMapper.toUpdateInput(entity);
 
     await this.prismaService.payment.upsert({
       create,

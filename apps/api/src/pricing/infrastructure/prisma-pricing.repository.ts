@@ -27,7 +27,7 @@ import { PrismaPricingMapper } from './prisma-pricing.mapper';
 export class PrismaPricingRepository implements PricingRepository {
   public constructor(
     private readonly prismaService: PrismaService,
-    private readonly mapper: PrismaPricingMapper,
+    private readonly pricingMapper: PrismaPricingMapper,
   ) {}
 
   public async findByDueCategoryAndMemberCategory(
@@ -42,7 +42,7 @@ export class PrismaPricingRepository implements PricingRepository {
       },
     });
 
-    return prices.map((pricing) => this.mapper.toDomain(pricing));
+    return prices.map((pricing) => this.pricingMapper.toDomain(pricing));
   }
 
   public async findById(id: UniqueId): Promise<null | PricingEntity> {
@@ -50,7 +50,7 @@ export class PrismaPricingRepository implements PricingRepository {
       where: { deletedAt: null, id: id.value },
     });
 
-    return pricing ? this.mapper.toDomain(pricing) : null;
+    return pricing ? this.pricingMapper.toDomain(pricing) : null;
   }
 
   public async findByIdOrThrow(id: UniqueId): Promise<PricingEntity> {
@@ -58,7 +58,7 @@ export class PrismaPricingRepository implements PricingRepository {
       where: { deletedAt: null, id: id.value },
     });
 
-    return this.mapper.toDomain(pricing);
+    return this.pricingMapper.toDomain(pricing);
   }
 
   public async findByIds(ids: UniqueId[]): Promise<PricingEntity[]> {
@@ -69,7 +69,7 @@ export class PrismaPricingRepository implements PricingRepository {
       },
     });
 
-    return prices.map((pricing) => this.mapper.toDomain(pricing));
+    return prices.map((pricing) => this.pricingMapper.toDomain(pricing));
   }
 
   public async findOneActive(
@@ -88,7 +88,7 @@ export class PrismaPricingRepository implements PricingRepository {
       },
     });
 
-    return pricing ? this.mapper.toDomain(pricing) : null;
+    return pricing ? this.pricingMapper.toDomain(pricing) : null;
   }
 
   public async findOverlapping(
@@ -120,7 +120,7 @@ export class PrismaPricingRepository implements PricingRepository {
       where,
     });
 
-    return prices.map((pricing) => this.mapper.toDomain(pricing));
+    return prices.map((pricing) => this.pricingMapper.toDomain(pricing));
   }
 
   public async findPaginated(
@@ -154,7 +154,7 @@ export class PrismaPricingRepository implements PricingRepository {
 
     return {
       data: prices.map((pricing) => ({
-        pricing: this.mapper.toDomain(pricing),
+        pricing: this.pricingMapper.toDomain(pricing),
       })),
       total,
     };
@@ -173,12 +173,12 @@ export class PrismaPricingRepository implements PricingRepository {
       },
     });
 
-    return pricing ? this.mapper.toDomain(pricing) : null;
+    return pricing ? this.pricingMapper.toDomain(pricing) : null;
   }
 
   public async save(entity: PricingEntity): Promise<void> {
-    const create = this.mapper.toCreateInput(entity);
-    const update = this.mapper.toUpdateInput(entity);
+    const create = this.pricingMapper.toCreateInput(entity);
+    const update = this.pricingMapper.toUpdateInput(entity);
 
     await this.prismaService.pricing.upsert({
       create,

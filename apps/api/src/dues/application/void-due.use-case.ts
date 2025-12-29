@@ -1,9 +1,9 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import {
-  MOVEMENT_REPOSITORY_PROVIDER,
-  type MovementRepository,
-} from '@/movements/domain/movement.repository';
+  DUE_REPOSITORY_PROVIDER,
+  type DueRepository,
+} from '@/dues/domain/due.repository';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -13,27 +13,35 @@ import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publis
 import { err, ok, type Result } from '@/shared/domain/result';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import type { VoidMovementParams } from './void-movement.params';
+export interface VoidDueParams {
+  id: string;
+  voidedBy: string;
+  voidReason: string;
+}
 
-export class VoidMovementUseCase extends UseCase {
+@Injectable()
+export class VoidDueUseCase extends UseCase {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    @Inject(MOVEMENT_REPOSITORY_PROVIDER)
-    private readonly movementRepository: MovementRepository,
+    @Inject(DUE_REPOSITORY_PROVIDER)
+    private readonly dueRepository: DueRepository,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
   }
 
-  public async execute(params: VoidMovementParams): Promise<Result> {
-    this.logger.info({ message: 'Voiding movement', params });
+  public async execute(params: VoidDueParams): Promise<Result> {
+    this.logger.info({
+      message: 'Voiding due',
+      params,
+    });
 
-    const movement = await this.movementRepository.findByIdOrThrow(
+    const due = await this.dueRepository.findByIdOrThrow(
       UniqueId.raw({ value: params.id }),
     );
 
-    const voidResult = movement.void({
+    const voidResult = due.void({
       voidedBy: params.voidedBy,
       voidReason: params.voidReason,
     });
@@ -42,8 +50,8 @@ export class VoidMovementUseCase extends UseCase {
       return err(voidResult.error);
     }
 
-    await this.movementRepository.save(movement);
-    this.eventPublisher.dispatch(movement);
+    await this.dueRepository.save(due);
+    this.eventPublisher.dispatch(due);
 
     return ok();
   }

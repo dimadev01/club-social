@@ -13,7 +13,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class PaymentDueItemDto {
+export class CreatePaymentDueDto implements CreatePaymentDueDto {
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
@@ -32,9 +32,9 @@ export class CreatePaymentRequestDto implements CreatePaymentDto {
 
   @ArrayMinSize(1)
   @IsArray()
-  @Type(() => PaymentDueItemDto)
+  @Type(() => CreatePaymentDueDto)
   @ValidateNested({ each: true })
-  public dues: PaymentDueItemDto[];
+  public dues: CreatePaymentDueDto[];
 
   @IsNotEmpty()
   @IsString()

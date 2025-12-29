@@ -13,7 +13,7 @@ import {
   AUDIT_LOG_REPOSITORY_PROVIDER,
   type AuditLogRepository,
 } from '../domain/audit-log.repository';
-import { AuditLogPaginatedDto } from './dto/audit-log-paginated.dto';
+import { AuditLogPaginatedResponseDto } from './dto/audit-log-paginated.dto';
 
 @Controller('audit-logs')
 export class AuditLogController extends BaseController {
@@ -26,11 +26,11 @@ export class AuditLogController extends BaseController {
     super(logger);
   }
 
-  @ApiPaginatedResponse(AuditLogPaginatedDto)
+  @ApiPaginatedResponse(AuditLogPaginatedResponseDto)
   @Get('paginated')
   public async getPaginated(
     @Query() query: GetPaginatedDataRequestDto,
-  ): Promise<PaginatedDataResponseDto<AuditLogPaginatedDto>> {
+  ): Promise<PaginatedDataResponseDto<AuditLogPaginatedResponseDto>> {
     const auditLogs = await this.auditLogRepository.findPaginated({
       filters: query.filters,
       page: query.page,

@@ -26,9 +26,9 @@ export class PrismaMemberMapper {
     Guard.string(member.createdBy);
 
     return {
-      birthDate: member.birthDate?.value ?? null,
+      birthDate: member.birthDate?.value,
       category: member.category,
-      cityName: member.address?.cityName ?? null,
+      cityName: member.address?.cityName,
       createdBy: member.createdBy,
       documentID: member.documentID,
       fileStatus: member.fileStatus,
@@ -37,11 +37,11 @@ export class PrismaMemberMapper {
       nationality: member.nationality,
       phones: member.phones,
       sex: member.sex,
-      stateName: member.address?.stateName ?? null,
+      stateName: member.address?.stateName,
       status: member.status,
-      street: member.address?.street ?? null,
+      street: member.address?.street,
       user: { connect: { id: member.userId.value } },
-      zipCode: member.address?.zipCode ?? null,
+      zipCode: member.address?.zipCode,
     };
   }
 
@@ -86,9 +86,9 @@ export class PrismaMemberMapper {
 
   public toUpdateInput(member: MemberEntity): MemberUpdateInput {
     return {
-      birthDate: member.birthDate?.value ?? null,
+      birthDate: member.birthDate?.value,
       category: member.category,
-      cityName: member.address?.cityName ?? null,
+      cityName: member.address?.cityName,
       documentID: member.documentID,
       fileStatus: member.fileStatus,
       id: member.id.value,
@@ -96,11 +96,11 @@ export class PrismaMemberMapper {
       nationality: member.nationality,
       phones: member.phones,
       sex: member.sex,
-      stateName: member.address?.stateName ?? null,
+      stateName: member.address?.stateName,
       status: member.status,
-      street: member.address?.street ?? null,
+      street: member.address?.street,
       updatedBy: member.updatedBy,
-      zipCode: member.address?.zipCode ?? null,
+      zipCode: member.address?.zipCode,
     };
   }
 }

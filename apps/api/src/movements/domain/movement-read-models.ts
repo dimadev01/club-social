@@ -43,3 +43,10 @@ export interface MovementReadModel {
   voidedBy: null | string;
   voidReason: null | string;
 }
+
+export interface MovementStatisticsModel {
+  balance: number;
+  cumulativeTotal: number;
+  totalInflow: number;
+  totalOutflow: number;
+}

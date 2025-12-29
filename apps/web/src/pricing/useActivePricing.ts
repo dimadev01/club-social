@@ -1,6 +1,6 @@
 import type { DueCategory } from '@club-social/shared/dues';
 import type { MemberCategory } from '@club-social/shared/members';
-import type { IPricingDetailDto } from '@club-social/shared/pricing';
+import type { PricingDto } from '@club-social/shared/pricing';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -25,7 +25,7 @@ export function useActivePricing({
     enabled:
       enabled && !!dueCategory && !!memberCategory && permissions.pricing.get,
     queryFn: () =>
-      $fetch<IPricingDetailDto>(`pricing/active`, {
+      $fetch<PricingDto>(`pricing/active`, {
         query: { dueCategory, memberCategory },
       }),
   });

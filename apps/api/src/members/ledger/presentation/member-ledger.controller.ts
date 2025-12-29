@@ -30,7 +30,7 @@ import {
   MemberLedgerEntryPaginatedExtraResponseDto,
   MemberLedgerEntryPaginatedResponseDto,
 } from './dto/member-ledger-entry-paginated.dto';
-import { MemberLedgerEntryDetailResponseDto } from './dto/member-ledger-entry-response.dto';
+import { MemberLedgerEntryResponseDto } from './dto/member-ledger-entry-response.dto';
 
 @Controller('member-ledger')
 export class MemberLedgerController extends BaseController {
@@ -86,7 +86,7 @@ export class MemberLedgerController extends BaseController {
   @Get(':id')
   public async getById(
     @Param() params: ParamIdReqResDto,
-  ): Promise<MemberLedgerEntryDetailResponseDto> {
+  ): Promise<MemberLedgerEntryResponseDto> {
     const entry = await this.memberLedgerRepository.findDetailById(params.id);
 
     if (!entry) {

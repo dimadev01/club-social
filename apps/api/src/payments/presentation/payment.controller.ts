@@ -36,8 +36,8 @@ import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
-import { CreatePaymentUseCase } from '../application/create-payment/create-payment.use-case';
-import { VoidPaymentUseCase } from '../application/void-payment/void-payment.use-case';
+import { CreatePaymentUseCase } from '../application/create-payment.use-case';
+import { VoidPaymentUseCase } from '../application/void-payment.use-case';
 import {
   PAYMENT_REPOSITORY_PROVIDER,
   type PaymentRepository,
@@ -48,8 +48,10 @@ import {
   PaymentPaginatedResponseDto,
 } from './dto/payment-paginated.dto';
 import { PaymentResponseDto } from './dto/payment-response.dto';
-import { GetPaymentStatisticsRequestDto } from './dto/payment-statistics-query.dto';
-import { PaymentStatisticsResponseDto } from './dto/payment-statistics.dto';
+import {
+  GetPaymentStatisticsRequestDto,
+  PaymentStatisticsResponseDto,
+} from './dto/payment-statistics.dto';
 import { VoidPaymentRequestDto } from './dto/void-payment.dto';
 
 @Controller('payments')

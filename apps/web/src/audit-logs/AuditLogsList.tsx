@@ -5,7 +5,7 @@ import {
   AuditActionLabel,
   AuditEntity,
   AuditEntityLabel,
-  type IAuditLogPaginatedDto,
+  type AuditLogPaginatedDto,
 } from '@club-social/shared/audit-logs';
 import { DateFormat } from '@club-social/shared/lib';
 import { keepPreviousData } from '@tanstack/react-query';
@@ -36,7 +36,7 @@ export function AuditLogsList() {
     query,
     resetFilters,
     state,
-  } = useTable<IAuditLogPaginatedDto>({
+  } = useTable<AuditLogPaginatedDto>({
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
   });
 
@@ -45,7 +45,7 @@ export function AuditLogsList() {
     enabled: permissions.auditLogs.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedDataResultDto<IAuditLogPaginatedDto>>(
+      $fetch<PaginatedDataResultDto<AuditLogPaginatedDto>>(
         '/audit-logs/paginated',
         {
           query,
@@ -63,7 +63,7 @@ export function AuditLogsList() {
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
-      <Table<IAuditLogPaginatedDto>
+      <Table<AuditLogPaginatedDto>
         columns={[
           {
             dataIndex: 'createdAt',

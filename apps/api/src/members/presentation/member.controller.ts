@@ -35,8 +35,8 @@ import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
-import { CreateMemberUseCase } from '../application/create-member/create-member.use-case';
-import { UpdateMemberUseCase } from '../application/update-member/update-member.use-case';
+import { CreateMemberUseCase } from '../application/create-member.use-case';
+import { UpdateMemberUseCase } from '../application/update-member.use-case';
 import {
   MEMBER_REPOSITORY_PROVIDER,
   type MemberRepository,

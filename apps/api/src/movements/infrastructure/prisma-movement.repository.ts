@@ -18,7 +18,6 @@ import {
   MovementOrderByWithRelationInput,
   MovementWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
-import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
@@ -31,8 +30,9 @@ import {
   MovementPaginatedReadModel,
   MovementReadModel,
 } from '../domain/movement-read-models';
+import { MovementStatisticsModel } from '../domain/movement-read-models';
 import { MovementRepository } from '../domain/movement.repository';
-import { MovementStatisticsModel } from '../domain/movement.types';
+import { PrismaMovementMapper } from './prisma-movement.mapper';
 
 const SYSTEM_START_DATE = '2022-01-01';
 
@@ -40,7 +40,7 @@ const SYSTEM_START_DATE = '2022-01-01';
 export class PrismaMovementRepository implements MovementRepository {
   public constructor(
     private readonly prismaService: PrismaService,
-    private readonly mapper: PrismaMappers,
+    private readonly movementMapper: PrismaMovementMapper,
   ) {}
 
   public async findById(id: UniqueId): Promise<MovementEntity | null> {
@@ -48,7 +48,7 @@ export class PrismaMovementRepository implements MovementRepository {
       where: { id: id.value },
     });
 
-    return movement ? this.mapper.movement.toDomain(movement) : null;
+    return movement ? this.movementMapper.toDomain(movement) : null;
   }
 
   public async findByIdOrThrow(id: UniqueId): Promise<MovementEntity> {
@@ -56,7 +56,7 @@ export class PrismaMovementRepository implements MovementRepository {
       where: { id: id.value },
     });
 
-    return this.mapper.movement.toDomain(movement);
+    return this.movementMapper.toDomain(movement);
   }
 
   public async findByIdReadModel(
@@ -76,7 +76,7 @@ export class PrismaMovementRepository implements MovementRepository {
       },
     });
 
-    return movements.map((m) => this.mapper.movement.toDomain(m));
+    return movements.map((m) => this.movementMapper.toDomain(m));
   }
 
   public async findByPaymentId(
@@ -88,7 +88,7 @@ export class PrismaMovementRepository implements MovementRepository {
       },
     });
 
-    return movement ? this.mapper.movement.toDomain(movement) : null;
+    return movement ? this.movementMapper.toDomain(movement) : null;
   }
 
   public async findForExport(
@@ -200,8 +200,8 @@ export class PrismaMovementRepository implements MovementRepository {
   }
 
   public async save(entity: MovementEntity): Promise<void> {
-    const create = this.mapper.movement.toCreateInput(entity);
-    const update = this.mapper.movement.toUpdateInput(entity);
+    const create = this.movementMapper.toCreateInput(entity);
+    const update = this.movementMapper.toUpdateInput(entity);
 
     await this.prismaService.movement.upsert({
       create,

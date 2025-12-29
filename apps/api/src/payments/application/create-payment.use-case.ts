@@ -136,7 +136,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       dues.map((due) => {
         const dueInParams = params.dues.find((pd) => pd.dueId === due.id.value);
 
-        Guard.defined(dueInParams); // It should never happen because we validated the dues exist
+        Guard.defined(dueInParams);
 
         const amount = Amount.fromCents(dueInParams.amount);
 

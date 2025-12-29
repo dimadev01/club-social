@@ -12,7 +12,7 @@ import { sample, times } from 'es-toolkit/compat';
 
 import { ConfigService } from './infrastructure/config/config.service';
 import { PrismaService } from './infrastructure/database/prisma/prisma.service';
-import { CreateMemberUseCase } from './members/application/create-member/create-member.use-case';
+import { CreateMemberUseCase } from './members/application/create-member.use-case';
 import { Address } from './shared/domain/value-objects/address/address.vo';
 import { CreateUserUseCase } from './users/application/create-user.use-case';
 import {

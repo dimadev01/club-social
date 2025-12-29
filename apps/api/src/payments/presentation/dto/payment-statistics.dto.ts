@@ -1,9 +1,18 @@
 import type {
+  GetPaymentStatisticsDto,
   PaymentStatisticsCategoryDto,
   PaymentStatisticsDto,
 } from '@club-social/shared/payments';
 
 import { DueCategory } from '@club-social/shared/dues';
+import { IsArray, IsDateString, IsOptional } from 'class-validator';
+
+export class GetPaymentStatisticsRequestDto implements GetPaymentStatisticsDto {
+  @IsArray()
+  @IsDateString({}, { each: true })
+  @IsOptional()
+  public dateRange?: [string, string];
+}
 
 export class PaymentStatisticsCategoryResponseDto implements PaymentStatisticsCategoryDto {
   public amount: number;

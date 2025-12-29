@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { CreateDueUseCase } from './application/create-due/create-due.use-case';
-import { UpdateDueUseCase } from './application/update-due/update-due.use-case';
-import { VoidDueUseCase } from './application/void-due/void-due.use-case';
+import { CreateDueUseCase } from './application/create-due.use-case';
+import { UpdateDueUseCase } from './application/update-due.use-case';
+import { VoidDueUseCase } from './application/void-due.use-case';
 import { DUE_REPOSITORY_PROVIDER } from './domain/due.repository';
 import { PrismaDueSettlementMapper } from './infrastructure/prisma-due-settlement.mapper';
 import { PrismaDueMapper } from './infrastructure/prisma-due.mapper';

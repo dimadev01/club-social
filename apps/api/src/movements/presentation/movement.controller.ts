@@ -32,8 +32,8 @@ import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
-import { CreateMovementUseCase } from '../application/create-movement/create-movement.use-case';
-import { VoidMovementUseCase } from '../application/void-movement/void-movement.use-case';
+import { CreateMovementUseCase } from '../application/create-movement.use-case';
+import { VoidMovementUseCase } from '../application/void-movement.use-case';
 import {
   MOVEMENT_REPOSITORY_PROVIDER,
   type MovementRepository,

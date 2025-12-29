@@ -1,13 +1,13 @@
-import { MovementMode } from '@club-social/shared/movements';
+import { DueCategory } from '@club-social/shared/dues';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
-import { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import {
-  MOVEMENT_REPOSITORY_PROVIDER,
-  type MovementRepository,
-} from '@/movements/domain/movement.repository';
+  DUE_REPOSITORY_PROVIDER,
+  type DueRepository,
+} from '@/dues/domain/due.repository';
+import { DueEntity } from '@/dues/domain/entities/due.entity';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -17,24 +17,33 @@ import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publis
 import { err, ok, ResultUtils } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import type { CreateMovementParams } from './create-movement.params';
+interface CreateDueParams {
+  amount: number;
+  category: DueCategory;
+  createdBy: string;
+  date: string;
+  memberId: string;
+  notes: null | string;
+}
 
-export class CreateMovementUseCase extends UseCase<MovementEntity> {
+export class CreateDueUseCase extends UseCase<DueEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    @Inject(MOVEMENT_REPOSITORY_PROVIDER)
-    private readonly movementRepository: MovementRepository,
+    @Inject(DUE_REPOSITORY_PROVIDER)
+    private readonly dueRepository: DueRepository,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
   }
 
-  public async execute(
-    params: CreateMovementParams,
-  ): Promise<Result<MovementEntity>> {
-    this.logger.info({ message: 'Creating movement', params });
+  public async execute(params: CreateDueParams): Promise<Result<DueEntity>> {
+    this.logger.info({
+      message: 'Creating due',
+      params,
+    });
 
     const results = ResultUtils.combine([
       Amount.fromCents(params.amount),
@@ -47,28 +56,24 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
 
     const [amount, date] = results.value;
 
-    const movementResult = MovementEntity.create(
+    const due = DueEntity.create(
       {
         amount,
         category: params.category,
         date,
-        mode: MovementMode.MANUAL,
+        memberId: UniqueId.raw({ value: params.memberId }),
         notes: params.notes,
-        paymentId: null,
-        type: params.type,
       },
       params.createdBy,
     );
 
-    if (movementResult.isErr()) {
-      return err(movementResult.error);
+    if (due.isErr()) {
+      return err(due.error);
     }
 
-    const movement = movementResult.value;
+    await this.dueRepository.save(due.value);
+    this.eventPublisher.dispatch(due.value);
 
-    await this.movementRepository.save(movement);
-    this.eventPublisher.dispatch(movement);
-
-    return ok(movement);
+    return ok(due.value);
   }
 }

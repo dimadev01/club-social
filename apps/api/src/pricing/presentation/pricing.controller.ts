@@ -24,9 +24,9 @@ import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
-import { CreatePricingUseCase } from '../application/create-pricing/create-pricing.use-case';
-import { FindActivePricingUseCase } from '../application/find-active-pricing/find-active-pricing.use-case';
-import { UpdatePricingUseCase } from '../application/update-pricing/update-pricing.use-case';
+import { CreatePricingUseCase } from '../application/create-pricing.use-case';
+import { FindActivePricingUseCase } from '../application/find-active-pricing.use-case';
+import { UpdatePricingUseCase } from '../application/update-pricing.use-case';
 import { PricingEntity } from '../domain/entities/pricing.entity';
 import {
   PRICING_REPOSITORY_PROVIDER,

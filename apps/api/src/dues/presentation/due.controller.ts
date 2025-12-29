@@ -37,9 +37,9 @@ import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
-import { CreateDueUseCase } from '../application/create-due/create-due.use-case';
-import { UpdateDueUseCase } from '../application/update-due/update-due.use-case';
-import { VoidDueUseCase } from '../application/void-due/void-due.use-case';
+import { CreateDueUseCase } from '../application/create-due.use-case';
+import { UpdateDueUseCase } from '../application/update-due.use-case';
+import { VoidDueUseCase } from '../application/void-due.use-case';
 import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
