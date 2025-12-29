@@ -112,9 +112,6 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(payment.error);
     }
 
-    const creditLedgerEntries: MemberLedgerEntryEntity[] = [];
-    const debitLedgerEntries: MemberLedgerEntryEntity[] = [];
-
     /**
      * Business reason:
      * For every payment registered, we must create corresponding member ledger entries
@@ -144,13 +141,30 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(creditEntry.error);
     }
 
-    creditLedgerEntries.push(creditEntry.value);
+    const creditMovement = MovementEntity.create(
+      {
+        amount: creditEntry.value.amount,
+        category: MovementCategory.MEMBER_LEDGER,
+        date: paymentDate,
+        mode: MovementMode.AUTOMATIC,
+        notes: null,
+        paymentId: payment.value.id,
+        status: MovementStatus.REGISTERED,
+      },
+      params.createdBy,
+    );
+
+    if (creditMovement.isErr()) {
+      return err(creditMovement.error);
+    }
+
+    const movements: MovementEntity[] = [creditMovement.value];
+
+    const debitLedgerEntries: MemberLedgerEntryEntity[] = [];
 
     for (const due of dues) {
       const dueInParams = params.dues.find((pd) => pd.dueId === due.id.value);
-
       Guard.defined(dueInParams);
-
       const amount = SignedAmount.fromCents(dueInParams.amount);
 
       if (amount.isErr()) {
@@ -190,6 +204,8 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       }
     }
 
+    let surplusCreditEntry: MemberLedgerEntryEntity | null = null;
+
     if (params.surplusToCreditAmount) {
       const surplusCreditAmount = SignedAmount.fromCents(
         params.surplusToCreditAmount,
@@ -199,7 +215,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         return err(surplusCreditAmount.error);
       }
 
-      const surplusCreditEntry = MemberLedgerEntryEntity.create(
+      const surplusCreditEntryResult = MemberLedgerEntryEntity.create(
         {
           amount: surplusCreditAmount.value,
           date: paymentDate,
@@ -214,32 +230,30 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         params.createdBy,
       );
 
-      if (surplusCreditEntry.isErr()) {
-        return err(surplusCreditEntry.error);
+      if (surplusCreditEntryResult.isErr()) {
+        return err(surplusCreditEntryResult.error);
       }
 
-      creditLedgerEntries.push(surplusCreditEntry.value);
-    }
+      surplusCreditEntry = surplusCreditEntryResult.value;
 
-    const movementsToCreate = ResultUtils.combine(
-      creditLedgerEntries.map((memberLedgerEntry) =>
-        MovementEntity.create(
-          {
-            amount: memberLedgerEntry.amount,
-            category: MovementCategory.MEMBER_LEDGER,
-            date: paymentDate,
-            mode: MovementMode.AUTOMATIC,
-            notes: 'Entrada automática',
-            paymentId: payment.value.id,
-            status: MovementStatus.REGISTERED,
-          },
-          params.createdBy,
-        ),
-      ),
-    );
+      const surplusCreditMovement = MovementEntity.create(
+        {
+          amount: surplusCreditEntryResult.value.amount,
+          category: MovementCategory.MEMBER_LEDGER,
+          date: paymentDate,
+          mode: MovementMode.AUTOMATIC,
+          notes: null,
+          paymentId: payment.value.id,
+          status: MovementStatus.REGISTERED,
+        },
+        params.createdBy,
+      );
 
-    if (movementsToCreate.isErr()) {
-      return err(movementsToCreate.error);
+      if (surplusCreditMovement.isErr()) {
+        return err(surplusCreditMovement.error);
+      }
+
+      movements.push(surplusCreditMovement.value);
     }
 
     await this.unitOfWork.execute(
@@ -250,30 +264,32 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         paymentsRepository,
       }) => {
         await paymentsRepository.save(payment.value);
-        await Promise.all(
-          creditLedgerEntries.map((entry) =>
-            memberLedgerRepository.save(entry),
-          ),
-        );
+        await memberLedgerRepository.save(creditEntry.value);
         await Promise.all(
           debitLedgerEntries.map((entry) => memberLedgerRepository.save(entry)),
         );
+
+        if (surplusCreditEntry) {
+          await memberLedgerRepository.save(surplusCreditEntry);
+        }
+
         await Promise.all(dues.map((due) => duesRepository.save(due)));
         await Promise.all(
-          movementsToCreate.value.map((movement) =>
-            movementsRepository.save(movement),
-          ),
+          movements.map((movement) => movementsRepository.save(movement)),
         );
       },
     );
 
     this.eventPublisher.dispatch(payment.value);
-    creditLedgerEntries.forEach((entry) => this.eventPublisher.dispatch(entry));
+    this.eventPublisher.dispatch(creditEntry.value);
     debitLedgerEntries.forEach((entry) => this.eventPublisher.dispatch(entry));
+
+    if (surplusCreditEntry) {
+      this.eventPublisher.dispatch(surplusCreditEntry);
+    }
+
     dues.forEach((due) => this.eventPublisher.dispatch(due));
-    movementsToCreate.value.forEach((movement) =>
-      this.eventPublisher.dispatch(movement),
-    );
+    movements.forEach((movement) => this.eventPublisher.dispatch(movement));
 
     return ok(payment.value);
   }

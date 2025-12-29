@@ -6,7 +6,6 @@ import {
   MovementModeLabel,
   MovementStatus,
   MovementStatusLabel,
-  MovementTypeLabel,
   type VoidMovementDto,
 } from '@club-social/shared/movements';
 import { App, Button, Col } from 'antd';
@@ -18,6 +17,7 @@ import { $fetch } from '@/shared/lib/fetch';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
+import { NavigateToPayment } from '@/ui/NavigateToPayment';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
 import { Row } from '@/ui/Row';
@@ -89,10 +89,6 @@ export function MovementView() {
                 label: 'Categoría',
               },
               {
-                children: MovementTypeLabel[movement.type],
-                label: 'Tipo',
-              },
-              {
                 children: NumberFormat.formatCurrencyCents(movement.amount),
                 label: 'Monto',
               },
@@ -103,6 +99,16 @@ export function MovementView() {
               {
                 children: MovementModeLabel[movement.mode],
                 label: 'Modo',
+              },
+              {
+                children: movement.paymentId ? (
+                  <NavigateToPayment formatDate={false} id={movement.paymentId}>
+                    Ver pago
+                  </NavigateToPayment>
+                ) : (
+                  '-'
+                ),
+                label: 'Pago',
               },
               {
                 children: movement.notes ?? '-',
