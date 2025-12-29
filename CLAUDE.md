@@ -17,7 +17,7 @@ Club Social is a monorepo built with Turborepo containing:
 ### Root-level commands
 
 ```bash
-npm run build              # Build all apps and packages
+npm run build              # Build all apps and packages (via Turbo)
 npm run check              # Run type checking, tests, linting, and formatting
 npm run check-types        # Type check all workspaces
 npm run lint               # Lint all workspaces
@@ -29,20 +29,20 @@ npm run ncu                # Interactively update dependencies
 
 ```bash
 npm run start:dev          # Run API in development mode with watch
-npm run start:debug        # Run API in debug mode
+npm run start:debug        # Run API in debug mode with watch
+npm run start:prod         # Run production build
 npm run build              # Build the API
 npm run test               # Run unit tests
 npm run test:watch         # Run tests in watch mode
 npm run test:e2e           # Run end-to-end tests
 npm run test:cov           # Run tests with coverage
 
-# Prisma commands
+# Prisma commands (all use dotenvx for env loading)
 npm run prisma:generate    # Generate Prisma client
 npm run prisma:new         # Create and apply new migration
 npm run prisma:new:create-only  # Create migration without applying
 npm run prisma:migrate     # Apply migrations (production)
 npm run prisma:reset       # Reset database (destructive)
-npm run prisma:seed        # Seed database
 
 # Better Auth
 npm run better-auth:generate  # Generate Better Auth client
@@ -68,30 +68,30 @@ npm run dev                # Build in watch mode
 
 ### Backend (apps/api) - Domain-Driven Design
 
-The API follows a strict DDD architecture with clear separation of concerns:
+The API follows a strict DDD architecture with clear separation of concerns.
 
-#### Module Structure
+#### Domain Modules
 
-Each domain module (e.g., `members/`, `users/`) follows this structure:
+Each domain module follows this structure:
 
 ```
 module/
 ├── application/           # Application layer - use cases and orchestration
 │   ├── create-X/
-│   │   ├── create-X.use-case.ts    # Business logic orchestration
-│   │   └── create-X.params.ts      # Input parameters
+│   │   ├── create-X.use-case.ts
+│   │   └── create-X.params.ts
 │   └── update-X/
 ├── domain/                # Domain layer - business logic and rules
 │   ├── entities/
-│   │   └── X.entity.ts    # Rich domain entities with behavior
+│   │   └── X.entity.ts
 │   ├── events/
-│   │   └── X-created.event.ts     # Domain events
+│   │   └── X-created.event.ts
 │   ├── interfaces/
 │   │   └── X.interface.ts
-│   └── X.repository.ts    # Repository interface (port)
+│   └── X.repository.ts
 ├── infrastructure/        # Infrastructure layer - technical implementations
-│   ├── prisma-X.mapper.ts         # Maps between domain entities and Prisma models
-│   └── prisma-X.repository.ts     # Repository implementation (adapter)
+│   ├── prisma-X.mapper.ts
+│   └── prisma-X.repository.ts
 └── presentation/          # Presentation layer - HTTP/API concerns
     ├── dto/
     │   ├── create-X.dto.ts
@@ -100,182 +100,283 @@ module/
     └── X.controller.ts
 ```
 
+Current domain modules:
+- `members/` - Member management (includes `ledger/` subdomain for financial ledger)
+- `users/` - User management and authentication
+- `payments/` - Payment processing
+- `dues/` - Membership dues
+- `movements/` - Financial movements with status tracking
+- `pricing/` - Pricing configuration
+- `audit/` - Audit logging
+
 #### Key Architectural Patterns
 
-**1. Result Pattern**: All operations return `Result<T, E>` from neverthrow library using the file `apps/api/src/shared/domain/result.ts`
+**1. Result Pattern**: All operations return `Result<T, E>` from neverthrow library
 
-- Success: `ok(value)`
-- Failure: `err(error)`
-- Check results with `.isOk()` / `.isErr()`
-- Enables type-safe error handling without exceptions
+```typescript
+import { ok, err, Result } from '@/shared/domain/result';
 
-**2. Entity Pattern**: Domain entities extend `Entity<T>` base class
+// Success: ok(value)
+// Failure: err(error)
+// Check: .isOk() / .isErr()
+```
 
-- Rich domain models with behavior, not anemic data containers
+**2. Entity Hierarchy**: Three-level class hierarchy for domain entities
+
+```
+Entity                    # Base class with UniqueId
+  └── AggregateRoot       # Adds domain event management (addEvent, pullEvents)
+        └── AuditedAggregateRoot  # Adds audit fields (createdAt/By, updatedAt/By)
+```
+
 - Factory methods: `create()` for new entities, `fromPersistence()` for hydration
-- Built-in audit fields: `createdAt`, `createdBy`, `updatedAt`, `updatedBy`, `deletedAt`, `deletedBy`
-- Methods like `markAsUpdated()`, `delete()`, `restore()` for state changes
-- Entities emit domain events via `addEvent()` (from `AggregateRoot`)
+- Audited entities have `markAsUpdated(updatedBy: string)` method
 
-**3. Domain Events**: Events are dispatched after persistence
+**3. Value Objects**: Immutable domain concepts with validation
+
+Located in `shared/domain/value-objects/`:
+- `UniqueId` - Entity identifiers (auto-generates UUIDs)
+- `Email` - Validated email addresses
+- `Name` - Personal names
+- `Address` - Physical addresses
+- `DateOnly` - Date without time
+- `DateRange` - Start/end date pairs
+- `Amount` - Non-negative monetary values
+- `SignedAmount` - Positive or negative monetary values (for ledger entries)
+
+All use factory pattern:
+- `raw()` - Skip validation (for hydration from persistence)
+- `create()` - Validate and return `Result<ValueObject>`
+
+**4. Use Cases**: Application layer orchestration
+
+```typescript
+export abstract class UseCase<TResponse, TError extends Error> {
+  protected constructor(protected readonly logger: AppLogger) {
+    this.logger.setContext(this.constructor.name);
+  }
+
+  abstract execute(request?: unknown): Promise<Result<TResponse, TError>>;
+}
+```
+
+**5. Repository Pattern**: Abstraction over data access
+
+Base interfaces in `shared/domain/repository.ts`:
+- `ReadableRepository<T>` - findById, findByIdOrThrow, findByIds
+- `WriteableRepository<T>` - save(entity, tx?)
+- `PaginatedRepository<TData, TSummary>` - findPaginated
+
+Repositories also commonly implement:
+- `findByIdReadModel()` - Returns read model (DTO) for queries
+- `findPaginated()` - Returns read models with optional summary
+- Custom query methods returning read models
+
+**6. Unit of Work Pattern**: Atomic transactions across repositories
+
+```typescript
+interface UnitOfWork {
+  execute<T>(fn: (repos: TransactionalRepositories) => Promise<T>): Promise<T>;
+}
+
+// Available repositories in transaction:
+interface TransactionalRepositories {
+  dues: WriteableRepository<DueEntity>;
+  memberLedger: WriteableRepository<MemberLedgerEntryEntity>;
+  payments: WriteableRepository<PaymentEntity>;
+}
+
+// Inject via UNIT_OF_WORK_PROVIDER symbol
+```
+
+**7. Mappers**: Convert between domain and persistence models
+
+Located in `infrastructure/`:
+- `toDomain()` - Prisma model → Domain entity (uses `raw()` for value objects)
+- `toCreateInput()` - Domain entity → Prisma create input
+- `toUpdateInput()` - Domain entity → Prisma update input
+
+**8. Domain Events**: Events dispatched after persistence
 
 - Events defined in `domain/events/`
 - Handlers in `infrastructure/events/` use `@OnEvent()` decorator
 - Pattern: Save entity → `eventPublisher.dispatch(entity)` → handlers execute
-- Example: `MemberCreatedEvent` triggers Better Auth user creation
 
-**4. Value Objects**: Encapsulate domain concepts with validation
+**9. Error Handling**: Structured error classes
 
-- Located in `shared/domain/value-objects/`
-- Examples: `Email`, `UniqueId`, `Address`
-- Immutable and self-validating
-- Created via factory methods that return `Result<ValueObject>`
+Located in `shared/domain/errors/`:
+- `ApplicationError` - Base error class
+- `ConflictError` - Constraint violations
+- `EntityNotFoundError` - Entity not found
+- `InternalServerError` - Unexpected errors
+- `ErrorMapper` - Maps errors to HTTP responses
 
-**5. Use Cases**: Application layer orchestrates domain logic
-
-- Extend `UseCase<TResponse, TError>` base class
-- Constructor injection for dependencies
-- Single `execute()` method
-- Coordinate between repositories, entities, and domain events
-
-**6. Repository Pattern**: Abstraction over data access
-
-- Interface in `domain/` (e.g., `MemberRepository`)
-- Implementation in `infrastructure/` (e.g., `PrismaMemberRepository`)
-- Composed of: `ReadableRepository`, `WriteableRepository`, `PaginatedRepository`
-- Injected using symbols: `MEMBER_REPOSITORY_PROVIDER`
-
-**7. Mappers**: Convert between domain and persistence models
-
-- Located in `infrastructure/`
-- `toDomain()`: Prisma model → Domain entity
-- `toPersistence()`: Domain entity → Prisma model
-- Handle type conversions, value object creation, nested mappings
-
-#### Infrastructure Layer Details
-
-**Auth**: Better Auth integration for authentication
-
-- Service in `infrastructure/auth/better-auth/`
-- Configuration: `BETTER_AUTH_SECRET`, `APP_API_URL`, `BETTER_AUTH_TRUSTED_ORIGINS`
+#### Infrastructure Layer
 
 **Database**: Prisma with PostgreSQL
+- Schema: `src/infrastructure/database/prisma/schema.prisma`
+- Config: `src/infrastructure/database/prisma/prisma.config.ts`
+- Generated client: `src/infrastructure/database/prisma/generated/`
+- Unit of Work: `src/infrastructure/database/prisma/prisma-unit-of-work.ts`
 
-- Schema: `infrastructure/database/prisma/schema.prisma`
-- Generated client in `infrastructure/database/prisma/generated/`
-- Use `dotenvx run --` prefix for all Prisma commands to load environment variables
+**Auth**: Better Auth with passkey support
+- Service: `src/infrastructure/auth/better-auth/`
+- Env: `BETTER_AUTH_SECRET`, `BETTER_AUTH_TRUSTED_ORIGINS`
 
 **Config**: Type-safe configuration with `@itgorillaz/configify`
-
-- Service in `infrastructure/config/config.service.ts`
-- Validates environment variables at startup
+- Service: `src/infrastructure/config/config.service.ts`
+- Validates at startup, helper methods: `isDev`, `isLocal`, `isProd`
 
 **Logging**: Winston + Better Stack (Logtail)
-
-- Inject via `APP_LOGGER_PROVIDER`
-- Auto-context from class name in use cases
-- Configuration: `BETTER_STACK_SOURCE_TOKEN`, `BETTER_STACK_ENDPOINT`
+- Inject via `APP_LOGGER_PROVIDER` symbol
+- Interface: `error(log)`, `info(log)`, `warn(log)`, `setContext(context)`
 
 **Queue**: BullMQ for background jobs
+- Location: `src/infrastructure/queue/`
+- Requires: `REDIS_HOST`, `REDIS_PORT`
 
-- Located in `infrastructure/queue/`
+**Email**: Multiple providers
+- Resend and Nodemailer support
+- Queue-based: `EmailQueueService`, `EmailProcessor`
 
-**Events**: NestJS Event Emitter for domain events
+**CSV**: Data export/import
+- Service: `src/infrastructure/csv/`
 
-- Event handlers in `infrastructure/events/`
+**Trace**: Request tracing
+- Middleware and service for trace ID management
 
-**Storage**: ClsService for request-scoped storage
+**Storage**: ClsService (nestjs-cls) for request-scoped data
 
-- Access request context (headers, user info) anywhere in the request lifecycle
-
-**Observability**: Sentry for error tracking and performance monitoring
-
-- Configuration: `SENTRY_DSN`
-- Source maps uploaded via `npm run sentry:sourcemaps`
+**Observability**: Sentry integration
+- Error tracking and performance monitoring
+- Source maps via `npm run sentry:sourcemaps`
 
 ### Frontend (apps/web)
 
-Built with React 19, React Router 7, and TanStack Query:
+Built with React 19, React Router 7, and TanStack Query.
+
+#### Structure
+
+```
+src/
+├── app/                   # App shell, context, theme, routing
+├── shared/                # Shared utilities and API client
+├── ui/                    # Reusable UI components
+├── auth/                  # Authentication
+├── members/               # Member management
+├── member-ledger/         # Member financial ledger
+├── payments/              # Payments
+├── dues/                  # Membership dues
+├── movements/             # Financial movements
+├── pricing/               # Pricing configuration
+├── audit-logs/            # Audit log viewer
+├── profile/               # User profile
+└── home/                  # Dashboard
+```
+
+#### Key Patterns
 
 - **Routing**: React Router with file-based routing
-- **State Management**: TanStack Query for server state
-- **UI Framework**: Ant Design components
-- **Styling**: Tailwind CSS v4 with `clsx` and `tailwind-merge` utilities
-- **Auth**: Better Auth client integration
-- **Type Safety**: Shared types from `@club-social/shared` package
+- **Server State**: TanStack Query with `@lukemorales/query-key-factory`
+- **UI Framework**: Ant Design v6 components
+- **Styling**: Tailwind CSS v4 with `clsx` and `tailwind-merge`
+- **Theme**: AppContext with theme/mode management, localStorage persistence
+- **Date Handling**: dayjs with plugins and Spanish locale
+- **Auth**: Better Auth client with passkey support
 
 ### Shared Package
 
-The `packages/shared` package contains:
+The `packages/shared` package provides types shared between API and web.
 
-- TypeScript types and enums shared between API and web
-- Organized by domain: `roles/`, `users/`, `members/`
-- Built with tsup for dual CJS/ESM output
-- Must be built before dependent packages can run tests
+#### Exports (conditional exports pattern)
+
+```typescript
+import { ... } from '@club-social/shared/members';
+import { ... } from '@club-social/shared/users';
+import { ... } from '@club-social/shared/dues';
+import { ... } from '@club-social/shared/payments';
+import { ... } from '@club-social/shared/movements';
+import { ... } from '@club-social/shared/pricing';
+import { ... } from '@club-social/shared/audit-logs';
+import { ... } from '@club-social/shared/roles';
+import { ... } from '@club-social/shared/types';
+import { ... } from '@club-social/shared/lib';
+```
+
+Built with tsup for dual CJS/ESM output. Must be built before dependent packages.
 
 ## Important Patterns and Conventions
 
 ### Creating New Domain Modules
 
-When adding a new domain module, follow the DDD structure:
-
 1. **Domain Layer First**:
-   - Define entity in `domain/entities/` extending `Entity<T>`
-   - Create repository interface in `domain/` composing base repository interfaces
-   - Add domain events in `domain/events/`
-   - Define value objects if needed
+   - Define entity extending `AuditedAggregateRoot`
+   - Create repository interface composing base interfaces
+   - Add domain events if needed
+   - Define value objects for domain concepts
 
 2. **Application Layer**:
    - Create use case extending `UseCase<TResponse, TError>`
-   - Define params interface for input validation
+   - Define params interface for input
    - Inject repository via provider symbol
    - Return `Result<T>` for all operations
 
 3. **Infrastructure Layer**:
-   - Implement Prisma mapper with `toDomain()` and `toPersistence()`
-   - Implement repository interface
+   - Implement mapper with `toDomain()`, `toCreateInput()`, `toUpdateInput()`
+   - Implement repository
    - Register in module providers
-   - Create event handlers if needed
+   - Add event handlers if needed
 
 4. **Presentation Layer**:
    - Create DTOs with `class-validator` decorators
-   - Implement controller with proper HTTP semantics
-   - Document with Swagger decorators
+   - Implement controller with Swagger decorators
    - Handle Result unwrapping and error responses
+
+### Module Exports
+
+Modules export specific use cases for cross-module use:
+```typescript
+@Module({
+  exports: [CreateMemberUseCase],
+})
+export class MembersModule {}
+```
 
 ### Database Changes
 
 1. Update `schema.prisma`
 2. Run `npm run prisma:new:create-only` to generate migration
 3. Review generated SQL in `prisma/migrations/`
-4. Apply with `npm run prisma:new` or modify and then apply
-5. Update mappers and entities accordingly
+4. Apply with `npm run prisma:new`
+5. Update mappers and entities
 
 ### Shared Types
-
-When adding types used by both API and web:
 
 1. Add to appropriate domain in `packages/shared/src/`
 2. Export from domain's `index.ts`
 3. Run `npm run build` in `packages/shared`
-4. Import in API: `@club-social/shared/domain-name`
-5. Import in web: `@club-social/shared/domain-name`
+4. Import: `@club-social/shared/domain-name`
 
 ## Environment Variables
 
-Critical environment variables (see `.env.example` files):
+Critical variables (see `.env.example` files):
 
 - `DATABASE_URI`: PostgreSQL connection string
 - `BETTER_AUTH_SECRET`: Auth encryption secret
-- `APP_API_URL`: Backend URL for auth callbacks
-- `BETTER_AUTH_TRUSTED_ORIGINS`: Allowed frontend origins (CORS)
-- `SENTRY_DSN`: Error tracking endpoint
-- `BETTER_STACK_SOURCE_TOKEN`: Logging service token
-- `RESEND_API_KEY`: Email service API key
+- `BETTER_AUTH_TRUSTED_ORIGINS`: Allowed frontend origins (comma-separated)
+- `ADMIN_USER_EMAIL`: Admin user email
+- `APP_DISPLAY_NAME`: Application display name
+- `APP_DOMAIN`: Application domain
+- `ENVIRONMENT`: local | development | production
+- `REDIS_HOST`, `REDIS_PORT`: Redis for BullMQ
+- `EMAIL_SMTP_HOST`, `EMAIL_SMTP_PORT`: SMTP configuration
+- `RESEND_API_KEY`: Resend email service
+- `BETTER_STACK_SOURCE_TOKEN`, `BETTER_STACK_ENDPOINT`: Logging
+- `SENTRY_DSN`: Error tracking
 
 ## Testing
 
 - Unit tests: `*.spec.ts` files alongside source
 - E2E tests: `*.e2e-spec.ts` in `apps/api/test/`
-- Test configuration in `jest` section of `package.json`
-- Run single test file: `npm test -- path/to/file.spec.ts`
+- Run single test: `npm test -- path/to/file.spec.ts`
+- Coverage: `npm run test:cov`
