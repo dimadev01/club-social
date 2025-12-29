@@ -22,6 +22,7 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
+import { LedgerIcon } from '@/ui/Icons/LedgerIcon';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
@@ -226,6 +227,18 @@ export function MemberListPage() {
                     }}
                   >
                     <Button icon={<PaymentsIcon />} type="text" />
+                  </Link>
+                </Tooltip>
+                <Tooltip title="Ver libro mayor">
+                  <Link
+                    to={{
+                      pathname: appRoutes.memberLedger.list,
+                      search: new URLSearchParams({
+                        filters: `memberId:${record.id}`,
+                      }).toString(),
+                    }}
+                  >
+                    <Button icon={<LedgerIcon />} type="text" />
                   </Link>
                 </Tooltip>
               </Space.Compact>
