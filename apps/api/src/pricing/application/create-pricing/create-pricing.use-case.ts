@@ -1,3 +1,5 @@
+import { DueCategory } from '@club-social/shared/dues';
+import { MemberCategory } from '@club-social/shared/members';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
@@ -17,7 +19,13 @@ import { err, ok, ResultUtils } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 
-import type { CreatePricingParams } from './create-pricing.params';
+interface CreatePricingParams {
+  amount: number;
+  createdBy: string;
+  dueCategory: DueCategory;
+  effectiveFrom: string;
+  memberCategory: MemberCategory;
+}
 
 export class CreatePricingUseCase extends UseCase<PricingEntity> {
   public constructor(

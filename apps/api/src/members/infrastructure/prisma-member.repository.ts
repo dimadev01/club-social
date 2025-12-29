@@ -1,5 +1,13 @@
 import { DueCategory, DueStatus } from '@club-social/shared/dues';
 import {
+  FileStatus,
+  MaritalStatus,
+  MemberCategory,
+  MemberNationality,
+  MemberSex,
+  MemberStatus,
+} from '@club-social/shared/members';
+import {
   ExportDataDto,
   GetPaginatedDataDto,
   PaginatedDataResultDto,
@@ -14,22 +22,20 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-type MemberWithUser = MemberGetPayload<{ include: { user: true } }>;
-type MemberWithUserAndDues = MemberGetPayload<{
-  include: { dues: { include: { settlements: true } }; user: true };
-}>;
-
 import { MemberEntity } from '../domain/entities/member.entity';
-import { MemberRepository } from '../domain/member.repository';
 import {
-  MemberDetailModel,
-  MemberPaginatedExtraModel,
-  MemberPaginatedModel,
-  MemberSearchModel,
+  MemberPaginatedExtraReadModel,
+  MemberPaginatedReadModel,
+  MemberReadModel,
   MemberSearchParams,
-} from '../domain/member.types';
+  MemberSearchReadModel,
+} from '../domain/member-read-models';
+import { MemberRepository } from '../domain/member.repository';
+
+type MemberPayload = MemberGetPayload<{ include: { user: true } }>;
 
 @Injectable()
 export class PrismaMemberRepository implements MemberRepository {
@@ -58,6 +64,22 @@ export class PrismaMemberRepository implements MemberRepository {
     return this.mapper.member.toDomain(member);
   }
 
+  public async findByIdReadModel(
+    id: UniqueId,
+  ): Promise<MemberReadModel | null> {
+    const member: MemberPayload | null =
+      await this.prismaService.member.findUnique({
+        include: { user: true },
+        where: { id: id.value },
+      });
+
+    if (!member) {
+      return null;
+    }
+
+    return this.toReadModel(member);
+  }
+
   public async findByIds(ids: UniqueId[]): Promise<MemberEntity[]> {
     const members = await this.prismaService.member.findMany({
       where: {
@@ -70,7 +92,7 @@ export class PrismaMemberRepository implements MemberRepository {
 
   public async findForExport(
     params: ExportDataDto,
-  ): Promise<MemberPaginatedModel[]> {
+  ): Promise<MemberPaginatedReadModel[]> {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const members = await this.prismaService.member.findMany({
@@ -83,50 +105,25 @@ export class PrismaMemberRepository implements MemberRepository {
       members.map((m) => m.id),
     );
 
-    return members.map((member) => {
-      const memberDues = duesByMemberAndCategory.get(member.id);
-
-      return {
-        electricityTotalDueAmount:
-          memberDues?.get(DueCategory.ELECTRICITY) ?? 0,
-        guestTotalDueAmount: memberDues?.get(DueCategory.GUEST) ?? 0,
-        member: this.mapper.member.toDomain(member),
-        memberShipTotalDueAmount: memberDues?.get(DueCategory.MEMBERSHIP) ?? 0,
-        user: this.mapper.user.toDomain(member.user),
-      };
-    });
-  }
-
-  public async findOneModel(id: UniqueId): Promise<MemberDetailModel | null> {
-    const member: MemberWithUserAndDues | null =
-      await this.prismaService.member.findUnique({
-        include: { dues: { include: { settlements: true } }, user: true },
-        where: { id: id.value },
-      });
-
-    if (!member) {
-      return null;
-    }
-
-    return {
-      dues: member.dues.map((due) => this.mapper.due.toDomain(due)),
-      member: this.mapper.member.toDomain(member),
-      payments: [],
-      user: this.mapper.user.toDomain(member.user),
-    };
+    return members.map((member) =>
+      this.toPaginatedReadModel(member, duesByMemberAndCategory),
+    );
   }
 
   public async findPaginated(
     params: GetPaginatedDataDto,
   ): Promise<
-    PaginatedDataResultDto<MemberPaginatedModel, MemberPaginatedExtraModel>
+    PaginatedDataResultDto<
+      MemberPaginatedReadModel,
+      MemberPaginatedExtraReadModel
+    >
   > {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     // Check if sorting by a due category field
     const dueSortField = this.extractDueSortField(params);
 
-    let members: MemberWithUser[];
+    let members: MemberPayload[];
     let total: number;
 
     if (dueSortField) {
@@ -161,19 +158,9 @@ export class PrismaMemberRepository implements MemberRepository {
     const totals = this.calculateTotalsByCategory(duesByMemberAndCategory);
 
     return {
-      data: members.map((member) => {
-        const memberDues = duesByMemberAndCategory.get(member.id);
-
-        return {
-          electricityTotalDueAmount:
-            memberDues?.get(DueCategory.ELECTRICITY) ?? 0,
-          guestTotalDueAmount: memberDues?.get(DueCategory.GUEST) ?? 0,
-          member: this.mapper.member.toDomain(member),
-          memberShipTotalDueAmount:
-            memberDues?.get(DueCategory.MEMBERSHIP) ?? 0,
-          user: this.mapper.user.toDomain(member.user),
-        };
-      }),
+      data: members.map((member) =>
+        this.toPaginatedReadModel(member, duesByMemberAndCategory),
+      ),
       extra: {
         electricityTotalDueAmount: totals[DueCategory.ELECTRICITY],
         guestTotalDueAmount: totals[DueCategory.GUEST],
@@ -196,7 +183,7 @@ export class PrismaMemberRepository implements MemberRepository {
 
   public async search(
     params: MemberSearchParams,
-  ): Promise<MemberSearchModel[]> {
+  ): Promise<MemberSearchReadModel[]> {
     const members = await this.prismaService.member.findMany({
       include: { user: true },
       orderBy: [{ user: { lastName: 'asc' } }, { user: { firstName: 'asc' } }],
@@ -226,8 +213,10 @@ export class PrismaMemberRepository implements MemberRepository {
     });
 
     return members.map((member) => ({
-      member: this.mapper.member.toDomain(member),
-      user: this.mapper.user.toDomain(member.user),
+      category: member.category as MemberCategory,
+      id: member.id,
+      name: `${member.user.firstName} ${member.user.lastName}`,
+      status: member.status as MemberStatus,
     }));
   }
 
@@ -349,7 +338,10 @@ export class PrismaMemberRepository implements MemberRepository {
     page: number;
     pageSize: number;
     where: MemberWhereInput;
-  }): Promise<{ members: MemberWithUser[]; total: number }> {
+  }): Promise<{
+    members: MemberPayload[];
+    total: number;
+  }> {
     // Get all matching member IDs
     const allMembers = await this.prismaService.member.findMany({
       select: { id: true },
@@ -397,13 +389,66 @@ export class PrismaMemberRepository implements MemberRepository {
     });
 
     // Re-sort to match the order (Prisma returns in arbitrary order)
-    const memberMap = new Map<string, MemberWithUser>(
+    const memberMap = new Map<string, MemberPayload>(
       fetchedMembers.map((m) => [m.id, m]),
     );
     const members = paginatedMemberIdsToFetch.map(
-      (id) => memberMap.get(id) as MemberWithUser,
+      (id) => memberMap.get(id) as MemberPayload,
     );
 
     return { members, total: totalMembersCount };
+  }
+
+  private toPaginatedReadModel(
+    member: MemberPayload,
+    duesByMemberAndCategory: Map<string, Map<DueCategory, number>>,
+  ): MemberPaginatedReadModel {
+    const memberDues = duesByMemberAndCategory.get(member.id);
+
+    return {
+      category: member.category as MemberCategory,
+      electricityTotalDueAmount: memberDues?.get(DueCategory.ELECTRICITY) ?? 0,
+      email: member.user.email,
+      guestTotalDueAmount: memberDues?.get(DueCategory.GUEST) ?? 0,
+      id: member.id,
+      memberShipTotalDueAmount: memberDues?.get(DueCategory.MEMBERSHIP) ?? 0,
+      name: Name.raw({
+        firstName: member.user.firstName,
+        lastName: member.user.lastName,
+      }).fullName,
+      status: member.status as MemberStatus,
+    };
+  }
+
+  private toReadModel(model: MemberPayload): MemberReadModel {
+    return {
+      address:
+        model.street || model.cityName || model.stateName || model.zipCode
+          ? {
+              cityName: model.cityName,
+              stateName: model.stateName,
+              street: model.street,
+              zipCode: model.zipCode,
+            }
+          : null,
+      birthDate: model.birthDate,
+      category: model.category as MemberCategory,
+      documentID: model.documentID,
+      email: model.user.email,
+      fileStatus: model.fileStatus as FileStatus,
+      firstName: model.user.firstName,
+      id: model.id,
+      lastName: model.user.lastName,
+      maritalStatus: model.maritalStatus as MaritalStatus | null,
+      name: Name.raw({
+        firstName: model.user.firstName,
+        lastName: model.user.lastName,
+      }).fullName,
+      nationality: model.nationality as MemberNationality | null,
+      phones: model.phones,
+      sex: model.sex as MemberSex | null,
+      status: model.status as MemberStatus,
+      userId: model.userId,
+    };
   }
 }

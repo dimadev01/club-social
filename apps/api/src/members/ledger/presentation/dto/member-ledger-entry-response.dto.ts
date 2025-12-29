@@ -1,11 +1,11 @@
 import {
-  type IMemberLedgerEntryDetailDto,
+  MemberLedgerEntryDto,
   type MemberLedgerEntrySource,
   type MemberLedgerEntryStatus,
   type MemberLedgerEntryType,
 } from '@club-social/shared/members';
 
-export class MemberLedgerEntryDetailDto implements IMemberLedgerEntryDetailDto {
+export class MemberLedgerEntryDetailResponseDto implements MemberLedgerEntryDto {
   public amount: number;
   public createdAt: string;
   public createdBy: string;

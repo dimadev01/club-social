@@ -1,11 +1,17 @@
 import {
-  IMemberPaginatedDto,
-  IMemberPaginatedExtraDto,
   MemberCategory,
+  MemberPaginatedDto,
+  MemberPaginatedExtraDto,
+  MemberStatus,
 } from '@club-social/shared/members';
-import { UserStatus } from '@club-social/shared/users';
 
-export class MemberPaginatedDto implements IMemberPaginatedDto {
+export class MemberPaginatedExtraResponseDto implements MemberPaginatedExtraDto {
+  public electricityTotalDueAmount: number;
+  public guestTotalDueAmount: number;
+  public memberShipTotalDueAmount: number;
+}
+
+export class MemberPaginatedResponseDto implements MemberPaginatedDto {
   public category: MemberCategory;
   public electricityTotalDueAmount: number;
   public email: string;
@@ -13,11 +19,5 @@ export class MemberPaginatedDto implements IMemberPaginatedDto {
   public id: string;
   public memberShipTotalDueAmount: number;
   public name: string;
-  public userStatus: UserStatus;
-}
-
-export class MemberPaginatedExtraDto implements IMemberPaginatedExtraDto {
-  public electricityTotalDueAmount: number;
-  public guestTotalDueAmount: number;
-  public memberShipTotalDueAmount: number;
+  public status: MemberStatus;
 }

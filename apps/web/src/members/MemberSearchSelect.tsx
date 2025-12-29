@@ -1,12 +1,12 @@
-import type { IMemberSearchResultDto } from '@club-social/shared/members';
 import type { SelectProps } from 'antd';
 import type { BaseOptionType } from 'antd/es/select';
 
 import {
-  UserStatus,
-  UserStatusLabel,
-  UserStatusSort,
-} from '@club-social/shared/users';
+  type MemberSearchResultDto,
+  MemberStatus,
+  MemberStatusLabel,
+  MemberStatusSort,
+} from '@club-social/shared/members';
 import { Select } from 'antd';
 import { groupBy } from 'es-toolkit/array';
 import { useCallback, useMemo, useState } from 'react';
@@ -15,9 +15,9 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useMemberSearch } from './useMemberSearch';
 
 export interface MemberSearchSelectProps extends SelectProps {
-  additionalOptions?: IMemberSearchResultDto[];
+  additionalOptions?: MemberSearchResultDto[];
   defaultIds?: string[];
-  onMembersChange?: (members?: IMemberSearchResultDto[]) => void;
+  onMembersChange?: (members?: MemberSearchResultDto[]) => void;
 }
 
 export function MemberSearchSelect({
@@ -41,7 +41,7 @@ export function MemberSearchSelect({
   }, 300);
 
   const options = useMemo(() => {
-    const resultMap = new Map<string, IMemberSearchResultDto>();
+    const resultMap = new Map<string, MemberSearchResultDto>();
 
     additionalOptions?.forEach((opt) => resultMap.set(opt.id, opt));
 
@@ -59,7 +59,7 @@ export function MemberSearchSelect({
     const groupedOptions: SelectProps['options'] = Object.entries(
       groupedByStatus,
     ).map(([status, members]) => ({
-      label: `${UserStatusLabel[status as UserStatus]} (${members.length})`,
+      label: `${MemberStatusLabel[status as MemberStatus]} (${members.length})`,
       options: members.map((member) => ({
         label: member.name,
         value: member.id,
@@ -81,8 +81,8 @@ export function MemberSearchSelect({
   const filterSort = useCallback(
     (optionA: BaseOptionType, optionB: BaseOptionType) => {
       return (
-        UserStatusSort[optionA.value as UserStatus] -
-        UserStatusSort[optionB.value as UserStatus]
+        MemberStatusSort[optionA.value as MemberStatus] -
+        MemberStatusSort[optionB.value as MemberStatus]
       );
     },
     [],

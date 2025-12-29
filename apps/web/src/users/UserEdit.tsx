@@ -1,4 +1,4 @@
-import type { IUpdateUserDto } from '@club-social/shared/users';
+import type { UpdateUserDto } from '@club-social/shared/users';
 
 import { App } from 'antd';
 import { useNavigate, useParams } from 'react-router';
@@ -21,7 +21,7 @@ export function UserEdit() {
 
   const { data: user, isLoading } = useUser(id);
 
-  const updateUserMutation = useMutation<unknown, Error, IUpdateUserDto>({
+  const updateUserMutation = useMutation<unknown, Error, UpdateUserDto>({
     mutationFn: (body) => $fetch(`users/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       message.success('Usuario actualizado correctamente');

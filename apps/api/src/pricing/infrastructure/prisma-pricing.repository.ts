@@ -50,11 +50,7 @@ export class PrismaPricingRepository implements PricingRepository {
       where: { deletedAt: null, id: id.value },
     });
 
-    if (!pricing) {
-      return null;
-    }
-
-    return this.mapper.toDomain(pricing);
+    return pricing ? this.mapper.toDomain(pricing) : null;
   }
 
   public async findByIdOrThrow(id: UniqueId): Promise<PricingEntity> {

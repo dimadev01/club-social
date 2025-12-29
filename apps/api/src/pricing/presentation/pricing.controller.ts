@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Inject,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -21,7 +22,7 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
+import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePricingUseCase } from '../application/create-pricing/create-pricing.use-case';
 import { FindActivePricingUseCase } from '../application/find-active-pricing/find-active-pricing.use-case';
@@ -33,8 +34,8 @@ import {
 } from '../domain/pricing.repository';
 import { CreatePricingRequestDto } from './dto/create-pricing.dto';
 import { FindActivePricingRequestDto } from './dto/find-active-pricing.dto';
-import { PricingDetailDto } from './dto/pricing-detail.dto';
 import { PricingPaginatedDto } from './dto/pricing-paginated.dto';
+import { PricingResponseDto } from './dto/pricing-response.dto';
 import { UpdatePricingRequestDto } from './dto/update-pricing.dto';
 
 @Controller('pricing')
@@ -55,7 +56,7 @@ export class PricingController extends BaseController {
   public async create(
     @Body() body: CreatePricingRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdRequestDto> {
+  ): Promise<ParamIdReqResDto> {
     const { id } = this.handleResult(
       await this.createPricingUseCase.execute({
         amount: body.amount,
@@ -71,7 +72,7 @@ export class PricingController extends BaseController {
 
   @Patch(':id')
   public async update(
-    @Param() request: ParamIdRequestDto,
+    @Param() request: ParamIdReqResDto,
     @Body() body: UpdatePricingRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -88,7 +89,7 @@ export class PricingController extends BaseController {
   @Get('active')
   public async getActive(
     @Query() query: FindActivePricingRequestDto,
-  ): Promise<null | PricingDetailDto> {
+  ): Promise<null | PricingResponseDto> {
     const pricing = this.handleResult(
       await this.findActivePricingUseCase.execute({
         dueCategory: query.dueCategory,
@@ -127,19 +128,23 @@ export class PricingController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() request: ParamIdRequestDto,
-  ): Promise<PricingDetailDto> {
-    const pricing = await this.pricingRepository.findByIdOrThrow(
+    @Param() request: ParamIdReqResDto,
+  ): Promise<PricingResponseDto> {
+    const pricing = await this.pricingRepository.findById(
       UniqueId.raw({ value: request.id }),
     );
+
+    if (!pricing) {
+      throw new NotFoundException();
+    }
 
     return this.toDetailDto(pricing);
   }
 
-  private toDetailDto(pricing: PricingEntity): PricingDetailDto {
-    Guard.string(pricing.createdAt);
+  private toDetailDto(pricing: PricingEntity): PricingResponseDto {
+    Guard.date(pricing.createdAt);
     Guard.string(pricing.createdBy);
-    Guard.string(pricing.updatedAt);
+    Guard.date(pricing.updatedAt);
 
     return {
       amount: pricing.amount.toCents(),

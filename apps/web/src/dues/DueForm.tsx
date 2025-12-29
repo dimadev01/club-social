@@ -1,4 +1,4 @@
-import type { IMemberSearchResultDto } from '@club-social/shared/members';
+import type { MemberSearchResultDto } from '@club-social/shared/members';
 import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
@@ -23,7 +23,7 @@ export interface DueFormData {
 export type DueFormInitialValues = Partial<DueFormData>;
 
 interface DueFormProps {
-  additionalMemberOptions?: IMemberSearchResultDto[];
+  additionalMemberOptions?: MemberSearchResultDto[];
   disabled?: boolean;
   initialValues?: DueFormInitialValues;
   loading?: boolean;
@@ -40,7 +40,7 @@ export function DueForm({
   onSubmit,
 }: DueFormProps) {
   const [selectedFirstMember, setSelectedFirstMember] =
-    useState<IMemberSearchResultDto>();
+    useState<MemberSearchResultDto>();
 
   const [form] = Form.useForm<DueFormData>();
   const { setFieldValue } = form;

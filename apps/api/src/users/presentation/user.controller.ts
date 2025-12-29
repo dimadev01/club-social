@@ -22,7 +22,7 @@ import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
 import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
+import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateUserUseCase } from '../application/create-user.use-case';
 import { UpdateUserUseCase } from '../application/update-user.use-case';
@@ -32,25 +32,43 @@ import {
 } from '../domain/user.repository';
 import { CreateUserRequestDto } from './dto/create-user.dto';
 import { UpdateUserRequestDto } from './dto/update-user.dto';
-import { UserDetailDto } from './dto/user-detail.dto';
-import { UserPaginatedDto } from './dto/user-paginated.dto';
+import { UserPaginatedResponseDto } from './dto/user-paginated.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Controller('users')
 export class UsersController extends BaseController {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    private readonly createUserUseCase: CreateUserUseCase,
-    private readonly updateUserUseCase: UpdateUserUseCase,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
+    private readonly createUserUseCase: CreateUserUseCase,
+    private readonly updateUserUseCase: UpdateUserUseCase,
   ) {
     super(logger);
   }
 
+  @Post()
+  public async create(
+    @Body() createUserDto: CreateUserRequestDto,
+    @Session() session: AuthSession,
+  ): Promise<ParamIdReqResDto> {
+    const { id } = this.handleResult(
+      await this.createUserUseCase.execute({
+        createdBy: session.user.name,
+        email: createUserDto.email,
+        firstName: createUserDto.firstName,
+        lastName: createUserDto.lastName,
+        role: UserRole.STAFF,
+      }),
+    );
+
+    return { id: id.value };
+  }
+
   @Patch(':id')
   public async update(
-    @Param() request: ParamIdRequestDto,
+    @Param() request: ParamIdReqResDto,
     @Body() body: UpdateUserRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -66,29 +84,11 @@ export class UsersController extends BaseController {
     );
   }
 
-  @Post()
-  public async create(
-    @Body() createUserDto: CreateUserRequestDto,
-    @Session() session: AuthSession,
-  ): Promise<ParamIdRequestDto> {
-    const { id } = this.handleResult(
-      await this.createUserUseCase.execute({
-        createdBy: session.user.name,
-        email: createUserDto.email,
-        firstName: createUserDto.firstName,
-        lastName: createUserDto.lastName,
-        role: UserRole.STAFF,
-      }),
-    );
-
-    return { id: id.value };
-  }
-
-  @ApiPaginatedResponse(UserPaginatedDto)
+  @ApiPaginatedResponse(UserPaginatedResponseDto)
   @Get('paginated')
   public async getPaginated(
     @Query() query: GetPaginatedDataRequestDto,
-  ): Promise<PaginatedDataResponseDto<UserPaginatedDto>> {
+  ): Promise<PaginatedDataResponseDto<UserPaginatedResponseDto>> {
     const users = await this.userRepository.findPaginated({
       filters: query.filters,
       page: query.page,
@@ -110,8 +110,8 @@ export class UsersController extends BaseController {
 
   @Get(':id')
   public async get(
-    @Param() request: ParamIdRequestDto,
-  ): Promise<UserDetailDto> {
+    @Param() request: ParamIdReqResDto,
+  ): Promise<UserResponseDto> {
     const user = await this.userRepository.findById(
       UniqueId.raw({ value: request.id }),
     );

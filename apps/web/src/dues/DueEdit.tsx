@@ -1,5 +1,5 @@
 import type { UpdateDueDto } from '@club-social/shared/dues';
-import type { IMemberSearchResultDto } from '@club-social/shared/members';
+import type { MemberSearchResultDto } from '@club-social/shared/members';
 
 import { DueStatus } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
@@ -56,7 +56,7 @@ export function DueEdit() {
 
   const isMutating = updateDueMutation.isPending;
 
-  const memberAdditionalOptions: IMemberSearchResultDto[] = [
+  const memberAdditionalOptions: MemberSearchResultDto[] = [
     {
       category: due.member.category,
       id: due.member.id,

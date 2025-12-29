@@ -33,7 +33,7 @@ import {
   type UserRepository,
 } from '@/users/domain/user.repository';
 
-export interface CreateMemberParams {
+interface CreateMemberParams {
   address: Address | null;
   birthDate: null | string;
   category: MemberCategory;

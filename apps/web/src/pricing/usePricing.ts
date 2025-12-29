@@ -1,4 +1,4 @@
-import type { IPricingDetailDto } from '@club-social/shared/pricing';
+import type { PricingDto } from '@club-social/shared/pricing';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -11,6 +11,6 @@ export function usePricing(id?: string) {
   return useQuery({
     ...queryKeys.pricing.detail(id),
     enabled: !!id && permissions.pricing.get,
-    queryFn: () => $fetch<IPricingDetailDto>(`pricing/${id}`),
+    queryFn: () => $fetch<PricingDto>(`pricing/${id}`),
   });
 }

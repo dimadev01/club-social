@@ -10,6 +10,15 @@ export const MemberStatusLabel = {
   [MemberStatus.INACTIVE]: 'Inactivo',
 } as const;
 
+export const MemberStatusSort = {
+  [MemberStatus.ACTIVE]: 1,
+  [MemberStatus.INACTIVE]: 2,
+} as const;
+
+export const MemberStatusSorted = Object.values(MemberStatus).sort(
+  (a, b) => MemberStatusSort[a] - MemberStatusSort[b],
+);
+
 export const MemberCategory = {
   ADHERENT_MEMBER: 'adherent-member',
   CADET: 'cadet',

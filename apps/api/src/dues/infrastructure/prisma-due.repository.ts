@@ -9,7 +9,7 @@ import {
   DueSettlementStatus,
   DueStatus,
 } from '@club-social/shared/dues';
-import { MemberStatus } from '@club-social/shared/members';
+import { MemberCategory, MemberStatus } from '@club-social/shared/members';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -266,6 +266,7 @@ export class PrismaDueRepository implements DueRepository {
       date: due.date,
       id: due.id,
       member: {
+        category: due.member.category as MemberCategory,
         id: due.member.id,
         name: Name.raw({
           firstName: due.member.user.firstName,
@@ -303,6 +304,7 @@ export class PrismaDueRepository implements DueRepository {
       })),
       id: due.id,
       member: {
+        category: due.member.category as MemberCategory,
         id: due.member.id,
         name: Name.raw({
           firstName: due.member.user.firstName,

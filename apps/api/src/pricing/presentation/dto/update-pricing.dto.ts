@@ -1,4 +1,4 @@
-import { IUpdatePricingDto } from '@club-social/shared/pricing';
+import { UpdatePricingDto } from '@club-social/shared/pricing';
 import {
   IsDateString,
   IsInt,
@@ -7,7 +7,7 @@ import {
   IsPositive,
 } from 'class-validator';
 
-export class UpdatePricingRequestDto implements IUpdatePricingDto {
+export class UpdatePricingRequestDto implements UpdatePricingDto {
   @IsInt()
   @IsNotEmpty()
   @IsNumber()

@@ -1,4 +1,4 @@
-import type { IMemberLedgerEntryDetailDto } from '@club-social/shared/members';
+import type { MemberLedgerEntryDto } from '@club-social/shared/members';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -8,6 +8,6 @@ export function useMemberLedgerEntry(id?: string) {
   return useQuery({
     ...queryKeys.memberLedger.detail(id),
     enabled: !!id,
-    queryFn: () => $fetch<IMemberLedgerEntryDetailDto>(`/member-ledger/${id}`),
+    queryFn: () => $fetch<MemberLedgerEntryDto>(`/member-ledger/${id}`),
   });
 }

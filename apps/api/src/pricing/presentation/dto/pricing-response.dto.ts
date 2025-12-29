@@ -1,8 +1,8 @@
 import { DueCategory } from '@club-social/shared/dues';
 import { MemberCategory } from '@club-social/shared/members';
-import { IPricingDetailDto } from '@club-social/shared/pricing';
+import { PricingDto } from '@club-social/shared/pricing';
 
-export class PricingDetailDto implements IPricingDetailDto {
+export class PricingResponseDto implements PricingDto {
   public amount: number;
   public createdAt: string;
   public createdBy: string;

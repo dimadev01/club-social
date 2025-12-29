@@ -1,7 +1,7 @@
-import { IUserPaginatedDto, UserRole } from '@club-social/shared/users';
+import { UserPaginatedDto, UserRole } from '@club-social/shared/users';
 import { UserStatus } from '@club-social/shared/users';
 
-export class UserPaginatedDto implements IUserPaginatedDto {
+export class UserPaginatedResponseDto implements UserPaginatedDto {
   public email: string;
   public id: string;
   public name: string;

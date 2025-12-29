@@ -1,4 +1,4 @@
-import type { IUserDetailDto } from '@club-social/shared/users';
+import type { UserDto } from '@club-social/shared/users';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -12,6 +12,6 @@ export function useUser(id?: string) {
   return useQuery({
     ...queryKeys.users.detail(id),
     enabled: !!id && permissions.users.get,
-    queryFn: () => $fetch<IUserDetailDto>(`users/${id}`),
+    queryFn: () => $fetch<UserDto>(`users/${id}`),
   });
 }

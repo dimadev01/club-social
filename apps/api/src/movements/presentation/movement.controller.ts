@@ -30,7 +30,7 @@ import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-pagin
 import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
 import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
+import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateMovementUseCase } from '../application/create-movement/create-movement.use-case';
 import { VoidMovementUseCase } from '../application/void-movement/void-movement.use-case';
@@ -39,11 +39,11 @@ import {
   type MovementRepository,
 } from '../domain/movement.repository';
 import { CreateMovementRequestDto } from './dto/create-movement.dto';
-import { MovementResponseDto } from './dto/movement-detail.dto';
 import {
   MovementPaginatedExtraResponseDto,
   MovementPaginatedResponseDto,
 } from './dto/movement-paginated.dto';
+import { MovementResponseDto } from './dto/movement-response.dto';
 import {
   MovementStatisticsQueryRequestDto,
   MovementStatisticsResponseDto,
@@ -68,7 +68,7 @@ export class MovementsController extends BaseController {
   public async create(
     @Body() body: CreateMovementRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdRequestDto> {
+  ): Promise<ParamIdReqResDto> {
     const { id } = this.handleResult(
       await this.createMovementUseCase.execute({
         amount: body.amount,
@@ -186,7 +186,7 @@ export class MovementsController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() params: ParamIdRequestDto,
+    @Param() params: ParamIdReqResDto,
   ): Promise<MovementResponseDto> {
     const movement = await this.movementRepository.findByIdReadModel(
       UniqueId.raw({ value: params.id }),
@@ -218,7 +218,7 @@ export class MovementsController extends BaseController {
 
   @Patch(':id/void')
   public async void(
-    @Param() params: ParamIdRequestDto,
+    @Param() params: ParamIdReqResDto,
     @Body() body: VoidMovementRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {

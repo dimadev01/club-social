@@ -1,12 +1,18 @@
 import {
-  type IMemberLedgerEntryPaginatedDto,
-  type IMemberLedgerEntryPaginatedExtraDto,
+  MemberLedgerEntryPaginatedDto,
+  MemberLedgerEntryPaginatedExtraDto,
   type MemberLedgerEntrySource,
   type MemberLedgerEntryStatus,
   type MemberLedgerEntryType,
 } from '@club-social/shared/members';
 
-export class MemberLedgerEntryPaginatedDto implements IMemberLedgerEntryPaginatedDto {
+export class MemberLedgerEntryPaginatedExtraResponseDto implements MemberLedgerEntryPaginatedExtraDto {
+  public totalAmount: number;
+  public totalAmountInflow: number;
+  public totalAmountOutflow: number;
+}
+
+export class MemberLedgerEntryPaginatedResponseDto implements MemberLedgerEntryPaginatedDto {
   public amount: number;
   public createdAt: string;
   public date: string;
@@ -18,10 +24,4 @@ export class MemberLedgerEntryPaginatedDto implements IMemberLedgerEntryPaginate
   public source: MemberLedgerEntrySource;
   public status: MemberLedgerEntryStatus;
   public type: MemberLedgerEntryType;
-}
-
-export class MemberLedgerEntryPaginatedExtraDto implements IMemberLedgerEntryPaginatedExtraDto {
-  public totalAmount: number;
-  public totalAmountInflow: number;
-  public totalAmountOutflow: number;
 }

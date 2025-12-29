@@ -17,7 +17,12 @@ import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import type { UpdatePricingParams } from './update-pricing.params';
+interface UpdatePricingParams {
+  amount: number;
+  effectiveFrom: string;
+  id: string;
+  updatedBy: string;
+}
 
 export class UpdatePricingUseCase extends UseCase<void> {
   public constructor(

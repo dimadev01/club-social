@@ -8,9 +8,10 @@ import {
   DueSettlementStatus,
   DueStatus,
 } from '@club-social/shared/dues';
-import { MemberStatus } from '@club-social/shared/members';
+import { MemberCategory, MemberStatus } from '@club-social/shared/members';
 
 export class DueMemberResponseDto implements DueMemberDto {
+  public category: MemberCategory;
   public id: string;
   public name: string;
   public status: MemberStatus;

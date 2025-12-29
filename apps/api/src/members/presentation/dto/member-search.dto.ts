@@ -1,12 +1,12 @@
 import {
-  IMemberSearchResultDto,
   MemberCategory,
+  MemberSearchResultDto,
+  MemberStatus,
 } from '@club-social/shared/members';
-import { UserStatus } from '@club-social/shared/users';
 
-export class MemberSearchDto implements IMemberSearchResultDto {
+export class MemberSearchResponseDto implements MemberSearchResultDto {
   public category: MemberCategory;
   public id: string;
   public name: string;
-  public status: UserStatus;
+  public status: MemberStatus;
 }

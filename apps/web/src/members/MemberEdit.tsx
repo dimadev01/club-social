@@ -1,7 +1,4 @@
-import type {
-  IMemberDetailDto,
-  IUpdateMemberDto,
-} from '@club-social/shared/members';
+import type { MemberDto, UpdateMemberDto } from '@club-social/shared/members';
 
 import { DateFormat } from '@club-social/shared/lib';
 import { App } from 'antd';
@@ -26,11 +23,7 @@ export function MemberEdit() {
 
   const { data: member, isLoading } = useMemberById(id);
 
-  const updateMemberMutation = useMutation<
-    IMemberDetailDto,
-    Error,
-    IUpdateMemberDto
-  >({
+  const updateMemberMutation = useMutation<MemberDto, Error, UpdateMemberDto>({
     mutationFn: (body) => $fetch(`members/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       message.success('Socio actualizado correctamente');

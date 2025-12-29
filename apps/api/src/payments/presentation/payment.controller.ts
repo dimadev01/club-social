@@ -34,7 +34,7 @@ import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-pagin
 import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
 import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
+import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePaymentUseCase } from '../application/create-payment/create-payment.use-case';
 import { VoidPaymentUseCase } from '../application/void-payment/void-payment.use-case';
@@ -70,7 +70,7 @@ export class PaymentsController extends BaseController {
   public async create(
     @Body() body: CreatePaymentRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdRequestDto> {
+  ): Promise<ParamIdReqResDto> {
     const { id } = this.handleResult(
       await this.createPaymentUseCase.execute({
         createdBy: session.user.name,
@@ -87,7 +87,7 @@ export class PaymentsController extends BaseController {
 
   @Patch(':id/void')
   public async void(
-    @Param() request: ParamIdRequestDto,
+    @Param() request: ParamIdReqResDto,
     @Body() body: VoidPaymentRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -219,7 +219,7 @@ export class PaymentsController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() request: ParamIdRequestDto,
+    @Param() request: ParamIdReqResDto,
   ): Promise<PaymentResponseDto> {
     const payment = await this.paymentRepository.findByIdReadModel(
       UniqueId.raw({ value: request.id }),

@@ -1,7 +1,7 @@
 import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { FilterOutlined, MoreOutlined } from '@ant-design/icons';
-import { DueCategoryOptions } from '@club-social/shared/dues';
+import { DueCategoryLabel, DueCategorySorted } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
 import {
@@ -22,6 +22,7 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
+import { NavigateToMember } from '@/ui/NavigateMember';
 import { NavigateToPayment } from '@/ui/NavigateToPayment';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
@@ -123,7 +124,10 @@ export function PaymentList() {
           className="min-w-full md:min-w-xs"
           mode="multiple"
           onChange={(value) => setFilter('dueCategory', value)}
-          options={DueCategoryOptions}
+          options={DueCategorySorted.map((value) => ({
+            label: DueCategoryLabel[value],
+            value,
+          }))}
           placeholder="Filtrar por categoría de deuda"
           value={getFilterValue('dueCategory') ?? undefined}
         />
@@ -163,9 +167,9 @@ export function PaymentList() {
                 {
                   dataIndex: 'memberId',
                   render: (memberId: string, record: PaymentPaginatedDto) => (
-                    <Link to={appRoutes.members.view(memberId)}>
+                    <NavigateToMember id={memberId}>
                       {record.memberName}
-                    </Link>
+                    </NavigateToMember>
                   ),
                   title: 'Socio',
                 } satisfies TableColumnType<PaymentPaginatedDto>,

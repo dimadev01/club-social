@@ -1,6 +1,6 @@
 import { DueCategory } from '@club-social/shared/dues';
 import { MemberCategory } from '@club-social/shared/members';
-import { ICreatePricingDto } from '@club-social/shared/pricing';
+import { CreatePricingDto } from '@club-social/shared/pricing';
 import {
   IsDateString,
   IsEnum,
@@ -10,7 +10,7 @@ import {
   IsPositive,
 } from 'class-validator';
 
-export class CreatePricingRequestDto implements ICreatePricingDto {
+export class CreatePricingRequestDto implements CreatePricingDto {
   @IsInt()
   @IsNotEmpty()
   @IsNumber()

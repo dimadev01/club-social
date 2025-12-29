@@ -1,4 +1,3 @@
-import { UserStatus } from '../users/user.enum';
 import {
   FileStatus,
   MaritalStatus,
@@ -8,8 +7,8 @@ import {
   MemberStatus,
 } from './member.enum';
 
-export interface ICreateMemberDto {
-  address: IMemberDetailIAddressDto | null;
+export interface CreateMemberDto {
+  address: MemberAddressDto | null;
   birthDate: null | string;
   category: MemberCategory;
   documentID: null | string;
@@ -23,33 +22,33 @@ export interface ICreateMemberDto {
   sex: MemberSex | null;
 }
 
-export interface IMemberDetailDto {
-  address: IMemberDetailIAddressDto | null;
-  birthDate: null | string;
-  category: MemberCategory;
-  documentID: null | string;
-  email: string;
-  fileStatus: FileStatus;
-  firstName: string;
-  id: string;
-  lastName: string;
-  maritalStatus: MaritalStatus | null;
-  name: string;
-  nationality: MemberNationality | null;
-  phones: string[];
-  sex: MemberSex | null;
-  status: UserStatus;
-  userId: string;
-}
-
-export interface IMemberDetailIAddressDto {
+export interface MemberAddressDto {
   cityName: null | string;
   stateName: null | string;
   street: null | string;
   zipCode: null | string;
 }
 
-export interface IMemberPaginatedDto {
+export interface MemberDto {
+  address: MemberAddressDto | null;
+  birthDate: null | string;
+  category: MemberCategory;
+  documentID: null | string;
+  email: string;
+  fileStatus: FileStatus;
+  firstName: string;
+  id: string;
+  lastName: string;
+  maritalStatus: MaritalStatus | null;
+  name: string;
+  nationality: MemberNationality | null;
+  phones: string[];
+  sex: MemberSex | null;
+  status: MemberStatus;
+  userId: string;
+}
+
+export interface MemberPaginatedDto {
   category: MemberCategory;
   electricityTotalDueAmount: number;
   email: string;
@@ -57,24 +56,24 @@ export interface IMemberPaginatedDto {
   id: string;
   memberShipTotalDueAmount: number;
   name: string;
-  userStatus: UserStatus;
+  status: MemberStatus;
 }
 
-export interface IMemberPaginatedExtraDto {
+export interface MemberPaginatedExtraDto {
   electricityTotalDueAmount: number;
   guestTotalDueAmount: number;
   memberShipTotalDueAmount: number;
 }
 
-export interface IMemberSearchResultDto {
+export interface MemberSearchResultDto {
   category: MemberCategory;
   id: string;
   name: string;
   status: MemberStatus;
 }
 
-export interface IUpdateMemberDto {
-  address: IMemberDetailIAddressDto | null;
+export interface UpdateMemberDto {
+  address: MemberAddressDto | null;
   birthDate: null | string;
   category: MemberCategory;
   documentID: null | string;

@@ -1,4 +1,4 @@
-import type { IMemberSearchResultDto } from '@club-social/shared/members';
+import type { MemberSearchResultDto } from '@club-social/shared/members';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 
@@ -6,7 +6,7 @@ interface Props {
   disabled?: boolean;
   isLoading: boolean;
   onFilterChange: (value?: string[]) => void;
-  selectedMembers: IMemberSearchResultDto[];
+  selectedMembers: MemberSearchResultDto[];
   value?: string[];
 }
 

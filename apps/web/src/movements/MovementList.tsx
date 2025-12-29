@@ -4,10 +4,10 @@ import { MoreOutlined } from '@ant-design/icons';
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
 import {
-  type IMovementPaginatedDto,
-  type IMovementPaginatedExtraDto,
   MovementCategory,
   MovementCategoryLabel,
+  type MovementPaginatedDto,
+  type MovementPaginatedExtraDto,
   MovementStatus,
   MovementStatusLabel,
   MovementType,
@@ -46,7 +46,7 @@ export function MovementList() {
     query,
     resetFilters,
     state,
-  } = useTable<IMovementPaginatedDto>({
+  } = useTable<MovementPaginatedDto>({
     defaultFilters: {
       status: [MovementStatus.REGISTERED],
     },
@@ -59,10 +59,7 @@ export function MovementList() {
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<
-        PaginatedDataResultDto<
-          IMovementPaginatedDto,
-          IMovementPaginatedExtraDto
-        >
+        PaginatedDataResultDto<MovementPaginatedDto, MovementPaginatedExtraDto>
       >('/movements', { query }),
   });
 
@@ -109,7 +106,7 @@ export function MovementList() {
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
-      <Table<IMovementPaginatedDto>
+      <Table<MovementPaginatedDto>
         columns={[
           {
             dataIndex: 'createdAt',
@@ -191,7 +188,7 @@ export function MovementList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number, record: IMovementPaginatedDto) =>
+            render: (amount: number, record: MovementPaginatedDto) =>
               record.type === MovementType.OUTFLOW
                 ? NumberFormat.formatCurrencyCents(amount)
                 : '',
@@ -201,7 +198,7 @@ export function MovementList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number, record: IMovementPaginatedDto) =>
+            render: (amount: number, record: MovementPaginatedDto) =>
               record.type === MovementType.INFLOW
                 ? NumberFormat.formatCurrencyCents(amount)
                 : '',

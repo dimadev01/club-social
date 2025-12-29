@@ -1,4 +1,4 @@
-import type { ICreateMovementDto } from '@club-social/shared/movements';
+import type { CreateMovementDto } from '@club-social/shared/movements';
 import type { ParamIdDto } from '@club-social/shared/types';
 
 import { NumberFormat } from '@club-social/shared/lib';
@@ -26,7 +26,7 @@ export function MovementNew() {
   const createMovementMutation = useMutation<
     ParamIdDto,
     Error,
-    ICreateMovementDto
+    CreateMovementDto
   >({
     mutationFn: (body) => $fetch('/movements', { body }),
     onSuccess: () => {

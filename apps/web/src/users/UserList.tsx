@@ -1,7 +1,7 @@
 import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import {
-  type IUserDetailDto,
+  type UserDto,
   UserRole,
   UserRoleLabel,
   UserStatus,
@@ -36,7 +36,7 @@ export function UserListPage() {
     query,
     resetFilters,
     state,
-  } = useTable<IUserDetailDto>({
+  } = useTable<UserDto>({
     defaultFilters: {
       role: [UserRole.STAFF],
       status: [UserStatus.ACTIVE],
@@ -49,7 +49,7 @@ export function UserListPage() {
     enabled: permissions.users.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedDataResultDto<IUserDetailDto>>('/users/paginated', {
+      $fetch<PaginatedDataResultDto<UserDto>>('/users/paginated', {
         query,
       }),
   });
@@ -77,12 +77,12 @@ export function UserListPage() {
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
-      <Table<IUserDetailDto>
+      <Table<UserDto>
         columns={[
           {
             dataIndex: 'id',
             fixed: 'left',
-            render: (id: string, record: IUserDetailDto) => (
+            render: (id: string, record: UserDto) => (
               <Typography.Text className="line-clamp-1 w-full">
                 <Link to={appRoutes.users.view(id)}>{record.name}</Link>
               </Typography.Text>

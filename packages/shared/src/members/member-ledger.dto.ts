@@ -4,7 +4,23 @@ import type {
   MemberLedgerEntryType,
 } from './member-ledger.enum';
 
-export interface IMemberLedgerEntryDetailDto {
+export interface MemberLedgerEntryDto {
+  amount: number;
+  createdAt: string;
+  createdBy: string;
+  date: string;
+  id: string;
+  memberFullName: string;
+  memberId: string;
+  notes: null | string;
+  paymentId: null | string;
+  reversalOfId: null | string;
+  source: MemberLedgerEntrySource;
+  status: MemberLedgerEntryStatus;
+  type: MemberLedgerEntryType;
+}
+
+export interface MemberLedgerEntryDto {
   amount: number;
   createdAt: string;
   createdBy: string;
@@ -22,7 +38,7 @@ export interface IMemberLedgerEntryDetailDto {
   updatedBy: null | string;
 }
 
-export interface IMemberLedgerEntryPaginatedDto {
+export interface MemberLedgerEntryPaginatedDto {
   amount: number;
   createdAt: string;
   date: string;
@@ -36,7 +52,7 @@ export interface IMemberLedgerEntryPaginatedDto {
   type: MemberLedgerEntryType;
 }
 
-export interface IMemberLedgerEntryPaginatedExtraDto {
+export interface MemberLedgerEntryPaginatedExtraDto {
   totalAmount: number;
   totalAmountInflow: number;
   totalAmountOutflow: number;

@@ -18,6 +18,7 @@ import { PrismaMappers } from '@/infrastructure/database/prisma/prisma.mappers';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
+import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
@@ -247,7 +248,10 @@ export class PrismaPaymentRepository implements PaymentRepository {
       id: payment.id,
       member: {
         id: payment.member.id,
-        name: payment.member.user.name,
+        name: Name.raw({
+          firstName: payment.member.user.firstName,
+          lastName: payment.member.user.lastName,
+        }).fullName,
       },
       status: payment.status as PaymentStatus,
     };

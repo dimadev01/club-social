@@ -2,14 +2,15 @@ import { MoreOutlined } from '@ant-design/icons';
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
 import {
-  type IMemberPaginatedDto,
-  type IMemberPaginatedExtraDto,
   MemberCategory,
   MemberCategoryLabel,
   MemberCategoryOptions,
+  type MemberPaginatedDto,
+  type MemberPaginatedExtraDto,
+  MemberStatus,
+  MemberStatusLabel,
 } from '@club-social/shared/members';
 import { type PaginatedDataResultDto } from '@club-social/shared/types';
-import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Button, Dropdown, Space, Tooltip, Typography } from 'antd';
 import { useState } from 'react';
@@ -47,9 +48,9 @@ export function MemberListPage() {
     resetFilters,
     setFilter,
     state,
-  } = useTable<IMemberPaginatedDto>({
+  } = useTable<MemberPaginatedDto>({
     defaultFilters: {
-      userStatus: [UserStatus.ACTIVE],
+      status: [MemberStatus.ACTIVE],
     },
     defaultSort: [{ field: 'id', order: 'ascend' }],
   });
@@ -70,7 +71,7 @@ export function MemberListPage() {
     placeholderData: keepPreviousData,
     queryFn: () =>
       $fetch<
-        PaginatedDataResultDto<IMemberPaginatedDto, IMemberPaginatedExtraDto>
+        PaginatedDataResultDto<MemberPaginatedDto, MemberPaginatedExtraDto>
       >('/members/paginated', {
         query,
       }),
@@ -120,7 +121,7 @@ export function MemberListPage() {
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
-      <Table<IMemberPaginatedDto>
+      <Table<MemberPaginatedDto>
         columns={[
           {
             dataIndex: 'id',
@@ -149,14 +150,13 @@ export function MemberListPage() {
           },
           {
             align: 'center',
-            dataIndex: 'userStatus',
-            filteredValue: getFilterValue('userStatus'),
-            filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
-              text: label,
-              value,
-            })),
-            onFilter: (value, record) => record.userStatus === value,
-            render: (value: UserStatus) => UserStatusLabel[value],
+            dataIndex: 'status',
+            filteredValue: getFilterValue('status'),
+            filters: Object.entries(MemberStatusLabel).map(
+              ([value, label]) => ({ text: label, value }),
+            ),
+            onFilter: (value, record) => record.status === value,
+            render: (value: MemberStatus) => MemberStatusLabel[value],
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },

@@ -20,26 +20,7 @@ export interface MemberListModel {
   user: UserEntity;
 }
 
-export interface MemberPaginatedExtraModel {
-  electricityTotalDueAmount: number;
-  guestTotalDueAmount: number;
-  memberShipTotalDueAmount: number;
-}
-
-export interface MemberPaginatedModel {
-  electricityTotalDueAmount: number;
-  guestTotalDueAmount: number;
-  member: MemberEntity;
-  memberShipTotalDueAmount: number;
-  user: UserEntity;
-}
-
-export interface MemberSearchModel {
+export interface MemberWithUserModel {
   member: MemberEntity;
   user: UserEntity;
-}
-
-export interface MemberSearchParams {
-  limit: number;
-  searchTerm: string;
 }

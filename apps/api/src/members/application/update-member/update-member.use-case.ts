@@ -1,3 +1,11 @@
+import {
+  FileStatus,
+  MaritalStatus,
+  MemberCategory,
+  MemberNationality,
+  MemberSex,
+} from '@club-social/shared/members';
+import { UserStatus } from '@club-social/shared/users';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
@@ -15,6 +23,7 @@ import { UseCase } from '@/shared/application/use-case';
 import { ConflictError } from '@/shared/domain/errors/conflict.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
+import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
@@ -24,7 +33,23 @@ import {
   type UserRepository,
 } from '@/users/domain/user.repository';
 
-import { UpdateMemberParams } from './update-member.params';
+interface UpdateMemberParams {
+  address: Address | null;
+  birthDate: null | string;
+  category: MemberCategory;
+  documentID: null | string;
+  email: string;
+  fileStatus: FileStatus;
+  firstName: string;
+  id: string;
+  lastName: string;
+  maritalStatus: MaritalStatus | null;
+  nationality: MemberNationality | null;
+  phones: string[];
+  sex: MemberSex | null;
+  status: UserStatus;
+  updatedBy: string;
+}
 
 export class UpdateMemberUseCase extends UseCase<MemberEntity> {
   public constructor(
@@ -102,6 +127,8 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
 
     await this.userRepository.save(user);
     await this.memberRepository.save(member);
+
+    this.eventPublisher.dispatch(user);
     this.eventPublisher.dispatch(member);
 
     return ok(member);

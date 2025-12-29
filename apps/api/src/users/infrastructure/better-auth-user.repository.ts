@@ -40,7 +40,7 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
     }
 
     if (hasUpdatedEvent) {
-      await this.updateUser(user);
+      return this.updateUser(user);
     }
 
     throw new InternalServerError('No event found to save user');

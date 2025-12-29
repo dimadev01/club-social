@@ -1,4 +1,4 @@
-import type { IMovementStatisticsDto } from '@club-social/shared/movements';
+import type { MovementStatisticsDto } from '@club-social/shared/movements';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -11,7 +11,7 @@ export function useMovementStatistics(query: UseMovementStatisticsQuery) {
   return useQuery({
     ...queryKeys.movements.statistics(query),
     queryFn: () =>
-      $fetch<IMovementStatisticsDto>('movements/statistics', {
+      $fetch<MovementStatisticsDto>('movements/statistics', {
         query: {
           dateRange: query.dateRange,
         },

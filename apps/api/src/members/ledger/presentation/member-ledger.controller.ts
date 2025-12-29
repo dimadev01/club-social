@@ -20,17 +20,17 @@ import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
 import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
+import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import {
   MEMBER_LEDGER_REPOSITORY_PROVIDER,
   type MemberLedgerRepository,
 } from '../member-ledger.repository';
-import { MemberLedgerEntryDetailDto } from './dto/member-ledger-entry-detail.dto';
 import {
-  MemberLedgerEntryPaginatedDto,
-  MemberLedgerEntryPaginatedExtraDto,
+  MemberLedgerEntryPaginatedExtraResponseDto,
+  MemberLedgerEntryPaginatedResponseDto,
 } from './dto/member-ledger-entry-paginated.dto';
+import { MemberLedgerEntryDetailResponseDto } from './dto/member-ledger-entry-response.dto';
 
 @Controller('member-ledger')
 export class MemberLedgerController extends BaseController {
@@ -43,14 +43,14 @@ export class MemberLedgerController extends BaseController {
     super(logger);
   }
 
-  @ApiPaginatedResponse(MemberLedgerEntryPaginatedDto)
+  @ApiPaginatedResponse(MemberLedgerEntryPaginatedResponseDto)
   @Get()
   public async getPaginated(
     @Query() query: GetPaginatedDataRequestDto,
   ): Promise<
     PaginatedDataResponseDto<
-      MemberLedgerEntryPaginatedDto,
-      MemberLedgerEntryPaginatedExtraDto
+      MemberLedgerEntryPaginatedResponseDto,
+      MemberLedgerEntryPaginatedExtraResponseDto
     >
   > {
     const result = await this.memberLedgerRepository.findPaginated({
@@ -85,8 +85,8 @@ export class MemberLedgerController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() params: ParamIdRequestDto,
-  ): Promise<MemberLedgerEntryDetailDto> {
+    @Param() params: ParamIdReqResDto,
+  ): Promise<MemberLedgerEntryDetailResponseDto> {
     const entry = await this.memberLedgerRepository.findDetailById(params.id);
 
     if (!entry) {

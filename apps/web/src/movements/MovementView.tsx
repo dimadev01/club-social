@@ -1,14 +1,14 @@
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
 import {
-  type IVoidMovementDto,
   MovementCategoryLabel,
   MovementModeLabel,
   MovementStatus,
   MovementStatusLabel,
   MovementTypeLabel,
+  type VoidMovementDto,
 } from '@club-social/shared/movements';
-import { App, Button, Divider } from 'antd';
+import { App, Button, Col } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -19,6 +19,7 @@ import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NotFound } from '@/ui/NotFound';
 import { Page } from '@/ui/Page';
+import { Row } from '@/ui/Row';
 import { VoidModal } from '@/ui/VoidModal';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -34,7 +35,7 @@ export function MovementView() {
 
   const { data: movement, isLoading } = useMovement(id);
 
-  const voidMovementMutation = useMutation<unknown, Error, IVoidMovementDto>({
+  const voidMovementMutation = useMutation<unknown, Error, VoidMovementDto>({
     mutationFn: (body) =>
       $fetch(`movements/${id}/void`, { body, method: 'PATCH' }),
     onSuccess: () => {
@@ -72,41 +73,45 @@ export function MovementView() {
       backButton
       title="Detalle de movimiento"
     >
-      <Descriptions
-        items={[
-          {
-            children: DateFormat.date(movement.date),
-            label: 'Fecha',
-          },
-          {
-            children: MovementCategoryLabel[movement.category],
-            label: 'Categoría',
-          },
-          {
-            children: MovementTypeLabel[movement.type],
-            label: 'Tipo',
-          },
-          {
-            children: NumberFormat.formatCurrencyCents(movement.amount),
-            label: 'Monto',
-          },
-          {
-            children: MovementStatusLabel[movement.status],
-            label: 'Estado',
-          },
-          {
-            children: MovementModeLabel[movement.mode],
-            label: 'Modo',
-          },
-          {
-            children: movement.notes ?? '-',
-            label: 'Notas',
-          },
-        ]}
-      />
-      <Divider />
-
-      <DescriptionsAudit {...movement} />
+      <Row>
+        <Col md={12} xs={24}>
+          <Descriptions
+            items={[
+              {
+                children: DateFormat.date(movement.date),
+                label: 'Fecha',
+              },
+              {
+                children: MovementCategoryLabel[movement.category],
+                label: 'Categoría',
+              },
+              {
+                children: MovementTypeLabel[movement.type],
+                label: 'Tipo',
+              },
+              {
+                children: NumberFormat.formatCurrencyCents(movement.amount),
+                label: 'Monto',
+              },
+              {
+                children: MovementStatusLabel[movement.status],
+                label: 'Estado',
+              },
+              {
+                children: MovementModeLabel[movement.mode],
+                label: 'Modo',
+              },
+              {
+                children: movement.notes ?? '-',
+                label: 'Notas',
+              },
+            ]}
+          />
+        </Col>
+        <Col md={12} xs={24}>
+          <DescriptionsAudit {...movement} />
+        </Col>
+      </Row>
 
       <VoidModal
         onCancel={() => setIsVoidModalOpen(false)}

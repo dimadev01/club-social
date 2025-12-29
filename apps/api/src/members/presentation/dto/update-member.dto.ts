@@ -1,13 +1,13 @@
 import {
   FileStatus,
-  IMemberDetailIAddressDto,
-  IUpdateMemberDto,
   MaritalStatus,
+  MemberAddressDto,
   MemberCategory,
   MemberNationality,
   MemberSex,
+  MemberStatus,
+  UpdateMemberDto,
 } from '@club-social/shared/members';
-import { UserStatus } from '@club-social/shared/users';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -21,7 +21,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class AddressRequestDto implements IMemberDetailIAddressDto {
+export class AddressRequestDto implements MemberAddressDto {
   @IsOptional()
   @IsString()
   public cityName: null | string;
@@ -39,7 +39,7 @@ export class AddressRequestDto implements IMemberDetailIAddressDto {
   public zipCode: null | string;
 }
 
-export class UpdateMemberRequestDto implements IUpdateMemberDto {
+export class UpdateMemberRequestDto implements UpdateMemberDto {
   @IsObject()
   @IsOptional()
   @Type(() => AddressRequestDto)
@@ -90,7 +90,7 @@ export class UpdateMemberRequestDto implements IUpdateMemberDto {
   @IsOptional()
   public sex: MemberSex | null;
 
-  @IsEnum(UserStatus)
+  @IsEnum(MemberStatus)
   @IsNotEmpty()
-  public status: UserStatus;
+  public status: MemberStatus;
 }

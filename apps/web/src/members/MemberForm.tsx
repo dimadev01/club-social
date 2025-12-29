@@ -12,8 +12,9 @@ import {
   MemberNationalityLabel,
   MemberSex,
   MemberSexLabel,
+  MemberStatus,
+  MemberStatusLabel,
 } from '@club-social/shared/members';
-import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { Button, Col, DatePicker, Empty, Input, Space, Tooltip } from 'antd';
 
 import { Card } from '@/ui/Card';
@@ -40,7 +41,7 @@ export interface MemberFormData {
   nationality?: MemberNationality;
   phones: string[];
   sex?: MemberSex;
-  status: UserStatus;
+  status: MemberStatus;
 }
 
 export type MemberFormInitialValues = Partial<MemberFormData>;
@@ -114,11 +115,8 @@ export function MemberForm({
                   rules={[{ required: true }]}
                 >
                   <Select
-                    options={Object.entries(UserStatusLabel).map(
-                      ([key, value]) => ({
-                        label: value,
-                        value: key,
-                      }),
+                    options={Object.entries(MemberStatusLabel).map(
+                      ([key, value]) => ({ label: value, value: key }),
                     )}
                   />
                 </Form.Item>

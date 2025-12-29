@@ -1,4 +1,4 @@
-import { MemberStatus } from '../members';
+import { MemberCategory, MemberStatus } from '../members';
 import { DueSettlementStatus } from './due-settlement.enum';
 import { DueCategory, DueStatus } from './due.enum';
 
@@ -29,6 +29,7 @@ export interface DueDto {
 }
 
 export interface DueMemberDto {
+  category: MemberCategory;
   id: string;
   name: string;
   status: MemberStatus;

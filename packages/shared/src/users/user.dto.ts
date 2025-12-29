@@ -1,19 +1,19 @@
 import { UserRole, UserStatus } from './user.enum';
 
-export interface ICreateUserDto {
+export interface CreateUserDto {
   email: string;
   firstName: string;
   lastName: string;
 }
 
-export interface IUpdateUserDto {
+export interface UpdateUserDto {
   email: string;
   firstName: string;
   lastName: string;
   status: UserStatus;
 }
 
-export interface IUserDetailDto {
+export interface UserDto {
   email: string;
   firstName: string;
   id: string;
@@ -23,7 +23,7 @@ export interface IUserDetailDto {
   status: UserStatus;
 }
 
-export interface IUserPaginatedDto {
+export interface UserPaginatedDto {
   email: string;
   id: string;
   name: string;

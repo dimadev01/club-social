@@ -2,8 +2,9 @@ import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
-  type IMemberLedgerEntryPaginatedDto,
-  type IMemberLedgerEntryPaginatedExtraDto,
+  type MemberLedgerEntryPaginatedDto,
+  type MemberLedgerEntryPaginatedExtraDto,
+  MemberLedgerEntrySource,
   MemberLedgerEntrySourceLabel,
   MemberLedgerEntryStatus,
   MemberLedgerEntryStatusLabel,
@@ -19,6 +20,7 @@ import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { NavigateToPayment } from '@/ui/NavigateToPayment';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -55,7 +57,7 @@ export function MemberLedgerList() {
     resetFilters,
     setFilter,
     state,
-  } = useTable<IMemberLedgerEntryPaginatedDto>({
+  } = useTable<MemberLedgerEntryPaginatedDto>({
     defaultFilters: {
       status: [MemberLedgerEntryStatus.POSTED],
     },
@@ -74,8 +76,8 @@ export function MemberLedgerList() {
     queryFn: () =>
       $fetch<
         PaginatedDataResultDto<
-          IMemberLedgerEntryPaginatedDto,
-          IMemberLedgerEntryPaginatedExtraDto
+          MemberLedgerEntryPaginatedDto,
+          MemberLedgerEntryPaginatedExtraDto
         >
       >('/member-ledger', { query }),
   });
@@ -98,7 +100,7 @@ export function MemberLedgerList() {
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
-      <Table<IMemberLedgerEntryPaginatedDto>
+      <Table<MemberLedgerEntryPaginatedDto>
         columns={[
           {
             dataIndex: 'createdAt',
@@ -124,6 +126,7 @@ export function MemberLedgerList() {
             filteredValue: getFilterValue('date'),
             render: (date: string) => DateFormat.date(date),
             title: 'Fecha',
+            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           {
             dataIndex: 'memberFullName',
@@ -133,7 +136,6 @@ export function MemberLedgerList() {
               </Link>
             ),
             title: 'Socio',
-            width: 200,
           },
           {
             align: 'center',
@@ -149,7 +151,7 @@ export function MemberLedgerList() {
             render: (value: MemberLedgerEntryType) =>
               MemberLedgerEntryTypeLabel[value],
             title: 'Tipo',
-            width: 160,
+            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
             align: 'center',
@@ -158,10 +160,28 @@ export function MemberLedgerList() {
             filters: Object.entries(MemberLedgerEntrySourceLabel).map(
               ([value, label]) => ({ text: label, value }),
             ),
-            render: (value: keyof typeof MemberLedgerEntrySourceLabel) =>
-              MemberLedgerEntrySourceLabel[value],
+            render: (
+              value: MemberLedgerEntrySource,
+              record: MemberLedgerEntryPaginatedDto,
+            ) => (
+              <>
+                {MemberLedgerEntrySourceLabel[value]}
+                {value === MemberLedgerEntrySource.PAYMENT &&
+                  record.paymentId && (
+                    <>
+                      {' - '}
+                      <NavigateToPayment
+                        formatDate={false}
+                        id={record.paymentId}
+                      >
+                        Ver pago
+                      </NavigateToPayment>
+                    </>
+                  )}
+              </>
+            ),
             title: 'Origen',
-            width: 100,
+            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
             align: 'center',
@@ -176,21 +196,9 @@ export function MemberLedgerList() {
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
-            align: 'center',
-            dataIndex: 'paymentId',
-            render: (paymentId: null | string) =>
-              paymentId ? (
-                <Link to={appRoutes.payments.view(paymentId)}>Ver pago</Link>
-              ) : (
-                '-'
-              ),
-            title: 'Pago',
-            width: 100,
-          },
-          {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number, record: IMemberLedgerEntryPaginatedDto) =>
+            render: (amount: number, record: MemberLedgerEntryPaginatedDto) =>
               DEBIT_TYPES.includes(record.type)
                 ? NumberFormat.formatCurrencyCents(amount)
                 : '',
@@ -200,7 +208,7 @@ export function MemberLedgerList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number, record: IMemberLedgerEntryPaginatedDto) =>
+            render: (amount: number, record: MemberLedgerEntryPaginatedDto) =>
               CREDIT_TYPES.includes(record.type)
                 ? NumberFormat.formatCurrencyCents(amount)
                 : '',
@@ -221,7 +229,7 @@ export function MemberLedgerList() {
             <Table.Summary.Row>
               <Table.Summary.Cell
                 align="right"
-                colSpan={7}
+                colSpan={6}
                 index={0}
                 rowSpan={2}
               >

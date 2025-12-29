@@ -39,7 +39,10 @@ const memberRole = ac.newRole({
   ...roleStatements.member,
 });
 
-const staffRole = ac.newRole({ ...userAc.statements, ...roleStatements.staff });
+const staffRole = ac.newRole({
+  ...userAc.statements,
+  ...roleStatements.staff,
+});
 
 export const defaultConfig = {
   advanced: {

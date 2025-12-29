@@ -1,8 +1,10 @@
 import type { Response } from 'express';
 
 import { NumberFormat } from '@club-social/shared/lib';
-import { MemberCategoryLabel } from '@club-social/shared/members';
-import { UserStatusLabel } from '@club-social/shared/users';
+import {
+  MemberCategoryLabel,
+  MemberStatusLabel,
+} from '@club-social/shared/members';
 import {
   Body,
   Controller,
@@ -31,7 +33,7 @@ import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-pagin
 import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
 import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
+import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateMemberUseCase } from '../application/create-member/create-member.use-case';
 import { UpdateMemberUseCase } from '../application/update-member/update-member.use-case';
@@ -40,13 +42,13 @@ import {
   type MemberRepository,
 } from '../domain/member.repository';
 import { CreateMemberRequestDto } from './dto/create-member.dto';
-import { MemberDetailDto } from './dto/member-detail.dto';
 import {
-  MemberPaginatedDto,
-  MemberPaginatedExtraDto,
+  MemberPaginatedExtraResponseDto,
+  MemberPaginatedResponseDto,
 } from './dto/member-paginated.dto';
+import { MemberResponseDto } from './dto/member-response.dto';
 import { MemberSearchRequestDto } from './dto/member-search-request.dto';
-import { MemberSearchDto } from './dto/member-search.dto';
+import { MemberSearchResponseDto } from './dto/member-search.dto';
 import { UpdateMemberRequestDto } from './dto/update-member.dto';
 
 @Controller('members')
@@ -65,7 +67,7 @@ export class MembersController extends BaseController {
 
   @Patch(':id')
   public async update(
-    @Param() request: ParamIdRequestDto,
+    @Param() request: ParamIdReqResDto,
     @Body() body: UpdateMemberRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -101,7 +103,7 @@ export class MembersController extends BaseController {
   public async create(
     @Body() createMemberDto: CreateMemberRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdRequestDto> {
+  ): Promise<ParamIdReqResDto> {
     const { id } = this.handleResult(
       await this.createMemberUseCase.execute({
         address: createMemberDto.address
@@ -142,17 +144,17 @@ export class MembersController extends BaseController {
     });
 
     const stream = this.csvService.generateStream(data, [
-      { accessor: (row) => row.member.id.value, header: 'ID' },
-      { accessor: (row) => row.user.name.fullName, header: 'Nombre' },
+      { accessor: (row) => row.id, header: 'ID' },
+      { accessor: (row) => row.name, header: 'Nombre' },
       {
-        accessor: (row) => MemberCategoryLabel[row.member.category],
+        accessor: (row) => MemberCategoryLabel[row.category],
         header: 'Categoría',
       },
       {
-        accessor: (row) => UserStatusLabel[row.user.status],
+        accessor: (row) => MemberStatusLabel[row.status],
         header: 'Estado',
       },
-      { accessor: (row) => row.user.email.value, header: 'Email' },
+      { accessor: (row) => row.email, header: 'Email' },
       {
         accessor: (row) => NumberFormat.fromCents(row.memberShipTotalDueAmount),
         header: 'Deuda cuota',
@@ -176,12 +178,15 @@ export class MembersController extends BaseController {
     stream.pipe(res);
   }
 
-  @ApiPaginatedResponse(MemberDetailDto)
+  @ApiPaginatedResponse(MemberResponseDto)
   @Get('paginated')
   public async getPaginated(
     @Query() query: GetPaginatedDataRequestDto,
   ): Promise<
-    PaginatedDataResponseDto<MemberPaginatedDto, MemberPaginatedExtraDto>
+    PaginatedDataResponseDto<
+      MemberPaginatedResponseDto,
+      MemberPaginatedExtraResponseDto
+    >
   > {
     const data = await this.memberRepository.findPaginated({
       filters: query.filters,
@@ -191,20 +196,21 @@ export class MembersController extends BaseController {
     });
 
     return {
-      data: data.data.map((item) => ({
-        category: item.member.category,
-        electricityTotalDueAmount: item.electricityTotalDueAmount,
-        email: item.user.email.value,
-        guestTotalDueAmount: item.guestTotalDueAmount,
-        id: item.member.id.value,
-        memberShipTotalDueAmount: item.memberShipTotalDueAmount,
-        name: item.user.name.fullName,
-        userStatus: item.user.status,
+      data: data.data.map((member) => ({
+        category: member.category,
+        electricityTotalDueAmount: member.electricityTotalDueAmount,
+        email: member.email,
+        guestTotalDueAmount: member.guestTotalDueAmount,
+        id: member.id,
+        memberShipTotalDueAmount: member.memberShipTotalDueAmount,
+        name: member.name,
+
+        status: member.status,
       })),
-      extra: {
-        electricityTotalDueAmount: data.extra?.electricityTotalDueAmount ?? 0,
-        guestTotalDueAmount: data.extra?.guestTotalDueAmount ?? 0,
-        memberShipTotalDueAmount: data.extra?.memberShipTotalDueAmount ?? 0,
+      extra: data.extra ?? {
+        electricityTotalDueAmount: 0,
+        guestTotalDueAmount: 0,
+        memberShipTotalDueAmount: 0,
       },
       total: data.total,
     };
@@ -213,67 +219,42 @@ export class MembersController extends BaseController {
   @Get('search')
   public async search(
     @Query() query: MemberSearchRequestDto,
-  ): Promise<MemberSearchDto[]> {
-    const data = await this.memberRepository.search({
+  ): Promise<MemberSearchResponseDto[]> {
+    return this.memberRepository.search({
       limit: query.limit ?? 20,
       searchTerm: query.q,
     });
-
-    return data.map(({ member, user }) => ({
-      category: member.category,
-      email: user.email.value,
-      id: member.id.value,
-      name: user.name.fullName,
-      status: user.status,
-    }));
   }
 
   @Get(':id')
   public async getById(
-    @Param() request: ParamIdRequestDto,
-  ): Promise<MemberDetailDto> {
-    const model = await this.memberRepository.findOneModel(
+    @Param() request: ParamIdReqResDto,
+  ): Promise<MemberResponseDto> {
+    const member = await this.memberRepository.findByIdReadModel(
       UniqueId.raw({ value: request.id }),
     );
 
-    if (!model) {
+    if (!member) {
       throw new NotFoundException('Member not found');
     }
 
-    const { dues, member, user } = model;
-
     return {
-      address: member.address
-        ? {
-            cityName: member.address.cityName,
-            stateName: member.address.stateName,
-            street: member.address.street,
-            zipCode: member.address.zipCode,
-          }
-        : null,
-      birthDate: member.birthDate ? member.birthDate.value : null,
+      address: member.address,
+      birthDate: member.birthDate,
       category: member.category,
       documentID: member.documentID,
-      dues: dues.map((due) => ({
-        amount: due.amount.toCents(),
-        category: due.category,
-        date: due.date.value,
-        id: due.id.value,
-        notes: due.notes,
-        status: due.status,
-      })),
-      email: user.email.value,
+      email: member.email,
       fileStatus: member.fileStatus,
-      firstName: user.name.firstName,
-      id: member.id.value,
-      lastName: user.name.lastName,
+      firstName: member.firstName,
+      id: member.id,
+      lastName: member.lastName,
       maritalStatus: member.maritalStatus,
-      name: user.name.fullName,
+      name: member.name,
       nationality: member.nationality,
       phones: member.phones,
       sex: member.sex,
-      status: user.status,
-      userId: member.userId.value,
+      status: member.status,
+      userId: member.userId,
     };
   }
 }

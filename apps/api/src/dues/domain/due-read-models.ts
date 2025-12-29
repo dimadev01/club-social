@@ -3,7 +3,7 @@ import {
   DueSettlementStatus,
   DueStatus,
 } from '@club-social/shared/dues';
-import { MemberStatus } from '@club-social/shared/members';
+import { MemberCategory, MemberStatus } from '@club-social/shared/members';
 
 export interface DuePaginatedExtraReadModel {
   totalAmount: number;
@@ -33,6 +33,7 @@ export interface DueReadModel {
 }
 
 interface DueMember {
+  category: MemberCategory;
   id: string;
   name: string;
   status: MemberStatus;

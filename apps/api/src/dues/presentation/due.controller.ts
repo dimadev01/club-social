@@ -35,7 +35,7 @@ import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-pagin
 import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
 import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
-import { ParamIdRequestDto } from '@/shared/presentation/dto/param-id.dto';
+import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateDueUseCase } from '../application/create-due/create-due.use-case';
 import { UpdateDueUseCase } from '../application/update-due/update-due.use-case';
@@ -74,7 +74,7 @@ export class DuesController extends BaseController {
   public async create(
     @Body() body: CreateDueRequestDto,
     @Session() session: AuthSession,
-  ): Promise<ParamIdRequestDto> {
+  ): Promise<ParamIdReqResDto> {
     const { id } = this.handleResult(
       await this.createDueUseCase.execute({
         amount: body.amount,
@@ -91,7 +91,7 @@ export class DuesController extends BaseController {
 
   @Patch(':id')
   public async update(
-    @Param() request: ParamIdRequestDto,
+    @Param() request: ParamIdReqResDto,
     @Body() body: UpdateDueRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -107,7 +107,7 @@ export class DuesController extends BaseController {
 
   @Patch(':id/void')
   public async void(
-    @Param() request: ParamIdRequestDto,
+    @Param() request: ParamIdReqResDto,
     @Body() body: VoidDueRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
@@ -247,7 +247,7 @@ export class DuesController extends BaseController {
 
   @Get(':id')
   public async getById(
-    @Param() request: ParamIdRequestDto,
+    @Param() request: ParamIdReqResDto,
   ): Promise<DueResponseDto> {
     const due = await this.dueRepository.findByIdReadModel(
       UniqueId.raw({ value: request.id }),
@@ -265,6 +265,7 @@ export class DuesController extends BaseController {
       date: due.date,
       id: due.id,
       member: {
+        category: due.member.category,
         id: due.member.id,
         name: due.member.name,
         status: due.member.status,

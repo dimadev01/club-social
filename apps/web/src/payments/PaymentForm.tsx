@@ -1,4 +1,4 @@
-import type { IMemberSearchResultDto } from '@club-social/shared/members';
+import type { MemberSearchResultDto } from '@club-social/shared/members';
 
 import {
   DueCategory,
@@ -164,7 +164,7 @@ export function PaymentForm({
     [getFieldValue, setFieldValue, getRemainingAmountForDue],
   );
 
-  const additionalOptions: IMemberSearchResultDto[] = member
+  const additionalOptions: MemberSearchResultDto[] = member
     ? [
         {
           category: member.category,

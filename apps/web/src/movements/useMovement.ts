@@ -1,4 +1,4 @@
-import type { IMovementDetailDto } from '@club-social/shared/movements';
+import type { MovementDto } from '@club-social/shared/movements';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
@@ -11,6 +11,6 @@ export function useMovement(id?: string) {
   return useQuery({
     ...queryKeys.movements.detail(id),
     enabled: !!id && permissions.movements.get,
-    queryFn: () => $fetch<IMovementDetailDto>(`movements/${id}`),
+    queryFn: () => $fetch<MovementDto>(`movements/${id}`),
   });
 }

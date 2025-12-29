@@ -9,21 +9,24 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MemberEntity } from './entities/member.entity';
 import {
-  MemberDetailModel,
-  MemberPaginatedExtraModel,
-  MemberPaginatedModel,
-  MemberSearchModel,
+  MemberPaginatedExtraReadModel,
+  MemberPaginatedReadModel,
+  MemberReadModel,
   MemberSearchParams,
-} from './member.types';
+  MemberSearchReadModel,
+} from './member-read-models';
 
 export const MEMBER_REPOSITORY_PROVIDER = Symbol('MemberRepository');
 
 export interface MemberRepository
   extends
-    PaginatedRepository<MemberPaginatedModel, MemberPaginatedExtraModel>,
+    PaginatedRepository<
+      MemberPaginatedReadModel,
+      MemberPaginatedExtraReadModel
+    >,
     ReadableRepository<MemberEntity>,
     WriteableRepository<MemberEntity> {
-  findForExport(params: ExportDataDto): Promise<MemberPaginatedModel[]>;
-  findOneModel(id: UniqueId): Promise<MemberDetailModel | null>;
-  search(params: MemberSearchParams): Promise<MemberSearchModel[]>;
+  findByIdReadModel(id: UniqueId): Promise<MemberReadModel | null>;
+  findForExport(params: ExportDataDto): Promise<MemberPaginatedReadModel[]>;
+  search(params: MemberSearchParams): Promise<MemberSearchReadModel[]>;
 }

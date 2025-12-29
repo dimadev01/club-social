@@ -1,3 +1,5 @@
+import { DueCategory } from '@club-social/shared/dues';
+import { MemberCategory } from '@club-social/shared/members';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
@@ -14,7 +16,10 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { ok } from '@/shared/domain/result';
 
-import type { FindActivePricingParams } from './find-active-pricing.params';
+interface FindActivePricingParams {
+  dueCategory: DueCategory;
+  memberCategory: MemberCategory;
+}
 
 export class FindActivePricingUseCase extends UseCase<null | PricingEntity> {
   public constructor(
