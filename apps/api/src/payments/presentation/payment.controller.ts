@@ -81,6 +81,7 @@ export class PaymentsController extends BaseController {
         memberId: body.memberId,
         notes: body.notes || null,
         receiptNumber: body.receiptNumber || null,
+        surplusToCreditAmount: body.surplusToCreditAmount,
       }),
     );
 

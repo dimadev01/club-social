@@ -7,6 +7,7 @@ export interface CreatePaymentDto {
   memberId: string;
   notes: null | string;
   receiptNumber: null | string;
+  surplusToCreditAmount: null | number;
 }
 
 export interface CreatePaymentDueDto {

@@ -35,6 +35,7 @@ export interface PaymentFormSchema {
   memberId: string;
   notes: string;
   receiptNumber: string;
+  surplusToCreditAmount?: number;
 }
 
 interface FormDueToPaySchema {
@@ -298,7 +299,7 @@ export function PaymentForm({
                 <Card
                   extra={`Total a registrar: ${NumberFormat.formatCurrency(total)}`}
                   size="small"
-                  title="Deudas Seleccionadas"
+                  title="Deudas seleccionadas"
                   type="inner"
                 >
                   {fields.length === 0 && (
@@ -384,6 +385,19 @@ export function PaymentForm({
           </Form.List>
         </>
       )}
+
+      <Form.Item<PaymentFormSchema>
+        label="Monto a crédito"
+        name="surplusToCreditAmount"
+      >
+        <InputNumber<number>
+          className="w-full"
+          formatter={(value) => NumberFormat.format(Number(value))}
+          parser={(value) => NumberFormat.parse(String(value))}
+          precision={0}
+          step={1000}
+        />
+      </Form.Item>
     </Form>
   );
 }

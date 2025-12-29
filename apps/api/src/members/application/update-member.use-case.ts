@@ -23,6 +23,10 @@ import { UseCase } from '@/shared/application/use-case';
 import { ConflictError } from '@/shared/domain/errors/conflict.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
+import {
+  UNIT_OF_WORK_PROVIDER,
+  type UnitOfWork,
+} from '@/shared/domain/unit-of-work';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
@@ -59,6 +63,8 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
     private readonly userRepository: UserRepository,
     @Inject(MEMBER_REPOSITORY_PROVIDER)
     private readonly memberRepository: MemberRepository,
+    @Inject(UNIT_OF_WORK_PROVIDER)
+    private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -125,8 +131,12 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       updatedBy: params.updatedBy,
     });
 
-    await this.userRepository.save(user);
-    await this.memberRepository.save(member);
+    await this.unitOfWork.execute(
+      async ({ memberRepository, userRepository }) => {
+        await userRepository.save(user);
+        await memberRepository.save(member);
+      },
+    );
 
     this.eventPublisher.dispatch(user);
     this.eventPublisher.dispatch(member);

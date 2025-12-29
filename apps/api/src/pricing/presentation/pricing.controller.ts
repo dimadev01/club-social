@@ -25,7 +25,6 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePricingUseCase } from '../application/create-pricing.use-case';
-import { FindActivePricingUseCase } from '../application/find-active-pricing.use-case';
 import { UpdatePricingUseCase } from '../application/update-pricing.use-case';
 import { PricingEntity } from '../domain/entities/pricing.entity';
 import {
@@ -45,7 +44,6 @@ export class PricingController extends BaseController {
     protected readonly logger: AppLogger,
     private readonly createPricingUseCase: CreatePricingUseCase,
     private readonly updatePricingUseCase: UpdatePricingUseCase,
-    private readonly findActivePricingUseCase: FindActivePricingUseCase,
     @Inject(PRICING_REPOSITORY_PROVIDER)
     private readonly pricingRepository: PricingRepository,
   ) {
@@ -90,11 +88,9 @@ export class PricingController extends BaseController {
   public async getActive(
     @Query() query: FindActivePricingRequestDto,
   ): Promise<null | PricingResponseDto> {
-    const pricing = this.handleResult(
-      await this.findActivePricingUseCase.execute({
-        dueCategory: query.dueCategory,
-        memberCategory: query.memberCategory,
-      }),
+    const pricing = await this.pricingRepository.findOneActive(
+      query.dueCategory,
+      query.memberCategory,
     );
 
     return pricing ? this.toDetailDto(pricing) : null;

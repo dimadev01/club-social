@@ -12,6 +12,10 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, type Result } from '@/shared/domain/result';
+import {
+  UNIT_OF_WORK_PROVIDER,
+  type UnitOfWork,
+} from '@/shared/domain/unit-of-work';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -29,6 +33,8 @@ export class VoidMovementUseCase extends UseCase {
     protected readonly logger: AppLogger,
     @Inject(MOVEMENT_REPOSITORY_PROVIDER)
     private readonly movementRepository: MovementRepository,
+    @Inject(UNIT_OF_WORK_PROVIDER)
+    private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -69,8 +75,11 @@ export class VoidMovementUseCase extends UseCase {
       return err(reversedMovement.error);
     }
 
-    await this.movementRepository.save(originalMovement);
-    await this.movementRepository.save(reversedMovement.value);
+    await this.unitOfWork.execute(async ({ movementsRepository }) => {
+      await movementsRepository.save(originalMovement);
+      await movementsRepository.save(reversedMovement.value);
+    });
+
     this.eventPublisher.dispatch(originalMovement);
 
     return ok();

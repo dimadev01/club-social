@@ -48,4 +48,9 @@ export class CreatePaymentRequestDto implements CreatePaymentDto {
   @IsOptional()
   @IsString()
   public receiptNumber: null | string;
+
+  @IsNumber()
+  @IsOptional()
+  @IsPositive()
+  public surplusToCreditAmount: null | number;
 }

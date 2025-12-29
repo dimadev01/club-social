@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { AUDIT_LOG_REPOSITORY_PROVIDER } from '@/audit/domain/audit-log.repository';
+import { PrismaAuditLogRepository } from '@/audit/infrastructure/prisma-audit-log.repository';
 import { DUE_REPOSITORY_PROVIDER } from '@/dues/domain/due.repository';
 import { PrismaDueSettlementMapper } from '@/dues/infrastructure/prisma-due-settlement.mapper';
 import { PrismaDueMapper } from '@/dues/infrastructure/prisma-due.mapper';
@@ -48,6 +50,7 @@ import { PrismaService } from './prisma.service';
     USER_READABLE_REPOSITORY_PROVIDER,
     USER_WRITEABLE_REPOSITORY_PROVIDER,
     USER_REPOSITORY_PROVIDER,
+    AUDIT_LOG_REPOSITORY_PROVIDER,
 
     PrismaPaymentMapper,
     PrismaDueMapper,
@@ -110,6 +113,10 @@ import { PrismaService } from './prisma.service';
     {
       provide: USER_REPOSITORY_PROVIDER,
       useClass: CompositeUserRepository,
+    },
+    {
+      provide: AUDIT_LOG_REPOSITORY_PROVIDER,
+      useClass: PrismaAuditLogRepository,
     },
   ],
 })

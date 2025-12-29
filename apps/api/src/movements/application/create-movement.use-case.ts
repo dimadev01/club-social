@@ -55,7 +55,7 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
 
     const [amount, date] = results.value;
 
-    const movementResult = MovementEntity.create(
+    const movement = MovementEntity.create(
       {
         amount:
           params.type === MovementType.INFLOW ? amount : amount.toNegative(),
@@ -69,15 +69,13 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
       params.createdBy,
     );
 
-    if (movementResult.isErr()) {
-      return err(movementResult.error);
+    if (movement.isErr()) {
+      return err(movement.error);
     }
 
-    const movement = movementResult.value;
+    await this.movementRepository.save(movement.value);
+    this.eventPublisher.dispatch(movement.value);
 
-    await this.movementRepository.save(movement);
-    this.eventPublisher.dispatch(movement);
-
-    return ok(movement);
+    return ok(movement.value);
   }
 }

@@ -53,6 +53,9 @@ export function PaymentNew() {
       memberId: values.memberId,
       notes: values.notes,
       receiptNumber: values.receiptNumber,
+      surplusToCreditAmount: values.surplusToCreditAmount
+        ? NumberFormat.toCents(values.surplusToCreditAmount)
+        : null,
     });
   };
 

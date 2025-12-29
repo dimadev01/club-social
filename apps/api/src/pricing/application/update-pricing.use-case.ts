@@ -13,9 +13,15 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
+import {
+  UNIT_OF_WORK_PROVIDER,
+  type UnitOfWork,
+} from '@/shared/domain/unit-of-work';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+import { PricingEntity } from '../domain/entities/pricing.entity';
 
 interface UpdatePricingParams {
   amount: number;
@@ -30,6 +36,8 @@ export class UpdatePricingUseCase extends UseCase<void> {
     protected readonly logger: AppLogger,
     @Inject(PRICING_REPOSITORY_PROVIDER)
     private readonly pricingRepository: PricingRepository,
+    @Inject(UNIT_OF_WORK_PROVIDER)
+    private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -74,6 +82,9 @@ export class UpdatePricingUseCase extends UseCase<void> {
       memberCategory: pricing.memberCategory,
     });
 
+    const pricesToDelete: PricingEntity[] = [];
+    const pricesToClose: PricingEntity[] = [];
+
     // Handle overlapping prices the same way as create:
     // 1. Prices that start before updated pricing: close them one day before
     // 2. Prices that start on or after updated pricing: delete them (superseded)
@@ -81,16 +92,27 @@ export class UpdatePricingUseCase extends UseCase<void> {
       if (existing.effectiveFrom.isBefore(effectiveFrom)) {
         // Existing pricing starts before updated one - close it one day before
         existing.close(effectiveFrom.subtractDays(1), params.updatedBy);
+        pricesToClose.push(existing);
       } else {
         // Existing pricing starts on or after updated one - mark it as deleted
         existing.delete(params.updatedBy, new Date());
+        pricesToDelete.push(existing);
       }
-
-      await this.pricingRepository.save(existing);
-      this.eventPublisher.dispatch(existing);
     }
 
-    await this.pricingRepository.save(pricing);
+    await this.unitOfWork.execute(async ({ pricingRepository }) => {
+      await Promise.all(
+        pricesToClose.map((price) => pricingRepository.save(price)),
+      );
+      await Promise.all(
+        pricesToDelete.map((price) => pricingRepository.save(price)),
+      );
+      await pricingRepository.save(pricing);
+      this.eventPublisher.dispatch(pricing);
+    });
+
+    pricesToClose.forEach((price) => this.eventPublisher.dispatch(price));
+    pricesToDelete.forEach((price) => this.eventPublisher.dispatch(price));
     this.eventPublisher.dispatch(pricing);
 
     return ok();

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { CreatePricingUseCase } from './application/create-pricing.use-case';
-import { FindActivePricingUseCase } from './application/find-active-pricing.use-case';
 import { UpdatePricingUseCase } from './application/update-pricing.use-case';
 import { PricingController } from './presentation/pricing.controller';
 
@@ -9,10 +8,6 @@ import { PricingController } from './presentation/pricing.controller';
   controllers: [PricingController],
   exports: [],
   imports: [],
-  providers: [
-    CreatePricingUseCase,
-    FindActivePricingUseCase,
-    UpdatePricingUseCase,
-  ],
+  providers: [CreatePricingUseCase, UpdatePricingUseCase],
 })
 export class PricingModule {}

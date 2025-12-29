@@ -13,6 +13,11 @@ import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
 } from '@/dues/domain/due.repository';
+import { MemberEntity } from '@/members/domain/entities/member.entity';
+import {
+  MEMBER_REPOSITORY_PROVIDER,
+  type MemberRepository,
+} from '@/members/domain/member.repository';
 import {
   MEMBER_LEDGER_REPOSITORY_PROVIDER,
   type MemberLedgerRepository,
@@ -25,7 +30,17 @@ import {
   PAYMENT_REPOSITORY_PROVIDER,
   type PaymentRepository,
 } from '@/payments/domain/payment.repository';
+import { PricingEntity } from '@/pricing/domain/entities/pricing.entity';
+import {
+  PRICING_REPOSITORY_PROVIDER,
+  type PricingRepository,
+} from '@/pricing/domain/pricing.repository';
 import { WriteableRepository } from '@/shared/domain/repository';
+import { UserEntity } from '@/users/domain/entities/user.entity';
+import {
+  USER_REPOSITORY_PROVIDER,
+  type UserRepository,
+} from '@/users/domain/user.repository';
 
 import type { PrismaTransactionClient } from './prisma.types';
 
@@ -43,6 +58,12 @@ export class PrismaUnitOfWork implements UnitOfWork {
     private readonly memberLedgerRepository: MemberLedgerRepository,
     @Inject(MOVEMENT_REPOSITORY_PROVIDER)
     private readonly movementRepository: MovementRepository,
+    @Inject(MEMBER_REPOSITORY_PROVIDER)
+    private readonly memberRepository: MemberRepository,
+    @Inject(USER_REPOSITORY_PROVIDER)
+    private readonly userRepository: UserRepository,
+    @Inject(PRICING_REPOSITORY_PROVIDER)
+    private readonly pricingRepository: PricingRepository,
   ) {}
 
   public async execute<T>(
@@ -52,8 +73,11 @@ export class PrismaUnitOfWork implements UnitOfWork {
       const repos: TransactionalRepositories = {
         duesRepository: this.createDueRepository(tx),
         memberLedgerRepository: this.createMemberLedgerRepository(tx),
+        memberRepository: this.createMemberRepository(tx),
         movementsRepository: this.createMovementRepository(tx),
         paymentsRepository: this.createPaymentRepository(tx),
+        pricingRepository: this.createPricingRepository(tx),
+        userRepository: this.createUserRepository(tx),
       };
 
       return fn(repos);
@@ -77,6 +101,15 @@ export class PrismaUnitOfWork implements UnitOfWork {
     };
   }
 
+  private createMemberRepository(
+    tx: PrismaTransactionClient,
+  ): WriteableRepository<MemberEntity> {
+    return {
+      save: (member: MemberEntity): Promise<void> =>
+        this.memberRepository.save(member, tx),
+    };
+  }
+
   private createMovementRepository(
     tx: PrismaTransactionClient,
   ): WriteableRepository<MovementEntity> {
@@ -92,6 +125,24 @@ export class PrismaUnitOfWork implements UnitOfWork {
     return {
       save: (payment: PaymentEntity): Promise<void> =>
         this.paymentRepository.save(payment, tx),
+    };
+  }
+
+  private createPricingRepository(
+    tx: PrismaTransactionClient,
+  ): WriteableRepository<PricingEntity> {
+    return {
+      save: (pricing: PricingEntity): Promise<void> =>
+        this.pricingRepository.save(pricing, tx),
+    };
+  }
+
+  private createUserRepository(
+    tx: PrismaTransactionClient,
+  ): WriteableRepository<UserEntity> {
+    return {
+      save: (user: UserEntity): Promise<void> =>
+        this.userRepository.save(user, tx),
     };
   }
 }

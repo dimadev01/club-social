@@ -14,6 +14,10 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok } from '@/shared/domain/result';
+import {
+  UNIT_OF_WORK_PROVIDER,
+  type UnitOfWork,
+} from '@/shared/domain/unit-of-work';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -30,6 +34,8 @@ export class UpdateDueUseCase extends UseCase<DueEntity> {
     protected readonly logger: AppLogger,
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
+    @Inject(UNIT_OF_WORK_PROVIDER)
+    private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -61,7 +67,10 @@ export class UpdateDueUseCase extends UseCase<DueEntity> {
       return err(updateResult.error);
     }
 
-    await this.dueRepository.save(due);
+    await this.unitOfWork.execute(async ({ duesRepository }) => {
+      await duesRepository.save(due);
+    });
+
     this.eventPublisher.dispatch(due);
 
     return ok(due);

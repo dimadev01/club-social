@@ -186,8 +186,6 @@ export class PrismaDueRepository implements DueRepository {
       where: { id: entity.id.value },
     });
 
-    throw new Error('test');
-
     for (const settlementUpsert of settlementUpserts) {
       await client.dueSettlement.upsert({
         create: settlementUpsert.create,
