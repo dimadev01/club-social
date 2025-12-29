@@ -24,7 +24,6 @@ export interface MovementDto {
   notes: null | string;
   paymentId: null | string;
   status: MovementStatus;
-  type: MovementType;
   updatedAt: string;
   updatedBy?: null | string;
   voidedAt: null | string;
@@ -42,7 +41,6 @@ export interface MovementPaginatedDto {
   notes: null | string;
   paymentId: null | string;
   status: MovementStatus;
-  type: MovementType;
 }
 
 export interface MovementPaginatedExtraDto {

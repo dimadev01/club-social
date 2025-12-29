@@ -2,7 +2,6 @@ import {
   MovementCategory,
   MovementMode,
   MovementStatus,
-  MovementType,
 } from '@club-social/shared/movements';
 
 import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
@@ -25,7 +24,6 @@ interface MovementProps {
   notes: null | string;
   paymentId: null | UniqueId;
   status: MovementStatus;
-  type: MovementType;
   voidedAt: Date | null;
   voidedBy: null | string;
   voidReason: null | string;
@@ -60,10 +58,6 @@ export class MovementEntity extends AuditedAggregateRoot {
     return this._status;
   }
 
-  public get type(): MovementType {
-    return this._type;
-  }
-
   public get voidedAt(): Date | null {
     return this._voidedAt;
   }
@@ -83,7 +77,6 @@ export class MovementEntity extends AuditedAggregateRoot {
   private _notes: null | string;
   private _paymentId: null | UniqueId;
   private _status: MovementStatus;
-  private _type: MovementType;
   private _voidedAt: Date | null;
   private _voidedBy: null | string;
   private _voidReason: null | string;
@@ -98,7 +91,6 @@ export class MovementEntity extends AuditedAggregateRoot {
     this._mode = props.mode;
     this._paymentId = props.paymentId;
     this._status = props.status;
-    this._type = props.type;
     this._voidReason = props.voidReason;
     this._voidedAt = props.voidedAt;
     this._voidedBy = props.voidedBy;
@@ -117,7 +109,6 @@ export class MovementEntity extends AuditedAggregateRoot {
         notes: props.notes,
         paymentId: props.paymentId,
         status: props.status,
-        type: props.type,
         voidedAt: null,
         voidedBy: null,
         voidReason: null,
@@ -150,7 +141,6 @@ export class MovementEntity extends AuditedAggregateRoot {
         notes: this._notes,
         paymentId: this._paymentId,
         status: this._status,
-        type: this._type,
         voidedAt: this._voidedAt,
         voidedBy: this._voidedBy,
         voidReason: this._voidReason,
@@ -163,11 +153,11 @@ export class MovementEntity extends AuditedAggregateRoot {
   }
 
   public isInflow(): boolean {
-    return this._type === MovementType.INFLOW;
+    return this._amount.isPositive();
   }
 
   public isOutflow(): boolean {
-    return this._type === MovementType.OUTFLOW;
+    return this._amount.isNegative();
   }
 
   public isRegistered(): boolean {

@@ -11,6 +11,7 @@ import { DueNew } from '@/dues/DueNew';
 import { DueView } from '@/dues/DueView';
 import { Home } from '@/home/HomePage';
 import { MemberLedgerList } from '@/member-ledger/MemberLedgerList';
+import { MemberLedgerNew } from '@/member-ledger/MemberLedgerNew';
 import { MemberLedgerView } from '@/member-ledger/MemberLedgerView';
 import { MemberEdit } from '@/members/MemberEdit';
 import { MemberListPage } from '@/members/MemberList';
@@ -60,6 +61,7 @@ export function AppRoutes() {
 
           <Route path={appRoutes.memberLedger.list}>
             <Route element={<MemberLedgerList />} index />
+            <Route element={<MemberLedgerNew />} path={appRoutes.generic.new} />
             <Route
               element={<MemberLedgerView />}
               path={appRoutes.generic.view}

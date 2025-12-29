@@ -13,15 +13,7 @@ import {
   type DueRepository,
 } from '@/dues/domain/due.repository';
 import { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
-import {
-  MEMBER_LEDGER_REPOSITORY_PROVIDER,
-  type MemberLedgerRepository,
-} from '@/members/ledger/member-ledger.repository';
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
-import {
-  PAYMENT_REPOSITORY_PROVIDER,
-  type PaymentRepository,
-} from '@/payments/domain/payment.repository';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -58,15 +50,11 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    @Inject(PAYMENT_REPOSITORY_PROVIDER)
-    private readonly paymentRepository: PaymentRepository,
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
-    @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
-    private readonly memberLedgerRepository: MemberLedgerRepository,
-    private readonly eventPublisher: DomainEventPublisher,
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
+    private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
   }
@@ -186,15 +174,17 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
     await this.unitOfWork.execute(
       async ({
-        dues: duesRepo,
-        memberLedger: memberLedgerRepo,
-        payments: paymentsRepo,
+        duesRepository,
+        memberLedgerRepository,
+        paymentsRepository,
       }) => {
-        await paymentsRepo.save(payment.value);
+        await paymentsRepository.save(payment.value);
         await Promise.all(
-          memberLedgerEntries.map((entry) => memberLedgerRepo.save(entry)),
+          memberLedgerEntries.map((entry) =>
+            memberLedgerRepository.save(entry),
+          ),
         );
-        await Promise.all(dues.map((due) => duesRepo.save(due)));
+        await Promise.all(dues.map((due) => duesRepository.save(due)));
       },
     );
 

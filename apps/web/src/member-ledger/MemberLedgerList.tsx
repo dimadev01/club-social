@@ -1,6 +1,6 @@
 import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
-import { MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   type MemberLedgerEntryPaginatedDto,
@@ -16,7 +16,7 @@ import {
 import { keepPreviousData } from '@tanstack/react-query';
 import { Button, Dropdown, Space } from 'antd';
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
@@ -37,6 +37,7 @@ import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
 export function MemberLedgerList() {
+  const navigate = useNavigate();
   const permissions = usePermissions();
 
   const {
@@ -84,6 +85,15 @@ export function MemberLedgerList() {
     <Page
       extra={
         <Space.Compact>
+          {permissions.memberLedger.create && (
+            <Button
+              icon={<PlusOutlined />}
+              onClick={() => navigate(appRoutes.memberLedger.new)}
+              type="primary"
+            >
+              Nuevo ajuste
+            </Button>
+          )}
           <Dropdown
             menu={{
               items: [

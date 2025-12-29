@@ -3,7 +3,6 @@ import {
   MovementDto,
   MovementMode,
   MovementStatus,
-  MovementType,
 } from '@club-social/shared/movements';
 
 export class MovementResponseDto implements MovementDto {
@@ -17,7 +16,6 @@ export class MovementResponseDto implements MovementDto {
   public notes: null | string;
   public paymentId: null | string;
   public status: MovementStatus;
-  public type: MovementType;
   public updatedAt: string;
   public updatedBy?: null | string;
   public voidedAt: null | string;

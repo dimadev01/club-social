@@ -8,7 +8,6 @@ import {
   MovementCategory,
   MovementMode,
   MovementStatus,
-  MovementType,
 } from '@club-social/shared/movements';
 import { Injectable } from '@nestjs/common';
 
@@ -19,6 +18,7 @@ import {
   MovementWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
 import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
@@ -123,23 +123,23 @@ export class PrismaMovementRepository implements MovementRepository {
         _sum: { amount: true },
         where: {
           ...where,
+          amount: { gt: 0 },
           status: MovementStatus.REGISTERED,
-          type: MovementType.INFLOW,
         },
       }),
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
         where: {
           ...where,
+          amount: { lt: 0 },
           status: MovementStatus.REGISTERED,
-          type: MovementType.OUTFLOW,
         },
       }),
     ]);
 
     const totalInflow = inflowSum._sum.amount ?? 0;
     const totalOutflow = outflowSum._sum.amount ?? 0;
-    const balance = totalInflow - totalOutflow;
+    const balance = totalInflow + totalOutflow;
 
     let cumulativeTotal = balance;
 
@@ -185,16 +185,16 @@ export class PrismaMovementRepository implements MovementRepository {
         _sum: { amount: true },
         where: {
           ...where,
+          amount: { gt: 0 },
           status: MovementStatus.REGISTERED,
-          type: MovementType.INFLOW,
         },
       }),
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
         where: {
           ...where,
+          amount: { lt: 0 },
           status: MovementStatus.REGISTERED,
-          type: MovementType.OUTFLOW,
         },
       }),
     ]);
@@ -214,11 +214,16 @@ export class PrismaMovementRepository implements MovementRepository {
     };
   }
 
-  public async save(entity: MovementEntity): Promise<void> {
+  public async save(
+    entity: MovementEntity,
+    tx?: PrismaClientLike,
+  ): Promise<void> {
+    const client = tx ?? this.prismaService;
+
     const create = this.movementMapper.toCreateInput(entity);
     const update = this.movementMapper.toUpdateInput(entity);
 
-    await this.prismaService.movement.upsert({
+    await client.movement.upsert({
       create,
       update,
       where: { id: entity.id.value },
@@ -254,10 +259,6 @@ export class PrismaMovementRepository implements MovementRepository {
       };
     }
 
-    if (params.filters?.type) {
-      where.type = { in: params.filters.type };
-    }
-
     if (params.filters?.category) {
       where.category = { in: params.filters.category };
     }
@@ -289,7 +290,6 @@ export class PrismaMovementRepository implements MovementRepository {
       notes: model.notes,
       paymentId: model.paymentId,
       status: model.status as MovementStatus,
-      type: model.type as MovementType,
       updatedAt: model.updatedAt,
       updatedBy: model.updatedBy,
       voidedAt: model.voidedAt,

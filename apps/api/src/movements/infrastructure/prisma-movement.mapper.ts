@@ -2,7 +2,6 @@ import {
   MovementCategory,
   MovementMode,
   MovementStatus,
-  MovementType,
 } from '@club-social/shared/movements';
 import { Injectable } from '@nestjs/common';
 
@@ -35,7 +34,6 @@ export class PrismaMovementMapper {
         ? { connect: { id: entity.paymentId.value } }
         : undefined,
       status: entity.status,
-      type: entity.type,
       voidedAt: entity.voidedAt,
       voidedBy: entity.voidedBy,
       voidReason: entity.voidReason,
@@ -54,7 +52,6 @@ export class PrismaMovementMapper {
           ? UniqueId.raw({ value: model.paymentId })
           : null,
         status: model.status as MovementStatus,
-        type: model.type as MovementType,
         voidedAt: model.voidedAt,
         voidedBy: model.voidedBy,
         voidReason: model.voidReason,
@@ -80,7 +77,6 @@ export class PrismaMovementMapper {
       mode: entity.mode,
       notes: entity.notes,
       status: entity.status,
-      type: entity.type,
       updatedBy: entity.updatedBy,
       voidedAt: entity.voidedAt,
       voidedBy: entity.voidedBy,

@@ -1,8 +1,17 @@
 import type {
+  MemberLedgerEntryMovementType,
   MemberLedgerEntrySource,
   MemberLedgerEntryStatus,
   MemberLedgerEntryType,
 } from './member-ledger.enum';
+
+export interface CreateMemberLedgerEntryDto {
+  amount: number;
+  date: string;
+  memberId: string;
+  movementType: MemberLedgerEntryMovementType;
+  notes: null | string;
+}
 
 export interface MemberLedgerEntryDto {
   amount: number;

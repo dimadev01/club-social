@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import type { DueEntity } from '@/dues/domain/entities/due.entity';
 import type { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
+import type { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import type { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import type {
   TransactionalRepositories,
@@ -17,9 +18,14 @@ import {
   type MemberLedgerRepository,
 } from '@/members/ledger/member-ledger.repository';
 import {
+  MOVEMENT_REPOSITORY_PROVIDER,
+  type MovementRepository,
+} from '@/movements/domain/movement.repository';
+import {
   PAYMENT_REPOSITORY_PROVIDER,
   type PaymentRepository,
 } from '@/payments/domain/payment.repository';
+import { WriteableRepository } from '@/shared/domain/repository';
 
 import type { PrismaTransactionClient } from './prisma.types';
 
@@ -35,6 +41,8 @@ export class PrismaUnitOfWork implements UnitOfWork {
     private readonly dueRepository: DueRepository,
     @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
     private readonly memberLedgerRepository: MemberLedgerRepository,
+    @Inject(MOVEMENT_REPOSITORY_PROVIDER)
+    private readonly movementRepository: MovementRepository,
   ) {}
 
   public async execute<T>(
@@ -42,9 +50,10 @@ export class PrismaUnitOfWork implements UnitOfWork {
   ): Promise<T> {
     return this.prisma.$transaction(async (tx) => {
       const repos: TransactionalRepositories = {
-        dues: this.createDueRepository(tx),
-        memberLedger: this.createMemberLedgerRepository(tx),
-        payments: this.createPaymentRepository(tx),
+        duesRepository: this.createDueRepository(tx),
+        memberLedgerRepository: this.createMemberLedgerRepository(tx),
+        movementsRepository: this.createMovementRepository(tx),
+        paymentsRepository: this.createPaymentRepository(tx),
       };
 
       return fn(repos);
@@ -53,31 +62,36 @@ export class PrismaUnitOfWork implements UnitOfWork {
 
   private createDueRepository(
     tx: PrismaTransactionClient,
-  ): TransactionalRepositories['dues'] {
+  ): WriteableRepository<DueEntity> {
     return {
-      save: async (due: DueEntity): Promise<void> => {
-        await this.dueRepository.save(due, tx);
-      },
+      save: (due: DueEntity): Promise<void> => this.dueRepository.save(due, tx),
     };
   }
 
   private createMemberLedgerRepository(
     tx: PrismaTransactionClient,
-  ): TransactionalRepositories['memberLedger'] {
+  ): WriteableRepository<MemberLedgerEntryEntity> {
     return {
-      save: async (ledgerEntry: MemberLedgerEntryEntity): Promise<void> => {
-        await this.memberLedgerRepository.save(ledgerEntry, tx);
-      },
+      save: (ledgerEntry: MemberLedgerEntryEntity): Promise<void> =>
+        this.memberLedgerRepository.save(ledgerEntry, tx),
+    };
+  }
+
+  private createMovementRepository(
+    tx: PrismaTransactionClient,
+  ): WriteableRepository<MovementEntity> {
+    return {
+      save: (movement: MovementEntity): Promise<void> =>
+        this.movementRepository.save(movement, tx),
     };
   }
 
   private createPaymentRepository(
     tx: PrismaTransactionClient,
-  ): TransactionalRepositories['payments'] {
+  ): WriteableRepository<PaymentEntity> {
     return {
-      save: async (payment: PaymentEntity): Promise<void> => {
-        await this.paymentRepository.save(payment, tx);
-      },
+      save: (payment: PaymentEntity): Promise<void> =>
+        this.paymentRepository.save(payment, tx),
     };
   }
 }

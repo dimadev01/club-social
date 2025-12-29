@@ -28,6 +28,7 @@ export const usePermissions = () => {
       void: useHasPermission(Resource.DUES, Action.VOID),
     } as const,
     memberLedger: {
+      create: useHasPermission(Resource.MEMBER_LEDGER, Action.CREATE),
       get: useHasPermission(Resource.MEMBER_LEDGER, Action.GET),
       list: useHasPermission(Resource.MEMBER_LEDGER, Action.LIST),
       listAll:

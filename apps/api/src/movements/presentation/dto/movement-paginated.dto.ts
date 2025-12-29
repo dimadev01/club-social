@@ -4,7 +4,6 @@ import {
   MovementPaginatedDto,
   MovementPaginatedExtraDto,
   MovementStatus,
-  MovementType,
 } from '@club-social/shared/movements';
 
 export class MovementPaginatedExtraResponseDto implements MovementPaginatedExtraDto {
@@ -23,5 +22,4 @@ export class MovementPaginatedResponseDto implements MovementPaginatedDto {
   public notes: null | string;
   public paymentId: null | string;
   public status: MovementStatus;
-  public type: MovementType;
 }

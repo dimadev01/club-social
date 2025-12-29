@@ -1,8 +1,4 @@
-import {
-  MovementMode,
-  MovementStatus,
-  MovementType,
-} from '@club-social/shared/movements';
+import { MovementMode, MovementStatus } from '@club-social/shared/movements';
 import { Inject } from '@nestjs/common';
 
 import {
@@ -56,20 +52,15 @@ export class VoidMovementUseCase extends UseCase {
 
     const reversedMovement = MovementEntity.create(
       {
-        amount:
-          originalMovement.type === MovementType.INFLOW
-            ? originalMovement.amount.toNegative()
-            : originalMovement.amount,
+        amount: originalMovement.isInflow()
+          ? originalMovement.amount.toNegative()
+          : originalMovement.amount,
         category: originalMovement.category,
         date: DateOnly.today(),
         mode: MovementMode.AUTOMATIC,
         notes: originalMovement.notes,
         paymentId: originalMovement.paymentId,
         status: MovementStatus.REVERSED,
-        type:
-          originalMovement.type === MovementType.INFLOW
-            ? MovementType.OUTFLOW
-            : MovementType.INFLOW,
       },
       params.voidedBy,
     );

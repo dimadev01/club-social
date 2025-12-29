@@ -1,7 +1,6 @@
 import type { Response } from 'express';
 
 import { NumberFormat } from '@club-social/shared/lib';
-import { MovementType } from '@club-social/shared/movements';
 import {
   Body,
   Controller,
@@ -106,16 +105,12 @@ export class MovementsController extends BaseController {
       { accessor: (row) => row.notes, header: 'Descripción' },
       {
         accessor: (row) =>
-          row.type === MovementType.OUTFLOW
-            ? NumberFormat.fromCents(row.amount)
-            : null,
+          row.amount < 0 ? NumberFormat.fromCents(row.amount) : null,
         header: 'Egreso',
       },
       {
         accessor: (row) =>
-          row.type === MovementType.INFLOW
-            ? NumberFormat.fromCents(row.amount)
-            : null,
+          row.amount > 0 ? NumberFormat.fromCents(row.amount) : null,
         header: 'Ingreso',
       },
     ]);
@@ -156,7 +151,6 @@ export class MovementsController extends BaseController {
         notes: movement.notes,
         paymentId: movement.paymentId,
         status: movement.status,
-        type: movement.type,
       })),
       extra: {
         totalAmount: result.extra?.totalAmount ?? 0,
@@ -207,7 +201,6 @@ export class MovementsController extends BaseController {
       notes: movement.notes,
       paymentId: movement.paymentId,
       status: movement.status,
-      type: movement.type,
       updatedAt: movement.updatedAt.toISOString(),
       updatedBy: movement.updatedBy,
       voidedAt: movement.voidedAt ? movement.voidedAt.toISOString() : null,

@@ -1676,7 +1676,6 @@ export type PaymentScalarFieldEnum =
 
 export const MovementScalarFieldEnum = {
   id: 'id',
-  type: 'type',
   category: 'category',
   amount: 'amount',
   date: 'date',

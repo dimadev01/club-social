@@ -36,7 +36,6 @@ export type MovementSumAggregateOutputType = {
 
 export type MovementMinAggregateOutputType = {
   id: string | null;
-  type: string | null;
   category: string | null;
   amount: number | null;
   date: string | null;
@@ -55,7 +54,6 @@ export type MovementMinAggregateOutputType = {
 
 export type MovementMaxAggregateOutputType = {
   id: string | null;
-  type: string | null;
   category: string | null;
   amount: number | null;
   date: string | null;
@@ -74,7 +72,6 @@ export type MovementMaxAggregateOutputType = {
 
 export type MovementCountAggregateOutputType = {
   id: number;
-  type: number;
   category: number;
   amount: number;
   date: number;
@@ -102,7 +99,6 @@ export type MovementSumAggregateInputType = {
 
 export type MovementMinAggregateInputType = {
   id?: true;
-  type?: true;
   category?: true;
   amount?: true;
   date?: true;
@@ -121,7 +117,6 @@ export type MovementMinAggregateInputType = {
 
 export type MovementMaxAggregateInputType = {
   id?: true;
-  type?: true;
   category?: true;
   amount?: true;
   date?: true;
@@ -140,7 +135,6 @@ export type MovementMaxAggregateInputType = {
 
 export type MovementCountAggregateInputType = {
   id?: true;
-  type?: true;
   category?: true;
   amount?: true;
   date?: true;
@@ -253,7 +247,6 @@ export type MovementGroupByArgs<
 
 export type MovementGroupByOutputType = {
   id: string;
-  type: string;
   category: string;
   amount: number;
   date: string;
@@ -293,7 +286,6 @@ export type MovementWhereInput = {
   OR?: Prisma.MovementWhereInput[];
   NOT?: Prisma.MovementWhereInput | Prisma.MovementWhereInput[];
   id?: Prisma.StringFilter<'Movement'> | string;
-  type?: Prisma.StringFilter<'Movement'> | string;
   category?: Prisma.StringFilter<'Movement'> | string;
   amount?: Prisma.IntFilter<'Movement'> | number;
   date?: Prisma.StringFilter<'Movement'> | string;
@@ -316,7 +308,6 @@ export type MovementWhereInput = {
 
 export type MovementOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
-  type?: Prisma.SortOrder;
   category?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
@@ -340,7 +331,6 @@ export type MovementWhereUniqueInput = Prisma.AtLeast<
     AND?: Prisma.MovementWhereInput | Prisma.MovementWhereInput[];
     OR?: Prisma.MovementWhereInput[];
     NOT?: Prisma.MovementWhereInput | Prisma.MovementWhereInput[];
-    type?: Prisma.StringFilter<'Movement'> | string;
     category?: Prisma.StringFilter<'Movement'> | string;
     amount?: Prisma.IntFilter<'Movement'> | number;
     date?: Prisma.StringFilter<'Movement'> | string;
@@ -365,7 +355,6 @@ export type MovementWhereUniqueInput = Prisma.AtLeast<
 
 export type MovementOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
-  type?: Prisma.SortOrder;
   category?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
@@ -396,7 +385,6 @@ export type MovementScalarWhereWithAggregatesInput = {
     | Prisma.MovementScalarWhereWithAggregatesInput
     | Prisma.MovementScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<'Movement'> | string;
-  type?: Prisma.StringWithAggregatesFilter<'Movement'> | string;
   category?: Prisma.StringWithAggregatesFilter<'Movement'> | string;
   amount?: Prisma.IntWithAggregatesFilter<'Movement'> | number;
   date?: Prisma.StringWithAggregatesFilter<'Movement'> | string;
@@ -431,7 +419,6 @@ export type MovementScalarWhereWithAggregatesInput = {
 
 export type MovementCreateInput = {
   id: string;
-  type: string;
   category: string;
   amount: number;
   date: string;
@@ -450,7 +437,6 @@ export type MovementCreateInput = {
 
 export type MovementUncheckedCreateInput = {
   id: string;
-  type: string;
   category: string;
   amount: number;
   date: string;
@@ -469,7 +455,6 @@ export type MovementUncheckedCreateInput = {
 
 export type MovementUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  type?: Prisma.StringFieldUpdateOperationsInput | string;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -492,7 +477,6 @@ export type MovementUpdateInput = {
 
 export type MovementUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  type?: Prisma.StringFieldUpdateOperationsInput | string;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -515,7 +499,6 @@ export type MovementUncheckedUpdateInput = {
 
 export type MovementCreateManyInput = {
   id: string;
-  type: string;
   category: string;
   amount: number;
   date: string;
@@ -534,7 +517,6 @@ export type MovementCreateManyInput = {
 
 export type MovementUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  type?: Prisma.StringFieldUpdateOperationsInput | string;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -556,7 +538,6 @@ export type MovementUpdateManyMutationInput = {
 
 export type MovementUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  type?: Prisma.StringFieldUpdateOperationsInput | string;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -589,7 +570,6 @@ export type MovementOrderByRelationAggregateInput = {
 
 export type MovementCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
-  type?: Prisma.SortOrder;
   category?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
@@ -612,7 +592,6 @@ export type MovementAvgOrderByAggregateInput = {
 
 export type MovementMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
-  type?: Prisma.SortOrder;
   category?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
@@ -631,7 +610,6 @@ export type MovementMaxOrderByAggregateInput = {
 
 export type MovementMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
-  type?: Prisma.SortOrder;
   category?: Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   date?: Prisma.SortOrder;
@@ -748,7 +726,6 @@ export type MovementUncheckedUpdateManyWithoutPaymentNestedInput = {
 
 export type MovementCreateWithoutPaymentInput = {
   id: string;
-  type: string;
   category: string;
   amount: number;
   date: string;
@@ -766,7 +743,6 @@ export type MovementCreateWithoutPaymentInput = {
 
 export type MovementUncheckedCreateWithoutPaymentInput = {
   id: string;
-  type: string;
   category: string;
   amount: number;
   date: string;
@@ -830,7 +806,6 @@ export type MovementScalarWhereInput = {
   OR?: Prisma.MovementScalarWhereInput[];
   NOT?: Prisma.MovementScalarWhereInput | Prisma.MovementScalarWhereInput[];
   id?: Prisma.StringFilter<'Movement'> | string;
-  type?: Prisma.StringFilter<'Movement'> | string;
   category?: Prisma.StringFilter<'Movement'> | string;
   amount?: Prisma.IntFilter<'Movement'> | number;
   date?: Prisma.StringFilter<'Movement'> | string;
@@ -849,7 +824,6 @@ export type MovementScalarWhereInput = {
 
 export type MovementCreateManyPaymentInput = {
   id: string;
-  type: string;
   category: string;
   amount: number;
   date: string;
@@ -867,7 +841,6 @@ export type MovementCreateManyPaymentInput = {
 
 export type MovementUpdateWithoutPaymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  type?: Prisma.StringFieldUpdateOperationsInput | string;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -889,7 +862,6 @@ export type MovementUpdateWithoutPaymentInput = {
 
 export type MovementUncheckedUpdateWithoutPaymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  type?: Prisma.StringFieldUpdateOperationsInput | string;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -911,7 +883,6 @@ export type MovementUncheckedUpdateWithoutPaymentInput = {
 
 export type MovementUncheckedUpdateManyWithoutPaymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
-  type?: Prisma.StringFieldUpdateOperationsInput | string;
   category?: Prisma.StringFieldUpdateOperationsInput | string;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   date?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -937,7 +908,6 @@ export type MovementSelect<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
-    type?: boolean;
     category?: boolean;
     amount?: boolean;
     date?: boolean;
@@ -963,7 +933,6 @@ export type MovementSelectCreateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
-    type?: boolean;
     category?: boolean;
     amount?: boolean;
     date?: boolean;
@@ -989,7 +958,6 @@ export type MovementSelectUpdateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
-    type?: boolean;
     category?: boolean;
     amount?: boolean;
     date?: boolean;
@@ -1011,7 +979,6 @@ export type MovementSelectUpdateManyAndReturn<
 
 export type MovementSelectScalar = {
   id?: boolean;
-  type?: boolean;
   category?: boolean;
   amount?: boolean;
   date?: boolean;
@@ -1033,7 +1000,6 @@ export type MovementOmit<
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
   | 'id'
-  | 'type'
   | 'category'
   | 'amount'
   | 'date'
@@ -1080,7 +1046,6 @@ export type $MovementPayload<
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
-      type: string;
       category: string;
       amount: number;
       date: string;
@@ -1701,7 +1666,6 @@ export interface Prisma__MovementClient<
  */
 export interface MovementFieldRefs {
   readonly id: Prisma.FieldRef<'Movement', 'String'>;
-  readonly type: Prisma.FieldRef<'Movement', 'String'>;
   readonly category: Prisma.FieldRef<'Movement', 'String'>;
   readonly amount: Prisma.FieldRef<'Movement', 'Int'>;
   readonly date: Prisma.FieldRef<'Movement', 'String'>;

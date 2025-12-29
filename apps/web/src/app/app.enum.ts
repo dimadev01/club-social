@@ -22,6 +22,7 @@ export const appRoutes = {
   logout: '/auth/logout',
   memberLedger: {
     list: '/member-ledger',
+    new: '/member-ledger/new',
     view: (id?: string) => `/member-ledger/${id}`,
   } as const,
   members: {

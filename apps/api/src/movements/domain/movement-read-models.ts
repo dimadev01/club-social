@@ -2,7 +2,6 @@ import {
   MovementCategory,
   MovementMode,
   MovementStatus,
-  MovementType,
 } from '@club-social/shared/movements';
 
 export interface MovementPaginatedExtraReadModel {
@@ -22,7 +21,6 @@ export type MovementPaginatedReadModel = Pick<
   | 'notes'
   | 'paymentId'
   | 'status'
-  | 'type'
 >;
 
 export interface MovementReadModel {
@@ -36,7 +34,6 @@ export interface MovementReadModel {
   notes: null | string;
   paymentId: null | string;
   status: MovementStatus;
-  type: MovementType;
   updatedAt: Date;
   updatedBy: null | string;
   voidedAt: Date | null;

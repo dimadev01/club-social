@@ -58,3 +58,16 @@ export const MemberLedgerEntryTypeSorted = Object.entries(
 )
   .map(([key, value]) => ({ label: value, value: key }))
   .sort((a, b) => a.label.localeCompare(b.label));
+
+export const MemberLedgerEntryMovementType = {
+  INFLOW: 'inflow',
+  OUTFLOW: 'outflow',
+} as const;
+
+export type MemberLedgerEntryMovementType =
+  (typeof MemberLedgerEntryMovementType)[keyof typeof MemberLedgerEntryMovementType];
+
+export const MemberLedgerEntryMovementTypeLabel = {
+  [MemberLedgerEntryMovementType.INFLOW]: 'Ingreso',
+  [MemberLedgerEntryMovementType.OUTFLOW]: 'Egreso',
+} as const;

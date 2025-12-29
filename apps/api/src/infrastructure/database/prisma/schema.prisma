@@ -252,7 +252,6 @@ model Payment {
 
 model Movement {
   id         String    @id
-  type       String
   category   String
   amount     Int
   date       String
@@ -271,7 +270,6 @@ model Movement {
   updatedAt DateTime @updatedAt
   updatedBy String?
 
-  @@index([type])
   @@index([category])
   @@index([status])
   @@index([date])

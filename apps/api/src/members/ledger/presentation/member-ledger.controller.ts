@@ -10,15 +10,20 @@ import {
   MemberLedgerEntryTypeLabel,
 } from '@club-social/shared/members';
 import {
+  Body,
   Controller,
   Get,
   Header,
   Inject,
   NotFoundException,
   Param,
+  Post,
   Query,
   Res,
+  Session,
 } from '@nestjs/common';
+
+import type { AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 
 import { CsvService } from '@/infrastructure/csv/csv.service';
 import {
@@ -32,10 +37,12 @@ import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
+import { CreateMemberLedgerEntryUseCase } from '../application/create-member-ledger-entry.use-case';
 import {
   MEMBER_LEDGER_REPOSITORY_PROVIDER,
   type MemberLedgerRepository,
 } from '../member-ledger.repository';
+import { CreateMemberLedgerEntryRequestDto } from './dto/create-member-ledger-entry.dto';
 import {
   MemberLedgerEntryPaginatedExtraResponseDto,
   MemberLedgerEntryPaginatedResponseDto,
@@ -49,9 +56,29 @@ export class MemberLedgerController extends BaseController {
     protected readonly logger: AppLogger,
     @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
     private readonly memberLedgerRepository: MemberLedgerRepository,
+    private readonly createMemberLedgerEntryUseCase: CreateMemberLedgerEntryUseCase,
     private readonly csvService: CsvService,
   ) {
     super(logger);
+  }
+
+  @Post()
+  public async create(
+    @Body() body: CreateMemberLedgerEntryRequestDto,
+    @Session() session: AuthSession,
+  ): Promise<ParamIdReqResDto> {
+    const { id } = this.handleResult(
+      await this.createMemberLedgerEntryUseCase.execute({
+        amount: body.amount,
+        createdBy: session.user.name,
+        date: body.date,
+        memberId: body.memberId,
+        movementType: body.movementType,
+        notes: body.notes || null,
+      }),
+    );
+
+    return { id: id.value };
   }
 
   @Get('export')

@@ -65,7 +65,6 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
         notes: params.notes,
         paymentId: null,
         status: MovementStatus.REGISTERED,
-        type: params.type,
       },
       params.createdBy,
     );

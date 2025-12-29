@@ -1,5 +1,6 @@
 import type { DueEntity } from '@/dues/domain/entities/due.entity';
 import type { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
+import type { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import type { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 
 import type { WriteableRepository } from './repository';
@@ -9,9 +10,10 @@ import type { WriteableRepository } from './repository';
  * Each repository exposes only the save method with proper typing.
  */
 export interface TransactionalRepositories {
-  dues: WriteableRepository<DueEntity>;
-  memberLedger: WriteableRepository<MemberLedgerEntryEntity>;
-  payments: WriteableRepository<PaymentEntity>;
+  duesRepository: WriteableRepository<DueEntity>;
+  memberLedgerRepository: WriteableRepository<MemberLedgerEntryEntity>;
+  movementsRepository: WriteableRepository<MovementEntity>;
+  paymentsRepository: WriteableRepository<PaymentEntity>;
 }
 
 /**

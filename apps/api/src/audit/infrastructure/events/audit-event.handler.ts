@@ -345,7 +345,6 @@ export class AuditEventHandler {
       notes: movement.notes,
       paymentId: movement.paymentId?.value ?? null,
       status: movement.status,
-      type: movement.type,
       updatedAt: movement.updatedAt,
       updatedBy: movement.updatedBy,
       voidedAt: movement.voidedAt,
