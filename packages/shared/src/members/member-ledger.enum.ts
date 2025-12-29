@@ -52,3 +52,17 @@ export const MemberLedgerEntryTypeLabel = {
   [MemberLedgerEntryType.ADJUSTMENT_DEBIT]: 'Ajuste negativo',
   [MemberLedgerEntryType.REVERSAL_CREDIT]: 'Reversión',
 } as const;
+
+export const DEBIT_TYPES: MemberLedgerEntryType[] = [
+  MemberLedgerEntryType.DUE_APPLY_DEBIT,
+  MemberLedgerEntryType.BALANCE_APPLY_DEBIT,
+  MemberLedgerEntryType.REFUND_DEBIT,
+  MemberLedgerEntryType.ADJUSTMENT_DEBIT,
+];
+
+// Types that represent positive amounts (credits)
+export const CREDIT_TYPES: MemberLedgerEntryType[] = [
+  MemberLedgerEntryType.DEPOSIT_CREDIT,
+  MemberLedgerEntryType.ADJUSTMENT_CREDIT,
+  MemberLedgerEntryType.REVERSAL_CREDIT,
+];

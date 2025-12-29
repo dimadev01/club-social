@@ -7,12 +7,12 @@ import {
 import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { ok, Result } from '@/shared/domain/result';
-import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 interface MemberLedgerEntryProps {
-  amount: Amount;
+  amount: SignedAmount;
   date: DateOnly;
   memberId: UniqueId;
   notes: null | string;
@@ -24,7 +24,7 @@ interface MemberLedgerEntryProps {
 }
 
 export class MemberLedgerEntryEntity extends AuditedAggregateRoot {
-  public get amount(): Amount {
+  public get amount(): SignedAmount {
     return this._amount;
   }
 
@@ -60,7 +60,7 @@ export class MemberLedgerEntryEntity extends AuditedAggregateRoot {
     return this._type;
   }
 
-  private _amount: Amount;
+  private _amount: SignedAmount;
   private _date: DateOnly;
   private _memberId: UniqueId;
   private _notes: null | string;

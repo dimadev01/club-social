@@ -32,21 +32,6 @@ import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
-// Types that represent negative amounts (debits)
-const DEBIT_TYPES: MemberLedgerEntryType[] = [
-  MemberLedgerEntryType.DUE_APPLY_DEBIT,
-  MemberLedgerEntryType.BALANCE_APPLY_DEBIT,
-  MemberLedgerEntryType.REFUND_DEBIT,
-  MemberLedgerEntryType.ADJUSTMENT_DEBIT,
-];
-
-// Types that represent positive amounts (credits)
-const CREDIT_TYPES: MemberLedgerEntryType[] = [
-  MemberLedgerEntryType.DEPOSIT_CREDIT,
-  MemberLedgerEntryType.ADJUSTMENT_CREDIT,
-  MemberLedgerEntryType.REVERSAL_CREDIT,
-];
-
 export function MemberLedgerList() {
   const permissions = usePermissions();
 
@@ -197,20 +182,16 @@ export function MemberLedgerList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number, record: MemberLedgerEntryPaginatedDto) =>
-              DEBIT_TYPES.includes(record.type)
-                ? NumberFormat.formatCurrencyCents(amount)
-                : '',
+            render: (amount: number) =>
+              amount < 0 ? NumberFormat.formatCurrencyCents(amount) : '',
             title: 'Egresos',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number, record: MemberLedgerEntryPaginatedDto) =>
-              CREDIT_TYPES.includes(record.type)
-                ? NumberFormat.formatCurrencyCents(amount)
-                : '',
+            render: (amount: number) =>
+              amount > 0 ? NumberFormat.formatCurrencyCents(amount) : '',
             title: 'Ingresos',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },

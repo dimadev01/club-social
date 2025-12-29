@@ -32,6 +32,7 @@ import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publis
 import { Guard } from '@/shared/domain/guards';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
+import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -133,50 +134,48 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
     memberLedgerEntries.push(creditEntry.value);
 
-    const dueSettlements = ResultUtils.combine(
-      dues.map((due) => {
-        const dueInParams = params.dues.find((pd) => pd.dueId === due.id.value);
+    for (const due of dues) {
+      const dueInParams = params.dues.find((pd) => pd.dueId === due.id.value);
 
-        Guard.defined(dueInParams);
+      Guard.defined(dueInParams);
 
-        const amount = Amount.fromCents(dueInParams.amount);
+      const amount = SignedAmount.fromCents(dueInParams.amount);
 
-        if (amount.isErr()) {
-          return err(amount.error);
-        }
+      if (amount.isErr()) {
+        return err(amount.error);
+      }
 
-        const debitEntry = MemberLedgerEntryEntity.create(
-          {
-            amount: amount.value,
-            date: paymentDate,
-            memberId: UniqueId.raw({ value: params.memberId }),
-            notes: params.notes,
-            paymentId: payment.value.id,
-            reversalOfId: null,
-            source: MemberLedgerEntrySource.PAYMENT,
-            status: MemberLedgerEntryStatus.POSTED,
-            type: MemberLedgerEntryType.DUE_APPLY_DEBIT,
-          },
-          params.createdBy,
-        );
-
-        if (debitEntry.isErr()) {
-          return err(debitEntry.error);
-        }
-
-        memberLedgerEntries.push(debitEntry.value);
-
-        return due.applySettlement({
-          amount: amount.value,
-          createdBy: params.createdBy,
-          memberLedgerEntryId: debitEntry.value.id,
+      const debitEntry = MemberLedgerEntryEntity.create(
+        {
+          amount: amount.value.toNegative(),
+          date: paymentDate,
+          memberId: UniqueId.raw({ value: params.memberId }),
+          notes: params.notes,
           paymentId: payment.value.id,
-        });
-      }),
-    );
+          reversalOfId: null,
+          source: MemberLedgerEntrySource.PAYMENT,
+          status: MemberLedgerEntryStatus.POSTED,
+          type: MemberLedgerEntryType.DUE_APPLY_DEBIT,
+        },
+        params.createdBy,
+      );
 
-    if (dueSettlements.isErr()) {
-      return err(dueSettlements.error);
+      if (debitEntry.isErr()) {
+        return err(debitEntry.error);
+      }
+
+      memberLedgerEntries.push(debitEntry.value);
+
+      const dueApplySettlementResult = due.applySettlement({
+        amount: amount.value,
+        createdBy: params.createdBy,
+        memberLedgerEntryId: debitEntry.value.id,
+        paymentId: payment.value.id,
+      });
+
+      if (dueApplySettlementResult.isErr()) {
+        return err(dueApplySettlementResult.error);
+      }
     }
 
     await this.paymentRepository.save(payment.value);

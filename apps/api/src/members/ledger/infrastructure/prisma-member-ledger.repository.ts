@@ -3,10 +3,6 @@ import type {
   PaginatedDataResultDto,
 } from '@club-social/shared/types';
 
-import {
-  MemberLedgerEntryStatus,
-  MemberLedgerEntryType,
-} from '@club-social/shared/members';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -27,20 +23,6 @@ import type {
 import { MemberLedgerEntryEntity } from '../domain/member-ledger-entry.entity';
 import { MemberLedgerRepository } from '../member-ledger.repository';
 import { PrismaMemberLedgerEntryMapper } from './prisma-member-ledger.mapper';
-
-// Types that represent negative amounts (debits)
-const DEBIT_TYPES: string[] = [
-  MemberLedgerEntryType.DUE_APPLY_DEBIT,
-  MemberLedgerEntryType.BALANCE_APPLY_DEBIT,
-  MemberLedgerEntryType.REFUND_DEBIT,
-  MemberLedgerEntryType.ADJUSTMENT_DEBIT,
-];
-
-// Types that represent positive amounts (credits)
-const CREDIT_TYPES: string[] = [
-  MemberLedgerEntryType.DEPOSIT_CREDIT,
-  MemberLedgerEntryType.ADJUSTMENT_CREDIT,
-];
 
 @Injectable()
 export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
@@ -122,18 +104,7 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
-      include: {
-        member: {
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-              },
-            },
-          },
-        },
-      },
+      include: { member: { include: { user: true } } },
       orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
@@ -147,23 +118,21 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
         _sum: { amount: true },
         where: {
           ...where,
-          status: MemberLedgerEntryStatus.POSTED,
-          type: { in: CREDIT_TYPES },
+          amount: { gt: 0 },
         },
       }),
       this.prismaService.memberLedgerEntry.aggregate({
         _sum: { amount: true },
         where: {
           ...where,
-          status: MemberLedgerEntryStatus.POSTED,
-          type: { in: DEBIT_TYPES },
+          amount: { lt: 0 },
         },
       }),
     ]);
 
     const totalInflow = inflowSum._sum.amount ?? 0;
     const totalOutflow = outflowSum._sum.amount ?? 0;
-    const totalAmount = totalInflow - totalOutflow;
+    const totalAmount = totalInflow + totalOutflow;
 
     return {
       data: entries.map((entry) => ({

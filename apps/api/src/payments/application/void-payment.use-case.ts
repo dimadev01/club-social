@@ -99,7 +99,7 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
 
       const reversedEntry = MemberLedgerEntryEntity.create(
         {
-          amount: originalEntry.amount,
+          amount: originalEntry.amount.toPositive(),
           date: DateOnly.today(),
           memberId: originalEntry.memberId,
           notes: originalEntry.notes,
