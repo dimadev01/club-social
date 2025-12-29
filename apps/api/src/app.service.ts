@@ -9,6 +9,7 @@ import { UserRole } from '@club-social/shared/users';
 import { faker } from '@faker-js/faker';
 import { Inject, Injectable } from '@nestjs/common';
 import { sample, times } from 'es-toolkit/compat';
+import pLimit from 'p-limit';
 
 import { ConfigService } from './infrastructure/config/config.service';
 import { PrismaService } from './infrastructure/database/prisma/prisma.service';
@@ -77,55 +78,62 @@ export class AppService {
         lastName: 'Club Social',
         role: UserRole.STAFF,
       }),
-      ...times(135, () =>
-        this.createMemberUseCase.execute({
-          address: sample([
-            null,
-            Address.raw({
-              cityName: sample([null, faker.location.city()]),
-              stateName: sample([null, faker.location.state()]),
-              street: sample([null, faker.location.street()]),
-              zipCode: sample([null, faker.location.zipCode()]),
-            }),
-          ]),
-          birthDate: sample([
-            null,
-            faker.date.birthdate().toISOString().split('T')[0],
-          ]),
-          category: sample([
-            MemberCategory.MEMBER,
-            MemberCategory.ADHERENT_MEMBER,
-            MemberCategory.CADET,
-            MemberCategory.PRE_CADET,
-          ]),
-          createdBy: 'System',
-          documentID: sample([null, faker.string.uuid()]),
-          email: faker.internet.email(),
-          fileStatus: sample([FileStatus.COMPLETED, FileStatus.PENDING]),
-          firstName: faker.person.firstName(),
-          lastName: faker.person.lastName(),
-          maritalStatus: sample([
-            null,
-            MaritalStatus.SINGLE,
-            MaritalStatus.MARRIED,
-            MaritalStatus.DIVORCED,
-            MaritalStatus.WIDOWED,
-          ]),
-          nationality: sample([
-            null,
-            MemberNationality.ARGENTINA,
-            MemberNationality.BULGARIA,
-            MemberNationality.COLOMBIA,
-            MemberNationality.UKRAINE,
-          ]),
-          phones: sample([
-            [],
-            [faker.phone.number()],
-            [faker.phone.number(), faker.phone.number()],
-          ]),
-          sex: sample([null, MemberSex.MALE, MemberSex.FEMALE]),
-        }),
-      ),
     ]);
+
+    const limit = pLimit(10);
+
+    await Promise.all(
+      times(135, () =>
+        limit(() =>
+          this.createMemberUseCase.execute({
+            address: sample([
+              null,
+              Address.raw({
+                cityName: sample([null, faker.location.city()]),
+                stateName: sample([null, faker.location.state()]),
+                street: sample([null, faker.location.street()]),
+                zipCode: sample([null, faker.location.zipCode()]),
+              }),
+            ]),
+            birthDate: sample([
+              null,
+              faker.date.birthdate().toISOString().split('T')[0],
+            ]),
+            category: sample([
+              MemberCategory.MEMBER,
+              MemberCategory.ADHERENT_MEMBER,
+              MemberCategory.CADET,
+              MemberCategory.PRE_CADET,
+            ]),
+            createdBy: 'System',
+            documentID: sample([null, faker.string.uuid()]),
+            email: faker.internet.email(),
+            fileStatus: sample([FileStatus.COMPLETED, FileStatus.PENDING]),
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            maritalStatus: sample([
+              null,
+              MaritalStatus.SINGLE,
+              MaritalStatus.MARRIED,
+              MaritalStatus.DIVORCED,
+              MaritalStatus.WIDOWED,
+            ]),
+            nationality: sample([
+              null,
+              MemberNationality.ARGENTINA,
+              MemberNationality.BULGARIA,
+              MemberNationality.COLOMBIA,
+              MemberNationality.UKRAINE,
+            ]),
+            phones: sample([
+              [],
+              [faker.phone.number()],
+              [faker.phone.number(), faker.phone.number()],
+            ]),
+            sex: sample([null, MemberSex.MALE, MemberSex.FEMALE]),
+          }),
+        ),
+      ),
+    );
   }
 }

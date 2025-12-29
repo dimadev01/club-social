@@ -1,4 +1,4 @@
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, formatAddress } from '@club-social/shared/lib';
 import {
   FileStatusLabel,
   MaritalStatusLabel,
@@ -109,23 +109,7 @@ export function MemberView() {
             label: 'Teléfonos',
           },
           {
-            children:
-              member.address &&
-              [
-                member.address.street,
-                member.address.cityName,
-                member.address.stateName,
-                member.address.zipCode,
-              ].some(Boolean)
-                ? [
-                    member.address.street,
-                    member.address.cityName,
-                    member.address.stateName,
-                    member.address.zipCode,
-                  ]
-                    .filter(Boolean)
-                    .join(', ')
-                : '-',
+            children: formatAddress(member.address),
             label: 'Dirección',
           },
         ]}
