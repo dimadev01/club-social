@@ -28,7 +28,7 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { Guard } from '@/shared/domain/guards';
-import { err, ok, ResultUtils } from '@/shared/domain/result';
+import { err, ok } from '@/shared/domain/result';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -65,82 +65,79 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
       UniqueId.raw({ value: params.id }),
     );
 
-    const voidResult = payment.void({
+    const voidPaymentResult = payment.void({
       voidedBy: params.voidedBy,
       voidReason: params.voidReason,
     });
 
-    if (voidResult.isErr()) {
-      return err(voidResult.error);
+    if (voidPaymentResult.isErr()) {
+      return err(voidPaymentResult.error);
     }
 
     const dues = await this.dueRepository.findByIds(payment.dueIds);
-
-    const memberLedgerEntries = await this.memberLedgerRepository.findByIds(
-      dues.flatMap((due) => due.settlements.map((s) => s.memberLedgerEntryId)),
+    const ledgerEntryIds = dues.flatMap((due) =>
+      due.settlements.map((s) => s.memberLedgerEntryId),
     );
 
-    const memberLedgerEntriesToUpdate: MemberLedgerEntryEntity[] = [];
+    const ledgerEntries =
+      await this.memberLedgerRepository.findByIds(ledgerEntryIds);
 
-    const voidPaymentResults = await ResultUtils.combineAsync(
-      dues.map(async (due) => {
-        const settlement = due.settlements.find(
-          (s) => s.paymentId?.value === payment.id.value,
-        );
-        Guard.defined(settlement);
+    const ledgerEntriesToSave: MemberLedgerEntryEntity[] = [];
 
-        const memberLedgerEntryToRevert = memberLedgerEntries.find(
-          (entry) => entry.id.value === settlement.memberLedgerEntryId.value,
-        );
-        Guard.defined(memberLedgerEntryToRevert);
+    for (const due of dues) {
+      const settlement = due.settlements.find(
+        (s) => s.paymentId?.value === payment.id.value,
+      );
+      Guard.defined(settlement);
 
-        memberLedgerEntryToRevert.reverse();
+      const originalEntry = ledgerEntries.find(
+        (entry) => entry.id.value === settlement.memberLedgerEntryId.value,
+      );
+      Guard.defined(originalEntry);
 
-        const reversedEntry = MemberLedgerEntryEntity.create(
-          {
-            amount: memberLedgerEntryToRevert.amount,
-            date: DateOnly.today(),
-            memberId: memberLedgerEntryToRevert.memberId,
-            notes: memberLedgerEntryToRevert.notes,
-            paymentId: memberLedgerEntryToRevert.paymentId,
-            reversalOfId: memberLedgerEntryToRevert.id,
-            source: MemberLedgerEntrySource.PAYMENT,
-            status: MemberLedgerEntryStatus.POSTED,
-            type: MemberLedgerEntryType.REVERSAL_CREDIT,
-          },
-          params.voidedBy,
-        );
+      originalEntry.reverse();
 
-        if (reversedEntry.isErr()) {
-          return err(reversedEntry.error);
-        }
+      const reversedEntry = MemberLedgerEntryEntity.create(
+        {
+          amount: originalEntry.amount,
+          date: DateOnly.today(),
+          memberId: originalEntry.memberId,
+          notes: originalEntry.notes,
+          paymentId: originalEntry.paymentId,
+          reversalOfId: originalEntry.id,
+          source: MemberLedgerEntrySource.PAYMENT,
+          status: MemberLedgerEntryStatus.POSTED,
+          type: MemberLedgerEntryType.REVERSAL_CREDIT,
+        },
+        params.voidedBy,
+      );
 
-        memberLedgerEntriesToUpdate.push(memberLedgerEntryToRevert);
-        memberLedgerEntriesToUpdate.push(reversedEntry.value);
+      if (reversedEntry.isErr()) {
+        return err(reversedEntry.error);
+      }
 
-        return due.voidPayment({
-          paymentId: payment.id,
-          voidedBy: params.voidedBy,
-        });
-      }),
-    );
+      ledgerEntriesToSave.push(originalEntry, reversedEntry.value);
 
-    if (voidPaymentResults.isErr()) {
-      return err(voidPaymentResults.error);
+      const dueVoidPaymentResult = due.voidPayment({
+        paymentId: payment.id,
+        voidedBy: params.voidedBy,
+      });
+
+      if (dueVoidPaymentResult.isErr()) {
+        return err(dueVoidPaymentResult.error);
+      }
     }
 
     await this.paymentRepository.save(payment);
     await Promise.all(dues.map((due) => this.dueRepository.save(due)));
     await Promise.all(
-      memberLedgerEntriesToUpdate.map((entry) =>
+      ledgerEntriesToSave.map((entry) =>
         this.memberLedgerRepository.save(entry),
       ),
     );
 
     this.eventPublisher.dispatch(payment);
-    memberLedgerEntriesToUpdate.forEach((entry) =>
-      this.eventPublisher.dispatch(entry),
-    );
+    ledgerEntriesToSave.forEach((entry) => this.eventPublisher.dispatch(entry));
     dues.forEach((due) => this.eventPublisher.dispatch(due));
 
     return ok(payment);
