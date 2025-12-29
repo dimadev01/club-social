@@ -53,7 +53,5 @@ export interface MemberLedgerEntryPaginatedDto {
 }
 
 export interface MemberLedgerEntryPaginatedExtraDto {
-  totalAmount: number;
-  totalAmountInflow: number;
-  totalAmountOutflow: number;
+  balance: number;
 }

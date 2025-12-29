@@ -1,4 +1,5 @@
 import type {
+  ExportDataDto,
   GetPaginatedDataDto,
   PaginatedDataResultDto,
 } from '@club-social/shared/types';
@@ -93,6 +94,32 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     };
   }
 
+  public async findForExport(
+    params: ExportDataDto,
+  ): Promise<MemberLedgerEntryPaginatedModel[]> {
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
+
+    const entries = await this.prismaService.memberLedgerEntry.findMany({
+      include: { member: { include: { user: true } } },
+      orderBy,
+      where,
+    });
+
+    return entries.map((entry) => ({
+      amount: entry.amount,
+      createdAt: entry.createdAt,
+      date: entry.date,
+      id: entry.id,
+      memberFullName: `${entry.member.user.lastName} ${entry.member.user.firstName}`,
+      memberId: entry.memberId,
+      notes: entry.notes,
+      paymentId: entry.paymentId,
+      source: entry.source,
+      status: entry.status,
+      type: entry.type,
+    }));
+  }
+
   public async findPaginated(
     params: GetPaginatedDataDto,
   ): Promise<
@@ -111,28 +138,16 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
       where,
     } satisfies MemberLedgerEntryFindManyArgs;
 
-    const [entries, total, inflowSum, outflowSum] = await Promise.all([
+    const [entries, total, balanceSum] = await Promise.all([
       this.prismaService.memberLedgerEntry.findMany(query),
       this.prismaService.memberLedgerEntry.count({ where }),
       this.prismaService.memberLedgerEntry.aggregate({
         _sum: { amount: true },
-        where: {
-          ...where,
-          amount: { gt: 0 },
-        },
-      }),
-      this.prismaService.memberLedgerEntry.aggregate({
-        _sum: { amount: true },
-        where: {
-          ...where,
-          amount: { lt: 0 },
-        },
+        where,
       }),
     ]);
 
-    const totalInflow = inflowSum._sum.amount ?? 0;
-    const totalOutflow = outflowSum._sum.amount ?? 0;
-    const totalAmount = totalInflow + totalOutflow;
+    const balance = balanceSum._sum.amount ?? 0;
 
     return {
       data: entries.map((entry) => ({
@@ -148,11 +163,7 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
         status: entry.status,
         type: entry.type,
       })),
-      extra: {
-        totalAmount,
-        totalAmountInflow: totalInflow,
-        totalAmountOutflow: totalOutflow,
-      },
+      extra: { balance },
       total,
     };
   }
@@ -168,7 +179,7 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     });
   }
 
-  private buildWhereAndOrderBy(params: GetPaginatedDataDto): {
+  private buildWhereAndOrderBy(params: ExportDataDto | GetPaginatedDataDto): {
     orderBy: MemberLedgerEntryOrderByWithRelationInput[];
     where: MemberLedgerEntryWhereInput;
   } {

@@ -1,4 +1,5 @@
 import type {
+  ExportDataDto,
   GetPaginatedDataDto,
   PaginatedDataResultDto,
 } from '@club-social/shared/types';
@@ -25,6 +26,9 @@ export interface MemberLedgerRepository
     ReadableRepository<MemberLedgerEntryEntity>,
     WriteableRepository<MemberLedgerEntryEntity> {
   findDetailById(id: string): Promise<MemberLedgerEntryDetailReadModel | null>;
+  findForExport(
+    params: ExportDataDto,
+  ): Promise<MemberLedgerEntryPaginatedModel[]>;
   findPaginated(
     params: GetPaginatedDataDto,
   ): Promise<

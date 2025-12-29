@@ -1,23 +1,33 @@
+import type { Response } from 'express';
+
+import { NumberFormat } from '@club-social/shared/lib';
 import {
   MemberLedgerEntrySource,
+  MemberLedgerEntrySourceLabel,
   MemberLedgerEntryStatus,
+  MemberLedgerEntryStatusLabel,
   MemberLedgerEntryType,
+  MemberLedgerEntryTypeLabel,
 } from '@club-social/shared/members';
 import {
   Controller,
   Get,
+  Header,
   Inject,
   NotFoundException,
   Param,
   Query,
+  Res,
 } from '@nestjs/common';
 
+import { CsvService } from '@/infrastructure/csv/csv.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
+import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
 import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
@@ -39,8 +49,55 @@ export class MemberLedgerController extends BaseController {
     protected readonly logger: AppLogger,
     @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
     private readonly memberLedgerRepository: MemberLedgerRepository,
+    private readonly csvService: CsvService,
   ) {
     super(logger);
+  }
+
+  @Get('export')
+  @Header('Content-Type', 'text/csv; charset=utf-8')
+  public async export(
+    @Query() query: ExportDataRequestDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    const entries = await this.memberLedgerRepository.findForExport({
+      filters: query.filters,
+      sort: query.sort,
+    });
+
+    const stream = this.csvService.generateStream(entries, [
+      { accessor: (row) => row.id, header: 'ID' },
+      { accessor: (row) => row.createdAt.toISOString(), header: 'Creado el' },
+      { accessor: (row) => row.date, header: 'Fecha' },
+      { accessor: (row) => row.memberFullName, header: 'Socio' },
+      {
+        accessor: (row) =>
+          MemberLedgerEntryTypeLabel[row.type as MemberLedgerEntryType],
+        header: 'Tipo',
+      },
+      {
+        accessor: (row) =>
+          MemberLedgerEntrySourceLabel[row.source as MemberLedgerEntrySource],
+        header: 'Origen',
+      },
+      {
+        accessor: (row) =>
+          MemberLedgerEntryStatusLabel[row.status as MemberLedgerEntryStatus],
+        header: 'Estado',
+      },
+      {
+        accessor: (row) => NumberFormat.fromCents(row.amount),
+        header: 'Monto',
+      },
+      { accessor: (row) => row.notes ?? '', header: 'Notas' },
+    ]);
+
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="${query.filename}"`,
+    );
+
+    stream.pipe(res);
   }
 
   @ApiPaginatedResponse(MemberLedgerEntryPaginatedResponseDto)
@@ -75,9 +132,7 @@ export class MemberLedgerController extends BaseController {
         type: entry.type as MemberLedgerEntryType,
       })),
       extra: {
-        totalAmount: result.extra?.totalAmount ?? 0,
-        totalAmountInflow: result.extra?.totalAmountInflow ?? 0,
-        totalAmountOutflow: result.extra?.totalAmountOutflow ?? 0,
+        balance: result.extra?.balance ?? 0,
       },
       total: result.total,
     };

@@ -1,5 +1,6 @@
 import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
+import { MoreOutlined } from '@ant-design/icons';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   type MemberLedgerEntryPaginatedDto,
@@ -10,13 +11,16 @@ import {
   MemberLedgerEntryStatusLabel,
   MemberLedgerEntryType,
   MemberLedgerEntryTypeLabel,
+  MemberLedgerEntryTypeSorted,
 } from '@club-social/shared/members';
 import { keepPreviousData } from '@tanstack/react-query';
+import { Button, Dropdown, Space } from 'antd';
 import { useState } from 'react';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
+import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
@@ -37,6 +41,7 @@ export function MemberLedgerList() {
 
   const {
     clearFilters,
+    exportQuery,
     getFilterValue,
     getSortOrder,
     onChange,
@@ -46,6 +51,11 @@ export function MemberLedgerList() {
     state,
   } = useTable<MemberLedgerEntryPaginatedDto>({
     defaultSort: [{ field: 'createdAt', order: 'descend' }],
+  });
+
+  const { exportData, isExporting } = useExport({
+    endpoint: '/member-ledger/export',
+    filename: `libro-mayor-${DateFormat.isoDate(new Date())}.csv`,
   });
 
   const [filteredMemberIds] = useState(getFilterValue('memberId') ?? []);
@@ -71,7 +81,27 @@ export function MemberLedgerList() {
   }
 
   return (
-    <Page title="Libro mayor de socios">
+    <Page
+      extra={
+        <Space.Compact>
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  disabled: isExporting,
+                  key: 'export',
+                  label: 'Exportar',
+                  onClick: () => exportData(exportQuery),
+                },
+              ],
+            }}
+          >
+            <Button icon={<MoreOutlined />} />
+          </Dropdown>
+        </Space.Compact>
+      }
+      title="Libro mayor de socios"
+    >
       <PageTableActions justify="end">
         {permissions.memberLedger.listAll && (
           <TableMembersSearch
@@ -126,12 +156,10 @@ export function MemberLedgerList() {
             dataIndex: 'type',
             filteredValue: getFilterValue('type'),
             filterMode: 'tree',
-            filters: Object.entries(MemberLedgerEntryTypeLabel).map(
-              ([value, label]) => ({
-                text: label,
-                value,
-              }),
-            ),
+            filters: MemberLedgerEntryTypeSorted.map(({ label, value }) => ({
+              text: label,
+              value,
+            })),
             render: (value: MemberLedgerEntryType) =>
               MemberLedgerEntryTypeLabel[value],
             title: 'Tipo',
@@ -209,28 +237,14 @@ export function MemberLedgerList() {
             <Table.Summary.Row>
               <Table.Summary.Cell
                 align="right"
-                colSpan={6}
+                colSpan={7}
                 index={0}
                 rowSpan={2}
               >
-                Totales
+                Balance
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={1}>
-                {NumberFormat.formatCurrencyCents(
-                  entries?.extra?.totalAmountOutflow ?? 0,
-                )}
-              </Table.Summary.Cell>
-              <Table.Summary.Cell align="right" colSpan={1} index={2}>
-                {NumberFormat.formatCurrencyCents(
-                  entries?.extra?.totalAmountInflow ?? 0,
-                )}
-              </Table.Summary.Cell>
-            </Table.Summary.Row>
-            <Table.Summary.Row>
-              <Table.Summary.Cell align="center" colSpan={2} index={1}>
-                {NumberFormat.formatCurrencyCents(
-                  entries?.extra?.totalAmount ?? 0,
-                )}
+                {NumberFormat.formatCurrencyCents(entries?.extra?.balance ?? 0)}
               </Table.Summary.Cell>
             </Table.Summary.Row>
           </>

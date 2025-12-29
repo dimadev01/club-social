@@ -53,16 +53,8 @@ export const MemberLedgerEntryTypeLabel = {
   [MemberLedgerEntryType.REVERSAL_CREDIT]: 'Reversión',
 } as const;
 
-export const DEBIT_TYPES: MemberLedgerEntryType[] = [
-  MemberLedgerEntryType.DUE_APPLY_DEBIT,
-  MemberLedgerEntryType.BALANCE_APPLY_DEBIT,
-  MemberLedgerEntryType.REFUND_DEBIT,
-  MemberLedgerEntryType.ADJUSTMENT_DEBIT,
-];
-
-// Types that represent positive amounts (credits)
-export const CREDIT_TYPES: MemberLedgerEntryType[] = [
-  MemberLedgerEntryType.DEPOSIT_CREDIT,
-  MemberLedgerEntryType.ADJUSTMENT_CREDIT,
-  MemberLedgerEntryType.REVERSAL_CREDIT,
-];
+export const MemberLedgerEntryTypeSorted = Object.entries(
+  MemberLedgerEntryTypeLabel,
+)
+  .map(([key, value]) => ({ label: value, value: key }))
+  .sort((a, b) => a.label.localeCompare(b.label));

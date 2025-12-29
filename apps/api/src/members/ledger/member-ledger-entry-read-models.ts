@@ -17,9 +17,7 @@ export interface MemberLedgerEntryDetailReadModel {
 }
 
 export interface MemberLedgerEntryPaginatedExtraModel {
-  totalAmount: number;
-  totalAmountInflow: number;
-  totalAmountOutflow: number;
+  balance: number;
 }
 
 export interface MemberLedgerEntryPaginatedModel {

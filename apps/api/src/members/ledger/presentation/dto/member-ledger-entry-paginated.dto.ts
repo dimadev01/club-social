@@ -7,9 +7,7 @@ import {
 } from '@club-social/shared/members';
 
 export class MemberLedgerEntryPaginatedExtraResponseDto implements MemberLedgerEntryPaginatedExtraDto {
-  public totalAmount: number;
-  public totalAmountInflow: number;
-  public totalAmountOutflow: number;
+  public balance: number;
 }
 
 export class MemberLedgerEntryPaginatedResponseDto implements MemberLedgerEntryPaginatedDto {
