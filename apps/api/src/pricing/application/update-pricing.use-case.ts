@@ -108,7 +108,6 @@ export class UpdatePricingUseCase extends UseCase<void> {
         pricesToDelete.map((price) => pricingRepository.save(price)),
       );
       await pricingRepository.save(pricing);
-      this.eventPublisher.dispatch(pricing);
     });
 
     pricesToClose.forEach((price) => this.eventPublisher.dispatch(price));

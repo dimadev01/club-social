@@ -6,7 +6,6 @@ import { DateFormat } from '@club-social/shared/lib';
 import {
   type MemberCategory,
   MemberCategoryLabel,
-  MemberCategoryOptions,
 } from '@club-social/shared/members';
 import { type IPricingPaginatedDto } from '@club-social/shared/pricing';
 import { keepPreviousData } from '@tanstack/react-query';
@@ -17,6 +16,7 @@ import { appRoutes } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -123,10 +123,7 @@ export function PricingList() {
             dataIndex: 'memberCategory',
             filteredValue: getFilterValue('memberCategory'),
             filterMode: 'tree',
-            filters: MemberCategoryOptions.map(({ label, value }) => ({
-              text: label,
-              value,
-            })),
+            filters: labelMapToFilterOptions(MemberCategoryLabel),
             render: (memberCategory: MemberCategory) =>
               MemberCategoryLabel[memberCategory],
             title: 'Categoría de socio',

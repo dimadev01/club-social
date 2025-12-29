@@ -138,9 +138,10 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       async ({ memberRepository, userRepository }) => {
         await userRepository.save(user.value);
         await memberRepository.save(member.value);
-        this.eventPublisher.dispatch(member.value);
       },
     );
+
+    this.eventPublisher.dispatch(member.value);
 
     return ok(member.value);
   }

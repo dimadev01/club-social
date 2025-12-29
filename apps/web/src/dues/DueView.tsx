@@ -10,13 +10,12 @@ import {
 } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
-import { App, Button, Col, Divider } from 'antd';
+import { Button, Col, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
-import { useMutation } from '@/shared/hooks/useMutation';
-import { $fetch } from '@/shared/lib/fetch';
+import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
@@ -35,7 +34,6 @@ import { useDue } from './useDue';
 
 export function DueView() {
   const permissions = usePermissions();
-  const { message } = App.useApp();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -43,12 +41,12 @@ export function DueView() {
 
   const { data: due, isLoading } = useDue(id);
 
-  const voidDueMutation = useMutation<unknown, Error, VoidDueDto>({
-    mutationFn: (body) => $fetch(`dues/${id}/void`, { body, method: 'PATCH' }),
+  const voidDueMutation = useVoidMutation<unknown, Error, VoidDueDto>({
+    endpoint: `dues/${id}/void`,
     onSuccess: () => {
-      message.success('Cuota anulada correctamente');
       navigate(-1);
     },
+    successMessage: 'Cuota anulada correctamente',
   });
 
   if (isLoading) {

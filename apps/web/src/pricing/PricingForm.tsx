@@ -5,10 +5,11 @@ import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormats } from '@club-social/shared/lib';
 import {
   type MemberCategory,
-  MemberCategoryOptions,
+  MemberCategoryLabel,
 } from '@club-social/shared/members';
 import { DatePicker, InputNumber } from 'antd';
 
+import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Form } from '@/ui/Form/Form';
 import { Select } from '@/ui/Select';
 
@@ -69,10 +70,7 @@ export function PricingForm({
       >
         <Select
           disabled={isEditMode}
-          options={Object.entries(DueCategoryLabel).map(([key, value]) => ({
-            label: value,
-            value: key,
-          }))}
+          options={labelMapToSelectOptions(DueCategoryLabel)}
         />
       </Form.Item>
 
@@ -83,7 +81,10 @@ export function PricingForm({
           { message: 'La categoría de socio es requerida', required: true },
         ]}
       >
-        <Select disabled={isEditMode} options={MemberCategoryOptions} />
+        <Select
+          disabled={isEditMode}
+          options={labelMapToSelectOptions(MemberCategoryLabel)}
+        />
       </Form.Item>
 
       <Form.Item<PricingFormData>

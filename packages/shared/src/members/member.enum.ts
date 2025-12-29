@@ -43,14 +43,6 @@ export const MemberCategorySort = {
   [MemberCategory.PRE_CADET]: 3,
 } as const;
 
-export const MemberCategoryOptions = Object.entries(MemberCategoryLabel)
-  .map(([key, value]) => ({ label: value, value: key }))
-  .sort(
-    (a, b) =>
-      MemberCategorySort[a.value as MemberCategory] -
-      MemberCategorySort[b.value as MemberCategory],
-  );
-
 export const FileStatus = {
   COMPLETED: 'completed',
   PENDING: 'pending',

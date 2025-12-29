@@ -12,6 +12,7 @@ import {
   PricingWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -176,11 +177,16 @@ export class PrismaPricingRepository implements PricingRepository {
     return pricing ? this.pricingMapper.toDomain(pricing) : null;
   }
 
-  public async save(entity: PricingEntity): Promise<void> {
+  public async save(
+    entity: PricingEntity,
+    tx?: PrismaClientLike,
+  ): Promise<void> {
+    const client = tx ?? this.prismaService;
+
     const create = this.pricingMapper.toCreateInput(entity);
     const update = this.pricingMapper.toUpdateInput(entity);
 
-    await this.prismaService.pricing.upsert({
+    await client.pricing.upsert({
       create,
       update,
       where: { id: entity.id.value },

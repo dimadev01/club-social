@@ -4,6 +4,7 @@ import {
 } from '@club-social/shared/types';
 import { Inject, Injectable } from '@nestjs/common';
 
+import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -47,7 +48,7 @@ export class CompositeUserRepository implements UserRepository {
     return this.userReadableRepository.findUniqueByEmail(email);
   }
 
-  public async save(entity: UserEntity): Promise<void> {
-    await this.userWriteableRepository.save(entity);
+  public async save(entity: UserEntity, tx?: PrismaClientLike): Promise<void> {
+    await this.userWriteableRepository.save(entity, tx);
   }
 }

@@ -4,7 +4,6 @@ import { DateFormat } from '@club-social/shared/lib';
 import {
   MemberCategory,
   MemberCategoryLabel,
-  MemberCategoryOptions,
   type MemberPaginatedDto,
   type MemberPaginatedExtraDto,
   MemberStatus,
@@ -21,6 +20,7 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { LedgerIcon } from '@/ui/Icons/LedgerIcon';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
@@ -141,10 +141,7 @@ export function MemberListPage() {
             dataIndex: 'category',
             filteredValue: getFilterValue('category'),
             filterMode: 'tree',
-            filters: MemberCategoryOptions.map(({ label, value }) => ({
-              text: label,
-              value,
-            })),
+            filters: labelMapToFilterOptions(MemberCategoryLabel),
             render: (value: MemberCategory) => MemberCategoryLabel[value],
             title: 'Categoría',
             width: TABLE_COLUMN_WIDTHS.CATEGORY,

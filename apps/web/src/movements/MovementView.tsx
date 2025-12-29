@@ -8,12 +8,11 @@ import {
   MovementStatusLabel,
   type VoidMovementDto,
 } from '@club-social/shared/movements';
-import { App, Button, Col } from 'antd';
+import { Button, Col } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { useMutation } from '@/shared/hooks/useMutation';
-import { $fetch } from '@/shared/lib/fetch';
+import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
@@ -28,7 +27,6 @@ import { useMovement } from './useMovement';
 
 export function MovementView() {
   const permissions = usePermissions();
-  const { message } = App.useApp();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -36,14 +34,15 @@ export function MovementView() {
 
   const { data: movement, isLoading } = useMovement(id);
 
-  const voidMovementMutation = useMutation<unknown, Error, VoidMovementDto>({
-    mutationFn: (body) =>
-      $fetch(`movements/${id}/void`, { body, method: 'PATCH' }),
-    onSuccess: () => {
-      message.success('Entrada/Salida anulada correctamente');
-      navigate(-1);
+  const voidMovementMutation = useVoidMutation<unknown, Error, VoidMovementDto>(
+    {
+      endpoint: `movements/${id}/void`,
+      onSuccess: () => {
+        navigate(-1);
+      },
+      successMessage: 'Entrada/Salida anulada correctamente',
     },
-  });
+  );
 
   if (isLoading) {
     return <Card loading />;

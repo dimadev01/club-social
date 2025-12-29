@@ -10,6 +10,7 @@ import {
 } from '@club-social/shared/movements';
 import { DatePicker, Input, InputNumber } from 'antd';
 
+import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Form } from '@/ui/Form/Form';
 import { Select } from '@/ui/Select';
 
@@ -62,12 +63,7 @@ export function MovementForm({
         name="type"
         rules={[{ message: 'El tipo es requerido', required: true }]}
       >
-        <Select
-          options={Object.entries(MovementTypeLabel).map(([key, value]) => ({
-            label: value,
-            value: key,
-          }))}
-        />
+        <Select options={labelMapToSelectOptions(MovementTypeLabel)} />
       </Form.Item>
 
       <Form.Item<MovementFormData>

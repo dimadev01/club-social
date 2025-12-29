@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useActivePricing } from '@/pricing/useActivePricing';
+import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Form } from '@/ui/Form/Form';
 import { Select } from '@/ui/Select';
 
@@ -115,10 +116,7 @@ export function DueForm({
       >
         <Select
           disabled={isEditMode}
-          options={Object.entries(DueCategoryLabel).map(([key, value]) => ({
-            label: value,
-            value: key,
-          }))}
+          options={labelMapToSelectOptions(DueCategoryLabel)}
         />
       </Form.Item>
 

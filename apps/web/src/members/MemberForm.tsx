@@ -7,7 +7,7 @@ import {
   MaritalStatus,
   MaritalStatusLabel,
   MemberCategory,
-  MemberCategoryOptions,
+  MemberCategoryLabel,
   MemberNationality,
   MemberNationalityLabel,
   MemberSex,
@@ -17,6 +17,7 @@ import {
 } from '@club-social/shared/members';
 import { Button, Col, DatePicker, Empty, Input, Space, Tooltip } from 'antd';
 
+import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Card } from '@/ui/Card';
 import { Form } from '@/ui/Form/Form';
 import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
@@ -105,7 +106,9 @@ export function MemberForm({
                 name="category"
                 rules={[{ required: true }]}
               >
-                <Select options={MemberCategoryOptions} />
+                <Select
+                  options={labelMapToSelectOptions(MemberCategoryLabel)}
+                />
               </Form.Item>
 
               {isEditMode && (
@@ -115,9 +118,7 @@ export function MemberForm({
                   rules={[{ required: true }]}
                 >
                   <Select
-                    options={Object.entries(MemberStatusLabel).map(
-                      ([key, value]) => ({ label: value, value: key }),
-                    )}
+                    options={labelMapToSelectOptions(MemberStatusLabel)}
                   />
                 </Form.Item>
               )}
@@ -144,14 +145,7 @@ export function MemberForm({
                 name="fileStatus"
                 rules={[{ required: true }]}
               >
-                <Select
-                  options={Object.entries(FileStatusLabel).map(
-                    ([key, value]) => ({
-                      label: value,
-                      value: key,
-                    }),
-                  )}
-                />
+                <Select options={labelMapToSelectOptions(FileStatusLabel)} />
               </Form.Item>
 
               <Form.Item<MemberFormData>
@@ -160,12 +154,7 @@ export function MemberForm({
                 rules={[{ required: false }]}
               >
                 <Select
-                  options={Object.entries(MemberNationalityLabel).map(
-                    ([key, value]) => ({
-                      label: value,
-                      value: key,
-                    }),
-                  )}
+                  options={labelMapToSelectOptions(MemberNationalityLabel)}
                 />
               </Form.Item>
 
@@ -174,14 +163,7 @@ export function MemberForm({
                 name="sex"
                 rules={[{ required: false }]}
               >
-                <Select
-                  options={Object.entries(MemberSexLabel).map(
-                    ([key, value]) => ({
-                      label: value,
-                      value: key,
-                    }),
-                  )}
-                />
+                <Select options={labelMapToSelectOptions(MemberSexLabel)} />
               </Form.Item>
 
               <Form.Item<MemberFormData>
@@ -189,14 +171,7 @@ export function MemberForm({
                 name="maritalStatus"
                 rules={[{ required: false }]}
               >
-                <Select
-                  options={Object.entries(MaritalStatusLabel).map(
-                    ([key, value]) => ({
-                      label: value,
-                      value: key,
-                    }),
-                  )}
-                />
+                <Select options={labelMapToSelectOptions(MaritalStatusLabel)} />
               </Form.Item>
             </Card>
           </Space>

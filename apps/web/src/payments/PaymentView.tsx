@@ -12,12 +12,11 @@ import {
   PaymentStatusLabel,
   type VoidPaymentDto,
 } from '@club-social/shared/payments';
-import { App, Button, Col, Divider } from 'antd';
+import { Button, Col, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-import { useMutation } from '@/shared/hooks/useMutation';
-import { $fetch } from '@/shared/lib/fetch';
+import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
@@ -36,7 +35,6 @@ import { usePayment } from './usePayment';
 
 export function PaymentView() {
   const permissions = usePermissions();
-  const { message } = App.useApp();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -44,13 +42,12 @@ export function PaymentView() {
 
   const { data: payment, isLoading } = usePayment(id);
 
-  const voidPayment = useMutation({
-    mutationFn: (body: VoidPaymentDto) =>
-      $fetch(`payments/${payment?.id}/void`, { body, method: 'PATCH' }),
+  const voidPaymentMutation = useVoidMutation<unknown, Error, VoidPaymentDto>({
+    endpoint: `payments/${payment?.id}/void`,
     onSuccess: () => {
-      message.success('Pago anulado correctamente');
       navigate(-1);
     },
+    successMessage: 'Pago anulado correctamente',
   });
 
   if (isLoading) {
@@ -61,7 +58,7 @@ export function PaymentView() {
     return <NotFound />;
   }
 
-  const isMutating = voidPayment.isPending;
+  const isMutating = voidPaymentMutation.isPending;
   const canVoid =
     permissions.payments.void && payment.status === PaymentStatus.PAID;
 
@@ -190,7 +187,7 @@ export function PaymentView() {
       <VoidModal
         onCancel={() => setIsVoidModalOpen(false)}
         onConfirm={(reason) => {
-          voidPayment.mutate({ voidReason: reason });
+          voidPaymentMutation.mutate({ voidReason: reason });
           setIsVoidModalOpen(false);
         }}
         open={isVoidModalOpen}

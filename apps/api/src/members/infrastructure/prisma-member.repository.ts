@@ -21,6 +21,7 @@ import {
   MemberWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -170,11 +171,16 @@ export class PrismaMemberRepository implements MemberRepository {
     };
   }
 
-  public async save(entity: MemberEntity): Promise<void> {
+  public async save(
+    entity: MemberEntity,
+    tx?: PrismaClientLike,
+  ): Promise<void> {
+    const client = tx ?? this.prismaService;
+
     const create = this.memberMapper.toCreateInput(entity);
     const update = this.memberMapper.toUpdateInput(entity);
 
-    await this.prismaService.member.upsert({
+    await client.member.upsert({
       create,
       update,
       where: { id: entity.id.value },
