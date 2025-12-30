@@ -10,7 +10,7 @@ export function Page({ ...props }: CardProps) {
 
 export function PageLoader() {
   return (
-    <Page className="flex items-center justify-center">
+    <Page className="flex h-screen items-center justify-center">
       <Spin size="large" />
     </Page>
   );

@@ -1,4 +1,4 @@
-import { MemberAddressDto } from '../members';
+import type { MemberAddressDto } from '../members';
 
 export function formatAddress(
   address: MemberAddressDto | null | undefined,

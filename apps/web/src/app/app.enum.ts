@@ -18,8 +18,7 @@ export const appRoutes = {
     view: ':id',
   } as const,
   home: '/',
-  login: '/auth/login',
-  logout: '/auth/logout',
+  maintenanceMode: '/maintenance-mode',
   memberLedger: {
     list: '/member-ledger',
     new: '/member-ledger/new',

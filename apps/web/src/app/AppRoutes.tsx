@@ -48,7 +48,6 @@ export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<Home />} path={appRoutes.home} />
 
@@ -109,11 +108,8 @@ export function AppRoutes() {
           <Route element={<LogoutPage />} path={appRoutes.auth.logout} />
         </Route>
 
-        {/* Public routes */}
         <Route element={<PublicRoute />}>
-          <Route path="/auth">
-            <Route element={<LoginPage />} path={appRoutes.auth.login} />
-          </Route>
+          <Route element={<LoginPage />} path={appRoutes.auth.login} />
         </Route>
 
         <Route element={<NotFound />} path="*" />

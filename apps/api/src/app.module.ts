@@ -10,6 +10,7 @@ import { ConfigModule } from './infrastructure/config/config.module';
 import { CsvModule } from './infrastructure/csv/csv.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
 import { EventsModule } from './infrastructure/events/events.module';
+import { FeatureFlagsModule } from './infrastructure/feature-flags/feature-flags.module';
 import { LoggerModule } from './infrastructure/logger/logger.module';
 import { ObservabilityModule } from './infrastructure/observability/observability.module';
 import { StorageModule } from './infrastructure/storage/storage.module';
@@ -32,6 +33,7 @@ import { UsersModule } from './users/user.module';
     TraceModule,
     DatabaseModule,
     AuthModule,
+    FeatureFlagsModule,
     StorageModule,
 
     /**

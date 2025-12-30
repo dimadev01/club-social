@@ -69,6 +69,18 @@ export class ConfigService {
   @Value('BETTER_AUTH_TRUSTED_ORIGINS', { parse: (value) => value.split(',') })
   public readonly trustedOrigins: string[];
 
+  @IsString()
+  @Value('UNLEASH_API_TOKEN')
+  public readonly unleashApiToken: string;
+
+  @IsString()
+  @Value('UNLEASH_APP_NAME')
+  public readonly unleashAppName: string;
+
+  @IsString()
+  @Value('UNLEASH_URL')
+  public readonly unleashUrl: string;
+
   public get isDev(): boolean {
     return this.environment === 'development';
   }

@@ -19,6 +19,10 @@ export const queryKeys = createQueryKeyStore({
     pendingStatistics: () => [undefined],
   },
 
+  featureFlags: {
+    maintenanceMode: null,
+  },
+
   memberLedger: {
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
