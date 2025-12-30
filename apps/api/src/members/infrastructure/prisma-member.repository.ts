@@ -14,6 +14,7 @@ import {
   SortOrder,
 } from '@club-social/shared/types';
 import { Injectable } from '@nestjs/common';
+import { orderBy, sumBy } from 'es-toolkit/compat';
 
 import {
   MemberGetPayload,
@@ -37,6 +38,9 @@ import { MemberRepository } from '../domain/member.repository';
 import { PrismaMemberMapper } from './prisma-member.mapper';
 
 type MemberPayload = MemberGetPayload<{ include: { user: true } }>;
+type MemberPayloadWithLedgerEntries = MemberGetPayload<{
+  include: { ledgerEntries: true; user: true };
+}>;
 
 @Injectable()
 export class PrismaMemberRepository implements MemberRepository {
@@ -97,7 +101,7 @@ export class PrismaMemberRepository implements MemberRepository {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const members = await this.prismaService.member.findMany({
-      include: { user: true },
+      include: { ledgerEntries: true, user: true },
       orderBy,
       where,
     });
@@ -121,10 +125,11 @@ export class PrismaMemberRepository implements MemberRepository {
   > {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
-    // Check if sorting by a due category field
+    // Check if sorting by a due category field or balance
     const dueSortField = this.extractDueSortField(params);
+    const balanceSortField = this.extractBalanceSortField(params);
 
-    let members: MemberPayload[];
+    let members: MemberPayloadWithLedgerEntries[];
     let total: number;
 
     if (dueSortField) {
@@ -138,11 +143,21 @@ export class PrismaMemberRepository implements MemberRepository {
       });
       members = result.members;
       total = result.total;
+    } else if (balanceSortField) {
+      // Sorting by balance - use aggregation-based sorting
+      const result = await this.findPaginatedByBalanceSort({
+        order: balanceSortField.order,
+        page: params.page,
+        pageSize: params.pageSize,
+        where,
+      });
+      members = result.members;
+      total = result.total;
     } else {
       // Standard Prisma sorting
       [members, total] = await Promise.all([
         this.prismaService.member.findMany({
-          include: { user: true },
+          include: { ledgerEntries: true, user: true },
           orderBy,
           skip: (params.page - 1) * params.pageSize,
           take: params.pageSize,
@@ -280,6 +295,16 @@ export class PrismaMemberRepository implements MemberRepository {
     return totals;
   }
 
+  private extractBalanceSortField(params: GetPaginatedDataDto) {
+    for (const sort of params.sort) {
+      if (sort.field === 'balance') {
+        return { order: sort.order };
+      }
+    }
+
+    return null;
+  }
+
   private extractDueSortField(
     params: GetPaginatedDataDto,
   ): null | { category: DueCategory; order: SortOrder } {
@@ -338,6 +363,47 @@ export class PrismaMemberRepository implements MemberRepository {
     return duesByMemberAndCategory;
   }
 
+  private async findPaginatedByBalanceSort(params: {
+    order: SortOrder;
+    page: number;
+    pageSize: number;
+    where: MemberWhereInput;
+  }): Promise<{
+    members: MemberPayloadWithLedgerEntries[];
+    total: number;
+  }> {
+    // Get all matching members with their ledger entries
+    const allMembers = await this.prismaService.member.findMany({
+      include: { ledgerEntries: true, user: true },
+      where: params.where,
+    });
+
+    const totalMembersCount = allMembers.length;
+
+    // Calculate balance for each member and sort
+    const membersWithBalance = allMembers.map((member) => ({
+      balance: sumBy(member.ledgerEntries, (entry) => entry.amount),
+      member,
+    }));
+
+    const sortedMembersWithBalance = orderBy(
+      membersWithBalance,
+      (m) => m.balance,
+      params.order,
+    );
+
+    // Paginate on the sorted list
+    const paginatedMembers = sortedMembersWithBalance.slice(
+      (params.page - 1) * params.pageSize,
+      params.page * params.pageSize,
+    );
+
+    return {
+      members: paginatedMembers.map((m) => m.member),
+      total: totalMembersCount,
+    };
+  }
+
   private async findPaginatedByDueSort(params: {
     category: DueCategory;
     order: SortOrder;
@@ -345,7 +411,7 @@ export class PrismaMemberRepository implements MemberRepository {
     pageSize: number;
     where: MemberWhereInput;
   }): Promise<{
-    members: MemberPayload[];
+    members: MemberPayloadWithLedgerEntries[];
     total: number;
   }> {
     // Get all matching member IDs
@@ -390,28 +456,33 @@ export class PrismaMemberRepository implements MemberRepository {
 
     // Fetch the members for this page
     const fetchedMembers = await this.prismaService.member.findMany({
-      include: { user: true },
+      include: { ledgerEntries: true, user: true },
       where: { id: { in: paginatedMemberIdsToFetch } },
     });
 
     // Re-sort to match the order (Prisma returns in arbitrary order)
-    const memberMap = new Map<string, MemberPayload>(
+    const memberMap = new Map<string, MemberPayloadWithLedgerEntries>(
       fetchedMembers.map((m) => [m.id, m]),
     );
     const members = paginatedMemberIdsToFetch.map(
-      (id) => memberMap.get(id) as MemberPayload,
+      (id) => memberMap.get(id) as MemberPayloadWithLedgerEntries,
     );
 
     return { members, total: totalMembersCount };
   }
 
   private toPaginatedReadModel(
-    member: MemberPayload,
+    member: MemberPayloadWithLedgerEntries,
     duesByMemberAndCategory: Map<string, Map<DueCategory, number>>,
   ): MemberPaginatedReadModel {
     const memberDues = duesByMemberAndCategory.get(member.id);
+    const balance = sumBy(
+      member.ledgerEntries,
+      (ledgerEntry) => ledgerEntry.amount,
+    );
 
     return {
+      balance,
       category: member.category as MemberCategory,
       electricityTotalDueAmount: memberDues?.get(DueCategory.ELECTRICITY) ?? 0,
       email: member.user.email,

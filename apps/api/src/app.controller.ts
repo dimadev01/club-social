@@ -27,4 +27,9 @@ export class AppController {
   public async clear(): Promise<void> {
     return this.appService.clear();
   }
+
+  @Post('migrate')
+  public async migrate(): Promise<void> {
+    return this.appService.migrate();
+  }
 }

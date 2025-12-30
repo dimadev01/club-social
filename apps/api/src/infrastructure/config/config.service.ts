@@ -46,6 +46,10 @@ export class ConfigService {
   public readonly environment: string;
 
   @IsString()
+  @Value('MONGO_URI')
+  public readonly mongoUri: string;
+
+  @IsString()
   @Value('NODE_ENV')
   public readonly nodeEnv: string;
 

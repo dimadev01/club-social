@@ -149,7 +149,7 @@ export function PaymentList() {
             sorter: true,
             sortOrder: getSortOrder('createdAt'),
             title: 'Creado el',
-            width: TABLE_COLUMN_WIDTHS.DATE,
+            width: TABLE_COLUMN_WIDTHS.DATE_TIME,
           },
           {
             dataIndex: 'date',

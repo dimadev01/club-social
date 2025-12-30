@@ -36,9 +36,6 @@ import { UsersModule } from './users/user.module';
     FeatureFlagsModule,
     StorageModule,
 
-    /**
-     * Domain
-     */
     UsersModule,
     MembersModule,
     DuesModule,

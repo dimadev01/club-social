@@ -12,6 +12,7 @@ export class MemberPaginatedExtraResponseDto implements MemberPaginatedExtraDto 
 }
 
 export class MemberPaginatedResponseDto implements MemberPaginatedDto {
+  public balance: number;
   public category: MemberCategory;
   public electricityTotalDueAmount: number;
   public email: string;

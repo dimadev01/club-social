@@ -6,6 +6,7 @@ import {
   MemberStatusLabel,
 } from '@club-social/shared/members';
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -71,16 +72,22 @@ export class MembersController extends BaseController {
     @Body() body: UpdateMemberRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
+    const address = body.address
+      ? Address.create({
+          cityName: body.address.cityName,
+          stateName: body.address.stateName,
+          street: body.address.street,
+          zipCode: body.address.zipCode,
+        })
+      : null;
+
+    if (address && address.isErr()) {
+      throw new BadRequestException(address.error.message);
+    }
+
     this.handleResult(
       await this.updateMemberUseCase.execute({
-        address: body.address
-          ? Address.create({
-              cityName: body.address.cityName,
-              stateName: body.address.stateName,
-              street: body.address.street,
-              zipCode: body.address.zipCode,
-            })
-          : null,
+        address: address ? address.value : null,
         birthDate: body.birthDate ? body.birthDate : null,
         category: body.category,
         documentID: body.documentID,
@@ -104,16 +111,22 @@ export class MembersController extends BaseController {
     @Body() createMemberDto: CreateMemberRequestDto,
     @Session() session: AuthSession,
   ): Promise<ParamIdReqResDto> {
+    const address = createMemberDto.address
+      ? Address.create({
+          cityName: createMemberDto.address.cityName,
+          stateName: createMemberDto.address.stateName,
+          street: createMemberDto.address.street,
+          zipCode: createMemberDto.address.zipCode,
+        })
+      : null;
+
+    if (address && address.isErr()) {
+      throw new BadRequestException(address.error.message);
+    }
+
     const { id } = this.handleResult(
       await this.createMemberUseCase.execute({
-        address: createMemberDto.address
-          ? Address.create({
-              cityName: createMemberDto.address.cityName,
-              stateName: createMemberDto.address.stateName,
-              street: createMemberDto.address.street,
-              zipCode: createMemberDto.address.zipCode,
-            })
-          : null,
+        address: address ? address.value : null,
         birthDate: createMemberDto.birthDate ? createMemberDto.birthDate : null,
         category: createMemberDto.category,
         createdBy: session.user.name,
@@ -197,6 +210,7 @@ export class MembersController extends BaseController {
 
     return {
       data: data.data.map((member) => ({
+        balance: member.balance,
         category: member.category,
         electricityTotalDueAmount: member.electricityTotalDueAmount,
         email: member.email,
@@ -204,7 +218,6 @@ export class MembersController extends BaseController {
         id: member.id,
         memberShipTotalDueAmount: member.memberShipTotalDueAmount,
         name: member.name,
-
         status: member.status,
       })),
       extra: data.extra ?? {

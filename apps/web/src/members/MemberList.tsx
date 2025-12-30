@@ -24,6 +24,7 @@ import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { LedgerIcon } from '@/ui/Icons/LedgerIcon';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
+import { NavigateToMember } from '@/ui/NavigateMember';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -129,7 +130,7 @@ export function MemberListPage() {
             fixed: 'left',
             render: (id, record) => (
               <Typography.Text className="line-clamp-1 w-full">
-                <Link to={appRoutes.members.view(id)}>{record.name}</Link>
+                <NavigateToMember id={id}>{record.name}</NavigateToMember>
               </Typography.Text>
             ),
             sorter: true,
@@ -195,6 +196,16 @@ export function MemberListPage() {
             sorter: true,
             sortOrder: getSortOrder('guestTotalDueAmount'),
             title: 'Deuda invitado',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+          {
+            align: 'right',
+            dataIndex: 'balance',
+            render: (amount: number) =>
+              NumberFormat.formatCurrencyCents(amount),
+            sorter: true,
+            sortOrder: getSortOrder('balance'),
+            title: 'Balance',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
@@ -272,7 +283,7 @@ export function MemberListPage() {
                 members?.extra?.guestTotalDueAmount ?? 0,
               )}
             </Table.Summary.Cell>
-            <Table.Summary.Cell colSpan={1} index={4} />
+            <Table.Summary.Cell colSpan={2} index={4} />
           </Table.Summary.Row>
         )}
       />

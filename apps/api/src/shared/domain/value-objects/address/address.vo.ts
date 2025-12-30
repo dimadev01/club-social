@@ -1,4 +1,4 @@
-import { Guard } from '../../guards';
+import { ok, Result } from '../../result';
 import { ValueObject } from '../value-object.base';
 
 interface Props {
@@ -29,29 +29,15 @@ export class Address extends ValueObject<Props> {
     super(props);
   }
 
-  public static create(props: Props): Address {
-    if (props.cityName !== null) {
-      Guard.string(props.cityName);
-    }
-
-    if (props.stateName !== null) {
-      Guard.string(props.stateName);
-    }
-
-    if (props.street !== null) {
-      Guard.string(props.street);
-    }
-
-    if (props.zipCode !== null) {
-      Guard.string(props.zipCode);
-    }
-
-    return new Address({
-      cityName: props.cityName !== null ? props.cityName.trim() : null,
-      stateName: props.stateName !== null ? props.stateName.trim() : null,
-      street: props.street !== null ? props.street.trim() : null,
-      zipCode: props.zipCode !== null ? props.zipCode.trim() : null,
-    });
+  public static create(props: Props): Result<Address> {
+    return ok(
+      new Address({
+        cityName: props.cityName !== null ? props.cityName.trim() : null,
+        stateName: props.stateName !== null ? props.stateName.trim() : null,
+        street: props.street !== null ? props.street.trim() : null,
+        zipCode: props.zipCode !== null ? props.zipCode.trim() : null,
+      }),
+    );
   }
 
   public static raw(props: Props): Address {

@@ -169,7 +169,7 @@ export function DueView() {
                 '-'
               ),
             title: 'Pago',
-            width: TABLE_COLUMN_WIDTHS.DATE,
+            width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
         ]}
         dataSource={due.settlements}

@@ -49,6 +49,7 @@ export interface MemberDto {
 }
 
 export interface MemberPaginatedDto {
+  balance: number;
   category: MemberCategory;
   electricityTotalDueAmount: number;
   email: string;

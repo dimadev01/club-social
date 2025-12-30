@@ -143,7 +143,7 @@ export function DueList() {
             sorter: true,
             sortOrder: getSortOrder('createdAt'),
             title: 'Creado el',
-            width: TABLE_COLUMN_WIDTHS.DATE,
+            width: TABLE_COLUMN_WIDTHS.DATE_TIME,
           },
           {
             dataIndex: 'date',
@@ -153,6 +153,7 @@ export function DueList() {
             filteredValue: getFilterValue('date'),
             render: (date: string) => DateFormat.date(date),
             title: 'Fecha',
+            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           ...(permissions.dues.listAll
             ? [

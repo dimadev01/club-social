@@ -7,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   UserFindManyArgs,
+  UserOrderByWithRelationInput,
   UserWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
@@ -69,8 +70,18 @@ export class PrismaUserRepository implements UserReadableRepository {
       where.status = { in: params.filters.status };
     }
 
+    const orderBy: UserOrderByWithRelationInput[] = [];
+
+    params.sort.forEach(({ field, order }) => {
+      if (field === 'id') {
+        orderBy.push({ lastName: order }, { firstName: order });
+      } else {
+        orderBy.push({ [field]: order });
+      }
+    });
+
     const query: UserFindManyArgs = {
-      orderBy: params.sort.map(({ field, order }) => ({ [field]: order })),
+      orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
       where,

@@ -21,6 +21,7 @@ export interface MemberPaginatedExtraReadModel {
 }
 
 export interface MemberPaginatedReadModel {
+  balance: number;
   category: MemberCategory;
   electricityTotalDueAmount: number;
   email: string;

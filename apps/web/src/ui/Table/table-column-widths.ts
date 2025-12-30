@@ -2,7 +2,8 @@ export const TABLE_COLUMN_WIDTHS = {
   ACTIONS: 100,
   AMOUNT: 150,
   CATEGORY: 100,
-  DATE: 150,
+  DATE: 125,
+  DATE_TIME: 175,
   STATUS: 150,
 } as const;
 
