@@ -60,7 +60,7 @@ export class VoidMovementUseCase extends UseCase {
       {
         amount: originalMovement.isInflow()
           ? originalMovement.amount.toNegative()
-          : originalMovement.amount,
+          : originalMovement.amount.toPositive(),
         category: originalMovement.category,
         date: DateOnly.today(),
         mode: MovementMode.AUTOMATIC,

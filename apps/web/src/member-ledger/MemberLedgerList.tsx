@@ -11,7 +11,6 @@ import {
   MemberLedgerEntryStatusLabel,
   MemberLedgerEntryType,
   MemberLedgerEntryTypeLabel,
-  MemberLedgerEntryTypeSorted,
 } from '@club-social/shared/members';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Button, Dropdown, Space } from 'antd';
@@ -24,6 +23,7 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import { NavigateToMember } from '@/ui/NavigateMember';
 import { NavigateToPayment } from '@/ui/NavigateToPayment';
 import { NotFound } from '@/ui/NotFound';
@@ -166,10 +166,7 @@ export function MemberLedgerList() {
             dataIndex: 'type',
             filteredValue: getFilterValue('type'),
             filterMode: 'tree',
-            filters: MemberLedgerEntryTypeSorted.map(({ label, value }) => ({
-              text: label,
-              value,
-            })),
+            filters: labelMapToFilterOptions(MemberLedgerEntryTypeLabel),
             render: (value: MemberLedgerEntryType) =>
               MemberLedgerEntryTypeLabel[value],
             title: 'Tipo',
@@ -179,9 +176,7 @@ export function MemberLedgerList() {
             align: 'center',
             dataIndex: 'source',
             filteredValue: getFilterValue('source'),
-            filters: Object.entries(MemberLedgerEntrySourceLabel).map(
-              ([value, label]) => ({ text: label, value }),
-            ),
+            filters: labelMapToFilterOptions(MemberLedgerEntrySourceLabel),
             render: (
               value: MemberLedgerEntrySource,
               record: MemberLedgerEntryPaginatedDto,
@@ -209,9 +204,7 @@ export function MemberLedgerList() {
             align: 'center',
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
-            filters: Object.entries(MemberLedgerEntryStatusLabel).map(
-              ([value, label]) => ({ text: label, value }),
-            ),
+            filters: labelMapToFilterOptions(MemberLedgerEntryStatusLabel),
             render: (value: MemberLedgerEntryStatus) =>
               MemberLedgerEntryStatusLabel[value],
             title: 'Estado',

@@ -4,7 +4,7 @@ import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormats } from '@club-social/shared/lib';
 import {
   MovementCategory,
-  MovementCategoryOptions,
+  MovementCategoryLabel,
   MovementType,
   MovementTypeLabel,
 } from '@club-social/shared/movements';
@@ -71,7 +71,7 @@ export function MovementForm({
         name="category"
         rules={[{ message: 'La categoría es requerida', required: true }]}
       >
-        <Select options={MovementCategoryOptions} />
+        <Select options={labelMapToSelectOptions(MovementCategoryLabel)} />
       </Form.Item>
 
       <Form.Item<MovementFormData>

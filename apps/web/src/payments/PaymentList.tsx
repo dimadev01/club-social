@@ -21,6 +21,7 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { NavigateToMember } from '@/ui/NavigateMember';
 import { NavigateToPayment } from '@/ui/NavigateToPayment';
@@ -194,13 +195,7 @@ export function PaymentList() {
             align: 'center',
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
-            filterMode: 'tree',
-            filters: Object.entries(PaymentStatusLabel).map(
-              ([value, label]) => ({
-                text: label,
-                value,
-              }),
-            ),
+            filters: labelMapToFilterOptions(PaymentStatusLabel),
             render: (value: PaymentStatus) => PaymentStatusLabel[value],
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,

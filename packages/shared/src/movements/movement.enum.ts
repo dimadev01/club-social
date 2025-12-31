@@ -45,10 +45,6 @@ export const MovementCategoryLabel: Record<MovementCategory, string> = {
   [MovementCategory.UTILITIES]: 'Servicios',
 } as const;
 
-export const MovementCategoryOptions = Object.entries(MovementCategoryLabel)
-  .map(([key, value]) => ({ label: value, value: key }))
-  .sort((a, b) => a.label.localeCompare(b.label));
-
 export const MovementStatus = {
   REGISTERED: 'registered',
   REVERSED: 'reversed',

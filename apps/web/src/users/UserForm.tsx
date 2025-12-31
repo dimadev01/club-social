@@ -1,6 +1,8 @@
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
 import { Form, Input, Select } from 'antd';
 
+import { labelMapToSelectOptions } from '@/shared/lib/utils';
+
 export interface UserFormData {
   email: string;
   firstName: string;
@@ -68,19 +70,7 @@ export function UserForm({
           name="status"
           rules={[{ required: true }]}
         >
-          <Select
-            options={[
-              {
-                label: UserStatusLabel[UserStatus.ACTIVE],
-                value: UserStatus.ACTIVE,
-              },
-              {
-                label: UserStatusLabel[UserStatus.INACTIVE],
-                value: UserStatus.INACTIVE,
-              },
-            ]}
-            placeholder="Seleccionar estado"
-          />
+          <Select options={labelMapToSelectOptions(UserStatusLabel)} />
         </Form.Item>
       )}
     </Form>

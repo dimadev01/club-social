@@ -96,10 +96,14 @@ export class AppService {
     const paymentsMap = new Map<string, string>();
     const movementsMap = new Map<string, string>();
 
+    // const testMemberId = 'jtwrdpTKf9QRe2MtZ';
+    // const testUserId = 'XwjxvPMDY6Nop3tPh';
+
     const mongoUsers = await this.mongoConnection
       .collection('users')
       .find({
-        // _id: 'DZL4CRjKvfv8yvsxR',
+        // // @ts-expect-error - This is a test user
+        // _id: testUserId,
         isDeleted: false,
         'profile.role': 'member',
       })
@@ -111,6 +115,8 @@ export class AppService {
     const mongoMembers = await this.mongoConnection
       .collection('members')
       .find({
+        // // @ts-expect-error - This is a test user
+        // _id: testMemberId,
         isDeleted: false,
       })
       .toArray();
@@ -119,7 +125,7 @@ export class AppService {
       .collection('dues')
       .find({
         isDeleted: false,
-        status: { $ne: 'voided' },
+        // memberId: testMemberId,
       })
       .toArray();
 
@@ -127,11 +133,70 @@ export class AppService {
       .collection('payments')
       .find({
         isDeleted: false,
-        status: {
-          $ne: 'voided',
+        // memberId: testMemberId,
+      })
+      .toArray();
+
+    const mongoMovements = await this.mongoConnection
+      .collection('movements')
+      .find({
+        // // @ts-expect-error - This is a test payment
+        // _id: null,
+        category: { $ne: 'member-payment' },
+        isDeleted: false,
+      })
+      .toArray();
+
+    const mongoEvents = await this.mongoConnection
+      .collection('events')
+      .find({
+        // // @ts-expect-error - This is a test event
+        // _id: null,
+        isDeleted: false,
+        resource: {
+          $ne: 'prices',
         },
       })
       .toArray();
+
+    const mongoMovementsCategoryMap = {
+      buffet: MovementCategory.BUFFET,
+      'court-rental': MovementCategory.COURT_RENTAL,
+      employee: MovementCategory.EMPLOYEE,
+      expense: MovementCategory.EXPENSE,
+      fair: MovementCategory.FAIR,
+      maintenance: MovementCategory.MAINTENANCE,
+      'member-payment': MovementCategory.MEMBER_LEDGER,
+      'other-expense': MovementCategory.OTHER,
+      'other-income': MovementCategory.OTHER,
+      parking: MovementCategory.PARKING,
+      professor: MovementCategory.PROFESSOR,
+      salary: MovementCategory.EMPLOYEE,
+      saloon: MovementCategory.SALOON,
+      saving: MovementCategory.OTHER,
+      service: MovementCategory.UTILITIES,
+    };
+
+    const eventEntityMap = {
+      dues: AuditEntity.DUE,
+      members: AuditEntity.MEMBER,
+      movements: AuditEntity.MOVEMENT,
+      payments: AuditEntity.PAYMENT,
+      prices: AuditEntity.PRICING,
+    };
+
+    const eventEntitiesMap = {
+      dues: duesMap,
+      members: membersMap,
+      movements: movementsMap,
+      payments: paymentsMap,
+    };
+
+    const eventActionMap = {
+      create: AuditAction.CREATED,
+      update: AuditAction.UPDATED,
+      void: AuditAction.VOIDED,
+    };
 
     const membersProcessing = mongoUsers.map((mongoUser) =>
       limit(async () => {
@@ -203,129 +268,99 @@ export class AppService {
 
         const memberId = member.id.value;
         membersMap.set(mongoMember._id.toString(), memberId);
+      }),
+    );
+    await Promise.all(membersProcessing);
 
-        /**
-         * Dues processing
-         */
-        const mongoDues = allMongoDues.filter(
-          (mongoDue) => mongoDue.memberId === mongoMember._id,
+    const duesProcessing = allMongoDues.map((mongoDue) =>
+      limit(async () => {
+        const dueId = UniqueId.generate().value;
+        duesMap.set(mongoDue._id.toString(), dueId);
+
+        const memberId = membersMap.get(mongoDue.memberId);
+        Guard.defined(memberId);
+
+        await this.createDue({ dueId, memberId, mongoDue });
+      }),
+    );
+    await Promise.all(duesProcessing);
+
+    const paymentsProcessing = allMongoPayments.map((mongoPayment) =>
+      limit(async () => {
+        const paymentId = UniqueId.generate().value;
+        paymentsMap.set(mongoPayment._id.toString(), paymentId);
+
+        const memberId = membersMap.get(mongoPayment.memberId);
+        Guard.defined(memberId);
+
+        await this.createPayment({ memberId, mongoPayment, paymentId });
+
+        const date = DateOnly.fromString(
+          mongoPayment.date.toISOString().split('T')[0],
         );
+
+        if (date.isErr()) {
+          throw date.error;
+        }
+
+        const creditLedgerEntryId = UniqueId.generate().value;
+
+        await this.createCreditLedgerEntry({
+          creditLedgerEntryId,
+          date: date.value.toString(),
+          memberId,
+          mongoPayment,
+          paymentId,
+        });
+
+        const movementId = UniqueId.generate().value;
+        movementsMap.set(mongoPayment._id.toString(), movementId);
+
+        await this.createMovement({
+          date: date.value.toString(),
+          mongoPayment,
+          movementId,
+          paymentId,
+        });
 
         await Promise.all(
-          mongoDues.map(async (mongoDue) => {
-            const dueId = UniqueId.generate().value;
-            duesMap.set(mongoDue._id.toString(), dueId);
-            await this.createDue({ dueId, memberId, mongoDue });
-          }),
-        );
-
-        /**
-         * Payments processing
-         */
-        const mongoPayments = allMongoPayments.filter(
-          (mongoPayment) => mongoPayment.memberId === mongoMember._id,
-        );
-
-        await Promise.all(
-          mongoPayments.map(async (mongoPayment) => {
-            const paymentId = UniqueId.generate().value;
-            paymentsMap.set(mongoPayment._id.toString(), paymentId);
-
-            await this.createPayment({ memberId, mongoPayment, paymentId });
-
-            const date = DateOnly.fromString(
-              mongoPayment.date.toISOString().split('T')[0],
-            );
-
-            if (date.isErr()) {
-              throw date.error;
-            }
-
-            const creditLedgerEntryId = UniqueId.generate().value;
-
-            await this.createCreditLedgerEntry({
-              creditLedgerEntryId,
+          mongoPayment.dues.map(async (mongoDuePayment: any) => {
+            const debitLedgerEntryId = UniqueId.generate().value;
+            await this.createDebitLedgerEntry({
               date: date.value.toString(),
+              debitLedgerEntryId,
               memberId,
+              mongoDuePayment,
               mongoPayment,
               paymentId,
             });
 
-            const movementId = UniqueId.generate().value;
-            movementsMap.set(mongoPayment._id.toString(), movementId);
+            const dueSettlementId = UniqueId.generate().value;
+            const dueId = duesMap.get(mongoDuePayment.dueId);
+            Guard.defined(dueId);
 
-            await this.createMovement({
-              date: date.value.toString(),
-              mongoPayment,
-              movementId,
+            await this.createDueSettlement({
+              debitLedgerEntryId,
+              dueId,
+              dueSettlementId,
+              mongoDuePayment,
               paymentId,
             });
 
-            await Promise.all(
-              mongoPayment.dues.map(async (mongoDuePayment: any) => {
-                const memberIdFromPostgres = membersMap.get(
-                  mongoPayment.memberId,
-                );
-                Guard.defined(memberIdFromPostgres);
-
-                const debitLedgerEntryId = UniqueId.generate().value;
-
-                await this.createDebitLedgerEntry({
-                  date: date.value.toString(),
-                  debitLedgerEntryId,
-                  memberId,
-                  mongoDuePayment,
-                  mongoPayment,
-                  paymentId,
-                });
-
-                const dueSettlementId = UniqueId.generate().value;
-
-                const dueIdFromPostgres = duesMap.get(mongoDuePayment.dueId);
-                Guard.defined(dueIdFromPostgres);
-
-                await this.createDueSettlement({
-                  debitLedgerEntryId,
-                  dueId: dueIdFromPostgres,
-                  dueSettlementId,
-                  mongoDuePayment,
-                  paymentId,
-                });
-              }),
-            );
+            // Only if payment was voided
+            if (mongoPayment.status === 'voided') {
+              await this.voidPayment({
+                debitLedgerEntryId,
+                updatedAt: mongoPayment.voidedAt as Date,
+                updatedBy: mongoPayment.voidedBy as string,
+              });
+            }
           }),
         );
       }),
     );
+    await Promise.all(paymentsProcessing);
 
-    const mongoMovements = await this.mongoConnection
-      .collection('movements')
-      .find({
-        category: {
-          $ne: 'member-payment',
-        },
-        isDeleted: false,
-        status: { $ne: 'voided' },
-      })
-      .toArray();
-
-    const mongoMovementsCategoryMap = {
-      buffet: MovementCategory.BUFFET,
-      'court-rental': MovementCategory.COURT_RENTAL,
-      employee: MovementCategory.EMPLOYEE,
-      expense: MovementCategory.EXPENSE,
-      fair: MovementCategory.FAIR,
-      maintenance: MovementCategory.MAINTENANCE,
-      'member-payment': MovementCategory.MEMBER_LEDGER,
-      'other-expense': MovementCategory.OTHER,
-      'other-income': MovementCategory.OTHER,
-      parking: MovementCategory.PARKING,
-      professor: MovementCategory.PROFESSOR,
-      salary: MovementCategory.EMPLOYEE,
-      saloon: MovementCategory.SALOON,
-      saving: MovementCategory.OTHER,
-      service: MovementCategory.UTILITIES,
-    };
     const movementsProcessing = mongoMovements.map((mongoMovement) =>
       limit(async () => {
         const movementId = UniqueId.generate().value;
@@ -365,37 +400,8 @@ export class AppService {
         });
       }),
     );
-
-    const mongoEvents = await this.mongoConnection
-      .collection('events')
-      .find({
-        isDeleted: false,
-        resource: {
-          $ne: 'prices',
-        },
-      })
-      .toArray();
-
-    const eventEntityMap = {
-      dues: AuditEntity.DUE,
-      members: AuditEntity.MEMBER,
-      movements: AuditEntity.MOVEMENT,
-      payments: AuditEntity.PAYMENT,
-      prices: AuditEntity.PRICING,
-    };
-
-    const eventEntitiesMap = {
-      dues: duesMap,
-      members: membersMap,
-      movements: movementsMap,
-      payments: paymentsMap,
-    };
-
-    const eventActionMap = {
-      create: AuditAction.CREATED,
-      update: AuditAction.UPDATED,
-      void: AuditAction.VOIDED,
-    };
+    await Promise.all(movementsProcessing);
+    await this.prismaService.auditLog.deleteMany({});
 
     const eventsProcessing = mongoEvents.map((mongoEvent) =>
       limit(async () => {
@@ -431,10 +437,6 @@ export class AppService {
         });
       }),
     );
-
-    await Promise.all([...membersProcessing, ...movementsProcessing]);
-
-    await this.prismaService.auditLog.deleteMany({});
 
     await Promise.all(eventsProcessing);
 
@@ -786,6 +788,71 @@ export class AppService {
         voidedAt: mongoPayment.voidedAt || null,
         voidedBy: mongoPayment.voidedBy || null,
         voidReason: mongoPayment.voidReason || null,
+      },
+    });
+  }
+
+  private async voidPayment({
+    debitLedgerEntryId,
+    updatedAt,
+    updatedBy,
+  }: {
+    debitLedgerEntryId: string;
+    updatedAt: Date;
+    updatedBy: string;
+  }) {
+    const debitLedgerEntry =
+      await this.prismaService.memberLedgerEntry.findUnique({
+        where: { id: debitLedgerEntryId },
+      });
+
+    if (!debitLedgerEntry) {
+      throw new Error('Debit ledger entry not found');
+    }
+
+    await this.prismaService.memberLedgerEntry.update({
+      data: {
+        status: MemberLedgerEntryStatus.REVERSED,
+        updatedBy,
+      },
+      where: {
+        id: debitLedgerEntryId,
+        status: MemberLedgerEntryStatus.POSTED,
+        type: MemberLedgerEntryType.DUE_APPLY_DEBIT,
+      },
+    });
+
+    const date = DateOnly.fromString(updatedAt.toISOString().split('T')[0]);
+
+    if (date.isErr()) {
+      throw date.error;
+    }
+
+    await this.prismaService.memberLedgerEntry.create({
+      data: {
+        amount: Math.abs(debitLedgerEntry.amount),
+        createdAt: updatedAt,
+        createdBy: updatedBy,
+        date: date.value.toString(),
+        id: UniqueId.generate().value,
+        memberId: debitLedgerEntry.memberId,
+        notes: null,
+        paymentId: debitLedgerEntry.paymentId,
+        reversalOfId: debitLedgerEntryId,
+        source: MemberLedgerEntrySource.PAYMENT,
+        status: MemberLedgerEntryStatus.POSTED,
+        type: MemberLedgerEntryType.REVERSAL_CREDIT,
+        updatedAt,
+        updatedBy,
+      },
+    });
+
+    await this.prismaService.dueSettlement.update({
+      data: {
+        status: DueSettlementStatus.VOIDED,
+      },
+      where: {
+        memberLedgerEntryId: debitLedgerEntryId,
       },
     });
   }

@@ -15,6 +15,7 @@ import { appRoutes } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
@@ -105,10 +106,7 @@ export function UserListPage() {
             align: 'center',
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
-            filters: Object.entries(UserStatusLabel).map(([value, label]) => ({
-              text: label,
-              value,
-            })),
+            filters: labelMapToFilterOptions(UserStatusLabel),
             render: (value: UserStatus) => UserStatusLabel[value],
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,

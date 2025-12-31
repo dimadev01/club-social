@@ -23,6 +23,7 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
@@ -174,10 +175,12 @@ export function DueList() {
             align: 'center',
             dataIndex: 'category',
             filteredValue: getFilterValue('category'),
-            filters: Object.entries(DueCategoryLabel).map(([value, label]) => ({
-              text: label,
-              value,
-            })),
+            filters: labelMapToFilterOptions(DueCategoryLabel).map(
+              ({ value }) => ({
+                text: <DueCategoryIconLabel category={value as DueCategory} />,
+                value,
+              }),
+            ),
             render: (value: DueCategory, record) => (
               <DueCategoryIconLabel category={value} date={record.date} />
             ),
@@ -197,10 +200,7 @@ export function DueList() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filterMode: 'tree',
-            filters: Object.entries(DueStatusLabel).map(([value, label]) => ({
-              text: label,
-              value,
-            })),
+            filters: labelMapToFilterOptions(DueStatusLabel),
             render: (value: DueStatus) => DueStatusLabel[value],
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
@@ -211,12 +211,7 @@ export function DueList() {
                   align: 'center',
                   dataIndex: 'memberStatus',
                   filteredValue: getFilterValue('memberStatus'),
-                  filters: Object.entries(MemberStatusLabel).map(
-                    ([value, label]) => ({
-                      text: label,
-                      value,
-                    }),
-                  ),
+                  filters: labelMapToFilterOptions(MemberStatusLabel),
                   render: (value: MemberStatus) => MemberStatusLabel[value],
                   title: 'Estado Socio',
                   width: TABLE_COLUMN_WIDTHS.STATUS,

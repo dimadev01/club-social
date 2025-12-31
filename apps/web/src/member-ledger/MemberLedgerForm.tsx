@@ -11,6 +11,7 @@ import { DatePicker, Input, InputNumber } from 'antd';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
+import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Form } from '@/ui/Form/Form';
 import { Select } from '@/ui/Select';
 
@@ -92,9 +93,7 @@ export function MemberLedgerEntryForm({
         rules={[{ message: 'El tipo es requerido', required: true }]}
       >
         <Select
-          options={Object.entries(MemberLedgerEntryMovementTypeLabel).map(
-            ([value, label]) => ({ label, value }),
-          )}
+          options={labelMapToSelectOptions(MemberLedgerEntryMovementTypeLabel)}
         />
       </Form.Item>
 

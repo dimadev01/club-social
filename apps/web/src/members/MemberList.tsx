@@ -151,9 +151,7 @@ export function MemberListPage() {
             align: 'center',
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
-            filters: Object.entries(MemberStatusLabel).map(
-              ([value, label]) => ({ text: label, value }),
-            ),
+            filters: labelMapToFilterOptions(MemberStatusLabel),
             onFilter: (value, record) => record.status === value,
             render: (value: MemberStatus) => MemberStatusLabel[value],
             title: 'Estado',

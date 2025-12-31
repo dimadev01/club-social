@@ -13,6 +13,7 @@ import { Button, Space } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
+import { DueCategoryIconLabel } from '@/dues/DueCategoryIconLabel';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
@@ -96,26 +97,28 @@ export function PricingList() {
           {
             dataIndex: 'effectiveFrom',
             render: (effectiveFrom: string) => DateFormat.date(effectiveFrom),
-            title: 'Vigente desde',
+            title: 'Desde',
             width: TABLE_COLUMN_WIDTHS.DATE,
           },
           {
             dataIndex: 'effectiveTo',
             render: (effectiveTo: null | string) =>
               effectiveTo ? DateFormat.date(effectiveTo) : '-',
-            title: 'Vigente hasta',
+            title: 'Hasta',
             width: TABLE_COLUMN_WIDTHS.DATE,
           },
           {
             align: 'center',
             dataIndex: 'dueCategory',
             filteredValue: getFilterValue('dueCategory'),
-            filters: Object.entries(DueCategoryLabel).map(([value, label]) => ({
-              text: label,
-              value,
-            })),
+            filters: labelMapToFilterOptions(DueCategoryLabel).map(
+              ({ value }) => ({
+                text: <DueCategoryIconLabel category={value as DueCategory} />,
+                value,
+              }),
+            ),
             render: (value: DueCategory) => DueCategoryLabel[value],
-            title: 'Tipo de deuda',
+            title: 'Categoría de Deuda',
             width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },
           {
@@ -126,7 +129,7 @@ export function PricingList() {
             filters: labelMapToFilterOptions(MemberCategoryLabel),
             render: (memberCategory: MemberCategory) =>
               MemberCategoryLabel[memberCategory],
-            title: 'Categoría de socio',
+            title: 'Categoría de Socio',
             width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },
           {
