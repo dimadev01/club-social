@@ -1,0 +1,43 @@
+{
+  "name": "Club Social",
+  "service": "dev-container",
+  "workspaceFolder": "/workspace",
+  "dockerComposeFile": ["./compose.yaml", "../compose.yaml"],
+  "postCreateCommand": ".devcontainer/post-create.sh",
+  "forwardPorts": [5173, 3000],
+  "features": {
+    "ghcr.io/guiyomh/features/vim:0": {}
+  },
+  "mounts": [
+    {
+      "source": "${localEnv:HOME}/.ssh",
+      "target": "/home/node/.ssh",
+      "type": "bind"
+    }
+  ],
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.linkedEditing": true,
+        "editor.tabSize": 2,
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        }
+      },
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "streetsidesoftware.code-spell-checker",
+        "dbaeumer.vscode-eslint",
+        "Prisma.prisma",
+        "bradlc.vscode-tailwindcss",
+        "Orta.vscode-jest",
+        "streetsidesoftware.code-spell-checker-spanish",
+        "Anthropic.claude-code"
+      ]
+    }
+  },
+  "remoteUser": "node"
+}

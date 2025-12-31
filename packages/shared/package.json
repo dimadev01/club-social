@@ -1,0 +1,75 @@
+{
+  "name": "@club-social/shared",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "exports": {
+    "./roles": {
+      "types": "./src/roles/index.ts",
+      "require": "./dist/roles/index.js",
+      "import": "./dist/roles/index.mjs"
+    },
+    "./users": {
+      "types": "./src/users/index.ts",
+      "require": "./dist/users/index.js",
+      "import": "./dist/users/index.mjs"
+    },
+    "./members": {
+      "types": "./src/members/index.ts",
+      "require": "./dist/members/index.js",
+      "import": "./dist/members/index.mjs"
+    },
+    "./types": {
+      "types": "./src/types/index.ts",
+      "require": "./dist/types/index.js",
+      "import": "./dist/types/index.mjs"
+    },
+    "./dues": {
+      "types": "./src/dues/index.ts",
+      "require": "./dist/dues/index.js",
+      "import": "./dist/dues/index.mjs"
+    },
+    "./payments": {
+      "types": "./src/payments/index.ts",
+      "require": "./dist/payments/index.js",
+      "import": "./dist/payments/index.mjs"
+    },
+    "./movements": {
+      "types": "./src/movements/index.ts",
+      "require": "./dist/movements/index.js",
+      "import": "./dist/movements/index.mjs"
+    },
+    "./audit-logs": {
+      "types": "./src/audit-logs/index.ts",
+      "require": "./dist/audit-logs/index.js",
+      "import": "./dist/audit-logs/index.mjs"
+    },
+    "./pricing": {
+      "types": "./src/pricing/index.ts",
+      "require": "./dist/pricing/index.js",
+      "import": "./dist/pricing/index.mjs"
+    },
+    "./lib": {
+      "types": "./src/lib/index.ts",
+      "require": "./dist/lib/index.js",
+      "import": "./dist/lib/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "dev": "tsup --watch",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint \"{src,test}/**/*.ts\" --fix"
+  },
+  "dependencies": {
+    "@internationalized/number": "^3.6.5",
+    "dayjs": "^1.11.19"
+  },
+  "devDependencies": {
+    "@club-social/eslint-config": "*",
+    "@club-social/prettier-config": "*",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}
