@@ -116,7 +116,7 @@ export function PricingList() {
             })),
             render: (value: DueCategory) => DueCategoryLabel[value],
             title: 'Tipo de deuda',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },
           {
             align: 'center',
@@ -127,7 +127,7 @@ export function PricingList() {
             render: (memberCategory: MemberCategory) =>
               MemberCategoryLabel[memberCategory],
             title: 'Categoría de socio',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },
           {
             align: 'right',

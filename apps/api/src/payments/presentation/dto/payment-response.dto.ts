@@ -11,6 +11,7 @@ import {
 export class PaymentDueSettlementDueResponseDto implements PaymentDueSettlementDueDto {
   public amount: number;
   public category: DueCategory;
+  public date: string;
   public id: string;
 }
 

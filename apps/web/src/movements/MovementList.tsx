@@ -158,7 +158,7 @@ export function MovementList() {
             ),
             render: (value: MovementMode) => MovementModeLabel[value],
             title: 'Modo',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+            width: 100,
           },
           {
             align: 'center',
@@ -195,7 +195,7 @@ export function MovementList() {
               );
             },
             title: 'Notas',
-            width: 300,
+            width: 200,
           },
           {
             align: 'right',

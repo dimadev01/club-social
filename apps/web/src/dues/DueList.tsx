@@ -34,6 +34,8 @@ import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
 import { useTable } from '@/ui/Table/useTable';
 import { usePermissions } from '@/users/use-permissions';
 
+import { DueCategoryIconLabel } from './DueCategoryIconLabel';
+
 export function DueList() {
   const navigate = useNavigate();
   const permissions = usePermissions();
@@ -176,9 +178,11 @@ export function DueList() {
               text: label,
               value,
             })),
-            render: (value: DueCategory) => DueCategoryLabel[value],
+            render: (value: DueCategory, record) => (
+              <DueCategoryIconLabel category={value} date={record.date} />
+            ),
             title: 'Categoría',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },
           {
             align: 'right',

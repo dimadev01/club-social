@@ -2,7 +2,7 @@ import { DueCategoryLabel, DueCategorySorted } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { Statistic } from 'antd';
 
-import { CategoryIconMap } from '@/dues/DueCategoryIconMap';
+import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
 import { Card } from '@/ui/Card';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
 
@@ -22,7 +22,7 @@ export function DuePendingStatisticsCard() {
         <Card.Grid className="w-full md:w-1/3" key={category}>
           <Statistic
             loading={isLoading}
-            prefix={CategoryIconMap[category]}
+            prefix={DueCategoryIconMap[category]}
             title={DueCategoryLabel[category]}
             value={NumberFormat.formatCurrencyCents(
               data?.categories[category] ?? 0,

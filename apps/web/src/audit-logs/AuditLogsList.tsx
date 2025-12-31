@@ -93,7 +93,7 @@ export function AuditLogsList() {
             })),
             render: (entity: AuditEntity) => AuditEntityLabel[entity],
             title: 'Entidad',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },
           {
             align: 'center',

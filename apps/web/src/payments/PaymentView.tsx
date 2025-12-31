@@ -1,6 +1,5 @@
 import {
   type DueCategory,
-  DueCategoryLabel,
   DueSettlementStatus,
   DueSettlementStatusLabel,
 } from '@club-social/shared/dues';
@@ -16,6 +15,7 @@ import { Button, Col, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
+import { DueCategoryIconLabel } from '@/dues/DueCategoryIconLabel';
 import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
@@ -136,9 +136,14 @@ export function PaymentView() {
           {
             align: 'center',
             dataIndex: ['due', 'category'],
-            render: (dueCategory: DueCategory) => DueCategoryLabel[dueCategory],
+            render: (dueCategory: DueCategory, record) => (
+              <DueCategoryIconLabel
+                category={dueCategory}
+                date={record.due.date}
+              />
+            ),
             title: 'Categoría',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },
 
           {

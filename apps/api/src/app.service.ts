@@ -1,12 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DueCategory, DueStatus } from '@club-social/shared/dues';
+import {
+  DueCategory,
+  DueSettlementStatus,
+  DueStatus,
+} from '@club-social/shared/dues';
+import { DateFormat } from '@club-social/shared/lib';
 import {
   FileStatus,
   MaritalStatus,
   MemberCategory,
+  MemberLedgerEntrySource,
+  MemberLedgerEntryStatus,
+  MemberLedgerEntryType,
   MemberNationality,
   MemberSex,
 } from '@club-social/shared/members';
+import {
+  MovementCategory,
+  MovementMode,
+  MovementStatus,
+} from '@club-social/shared/movements';
 import { PaymentStatus } from '@club-social/shared/payments';
 import { UserRole } from '@club-social/shared/users';
 import { faker } from '@faker-js/faker';
@@ -51,13 +64,13 @@ export class AppService {
 
   public async clear(): Promise<void> {
     await this.prismaService.auditLog.deleteMany({});
-    await this.prismaService.movement.deleteMany({});
     await this.prismaService.dueSettlement.deleteMany({});
     await this.prismaService.payment.deleteMany({});
     await this.prismaService.due.deleteMany({});
+    await this.prismaService.movement.deleteMany({});
     await this.prismaService.pricing.deleteMany({});
-    await this.prismaService.member.deleteMany({});
     await this.prismaService.memberLedgerEntry.deleteMany({});
+    await this.prismaService.member.deleteMany({});
 
     // await this.prismaService.session.deleteMany({});
     // await this.prismaService.account.deleteMany({});
@@ -77,14 +90,19 @@ export class AppService {
   public async migrate() {
     await this.clear();
 
+    // Mongo Member ID -> Prisma Member ID
+    const membersMap = new Map<string, string>();
+    // Mongo Due ID -> Prisma Due ID
+    const duesMap = new Map<string, string>();
+
     const mongoUsers = await this.mongoConnection
       .collection('users')
       .find({
-        // @ts-expect-error - _id is a string
-        _id: 'DZL4CRjKvfv8yvsxR',
+        // _id: 'DZL4CRjKvfv8yvsxR',
         isDeleted: false,
+        'profile.role': 'member',
       })
-      .limit(10)
+      // .limit(10)
       .toArray();
 
     for (const mongoUser of mongoUsers) {
@@ -154,42 +172,94 @@ export class AppService {
         name: name.value,
       });
 
-      const memberId = member.id;
+      membersMap.set(mongoMember._id.toString(), member.id.value);
+
+      const memberId = member.id.value;
 
       const mongoDues = await this.mongoConnection
         .collection('dues')
         .find({
+          isDeleted: false,
           memberId: mongoMember._id,
           status: {
-            $ne: DueStatus.VOIDED,
+            $ne: 'voided',
           },
         })
         .toArray();
 
       for (const mongoDue of mongoDues) {
-        const dueId = UniqueId.generate();
+        const dueId = UniqueId.generate().value;
+        duesMap.set(mongoDue._id.toString(), dueId);
         await this.createDue({ dueId, memberId, mongoDue });
+      }
 
-        for (const mongoDuePayment of mongoDue.payments) {
-          const mongoPayment = await this.mongoConnection
-            .collection('payments')
-            .findOne({ _id: mongoDuePayment.paymentId });
-          Guard.defined(mongoPayment);
+      const mongoPayments = await this.mongoConnection
+        .collection('payments')
+        .find({
+          isDeleted: false,
+          memberId: mongoMember._id,
+          status: {
+            $ne: 'voided',
+          },
+        })
+        .toArray();
 
-          const paymentId = UniqueId.generate();
-          const payment = await this.createPayment({
+      for (const mongoPayment of mongoPayments) {
+        const paymentId = UniqueId.generate().value;
+
+        await this.createPayment({ memberId, mongoPayment, paymentId });
+
+        const date = DateOnly.fromString(
+          mongoPayment.date.toISOString().split('T')[0],
+        );
+
+        if (date.isErr()) {
+          throw date.error;
+        }
+
+        const creditLedgerEntryId = UniqueId.generate().value;
+
+        await this.createCreditLedgerEntry({
+          creditLedgerEntryId,
+          date: date.value.toString(),
+          memberId,
+          mongoPayment,
+          paymentId,
+        });
+
+        await this.createMovement({
+          date: date.value.toString(),
+          mongoPayment,
+          paymentId,
+        });
+
+        for (const mongoDuePayment of mongoPayment.dues) {
+          const memberIdFromPostgres = membersMap.get(mongoPayment.memberId);
+          Guard.defined(memberIdFromPostgres);
+
+          const debitLedgerEntryId = UniqueId.generate().value;
+
+          await this.createDebitLedgerEntry({
+            date: date.value.toString(),
+            debitLedgerEntryId,
             memberId,
+            mongoDuePayment,
             mongoPayment,
             paymentId,
           });
 
-          console.log(payment);
+          const dueSettlementId = UniqueId.generate().value;
 
-          /**
-           * Each payment must create a corresponding member double ledger entry
-           * Each `mongoDuePayment` is a DueSettlementDto
-           * Each payment must create a corresponding movement
-           */
+          const dueIdFromPostgres = duesMap.get(mongoDuePayment.dueId);
+          Guard.defined(dueIdFromPostgres);
+
+          await this.createDueSettlement({
+            debitLedgerEntryId,
+            dueId: dueIdFromPostgres,
+            dueSettlementId,
+            mongoDuePayment,
+            paymentId,
+          });
         }
       }
     }
@@ -283,13 +353,82 @@ export class AppService {
     );
   }
 
+  private async createCreditLedgerEntry({
+    creditLedgerEntryId,
+    date,
+    memberId,
+    mongoPayment,
+    paymentId,
+  }: {
+    creditLedgerEntryId: string;
+    date: string;
+    memberId: string;
+    mongoPayment: any;
+    paymentId: string;
+  }) {
+    await this.prismaService.memberLedgerEntry.create({
+      data: {
+        amount: mongoPayment.amount as number,
+        createdAt: mongoPayment.createdAt as Date,
+        createdBy: mongoPayment.createdBy as string,
+        date: date.toString(),
+        id: creditLedgerEntryId,
+        memberId,
+        notes: null,
+        paymentId,
+        reversalOfId: null,
+        source: MemberLedgerEntrySource.PAYMENT,
+        status: MemberLedgerEntryStatus.POSTED,
+        type: MemberLedgerEntryType.DEPOSIT_CREDIT,
+        updatedAt: mongoPayment.updatedAt as Date,
+        updatedBy: mongoPayment.updatedBy as string,
+      },
+    });
+  }
+
+  private async createDebitLedgerEntry({
+    date,
+    debitLedgerEntryId,
+    memberId,
+    mongoDuePayment,
+    mongoPayment,
+    paymentId,
+  }: {
+    date: string;
+    debitLedgerEntryId: string;
+    memberId: string;
+    mongoDuePayment: any;
+    mongoPayment: any;
+    paymentId: string;
+  }) {
+    await this.prismaService.memberLedgerEntry.create({
+      data: {
+        amount: -(mongoDuePayment.directAmount as number),
+        createdAt: DateFormat.parse(mongoPayment.createdAt as string)
+          .add(1, 'second')
+          .toDate(),
+        createdBy: mongoPayment.createdBy as string,
+        date: date.toString(),
+        id: debitLedgerEntryId,
+        member: { connect: { id: memberId } },
+        notes: null,
+        payment: { connect: { id: paymentId } },
+        source: MemberLedgerEntrySource.PAYMENT,
+        status: MemberLedgerEntryStatus.POSTED,
+        type: MemberLedgerEntryType.DUE_APPLY_DEBIT,
+        updatedAt: mongoPayment.updatedAt as Date,
+        updatedBy: mongoPayment.updatedBy as string,
+      },
+    });
+  }
+
   private async createDue({
     dueId,
     memberId,
     mongoDue,
   }: {
-    dueId: UniqueId;
-    memberId: UniqueId;
+    dueId: string;
+    memberId: string;
     mongoDue: any;
   }) {
     const date = DateOnly.fromString(mongoDue.date.toISOString().split('T')[0]);
@@ -305,8 +444,8 @@ export class AppService {
         createdAt: mongoDue.createdAt as Date,
         createdBy: mongoDue.createdBy as string,
         date: date.value.toString(),
-        id: dueId.value,
-        member: { connect: { id: memberId.value } },
+        id: dueId,
+        member: { connect: { id: memberId } },
         notes: mongoDue.notes || null,
         status: mongoDue.status as DueStatus,
         updatedAt: mongoDue.updatedAt as Date,
@@ -314,6 +453,31 @@ export class AppService {
         voidedAt: mongoDue.voidedAt || null,
         voidedBy: mongoDue.voidedBy || null,
         voidReason: mongoDue.voidReason || null,
+      },
+    });
+  }
+
+  private async createDueSettlement({
+    debitLedgerEntryId,
+    dueId,
+    dueSettlementId,
+    mongoDuePayment,
+    paymentId,
+  }: {
+    debitLedgerEntryId: string;
+    dueId: string;
+    dueSettlementId: string;
+    mongoDuePayment: any;
+    paymentId: string;
+  }) {
+    await this.prismaService.dueSettlement.create({
+      data: {
+        amount: mongoDuePayment.directAmount as number,
+        due: { connect: { id: dueId } },
+        id: dueSettlementId,
+        memberLedgerEntry: { connect: { id: debitLedgerEntryId } },
+        payment: { connect: { id: paymentId } },
+        status: DueSettlementStatus.APPLIED,
       },
     });
   }
@@ -381,14 +545,44 @@ export class AppService {
     return result.value;
   }
 
+  private async createMovement({
+    date,
+    mongoPayment,
+    paymentId,
+  }: {
+    date: string;
+    mongoPayment: any;
+    paymentId: string;
+  }) {
+    await this.prismaService.movement.create({
+      data: {
+        amount: mongoPayment.amount as number,
+        category: MovementCategory.MEMBER_LEDGER,
+        createdAt: mongoPayment.createdAt as Date,
+        createdBy: mongoPayment.createdBy as string,
+        date: date.toString(),
+        id: UniqueId.generate().value,
+        mode: MovementMode.AUTOMATIC,
+        notes: 'Pago de deuda',
+        payment: { connect: { id: paymentId } },
+        status: MovementStatus.REGISTERED,
+        updatedAt: mongoPayment.updatedAt as Date,
+        updatedBy: mongoPayment.updatedBy as string,
+        voidedAt: null,
+        voidedBy: null,
+        voidReason: null,
+      },
+    });
+  }
+
   private async createPayment({
     memberId,
     mongoPayment,
     paymentId,
   }: {
-    memberId: UniqueId;
+    memberId: string;
     mongoPayment: any;
-    paymentId: UniqueId;
+    paymentId: string;
   }) {
     const date = DateOnly.fromString(
       mongoPayment.date.toISOString().split('T')[0],
@@ -404,8 +598,8 @@ export class AppService {
         createdAt: mongoPayment.createdAt as Date,
         createdBy: mongoPayment.createdBy as string,
         date: date.value.toString(),
-        id: paymentId.value,
-        member: { connect: { id: memberId.value } },
+        id: paymentId,
+        member: { connect: { id: memberId } },
         notes: mongoPayment.notes || null,
         receiptNumber: mongoPayment.receiptNumber?.toString() || null,
         status: mongoPayment.status as PaymentStatus,

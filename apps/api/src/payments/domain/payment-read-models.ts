@@ -7,7 +7,14 @@ export interface PaymentPaginatedExtraReadModel {
 
 export type PaymentPaginatedReadModel = Pick<
   PaymentReadModel,
-  'amount' | 'createdAt' | 'createdBy' | 'date' | 'id' | 'member' | 'status'
+  | 'amount'
+  | 'createdAt'
+  | 'createdBy'
+  | 'date'
+  | 'id'
+  | 'member'
+  | 'receiptNumber'
+  | 'status'
 >;
 
 export interface PaymentReadModel {
@@ -43,6 +50,7 @@ interface PaymentDueSettlement {
 interface PaymentDueSettlementDue {
   amount: number;
   category: DueCategory;
+  date: string;
   id: string;
 }
 

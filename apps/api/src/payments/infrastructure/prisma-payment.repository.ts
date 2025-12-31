@@ -259,6 +259,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
           lastName: payment.member.user.lastName,
         }).fullName,
       },
+      receiptNumber: payment.receiptNumber,
       status: payment.status as PaymentStatus,
     };
   }
@@ -281,6 +282,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
         due: {
           amount: settlement.due.amount,
           category: settlement.due.category as DueCategory,
+          date: settlement.due.date,
           id: settlement.due.id,
         },
         memberLedgerEntry: {

@@ -147,7 +147,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         category: MovementCategory.MEMBER_LEDGER,
         date: paymentDate,
         mode: MovementMode.AUTOMATIC,
-        notes: null,
+        notes: 'Pago de deuda',
         paymentId: payment.value.id,
         status: MovementStatus.REGISTERED,
       },

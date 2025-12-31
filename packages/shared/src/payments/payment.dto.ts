@@ -47,6 +47,7 @@ export interface PaymentDueSettlementDto {
 export interface PaymentDueSettlementDueDto {
   amount: number;
   category: DueCategory;
+  date: string;
   id: string;
 }
 
@@ -68,6 +69,7 @@ export interface PaymentPaginatedDto {
   id: string;
   memberId: string;
   memberName: string;
+  receiptNumber: null | string;
   status: PaymentStatus;
 }
 

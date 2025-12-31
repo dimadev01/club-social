@@ -145,7 +145,7 @@ export function MemberListPage() {
             filters: labelMapToFilterOptions(MemberCategoryLabel),
             render: (value: MemberCategory) => MemberCategoryLabel[value],
             title: 'Categoría',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },
           {
             align: 'center',

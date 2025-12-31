@@ -184,6 +184,13 @@ export function PaymentList() {
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
+            align: 'right',
+            dataIndex: 'receiptNumber',
+            render: (receiptNumber: null | string) => receiptNumber ?? '-',
+            title: 'Recibo',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+          {
             align: 'center',
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
@@ -259,7 +266,7 @@ export function PaymentList() {
             <Table.Summary.Cell align="right" colSpan={1} index={0}>
               Total
             </Table.Summary.Cell>
-            <Table.Summary.Cell colSpan={5} index={1}>
+            <Table.Summary.Cell colSpan={6} index={1}>
               {NumberFormat.formatCurrencyCents(
                 payments?.extra?.totalAmount ?? 0,
               )}

@@ -16,5 +16,6 @@ export class PaymentPaginatedResponseDto implements PaymentPaginatedDto {
   public id: string;
   public memberId: string;
   public memberName: string;
+  public receiptNumber: null | string;
   public status: PaymentStatus;
 }

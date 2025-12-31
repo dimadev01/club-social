@@ -1,5 +1,4 @@
 import {
-  DueCategoryLabel,
   type DueSettlementDto,
   type DueSettlementPaymentDto,
   DueSettlementStatus,
@@ -30,6 +29,7 @@ import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { VoidModal } from '@/ui/VoidModal';
 import { usePermissions } from '@/users/use-permissions';
 
+import { DueCategoryIconLabel } from './DueCategoryIconLabel';
 import { useDue } from './useDue';
 
 export function DueView() {
@@ -108,7 +108,12 @@ export function DueView() {
                 label: 'Monto',
               },
               {
-                children: DueCategoryLabel[due.category],
+                children: (
+                  <DueCategoryIconLabel
+                    category={due.category}
+                    date={due.date}
+                  />
+                ),
                 label: 'Categoría',
               },
               {

@@ -4,7 +4,7 @@ import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { Grid, Skeleton } from 'antd';
 
-import { CategoryIconMap } from '@/dues/DueCategoryIconMap';
+import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
 import { Descriptions } from '@/ui/Descriptions';
 
 interface Props {
@@ -21,7 +21,7 @@ export function DueCategoryDescriptions({ category, data, loading }: Props) {
 
   return (
     <Descriptions
-      extra={CategoryIconMap[category]}
+      extra={DueCategoryIconMap[category]}
       items={[
         {
           children: skeletonOrValue(data?.categories[category].count ?? 0),

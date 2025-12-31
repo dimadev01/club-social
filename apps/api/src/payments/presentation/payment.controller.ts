@@ -129,6 +129,7 @@ export class PaymentsController extends BaseController {
         id: payment.id,
         memberId: payment.member.id,
         memberName: payment.member.name,
+        receiptNumber: payment.receiptNumber,
         status: payment.status,
       })),
       extra: {
@@ -251,6 +252,7 @@ export class PaymentsController extends BaseController {
         due: {
           amount: settlement.due.amount,
           category: settlement.due.category,
+          date: settlement.due.date,
           id: settlement.due.id,
         },
         memberLedgerEntry: {
