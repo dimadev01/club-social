@@ -1,4 +1,5 @@
 import type {
+  DateRangeDto,
   ExportDataDto,
   GetPaginatedDataDto,
   PaginatedDataResultDto,
@@ -16,7 +17,6 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
-import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -103,7 +103,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
   }
 
   public async findForStatistics(
-    params: FindForStatisticsParams,
+    params: DateRangeDto,
   ): Promise<PaymentStatisticsReadModel[]> {
     const where: PaymentWhereInput = {
       settlements: {

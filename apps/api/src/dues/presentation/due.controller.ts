@@ -32,6 +32,7 @@ import {
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
+import { DateRangeRequestDto } from '@/shared/presentation/dto/date-range-request.dto';
 import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
 import { GetPaginatedDataRequestDto } from '@/shared/presentation/dto/paginated-request.dto';
 import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-response.dto';
@@ -208,19 +209,23 @@ export class DuesController extends BaseController {
   }
 
   @Get('pending-statistics')
-  public async getPendingStatistics(): Promise<DuePendingStatisticsResponseDto> {
-    const dues = await this.dueRepository.findPending();
+  public async getPendingStatistics(
+    @Query() query: DateRangeRequestDto,
+  ): Promise<DuePendingStatisticsResponseDto> {
+    const dues = await this.dueRepository.findPending({
+      dateRange: query.dateRange,
+    });
 
     const categories = Object.values(DueCategory).reduce(
       (acc, category) => {
         const items = dues.filter((due) => due.category === category);
-        acc[category] = sumBy(items, (due) => due.amount.toCents());
+        acc[category] = sumBy(items, (due) => due.pendingAmount.toCents());
 
         return acc;
       },
       {} as Record<DueCategory, number>,
     );
-    const total = sumBy(dues, (due) => due.amount.toCents());
+    const total = sumBy(dues, (due) => due.pendingAmount.toCents());
 
     return {
       categories,

@@ -19,7 +19,6 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
-import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -31,7 +30,10 @@ import {
   MovementReadModel,
 } from '../domain/movement-read-models';
 import { MovementStatisticsModel } from '../domain/movement-read-models';
-import { MovementRepository } from '../domain/movement.repository';
+import {
+  FindMovementsForStatisticsParams,
+  MovementRepository,
+} from '../domain/movement.repository';
 import { PrismaMovementMapper } from './prisma-movement.mapper';
 
 const SYSTEM_START_DATE = '2022-01-01';
@@ -105,7 +107,7 @@ export class PrismaMovementRepository implements MovementRepository {
   }
 
   public async findForStatistics(
-    params: FindForStatisticsParams,
+    params: FindMovementsForStatisticsParams,
   ): Promise<MovementStatisticsModel> {
     const where: MovementWhereInput = {
       status: MovementStatus.REGISTERED,

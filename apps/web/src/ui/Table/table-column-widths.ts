@@ -8,4 +8,4 @@ export const TABLE_COLUMN_WIDTHS = {
   STATUS: 150,
 } as const;
 
-export const TABLE_DESCRIPTION_MAX_LENGTH = 50;
+export const TABLE_DESCRIPTION_MAX_LENGTH = 25;

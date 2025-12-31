@@ -1,3 +1,4 @@
+/* eslint-disable perfectionist/sort-objects */
 import type { TimeRangePickerProps } from 'antd';
 
 import dayjs, { Dayjs } from 'dayjs';
@@ -39,38 +40,38 @@ export const generatePresets = (): Record<
   const today = dayjs().startOf('day');
 
   return {
-    // "Last N days" includes today and goes back N-1 full days
-    // Example: "Last 7 days" = today + 6 days before = 7 full days
-    [DatePickerPresetEnum.LAST_7_DAYS]: [today.subtract(6, 'days'), today],
-    [DatePickerPresetEnum.LAST_14_DAYS]: [today.subtract(13, 'days'), today],
-    [DatePickerPresetEnum.LAST_30_DAYS]: [today.subtract(29, 'days'), today],
-    [DatePickerPresetEnum.LAST_90_DAYS]: [today.subtract(89, 'days'), today],
-
-    // Complete periods (full month/week/year)
-    [DatePickerPresetEnum.LAST_MONTH]: [
-      today.subtract(1, 'month').startOf('month'),
-      today.subtract(1, 'month').endOf('month'),
-    ],
-    [DatePickerPresetEnum.LAST_WEEK]: [
-      today.subtract(1, 'week').startOf('week'),
-      today.subtract(1, 'week').endOf('week'),
-    ],
-    [DatePickerPresetEnum.PAST_YEAR]: [
-      today.subtract(1, 'year').startOf('year'),
-      today.subtract(1, 'year').endOf('year'),
-    ],
-
-    // Current period from start until today (partial period)
-    [DatePickerPresetEnum.THIS_MONTH]: [today.startOf('month'), today],
-    [DatePickerPresetEnum.THIS_WEEK]: [today.startOf('week'), today],
-    [DatePickerPresetEnum.THIS_YEAR]: [today.startOf('year'), today],
-
     // Single days
     [DatePickerPresetEnum.TODAY]: [today, today],
     [DatePickerPresetEnum.YESTERDAY]: [
       today.subtract(1, 'day'),
       today.subtract(1, 'day'),
     ],
+
+    // Current period from start until today (partial period)
+    [DatePickerPresetEnum.THIS_WEEK]: [today.startOf('week'), today],
+    [DatePickerPresetEnum.THIS_MONTH]: [today.startOf('month'), today],
+    [DatePickerPresetEnum.THIS_YEAR]: [today.startOf('year'), today],
+
+    // Complete periods (full month/week/year)
+    [DatePickerPresetEnum.LAST_WEEK]: [
+      today.subtract(1, 'week').startOf('week'),
+      today.subtract(1, 'week').endOf('week'),
+    ],
+    [DatePickerPresetEnum.LAST_MONTH]: [
+      today.subtract(1, 'month').startOf('month'),
+      today.subtract(1, 'month').endOf('month'),
+    ],
+    [DatePickerPresetEnum.PAST_YEAR]: [
+      today.subtract(1, 'year').startOf('year'),
+      today.subtract(1, 'year').endOf('year'),
+    ],
+
+    // "Last N days" includes today and goes back N-1 full days
+    // Example: "Last 7 days" = today + 6 days before = 7 full days
+    [DatePickerPresetEnum.LAST_7_DAYS]: [today.subtract(6, 'days'), today],
+    [DatePickerPresetEnum.LAST_14_DAYS]: [today.subtract(13, 'days'), today],
+    [DatePickerPresetEnum.LAST_30_DAYS]: [today.subtract(29, 'days'), today],
+    [DatePickerPresetEnum.LAST_90_DAYS]: [today.subtract(89, 'days'), today],
   };
 };
 

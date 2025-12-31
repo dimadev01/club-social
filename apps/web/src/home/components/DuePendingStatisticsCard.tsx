@@ -1,5 +1,7 @@
+import type { Dayjs } from 'dayjs';
+
 import { DueCategoryLabel, DueCategorySorted } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { Statistic } from 'antd';
 
 import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
@@ -8,8 +10,16 @@ import { DuesIcon } from '@/ui/Icons/DuesIcon';
 
 import { useDuePendingStatistics } from '../useDuePendingStatistics';
 
-export function DuePendingStatisticsCard() {
-  const { data, isLoading } = useDuePendingStatistics();
+interface Props {
+  dateRange: [Dayjs, Dayjs] | null;
+}
+
+export function DuePendingStatisticsCard({ dateRange }: Props) {
+  const { data, isLoading } = useDuePendingStatistics({
+    dateRange: dateRange
+      ? [DateFormat.isoDate(dateRange[0]), DateFormat.isoDate(dateRange[1])]
+      : undefined,
+  });
 
   return (
     <Card

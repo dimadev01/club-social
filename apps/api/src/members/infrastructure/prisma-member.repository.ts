@@ -236,7 +236,10 @@ export class PrismaMemberRepository implements MemberRepository {
     return members.map((member) => ({
       category: member.category as MemberCategory,
       id: member.id,
-      name: `${member.user.firstName} ${member.user.lastName}`,
+      name: Name.raw({
+        firstName: member.user.firstName,
+        lastName: member.user.lastName,
+      }).fullName,
       status: member.status as MemberStatus,
     }));
   }

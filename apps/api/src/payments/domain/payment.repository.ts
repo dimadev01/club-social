@@ -1,11 +1,10 @@
-import { ExportDataDto } from '@club-social/shared/types';
+import { DateRangeDto, ExportDataDto } from '@club-social/shared/types';
 
 import {
   PaginatedRepository,
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
-import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from './entities/payment.entity';
@@ -29,6 +28,6 @@ export interface PaymentRepository
   findByIdReadModel(id: UniqueId): Promise<null | PaymentReadModel>;
   findForExport(params: ExportDataDto): Promise<PaymentPaginatedReadModel[]>;
   findForStatistics(
-    params: FindForStatisticsParams,
+    params: DateRangeDto,
   ): Promise<PaymentStatisticsReadModel[]>;
 }

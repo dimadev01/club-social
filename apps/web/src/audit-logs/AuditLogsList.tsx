@@ -9,12 +9,12 @@ import {
 } from '@club-social/shared/audit-logs';
 import { DateFormat } from '@club-social/shared/lib';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Col, Tag, Typography } from 'antd';
+import { Col, Typography } from 'antd';
+import JSONPretty from 'react-json-pretty';
 
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { Descriptions } from '@/ui/Descriptions';
 import { NotFound } from '@/ui/NotFound';
 import { Page, PageTableActions } from '@/ui/Page';
 import { Row } from '@/ui/Row';
@@ -109,9 +109,11 @@ export function AuditLogsList() {
             width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
           {
-            dataIndex: 'id',
-            render: (id: string) => (
-              <Typography.Text copyable={{ text: id }}>{id}</Typography.Text>
+            dataIndex: 'entityId',
+            render: (entityId: string) => (
+              <Typography.Text copyable={{ text: entityId }}>
+                {entityId}
+              </Typography.Text>
             ),
             title: 'ID',
           },
@@ -121,47 +123,18 @@ export function AuditLogsList() {
           expandedRowRender: (record) => (
             <Row>
               <Col md={12} xs={24}>
-                <Descriptions
-                  bordered
-                  column={1}
-                  items={Object.entries(record.oldData ?? {}).map(
-                    ([key, value]) => ({
-                      children:
-                        typeof value === 'object' && value !== null
-                          ? JSON.stringify(value, null, 2)
-                          : String(value ?? '-'),
-                      label: key,
-                    }),
-                  )}
-                  title="Datos antiguos"
-                />
+                {record.oldData ? (
+                  <JSONPretty data={record.oldData} id="json-pretty" />
+                ) : (
+                  '-'
+                )}
               </Col>
               <Col md={12} xs={24}>
-                <Descriptions
-                  bordered
-                  column={1}
-                  items={Object.entries(record.newData ?? {}).map(
-                    ([key, value]) => {
-                      const oldData = String(record.oldData?.[key] ?? '-');
-                      const newData = String(value ?? '-');
-
-                      if (record.oldData && oldData !== newData) {
-                        return {
-                          children: <Tag color="green">{newData}</Tag>,
-                          key,
-                          label: key,
-                        };
-                      }
-
-                      return {
-                        children: newData,
-                        key,
-                        label: key,
-                      };
-                    },
-                  )}
-                  title="Datos nuevos"
-                />
+                {record.newData ? (
+                  <JSONPretty data={record.newData} id="json-pretty" />
+                ) : (
+                  '-'
+                )}
               </Col>
             </Row>
           ),

@@ -1,4 +1,5 @@
 import type {
+  DateRangeDto,
   ExportDataDto,
   GetPaginatedDataDto,
   PaginatedDataResultDto,
@@ -145,14 +146,23 @@ export class PrismaDueRepository implements DueRepository {
     };
   }
 
-  public async findPending(): Promise<DueEntity[]> {
+  public async findPending(params: DateRangeDto): Promise<DueEntity[]> {
+    const where: DueWhereInput = {
+      status: {
+        in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
+      },
+    };
+
+    if (params.dateRange) {
+      where.date = {
+        gte: params.dateRange[0],
+        lte: params.dateRange[1],
+      };
+    }
+
     const dues = await this.prismaService.due.findMany({
       include: { settlements: true },
-      where: {
-        status: {
-          in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
-        },
-      },
+      where,
     });
 
     return dues.map((due) => this.dueMapper.toDomain(due));

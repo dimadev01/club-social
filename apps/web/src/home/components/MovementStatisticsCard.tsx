@@ -16,7 +16,7 @@ interface Props {
 export function MovementStatisticsCard({ dateRange }: Props) {
   const { data: statistics, isLoading } = useMovementStatistics({
     dateRange: dateRange
-      ? [dateRange[0].format('YYYY-MM-DD'), dateRange[1].format('YYYY-MM-DD')]
+      ? [DateFormat.isoDate(dateRange[0]), DateFormat.isoDate(dateRange[1])]
       : undefined,
   });
 

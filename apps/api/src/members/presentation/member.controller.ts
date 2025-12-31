@@ -233,10 +233,17 @@ export class MembersController extends BaseController {
   public async search(
     @Query() query: MemberSearchRequestDto,
   ): Promise<MemberSearchResponseDto[]> {
-    return this.memberRepository.search({
+    const data = await this.memberRepository.search({
       limit: query.limit ?? 20,
       searchTerm: query.q,
     });
+
+    return data.map((member) => ({
+      category: member.category,
+      id: member.id,
+      name: member.name,
+      status: member.status,
+    }));
   }
 
   @Get(':id')

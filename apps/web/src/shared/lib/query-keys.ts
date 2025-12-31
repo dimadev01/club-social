@@ -1,14 +1,11 @@
 import type { DueCategory } from '@club-social/shared/dues';
 import type { MemberCategory } from '@club-social/shared/members';
+import type { DateRangeDto } from '@club-social/shared/types';
 
 import { createQueryKeyStore } from '@lukemorales/query-key-factory';
 
 import type { UsePaymentStatisticsQuery } from '@/home/usePaymentStatistics';
 import type { TableQuery } from '@/ui/Table/useTable';
-
-export interface UseMovementStatisticsQuery {
-  dateRange?: [string, string];
-}
 
 export const queryKeys = createQueryKeyStore({
   dues: {
@@ -16,7 +13,7 @@ export const queryKeys = createQueryKeyStore({
     paginated: (query?: TableQuery) => [query],
     payments: (id?: string) => [id],
     pending: (memberId?: string) => [memberId],
-    pendingStatistics: () => [undefined],
+    pendingStatistics: (query?: DateRangeDto) => [query],
   },
 
   featureFlags: {
@@ -38,7 +35,7 @@ export const queryKeys = createQueryKeyStore({
     balance: () => [undefined],
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
-    statistics: (query?: UseMovementStatisticsQuery) => [query],
+    statistics: (query?: DateRangeDto) => [query],
   },
 
   passkeys: {

@@ -1,11 +1,10 @@
-import { ExportDataDto } from '@club-social/shared/types';
+import { DateRangeDto, ExportDataDto } from '@club-social/shared/types';
 
 import {
   PaginatedRepository,
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
-import { FindForStatisticsParams } from '@/shared/domain/repository-types';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MovementEntity } from './entities/movement.entity';
@@ -17,6 +16,10 @@ import {
 import { MovementStatisticsModel } from './movement-read-models';
 
 export const MOVEMENT_REPOSITORY_PROVIDER = Symbol('MovementRepository');
+
+export interface FindMovementsForStatisticsParams extends DateRangeDto {
+  includePreviousBalance: boolean;
+}
 
 export interface MovementRepository
   extends
@@ -30,6 +33,6 @@ export interface MovementRepository
   findByPaymentId(paymentId: UniqueId): Promise<MovementEntity | null>;
   findForExport(params: ExportDataDto): Promise<MovementPaginatedReadModel[]>;
   findForStatistics(
-    params: FindForStatisticsParams,
+    params: FindMovementsForStatisticsParams,
   ): Promise<MovementStatisticsModel>;
 }

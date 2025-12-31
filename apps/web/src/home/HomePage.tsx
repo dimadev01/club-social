@@ -34,7 +34,7 @@ export function Home() {
       <Space className="flex" vertical>
         <PaymentStatisticsCard dateRange={dateRange} />
         <MovementStatisticsCard dateRange={dateRange} />
-        <DuePendingStatisticsCard />
+        <DuePendingStatisticsCard dateRange={dateRange} />
       </Space>
     </Page>
   );

@@ -279,14 +279,18 @@ export function DueList() {
           total: dues?.total,
         }}
         summary={() => (
-          <Table.Summary.Row>
-            <Table.Summary.Cell align="right" colSpan={1} index={0}>
-              Total
-            </Table.Summary.Cell>
-            <Table.Summary.Cell colSpan={7} index={1}>
-              {NumberFormat.formatCurrencyCents(dues?.extra?.totalAmount ?? 0)}
-            </Table.Summary.Cell>
-          </Table.Summary.Row>
+          <Table.Summary fixed>
+            <Table.Summary.Row>
+              <Table.Summary.Cell align="right" colSpan={1} index={0}>
+                Total
+              </Table.Summary.Cell>
+              <Table.Summary.Cell colSpan={7} index={1}>
+                {NumberFormat.formatCurrencyCents(
+                  dues?.extra?.totalAmount ?? 0,
+                )}
+              </Table.Summary.Cell>
+            </Table.Summary.Row>
+          </Table.Summary>
         )}
       />
     </Page>

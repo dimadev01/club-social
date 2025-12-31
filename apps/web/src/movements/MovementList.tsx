@@ -173,29 +173,23 @@ export function MovementList() {
           },
           {
             dataIndex: 'notes',
-            render: (notes: null | string, record) => {
+            render: (notes: null | string) => {
               if (!notes) {
                 return '-';
               }
 
               if (notes.length <= TABLE_DESCRIPTION_MAX_LENGTH) {
-                return (
-                  <Link to={appRoutes.payments.view(record.paymentId ?? '')}>
-                    {notes}
-                  </Link>
-                );
+                return notes;
               }
 
               return (
                 <Tooltip title={notes}>
-                  <Link to={appRoutes.payments.view(record.paymentId ?? '')}>
-                    {notes.substring(0, TABLE_DESCRIPTION_MAX_LENGTH)}...
-                  </Link>
+                  {notes.substring(0, TABLE_DESCRIPTION_MAX_LENGTH)}...
                 </Tooltip>
               );
             },
             title: 'Notas',
-            width: 200,
+            width: 250,
           },
           {
             align: 'right',
@@ -223,7 +217,7 @@ export function MovementList() {
           total: movements?.total,
         }}
         summary={() => (
-          <>
+          <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell
                 align="right"
@@ -251,7 +245,7 @@ export function MovementList() {
                 )}
               </Table.Summary.Cell>
             </Table.Summary.Row>
-          </>
+          </Table.Summary>
         )}
       />
     </Page>
