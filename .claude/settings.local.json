@@ -18,7 +18,8 @@
       "Bash(dotenvx run:*)",
       "Bash(npx prisma migrate dev:*)",
       "Bash(turbo build:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(npm test:*)"
     ]
   },
   "outputStyle": "default"

@@ -3,71 +3,74 @@ import { UserRole, UserStatus } from '@club-social/shared/users';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import {
+  TEST_ALT_EMAIL,
+  TEST_ALT_FIRST_NAME,
+  TEST_ALT_LAST_NAME,
+  TEST_CREATED_BY,
+  TEST_EMAIL,
+  TEST_FIRST_NAME,
+  TEST_LAST_NAME,
+} from '@/shared/test/constants';
+import { createUser, createUserProps } from '@/shared/test/factories';
 
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
 import { UserEntity } from './user.entity';
 
 describe('UserEntity', () => {
-  const createValidUserProps = () => ({
-    banExpires: null,
-    banned: null,
-    banReason: null,
-    email: Email.create('john.doe@example.com')._unsafeUnwrap(),
-    name: Name.create({ firstName: 'John', lastName: 'Doe' })._unsafeUnwrap(),
-    role: UserRole.MEMBER,
-    status: UserStatus.ACTIVE,
-  });
-
   describe('create', () => {
     it('should create a user with valid props', () => {
-      const props = createValidUserProps();
-      const createdBy = 'admin-123';
+      const props = createUserProps();
 
-      const result = UserEntity.create(props, createdBy);
+      const result = UserEntity.create(props, TEST_CREATED_BY);
 
       expect(result.isOk()).toBe(true);
       const user = result._unsafeUnwrap();
-      expect(user.email.value).toBe('john.doe@example.com');
-      expect(user.name.firstName).toBe('John');
-      expect(user.name.lastName).toBe('Doe');
-      expect(user.name.fullName).toBe('Doe John');
+      expect(user.email.value).toBe(TEST_EMAIL);
+      expect(user.name.firstName).toBe(TEST_FIRST_NAME);
+      expect(user.name.lastName).toBe(TEST_LAST_NAME);
+      expect(user.name.fullNameFirstNameFirst).toBe(
+        `${TEST_FIRST_NAME} ${TEST_LAST_NAME}`,
+      );
+      expect(user.name.fullNameLastNameFirst).toBe(
+        `${TEST_LAST_NAME} ${TEST_FIRST_NAME}`,
+      );
       expect(user.role).toBe(UserRole.MEMBER);
       expect(user.status).toBe(UserStatus.ACTIVE);
       expect(user.banned).toBeNull();
       expect(user.banReason).toBeNull();
       expect(user.banExpires).toBeNull();
-      expect(user.createdBy).toBe(createdBy);
+      expect(user.createdBy).toBe(TEST_CREATED_BY);
     });
 
-    it('should create a user with admin role', () => {
-      const props = { ...createValidUserProps(), role: UserRole.ADMIN };
+    it('should create a user with admin role using overrides', () => {
+      const props = createUserProps({ role: UserRole.ADMIN });
 
-      const result = UserEntity.create(props, 'admin');
+      const result = UserEntity.create(props, TEST_CREATED_BY);
 
       expect(result.isOk()).toBe(true);
       expect(result._unsafeUnwrap().role).toBe(UserRole.ADMIN);
     });
 
-    it('should create a user with staff role', () => {
-      const props = { ...createValidUserProps(), role: UserRole.STAFF };
+    it('should create a user with staff role using overrides', () => {
+      const props = createUserProps({ role: UserRole.STAFF });
 
-      const result = UserEntity.create(props, 'admin');
+      const result = UserEntity.create(props, TEST_CREATED_BY);
 
       expect(result.isOk()).toBe(true);
       expect(result._unsafeUnwrap().role).toBe(UserRole.STAFF);
     });
 
-    it('should create a banned user', () => {
+    it('should create a banned user using overrides', () => {
       const banExpires = new Date('2024-12-31');
-      const props = {
-        ...createValidUserProps(),
+      const props = createUserProps({
         banExpires,
         banned: true,
         banReason: 'Violation of terms',
-      };
+      });
 
-      const result = UserEntity.create(props, 'admin');
+      const result = UserEntity.create(props, TEST_CREATED_BY);
 
       expect(result.isOk()).toBe(true);
       const user = result._unsafeUnwrap();
@@ -77,9 +80,9 @@ describe('UserEntity', () => {
     });
 
     it('should add UserCreatedEvent on creation', () => {
-      const props = createValidUserProps();
+      const props = createUserProps();
 
-      const result = UserEntity.create(props, 'admin');
+      const result = UserEntity.create(props, TEST_CREATED_BY);
       const user = result._unsafeUnwrap();
       const events = user.pullEvents();
 
@@ -89,10 +92,10 @@ describe('UserEntity', () => {
     });
 
     it('should generate unique ids for each user', () => {
-      const props = createValidUserProps();
+      const props = createUserProps();
 
-      const result1 = UserEntity.create(props, 'admin');
-      const result2 = UserEntity.create(props, 'admin');
+      const result1 = UserEntity.create(props, TEST_CREATED_BY);
+      const result2 = UserEntity.create(props, TEST_CREATED_BY);
 
       expect(result1._unsafeUnwrap().id.value).not.toBe(
         result2._unsafeUnwrap().id.value,
@@ -109,15 +112,18 @@ describe('UserEntity', () => {
           banExpires: null,
           banned: null,
           banReason: null,
-          email: Email.raw({ value: 'persisted@example.com' }),
-          name: Name.raw({ firstName: 'Jane', lastName: 'Smith' }),
+          email: Email.raw({ value: TEST_ALT_EMAIL }),
+          name: Name.raw({
+            firstName: TEST_ALT_FIRST_NAME,
+            lastName: TEST_ALT_LAST_NAME,
+          }),
           role: UserRole.ADMIN,
           status: UserStatus.ACTIVE,
         },
         {
           audit: {
             createdAt: new Date('2024-01-01'),
-            createdBy: 'system',
+            createdBy: TEST_CREATED_BY,
             updatedAt: null,
             updatedBy: null,
           },
@@ -127,10 +133,10 @@ describe('UserEntity', () => {
       );
 
       expect(user.id).toBe(id);
-      expect(user.email.value).toBe('persisted@example.com');
-      expect(user.name.firstName).toBe('Jane');
+      expect(user.email.value).toBe(TEST_ALT_EMAIL);
+      expect(user.name.firstName).toBe(TEST_ALT_FIRST_NAME);
       expect(user.role).toBe(UserRole.ADMIN);
-      expect(user.createdBy).toBe('system');
+      expect(user.createdBy).toBe(TEST_CREATED_BY);
     });
 
     it('should create a soft-deleted user from persisted data', () => {
@@ -141,27 +147,29 @@ describe('UserEntity', () => {
           banExpires: null,
           banned: null,
           banReason: null,
-          email: Email.raw({ value: 'deleted@example.com' }),
-          name: Name.raw({ firstName: 'Deleted', lastName: 'User' }),
+          email: Email.raw({ value: TEST_ALT_EMAIL }),
+          name: Name.raw({
+            firstName: TEST_ALT_FIRST_NAME,
+            lastName: TEST_ALT_LAST_NAME,
+          }),
           role: UserRole.MEMBER,
           status: UserStatus.INACTIVE,
         },
         {
-          audit: { createdBy: 'admin' },
-          deleted: { deletedAt, deletedBy: 'admin' },
+          audit: { createdBy: TEST_CREATED_BY },
+          deleted: { deletedAt, deletedBy: TEST_CREATED_BY },
           id: UniqueId.generate(),
         },
       );
 
       expect(user.deletedAt).toBe(deletedAt);
-      expect(user.deletedBy).toBe('admin');
+      expect(user.deletedBy).toBe(TEST_CREATED_BY);
     });
   });
 
   describe('clone', () => {
     it('should create an exact copy of the user', () => {
-      const props = createValidUserProps();
-      const original = UserEntity.create(props, 'admin')._unsafeUnwrap();
+      const original = createUser();
 
       const cloned = original.clone();
 
@@ -174,8 +182,7 @@ describe('UserEntity', () => {
     });
 
     it('should create an independent copy', () => {
-      const props = createValidUserProps();
-      const original = UserEntity.create(props, 'admin')._unsafeUnwrap();
+      const original = createUser();
       const cloned = original.clone();
 
       original.updateStatus(UserStatus.INACTIVE);
@@ -187,10 +194,7 @@ describe('UserEntity', () => {
 
   describe('updateEmail', () => {
     it('should update the email', () => {
-      const user = UserEntity.create(
-        createValidUserProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const user = createUser();
 
       const newEmail = Email.create('new.email@example.com')._unsafeUnwrap();
       user.updateEmail(newEmail);
@@ -201,10 +205,7 @@ describe('UserEntity', () => {
 
   describe('updateName', () => {
     it('should update the name', () => {
-      const user = UserEntity.create(
-        createValidUserProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const user = createUser();
 
       const newName = Name.create({
         firstName: 'Jane',
@@ -219,21 +220,18 @@ describe('UserEntity', () => {
 
   describe('updateStatus', () => {
     it('should update the status to inactive', () => {
-      const user = UserEntity.create(
-        createValidUserProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const user = createUser();
 
       user.updateStatus(UserStatus.INACTIVE);
 
       expect(user.status).toBe(UserStatus.INACTIVE);
     });
 
-    it('should update the status to active', () => {
+    it('should update the status to active using overrides', () => {
       const user = UserEntity.fromPersistence(
-        { ...createValidUserProps(), status: UserStatus.INACTIVE },
+        createUserProps({ status: UserStatus.INACTIVE }),
         {
-          audit: { createdBy: 'admin' },
+          audit: { createdBy: TEST_CREATED_BY },
           deleted: {},
           id: UniqueId.generate(),
         },
@@ -247,10 +245,7 @@ describe('UserEntity', () => {
 
   describe('updateProfile', () => {
     it('should update email, name, and status', () => {
-      const user = UserEntity.create(
-        createValidUserProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const user = createUser();
       user.pullEvents(); // Clear creation event
 
       const newEmail = Email.create('updated@example.com')._unsafeUnwrap();
@@ -274,17 +269,17 @@ describe('UserEntity', () => {
     });
 
     it('should add UserUpdatedEvent when updating profile', () => {
-      const user = UserEntity.create(
-        createValidUserProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const user = createUser();
       user.pullEvents();
 
       user.updateProfile({
         email: Email.create('new@example.com')._unsafeUnwrap(),
-        name: Name.create({ firstName: 'New', lastName: 'User' })._unsafeUnwrap(),
+        name: Name.create({
+          firstName: 'New',
+          lastName: 'User',
+        })._unsafeUnwrap(),
         status: UserStatus.ACTIVE,
-        updatedBy: 'admin',
+        updatedBy: TEST_CREATED_BY,
       });
 
       const events = user.pullEvents();
@@ -292,17 +287,14 @@ describe('UserEntity', () => {
       expect(events[0]).toBeInstanceOf(UserUpdatedEvent);
 
       const event = events[0] as UserUpdatedEvent;
-      expect(event.oldUser.email.value).toBe('john.doe@example.com');
+      expect(event.oldUser.email.value).toBe(TEST_EMAIL);
       expect(event.user.email.value).toBe('new@example.com');
     });
   });
 
   describe('soft delete', () => {
     it('should delete the user', () => {
-      const user = UserEntity.create(
-        createValidUserProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const user = createUser();
 
       const deleteDate = new Date('2024-06-15');
       user.delete('admin-deleter', deleteDate);
@@ -312,14 +304,11 @@ describe('UserEntity', () => {
     });
 
     it('should restore a deleted user', () => {
-      const user = UserEntity.fromPersistence(
-        createValidUserProps(),
-        {
-          audit: { createdBy: 'admin' },
-          deleted: { deletedAt: new Date(), deletedBy: 'admin' },
-          id: UniqueId.generate(),
-        },
-      );
+      const user = UserEntity.fromPersistence(createUserProps(), {
+        audit: { createdBy: TEST_CREATED_BY },
+        deleted: { deletedAt: new Date(), deletedBy: TEST_CREATED_BY },
+        id: UniqueId.generate(),
+      });
 
       expect(user.deletedAt).toBeDefined();
 
@@ -367,10 +356,10 @@ describe('UserEntity', () => {
     });
 
     it('should not be equal when ids differ', () => {
-      const props = createValidUserProps();
+      const props = createUserProps();
 
-      const user1 = UserEntity.create(props, 'admin')._unsafeUnwrap();
-      const user2 = UserEntity.create(props, 'admin')._unsafeUnwrap();
+      const user1 = UserEntity.create(props, TEST_CREATED_BY)._unsafeUnwrap();
+      const user2 = UserEntity.create(props, TEST_CREATED_BY)._unsafeUnwrap();
 
       expect(user1.equals(user2)).toBe(false);
     });
@@ -378,53 +367,57 @@ describe('UserEntity', () => {
 
   describe('name value object', () => {
     it('should have correct full name formats', () => {
-      const user = UserEntity.create(
-        createValidUserProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const user = createUser();
 
-      expect(user.name.fullName).toBe('Doe John');
-      expect(user.name.fullNameLastNameFirst).toBe('Doe John');
-      expect(user.name.fullNameFirstNameFirst).toBe('John Doe');
+      expect(user.name.fullName).toBe(`${TEST_LAST_NAME} ${TEST_FIRST_NAME}`);
+      expect(user.name.fullNameLastNameFirst).toBe(
+        `${TEST_LAST_NAME} ${TEST_FIRST_NAME}`,
+      );
+      expect(user.name.fullNameFirstNameFirst).toBe(
+        `${TEST_FIRST_NAME} ${TEST_LAST_NAME}`,
+      );
     });
   });
 
   describe('email value object', () => {
     it('should have correct email methods', () => {
-      const user = UserEntity.create(
-        createValidUserProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const user = createUser();
 
-      expect(user.email.local()).toBe('john.doe');
+      expect(user.email.local()).toBe('test');
       expect(user.email.domain()).toBe('example.com');
-      expect(user.email.toString()).toBe('john.doe@example.com');
+      expect(user.email.toString()).toBe(TEST_EMAIL);
     });
   });
 
   describe('different roles', () => {
     const roles = Object.values(UserRole);
 
-    it.each(roles)('should create user with role %s', (role) => {
-      const props = { ...createValidUserProps(), role };
+    it.each(roles)(
+      'should create user with role %s using overrides',
+      (role) => {
+        const props = createUserProps({ role });
 
-      const result = UserEntity.create(props, 'admin');
+        const result = UserEntity.create(props, TEST_CREATED_BY);
 
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().role).toBe(role);
-    });
+        expect(result.isOk()).toBe(true);
+        expect(result._unsafeUnwrap().role).toBe(role);
+      },
+    );
   });
 
   describe('different statuses', () => {
     const statuses = Object.values(UserStatus);
 
-    it.each(statuses)('should create user with status %s', (status) => {
-      const props = { ...createValidUserProps(), status };
+    it.each(statuses)(
+      'should create user with status %s using overrides',
+      (status) => {
+        const props = createUserProps({ status });
 
-      const result = UserEntity.create(props, 'admin');
+        const result = UserEntity.create(props, TEST_CREATED_BY);
 
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().status).toBe(status);
-    });
+        expect(result.isOk()).toBe(true);
+        expect(result._unsafeUnwrap().status).toBe(status);
+      },
+    );
   });
 });

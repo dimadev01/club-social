@@ -6,81 +6,58 @@ import {
   MemberSex,
   MemberStatus,
 } from '@club-social/shared/members';
-import { UserRole, UserStatus } from '@club-social/shared/users';
 
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
-import { Email } from '@/shared/domain/value-objects/email/email.vo';
-import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
-import { UserEntity } from '@/users/domain/entities/user.entity';
+import {
+  TEST_ADDRESS,
+  TEST_ALT_ADDRESS,
+  TEST_ALT_BIRTH_DATE,
+  TEST_ALT_DOCUMENT_ID,
+  TEST_ALT_PHONE,
+  TEST_BIRTH_DATE,
+  TEST_CREATED_BY,
+  TEST_DOCUMENT_ID,
+  TEST_PHONE,
+} from '@/shared/test/constants';
+import {
+  createMember,
+  createMemberProps,
+  createUser,
+} from '@/shared/test/factories';
 
 import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
 import { MemberEntity } from './member.entity';
 
 describe('MemberEntity', () => {
-  const createTestUser = () =>
-    UserEntity.create(
-      {
-        banExpires: null,
-        banned: null,
-        banReason: null,
-        email: Email.create('test@example.com')._unsafeUnwrap(),
-        name: Name.create({
-          firstName: 'John',
-          lastName: 'Doe',
-        })._unsafeUnwrap(),
-        role: UserRole.MEMBER,
-        status: UserStatus.ACTIVE,
-      },
-      'admin',
-    )._unsafeUnwrap();
-
-  const createValidMemberProps = (userId: UniqueId) => ({
-    address: Address.create({
-      cityName: 'Buenos Aires',
-      stateName: 'CABA',
-      street: 'Av. Corrientes 1234',
-      zipCode: '1000',
-    })._unsafeUnwrap(),
-    birthDate: DateOnly.fromString('1990-05-15')._unsafeUnwrap(),
-    category: MemberCategory.MEMBER,
-    documentID: '12345678',
-    fileStatus: FileStatus.COMPLETED,
-    maritalStatus: MaritalStatus.SINGLE,
-    nationality: MemberNationality.ARGENTINA,
-    phones: ['+54 11 1234-5678'],
-    sex: MemberSex.MALE,
-    userId,
-  });
-
   describe('create', () => {
     it('should create a member with valid props', () => {
-      const user = createTestUser();
-      const props = createValidMemberProps(user.id);
+      const user = createUser();
+      const props = createMemberProps(user.id);
 
       const result = MemberEntity.create(props, user);
 
       expect(result.isOk()).toBe(true);
       const member = result._unsafeUnwrap();
-      expect(member.address?.street).toBe('Av. Corrientes 1234');
-      expect(member.birthDate?.value).toBe('1990-05-15');
+      expect(member.address?.street).toBe(TEST_ADDRESS.street);
+      expect(member.birthDate?.value).toBe(TEST_BIRTH_DATE);
       expect(member.category).toBe(MemberCategory.MEMBER);
-      expect(member.documentID).toBe('12345678');
+      expect(member.documentID).toBe(TEST_DOCUMENT_ID);
       expect(member.fileStatus).toBe(FileStatus.COMPLETED);
       expect(member.maritalStatus).toBe(MaritalStatus.SINGLE);
       expect(member.nationality).toBe(MemberNationality.ARGENTINA);
-      expect(member.phones).toEqual(['+54 11 1234-5678']);
+      expect(member.phones).toEqual([TEST_PHONE]);
       expect(member.sex).toBe(MemberSex.MALE);
       expect(member.status).toBe(MemberStatus.ACTIVE);
       expect(member.userId.value).toBe(user.id.value);
       expect(member.createdBy).toBe(user.createdBy);
     });
 
-    it('should create a member with null optional props', () => {
-      const user = createTestUser();
-      const props = {
+    it('should create a member with null optional props using overrides', () => {
+      const user = createUser();
+      const props = createMemberProps(user.id, {
         address: null,
         birthDate: null,
         category: MemberCategory.ADHERENT_MEMBER,
@@ -90,8 +67,7 @@ describe('MemberEntity', () => {
         nationality: null,
         phones: [],
         sex: null,
-        userId: user.id,
-      };
+      });
 
       const result = MemberEntity.create(props, user);
 
@@ -107,9 +83,9 @@ describe('MemberEntity', () => {
     });
 
     it('should add MemberCreatedEvent on creation', () => {
-      const user = createTestUser();
+      const user = createUser();
       user.pullEvents(); // Clear user events
-      const props = createValidMemberProps(user.id);
+      const props = createMemberProps(user.id);
 
       const result = MemberEntity.create(props, user);
       const member = result._unsafeUnwrap();
@@ -123,8 +99,8 @@ describe('MemberEntity', () => {
     });
 
     it('should generate a unique id', () => {
-      const user = createTestUser();
-      const props = createValidMemberProps(user.id);
+      const user = createUser();
+      const props = createMemberProps(user.id);
 
       const result1 = MemberEntity.create(props, user);
       const result2 = MemberEntity.create(props, user);
@@ -143,13 +119,13 @@ describe('MemberEntity', () => {
       const member = MemberEntity.fromPersistence(
         {
           address: null,
-          birthDate: DateOnly.fromString('1985-03-20')._unsafeUnwrap(),
+          birthDate: DateOnly.fromString(TEST_ALT_BIRTH_DATE)._unsafeUnwrap(),
           category: MemberCategory.CADET,
-          documentID: '87654321',
+          documentID: TEST_ALT_DOCUMENT_ID,
           fileStatus: FileStatus.PENDING,
           maritalStatus: null,
           nationality: MemberNationality.COLOMBIA,
-          phones: ['+57 300 123 4567'],
+          phones: [TEST_ALT_PHONE],
           sex: MemberSex.FEMALE,
           status: MemberStatus.INACTIVE,
           userId,
@@ -157,7 +133,7 @@ describe('MemberEntity', () => {
         {
           audit: {
             createdAt: new Date('2024-01-01'),
-            createdBy: 'admin',
+            createdBy: TEST_CREATED_BY,
             updatedAt: null,
             updatedBy: null,
           },
@@ -169,15 +145,14 @@ describe('MemberEntity', () => {
       expect(member.userId).toBe(userId);
       expect(member.category).toBe(MemberCategory.CADET);
       expect(member.status).toBe(MemberStatus.INACTIVE);
-      expect(member.createdBy).toBe('admin');
+      expect(member.createdBy).toBe(TEST_CREATED_BY);
     });
   });
 
   describe('clone', () => {
     it('should create an exact copy of the member', () => {
-      const user = createTestUser();
-      const props = createValidMemberProps(user.id);
-      const original = MemberEntity.create(props, user)._unsafeUnwrap();
+      const user = createUser();
+      const original = createMember(user);
 
       const cloned = original.clone();
 
@@ -190,71 +165,63 @@ describe('MemberEntity', () => {
     });
 
     it('should create an independent copy of phones array', () => {
-      const user = createTestUser();
-      const props = createValidMemberProps(user.id);
-      const original = MemberEntity.create(props, user)._unsafeUnwrap();
+      const user = createUser();
+      const original = createMember(user);
       const cloned = original.clone();
 
       // Modifying original phones shouldn't affect cloned
       original.updateProfile({
-        ...props,
+        ...createMemberProps(user.id),
         phones: ['+54 11 9999-9999'],
-        updatedBy: 'admin',
+        updatedBy: TEST_CREATED_BY,
       });
 
-      expect(cloned.phones).toEqual(['+54 11 1234-5678']);
+      expect(cloned.phones).toEqual([TEST_PHONE]);
     });
   });
 
   describe('updateProfile', () => {
     it('should update all profile fields', () => {
-      const user = createTestUser();
-      const props = createValidMemberProps(user.id);
-      const member = MemberEntity.create(props, user)._unsafeUnwrap();
+      const user = createUser();
+      const member = createMember(user);
       member.pullEvents(); // Clear creation event
 
-      const newAddress = Address.create({
-        cityName: 'Córdoba',
-        stateName: 'Córdoba',
-        street: 'Av. Colón 500',
-        zipCode: '5000',
-      })._unsafeUnwrap();
+      const newAddress = Address.create(TEST_ALT_ADDRESS)._unsafeUnwrap();
 
       member.updateProfile({
         address: newAddress,
-        birthDate: DateOnly.fromString('1985-12-25')._unsafeUnwrap(),
+        birthDate: DateOnly.fromString(TEST_ALT_BIRTH_DATE)._unsafeUnwrap(),
         category: MemberCategory.ADHERENT_MEMBER,
-        documentID: '99999999',
+        documentID: TEST_ALT_DOCUMENT_ID,
         fileStatus: FileStatus.PENDING,
         maritalStatus: MaritalStatus.MARRIED,
         nationality: MemberNationality.UKRAINE,
-        phones: ['+54 351 123-4567', '+54 351 765-4321'],
+        phones: [TEST_ALT_PHONE, '+54 351 765-4321'],
         sex: MemberSex.FEMALE,
-        updatedBy: 'admin',
+        updatedBy: TEST_CREATED_BY,
       });
 
-      expect(member.address?.cityName).toBe('Córdoba');
-      expect(member.birthDate?.value).toBe('1985-12-25');
+      expect(member.address?.cityName).toBe(TEST_ALT_ADDRESS.cityName);
+      expect(member.birthDate?.value).toBe(TEST_ALT_BIRTH_DATE);
       expect(member.category).toBe(MemberCategory.ADHERENT_MEMBER);
-      expect(member.documentID).toBe('99999999');
+      expect(member.documentID).toBe(TEST_ALT_DOCUMENT_ID);
       expect(member.fileStatus).toBe(FileStatus.PENDING);
       expect(member.maritalStatus).toBe(MaritalStatus.MARRIED);
       expect(member.nationality).toBe(MemberNationality.UKRAINE);
       expect(member.phones).toHaveLength(2);
       expect(member.sex).toBe(MemberSex.FEMALE);
-      expect(member.updatedBy).toBe('admin');
+      expect(member.updatedBy).toBe(TEST_CREATED_BY);
     });
 
     it('should add MemberUpdatedEvent when updating', () => {
-      const user = createTestUser();
-      const props = createValidMemberProps(user.id);
-      const member = MemberEntity.create(props, user)._unsafeUnwrap();
+      const user = createUser();
+      const member = createMember(user);
       member.pullEvents();
 
       member.updateProfile({
-        ...props,
+        ...createMemberProps(user.id),
         category: MemberCategory.PRE_CADET,
-        updatedBy: 'admin',
+        updatedBy: TEST_CREATED_BY,
       });
 
       const events = member.pullEvents();
@@ -267,9 +234,8 @@ describe('MemberEntity', () => {
     });
 
     it('should update to null values', () => {
-      const user = createTestUser();
-      const props = createValidMemberProps(user.id);
-      const member = MemberEntity.create(props, user)._unsafeUnwrap();
+      const user = createUser();
+      const member = createMember(user);
 
       member.updateProfile({
         address: null,
@@ -281,7 +247,7 @@ describe('MemberEntity', () => {
         nationality: null,
         phones: [],
         sex: null,
-        updatedBy: 'admin',
+        updatedBy: TEST_CREATED_BY,
       });
 
       expect(member.address).toBeNull();
@@ -369,32 +335,29 @@ describe('MemberEntity', () => {
   describe('different categories', () => {
     const categories = Object.values(MemberCategory);
 
-    it.each(categories)('should create member with category %s', (category) => {
-      const user = createTestUser();
-      const props = {
-        ...createValidMemberProps(user.id),
-        category,
-      };
+    it.each(categories)(
+      'should create member with category %s using overrides',
+      (category) => {
+        const user = createUser();
+        const props = createMemberProps(user.id, { category });
 
-      const result = MemberEntity.create(props, user);
+        const result = MemberEntity.create(props, user);
 
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().category).toBe(category);
-    });
+        expect(result.isOk()).toBe(true);
+        expect(result._unsafeUnwrap().category).toBe(category);
+      },
+    );
   });
 
   describe('multiple phones', () => {
-    it('should handle multiple phone numbers', () => {
-      const user = createTestUser();
+    it('should handle multiple phone numbers using overrides', () => {
+      const user = createUser();
       const phones = [
         '+54 11 1111-1111',
         '+54 11 2222-2222',
         '+54 11 3333-3333',
       ];
-      const props = {
-        ...createValidMemberProps(user.id),
-        phones,
-      };
+      const props = createMemberProps(user.id, { phones });
 
       const result = MemberEntity.create(props, user);
 
