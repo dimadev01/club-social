@@ -95,53 +95,8 @@ export class AppService {
     const paymentsMap = new Map<string, string>();
     const movementsMap = new Map<string, string>();
 
-    const mongoUsers = await this.mongoConnection
-      .collection('users')
-      .find({
-        isDeleted: false,
-      })
-      .toArray();
-
+    const BATCH_SIZE = 100;
     const limit = pLimit(10);
-
-    const mongoMembers = await this.mongoConnection
-      .collection('members')
-      .find({
-        isDeleted: false,
-      })
-      .toArray();
-
-    const allMongoDues = await this.mongoConnection
-      .collection('dues')
-      .find({
-        isDeleted: false,
-      })
-      .toArray();
-
-    const allMongoPayments = await this.mongoConnection
-      .collection('payments')
-      .find({
-        isDeleted: false,
-      })
-      .toArray();
-
-    const mongoMovements = await this.mongoConnection
-      .collection('movements')
-      .find({
-        category: { $ne: 'member-payment' },
-        isDeleted: false,
-      })
-      .toArray();
-
-    const mongoEvents = await this.mongoConnection
-      .collection('events')
-      .find({
-        isDeleted: false,
-        resource: {
-          $ne: 'prices',
-        },
-      })
-      .toArray();
 
     const mongoMovementsCategoryMap = {
       buffet: MovementCategory.BUFFET,
@@ -182,257 +137,367 @@ export class AppService {
       void: AuditAction.VOIDED,
     };
 
-    const membersProcessing = mongoUsers.map((mongoUser) =>
-      limit(async () => {
-        const isAdmin = mongoUser.profile.role === 'admin';
-        const isStaff = mongoUser.profile.role === 'staff';
+    // Process users/members in batches
+    this.logger.info({ message: 'Starting users/members migration...' });
+    let usersSkip = 0;
 
-        let email: string;
+    while (true) {
+      const mongoUsers = await this.mongoConnection
+        .collection('users')
+        .find({ isDeleted: false })
+        .skip(usersSkip)
+        .limit(BATCH_SIZE)
+        .toArray();
 
-        const name = Name.create({
-          firstName: mongoUser.profile.firstName as string,
-          lastName: mongoUser.profile.lastName as string,
-        });
+      if (mongoUsers.length === 0) break;
 
-        if (name.isErr()) {
-          throw name.error;
-        }
+      // Fetch members for this batch of users
+      const userIds = mongoUsers.map((u) => u._id);
+      const mongoMembers = await this.mongoConnection
+        .collection('members')
+        .find({ isDeleted: false, userId: { $in: userIds } })
+        .toArray();
 
-        if (mongoUser.emails && mongoUser.emails.length > 0) {
-          email = mongoUser.emails[0].address;
-        } else {
-          // Normalize letters (e.g., ñ → n) and remove spaces for email construction
-          const normalize = (str: string): string =>
-            str
-              .normalize('NFD')
-              .replace(/[\u0300-\u036f]/g, '') // Remove diacritics/accents
-              .replace(/ñ/g, 'n') // Lowercase ñ specifically (edge case for some environments)
-              .replace(/Ñ/g, 'n') // Uppercase Ñ
-              .replace(/\s+/g, '') // Remove whitespace
-              .replace(/[’'´`]/g, '') // Remove special apostrophe/acute characters like ’, ', ´, `
-              .toLowerCase();
+      const membersProcessing = mongoUsers.map((mongoUser) =>
+        limit(async () => {
+          const isAdmin = mongoUser.profile.role === 'admin';
+          const isStaff = mongoUser.profile.role === 'staff';
 
-          email = `${normalize(name.value.firstName)}.${normalize(name.value.lastName)}@clubsocialmontegrande.ar`;
-        }
+          let email: string;
 
-        if (isAdmin || isStaff) {
-          const result = await this.createUserUseCase.execute({
-            createdBy: 'System',
-            email,
-            firstName: name.value.firstName,
-            lastName: name.value.lastName,
-            role: mongoUser.profile.role as UserRole,
+          const name = Name.create({
+            firstName: mongoUser.profile.firstName as string,
+            lastName: mongoUser.profile.lastName as string,
           });
 
-          if (result.isErr()) {
-            throw result.error;
+          if (name.isErr()) {
+            throw name.error;
           }
 
-          return;
-        }
+          if (mongoUser.emails && mongoUser.emails.length > 0) {
+            email = mongoUser.emails[0].address;
+          } else {
+            const normalize = (str: string): string =>
+              str
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/ñ/g, 'n')
+                .replace(/Ñ/g, 'n')
+                .replace(/\s+/g, '')
+                .replace(/[''´`]/g, '')
+                .toLowerCase();
 
-        const mongoMember = mongoMembers.find(
-          (mongoMember) => mongoMember.userId === mongoUser._id,
-        );
+            email = `${normalize(name.value.firstName)}.${normalize(name.value.lastName)}@clubsocialmontegrande.ar`;
+          }
 
-        if (!mongoMember) {
-          this.logger.warn({
-            message: 'Member not found',
-            params: { userId: mongoUser._id },
+          if (isAdmin || isStaff) {
+            const result = await this.createUserUseCase.execute({
+              createdBy: 'System',
+              email,
+              firstName: name.value.firstName,
+              lastName: name.value.lastName,
+              role: mongoUser.profile.role as UserRole,
+            });
+
+            if (result.isErr()) {
+              throw result.error;
+            }
+
+            return;
+          }
+
+          const mongoMember = mongoMembers.find(
+            (mongoMember) => mongoMember.userId === mongoUser._id,
+          );
+
+          if (!mongoMember) {
+            this.logger.warn({
+              message: 'Member not found',
+              params: { userId: mongoUser._id },
+            });
+
+            return;
+          }
+
+          const member = await this.createMember({
+            email,
+            mongoMember,
+            name: name.value,
           });
 
-          return;
-        }
+          const memberId = member.id.value;
+          membersMap.set(mongoMember._id.toString(), memberId);
 
-        const member = await this.createMember({
-          email,
-          mongoMember,
-          name: name.value,
-        });
+          if (mongoMember.status === 'inactive') {
+            await this.prismaService.member.update({
+              data: { status: MemberStatus.INACTIVE },
+              where: { id: memberId },
+            });
+          }
+        }),
+      );
+      await Promise.all(membersProcessing);
 
-        const memberId = member.id.value;
-        membersMap.set(mongoMember._id.toString(), memberId);
+      this.logger.info({
+        message: `Processed ${usersSkip + mongoUsers.length} users`,
+      });
+      usersSkip += BATCH_SIZE;
+    }
 
-        if (mongoMember.status === 'inactive') {
-          await this.prismaService.member.update({
-            data: { status: MemberStatus.INACTIVE },
-            where: { id: memberId },
-          });
-        }
-      }),
-    );
-    await Promise.all(membersProcessing);
+    // Process dues in batches
+    this.logger.info({ message: 'Starting dues migration...' });
+    let duesSkip = 0;
 
-    const duesProcessing = allMongoDues.map((mongoDue) =>
-      limit(() => {
-        const dueId = UniqueId.generate().value;
-        duesMap.set(mongoDue._id.toString(), dueId);
+    while (true) {
+      const mongoDues = await this.mongoConnection
+        .collection('dues')
+        .find({ isDeleted: false })
+        .skip(duesSkip)
+        .limit(BATCH_SIZE)
+        .toArray();
 
-        const memberId = membersMap.get(mongoDue.memberId);
-        Guard.defined(memberId);
+      if (mongoDues.length === 0) break;
 
-        return this.createDue({ dueId, memberId, mongoDue });
-      }),
-    );
-    await Promise.all(duesProcessing);
+      const duesProcessing = mongoDues.map((mongoDue) =>
+        limit(() => {
+          const dueId = UniqueId.generate().value;
+          duesMap.set(mongoDue._id.toString(), dueId);
 
-    const paymentsProcessing = allMongoPayments.map((mongoPayment) =>
-      limit(async () => {
-        const paymentId = UniqueId.generate().value;
-        paymentsMap.set(mongoPayment._id.toString(), paymentId);
+          const memberId = membersMap.get(mongoDue.memberId);
+          Guard.defined(memberId);
 
-        const memberId = membersMap.get(mongoPayment.memberId);
-        Guard.defined(memberId);
+          return this.createDue({ dueId, memberId, mongoDue });
+        }),
+      );
+      await Promise.all(duesProcessing);
 
-        await this.createPayment({ memberId, mongoPayment, paymentId });
+      this.logger.info({
+        message: `Processed ${duesSkip + mongoDues.length} dues`,
+      });
+      duesSkip += BATCH_SIZE;
+    }
 
-        const date = DateOnly.fromString(
-          mongoPayment.date.toISOString().split('T')[0],
-        );
+    // Process payments in batches
+    this.logger.info({ message: 'Starting payments migration...' });
+    let paymentsSkip = 0;
 
-        if (date.isErr()) {
-          throw date.error;
-        }
+    while (true) {
+      const mongoPayments = await this.mongoConnection
+        .collection('payments')
+        .find({ isDeleted: false })
+        .skip(paymentsSkip)
+        .limit(BATCH_SIZE)
+        .toArray();
 
-        if (mongoPayment.dues.length > 0) {
-          const creditLedgerEntryId = UniqueId.generate().value;
+      if (mongoPayments.length === 0) break;
 
-          await this.createCreditLedgerEntry({
-            creditLedgerEntryId,
-            date: date.value.toString(),
-            memberId,
-            mongoPayment,
-            paymentId,
-          });
+      const paymentsProcessing = mongoPayments.map((mongoPayment) =>
+        limit(async () => {
+          const paymentId = UniqueId.generate().value;
+          paymentsMap.set(mongoPayment._id.toString(), paymentId);
 
-          const movementId = UniqueId.generate().value;
-          movementsMap.set(mongoPayment._id.toString(), movementId);
+          const memberId = membersMap.get(mongoPayment.memberId);
+          Guard.defined(memberId);
 
-          await this.createMovementForPayment({
-            date: date.value.toString(),
-            mongoPayment,
-            movementId,
-            paymentId,
-          });
-        }
+          await this.createPayment({ memberId, mongoPayment, paymentId });
 
-        await Promise.all(
-          mongoPayment.dues.map(async (mongoDuePayment: any) => {
-            const debitLedgerEntryId = UniqueId.generate().value;
-            await this.createDebitLedgerEntry({
+          const date = DateOnly.fromString(
+            mongoPayment.date.toISOString().split('T')[0],
+          );
+
+          if (date.isErr()) {
+            throw date.error;
+          }
+
+          if (mongoPayment.dues.length > 0) {
+            const creditLedgerEntryId = UniqueId.generate().value;
+
+            await this.createCreditLedgerEntry({
+              creditLedgerEntryId,
               date: date.value.toString(),
-              debitLedgerEntryId,
               memberId,
-              mongoDuePayment,
               mongoPayment,
               paymentId,
             });
 
-            const dueSettlementId = UniqueId.generate().value;
-            const dueId = duesMap.get(mongoDuePayment.dueId);
-            Guard.defined(dueId);
+            const movementId = UniqueId.generate().value;
+            movementsMap.set(mongoPayment._id.toString(), movementId);
 
-            await this.createDueSettlement({
-              debitLedgerEntryId,
-              dueId,
-              dueSettlementId,
-              mongoDuePayment,
+            await this.createMovementForPayment({
+              date: date.value.toString(),
+              mongoPayment,
+              movementId,
               paymentId,
             });
+          }
 
-            // Only if payment was voided
-            if (mongoPayment.status === 'voided') {
-              await this.voidDueSettlement({
+          await Promise.all(
+            mongoPayment.dues.map(async (mongoDuePayment: any) => {
+              const debitLedgerEntryId = UniqueId.generate().value;
+              await this.createDebitLedgerEntry({
+                date: date.value.toString(),
                 debitLedgerEntryId,
-                updatedAt: mongoPayment.voidedAt as Date,
-                updatedBy: mongoPayment.voidedBy as string,
+                memberId,
+                mongoDuePayment,
+                mongoPayment,
+                paymentId,
               });
-            }
-          }),
-        );
-      }),
-    );
-    await Promise.all(paymentsProcessing);
 
-    const movementProcessing = mongoMovements.map((mongoMovement) =>
-      limit(async () => {
-        const movementId = UniqueId.generate().value;
-        const isInflow = mongoMovement.type === 'income';
+              const dueSettlementId = UniqueId.generate().value;
+              const dueId = duesMap.get(mongoDuePayment.dueId);
+              Guard.defined(dueId);
 
-        const date = DateOnly.fromString(
-          mongoMovement.date.toISOString().split('T')[0],
-        );
+              await this.createDueSettlement({
+                debitLedgerEntryId,
+                dueId,
+                dueSettlementId,
+                mongoDuePayment,
+                paymentId,
+              });
 
-        if (date.isErr()) {
-          throw date.error;
-        }
+              if (mongoPayment.status === 'voided') {
+                await this.voidDueSettlement({
+                  debitLedgerEntryId,
+                  updatedAt: mongoPayment.voidedAt as Date,
+                  updatedBy: mongoPayment.voidedBy as string,
+                });
+              }
+            }),
+          );
+        }),
+      );
+      await Promise.all(paymentsProcessing);
 
-        return this.prismaService.movement.create({
-          data: {
-            amount: isInflow
-              ? mongoMovement.amount
-              : -(mongoMovement.amount as number),
-            category:
-              mongoMovementsCategoryMap[
-                mongoMovement.category as keyof typeof mongoMovementsCategoryMap
-              ],
-            createdAt: mongoMovement.createdAt as Date,
-            createdBy: mongoMovement.createdBy as string,
-            date: date.value.toString(),
-            id: movementId,
-            mode: MovementMode.MANUAL,
-            notes: mongoMovement.notes || null,
-            status: mongoMovement.status as MovementStatus,
-            updatedAt: mongoMovement.updatedAt as Date,
-            updatedBy: mongoMovement.updatedBy as string,
-            voidedAt: mongoMovement.voidedAt as Date,
-            voidedBy: mongoMovement.voidedBy as string,
-            voidReason: mongoMovement.voidReason as string,
-          },
-        });
-      }),
-    );
+      this.logger.info({
+        message: `Processed ${paymentsSkip + mongoPayments.length} payments`,
+      });
+      paymentsSkip += BATCH_SIZE;
+    }
 
-    await Promise.all(movementProcessing);
+    // Process movements in batches
+    this.logger.info({ message: 'Starting movements migration...' });
+    let movementsSkip = 0;
 
-    await this.prismaService.auditLog.deleteMany({});
+    while (true) {
+      const mongoMovements = await this.mongoConnection
+        .collection('movements')
+        .find({
+          category: { $ne: 'member-payment' },
+          isDeleted: false,
+        })
+        .skip(movementsSkip)
+        .limit(BATCH_SIZE)
+        .toArray();
 
-    const eventsProcessing = mongoEvents.map((mongoEvent) =>
-      limit(async () => {
-        const eventId = UniqueId.generate().value;
+      if (mongoMovements.length === 0) break;
 
-        const entityId = eventEntitiesMap[
-          mongoEvent.resource as keyof typeof eventEntitiesMap
-        ].get(mongoEvent.resourceId);
+      const movementProcessing = mongoMovements.map((mongoMovement) =>
+        limit(async () => {
+          const movementId = UniqueId.generate().value;
+          const isInflow = mongoMovement.type === 'income';
 
-        if (!entityId) {
-          this.logger.warn({
-            message: 'Entity not found',
-            params: { eventId: mongoEvent._id },
+          const date = DateOnly.fromString(
+            mongoMovement.date.toISOString().split('T')[0],
+          );
+
+          if (date.isErr()) {
+            throw date.error;
+          }
+
+          return this.prismaService.movement.create({
+            data: {
+              amount: isInflow
+                ? mongoMovement.amount
+                : -(mongoMovement.amount as number),
+              category:
+                mongoMovementsCategoryMap[
+                  mongoMovement.category as keyof typeof mongoMovementsCategoryMap
+                ],
+              createdAt: mongoMovement.createdAt as Date,
+              createdBy: mongoMovement.createdBy as string,
+              date: date.value.toString(),
+              id: movementId,
+              mode: MovementMode.MANUAL,
+              notes: mongoMovement.notes || null,
+              status: mongoMovement.status as MovementStatus,
+              updatedAt: mongoMovement.updatedAt as Date,
+              updatedBy: mongoMovement.updatedBy as string,
+              voidedAt: mongoMovement.voidedAt as Date,
+              voidedBy: mongoMovement.voidedBy as string,
+              voidReason: mongoMovement.voidReason as string,
+            },
           });
+        }),
+      );
+      await Promise.all(movementProcessing);
 
-          return;
-        }
+      this.logger.info({
+        message: `Processed ${movementsSkip + mongoMovements.length} movements`,
+      });
+      movementsSkip += BATCH_SIZE;
+    }
 
-        await this.prismaService.auditLog.create({
-          data: {
-            action:
-              eventActionMap[mongoEvent.action as keyof typeof eventActionMap],
-            createdAt: mongoEvent.createdAt as Date,
-            createdBy: mongoEvent.createdBy as string,
-            entity:
-              eventEntityMap[
-                mongoEvent.resource as keyof typeof eventEntityMap
-              ],
-            entityId,
-            id: eventId,
-            message: 'Evento migrado',
-          },
-        });
-      }),
-    );
+    // Process events in batches
+    this.logger.info({ message: 'Starting events migration...' });
+    await this.prismaService.auditLog.deleteMany({});
+    let eventsSkip = 0;
 
-    await Promise.all(eventsProcessing);
+    while (true) {
+      const mongoEvents = await this.mongoConnection
+        .collection('events')
+        .find({
+          isDeleted: false,
+          resource: { $ne: 'prices' },
+        })
+        .skip(eventsSkip)
+        .limit(BATCH_SIZE)
+        .toArray();
+
+      if (mongoEvents.length === 0) break;
+
+      const eventsProcessing = mongoEvents.map((mongoEvent) =>
+        limit(async () => {
+          const eventId = UniqueId.generate().value;
+
+          const entityId = eventEntitiesMap[
+            mongoEvent.resource as keyof typeof eventEntitiesMap
+          ].get(mongoEvent.resourceId);
+
+          if (!entityId) {
+            this.logger.warn({
+              message: 'Entity not found',
+              params: { eventId: mongoEvent._id },
+            });
+
+            return;
+          }
+
+          await this.prismaService.auditLog.create({
+            data: {
+              action:
+                eventActionMap[
+                  mongoEvent.action as keyof typeof eventActionMap
+                ],
+              createdAt: mongoEvent.createdAt as Date,
+              createdBy: mongoEvent.createdBy as string,
+              entity:
+                eventEntityMap[
+                  mongoEvent.resource as keyof typeof eventEntityMap
+                ],
+              entityId,
+              id: eventId,
+              message: 'Evento migrado',
+            },
+          });
+        }),
+      );
+      await Promise.all(eventsProcessing);
+
+      this.logger.info({
+        message: `Processed ${eventsSkip + mongoEvents.length} events`,
+      });
+      eventsSkip += BATCH_SIZE;
+    }
 
     this.logger.info({ message: 'Migration completed' });
   }
