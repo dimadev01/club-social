@@ -59,7 +59,7 @@ export function ProfilePage() {
       }),
     onSuccess: ({ data, error }) => {
       if (data) {
-        message.success('Email cambiado');
+        message.success('Link de verificación enviado');
       }
 
       if (error) {

@@ -23,7 +23,7 @@ import {
   MovementStatus,
 } from '@club-social/shared/movements';
 import { PaymentStatus } from '@club-social/shared/payments';
-import { UserRole } from '@club-social/shared/users';
+import { UserRole, UserStatus } from '@club-social/shared/users';
 import { faker } from '@faker-js/faker';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
@@ -191,17 +191,24 @@ export class AppService {
           }
 
           if (isAdmin || isStaff) {
-            const result = await this.createUserUseCase.execute({
-              createdBy: 'System',
-              email,
-              firstName: name.value.firstName,
-              lastName: name.value.lastName,
-              role: mongoUser.profile.role as UserRole,
-            });
+            const userId = UniqueId.generate().value;
+            const fullName = `${name.value.firstName} ${name.value.lastName}`;
 
-            if (result.isErr()) {
-              throw result.error;
-            }
+            await this.prismaService.user.create({
+              data: {
+                createdAt: (mongoUser.createdAt as Date) ?? new Date(),
+                createdBy: 'System',
+                email,
+                firstName: name.value.firstName,
+                id: userId,
+                lastName: name.value.lastName,
+                name: fullName,
+                role: mongoUser.profile.role as UserRole,
+                status: UserStatus.ACTIVE,
+                updatedAt: (mongoUser.updatedAt as Date) ?? new Date(),
+                updatedBy: 'System',
+              },
+            });
 
             return;
           }
@@ -225,7 +232,7 @@ export class AppService {
             name: name.value,
           });
 
-          const memberId = member.id.value;
+          const memberId = member.id;
           membersMap.set(mongoMember._id.toString(), memberId);
 
           if (mongoMember.status === 'inactive') {
@@ -727,59 +734,58 @@ export class AppService {
     email: string;
     mongoMember: any;
     name: Name;
-  }) {
-    let address: Address | null = null;
-
-    if (
-      mongoMember.address &&
-      (mongoMember.address.cityName ||
-        mongoMember.address.stateName ||
-        mongoMember.address.street ||
-        mongoMember.address.zipCode)
-    ) {
-      const result = Address.create({
-        cityName: mongoMember.address.cityName ?? null,
-        stateName: mongoMember.address.stateName ?? null,
-        street: mongoMember.address.street ?? null,
-        zipCode: mongoMember.address.zipCode ?? null,
-      });
-
-      if (result.isErr()) {
-        throw result.error;
-      }
-
-      address = result.value;
-    }
-
+  }): Promise<{ id: string }> {
     const birthDate = mongoMember.birthDate
-      ? DateOnly.fromString(mongoMember.birthDate.toISOString().split('T')[0])
+      ? mongoMember.birthDate.toISOString().split('T')[0]
       : null;
 
-    if (birthDate && birthDate.isErr()) {
-      throw birthDate.error;
-    }
+    const userId = UniqueId.generate().value;
+    const memberId = UniqueId.generate().value;
+    const fullName = `${name.firstName} ${name.lastName}`;
 
-    const result = await this.createMemberUseCase.execute({
-      address,
-      birthDate: birthDate ? birthDate.value.toString() : null,
-      category: mongoMember.category as MemberCategory,
-      createdBy: mongoMember.createdBy as string,
-      documentID: mongoMember.documentID || null,
-      email,
-      fileStatus: mongoMember.fileStatus || FileStatus.PENDING,
-      firstName: name.firstName,
-      lastName: name.lastName,
-      maritalStatus: mongoMember.maritalStatus || null,
-      nationality: mongoMember.nationality || null,
-      phones: mongoMember.phones || [],
-      sex: mongoMember.sex || null,
+    // Create user directly via Prisma (bypasses logging and events)
+    await this.prismaService.user.create({
+      data: {
+        createdAt: (mongoMember.createdAt as Date) ?? new Date(),
+        createdBy: (mongoMember.createdBy as string) ?? 'System',
+        email,
+        firstName: name.firstName,
+        id: userId,
+        lastName: name.lastName,
+        name: fullName,
+        role: UserRole.MEMBER,
+        status: UserStatus.ACTIVE,
+        updatedAt: (mongoMember.updatedAt as Date) ?? new Date(),
+        updatedBy: (mongoMember.updatedBy as string) ?? 'System',
+      },
     });
 
-    if (result.isErr()) {
-      throw result.error;
-    }
+    // Create member directly via Prisma (bypasses logging and events)
+    await this.prismaService.member.create({
+      data: {
+        birthDate,
+        category: mongoMember.category as MemberCategory,
+        cityName: mongoMember.address?.cityName ?? null,
+        createdAt: (mongoMember.createdAt as Date) ?? new Date(),
+        createdBy: (mongoMember.createdBy as string) ?? 'System',
+        documentID: mongoMember.documentID || null,
+        fileStatus: mongoMember.fileStatus || FileStatus.PENDING,
+        id: memberId,
+        maritalStatus: mongoMember.maritalStatus || null,
+        nationality: mongoMember.nationality || null,
+        phones: mongoMember.phones || [],
+        sex: mongoMember.sex || null,
+        stateName: mongoMember.address?.stateName ?? null,
+        status: MemberStatus.ACTIVE,
+        street: mongoMember.address?.street ?? null,
+        updatedAt: (mongoMember.updatedAt as Date) ?? new Date(),
+        updatedBy: mongoMember.updatedBy || null,
+        userId,
+        zipCode: mongoMember.address?.zipCode ?? null,
+      },
+    });
 
-    return result.value;
+    return { id: memberId };
   }
 
   private async createMovementForPayment({
