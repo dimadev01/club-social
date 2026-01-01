@@ -283,6 +283,8 @@ export class DuesController extends BaseController {
           date: dueSettlement.memberLedgerEntry.date,
           id: dueSettlement.memberLedgerEntry.id,
           source: dueSettlement.memberLedgerEntry.source,
+          status: dueSettlement.memberLedgerEntry.status,
+          type: dueSettlement.memberLedgerEntry.type,
         },
         payment: dueSettlement.payment
           ? { date: dueSettlement.payment.date, id: dueSettlement.payment.id }

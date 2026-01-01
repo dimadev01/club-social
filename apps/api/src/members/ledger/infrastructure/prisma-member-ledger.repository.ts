@@ -13,6 +13,7 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
+import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -169,13 +170,13 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     };
   }
 
-  public async getBalanceByMemberId(memberId: UniqueId): Promise<number> {
+  public async getBalanceByMemberId(memberId: UniqueId): Promise<SignedAmount> {
     const balance = await this.prismaService.memberLedgerEntry.aggregate({
       _sum: { amount: true },
       where: { memberId: memberId.value },
     });
 
-    return balance._sum.amount ?? 0;
+    return SignedAmount.raw({ cents: balance._sum.amount ?? 0 });
   }
 
   public async save(

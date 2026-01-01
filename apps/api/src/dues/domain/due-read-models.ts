@@ -6,6 +6,8 @@ import {
 import {
   MemberCategory,
   MemberLedgerEntrySource,
+  MemberLedgerEntryStatus,
+  MemberLedgerEntryType,
   MemberStatus,
 } from '@club-social/shared/members';
 
@@ -55,6 +57,8 @@ interface DueSettlementMemberLedgerEntry {
   date: string;
   id: string;
   source: MemberLedgerEntrySource;
+  status: MemberLedgerEntryStatus;
+  type: MemberLedgerEntryType;
 }
 
 interface DueSettlementPayment {

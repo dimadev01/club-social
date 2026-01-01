@@ -72,7 +72,7 @@ const calculateSelectedDues = flow(
       formDuesToRemove,
       (pd) => pd.dueId,
     ),
-  (arr) => orderBy(arr, ['dueId'], ['desc']),
+  (arr) => orderBy(arr, ['dueId'], ['asc']),
 );
 
 export function PaymentForm({
@@ -535,8 +535,8 @@ export function PaymentForm({
                           name={[field.name, 'amount']}
                           rules={[
                             {
-                              message: 'El monto debe ser mayor a 1',
-                              min: 1,
+                              message: 'El monto debe ser mayor a 0',
+                              min: 0,
                               type: 'number',
                             },
                           ]}

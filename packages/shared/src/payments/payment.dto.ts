@@ -12,6 +12,7 @@ export interface CreatePaymentDto {
 
 export interface CreatePaymentDueDto {
   amount: number;
+  amountFromBalance: null | number;
   dueId: string;
 }
 

@@ -11,6 +11,8 @@ import {
 import {
   MemberCategory,
   MemberLedgerEntrySource,
+  MemberLedgerEntryStatus,
+  MemberLedgerEntryType,
   MemberStatus,
 } from '@club-social/shared/members';
 
@@ -43,6 +45,8 @@ export class DueSettlementMemberLedgerEntryResponseDto implements DueSettlementM
   public date: string;
   public id: string;
   public source: MemberLedgerEntrySource;
+  public status: MemberLedgerEntryStatus;
+  public type: MemberLedgerEntryType;
 }
 
 export class DueSettlementPaymentResponseDto implements DueSettlementPaymentDto {
