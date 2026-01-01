@@ -452,7 +452,7 @@ export class AppService {
     await Promise.all([
       this.createUserUseCase.execute({
         createdBy: 'System',
-        email: this.configService.adminUserEmail,
+        email: 'info@clubsocialmontegrande.ar',
         firstName: 'Admin',
         lastName: 'Club Social',
         role: UserRole.ADMIN,
