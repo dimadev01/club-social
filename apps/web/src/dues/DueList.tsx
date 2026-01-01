@@ -203,7 +203,7 @@ export function DueList() {
             filters: labelMapToFilterOptions(DueStatusLabel),
             render: (value: DueStatus) => DueStatusLabel[value],
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.DUE_STATUS,
           },
           ...(permissions.dues.listAll
             ? [

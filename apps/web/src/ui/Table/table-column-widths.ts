@@ -5,6 +5,7 @@ export const TABLE_COLUMN_WIDTHS = {
   DATE: 125,
   DATE_TIME: 175,
   DUE_CATEGORY: 200,
+  DUE_STATUS: 175,
   STATUS: 150,
 } as const;
 

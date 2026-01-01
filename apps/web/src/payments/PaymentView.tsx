@@ -3,7 +3,7 @@ import {
   DueSettlementStatus,
   DueSettlementStatusLabel,
 } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
+import { DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
 import {
   type PaymentDueSettlementDto,
@@ -124,15 +124,15 @@ export function PaymentView() {
       <Table<PaymentDueSettlementDto>
         columns={[
           {
-            dataIndex: ['memberLedgerEntry', 'date'],
+            dataIndex: ['due', 'date'],
             render: (date: string, record: PaymentDueSettlementDto) => (
-              <NavigateMemberLedgerEntry
-                date={date}
-                id={record.memberLedgerEntry.id}
-              />
+              <NavigateToDue dateFormat={DateFormats.date} id={record.due.id}>
+                {date}
+              </NavigateToDue>
             ),
-            title: 'Fecha',
+            title: 'Fecha de deuda',
           },
+
           {
             align: 'center',
             dataIndex: ['due', 'category'],
@@ -152,7 +152,7 @@ export function PaymentView() {
             render: (status: DueSettlementStatus) =>
               DueSettlementStatusLabel[status],
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.DUE_STATUS,
           },
           {
             align: 'right',
@@ -172,21 +172,21 @@ export function PaymentView() {
           },
           {
             align: 'center',
-            dataIndex: ['due', 'id'],
-            render: (dueId: string) => (
-              <NavigateToDue formatDate={false} id={dueId}>
-                Ver deuda
-              </NavigateToDue>
+            dataIndex: ['memberLedgerEntry', 'id'],
+            render: (id: string) => (
+              <NavigateMemberLedgerEntry formatDate={false} id={id}>
+                Ver movimiento
+              </NavigateMemberLedgerEntry>
             ),
-            title: 'Deuda',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            title: 'Movimiento',
+            width: 150,
           },
         ]}
         dataSource={payment.settlements}
         loading={isLoading}
         pagination={false}
         size="small"
-        title={() => 'Deudas pagas'}
+        title={() => 'Deudas asociadas'}
       />
 
       <VoidModal

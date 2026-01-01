@@ -71,13 +71,13 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
       UniqueId.raw({ value: params.id }),
     );
 
-    const voidPaymentResult = payment.void({
+    const paymentVoidResult = payment.void({
       voidedBy: params.voidedBy,
       voidReason: params.voidReason,
     });
 
-    if (voidPaymentResult.isErr()) {
-      return err(voidPaymentResult.error);
+    if (paymentVoidResult.isErr()) {
+      return err(paymentVoidResult.error);
     }
 
     const dues = await this.dueRepository.findByIds(payment.dueIds);
@@ -91,26 +91,35 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
     const ledgerEntriesToSave: MemberLedgerEntryEntity[] = [];
 
     for (const due of dues) {
-      const settlement = due.settlements.find(
-        (s) => s.paymentId?.value === payment.id.value,
-      );
-      Guard.defined(settlement);
+      const duePaymentVoidResult = due.voidPayment({
+        paymentId: payment.id,
+        voidedBy: params.voidedBy,
+      });
 
-      const originalEntry = ledgerEntries.find(
-        (entry) => entry.id.value === settlement.memberLedgerEntryId.value,
-      );
-      Guard.defined(originalEntry);
+      if (duePaymentVoidResult.isErr()) {
+        return err(duePaymentVoidResult.error);
+      }
 
-      originalEntry.reverse();
+      const dueSettlement = due.getDueSettlementByPaymentId(payment.id);
+
+      /**
+       * As we are voiding the payment, we need to reverse the debit ledger entry.
+       * So the original amount now is credited to the member's account
+       */
+      const originalDebitEntry = ledgerEntries.find((entry) =>
+        entry.id.equals(dueSettlement.memberLedgerEntryId),
+      );
+      Guard.defined(originalDebitEntry);
+      originalDebitEntry.reverse();
 
       const reversedEntry = MemberLedgerEntryEntity.create(
         {
-          amount: originalEntry.amount.toPositive(),
+          amount: originalDebitEntry.amount.toPositive(),
           date: DateOnly.today(),
-          memberId: originalEntry.memberId,
-          notes: originalEntry.notes,
-          paymentId: originalEntry.paymentId,
-          reversalOfId: originalEntry.id,
+          memberId: originalDebitEntry.memberId,
+          notes: originalDebitEntry.notes,
+          paymentId: originalDebitEntry.paymentId,
+          reversalOfId: originalDebitEntry.id,
           source: MemberLedgerEntrySource.PAYMENT,
           status: MemberLedgerEntryStatus.POSTED,
           type: MemberLedgerEntryType.REVERSAL_CREDIT,
@@ -122,16 +131,7 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
         return err(reversedEntry.error);
       }
 
-      ledgerEntriesToSave.push(originalEntry, reversedEntry.value);
-
-      const dueVoidPaymentResult = due.voidPayment({
-        paymentId: payment.id,
-        voidedBy: params.voidedBy,
-      });
-
-      if (dueVoidPaymentResult.isErr()) {
-        return err(dueVoidPaymentResult.error);
-      }
+      ledgerEntriesToSave.push(originalDebitEntry, reversedEntry.value);
     }
 
     await this.unitOfWork.execute(

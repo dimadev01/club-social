@@ -20,7 +20,6 @@ export const MemberLedgerEntryType = {
   // Debits (money leaving / balance decreasing)
   DUE_APPLY_DEBIT: 'due-apply-debit', // Applied to settle a due
   BALANCE_APPLY_DEBIT: 'balance-apply-debit', // Applied from existing balance
-  REFUND_DEBIT: 'refund-debit', // Money refunded out
   ADJUSTMENT_DEBIT: 'adjustment-debit', // Manual negative adjustment
 
   // Corrections
@@ -48,7 +47,6 @@ export const MemberLedgerEntryTypeLabel = {
   [MemberLedgerEntryType.ADJUSTMENT_CREDIT]: 'Ajuste positivo',
   [MemberLedgerEntryType.DUE_APPLY_DEBIT]: 'Pago de deuda',
   [MemberLedgerEntryType.BALANCE_APPLY_DEBIT]: 'Aplicación de saldo',
-  [MemberLedgerEntryType.REFUND_DEBIT]: 'Reembolso',
   [MemberLedgerEntryType.ADJUSTMENT_DEBIT]: 'Ajuste negativo',
   [MemberLedgerEntryType.REVERSAL_CREDIT]: 'Reversión',
 } as const;

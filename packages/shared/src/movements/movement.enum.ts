@@ -47,7 +47,6 @@ export const MovementCategoryLabel: Record<MovementCategory, string> = {
 
 export const MovementStatus = {
   REGISTERED: 'registered',
-  REVERSED: 'reversed',
   VOIDED: 'voided',
 } as const;
 
@@ -56,7 +55,6 @@ export type MovementStatus =
 
 export const MovementStatusLabel = {
   [MovementStatus.REGISTERED]: 'Registrado',
-  [MovementStatus.REVERSED]: 'Revertido',
   [MovementStatus.VOIDED]: 'Anulado',
 } as const;
 

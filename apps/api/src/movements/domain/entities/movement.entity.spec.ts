@@ -440,16 +440,19 @@ describe('MovementEntity', () => {
   describe('different categories', () => {
     const categories = Object.values(MovementCategory);
 
-    it.each(categories)('should create movement with category %s', (category) => {
-      const props = {
-        ...createValidInflowProps(),
-        category,
-      };
+    it.each(categories)(
+      'should create movement with category %s',
+      (category) => {
+        const props = {
+          ...createValidInflowProps(),
+          category,
+        };
 
-      const result = MovementEntity.create(props, 'user-123');
+        const result = MovementEntity.create(props, 'user-123');
 
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().category).toBe(category);
-    });
+        expect(result.isOk()).toBe(true);
+        expect(result._unsafeUnwrap().category).toBe(category);
+      },
+    );
   });
 });

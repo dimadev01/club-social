@@ -208,6 +208,15 @@ export class DueEntity extends AuditedAggregateRoot {
     );
   }
 
+  public getDueSettlementByPaymentId(paymentId: UniqueId): DueSettlementEntity {
+    const dueSettlement = this.settlements.find((s) =>
+      s.paymentId?.equals(paymentId),
+    );
+    Guard.defined(dueSettlement);
+
+    return dueSettlement;
+  }
+
   public isPaid(): boolean {
     return this._status === DueStatus.PAID;
   }
@@ -272,13 +281,9 @@ export class DueEntity extends AuditedAggregateRoot {
     paymentId: UniqueId;
     voidedBy: string;
   }): Result<void> {
-    const settlement = this.settlements.find(
-      (s) => s.paymentId?.value === props.paymentId.value,
-    );
+    const dueSettlement = this.getDueSettlementByPaymentId(props.paymentId);
 
-    Guard.defined(settlement);
-
-    settlement.void();
+    dueSettlement.void();
 
     this.recalculateStatusInternal(props.voidedBy);
 

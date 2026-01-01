@@ -15,6 +15,7 @@ import {
   MemberLedgerEntryType,
   MemberNationality,
   MemberSex,
+  MemberStatus,
 } from '@club-social/shared/members';
 import {
   MovementCategory,
@@ -33,6 +34,7 @@ import pLimit from 'p-limit';
 import { ConfigService } from './infrastructure/config/config.service';
 import { PrismaService } from './infrastructure/database/prisma/prisma.service';
 import { CreateMemberUseCase } from './members/application/create-member.use-case';
+import { VoidPaymentUseCase } from './payments/application/void-payment.use-case';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -57,6 +59,7 @@ export class AppService {
     private readonly createMemberUseCase: CreateMemberUseCase,
     private readonly configService: ConfigService,
     private readonly prismaService: PrismaService,
+    private readonly voidPayment: VoidPaymentUseCase,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
     @InjectConnection()
@@ -103,6 +106,7 @@ export class AppService {
       .collection('users')
       .find({
         // // @ts-expect-error - This is a test user
+        // _id: null,
         // _id: testUserId,
         isDeleted: false,
         'profile.role': 'member',
@@ -116,6 +120,7 @@ export class AppService {
       .collection('members')
       .find({
         // // @ts-expect-error - This is a test user
+        // _id: null,
         // _id: testMemberId,
         isDeleted: false,
       })
@@ -124,6 +129,8 @@ export class AppService {
     const allMongoDues = await this.mongoConnection
       .collection('dues')
       .find({
+        // // @ts-expect-error - This is a test due
+        // _id: null,
         isDeleted: false,
         // memberId: testMemberId,
       })
@@ -132,6 +139,8 @@ export class AppService {
     const allMongoPayments = await this.mongoConnection
       .collection('payments')
       .find({
+        // // @ts-expect-error - This is a test payment
+        // _id: null,
         isDeleted: false,
         // memberId: testMemberId,
       })
@@ -141,7 +150,7 @@ export class AppService {
       .collection('movements')
       .find({
         // // @ts-expect-error - This is a test payment
-        // _id: null,
+        // _id: '4c2RSMKfEHq52ZJum',
         category: { $ne: 'member-payment' },
         isDeleted: false,
       })
@@ -268,19 +277,26 @@ export class AppService {
 
         const memberId = member.id.value;
         membersMap.set(mongoMember._id.toString(), memberId);
+
+        if (mongoMember.status === 'inactive') {
+          await this.prismaService.member.update({
+            data: { status: MemberStatus.INACTIVE },
+            where: { id: memberId },
+          });
+        }
       }),
     );
     await Promise.all(membersProcessing);
 
     const duesProcessing = allMongoDues.map((mongoDue) =>
-      limit(async () => {
+      limit(() => {
         const dueId = UniqueId.generate().value;
         duesMap.set(mongoDue._id.toString(), dueId);
 
         const memberId = membersMap.get(mongoDue.memberId);
         Guard.defined(memberId);
 
-        await this.createDue({ dueId, memberId, mongoDue });
+        return this.createDue({ dueId, memberId, mongoDue });
       }),
     );
     await Promise.all(duesProcessing);
@@ -303,25 +319,27 @@ export class AppService {
           throw date.error;
         }
 
-        const creditLedgerEntryId = UniqueId.generate().value;
+        if (mongoPayment.dues.length > 0) {
+          const creditLedgerEntryId = UniqueId.generate().value;
 
-        await this.createCreditLedgerEntry({
-          creditLedgerEntryId,
-          date: date.value.toString(),
-          memberId,
-          mongoPayment,
-          paymentId,
-        });
+          await this.createCreditLedgerEntry({
+            creditLedgerEntryId,
+            date: date.value.toString(),
+            memberId,
+            mongoPayment,
+            paymentId,
+          });
 
-        const movementId = UniqueId.generate().value;
-        movementsMap.set(mongoPayment._id.toString(), movementId);
+          const movementId = UniqueId.generate().value;
+          movementsMap.set(mongoPayment._id.toString(), movementId);
 
-        await this.createMovement({
-          date: date.value.toString(),
-          mongoPayment,
-          movementId,
-          paymentId,
-        });
+          await this.createMovementForPayment({
+            date: date.value.toString(),
+            mongoPayment,
+            movementId,
+            paymentId,
+          });
+        }
 
         await Promise.all(
           mongoPayment.dues.map(async (mongoDuePayment: any) => {
@@ -349,7 +367,7 @@ export class AppService {
 
             // Only if payment was voided
             if (mongoPayment.status === 'voided') {
-              await this.voidPayment({
+              await this.voidDueSettlement({
                 debitLedgerEntryId,
                 updatedAt: mongoPayment.voidedAt as Date,
                 updatedBy: mongoPayment.voidedBy as string,
@@ -361,10 +379,9 @@ export class AppService {
     );
     await Promise.all(paymentsProcessing);
 
-    const movementsProcessing = mongoMovements.map((mongoMovement) =>
+    const movementProcessing = mongoMovements.map((mongoMovement) =>
       limit(async () => {
         const movementId = UniqueId.generate().value;
-
         const isInflow = mongoMovement.type === 'income';
 
         const date = DateOnly.fromString(
@@ -390,17 +407,19 @@ export class AppService {
             id: movementId,
             mode: MovementMode.MANUAL,
             notes: mongoMovement.notes || null,
-            status: MovementStatus.REGISTERED,
+            status: mongoMovement.status as MovementStatus,
             updatedAt: mongoMovement.updatedAt as Date,
             updatedBy: mongoMovement.updatedBy as string,
-            voidedAt: null,
-            voidedBy: null,
-            voidReason: null,
+            voidedAt: mongoMovement.voidedAt as Date,
+            voidedBy: mongoMovement.voidedBy as string,
+            voidReason: mongoMovement.voidReason as string,
           },
         });
       }),
     );
-    await Promise.all(movementsProcessing);
+
+    await Promise.all(movementProcessing);
+
     await this.prismaService.auditLog.deleteMany({});
 
     const eventsProcessing = mongoEvents.map((mongoEvent) =>
@@ -549,7 +568,7 @@ export class AppService {
         amount: mongoPayment.amount as number,
         createdAt: mongoPayment.createdAt as Date,
         createdBy: mongoPayment.createdBy as string,
-        date: date.toString(),
+        date,
         id: creditLedgerEntryId,
         memberId,
         notes: null,
@@ -586,7 +605,7 @@ export class AppService {
           .add(1, 'second')
           .toDate(),
         createdBy: mongoPayment.createdBy as string,
-        date: date.toString(),
+        date,
         id: debitLedgerEntryId,
         member: { connect: { id: memberId } },
         notes: null,
@@ -723,7 +742,7 @@ export class AppService {
     return result.value;
   }
 
-  private async createMovement({
+  private async createMovementForPayment({
     date,
     mongoPayment,
     movementId,
@@ -792,7 +811,7 @@ export class AppService {
     });
   }
 
-  private async voidPayment({
+  private async voidDueSettlement({
     debitLedgerEntryId,
     updatedAt,
     updatedBy,
@@ -802,38 +821,38 @@ export class AppService {
     updatedBy: string;
   }) {
     const debitLedgerEntry =
-      await this.prismaService.memberLedgerEntry.findUnique({
+      await this.prismaService.memberLedgerEntry.findUniqueOrThrow({
         where: { id: debitLedgerEntryId },
       });
 
-    if (!debitLedgerEntry) {
-      throw new Error('Debit ledger entry not found');
-    }
+    await this.prismaService.dueSettlement.update({
+      data: {
+        status: DueSettlementStatus.VOIDED,
+      },
+      where: {
+        memberLedgerEntryId: debitLedgerEntryId,
+      },
+    });
 
     await this.prismaService.memberLedgerEntry.update({
       data: {
         status: MemberLedgerEntryStatus.REVERSED,
+        updatedAt: DateFormat.parse(updatedAt.toISOString())
+          .add(1, 'second')
+          .toDate(),
         updatedBy,
       },
-      where: {
-        id: debitLedgerEntryId,
-        status: MemberLedgerEntryStatus.POSTED,
-        type: MemberLedgerEntryType.DUE_APPLY_DEBIT,
-      },
+      where: { id: debitLedgerEntryId },
     });
-
-    const date = DateOnly.fromString(updatedAt.toISOString().split('T')[0]);
-
-    if (date.isErr()) {
-      throw date.error;
-    }
 
     await this.prismaService.memberLedgerEntry.create({
       data: {
         amount: Math.abs(debitLedgerEntry.amount),
-        createdAt: updatedAt,
+        createdAt: DateFormat.parse(updatedAt.toISOString())
+          .add(2, 'seconds')
+          .toDate(),
         createdBy: updatedBy,
-        date: date.value.toString(),
+        date: updatedAt.toISOString().split('T')[0],
         id: UniqueId.generate().value,
         memberId: debitLedgerEntry.memberId,
         notes: null,
@@ -842,17 +861,33 @@ export class AppService {
         source: MemberLedgerEntrySource.PAYMENT,
         status: MemberLedgerEntryStatus.POSTED,
         type: MemberLedgerEntryType.REVERSAL_CREDIT,
-        updatedAt,
+        updatedAt: DateFormat.parse(updatedAt.toISOString())
+          .add(2, 'second')
+          .toDate(),
         updatedBy,
       },
     });
 
-    await this.prismaService.dueSettlement.update({
+    await this.prismaService.memberLedgerEntry.create({
       data: {
-        status: DueSettlementStatus.VOIDED,
-      },
-      where: {
-        memberLedgerEntryId: debitLedgerEntryId,
+        amount: debitLedgerEntry.amount,
+        createdAt: DateFormat.parse(updatedAt.toISOString())
+          .add(3, 'seconds')
+          .toDate(),
+        createdBy: updatedBy,
+        date: updatedAt.toISOString().split('T')[0],
+        id: UniqueId.generate().value,
+        memberId: debitLedgerEntry.memberId,
+        notes: 'Ajuste por migración',
+        paymentId: debitLedgerEntry.paymentId,
+        reversalOfId: debitLedgerEntryId,
+        source: MemberLedgerEntrySource.ADJUSTMENT,
+        status: MemberLedgerEntryStatus.POSTED,
+        type: MemberLedgerEntryType.ADJUSTMENT_DEBIT,
+        updatedAt: DateFormat.parse(updatedAt.toISOString())
+          .add(3, 'seconds')
+          .toDate(),
+        updatedBy,
       },
     });
   }

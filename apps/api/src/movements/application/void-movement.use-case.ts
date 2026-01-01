@@ -1,4 +1,3 @@
-import { MovementMode, MovementStatus } from '@club-social/shared/movements';
 import { Inject } from '@nestjs/common';
 
 import {
@@ -10,16 +9,10 @@ import {
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { UseCase } from '@/shared/application/use-case';
+import { ApplicationError } from '@/shared/domain/errors/application.error';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, type Result } from '@/shared/domain/result';
-import {
-  UNIT_OF_WORK_PROVIDER,
-  type UnitOfWork,
-} from '@/shared/domain/unit-of-work';
-import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
-
-import { MovementEntity } from '../domain/entities/movement.entity';
 
 export interface VoidMovementParams {
   id: string;
@@ -33,8 +26,6 @@ export class VoidMovementUseCase extends UseCase {
     protected readonly logger: AppLogger,
     @Inject(MOVEMENT_REPOSITORY_PROVIDER)
     private readonly movementRepository: MovementRepository,
-    @Inject(UNIT_OF_WORK_PROVIDER)
-    private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -47,6 +38,12 @@ export class VoidMovementUseCase extends UseCase {
       UniqueId.raw({ value: params.id }),
     );
 
+    if (originalMovement.isAutomatic()) {
+      return err(
+        new ApplicationError('No se puede anular un movimiento automático'),
+      );
+    }
+
     const voidResult = originalMovement.void({
       voidedBy: params.voidedBy,
       voidReason: params.voidReason,
@@ -56,29 +53,7 @@ export class VoidMovementUseCase extends UseCase {
       return err(voidResult.error);
     }
 
-    const reversedMovement = MovementEntity.create(
-      {
-        amount: originalMovement.isInflow()
-          ? originalMovement.amount.toNegative()
-          : originalMovement.amount.toPositive(),
-        category: originalMovement.category,
-        date: DateOnly.today(),
-        mode: MovementMode.AUTOMATIC,
-        notes: originalMovement.notes,
-        paymentId: originalMovement.paymentId,
-        status: MovementStatus.REVERSED,
-      },
-      params.voidedBy,
-    );
-
-    if (reversedMovement.isErr()) {
-      return err(reversedMovement.error);
-    }
-
-    await this.unitOfWork.execute(async ({ movementsRepository }) => {
-      await movementsRepository.save(originalMovement);
-      await movementsRepository.save(reversedMovement.value);
-    });
+    await this.movementRepository.save(originalMovement);
 
     this.eventPublisher.dispatch(originalMovement);
 

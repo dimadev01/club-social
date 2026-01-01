@@ -109,9 +109,7 @@ export class PrismaMovementRepository implements MovementRepository {
   public async findForStatistics(
     params: FindMovementsForStatisticsParams,
   ): Promise<MovementStatisticsModel> {
-    const where: MovementWhereInput = {
-      status: MovementStatus.REGISTERED,
-    };
+    const where: MovementWhereInput = {};
 
     if (params.dateRange) {
       where.date = {
@@ -123,19 +121,11 @@ export class PrismaMovementRepository implements MovementRepository {
     const [inflowSum, outflowSum] = await Promise.all([
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
-        where: {
-          ...where,
-          amount: { gt: 0 },
-          status: MovementStatus.REGISTERED,
-        },
+        where: { ...where, amount: { gt: 0 } },
       }),
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
-        where: {
-          ...where,
-          amount: { lt: 0 },
-          status: MovementStatus.REGISTERED,
-        },
+        where: { ...where, amount: { lt: 0 } },
       }),
     ]);
 
@@ -185,19 +175,11 @@ export class PrismaMovementRepository implements MovementRepository {
       this.prismaService.movement.count({ where }),
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
-        where: {
-          ...where,
-          amount: { gt: 0 },
-          status: MovementStatus.REGISTERED,
-        },
+        where: { ...where, amount: { gt: 0 } },
       }),
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
-        where: {
-          ...where,
-          amount: { lt: 0 },
-          status: MovementStatus.REGISTERED,
-        },
+        where: { ...where, amount: { lt: 0 } },
       }),
     ]);
 

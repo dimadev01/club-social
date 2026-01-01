@@ -1,10 +1,11 @@
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
+  MemberLedgerEntrySource,
   MemberLedgerEntrySourceLabel,
   MemberLedgerEntryStatusLabel,
   MemberLedgerEntryTypeLabel,
 } from '@club-social/shared/members';
-import { Col, Divider } from 'antd';
+import { Col } from 'antd';
 import { Link, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
@@ -30,6 +31,18 @@ export function MemberLedgerView() {
   if (!entry) {
     return <NotFound />;
   }
+
+  const renderSource = () => {
+    if (entry.source === MemberLedgerEntrySource.PAYMENT && entry.paymentId) {
+      return (
+        <NavigateToPayment formatDate={false} id={entry.paymentId}>
+          {MemberLedgerEntrySourceLabel[entry.source]}
+        </NavigateToPayment>
+      );
+    }
+
+    return MemberLedgerEntrySourceLabel[entry.source];
+  };
 
   return (
     <Page backButton title="Detalle de entrada de libro mayor">
@@ -62,19 +75,7 @@ export function MemberLedgerView() {
                 label: 'Estado',
               },
               {
-                children: (
-                  <>
-                    {MemberLedgerEntrySourceLabel[entry.source]} -{' '}
-                    {entry.paymentId && (
-                      <NavigateToPayment
-                        formatDate={false}
-                        id={entry.paymentId}
-                      >
-                        Ver pago
-                      </NavigateToPayment>
-                    )}
-                  </>
-                ),
+                children: renderSource(),
                 label: 'Origen',
               },
               {
@@ -89,7 +90,6 @@ export function MemberLedgerView() {
           <DescriptionsAudit {...entry} />
         </Col>
       </Row>
-      <Divider />
     </Page>
   );
 }

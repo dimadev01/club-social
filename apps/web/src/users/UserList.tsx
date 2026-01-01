@@ -109,7 +109,7 @@ export function UserListPage() {
             filters: labelMapToFilterOptions(UserStatusLabel),
             render: (value: UserStatus) => UserStatusLabel[value],
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.DUE_STATUS,
           },
           {
             align: 'center',

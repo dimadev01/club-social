@@ -3,7 +3,11 @@ import {
   DueSettlementStatus,
   DueStatus,
 } from '@club-social/shared/dues';
-import { MemberCategory, MemberStatus } from '@club-social/shared/members';
+import {
+  MemberCategory,
+  MemberLedgerEntrySource,
+  MemberStatus,
+} from '@club-social/shared/members';
 
 export interface DuePaginatedExtraReadModel {
   totalAmount: number;
@@ -50,8 +54,10 @@ interface DueSettlement {
 interface DueSettlementMemberLedgerEntry {
   date: string;
   id: string;
+  source: MemberLedgerEntrySource;
 }
 
 interface DueSettlementPayment {
+  date: string;
   id: string;
 }

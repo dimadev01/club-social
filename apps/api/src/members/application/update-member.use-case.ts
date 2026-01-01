@@ -128,6 +128,7 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       nationality: params.nationality,
       phones: params.phones,
       sex: params.sex,
+      status: params.status,
       updatedBy: params.updatedBy,
     });
 

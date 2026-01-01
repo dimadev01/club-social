@@ -162,6 +162,7 @@ export class MemberEntity extends AuditedAggregateRoot {
     nationality: MemberNationality | null;
     phones: string[];
     sex: MemberSex | null;
+    status: MemberStatus;
     updatedBy: string;
   }) {
     const oldMember = this.clone();
@@ -173,6 +174,7 @@ export class MemberEntity extends AuditedAggregateRoot {
     this._fileStatus = props.fileStatus;
     this._maritalStatus = props.maritalStatus;
     this._nationality = props.nationality;
+    this._status = props.status;
     this._phones = props.phones;
     this._sex = props.sex;
 

@@ -33,7 +33,7 @@ export type DueStatus = (typeof DueStatus)[keyof typeof DueStatus];
 
 export const DueStatusLabel = {
   [DueStatus.PAID]: 'Pagado',
-  [DueStatus.PARTIALLY_PAID]: 'Parcialmente Pagado',
+  [DueStatus.PARTIALLY_PAID]: 'Parcialmente pago',
   [DueStatus.PENDING]: 'Pendiente',
   [DueStatus.VOIDED]: 'Anulado',
 } as const;

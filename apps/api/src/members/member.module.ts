@@ -10,7 +10,7 @@ import { MembersController } from './presentation/member.controller';
 
 @Module({
   controllers: [MembersController, MemberLedgerController],
-  exports: [CreateMemberUseCase],
+  exports: [CreateMemberUseCase, CreateMemberLedgerEntryUseCase],
   imports: [UsersModule],
   providers: [
     CreateMemberUseCase,

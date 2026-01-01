@@ -8,7 +8,11 @@ import {
   DueSettlementStatus,
   DueStatus,
 } from '@club-social/shared/dues';
-import { MemberCategory, MemberStatus } from '@club-social/shared/members';
+import {
+  MemberCategory,
+  MemberLedgerEntrySource,
+  MemberStatus,
+} from '@club-social/shared/members';
 
 export class DueMemberResponseDto implements DueMemberDto {
   public category: MemberCategory;
@@ -38,9 +42,11 @@ export class DueResponseDto implements DueDto {
 export class DueSettlementMemberLedgerEntryResponseDto implements DueSettlementMemberLedgerEntryDto {
   public date: string;
   public id: string;
+  public source: MemberLedgerEntrySource;
 }
 
 export class DueSettlementPaymentResponseDto implements DueSettlementPaymentDto {
+  public date: string;
   public id: string;
 }
 

@@ -1,6 +1,5 @@
 import {
   type DueSettlementDto,
-  type DueSettlementPaymentDto,
   DueSettlementStatus,
   DueSettlementStatusLabel,
   DueStatus,
@@ -9,6 +8,10 @@ import {
 } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat } from '@club-social/shared/lib';
+import {
+  MemberLedgerEntrySource,
+  MemberLedgerEntrySourceLabel,
+} from '@club-social/shared/members';
 import { Button, Col, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -139,12 +142,11 @@ export function DueView() {
           {
             dataIndex: ['memberLedgerEntry', 'date'],
             render: (date: string, record) => (
-              <NavigateMemberLedgerEntry
-                date={date}
-                id={record.memberLedgerEntry.id}
-              />
+              <NavigateMemberLedgerEntry id={record.memberLedgerEntry.id}>
+                {date}
+              </NavigateMemberLedgerEntry>
             ),
-            title: 'Fecha',
+            title: 'Fecha de movimiento',
           },
           {
             align: 'right',
@@ -164,16 +166,22 @@ export function DueView() {
           },
           {
             align: 'center',
-            dataIndex: 'payment',
-            render: (payment: DueSettlementPaymentDto | null) =>
-              payment ? (
-                <NavigateToPayment formatDate={false} id={payment.id}>
-                  Ver pago
-                </NavigateToPayment>
-              ) : (
-                '-'
-              ),
-            title: 'Pago',
+            dataIndex: ['memberLedgerEntry', 'source'],
+            render: (source: MemberLedgerEntrySource, record) => {
+              if (
+                source === MemberLedgerEntrySource.PAYMENT &&
+                record.payment
+              ) {
+                return (
+                  <NavigateToPayment formatDate={false} id={record.payment.id}>
+                    {MemberLedgerEntrySourceLabel[source]}
+                  </NavigateToPayment>
+                );
+              }
+
+              return MemberLedgerEntrySourceLabel[source];
+            },
+            title: 'Origen',
             width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
         ]}
@@ -181,7 +189,7 @@ export function DueView() {
         loading={isLoading}
         pagination={false}
         size="small"
-        title={() => 'Movimientos'}
+        title={() => 'Movimientos asociados'}
       />
 
       <VoidModal

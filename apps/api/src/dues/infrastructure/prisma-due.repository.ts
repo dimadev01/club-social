@@ -10,7 +10,11 @@ import {
   DueSettlementStatus,
   DueStatus,
 } from '@club-social/shared/dues';
-import { MemberCategory, MemberStatus } from '@club-social/shared/members';
+import {
+  MemberCategory,
+  MemberLedgerEntrySource,
+  MemberStatus,
+} from '@club-social/shared/members';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -309,8 +313,12 @@ export class PrismaDueRepository implements DueRepository {
         memberLedgerEntry: {
           date: settlement.memberLedgerEntry.date,
           id: settlement.memberLedgerEntry.id,
+          source: settlement.memberLedgerEntry
+            .source as MemberLedgerEntrySource,
         },
-        payment: settlement.payment ? { id: settlement.payment.id } : null,
+        payment: settlement.payment
+          ? { date: settlement.payment.date, id: settlement.payment.id }
+          : null,
         status: settlement.status as DueSettlementStatus,
       })),
       id: due.id,

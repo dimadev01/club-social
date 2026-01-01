@@ -180,25 +180,22 @@ export function MemberLedgerList() {
             render: (
               value: MemberLedgerEntrySource,
               record: MemberLedgerEntryPaginatedDto,
-            ) => (
-              <>
-                {MemberLedgerEntrySourceLabel[value]}
-                {value === MemberLedgerEntrySource.PAYMENT &&
-                  record.paymentId && (
-                    <>
-                      {' - '}
-                      <NavigateToPayment
-                        formatDate={false}
-                        id={record.paymentId}
-                      >
-                        Ver pago
-                      </NavigateToPayment>
-                    </>
-                  )}
-              </>
-            ),
+            ) => {
+              if (
+                value === MemberLedgerEntrySource.PAYMENT &&
+                record.paymentId
+              ) {
+                return (
+                  <NavigateToPayment formatDate={false} id={record.paymentId}>
+                    {MemberLedgerEntrySourceLabel[value]}
+                  </NavigateToPayment>
+                );
+              }
+
+              return MemberLedgerEntrySourceLabel[value];
+            },
             title: 'Origen',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
           {
             align: 'center',
@@ -236,7 +233,7 @@ export function MemberLedgerList() {
           total: entries?.total,
         }}
         summary={() => (
-          <>
+          <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell
                 align="right"
@@ -250,7 +247,7 @@ export function MemberLedgerList() {
                 {NumberFormat.formatCurrencyCents(entries?.extra?.balance ?? 0)}
               </Table.Summary.Cell>
             </Table.Summary.Row>
-          </>
+          </Table.Summary>
         )}
       />
     </Page>
