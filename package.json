@@ -1,0 +1,39 @@
+{
+  "name": "workspace",
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git@dimadev01:dimadev01/club-social.git"
+  },
+  "license": "UNLICENSED",
+  "author": "Dmitriy Mironov",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "check": "turbo check-types test lint format",
+    "check-types": "turbo check-types",
+    "commitlint": "commitlint --edit",
+    "format": "turbo format",
+    "lint": "turbo lint",
+    "lint-staged": "lint-staged",
+    "ncu": "ncu --workspaces --interactive",
+    "prepare": "husky",
+    "test": "turbo test"
+  },
+  "devDependencies": {
+    "@club-social/eslint-config": "*",
+    "@club-social/prettier-config": "*",
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "npm-check-updates": "^19.2.0",
+    "turbo": "^2.7.2"
+  },
+  "packageManager": "npm@11.7.0"
+}

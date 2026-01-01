@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Bash(cat:*)",
+      "Bash(npm run check-types:*)",
+      "Bash(tree:*)",
+      "Bash(npm run prisma:generate:*)",
+      "Bash(npm run prisma:new:create-only:*)",
+      "Bash(mkdir:*)",
+      "WebSearch",
+      "WebFetch(domain:ant.design)",
+      "Bash(grep:*)",
+      "Bash(npx tsc:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(find:*)",
+      "Bash(npm run lint:*)",
+      "Bash(dotenvx run:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(turbo build:*)",
+      "Bash(npm install:*)",
+      "Bash(npm test:*)"
+    ]
+  },
+  "outputStyle": "default"
+}

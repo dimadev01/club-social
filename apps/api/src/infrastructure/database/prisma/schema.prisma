@@ -1,0 +1,320 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "./generated"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          String
+  banned        Boolean?  @default(false)
+  banReason     String?
+  banExpires    DateTime?
+  createdBy     String
+  deletedAt     DateTime?
+  deletedBy     String?
+  firstName     String
+  lastName      String
+  status        String
+  updatedBy     String
+  sessions      Session[]
+  accounts      Account[]
+  passkeys      Passkey[]
+  member        Member?
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id             String   @id
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy String?
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model Passkey {
+  id           String    @id
+  name         String?
+  publicKey    String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialID String
+  counter      Int
+  deviceType   String
+  backedUp     Boolean
+  transports   String?
+  createdAt    DateTime?
+  aaguid       String?
+
+  @@index([userId])
+  @@index([credentialID])
+  @@map("passkey")
+}
+
+model Member {
+  id            String   @id
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  birthDate     String?
+  category      String
+  maritalStatus String?
+  documentID    String?
+  fileStatus    String
+  nationality   String?
+  phones        String[]
+  sex           String?
+  street        String?
+  cityName      String?
+  stateName     String?
+  zipCode       String?
+  status        String
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  dues          Due[]
+  payments      Payment[]
+  ledgerEntries MemberLedgerEntry[]
+
+  @@index([userId])
+  @@map("member")
+}
+
+model MemberLedgerEntry {
+  id String @id
+
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
+
+  amount Int
+  date   String
+  type   String
+  notes  String?
+  status String
+  source String
+
+  paymentId String?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  reversalOfId String?
+  reversalOf   MemberLedgerEntry?  @relation("LedgerReversal", fields: [reversalOfId], references: [id])
+  reversals    MemberLedgerEntry[] @relation("LedgerReversal")
+
+  settlement DueSettlement?
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  @@index([memberId])
+  @@index([date])
+  @@index([paymentId])
+  @@index([type])
+  @@map("member_ledger_entry")
+}
+
+model Due {
+  id String @id
+
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
+
+  amount     Int
+  category   String
+  date       String
+  notes      String?
+  status     String
+  voidReason String?
+  voidedAt   DateTime?
+  voidedBy   String?
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  settlements DueSettlement[]
+
+  @@index([memberId])
+  @@index([status])
+  @@index([category])
+  @@index([date])
+  @@index([createdAt])
+  @@map("due")
+}
+
+model DueSettlement {
+  id String @id
+
+  amount Int
+  status String
+
+  dueId String
+  due   Due    @relation(fields: [dueId], references: [id])
+
+  memberLedgerEntryId String            @unique
+  memberLedgerEntry   MemberLedgerEntry @relation(fields: [memberLedgerEntryId], references: [id])
+
+  paymentId String?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  @@index([dueId])
+  @@index([paymentId])
+  @@map("due_settlement")
+}
+
+model Payment {
+  id String @id
+
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
+
+  amount        Int
+  date          String
+  notes         String?
+  status        String
+  receiptNumber String?
+  voidReason    String?
+  voidedAt      DateTime?
+  voidedBy      String?
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  ledgerEntries MemberLedgerEntry[]
+  settlements   DueSettlement[]
+  movements     Movement[]
+
+  @@index([date])
+  @@index([memberId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("payment")
+}
+
+model Movement {
+  id         String    @id
+  category   String
+  amount     Int
+  date       String
+  notes      String?
+  status     String
+  mode       String
+  voidReason String?
+  voidedAt   DateTime?
+  voidedBy   String?
+
+  paymentId String?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  @@index([category])
+  @@index([status])
+  @@index([date])
+  @@index([createdAt])
+  @@index([paymentId])
+  @@map("movement")
+}
+
+model AuditLog {
+  id        String   @id
+  createdAt DateTime @default(now())
+  createdBy String
+
+  entity   String
+  entityId String
+  action   String
+
+  message String?
+  oldData Json?
+  newData Json?
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_log")
+}
+
+model Pricing {
+  id             String  @id
+  dueCategory    String
+  memberCategory String
+  amount         Int
+  effectiveFrom  String
+  effectiveTo    String?
+
+  createdAt DateTime  @default(now())
+  createdBy String
+  updatedAt DateTime  @updatedAt
+  updatedBy String?
+  deletedAt DateTime?
+  deletedBy String?
+
+  @@index([dueCategory])
+  @@index([memberCategory])
+  @@index([effectiveFrom])
+  @@index([effectiveTo])
+  @@index([dueCategory, memberCategory, effectiveFrom, effectiveTo])
+  @@map("pricing")
+}

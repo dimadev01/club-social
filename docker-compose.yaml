@@ -1,0 +1,68 @@
+name: club-social
+
+services:
+  maildev:
+    image: maildev/maildev
+    ports:
+      - '1080:1080'
+      - '1025:1025'
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+
+  redis-insight:
+    image: redis/redisinsight:latest
+    ports:
+      - '5540:5540'
+
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: club-social
+    ports:
+      - '5932:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/18/docker
+
+  unleash:
+    image: unleashorg/unleash-server:latest
+    ports:
+      - '4242:4242'
+    environment:
+      DATABASE_URL: postgresql://postgres:password@unleash-db:5432/unleash
+      DATABASE_SSL: 'false'
+      INIT_ADMIN_API_TOKENS: '*:*.unleash-api-token'
+    depends_on:
+      unleash-db:
+        condition: service_healthy
+
+  unleash-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: unleash
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 2s
+      timeout: 1s
+      retries: 5
+
+  mongodb:
+    image: mongo
+    ports:
+      - '28017:27017'
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  redis_data:
+  postgres_data:
+  node_modules:
+  mongodb_data:

@@ -1,0 +1,9 @@
+name: club-social
+
+services:
+  dev-container:
+    image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+    command: sleep infinity
+    volumes:
+      - ../:/workspace:cached
+      - node_modules:/workspace/node_modules

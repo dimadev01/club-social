@@ -1,0 +1,63 @@
+import {
+  DueCategory,
+  DueDto,
+  DueMemberDto,
+  DueSettlementDto,
+  DueSettlementMemberLedgerEntryDto,
+  DueSettlementPaymentDto,
+  DueSettlementStatus,
+  DueStatus,
+} from '@club-social/shared/dues';
+import {
+  MemberCategory,
+  MemberLedgerEntrySource,
+  MemberLedgerEntryStatus,
+  MemberLedgerEntryType,
+  MemberStatus,
+} from '@club-social/shared/members';
+
+export class DueMemberResponseDto implements DueMemberDto {
+  public category: MemberCategory;
+  public id: string;
+  public name: string;
+  public status: MemberStatus;
+}
+
+export class DueResponseDto implements DueDto {
+  public amount: number;
+  public category: DueCategory;
+  public createdAt: string;
+  public createdBy: string;
+  public date: string;
+  public id: string;
+  public member: DueMemberResponseDto;
+  public notes: null | string;
+  public settlements: DueSettlementResponseDto[];
+  public status: DueStatus;
+  public updatedAt: string;
+  public updatedBy: null | string;
+  public voidedAt: null | string;
+  public voidedBy: null | string;
+  public voidReason: null | string;
+}
+
+export class DueSettlementMemberLedgerEntryResponseDto implements DueSettlementMemberLedgerEntryDto {
+  public date: string;
+  public id: string;
+  public source: MemberLedgerEntrySource;
+  public status: MemberLedgerEntryStatus;
+  public type: MemberLedgerEntryType;
+}
+
+export class DueSettlementPaymentResponseDto implements DueSettlementPaymentDto {
+  public date: string;
+  public id: string;
+}
+
+export class DueSettlementResponseDto implements DueSettlementDto {
+  public amount: number;
+  public dueId: string;
+  public memberLedgerEntry: DueSettlementMemberLedgerEntryResponseDto;
+  public payment: DueSettlementPaymentResponseDto | null;
+  public status: DueSettlementStatus;
+}
