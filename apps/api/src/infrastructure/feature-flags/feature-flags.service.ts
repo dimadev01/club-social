@@ -30,7 +30,7 @@ export class FeatureFlagsService implements OnModuleDestroy, OnModuleInit {
     this.unleash = initialize({
       appName: this.configService.unleashAppName,
       customHeaders: {
-        Authorization: this.configService.unleashApiToken,
+        Authorization: this.configService.unleashApiKey,
       },
       refreshInterval: 5000,
       url: this.configService.unleashUrl,

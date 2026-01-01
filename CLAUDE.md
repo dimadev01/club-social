@@ -101,6 +101,7 @@ module/
 ```
 
 Current domain modules:
+
 - `members/` - Member management (includes `ledger/` subdomain for financial ledger)
 - `users/` - User management and authentication
 - `payments/` - Payment processing
@@ -135,6 +136,7 @@ Entity                    # Base class with UniqueId
 **3. Value Objects**: Immutable domain concepts with validation
 
 Located in `shared/domain/value-objects/`:
+
 - `UniqueId` - Entity identifiers (auto-generates UUIDs)
 - `Email` - Validated email addresses
 - `Name` - Personal names
@@ -145,6 +147,7 @@ Located in `shared/domain/value-objects/`:
 - `SignedAmount` - Positive or negative monetary values (for ledger entries)
 
 All use factory pattern:
+
 - `raw()` - Skip validation (for hydration from persistence)
 - `create()` - Validate and return `Result<ValueObject>`
 
@@ -163,11 +166,13 @@ export abstract class UseCase<TResponse, TError extends Error> {
 **5. Repository Pattern**: Abstraction over data access
 
 Base interfaces in `shared/domain/repository.ts`:
+
 - `ReadableRepository<T>` - findById, findByIdOrThrow, findByIds
 - `WriteableRepository<T>` - save(entity, tx?)
 - `PaginatedRepository<TData, TSummary>` - findPaginated
 
 Repositories also commonly implement:
+
 - `findByIdReadModel()` - Returns read model (DTO) for queries
 - `findPaginated()` - Returns read models with optional summary
 - Custom query methods returning read models
@@ -192,6 +197,7 @@ interface TransactionalRepositories {
 **7. Mappers**: Convert between domain and persistence models
 
 Located in `infrastructure/`:
+
 - `toDomain()` - Prisma model → Domain entity (uses `raw()` for value objects)
 - `toCreateInput()` - Domain entity → Prisma create input
 - `toUpdateInput()` - Domain entity → Prisma update input
@@ -205,6 +211,7 @@ Located in `infrastructure/`:
 **9. Error Handling**: Structured error classes
 
 Located in `shared/domain/errors/`:
+
 - `ApplicationError` - Base error class
 - `ConflictError` - Constraint violations
 - `EntityNotFoundError` - Entity not found
@@ -214,40 +221,49 @@ Located in `shared/domain/errors/`:
 #### Infrastructure Layer
 
 **Database**: Prisma with PostgreSQL
+
 - Schema: `src/infrastructure/database/prisma/schema.prisma`
 - Config: `src/infrastructure/database/prisma/prisma.config.ts`
 - Generated client: `src/infrastructure/database/prisma/generated/`
 - Unit of Work: `src/infrastructure/database/prisma/prisma-unit-of-work.ts`
 
 **Auth**: Better Auth with passkey support
+
 - Service: `src/infrastructure/auth/better-auth/`
 - Env: `BETTER_AUTH_SECRET`, `BETTER_AUTH_TRUSTED_ORIGINS`
 
 **Config**: Type-safe configuration with `@itgorillaz/configify`
+
 - Service: `src/infrastructure/config/config.service.ts`
 - Validates at startup, helper methods: `isDev`, `isLocal`, `isProd`
 
 **Logging**: Winston + Better Stack (Logtail)
+
 - Inject via `APP_LOGGER_PROVIDER` symbol
 - Interface: `error(log)`, `info(log)`, `warn(log)`, `setContext(context)`
 
 **Queue**: BullMQ for background jobs
+
 - Location: `src/infrastructure/queue/`
 - Requires: `REDIS_HOST`, `REDIS_PORT`
 
 **Email**: Multiple providers
+
 - Resend and Nodemailer support
 - Queue-based: `EmailQueueService`, `EmailProcessor`
 
 **CSV**: Data export/import
+
 - Service: `src/infrastructure/csv/`
 
 **Trace**: Request tracing
+
 - Middleware and service for trace ID management
 
 **Storage**: ClsService (nestjs-cls) for request-scoped data
 
 **Observability**: Sentry integration
+
 - Error tracking and performance monitoring
 - Source maps via `npm run sentry:sourcemaps`
 
@@ -335,6 +351,7 @@ Built with tsup for dual CJS/ESM output. Must be built before dependent packages
 ### Module Exports
 
 Modules export specific use cases for cross-module use:
+
 ```typescript
 @Module({
   exports: [CreateMemberUseCase],
@@ -363,8 +380,8 @@ Critical variables (see `.env.example` files):
 
 - `DATABASE_URI`: PostgreSQL connection string
 - `BETTER_AUTH_SECRET`: Auth encryption secret
+- `BETTER_AUTH_URL`: Auth URL
 - `BETTER_AUTH_TRUSTED_ORIGINS`: Allowed frontend origins (comma-separated)
-- `ADMIN_USER_EMAIL`: Admin user email
 - `APP_DISPLAY_NAME`: Application display name
 - `APP_DOMAIN`: Application domain
 - `ENVIRONMENT`: local | development | production

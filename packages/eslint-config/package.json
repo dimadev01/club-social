@@ -6,7 +6,7 @@
   "author": "Dmitriy Mironov",
   "exports": "./index.mjs",
   "devDependencies": {
-    "@club-social/prettier-config": "workspace:*",
+    "@club-social/prettier-config": "*",
     "@eslint/js": "^9.39.2",
     "@stylistic/eslint-plugin": "^5.6.1",
     "eslint": "^9.39.2",

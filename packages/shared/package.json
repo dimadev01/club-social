@@ -67,8 +67,8 @@
     "dayjs": "^1.11.19"
   },
   "devDependencies": {
-    "@club-social/eslint-config": "workspace:*",
-    "@club-social/prettier-config": "workspace:*",
+    "@club-social/eslint-config": "*",
+    "@club-social/prettier-config": "*",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"
   }
