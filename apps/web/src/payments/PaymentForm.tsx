@@ -558,22 +558,25 @@ export function PaymentForm({
                           />
                         </Form.Item>
 
-                        <Form.Item hidden name={[field.name, 'useBalance']}>
-                          <Input />
-                        </Form.Item>
-
-                        <Checkbox
-                          checked={formDue?.useBalance ?? false}
-                          disabled={
-                            isBalanceCheckboxDisabled(field.name) ||
-                            (memberBalance ?? 0) <= 0
-                          }
-                          onChange={(e) =>
-                            handleUseBalanceChange(field.name, e.target.checked)
-                          }
+                        <Form.Item
+                          name={[field.name, 'useBalance']}
+                          valuePropName="checked"
                         >
-                          Usar saldo disponible
-                        </Checkbox>
+                          <Checkbox
+                            disabled={
+                              isBalanceCheckboxDisabled(field.name) ||
+                              (memberBalance ?? 0) <= 0
+                            }
+                            onChange={(e) =>
+                              handleUseBalanceChange(
+                                field.name,
+                                e.target.checked,
+                              )
+                            }
+                          >
+                            Usar saldo disponible
+                          </Checkbox>
+                        </Form.Item>
 
                         {formDue?.useBalance && (
                           <Form.Item
