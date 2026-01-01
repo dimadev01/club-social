@@ -1,4 +1,4 @@
-import { passkey } from '@better-auth/passkey';
+import { passkey, type PasskeyOptions } from '@better-auth/passkey';
 import { roleStatements, statements } from '@club-social/shared/roles';
 import { UserStatus } from '@club-social/shared/users';
 import { Inject, Injectable } from '@nestjs/common';
@@ -9,6 +9,7 @@ import {
   admin as adminPlugin,
   createAccessControl,
   magicLink,
+  type MagicLinkOptions,
 } from 'better-auth/plugins';
 import {
   adminAc,
@@ -27,6 +28,11 @@ import {
   type UserReadableRepository,
 } from '@/users/domain/user.repository';
 
+interface BuildPluginsOptions {
+  passkey?: PasskeyOptions;
+  sendMagicLink?: MagicLinkOptions['sendMagicLink'];
+}
+
 const ac = createAccessControl({ ...defaultStatements, ...statements });
 
 const adminRole = ac.newRole({
@@ -43,6 +49,31 @@ const staffRole = ac.newRole({
   ...userAc.statements,
   ...roleStatements.staff,
 });
+
+const buildPasskeyPlugin = (config?: PasskeyOptions) =>
+  config ? passkey(config) : passkey();
+
+const buildPlugins = (options?: BuildPluginsOptions) => [
+  adminPlugin({
+    ac,
+    roles: {
+      admin: adminRole,
+      member: memberRole,
+      staff: staffRole,
+    },
+  }),
+  magicLink({
+    disableSignUp: true,
+    sendMagicLink: async (data) => {
+      if (options?.sendMagicLink) {
+        return options.sendMagicLink(data);
+      }
+
+      console.log(data);
+    },
+  }),
+  buildPasskeyPlugin(options?.passkey),
+];
 
 export const defaultConfig = {
   advanced: {
@@ -61,23 +92,7 @@ export const defaultConfig = {
   experimental: {
     joins: true,
   },
-  plugins: [
-    adminPlugin({
-      ac,
-      roles: {
-        admin: adminRole,
-        member: memberRole,
-        staff: staffRole,
-      },
-    }),
-    magicLink({
-      disableSignUp: true,
-      sendMagicLink: async (data) => {
-        console.log(data);
-      },
-    }),
-    passkey(),
-  ],
+  plugins: buildPlugins(),
   user: {
     additionalFields: {
       createdBy: {
@@ -156,18 +171,14 @@ export class BetterAuthService {
           }
         }),
       },
-      plugins: [
-        ...(defaultConfig.plugins ?? []),
-        magicLink({
-          disableSignUp: true,
-          sendMagicLink: (data) =>
-            this.sendMagicLink({ email: data.email, url: data.url }),
-        }),
-        passkey({
+      plugins: buildPlugins({
+        passkey: {
           rpID: this.configService.appDomain,
           rpName: this.configService.appDisplayName,
-        }),
-      ],
+        },
+        sendMagicLink: (data) =>
+          this.sendMagicLink({ email: data.email, url: data.url }),
+      }),
       trustedOrigins: this.configService.trustedOrigins,
       user: {
         ...defaultConfig.user,
