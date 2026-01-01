@@ -23,6 +23,7 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
 import {
+  PaymentDailyStatisticsReadModel,
   PaymentPaginatedExtraReadModel,
   PaymentPaginatedReadModel,
   PaymentReadModel,
@@ -86,6 +87,41 @@ export class PrismaPaymentRepository implements PaymentRepository {
     });
 
     return payments.map((payment) => this.paymentMapper.toDomain(payment));
+  }
+
+  public async findDailyStatistics(
+    month: string,
+  ): Promise<PaymentDailyStatisticsReadModel[]> {
+    const startDate = `${month}-01`;
+    const [year, monthNum] = month.split('-').map(Number);
+    const lastDay = new Date(year, monthNum, 0).getDate();
+    const endDate = `${month}-${String(lastDay).padStart(2, '0')}`;
+
+    const result = await this.prismaService.payment.groupBy({
+      _count: {
+        id: true,
+      },
+      _sum: {
+        amount: true,
+      },
+      by: ['date'],
+      orderBy: {
+        date: 'asc',
+      },
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate,
+        },
+        status: PaymentStatus.PAID,
+      },
+    });
+
+    return result.map((row) => ({
+      amount: row._sum.amount ?? 0,
+      count: row._count.id,
+      date: row.date,
+    }));
   }
 
   public async findForExport(

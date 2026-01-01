@@ -1,6 +1,12 @@
 import { DueCategory, DueSettlementStatus } from '@club-social/shared/dues';
 import { PaymentStatus } from '@club-social/shared/payments';
 
+export interface PaymentDailyStatisticsReadModel {
+  amount: number;
+  count: number;
+  date: string;
+}
+
 export interface PaymentPaginatedExtraReadModel {
   totalAmount: number;
 }

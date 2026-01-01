@@ -44,6 +44,10 @@ import {
 } from '../domain/payment.repository';
 import { CreatePaymentRequestDto } from './dto/create-payment.dto';
 import {
+  GetPaymentDailyStatisticsRequestDto,
+  PaymentDailyStatisticsResponseDto,
+} from './dto/payment-daily-statistics.dto';
+import {
   PaymentPaginatedExtraResponseDto,
   PaymentPaginatedResponseDto,
 } from './dto/payment-paginated.dto';
@@ -182,6 +186,15 @@ export class PaymentsController extends BaseController {
       paidDuesCount,
       total,
     };
+  }
+
+  @Get('statistics/daily')
+  public async getDailyStatistics(
+    @Query() query: GetPaymentDailyStatisticsRequestDto,
+  ): Promise<PaymentDailyStatisticsResponseDto> {
+    const days = await this.paymentRepository.findDailyStatistics(query.month);
+
+    return { days };
   }
 
   @Get('export')

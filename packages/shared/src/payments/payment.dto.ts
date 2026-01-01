@@ -94,3 +94,17 @@ export interface PaymentStatisticsDto {
 export interface VoidPaymentDto {
   voidReason: string;
 }
+
+export interface GetPaymentDailyStatisticsDto {
+  month: string; // YYYY-MM format
+}
+
+export interface PaymentDailyStatisticsItemDto {
+  date: string;
+  amount: number;
+  count: number;
+}
+
+export interface PaymentDailyStatisticsDto {
+  days: PaymentDailyStatisticsItemDto[];
+}
