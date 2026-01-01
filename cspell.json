@@ -16,7 +16,8 @@
     ".husky",
     "tsconfig.json",
     "config.toml",
-    "docker-compose.yaml"
+    "docker-compose.yaml",
+    ".github"
   ],
   "words": ["aaguid", "egresos", "Egresos", "Idcard", "Upserts"],
   "ignoreWords": [
