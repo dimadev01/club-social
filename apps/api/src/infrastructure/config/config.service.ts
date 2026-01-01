@@ -64,7 +64,9 @@ export class ConfigService {
   public readonly resendApiKey: string;
 
   @IsString({ each: true })
-  @Value('BETTER_AUTH_TRUSTED_ORIGINS', { parse: (value) => value.split(',') })
+  @Value('BETTER_AUTH_TRUSTED_ORIGINS', {
+    parse: (value) => value?.split(',') ?? [],
+  })
   public readonly trustedOrigins: string[];
 
   @IsString()
