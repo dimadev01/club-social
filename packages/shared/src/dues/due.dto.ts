@@ -1,6 +1,8 @@
 import {
   MemberCategory,
   MemberLedgerEntrySource,
+  MemberLedgerEntryStatus,
+  MemberLedgerEntryType,
   MemberStatus,
 } from '../members';
 import { DueSettlementStatus } from './due-settlement.enum';
@@ -72,6 +74,8 @@ export interface DueSettlementMemberLedgerEntryDto {
   date: string;
   id: string;
   source: MemberLedgerEntrySource;
+  status: MemberLedgerEntryStatus;
+  type: MemberLedgerEntryType;
 }
 
 export interface DueSettlementPaymentDto {

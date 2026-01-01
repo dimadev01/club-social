@@ -11,6 +11,10 @@ import { DateFormat } from '@club-social/shared/lib';
 import {
   MemberLedgerEntrySource,
   MemberLedgerEntrySourceLabel,
+  MemberLedgerEntryStatus,
+  MemberLedgerEntryStatusLabel,
+  MemberLedgerEntryType,
+  MemberLedgerEntryTypeLabel,
 } from '@club-social/shared/members';
 import { Button, Col, Divider } from 'antd';
 import { useState } from 'react';
@@ -149,20 +153,36 @@ export function DueView() {
             title: 'Fecha de movimiento',
           },
           {
-            align: 'right',
-            dataIndex: ['amount'],
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
-            title: 'Monto',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
-          },
-          {
             align: 'center',
             dataIndex: 'status',
             render: (status: DueSettlementStatus) =>
               DueSettlementStatusLabel[status],
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
+          },
+          {
+            align: 'center',
+            dataIndex: ['memberLedgerEntry', 'type'],
+            render: (type: MemberLedgerEntryType) =>
+              MemberLedgerEntryTypeLabel[type],
+            title: 'Tipo de movimiento',
+            width: TABLE_COLUMN_WIDTHS.STATUS,
+          },
+          {
+            align: 'center',
+            dataIndex: ['memberLedgerEntry', 'status'],
+            render: (status: MemberLedgerEntryStatus) =>
+              MemberLedgerEntryStatusLabel[status],
+            title: 'Estado de movimiento',
+            width: TABLE_COLUMN_WIDTHS.STATUS,
+          },
+          {
+            align: 'right',
+            dataIndex: 'amount',
+            render: (amount: number) =>
+              NumberFormat.formatCurrencyCents(amount),
+            title: 'Monto',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
             align: 'center',

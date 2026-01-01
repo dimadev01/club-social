@@ -17,7 +17,12 @@ import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
 } from '@/dues/domain/due.repository';
+import { DueEntity } from '@/dues/domain/entities/due.entity';
 import { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
+import {
+  MEMBER_LEDGER_REPOSITORY_PROVIDER,
+  type MemberLedgerRepository,
+} from '@/members/ledger/member-ledger.repository';
 import { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import {
@@ -40,6 +45,7 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 interface CreatePaymentDueParams {
   amount: number;
+  amountFromBalance: null | number;
   dueId: string;
 }
 
@@ -59,6 +65,8 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     protected readonly logger: AppLogger,
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
+    @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
+    private readonly memberLedgerRepository: MemberLedgerRepository,
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
@@ -74,15 +82,24 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       params,
     });
 
-    /**
-     * Validation that ensure the dues exist
-     */
+    const memberId = UniqueId.raw({ value: params.memberId });
+
+    // Dues validation
     const dues = await this.dueRepository.findByIds(
       params.dues.map((pd) => UniqueId.raw({ value: pd.dueId })),
     );
+    const duesValidation = await this.validateDuesExistence(dues);
 
-    if (dues.length !== params.dues.length) {
-      return err(new ApplicationError('Una o más cuotas no existen'));
+    if (duesValidation.isErr()) {
+      return err(duesValidation.error);
+    }
+
+    // Sufficient balance validation
+    const sufficientBalanceValidation =
+      await this.validateSufficientBalance(params);
+
+    if (sufficientBalanceValidation.isErr()) {
+      return err(sufficientBalanceValidation.error);
     }
 
     const results = ResultUtils.combine([
@@ -96,12 +113,13 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
     const [paymentAmount, paymentDate] = results.value;
 
+    // Payment creation
     const payment = PaymentEntity.create(
       {
         amount: paymentAmount,
         date: paymentDate,
-        dueIds: dues.map((due) => due.id),
-        memberId: UniqueId.raw({ value: params.memberId }),
+        dueIds: params.dues.map((pd) => UniqueId.raw({ value: pd.dueId })),
+        memberId,
         notes: params.notes,
         receiptNumber: params.receiptNumber,
       },
@@ -126,7 +144,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       {
         amount: payment.value.amount,
         date: paymentDate,
-        memberId: UniqueId.raw({ value: params.memberId }),
+        memberId,
         notes: params.notes,
         paymentId: payment.value.id,
         reversalOfId: null,
@@ -158,22 +176,54 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(creditMovement.error);
     }
 
+    // This holds the credit movement by entering or surplus
     const movements: MovementEntity[] = [creditMovement.value];
 
+    // This holds the cash and balance debit ledger entries
     const debitLedgerEntries: MemberLedgerEntryEntity[] = [];
 
     for (const due of dues) {
-      const dueInParams = params.dues.find((pd) => pd.dueId === due.id.value);
-      Guard.defined(dueInParams);
-      const amount = SignedAmount.fromCents(dueInParams.amount);
+      const dueFromParams = params.dues.find((d) => d.dueId === due.id.value);
+      Guard.defined(dueFromParams);
 
-      if (amount.isErr()) {
-        return err(amount.error);
+      const cashAmountResult = Amount.fromCents(dueFromParams.amount);
+
+      if (cashAmountResult.isErr()) {
+        return err(cashAmountResult.error);
       }
 
-      const debitEntry = MemberLedgerEntryEntity.create(
+      const cashAmount: Amount = cashAmountResult.value;
+      let balanceAmount: Amount | null = null;
+
+      if (dueFromParams.amountFromBalance) {
+        const balanceAmountResult = SignedAmount.fromCents(
+          dueFromParams.amountFromBalance,
+        );
+
+        if (balanceAmountResult.isErr()) {
+          return err(balanceAmountResult.error);
+        }
+
+        balanceAmount = balanceAmountResult.value;
+      }
+
+      const totalAmount = cashAmount.add(balanceAmount ?? SignedAmount.ZERO);
+
+      /**
+       * Validate that between the cash amount and balance
+       * amount is not greater than the due amount
+       */
+      if (totalAmount.isGreaterThan(due.pendingAmount)) {
+        return err(
+          new ApplicationError(
+            'El monto a registrar no puede ser mayor al monto pendiente de la cuota',
+          ),
+        );
+      }
+
+      const cashDebitEntry = MemberLedgerEntryEntity.create(
         {
-          amount: amount.value.toNegative(),
+          amount: cashAmountResult.value.toNegative(),
           date: paymentDate,
           memberId: UniqueId.raw({ value: params.memberId }),
           notes: params.notes,
@@ -186,24 +236,60 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         params.createdBy,
       );
 
-      if (debitEntry.isErr()) {
-        return err(debitEntry.error);
+      if (cashDebitEntry.isErr()) {
+        return err(cashDebitEntry.error);
       }
 
-      debitLedgerEntries.push(debitEntry.value);
+      debitLedgerEntries.push(cashDebitEntry.value);
 
       const dueApplySettlementResult = due.applySettlement({
-        amount: amount.value,
+        amount: cashAmountResult.value,
         createdBy: params.createdBy,
-        memberLedgerEntryId: debitEntry.value.id,
+        memberLedgerEntryId: cashDebitEntry.value.id,
         paymentId: payment.value.id,
       });
 
       if (dueApplySettlementResult.isErr()) {
         return err(dueApplySettlementResult.error);
       }
+
+      // If the due has an amount from balance, use it
+      if (balanceAmount) {
+        const balanceDebitEntry = MemberLedgerEntryEntity.create(
+          {
+            amount: balanceAmount.toNegative(),
+            date: paymentDate,
+            memberId,
+            notes: params.notes,
+            paymentId: payment.value.id,
+            reversalOfId: null,
+            source: MemberLedgerEntrySource.PAYMENT,
+            status: MemberLedgerEntryStatus.POSTED,
+            type: MemberLedgerEntryType.BALANCE_APPLY_DEBIT,
+          },
+          params.createdBy,
+        );
+
+        if (balanceDebitEntry.isErr()) {
+          return err(balanceDebitEntry.error);
+        }
+
+        debitLedgerEntries.push(balanceDebitEntry.value);
+
+        const dueApplySettlementResult = due.applySettlement({
+          amount: balanceAmount,
+          createdBy: params.createdBy,
+          memberLedgerEntryId: balanceDebitEntry.value.id,
+          paymentId: payment.value.id,
+        });
+
+        if (dueApplySettlementResult.isErr()) {
+          return err(dueApplySettlementResult.error);
+        }
+      }
     }
 
+    // Surplus credit entry creation
     let surplusCreditEntry: MemberLedgerEntryEntity | null = null;
 
     if (params.surplusToCreditAmount) {
@@ -292,5 +378,45 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     movements.forEach((movement) => this.eventPublisher.dispatch(movement));
 
     return ok(payment.value);
+  }
+
+  private async validateDuesExistence(
+    dues: DueEntity[],
+  ): Promise<Result<void>> {
+    if (dues.length !== dues.length) {
+      return err(new ApplicationError('Una o más cuotas no existen'));
+    }
+
+    return ok();
+  }
+
+  private async validateSufficientBalance(
+    params: CreatePaymentParams,
+  ): Promise<Result> {
+    const amountFromBalanceSum = sumBy(
+      params.dues,
+      (d) => d.amountFromBalance ?? 0,
+    );
+
+    if (amountFromBalanceSum === 0) {
+      return ok();
+    }
+
+    const amountFromBalance = SignedAmount.fromCents(amountFromBalanceSum);
+
+    if (amountFromBalance.isErr()) {
+      return err(amountFromBalance.error);
+    }
+
+    const memberBalance =
+      await this.memberLedgerRepository.getBalanceByMemberId(
+        UniqueId.raw({ value: params.memberId }),
+      );
+
+    if (memberBalance.isLessThan(amountFromBalance.value)) {
+      return err(new ApplicationError('El saldo disponible no es suficiente'));
+    }
+
+    return ok();
   }
 }

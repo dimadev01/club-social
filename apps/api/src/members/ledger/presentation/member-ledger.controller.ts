@@ -171,9 +171,11 @@ export class MemberLedgerController extends BaseController {
   public async getBalance(
     @Param() request: GetMemberBalanceRequestDto,
   ): Promise<number> {
-    return this.memberLedgerRepository.getBalanceByMemberId(
+    const balance = await this.memberLedgerRepository.getBalanceByMemberId(
       UniqueId.raw({ value: request.memberId }),
     );
+
+    return balance.toCents();
   }
 
   @Get(':id')
