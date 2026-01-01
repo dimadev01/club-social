@@ -51,6 +51,10 @@ export class ConfigService {
   @Value('REDIS_HOST')
   public readonly redisHost: string;
 
+  @IsString()
+  @Value('REDIS_PASSWORD', { default: '' })
+  public readonly redisPassword: string;
+
   @IsNumber()
   @Value('REDIS_PORT', { parse: Number })
   public readonly redisPort: number;
