@@ -16,6 +16,7 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
+import { Card } from '@/ui/Card';
 import { NotFound } from '@/ui/NotFound';
 import { PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';

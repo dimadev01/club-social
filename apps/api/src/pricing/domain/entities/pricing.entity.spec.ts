@@ -4,65 +4,55 @@ import { MemberCategory } from '@club-social/shared/members';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import {
+  TEST_ALT_PRICING_AMOUNT_CENTS,
+  TEST_ALT_PRICING_EFFECTIVE_FROM,
+  TEST_ALT_PRICING_EFFECTIVE_TO,
+  TEST_CREATED_BY,
+  TEST_PRICING_AMOUNT_CENTS,
+  TEST_PRICING_EFFECTIVE_FROM,
+} from '@/shared/test/constants';
+import { createPricingProps, createTestPricing } from '@/shared/test/factories';
 
 import { PricingCreatedEvent } from '../events/pricing-created.event';
 import { PricingUpdatedEvent } from '../events/pricing-updated.event';
 import { PricingEntity } from './pricing.entity';
 
 describe('PricingEntity', () => {
-  const createValidPricingProps = () => ({
-    amount: Amount.fromCents(50000)._unsafeUnwrap(),
-    dueCategory: DueCategory.MEMBERSHIP,
-    effectiveFrom: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-    memberCategory: MemberCategory.MEMBER,
-  });
-
   describe('create', () => {
     it('should create a pricing with valid props', () => {
-      const props = createValidPricingProps();
-      const createdBy = 'admin-123';
+      const props = createPricingProps();
 
-      const result = PricingEntity.create(props, createdBy);
+      const result = PricingEntity.create(props, TEST_CREATED_BY);
 
       expect(result.isOk()).toBe(true);
       const pricing = result._unsafeUnwrap();
-      expect(pricing.amount.cents).toBe(50000);
+      expect(pricing.amount.cents).toBe(TEST_PRICING_AMOUNT_CENTS);
       expect(pricing.dueCategory).toBe(DueCategory.MEMBERSHIP);
-      expect(pricing.effectiveFrom.value).toBe('2024-01-01');
+      expect(pricing.effectiveFrom.value).toBe(TEST_PRICING_EFFECTIVE_FROM);
       expect(pricing.effectiveTo).toBeNull();
       expect(pricing.memberCategory).toBe(MemberCategory.MEMBER);
-      expect(pricing.createdBy).toBe(createdBy);
+      expect(pricing.createdBy).toBe(TEST_CREATED_BY);
     });
 
     it('should create pricing for different due categories', () => {
-      const props = {
-        ...createValidPricingProps(),
+      const pricing = createTestPricing({
         dueCategory: DueCategory.ELECTRICITY,
-      };
+      });
 
-      const result = PricingEntity.create(props, 'admin');
-
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().dueCategory).toBe(DueCategory.ELECTRICITY);
+      expect(pricing.dueCategory).toBe(DueCategory.ELECTRICITY);
     });
 
     it('should create pricing for different member categories', () => {
-      const props = {
-        ...createValidPricingProps(),
+      const pricing = createTestPricing({
         memberCategory: MemberCategory.CADET,
-      };
+      });
 
-      const result = PricingEntity.create(props, 'admin');
-
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().memberCategory).toBe(MemberCategory.CADET);
+      expect(pricing.memberCategory).toBe(MemberCategory.CADET);
     });
 
     it('should add PricingCreatedEvent on creation', () => {
-      const props = createValidPricingProps();
-
-      const result = PricingEntity.create(props, 'admin');
-      const pricing = result._unsafeUnwrap();
+      const pricing = createTestPricing();
       const events = pricing.pullEvents();
 
       expect(events).toHaveLength(1);
@@ -71,14 +61,10 @@ describe('PricingEntity', () => {
     });
 
     it('should generate unique ids for each pricing', () => {
-      const props = createValidPricingProps();
+      const pricing1 = createTestPricing();
+      const pricing2 = createTestPricing();
 
-      const result1 = PricingEntity.create(props, 'admin');
-      const result2 = PricingEntity.create(props, 'admin');
-
-      expect(result1._unsafeUnwrap().id.value).not.toBe(
-        result2._unsafeUnwrap().id.value,
-      );
+      expect(pricing1.id.value).not.toBe(pricing2.id.value);
     });
   });
 
@@ -88,15 +74,19 @@ describe('PricingEntity', () => {
 
       const pricing = PricingEntity.fromPersistence(
         {
-          amount: Amount.fromCents(75000)._unsafeUnwrap(),
+          amount: Amount.fromCents(
+            TEST_ALT_PRICING_AMOUNT_CENTS,
+          )._unsafeUnwrap(),
           dueCategory: DueCategory.GUEST,
-          effectiveFrom: DateOnly.fromString('2024-03-01')._unsafeUnwrap(),
+          effectiveFrom: DateOnly.fromString(
+            TEST_ALT_PRICING_EFFECTIVE_FROM,
+          )._unsafeUnwrap(),
           effectiveTo: null,
           memberCategory: MemberCategory.ADHERENT_MEMBER,
         },
         {
           audit: {
-            createdAt: new Date('2024-03-01'),
+            createdAt: new Date(TEST_ALT_PRICING_EFFECTIVE_FROM),
             createdBy: 'system',
             updatedAt: null,
             updatedBy: null,
@@ -107,7 +97,7 @@ describe('PricingEntity', () => {
       );
 
       expect(pricing.id).toBe(id);
-      expect(pricing.amount.cents).toBe(75000);
+      expect(pricing.amount.cents).toBe(TEST_ALT_PRICING_AMOUNT_CENTS);
       expect(pricing.dueCategory).toBe(DueCategory.GUEST);
       expect(pricing.memberCategory).toBe(MemberCategory.ADHERENT_MEMBER);
       expect(pricing.createdBy).toBe('system');
@@ -123,7 +113,7 @@ describe('PricingEntity', () => {
           memberCategory: MemberCategory.MEMBER,
         },
         {
-          audit: { createdBy: 'admin' },
+          audit: { createdBy: TEST_CREATED_BY },
           deleted: {},
           id: UniqueId.generate(),
         },
@@ -139,26 +129,27 @@ describe('PricingEntity', () => {
         {
           amount: Amount.fromCents(30000)._unsafeUnwrap(),
           dueCategory: DueCategory.MEMBERSHIP,
-          effectiveFrom: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
+          effectiveFrom: DateOnly.fromString(
+            TEST_PRICING_EFFECTIVE_FROM,
+          )._unsafeUnwrap(),
           effectiveTo: null,
           memberCategory: MemberCategory.MEMBER,
         },
         {
-          audit: { createdBy: 'admin' },
-          deleted: { deletedAt, deletedBy: 'admin' },
+          audit: { createdBy: TEST_CREATED_BY },
+          deleted: { deletedAt, deletedBy: TEST_CREATED_BY },
           id: UniqueId.generate(),
         },
       );
 
       expect(pricing.deletedAt).toBe(deletedAt);
-      expect(pricing.deletedBy).toBe('admin');
+      expect(pricing.deletedBy).toBe(TEST_CREATED_BY);
     });
   });
 
   describe('clone', () => {
     it('should create an exact copy of the pricing', () => {
-      const props = createValidPricingProps();
-      const original = PricingEntity.create(props, 'admin')._unsafeUnwrap();
+      const original = createTestPricing();
 
       const cloned = original.clone();
 
@@ -171,49 +162,39 @@ describe('PricingEntity', () => {
     });
 
     it('should create an independent copy', () => {
-      const props = createValidPricingProps();
-      const original = PricingEntity.create(props, 'admin')._unsafeUnwrap();
+      const original = createTestPricing();
+      original.pullEvents();
       const cloned = original.clone();
 
       original.close(
-        DateOnly.fromString('2024-06-30')._unsafeUnwrap(),
-        'admin',
+        DateOnly.fromString(TEST_ALT_PRICING_EFFECTIVE_TO)._unsafeUnwrap(),
+        TEST_CREATED_BY,
       );
 
-      expect(original.effectiveTo?.value).toBe('2024-06-30');
+      expect(original.effectiveTo?.value).toBe(TEST_ALT_PRICING_EFFECTIVE_TO);
       expect(cloned.effectiveTo).toBeNull();
     });
   });
 
   describe('isActiveOn', () => {
     it('should return true for date within active period', () => {
-      const pricing = PricingEntity.create(
-        createValidPricingProps(),
-        'admin',
-      )._unsafeUnwrap();
-
+      const pricing = createTestPricing();
       const testDate = DateOnly.fromString('2024-06-15')._unsafeUnwrap();
 
       expect(pricing.isActiveOn(testDate)).toBe(true);
     });
 
     it('should return true for date on effectiveFrom', () => {
-      const pricing = PricingEntity.create(
-        createValidPricingProps(),
-        'admin',
+      const pricing = createTestPricing();
+      const testDate = DateOnly.fromString(
+        TEST_PRICING_EFFECTIVE_FROM,
       )._unsafeUnwrap();
-
-      const testDate = DateOnly.fromString('2024-01-01')._unsafeUnwrap();
 
       expect(pricing.isActiveOn(testDate)).toBe(true);
     });
 
     it('should return false for date before effectiveFrom', () => {
-      const pricing = PricingEntity.create(
-        createValidPricingProps(),
-        'admin',
-      )._unsafeUnwrap();
-
+      const pricing = createTestPricing();
       const testDate = DateOnly.fromString('2023-12-31')._unsafeUnwrap();
 
       expect(pricing.isActiveOn(testDate)).toBe(false);
@@ -222,20 +203,26 @@ describe('PricingEntity', () => {
     it('should return false for date on effectiveTo (closed pricing)', () => {
       const pricing = PricingEntity.fromPersistence(
         {
-          amount: Amount.fromCents(50000)._unsafeUnwrap(),
+          amount: Amount.fromCents(TEST_PRICING_AMOUNT_CENTS)._unsafeUnwrap(),
           dueCategory: DueCategory.MEMBERSHIP,
-          effectiveFrom: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          effectiveTo: DateOnly.fromString('2024-06-30')._unsafeUnwrap(),
+          effectiveFrom: DateOnly.fromString(
+            TEST_PRICING_EFFECTIVE_FROM,
+          )._unsafeUnwrap(),
+          effectiveTo: DateOnly.fromString(
+            TEST_ALT_PRICING_EFFECTIVE_TO,
+          )._unsafeUnwrap(),
           memberCategory: MemberCategory.MEMBER,
         },
         {
-          audit: { createdBy: 'admin' },
+          audit: { createdBy: TEST_CREATED_BY },
           deleted: {},
           id: UniqueId.generate(),
         },
       );
 
-      const testDate = DateOnly.fromString('2024-06-30')._unsafeUnwrap();
+      const testDate = DateOnly.fromString(
+        TEST_ALT_PRICING_EFFECTIVE_TO,
+      )._unsafeUnwrap();
 
       expect(pricing.isActiveOn(testDate)).toBe(false);
     });
@@ -243,14 +230,18 @@ describe('PricingEntity', () => {
     it('should return true for date before effectiveTo (closed pricing)', () => {
       const pricing = PricingEntity.fromPersistence(
         {
-          amount: Amount.fromCents(50000)._unsafeUnwrap(),
+          amount: Amount.fromCents(TEST_PRICING_AMOUNT_CENTS)._unsafeUnwrap(),
           dueCategory: DueCategory.MEMBERSHIP,
-          effectiveFrom: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          effectiveTo: DateOnly.fromString('2024-06-30')._unsafeUnwrap(),
+          effectiveFrom: DateOnly.fromString(
+            TEST_PRICING_EFFECTIVE_FROM,
+          )._unsafeUnwrap(),
+          effectiveTo: DateOnly.fromString(
+            TEST_ALT_PRICING_EFFECTIVE_TO,
+          )._unsafeUnwrap(),
           memberCategory: MemberCategory.MEMBER,
         },
         {
-          audit: { createdBy: 'admin' },
+          audit: { createdBy: TEST_CREATED_BY },
           deleted: {},
           id: UniqueId.generate(),
         },
@@ -264,28 +255,22 @@ describe('PricingEntity', () => {
 
   describe('close', () => {
     it('should close an open pricing', () => {
-      const pricing = PricingEntity.create(
-        createValidPricingProps(),
-        'admin',
-      )._unsafeUnwrap();
-      pricing.pullEvents(); // Clear creation event
-
-      const effectiveTo = DateOnly.fromString('2024-12-31')._unsafeUnwrap();
-      pricing.close(effectiveTo, 'admin-closer');
-
-      expect(pricing.effectiveTo?.value).toBe('2024-12-31');
-      expect(pricing.updatedBy).toBe('admin-closer');
-    });
-
-    it('should add PricingUpdatedEvent when closing', () => {
-      const pricing = PricingEntity.create(
-        createValidPricingProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const pricing = createTestPricing();
       pricing.pullEvents();
 
       const effectiveTo = DateOnly.fromString('2024-12-31')._unsafeUnwrap();
-      pricing.close(effectiveTo, 'admin');
+      pricing.close(effectiveTo, TEST_CREATED_BY);
+
+      expect(pricing.effectiveTo?.value).toBe('2024-12-31');
+      expect(pricing.updatedBy).toBe(TEST_CREATED_BY);
+    });
+
+    it('should add PricingUpdatedEvent when closing', () => {
+      const pricing = createTestPricing();
+      pricing.pullEvents();
+
+      const effectiveTo = DateOnly.fromString('2024-12-31')._unsafeUnwrap();
+      pricing.close(effectiveTo, TEST_CREATED_BY);
 
       const events = pricing.pullEvents();
       expect(events).toHaveLength(1);
@@ -299,35 +284,31 @@ describe('PricingEntity', () => {
 
   describe('update', () => {
     it('should update amount and effectiveFrom on open pricing', () => {
-      const pricing = PricingEntity.create(
-        createValidPricingProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const pricing = createTestPricing();
       pricing.pullEvents();
 
       const result = pricing.update({
         amount: Amount.fromCents(60000)._unsafeUnwrap(),
         effectiveFrom: DateOnly.fromString('2024-02-01')._unsafeUnwrap(),
-        updatedBy: 'admin-updater',
+        updatedBy: TEST_CREATED_BY,
       });
 
       expect(result.isOk()).toBe(true);
       expect(pricing.amount.cents).toBe(60000);
       expect(pricing.effectiveFrom.value).toBe('2024-02-01');
-      expect(pricing.updatedBy).toBe('admin-updater');
+      expect(pricing.updatedBy).toBe(TEST_CREATED_BY);
     });
 
     it('should add PricingUpdatedEvent when updating', () => {
-      const pricing = PricingEntity.create(
-        createValidPricingProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const pricing = createTestPricing();
       pricing.pullEvents();
 
       pricing.update({
-        amount: Amount.fromCents(75000)._unsafeUnwrap(),
-        effectiveFrom: DateOnly.fromString('2024-03-01')._unsafeUnwrap(),
-        updatedBy: 'admin',
+        amount: Amount.fromCents(TEST_ALT_PRICING_AMOUNT_CENTS)._unsafeUnwrap(),
+        effectiveFrom: DateOnly.fromString(
+          TEST_ALT_PRICING_EFFECTIVE_FROM,
+        )._unsafeUnwrap(),
+        updatedBy: TEST_CREATED_BY,
       });
 
       const events = pricing.pullEvents();
@@ -335,21 +316,25 @@ describe('PricingEntity', () => {
       expect(events[0]).toBeInstanceOf(PricingUpdatedEvent);
 
       const event = events[0] as PricingUpdatedEvent;
-      expect(event.oldPricing.amount.cents).toBe(50000);
-      expect(event.pricing.amount.cents).toBe(75000);
+      expect(event.oldPricing.amount.cents).toBe(TEST_PRICING_AMOUNT_CENTS);
+      expect(event.pricing.amount.cents).toBe(TEST_ALT_PRICING_AMOUNT_CENTS);
     });
 
     it('should fail to update a closed pricing', () => {
       const pricing = PricingEntity.fromPersistence(
         {
-          amount: Amount.fromCents(50000)._unsafeUnwrap(),
+          amount: Amount.fromCents(TEST_PRICING_AMOUNT_CENTS)._unsafeUnwrap(),
           dueCategory: DueCategory.MEMBERSHIP,
-          effectiveFrom: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          effectiveTo: DateOnly.fromString('2024-06-30')._unsafeUnwrap(),
+          effectiveFrom: DateOnly.fromString(
+            TEST_PRICING_EFFECTIVE_FROM,
+          )._unsafeUnwrap(),
+          effectiveTo: DateOnly.fromString(
+            TEST_ALT_PRICING_EFFECTIVE_TO,
+          )._unsafeUnwrap(),
           memberCategory: MemberCategory.MEMBER,
         },
         {
-          audit: { createdBy: 'admin' },
+          audit: { createdBy: TEST_CREATED_BY },
           deleted: {},
           id: UniqueId.generate(),
         },
@@ -358,7 +343,7 @@ describe('PricingEntity', () => {
       const result = pricing.update({
         amount: Amount.fromCents(60000)._unsafeUnwrap(),
         effectiveFrom: DateOnly.fromString('2024-02-01')._unsafeUnwrap(),
-        updatedBy: 'admin',
+        updatedBy: TEST_CREATED_BY,
       });
 
       expect(result.isErr()).toBe(true);
@@ -370,24 +355,21 @@ describe('PricingEntity', () => {
 
   describe('soft delete', () => {
     it('should delete the pricing', () => {
-      const pricing = PricingEntity.create(
-        createValidPricingProps(),
-        'admin',
-      )._unsafeUnwrap();
+      const pricing = createTestPricing();
 
       const deleteDate = new Date('2024-06-15');
-      pricing.delete('admin-deleter', deleteDate);
+      pricing.delete(TEST_CREATED_BY, deleteDate);
 
       expect(pricing.deletedAt).toBe(deleteDate);
-      expect(pricing.deletedBy).toBe('admin-deleter');
+      expect(pricing.deletedBy).toBe(TEST_CREATED_BY);
     });
 
     it('should restore a deleted pricing', () => {
       const pricing = PricingEntity.fromPersistence(
-        createValidPricingProps(),
+        { ...createPricingProps(), effectiveTo: null },
         {
-          audit: { createdBy: 'admin' },
-          deleted: { deletedAt: new Date(), deletedBy: 'admin' },
+          audit: { createdBy: TEST_CREATED_BY },
+          deleted: { deletedAt: new Date(), deletedBy: TEST_CREATED_BY },
           id: UniqueId.generate(),
         },
       );
@@ -395,11 +377,11 @@ describe('PricingEntity', () => {
       expect(pricing.deletedAt).toBeDefined();
 
       const restoreDate = new Date('2024-07-01');
-      pricing.restore('admin-restorer', restoreDate);
+      pricing.restore(TEST_CREATED_BY, restoreDate);
 
       expect(pricing.deletedAt).toBeUndefined();
       expect(pricing.deletedBy).toBeUndefined();
-      expect(pricing.updatedBy).toBe('admin-restorer');
+      expect(pricing.updatedBy).toBe(TEST_CREATED_BY);
     });
   });
 
@@ -409,18 +391,22 @@ describe('PricingEntity', () => {
 
       const pricing1 = PricingEntity.fromPersistence(
         {
-          amount: Amount.fromCents(50000)._unsafeUnwrap(),
+          amount: Amount.fromCents(TEST_PRICING_AMOUNT_CENTS)._unsafeUnwrap(),
           dueCategory: DueCategory.MEMBERSHIP,
-          effectiveFrom: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
+          effectiveFrom: DateOnly.fromString(
+            TEST_PRICING_EFFECTIVE_FROM,
+          )._unsafeUnwrap(),
           effectiveTo: null,
           memberCategory: MemberCategory.MEMBER,
         },
-        { audit: { createdBy: 'admin' }, deleted: {}, id },
+        { audit: { createdBy: TEST_CREATED_BY }, deleted: {}, id },
       );
 
       const pricing2 = PricingEntity.fromPersistence(
         {
-          amount: Amount.fromCents(75000)._unsafeUnwrap(),
+          amount: Amount.fromCents(
+            TEST_ALT_PRICING_AMOUNT_CENTS,
+          )._unsafeUnwrap(),
           dueCategory: DueCategory.ELECTRICITY,
           effectiveFrom: DateOnly.fromString('2024-06-01')._unsafeUnwrap(),
           effectiveTo: DateOnly.fromString('2024-12-31')._unsafeUnwrap(),
@@ -433,10 +419,8 @@ describe('PricingEntity', () => {
     });
 
     it('should not be equal when ids differ', () => {
-      const props = createValidPricingProps();
-
-      const pricing1 = PricingEntity.create(props, 'admin')._unsafeUnwrap();
-      const pricing2 = PricingEntity.create(props, 'admin')._unsafeUnwrap();
+      const pricing1 = createTestPricing();
+      const pricing2 = createTestPricing();
 
       expect(pricing1.equals(pricing2)).toBe(false);
     });
@@ -448,12 +432,9 @@ describe('PricingEntity', () => {
     it.each(dueCategories)(
       'should create pricing with due category %s',
       (dueCategory) => {
-        const props = { ...createValidPricingProps(), dueCategory };
+        const pricing = createTestPricing({ dueCategory });
 
-        const result = PricingEntity.create(props, 'admin');
-
-        expect(result.isOk()).toBe(true);
-        expect(result._unsafeUnwrap().dueCategory).toBe(dueCategory);
+        expect(pricing.dueCategory).toBe(dueCategory);
       },
     );
   });
@@ -464,12 +445,9 @@ describe('PricingEntity', () => {
     it.each(memberCategories)(
       'should create pricing with member category %s',
       (memberCategory) => {
-        const props = { ...createValidPricingProps(), memberCategory };
+        const pricing = createTestPricing({ memberCategory });
 
-        const result = PricingEntity.create(props, 'admin');
-
-        expect(result.isOk()).toBe(true);
-        expect(result._unsafeUnwrap().memberCategory).toBe(memberCategory);
+        expect(pricing.memberCategory).toBe(memberCategory);
       },
     );
   });

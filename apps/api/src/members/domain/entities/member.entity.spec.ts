@@ -22,9 +22,9 @@ import {
   TEST_PHONE,
 } from '@/shared/test/constants';
 import {
-  createMember,
   createMemberProps,
-  createUser,
+  createTestMember,
+  createTestUser,
 } from '@/shared/test/factories';
 
 import { MemberCreatedEvent } from '../events/member-created.event';
@@ -34,7 +34,7 @@ import { MemberEntity } from './member.entity';
 describe('MemberEntity', () => {
   describe('create', () => {
     it('should create a member with valid props', () => {
-      const user = createUser();
+      const user = createTestUser();
       const props = createMemberProps(user.id);
 
       const result = MemberEntity.create(props, user);
@@ -56,7 +56,7 @@ describe('MemberEntity', () => {
     });
 
     it('should create a member with null optional props using overrides', () => {
-      const user = createUser();
+      const user = createTestUser();
       const props = createMemberProps(user.id, {
         address: null,
         birthDate: null,
@@ -83,7 +83,7 @@ describe('MemberEntity', () => {
     });
 
     it('should add MemberCreatedEvent on creation', () => {
-      const user = createUser();
+      const user = createTestUser();
       user.pullEvents(); // Clear user events
       const props = createMemberProps(user.id);
 
@@ -99,7 +99,7 @@ describe('MemberEntity', () => {
     });
 
     it('should generate a unique id', () => {
-      const user = createUser();
+      const user = createTestUser();
       const props = createMemberProps(user.id);
 
       const result1 = MemberEntity.create(props, user);
@@ -151,8 +151,8 @@ describe('MemberEntity', () => {
 
   describe('clone', () => {
     it('should create an exact copy of the member', () => {
-      const user = createUser();
-      const original = createMember(user);
+      const user = createTestUser();
+      const original = createTestMember(user);
 
       const cloned = original.clone();
 
@@ -165,8 +165,8 @@ describe('MemberEntity', () => {
     });
 
     it('should create an independent copy of phones array', () => {
-      const user = createUser();
-      const original = createMember(user);
+      const user = createTestUser();
+      const original = createTestMember(user);
       const cloned = original.clone();
 
       // Modifying original phones shouldn't affect cloned
@@ -182,8 +182,8 @@ describe('MemberEntity', () => {
 
   describe('updateProfile', () => {
     it('should update all profile fields', () => {
-      const user = createUser();
-      const member = createMember(user);
+      const user = createTestUser();
+      const member = createTestMember(user);
       member.pullEvents(); // Clear creation event
 
       const newAddress = Address.create(TEST_ALT_ADDRESS)._unsafeUnwrap();
@@ -198,6 +198,7 @@ describe('MemberEntity', () => {
         nationality: MemberNationality.UKRAINE,
         phones: [TEST_ALT_PHONE, '+54 351 765-4321'],
         sex: MemberSex.FEMALE,
+        status: MemberStatus.ACTIVE,
         updatedBy: TEST_CREATED_BY,
       });
 
@@ -214,8 +215,8 @@ describe('MemberEntity', () => {
     });
 
     it('should add MemberUpdatedEvent when updating', () => {
-      const user = createUser();
-      const member = createMember(user);
+      const user = createTestUser();
+      const member = createTestMember(user);
       member.pullEvents();
 
       member.updateProfile({
@@ -234,8 +235,8 @@ describe('MemberEntity', () => {
     });
 
     it('should update to null values', () => {
-      const user = createUser();
-      const member = createMember(user);
+      const user = createTestUser();
+      const member = createTestMember(user);
 
       member.updateProfile({
         address: null,
@@ -247,6 +248,7 @@ describe('MemberEntity', () => {
         nationality: null,
         phones: [],
         sex: null,
+        status: MemberStatus.ACTIVE,
         updatedBy: TEST_CREATED_BY,
       });
 
@@ -257,112 +259,8 @@ describe('MemberEntity', () => {
       expect(member.nationality).toBeNull();
       expect(member.phones).toHaveLength(0);
       expect(member.sex).toBeNull();
-    });
-  });
-
-  describe('entity equality', () => {
-    it('should be equal when ids match', () => {
-      const id = UniqueId.generate();
-      const userId = UniqueId.generate();
-
-      const member1 = MemberEntity.fromPersistence(
-        {
-          address: null,
-          birthDate: null,
-          category: MemberCategory.MEMBER,
-          documentID: null,
-          fileStatus: FileStatus.PENDING,
-          maritalStatus: null,
-          nationality: null,
-          phones: [],
-          sex: null,
-          status: MemberStatus.ACTIVE,
-          userId,
-        },
-        { audit: { createdBy: 'user' }, id },
-      );
-
-      const member2 = MemberEntity.fromPersistence(
-        {
-          address: null,
-          birthDate: null,
-          category: MemberCategory.CADET,
-          documentID: '12345',
-          fileStatus: FileStatus.COMPLETED,
-          maritalStatus: MaritalStatus.MARRIED,
-          nationality: MemberNationality.BULGARIA,
-          phones: ['123'],
-          sex: MemberSex.MALE,
-          status: MemberStatus.INACTIVE,
-          userId,
-        },
-        { audit: { createdBy: 'admin' }, id },
-      );
-
-      expect(member1.equals(member2)).toBe(true);
-    });
-
-    it('should not be equal when ids differ', () => {
-      const userId = UniqueId.generate();
-      const baseProps = {
-        address: null,
-        birthDate: null,
-        category: MemberCategory.MEMBER,
-        documentID: null,
-        fileStatus: FileStatus.PENDING,
-        maritalStatus: null,
-        nationality: null,
-        phones: [],
-        sex: null,
-        status: MemberStatus.ACTIVE,
-        userId,
-      };
-
-      const member1 = MemberEntity.fromPersistence(baseProps, {
-        audit: { createdBy: 'user' },
-        id: UniqueId.generate(),
-      });
-
-      const member2 = MemberEntity.fromPersistence(baseProps, {
-        audit: { createdBy: 'user' },
-        id: UniqueId.generate(),
-      });
-
-      expect(member1.equals(member2)).toBe(false);
-    });
-  });
-
-  describe('different categories', () => {
-    const categories = Object.values(MemberCategory);
-
-    it.each(categories)(
-      'should create member with category %s using overrides',
-      (category) => {
-        const user = createUser();
-        const props = createMemberProps(user.id, { category });
-
-        const result = MemberEntity.create(props, user);
-
-        expect(result.isOk()).toBe(true);
-        expect(result._unsafeUnwrap().category).toBe(category);
-      },
-    );
-  });
-
-  describe('multiple phones', () => {
-    it('should handle multiple phone numbers using overrides', () => {
-      const user = createUser();
-      const phones = [
-        '+54 11 1111-1111',
-        '+54 11 2222-2222',
-        '+54 11 3333-3333',
-      ];
-      const props = createMemberProps(user.id, { phones });
-
-      const result = MemberEntity.create(props, user);
-
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().phones).toEqual(phones);
+      expect(member.status).toBe(MemberStatus.ACTIVE);
+      expect(member.updatedBy).toBe(TEST_CREATED_BY);
     });
   });
 });

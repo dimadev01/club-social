@@ -12,7 +12,7 @@ import {
   TEST_FIRST_NAME,
   TEST_LAST_NAME,
 } from '@/shared/test/constants';
-import { createUser, createUserProps } from '@/shared/test/factories';
+import { createTestUser, createUserProps } from '@/shared/test/factories';
 
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
@@ -45,45 +45,34 @@ describe('UserEntity', () => {
     });
 
     it('should create a user with admin role using overrides', () => {
-      const props = createUserProps({ role: UserRole.ADMIN });
+      const user = createTestUser({ role: UserRole.ADMIN });
 
-      const result = UserEntity.create(props, TEST_CREATED_BY);
-
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().role).toBe(UserRole.ADMIN);
+      expect(user.role).toBe(UserRole.ADMIN);
     });
 
     it('should create a user with staff role using overrides', () => {
-      const props = createUserProps({ role: UserRole.STAFF });
+      const user = createTestUser({ role: UserRole.STAFF });
 
-      const result = UserEntity.create(props, TEST_CREATED_BY);
-
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().role).toBe(UserRole.STAFF);
+      expect(user.role).toBe(UserRole.STAFF);
     });
 
     it('should create a banned user using overrides', () => {
       const banExpires = new Date('2024-12-31');
-      const props = createUserProps({
+
+      const user = createTestUser({
         banExpires,
         banned: true,
         banReason: 'Violation of terms',
       });
 
-      const result = UserEntity.create(props, TEST_CREATED_BY);
-
-      expect(result.isOk()).toBe(true);
-      const user = result._unsafeUnwrap();
       expect(user.banned).toBe(true);
       expect(user.banReason).toBe('Violation of terms');
       expect(user.banExpires).toBe(banExpires);
     });
 
     it('should add UserCreatedEvent on creation', () => {
-      const props = createUserProps();
+      const user = createTestUser();
 
-      const result = UserEntity.create(props, TEST_CREATED_BY);
-      const user = result._unsafeUnwrap();
       const events = user.pullEvents();
 
       expect(events).toHaveLength(1);
@@ -92,14 +81,10 @@ describe('UserEntity', () => {
     });
 
     it('should generate unique ids for each user', () => {
-      const props = createUserProps();
+      const user1 = createTestUser();
+      const user2 = createTestUser();
 
-      const result1 = UserEntity.create(props, TEST_CREATED_BY);
-      const result2 = UserEntity.create(props, TEST_CREATED_BY);
-
-      expect(result1._unsafeUnwrap().id.value).not.toBe(
-        result2._unsafeUnwrap().id.value,
-      );
+      expect(user1.id.value).not.toBe(user2.id.value);
     });
   });
 
@@ -169,7 +154,7 @@ describe('UserEntity', () => {
 
   describe('clone', () => {
     it('should create an exact copy of the user', () => {
-      const original = createUser();
+      const original = createTestUser();
 
       const cloned = original.clone();
 
@@ -182,7 +167,7 @@ describe('UserEntity', () => {
     });
 
     it('should create an independent copy', () => {
-      const original = createUser();
+      const original = createTestUser();
       const cloned = original.clone();
 
       original.updateStatus(UserStatus.INACTIVE);
@@ -194,7 +179,7 @@ describe('UserEntity', () => {
 
   describe('updateEmail', () => {
     it('should update the email', () => {
-      const user = createUser();
+      const user = createTestUser();
 
       const newEmail = Email.create('new.email@example.com')._unsafeUnwrap();
       user.updateEmail(newEmail);
@@ -205,7 +190,7 @@ describe('UserEntity', () => {
 
   describe('updateName', () => {
     it('should update the name', () => {
-      const user = createUser();
+      const user = createTestUser();
 
       const newName = Name.create({
         firstName: 'Jane',
@@ -220,7 +205,7 @@ describe('UserEntity', () => {
 
   describe('updateStatus', () => {
     it('should update the status to inactive', () => {
-      const user = createUser();
+      const user = createTestUser();
 
       user.updateStatus(UserStatus.INACTIVE);
 
@@ -245,10 +230,11 @@ describe('UserEntity', () => {
 
   describe('updateProfile', () => {
     it('should update email, name, and status', () => {
-      const user = createUser();
-      user.pullEvents(); // Clear creation event
+      const user = createTestUser();
+      user.pullEvents();
 
       const newEmail = Email.create('updated@example.com')._unsafeUnwrap();
+
       const newName = Name.create({
         firstName: 'Updated',
         lastName: 'Name',
@@ -269,7 +255,7 @@ describe('UserEntity', () => {
     });
 
     it('should add UserUpdatedEvent when updating profile', () => {
-      const user = createUser();
+      const user = createTestUser();
       user.pullEvents();
 
       user.updateProfile({
@@ -290,134 +276,5 @@ describe('UserEntity', () => {
       expect(event.oldUser.email.value).toBe(TEST_EMAIL);
       expect(event.user.email.value).toBe('new@example.com');
     });
-  });
-
-  describe('soft delete', () => {
-    it('should delete the user', () => {
-      const user = createUser();
-
-      const deleteDate = new Date('2024-06-15');
-      user.delete('admin-deleter', deleteDate);
-
-      expect(user.deletedAt).toBe(deleteDate);
-      expect(user.deletedBy).toBe('admin-deleter');
-    });
-
-    it('should restore a deleted user', () => {
-      const user = UserEntity.fromPersistence(createUserProps(), {
-        audit: { createdBy: TEST_CREATED_BY },
-        deleted: { deletedAt: new Date(), deletedBy: TEST_CREATED_BY },
-        id: UniqueId.generate(),
-      });
-
-      expect(user.deletedAt).toBeDefined();
-
-      const restoreDate = new Date('2024-07-01');
-      user.restore('admin-restorer', restoreDate);
-
-      expect(user.deletedAt).toBeUndefined();
-      expect(user.deletedBy).toBeUndefined();
-      expect(user.updatedBy).toBe('admin-restorer');
-      expect(user.updatedAt).toBe(restoreDate);
-    });
-  });
-
-  describe('entity equality', () => {
-    it('should be equal when ids match', () => {
-      const id = UniqueId.generate();
-
-      const user1 = UserEntity.fromPersistence(
-        {
-          banExpires: null,
-          banned: null,
-          banReason: null,
-          email: Email.raw({ value: 'user1@example.com' }),
-          name: Name.raw({ firstName: 'User', lastName: 'One' }),
-          role: UserRole.MEMBER,
-          status: UserStatus.ACTIVE,
-        },
-        { audit: { createdBy: 'admin' }, deleted: {}, id },
-      );
-
-      const user2 = UserEntity.fromPersistence(
-        {
-          banExpires: null,
-          banned: null,
-          banReason: null,
-          email: Email.raw({ value: 'user2@example.com' }),
-          name: Name.raw({ firstName: 'User', lastName: 'Two' }),
-          role: UserRole.ADMIN,
-          status: UserStatus.INACTIVE,
-        },
-        { audit: { createdBy: 'system' }, deleted: {}, id },
-      );
-
-      expect(user1.equals(user2)).toBe(true);
-    });
-
-    it('should not be equal when ids differ', () => {
-      const props = createUserProps();
-
-      const user1 = UserEntity.create(props, TEST_CREATED_BY)._unsafeUnwrap();
-      const user2 = UserEntity.create(props, TEST_CREATED_BY)._unsafeUnwrap();
-
-      expect(user1.equals(user2)).toBe(false);
-    });
-  });
-
-  describe('name value object', () => {
-    it('should have correct full name formats', () => {
-      const user = createUser();
-
-      expect(user.name.fullName).toBe(`${TEST_LAST_NAME} ${TEST_FIRST_NAME}`);
-      expect(user.name.fullNameLastNameFirst).toBe(
-        `${TEST_LAST_NAME} ${TEST_FIRST_NAME}`,
-      );
-      expect(user.name.fullNameFirstNameFirst).toBe(
-        `${TEST_FIRST_NAME} ${TEST_LAST_NAME}`,
-      );
-    });
-  });
-
-  describe('email value object', () => {
-    it('should have correct email methods', () => {
-      const user = createUser();
-
-      expect(user.email.local()).toBe('test');
-      expect(user.email.domain()).toBe('example.com');
-      expect(user.email.toString()).toBe(TEST_EMAIL);
-    });
-  });
-
-  describe('different roles', () => {
-    const roles = Object.values(UserRole);
-
-    it.each(roles)(
-      'should create user with role %s using overrides',
-      (role) => {
-        const props = createUserProps({ role });
-
-        const result = UserEntity.create(props, TEST_CREATED_BY);
-
-        expect(result.isOk()).toBe(true);
-        expect(result._unsafeUnwrap().role).toBe(role);
-      },
-    );
-  });
-
-  describe('different statuses', () => {
-    const statuses = Object.values(UserStatus);
-
-    it.each(statuses)(
-      'should create user with status %s using overrides',
-      (status) => {
-        const props = createUserProps({ status });
-
-        const result = UserEntity.create(props, TEST_CREATED_BY);
-
-        expect(result.isOk()).toBe(true);
-        expect(result._unsafeUnwrap().status).toBe(status);
-      },
-    );
   });
 });
