@@ -66,7 +66,7 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
         email: user.email.value,
         name: user.name.fullNameFirstNameFirst,
         password: UniqueId.generate().value,
-        role: user.role as 'admin' | 'user' | ('admin' | 'user')[] | undefined,
+        role: user.role,
       },
       headers: hasCookies ? headers : undefined,
     });
