@@ -30,6 +30,7 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
 import { ExportDataRequestDto } from '@/shared/presentation/dto/export-request.dto';
@@ -43,6 +44,7 @@ import {
   type MemberLedgerRepository,
 } from '../member-ledger.repository';
 import { CreateMemberLedgerEntryRequestDto } from './dto/create-member-ledger-entry.dto';
+import { GetMemberBalanceRequestDto } from './dto/get-balance-request.dto';
 import {
   MemberLedgerEntryPaginatedExtraResponseDto,
   MemberLedgerEntryPaginatedResponseDto,
@@ -163,6 +165,15 @@ export class MemberLedgerController extends BaseController {
       },
       total: result.total,
     };
+  }
+
+  @Get(':memberId/balance')
+  public async getBalance(
+    @Param() request: GetMemberBalanceRequestDto,
+  ): Promise<number> {
+    return this.memberLedgerRepository.getBalanceByMemberId(
+      UniqueId.raw({ value: request.memberId }),
+    );
   }
 
   @Get(':id')

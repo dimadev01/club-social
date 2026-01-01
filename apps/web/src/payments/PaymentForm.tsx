@@ -8,17 +8,25 @@ import {
 import { NumberFormat } from '@club-social/shared/lib';
 import { DateFormat, DateFormats } from '@club-social/shared/lib';
 import { useQueries } from '@tanstack/react-query';
-import { DatePicker, Empty, Input, InputNumber, Space } from 'antd';
+import {
+  Checkbox,
+  DatePicker,
+  Empty,
+  Input,
+  InputNumber,
+  Skeleton,
+} from 'antd';
 import dayjs from 'dayjs';
 import { difference, differenceBy, flatMap, orderBy } from 'es-toolkit/array';
 import { flow } from 'es-toolkit/function';
 import { sumBy } from 'es-toolkit/math';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { getDueQueryOptions } from '@/dues/useDue';
 import { usePendingDues } from '@/dues/usePendingDues';
+import { useMemberBalance } from '@/member-ledger/useMemberBalance';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { Card } from '@/ui/Card';
@@ -36,11 +44,14 @@ export interface PaymentFormSchema {
   notes: string;
   receiptNumber: string;
   surplusToCreditAmount?: number;
+  useSurplusToCredit?: boolean;
 }
 
 interface FormDueToPaySchema {
   amount: number;
+  amountFromBalance?: number;
   dueId: string;
+  useBalance: boolean;
 }
 
 interface PaymentFormProps {
@@ -50,7 +61,7 @@ interface PaymentFormProps {
   onSubmit: (data: PaymentFormSchema) => void;
 }
 
-const calculateFinalPaymentDues = flow(
+const calculateSelectedDues = flow(
   (
     currentFormDues: FormDueToPaySchema[],
     formDuesToAdd: FormDueToPaySchema[],
@@ -69,15 +80,33 @@ export function PaymentForm({
   initialValues,
   onSubmit,
 }: PaymentFormProps) {
+  /**
+   * State
+   */
+  const [selectedDueIds, setSelectedDueIds] = useState<string[]>([]);
+
+  /**
+   * Form
+   */
   const [form] = Form.useForm<PaymentFormSchema>();
   const { getFieldValue, setFieldValue } = form;
-  const formMemberId = Form.useWatch('memberId', form);
 
+  const formMemberId = Form.useWatch('memberId', form);
+  const formUseSurplusToCredit = Form.useWatch('useSurplusToCredit', form);
+  const formDuesRaw = Form.useWatch<FormDueToPaySchema[]>('dues', form);
+  const formDues = useMemo(() => formDuesRaw ?? [], [formDuesRaw]);
+
+  /**
+   * Queries
+   */
   const { data: member, isLoading: isMemberLoading } = useMemberById(
     initialValues?.memberId,
   );
   const { data: pendingDues, isLoading: isPendingDuesLoading } =
     usePendingDues(formMemberId);
+
+  const { data: memberBalance, isLoading: isMemberBalanceLoading } =
+    useMemberBalance(formMemberId);
 
   const { data: dues, isLoading: isLoadingDues } = useQueries({
     combine: (results) => ({
@@ -90,8 +119,22 @@ export function PaymentForm({
     queries: (pendingDues ?? []).map((due) => getDueQueryOptions(due.id)),
   });
 
-  const [selectedDueIds, setSelectedDueIds] = useState<string[]>([]);
+  /**
+   * Calculations
+   */
+  const allocatedBalance = useMemo(
+    () =>
+      sumBy(formDues, (due) =>
+        NumberFormat.toCents(due.amountFromBalance ?? 0),
+      ),
+    [formDues],
+  );
 
+  const availableBalance = (memberBalance ?? 0) - allocatedBalance;
+
+  /**
+   * Due calculations
+   */
   const getPaidAmountForDue = useCallback(
     (dueId: string) => {
       const dueSettlements = flatMap(dues, (due) => due.settlements);
@@ -99,7 +142,7 @@ export function PaymentForm({
         (ds) => ds.dueId === dueId,
       );
 
-      return sumBy(dueSettlementsForDue, (p) => p.amount);
+      return sumBy(dueSettlementsForDue, (ds) => ds.amount);
     },
     [dues],
   );
@@ -115,6 +158,101 @@ export function PaymentForm({
       return due.amount - getPaidAmountForDue(dueId);
     },
     [pendingDues, getPaidAmountForDue],
+  );
+
+  /**
+   * Form dynamic handlers/calculations
+   */
+  const getMaxBalanceForDue = useCallback(
+    (fieldIndex: number): number => {
+      const dues: FormDueToPaySchema[] = getFieldValue('dues');
+      const currentDue = dues[fieldIndex];
+      const currentAllocation = NumberFormat.toCents(
+        currentDue.amountFromBalance ?? 0,
+      );
+      const dueRemaining = getRemainingAmountForDue(currentDue.dueId);
+      const effectiveAvailable = availableBalance + currentAllocation;
+
+      return Math.min(effectiveAvailable, dueRemaining);
+    },
+    [getFieldValue, availableBalance, getRemainingAmountForDue],
+  );
+
+  const getMaxCashForDue = useCallback(
+    (fieldIndex: number): number => {
+      const dues: FormDueToPaySchema[] = getFieldValue('dues');
+      const currentDue = dues[fieldIndex];
+      const dueRemaining = getRemainingAmountForDue(currentDue.dueId);
+      const balanceAllocated = NumberFormat.toCents(
+        currentDue.amountFromBalance ?? 0,
+      );
+
+      return dueRemaining - balanceAllocated;
+    },
+    [getFieldValue, getRemainingAmountForDue],
+  );
+
+  const isBalanceCheckboxDisabled = useCallback(
+    (fieldIndex: number): boolean => {
+      const dues: FormDueToPaySchema[] = getFieldValue('dues');
+      const currentDue = dues[fieldIndex];
+
+      if (currentDue.useBalance) {
+        return false;
+      }
+
+      return availableBalance <= 0;
+    },
+    [getFieldValue, availableBalance],
+  );
+
+  const handleUseBalanceChange = useCallback(
+    (fieldIndex: number, checked: boolean) => {
+      const dues: FormDueToPaySchema[] = getFieldValue('dues');
+      const currentDue = dues[fieldIndex];
+      const dueRemaining = getRemainingAmountForDue(currentDue.dueId);
+
+      if (checked) {
+        const maxBalance = getMaxBalanceForDue(fieldIndex);
+        const balanceToApply = NumberFormat.fromCents(maxBalance);
+        const cashAmount = NumberFormat.fromCents(dueRemaining - maxBalance);
+
+        setFieldValue(
+          ['dues', fieldIndex, 'amountFromBalance'],
+          balanceToApply,
+        );
+        setFieldValue(['dues', fieldIndex, 'amount'], cashAmount);
+      } else {
+        setFieldValue(['dues', fieldIndex, 'amountFromBalance'], undefined);
+        setFieldValue(
+          ['dues', fieldIndex, 'amount'],
+          NumberFormat.fromCents(dueRemaining),
+        );
+      }
+
+      setFieldValue(['dues', fieldIndex, 'useBalance'], checked);
+    },
+    [
+      getFieldValue,
+      setFieldValue,
+      getRemainingAmountForDue,
+      getMaxBalanceForDue,
+    ],
+  );
+
+  const handleBalanceAmountChange = useCallback(
+    (fieldIndex: number, value: null | number) => {
+      const dues: FormDueToPaySchema[] = getFieldValue('dues');
+      const currentDue = dues[fieldIndex];
+      const dueRemaining = getRemainingAmountForDue(currentDue.dueId);
+      const dueRemainingDisplay = NumberFormat.fromCents(dueRemaining);
+
+      const balanceAmount = value ?? 0;
+      const cashAmount = Math.max(0, dueRemainingDisplay - balanceAmount);
+
+      setFieldValue(['dues', fieldIndex, 'amount'], cashAmount);
+    },
+    [getFieldValue, setFieldValue, getRemainingAmountForDue],
   );
 
   const handleRowSelectionChange = useCallback(
@@ -141,7 +279,9 @@ export function PaymentForm({
       newSelections.forEach((dueId) => {
         newPaymentDuesToAdd.push({
           amount: NumberFormat.fromCents(getRemainingAmountForDue(dueId)),
+          amountFromBalance: undefined,
           dueId,
+          useBalance: false,
         });
       });
 
@@ -150,16 +290,17 @@ export function PaymentForm({
         paymentDuesToRemove.push({
           amount: NumberFormat.fromCents(getRemainingAmountForDue(dueId)),
           dueId,
+          useBalance: false,
         });
       });
 
-      const finalFormPaymentDues = calculateFinalPaymentDues(
+      const selectedDues = calculateSelectedDues(
         currentPaymentDues,
         newPaymentDuesToAdd,
         paymentDuesToRemove,
       );
 
-      setFieldValue('dues', finalFormPaymentDues);
+      setFieldValue('dues', selectedDues);
       setSelectedDueIds(newSelectedRowKeys as string[]);
     },
     [getFieldValue, setFieldValue, getRemainingAmountForDue],
@@ -222,6 +363,30 @@ export function PaymentForm({
       <Form.Item<PaymentFormSchema> label="Notas" name="notes">
         <Input.TextArea placeholder="Notas adicionales..." rows={3} />
       </Form.Item>
+
+      {formMemberId && (
+        <Descriptions
+          bordered={false}
+          className="mb-6"
+          colon={false}
+          layout="vertical"
+        >
+          <Descriptions.Item label="Saldo total">
+            {isMemberBalanceLoading ? (
+              <Skeleton.Button active />
+            ) : (
+              NumberFormat.formatCurrencyCents(memberBalance ?? 0)
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label="Saldo disponible">
+            {isMemberBalanceLoading ? (
+              <Skeleton.Button active />
+            ) : (
+              NumberFormat.formatCurrencyCents(availableBalance)
+            )}
+          </Descriptions.Item>
+        </Descriptions>
+      )}
 
       {pendingDues && (
         <>
@@ -291,13 +456,29 @@ export function PaymentForm({
 
           <Form.List name="dues">
             {(fields) => {
-              const total = sumBy(fields, (field) =>
-                form.getFieldValue(['dues', field.name, 'amount']),
+              const totalCash = sumBy(
+                fields,
+                (field) =>
+                  form.getFieldValue(['dues', field.name, 'amount']) ?? 0,
+              );
+              const totalBalance = sumBy(
+                fields,
+                (field) =>
+                  form.getFieldValue([
+                    'dues',
+                    field.name,
+                    'amountFromBalance',
+                  ]) ?? 0,
               );
 
               return (
                 <Card
-                  extra={`Total a registrar: ${NumberFormat.formatCurrency(total)}`}
+                  className="mb-6"
+                  extra={
+                    totalBalance > 0
+                      ? `Efectivo: ${NumberFormat.formatCurrency(totalCash)} | Saldo: ${NumberFormat.formatCurrency(totalBalance)}`
+                      : `Total: ${NumberFormat.formatCurrency(totalCash)}`
+                  }
                   size="small"
                   title="Deudas seleccionadas"
                   type="inner"
@@ -312,11 +493,11 @@ export function PaymentForm({
                   {fields.map((field) => {
                     const formDue = form.getFieldValue(['dues', field.name]);
 
-                    const due = pendingDues?.find(
+                    const pendingDue = pendingDues?.find(
                       (d) => d.id === formDue?.dueId,
                     );
 
-                    if (!due) {
+                    if (!pendingDue) {
                       return null;
                     }
 
@@ -328,33 +509,81 @@ export function PaymentForm({
                         <Form.Item hidden name={[field.name, 'dueId']} noStyle>
                           <Input />
                         </Form.Item>
-                        <Space className="flex" vertical>
-                          <Descriptions
-                            items={[
-                              {
-                                children: DateFormat.date(due.date),
-                                label: 'Fecha',
-                              },
-                              {
-                                children: DueCategoryLabel[due.category],
-                                label: 'Categoría',
-                              },
-                              {
-                                children: NumberFormat.formatCurrencyCents(
-                                  getRemainingAmountForDue(due.id),
-                                ),
-                                label: 'Monto a pagar',
-                              },
-                            ]}
-                          />
 
+                        <Descriptions
+                          className="mb-6"
+                          items={[
+                            {
+                              children: DateFormat.date(pendingDue.date),
+                              label: 'Fecha',
+                            },
+                            {
+                              children: DueCategoryLabel[pendingDue.category],
+                              label: 'Categoría',
+                            },
+                            {
+                              children: NumberFormat.formatCurrencyCents(
+                                getRemainingAmountForDue(pendingDue.id),
+                              ),
+                              label: 'Monto a pagar',
+                            },
+                          ]}
+                        />
+
+                        <Form.Item
+                          label="Monto a registrar"
+                          name={[field.name, 'amount']}
+                          rules={[
+                            {
+                              message: 'El monto debe ser mayor a 1',
+                              min: 1,
+                              type: 'number',
+                            },
+                          ]}
+                        >
+                          <InputNumber
+                            className="w-full"
+                            formatter={(value) =>
+                              NumberFormat.format(Number(value))
+                            }
+                            max={NumberFormat.fromCents(
+                              getMaxCashForDue(field.name),
+                            )}
+                            min={0}
+                            parser={(value) =>
+                              NumberFormat.parse(String(value))
+                            }
+                            precision={0}
+                            step={1000}
+                          />
+                        </Form.Item>
+
+                        <Form.Item hidden name={[field.name, 'useBalance']}>
+                          <Input />
+                        </Form.Item>
+
+                        <Checkbox
+                          checked={formDue?.useBalance ?? false}
+                          disabled={
+                            isBalanceCheckboxDisabled(field.name) ||
+                            (memberBalance ?? 0) <= 0
+                          }
+                          onChange={(e) =>
+                            handleUseBalanceChange(field.name, e.target.checked)
+                          }
+                        >
+                          Usar saldo disponible
+                        </Checkbox>
+
+                        {formDue?.useBalance && (
                           <Form.Item
-                            label="Monto a registrar"
-                            name={[field.name, 'amount']}
+                            className="mt-4"
+                            label="Monto desde saldo"
+                            name={[field.name, 'amountFromBalance']}
                             rules={[
                               {
-                                message: 'El monto debe ser mayor a 1',
-                                min: 1,
+                                message: 'El monto debe ser mayor a 0',
+                                min: 0,
                                 type: 'number',
                               },
                             ]}
@@ -365,9 +594,12 @@ export function PaymentForm({
                                 NumberFormat.format(Number(value))
                               }
                               max={NumberFormat.fromCents(
-                                getRemainingAmountForDue(due.id),
+                                getMaxBalanceForDue(field.name),
                               )}
                               min={0}
+                              onChange={(value) =>
+                                handleBalanceAmountChange(field.name, value)
+                              }
                               parser={(value) =>
                                 NumberFormat.parse(String(value))
                               }
@@ -375,7 +607,7 @@ export function PaymentForm({
                               step={1000}
                             />
                           </Form.Item>
-                        </Space>
+                        )}
                       </Card.Grid>
                     );
                   })}
@@ -383,21 +615,30 @@ export function PaymentForm({
               );
             }}
           </Form.List>
+
+          <Form.Item<PaymentFormSchema>
+            name="useSurplusToCredit"
+            valuePropName="checked"
+          >
+            <Checkbox>Agregar saldo a favor</Checkbox>
+          </Form.Item>
+
+          {formUseSurplusToCredit && (
+            <Form.Item<PaymentFormSchema>
+              label="Monto a crédito"
+              name="surplusToCreditAmount"
+            >
+              <InputNumber<number>
+                className="w-full"
+                formatter={(value) => NumberFormat.format(Number(value))}
+                parser={(value) => NumberFormat.parse(String(value))}
+                precision={0}
+                step={1000}
+              />
+            </Form.Item>
+          )}
         </>
       )}
-
-      <Form.Item<PaymentFormSchema>
-        label="Monto a crédito"
-        name="surplusToCreditAmount"
-      >
-        <InputNumber<number>
-          className="w-full"
-          formatter={(value) => NumberFormat.format(Number(value))}
-          parser={(value) => NumberFormat.parse(String(value))}
-          precision={0}
-          step={1000}
-        />
-      </Form.Item>
     </Form>
   );
 }

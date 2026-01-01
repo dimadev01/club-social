@@ -169,6 +169,15 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     };
   }
 
+  public async getBalanceByMemberId(memberId: UniqueId): Promise<number> {
+    const balance = await this.prismaService.memberLedgerEntry.aggregate({
+      _sum: { amount: true },
+      where: { memberId: memberId.value },
+    });
+
+    return balance._sum.amount ?? 0;
+  }
+
   public async save(
     entity: MemberLedgerEntryEntity,
     tx?: PrismaClientLike,

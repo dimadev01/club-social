@@ -13,6 +13,10 @@ export interface CreateMemberLedgerEntryDto {
   notes: null | string;
 }
 
+export interface GetMemberBalanceDto {
+  memberId: string;
+}
+
 export interface MemberLedgerEntryDto {
   amount: number;
   createdAt: string;

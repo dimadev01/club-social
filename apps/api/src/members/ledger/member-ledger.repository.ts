@@ -8,6 +8,7 @@ import {
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import type {
   MemberLedgerEntryDetailReadModel,
@@ -37,4 +38,5 @@ export interface MemberLedgerRepository
       MemberLedgerEntryPaginatedExtraModel
     >
   >;
+  getBalanceByMemberId(memberId: UniqueId): Promise<number>;
 }

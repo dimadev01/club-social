@@ -21,6 +21,7 @@ export const queryKeys = createQueryKeyStore({
   },
 
   memberLedger: {
+    balance: (memberId?: string) => [memberId],
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
   },
