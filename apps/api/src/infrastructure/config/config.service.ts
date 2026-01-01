@@ -1,18 +1,8 @@
 import { Configuration, Value } from '@itgorillaz/configify';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  IsUrl,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, IsUrl } from 'class-validator';
 
 @Configuration()
 export class ConfigService {
-  @IsEmail()
-  @Value('ADMIN_USER_EMAIL')
-  public readonly adminUserEmail: string;
-
   @IsNotEmpty()
   @Value('APP_DISPLAY_NAME')
   public readonly appDisplayName: string;
@@ -34,11 +24,11 @@ export class ConfigService {
   public readonly databaseUrl: string;
 
   @IsString()
-  @Value('EMAIL_SMTP_HOST')
+  @Value('EMAIL_SMTP_HOST', { default: 'localhost' })
   public readonly emailSmtpHost: string;
 
   @IsNumber()
-  @Value('EMAIL_SMTP_PORT', { parse: Number })
+  @Value('EMAIL_SMTP_PORT', { default: 1025, parse: Number })
   public readonly emailSmtpPort: number;
 
   @IsString()
@@ -74,8 +64,8 @@ export class ConfigService {
   public readonly trustedOrigins: string[];
 
   @IsString()
-  @Value('UNLEASH_API_TOKEN')
-  public readonly unleashApiToken: string;
+  @Value('UNLEASH_API_KEY')
+  public readonly unleashApiKey: string;
 
   @IsString()
   @Value('UNLEASH_APP_NAME')

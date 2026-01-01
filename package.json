@@ -28,8 +28,8 @@
     "test": "turbo test"
   },
   "devDependencies": {
-    "@club-social/eslint-config": "workspace:*",
-    "@club-social/prettier-config": "workspace:*",
+    "@club-social/eslint-config": "*",
+    "@club-social/prettier-config": "*",
     "@commitlint/cli": "^20.3.0",
     "@commitlint/config-conventional": "^20.3.0",
     "husky": "^9.1.7",
