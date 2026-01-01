@@ -39,8 +39,8 @@
   },
   "devDependencies": {
     "@better-auth/cli": "^1.4.10",
-    "@club-social/eslint-config": "*",
-    "@club-social/prettier-config": "*",
+    "@club-social/eslint-config": "workspace:*",
+    "@club-social/prettier-config": "workspace:*",
     "@eslint/js": "^9.39.2",
     "@tanstack/eslint-plugin-query": "^5.91.2",
     "@tanstack/react-query-devtools": "^5.91.2",
