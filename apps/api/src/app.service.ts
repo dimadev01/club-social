@@ -76,15 +76,11 @@ export class AppService {
     await this.prismaService.memberLedgerEntry.deleteMany({});
     await this.prismaService.member.deleteMany({});
 
-    // await this.prismaService.session.deleteMany({});
-    // await this.prismaService.account.deleteMany({});
-    // await this.prismaService.verification.deleteMany({});
-    // await this.prismaService.passkey.deleteMany({});
-    await this.prismaService.user.deleteMany({
-      where: {
-        role: UserRole.MEMBER,
-      },
-    });
+    await this.prismaService.session.deleteMany({});
+    await this.prismaService.account.deleteMany({});
+    await this.prismaService.verification.deleteMany({});
+    await this.prismaService.passkey.deleteMany({});
+    await this.prismaService.user.deleteMany({});
   }
 
   public getHello(): string {
@@ -99,19 +95,11 @@ export class AppService {
     const paymentsMap = new Map<string, string>();
     const movementsMap = new Map<string, string>();
 
-    // const testMemberId = 'jtwrdpTKf9QRe2MtZ';
-    // const testUserId = 'XwjxvPMDY6Nop3tPh';
-
     const mongoUsers = await this.mongoConnection
       .collection('users')
       .find({
-        // // @ts-expect-error - This is a test user
-        // _id: null,
-        // _id: testUserId,
         isDeleted: false,
-        'profile.role': 'member',
       })
-      // .limit(10)
       .toArray();
 
     const limit = pLimit(10);
@@ -119,9 +107,6 @@ export class AppService {
     const mongoMembers = await this.mongoConnection
       .collection('members')
       .find({
-        // // @ts-expect-error - This is a test user
-        // _id: null,
-        // _id: testMemberId,
         isDeleted: false,
       })
       .toArray();
@@ -129,28 +114,20 @@ export class AppService {
     const allMongoDues = await this.mongoConnection
       .collection('dues')
       .find({
-        // // @ts-expect-error - This is a test due
-        // _id: null,
         isDeleted: false,
-        // memberId: testMemberId,
       })
       .toArray();
 
     const allMongoPayments = await this.mongoConnection
       .collection('payments')
       .find({
-        // // @ts-expect-error - This is a test payment
-        // _id: null,
         isDeleted: false,
-        // memberId: testMemberId,
       })
       .toArray();
 
     const mongoMovements = await this.mongoConnection
       .collection('movements')
       .find({
-        // // @ts-expect-error - This is a test payment
-        // _id: '4c2RSMKfEHq52ZJum',
         category: { $ne: 'member-payment' },
         isDeleted: false,
       })
@@ -159,8 +136,6 @@ export class AppService {
     const mongoEvents = await this.mongoConnection
       .collection('events')
       .find({
-        // // @ts-expect-error - This is a test event
-        // _id: null,
         isDeleted: false,
         resource: {
           $ne: 'prices',
