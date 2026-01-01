@@ -19,7 +19,7 @@ import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import { NotFound } from '@/ui/NotFound';
-import { Page, PageTableActions } from '@/ui/Page';
+import { PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { TableActions } from '@/ui/Table/TableActions';
@@ -60,7 +60,7 @@ export function PricingList() {
   }
 
   return (
-    <Page
+    <Card
       extra={
         <Space.Compact>
           {permissions.pricing.create && (
@@ -150,6 +150,6 @@ export function PricingList() {
           total: pricing?.total,
         }}
       />
-    </Page>
+    </Card>
   );
 }

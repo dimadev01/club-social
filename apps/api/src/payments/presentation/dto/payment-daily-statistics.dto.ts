@@ -4,12 +4,11 @@ import type {
   PaymentDailyStatisticsItemDto,
 } from '@club-social/shared/payments';
 
-import { IsNotEmpty, IsString, Matches } from 'class-validator';
+import { IsDateString, IsNotEmpty } from 'class-validator';
 
 export class GetPaymentDailyStatisticsRequestDto implements GetPaymentDailyStatisticsDto {
+  @IsDateString()
   @IsNotEmpty()
-  @IsString()
-  @Matches(/^\d{4}-\d{2}$/, { message: 'month must be in YYYY-MM format' })
   public month: string;
 }
 

@@ -7,9 +7,9 @@ import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { Card } from '@/ui/Card';
 import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
 import { MemberForm, type MemberFormData } from './MemberForm';
@@ -59,7 +59,7 @@ export function MemberEdit() {
   }
 
   if (isLoading) {
-    return <Page loading title="Editar socio" />;
+    return <Card loading title="Editar socio" />;
   }
 
   if (!member) {
@@ -69,7 +69,7 @@ export function MemberEdit() {
   const isMutating = updateMemberMutation.isPending;
 
   return (
-    <Page
+    <Card
       actions={[
         <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Actualizar socio
@@ -103,6 +103,6 @@ export function MemberEdit() {
         mode="edit"
         onSubmit={handleSubmit}
       />
-    </Page>
+    </Card>
   );
 }

@@ -1,7 +1,8 @@
 import type { PaymentDailyStatisticsItemDto } from '@club-social/shared/payments';
 
-import { NumberFormat } from '@club-social/shared/lib';
-import { DatePicker, Empty, Spin, theme } from 'antd';
+import { BarChartOutlined } from '@ant-design/icons';
+import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
+import { DatePicker, Empty, theme } from 'antd';
 import dayjs, { type Dayjs } from 'dayjs';
 import { useMemo, useState } from 'react';
 import {
@@ -15,7 +16,7 @@ import {
 } from 'recharts';
 
 import { Card } from '@/ui/Card';
-import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
+import { Form } from '@/ui/Form/Form';
 
 import { usePaymentDailyStatistics } from '../usePaymentDailyStatistics';
 
@@ -32,52 +33,51 @@ interface CustomTooltipProps {
 }
 
 export function PaymentChartCard() {
-  const [selectedMonth, setSelectedMonth] = useState<Dayjs>(dayjs());
+  const [selectedMonth, setSelectedMonth] = useState<Dayjs>(
+    dayjs().subtract(1, 'month'),
+  );
   const { token } = theme.useToken();
 
-  const monthStr = selectedMonth.format('YYYY-MM');
+  const monthStr = selectedMonth.startOf('month').format(DateFormats.isoDate);
 
   const { data: statistics, isLoading } = usePaymentDailyStatistics({
     month: monthStr,
   });
 
   const days = statistics?.days;
-  const chartData = useMemo(() => {
-    if (!days) return [];
 
-    return transformData(days, monthStr);
-  }, [days, monthStr]);
+  const chartData = useMemo(
+    () => transformData(days ?? [], selectedMonth),
+    [days, selectedMonth],
+  );
 
   const hasData = chartData.some((d) => d.amount > 0);
 
   return (
     <Card
-      extra={<PaymentsIcon />}
-      size="small"
-      title={
-        <div className="flex items-center gap-3">
-          <span>Pagos por día</span>
-          <DatePicker
-            allowClear={false}
-            onChange={(date) => date && setSelectedMonth(date)}
-            picker="month"
-            size="small"
-            value={selectedMonth}
-          />
-        </div>
-      }
-      type="inner"
+      extra={<BarChartOutlined />}
+      loading={isLoading}
+      title="Estadísticas de pagos"
     >
-      <div className="h-64 w-full">
-        {isLoading ? (
-          <div className="flex h-full items-center justify-center">
-            <Spin />
-          </div>
-        ) : !hasData ? (
+      <Form.Item label="Mes">
+        <DatePicker
+          allowClear={false}
+          className="w-40"
+          format={DateFormats.monthYear}
+          onChange={(date) => date && setSelectedMonth(date)}
+          picker="month"
+          value={selectedMonth}
+        />
+      </Form.Item>
+
+      <div className="h-64">
+        {!hasData && (
           <div className="flex h-full items-center justify-center">
             <Empty description="Sin pagos en este mes" />
           </div>
-        ) : (
+        )}
+
+        {hasData && (
           <ResponsiveContainer height="100%" width="100%">
             <BarChart
               data={chartData}
@@ -118,14 +118,16 @@ export function PaymentChartCard() {
 }
 
 function CustomTooltip({ active, payload }: CustomTooltipProps) {
-  if (!active || !payload?.length) return null;
+  if (!active || !payload?.length) {
+    return null;
+  }
 
   const data = payload[0].payload;
 
   return (
     <div className="rounded-md border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
       <p className="mb-1 font-medium">
-        {dayjs(data.date).format('D [de] MMMM')}
+        {DateFormat.parse(data.date).format('D [de] MMMM')}
       </p>
       <p className="text-sm">
         <span className="text-gray-500 dark:text-gray-400">Monto: </span>
@@ -142,18 +144,20 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 }
 
 function transformData(
-  days: PaymentDailyStatisticsItemDto[],
-  month: string,
+  stats: PaymentDailyStatisticsItemDto[],
+  selectedDate: Dayjs,
 ): ChartDataItem[] {
-  const [year, monthNum] = month.split('-').map(Number);
-  const daysInMonth = new Date(year, monthNum, 0).getDate();
+  const daysInMonth = selectedDate.daysInMonth();
 
-  const dataMap = new Map(days.map((d) => [d.date, d]));
+  // Data coming in the format YYYY-MM-DD
+  const dataMap = new Map(stats.map((stat) => [stat.date, stat]));
 
   const result: ChartDataItem[] = [];
 
   for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = `${month}-${String(day).padStart(2, '0')}`;
+    const date = selectedDate.set('date', day);
+
+    const dateStr = date.format(DateFormats.isoDate);
     const data = dataMap.get(dateStr);
 
     result.push({

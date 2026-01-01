@@ -9,9 +9,9 @@ import { useNavigate } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { Card } from '@/ui/Card';
 import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
 import { MemberForm, type MemberFormData } from './MemberForm';
@@ -58,7 +58,7 @@ export function MemberNew() {
   const isMutating = createMemberMutation.isPending;
 
   return (
-    <Page
+    <Card
       actions={[
         <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Crear socio
@@ -91,6 +91,6 @@ export function MemberNew() {
         mode="create"
         onSubmit={handleSubmit}
       />
-    </Page>
+    </Card>
   );
 }

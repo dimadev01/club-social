@@ -11,6 +11,7 @@ export const DateFormats = {
   date: 'DD/MM/YYYY',
   dateTime: 'DD/MM/YYYY HH:mm',
   isoDate: 'YYYY-MM-DD',
+  isoMonth: 'YYYY-MM',
   month: 'MMMM',
   monthYear: 'MMMM YYYY',
   time: 'HH:mm',

@@ -31,9 +31,7 @@ export class DateOnly extends ValueObject<Props> {
       return err(new ApplicationError('Invalid date'));
     }
 
-    const value = date.toISOString().split('T')[0];
-
-    return ok(new DateOnly({ value }));
+    return ok(new DateOnly({ value: DateOnly.toDateString(date) }));
   }
 
   /**
@@ -76,6 +74,21 @@ export class DateOnly extends ValueObject<Props> {
     return new DateOnly({ value });
   }
 
+  private static toDateString(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+
+  public addMonths(months: number): DateOnly {
+    const date = this.toDate();
+    date.setUTCMonth(date.getUTCMonth() + months);
+
+    return new DateOnly({ value: DateOnly.toDateString(date) });
+  }
+
+  public endOfMonth(): DateOnly {
+    return this.startOfMonth().addMonths(1).subtractDays(1);
+  }
+
   public equals(vo?: ValueObject<Props>): boolean {
     if (!vo || !(vo instanceof DateOnly)) {
       return false;
@@ -108,11 +121,17 @@ export class DateOnly extends ValueObject<Props> {
     return this.value <= other.value;
   }
 
-  public subtractDays(days: number): DateOnly {
-    const date = new Date(this.value);
-    date.setDate(date.getDate() - days);
+  public startOfMonth(): DateOnly {
+    const [year, month] = this.value.split('-');
 
-    return new DateOnly({ value: date.toISOString().split('T')[0] });
+    return new DateOnly({ value: `${year}-${month}-01` });
+  }
+
+  public subtractDays(days: number): DateOnly {
+    const date = this.toDate();
+    date.setUTCDate(date.getUTCDate() - days);
+
+    return new DateOnly({ value: DateOnly.toDateString(date) });
   }
 
   /**

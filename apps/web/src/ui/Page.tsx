@@ -2,17 +2,17 @@ import { Flex, type FlexProps, Spin } from 'antd';
 
 import { cn } from '@/shared/lib/utils';
 
-import { Card, type CardProps } from './Card';
+import { Card } from './Card';
 
-export function Page({ ...props }: CardProps) {
-  return <Card {...props} />;
+export function Page(props: React.HTMLAttributes<HTMLDivElement>) {
+  return <div {...props} />;
 }
 
 export function PageLoader() {
   return (
-    <Page className="flex h-screen items-center justify-center">
+    <Card className="flex h-screen items-center justify-center">
       <Spin size="large" />
-    </Page>
+    </Card>
   );
 }
 

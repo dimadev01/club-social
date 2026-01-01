@@ -26,7 +26,7 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
 import { NotFound } from '@/ui/NotFound';
-import { Page, PageTableActions } from '@/ui/Page';
+import { PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { TableActions } from '@/ui/Table/TableActions';
@@ -86,7 +86,7 @@ export function DueList() {
   }
 
   return (
-    <Page
+    <Card
       extra={
         <Space.Compact>
           {permissions.dues.create && (
@@ -288,6 +288,6 @@ export function DueList() {
           </Table.Summary>
         )}
       />
-    </Page>
+    </Card>
   );
 }

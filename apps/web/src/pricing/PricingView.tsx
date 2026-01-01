@@ -10,7 +10,6 @@ import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 import { Row } from '@/ui/Row';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -34,7 +33,7 @@ export function PricingView() {
   const canEdit = permissions.pricing.update && pricing.effectiveTo === null;
 
   return (
-    <Page
+    <Card
       actions={[
         canEdit && (
           <Button
@@ -88,6 +87,6 @@ export function PricingView() {
           />
         </Col>
       </Row>
-    </Page>
+    </Card>
   );
 }

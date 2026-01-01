@@ -15,8 +15,22 @@ export interface CreatePaymentDueDto {
   dueId: string;
 }
 
+export interface GetPaymentDailyStatisticsDto {
+  month: string; // YYYY-MM format
+}
+
 export interface GetPaymentStatisticsDto {
   dateRange?: [string, string];
+}
+
+export interface PaymentDailyStatisticsDto {
+  days: PaymentDailyStatisticsItemDto[];
+}
+
+export interface PaymentDailyStatisticsItemDto {
+  amount: number;
+  count: number;
+  date: string;
 }
 
 export interface PaymentDto {
@@ -93,18 +107,4 @@ export interface PaymentStatisticsDto {
 
 export interface VoidPaymentDto {
   voidReason: string;
-}
-
-export interface GetPaymentDailyStatisticsDto {
-  month: string; // YYYY-MM format
-}
-
-export interface PaymentDailyStatisticsItemDto {
-  date: string;
-  amount: number;
-  count: number;
-}
-
-export interface PaymentDailyStatisticsDto {
-  days: PaymentDailyStatisticsItemDto[];
 }

@@ -17,6 +17,7 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -90,12 +91,9 @@ export class PrismaPaymentRepository implements PaymentRepository {
   }
 
   public async findDailyStatistics(
-    month: string,
+    date: DateOnly,
   ): Promise<PaymentDailyStatisticsReadModel[]> {
-    const startDate = `${month}-01`;
-    const [year, monthNum] = month.split('-').map(Number);
-    const lastDay = new Date(year, monthNum, 0).getDate();
-    const endDate = `${month}-${String(lastDay).padStart(2, '0')}`;
+    const endDate = date.endOfMonth();
 
     const result = await this.prismaService.payment.groupBy({
       _count: {
@@ -110,8 +108,8 @@ export class PrismaPaymentRepository implements PaymentRepository {
       },
       where: {
         date: {
-          gte: startDate,
-          lte: endDate,
+          gte: date.value,
+          lte: endDate.value,
         },
         status: PaymentStatus.PAID,
       },

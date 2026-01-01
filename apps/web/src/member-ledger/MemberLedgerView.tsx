@@ -14,7 +14,6 @@ import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NavigateToPayment } from '@/ui/NavigateToPayment';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 import { Row } from '@/ui/Row';
 
 import { useMemberLedgerEntry } from './useMemberLedgerEntry';
@@ -45,7 +44,7 @@ export function MemberLedgerView() {
   };
 
   return (
-    <Page backButton title="Detalle de entrada de libro mayor">
+    <Card backButton title="Detalle de entrada de libro mayor">
       <Row>
         <Col md={12} xs={24}>
           <Descriptions
@@ -90,6 +89,6 @@ export function MemberLedgerView() {
           <DescriptionsAudit {...entry} />
         </Col>
       </Row>
-    </Page>
+    </Card>
   );
 }

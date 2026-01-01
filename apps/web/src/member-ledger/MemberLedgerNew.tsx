@@ -10,9 +10,9 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { Card } from '@/ui/Card';
 import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
 import {
@@ -57,7 +57,7 @@ export function MemberLedgerNew() {
   const isMutating = createMemberLedgerEntryMutation.isPending;
 
   return (
-    <Page
+    <Card
       actions={[
         <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Crear ajuste
@@ -77,6 +77,6 @@ export function MemberLedgerNew() {
         }}
         onSubmit={handleSubmit}
       />
-    </Page>
+    </Card>
   );
 }

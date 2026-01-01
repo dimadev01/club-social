@@ -7,6 +7,8 @@ import {
 } from 'antd';
 import { useNavigate } from 'react-router';
 
+import { cn } from '@/shared/lib/utils';
+
 import { BackIcon } from './Icons/BackIcon';
 
 export interface CardProps extends AntCardProps {
@@ -15,6 +17,7 @@ export interface CardProps extends AntCardProps {
 
 export function Card({
   backButton = false,
+  classNames,
   loading,
   title,
   ...props
@@ -23,6 +26,10 @@ export function Card({
 
   return (
     <AntCard
+      classNames={{
+        header: cn('[&>.ant-card-head-wrapper]:gap-2'),
+        ...classNames,
+      }}
       loading={loading}
       {...(title && {
         title: (
