@@ -20,7 +20,7 @@ services:
       - '5540:5540'
 
   postgres:
-    image: postgres:18
+    image: postgres:17
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -28,7 +28,7 @@ services:
     ports:
       - '5932:5432'
     volumes:
-      - postgres_data:/var/lib/postgresql/18/docker
+      - postgres_data:/var/lib/postgresql/17/docker
 
   unleash:
     image: unleashorg/unleash-server:latest
