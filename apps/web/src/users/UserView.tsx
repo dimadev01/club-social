@@ -6,7 +6,6 @@ import { appRoutes } from '@/app/app.enum';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 
 import { usePermissions } from './use-permissions';
 import { useUser } from './useUser';
@@ -29,7 +28,7 @@ export function UserView() {
   const canEdit = permissions.users.update;
 
   return (
-    <Page
+    <Card
       actions={[
         canEdit && (
           <Button
@@ -63,6 +62,6 @@ export function UserView() {
           },
         ]}
       />
-    </Page>
+    </Card>
   );
 }

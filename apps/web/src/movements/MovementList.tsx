@@ -23,8 +23,9 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
+import { Card } from '@/ui/Card';
 import { NotFound } from '@/ui/NotFound';
-import { Page, PageTableActions } from '@/ui/Page';
+import { PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import {
   TABLE_COLUMN_WIDTHS,
@@ -72,7 +73,7 @@ export function MovementList() {
   }
 
   return (
-    <Page
+    <Card
       extra={
         <Space.Compact>
           {permissions.movements.create && (
@@ -237,6 +238,6 @@ export function MovementList() {
           </Table.Summary>
         )}
       />
-    </Page>
+    </Card>
   );
 }

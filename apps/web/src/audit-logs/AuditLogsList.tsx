@@ -15,8 +15,9 @@ import JSONPretty from 'react-json-pretty';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
+import { Card } from '@/ui/Card';
 import { NotFound } from '@/ui/NotFound';
-import { Page, PageTableActions } from '@/ui/Page';
+import { PageTableActions } from '@/ui/Page';
 import { Row } from '@/ui/Row';
 import { Table } from '@/ui/Table/Table';
 import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
@@ -58,7 +59,7 @@ export function AuditLogsList() {
   }
 
   return (
-    <Page title="Auditoría">
+    <Card title="Auditoría">
       <PageTableActions justify="end">
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -147,6 +148,6 @@ export function AuditLogsList() {
           total: auditLogs?.total,
         }}
       />
-    </Page>
+    </Card>
   );
 }

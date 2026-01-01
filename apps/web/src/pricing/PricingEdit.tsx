@@ -8,9 +8,9 @@ import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { Card } from '@/ui/Card';
 import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
 import { PricingForm, type PricingFormData } from './PricingForm';
@@ -45,7 +45,7 @@ export function PricingEdit() {
   }
 
   if (isLoading) {
-    return <Page loading title="Editar precio" />;
+    return <Card loading title="Editar precio" />;
   }
 
   if (!pricing) {
@@ -55,7 +55,7 @@ export function PricingEdit() {
   const isMutating = updatePricingMutation.isPending;
 
   return (
-    <Page
+    <Card
       actions={[
         <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Actualizar precio
@@ -75,6 +75,6 @@ export function PricingEdit() {
         mode="edit"
         onSubmit={handleSubmit}
       />
-    </Page>
+    </Card>
   );
 }

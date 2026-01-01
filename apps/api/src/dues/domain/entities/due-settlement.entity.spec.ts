@@ -2,44 +2,59 @@ import { DueSettlementStatus } from '@club-social/shared/dues';
 
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import {
+  TEST_ALT_DUE_SETTLEMENT_AMOUNT_CENTS,
+  TEST_DUE_SETTLEMENT_AMOUNT_CENTS,
+} from '@/shared/test/constants';
+import {
+  createDueSettlementProps,
+  createTestDueSettlement,
+} from '@/shared/test/factories';
 
 import { DueSettlementEntity } from './due-settlement.entity';
 
 describe('DueSettlementEntity', () => {
-  const createValidSettlementProps = () => ({
-    amount: Amount.fromCents(5000)._unsafeUnwrap(),
-    dueId: UniqueId.generate(),
-    memberLedgerEntryId: UniqueId.generate(),
-    paymentId: UniqueId.generate(),
-  });
-
   describe('create', () => {
     it('should create a settlement with valid props', () => {
-      const props = createValidSettlementProps();
+      const dueId = UniqueId.generate();
+      const props = createDueSettlementProps(dueId);
 
       const result = DueSettlementEntity.create(props);
 
       expect(result.isOk()).toBe(true);
       const settlement = result._unsafeUnwrap();
-      expect(settlement.amount.cents).toBe(5000);
-      expect(settlement.dueId).toBe(props.dueId);
+      expect(settlement.amount.cents).toBe(TEST_DUE_SETTLEMENT_AMOUNT_CENTS);
+      expect(settlement.dueId).toBe(dueId);
       expect(settlement.memberLedgerEntryId).toBe(props.memberLedgerEntryId);
       expect(settlement.paymentId).toBe(props.paymentId);
       expect(settlement.status).toBe(DueSettlementStatus.APPLIED);
     });
 
-    it('should create a settlement with null paymentId', () => {
-      const props = { ...createValidSettlementProps(), paymentId: null };
+    it('should create a settlement with null paymentId using overrides', () => {
+      const dueId = UniqueId.generate();
 
-      const result = DueSettlementEntity.create(props);
+      const settlement = createTestDueSettlement(dueId, { paymentId: null });
 
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().paymentId).toBeNull();
+      expect(settlement.paymentId).toBeNull();
+    });
+
+    it('should create a settlement with different amount using overrides', () => {
+      const dueId = UniqueId.generate();
+
+      const settlement = createTestDueSettlement(dueId, {
+        amount: Amount.fromCents(
+          TEST_ALT_DUE_SETTLEMENT_AMOUNT_CENTS,
+        )._unsafeUnwrap(),
+      });
+
+      expect(settlement.amount.cents).toBe(
+        TEST_ALT_DUE_SETTLEMENT_AMOUNT_CENTS,
+      );
     });
 
     it('should fail to create a settlement with negative amount', () => {
       const props = {
-        ...createValidSettlementProps(),
+        ...createDueSettlementProps(UniqueId.generate()),
         amount: Amount.fromCents(-5000),
       };
 
@@ -48,14 +63,12 @@ describe('DueSettlementEntity', () => {
     });
 
     it('should generate unique ids for each settlement', () => {
-      const props = createValidSettlementProps();
+      const dueId = UniqueId.generate();
 
-      const result1 = DueSettlementEntity.create(props);
-      const result2 = DueSettlementEntity.create(props);
+      const settlement1 = createTestDueSettlement(dueId);
+      const settlement2 = createTestDueSettlement(dueId);
 
-      expect(result1._unsafeUnwrap().id.value).not.toBe(
-        result2._unsafeUnwrap().id.value,
-      );
+      expect(settlement1.id.value).not.toBe(settlement2.id.value);
     });
   });
 
@@ -66,14 +79,18 @@ describe('DueSettlementEntity', () => {
       const paymentId = UniqueId.generate();
 
       const settlement = DueSettlementEntity.fromPersistence({
-        amount: Amount.fromCents(3000)._unsafeUnwrap(),
+        amount: Amount.fromCents(
+          TEST_ALT_DUE_SETTLEMENT_AMOUNT_CENTS,
+        )._unsafeUnwrap(),
         dueId,
         memberLedgerEntryId,
         paymentId,
         status: DueSettlementStatus.APPLIED,
       });
 
-      expect(settlement.amount.cents).toBe(3000);
+      expect(settlement.amount.cents).toBe(
+        TEST_ALT_DUE_SETTLEMENT_AMOUNT_CENTS,
+      );
       expect(settlement.dueId).toBe(dueId);
       expect(settlement.memberLedgerEntryId).toBe(memberLedgerEntryId);
       expect(settlement.paymentId).toBe(paymentId);
@@ -82,7 +99,9 @@ describe('DueSettlementEntity', () => {
 
     it('should create a voided settlement from persisted data', () => {
       const settlement = DueSettlementEntity.fromPersistence({
-        amount: Amount.fromCents(3000)._unsafeUnwrap(),
+        amount: Amount.fromCents(
+          TEST_ALT_DUE_SETTLEMENT_AMOUNT_CENTS,
+        )._unsafeUnwrap(),
         dueId: UniqueId.generate(),
         memberLedgerEntryId: UniqueId.generate(),
         paymentId: UniqueId.generate(),
@@ -96,9 +115,9 @@ describe('DueSettlementEntity', () => {
 
   describe('isApplied', () => {
     it('should return true when status is APPLIED', () => {
-      const settlement = DueSettlementEntity.create(
-        createValidSettlementProps(),
-      )._unsafeUnwrap();
+      const dueId = UniqueId.generate();
+
+      const settlement = createTestDueSettlement(dueId);
 
       expect(settlement.isApplied()).toBe(true);
     });
@@ -130,9 +149,9 @@ describe('DueSettlementEntity', () => {
     });
 
     it('should return false when status is APPLIED', () => {
-      const settlement = DueSettlementEntity.create(
-        createValidSettlementProps(),
-      )._unsafeUnwrap();
+      const dueId = UniqueId.generate();
+
+      const settlement = createTestDueSettlement(dueId);
 
       expect(settlement.isVoided()).toBe(false);
     });
@@ -140,9 +159,8 @@ describe('DueSettlementEntity', () => {
 
   describe('void', () => {
     it('should change status to VOIDED', () => {
-      const settlement = DueSettlementEntity.create(
-        createValidSettlementProps(),
-      )._unsafeUnwrap();
+      const dueId = UniqueId.generate();
+      const settlement = createTestDueSettlement(dueId);
 
       expect(settlement.isApplied()).toBe(true);
 
@@ -154,9 +172,8 @@ describe('DueSettlementEntity', () => {
     });
 
     it('should be idempotent', () => {
-      const settlement = DueSettlementEntity.create(
-        createValidSettlementProps(),
-      )._unsafeUnwrap();
+      const dueId = UniqueId.generate();
+      const settlement = createTestDueSettlement(dueId);
 
       settlement.void();
       settlement.void();
@@ -167,9 +184,8 @@ describe('DueSettlementEntity', () => {
 
   describe('entity equality', () => {
     it('should be equal when ids match', () => {
-      const settlement1 = DueSettlementEntity.create(
-        createValidSettlementProps(),
-      )._unsafeUnwrap();
+      const dueId = UniqueId.generate();
+      const settlement1 = createTestDueSettlement(dueId);
 
       // Create another settlement with the same entity (clone-like behavior)
       const settlement2 = DueSettlementEntity.fromPersistence({
@@ -186,10 +202,10 @@ describe('DueSettlementEntity', () => {
     });
 
     it('should not be equal when ids differ', () => {
-      const props = createValidSettlementProps();
+      const dueId = UniqueId.generate();
 
-      const settlement1 = DueSettlementEntity.create(props)._unsafeUnwrap();
-      const settlement2 = DueSettlementEntity.create(props)._unsafeUnwrap();
+      const settlement1 = createTestDueSettlement(dueId);
+      const settlement2 = createTestDueSettlement(dueId);
 
       expect(settlement1.equals(settlement2)).toBe(false);
     });
@@ -197,7 +213,9 @@ describe('DueSettlementEntity', () => {
 
   describe('getters', () => {
     it('should return all properties correctly', () => {
-      const props = createValidSettlementProps();
+      const dueId = UniqueId.generate();
+      const props = createDueSettlementProps(dueId);
+
       const settlement = DueSettlementEntity.create(props)._unsafeUnwrap();
 
       expect(settlement.amount).toBe(props.amount);

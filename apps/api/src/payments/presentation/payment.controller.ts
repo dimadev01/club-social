@@ -28,6 +28,7 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { BaseController } from '@/shared/presentation/controller';
 import { ApiPaginatedResponse } from '@/shared/presentation/decorators/api-paginated.decorator';
@@ -43,6 +44,10 @@ import {
   type PaymentRepository,
 } from '../domain/payment.repository';
 import { CreatePaymentRequestDto } from './dto/create-payment.dto';
+import {
+  GetPaymentDailyStatisticsRequestDto,
+  PaymentDailyStatisticsResponseDto,
+} from './dto/payment-daily-statistics.dto';
 import {
   PaymentPaginatedExtraResponseDto,
   PaymentPaginatedResponseDto,
@@ -182,6 +187,17 @@ export class PaymentsController extends BaseController {
       paidDuesCount,
       total,
     };
+  }
+
+  @Get('statistics/daily')
+  public async getDailyStatistics(
+    @Query() query: GetPaymentDailyStatisticsRequestDto,
+  ): Promise<PaymentDailyStatisticsResponseDto> {
+    const days = await this.paymentRepository.findDailyStatistics(
+      DateOnly.raw({ value: query.month }),
+    );
+
+    return { days };
   }
 
   @Get('export')

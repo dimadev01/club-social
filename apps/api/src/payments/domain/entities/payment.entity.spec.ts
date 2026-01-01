@@ -3,74 +3,64 @@ import { PaymentStatus } from '@club-social/shared/payments';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import {
+  TEST_ALT_PAYMENT_AMOUNT_CENTS,
+  TEST_ALT_PAYMENT_DATE,
+  TEST_ALT_PAYMENT_NOTES,
+  TEST_ALT_PAYMENT_RECEIPT_NUMBER,
+  TEST_CREATED_BY,
+  TEST_PAYMENT_AMOUNT_CENTS,
+  TEST_PAYMENT_DATE,
+  TEST_PAYMENT_NOTES,
+  TEST_PAYMENT_RECEIPT_NUMBER,
+} from '@/shared/test/constants';
+import { createPaymentProps, createTestPayment } from '@/shared/test/factories';
 
 import { PaymentCreatedEvent } from '../events/payment-created.event';
 import { PaymentUpdatedEvent } from '../events/payment-updated.event';
 import { PaymentEntity } from './payment.entity';
 
 describe('PaymentEntity', () => {
-  const createValidPaymentProps = () => ({
-    amount: Amount.fromCents(10000)._unsafeUnwrap(),
-    date: DateOnly.fromString('2024-01-15')._unsafeUnwrap(),
-    dueIds: [UniqueId.generate()],
-    memberId: UniqueId.generate(),
-    notes: 'Test payment',
-    receiptNumber: 'REC-001',
-  });
-
   describe('create', () => {
     it('should create a payment with valid props', () => {
-      const props = createValidPaymentProps();
-      const createdBy = 'user-123';
+      const props = createPaymentProps();
 
-      const result = PaymentEntity.create(props, createdBy);
+      const result = PaymentEntity.create(props, TEST_CREATED_BY);
 
       expect(result.isOk()).toBe(true);
       const payment = result._unsafeUnwrap();
-      expect(payment.amount.cents).toBe(10000);
-      expect(payment.date.value).toBe('2024-01-15');
+      expect(payment.amount.cents).toBe(TEST_PAYMENT_AMOUNT_CENTS);
+      expect(payment.date.value).toBe(TEST_PAYMENT_DATE);
       expect(payment.dueIds).toHaveLength(1);
       expect(payment.memberId).toBe(props.memberId);
-      expect(payment.notes).toBe('Test payment');
-      expect(payment.receiptNumber).toBe('REC-001');
+      expect(payment.notes).toBe(TEST_PAYMENT_NOTES);
+      expect(payment.receiptNumber).toBe(TEST_PAYMENT_RECEIPT_NUMBER);
       expect(payment.status).toBe(PaymentStatus.PAID);
       expect(payment.voidedAt).toBeNull();
       expect(payment.voidedBy).toBeNull();
       expect(payment.voidReason).toBeNull();
-      expect(payment.createdBy).toBe(createdBy);
+      expect(payment.createdBy).toBe(TEST_CREATED_BY);
     });
 
     it('should create a payment with null notes and receiptNumber', () => {
-      const props = {
-        ...createValidPaymentProps(),
+      const payment = createTestPayment({
         notes: null,
         receiptNumber: null,
-      };
+      });
 
-      const result = PaymentEntity.create(props, 'user-123');
-
-      expect(result.isOk()).toBe(true);
-      const payment = result._unsafeUnwrap();
       expect(payment.notes).toBeNull();
       expect(payment.receiptNumber).toBeNull();
     });
 
     it('should generate a unique id', () => {
-      const props = createValidPaymentProps();
+      const payment1 = createTestPayment();
+      const payment2 = createTestPayment();
 
-      const result1 = PaymentEntity.create(props, 'user-123');
-      const result2 = PaymentEntity.create(props, 'user-123');
-
-      expect(result1._unsafeUnwrap().id.value).not.toBe(
-        result2._unsafeUnwrap().id.value,
-      );
+      expect(payment1.id.value).not.toBe(payment2.id.value);
     });
 
     it('should add PaymentCreatedEvent on creation', () => {
-      const props = createValidPaymentProps();
-
-      const result = PaymentEntity.create(props, 'user-123');
-      const payment = result._unsafeUnwrap();
+      const payment = createTestPayment();
       const events = payment.pullEvents();
 
       expect(events).toHaveLength(1);
@@ -87,12 +77,14 @@ describe('PaymentEntity', () => {
 
       const payment = PaymentEntity.fromPersistence(
         {
-          amount: Amount.fromCents(5000)._unsafeUnwrap(),
-          date: DateOnly.fromString('2024-02-20')._unsafeUnwrap(),
+          amount: Amount.fromCents(
+            TEST_ALT_PAYMENT_AMOUNT_CENTS,
+          )._unsafeUnwrap(),
+          date: DateOnly.fromString(TEST_ALT_PAYMENT_DATE)._unsafeUnwrap(),
           dueIds,
           memberId,
-          notes: 'Persisted payment',
-          receiptNumber: 'REC-002',
+          notes: TEST_ALT_PAYMENT_NOTES,
+          receiptNumber: TEST_ALT_PAYMENT_RECEIPT_NUMBER,
           status: PaymentStatus.PAID,
           voidedAt: null,
           voidedBy: null,
@@ -100,8 +92,8 @@ describe('PaymentEntity', () => {
         },
         {
           audit: {
-            createdAt: new Date('2024-02-20'),
-            createdBy: 'admin',
+            createdAt: new Date(TEST_ALT_PAYMENT_DATE),
+            createdBy: TEST_CREATED_BY,
             updatedAt: null,
             updatedBy: null,
           },
@@ -110,9 +102,9 @@ describe('PaymentEntity', () => {
       );
 
       expect(payment.id).toBe(id);
-      expect(payment.amount.cents).toBe(5000);
+      expect(payment.amount.cents).toBe(TEST_ALT_PAYMENT_AMOUNT_CENTS);
       expect(payment.status).toBe(PaymentStatus.PAID);
-      expect(payment.createdBy).toBe('admin');
+      expect(payment.createdBy).toBe(TEST_CREATED_BY);
     });
 
     it('should create a voided payment from persisted data', () => {
@@ -120,15 +112,17 @@ describe('PaymentEntity', () => {
 
       const payment = PaymentEntity.fromPersistence(
         {
-          amount: Amount.fromCents(5000)._unsafeUnwrap(),
-          date: DateOnly.fromString('2024-02-20')._unsafeUnwrap(),
+          amount: Amount.fromCents(
+            TEST_ALT_PAYMENT_AMOUNT_CENTS,
+          )._unsafeUnwrap(),
+          date: DateOnly.fromString(TEST_ALT_PAYMENT_DATE)._unsafeUnwrap(),
           dueIds: [],
           memberId: UniqueId.generate(),
           notes: null,
           receiptNumber: null,
           status: PaymentStatus.VOIDED,
           voidedAt,
-          voidedBy: 'admin',
+          voidedBy: TEST_CREATED_BY,
           voidReason: 'Duplicate payment',
         },
         {
@@ -139,15 +133,14 @@ describe('PaymentEntity', () => {
 
       expect(payment.status).toBe(PaymentStatus.VOIDED);
       expect(payment.voidedAt).toBe(voidedAt);
-      expect(payment.voidedBy).toBe('admin');
+      expect(payment.voidedBy).toBe(TEST_CREATED_BY);
       expect(payment.voidReason).toBe('Duplicate payment');
     });
   });
 
   describe('clone', () => {
     it('should create an exact copy of the payment', () => {
-      const props = createValidPaymentProps();
-      const original = PaymentEntity.create(props, 'user-123')._unsafeUnwrap();
+      const original = createTestPayment();
 
       const cloned = original.clone();
 
@@ -161,11 +154,11 @@ describe('PaymentEntity', () => {
     });
 
     it('should create an independent copy', () => {
-      const props = createValidPaymentProps();
-      const original = PaymentEntity.create(props, 'user-123')._unsafeUnwrap();
+      const original = createTestPayment();
+      original.pullEvents();
       const cloned = original.clone();
 
-      original.void({ voidedBy: 'admin', voidReason: 'Test void' });
+      original.void({ voidedBy: TEST_CREATED_BY, voidReason: 'Test void' });
 
       expect(original.isVoided()).toBe(true);
       expect(cloned.isVoided()).toBe(false);
@@ -174,10 +167,7 @@ describe('PaymentEntity', () => {
 
   describe('isPaid', () => {
     it('should return true when status is PAID', () => {
-      const payment = PaymentEntity.create(
-        createValidPaymentProps(),
-        'user-123',
-      )._unsafeUnwrap();
+      const payment = createTestPayment();
 
       expect(payment.isPaid()).toBe(true);
     });
@@ -193,7 +183,7 @@ describe('PaymentEntity', () => {
           receiptNumber: null,
           status: PaymentStatus.VOIDED,
           voidedAt: new Date(),
-          voidedBy: 'admin',
+          voidedBy: TEST_CREATED_BY,
           voidReason: 'Test',
         },
         {
@@ -218,7 +208,7 @@ describe('PaymentEntity', () => {
           receiptNumber: null,
           status: PaymentStatus.VOIDED,
           voidedAt: new Date(),
-          voidedBy: 'admin',
+          voidedBy: TEST_CREATED_BY,
           voidReason: 'Test',
         },
         {
@@ -231,10 +221,7 @@ describe('PaymentEntity', () => {
     });
 
     it('should return false when status is PAID', () => {
-      const payment = PaymentEntity.create(
-        createValidPaymentProps(),
-        'user-123',
-      )._unsafeUnwrap();
+      const payment = createTestPayment();
 
       expect(payment.isVoided()).toBe(false);
     });
@@ -242,33 +229,27 @@ describe('PaymentEntity', () => {
 
   describe('void', () => {
     it('should void a paid payment', () => {
-      const payment = PaymentEntity.create(
-        createValidPaymentProps(),
-        'user-123',
-      )._unsafeUnwrap();
-      payment.pullEvents(); // Clear creation event
+      const payment = createTestPayment();
+      payment.pullEvents();
 
       const result = payment.void({
-        voidedBy: 'admin',
+        voidedBy: TEST_CREATED_BY,
         voidReason: 'Customer request',
       });
 
       expect(result.isOk()).toBe(true);
       expect(payment.status).toBe(PaymentStatus.VOIDED);
-      expect(payment.voidedBy).toBe('admin');
+      expect(payment.voidedBy).toBe(TEST_CREATED_BY);
       expect(payment.voidReason).toBe('Customer request');
       expect(payment.voidedAt).toBeInstanceOf(Date);
-      expect(payment.updatedBy).toBe('admin');
+      expect(payment.updatedBy).toBe(TEST_CREATED_BY);
     });
 
     it('should add PaymentUpdatedEvent when voiding', () => {
-      const payment = PaymentEntity.create(
-        createValidPaymentProps(),
-        'user-123',
-      )._unsafeUnwrap();
-      payment.pullEvents(); // Clear creation event
+      const payment = createTestPayment();
+      payment.pullEvents();
 
-      payment.void({ voidedBy: 'admin', voidReason: 'Test' });
+      payment.void({ voidedBy: TEST_CREATED_BY, voidReason: 'Test' });
 
       const events = payment.pullEvents();
       expect(events).toHaveLength(1);
@@ -290,7 +271,7 @@ describe('PaymentEntity', () => {
           receiptNumber: null,
           status: PaymentStatus.VOIDED,
           voidedAt: new Date(),
-          voidedBy: 'admin',
+          voidedBy: TEST_CREATED_BY,
           voidReason: 'Already voided',
         },
         {
@@ -300,7 +281,7 @@ describe('PaymentEntity', () => {
       );
 
       const result = payment.void({
-        voidedBy: 'admin',
+        voidedBy: TEST_CREATED_BY,
         voidReason: 'Try again',
       });
 
@@ -343,35 +324,15 @@ describe('PaymentEntity', () => {
           voidedBy: null,
           voidReason: null,
         },
-        { audit: { createdBy: 'admin' }, id },
+        { audit: { createdBy: TEST_CREATED_BY }, id },
       );
 
       expect(payment1.equals(payment2)).toBe(true);
     });
 
     it('should not be equal when ids differ', () => {
-      const baseProps = {
-        amount: Amount.fromCents(1000)._unsafeUnwrap(),
-        date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-        dueIds: [],
-        memberId: UniqueId.generate(),
-        notes: null,
-        receiptNumber: null,
-        status: PaymentStatus.PAID,
-        voidedAt: null,
-        voidedBy: null,
-        voidReason: null,
-      };
-
-      const payment1 = PaymentEntity.fromPersistence(baseProps, {
-        audit: { createdBy: 'user' },
-        id: UniqueId.generate(),
-      });
-
-      const payment2 = PaymentEntity.fromPersistence(baseProps, {
-        audit: { createdBy: 'user' },
-        id: UniqueId.generate(),
-      });
+      const payment1 = createTestPayment();
+      const payment2 = createTestPayment();
 
       expect(payment1.equals(payment2)).toBe(false);
     });

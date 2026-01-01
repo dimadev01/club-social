@@ -17,12 +17,14 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
+import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { PaymentEntity } from '../domain/entities/payment.entity';
 import {
+  PaymentDailyStatisticsReadModel,
   PaymentPaginatedExtraReadModel,
   PaymentPaginatedReadModel,
   PaymentReadModel,
@@ -86,6 +88,38 @@ export class PrismaPaymentRepository implements PaymentRepository {
     });
 
     return payments.map((payment) => this.paymentMapper.toDomain(payment));
+  }
+
+  public async findDailyStatistics(
+    date: DateOnly,
+  ): Promise<PaymentDailyStatisticsReadModel[]> {
+    const endDate = date.endOfMonth();
+
+    const result = await this.prismaService.payment.groupBy({
+      _count: {
+        id: true,
+      },
+      _sum: {
+        amount: true,
+      },
+      by: ['date'],
+      orderBy: {
+        date: 'asc',
+      },
+      where: {
+        date: {
+          gte: date.value,
+          lte: endDate.value,
+        },
+        status: PaymentStatus.PAID,
+      },
+    });
+
+    return result.map((row) => ({
+      amount: row._sum.amount ?? 0,
+      count: row._count.id,
+      date: row.date,
+    }));
   }
 
   public async findForExport(

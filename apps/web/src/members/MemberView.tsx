@@ -14,7 +14,6 @@ import { appRoutes } from '@/app/app.enum';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
 import { useMemberById } from './useMemberById';
@@ -37,7 +36,7 @@ export function MemberView() {
   const canEdit = permissions.members.update;
 
   return (
-    <Page
+    <Card
       actions={[
         canEdit && (
           <Button
@@ -114,6 +113,6 @@ export function MemberView() {
           },
         ]}
       />
-    </Page>
+    </Card>
   );
 }

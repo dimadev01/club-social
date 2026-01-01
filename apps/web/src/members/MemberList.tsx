@@ -21,12 +21,13 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
+import { Card } from '@/ui/Card';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { LedgerIcon } from '@/ui/Icons/LedgerIcon';
 import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
 import { NavigateToMember } from '@/ui/NavigateMember';
 import { NotFound } from '@/ui/NotFound';
-import { Page, PageTableActions } from '@/ui/Page';
+import { PageTableActions } from '@/ui/Page';
 import { Table } from '@/ui/Table/Table';
 import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
 import { TableActions } from '@/ui/Table/TableActions';
@@ -84,7 +85,7 @@ export function MemberListPage() {
   }
 
   return (
-    <Page
+    <Card
       extra={
         <Space.Compact>
           <Button
@@ -285,6 +286,6 @@ export function MemberListPage() {
           </Table.Summary.Row>
         )}
       />
-    </Page>
+    </Card>
   );
 }

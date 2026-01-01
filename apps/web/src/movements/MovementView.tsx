@@ -18,7 +18,6 @@ import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
 import { NavigateToPayment } from '@/ui/NavigateToPayment';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 import { Row } from '@/ui/Row';
 import { VoidModal } from '@/ui/VoidModal';
 import { usePermissions } from '@/users/use-permissions';
@@ -59,7 +58,7 @@ export function MovementView() {
     movement.mode === MovementMode.MANUAL;
 
   return (
-    <Page
+    <Card
       actions={[
         canVoid && (
           <Button
@@ -129,6 +128,6 @@ export function MovementView() {
         }}
         open={isVoidModalOpen}
       />
-    </Page>
+    </Card>
   );
 }

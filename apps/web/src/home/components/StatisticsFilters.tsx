@@ -14,7 +14,6 @@ export function StatisticsFilters({ onChange, value }: StatisticsFiltersProps) {
   return (
     <>
       <DatePicker.RangePicker
-        className="w-full"
         format={DateFormats.date}
         onChange={(dates) => {
           if (dates && dates[0] && dates[1]) {

@@ -1,40 +1,16 @@
-import type { Dayjs } from 'dayjs';
-
 import { Space } from 'antd';
-import dayjs from 'dayjs';
-import { useState } from 'react';
 
 import { Page } from '@/ui/Page';
 
-import { DuePendingStatisticsCard } from './components/DuePendingStatisticsCard';
-import { MovementStatisticsCard } from './components/MovementStatisticsCard';
-import { PaymentStatisticsCard } from './components/PaymentStatisticsCard';
-import { StatisticsFilters } from './components/StatisticsFilters';
+import { MainStatisticsCard } from './components/MainStatisticsCard';
+import { PaymentChartCard } from './components/PaymentChartCard';
 
 export function Home() {
-  const [dateRange, setDateRange] = useState<[Dayjs, Dayjs] | null>([
-    dayjs().startOf('month'),
-    dayjs(),
-  ]);
-
   return (
-    <Page
-      classNames={{
-        header:
-          '[&>.ant-card-head-wrapper]:flex-wrap [&>.ant-card-head-wrapper]:gap-2 [&>.ant-card-head-wrapper]:py-2',
-      }}
-      extra={
-        <StatisticsFilters
-          onChange={(dates) => setDateRange(dates)}
-          value={dateRange ?? undefined}
-        />
-      }
-      title="Balance"
-    >
+    <Page>
       <Space className="flex" vertical>
-        <PaymentStatisticsCard dateRange={dateRange} />
-        <MovementStatisticsCard dateRange={dateRange} />
-        <DuePendingStatisticsCard dateRange={dateRange} />
+        <MainStatisticsCard />
+        <PaymentChartCard />
       </Space>
     </Page>
   );

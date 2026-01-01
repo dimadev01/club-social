@@ -9,9 +9,9 @@ import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { Card } from '@/ui/Card';
 import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueForm, type DueFormData } from './DueForm';
@@ -43,7 +43,7 @@ export function DueEdit() {
   }
 
   if (isLoading) {
-    return <Page loading title="Editar deuda" />;
+    return <Card loading title="Editar deuda" />;
   }
 
   if (!due) {
@@ -66,7 +66,7 @@ export function DueEdit() {
   ];
 
   return (
-    <Page
+    <Card
       actions={[
         <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Actualizar deuda
@@ -89,6 +89,6 @@ export function DueEdit() {
         mode="edit"
         onSubmit={handleSubmit}
       />
-    </Page>
+    </Card>
   );
 }

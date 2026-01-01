@@ -4,6 +4,7 @@ import type { DateRangeDto } from '@club-social/shared/types';
 
 import { createQueryKeyStore } from '@lukemorales/query-key-factory';
 
+import type { UsePaymentDailyStatisticsQuery } from '@/home/usePaymentDailyStatistics';
 import type { UsePaymentStatisticsQuery } from '@/home/usePaymentStatistics';
 import type { TableQuery } from '@/ui/Table/useTable';
 
@@ -44,6 +45,7 @@ export const queryKeys = createQueryKeyStore({
   },
 
   payments: {
+    dailyStatistics: (query?: UsePaymentDailyStatisticsQuery) => [query],
     detail: (id?: string) => [id],
     dues: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],

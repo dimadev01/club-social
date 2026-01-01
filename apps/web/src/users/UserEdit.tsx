@@ -5,9 +5,9 @@ import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { Card } from '@/ui/Card';
 import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 
 import { usePermissions } from './use-permissions';
 import { UserForm, type UserFormData } from './UserForm';
@@ -43,7 +43,7 @@ export function UserEdit() {
   }
 
   if (isLoading) {
-    return <Page loading title="Editar usuario" />;
+    return <Card loading title="Editar usuario" />;
   }
 
   if (!user) {
@@ -53,7 +53,7 @@ export function UserEdit() {
   const isMutating = updateUserMutation.isPending;
 
   return (
-    <Page
+    <Card
       actions={[
         <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Actualizar usuario
@@ -73,6 +73,6 @@ export function UserEdit() {
         mode="edit"
         onSubmit={handleSubmit}
       />
-    </Page>
+    </Card>
   );
 }

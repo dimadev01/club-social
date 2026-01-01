@@ -11,9 +11,9 @@ import { useNavigate } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { Card } from '@/ui/Card';
 import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
 import { NotFound } from '@/ui/NotFound';
-import { Page } from '@/ui/Page';
 import { usePermissions } from '@/users/use-permissions';
 
 import { MovementForm, type MovementFormData } from './MovementForm';
@@ -55,7 +55,7 @@ export function MovementNew() {
   const isMutating = createMovementMutation.isPending;
 
   return (
-    <Page
+    <Card
       actions={[
         <FormSubmitButton disabled={isMutating} loading={isMutating}>
           Crear movimiento
@@ -75,6 +75,6 @@ export function MovementNew() {
         }}
         onSubmit={handleSubmit}
       />
-    </Page>
+    </Card>
   );
 }
