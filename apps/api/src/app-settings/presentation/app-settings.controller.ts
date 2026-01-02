@@ -26,7 +26,7 @@ import { AppSettingKey } from '../domain/app-setting.types';
 import { AppSettingEntity } from '../domain/entities/app-setting.entity';
 import { AppSettingService } from '../infrastructure/app-setting.service';
 import { AppSettingDto, MaintenanceModeDto } from './dto/app-setting.dto';
-import { UpdateMaintenanceModeDto } from './dto/update-setting.dto';
+import { UpdateMaintenanceModeRequestDto } from './dto/update-setting.dto';
 
 @ApiTags('App Settings')
 @Controller('app-settings')
@@ -66,7 +66,7 @@ export class AppSettingsController extends BaseController {
 
   @Patch('maintenance-mode')
   public async updateMaintenanceMode(
-    @Body() body: UpdateMaintenanceModeDto,
+    @Body() body: UpdateMaintenanceModeRequestDto,
     @Session() session: AuthSession,
   ): Promise<AppSettingDto> {
     this.requireAdmin(session);
