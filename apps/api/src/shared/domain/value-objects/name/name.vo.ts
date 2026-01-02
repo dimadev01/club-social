@@ -17,7 +17,7 @@ export class Name extends ValueObject<Props> {
   }
 
   public get fullNameFirstNameFirst(): string {
-    return `${this.firstName} ${this.lastName}`;
+    return this.toString();
   }
 
   public get fullNameLastNameFirst(): string {
