@@ -15,7 +15,13 @@ export class Amount extends SignedAmount {
       return err(new ApplicationError('Amount cannot be negative'));
     }
 
-    return ok(new SignedAmount({ cents }));
+    const signedAmount = SignedAmount.fromCents(cents);
+
+    if (signedAmount.isErr()) {
+      return err(signedAmount.error);
+    }
+
+    return ok(new Amount({ cents: signedAmount.value.cents }));
   }
 
   public static fromDollars(dollars: number): Result<Amount> {
