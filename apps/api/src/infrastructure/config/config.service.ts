@@ -69,18 +69,6 @@ export class ConfigService {
   })
   public readonly trustedOrigins: string[];
 
-  @IsString()
-  @Value('UNLEASH_API_KEY')
-  public readonly unleashApiKey: string;
-
-  @IsString()
-  @Value('UNLEASH_APP_NAME')
-  public readonly unleashAppName: string;
-
-  @IsString()
-  @Value('UNLEASH_URL')
-  public readonly unleashUrl: string;
-
   public get isDev(): boolean {
     return this.environment === 'development';
   }

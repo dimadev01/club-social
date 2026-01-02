@@ -2,19 +2,14 @@ import { UserRole } from '@club-social/shared/users';
 import {
   CanActivate,
   ExecutionContext,
-  Inject,
   Injectable,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 
+import { AppSettingService } from '@/app-settings/infrastructure/app-setting.service';
 import { AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
-import { FeatureFlag } from '@/infrastructure/feature-flags/feature-flags.enum';
-import {
-  FEATURE_FLAGS_SERVICE_PROVIDER,
-  FeatureFlagsService,
-} from '@/infrastructure/feature-flags/feature-flags.service';
 
 import { IS_PUBLIC_KEY } from '../decorators/public-route.decorator';
 import { SKIP_MAINTENANCE_CHECK_KEY } from '../decorators/skip-maintenance-check.decorator';
@@ -23,11 +18,10 @@ import { SKIP_MAINTENANCE_CHECK_KEY } from '../decorators/skip-maintenance-check
 export class MaintenanceModeGuard implements CanActivate {
   public constructor(
     private readonly reflector: Reflector,
-    @Inject(FEATURE_FLAGS_SERVICE_PROVIDER)
-    private readonly featureFlagsService: FeatureFlagsService,
+    private readonly appSettingService: AppSettingService,
   ) {}
 
-  public canActivate(context: ExecutionContext): boolean {
+  public async canActivate(context: ExecutionContext): Promise<boolean> {
     const skipMaintenanceCheck = this.reflector.getAllAndOverride<boolean>(
       SKIP_MAINTENANCE_CHECK_KEY,
       [context.getHandler(), context.getClass()],
@@ -46,11 +40,9 @@ export class MaintenanceModeGuard implements CanActivate {
       return true;
     }
 
-    const isMaintenanceMode = this.featureFlagsService.isEnabled(
-      FeatureFlag.MAINTENANCE_MODE,
-    );
+    const maintenanceMode = await this.appSettingService.getMaintenanceMode();
 
-    if (!isMaintenanceMode) {
+    if (!maintenanceMode.enabled) {
       return true;
     }
 

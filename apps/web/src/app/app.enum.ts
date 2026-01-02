@@ -1,4 +1,5 @@
 export const appRoutes = {
+  appSettings: '/app-settings',
   auditLogs: {
     list: '/audit-logs',
   } as const,
@@ -18,7 +19,6 @@ export const appRoutes = {
     view: ':id',
   } as const,
   home: '/',
-  maintenanceMode: '/maintenance-mode',
   memberLedger: {
     list: '/member-ledger',
     new: '/member-ledger/new',

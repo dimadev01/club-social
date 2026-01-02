@@ -19,7 +19,10 @@
       "Bash(npx prisma migrate dev:*)",
       "Bash(turbo build:*)",
       "Bash(npm install:*)",
-      "Bash(npm test:*)"
+      "Bash(npm test:*)",
+      "Bash(npm run new-migration:*)",
+      "Bash(npm run generate-schema:*)",
+      "Bash(npm ls:*)"
     ]
   },
   "outputStyle": "default"

@@ -9,16 +9,17 @@ import type { UsePaymentStatisticsQuery } from '@/home/usePaymentStatistics';
 import type { TableQuery } from '@/ui/Table/useTable';
 
 export const queryKeys = createQueryKeyStore({
+  appSettings: {
+    all: null,
+    maintenanceMode: null,
+  },
+
   dues: {
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
     payments: (id?: string) => [id],
     pending: (memberId?: string) => [memberId],
     pendingStatistics: (query?: DateRangeDto) => [query],
-  },
-
-  featureFlags: {
-    maintenanceMode: null,
   },
 
   memberLedger: {
