@@ -171,6 +171,7 @@ export class BetterAuthService {
       },
       plugins: buildPlugins({
         passkey: {
+          origin: this.configService.trustedOrigins,
           rpID: this.configService.appDomain,
           rpName: this.configService.appDisplayName,
         },
