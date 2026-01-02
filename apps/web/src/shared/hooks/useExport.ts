@@ -37,7 +37,7 @@ export function useExport({
           }
         });
 
-        const url = `${import.meta.env.VITE_APP_API_URL}${endpoint}?${params.toString()}`;
+        const url = `${import.meta.env.VITE_API_URL}${endpoint}?${params.toString()}`;
 
         const response = await fetch(url, {
           credentials: 'include',

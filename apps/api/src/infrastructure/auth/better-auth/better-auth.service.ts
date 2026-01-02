@@ -68,8 +68,6 @@ const buildPlugins = (options?: BuildPluginsOptions) => [
       if (options?.sendMagicLink) {
         return options.sendMagicLink(data);
       }
-
-      console.log(data);
     },
   }),
   buildPasskeyPlugin(options?.passkey),
