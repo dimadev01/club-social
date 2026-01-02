@@ -55,11 +55,15 @@ describe('DueSettlementEntity', () => {
     it('should fail to create a settlement with negative amount', () => {
       const props = {
         ...createDueSettlementProps(UniqueId.generate()),
-        amount: Amount.fromCents(-5000),
+        amount: Amount.raw({ cents: -5000 }),
       };
 
-      // Amount.fromCents already validates negative amounts
-      expect(props.amount.isErr()).toBe(true);
+      const result = DueSettlementEntity.create(props);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe(
+        'El monto del settlement debe ser positivo',
+      );
     });
 
     it('should generate unique ids for each settlement', () => {
