@@ -15,9 +15,11 @@ async function bootstrap() {
 
   app.set('query parser', 'extended');
 
+  const configService = app.get(ConfigService);
+
   app.enableCors({
     credentials: true,
-    origin: 'http://localhost:5173',
+    origin: configService.trustedOrigins,
   });
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
@@ -43,8 +45,6 @@ async function bootstrap() {
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
-
-  const configService = app.get(ConfigService);
 
   await app.listen(configService.port, '::');
 

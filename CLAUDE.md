@@ -230,7 +230,7 @@ Located in `shared/domain/errors/`:
 **Auth**: Better Auth with passkey support
 
 - Service: `src/infrastructure/auth/better-auth/`
-- Env: `BETTER_AUTH_SECRET`, `BETTER_AUTH_TRUSTED_ORIGINS`
+- Env: `BETTER_AUTH_SECRET`, `TRUSTED_ORIGINS`
 
 **Config**: Type-safe configuration with `@itgorillaz/configify`
 
@@ -381,7 +381,7 @@ Critical variables (see `.env.example` files):
 - `DATABASE_URI`: PostgreSQL connection string
 - `BETTER_AUTH_SECRET`: Auth encryption secret
 - `BETTER_AUTH_URL`: Auth URL
-- `BETTER_AUTH_TRUSTED_ORIGINS`: Allowed frontend origins (comma-separated)
+- `TRUSTED_ORIGINS`: Allowed frontend origins (comma-separated)
 - `APP_DISPLAY_NAME`: Application display name
 - `APP_DOMAIN`: Application domain
 - `ENVIRONMENT`: local | development | production
