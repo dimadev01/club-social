@@ -29,10 +29,6 @@ export class SignedAmount extends ValueObject<Props> {
       return err(new ApplicationError('Amount in cents must be an integer'));
     }
 
-    if (!Number.isFinite(cents)) {
-      return err(new ApplicationError('Amount must be a finite number'));
-    }
-
     if (cents > 9_999_999_999) {
       return err(new ApplicationError('Amount exceeds maximum allowed value'));
     }

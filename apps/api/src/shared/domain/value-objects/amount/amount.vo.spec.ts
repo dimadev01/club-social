@@ -25,11 +25,9 @@ describe('Amount', () => {
       );
     });
 
-    it('should return error for non-integer cents (validation is in SignedAmount)', () => {
-      // Note: Amount.fromCents only validates non-negative, integer check is in SignedAmount
+    it('should propagate SignedAmount validation for non‑integer cents', () => {
       const result = Amount.fromCents(10.5);
 
-      // This passes to SignedAmount which validates, but via ok() wrapping
       expect(result.isErr()).toBe(true);
     });
   });

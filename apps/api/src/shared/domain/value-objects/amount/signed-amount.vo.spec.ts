@@ -36,7 +36,6 @@ describe('SignedAmount', () => {
       const result = SignedAmount.fromCents(Infinity);
 
       expect(result.isErr()).toBe(true);
-      // Infinity fails the integer check before the finite check
       expect(result._unsafeUnwrapErr().message).toBe(
         'Amount in cents must be an integer',
       );

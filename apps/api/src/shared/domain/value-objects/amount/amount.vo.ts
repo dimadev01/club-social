@@ -11,17 +11,18 @@ export class Amount extends SignedAmount {
   public static fromCents(cents: number): Result<Amount> {
     Guard.number(cents);
 
-    if (cents < 0) {
-      return err(new ApplicationError('Amount cannot be negative'));
-    }
-
+    // First validate base class
     const signedAmount = SignedAmount.fromCents(cents);
 
     if (signedAmount.isErr()) {
       return err(signedAmount.error);
     }
 
-    return ok(new Amount({ cents: signedAmount.value.cents }));
+    if (cents < 0) {
+      return err(new ApplicationError('Amount cannot be negative'));
+    }
+
+    return ok(new Amount({ cents }));
   }
 
   public static fromDollars(dollars: number): Result<Amount> {
