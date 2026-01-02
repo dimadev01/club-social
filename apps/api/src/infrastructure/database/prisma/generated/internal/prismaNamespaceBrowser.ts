@@ -67,6 +67,7 @@ export const ModelName = {
   Movement: 'Movement',
   AuditLog: 'AuditLog',
   Pricing: 'Pricing',
+  AppSetting: 'AppSetting',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -323,6 +324,17 @@ export const PricingScalarFieldEnum = {
 export type PricingScalarFieldEnum =
   (typeof PricingScalarFieldEnum)[keyof typeof PricingScalarFieldEnum];
 
+export const AppSettingScalarFieldEnum = {
+  key: 'key',
+  value: 'value',
+  description: 'description',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+} as const;
+
+export type AppSettingScalarFieldEnum =
+  (typeof AppSettingScalarFieldEnum)[keyof typeof AppSettingScalarFieldEnum];
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc',
@@ -337,6 +349,13 @@ export const NullableJsonNullValueInput = {
 
 export type NullableJsonNullValueInput =
   (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput];
+
+export const JsonNullValueInput = {
+  JsonNull: 'JsonNull',
+} as const;
+
+export type JsonNullValueInput =
+  (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
 
 export const QueryMode = {
   default: 'default',

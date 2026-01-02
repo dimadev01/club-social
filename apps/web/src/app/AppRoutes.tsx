@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
+import { AppSettingsPage } from '@/app-settings/AppSettingsPage';
 import { AuditLogsList } from '@/audit-logs/AuditLogsList';
 import { LoginPage } from '@/auth/LoginPage';
 import { LogoutPage } from '@/auth/LogoutPage';
@@ -105,6 +106,7 @@ export function AppRoutes() {
           </Route>
 
           <Route element={<ProfilePage />} path={appRoutes.profile} />
+          <Route element={<AppSettingsPage />} path={appRoutes.appSettings} />
           <Route element={<LogoutPage />} path={appRoutes.auth.logout} />
         </Route>
 

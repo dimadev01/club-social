@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
 
+import { AppSettingsModule } from './app-settings/app-settings.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuditModule } from './audit/audit.module';
 import { DuesModule } from './dues/due.module';
 import { AuthModule } from './infrastructure/auth/auth.module';
+import { CacheModule } from './infrastructure/cache/cache.module';
 import { ConfigModule } from './infrastructure/config/config.module';
 import { CsvModule } from './infrastructure/csv/csv.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
 import { EventsModule } from './infrastructure/events/events.module';
-import { FeatureFlagsModule } from './infrastructure/feature-flags/feature-flags.module';
 import { HealthCheckModule } from './infrastructure/health-check/health-check.module';
 import { LoggerModule } from './infrastructure/logger/logger.module';
 import { ObservabilityModule } from './infrastructure/observability/observability.module';
@@ -34,9 +35,9 @@ import { UsersModule } from './users/user.module';
     TraceModule,
     DatabaseModule,
     AuthModule,
-    FeatureFlagsModule,
     HealthCheckModule,
     StorageModule,
+    CacheModule,
 
     UsersModule,
     MembersModule,
@@ -45,6 +46,7 @@ import { UsersModule } from './users/user.module';
     PricingModule,
     MovementsModule,
     AuditModule,
+    AppSettingsModule,
   ],
   providers: [
     AppService,

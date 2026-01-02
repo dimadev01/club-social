@@ -81,3 +81,8 @@ export type AuditLog = Prisma.AuditLogModel;
  *
  */
 export type Pricing = Prisma.PricingModel;
+/**
+ * Model AppSetting
+ *
+ */
+export type AppSetting = Prisma.AppSettingModel;

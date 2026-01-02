@@ -318,3 +318,13 @@ model Pricing {
   @@index([dueCategory, memberCategory, effectiveFrom, effectiveTo])
   @@map("pricing")
 }
+
+model AppSetting {
+  key         String   @id
+  value       Json
+  description String?
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?
+
+  @@map("app_setting")
+}
