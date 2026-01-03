@@ -1,11 +1,12 @@
 import type { SpaceCompactProps } from 'antd/es/space/Compact';
 
-import { Button, Space, Tooltip } from 'antd';
+import { Space } from 'antd';
 
 import { cn } from '@/shared/lib/utils';
 
+import { Button } from '../Button';
 import { FilterClearIcon } from '../Icons/FilterClearIcon';
-import { FilterResetIcon } from '../Icons/FilterResetICon';
+import { FilterResetIcon } from '../Icons/FilterResetICon2';
 
 interface Props extends SpaceCompactProps {
   clearFilters: () => void;
@@ -20,12 +21,18 @@ export function TableActions({
 }: Props) {
   return (
     <Space.Compact className={cn('ml-auto', className)} {...props}>
-      <Tooltip title="Filtros por defecto">
-        <Button icon={<FilterResetIcon />} onClick={resetFilters} type="text" />
-      </Tooltip>
-      <Tooltip title="Eliminar filtros">
-        <Button icon={<FilterClearIcon />} onClick={clearFilters} type="text" />
-      </Tooltip>
+      <Button
+        icon={<FilterResetIcon />}
+        onClick={resetFilters}
+        tooltip="Filtros por defecto"
+        type="text"
+      />
+      <Button
+        icon={<FilterClearIcon />}
+        onClick={clearFilters}
+        tooltip="Eliminar filtros"
+        type="text"
+      />
     </Space.Compact>
   );
 }

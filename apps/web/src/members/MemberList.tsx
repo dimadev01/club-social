@@ -11,7 +11,7 @@ import {
 } from '@club-social/shared/members';
 import { type PaginatedDataResultDto } from '@club-social/shared/types';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Dropdown, Space, Tooltip, Typography } from 'antd';
+import { Dropdown, Space, Typography } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -21,6 +21,7 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
+import { Button } from '@/ui/Button';
 import { Card } from '@/ui/Card';
 import { DuesIcon } from '@/ui/Icons/DuesIcon';
 import { LedgerIcon } from '@/ui/Icons/LedgerIcon';
@@ -212,42 +213,48 @@ export function MemberListPage() {
             fixed: 'right',
             render: (_, record) => (
               <Space.Compact size="small">
-                <Tooltip title="Ver deudas">
-                  <Link
-                    to={{
-                      pathname: appRoutes.dues.list,
-                      search: new URLSearchParams({
-                        filters: `memberId:${record.id}`,
-                      }).toString(),
-                    }}
-                  >
-                    <Button icon={<DuesIcon />} type="text" />
-                  </Link>
-                </Tooltip>
-                <Tooltip title="Ver pagos">
-                  <Link
-                    to={{
-                      pathname: appRoutes.payments.list,
-                      search: new URLSearchParams({
-                        filters: `memberId:${record.id}`,
-                      }).toString(),
-                    }}
-                  >
-                    <Button icon={<PaymentsIcon />} type="text" />
-                  </Link>
-                </Tooltip>
-                <Tooltip title="Ver libro mayor">
-                  <Link
-                    to={{
-                      pathname: appRoutes.memberLedger.list,
-                      search: new URLSearchParams({
-                        filters: `memberId:${record.id}`,
-                      }).toString(),
-                    }}
-                  >
-                    <Button icon={<LedgerIcon />} type="text" />
-                  </Link>
-                </Tooltip>
+                <Link
+                  to={{
+                    pathname: appRoutes.dues.list,
+                    search: new URLSearchParams({
+                      filters: `memberId:${record.id}`,
+                    }).toString(),
+                  }}
+                >
+                  <Button
+                    icon={<DuesIcon />}
+                    tooltip="Ver deudas"
+                    type="text"
+                  />
+                </Link>
+                <Link
+                  to={{
+                    pathname: appRoutes.payments.list,
+                    search: new URLSearchParams({
+                      filters: `memberId:${record.id}`,
+                    }).toString(),
+                  }}
+                >
+                  <Button
+                    icon={<PaymentsIcon />}
+                    tooltip="Ver pagos"
+                    type="text"
+                  />
+                </Link>
+                <Link
+                  to={{
+                    pathname: appRoutes.memberLedger.list,
+                    search: new URLSearchParams({
+                      filters: `memberId:${record.id}`,
+                    }).toString(),
+                  }}
+                >
+                  <Button
+                    icon={<LedgerIcon />}
+                    tooltip="Ver libro mayor"
+                    type="text"
+                  />
+                </Link>
               </Space.Compact>
             ),
             title: 'Acciones',
