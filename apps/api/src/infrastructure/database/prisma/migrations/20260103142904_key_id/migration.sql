@@ -6,14 +6,16 @@
   - Added the required column `id` to the `app_setting` table without a default value. This is not possible if the table is not empty.
 
 */
+
+-- Drop existing values
+DELETE FROM "app_setting";
+
 -- AlterTable
 ALTER TABLE "app_setting" DROP CONSTRAINT "app_setting_pkey",
 DROP COLUMN "key",
 ADD COLUMN     "id" TEXT NOT NULL,
 ADD CONSTRAINT "app_setting_pkey" PRIMARY KEY ("id");
 
--- Drop existing values
-DELETE FROM "app_setting";
 
 INSERT INTO "app_setting" ("id", "value", "description", "updatedAt")
 VALUES ('maintenance-mode', '{"enabled": false}', 'When enabled, only admins can access the system', NOW());
