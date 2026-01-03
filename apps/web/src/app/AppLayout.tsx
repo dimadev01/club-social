@@ -133,7 +133,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   return (
     <Layout className="min-h-screen" hasSider>
       <Layout.Sider
-        className="sticky top-0 left-0 h-screen overflow-auto [scrollbar-gutter:stable] [scrollbar-width:thin]"
+        className="h-screen overflow-auto [scrollbar-gutter:stable] [scrollbar-width:thin]"
         collapsed={collapsed}
         collapsible
         onCollapse={setCollapsed}
