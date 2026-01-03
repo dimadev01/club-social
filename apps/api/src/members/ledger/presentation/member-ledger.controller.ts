@@ -88,11 +88,15 @@ export class MemberLedgerController extends BaseController {
   public async export(
     @Query() query: ExportDataRequestDto,
     @Res() res: Response,
+    @Session() session: AuthSession,
   ): Promise<void> {
-    const entries = await this.memberLedgerRepository.findForExport({
-      filters: query.filters,
-      sort: query.sort,
-    });
+    const entries = await this.memberLedgerRepository.findForExport(
+      {
+        filters: query.filters,
+        sort: query.sort,
+      },
+      this.buildQueryContext(session),
+    );
 
     const stream = this.csvService.generateStream(entries, [
       { accessor: (row) => row.id, header: 'ID' },
@@ -140,19 +144,15 @@ export class MemberLedgerController extends BaseController {
       MemberLedgerEntryPaginatedExtraResponseDto
     >
   > {
-    if (session.memberId) {
-      query.filters = {
-        ...query.filters,
-        memberId: [session.memberId],
-      };
-    }
-
-    const result = await this.memberLedgerRepository.findPaginated({
-      filters: query.filters,
-      page: query.page,
-      pageSize: query.pageSize,
-      sort: query.sort,
-    });
+    const result = await this.memberLedgerRepository.findPaginated(
+      {
+        filters: query.filters,
+        page: query.page,
+        pageSize: query.pageSize,
+        sort: query.sort,
+      },
+      this.buildQueryContext(session),
+    );
 
     return {
       data: result.data.map((entry) => ({
@@ -189,8 +189,12 @@ export class MemberLedgerController extends BaseController {
   @Get(':id')
   public async getById(
     @Param() params: ParamIdReqResDto,
+    @Session() session: AuthSession,
   ): Promise<MemberLedgerEntryResponseDto> {
-    const entry = await this.memberLedgerRepository.findDetailById(params.id);
+    const entry = await this.memberLedgerRepository.findByIdReadModel(
+      UniqueId.raw({ value: params.id }),
+      this.buildQueryContext(session),
+    );
 
     if (!entry) {
       throw new NotFoundException('Entrada de libro mayor no encontrada');

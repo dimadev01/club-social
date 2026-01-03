@@ -38,6 +38,7 @@ export const usePermissions = () => {
       create: useHasPermission(Resource.MEMBERS, Action.CREATE),
       get: useHasPermission(Resource.MEMBERS, Action.GET),
       list: useHasPermission(Resource.MEMBERS, Action.LIST),
+      listAll: useHasPermission(Resource.MEMBERS, Action.LIST) && canListAll,
       update: useHasPermission(Resource.MEMBERS, Action.UPDATE),
       void: useHasPermission(Resource.MEMBERS, Action.VOID),
     } as const,
