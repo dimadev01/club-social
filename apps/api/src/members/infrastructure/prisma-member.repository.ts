@@ -186,6 +186,14 @@ export class PrismaMemberRepository implements MemberRepository {
     };
   }
 
+  public async findUniqueByUserId(userId: UniqueId): Promise<MemberEntity> {
+    const member = await this.prismaService.member.findUniqueOrThrow({
+      where: { userId: userId.value },
+    });
+
+    return this.memberMapper.toDomain(member);
+  }
+
   public async save(
     entity: MemberEntity,
     tx?: PrismaClientLike,

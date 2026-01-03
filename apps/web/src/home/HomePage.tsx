@@ -1,7 +1,7 @@
 import { UserRole } from '@club-social/shared/users';
 import { Space } from 'antd';
 
-import { useSession } from '@/auth/useSession';
+import { useSessionUser } from '@/auth/useUser';
 import { Page } from '@/ui/Page';
 
 import { MainStatisticsCard } from './components/MainStatisticsCard';
@@ -9,7 +9,7 @@ import { PaymentChartCard } from './components/PaymentChartCard';
 import { MemberHomePage } from './MemberHomePage';
 
 export function HomePage() {
-  const { user } = useSession();
+  const user = useSessionUser();
 
   if (user.role === UserRole.MEMBER) {
     return <MemberHomePage />;
