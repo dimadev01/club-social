@@ -1,4 +1,5 @@
 import type { MenuItemType } from 'antd/es/menu/interface';
+import type { PropsWithChildren } from 'react';
 
 import {
   FilePdfOutlined,
@@ -19,7 +20,6 @@ import {
   theme,
   Typography,
 } from 'antd';
-import { type PropsWithChildren, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
@@ -128,11 +128,7 @@ export function AppLayout({ children }: PropsWithChildren) {
     }
   }
 
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([
-    `/${location.pathname.split('/')[1]}`,
-  ]);
-
-  console.log(selectedKeys);
+  const selectedKeys = [`/${location.pathname.split('/')[1]}`];
 
   return (
     <Layout className="min-h-screen" hasSider>
@@ -178,10 +174,7 @@ export function AppLayout({ children }: PropsWithChildren) {
               className="border-e-0"
               items={menuItems}
               mode="inline"
-              onClick={({ key }) => {
-                setSelectedKeys([key]);
-                navigate(key);
-              }}
+              onClick={({ key }) => navigate(key)}
               selectedKeys={selectedKeys}
               theme={themeMode}
             />
@@ -201,10 +194,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                 },
               ]}
               mode="inline"
-              onClick={({ key }) => {
-                setSelectedKeys([key]);
-                navigate(key);
-              }}
+              onClick={({ key }) => navigate(key)}
               selectedKeys={selectedKeys}
               theme={themeMode}
             />

@@ -125,12 +125,16 @@ export class DuesController extends BaseController {
   @Header('Content-Type', 'text/csv; charset=utf-8')
   public async export(
     @Query() query: ExportDataRequestDto,
+    @Session() session: AuthSession,
     @Res() res: Response,
   ): Promise<void> {
-    const dues = await this.dueRepository.findForExport({
-      filters: query.filters,
-      sort: query.sort,
-    });
+    const dues = await this.dueRepository.findForExport(
+      {
+        filters: query.filters,
+        sort: query.sort,
+      },
+      this.buildQueryContext(session),
+    );
 
     const stream = this.csvService.generateStream(dues, [
       { accessor: (row) => row.id, header: 'ID' },
@@ -183,19 +187,15 @@ export class DuesController extends BaseController {
       DuePaginatedExtraResponseDto
     >
   > {
-    if (session.memberId) {
-      query.filters = {
-        ...query.filters,
-        memberId: [session.memberId],
-      };
-    }
-
-    const data = await this.dueRepository.findPaginated({
-      filters: query.filters,
-      page: query.page,
-      pageSize: query.pageSize,
-      sort: query.sort,
-    });
+    const data = await this.dueRepository.findPaginated(
+      {
+        filters: query.filters,
+        page: query.page,
+        pageSize: query.pageSize,
+        sort: query.sort,
+      },
+      this.buildQueryContext(session),
+    );
 
     return {
       data: data.data.map((due) => ({
@@ -221,12 +221,12 @@ export class DuesController extends BaseController {
     @Query() query: DateRangeRequestDto,
     @Session() session: AuthSession,
   ): Promise<DuePendingStatisticsResponseDto> {
-    const dues = await this.dueRepository.findPending({
-      dateRange: query.dateRange,
-      memberId: session.memberId
-        ? UniqueId.raw({ value: session.memberId })
-        : undefined,
-    });
+    const dues = await this.dueRepository.findPending(
+      {
+        dateRange: query.dateRange,
+      },
+      this.buildQueryContext(session),
+    );
 
     const categories = Object.values(DueCategory).reduce(
       (acc, category) => {
@@ -265,9 +265,11 @@ export class DuesController extends BaseController {
   @Get(':id')
   public async getById(
     @Param() request: ParamIdReqResDto,
+    @Session() session: AuthSession,
   ): Promise<DueResponseDto> {
     const due = await this.dueRepository.findByIdReadModel(
       UniqueId.raw({ value: request.id }),
+      this.buildQueryContext(session),
     );
 
     if (!due) {

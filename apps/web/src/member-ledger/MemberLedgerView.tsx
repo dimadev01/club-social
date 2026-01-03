@@ -6,12 +6,12 @@ import {
   MemberLedgerEntryTypeLabel,
 } from '@club-social/shared/members';
 import { Col } from 'antd';
-import { Link, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
-import { appRoutes } from '@/app/app.enum';
 import { Card } from '@/ui/Card';
 import { Descriptions } from '@/ui/Descriptions';
 import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
+import { NavigateToMember } from '@/ui/NavigateMember';
 import { NavigateToPayment } from '@/ui/NavigateToPayment';
 import { NotFound } from '@/ui/NotFound';
 import { Row } from '@/ui/Row';
@@ -55,9 +55,9 @@ export function MemberLedgerView() {
               },
               {
                 children: (
-                  <Link to={appRoutes.members.view(entry.memberId)}>
+                  <NavigateToMember id={entry.memberId}>
                     {entry.memberFullName}
-                  </Link>
+                  </NavigateToMember>
                 ),
                 label: 'Socio',
               },

@@ -5,6 +5,7 @@ import type {
 } from '@club-social/shared/types';
 
 import {
+  QueryContext,
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
@@ -27,12 +28,17 @@ export interface MemberLedgerRepository
   extends
     ReadableRepository<MemberLedgerEntryEntity>,
     WriteableRepository<MemberLedgerEntryEntity> {
-  findDetailById(id: string): Promise<MemberLedgerEntryDetailReadModel | null>;
+  findByIdReadModel(
+    id: UniqueId,
+    context?: QueryContext,
+  ): Promise<MemberLedgerEntryDetailReadModel | null>;
   findForExport(
     params: ExportDataDto,
+    context?: QueryContext,
   ): Promise<MemberLedgerEntryPaginatedModel[]>;
   findPaginated(
     params: GetPaginatedDataDto,
+    context?: QueryContext,
   ): Promise<
     PaginatedDataResultDto<
       MemberLedgerEntryPaginatedModel,

@@ -1,4 +1,7 @@
 import { DateFormat } from '@club-social/shared/lib';
+import { UserRole } from '@club-social/shared/users';
+
+import { useSessionUser } from '@/auth/useUser';
 
 import { Descriptions } from './Descriptions';
 
@@ -14,6 +17,12 @@ interface Props {
 }
 
 export function DescriptionsAudit({ showVoidInfo = true, ...props }: Props) {
+  const user = useSessionUser();
+
+  if (user.role === UserRole.MEMBER) {
+    return null;
+  }
+
   return (
     <Descriptions
       bordered={false}

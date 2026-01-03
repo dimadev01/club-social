@@ -19,9 +19,9 @@ import { usePermissions } from '@/users/use-permissions';
 import { useMemberById } from './useMemberById';
 
 export function MemberView() {
-  const permissions = usePermissions();
   const { id } = useParams();
   const navigate = useNavigate();
+  const permissions = usePermissions();
 
   const { data: member, isLoading } = useMemberById(id);
 

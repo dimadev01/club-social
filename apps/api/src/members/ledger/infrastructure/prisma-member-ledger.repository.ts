@@ -13,6 +13,7 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
+import { QueryContext } from '@/shared/domain/repository';
 import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -34,10 +35,19 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     private readonly memberLedgerEntryMapper: PrismaMemberLedgerEntryMapper,
   ) {}
 
-  public async findById(id: UniqueId): Promise<MemberLedgerEntryEntity | null> {
+  public async findById(
+    id: UniqueId,
+    context?: QueryContext,
+  ): Promise<MemberLedgerEntryEntity | null> {
+    const where: MemberLedgerEntryWhereInput = { id: id.value };
+
+    if (context?.memberId) {
+      where.memberId = context.memberId.value;
+    }
+
     const memberLedgerEntry =
-      await this.prismaService.memberLedgerEntry.findUnique({
-        where: { id: id.value },
+      await this.prismaService.memberLedgerEntry.findFirst({
+        where,
       });
 
     return memberLedgerEntry
@@ -45,32 +55,37 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
       : null;
   }
 
-  public async findByIdOrThrow(id: UniqueId): Promise<MemberLedgerEntryEntity> {
+  public async findByIdOrThrow(
+    id: UniqueId,
+    context?: QueryContext,
+  ): Promise<MemberLedgerEntryEntity> {
+    const where: MemberLedgerEntryWhereInput = { id: id.value };
+
+    if (context?.memberId) {
+      where.memberId = context.memberId.value;
+    }
+
     const memberLedgerEntry =
-      await this.prismaService.memberLedgerEntry.findUniqueOrThrow({
-        where: { id: id.value },
+      await this.prismaService.memberLedgerEntry.findFirstOrThrow({
+        where,
       });
 
     return this.memberLedgerEntryMapper.toDomain(memberLedgerEntry);
   }
 
-  public async findByIds(ids: UniqueId[]): Promise<MemberLedgerEntryEntity[]> {
-    const memberLedgerEntries =
-      await this.prismaService.memberLedgerEntry.findMany({
-        where: { id: { in: ids.map((id) => id.value) } },
-      });
-
-    return memberLedgerEntries.map((memberLedgerEntry) =>
-      this.memberLedgerEntryMapper.toDomain(memberLedgerEntry),
-    );
-  }
-
-  public async findDetailById(
-    id: string,
+  public async findByIdReadModel(
+    id: UniqueId,
+    context?: QueryContext,
   ): Promise<MemberLedgerEntryDetailReadModel | null> {
-    const entry = await this.prismaService.memberLedgerEntry.findUnique({
+    const where: MemberLedgerEntryWhereInput = { id: id.value };
+
+    if (context?.memberId) {
+      where.memberId = context.memberId.value;
+    }
+
+    const entry = await this.prismaService.memberLedgerEntry.findFirst({
       include: { member: { include: { user: true } } },
-      where: { id },
+      where,
     });
 
     if (!entry) {
@@ -96,10 +111,33 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     };
   }
 
+  public async findByIds(
+    ids: UniqueId[],
+    context?: QueryContext,
+  ): Promise<MemberLedgerEntryEntity[]> {
+    const where: MemberLedgerEntryWhereInput = {
+      id: { in: ids.map((id) => id.value) },
+    };
+
+    if (context?.memberId) {
+      where.memberId = context.memberId.value;
+    }
+
+    const memberLedgerEntries =
+      await this.prismaService.memberLedgerEntry.findMany({
+        where,
+      });
+
+    return memberLedgerEntries.map((memberLedgerEntry) =>
+      this.memberLedgerEntryMapper.toDomain(memberLedgerEntry),
+    );
+  }
+
   public async findForExport(
     params: ExportDataDto,
+    context?: QueryContext,
   ): Promise<MemberLedgerEntryPaginatedModel[]> {
-    const { orderBy, where } = this.buildWhereAndOrderBy(params);
+    const { orderBy, where } = this.buildWhereAndOrderBy(params, context);
 
     const entries = await this.prismaService.memberLedgerEntry.findMany({
       include: { member: { include: { user: true } } },
@@ -124,13 +162,14 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
 
   public async findPaginated(
     params: GetPaginatedDataDto,
+    context?: QueryContext,
   ): Promise<
     PaginatedDataResultDto<
       MemberLedgerEntryPaginatedModel,
       MemberLedgerEntryPaginatedExtraModel
     >
   > {
-    const { orderBy, where } = this.buildWhereAndOrderBy(params);
+    const { orderBy, where } = this.buildWhereAndOrderBy(params, context);
 
     const query = {
       include: { member: { include: { user: true } } },
@@ -195,7 +234,10 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     });
   }
 
-  private buildWhereAndOrderBy(params: ExportDataDto | GetPaginatedDataDto): {
+  private buildWhereAndOrderBy(
+    params: ExportDataDto | GetPaginatedDataDto,
+    context?: QueryContext,
+  ): {
     orderBy: MemberLedgerEntryOrderByWithRelationInput[];
     where: MemberLedgerEntryWhereInput;
   } {
@@ -224,7 +266,9 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
       };
     }
 
-    if (params.filters?.memberId) {
+    if (context?.memberId) {
+      where.memberId = context.memberId.value;
+    } else if (params.filters?.memberId) {
       where.memberId = { in: params.filters.memberId };
     }
 
