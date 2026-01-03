@@ -16,6 +16,7 @@
     "migrate": "prisma migrate deploy --config src/infrastructure/database/prisma/prisma.config.ts --schema src/infrastructure/database/prisma/schema.prisma",
     "migrate:local": "dotenvx run -- prisma migrate deploy --config src/infrastructure/database/prisma/prisma.config.ts --schema src/infrastructure/database/prisma/schema.prisma",
     "new-migration": "dotenvx run -- prisma migrate dev --config src/infrastructure/database/prisma/prisma.config.ts --schema src/infrastructure/database/prisma/schema.prisma",
+    "new-migration:create-only": "dotenvx run -- prisma migrate dev --create-only --config src/infrastructure/database/prisma/prisma.config.ts --schema src/infrastructure/database/prisma/schema.prisma",
     "reset-database": "dotenvx run -- prisma migrate reset --config src/infrastructure/database/prisma/prisma.config.ts --schema src/infrastructure/database/prisma/schema.prisma",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org dimadev --project club-social ./dist && sentry-cli sourcemaps upload --org dimadev --project club-social ./dist",
     "start": "nest start",

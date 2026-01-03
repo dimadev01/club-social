@@ -1,5 +1,9 @@
 import type { InputJsonValue } from '@prisma/client/runtime/client';
 
+import {
+  AppSettingKey,
+  AppSettingValues,
+} from '@club-social/shared/app-settings';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -7,7 +11,6 @@ import {
   AppSettingUpdateInput,
 } from '@/infrastructure/database/prisma/generated/models';
 
-import { AppSettingKey, AppSettingValues } from '../domain/app-setting.types';
 import { AppSettingEntity } from '../domain/entities/app-setting.entity';
 
 @Injectable()
@@ -18,7 +21,7 @@ export class PrismaAppSettingMapper {
     return AppSettingEntity.fromPersistence<K>(
       {
         description: model.description,
-        key: model.key as K,
+        key: model.id as K,
         value: model.value as unknown as AppSettingValues[K],
       },
       {

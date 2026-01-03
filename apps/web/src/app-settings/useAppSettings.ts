@@ -1,8 +1,8 @@
+import type { AppSettingDto } from '@club-social/shared/app-settings';
+
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-
-import type { AppSettingDto } from './types';
 
 export function useAppSettings() {
   return useQuery<AppSettingDto[]>({

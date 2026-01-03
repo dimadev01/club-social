@@ -142,20 +142,20 @@ export function AppLayout({ children }: PropsWithChildren) {
         label: 'Configuración',
       });
     }
-
-    menuItems.push(
-      {
-        icon: <UserOutlined />,
-        key: appRoutes.profile,
-        label: 'Mi Perfil',
-      },
-      {
-        icon: <LogoutIcon />,
-        key: appRoutes.auth.logout,
-        label: 'Cerrar sesión',
-      },
-    );
   }
+
+  menuItems.push(
+    {
+      icon: <UserOutlined />,
+      key: appRoutes.profile,
+      label: 'Mi Perfil',
+    },
+    {
+      icon: <LogoutIcon />,
+      key: appRoutes.auth.logout,
+      label: 'Cerrar sesión',
+    },
+  );
 
   const selectedKeys = [`/${location.pathname.split('/')[1]}`];
 

@@ -1,11 +1,15 @@
-export class AppSettingDto {
-  public description: null | string;
-  public key: string;
-  public updatedAt: Date;
-  public updatedBy: null | string;
-  public value: unknown;
-}
+import {
+  AppSettingDto,
+  AppSettingKey,
+  AppSettingValues,
+} from '@club-social/shared/app-settings';
 
-export class MaintenanceModeDto {
-  public enabled: boolean;
+export class AppSettingResponseDto<
+  K extends AppSettingKey,
+> implements AppSettingDto<K> {
+  public description: null | string;
+  public key: K;
+  public updatedAt: string;
+  public updatedBy: null | string;
+  public value: AppSettingValues[K];
 }

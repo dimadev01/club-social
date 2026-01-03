@@ -11,6 +11,7 @@ import type { TableQuery } from '@/ui';
 export const queryKeys = createQueryKeyStore({
   appSettings: {
     all: null,
+    byKey: (key: string) => [key],
     maintenanceMode: null,
   },
 

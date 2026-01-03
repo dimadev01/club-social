@@ -4,6 +4,11 @@
   "private": true,
   "license": "MIT",
   "exports": {
+    "./app-settings": {
+      "types": "./src/app-settings/index.ts",
+      "require": "./dist/app-settings/index.js",
+      "import": "./dist/app-settings/index.mjs"
+    },
     "./roles": {
       "types": "./src/roles/index.ts",
       "require": "./dist/roles/index.js",

@@ -1,7 +1,7 @@
-import { IsBoolean, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsObject } from 'class-validator';
 
-export class UpdateMaintenanceModeRequestDto {
-  @IsBoolean()
+export class UpdateSettingRequestDto {
   @IsNotEmpty()
-  public enabled: boolean;
+  @IsObject()
+  public value: Record<string, unknown>;
 }

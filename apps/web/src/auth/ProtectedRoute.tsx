@@ -22,7 +22,7 @@ export function ProtectedRoute() {
   }
 
   const isAdmin = session.user.role === UserRole.ADMIN;
-  const isMaintenanceModeEnabled = maintenanceMode?.enabled ?? false;
+  const isMaintenanceModeEnabled = maintenanceMode?.value.enabled ?? false;
 
   if (isMaintenanceModeEnabled && !isAdmin) {
     return <MaintenancePage />;
