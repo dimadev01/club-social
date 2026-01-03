@@ -402,7 +402,7 @@ export function PaymentForm({
                 dataIndex: 'category',
                 render: (category: DueCategory, record: PendingDueDto) => {
                   if (category === DueCategory.MEMBERSHIP) {
-                    return `${DueCategoryLabel[category]} (${DateFormat.month(record.date)})`;
+                    return `${DueCategoryLabel[category]} (${DateFormat.monthNameShort(record.date)})`;
                   }
 
                   return DueCategoryLabel[category];

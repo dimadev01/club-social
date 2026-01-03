@@ -3,8 +3,9 @@ import type { PaymentDailyStatisticsItemDto } from '@club-social/shared/payments
 import { BarChartOutlined } from '@ant-design/icons';
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { DatePicker, Empty, theme } from 'antd';
-import dayjs, { type Dayjs } from 'dayjs';
-import { useMemo, useState } from 'react';
+import { type Dayjs } from 'dayjs';
+import { useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router';
 import {
   Bar,
   BarChart,
@@ -32,10 +33,34 @@ interface CustomTooltipProps {
 }
 
 export function PaymentChartCard() {
-  const [selectedMonth, setSelectedMonth] = useState<Dayjs>(
-    dayjs().subtract(1, 'month'),
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
   const { token } = theme.useToken();
+
+  const selectedMonth = useMemo<Dayjs>(() => {
+    const chartMonth = searchParams.get('chartMonth');
+
+    if (chartMonth) {
+      const parsed = DateFormat.parse(chartMonth);
+
+      if (parsed.isValid()) {
+        return parsed;
+      }
+    }
+
+    return DateFormat.parse().subtract(1, 'month');
+  }, [searchParams]);
+
+  const setSelectedMonth = useCallback(
+    (month: Dayjs) => {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('chartMonth', DateFormat.isoMonth(month));
+
+        return newParams;
+      });
+    },
+    [setSearchParams],
+  );
 
   const monthStr = selectedMonth.startOf('month').format(DateFormats.isoDate);
 

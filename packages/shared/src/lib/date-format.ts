@@ -42,15 +42,19 @@ export const DateFormat = {
     return DateFormat.date(value, DateFormats.isoDate);
   },
 
-  month(value: Date | Dayjs | string): string {
+  isoMonth(value: Date | Dayjs | string): string {
+    return DateFormat.date(value, DateFormats.isoMonth);
+  },
+
+  monthNameShort(value: Date | Dayjs | string): string {
     return DateFormat.date(value, DateFormats.monthShort);
   },
 
-  monthYear(value: Date | Dayjs | string): string {
+  monthYearName(value: Date | Dayjs | string): string {
     return DateFormat.date(value, DateFormats.monthYear);
   },
 
-  parse(value: Date | Dayjs | string): Dayjs {
+  parse(value?: Date | Dayjs | string): Dayjs {
     return dayjs(value);
   },
 

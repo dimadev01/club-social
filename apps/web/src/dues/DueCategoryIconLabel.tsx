@@ -18,7 +18,7 @@ export function DueCategoryIconLabel({ category, date }: Props) {
       {DueCategoryIconMap[category]}
       <span>
         {DueCategoryLabel[category]}{' '}
-        {renderDate ? `(${DateFormat.month(date)})` : ''}
+        {renderDate ? `(${DateFormat.monthNameShort(date)})` : ''}
       </span>
     </Space>
   );
