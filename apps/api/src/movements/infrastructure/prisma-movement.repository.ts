@@ -28,8 +28,8 @@ import {
   MovementPaginatedExtraReadModel,
   MovementPaginatedReadModel,
   MovementReadModel,
+  MovementStatisticsModel,
 } from '../domain/movement-read-models';
-import { MovementStatisticsModel } from '../domain/movement-read-models';
 import {
   FindMovementsForStatisticsParams,
   MovementRepository,
