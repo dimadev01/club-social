@@ -3,9 +3,11 @@ import type { PropsWithChildren } from 'react';
 
 import {
   FilePdfOutlined,
+  SettingOutlined,
   UserAddOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { UserRole } from '@club-social/shared/users';
 import {
   Avatar,
   Button,
@@ -53,6 +55,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   );
 
   const user = useSessionUser();
+  const isAdmin = user.role === UserRole.ADMIN;
 
   const permissions = usePermissions();
 
@@ -124,6 +127,14 @@ export function AppLayout({ children }: PropsWithChildren) {
         icon: <AuditLogsIcon />,
         key: appRoutes.auditLogs.list,
         label: 'Auditoría',
+      });
+    }
+
+    if (isAdmin) {
+      menuItems.push({
+        icon: <SettingOutlined />,
+        key: appRoutes.appSettings,
+        label: 'Configuración',
       });
     }
   }

@@ -1,5 +1,9 @@
 import { SettingOutlined } from '@ant-design/icons';
+import { UserRole } from '@club-social/shared/users';
 import { Card, Skeleton, Space, Switch, Typography } from 'antd';
+
+import { useSessionUser } from '@/auth/useUser';
+import { NotFound } from '@/ui/NotFound';
 
 import { useMaintenanceMode } from './useMaintenanceMode';
 import { useUpdateMaintenanceMode } from './useUpdateMaintenanceMode';
@@ -7,12 +11,19 @@ import { useUpdateMaintenanceMode } from './useUpdateMaintenanceMode';
 const { Text, Title } = Typography;
 
 export function AppSettingsPage() {
+  const { role } = useSessionUser();
+  const isAdmin = role === UserRole.ADMIN;
+
   const { data: maintenanceMode, isLoading } = useMaintenanceMode();
   const updateMutation = useUpdateMaintenanceMode();
 
   const handleMaintenanceModeChange = (checked: boolean) => {
     updateMutation.mutate({ enabled: checked });
   };
+
+  if (!isAdmin) {
+    return <NotFound />;
+  }
 
   if (isLoading) {
     return (
