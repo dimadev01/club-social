@@ -30,7 +30,7 @@ import { PricingNew } from '@/pricing/PricingNew';
 import { PricingView } from '@/pricing/PricingView';
 import { ProfilePage } from '@/profile/ProfilePage';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
-import { NotFound } from '@/ui/NotFound';
+import { NotFound } from '@/ui';
 import { UserEdit } from '@/users/UserEdit';
 import { UserListPage } from '@/users/UserList';
 import { UserNew } from '@/users/UserNew';

@@ -1,5 +1,4 @@
-import { Card } from '@/ui/Card';
-import { Page } from '@/ui/Page';
+import { Card, Page } from '@/ui';
 
 import { DuePendingStatisticsCard } from './components/DuePendingStatisticsCard';
 

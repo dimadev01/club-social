@@ -2,8 +2,7 @@ import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { FilterOutlined, MoreOutlined } from '@ant-design/icons';
 import { DueCategoryLabel, DueCategorySorted } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   type PaymentPaginatedDto,
   type PaymentPaginatedExtraDto,
@@ -11,7 +10,7 @@ import {
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Dropdown, Space, type TableColumnType, Tooltip } from 'antd';
+import { Dropdown, Space, type TableColumnType } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -22,19 +21,22 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
-import { Card } from '@/ui/Card';
-import { DuesIcon } from '@/ui/Icons/DuesIcon';
-import { NavigateToMember } from '@/ui/NavigateMember';
-import { NavigateToPayment } from '@/ui/NavigateToPayment';
-import { NotFound } from '@/ui/NotFound';
-import { PageTableActions } from '@/ui/Page';
-import { Select } from '@/ui/Select';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { TableActions } from '@/ui/Table/TableActions';
-import { TableDateRangeFilterDropdown } from '@/ui/Table/TableDateRangeFilterDropdown';
-import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
-import { useTable } from '@/ui/Table/useTable';
+import {
+  Button,
+  Card,
+  DuesIcon,
+  NavigateToMember,
+  NavigateToPayment,
+  NotFound,
+  PageTableActions,
+  Select,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  TableActions,
+  TableDateRangeFilterDropdown,
+  TableMembersSearch,
+  useTable,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 export function PaymentList() {
@@ -208,39 +210,40 @@ export function PaymentList() {
                   fixed: 'right',
                   render: (_, record) => (
                     <Space.Compact size="small">
-                      <Tooltip title="Filtrar por este socio">
-                        <Link
-                          to={{
-                            pathname: appRoutes.payments.list,
-                            search: new URLSearchParams({
-                              filters: `memberId:${record.memberId}`,
-                            }).toString(),
-                          }}
-                        >
-                          <Button
-                            disabled={getFilterValue('memberId')?.includes(
-                              record.memberId,
-                            )}
-                            icon={<FilterOutlined />}
-                            onClick={() =>
-                              setFilteredMemberIds([record.memberId])
-                            }
-                            type="text"
-                          />
-                        </Link>
-                      </Tooltip>
-                      <Tooltip title="Ver deudas">
-                        <Link
-                          to={{
-                            pathname: appRoutes.dues.list,
-                            search: new URLSearchParams({
-                              filters: `memberId:${record.memberId}`,
-                            }).toString(),
-                          }}
-                        >
-                          <Button icon={<DuesIcon />} type="text" />
-                        </Link>
-                      </Tooltip>
+                      <Link
+                        to={{
+                          pathname: appRoutes.payments.list,
+                          search: new URLSearchParams({
+                            filters: `memberId:${record.memberId}`,
+                          }).toString(),
+                        }}
+                      >
+                        <Button
+                          disabled={getFilterValue('memberId')?.includes(
+                            record.memberId,
+                          )}
+                          icon={<FilterOutlined />}
+                          onClick={() =>
+                            setFilteredMemberIds([record.memberId])
+                          }
+                          tooltip="Filtrar por este socio"
+                          type="text"
+                        />
+                      </Link>
+                      <Link
+                        to={{
+                          pathname: appRoutes.dues.list,
+                          search: new URLSearchParams({
+                            filters: `memberId:${record.memberId}`,
+                          }).toString(),
+                        }}
+                      >
+                        <Button
+                          icon={<DuesIcon />}
+                          tooltip="Ver deudas"
+                          type="text"
+                        />
+                      </Link>
                     </Space.Compact>
                   ),
                   title: 'Acciones',

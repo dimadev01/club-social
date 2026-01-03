@@ -3,14 +3,15 @@ import type { PropsWithChildren } from 'react';
 
 import {
   FilePdfOutlined,
+  FileTextOutlined,
   SettingOutlined,
   UserAddOutlined,
   UserOutlined,
+  WhatsAppOutlined,
 } from '@ant-design/icons';
 import { UserRole } from '@club-social/shared/users';
 import {
   Avatar,
-  Button,
   ConfigProvider,
   Flex,
   FloatButton,
@@ -26,17 +27,21 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
 import { useSessionUser } from '@/auth/useUser';
-import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
-import { AuditLogsIcon } from '@/ui/Icons/AuditLogsIcon';
-import { DashboardIcon } from '@/ui/Icons/DashboardIcon';
-import { DuesIcon } from '@/ui/Icons/DuesIcon';
-import { LedgerIcon } from '@/ui/Icons/LedgerIcon';
-import { LogoutIcon } from '@/ui/Icons/LogoutIcon';
-import { MovementsIcon } from '@/ui/Icons/MovementsIcon';
-import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
-import { PricingIcon } from '@/ui/Icons/PricesIcon';
-import { UsersIcon } from '@/ui/Icons/UsersIcon';
-import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
+import { cn } from '@/shared/lib/utils';
+import {
+  AddNewIcon,
+  AuditLogsIcon,
+  Button,
+  DashboardIcon,
+  DuesIcon,
+  LedgerIcon,
+  LogoutIcon,
+  MenuThemeSwitcher,
+  MovementsIcon,
+  PaymentsIcon,
+  PricingIcon,
+  UsersIcon,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { appRoutes } from './app.enum';
@@ -137,6 +142,19 @@ export function AppLayout({ children }: PropsWithChildren) {
         label: 'Configuración',
       });
     }
+
+    menuItems.push(
+      {
+        icon: <UserOutlined />,
+        key: appRoutes.profile,
+        label: 'Mi Perfil',
+      },
+      {
+        icon: <LogoutIcon />,
+        key: appRoutes.auth.logout,
+        label: 'Cerrar sesión',
+      },
+    );
   }
 
   const selectedKeys = [`/${location.pathname.split('/')[1]}`];
@@ -144,7 +162,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   return (
     <Layout className="min-h-screen" hasSider>
       <Layout.Sider
-        className="sticky top-0 left-0 h-screen overflow-auto [scrollbar-gutter:stable] [scrollbar-width:thin]"
+        className="min-h-screen overflow-auto [scrollbar-gutter:stable] [scrollbar-width:thin]"
         collapsed={collapsed}
         collapsible
         onCollapse={setCollapsed}
@@ -155,11 +173,15 @@ export function AppLayout({ children }: PropsWithChildren) {
             alt="Club Social Logo"
             className="mx-auto max-w-[128px]"
             preview={false}
-            rootClassName="w-full my-8"
+            rootClassName="w-full mb-6 mt-4"
             src="/club-social-logo.png"
           />
 
-          <Space align="center" className="mb-8 px-6" vertical>
+          <Space
+            align="center"
+            className={cn('mx-auto mb-6 flex px-4')}
+            size={collapsed ? 0 : undefined}
+          >
             <Avatar className="text-center" size="default">
               {user.firstName.charAt(0)}
               {user.lastName.charAt(0)}
@@ -189,26 +211,6 @@ export function AppLayout({ children }: PropsWithChildren) {
               selectedKeys={selectedKeys}
               theme={themeMode}
             />
-
-            <Menu
-              className="mt-auto border-e-0"
-              items={[
-                {
-                  icon: <UserOutlined />,
-                  key: appRoutes.profile,
-                  label: 'Mi Perfil',
-                },
-                {
-                  icon: <LogoutIcon />,
-                  key: appRoutes.auth.logout,
-                  label: 'Cerrar sesión',
-                },
-              ]}
-              mode="inline"
-              onClick={({ key }) => navigate(key)}
-              selectedKeys={selectedKeys}
-              theme={themeMode}
-            />
           </ConfigProvider>
         </Flex>
       </Layout.Sider>
@@ -223,6 +225,23 @@ export function AppLayout({ children }: PropsWithChildren) {
                 href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
                 icon={<FilePdfOutlined />}
                 target="_blank"
+                tooltip="Manual de Club"
+                type="text"
+              />
+              <Button
+                href="https://docs.google.com/forms/d/e/1FAIpQLSdMysEOdliOL3Aug58ns2W3oz8vv2Q6kwJSzsbOKc_rdtqIXA/viewform?usp=header"
+                htmlType="button"
+                icon={<FileTextOutlined />}
+                target="_blank"
+                tooltip="Formulario de Registro"
+                type="text"
+              />
+              <Button
+                href="https://wa.me/5491158804950"
+                htmlType="button"
+                icon={<WhatsAppOutlined />}
+                target="_blank"
+                tooltip="Enviar WhatsApp al Club"
                 type="text"
               />
             </Space.Compact>

@@ -1,13 +1,13 @@
 import { DeleteOutlined, MailOutlined } from '@ant-design/icons';
 import { DateFormat } from '@club-social/shared/lib';
-import { App, Button, Card, Empty, Form, Input, Space } from 'antd';
+import { App, Empty, Form, Input, Space } from 'antd';
 
 import { useSessionUser } from '@/auth/useUser';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { Descriptions } from '@/ui/Descriptions';
+import { Button, Card, Descriptions } from '@/ui';
 
 interface EmailFormSchema {
   email: string;

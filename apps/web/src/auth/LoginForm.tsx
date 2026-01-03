@@ -15,7 +15,7 @@ import { useState } from 'react';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
-import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
+import { MenuThemeSwitcher } from '@/ui';
 
 interface FormSchema {
   email: string;

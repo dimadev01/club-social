@@ -1,4 +1,5 @@
 import config from '@club-social/eslint-config';
+import importPlugin from 'eslint-plugin-import';
 import { defineConfig } from 'eslint/config';
 import globals from 'globals';
 
@@ -11,6 +12,21 @@ export default defineConfig(
         ...globals.jest,
       },
       sourceType: 'module',
+    },
+  },
+  {
+    extends: [
+      importPlugin.flatConfigs.recommended,
+      importPlugin.flatConfigs.typescript,
+    ],
+    files: ['**/*.ts'],
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: ['./tsconfig.json'],
+        },
+      },
     },
   },
   {

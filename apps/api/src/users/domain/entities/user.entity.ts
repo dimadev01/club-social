@@ -1,5 +1,4 @@
-import { UserRole } from '@club-social/shared/users';
-import { UserStatus } from '@club-social/shared/users';
+import { UserRole, UserStatus } from '@club-social/shared/users';
 
 import { SoftDeletablePersistenceMeta } from '@/shared/domain/persistence-meta';
 import { ok, Result } from '@/shared/domain/result';

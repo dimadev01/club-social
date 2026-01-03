@@ -4,8 +4,7 @@ import { DueCategorySorted } from '@club-social/shared/dues';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { Statistic } from 'antd';
 
-import { Card } from '@/ui/Card';
-import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
+import { Card, PaymentsIcon } from '@/ui';
 
 import { usePaymentStatistics } from '../usePaymentStatistics';
 import { DueCategoryDescriptions } from './DueCategoryDescriptions';

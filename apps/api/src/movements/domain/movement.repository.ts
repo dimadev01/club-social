@@ -12,8 +12,8 @@ import {
   MovementPaginatedExtraReadModel,
   MovementPaginatedReadModel,
   MovementReadModel,
+  MovementStatisticsModel,
 } from './movement-read-models';
-import { MovementStatisticsModel } from './movement-read-models';
 
 export const MOVEMENT_REPOSITORY_PROVIDER = Symbol('MovementRepository');
 

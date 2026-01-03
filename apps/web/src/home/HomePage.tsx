@@ -2,7 +2,7 @@ import { UserRole } from '@club-social/shared/users';
 import { Space } from 'antd';
 
 import { useSessionUser } from '@/auth/useUser';
-import { Page } from '@/ui/Page';
+import { Page } from '@/ui';
 
 import { MainStatisticsCard } from './components/MainStatisticsCard';
 import { PaymentChartCard } from './components/PaymentChartCard';

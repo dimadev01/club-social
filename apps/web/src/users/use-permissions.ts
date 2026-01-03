@@ -1,5 +1,4 @@
-import { Action } from '@club-social/shared/roles';
-import { Resource } from '@club-social/shared/roles';
+import { Action, Resource } from '@club-social/shared/roles';
 import { UserRole } from '@club-social/shared/users';
 
 import { useSessionUser } from '@/auth/useUser';

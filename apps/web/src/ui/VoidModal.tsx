@@ -1,7 +1,7 @@
 import { Input, Modal } from 'antd';
 import { useState } from 'react';
 
-import { Form } from '@/ui/Form/Form';
+import { Form } from '@/ui';
 
 interface FormSchema {
   reason: string;

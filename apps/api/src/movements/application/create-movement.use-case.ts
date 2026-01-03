@@ -1,5 +1,9 @@
-import { MovementMode, MovementStatus } from '@club-social/shared/movements';
-import { MovementCategory, MovementType } from '@club-social/shared/movements';
+import {
+  MovementCategory,
+  MovementMode,
+  MovementStatus,
+  MovementType,
+} from '@club-social/shared/movements';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';

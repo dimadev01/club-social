@@ -1,8 +1,6 @@
 import { DueCategory } from '@club-social/shared/dues';
 
-import { ElectricityIcon } from '@/ui/Icons/ElectricityIcon';
-import { GuestIcon } from '@/ui/Icons/GuestIcon';
-import { MembershipIcon } from '@/ui/Icons/MembershipIcon';
+import { ElectricityIcon, GuestIcon, MembershipIcon } from '@/ui';
 
 export const DueCategoryIconMap: Record<DueCategory, React.ReactNode> = {
   [DueCategory.ELECTRICITY]: <ElectricityIcon />,

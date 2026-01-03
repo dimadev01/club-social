@@ -5,7 +5,7 @@ import { NumberFormat } from '@club-social/shared/lib';
 import { Grid, Skeleton } from 'antd';
 
 import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
-import { Descriptions } from '@/ui/Descriptions';
+import { Descriptions } from '@/ui';
 
 interface Props {
   category: DueCategory;
