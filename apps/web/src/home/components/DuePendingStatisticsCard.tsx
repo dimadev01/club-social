@@ -11,8 +11,7 @@ import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
-import { Card } from '@/ui/Card';
-import { DuesIcon } from '@/ui/Icons/DuesIcon';
+import { Card, DuesIcon } from '@/ui';
 
 import { useDuePendingStatistics } from '../useDuePendingStatistics';
 

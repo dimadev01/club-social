@@ -3,7 +3,7 @@ import { UserRole } from '@club-social/shared/users';
 
 import { useSessionUser } from '@/auth/useUser';
 
-import { Descriptions } from './Descriptions';
+import { Descriptions } from '.';
 
 interface Props {
   createdAt: string;

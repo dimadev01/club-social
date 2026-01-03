@@ -2,8 +2,7 @@ import type { CreatePricingDto } from '@club-social/shared/pricing';
 import type { ParamIdDto } from '@club-social/shared/types';
 
 import { DueCategory } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { MemberCategory } from '@club-social/shared/members';
 import { App } from 'antd';
 import dayjs from 'dayjs';
@@ -12,9 +11,7 @@ import { useNavigate } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
-import { Card } from '@/ui/Card';
-import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
-import { NotFound } from '@/ui/NotFound';
+import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { PricingForm, type PricingFormData } from './PricingForm';

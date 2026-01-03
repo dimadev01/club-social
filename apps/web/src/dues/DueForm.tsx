@@ -2,16 +2,14 @@ import type { MemberSearchResultDto } from '@club-social/shared/members';
 import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormats } from '@club-social/shared/lib';
+import { DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { DatePicker, Input, InputNumber } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useActivePricing } from '@/pricing/useActivePricing';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form } from '@/ui/Form/Form';
-import { Select } from '@/ui/Select';
+import { Form, Select } from '@/ui';
 
 export interface DueFormData {
   amount: number;

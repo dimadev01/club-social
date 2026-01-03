@@ -9,11 +9,10 @@ import {
   DueStatus,
   DueStatusLabel,
 } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { MemberStatus, MemberStatusLabel } from '@club-social/shared/members';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Dropdown, Space, type TableColumnType, Tooltip } from 'antd';
+import { Dropdown, Space, type TableColumnType } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -24,16 +23,19 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
-import { Card } from '@/ui/Card';
-import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
-import { NotFound } from '@/ui/NotFound';
-import { PageTableActions } from '@/ui/Page';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { TableActions } from '@/ui/Table/TableActions';
-import { TableDateRangeFilterDropdown } from '@/ui/Table/TableDateRangeFilterDropdown';
-import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
-import { useTable } from '@/ui/Table/useTable';
+import {
+  Button,
+  Card,
+  NotFound,
+  PageTableActions,
+  PaymentsIcon,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  TableActions,
+  TableDateRangeFilterDropdown,
+  TableMembersSearch,
+  useTable,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueCategoryIconLabel } from './DueCategoryIconLabel';
@@ -222,42 +224,40 @@ export function DueList() {
                   fixed: 'right',
                   render: (_, record) => (
                     <Space.Compact size="small">
-                      <Tooltip title="Filtrar por este socio">
-                        <Link
-                          to={{
-                            pathname: appRoutes.dues.list,
-                            search: new URLSearchParams({
-                              filters: `memberId:${record.memberId}`,
-                            }).toString(),
-                          }}
-                        >
-                          <Button
-                            disabled={getFilterValue('memberId')?.includes(
-                              record.memberId,
-                            )}
-                            icon={<FilterOutlined />}
-                            onClick={() =>
-                              setFilteredMemberIds([record.memberId])
-                            }
-                            type="text"
-                          />
-                        </Link>
-                      </Tooltip>
+                      <Link
+                        to={{
+                          pathname: appRoutes.dues.list,
+                          search: new URLSearchParams({
+                            filters: `memberId:${record.memberId}`,
+                          }).toString(),
+                        }}
+                      >
+                        <Button
+                          disabled={getFilterValue('memberId')?.includes(
+                            record.memberId,
+                          )}
+                          icon={<FilterOutlined />}
+                          onClick={() =>
+                            setFilteredMemberIds([record.memberId])
+                          }
+                          tooltip="Filtrar por este socio"
+                          type="text"
+                        />
+                      </Link>
 
-                      <Tooltip title="Nuevo pago">
-                        <Link
-                          to={`${appRoutes.payments.new}?memberId=${record.memberId}`}
-                        >
-                          <Button
-                            disabled={record.status === DueStatus.PAID}
-                            icon={<PaymentsIcon />}
-                            onClick={() =>
-                              setFilteredMemberIds([record.memberId])
-                            }
-                            type="text"
-                          />
-                        </Link>
-                      </Tooltip>
+                      <Link
+                        to={`${appRoutes.payments.new}?memberId=${record.memberId}`}
+                      >
+                        <Button
+                          disabled={record.status === DueStatus.PAID}
+                          icon={<PaymentsIcon />}
+                          onClick={() =>
+                            setFilteredMemberIds([record.memberId])
+                          }
+                          tooltip="Nuevo pago"
+                          type="text"
+                        />
+                      </Link>
                     </Space.Compact>
                   ),
                   title: 'Acciones',

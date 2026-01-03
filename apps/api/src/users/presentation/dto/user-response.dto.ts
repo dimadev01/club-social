@@ -1,5 +1,4 @@
-import { UserDto, UserRole } from '@club-social/shared/users';
-import { UserStatus } from '@club-social/shared/users';
+import { UserDto, UserRole, UserStatus } from '@club-social/shared/users';
 
 export class UserResponseDto implements UserDto {
   public email: string;

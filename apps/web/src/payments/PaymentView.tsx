@@ -3,8 +3,7 @@ import {
   DueSettlementStatus,
   DueSettlementStatusLabel,
 } from '@club-social/shared/dues';
-import { DateFormats, NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
 import {
   type PaymentDueSettlementDto,
   PaymentStatus,
@@ -17,17 +16,19 @@ import { useNavigate, useParams } from 'react-router';
 
 import { DueCategoryIconLabel } from '@/dues/DueCategoryIconLabel';
 import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { NavigateToDue } from '@/ui/NavigateDue';
-import { NavigateToMember } from '@/ui/NavigateMember';
-import { NavigateMemberLedgerEntry } from '@/ui/NavigateMemberLedgerEntry';
-import { NotFound } from '@/ui/NotFound';
-import { Row } from '@/ui/Row';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { VoidModal } from '@/ui/VoidModal';
+import {
+  Card,
+  Descriptions,
+  DescriptionsAudit,
+  NavigateMemberLedgerEntry,
+  NavigateToDue,
+  NavigateToMember,
+  NotFound,
+  Row,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  VoidModal,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { usePayment } from './usePayment';

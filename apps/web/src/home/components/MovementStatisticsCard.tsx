@@ -4,8 +4,7 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { Space, Statistic, Tooltip } from 'antd';
 
-import { Card } from '@/ui/Card';
-import { MovementsIcon } from '@/ui/Icons/MovementsIcon';
+import { Card, MovementsIcon } from '@/ui';
 
 import { useMovementStatistics } from '../useMovementStatistics';
 

@@ -8,13 +8,15 @@ import {
 import { Col } from 'antd';
 import { useParams } from 'react-router';
 
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { NavigateToMember } from '@/ui/NavigateMember';
-import { NavigateToPayment } from '@/ui/NavigateToPayment';
-import { NotFound } from '@/ui/NotFound';
-import { Row } from '@/ui/Row';
+import {
+  Card,
+  Descriptions,
+  DescriptionsAudit,
+  NavigateToMember,
+  NavigateToPayment,
+  NotFound,
+  Row,
+} from '@/ui';
 
 import { useMemberLedgerEntry } from './useMemberLedgerEntry';
 

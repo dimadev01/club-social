@@ -1,6 +1,6 @@
 import { Result } from 'antd';
 
-import { CenteredLayout } from '@/ui/CenteredLayout';
+import { CenteredLayout } from '@/ui';
 
 export function MaintenancePage() {
   return (

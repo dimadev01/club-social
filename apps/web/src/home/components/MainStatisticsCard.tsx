@@ -4,8 +4,7 @@ import { Space } from 'antd';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 
-import { Card } from '@/ui/Card';
-import { Form } from '@/ui/Form/Form';
+import { Card, Form } from '@/ui';
 
 import { DuePendingStatisticsCard } from './DuePendingStatisticsCard';
 import { MovementStatisticsCard } from './MovementStatisticsCard';
