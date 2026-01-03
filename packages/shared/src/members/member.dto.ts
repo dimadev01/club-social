@@ -58,12 +58,14 @@ export interface MemberPaginatedDto {
   memberShipTotalDueAmount: number;
   name: string;
   status: MemberStatus;
+  totalAmount: number;
 }
 
 export interface MemberPaginatedExtraDto {
   electricityTotalDueAmount: number;
   guestTotalDueAmount: number;
   memberShipTotalDueAmount: number;
+  totalAmount: number;
 }
 
 export interface MemberSearchResultDto {

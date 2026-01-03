@@ -29,17 +29,13 @@ export function DueCategoryDescriptions({ category, data, loading }: Props) {
         },
         {
           children: skeletonOrValue(
-            NumberFormat.formatCurrencyCents(
-              data?.categories[category].amount ?? 0,
-            ),
+            NumberFormat.currencyCents(data?.categories[category].amount ?? 0),
           ),
           label: 'Total',
         },
         {
           children: skeletonOrValue(
-            NumberFormat.formatCurrencyCents(
-              data?.categories[category].average ?? 0,
-            ),
+            NumberFormat.currencyCents(data?.categories[category].average ?? 0),
           ),
           label: 'Promedio',
         },

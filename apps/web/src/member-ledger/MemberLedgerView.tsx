@@ -68,7 +68,7 @@ export function MemberLedgerView() {
                 label: 'Tipo',
               },
               {
-                children: NumberFormat.formatCurrencyCents(entry.amount),
+                children: NumberFormat.currencyCents(entry.amount),
                 label: 'Monto',
               },
               {

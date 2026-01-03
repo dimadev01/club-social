@@ -122,7 +122,7 @@ export function PaymentChartCard() {
                 fontSize={12}
                 stroke={token.colorTextSecondary}
                 tickFormatter={(value: number) =>
-                  NumberFormat.formatCurrencyCents(value)
+                  NumberFormat.currencyCents(value)
                 }
                 tickLine={false}
                 width={80}
@@ -162,7 +162,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
             label: 'Pagos',
           },
           {
-            children: NumberFormat.formatCurrencyCents(data.amount),
+            children: NumberFormat.currencyCents(data.amount),
             label: 'Total',
           },
         ]}

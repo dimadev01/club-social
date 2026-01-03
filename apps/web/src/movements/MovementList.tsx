@@ -5,8 +5,6 @@ import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   MovementCategory,
   MovementCategoryLabel,
-  MovementMode,
-  MovementModeLabel,
   type MovementPaginatedDto,
   type MovementPaginatedExtraDto,
   MovementStatus,
@@ -14,7 +12,7 @@ import {
 } from '@club-social/shared/movements';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Button, Dropdown, Space, Tooltip } from 'antd';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useExport } from '@/shared/hooks/useExport';
@@ -24,6 +22,7 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Card,
+  NavigateToMovement,
   NotFound,
   PageTableActions,
   Table,
@@ -49,7 +48,10 @@ export function MovementList() {
     resetFilters,
     state,
   } = useTable<MovementPaginatedDto>({
-    defaultSort: [{ field: 'createdAt', order: 'descend' }],
+    defaultFilters: {
+      status: [MovementStatus.REGISTERED],
+    },
+    defaultSort: [{ field: 'date', order: 'descend' }],
   });
 
   const { data: movements, isLoading } = useQuery({
@@ -108,29 +110,18 @@ export function MovementList() {
       <Table<MovementPaginatedDto>
         columns={[
           {
-            dataIndex: 'createdAt',
-            filterDropdown: (props) => (
-              <TableDateRangeFilterDropdown {...props} format="datetime" />
-            ),
-            filteredValue: getFilterValue('createdAt'),
-            render: (createdAt: string, record) => (
-              <Link to={appRoutes.movements.view(record.id)}>
-                {DateFormat.dateTime(createdAt)}
-              </Link>
-            ),
-            sorter: true,
-            sortOrder: getSortOrder('createdAt'),
-            title: 'Creado el',
-            width: TABLE_COLUMN_WIDTHS.DATE_TIME,
-          },
-          {
             dataIndex: 'date',
             filterDropdown: (props) => (
               <TableDateRangeFilterDropdown {...props} format="date" />
             ),
             filteredValue: getFilterValue('date'),
-            render: (date: string) => DateFormat.date(date),
+            render: (date: string, record: MovementPaginatedDto) => (
+              <NavigateToMovement id={record.id}>{date}</NavigateToMovement>
+            ),
+            sorter: true,
+            sortOrder: getSortOrder('date'),
             title: 'Fecha',
+            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           {
             align: 'center',
@@ -140,25 +131,7 @@ export function MovementList() {
             filters: labelMapToFilterOptions(MovementCategoryLabel),
             render: (value: MovementCategory) => MovementCategoryLabel[value],
             title: 'Categoría',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
-          },
-          {
-            align: 'center',
-            dataIndex: 'mode',
-            filteredValue: getFilterValue('mode'),
-            filters: labelMapToFilterOptions(MovementModeLabel),
-            render: (value: MovementMode) => MovementModeLabel[value],
-            title: 'Modo',
-            width: 100,
-          },
-          {
-            align: 'center',
-            dataIndex: 'status',
-            filteredValue: getFilterValue('status'),
-            filters: labelMapToFilterOptions(MovementStatusLabel),
-            render: (value: MovementStatus) => MovementStatusLabel[value],
-            title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.MOVEMENT_CATEGORY,
           },
           {
             dataIndex: 'notes',
@@ -178,13 +151,25 @@ export function MovementList() {
               );
             },
             title: 'Notas',
-            width: 250,
+          },
+          {
+            align: 'center',
+            dataIndex: 'status',
+            filteredValue: getFilterValue('status'),
+            filters: labelMapToFilterOptions(MovementStatusLabel),
+            render: (value: MovementStatus) => MovementStatusLabel[value],
+            title: 'Estado',
+            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
             align: 'right',
             dataIndex: 'amount',
             render: (amount: number) =>
-              amount < 0 ? NumberFormat.formatCurrencyCents(amount) : '',
+              amount < 0
+                ? NumberFormat.currencyCents(Math.abs(amount), {
+                    maximumFractionDigits: 2,
+                  })
+                : '',
             title: 'Egreso',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -192,7 +177,11 @@ export function MovementList() {
             align: 'right',
             dataIndex: 'amount',
             render: (amount: number) =>
-              amount > 0 ? NumberFormat.formatCurrencyCents(amount) : '',
+              amount > 0
+                ? NumberFormat.currencyCents(amount, {
+                    maximumFractionDigits: 2,
+                  })
+                : '',
             title: 'Ingreso',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -210,28 +199,27 @@ export function MovementList() {
             <Table.Summary.Row>
               <Table.Summary.Cell
                 align="right"
-                colSpan={6}
+                colSpan={4}
                 index={0}
                 rowSpan={2}
               >
                 Totales
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={1}>
-                {NumberFormat.formatCurrencyCents(
+                {NumberFormat.currencyCents(
                   movements?.extra?.totalAmountOutflow ?? 0,
                 )}
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={2}>
-                {NumberFormat.formatCurrencyCents(
+                {NumberFormat.currencyCents(
                   movements?.extra?.totalAmountInflow ?? 0,
                 )}
               </Table.Summary.Cell>
             </Table.Summary.Row>
+
             <Table.Summary.Row>
-              <Table.Summary.Cell align="center" colSpan={2} index={1}>
-                {NumberFormat.formatCurrencyCents(
-                  movements?.extra?.totalAmount ?? 0,
-                )}
+              <Table.Summary.Cell align="center" colSpan={2} index={0}>
+                {NumberFormat.currencyCents(movements?.extra?.totalAmount ?? 0)}
               </Table.Summary.Cell>
             </Table.Summary.Row>
           </Table.Summary>

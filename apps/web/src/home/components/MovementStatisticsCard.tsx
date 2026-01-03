@@ -30,15 +30,15 @@ export function MovementStatisticsCard({ dateRange }: Props) {
         <Statistic
           loading={isLoading}
           title="Ingresos"
-          value={NumberFormat.formatCurrencyCents(statistics?.totalInflow ?? 0)}
+          value={NumberFormat.currencyCents(statistics?.totalInflow ?? 0)}
         />
       </Card.Grid>
       <Card.Grid className="w-full md:w-1/3">
         <Statistic
           loading={isLoading}
           title="Egresos"
-          value={NumberFormat.formatCurrencyCents(
-            statistics?.totalOutflow ?? 0,
+          value={NumberFormat.currencyCents(
+            Math.abs(statistics?.totalOutflow ?? 0),
           )}
         />
       </Card.Grid>
@@ -53,7 +53,7 @@ export function MovementStatisticsCard({ dateRange }: Props) {
               </Tooltip>
             </Space>
           }
-          value={NumberFormat.formatCurrencyCents(statistics?.balance ?? 0)}
+          value={NumberFormat.currencyCents(statistics?.balance ?? 0)}
         />
       </Card.Grid>
       <Card.Grid className="w-full">
@@ -73,7 +73,7 @@ export function MovementStatisticsCard({ dateRange }: Props) {
               'Total acumulado'
             )
           }
-          value={NumberFormat.formatCurrencyCents(statistics?.total ?? 0)}
+          value={NumberFormat.currencyCents(statistics?.total ?? 0)}
         />
       </Card.Grid>
     </Card>

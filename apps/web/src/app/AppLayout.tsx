@@ -1,5 +1,4 @@
 import type { MenuItemType } from 'antd/es/menu/interface';
-import type { PropsWithChildren } from 'react';
 
 import {
   FilePdfOutlined,
@@ -23,6 +22,7 @@ import {
   theme,
   Typography,
 } from 'antd';
+import { type PropsWithChildren, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
@@ -51,6 +51,8 @@ export function AppLayout({ children }: PropsWithChildren) {
   const { sm } = Grid.useBreakpoint();
   const { themeMode } = useAppContext();
   const { token } = theme.useToken();
+
+  const [isFloatMenuOpen, setIsFloatMenuOpen] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -253,11 +255,18 @@ export function AppLayout({ children }: PropsWithChildren) {
           </Flex>
         </Layout.Footer>
 
-        <FloatButton.Group icon={<AddNewIcon />} trigger="click" type="primary">
+        <FloatButton.Group
+          icon={<AddNewIcon />}
+          onOpenChange={setIsFloatMenuOpen}
+          open={isFloatMenuOpen}
+          trigger="click"
+          type="primary"
+        >
           {permissions.members.create && (
             <Link to={appRoutes.members.new}>
               <FloatButton
                 icon={<UserAddOutlined />}
+                onClick={() => setIsFloatMenuOpen(false)}
                 tooltip={{ placement: 'left', title: 'Nuevo socio' }}
               />
             </Link>
@@ -267,6 +276,7 @@ export function AppLayout({ children }: PropsWithChildren) {
             <Link to={appRoutes.dues.new}>
               <FloatButton
                 icon={<DuesIcon />}
+                onClick={() => setIsFloatMenuOpen(false)}
                 tooltip={{ placement: 'left', title: 'Nueva deuda' }}
               />
             </Link>
@@ -276,6 +286,7 @@ export function AppLayout({ children }: PropsWithChildren) {
             <Link to={appRoutes.payments.new}>
               <FloatButton
                 icon={<PaymentsIcon />}
+                onClick={() => setIsFloatMenuOpen(false)}
                 tooltip={{ placement: 'left', title: 'Nuevo pago' }}
               />
             </Link>

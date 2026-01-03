@@ -66,7 +66,7 @@ export function PricingView() {
                 label: 'Categoría de socio',
               },
               {
-                children: NumberFormat.formatCurrencyCents(pricing.amount),
+                children: NumberFormat.currencyCents(pricing.amount),
                 label: 'Monto',
               },
             ]}

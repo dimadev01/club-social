@@ -12,7 +12,7 @@ import {
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { MemberStatus, MemberStatusLabel } from '@club-social/shared/members';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Dropdown, Space, type TableColumnType } from 'antd';
+import { Dropdown, Flex, Space, type TableColumnType } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -22,13 +22,18 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { labelMapToFilterOptions } from '@/shared/lib/utils';
+import {
+  labelMapToFilterOptions,
+  labelMapToSelectOptions,
+} from '@/shared/lib/utils';
 import {
   Button,
   Card,
+  NavigateToDue,
   NotFound,
   PageTableActions,
   PaymentsIcon,
+  Select,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -56,9 +61,10 @@ export function DueList() {
     state,
   } = useTable<DuePaginatedDto>({
     defaultFilters: {
+      memberStatus: [MemberStatus.ACTIVE],
       status: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
     },
-    defaultSort: [{ field: 'createdAt', order: 'descend' }],
+    defaultSort: [{ field: 'date', order: 'descend' }],
   });
 
   const { exportData, isExporting } = useExport({
@@ -120,14 +126,25 @@ export function DueList() {
       title="Deudas"
     >
       <PageTableActions>
-        {permissions.dues.listAll && (
-          <TableMembersSearch
-            isLoading={isSelectedMembersLoading}
-            onFilterChange={(value) => setFilter('memberId', value)}
-            selectedMembers={selectedMembers}
-            value={getFilterValue('memberId') ?? undefined}
+        <Flex gap="middle" wrap>
+          {permissions.dues.listAll && (
+            <TableMembersSearch
+              isLoading={isSelectedMembersLoading}
+              onFilterChange={(value) => setFilter('memberId', value)}
+              selectedMembers={selectedMembers}
+              value={getFilterValue('memberId') ?? undefined}
+            />
+          )}
+
+          <Select
+            className="min-w-full md:min-w-48"
+            mode="multiple"
+            onChange={(value) => setFilter('memberStatus', value)}
+            options={labelMapToSelectOptions(MemberStatusLabel)}
+            placeholder="Filtrar por estado socio"
+            value={getFilterValue('memberStatus') ?? undefined}
           />
-        )}
+        </Flex>
 
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -135,29 +152,17 @@ export function DueList() {
       <Table<DuePaginatedDto>
         columns={[
           {
-            dataIndex: 'createdAt',
-            filterDropdown: (props) => (
-              <TableDateRangeFilterDropdown {...props} format="datetime" />
-            ),
-            filteredValue: getFilterValue('createdAt'),
-            fixed: 'left',
-            render: (createdAt: string, record) => (
-              <Link to={appRoutes.dues.view(record.id)}>
-                {DateFormat.dateTime(createdAt)}
-              </Link>
-            ),
-            sorter: true,
-            sortOrder: getSortOrder('createdAt'),
-            title: 'Creado el',
-            width: TABLE_COLUMN_WIDTHS.DATE_TIME,
-          },
-          {
+            align: 'left',
             dataIndex: 'date',
             filterDropdown: (props) => (
               <TableDateRangeFilterDropdown {...props} format="date" />
             ),
             filteredValue: getFilterValue('date'),
-            render: (date: string) => DateFormat.date(date),
+            render: (date: string, record: DuePaginatedDto) => (
+              <NavigateToDue id={record.id}>{date}</NavigateToDue>
+            ),
+            sorter: true,
+            sortOrder: getSortOrder('date'),
             title: 'Fecha',
             width: TABLE_COLUMN_WIDTHS.DATE,
           },
@@ -175,7 +180,7 @@ export function DueList() {
               ]
             : []),
           {
-            align: 'center',
+            align: 'left',
             dataIndex: 'category',
             filteredValue: getFilterValue('category'),
             filters: labelMapToFilterOptions(DueCategoryLabel).map(
@@ -193,8 +198,7 @@ export function DueList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -210,15 +214,15 @@ export function DueList() {
           },
           ...(permissions.dues.listAll
             ? [
-                {
-                  align: 'center',
-                  dataIndex: 'memberStatus',
-                  filteredValue: getFilterValue('memberStatus'),
-                  filters: labelMapToFilterOptions(MemberStatusLabel),
-                  render: (value: MemberStatus) => MemberStatusLabel[value],
-                  title: 'Estado Socio',
-                  width: TABLE_COLUMN_WIDTHS.STATUS,
-                } satisfies TableColumnType<DuePaginatedDto>,
+                // {
+                //   align: 'center',
+                //   dataIndex: 'memberStatus',
+                //   filteredValue: getFilterValue('memberStatus'),
+                //   filters: labelMapToFilterOptions(MemberStatusLabel),
+                //   render: (value: MemberStatus) => MemberStatusLabel[value],
+                //   title: 'Estado Socio',
+                //   width: TABLE_COLUMN_WIDTHS.STATUS,
+                // } satisfies TableColumnType<DuePaginatedDto>,
                 {
                   align: 'center',
                   fixed: 'right',
@@ -281,9 +285,7 @@ export function DueList() {
                 Total
               </Table.Summary.Cell>
               <Table.Summary.Cell colSpan={7} index={1}>
-                {NumberFormat.formatCurrencyCents(
-                  dues?.extra?.totalAmount ?? 0,
-                )}
+                {NumberFormat.currencyCents(dues?.extra?.totalAmount ?? 0)}
               </Table.Summary.Cell>
             </Table.Summary.Row>
           </Table.Summary>

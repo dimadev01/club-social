@@ -4,13 +4,12 @@ import {
   MemberCategory,
   MemberCategoryLabel,
   type MemberPaginatedDto,
-  type MemberPaginatedExtraDto,
   MemberStatus,
   MemberStatusLabel,
 } from '@club-social/shared/members';
 import { type PaginatedDataResultDto } from '@club-social/shared/types';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Dropdown, Space, Typography } from 'antd';
+import { Dropdown, Flex, Space, Typography } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -19,7 +18,10 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { labelMapToFilterOptions } from '@/shared/lib/utils';
+import {
+  labelMapToFilterOptions,
+  labelMapToSelectOptions,
+} from '@/shared/lib/utils';
 import {
   Button,
   Card,
@@ -29,6 +31,7 @@ import {
   NotFound,
   PageTableActions,
   PaymentsIcon,
+  Select,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -75,9 +78,7 @@ export function MemberListPage() {
     enabled: permissions.members.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<
-        PaginatedDataResultDto<MemberPaginatedDto, MemberPaginatedExtraDto>
-      >('/members/paginated', {
+      $fetch<PaginatedDataResultDto<MemberPaginatedDto>>('/members/paginated', {
         query,
       }),
   });
@@ -116,12 +117,23 @@ export function MemberListPage() {
       title="Socios"
     >
       <PageTableActions>
-        <TableMembersSearch
-          isLoading={isSelectedMembersLoading}
-          onFilterChange={(value) => setFilter('id', value ?? [])}
-          selectedMembers={selectedMembers}
-          value={getFilterValue('id') ?? undefined}
-        />
+        <Flex gap="middle" wrap>
+          <TableMembersSearch
+            isLoading={isSelectedMembersLoading}
+            onFilterChange={(value) => setFilter('id', value ?? [])}
+            selectedMembers={selectedMembers}
+            value={getFilterValue('id') ?? undefined}
+          />
+
+          <Select
+            className="min-w-full md:min-w-40"
+            mode="multiple"
+            onChange={(value) => setFilter('status', value)}
+            options={labelMapToSelectOptions(MemberStatusLabel)}
+            placeholder="Filtrar por estado"
+            value={getFilterValue('status') ?? undefined}
+          />
+        </Flex>
 
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -151,16 +163,6 @@ export function MemberListPage() {
             width: TABLE_COLUMN_WIDTHS.CATEGORY,
           },
           {
-            align: 'center',
-            dataIndex: 'status',
-            filteredValue: getFilterValue('status'),
-            filters: labelMapToFilterOptions(MemberStatusLabel),
-            onFilter: (value, record) => record.status === value,
-            render: (value: MemberStatus) => MemberStatusLabel[value],
-            title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
-          },
-          {
             dataIndex: 'email',
             render: (text) => (
               <Typography.Text copyable={{ text }}>{text}</Typography.Text>
@@ -172,8 +174,7 @@ export function MemberListPage() {
           {
             align: 'right',
             dataIndex: 'memberShipTotalDueAmount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             sorter: true,
             sortOrder: getSortOrder('memberShipTotalDueAmount'),
             title: 'Deuda cuota',
@@ -182,8 +183,7 @@ export function MemberListPage() {
           {
             align: 'right',
             dataIndex: 'electricityTotalDueAmount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             sorter: true,
             sortOrder: getSortOrder('electricityTotalDueAmount'),
             title: 'Deuda luz',
@@ -192,8 +192,7 @@ export function MemberListPage() {
           {
             align: 'right',
             dataIndex: 'guestTotalDueAmount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             sorter: true,
             sortOrder: getSortOrder('guestTotalDueAmount'),
             title: 'Deuda invitado',
@@ -201,12 +200,20 @@ export function MemberListPage() {
           },
           {
             align: 'right',
+            dataIndex: 'totalAmount',
+            render: (amount: number) => NumberFormat.currencyCents(amount),
+            sorter: true,
+            sortOrder: getSortOrder('totalAmount'),
+            title: 'Deuda total',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+          {
+            align: 'right',
             dataIndex: 'balance',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             sorter: true,
             sortOrder: getSortOrder('balance'),
-            title: 'Balance',
+            title: 'Saldo',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
@@ -270,29 +277,6 @@ export function MemberListPage() {
           pageSize: state.pageSize,
           total: members?.total,
         }}
-        summary={() => (
-          <Table.Summary.Row>
-            <Table.Summary.Cell align="right" colSpan={4} index={0}>
-              Total
-            </Table.Summary.Cell>
-            <Table.Summary.Cell align="right" colSpan={1} index={1}>
-              {NumberFormat.formatCurrencyCents(
-                members?.extra?.memberShipTotalDueAmount ?? 0,
-              )}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell align="right" colSpan={1} index={2}>
-              {NumberFormat.formatCurrencyCents(
-                members?.extra?.electricityTotalDueAmount ?? 0,
-              )}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell align="right" colSpan={1} index={3}>
-              {NumberFormat.formatCurrencyCents(
-                members?.extra?.guestTotalDueAmount ?? 0,
-              )}
-            </Table.Summary.Cell>
-            <Table.Summary.Cell colSpan={2} index={4} />
-          </Table.Summary.Row>
-        )}
       />
     </Card>
   );

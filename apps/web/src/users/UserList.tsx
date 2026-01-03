@@ -3,25 +3,24 @@ import type { PaginatedDataResultDto } from '@club-social/shared/types';
 import {
   type UserDto,
   UserRole,
-  UserRoleLabel,
   UserStatus,
   UserStatusLabel,
 } from '@club-social/shared/users';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Space, Typography } from 'antd';
+import { Button, Flex, Space, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { labelMapToFilterOptions } from '@/shared/lib/utils';
+import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import {
   Card,
   NotFound,
   PageTableActions,
+  Select,
   Table,
-  TABLE_COLUMN_WIDTHS,
   TableActions,
   useTable,
 } from '@/ui';
@@ -39,6 +38,7 @@ export function UserListPage() {
     onChange,
     query,
     resetFilters,
+    setFilter,
     state,
   } = useTable<UserDto>({
     defaultFilters: {
@@ -78,6 +78,16 @@ export function UserListPage() {
       title="Usuarios"
     >
       <PageTableActions justify="end">
+        <Flex gap="middle" wrap>
+          <Select
+            className="min-w-full md:min-w-40"
+            mode="multiple"
+            onChange={(value) => setFilter('status', value)}
+            options={labelMapToSelectOptions(UserStatusLabel)}
+            placeholder="Filtrar por rol"
+            value={getFilterValue('status') ?? undefined}
+          />
+        </Flex>
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
@@ -103,30 +113,7 @@ export function UserListPage() {
             sorter: true,
             sortOrder: getSortOrder('email'),
             title: 'Email',
-            width: 300,
-          },
-          {
-            align: 'center',
-            dataIndex: 'status',
-            filteredValue: getFilterValue('status'),
-            filters: labelMapToFilterOptions(UserStatusLabel),
-            render: (value: UserStatus) => UserStatusLabel[value],
-            title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.DUE_STATUS,
-          },
-          {
-            align: 'center',
-            dataIndex: 'role',
-            filteredValue: getFilterValue('role'),
-            filters: [
-              {
-                text: UserRoleLabel[UserRole.STAFF],
-                value: UserRole.STAFF,
-              },
-            ],
-            render: (value: UserRole) => UserRoleLabel[value],
-            title: 'Rol',
-            width: 100,
+            width: 400,
           },
         ]}
         dataSource={users?.data}

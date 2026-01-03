@@ -76,7 +76,7 @@ export function PricingList() {
           )}
         </Space.Compact>
       }
-      title="Deudas"
+      title="Precios"
     >
       <PageTableActions>
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
@@ -137,8 +137,7 @@ export function PricingList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },

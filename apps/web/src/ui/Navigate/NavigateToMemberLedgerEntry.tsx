@@ -1,26 +1,11 @@
-import { DateFormat, DateFormats } from '@club-social/shared/lib';
-import { Link, type LinkProps } from 'react-router';
-
 import { appRoutes } from '@/app/app.enum';
 
-interface Props extends Omit<LinkProps, 'to'> {
-  dateFormat?: DateFormats;
-  formatDate?: boolean;
-  id: string;
-}
+import { NavigateToEntityProps } from './NavigateToEntity';
 
-export function NavigateMemberLedgerEntry({
-  children,
-  dateFormat = DateFormats.date,
-  formatDate = true,
-  id,
+export function NavigateToMemberLedgerEntry({
   ...props
-}: Props) {
+}: Omit<NavigateToEntityProps, 'view'>) {
   return (
-    <Link to={appRoutes.memberLedger.view(id)} {...props}>
-      {formatDate
-        ? DateFormat.format(children as string, dateFormat)
-        : children}
-    </Link>
+    <NavigateToEntityProps view={appRoutes.memberLedger.view} {...props} />
   );
 }

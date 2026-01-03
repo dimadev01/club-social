@@ -3,7 +3,7 @@ import {
   DueSettlementStatus,
   DueSettlementStatusLabel,
 } from '@club-social/shared/dues';
-import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   type PaymentDueSettlementDto,
   PaymentStatus,
@@ -20,9 +20,9 @@ import {
   Card,
   Descriptions,
   DescriptionsAudit,
-  NavigateMemberLedgerEntry,
   NavigateToDue,
   NavigateToMember,
+  NavigateToMemberLedgerEntry,
   NotFound,
   Row,
   Table,
@@ -96,7 +96,7 @@ export function PaymentView() {
                 label: 'Socio',
               },
               {
-                children: NumberFormat.formatCurrencyCents(payment.amount),
+                children: NumberFormat.currencyCents(payment.amount),
                 label: 'Monto',
               },
               {
@@ -126,9 +126,7 @@ export function PaymentView() {
           {
             dataIndex: ['due', 'date'],
             render: (date: string, record: PaymentDueSettlementDto) => (
-              <NavigateToDue dateFormat={DateFormats.date} id={record.due.id}>
-                {date}
-              </NavigateToDue>
+              <NavigateToDue id={record.due.id}>{date}</NavigateToDue>
             ),
             title: 'Fecha de deuda',
           },
@@ -157,16 +155,14 @@ export function PaymentView() {
           {
             align: 'right',
             dataIndex: ['due', 'amount'],
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto deuda',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto pago',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -174,9 +170,9 @@ export function PaymentView() {
             align: 'center',
             dataIndex: ['memberLedgerEntry', 'id'],
             render: (id: string) => (
-              <NavigateMemberLedgerEntry formatDate={false} id={id}>
+              <NavigateToMemberLedgerEntry formatDate={false} id={id}>
                 Ver movimiento
-              </NavigateMemberLedgerEntry>
+              </NavigateToMemberLedgerEntry>
             ),
             title: 'Movimiento',
             width: 150,

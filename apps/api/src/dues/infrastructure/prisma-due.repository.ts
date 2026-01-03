@@ -210,6 +210,7 @@ export class PrismaDueRepository implements DueRepository {
   public async findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]> {
     const dues = await this.prismaService.due.findMany({
       include: { settlements: true },
+      orderBy: { date: 'asc' },
       where: {
         memberId: memberId.value,
         status: {
@@ -302,11 +303,10 @@ export class PrismaDueRepository implements DueRepository {
       };
     }
 
-    const orderBy: DueOrderByWithRelationInput[] = [];
-
-    params.sort.forEach(({ field, order }) => {
-      orderBy.push({ [field]: order });
-    });
+    const orderBy: DueOrderByWithRelationInput[] = [
+      ...params.sort.map(({ field, order }) => ({ [field]: order })),
+      { createdAt: 'desc' },
+    ];
 
     return { orderBy, where };
   }

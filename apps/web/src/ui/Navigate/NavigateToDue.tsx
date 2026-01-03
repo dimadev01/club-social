@@ -1,26 +1,9 @@
-import { DateFormat, DateFormats } from '@club-social/shared/lib';
-import { Link, type LinkProps } from 'react-router';
-
 import { appRoutes } from '@/app/app.enum';
 
-interface Props extends Omit<LinkProps, 'to'> {
-  dateFormat?: DateFormats;
-  formatDate?: boolean;
-  id: string;
-}
+import { NavigateToEntityProps } from './NavigateToEntity';
 
 export function NavigateToDue({
-  children,
-  dateFormat = DateFormats.dateTime,
-  formatDate = true,
-  id,
   ...props
-}: Props) {
-  return (
-    <Link to={appRoutes.dues.view(id)} {...props}>
-      {formatDate
-        ? DateFormat.format(children as string, dateFormat)
-        : children}
-    </Link>
-  );
+}: Omit<NavigateToEntityProps, 'view'>) {
+  return <NavigateToEntityProps view={appRoutes.dues.view} {...props} />;
 }

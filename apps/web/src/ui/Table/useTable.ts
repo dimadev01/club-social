@@ -42,7 +42,7 @@ interface TableState {
   sort: SortItem[];
 }
 
-const DEFAULT_PAGE_SIZE = 25;
+const DEFAULT_PAGE_SIZE = 10;
 
 export function useTable<T = unknown>({
   defaultFilters,

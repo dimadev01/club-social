@@ -85,10 +85,18 @@ export function MovementForm({
       >
         <InputNumber<number>
           className="w-full"
-          formatter={(value) => NumberFormat.format(Number(value))}
+          formatter={(value) =>
+            NumberFormat.format(Number(value), {
+              maximumFractionDigits: 2,
+            })
+          }
           min={0}
-          parser={(value) => NumberFormat.parse(String(value))}
-          precision={0}
+          parser={(value) =>
+            NumberFormat.parse(String(value), {
+              maximumFractionDigits: 2,
+            })
+          }
+          precision={2}
           step={1000}
         />
       </Form.Item>

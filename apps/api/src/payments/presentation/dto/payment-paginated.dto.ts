@@ -1,3 +1,4 @@
+import { DueCategory } from '@club-social/shared/dues';
 import {
   PaymentPaginatedDto,
   PaymentPaginatedExtraDto,
@@ -10,6 +11,7 @@ export class PaymentPaginatedExtraResponseDto implements PaymentPaginatedExtraDt
 
 export class PaymentPaginatedResponseDto implements PaymentPaginatedDto {
   public amount: number;
+  public categories: DueCategory[];
   public createdAt: string;
   public createdBy: string;
   public date: string;

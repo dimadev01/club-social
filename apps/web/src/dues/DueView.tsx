@@ -25,8 +25,8 @@ import {
   Card,
   Descriptions,
   DescriptionsAudit,
-  NavigateMemberLedgerEntry,
   NavigateToMember,
+  NavigateToMemberLedgerEntry,
   NavigateToPayment,
   NotFound,
   Row,
@@ -111,7 +111,7 @@ export function DueView() {
                 label: 'Socio',
               },
               {
-                children: NumberFormat.formatCurrencyCents(due.amount),
+                children: NumberFormat.currencyCents(due.amount),
                 label: 'Monto',
               },
               {
@@ -146,9 +146,9 @@ export function DueView() {
           {
             dataIndex: ['memberLedgerEntry', 'date'],
             render: (date: string, record) => (
-              <NavigateMemberLedgerEntry id={record.memberLedgerEntry.id}>
+              <NavigateToMemberLedgerEntry id={record.memberLedgerEntry.id}>
                 {date}
-              </NavigateMemberLedgerEntry>
+              </NavigateToMemberLedgerEntry>
             ),
             title: 'Fecha de movimiento',
           },
@@ -179,8 +179,7 @@ export function DueView() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },

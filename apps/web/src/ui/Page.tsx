@@ -19,10 +19,9 @@ export function PageLoader() {
 export function PageTableActions({ className, ...props }: FlexProps) {
   return (
     <Flex
-      align="center"
+      align="flex-start"
       className={cn('mb-8', className)}
       gap="middle"
-      wrap
       {...props}
     />
   );

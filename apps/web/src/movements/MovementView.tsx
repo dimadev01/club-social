@@ -88,7 +88,9 @@ export function MovementView() {
                 label: 'Categoría',
               },
               {
-                children: NumberFormat.formatCurrencyCents(movement.amount),
+                children: NumberFormat.currencyCents(movement.amount, {
+                  maximumFractionDigits: 2,
+                }),
                 label: 'Monto',
               },
               {

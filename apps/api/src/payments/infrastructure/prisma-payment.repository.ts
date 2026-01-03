@@ -162,7 +162,10 @@ export class PrismaPaymentRepository implements PaymentRepository {
     const { orderBy, where } = this.buildWhereAndOrderBy(params, context);
 
     const payments = await this.prismaService.payment.findMany({
-      include: { member: { include: { user: true } } },
+      include: {
+        member: { include: { user: true } },
+        settlements: { include: { due: true } },
+      },
       orderBy,
       where,
     });
@@ -218,7 +221,10 @@ export class PrismaPaymentRepository implements PaymentRepository {
     const { orderBy, where } = this.buildWhereAndOrderBy(params, context);
 
     const query = {
-      include: { member: { include: { user: true } } },
+      include: {
+        member: { include: { user: true } },
+        settlements: { include: { due: true } },
+      },
       orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
@@ -298,28 +304,37 @@ export class PrismaPaymentRepository implements PaymentRepository {
       where.status = { in: params.filters.status };
     }
 
-    if (params.filters?.dueCategory) {
+    if (params.filters?.categories) {
       where.settlements = {
-        some: { due: { category: { in: params.filters.dueCategory } } },
+        some: { due: { category: { in: params.filters.categories } } },
       };
     }
 
-    const orderBy: PaymentOrderByWithRelationInput[] = [];
-
-    params.sort.forEach(({ field, order }) => {
-      orderBy.push({ [field]: order });
-    });
+    const orderBy: PaymentOrderByWithRelationInput[] = [
+      ...params.sort.map(({ field, order }) => ({ [field]: order })),
+      { date: 'desc' },
+    ];
 
     return { orderBy, where };
   }
 
   private toPaginatedReadModel(
     payment: PaymentGetPayload<{
-      include: { member: { include: { user: true } } };
+      include: {
+        member: { include: { user: true } };
+        settlements: { include: { due: true } };
+      };
     }>,
   ): PaymentPaginatedReadModel {
+    const categoriesPaid = new Set<DueCategory>();
+
+    for (const settlement of payment.settlements) {
+      categoriesPaid.add(settlement.due.category as DueCategory);
+    }
+
     return {
       amount: payment.amount,
+      categories: Array.from(categoriesPaid).sort(),
       createdAt: payment.createdAt,
       createdBy: payment.createdBy,
       date: payment.date,

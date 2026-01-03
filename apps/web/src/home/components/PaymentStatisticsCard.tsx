@@ -40,14 +40,14 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
         <Statistic
           loading={isLoading}
           title="Total de pagos"
-          value={NumberFormat.formatCurrencyCents(statistics?.total ?? 0)}
+          value={NumberFormat.currencyCents(statistics?.total ?? 0)}
         />
       </Card.Grid>
       <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">
         <Statistic
           loading={isLoading}
           title="Promedio de pago"
-          value={NumberFormat.formatCurrencyCents(statistics?.average ?? 0)}
+          value={NumberFormat.currencyCents(statistics?.average ?? 0)}
         />
       </Card.Grid>
 

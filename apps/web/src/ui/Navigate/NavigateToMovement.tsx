@@ -2,8 +2,8 @@ import { appRoutes } from '@/app/app.enum';
 
 import { NavigateToEntityProps } from './NavigateToEntity';
 
-export function NavigateToPayment({
+export function NavigateToMovement({
   ...props
 }: Omit<NavigateToEntityProps, 'view'>) {
-  return <NavigateToEntityProps view={appRoutes.payments.view} {...props} />;
+  return <NavigateToEntityProps view={appRoutes.movements.view} {...props} />;
 }

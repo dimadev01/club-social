@@ -18,6 +18,7 @@ export interface MemberPaginatedExtraReadModel {
   electricityTotalDueAmount: number;
   guestTotalDueAmount: number;
   memberShipTotalDueAmount: number;
+  totalAmount: number;
 }
 
 export interface MemberPaginatedReadModel {
@@ -30,6 +31,7 @@ export interface MemberPaginatedReadModel {
   memberShipTotalDueAmount: number;
   name: string;
   status: MemberStatus;
+  totalAmount: number;
 }
 
 export interface MemberReadModel {

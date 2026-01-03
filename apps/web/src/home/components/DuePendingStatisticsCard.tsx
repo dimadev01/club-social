@@ -54,7 +54,7 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
               loading={isLoading}
               prefix={DueCategoryIconMap[category]}
               title={DueCategoryLabel[category]}
-              value={NumberFormat.formatCurrencyCents(
+              value={NumberFormat.currencyCents(
                 data?.categories[category] ?? 0,
               )}
             />
@@ -65,7 +65,7 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
         <Statistic
           loading={isLoading}
           title="Total"
-          value={NumberFormat.formatCurrencyCents(data?.total ?? 0)}
+          value={NumberFormat.currencyCents(data?.total ?? 0)}
         />
       </Card.Grid>
     </Card>
