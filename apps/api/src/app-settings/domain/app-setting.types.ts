@@ -1,13 +1,44 @@
-export const AppSettingKey = {
-  MAINTENANCE_MODE: 'maintenance-mode',
-} as const;
+import {
+  AppSettingKey,
+  type AppSettingValues,
+} from '@club-social/shared/app-settings';
 
-export type AppSettingKey = (typeof AppSettingKey)[keyof typeof AppSettingKey];
+import { ApplicationError } from '@/shared/domain/errors/application.error';
+import { Guard } from '@/shared/domain/guards';
+import { err, ok, Result } from '@/shared/domain/result';
 
-export interface AppSettingValues {
-  [AppSettingKey.MAINTENANCE_MODE]: MaintenanceModeValue;
+type SettingValidator<K extends AppSettingKey> = (
+  value: unknown,
+) => Result<AppSettingValues[K]>;
+
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  Guard.isObject(value);
+
+const settingValidators: {
+  [K in AppSettingKey]: SettingValidator<K>;
+} = {
+  [AppSettingKey.MAINTENANCE_MODE]: (value) => {
+    if (!isObject(value) || typeof value.enabled !== 'boolean') {
+      return err(
+        new ApplicationError(
+          'Invalid maintenance mode value: expected { enabled: boolean }',
+        ),
+      );
+    }
+
+    return ok({ enabled: value.enabled });
+  },
+};
+
+export function isValidAppSettingKey(key: string): key is AppSettingKey {
+  return Object.values(AppSettingKey).includes(key as AppSettingKey);
 }
 
-export interface MaintenanceModeValue {
-  enabled: boolean;
+export function validateSettingValue<K extends AppSettingKey>(
+  key: K,
+  value: unknown,
+): Result<AppSettingValues[K]> {
+  const validator = settingValidators[key] as SettingValidator<K>;
+
+  return validator(value);
 }

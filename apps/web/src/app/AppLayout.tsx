@@ -4,10 +4,12 @@ import type { PropsWithChildren } from 'react';
 import {
   FilePdfOutlined,
   FileTextOutlined,
+  SettingOutlined,
   UserAddOutlined,
   UserOutlined,
   WhatsAppOutlined,
 } from '@ant-design/icons';
+import { UserRole } from '@club-social/shared/users';
 import {
   Avatar,
   ConfigProvider,
@@ -58,6 +60,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   );
 
   const user = useSessionUser();
+  const isAdmin = user.role === UserRole.ADMIN;
 
   const permissions = usePermissions();
 
@@ -132,19 +135,27 @@ export function AppLayout({ children }: PropsWithChildren) {
       });
     }
 
-    menuItems.push(
-      {
-        icon: <UserOutlined />,
-        key: appRoutes.profile,
-        label: 'Mi Perfil',
-      },
-      {
-        icon: <LogoutIcon />,
-        key: appRoutes.auth.logout,
-        label: 'Cerrar sesión',
-      },
-    );
+    if (isAdmin) {
+      menuItems.push({
+        icon: <SettingOutlined />,
+        key: appRoutes.appSettings,
+        label: 'Configuración',
+      });
+    }
   }
+
+  menuItems.push(
+    {
+      icon: <UserOutlined />,
+      key: appRoutes.profile,
+      label: 'Mi Perfil',
+    },
+    {
+      icon: <LogoutIcon />,
+      key: appRoutes.auth.logout,
+      label: 'Cerrar sesión',
+    },
+  );
 
   const selectedKeys = [`/${location.pathname.split('/')[1]}`];
 

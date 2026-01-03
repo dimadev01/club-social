@@ -1,14 +1,17 @@
+import { AppSettingKey } from '@club-social/shared/app-settings';
 import { UserRole } from '@club-social/shared/users';
 import {
+  BadRequestException,
   Body,
   Controller,
   ForbiddenException,
   Get,
   Inject,
+  NotFoundException,
+  Param,
   Patch,
   Session,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 
 import type { AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 import type { AppLogger } from '@/shared/application/app-logger';
@@ -22,13 +25,12 @@ import type { AppSettingRepository } from '../domain/app-setting.repository';
 
 import { UpdateSettingUseCase } from '../application/update-setting.use-case';
 import { APP_SETTING_REPOSITORY_PROVIDER } from '../domain/app-setting.repository';
-import { AppSettingKey } from '../domain/app-setting.types';
+import { isValidAppSettingKey } from '../domain/app-setting.types';
 import { AppSettingEntity } from '../domain/entities/app-setting.entity';
 import { AppSettingService } from '../infrastructure/app-setting.service';
-import { AppSettingDto, MaintenanceModeDto } from './dto/app-setting.dto';
-import { UpdateMaintenanceModeRequestDto } from './dto/update-setting.dto';
+import { AppSettingResponseDto } from './dto/app-setting.dto';
+import { UpdateSettingRequestDto } from './dto/update-setting.dto';
 
-@ApiTags('App Settings')
 @Controller('app-settings')
 export class AppSettingsController extends BaseController {
   public constructor(
@@ -45,7 +47,7 @@ export class AppSettingsController extends BaseController {
   @Get()
   public async getAll(
     @Session() session: AuthSession,
-  ): Promise<AppSettingDto[]> {
+  ): Promise<AppSettingResponseDto<AppSettingKey>[]> {
     this.requireAdmin(session);
 
     const settings = await this.repository.findAll();
@@ -56,30 +58,65 @@ export class AppSettingsController extends BaseController {
   @Get('maintenance-mode')
   @PublicRoute()
   @SkipMaintenanceCheck()
-  public async getMaintenanceMode(): Promise<MaintenanceModeDto> {
-    const maintenanceMode = await this.appSettingService.getMaintenanceMode();
+  public async getMaintenanceMode(): Promise<
+    AppSettingResponseDto<typeof AppSettingKey.MAINTENANCE_MODE>
+  > {
+    const setting = await this.appSettingService.getMaintenanceMode();
 
-    return {
-      enabled: maintenanceMode.enabled,
-    };
+    return this.toDto(setting);
   }
 
   @Patch('maintenance-mode')
   public async updateMaintenanceMode(
-    @Body() body: UpdateMaintenanceModeRequestDto,
+    @Body() body: UpdateSettingRequestDto,
     @Session() session: AuthSession,
-  ): Promise<AppSettingDto> {
+  ): Promise<void> {
     this.requireAdmin(session);
 
-    const result = await this.updateSettingUseCase.execute({
-      key: AppSettingKey.MAINTENANCE_MODE,
-      updatedBy: session.user.id,
-      value: { enabled: body.enabled },
-    });
+    this.handleResult(
+      await this.updateSettingUseCase.execute({
+        key: AppSettingKey.MAINTENANCE_MODE,
+        updatedBy: session.user.id,
+        value: body.value,
+      }),
+    );
+  }
 
-    const entity = this.handleResult(result);
+  @Get(':key')
+  public async getByKey(
+    @Param('key') key: string,
+    @Session() session: AuthSession,
+  ): Promise<AppSettingResponseDto<AppSettingKey>> {
+    this.requireAdmin(session);
 
-    return this.toDto(entity);
+    if (!isValidAppSettingKey(key)) {
+      throw new NotFoundException(`Setting with key "${key}" not found`);
+    }
+
+    const setting = await this.appSettingService.getValue(key);
+
+    return this.toDto(setting);
+  }
+
+  @Patch(':key')
+  public async updateByKey(
+    @Param('key') key: string,
+    @Body() body: UpdateSettingRequestDto,
+    @Session() session: AuthSession,
+  ): Promise<void> {
+    this.requireAdmin(session);
+
+    if (!isValidAppSettingKey(key)) {
+      throw new BadRequestException(`Invalid setting key: "${key}"`);
+    }
+
+    this.handleResult(
+      await this.updateSettingUseCase.execute({
+        key,
+        updatedBy: session.user.id,
+        value: body.value,
+      }),
+    );
   }
 
   private requireAdmin(session: AuthSession): void {
@@ -88,11 +125,13 @@ export class AppSettingsController extends BaseController {
     }
   }
 
-  private toDto(entity: AppSettingEntity): AppSettingDto {
+  private toDto(
+    entity: AppSettingEntity,
+  ): AppSettingResponseDto<AppSettingKey> {
     return {
       description: entity.description,
-      key: entity.key,
-      updatedAt: entity.updatedAt,
+      key: entity.id.value as AppSettingKey,
+      updatedAt: entity.updatedAt.toISOString(),
       updatedBy: entity.updatedBy,
       value: entity.value,
     };

@@ -1,7 +1,11 @@
+import {
+  AppSettingKey,
+  AppSettingValues,
+} from '@club-social/shared/app-settings';
+
 import { AggregateRoot } from '@/shared/domain/aggregate-root';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import { AppSettingKey, AppSettingValues } from '../app-setting.types';
 import { AppSettingUpdatedEvent } from '../events/app-setting-updated.event';
 
 interface AppSettingPersistenceMeta {
@@ -22,10 +26,6 @@ export class AppSettingEntity<
     return this._description;
   }
 
-  public get key(): K {
-    return this._key;
-  }
-
   public get updatedAt(): Date {
     return this._updatedAt;
   }
@@ -38,8 +38,7 @@ export class AppSettingEntity<
     return this._value;
   }
 
-  private readonly _description: null | string;
-  private readonly _key: K;
+  private _description: null | string;
   private _updatedAt: Date;
   private _updatedBy: null | string;
   private _value: AppSettingValues[K];
