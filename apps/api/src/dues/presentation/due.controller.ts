@@ -176,12 +176,20 @@ export class DuesController extends BaseController {
   @Get('paginated')
   public async getPaginated(
     @Query() query: GetPaginatedDataRequestDto,
+    @Session() session: AuthSession,
   ): Promise<
     PaginatedDataResponseDto<
       DuePaginatedResponseDto,
       DuePaginatedExtraResponseDto
     >
   > {
+    if (session.memberId) {
+      query.filters = {
+        ...query.filters,
+        memberId: [session.memberId],
+      };
+    }
+
     const data = await this.dueRepository.findPaginated({
       filters: query.filters,
       page: query.page,
@@ -211,9 +219,13 @@ export class DuesController extends BaseController {
   @Get('pending-statistics')
   public async getPendingStatistics(
     @Query() query: DateRangeRequestDto,
+    @Session() session: AuthSession,
   ): Promise<DuePendingStatisticsResponseDto> {
     const dues = await this.dueRepository.findPending({
       dateRange: query.dateRange,
+      memberId: session.memberId
+        ? UniqueId.raw({ value: session.memberId })
+        : undefined,
     });
 
     const categories = Object.values(DueCategory).reduce(

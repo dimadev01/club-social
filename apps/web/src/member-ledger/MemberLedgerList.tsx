@@ -13,7 +13,7 @@ import {
   MemberLedgerEntryTypeLabel,
 } from '@club-social/shared/members';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Dropdown, Space } from 'antd';
+import { Button, Dropdown, Space, type TableColumnType } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -153,15 +153,19 @@ export function MemberLedgerList() {
             title: 'Fecha',
             width: TABLE_COLUMN_WIDTHS.DATE,
           },
-          {
-            dataIndex: 'memberFullName',
-            render: (memberFullName: string, record) => (
-              <NavigateToMember id={record.memberId}>
-                {memberFullName}
-              </NavigateToMember>
-            ),
-            title: 'Socio',
-          },
+          ...(permissions.memberLedger.listAll
+            ? [
+                {
+                  dataIndex: 'memberFullName',
+                  render: (memberFullName: string, record) => (
+                    <NavigateToMember id={record.memberId}>
+                      {memberFullName}
+                    </NavigateToMember>
+                  ),
+                  title: 'Socio',
+                } satisfies TableColumnType<MemberLedgerEntryPaginatedDto>,
+              ]
+            : []),
           {
             align: 'center',
             dataIndex: 'type',

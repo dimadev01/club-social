@@ -133,12 +133,20 @@ export class MemberLedgerController extends BaseController {
   @Get()
   public async getPaginated(
     @Query() query: GetPaginatedDataRequestDto,
+    @Session() session: AuthSession,
   ): Promise<
     PaginatedDataResponseDto<
       MemberLedgerEntryPaginatedResponseDto,
       MemberLedgerEntryPaginatedExtraResponseDto
     >
   > {
+    if (session.memberId) {
+      query.filters = {
+        ...query.filters,
+        memberId: [session.memberId],
+      };
+    }
+
     const result = await this.memberLedgerRepository.findPaginated({
       filters: query.filters,
       page: query.page,

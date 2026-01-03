@@ -132,6 +132,8 @@ export function AppLayout({ children }: PropsWithChildren) {
     `/${location.pathname.split('/')[1]}`,
   ]);
 
+  console.log(selectedKeys);
+
   return (
     <Layout className="min-h-screen" hasSider>
       <Layout.Sider

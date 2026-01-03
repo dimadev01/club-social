@@ -10,7 +10,7 @@ import { DueEdit } from '@/dues/DueEdit';
 import { DueList } from '@/dues/DueList';
 import { DueNew } from '@/dues/DueNew';
 import { DueView } from '@/dues/DueView';
-import { Home } from '@/home/HomePage';
+import { HomePage } from '@/home/HomePage';
 import { MemberLedgerList } from '@/member-ledger/MemberLedgerList';
 import { MemberLedgerNew } from '@/member-ledger/MemberLedgerNew';
 import { MemberLedgerView } from '@/member-ledger/MemberLedgerView';
@@ -50,7 +50,7 @@ export function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route element={<ProtectedRoute />}>
-          <Route element={<Home />} path={appRoutes.home} />
+          <Route element={<HomePage />} path={appRoutes.home} />
 
           <Route path={appRoutes.users.list}>
             <Route element={<UserListPage />} index />

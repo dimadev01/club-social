@@ -1,4 +1,4 @@
-import { DateRangeDto, ExportDataDto } from '@club-social/shared/types';
+import { ExportDataDto } from '@club-social/shared/types';
 
 import {
   PaginatedRepository,
@@ -12,6 +12,7 @@ import {
   DuePaginatedReadModel,
   DueReadModel,
 } from './due-read-models';
+import { FindPendingByMemberIdParams } from './due-repository.types';
 import { DueEntity } from './entities/due.entity';
 
 export const DUE_REPOSITORY_PROVIDER = Symbol('DueRepository');
@@ -24,6 +25,6 @@ export interface DueRepository
   findByIdReadModel(id: UniqueId): Promise<DueReadModel | null>;
   findByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
   findForExport(params: ExportDataDto): Promise<DuePaginatedReadModel[]>;
-  findPending(params: DateRangeDto): Promise<DueEntity[]>;
+  findPending(params: FindPendingByMemberIdParams): Promise<DueEntity[]>;
   findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
 }

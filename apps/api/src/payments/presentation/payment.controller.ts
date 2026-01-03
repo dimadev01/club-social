@@ -112,12 +112,20 @@ export class PaymentsController extends BaseController {
   @Get('paginated')
   public async getPaginated(
     @Query() query: GetPaginatedDataRequestDto,
+    @Session() session: AuthSession,
   ): Promise<
     PaginatedDataResponseDto<
       PaymentPaginatedResponseDto,
       PaymentPaginatedExtraResponseDto
     >
   > {
+    if (session.memberId) {
+      query.filters = {
+        ...query.filters,
+        memberId: [session.memberId],
+      };
+    }
+
     const data = await this.paymentRepository.findPaginated({
       filters: query.filters,
       page: query.page,

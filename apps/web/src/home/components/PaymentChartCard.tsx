@@ -16,6 +16,7 @@ import {
 } from 'recharts';
 
 import { Card } from '@/ui/Card';
+import { Descriptions } from '@/ui/Descriptions';
 import { Form } from '@/ui/Form/Form';
 
 import { usePaymentDailyStatistics } from '../usePaymentDailyStatistics';
@@ -125,21 +126,25 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   const data = payload[0].payload;
 
   return (
-    <div className="rounded-md border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
-      <p className="mb-1 font-medium">
-        {DateFormat.parse(data.date).format('D [de] MMMM')}
-      </p>
-      <p className="text-sm">
-        <span className="text-gray-500 dark:text-gray-400">Monto: </span>
-        <span className="font-medium">
-          {NumberFormat.formatCurrencyCents(data.amount)}
-        </span>
-      </p>
-      <p className="text-sm">
-        <span className="text-gray-500 dark:text-gray-400">Pagos: </span>
-        <span className="font-medium">{data.count}</span>
-      </p>
-    </div>
+    <Card
+      size="small"
+      title={DateFormat.parse(data.date).format('D [de] MMMM')}
+    >
+      <Descriptions
+        bordered={false}
+        className="max-w-32"
+        items={[
+          {
+            children: data.count,
+            label: 'Pagos',
+          },
+          {
+            children: NumberFormat.formatCurrencyCents(data.amount),
+            label: 'Total',
+          },
+        ]}
+      />
+    </Card>
   );
 }
 
