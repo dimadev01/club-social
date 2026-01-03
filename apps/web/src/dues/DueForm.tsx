@@ -2,8 +2,7 @@ import type { MemberSearchResultDto } from '@club-social/shared/members';
 import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormats } from '@club-social/shared/lib';
+import { DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { DatePicker, Input, InputNumber } from 'antd';
 import { useEffect, useState } from 'react';
 

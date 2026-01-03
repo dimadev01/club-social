@@ -1,6 +1,5 @@
 import { MoreOutlined } from '@ant-design/icons';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   MemberCategory,
   MemberCategoryLabel,

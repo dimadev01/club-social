@@ -1,8 +1,7 @@
 import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   type MemberCategory,
   MemberCategoryLabel,

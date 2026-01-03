@@ -1,7 +1,6 @@
 import type dayjs from 'dayjs';
 
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormats } from '@club-social/shared/lib';
+import { DateFormats, NumberFormat } from '@club-social/shared/lib';
 import {
   MovementCategory,
   MovementCategoryLabel,
@@ -11,8 +10,7 @@ import {
 import { DatePicker, Input, InputNumber } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form } from '@/ui';
-import { Select } from '@/ui';
+import { Form, Select } from '@/ui';
 
 export interface MovementFormData {
   amount: number;

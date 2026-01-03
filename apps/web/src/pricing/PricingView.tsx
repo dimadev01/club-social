@@ -1,6 +1,5 @@
 import { DueCategoryLabel } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { MemberCategoryLabel } from '@club-social/shared/members';
 import { Button, Col } from 'antd';
 import { useNavigate, useParams } from 'react-router';

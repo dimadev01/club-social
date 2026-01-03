@@ -2,8 +2,7 @@ import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { FilterOutlined, MoreOutlined } from '@ant-design/icons';
 import { DueCategoryLabel, DueCategorySorted } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   type PaymentPaginatedDto,
   type PaymentPaginatedExtraDto,

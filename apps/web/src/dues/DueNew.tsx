@@ -2,8 +2,7 @@ import type { CreateDueDto } from '@club-social/shared/dues';
 import type { ParamIdDto } from '@club-social/shared/types';
 
 import { DueCategory } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router';

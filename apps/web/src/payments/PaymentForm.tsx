@@ -5,8 +5,7 @@ import {
   DueCategoryLabel,
   type PendingDueDto,
 } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat, DateFormats } from '@club-social/shared/lib';
+import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { useQueries } from '@tanstack/react-query';
 import {
   Checkbox,
