@@ -26,18 +26,20 @@ import { useLocalStorage } from 'react-use';
 
 import { useSessionUser } from '@/auth/useUser';
 import { cn } from '@/shared/lib/utils';
-import { Button } from '@/ui/Button';
-import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
-import { AuditLogsIcon } from '@/ui/Icons/AuditLogsIcon';
-import { DashboardIcon } from '@/ui/Icons/DashboardIcon';
-import { DuesIcon } from '@/ui/Icons/DuesIcon';
-import { LedgerIcon } from '@/ui/Icons/LedgerIcon';
-import { LogoutIcon } from '@/ui/Icons/LogoutIcon';
-import { MovementsIcon } from '@/ui/Icons/MovementsIcon';
-import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
-import { PricingIcon } from '@/ui/Icons/PricesIcon';
-import { UsersIcon } from '@/ui/Icons/UsersIcon';
-import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
+import {
+  AddNewIcon,
+  AuditLogsIcon,
+  Button,
+  DashboardIcon,
+  DuesIcon,
+  LedgerIcon,
+  LogoutIcon,
+  MenuThemeSwitcher,
+  MovementsIcon,
+  PaymentsIcon,
+  PricingIcon,
+  UsersIcon,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { appRoutes } from './app.enum';

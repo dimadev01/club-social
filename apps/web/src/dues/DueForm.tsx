@@ -10,8 +10,7 @@ import { useEffect, useState } from 'react';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useActivePricing } from '@/pricing/useActivePricing';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form } from '@/ui/Form/Form';
-import { Select } from '@/ui/Select';
+import { Form, Select } from '@/ui';
 
 export interface DueFormData {
   amount: number;

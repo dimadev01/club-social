@@ -12,8 +12,7 @@ import { DatePicker, Input, InputNumber } from 'antd';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form } from '@/ui/Form/Form';
-import { Select } from '@/ui/Select';
+import { Form, Select } from '@/ui';
 
 export interface MemberLedgerEntryFormData {
   amount: number;

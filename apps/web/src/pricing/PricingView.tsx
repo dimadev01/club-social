@@ -6,11 +6,7 @@ import { Button, Col } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { NotFound } from '@/ui/NotFound';
-import { Row } from '@/ui/Row';
+import { Card, Descriptions, DescriptionsAudit, NotFound, Row } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { usePricing } from './usePricing';

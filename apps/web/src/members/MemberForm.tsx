@@ -18,12 +18,7 @@ import {
 import { Col, DatePicker, Empty, Input, Space } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Button } from '@/ui/Button';
-import { Card } from '@/ui/Card';
-import { Form } from '@/ui/Form/Form';
-import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
-import { Row } from '@/ui/Row';
-import { Select } from '@/ui/Select';
+import { AddNewIcon, Button, Card, Form, Row, Select } from '@/ui';
 
 export interface MemberFormData {
   address: {

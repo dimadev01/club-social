@@ -24,17 +24,19 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
-import { Card } from '@/ui/Card';
-import { NavigateToMember } from '@/ui/NavigateMember';
-import { NavigateToPayment } from '@/ui/NavigateToPayment';
-import { NotFound } from '@/ui/NotFound';
-import { PageTableActions } from '@/ui/Page';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { TableActions } from '@/ui/Table/TableActions';
-import { TableDateRangeFilterDropdown } from '@/ui/Table/TableDateRangeFilterDropdown';
-import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
-import { useTable } from '@/ui/Table/useTable';
+import {
+  Card,
+  NavigateToMember,
+  NavigateToPayment,
+  NotFound,
+  PageTableActions,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  TableActions,
+  TableDateRangeFilterDropdown,
+  TableMembersSearch,
+  useTable,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 export function MemberLedgerList() {

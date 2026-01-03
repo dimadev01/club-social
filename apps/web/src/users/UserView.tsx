@@ -3,9 +3,7 @@ import { Button } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { NotFound } from '@/ui/NotFound';
+import { Card, Descriptions, NotFound } from '@/ui';
 
 import { usePermissions } from './use-permissions';
 import { useUser } from './useUser';

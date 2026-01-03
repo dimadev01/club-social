@@ -13,13 +13,15 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { NavigateToPayment } from '@/ui/NavigateToPayment';
-import { NotFound } from '@/ui/NotFound';
-import { Row } from '@/ui/Row';
-import { VoidModal } from '@/ui/VoidModal';
+import {
+  Card,
+  Descriptions,
+  DescriptionsAudit,
+  NavigateToPayment,
+  NotFound,
+  Row,
+  VoidModal,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { useMovement } from './useMovement';

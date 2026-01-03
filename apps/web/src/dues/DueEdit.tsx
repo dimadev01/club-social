@@ -9,9 +9,7 @@ import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
-import { Card } from '@/ui/Card';
-import { FormSubmitButton } from '@/ui/Form/FormSaveButton';
-import { NotFound } from '@/ui/NotFound';
+import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueForm, type DueFormData } from './DueForm';

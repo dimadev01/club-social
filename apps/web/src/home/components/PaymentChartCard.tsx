@@ -15,9 +15,7 @@ import {
   YAxis,
 } from 'recharts';
 
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { Form } from '@/ui/Form/Form';
+import { Card, Descriptions, Form } from '@/ui';
 
 import { usePaymentDailyStatistics } from '../usePaymentDailyStatistics';
 

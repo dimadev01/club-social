@@ -18,13 +18,15 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
-import { Card } from '@/ui/Card';
-import { NotFound } from '@/ui/NotFound';
-import { PageTableActions } from '@/ui/Page';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { TableActions } from '@/ui/Table/TableActions';
-import { useTable } from '@/ui/Table/useTable';
+import {
+  Card,
+  NotFound,
+  PageTableActions,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  TableActions,
+  useTable,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 export function PricingList() {

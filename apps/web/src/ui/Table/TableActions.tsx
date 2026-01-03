@@ -6,7 +6,7 @@ import { cn } from '@/shared/lib/utils';
 
 import { Button } from '../Button';
 import { FilterClearIcon } from '../Icons/FilterClearIcon';
-import { FilterResetIcon } from '../Icons/FilterResetICon2';
+import { FilterResetIcon } from '../Icons/FilterResetIcon';
 
 interface Props extends SpaceCompactProps {
   clearFilters: () => void;

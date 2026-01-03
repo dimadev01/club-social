@@ -21,19 +21,21 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
-import { Button } from '@/ui/Button';
-import { Card } from '@/ui/Card';
-import { DuesIcon } from '@/ui/Icons/DuesIcon';
-import { LedgerIcon } from '@/ui/Icons/LedgerIcon';
-import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
-import { NavigateToMember } from '@/ui/NavigateMember';
-import { NotFound } from '@/ui/NotFound';
-import { PageTableActions } from '@/ui/Page';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { TableActions } from '@/ui/Table/TableActions';
-import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
-import { useTable } from '@/ui/Table/useTable';
+import {
+  Button,
+  Card,
+  DuesIcon,
+  LedgerIcon,
+  NavigateToMember,
+  NotFound,
+  PageTableActions,
+  PaymentsIcon,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  TableActions,
+  TableMembersSearch,
+  useTable,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { useMembersForSelect } from './useMembersForSelect';

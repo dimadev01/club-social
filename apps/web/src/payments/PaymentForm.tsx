@@ -29,11 +29,7 @@ import { usePendingDues } from '@/dues/usePendingDues';
 import { useMemberBalance } from '@/member-ledger/useMemberBalance';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { Form } from '@/ui/Form/Form';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
+import { Card, Descriptions, Form, Table, TABLE_COLUMN_WIDTHS } from '@/ui';
 
 export type FormInitialValues = Partial<PaymentFormSchema>;
 

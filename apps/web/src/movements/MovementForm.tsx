@@ -11,8 +11,8 @@ import {
 import { DatePicker, Input, InputNumber } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form } from '@/ui/Form/Form';
-import { Select } from '@/ui/Select';
+import { Form } from '@/ui';
+import { Select } from '@/ui';
 
 export interface MovementFormData {
   amount: number;
