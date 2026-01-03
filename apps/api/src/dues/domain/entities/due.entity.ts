@@ -13,7 +13,7 @@ import { DueCreatedEvent } from '../events/due-created.event';
 import { DueUpdatedEvent } from '../events/due-updated.event';
 import { DueSettlementEntity } from './due-settlement.entity';
 
-interface DueProps {
+export interface DueProps {
   amount: Amount;
   category: DueCategory;
   date: DateOnly;

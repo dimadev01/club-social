@@ -7,7 +7,10 @@ import {
   MemberStatus,
 } from '@club-social/shared/members';
 
-import { MemberEntity } from '@/members/domain/entities/member.entity';
+import {
+  MemberEntity,
+  type MemberProps,
+} from '@/members/domain/entities/member.entity';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -20,17 +23,7 @@ import {
   TEST_PHONE,
 } from '../constants';
 
-export interface MemberPropsOverrides {
-  address?: Address | null;
-  birthDate?: DateOnly | null;
-  category?: MemberCategory;
-  documentID?: null | string;
-  fileStatus?: FileStatus;
-  maritalStatus?: MaritalStatus | null;
-  nationality?: MemberNationality | null;
-  phones?: string[];
-  sex?: MemberSex | null;
-}
+export type MemberPropsOverrides = Partial<Omit<MemberProps, 'userId'>>;
 
 export const createMemberProps = (
   userId: UniqueId,

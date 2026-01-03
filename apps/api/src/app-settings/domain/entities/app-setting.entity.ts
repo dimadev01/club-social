@@ -8,12 +8,12 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { AppSettingUpdatedEvent } from '../events/app-setting-updated.event';
 
-interface AppSettingPersistenceMeta {
+export interface AppSettingPersistenceMeta {
   updatedAt: Date;
   updatedBy: null | string;
 }
 
-interface AppSettingProps<K extends AppSettingKey> {
+export interface AppSettingProps<K extends AppSettingKey> {
   description: null | string;
   key: K;
   value: AppSettingValues[K];

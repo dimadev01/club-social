@@ -1,5 +1,7 @@
 import { DueCategory } from '@club-social/shared/dues';
 
+import type { DueProps } from '@/dues/domain/entities/due.entity';
+
 import { DueEntity } from '@/dues/domain/entities/due.entity';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
@@ -12,13 +14,7 @@ import {
   TEST_DUE_NOTES,
 } from '../constants';
 
-export interface DuePropsOverrides {
-  amount?: Amount;
-  category?: DueCategory;
-  date?: DateOnly;
-  memberId?: UniqueId;
-  notes?: null | string;
-}
+export type DuePropsOverrides = Partial<DueProps>;
 
 export const createDueProps = (
   memberId: UniqueId,

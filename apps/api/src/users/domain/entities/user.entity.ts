@@ -10,7 +10,7 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
 
-interface UserProps {
+export interface UserProps {
   banExpires: Date | null;
   banned: boolean | null;
   banReason: null | string;
