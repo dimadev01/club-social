@@ -2,16 +2,31 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
 
-import { SendMagicLinkParams } from './email.types';
+import { QueueEmailType } from './email.enum';
+import {
+  EmailJobData,
+  SendMagicLinkParams,
+  SendVerificationEmailParams,
+} from './email.types';
 
 @Injectable()
 export class EmailQueueService {
   public constructor(
     @InjectQueue('email')
-    private readonly queue: Queue,
+    private readonly queue: Queue<EmailJobData, void, QueueEmailType>,
   ) {}
 
-  public async magicLink(params: SendMagicLinkParams): Promise<void> {
-    await this.queue.add('send-magic-link', params);
+  public async magicLink(params: SendMagicLinkParams) {
+    await this.queue.add(QueueEmailType.SEND_MAGIC_LINK, {
+      data: params,
+      type: QueueEmailType.SEND_MAGIC_LINK,
+    });
+  }
+
+  public async sendVerificationEmail(params: SendVerificationEmailParams) {
+    await this.queue.add(QueueEmailType.SEND_VERIFICATION_EMAIL, {
+      data: params,
+      type: QueueEmailType.SEND_VERIFICATION_EMAIL,
+    });
   }
 }

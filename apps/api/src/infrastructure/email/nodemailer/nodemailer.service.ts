@@ -1,6 +1,8 @@
+import { AppSettingKey } from '@club-social/shared/app-settings';
 import { Inject, Injectable } from '@nestjs/common';
 import { createTransport, Transporter } from 'nodemailer';
 
+import { AppSettingService } from '@/app-settings/infrastructure/app-setting.service';
 import { ConfigService } from '@/infrastructure/config/config.service';
 import {
   APP_LOGGER_PROVIDER,
@@ -18,6 +20,7 @@ export class NodemailerProvider implements EmailProvider {
     private readonly configService: ConfigService,
     @Inject(APP_LOGGER_PROVIDER)
     private readonly logger: AppLogger,
+    private readonly appSettingService: AppSettingService,
   ) {
     this.nodemailer = createTransport({
       host: this.configService.emailSmtpHost,
@@ -27,6 +30,19 @@ export class NodemailerProvider implements EmailProvider {
   }
 
   public async sendEmail(params: SendEmailParams): Promise<void> {
+    const sendEmails = await this.appSettingService.getValue(
+      AppSettingKey.SEND_EMAILS,
+    );
+
+    if (!sendEmails.value.enabled) {
+      this.logger.warn({
+        message: 'Sending emails is disabled',
+        params,
+      });
+
+      return;
+    }
+
     this.logger.info({
       message: 'Sending email',
       params,

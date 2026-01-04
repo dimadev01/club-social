@@ -89,7 +89,7 @@ export function LoginForm() {
             disabled={singInMagicLinkMutation.isPending}
             form={form}
             id="form"
-            initialValues={{ email: 'info@clubsocialmontegrande.ar' }}
+            initialValues={{ email: undefined }}
             layout="vertical"
             name="form"
             onFinish={onSubmit}

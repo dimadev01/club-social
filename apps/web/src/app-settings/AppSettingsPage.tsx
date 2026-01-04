@@ -87,6 +87,12 @@ export function AppSettingsPage() {
           </Form>
         </Card>
       )}
+
+      {appScopeSettings.length === 0 && isStaff && (
+        <Card loading={isLoading} title="Configuración de la Aplicación">
+          <p>No hay configuración de la aplicación aun para configurar</p>
+        </Card>
+      )}
     </Page>
   );
 }
