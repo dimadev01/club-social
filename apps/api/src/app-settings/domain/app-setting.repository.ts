@@ -1,4 +1,5 @@
-import { AppSettingKey } from './app-setting.types';
+import { AppSettingKey } from '@club-social/shared/app-settings';
+
 import { AppSettingEntity } from './entities/app-setting.entity';
 
 export const APP_SETTING_REPOSITORY_PROVIDER = Symbol('AppSettingRepository');

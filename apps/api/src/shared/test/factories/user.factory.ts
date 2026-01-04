@@ -2,7 +2,10 @@ import { UserRole, UserStatus } from '@club-social/shared/users';
 
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
-import { UserEntity } from '@/users/domain/entities/user.entity';
+import {
+  UserEntity,
+  type UserProps,
+} from '@/users/domain/entities/user.entity';
 
 import {
   TEST_CREATED_BY,
@@ -11,15 +14,7 @@ import {
   TEST_LAST_NAME,
 } from '../constants';
 
-export interface UserPropsOverrides {
-  banExpires?: Date | null;
-  banned?: boolean | null;
-  banReason?: null | string;
-  email?: Email;
-  name?: Name;
-  role?: UserRole;
-  status?: UserStatus;
-}
+export type UserPropsOverrides = Partial<UserProps>;
 
 export const createUserProps = (overrides?: UserPropsOverrides) => ({
   banExpires: null,

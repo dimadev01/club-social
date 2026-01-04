@@ -132,6 +132,7 @@ export class PaymentsController extends BaseController {
     return {
       data: data.data.map((payment) => ({
         amount: payment.amount,
+        categories: payment.categories,
         createdAt: payment.createdAt.toISOString(),
         createdBy: payment.createdBy,
         date: payment.date,

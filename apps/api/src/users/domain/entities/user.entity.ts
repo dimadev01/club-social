@@ -1,5 +1,4 @@
-import { UserRole } from '@club-social/shared/users';
-import { UserStatus } from '@club-social/shared/users';
+import { UserRole, UserStatus } from '@club-social/shared/users';
 
 import { SoftDeletablePersistenceMeta } from '@/shared/domain/persistence-meta';
 import { ok, Result } from '@/shared/domain/result';
@@ -11,7 +10,7 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
 
-interface UserProps {
+export interface UserProps {
   banExpires: Date | null;
   banned: boolean | null;
   banReason: null | string;

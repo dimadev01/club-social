@@ -219,12 +219,8 @@ export class MembersController extends BaseController {
         memberShipTotalDueAmount: member.memberShipTotalDueAmount,
         name: member.name,
         status: member.status,
+        totalAmount: member.totalAmount,
       })),
-      extra: data.extra ?? {
-        electricityTotalDueAmount: 0,
-        guestTotalDueAmount: 0,
-        memberShipTotalDueAmount: 0,
-      },
       total: data.total,
     };
   }

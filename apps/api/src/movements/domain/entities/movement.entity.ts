@@ -16,7 +16,7 @@ import { StrictOmit } from '@/shared/types/type-utils';
 import { MovementCreatedEvent } from '../events/movement-created.event';
 import { MovementUpdatedEvent } from '../events/movement-updated.event';
 
-interface MovementProps {
+export interface MovementProps {
   amount: SignedAmount;
   category: MovementCategory;
   date: DateOnly;

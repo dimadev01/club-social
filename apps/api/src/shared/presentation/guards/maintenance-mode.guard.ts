@@ -40,9 +40,10 @@ export class MaintenanceModeGuard implements CanActivate {
       return true;
     }
 
-    const maintenanceMode = await this.appSettingService.getMaintenanceMode();
+    const maintenanceModeSetting =
+      await this.appSettingService.getMaintenanceMode();
 
-    if (!maintenanceMode.enabled) {
+    if (!maintenanceModeSetting.value.enabled) {
       return true;
     }
 

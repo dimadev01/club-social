@@ -1,5 +1,4 @@
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   MovementCategoryLabel,
   MovementMode,
@@ -13,13 +12,15 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { NavigateToPayment } from '@/ui/NavigateToPayment';
-import { NotFound } from '@/ui/NotFound';
-import { Row } from '@/ui/Row';
-import { VoidModal } from '@/ui/VoidModal';
+import {
+  Card,
+  Descriptions,
+  DescriptionsAudit,
+  NavigateToPayment,
+  NotFound,
+  Row,
+  VoidModal,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { useMovement } from './useMovement';
@@ -87,7 +88,9 @@ export function MovementView() {
                 label: 'Categoría',
               },
               {
-                children: NumberFormat.formatCurrencyCents(movement.amount),
+                children: NumberFormat.currencyCents(movement.amount, {
+                  maximumFractionDigits: 2,
+                }),
                 label: 'Monto',
               },
               {

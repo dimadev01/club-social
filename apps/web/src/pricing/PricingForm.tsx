@@ -1,8 +1,7 @@
 import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormats } from '@club-social/shared/lib';
+import { DateFormats, NumberFormat } from '@club-social/shared/lib';
 import {
   type MemberCategory,
   MemberCategoryLabel,
@@ -10,8 +9,7 @@ import {
 import { DatePicker, InputNumber } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form } from '@/ui/Form/Form';
-import { Select } from '@/ui/Select';
+import { Form, Select } from '@/ui';
 
 export interface PricingFormData {
   amount: number;

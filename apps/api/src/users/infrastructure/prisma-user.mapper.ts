@@ -1,5 +1,4 @@
-import { UserRole } from '@club-social/shared/users';
-import { UserStatus } from '@club-social/shared/users';
+import { UserRole, UserStatus } from '@club-social/shared/users';
 import { Injectable } from '@nestjs/common';
 
 import { UserModel } from '@/infrastructure/database/prisma/generated/models';

@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import { useCallback, useState } from 'react';
 
-import type { ExportQuery } from '@/ui/Table/useTable';
+import type { ExportQuery } from '@/ui';
 
 interface UseExportOptions {
   endpoint: string;

@@ -4,10 +4,12 @@ import {
   MovementStatus,
 } from '@club-social/shared/movements';
 
-import { MovementEntity } from '@/movements/domain/entities/movement.entity';
+import {
+  MovementEntity,
+  type MovementProps,
+} from '@/movements/domain/entities/movement.entity';
 import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
-import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import {
   TEST_CREATED_BY,
@@ -18,15 +20,9 @@ import {
   TEST_MOVEMENT_OUTFLOW_NOTES,
 } from '../constants';
 
-export interface MovementPropsOverrides {
-  amount?: SignedAmount;
-  category?: MovementCategory;
-  date?: DateOnly;
-  mode?: MovementMode;
-  notes?: null | string;
-  paymentId?: null | UniqueId;
-  status?: MovementStatus;
-}
+export type MovementPropsOverrides = Partial<
+  Omit<MovementProps, 'voidedAt' | 'voidedBy' | 'voidReason'>
+>;
 
 export const createInflowMovementProps = (
   overrides?: MovementPropsOverrides,

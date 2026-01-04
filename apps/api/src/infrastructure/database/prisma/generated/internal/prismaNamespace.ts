@@ -1807,7 +1807,7 @@ export type PricingScalarFieldEnum =
   (typeof PricingScalarFieldEnum)[keyof typeof PricingScalarFieldEnum];
 
 export const AppSettingScalarFieldEnum = {
-  key: 'key',
+  id: 'id',
   value: 'value',
   description: 'description',
   updatedAt: 'updatedAt',

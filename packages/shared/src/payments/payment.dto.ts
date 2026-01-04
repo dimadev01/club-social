@@ -78,6 +78,7 @@ export interface PaymentMemberLedgerEntryDto {
 
 export interface PaymentPaginatedDto {
   amount: number;
+  categories: DueCategory[];
   createdAt: string;
   createdBy: string;
   date: string;

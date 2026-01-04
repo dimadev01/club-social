@@ -5,7 +5,7 @@ import { NumberFormat } from '@club-social/shared/lib';
 import { Grid, Skeleton } from 'antd';
 
 import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
-import { Descriptions } from '@/ui/Descriptions';
+import { Descriptions } from '@/ui';
 
 interface Props {
   category: DueCategory;
@@ -29,17 +29,13 @@ export function DueCategoryDescriptions({ category, data, loading }: Props) {
         },
         {
           children: skeletonOrValue(
-            NumberFormat.formatCurrencyCents(
-              data?.categories[category].amount ?? 0,
-            ),
+            NumberFormat.currencyCents(data?.categories[category].amount ?? 0),
           ),
           label: 'Total',
         },
         {
           children: skeletonOrValue(
-            NumberFormat.formatCurrencyCents(
-              data?.categories[category].average ?? 0,
-            ),
+            NumberFormat.currencyCents(data?.categories[category].average ?? 0),
           ),
           label: 'Promedio',
         },

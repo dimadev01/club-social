@@ -6,11 +6,12 @@ import { createQueryKeyStore } from '@lukemorales/query-key-factory';
 
 import type { UsePaymentDailyStatisticsQuery } from '@/home/usePaymentDailyStatistics';
 import type { UsePaymentStatisticsQuery } from '@/home/usePaymentStatistics';
-import type { TableQuery } from '@/ui/Table/useTable';
+import type { TableQuery } from '@/ui';
 
 export const queryKeys = createQueryKeyStore({
   appSettings: {
     all: null,
+    byKey: (key: string) => [key],
     maintenanceMode: null,
   },
 

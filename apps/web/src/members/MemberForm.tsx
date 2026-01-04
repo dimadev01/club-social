@@ -15,14 +15,10 @@ import {
   MemberStatus,
   MemberStatusLabel,
 } from '@club-social/shared/members';
-import { Button, Col, DatePicker, Empty, Input, Space, Tooltip } from 'antd';
+import { Col, DatePicker, Empty, Input, Space } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Card } from '@/ui/Card';
-import { Form } from '@/ui/Form/Form';
-import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
-import { Row } from '@/ui/Row';
-import { Select } from '@/ui/Select';
+import { AddNewIcon, Button, Card, Form, Row, Select } from '@/ui';
 
 export interface MemberFormData {
   address: {
@@ -183,13 +179,12 @@ export function MemberForm({
               {(fields, { add, remove }) => (
                 <Card
                   extra={
-                    <Tooltip title="Agregar">
-                      <Button
-                        icon={<AddNewIcon />}
-                        onClick={() => add()}
-                        size="small"
-                      />
-                    </Tooltip>
+                    <Button
+                      icon={<AddNewIcon />}
+                      onClick={() => add()}
+                      size="small"
+                      tooltip="Agregar"
+                    />
                   }
                   size="small"
                   title="Datos de contacto"

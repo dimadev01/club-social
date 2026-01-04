@@ -1,3 +1,4 @@
+import { AppSettingKey } from '@club-social/shared/app-settings';
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
@@ -23,6 +24,8 @@ export class AppSettingEventHandler {
   public async handleAppSettingUpdated(
     event: AppSettingUpdatedEvent,
   ): Promise<void> {
-    await this.appSettingCacheService.invalidate(event.appSetting.key);
+    await this.appSettingCacheService.invalidate(
+      event.appSetting.id.value as AppSettingKey,
+    );
   }
 }

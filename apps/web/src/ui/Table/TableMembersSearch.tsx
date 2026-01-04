@@ -21,7 +21,7 @@ export function TableMembersSearch({
     <MemberSearchSelect
       additionalOptions={selectedMembers}
       allowClear
-      className="min-w-full md:min-w-xs"
+      className="min-w-full md:min-w-60"
       disabled={disabled || isLoading}
       loading={isLoading}
       mode="multiple"

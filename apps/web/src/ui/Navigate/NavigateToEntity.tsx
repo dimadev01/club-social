@@ -1,23 +1,23 @@
 import { DateFormat, DateFormats } from '@club-social/shared/lib';
 import { Link, type LinkProps } from 'react-router';
 
-import { appRoutes } from '@/app/app.enum';
-
-interface Props extends Omit<LinkProps, 'to'> {
+export interface NavigateToEntityProps extends Omit<LinkProps, 'to'> {
   dateFormat?: DateFormats;
   formatDate?: boolean;
   id: string;
+  view: (id: string) => string;
 }
 
-export function NavigateToPayment({
+export function NavigateToEntityProps({
   children,
-  dateFormat = DateFormats.dateTime,
+  dateFormat = DateFormats.date,
   formatDate = true,
   id,
+  view,
   ...props
-}: Props) {
+}: NavigateToEntityProps) {
   return (
-    <Link to={appRoutes.payments.view(id)} {...props}>
+    <Link to={view(id)} {...props}>
       {formatDate
         ? DateFormat.format(children as string, dateFormat)
         : children}

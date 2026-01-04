@@ -284,8 +284,10 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
       where.source = { in: params.filters.source };
     }
 
-    const orderBy: MemberLedgerEntryOrderByWithRelationInput[] =
-      params.sort.map(({ field, order }) => ({ [field]: order }));
+    const orderBy: MemberLedgerEntryOrderByWithRelationInput[] = [
+      ...params.sort.map(({ field, order }) => ({ [field]: order })),
+      { createdAt: 'desc' },
+    ];
 
     return { orderBy, where };
   }

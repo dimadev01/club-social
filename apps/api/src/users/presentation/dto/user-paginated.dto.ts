@@ -1,5 +1,8 @@
-import { UserPaginatedDto, UserRole } from '@club-social/shared/users';
-import { UserStatus } from '@club-social/shared/users';
+import {
+  UserPaginatedDto,
+  UserRole,
+  UserStatus,
+} from '@club-social/shared/users';
 
 export class UserPaginatedResponseDto implements UserPaginatedDto {
   public email: string;
