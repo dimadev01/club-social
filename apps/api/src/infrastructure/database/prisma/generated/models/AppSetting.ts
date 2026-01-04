@@ -27,6 +27,7 @@ export type AggregateAppSetting = {
 export type AppSettingMinAggregateOutputType = {
   id: string | null;
   description: string | null;
+  scope: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
 };
@@ -34,6 +35,7 @@ export type AppSettingMinAggregateOutputType = {
 export type AppSettingMaxAggregateOutputType = {
   id: string | null;
   description: string | null;
+  scope: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
 };
@@ -42,6 +44,7 @@ export type AppSettingCountAggregateOutputType = {
   id: number;
   value: number;
   description: number;
+  scope: number;
   updatedAt: number;
   updatedBy: number;
   _all: number;
@@ -50,6 +53,7 @@ export type AppSettingCountAggregateOutputType = {
 export type AppSettingMinAggregateInputType = {
   id?: true;
   description?: true;
+  scope?: true;
   updatedAt?: true;
   updatedBy?: true;
 };
@@ -57,6 +61,7 @@ export type AppSettingMinAggregateInputType = {
 export type AppSettingMaxAggregateInputType = {
   id?: true;
   description?: true;
+  scope?: true;
   updatedAt?: true;
   updatedBy?: true;
 };
@@ -65,6 +70,7 @@ export type AppSettingCountAggregateInputType = {
   id?: true;
   value?: true;
   description?: true;
+  scope?: true;
   updatedAt?: true;
   updatedBy?: true;
   _all?: true;
@@ -153,6 +159,7 @@ export type AppSettingGroupByOutputType = {
   id: string;
   value: runtime.JsonValue;
   description: string | null;
+  scope: string;
   updatedAt: Date;
   updatedBy: string | null;
   _count: AppSettingCountAggregateOutputType | null;
@@ -180,6 +187,7 @@ export type AppSettingWhereInput = {
   id?: Prisma.StringFilter<'AppSetting'> | string;
   value?: Prisma.JsonFilter<'AppSetting'>;
   description?: Prisma.StringNullableFilter<'AppSetting'> | string | null;
+  scope?: Prisma.StringFilter<'AppSetting'> | string;
   updatedAt?: Prisma.DateTimeFilter<'AppSetting'> | Date | string;
   updatedBy?: Prisma.StringNullableFilter<'AppSetting'> | string | null;
 };
@@ -188,6 +196,7 @@ export type AppSettingOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
   value?: Prisma.SortOrder;
   description?: Prisma.SortOrderInput | Prisma.SortOrder;
+  scope?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
 };
@@ -200,6 +209,7 @@ export type AppSettingWhereUniqueInput = Prisma.AtLeast<
     NOT?: Prisma.AppSettingWhereInput | Prisma.AppSettingWhereInput[];
     value?: Prisma.JsonFilter<'AppSetting'>;
     description?: Prisma.StringNullableFilter<'AppSetting'> | string | null;
+    scope?: Prisma.StringFilter<'AppSetting'> | string;
     updatedAt?: Prisma.DateTimeFilter<'AppSetting'> | Date | string;
     updatedBy?: Prisma.StringNullableFilter<'AppSetting'> | string | null;
   },
@@ -210,6 +220,7 @@ export type AppSettingOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
   value?: Prisma.SortOrder;
   description?: Prisma.SortOrderInput | Prisma.SortOrder;
+  scope?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.AppSettingCountOrderByAggregateInput;
@@ -231,6 +242,7 @@ export type AppSettingScalarWhereWithAggregatesInput = {
     | Prisma.StringNullableWithAggregatesFilter<'AppSetting'>
     | string
     | null;
+  scope?: Prisma.StringWithAggregatesFilter<'AppSetting'> | string;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<'AppSetting'> | Date | string;
   updatedBy?:
     | Prisma.StringNullableWithAggregatesFilter<'AppSetting'>
@@ -242,6 +254,7 @@ export type AppSettingCreateInput = {
   id: string;
   value: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   description?: string | null;
+  scope?: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
 };
@@ -250,6 +263,7 @@ export type AppSettingUncheckedCreateInput = {
   id: string;
   value: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   description?: string | null;
+  scope?: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
 };
@@ -258,6 +272,7 @@ export type AppSettingUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   value?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  scope?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
@@ -266,6 +281,7 @@ export type AppSettingUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   value?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  scope?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
@@ -274,6 +290,7 @@ export type AppSettingCreateManyInput = {
   id: string;
   value: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   description?: string | null;
+  scope?: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
 };
@@ -282,6 +299,7 @@ export type AppSettingUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   value?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  scope?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
@@ -290,6 +308,7 @@ export type AppSettingUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   value?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  scope?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
@@ -298,6 +317,7 @@ export type AppSettingCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   value?: Prisma.SortOrder;
   description?: Prisma.SortOrder;
+  scope?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
@@ -305,6 +325,7 @@ export type AppSettingCountOrderByAggregateInput = {
 export type AppSettingMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   description?: Prisma.SortOrder;
+  scope?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
@@ -312,6 +333,7 @@ export type AppSettingMaxOrderByAggregateInput = {
 export type AppSettingMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   description?: Prisma.SortOrder;
+  scope?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
@@ -324,6 +346,7 @@ export type AppSettingSelect<
     id?: boolean;
     value?: boolean;
     description?: boolean;
+    scope?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
   },
@@ -338,6 +361,7 @@ export type AppSettingSelectCreateManyAndReturn<
     id?: boolean;
     value?: boolean;
     description?: boolean;
+    scope?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
   },
@@ -352,6 +376,7 @@ export type AppSettingSelectUpdateManyAndReturn<
     id?: boolean;
     value?: boolean;
     description?: boolean;
+    scope?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
   },
@@ -362,6 +387,7 @@ export type AppSettingSelectScalar = {
   id?: boolean;
   value?: boolean;
   description?: boolean;
+  scope?: boolean;
   updatedAt?: boolean;
   updatedBy?: boolean;
 };
@@ -370,7 +396,7 @@ export type AppSettingOmit<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
-  'id' | 'value' | 'description' | 'updatedAt' | 'updatedBy',
+  'id' | 'value' | 'description' | 'scope' | 'updatedAt' | 'updatedBy',
   ExtArgs['result']['appSetting']
 >;
 
@@ -385,6 +411,7 @@ export type $AppSettingPayload<
       id: string;
       value: runtime.JsonValue;
       description: string | null;
+      scope: string;
       updatedAt: Date;
       updatedBy: string | null;
     },
@@ -982,6 +1009,7 @@ export interface AppSettingFieldRefs {
   readonly id: Prisma.FieldRef<'AppSetting', 'String'>;
   readonly value: Prisma.FieldRef<'AppSetting', 'Json'>;
   readonly description: Prisma.FieldRef<'AppSetting', 'String'>;
+  readonly scope: Prisma.FieldRef<'AppSetting', 'String'>;
   readonly updatedAt: Prisma.FieldRef<'AppSetting', 'DateTime'>;
   readonly updatedBy: Prisma.FieldRef<'AppSetting', 'String'>;
 }

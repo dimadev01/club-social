@@ -49,6 +49,7 @@ import {
   USER_REPOSITORY_PROVIDER,
   type UserRepository,
 } from './users/domain/user.repository';
+import { DEFAULT_USER_PREFERENCES } from './users/domain/value-objects/user-preferences.vo';
 
 @Injectable()
 export class AppService {
@@ -203,6 +204,7 @@ export class AppService {
                 id: userId,
                 lastName: name.value.lastName,
                 name: fullName,
+                preferences: DEFAULT_USER_PREFERENCES,
                 role: mongoUser.profile.role as UserRole,
                 status: UserStatus.ACTIVE,
                 updatedAt: (mongoUser.updatedAt as Date) ?? new Date(),

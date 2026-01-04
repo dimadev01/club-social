@@ -1,4 +1,7 @@
-import { AppSettingKey } from '@club-social/shared/app-settings';
+import {
+  AppSettingKey,
+  AppSettingScope,
+} from '@club-social/shared/app-settings';
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
@@ -30,6 +33,17 @@ export class PrismaAppSettingRepository implements AppSettingRepository {
     });
 
     return this.mapper.toDomain<K>(setting);
+  }
+
+  public async findByScopes(
+    scopes: AppSettingScope[],
+  ): Promise<AppSettingEntity[]> {
+    const settings = await this.prismaService.appSetting.findMany({
+      orderBy: { id: 'asc' },
+      where: { scope: { in: scopes } },
+    });
+
+    return settings.map((setting) => this.mapper.toDomain(setting));
   }
 
   public async save(entity: AppSettingEntity): Promise<void> {

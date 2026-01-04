@@ -6,9 +6,20 @@ import { SoftDeletableAggregateRoot } from '@/shared/domain/soft-deletable-aggre
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import { StrictOmit } from '@/shared/types/type-utils';
 
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
+import {
+  DEFAULT_USER_PREFERENCES,
+  UserPreferencesProps,
+  UserPreferencesVO,
+} from '../value-objects/user-preferences.vo';
+
+export type CreateUserProps = StrictOmit<
+  UserProps,
+  'banExpires' | 'banned' | 'banReason' | 'preferences' | 'status'
+>;
 
 export interface UserProps {
   banExpires: Date | null;
@@ -16,6 +27,7 @@ export interface UserProps {
   banReason: null | string;
   email: Email;
   name: Name;
+  preferences: UserPreferencesVO;
   role: UserRole;
   status: UserStatus;
 }
@@ -41,6 +53,10 @@ export class UserEntity extends SoftDeletableAggregateRoot {
     return this._name;
   }
 
+  public get preferences(): UserPreferencesVO {
+    return this._preferences;
+  }
+
   public get role(): UserRole {
     return this._role;
   }
@@ -54,6 +70,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
   private _banReason: null | string;
   private _email: Email;
   private _name: Name;
+  private _preferences: UserPreferencesVO;
   private _role: UserRole;
   private _status: UserStatus;
 
@@ -67,16 +84,29 @@ export class UserEntity extends SoftDeletableAggregateRoot {
     this._banReason = props.banReason;
     this._banExpires = props.banExpires;
     this._status = props.status;
+    this._preferences = props.preferences;
   }
 
   public static create(
-    props: UserProps,
+    props: CreateUserProps,
     createdBy: string,
   ): Result<UserEntity> {
-    const user = new UserEntity(props, {
-      audit: { createdBy },
-      id: UniqueId.generate(),
-    });
+    const user = new UserEntity(
+      {
+        banExpires: null,
+        banned: false,
+        banReason: null,
+        email: props.email,
+        name: props.name,
+        preferences: UserPreferencesVO.raw(DEFAULT_USER_PREFERENCES),
+        role: props.role,
+        status: UserStatus.ACTIVE,
+      },
+      {
+        audit: { createdBy },
+        id: UniqueId.generate(),
+      },
+    );
 
     user.addEvent(new UserCreatedEvent(user));
 
@@ -98,6 +128,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
         banReason: this._banReason,
         email: this._email,
         name: this._name,
+        preferences: this._preferences,
         role: this._role,
         status: this._status,
       },
@@ -115,6 +146,18 @@ export class UserEntity extends SoftDeletableAggregateRoot {
 
   public updateName(name: Name) {
     this._name = name;
+  }
+
+  public updatePreferences(
+    preferences: Partial<UserPreferencesProps>,
+    updatedBy: string,
+  ): void {
+    this._preferences = this._preferences.update(preferences);
+    this.markAsUpdated(updatedBy);
+
+    const oldUser = this.clone();
+
+    this.addEvent(new UserUpdatedEvent(oldUser, this));
   }
 
   public updateProfile(props: {

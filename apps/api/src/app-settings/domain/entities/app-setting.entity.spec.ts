@@ -1,4 +1,7 @@
-import { AppSettingKey } from '@club-social/shared/app-settings';
+import {
+  AppSettingKey,
+  AppSettingScope,
+} from '@club-social/shared/app-settings';
 
 import { TEST_CREATED_BY } from '@/shared/test/constants';
 import { createTestAppSetting } from '@/shared/test/factories';
@@ -15,6 +18,7 @@ describe('AppSettingEntity', () => {
         {
           description: 'Test description',
           key: AppSettingKey.MAINTENANCE_MODE,
+          scope: AppSettingScope.SYSTEM,
           value: { enabled: true },
         },
         {
@@ -25,6 +29,7 @@ describe('AppSettingEntity', () => {
 
       expect(setting.id.value).toBe(AppSettingKey.MAINTENANCE_MODE);
       expect(setting.description).toBe('Test description');
+      expect(setting.scope).toBe(AppSettingScope.SYSTEM);
       expect(setting.value).toEqual({ enabled: true });
       expect(setting.updatedAt).toBe(updatedAt);
       expect(setting.updatedBy).toBe(TEST_CREATED_BY);

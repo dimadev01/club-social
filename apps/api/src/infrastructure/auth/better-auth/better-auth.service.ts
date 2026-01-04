@@ -20,7 +20,6 @@ import {
 import { ConfigService } from '@/infrastructure/config/config.service';
 import { prisma } from '@/infrastructure/database/prisma/prisma.client';
 import { EmailQueueService } from '@/infrastructure/email/email-queue.service';
-import { SendMagicLinkParams } from '@/infrastructure/email/email.types';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import {
@@ -158,9 +157,11 @@ export class BetterAuthService {
   ) {
     this._auth = createBetterAuth({
       emailVerification: {
-        sendVerificationEmail: async (data) => {
-          console.log(data);
-        },
+        sendVerificationEmail: (data) =>
+          this.emailQueueService.sendVerificationEmail({
+            email: data.user.email,
+            url: data.url,
+          }),
       },
       hooks: {
         before: createAuthMiddleware(async (ctx) => {
@@ -176,7 +177,10 @@ export class BetterAuthService {
           rpName: this.configService.appDisplayName,
         },
         sendMagicLink: (data) =>
-          this.sendMagicLink({ email: data.email, url: data.url }),
+          this.emailQueueService.magicLink({
+            email: data.email,
+            url: data.url,
+          }),
       }),
       trustedOrigins: this.configService.trustedOrigins,
       user: {
@@ -185,13 +189,6 @@ export class BetterAuthService {
           enabled: true,
         },
       },
-    });
-  }
-
-  private async sendMagicLink(data: SendMagicLinkParams) {
-    return this.emailQueueService.magicLink({
-      email: data.email,
-      url: data.url,
     });
   }
 

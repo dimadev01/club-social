@@ -6,6 +6,7 @@ export const appRoutes = {
   auth: {
     login: '/auth/login',
     logout: '/auth/logout',
+    root: '/auth',
   },
   dues: {
     edit: (id?: string) => `/dues/${id}/edit`,

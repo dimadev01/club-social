@@ -1,6 +1,8 @@
+import { AppSettingKey } from '@club-social/shared/app-settings';
 import { Inject, Injectable } from '@nestjs/common';
 import { Resend } from 'resend';
 
+import { AppSettingService } from '@/app-settings/infrastructure/app-setting.service';
 import { ConfigService } from '@/infrastructure/config/config.service';
 import {
   APP_LOGGER_PROVIDER,
@@ -19,12 +21,26 @@ export class ResendProvider implements EmailProvider {
     private readonly configService: ConfigService,
     @Inject(APP_LOGGER_PROVIDER)
     private readonly logger: AppLogger,
+    private readonly appSettingService: AppSettingService,
   ) {
     this.resend = new Resend(this.configService.resendApiKey);
     this.logger.setContext(ResendProvider.name);
   }
 
   public async sendEmail(params: SendEmailParams): Promise<void> {
+    const sendEmails = await this.appSettingService.getValue(
+      AppSettingKey.SEND_EMAILS,
+    );
+
+    if (!sendEmails.value.enabled) {
+      this.logger.warn({
+        message: 'Sending emails is disabled',
+        params,
+      });
+
+      return;
+    }
+
     this.logger.info({
       message: 'Sending email',
       params,
