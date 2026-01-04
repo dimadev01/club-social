@@ -50,9 +50,7 @@ export function AuditLogsList() {
     queryFn: () =>
       $fetch<PaginatedDataResultDto<AuditLogPaginatedDto>>(
         '/audit-logs/paginated',
-        {
-          query,
-        },
+        { query },
       ),
   });
 

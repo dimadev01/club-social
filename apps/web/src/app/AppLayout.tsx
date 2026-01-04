@@ -141,7 +141,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       menuItems.push({
         icon: <SettingOutlined />,
         key: appRoutes.appSettings,
-        label: 'Configuración',
+        label: 'Sistema',
       });
     }
   }
@@ -247,6 +247,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                 type="text"
               />
             </Space.Compact>
+
             {sm && <Typography.Text>Hecho por D.</Typography.Text>}
 
             <div>

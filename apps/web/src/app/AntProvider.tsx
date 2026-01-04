@@ -7,6 +7,7 @@ import {
   type ThemeConfig,
 } from 'antd';
 import esEs from 'antd/locale/es_ES';
+import { GiTennisBall } from 'react-icons/gi';
 import { useMedia } from 'react-use';
 
 import {
@@ -50,7 +51,7 @@ export function AntProvider({ children }: { children: React.ReactNode }) {
     token: {
       colorInfo: '#22883e',
       colorPrimary: '#22883e',
-      motion: false,
+      // motion: false,
     },
     zeroRuntime: true,
   };
@@ -67,6 +68,10 @@ export function AntProvider({ children }: { children: React.ReactNode }) {
         }}
         space={{
           size: 'middle',
+        }}
+        spin={{
+          className: 'max-h-none',
+          indicator: <GiTennisBall className="icon-bounce" />,
         }}
         table={{
           rowKey: 'id',
