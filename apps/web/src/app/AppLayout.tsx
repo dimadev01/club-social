@@ -252,6 +252,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                 type="text"
               />
             </Space.Compact>
+
             {sm && <Typography.Text>Hecho por D.</Typography.Text>}
 
             <div>

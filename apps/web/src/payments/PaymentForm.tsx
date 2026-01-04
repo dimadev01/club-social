@@ -440,6 +440,22 @@ export function PaymentForm({
               type: 'checkbox',
             }}
             size="small"
+            summary={() => (
+              <Table.Summary fixed>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell align="right" colSpan={5} index={0}>
+                    Total
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell align="right" colSpan={1} index={1}>
+                    {NumberFormat.currencyCents(
+                      sumBy(pendingDues, (due) =>
+                        getRemainingAmountForDue(due.id),
+                      ),
+                    )}
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+              </Table.Summary>
+            )}
           />
 
           <Form.List name="dues">
@@ -462,7 +478,7 @@ export function PaymentForm({
               return (
                 <Card
                   className="mb-6"
-                  extra={`Efectivo: ${NumberFormat.currency(totalCash)} | Saldo: ${NumberFormat.currency(totalBalance)} | Total: ${NumberFormat.currency(totalCash + totalBalance)}`}
+                  extra={`Efectivo: ${NumberFormat.currency(totalCash)} | Balance: ${NumberFormat.currency(totalBalance)} | Total: ${NumberFormat.currency(totalCash + totalBalance)}`}
                   size="small"
                   title="Deudas seleccionadas"
                   type="inner"

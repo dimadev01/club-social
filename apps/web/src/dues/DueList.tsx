@@ -214,15 +214,6 @@ export function DueList() {
           },
           ...(permissions.dues.listAll
             ? [
-                // {
-                //   align: 'center',
-                //   dataIndex: 'memberStatus',
-                //   filteredValue: getFilterValue('memberStatus'),
-                //   filters: labelMapToFilterOptions(MemberStatusLabel),
-                //   render: (value: MemberStatus) => MemberStatusLabel[value],
-                //   title: 'Estado Socio',
-                //   width: TABLE_COLUMN_WIDTHS.STATUS,
-                // } satisfies TableColumnType<DuePaginatedDto>,
                 {
                   align: 'center',
                   fixed: 'right',
