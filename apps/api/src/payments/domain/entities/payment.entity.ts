@@ -12,7 +12,7 @@ import { StrictOmit } from '@/shared/types/type-utils';
 import { PaymentCreatedEvent } from '../events/payment-created.event';
 import { PaymentUpdatedEvent } from '../events/payment-updated.event';
 
-interface PaymentProps {
+export interface PaymentProps {
   amount: Amount;
   date: DateOnly;
   dueIds: UniqueId[];

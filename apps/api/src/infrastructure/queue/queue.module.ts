@@ -11,6 +11,7 @@ import { ConfigService } from '../config/config.service';
       useFactory: (configService: ConfigService) => ({
         connection: {
           host: configService.redisHost,
+          password: configService.redisPassword,
           port: configService.redisPort,
         },
       }),

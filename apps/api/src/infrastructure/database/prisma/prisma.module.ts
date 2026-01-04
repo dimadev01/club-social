@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 
+import { APP_SETTING_REPOSITORY_PROVIDER } from '@/app-settings/domain/app-setting.repository';
+import { PrismaAppSettingMapper } from '@/app-settings/infrastructure/prisma-app-setting.mapper';
+import { PrismaAppSettingRepository } from '@/app-settings/infrastructure/prisma-app-setting.repository';
 import { AUDIT_LOG_REPOSITORY_PROVIDER } from '@/audit/domain/audit-log.repository';
 import { PrismaAuditLogRepository } from '@/audit/infrastructure/prisma-audit-log.repository';
 import { DUE_REPOSITORY_PROVIDER } from '@/dues/domain/due.repository';
@@ -51,15 +54,7 @@ import { PrismaService } from './prisma.service';
     USER_WRITEABLE_REPOSITORY_PROVIDER,
     USER_REPOSITORY_PROVIDER,
     AUDIT_LOG_REPOSITORY_PROVIDER,
-
-    PrismaPaymentMapper,
-    PrismaDueMapper,
-    PrismaDueSettlementMapper,
-    PrismaMemberMapper,
-    PrismaUserMapper,
-    PrismaPricingMapper,
-    PrismaMovementMapper,
-    PrismaMemberLedgerEntryMapper,
+    APP_SETTING_REPOSITORY_PROVIDER,
   ],
   imports: [],
   providers: [
@@ -73,6 +68,7 @@ import { PrismaService } from './prisma.service';
     PrismaPricingMapper,
     PrismaMovementMapper,
     PrismaMemberLedgerEntryMapper,
+    PrismaAppSettingMapper,
 
     {
       provide: UNIT_OF_WORK_PROVIDER,
@@ -117,6 +113,10 @@ import { PrismaService } from './prisma.service';
     {
       provide: AUDIT_LOG_REPOSITORY_PROVIDER,
       useClass: PrismaAuditLogRepository,
+    },
+    {
+      provide: APP_SETTING_REPOSITORY_PROVIDER,
+      useClass: PrismaAppSettingRepository,
     },
   ],
 })

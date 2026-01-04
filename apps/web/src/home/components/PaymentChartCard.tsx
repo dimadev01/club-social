@@ -3,8 +3,9 @@ import type { PaymentDailyStatisticsItemDto } from '@club-social/shared/payments
 import { BarChartOutlined } from '@ant-design/icons';
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { DatePicker, Empty, theme } from 'antd';
-import dayjs, { type Dayjs } from 'dayjs';
-import { useMemo, useState } from 'react';
+import { type Dayjs } from 'dayjs';
+import { useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router';
 import {
   Bar,
   BarChart,
@@ -15,8 +16,7 @@ import {
   YAxis,
 } from 'recharts';
 
-import { Card } from '@/ui/Card';
-import { Form } from '@/ui/Form/Form';
+import { Card, Descriptions, Form } from '@/ui';
 
 import { usePaymentDailyStatistics } from '../usePaymentDailyStatistics';
 
@@ -33,10 +33,34 @@ interface CustomTooltipProps {
 }
 
 export function PaymentChartCard() {
-  const [selectedMonth, setSelectedMonth] = useState<Dayjs>(
-    dayjs().subtract(1, 'month'),
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
   const { token } = theme.useToken();
+
+  const selectedMonth = useMemo<Dayjs>(() => {
+    const chartMonth = searchParams.get('chartMonth');
+
+    if (chartMonth) {
+      const parsed = DateFormat.parse(chartMonth);
+
+      if (parsed.isValid()) {
+        return parsed;
+      }
+    }
+
+    return DateFormat.parse().subtract(1, 'month');
+  }, [searchParams]);
+
+  const setSelectedMonth = useCallback(
+    (month: Dayjs) => {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set('chartMonth', DateFormat.isoMonth(month));
+
+        return newParams;
+      });
+    },
+    [setSearchParams],
+  );
 
   const monthStr = selectedMonth.startOf('month').format(DateFormats.isoDate);
 
@@ -98,7 +122,7 @@ export function PaymentChartCard() {
                 fontSize={12}
                 stroke={token.colorTextSecondary}
                 tickFormatter={(value: number) =>
-                  NumberFormat.formatCurrencyCents(value)
+                  NumberFormat.currencyCents(value)
                 }
                 tickLine={false}
                 width={80}
@@ -125,21 +149,25 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   const data = payload[0].payload;
 
   return (
-    <div className="rounded-md border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
-      <p className="mb-1 font-medium">
-        {DateFormat.parse(data.date).format('D [de] MMMM')}
-      </p>
-      <p className="text-sm">
-        <span className="text-gray-500 dark:text-gray-400">Monto: </span>
-        <span className="font-medium">
-          {NumberFormat.formatCurrencyCents(data.amount)}
-        </span>
-      </p>
-      <p className="text-sm">
-        <span className="text-gray-500 dark:text-gray-400">Pagos: </span>
-        <span className="font-medium">{data.count}</span>
-      </p>
-    </div>
+    <Card
+      size="small"
+      title={DateFormat.parse(data.date).format('D [de] MMMM')}
+    >
+      <Descriptions
+        bordered={false}
+        className="max-w-32"
+        items={[
+          {
+            children: data.count,
+            label: 'Pagos',
+          },
+          {
+            children: NumberFormat.currencyCents(data.amount),
+            label: 'Total',
+          },
+        ]}
+      />
+    </Card>
   );
 }
 

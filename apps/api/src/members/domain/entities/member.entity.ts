@@ -19,7 +19,7 @@ import { UserEntity } from '@/users/domain/entities/user.entity';
 import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
 
-interface MemberProps {
+export interface MemberProps {
   address: Address | null;
   birthDate: DateOnly | null;
   category: MemberCategory;

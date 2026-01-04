@@ -17,7 +17,7 @@
     "build": "turbo build",
     "build:api": "turbo build --filter=@club-social/api",
     "build:web": "turbo build --filter=@club-social/web",
-    "check": "turbo check-types test lint format",
+    "check": "turbo check-types test lint",
     "check-types": "turbo check-types",
     "commitlint": "commitlint --edit",
     "format": "turbo format",

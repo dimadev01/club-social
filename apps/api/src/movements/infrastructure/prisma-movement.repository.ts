@@ -28,8 +28,8 @@ import {
   MovementPaginatedExtraReadModel,
   MovementPaginatedReadModel,
   MovementReadModel,
+  MovementStatisticsModel,
 } from '../domain/movement-read-models';
-import { MovementStatisticsModel } from '../domain/movement-read-models';
 import {
   FindMovementsForStatisticsParams,
   MovementRepository,
@@ -255,9 +255,10 @@ export class PrismaMovementRepository implements MovementRepository {
       where.mode = { in: params.filters.mode };
     }
 
-    const orderBy: MovementOrderByWithRelationInput[] = params.sort.map(
-      ({ field, order }) => ({ [field]: order }),
-    );
+    const orderBy: MovementOrderByWithRelationInput[] = [
+      ...params.sort.map(({ field, order }) => ({ [field]: order })),
+      { createdAt: 'desc' },
+    ];
 
     return { orderBy, where };
   }

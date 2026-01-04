@@ -127,20 +127,40 @@ export class PrismaMemberRepository implements MemberRepository {
 
     // Check if sorting by a due category field or balance
     const dueSortField = this.extractDueSortField(params);
-    const balanceSortField = this.extractBalanceSortField(params);
+
+    // Check if sorting by balance
+    const balanceSortField = params.sort.find(
+      (sort) => sort.field === 'balance',
+    );
+
+    // Check if sorting by total amount
+    const totalAmountSortField = params.sort.find(
+      (sort) => sort.field === 'totalAmount',
+    );
 
     let members: MemberPayloadWithLedgerEntries[];
     let total: number;
 
     if (dueSortField) {
       // Sorting by due amount - use aggregation-based sorting
-      const result = await this.findPaginatedByDueSort({
+      const result = await this.findPaginatedByCategoryOrTotalSort({
         category: dueSortField.category,
         order: dueSortField.order,
         page: params.page,
         pageSize: params.pageSize,
         where,
       });
+
+      members = result.members;
+      total = result.total;
+    } else if (totalAmountSortField) {
+      const result = await this.findPaginatedByCategoryOrTotalSort({
+        order: totalAmountSortField.order,
+        page: params.page,
+        pageSize: params.pageSize,
+        where,
+      });
+
       members = result.members;
       total = result.total;
     } else if (balanceSortField) {
@@ -171,19 +191,20 @@ export class PrismaMemberRepository implements MemberRepository {
       members.map((m) => m.id),
     );
 
-    const totals = this.calculateTotalsByCategory(duesByMemberAndCategory);
-
     return {
       data: members.map((member) =>
         this.toPaginatedReadModel(member, duesByMemberAndCategory),
       ),
-      extra: {
-        electricityTotalDueAmount: totals[DueCategory.ELECTRICITY],
-        guestTotalDueAmount: totals[DueCategory.GUEST],
-        memberShipTotalDueAmount: totals[DueCategory.MEMBERSHIP],
-      },
       total,
     };
+  }
+
+  public async findUniqueByUserId(userId: UniqueId): Promise<MemberEntity> {
+    const member = await this.prismaService.member.findUniqueOrThrow({
+      where: { userId: userId.value },
+    });
+
+    return this.memberMapper.toDomain(member);
   }
 
   public async save(
@@ -278,34 +299,6 @@ export class PrismaMemberRepository implements MemberRepository {
     });
 
     return { orderBy, where };
-  }
-
-  private calculateTotalsByCategory(
-    duesByMemberAndCategory: Map<string, Map<DueCategory, number>>,
-  ): Record<DueCategory, number> {
-    const totals: Record<DueCategory, number> = {
-      [DueCategory.ELECTRICITY]: 0,
-      [DueCategory.GUEST]: 0,
-      [DueCategory.MEMBERSHIP]: 0,
-    };
-
-    duesByMemberAndCategory.forEach((categoryMap) => {
-      categoryMap.forEach((amount, category) => {
-        totals[category] += amount;
-      });
-    });
-
-    return totals;
-  }
-
-  private extractBalanceSortField(params: GetPaginatedDataDto) {
-    for (const sort of params.sort) {
-      if (sort.field === 'balance') {
-        return { order: sort.order };
-      }
-    }
-
-    return null;
   }
 
   private extractDueSortField(
@@ -407,8 +400,8 @@ export class PrismaMemberRepository implements MemberRepository {
     };
   }
 
-  private async findPaginatedByDueSort(params: {
-    category: DueCategory;
+  private async findPaginatedByCategoryOrTotalSort(params: {
+    category?: DueCategory;
     order: SortOrder;
     page: number;
     pageSize: number;
@@ -426,7 +419,7 @@ export class PrismaMemberRepository implements MemberRepository {
     const allMemberIds = allMembers.map((m) => m.id);
     const totalMembersCount = allMemberIds.length;
 
-    // Aggregate dues by category and sort
+    // Aggregate dues and sort (optionally filtered by category)
     const dues = await this.prismaService.due.groupBy({
       _sum: { amount: true },
       by: ['memberId'],
@@ -434,7 +427,7 @@ export class PrismaMemberRepository implements MemberRepository {
         _sum: { amount: params.order },
       },
       where: {
-        category: params.category,
+        ...(params.category && { category: params.category }),
         memberId: { in: allMemberIds },
         status: {
           in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
@@ -479,6 +472,18 @@ export class PrismaMemberRepository implements MemberRepository {
     duesByMemberAndCategory: Map<string, Map<DueCategory, number>>,
   ): MemberPaginatedReadModel {
     const memberDues = duesByMemberAndCategory.get(member.id);
+
+    const electricityTotalDueAmount =
+      memberDues?.get(DueCategory.ELECTRICITY) ?? 0;
+    const guestTotalDueAmount = memberDues?.get(DueCategory.GUEST) ?? 0;
+    const memberShipTotalDueAmount =
+      memberDues?.get(DueCategory.MEMBERSHIP) ?? 0;
+
+    const totalAmount =
+      electricityTotalDueAmount +
+      guestTotalDueAmount +
+      memberShipTotalDueAmount;
+
     const balance = sumBy(
       member.ledgerEntries,
       (ledgerEntry) => ledgerEntry.amount,
@@ -487,16 +492,17 @@ export class PrismaMemberRepository implements MemberRepository {
     return {
       balance,
       category: member.category as MemberCategory,
-      electricityTotalDueAmount: memberDues?.get(DueCategory.ELECTRICITY) ?? 0,
+      electricityTotalDueAmount,
       email: member.user.email,
-      guestTotalDueAmount: memberDues?.get(DueCategory.GUEST) ?? 0,
+      guestTotalDueAmount,
       id: member.id,
-      memberShipTotalDueAmount: memberDues?.get(DueCategory.MEMBERSHIP) ?? 0,
+      memberShipTotalDueAmount,
       name: Name.raw({
         firstName: member.user.firstName,
         lastName: member.user.lastName,
       }).fullName,
       status: member.status as MemberStatus,
+      totalAmount,
     };
   }
 

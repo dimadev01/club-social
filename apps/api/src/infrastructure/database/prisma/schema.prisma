@@ -27,6 +27,7 @@ model User {
   lastName      String
   status        String
   updatedBy     String
+  preferences   Json?
   sessions      Session[]
   accounts      Account[]
   passkeys      Passkey[]
@@ -317,4 +318,15 @@ model Pricing {
   @@index([effectiveTo])
   @@index([dueCategory, memberCategory, effectiveFrom, effectiveTo])
   @@map("pricing")
+}
+
+model AppSetting {
+  id          String   @id
+  value       Json
+  description String?
+  scope       String   @default("system")
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?
+
+  @@map("app_setting")
 }

@@ -1,12 +1,31 @@
-import { NumberParser } from '@internationalized/number';
+import {
+  type NumberFormatOptions,
+  NumberParser,
+} from '@internationalized/number';
 
 const locale = 'es-AR';
-const parser = new NumberParser(locale);
+
+const parser = (opts: NumberFormatOptions) => new NumberParser(locale, opts);
 
 const formatter = (opts: Intl.NumberFormatOptions) =>
   new Intl.NumberFormat(locale, opts);
 
 export const NumberFormat = {
+  currency(value: number, options: Intl.NumberFormatOptions = {}): string {
+    return formatter({
+      currency: 'ARS',
+      currencySign: 'standard',
+      maximumFractionDigits: 0,
+      signDisplay: 'auto',
+      style: 'currency',
+      ...options,
+    }).format(value);
+  },
+
+  currencyCents(value: number, options: Intl.NumberFormatOptions = {}): string {
+    return NumberFormat.currency(value / 100, options);
+  },
+
   decimal(value: number, fractionDigits = 2): string {
     return formatter({ maximumFractionDigits: fractionDigits }).format(value);
   },
@@ -15,26 +34,12 @@ export const NumberFormat = {
     return formatter(options).format(value);
   },
 
-  formatCurrency(value: number): string {
-    return formatter({
-      currency: 'ARS',
-      currencySign: 'standard',
-      maximumFractionDigits: 0,
-      signDisplay: 'auto',
-      style: 'currency',
-    }).format(value);
-  },
-
-  formatCurrencyCents(value: number): string {
-    return NumberFormat.formatCurrency(Math.round(value / 100));
-  },
-
   fromCents(value: number): number {
     return value / 100;
   },
 
-  parse(formatted: string): number {
-    return parser.parse(formatted);
+  parse(formatted: string, options: NumberFormatOptions = {}): number {
+    return parser(options).parse(formatted);
   },
 
   toCents(value: number): number {

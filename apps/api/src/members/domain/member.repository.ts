@@ -28,5 +28,6 @@ export interface MemberRepository
     WriteableRepository<MemberEntity> {
   findByIdReadModel(id: UniqueId): Promise<MemberReadModel | null>;
   findForExport(params: ExportDataDto): Promise<MemberPaginatedReadModel[]>;
+  findUniqueByUserId(userId: UniqueId): Promise<MemberEntity>;
   search(params: MemberSearchParams): Promise<MemberSearchReadModel[]>;
 }

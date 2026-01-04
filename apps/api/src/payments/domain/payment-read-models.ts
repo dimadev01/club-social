@@ -21,7 +21,9 @@ export type PaymentPaginatedReadModel = Pick<
   | 'member'
   | 'receiptNumber'
   | 'status'
->;
+> & {
+  categories: DueCategory[];
+};
 
 export interface PaymentReadModel {
   amount: number;

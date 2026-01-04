@@ -6,8 +6,7 @@ import {
   DueStatusLabel,
   type VoidDueDto,
 } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   MemberLedgerEntrySource,
   MemberLedgerEntrySourceLabel,
@@ -22,17 +21,19 @@ import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { NavigateToMember } from '@/ui/NavigateMember';
-import { NavigateMemberLedgerEntry } from '@/ui/NavigateMemberLedgerEntry';
-import { NavigateToPayment } from '@/ui/NavigateToPayment';
-import { NotFound } from '@/ui/NotFound';
-import { Row } from '@/ui/Row';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { VoidModal } from '@/ui/VoidModal';
+import {
+  Card,
+  Descriptions,
+  DescriptionsAudit,
+  NavigateToMember,
+  NavigateToMemberLedgerEntry,
+  NavigateToPayment,
+  NotFound,
+  Row,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  VoidModal,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueCategoryIconLabel } from './DueCategoryIconLabel';
@@ -110,7 +111,7 @@ export function DueView() {
                 label: 'Socio',
               },
               {
-                children: NumberFormat.formatCurrencyCents(due.amount),
+                children: NumberFormat.currencyCents(due.amount),
                 label: 'Monto',
               },
               {
@@ -145,9 +146,9 @@ export function DueView() {
           {
             dataIndex: ['memberLedgerEntry', 'date'],
             render: (date: string, record) => (
-              <NavigateMemberLedgerEntry id={record.memberLedgerEntry.id}>
+              <NavigateToMemberLedgerEntry id={record.memberLedgerEntry.id}>
                 {date}
-              </NavigateMemberLedgerEntry>
+              </NavigateToMemberLedgerEntry>
             ),
             title: 'Fecha de movimiento',
           },
@@ -178,8 +179,7 @@ export function DueView() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },

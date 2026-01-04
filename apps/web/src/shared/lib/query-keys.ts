@@ -6,19 +6,21 @@ import { createQueryKeyStore } from '@lukemorales/query-key-factory';
 
 import type { UsePaymentDailyStatisticsQuery } from '@/home/usePaymentDailyStatistics';
 import type { UsePaymentStatisticsQuery } from '@/home/usePaymentStatistics';
-import type { TableQuery } from '@/ui/Table/useTable';
+import type { TableQuery } from '@/ui';
 
 export const queryKeys = createQueryKeyStore({
+  appSettings: {
+    all: null,
+    byKey: (key: string) => [key],
+    maintenanceMode: null,
+  },
+
   dues: {
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
     payments: (id?: string) => [id],
     pending: (memberId?: string) => [memberId],
     pendingStatistics: (query?: DateRangeDto) => [query],
-  },
-
-  featureFlags: {
-    maintenanceMode: null,
   },
 
   memberLedger: {
@@ -63,6 +65,7 @@ export const queryKeys = createQueryKeyStore({
 
   users: {
     detail: (id?: string) => [id],
+    myPreferences: null,
     paginated: (query?: TableQuery) => [query],
   },
 });

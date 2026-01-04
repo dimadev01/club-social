@@ -1,7 +1,6 @@
 import type dayjs from 'dayjs';
 
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormats } from '@club-social/shared/lib';
+import { DateFormats, NumberFormat } from '@club-social/shared/lib';
 import {
   MovementCategory,
   MovementCategoryLabel,
@@ -11,8 +10,7 @@ import {
 import { DatePicker, Input, InputNumber } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form } from '@/ui/Form/Form';
-import { Select } from '@/ui/Select';
+import { Form, Select } from '@/ui';
 
 export interface MovementFormData {
   amount: number;
@@ -87,10 +85,18 @@ export function MovementForm({
       >
         <InputNumber<number>
           className="w-full"
-          formatter={(value) => NumberFormat.format(Number(value))}
+          formatter={(value) =>
+            NumberFormat.format(Number(value), {
+              maximumFractionDigits: 2,
+            })
+          }
           min={0}
-          parser={(value) => NumberFormat.parse(String(value))}
-          precision={0}
+          parser={(value) =>
+            NumberFormat.parse(String(value), {
+              maximumFractionDigits: 2,
+            })
+          }
+          precision={2}
           step={1000}
         />
       </Form.Item>

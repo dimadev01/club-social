@@ -1,10 +1,12 @@
 export const appRoutes = {
+  appSettings: '/app-settings',
   auditLogs: {
     list: '/audit-logs',
   } as const,
   auth: {
     login: '/auth/login',
     logout: '/auth/logout',
+    root: '/auth',
   },
   dues: {
     edit: (id?: string) => `/dues/${id}/edit`,
@@ -18,7 +20,6 @@ export const appRoutes = {
     view: ':id',
   } as const,
   home: '/',
-  maintenanceMode: '/maintenance-mode',
   memberLedger: {
     list: '/member-ledger',
     new: '/member-ledger/new',

@@ -1,10 +1,10 @@
 import { UserRole } from '@club-social/shared/users';
 import { Navigate, Outlet } from 'react-router';
 
+import { useMaintenanceMode } from '@/app-settings/useMaintenanceMode';
 import { appRoutes } from '@/app/app.enum';
 import { AppLayout } from '@/app/AppLayout';
 import { AppLoading } from '@/app/AppLoading';
-import { useMaintenanceMode } from '@/feature-flags/useMaintenanceMode';
 import { MaintenancePage } from '@/maintenance/MaintenancePage';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 
@@ -22,7 +22,7 @@ export function ProtectedRoute() {
   }
 
   const isAdmin = session.user.role === UserRole.ADMIN;
-  const isMaintenanceModeEnabled = maintenanceMode?.enabled ?? false;
+  const isMaintenanceModeEnabled = maintenanceMode?.value.enabled ?? false;
 
   if (isMaintenanceModeEnabled && !isAdmin) {
     return <MaintenancePage />;

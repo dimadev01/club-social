@@ -2,6 +2,7 @@ import { DateRangeDto, ExportDataDto } from '@club-social/shared/types';
 
 import {
   PaginatedRepository,
+  QueryContext,
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
@@ -21,9 +22,17 @@ export interface DueRepository
     PaginatedRepository<DuePaginatedReadModel, DuePaginatedExtraReadModel>,
     ReadableRepository<DueEntity>,
     WriteableRepository<DueEntity> {
-  findByIdReadModel(id: UniqueId): Promise<DueReadModel | null>;
-  findByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
-  findForExport(params: ExportDataDto): Promise<DuePaginatedReadModel[]>;
-  findPending(params: DateRangeDto): Promise<DueEntity[]>;
+  findByIdReadModel(
+    id: UniqueId,
+    context?: QueryContext,
+  ): Promise<DueReadModel | null>;
+  findForExport(
+    params: ExportDataDto,
+    context?: QueryContext,
+  ): Promise<DuePaginatedReadModel[]>;
   findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
+  findPendingForStatistics(
+    params: DateRangeDto,
+    context?: QueryContext,
+  ): Promise<DueEntity[]>;
 }

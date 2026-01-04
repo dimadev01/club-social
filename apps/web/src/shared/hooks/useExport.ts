@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import { useCallback, useState } from 'react';
 
-import type { ExportQuery } from '@/ui/Table/useTable';
+import type { ExportQuery } from '@/ui';
 
 interface UseExportOptions {
   endpoint: string;
@@ -37,7 +37,7 @@ export function useExport({
           }
         });
 
-        const url = `${import.meta.env.VITE_APP_API_URL}${endpoint}?${params.toString()}`;
+        const url = `${import.meta.env.VITE_API_URL}${endpoint}?${params.toString()}`;
 
         const response = await fetch(url, {
           credentials: 'include',

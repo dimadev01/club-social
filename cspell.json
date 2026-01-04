@@ -17,9 +17,19 @@
     "tsconfig.json",
     "config.toml",
     "docker-compose.yaml",
-    ".github"
+    ".github",
+    "migrations",
+    "CLAUDE.md"
   ],
-  "words": ["aaguid", "egresos", "Egresos", "Idcard", "Upserts"],
+  "words": [
+    "aaguid",
+    "borderless",
+    "clubsocialmontegrande",
+    "egresos",
+    "Egresos",
+    "Idcard",
+    "Upserts"
+  ],
   "ignoreWords": [
     "Dorrego",
     "Logtail",

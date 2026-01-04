@@ -1,7 +1,10 @@
 import { DueCategory } from '@club-social/shared/dues';
 import { MemberCategory } from '@club-social/shared/members';
 
-import { PricingEntity } from '@/pricing/domain/entities/pricing.entity';
+import {
+  PricingEntity,
+  type PricingProps,
+} from '@/pricing/domain/entities/pricing.entity';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 
@@ -11,12 +14,7 @@ import {
   TEST_PRICING_EFFECTIVE_FROM,
 } from '../constants';
 
-export interface PricingPropsOverrides {
-  amount?: Amount;
-  dueCategory?: DueCategory;
-  effectiveFrom?: DateOnly;
-  memberCategory?: MemberCategory;
-}
+export type PricingPropsOverrides = Partial<Omit<PricingProps, 'effectiveTo'>>;
 
 export const createPricingProps = (overrides?: PricingPropsOverrides) => ({
   amount: Amount.fromCents(TEST_PRICING_AMOUNT_CENTS)._unsafeUnwrap(),

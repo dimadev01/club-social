@@ -112,22 +112,27 @@ export class PaymentsController extends BaseController {
   @Get('paginated')
   public async getPaginated(
     @Query() query: GetPaginatedDataRequestDto,
+    @Session() session: AuthSession,
   ): Promise<
     PaginatedDataResponseDto<
       PaymentPaginatedResponseDto,
       PaymentPaginatedExtraResponseDto
     >
   > {
-    const data = await this.paymentRepository.findPaginated({
-      filters: query.filters,
-      page: query.page,
-      pageSize: query.pageSize,
-      sort: query.sort,
-    });
+    const data = await this.paymentRepository.findPaginated(
+      {
+        filters: query.filters,
+        page: query.page,
+        pageSize: query.pageSize,
+        sort: query.sort,
+      },
+      this.buildQueryContext(session),
+    );
 
     return {
       data: data.data.map((payment) => ({
         amount: payment.amount,
+        categories: payment.categories,
         createdAt: payment.createdAt.toISOString(),
         createdBy: payment.createdBy,
         date: payment.date,
@@ -204,12 +209,16 @@ export class PaymentsController extends BaseController {
   @Header('Content-Type', 'text/csv; charset=utf-8')
   public async export(
     @Query() query: ExportDataRequestDto,
+    @Session() session: AuthSession,
     @Res() res: Response,
   ): Promise<void> {
-    const payments = await this.paymentRepository.findForExport({
-      filters: query.filters,
-      sort: query.sort,
-    });
+    const payments = await this.paymentRepository.findForExport(
+      {
+        filters: query.filters,
+        sort: query.sort,
+      },
+      this.buildQueryContext(session),
+    );
 
     const stream = this.csvService.generateStream(payments, [
       { accessor: (row) => row.id, header: 'ID' },
@@ -240,9 +249,11 @@ export class PaymentsController extends BaseController {
   @Get(':id')
   public async getById(
     @Param() request: ParamIdReqResDto,
+    @Session() session: AuthSession,
   ): Promise<PaymentResponseDto> {
     const payment = await this.paymentRepository.findByIdReadModel(
       UniqueId.raw({ value: request.id }),
+      this.buildQueryContext(session),
     );
 
     if (!payment) {

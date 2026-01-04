@@ -1,8 +1,7 @@
 import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   type MemberCategory,
   MemberCategoryLabel,
@@ -18,13 +17,15 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
-import { Card } from '@/ui/Card';
-import { NotFound } from '@/ui/NotFound';
-import { PageTableActions } from '@/ui/Page';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { TableActions } from '@/ui/Table/TableActions';
-import { useTable } from '@/ui/Table/useTable';
+import {
+  Card,
+  NotFound,
+  PageTableActions,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  TableActions,
+  useTable,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 export function PricingList() {
@@ -75,7 +76,7 @@ export function PricingList() {
           )}
         </Space.Compact>
       }
-      title="Deudas"
+      title="Precios"
     >
       <PageTableActions>
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
@@ -136,8 +137,7 @@ export function PricingList() {
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },

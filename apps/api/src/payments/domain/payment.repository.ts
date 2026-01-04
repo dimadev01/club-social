@@ -2,6 +2,7 @@ import { DateRangeDto, ExportDataDto } from '@club-social/shared/types';
 
 import {
   PaginatedRepository,
+  QueryContext,
   ReadableRepository,
   WriteableRepository,
 } from '@/shared/domain/repository';
@@ -27,11 +28,17 @@ export interface PaymentRepository
     >,
     ReadableRepository<PaymentEntity>,
     WriteableRepository<PaymentEntity> {
-  findByIdReadModel(id: UniqueId): Promise<null | PaymentReadModel>;
+  findByIdReadModel(
+    id: UniqueId,
+    context?: QueryContext,
+  ): Promise<null | PaymentReadModel>;
   findDailyStatistics(
     month: DateOnly,
   ): Promise<PaymentDailyStatisticsReadModel[]>;
-  findForExport(params: ExportDataDto): Promise<PaymentPaginatedReadModel[]>;
+  findForExport(
+    params: ExportDataDto,
+    context?: QueryContext,
+  ): Promise<PaymentPaginatedReadModel[]>;
   findForStatistics(
     params: DateRangeDto,
   ): Promise<PaymentStatisticsReadModel[]>;

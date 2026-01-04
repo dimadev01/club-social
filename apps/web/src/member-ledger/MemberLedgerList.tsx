@@ -7,15 +7,14 @@ import {
   type MemberLedgerEntryPaginatedExtraDto,
   MemberLedgerEntrySource,
   MemberLedgerEntrySourceLabel,
-  MemberLedgerEntryStatus,
   MemberLedgerEntryStatusLabel,
   MemberLedgerEntryType,
   MemberLedgerEntryTypeLabel,
 } from '@club-social/shared/members';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Dropdown, Space } from 'antd';
+import { Button, Dropdown, Flex, Space, type TableColumnType } from 'antd';
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
@@ -23,18 +22,26 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { labelMapToFilterOptions } from '@/shared/lib/utils';
-import { Card } from '@/ui/Card';
-import { NavigateToMember } from '@/ui/NavigateMember';
-import { NavigateToPayment } from '@/ui/NavigateToPayment';
-import { NotFound } from '@/ui/NotFound';
-import { PageTableActions } from '@/ui/Page';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { TableActions } from '@/ui/Table/TableActions';
-import { TableDateRangeFilterDropdown } from '@/ui/Table/TableDateRangeFilterDropdown';
-import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
-import { useTable } from '@/ui/Table/useTable';
+import {
+  labelMapToFilterOptions,
+  labelMapToSelectOptions,
+} from '@/shared/lib/utils';
+import {
+  Card,
+  NavigateToMember,
+  NavigateToMemberLedgerEntry,
+  NavigateToPayment,
+  NotFound,
+  PageTableActions,
+  Select,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  TableActions,
+  TableDateRangeFilterDropdown,
+  TableMembersSearch,
+  useTable,
+} from '@/ui';
+import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
 
 export function MemberLedgerList() {
@@ -52,7 +59,7 @@ export function MemberLedgerList() {
     setFilter,
     state,
   } = useTable<MemberLedgerEntryPaginatedDto>({
-    defaultSort: [{ field: 'createdAt', order: 'descend' }],
+    defaultSort: [{ field: 'date', order: 'descend' }],
   });
 
   const { exportData, isExporting } = useExport({
@@ -114,54 +121,59 @@ export function MemberLedgerList() {
       title="Libro mayor de socios"
     >
       <PageTableActions justify="end">
-        {permissions.memberLedger.listAll && (
-          <TableMembersSearch
-            isLoading={isSelectedMembersLoading}
-            onFilterChange={(value) => setFilter('memberId', value)}
-            selectedMembers={selectedMembers}
-            value={getFilterValue('memberId') ?? undefined}
+        <Flex gap="middle" wrap>
+          {permissions.memberLedger.listAll && (
+            <TableMembersSearch
+              isLoading={isSelectedMembersLoading}
+              onFilterChange={(value) => setFilter('memberId', value)}
+              selectedMembers={selectedMembers}
+              value={getFilterValue('memberId') ?? undefined}
+            />
+          )}
+          <Select
+            className="min-w-full md:min-w-40"
+            mode="multiple"
+            onChange={(value) => setFilter('status', value)}
+            options={labelMapToSelectOptions(MemberLedgerEntryStatusLabel)}
+            placeholder="Filtrar por estado"
+            value={getFilterValue('status') ?? undefined}
           />
-        )}
+        </Flex>
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
       <Table<MemberLedgerEntryPaginatedDto>
         columns={[
           {
-            dataIndex: 'createdAt',
-            filterDropdown: (props) => (
-              <TableDateRangeFilterDropdown {...props} format="datetime" />
-            ),
-            filteredValue: getFilterValue('createdAt'),
-            render: (createdAt: string, record) => (
-              <Link to={appRoutes.memberLedger.view(record.id)}>
-                {DateFormat.dateTime(createdAt)}
-              </Link>
-            ),
-            sorter: true,
-            sortOrder: getSortOrder('createdAt'),
-            title: 'Creado el',
-            width: TABLE_COLUMN_WIDTHS.DATE_TIME,
-          },
-          {
+            align: 'left',
             dataIndex: 'date',
             filterDropdown: (props) => (
               <TableDateRangeFilterDropdown {...props} format="date" />
             ),
             filteredValue: getFilterValue('date'),
-            render: (date: string) => DateFormat.date(date),
+            render: (createdAt: string, record) => (
+              <NavigateToMemberLedgerEntry id={record.id}>
+                {createdAt}
+              </NavigateToMemberLedgerEntry>
+            ),
+            sorter: true,
+            sortOrder: getSortOrder('date'),
             title: 'Fecha',
             width: TABLE_COLUMN_WIDTHS.DATE,
           },
-          {
-            dataIndex: 'memberFullName',
-            render: (memberFullName: string, record) => (
-              <NavigateToMember id={record.memberId}>
-                {memberFullName}
-              </NavigateToMember>
-            ),
-            title: 'Socio',
-          },
+          ...(permissions.memberLedger.listAll
+            ? [
+                {
+                  dataIndex: 'memberFullName',
+                  render: (memberFullName: string, record) => (
+                    <NavigateToMember id={record.memberId}>
+                      {memberFullName}
+                    </NavigateToMember>
+                  ),
+                  title: 'Socio',
+                } satisfies TableColumnType<MemberLedgerEntryPaginatedDto>,
+              ]
+            : []),
           {
             align: 'center',
             dataIndex: 'type',
@@ -199,20 +211,10 @@ export function MemberLedgerList() {
             width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
           {
-            align: 'center',
-            dataIndex: 'status',
-            filteredValue: getFilterValue('status'),
-            filters: labelMapToFilterOptions(MemberLedgerEntryStatusLabel),
-            render: (value: MemberLedgerEntryStatus) =>
-              MemberLedgerEntryStatusLabel[value],
-            title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
-          },
-          {
             align: 'right',
             dataIndex: 'amount',
             render: (amount: number) =>
-              amount < 0 ? NumberFormat.formatCurrencyCents(amount) : '',
+              amount < 0 ? NumberFormat.currencyCents(Math.abs(amount)) : '',
             title: 'Egresos',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -220,7 +222,7 @@ export function MemberLedgerList() {
             align: 'right',
             dataIndex: 'amount',
             render: (amount: number) =>
-              amount > 0 ? NumberFormat.formatCurrencyCents(amount) : '',
+              amount > 0 ? NumberFormat.currencyCents(amount) : '',
             title: 'Ingresos',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -236,16 +238,11 @@ export function MemberLedgerList() {
         summary={() => (
           <Table.Summary fixed>
             <Table.Summary.Row>
-              <Table.Summary.Cell
-                align="right"
-                colSpan={7}
-                index={0}
-                rowSpan={2}
-              >
-                Balance
+              <Table.Summary.Cell align="right" colSpan={4} index={0}>
+                <TableSummaryTotalFilterText title="Balance" />
               </Table.Summary.Cell>
-              <Table.Summary.Cell align="right" colSpan={1} index={1}>
-                {NumberFormat.formatCurrencyCents(entries?.extra?.balance ?? 0)}
+              <Table.Summary.Cell align="center" colSpan={2} index={1}>
+                {NumberFormat.currencyCents(entries?.extra?.balance ?? 0)}
               </Table.Summary.Cell>
             </Table.Summary.Row>
           </Table.Summary>

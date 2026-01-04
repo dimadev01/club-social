@@ -3,8 +3,7 @@ import {
   DueSettlementStatus,
   DueSettlementStatusLabel,
 } from '@club-social/shared/dues';
-import { DateFormats, NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   type PaymentDueSettlementDto,
   PaymentStatus,
@@ -17,17 +16,19 @@ import { useNavigate, useParams } from 'react-router';
 
 import { DueCategoryIconLabel } from '@/dues/DueCategoryIconLabel';
 import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { DescriptionsAudit } from '@/ui/DescriptionsAudit';
-import { NavigateToDue } from '@/ui/NavigateDue';
-import { NavigateToMember } from '@/ui/NavigateMember';
-import { NavigateMemberLedgerEntry } from '@/ui/NavigateMemberLedgerEntry';
-import { NotFound } from '@/ui/NotFound';
-import { Row } from '@/ui/Row';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { VoidModal } from '@/ui/VoidModal';
+import {
+  Card,
+  Descriptions,
+  DescriptionsAudit,
+  NavigateToDue,
+  NavigateToMember,
+  NavigateToMemberLedgerEntry,
+  NotFound,
+  Row,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  VoidModal,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { usePayment } from './usePayment';
@@ -95,7 +96,7 @@ export function PaymentView() {
                 label: 'Socio',
               },
               {
-                children: NumberFormat.formatCurrencyCents(payment.amount),
+                children: NumberFormat.currencyCents(payment.amount),
                 label: 'Monto',
               },
               {
@@ -125,9 +126,7 @@ export function PaymentView() {
           {
             dataIndex: ['due', 'date'],
             render: (date: string, record: PaymentDueSettlementDto) => (
-              <NavigateToDue dateFormat={DateFormats.date} id={record.due.id}>
-                {date}
-              </NavigateToDue>
+              <NavigateToDue id={record.due.id}>{date}</NavigateToDue>
             ),
             title: 'Fecha de deuda',
           },
@@ -156,16 +155,14 @@ export function PaymentView() {
           {
             align: 'right',
             dataIndex: ['due', 'amount'],
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto deuda',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
           {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto pago',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -173,9 +170,9 @@ export function PaymentView() {
             align: 'center',
             dataIndex: ['memberLedgerEntry', 'id'],
             render: (id: string) => (
-              <NavigateMemberLedgerEntry formatDate={false} id={id}>
+              <NavigateToMemberLedgerEntry formatDate={false} id={id}>
                 Ver movimiento
-              </NavigateMemberLedgerEntry>
+              </NavigateToMemberLedgerEntry>
             ),
             title: 'Movimiento',
             width: 150,
