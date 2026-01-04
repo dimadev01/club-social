@@ -1,4 +1,7 @@
-import { AppSettingKey } from '@club-social/shared/app-settings';
+import {
+  AppSettingKey,
+  AppSettingScope,
+} from '@club-social/shared/app-settings';
 import { UserRole } from '@club-social/shared/users';
 import {
   BadRequestException,
@@ -48,9 +51,13 @@ export class AppSettingsController extends BaseController {
   public async getAll(
     @Session() session: AuthSession,
   ): Promise<AppSettingResponseDto<AppSettingKey>[]> {
-    this.requireAdmin(session);
+    const scopes = this.getScopesForRole(session.user.role as UserRole);
 
-    const settings = await this.repository.findAll();
+    if (scopes.length === 0) {
+      throw new ForbiddenException('You do not have access to any settings');
+    }
+
+    const settings = await this.repository.findByScopes(scopes);
 
     return settings.map((s) => this.toDto(s));
   }
@@ -59,7 +66,7 @@ export class AppSettingsController extends BaseController {
   @PublicRoute()
   @SkipMaintenanceCheck()
   public async getMaintenanceMode(): Promise<
-    AppSettingResponseDto<typeof AppSettingKey.MAINTENANCE_MODE>
+    AppSettingResponseDto<AppSettingKey>
   > {
     const setting = await this.appSettingService.getMaintenanceMode();
 
@@ -76,7 +83,7 @@ export class AppSettingsController extends BaseController {
     this.handleResult(
       await this.updateSettingUseCase.execute({
         key: AppSettingKey.MAINTENANCE_MODE,
-        updatedBy: session.user.id,
+        updatedBy: session.user.name,
         value: body.value,
       }),
     );
@@ -87,13 +94,13 @@ export class AppSettingsController extends BaseController {
     @Param('key') key: string,
     @Session() session: AuthSession,
   ): Promise<AppSettingResponseDto<AppSettingKey>> {
-    this.requireAdmin(session);
-
     if (!isValidAppSettingKey(key)) {
       throw new NotFoundException(`Setting with key "${key}" not found`);
     }
 
     const setting = await this.appSettingService.getValue(key);
+
+    this.requireAccessToScope(setting.scope, session.user.role as UserRole);
 
     return this.toDto(setting);
   }
@@ -104,19 +111,42 @@ export class AppSettingsController extends BaseController {
     @Body() body: UpdateSettingRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
-    this.requireAdmin(session);
-
     if (!isValidAppSettingKey(key)) {
       throw new BadRequestException(`Invalid setting key: "${key}"`);
     }
 
+    const setting = await this.appSettingService.getValue(key);
+
+    this.requireAccessToScope(setting.scope, session.user.role as UserRole);
+
     this.handleResult(
       await this.updateSettingUseCase.execute({
         key,
-        updatedBy: session.user.id,
+        updatedBy: session.user.name,
         value: body.value,
       }),
     );
+  }
+
+  private getScopesForRole(role: UserRole): AppSettingScope[] {
+    switch (role) {
+      case UserRole.ADMIN:
+        return [AppSettingScope.SYSTEM, AppSettingScope.APP];
+      case UserRole.STAFF:
+        return [AppSettingScope.APP];
+      default:
+        return [];
+    }
+  }
+
+  private requireAccessToScope(scope: AppSettingScope, role: UserRole): void {
+    const allowedScopes = this.getScopesForRole(role);
+
+    if (!allowedScopes.includes(scope)) {
+      throw new ForbiddenException(
+        'You do not have permission to access this setting',
+      );
+    }
   }
 
   private requireAdmin(session: AuthSession): void {
@@ -131,6 +161,7 @@ export class AppSettingsController extends BaseController {
     return {
       description: entity.description,
       key: entity.id.value as AppSettingKey,
+      scope: entity.scope,
       updatedAt: entity.updatedAt.toISOString(),
       updatedBy: entity.updatedBy,
       value: entity.value,

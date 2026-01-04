@@ -1,4 +1,7 @@
-import { AppSettingKey } from '@club-social/shared/app-settings';
+import {
+  AppSettingKey,
+  AppSettingScope,
+} from '@club-social/shared/app-settings';
 
 import {
   AppSettingEntity,
@@ -20,6 +23,7 @@ export const createAppSettingProps = <
       ? (overrides?.description as null | string)
       : 'Maintenance mode setting',
   key: (overrides?.key ?? AppSettingKey.MAINTENANCE_MODE) as K,
+  scope: overrides?.scope ?? AppSettingScope.SYSTEM,
   value: (overrides?.value ?? {
     enabled: false,
   }) as AppSettingProps<K>['value'],

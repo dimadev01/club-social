@@ -2,6 +2,7 @@ import type { InputJsonValue } from '@prisma/client/runtime/client';
 
 import {
   AppSettingKey,
+  AppSettingScope,
   AppSettingValues,
 } from '@club-social/shared/app-settings';
 import { Injectable } from '@nestjs/common';
@@ -22,6 +23,7 @@ export class PrismaAppSettingMapper {
       {
         description: model.description,
         key: model.id as K,
+        scope: model.scope as AppSettingScope,
         value: model.value as unknown as AppSettingValues[K],
       },
       {

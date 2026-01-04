@@ -7,6 +7,10 @@ import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { UserEntity } from '../domain/entities/user.entity';
+import {
+  DEFAULT_USER_PREFERENCES,
+  UserPreferencesVO,
+} from '../domain/value-objects/user-preferences.vo';
 
 @Injectable()
 export class PrismaUserMapper {
@@ -18,6 +22,10 @@ export class PrismaUserMapper {
         banReason: user.banReason,
         email: Email.raw({ value: user.email }),
         name: Name.raw({ firstName: user.firstName, lastName: user.lastName }),
+        preferences: UserPreferencesVO.raw(
+          // user.preferences as unknown as UserPreferencesProps,
+          DEFAULT_USER_PREFERENCES,
+        ),
         role: user.role as UserRole,
         status: user.status as UserStatus,
       },

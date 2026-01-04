@@ -2,6 +2,7 @@ import {
   AppSettingKey,
   type AppSettingValues,
   MaintenanceModeValue,
+  SendEmailsValue,
 } from '@club-social/shared/app-settings';
 
 import { ApplicationError } from '@/shared/domain/errors/application.error';
@@ -26,6 +27,23 @@ const settingValidators: {
       return err(
         new ApplicationError(
           'Invalid maintenance mode value: expected { enabled: boolean }',
+        ),
+      );
+    }
+
+    return ok({ enabled: value.enabled });
+  },
+  [AppSettingKey.SEND_EMAILS]: (value: SendEmailsValue) => {
+    if (!Guard.isObject(value)) {
+      return err(
+        new ApplicationError('Invalid send emails value: expected object'),
+      );
+    }
+
+    if (!Guard.isBoolean(value.enabled)) {
+      return err(
+        new ApplicationError(
+          'Invalid send emails value: expected { enabled: boolean }',
         ),
       );
     }

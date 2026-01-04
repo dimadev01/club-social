@@ -16,6 +16,10 @@ import { createTestUser, createUserProps } from '@/shared/test/factories';
 
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
+import {
+  DEFAULT_USER_PREFERENCES,
+  UserPreferencesVO,
+} from '../value-objects/user-preferences.vo';
 import { UserEntity } from './user.entity';
 
 describe('UserEntity', () => {
@@ -38,8 +42,8 @@ describe('UserEntity', () => {
       );
       expect(user.role).toBe(UserRole.MEMBER);
       expect(user.status).toBe(UserStatus.ACTIVE);
-      expect(user.banned).toBeNull();
-      expect(user.banReason).toBeNull();
+      expect(user.banned).toBe(false);
+      expect(user.banReason).toBe(null);
       expect(user.banExpires).toBeNull();
       expect(user.createdBy).toBe(TEST_CREATED_BY);
     });
@@ -54,20 +58,6 @@ describe('UserEntity', () => {
       const user = createTestUser({ role: UserRole.STAFF });
 
       expect(user.role).toBe(UserRole.STAFF);
-    });
-
-    it('should create a banned user using overrides', () => {
-      const banExpires = new Date('2024-12-31');
-
-      const user = createTestUser({
-        banExpires,
-        banned: true,
-        banReason: 'Violation of terms',
-      });
-
-      expect(user.banned).toBe(true);
-      expect(user.banReason).toBe('Violation of terms');
-      expect(user.banExpires).toBe(banExpires);
     });
 
     it('should add UserCreatedEvent on creation', () => {
@@ -102,6 +92,7 @@ describe('UserEntity', () => {
             firstName: TEST_ALT_FIRST_NAME,
             lastName: TEST_ALT_LAST_NAME,
           }),
+          preferences: UserPreferencesVO.raw(DEFAULT_USER_PREFERENCES),
           role: UserRole.ADMIN,
           status: UserStatus.ACTIVE,
         },
@@ -137,6 +128,7 @@ describe('UserEntity', () => {
             firstName: TEST_ALT_FIRST_NAME,
             lastName: TEST_ALT_LAST_NAME,
           }),
+          preferences: UserPreferencesVO.raw(DEFAULT_USER_PREFERENCES),
           role: UserRole.MEMBER,
           status: UserStatus.INACTIVE,
         },

@@ -1,56 +1,92 @@
-import { SettingOutlined } from '@ant-design/icons';
-import { AppSettingKey } from '@club-social/shared/app-settings';
+import {
+  type AppSettingDto,
+  AppSettingKey,
+  AppSettingScope,
+} from '@club-social/shared/app-settings';
 import { UserRole } from '@club-social/shared/users';
-import { Space, Switch, Typography } from 'antd';
+import { Checkbox } from 'antd';
+import { useMemo } from 'react';
 
 import { useSessionUser } from '@/auth/useUser';
-import { Card, Page } from '@/ui';
+import { Card, Form, Page } from '@/ui';
 import { NotFound } from '@/ui/NotFound';
 
-import { useAppSetting } from './useAppSetting';
+import { useAppSettings } from './useAppSettings';
 import { useUpdateAppSetting } from './useUpdateAppSetting';
+
+const SETTING_LABELS: Record<AppSettingKey, string> = {
+  [AppSettingKey.MAINTENANCE_MODE]: 'Modo de mantenimiento',
+  [AppSettingKey.SEND_EMAILS]: 'Enviar correos electrónicos',
+};
 
 export function AppSettingsPage() {
   const { role } = useSessionUser();
   const isAdmin = role === UserRole.ADMIN;
+  const isStaff = role === UserRole.STAFF;
 
-  const { data: maintenanceMode, isLoading } = useAppSetting(
-    AppSettingKey.MAINTENANCE_MODE,
-  );
+  const { data: appSettings, isLoading, refetch } = useAppSettings();
   const updateMutation = useUpdateAppSetting();
 
-  const handleMaintenanceModeChange = (checked: boolean) => {
-    updateMutation.mutate({
-      key: AppSettingKey.MAINTENANCE_MODE,
-      value: { enabled: checked },
-    });
-  };
+  const { appScopeSettings, systemSettings } = useMemo(() => {
+    const system = (appSettings ?? []).filter(
+      (setting) => setting.scope === AppSettingScope.SYSTEM,
+    );
+    const app = (appSettings ?? []).filter(
+      (setting) => setting.scope === AppSettingScope.APP,
+    );
 
-  if (!isAdmin) {
+    return { appScopeSettings: app, systemSettings: system };
+  }, [appSettings]);
+
+  if (!isAdmin && !isStaff) {
     return <NotFound />;
   }
 
-  const isMaintenanceEnabled = maintenanceMode?.value.enabled ?? false;
+  const renderBooleanSetting = (setting: AppSettingDto<AppSettingKey>) => {
+    const value = setting.value as { enabled: boolean };
+
+    return (
+      <Form.Item
+        key={setting.key}
+        label={SETTING_LABELS[setting.key]}
+        name={setting.key}
+      >
+        <Checkbox
+          checked={value.enabled}
+          onChange={(e) => {
+            updateMutation.mutate(
+              { key: setting.key, value: { enabled: e.target.checked } },
+              { onSuccess: () => refetch() },
+            );
+          }}
+        >
+          {setting.description}
+        </Checkbox>
+      </Form.Item>
+    );
+  };
 
   return (
     <Page>
-      <Card extra={<SettingOutlined />} title="Configuración del Sistema">
-        <Space>
-          <Switch
-            checked={isMaintenanceEnabled}
-            checkedChildren="Activado"
-            disabled={isLoading}
-            loading={isLoading || updateMutation.isPending}
-            onChange={handleMaintenanceModeChange}
-            unCheckedChildren="Desactivado"
-          />
-          <Typography.Text>
-            {isMaintenanceEnabled
-              ? 'El sistema está en modo de mantenimiento'
-              : 'El sistema está operando normalmente'}
-          </Typography.Text>
-        </Space>
-      </Card>
+      {isAdmin && systemSettings.length > 0 && (
+        <Card
+          className="mb-4"
+          loading={isLoading}
+          title="Configuración del Sistema"
+        >
+          <Form layout="horizontal">
+            {systemSettings.map(renderBooleanSetting)}
+          </Form>
+        </Card>
+      )}
+
+      {appScopeSettings.length > 0 && (
+        <Card loading={isLoading} title="Configuración de la Aplicación">
+          <Form layout="horizontal">
+            {appScopeSettings.map(renderBooleanSetting)}
+          </Form>
+        </Card>
+      )}
     </Page>
   );
 }

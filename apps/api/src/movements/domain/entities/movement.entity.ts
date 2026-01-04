@@ -16,6 +16,11 @@ import { StrictOmit } from '@/shared/types/type-utils';
 import { MovementCreatedEvent } from '../events/movement-created.event';
 import { MovementUpdatedEvent } from '../events/movement-updated.event';
 
+export type CreateMovementProps = StrictOmit<
+  MovementProps,
+  'voidedAt' | 'voidedBy' | 'voidReason'
+>;
+
 export interface MovementProps {
   amount: SignedAmount;
   category: MovementCategory;
@@ -97,7 +102,7 @@ export class MovementEntity extends AuditedAggregateRoot {
   }
 
   public static create(
-    props: StrictOmit<MovementProps, 'voidedAt' | 'voidedBy' | 'voidReason'>,
+    props: CreateMovementProps,
     createdBy: string,
   ): Result<MovementEntity> {
     const movement = new MovementEntity(

@@ -27,6 +27,7 @@ model User {
   lastName      String
   status        String
   updatedBy     String
+  preferences   Json?
   sessions      Session[]
   accounts      Account[]
   passkeys      Passkey[]
@@ -320,9 +321,10 @@ model Pricing {
 }
 
 model AppSetting {
-  id         String   @id
+  id          String   @id
   value       Json
   description String?
+  scope       String   @default("system")
   updatedAt   DateTime @updatedAt
   updatedBy   String?
 

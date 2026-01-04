@@ -1,4 +1,7 @@
-import { NumberFormatOptions, NumberParser } from '@internationalized/number';
+import {
+  type NumberFormatOptions,
+  NumberParser,
+} from '@internationalized/number';
 
 const locale = 'es-AR';
 
