@@ -18,7 +18,8 @@
     "config.toml",
     "docker-compose.yaml",
     ".github",
-    "migrations"
+    "migrations",
+    "CLAUDE.md"
   ],
   "words": [
     "aaguid",

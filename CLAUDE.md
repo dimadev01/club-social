@@ -237,7 +237,7 @@ Located in `shared/domain/errors/`:
 - Service: `src/infrastructure/config/config.service.ts`
 - Validates at startup, helper methods: `isDev`, `isLocal`, `isProd`
 
-**Logging**: Winston + Better Stack (Logtail)
+**Logging**: Winston + Sentry
 
 - Inject via `APP_LOGGER_PROVIDER` symbol
 - Interface: `error(log)`, `info(log)`, `warn(log)`, `setContext(context)`

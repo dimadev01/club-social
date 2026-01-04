@@ -1,8 +1,8 @@
-import { Logtail } from '@logtail/node';
-import { LogtailTransport } from '@logtail/winston';
 import { Global, Module } from '@nestjs/common';
+import * as Sentry from '@sentry/nestjs';
 import { WinstonModule, utilities as winstonUtilities } from 'nest-winston';
 import * as winston from 'winston';
+import Transport from 'winston-transport';
 
 import { ConfigService } from '@/infrastructure/config/config.service';
 import { TraceModule } from '@/infrastructure/trace/trace.module';
@@ -51,17 +51,12 @@ import { traceIdFormat } from './trace-id.format';
           };
         }
 
+        const SentryWinstonTransport =
+          Sentry.createSentryWinstonTransport(Transport);
+
         return {
           transports: [
-            new LogtailTransport(
-              new Logtail(configService.betterStackSourceToken, {
-                endpoint: configService.betterStackEndpoint,
-              }),
-              {
-                format: commonFormat,
-                level: 'info',
-              },
-            ),
+            new SentryWinstonTransport(),
             new winston.transports.Console({
               format: commonFormat,
               level: 'info',
