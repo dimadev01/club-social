@@ -51,7 +51,7 @@ export function AntProvider({ children }: { children: React.ReactNode }) {
     token: {
       colorInfo: '#22883e',
       colorPrimary: '#22883e',
-      // motion: false,
+      motion: false,
     },
     zeroRuntime: true,
   };
