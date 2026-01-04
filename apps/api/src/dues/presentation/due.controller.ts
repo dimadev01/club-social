@@ -221,7 +221,7 @@ export class DuesController extends BaseController {
     @Query() query: DateRangeRequestDto,
     @Session() session: AuthSession,
   ): Promise<DuePendingStatisticsResponseDto> {
-    const dues = await this.dueRepository.findPending(
+    const dues = await this.dueRepository.findPendingForStatistics(
       {
         dateRange: query.dateRange,
       },

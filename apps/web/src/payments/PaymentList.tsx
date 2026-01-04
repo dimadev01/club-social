@@ -41,6 +41,7 @@ import {
   TableMembersSearch,
   useTable,
 } from '@/ui';
+import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
 
 export function PaymentList() {
@@ -268,7 +269,7 @@ export function PaymentList() {
           <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell align="right" colSpan={1} index={0}>
-                Total
+                <TableSummaryTotalFilterText />
               </Table.Summary.Cell>
               <Table.Summary.Cell colSpan={6} index={1}>
                 {NumberFormat.currencyCents(payments?.extra?.totalAmount ?? 0)}

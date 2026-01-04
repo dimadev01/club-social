@@ -41,6 +41,7 @@ import {
   TableMembersSearch,
   useTable,
 } from '@/ui';
+import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueCategoryIconLabel } from './DueCategoryIconLabel';
@@ -273,7 +274,7 @@ export function DueList() {
           <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell align="right" colSpan={1} index={0}>
-                Total
+                <TableSummaryTotalFilterText />
               </Table.Summary.Cell>
               <Table.Summary.Cell colSpan={7} index={1}>
                 {NumberFormat.currencyCents(dues?.extra?.totalAmount ?? 0)}

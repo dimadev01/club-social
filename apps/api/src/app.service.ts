@@ -398,7 +398,10 @@ export class AppService {
         .limit(BATCH_SIZE)
         .toArray();
 
-      if (mongoMovements.length === 0) break;
+      if (mongoMovements.length === 0) {
+        movementsSkip = 0;
+        break;
+      }
 
       const movementProcessing = mongoMovements.map((mongoMovement) =>
         limit(async () => {
@@ -429,6 +432,63 @@ export class AppService {
               mode: MovementMode.MANUAL,
               notes: mongoMovement.notes || null,
               status: mongoMovement.status as MovementStatus,
+              updatedAt: mongoMovement.updatedAt as Date,
+              updatedBy: mongoMovement.updatedBy as string,
+              voidedAt: mongoMovement.voidedAt as Date,
+              voidedBy: mongoMovement.voidedBy as string,
+              voidReason: mongoMovement.voidReason as string,
+            },
+          });
+        }),
+      );
+      await Promise.all(movementProcessing);
+
+      this.logger.info({
+        message: `Processed ${movementsSkip + mongoMovements.length} movements`,
+      });
+      movementsSkip += BATCH_SIZE;
+    }
+
+    while (true) {
+      const mongoMovements = await this.mongoConnection
+        .collection('movements')
+        .find({
+          category: 'member-payment',
+          isDeleted: false,
+          status: 'voided',
+        })
+        .skip(movementsSkip)
+        .limit(BATCH_SIZE)
+        .toArray();
+
+      if (mongoMovements.length === 0) break;
+
+      const movementProcessing = mongoMovements.map((mongoMovement) =>
+        limit(async () => {
+          const movementId = UniqueId.generate().value;
+
+          const date = DateOnly.fromString(
+            mongoMovement.date.toISOString().split('T')[0],
+          );
+
+          if (date.isErr()) {
+            throw date.error;
+          }
+
+          return this.prismaService.movement.create({
+            data: {
+              amount: -(mongoMovement.amount as number),
+              category:
+                mongoMovementsCategoryMap[
+                  mongoMovement.category as keyof typeof mongoMovementsCategoryMap
+                ],
+              createdAt: mongoMovement.createdAt as Date,
+              createdBy: mongoMovement.createdBy as string,
+              date: date.value.toString(),
+              id: movementId,
+              mode: MovementMode.AUTOMATIC,
+              notes: 'Ajuste por migración de datos',
+              status: MovementStatus.REGISTERED,
               updatedAt: mongoMovement.updatedAt as Date,
               updatedBy: mongoMovement.updatedBy as string,
               voidedAt: mongoMovement.voidedAt as Date,

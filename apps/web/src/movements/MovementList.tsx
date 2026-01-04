@@ -32,6 +32,7 @@ import {
   TableDateRangeFilterDropdown,
   useTable,
 } from '@/ui';
+import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
 
 export function MovementList() {
@@ -203,7 +204,7 @@ export function MovementList() {
                 index={0}
                 rowSpan={2}
               >
-                Totales
+                <TableSummaryTotalFilterText title="Totales" />
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={1}>
                 {NumberFormat.currencyCents(

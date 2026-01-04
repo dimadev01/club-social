@@ -41,6 +41,7 @@ import {
   TableMembersSearch,
   useTable,
 } from '@/ui';
+import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
 
 export function MemberLedgerList() {
@@ -238,7 +239,7 @@ export function MemberLedgerList() {
           <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell align="right" colSpan={4} index={0}>
-                Balance
+                <TableSummaryTotalFilterText title="Balance" />
               </Table.Summary.Cell>
               <Table.Summary.Cell align="center" colSpan={2} index={1}>
                 {NumberFormat.currencyCents(entries?.extra?.balance ?? 0)}

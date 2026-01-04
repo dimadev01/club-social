@@ -18,6 +18,7 @@ import {
   MemberStatus,
 } from '@club-social/shared/members';
 import { Injectable } from '@nestjs/common';
+import { sumBy } from 'es-toolkit/compat';
 
 import {
   DueFindManyArgs,
@@ -163,26 +164,51 @@ export class PrismaDueRepository implements DueRepository {
       where,
     } satisfies DueFindManyArgs;
 
-    const [dues, total, totalAmount] = await Promise.all([
+    const [dues, total, allDues] = await Promise.all([
       this.prismaService.due.findMany(query),
       this.prismaService.due.count({ where }),
-      this.prismaService.due.aggregate({ _sum: { amount: true }, where }),
+      this.prismaService.due.findMany({
+        include: { settlements: true },
+        where,
+      }),
     ]);
+
+    const totalAmount = sumBy(allDues, (due) =>
+      this.dueMapper.toDomain(due).pendingAmount.toCents(),
+    );
 
     return {
       data: dues.map((due) => this.toPaginatedReadModel(due)),
       extra: {
-        totalAmount: totalAmount._sum.amount ?? 0,
+        totalAmount,
       },
       total,
     };
   }
 
-  public async findPending(
+  public async findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]> {
+    const dues = await this.prismaService.due.findMany({
+      include: { settlements: true },
+      orderBy: { date: 'asc' },
+      where: {
+        memberId: memberId.value,
+        status: {
+          in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
+        },
+      },
+    });
+
+    return dues.map((due) => this.dueMapper.toDomain(due));
+  }
+
+  public async findPendingForStatistics(
     params: DateRangeDto,
     context?: QueryContext,
   ): Promise<DueEntity[]> {
     const where: DueWhereInput = {
+      member: {
+        status: MemberStatus.ACTIVE,
+      },
       status: {
         in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
       },
@@ -202,21 +228,6 @@ export class PrismaDueRepository implements DueRepository {
     const dues = await this.prismaService.due.findMany({
       include: { settlements: true },
       where,
-    });
-
-    return dues.map((due) => this.dueMapper.toDomain(due));
-  }
-
-  public async findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]> {
-    const dues = await this.prismaService.due.findMany({
-      include: { settlements: true },
-      orderBy: { date: 'asc' },
-      where: {
-        memberId: memberId.value,
-        status: {
-          in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
-        },
-      },
     });
 
     return dues.map((due) => this.dueMapper.toDomain(due));

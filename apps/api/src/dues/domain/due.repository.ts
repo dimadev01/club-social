@@ -30,9 +30,9 @@ export interface DueRepository
     params: ExportDataDto,
     context?: QueryContext,
   ): Promise<DuePaginatedReadModel[]>;
-  findPending(
+  findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
+  findPendingForStatistics(
     params: DateRangeDto,
     context?: QueryContext,
   ): Promise<DueEntity[]>;
-  findPendingByMemberId(memberId: UniqueId): Promise<DueEntity[]>;
 }

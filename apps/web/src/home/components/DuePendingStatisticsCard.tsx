@@ -1,12 +1,13 @@
 import type { Dayjs } from 'dayjs';
 
+import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   DueCategory,
   DueCategoryLabel,
   DueCategorySorted,
 } from '@club-social/shared/dues';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
-import { Statistic } from 'antd';
+import { Space, Statistic, Tooltip } from 'antd';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
@@ -36,7 +37,14 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
     <Card
       extra={<DuesIcon />}
       size="small"
-      title="Deudas pendientes"
+      title={
+        <Space size="small">
+          Deudas pendientes
+          <Tooltip title="Solamente socios activos">
+            <InfoCircleOutlined />
+          </Tooltip>
+        </Space>
+      }
       type="inner"
     >
       {DueCategorySorted.map((category) => (
