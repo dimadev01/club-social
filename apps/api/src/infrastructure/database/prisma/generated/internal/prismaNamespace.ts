@@ -1587,6 +1587,7 @@ export const UserScalarFieldEnum = {
   lastName: 'lastName',
   status: 'status',
   updatedBy: 'updatedBy',
+  preferences: 'preferences',
 } as const;
 
 export type UserScalarFieldEnum =
@@ -1810,6 +1811,7 @@ export const AppSettingScalarFieldEnum = {
   id: 'id',
   value: 'value',
   description: 'description',
+  scope: 'scope',
   updatedAt: 'updatedAt',
   updatedBy: 'updatedBy',
 } as const;
@@ -1846,13 +1848,6 @@ export const QueryMode = {
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
 
-export const NullsOrder = {
-  first: 'first',
-  last: 'last',
-} as const;
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];
-
 export const JsonNullValueFilter = {
   DbNull: DbNull,
   JsonNull: JsonNull,
@@ -1861,6 +1856,13 @@ export const JsonNullValueFilter = {
 
 export type JsonNullValueFilter =
   (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last',
+} as const;
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];
 
 /**
  * Field references
@@ -1907,22 +1909,6 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<
 >;
 
 /**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  'Int'
->;
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  'Int[]'
->;
-
-/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<
@@ -1936,6 +1922,22 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<
   $PrismaModel,
   'QueryMode'
+>;
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'Int'
+>;
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  'Int[]'
 >;
 
 /**

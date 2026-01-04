@@ -7,8 +7,13 @@ import {
   type AppLogger,
 } from '@/shared/application/app-logger';
 
+import { QueueEmailType } from './email.enum';
 import { EMAIL_PROVIDER_PROVIDER, type EmailProvider } from './email.provider';
-import { SendMagicLinkParams } from './email.types';
+import {
+  EmailJobData,
+  SendMagicLinkParams,
+  SendVerificationEmailParams,
+} from './email.types';
 
 @Processor('email', {
   limiter: {
@@ -27,20 +32,33 @@ export class EmailProcessor extends WorkerHost {
     this.logger.setContext(EmailProcessor.name);
   }
 
-  public async process(job: Job): Promise<void> {
-    switch (job.name) {
-      case 'send-magic-link':
-        await this.handleMagicLink(job.data);
-        break;
+  public async process(
+    job: Job<EmailJobData, void, QueueEmailType>,
+  ): Promise<void> {
+    switch (job.data.type) {
+      case QueueEmailType.SEND_MAGIC_LINK:
+        return this.handleMagicLink(job.data.data);
+      case QueueEmailType.SEND_VERIFICATION_EMAIL:
+        return this.handleVerificationEmail(job.data.data);
       default:
         throw new Error(`Unknown job name: ${job.name}`);
     }
   }
 
   private async handleMagicLink(data: SendMagicLinkParams): Promise<void> {
-    await this.emailProvider.sendEmail({
+    return this.emailProvider.sendEmail({
       html: `Click here to login: <a href="${data.url}">${data.url}</a>`,
       subject: 'Magic link',
+      to: data.email,
+    });
+  }
+
+  private async handleVerificationEmail(
+    data: SendVerificationEmailParams,
+  ): Promise<void> {
+    return this.emailProvider.sendEmail({
+      html: `Click here to verify your email: <a href="${data.url}">${data.url}</a>`,
+      subject: 'Verify your email',
       to: data.email,
     });
   }

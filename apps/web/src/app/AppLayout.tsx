@@ -22,7 +22,7 @@ import {
   theme,
   Typography,
 } from 'antd';
-import { type PropsWithChildren, useState } from 'react';
+import { type PropsWithChildren, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
@@ -63,66 +63,69 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   const user = useSessionUser();
   const isAdmin = user.role === UserRole.ADMIN;
+  const isStaff = user.role === UserRole.STAFF;
 
   const permissions = usePermissions();
 
-  const menuItems: MenuItemType[] = [
-    {
-      icon: <DashboardIcon />,
-      key: appRoutes.home,
-      label: 'Inicio',
-    },
-  ];
+  const menuItems = useMemo(() => {
+    const items: MenuItemType[] = [
+      {
+        icon: <DashboardIcon />,
+        key: appRoutes.home,
+        label: 'Inicio',
+      },
+    ];
 
-  if (permissions.dues.list) {
-    menuItems.push({
-      icon: <DuesIcon />,
-      key: appRoutes.dues.list,
-      label: 'Deudas',
-    });
-  }
+    if (permissions.dues.list) {
+      items.push({
+        icon: <DuesIcon />,
+        key: appRoutes.dues.list,
+        label: 'Deudas',
+      });
+    }
 
-  if (permissions.payments.list) {
-    menuItems.push({
-      icon: <PaymentsIcon />,
-      key: appRoutes.payments.list,
-      label: 'Pagos',
-    });
-  }
+    if (permissions.payments.list) {
+      items.push({
+        icon: <PaymentsIcon />,
+        key: appRoutes.payments.list,
+        label: 'Pagos',
+      });
+    }
 
-  if (permissions.movements.list) {
-    menuItems.push({
-      icon: <MovementsIcon />,
-      key: appRoutes.movements.list,
-      label: 'Movimientos',
-    });
-  }
+    if (permissions.movements.list) {
+      items.push({
+        icon: <MovementsIcon />,
+        key: appRoutes.movements.list,
+        label: 'Movimientos',
+      });
+    }
 
-  if (permissions.memberLedger.list) {
-    menuItems.push({
-      icon: <LedgerIcon />,
-      key: appRoutes.memberLedger.list,
-      label: 'Libro Mayor',
-    });
-  }
+    if (permissions.memberLedger.list) {
+      items.push({
+        icon: <LedgerIcon />,
+        key: appRoutes.memberLedger.list,
+        label: 'Libro Mayor',
+      });
+    }
 
-  if (permissions.members.list) {
-    menuItems.push({
-      icon: <UsersIcon />,
-      key: appRoutes.members.list,
-      label: 'Socios',
-    });
-  }
+    if (permissions.members.list) {
+      items.push({
+        icon: <UsersIcon />,
+        key: appRoutes.members.list,
+        label: 'Socios',
+      });
+    }
 
-  if (permissions.users.list) {
-    menuItems.push({
-      icon: <UsersIcon />,
-      key: appRoutes.users.list,
-      label: 'Usuarios',
-    });
+    if (permissions.users.list) {
+      items.push({
+        icon: <UsersIcon />,
+        key: appRoutes.users.list,
+        label: 'Usuarios',
+      });
+    }
 
     if (permissions.pricing.list) {
-      menuItems.push({
+      items.push({
         icon: <PricingIcon />,
         key: appRoutes.pricing.list,
         label: 'Precios',
@@ -130,34 +133,36 @@ export function AppLayout({ children }: PropsWithChildren) {
     }
 
     if (permissions.auditLogs.list) {
-      menuItems.push({
+      items.push({
         icon: <AuditLogsIcon />,
         key: appRoutes.auditLogs.list,
         label: 'Auditoría',
       });
     }
 
-    if (isAdmin) {
-      menuItems.push({
+    if (isAdmin || isStaff) {
+      items.push({
         icon: <SettingOutlined />,
         key: appRoutes.appSettings,
-        label: 'Configuración',
+        label: 'Configuración del Sistema',
       });
     }
-  }
 
-  menuItems.push(
-    {
-      icon: <UserOutlined />,
-      key: appRoutes.profile,
-      label: 'Mi Perfil',
-    },
-    {
-      icon: <LogoutIcon />,
-      key: appRoutes.auth.logout,
-      label: 'Cerrar sesión',
-    },
-  );
+    items.push(
+      {
+        icon: <UserOutlined />,
+        key: appRoutes.profile,
+        label: 'Mi Perfil',
+      },
+      {
+        icon: <LogoutIcon />,
+        key: appRoutes.auth.logout,
+        label: 'Cerrar sesión',
+      },
+    );
+
+    return items;
+  }, [isAdmin, isStaff, permissions]);
 
   const selectedKeys = [`/${location.pathname.split('/')[1]}`];
 
@@ -247,6 +252,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                 type="text"
               />
             </Space.Compact>
+
             {sm && <Typography.Text>Hecho por D.</Typography.Text>}
 
             <div>

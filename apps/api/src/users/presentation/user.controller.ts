@@ -2,6 +2,7 @@ import { UserRole } from '@club-social/shared/users';
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Inject,
   NotFoundException,
@@ -25,6 +26,7 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateUserUseCase } from '../application/create-user.use-case';
+import { UpdateUserPreferencesUseCase } from '../application/update-user-preferences.use-case';
 import { UpdateUserUseCase } from '../application/update-user.use-case';
 import {
   USER_REPOSITORY_PROVIDER,
@@ -33,6 +35,10 @@ import {
 import { CreateUserRequestDto } from './dto/create-user.dto';
 import { UpdateUserRequestDto } from './dto/update-user.dto';
 import { UserPaginatedResponseDto } from './dto/user-paginated.dto';
+import {
+  UpdateUserPreferencesRequestDto,
+  UserPreferencesResponseDto,
+} from './dto/user-preferences.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 
 @Controller('users')
@@ -44,6 +50,7 @@ export class UsersController extends BaseController {
     private readonly userRepository: UserRepository,
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
+    private readonly updateUserPreferencesUseCase: UpdateUserPreferencesUseCase,
   ) {
     super(logger);
   }
@@ -108,6 +115,70 @@ export class UsersController extends BaseController {
     };
   }
 
+  @Get('me/preferences')
+  public async getMyPreferences(
+    @Session() session: AuthSession,
+  ): Promise<UserPreferencesResponseDto> {
+    const user = await this.userRepository.findByIdOrThrow(
+      UniqueId.raw({ value: session.user.id }),
+    );
+
+    return user.preferences.toJSON();
+  }
+
+  @Patch('me/preferences')
+  public async updateMyPreferences(
+    @Body() body: UpdateUserPreferencesRequestDto,
+    @Session() session: AuthSession,
+  ): Promise<UserPreferencesResponseDto> {
+    const user = this.handleResult(
+      await this.updateUserPreferencesUseCase.execute({
+        preferences: body,
+        updatedBy: session.user.id,
+        userId: session.user.id,
+      }),
+    );
+
+    return user.preferences.toJSON();
+  }
+
+  @Get(':id/preferences')
+  public async getUserPreferences(
+    @Param() request: ParamIdReqResDto,
+    @Session() session: AuthSession,
+  ): Promise<UserPreferencesResponseDto> {
+    this.requireAdmin(session);
+
+    const user = await this.userRepository.findById(
+      UniqueId.raw({ value: request.id }),
+    );
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return user.preferences.toJSON();
+  }
+
+  @Patch(':id/preferences')
+  public async updateUserPreferences(
+    @Param() request: ParamIdReqResDto,
+    @Body() body: UpdateUserPreferencesRequestDto,
+    @Session() session: AuthSession,
+  ): Promise<UserPreferencesResponseDto> {
+    this.requireAdmin(session);
+
+    const user = this.handleResult(
+      await this.updateUserPreferencesUseCase.execute({
+        preferences: body,
+        updatedBy: session.user.id,
+        userId: request.id,
+      }),
+    );
+
+    return user.preferences.toJSON();
+  }
+
   @Get(':id')
   public async get(
     @Param() request: ParamIdReqResDto,
@@ -129,5 +200,11 @@ export class UsersController extends BaseController {
       role: user.role,
       status: user.status,
     };
+  }
+
+  private requireAdmin(session: AuthSession): void {
+    if (session.user.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('Only admins can access this resource');
+    }
   }
 }

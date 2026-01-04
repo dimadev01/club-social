@@ -5,7 +5,6 @@ import { AuditLogsList } from '@/audit-logs/AuditLogsList';
 import { LoginPage } from '@/auth/LoginPage';
 import { LogoutPage } from '@/auth/LogoutPage';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
-import { PublicRoute } from '@/auth/PublicRoute';
 import { DueEdit } from '@/dues/DueEdit';
 import { DueList } from '@/dues/DueList';
 import { DueNew } from '@/dues/DueNew';
@@ -107,11 +106,11 @@ export function AppRoutes() {
 
           <Route element={<ProfilePage />} path={appRoutes.profile} />
           <Route element={<AppSettingsPage />} path={appRoutes.appSettings} />
-          <Route element={<LogoutPage />} path={appRoutes.auth.logout} />
         </Route>
 
-        <Route element={<PublicRoute />}>
+        <Route path={appRoutes.auth.root}>
           <Route element={<LoginPage />} path={appRoutes.auth.login} />
+          <Route element={<LogoutPage />} path={appRoutes.auth.logout} />
         </Route>
 
         <Route element={<NotFound />} path="*" />

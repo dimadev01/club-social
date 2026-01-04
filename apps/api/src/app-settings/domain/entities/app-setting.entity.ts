@@ -1,5 +1,6 @@
 import {
   AppSettingKey,
+  AppSettingScope,
   AppSettingValues,
 } from '@club-social/shared/app-settings';
 
@@ -16,6 +17,7 @@ export interface AppSettingPersistenceMeta {
 export interface AppSettingProps<K extends AppSettingKey> {
   description: null | string;
   key: K;
+  scope: AppSettingScope;
   value: AppSettingValues[K];
 }
 
@@ -24,6 +26,10 @@ export class AppSettingEntity<
 > extends AggregateRoot {
   public get description(): null | string {
     return this._description;
+  }
+
+  public get scope(): AppSettingScope {
+    return this._scope;
   }
 
   public get updatedAt(): Date {
@@ -39,6 +45,7 @@ export class AppSettingEntity<
   }
 
   private _description: null | string;
+  private _scope: AppSettingScope;
   private _updatedAt: Date;
   private _updatedBy: null | string;
   private _value: AppSettingValues[K];
@@ -51,6 +58,7 @@ export class AppSettingEntity<
 
     this._value = props.value;
     this._description = props.description;
+    this._scope = props.scope;
     this._updatedAt = meta.updatedAt;
     this._updatedBy = meta.updatedBy;
   }

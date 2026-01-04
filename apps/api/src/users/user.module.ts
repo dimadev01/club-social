@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { CreateUserUseCase } from './application/create-user.use-case';
+import { UpdateUserPreferencesUseCase } from './application/update-user-preferences.use-case';
 import { UpdateUserUseCase } from './application/update-user.use-case';
 import { UsersController } from './presentation/user.controller';
 
@@ -8,6 +9,10 @@ import { UsersController } from './presentation/user.controller';
   controllers: [UsersController],
   exports: [CreateUserUseCase],
   imports: [],
-  providers: [CreateUserUseCase, UpdateUserUseCase],
+  providers: [
+    CreateUserUseCase,
+    UpdateUserPreferencesUseCase,
+    UpdateUserUseCase,
+  ],
 })
 export class UsersModule {}
