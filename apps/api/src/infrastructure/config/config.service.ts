@@ -1,5 +1,5 @@
 import { Configuration, Value } from '@itgorillaz/configify';
-import { IsNotEmpty, IsNumber, IsString, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 @Configuration()
 export class ConfigService {
@@ -10,14 +10,6 @@ export class ConfigService {
   @IsString()
   @Value('APP_DOMAIN')
   public readonly appDomain: string;
-
-  @IsUrl()
-  @Value('BETTER_STACK_ENDPOINT')
-  public readonly betterStackEndpoint: string;
-
-  @IsString()
-  @Value('BETTER_STACK_SOURCE_TOKEN')
-  public readonly betterStackSourceToken: string;
 
   @IsString()
   @Value('DATABASE_URI')
