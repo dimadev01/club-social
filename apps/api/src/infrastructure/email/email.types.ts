@@ -1,3 +1,7 @@
+export type EmailJobData =
+  | { data: SendMagicLinkParams; type: 'send-magic-link' }
+  | { data: SendVerificationEmailParams; type: 'send-verification-email' };
+
 export interface SendEmailParams {
   from?: string;
   html: string;
@@ -8,6 +12,11 @@ export interface SendEmailParams {
 }
 
 export interface SendMagicLinkParams {
+  email: string;
+  url: string;
+}
+
+export interface SendVerificationEmailParams {
   email: string;
   url: string;
 }

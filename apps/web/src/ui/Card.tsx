@@ -1,14 +1,9 @@
-import {
-  Card as AntCard,
-  type CardProps as AntCardProps,
-  Button,
-  Space,
-  Tooltip,
-} from 'antd';
+import { Card as AntCard, type CardProps as AntCardProps, Space } from 'antd';
 import { useNavigate } from 'react-router';
 
 import { cn } from '@/shared/lib/utils';
 
+import { Button } from './Button';
 import { BackIcon } from './Icons/BackIcon';
 
 export interface CardProps extends AntCardProps {
@@ -35,14 +30,13 @@ export function Card({
         title: (
           <Space size="small">
             {backButton && (
-              <Tooltip title="Volver">
-                <Button
-                  icon={<BackIcon />}
-                  onClick={() => navigate(-1)}
-                  size="small"
-                  type="text"
-                />
-              </Tooltip>
+              <Button
+                icon={<BackIcon />}
+                onClick={() => navigate(-1)}
+                size="small"
+                tooltip="Volver"
+                type="text"
+              />
             )}
 
             {title}

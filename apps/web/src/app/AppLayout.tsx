@@ -2,12 +2,15 @@ import type { MenuItemType } from 'antd/es/menu/interface';
 
 import {
   FilePdfOutlined,
+  FileTextOutlined,
+  SettingOutlined,
   UserAddOutlined,
   UserOutlined,
+  WhatsAppOutlined,
 } from '@ant-design/icons';
+import { UserRole } from '@club-social/shared/users';
 import {
   Avatar,
-  Button,
   ConfigProvider,
   Flex,
   FloatButton,
@@ -19,22 +22,26 @@ import {
   theme,
   Typography,
 } from 'antd';
-import { type PropsWithChildren, useState } from 'react';
+import { type PropsWithChildren, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
 import { useSessionUser } from '@/auth/useUser';
-import { AddNewIcon } from '@/ui/Icons/AddNewIcon';
-import { AuditLogsIcon } from '@/ui/Icons/AuditLogsIcon';
-import { DashboardIcon } from '@/ui/Icons/DashboardIcon';
-import { DuesIcon } from '@/ui/Icons/DuesIcon';
-import { LedgerIcon } from '@/ui/Icons/LedgerIcon';
-import { LogoutIcon } from '@/ui/Icons/LogoutIcon';
-import { MovementsIcon } from '@/ui/Icons/MovementsIcon';
-import { PaymentsIcon } from '@/ui/Icons/PaymentsIcon';
-import { PricingIcon } from '@/ui/Icons/PricesIcon';
-import { UsersIcon } from '@/ui/Icons/UsersIcon';
-import { MenuThemeSwitcher } from '@/ui/MenuThemeSwitcher';
+import { cn } from '@/shared/lib/utils';
+import {
+  AddNewIcon,
+  AuditLogsIcon,
+  Button,
+  DashboardIcon,
+  DuesIcon,
+  LedgerIcon,
+  LogoutIcon,
+  MenuThemeSwitcher,
+  MovementsIcon,
+  PaymentsIcon,
+  PricingIcon,
+  UsersIcon,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { appRoutes } from './app.enum';
@@ -45,6 +52,8 @@ export function AppLayout({ children }: PropsWithChildren) {
   const { themeMode } = useAppContext();
   const { token } = theme.useToken();
 
+  const [isFloatMenuOpen, setIsFloatMenuOpen] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useLocalStorage<boolean>(
@@ -53,66 +62,70 @@ export function AppLayout({ children }: PropsWithChildren) {
   );
 
   const user = useSessionUser();
+  const isAdmin = user.role === UserRole.ADMIN;
+  const isStaff = user.role === UserRole.STAFF;
 
   const permissions = usePermissions();
 
-  const menuItems: MenuItemType[] = [
-    {
-      icon: <DashboardIcon />,
-      key: appRoutes.home,
-      label: 'Inicio',
-    },
-  ];
+  const menuItems = useMemo(() => {
+    const items: MenuItemType[] = [
+      {
+        icon: <DashboardIcon />,
+        key: appRoutes.home,
+        label: 'Inicio',
+      },
+    ];
 
-  if (permissions.dues.list) {
-    menuItems.push({
-      icon: <DuesIcon />,
-      key: appRoutes.dues.list,
-      label: 'Deudas',
-    });
-  }
+    if (permissions.dues.list) {
+      items.push({
+        icon: <DuesIcon />,
+        key: appRoutes.dues.list,
+        label: 'Deudas',
+      });
+    }
 
-  if (permissions.payments.list) {
-    menuItems.push({
-      icon: <PaymentsIcon />,
-      key: appRoutes.payments.list,
-      label: 'Pagos',
-    });
-  }
+    if (permissions.payments.list) {
+      items.push({
+        icon: <PaymentsIcon />,
+        key: appRoutes.payments.list,
+        label: 'Pagos',
+      });
+    }
 
-  if (permissions.movements.list) {
-    menuItems.push({
-      icon: <MovementsIcon />,
-      key: appRoutes.movements.list,
-      label: 'Movimientos',
-    });
-  }
+    if (permissions.movements.list) {
+      items.push({
+        icon: <MovementsIcon />,
+        key: appRoutes.movements.list,
+        label: 'Movimientos',
+      });
+    }
 
-  if (permissions.memberLedger.list) {
-    menuItems.push({
-      icon: <LedgerIcon />,
-      key: appRoutes.memberLedger.list,
-      label: 'Libro Mayor',
-    });
-  }
+    if (permissions.memberLedger.list) {
+      items.push({
+        icon: <LedgerIcon />,
+        key: appRoutes.memberLedger.list,
+        label: 'Libro Mayor',
+      });
+    }
 
-  if (permissions.members.list) {
-    menuItems.push({
-      icon: <UsersIcon />,
-      key: appRoutes.members.list,
-      label: 'Socios',
-    });
-  }
+    if (permissions.members.list) {
+      items.push({
+        icon: <UsersIcon />,
+        key: appRoutes.members.list,
+        label: 'Socios',
+      });
+    }
 
-  if (permissions.users.list) {
-    menuItems.push({
-      icon: <UsersIcon />,
-      key: appRoutes.users.list,
-      label: 'Usuarios',
-    });
+    if (permissions.users.list) {
+      items.push({
+        icon: <UsersIcon />,
+        key: appRoutes.users.list,
+        label: 'Usuarios',
+      });
+    }
 
     if (permissions.pricing.list) {
-      menuItems.push({
+      items.push({
         icon: <PricingIcon />,
         key: appRoutes.pricing.list,
         label: 'Precios',
@@ -120,21 +133,43 @@ export function AppLayout({ children }: PropsWithChildren) {
     }
 
     if (permissions.auditLogs.list) {
-      menuItems.push({
+      items.push({
         icon: <AuditLogsIcon />,
         key: appRoutes.auditLogs.list,
         label: 'Auditoría',
       });
     }
-  }
 
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([
-    `/${location.pathname.split('/')[1]}`,
-  ]);
+    if (isAdmin || isStaff) {
+      items.push({
+        icon: <SettingOutlined />,
+        key: appRoutes.appSettings,
+        label: 'Configuración del Sistema',
+      });
+    }
+
+    items.push(
+      {
+        icon: <UserOutlined />,
+        key: appRoutes.profile,
+        label: 'Mi Perfil',
+      },
+      {
+        icon: <LogoutIcon />,
+        key: appRoutes.auth.logout,
+        label: 'Cerrar sesión',
+      },
+    );
+
+    return items;
+  }, [isAdmin, isStaff, permissions]);
+
+  const selectedKeys = [`/${location.pathname.split('/')[1]}`];
 
   return (
     <Layout className="min-h-screen" hasSider>
       <Layout.Sider
+        className="min-h-screen overflow-auto [scrollbar-gutter:stable] [scrollbar-width:thin]"
         collapsed={collapsed}
         collapsible
         onCollapse={setCollapsed}
@@ -145,11 +180,15 @@ export function AppLayout({ children }: PropsWithChildren) {
             alt="Club Social Logo"
             className="mx-auto max-w-[128px]"
             preview={false}
-            rootClassName="w-full my-8"
+            rootClassName="w-full mb-6 mt-4"
             src="/club-social-logo.png"
           />
 
-          <Space align="center" className="mb-8 px-6" vertical>
+          <Space
+            align="center"
+            className={cn('mx-auto mb-6 flex px-4')}
+            size={collapsed ? 0 : undefined}
+          >
             <Avatar className="text-center" size="default">
               {user.firstName.charAt(0)}
               {user.lastName.charAt(0)}
@@ -175,33 +214,7 @@ export function AppLayout({ children }: PropsWithChildren) {
               className="border-e-0"
               items={menuItems}
               mode="inline"
-              onClick={({ key }) => {
-                setSelectedKeys([key]);
-                navigate(key);
-              }}
-              selectedKeys={selectedKeys}
-              theme={themeMode}
-            />
-
-            <Menu
-              className="mt-auto border-e-0"
-              items={[
-                {
-                  icon: <UserOutlined />,
-                  key: appRoutes.profile,
-                  label: 'Mi Perfil',
-                },
-                {
-                  icon: <LogoutIcon />,
-                  key: appRoutes.auth.logout,
-                  label: 'Cerrar sesión',
-                },
-              ]}
-              mode="inline"
-              onClick={({ key }) => {
-                setSelectedKeys([key]);
-                navigate(key);
-              }}
+              onClick={({ key }) => navigate(key)}
               selectedKeys={selectedKeys}
               theme={themeMode}
             />
@@ -219,9 +232,27 @@ export function AppLayout({ children }: PropsWithChildren) {
                 href="https://drive.google.com/file/d/1_rFbEf4z5Rx801ElUYfdk4qrCOv-maj_/view?usp=drive_link"
                 icon={<FilePdfOutlined />}
                 target="_blank"
+                tooltip="Manual de Club"
+                type="text"
+              />
+              <Button
+                href="https://docs.google.com/forms/d/e/1FAIpQLSdMysEOdliOL3Aug58ns2W3oz8vv2Q6kwJSzsbOKc_rdtqIXA/viewform?usp=header"
+                htmlType="button"
+                icon={<FileTextOutlined />}
+                target="_blank"
+                tooltip="Formulario de Registro"
+                type="text"
+              />
+              <Button
+                href="https://wa.me/5491158804950"
+                htmlType="button"
+                icon={<WhatsAppOutlined />}
+                target="_blank"
+                tooltip="Enviar WhatsApp al Club"
                 type="text"
               />
             </Space.Compact>
+
             {sm && <Typography.Text>Hecho por D.</Typography.Text>}
 
             <div>
@@ -230,11 +261,18 @@ export function AppLayout({ children }: PropsWithChildren) {
           </Flex>
         </Layout.Footer>
 
-        <FloatButton.Group icon={<AddNewIcon />} trigger="click" type="primary">
+        <FloatButton.Group
+          icon={<AddNewIcon />}
+          onOpenChange={setIsFloatMenuOpen}
+          open={isFloatMenuOpen}
+          trigger="click"
+          type="primary"
+        >
           {permissions.members.create && (
             <Link to={appRoutes.members.new}>
               <FloatButton
                 icon={<UserAddOutlined />}
+                onClick={() => setIsFloatMenuOpen(false)}
                 tooltip={{ placement: 'left', title: 'Nuevo socio' }}
               />
             </Link>
@@ -244,6 +282,7 @@ export function AppLayout({ children }: PropsWithChildren) {
             <Link to={appRoutes.dues.new}>
               <FloatButton
                 icon={<DuesIcon />}
+                onClick={() => setIsFloatMenuOpen(false)}
                 tooltip={{ placement: 'left', title: 'Nueva deuda' }}
               />
             </Link>
@@ -253,6 +292,7 @@ export function AppLayout({ children }: PropsWithChildren) {
             <Link to={appRoutes.payments.new}>
               <FloatButton
                 icon={<PaymentsIcon />}
+                onClick={() => setIsFloatMenuOpen(false)}
                 tooltip={{ placement: 'left', title: 'Nuevo pago' }}
               />
             </Link>

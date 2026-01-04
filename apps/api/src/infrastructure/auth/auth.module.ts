@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 
 import { BetterAuthService } from '@/infrastructure/auth/better-auth/better-auth.service';
 import { EmailModule } from '@/infrastructure/email/email.module';
+import { MembersModule } from '@/members/member.module';
 import { AuthController } from '@/shared/presentation/auth/auth.controller';
 import { AuthGuard } from '@/shared/presentation/auth/auth.guard';
 import { MaintenanceModeGuard } from '@/shared/presentation/guards/maintenance-mode.guard';
@@ -12,7 +13,7 @@ import { UsersModule } from '@/users/user.module';
 @Module({
   controllers: [AuthController],
   exports: [BetterAuthService],
-  imports: [EmailModule, UsersModule],
+  imports: [EmailModule, MembersModule, UsersModule],
   providers: [
     BetterAuthService,
     AuthGuard,

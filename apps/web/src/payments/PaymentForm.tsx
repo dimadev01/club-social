@@ -5,8 +5,7 @@ import {
   DueCategoryLabel,
   type PendingDueDto,
 } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat, DateFormats } from '@club-social/shared/lib';
+import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { useQueries } from '@tanstack/react-query';
 import {
   Checkbox,
@@ -29,11 +28,7 @@ import { usePendingDues } from '@/dues/usePendingDues';
 import { useMemberBalance } from '@/member-ledger/useMemberBalance';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
-import { Card } from '@/ui/Card';
-import { Descriptions } from '@/ui/Descriptions';
-import { Form } from '@/ui/Form/Form';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
+import { Card, Descriptions, Form, Table, TABLE_COLUMN_WIDTHS } from '@/ui';
 
 export type FormInitialValues = Partial<PaymentFormSchema>;
 
@@ -375,14 +370,7 @@ export function PaymentForm({
             {isMemberBalanceLoading ? (
               <Skeleton.Button active />
             ) : (
-              NumberFormat.formatCurrencyCents(memberBalance ?? 0)
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item label="Saldo disponible">
-            {isMemberBalanceLoading ? (
-              <Skeleton.Button active />
-            ) : (
-              NumberFormat.formatCurrencyCents(availableBalance)
+              NumberFormat.currencyCents(memberBalance ?? 0)
             )}
           </Descriptions.Item>
         </Descriptions>
@@ -395,6 +383,7 @@ export function PaymentForm({
             columns={[
               {
                 dataIndex: 'date',
+                defaultSortOrder: 'descend',
                 render: (date: string, record: PendingDueDto) => (
                   <Link to={appRoutes.dues.view(record.id)}>
                     {DateFormat.date(date)}
@@ -407,7 +396,7 @@ export function PaymentForm({
                 dataIndex: 'category',
                 render: (category: DueCategory, record: PendingDueDto) => {
                   if (category === DueCategory.MEMBERSHIP) {
-                    return `${DueCategoryLabel[category]} (${DateFormat.month(record.date)})`;
+                    return `${DueCategoryLabel[category]} (${DateFormat.monthNameShort(record.date)})`;
                   }
 
                   return DueCategoryLabel[category];
@@ -418,15 +407,14 @@ export function PaymentForm({
               {
                 align: 'right',
                 dataIndex: 'amount',
-                render: (amount: number) =>
-                  NumberFormat.formatCurrencyCents(amount),
+                render: (amount: number) => NumberFormat.currencyCents(amount),
                 title: 'Monto',
                 width: TABLE_COLUMN_WIDTHS.AMOUNT,
               },
               {
                 align: 'right',
                 render: (_, record: PendingDueDto) => {
-                  return NumberFormat.formatCurrencyCents(
+                  return NumberFormat.currencyCents(
                     getPaidAmountForDue(record.id),
                   );
                 },
@@ -436,7 +424,7 @@ export function PaymentForm({
               {
                 align: 'right',
                 render: (_, record: PendingDueDto) => {
-                  return NumberFormat.formatCurrencyCents(
+                  return NumberFormat.currencyCents(
                     getRemainingAmountForDue(record.id),
                   );
                 },
@@ -452,6 +440,22 @@ export function PaymentForm({
               type: 'checkbox',
             }}
             size="small"
+            summary={() => (
+              <Table.Summary fixed>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell align="right" colSpan={5} index={0}>
+                    Total
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell align="right" colSpan={1} index={1}>
+                    {NumberFormat.currencyCents(
+                      sumBy(pendingDues, (due) =>
+                        getRemainingAmountForDue(due.id),
+                      ),
+                    )}
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+              </Table.Summary>
+            )}
           />
 
           <Form.List name="dues">
@@ -474,11 +478,7 @@ export function PaymentForm({
               return (
                 <Card
                   className="mb-6"
-                  extra={
-                    totalBalance > 0
-                      ? `Efectivo: ${NumberFormat.formatCurrency(totalCash)} | Saldo: ${NumberFormat.formatCurrency(totalBalance)}`
-                      : `Total: ${NumberFormat.formatCurrency(totalCash)}`
-                  }
+                  extra={`Efectivo: ${NumberFormat.currency(totalCash)} | Balance: ${NumberFormat.currency(totalBalance)} | Total: ${NumberFormat.currency(totalCash + totalBalance)}`}
                   size="small"
                   title="Deudas seleccionadas"
                   type="inner"
@@ -522,7 +522,7 @@ export function PaymentForm({
                               label: 'Categoría',
                             },
                             {
-                              children: NumberFormat.formatCurrencyCents(
+                              children: NumberFormat.currencyCents(
                                 getRemainingAmountForDue(pendingDue.id),
                               ),
                               label: 'Monto a pagar',
@@ -619,6 +619,23 @@ export function PaymentForm({
             }}
           </Form.List>
 
+          {formMemberId && (
+            <Descriptions
+              bordered={false}
+              className="mb-6"
+              colon={false}
+              layout="vertical"
+            >
+              <Descriptions.Item label="Saldo disponible">
+                {isMemberBalanceLoading ? (
+                  <Skeleton.Button active />
+                ) : (
+                  NumberFormat.currencyCents(availableBalance)
+                )}
+              </Descriptions.Item>
+            </Descriptions>
+          )}
+
           <Form.Item<PaymentFormSchema>
             name="useSurplusToCredit"
             valuePropName="checked"
@@ -628,7 +645,7 @@ export function PaymentForm({
 
           {formUseSurplusToCredit && (
             <Form.Item<PaymentFormSchema>
-              label="Monto a crédito"
+              label="Monto a agregar a favor"
               name="surplusToCreditAmount"
             >
               <InputNumber<number>

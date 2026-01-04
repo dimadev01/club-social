@@ -12,7 +12,7 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import { PricingCreatedEvent } from '../events/pricing-created.event';
 import { PricingUpdatedEvent } from '../events/pricing-updated.event';
 
-interface PricingProps {
+export interface PricingProps {
   amount: Amount;
   dueCategory: DueCategory;
   effectiveFrom: DateOnly;

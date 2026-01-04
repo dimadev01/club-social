@@ -15,15 +15,17 @@ import JSONPretty from 'react-json-pretty';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { Card } from '@/ui/Card';
-import { NotFound } from '@/ui/NotFound';
-import { PageTableActions } from '@/ui/Page';
-import { Row } from '@/ui/Row';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { TableActions } from '@/ui/Table/TableActions';
-import { TableDateRangeFilterDropdown } from '@/ui/Table/TableDateRangeFilterDropdown';
-import { useTable } from '@/ui/Table/useTable';
+import {
+  Card,
+  NotFound,
+  PageTableActions,
+  Row,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  TableActions,
+  TableDateRangeFilterDropdown,
+  useTable,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 export function AuditLogsList() {
@@ -48,9 +50,7 @@ export function AuditLogsList() {
     queryFn: () =>
       $fetch<PaginatedDataResultDto<AuditLogPaginatedDto>>(
         '/audit-logs/paginated',
-        {
-          query,
-        },
+        { query },
       ),
   });
 

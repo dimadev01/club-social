@@ -12,7 +12,7 @@ export const DateFormats = {
   dateTime: 'DD/MM/YYYY HH:mm',
   isoDate: 'YYYY-MM-DD',
   isoMonth: 'YYYY-MM',
-  month: 'MMMM',
+  monthShort: 'MMM',
   monthYear: 'MMMM YYYY',
   time: 'HH:mm',
 } as const;
@@ -42,15 +42,19 @@ export const DateFormat = {
     return DateFormat.date(value, DateFormats.isoDate);
   },
 
-  month(value: Date | Dayjs | string): string {
-    return DateFormat.date(value, DateFormats.month);
+  isoMonth(value: Date | Dayjs | string): string {
+    return DateFormat.date(value, DateFormats.isoMonth);
   },
 
-  monthYear(value: Date | Dayjs | string): string {
+  monthNameShort(value: Date | Dayjs | string): string {
+    return DateFormat.date(value, DateFormats.monthShort);
+  },
+
+  monthYearName(value: Date | Dayjs | string): string {
     return DateFormat.date(value, DateFormats.monthYear);
   },
 
-  parse(value: Date | Dayjs | string): Dayjs {
+  parse(value?: Date | Dayjs | string): Dayjs {
     return dayjs(value);
   },
 

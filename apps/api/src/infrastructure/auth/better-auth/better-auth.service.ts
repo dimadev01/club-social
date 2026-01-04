@@ -1,4 +1,4 @@
-import { passkey } from '@better-auth/passkey';
+import { passkey, type PasskeyOptions } from '@better-auth/passkey';
 import { roleStatements, statements } from '@club-social/shared/roles';
 import { UserStatus } from '@club-social/shared/users';
 import { Inject, Injectable } from '@nestjs/common';
@@ -9,6 +9,7 @@ import {
   admin as adminPlugin,
   createAccessControl,
   magicLink,
+  type MagicLinkOptions,
 } from 'better-auth/plugins';
 import {
   adminAc,
@@ -19,13 +20,17 @@ import {
 import { ConfigService } from '@/infrastructure/config/config.service';
 import { prisma } from '@/infrastructure/database/prisma/prisma.client';
 import { EmailQueueService } from '@/infrastructure/email/email-queue.service';
-import { SendMagicLinkParams } from '@/infrastructure/email/email.types';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import {
   USER_READABLE_REPOSITORY_PROVIDER,
   type UserReadableRepository,
 } from '@/users/domain/user.repository';
+
+interface BuildPluginsOptions {
+  passkey?: PasskeyOptions;
+  sendMagicLink?: MagicLinkOptions['sendMagicLink'];
+}
 
 const ac = createAccessControl({ ...defaultStatements, ...statements });
 
@@ -44,6 +49,29 @@ const staffRole = ac.newRole({
   ...roleStatements.staff,
 });
 
+const buildPasskeyPlugin = (config?: PasskeyOptions) =>
+  config ? passkey(config) : passkey();
+
+const buildPlugins = (options?: BuildPluginsOptions) => [
+  adminPlugin({
+    ac,
+    roles: {
+      admin: adminRole,
+      member: memberRole,
+      staff: staffRole,
+    },
+  }),
+  magicLink({
+    disableSignUp: true,
+    sendMagicLink: async (data) => {
+      if (options?.sendMagicLink) {
+        return options.sendMagicLink(data);
+      }
+    },
+  }),
+  buildPasskeyPlugin(options?.passkey),
+];
+
 export const defaultConfig = {
   advanced: {
     cookiePrefix: 'cs',
@@ -61,23 +89,7 @@ export const defaultConfig = {
   experimental: {
     joins: true,
   },
-  plugins: [
-    adminPlugin({
-      ac,
-      roles: {
-        admin: adminRole,
-        member: memberRole,
-        staff: staffRole,
-      },
-    }),
-    magicLink({
-      disableSignUp: true,
-      sendMagicLink: async (data) => {
-        console.log(data);
-      },
-    }),
-    passkey(),
-  ],
+  plugins: buildPlugins(),
   user: {
     additionalFields: {
       createdBy: {
@@ -145,9 +157,11 @@ export class BetterAuthService {
   ) {
     this._auth = createBetterAuth({
       emailVerification: {
-        sendVerificationEmail: async (data) => {
-          console.log(data);
-        },
+        sendVerificationEmail: (data) =>
+          this.emailQueueService.sendVerificationEmail({
+            email: data.user.email,
+            url: data.url,
+          }),
       },
       hooks: {
         before: createAuthMiddleware(async (ctx) => {
@@ -156,18 +170,18 @@ export class BetterAuthService {
           }
         }),
       },
-      plugins: [
-        ...(defaultConfig.plugins ?? []),
-        magicLink({
-          disableSignUp: true,
-          sendMagicLink: (data) =>
-            this.sendMagicLink({ email: data.email, url: data.url }),
-        }),
-        passkey({
+      plugins: buildPlugins({
+        passkey: {
+          origin: this.configService.trustedOrigins,
           rpID: this.configService.appDomain,
           rpName: this.configService.appDisplayName,
-        }),
-      ],
+        },
+        sendMagicLink: (data) =>
+          this.emailQueueService.magicLink({
+            email: data.email,
+            url: data.url,
+          }),
+      }),
       trustedOrigins: this.configService.trustedOrigins,
       user: {
         ...defaultConfig.user,
@@ -175,13 +189,6 @@ export class BetterAuthService {
           enabled: true,
         },
       },
-    });
-  }
-
-  private async sendMagicLink(data: SendMagicLinkParams) {
-    return this.emailQueueService.magicLink({
-      email: data.email,
-      url: data.url,
     });
   }
 

@@ -1,9 +1,8 @@
 import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { FilterOutlined, MoreOutlined } from '@ant-design/icons';
-import { DueCategoryLabel, DueCategorySorted } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
-import { DateFormat } from '@club-social/shared/lib';
+import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   type PaymentPaginatedDto,
   type PaymentPaginatedExtraDto,
@@ -11,30 +10,38 @@ import {
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Dropdown, Space, type TableColumnType, Tooltip } from 'antd';
+import { Divider, Dropdown, Flex, Space, type TableColumnType } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
+import { DueCategoryIconLabel } from '@/dues/DueCategoryIconLabel';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { labelMapToFilterOptions } from '@/shared/lib/utils';
-import { Card } from '@/ui/Card';
-import { DuesIcon } from '@/ui/Icons/DuesIcon';
-import { NavigateToMember } from '@/ui/NavigateMember';
-import { NavigateToPayment } from '@/ui/NavigateToPayment';
-import { NotFound } from '@/ui/NotFound';
-import { PageTableActions } from '@/ui/Page';
-import { Select } from '@/ui/Select';
-import { Table } from '@/ui/Table/Table';
-import { TABLE_COLUMN_WIDTHS } from '@/ui/Table/table-column-widths';
-import { TableActions } from '@/ui/Table/TableActions';
-import { TableDateRangeFilterDropdown } from '@/ui/Table/TableDateRangeFilterDropdown';
-import { TableMembersSearch } from '@/ui/Table/TableMembersSearch';
-import { useTable } from '@/ui/Table/useTable';
+import {
+  labelMapToFilterOptions,
+  labelMapToSelectOptions,
+} from '@/shared/lib/utils';
+import {
+  Button,
+  Card,
+  DuesIcon,
+  NavigateToMember,
+  NavigateToPayment,
+  NotFound,
+  PageTableActions,
+  Select,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+  TableActions,
+  TableDateRangeFilterDropdown,
+  TableMembersSearch,
+  useTable,
+} from '@/ui';
+import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
 
 export function PaymentList() {
@@ -55,7 +62,7 @@ export function PaymentList() {
     defaultFilters: {
       status: [PaymentStatus.PAID],
     },
-    defaultSort: [{ field: 'createdAt', order: 'descend' }],
+    defaultSort: [{ field: 'date', order: 'descend' }],
   });
 
   const [filteredMemberIds, setFilteredMemberIds] = useState(
@@ -116,51 +123,42 @@ export function PaymentList() {
       title="Pagos"
     >
       <PageTableActions>
-        <TableMembersSearch
-          isLoading={isSelectedMembersLoading}
-          onFilterChange={(value) => setFilter('memberId', value)}
-          selectedMembers={selectedMembers}
-          value={getFilterValue('memberId') ?? undefined}
-        />
-        <Select
-          className="min-w-full md:min-w-xs"
-          mode="multiple"
-          onChange={(value) => setFilter('dueCategory', value)}
-          options={DueCategorySorted.map((value) => ({
-            label: DueCategoryLabel[value],
-            value,
-          }))}
-          placeholder="Filtrar por categoría de deuda"
-          value={getFilterValue('dueCategory') ?? undefined}
-        />
+        <Flex gap="middle" wrap>
+          {permissions.payments.listAll && (
+            <TableMembersSearch
+              isLoading={isSelectedMembersLoading}
+              onFilterChange={(value) => setFilter('memberId', value)}
+              selectedMembers={selectedMembers}
+              value={getFilterValue('memberId') ?? undefined}
+            />
+          )}
+
+          <Select
+            className="min-w-full md:min-w-40"
+            mode="multiple"
+            onChange={(value) => setFilter('status', value)}
+            options={labelMapToSelectOptions(PaymentStatusLabel)}
+            placeholder="Filtrar por estado"
+            value={getFilterValue('status') ?? undefined}
+          />
+        </Flex>
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
       <Table<PaymentPaginatedDto>
         columns={[
           {
-            dataIndex: 'createdAt',
-            filterDropdown: (props) => (
-              <TableDateRangeFilterDropdown {...props} format="datetime" />
-            ),
-            filteredValue: getFilterValue('createdAt'),
-            fixed: 'left',
-            render: (createdAt: string, record) => (
-              <NavigateToPayment id={record.id}>{createdAt}</NavigateToPayment>
-            ),
-            sorter: true,
-            sortOrder: getSortOrder('createdAt'),
-            title: 'Creado el',
-            width: TABLE_COLUMN_WIDTHS.DATE_TIME,
-          },
-          {
             dataIndex: 'date',
             filterDropdown: (props) => (
               <TableDateRangeFilterDropdown {...props} format="date" />
             ),
-
             filteredValue: getFilterValue('date'),
-            render: (date: string) => DateFormat.date(date),
+            fixed: 'left',
+            render: (date: string, record: PaymentPaginatedDto) => (
+              <NavigateToPayment id={record.id}>{date}</NavigateToPayment>
+            ),
+            sorter: true,
+            sortOrder: getSortOrder('date'),
             title: 'Fecha',
             width: TABLE_COLUMN_WIDTHS.DATE,
           },
@@ -178,10 +176,28 @@ export function PaymentList() {
               ]
             : []),
           {
+            dataIndex: 'categories',
+            filteredValue: getFilterValue('categories'),
+            filters: labelMapToFilterOptions(DueCategoryLabel).map(
+              ({ value }) => ({
+                text: <DueCategoryIconLabel category={value as DueCategory} />,
+                value,
+              }),
+            ),
+            render: (categories: DueCategory[]) => (
+              <Space separator={<Divider vertical />} size="small">
+                {categories.map((category) => (
+                  <DueCategoryIconLabel category={category} key={category} />
+                ))}
+              </Space>
+            ),
+            title: 'Categorías',
+            width: 300,
+          },
+          {
             align: 'right',
             dataIndex: 'amount',
-            render: (amount: number) =>
-              NumberFormat.formatCurrencyCents(amount),
+            render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
@@ -192,15 +208,6 @@ export function PaymentList() {
             title: 'Recibo',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
-          {
-            align: 'center',
-            dataIndex: 'status',
-            filteredValue: getFilterValue('status'),
-            filters: labelMapToFilterOptions(PaymentStatusLabel),
-            render: (value: PaymentStatus) => PaymentStatusLabel[value],
-            title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
-          },
           ...(permissions.payments.listAll
             ? [
                 {
@@ -208,39 +215,40 @@ export function PaymentList() {
                   fixed: 'right',
                   render: (_, record) => (
                     <Space.Compact size="small">
-                      <Tooltip title="Filtrar por este socio">
-                        <Link
-                          to={{
-                            pathname: appRoutes.payments.list,
-                            search: new URLSearchParams({
-                              filters: `memberId:${record.memberId}`,
-                            }).toString(),
-                          }}
-                        >
-                          <Button
-                            disabled={getFilterValue('memberId')?.includes(
-                              record.memberId,
-                            )}
-                            icon={<FilterOutlined />}
-                            onClick={() =>
-                              setFilteredMemberIds([record.memberId])
-                            }
-                            type="text"
-                          />
-                        </Link>
-                      </Tooltip>
-                      <Tooltip title="Ver deudas">
-                        <Link
-                          to={{
-                            pathname: appRoutes.dues.list,
-                            search: new URLSearchParams({
-                              filters: `memberId:${record.memberId}`,
-                            }).toString(),
-                          }}
-                        >
-                          <Button icon={<DuesIcon />} type="text" />
-                        </Link>
-                      </Tooltip>
+                      <Link
+                        to={{
+                          pathname: appRoutes.payments.list,
+                          search: new URLSearchParams({
+                            filters: `memberId:${record.memberId}`,
+                          }).toString(),
+                        }}
+                      >
+                        <Button
+                          disabled={getFilterValue('memberId')?.includes(
+                            record.memberId,
+                          )}
+                          icon={<FilterOutlined />}
+                          onClick={() =>
+                            setFilteredMemberIds([record.memberId])
+                          }
+                          tooltip="Filtrar por este socio"
+                          type="text"
+                        />
+                      </Link>
+                      <Link
+                        to={{
+                          pathname: appRoutes.dues.list,
+                          search: new URLSearchParams({
+                            filters: `memberId:${record.memberId}`,
+                          }).toString(),
+                        }}
+                      >
+                        <Button
+                          icon={<DuesIcon />}
+                          tooltip="Ver deudas"
+                          type="text"
+                        />
+                      </Link>
                     </Space.Compact>
                   ),
                   title: 'Acciones',
@@ -261,12 +269,10 @@ export function PaymentList() {
           <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell align="right" colSpan={1} index={0}>
-                Total
+                <TableSummaryTotalFilterText />
               </Table.Summary.Cell>
               <Table.Summary.Cell colSpan={6} index={1}>
-                {NumberFormat.formatCurrencyCents(
-                  payments?.extra?.totalAmount ?? 0,
-                )}
+                {NumberFormat.currencyCents(payments?.extra?.totalAmount ?? 0)}
               </Table.Summary.Cell>
             </Table.Summary.Row>
           </Table.Summary>

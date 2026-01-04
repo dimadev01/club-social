@@ -1,5 +1,5 @@
 import { Configuration, Value } from '@itgorillaz/configify';
-import { IsNotEmpty, IsNumber, IsString, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 @Configuration()
 export class ConfigService {
@@ -10,14 +10,6 @@ export class ConfigService {
   @IsString()
   @Value('APP_DOMAIN')
   public readonly appDomain: string;
-
-  @IsUrl()
-  @Value('BETTER_STACK_ENDPOINT')
-  public readonly betterStackEndpoint: string;
-
-  @IsString()
-  @Value('BETTER_STACK_SOURCE_TOKEN')
-  public readonly betterStackSourceToken: string;
 
   @IsString()
   @Value('DATABASE_URI')
@@ -51,6 +43,10 @@ export class ConfigService {
   @Value('REDIS_HOST')
   public readonly redisHost: string;
 
+  @IsString()
+  @Value('REDIS_PASSWORD', { default: '' })
+  public readonly redisPassword: string;
+
   @IsNumber()
   @Value('REDIS_PORT', { parse: Number })
   public readonly redisPort: number;
@@ -60,20 +56,10 @@ export class ConfigService {
   public readonly resendApiKey: string;
 
   @IsString({ each: true })
-  @Value('BETTER_AUTH_TRUSTED_ORIGINS', { parse: (value) => value.split(',') })
+  @Value('TRUSTED_ORIGINS', {
+    parse: (value) => value?.split(',') ?? [],
+  })
   public readonly trustedOrigins: string[];
-
-  @IsString()
-  @Value('UNLEASH_API_KEY')
-  public readonly unleashApiKey: string;
-
-  @IsString()
-  @Value('UNLEASH_APP_NAME')
-  public readonly unleashAppName: string;
-
-  @IsString()
-  @Value('UNLEASH_URL')
-  public readonly unleashUrl: string;
 
   public get isDev(): boolean {
     return this.environment === 'development';

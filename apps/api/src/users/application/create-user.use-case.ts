@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from '@club-social/shared/users';
+import { UserRole } from '@club-social/shared/users';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
@@ -69,13 +69,9 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
 
     const user = UserEntity.create(
       {
-        banExpires: null,
-        banned: false,
-        banReason: null,
         email: email.value,
         name: name.value,
         role: params.role,
-        status: UserStatus.ACTIVE,
       },
       params.createdBy,
     );

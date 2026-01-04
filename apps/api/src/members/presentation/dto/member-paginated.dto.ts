@@ -9,6 +9,7 @@ export class MemberPaginatedExtraResponseDto implements MemberPaginatedExtraDto 
   public electricityTotalDueAmount: number;
   public guestTotalDueAmount: number;
   public memberShipTotalDueAmount: number;
+  public totalAmount: number;
 }
 
 export class MemberPaginatedResponseDto implements MemberPaginatedDto {
@@ -21,4 +22,5 @@ export class MemberPaginatedResponseDto implements MemberPaginatedDto {
   public memberShipTotalDueAmount: number;
   public name: string;
   public status: MemberStatus;
+  public totalAmount: number;
 }

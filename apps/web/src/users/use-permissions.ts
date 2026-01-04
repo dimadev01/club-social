@@ -1,5 +1,4 @@
-import { Action } from '@club-social/shared/roles';
-import { Resource } from '@club-social/shared/roles';
+import { Action, Resource } from '@club-social/shared/roles';
 import { UserRole } from '@club-social/shared/users';
 
 import { useSessionUser } from '@/auth/useUser';
@@ -38,6 +37,7 @@ export const usePermissions = () => {
       create: useHasPermission(Resource.MEMBERS, Action.CREATE),
       get: useHasPermission(Resource.MEMBERS, Action.GET),
       list: useHasPermission(Resource.MEMBERS, Action.LIST),
+      listAll: useHasPermission(Resource.MEMBERS, Action.LIST) && canListAll,
       update: useHasPermission(Resource.MEMBERS, Action.UPDATE),
       void: useHasPermission(Resource.MEMBERS, Action.VOID),
     } as const,

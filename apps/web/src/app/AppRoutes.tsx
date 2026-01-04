@@ -1,15 +1,15 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
+import { AppSettingsPage } from '@/app-settings/AppSettingsPage';
 import { AuditLogsList } from '@/audit-logs/AuditLogsList';
 import { LoginPage } from '@/auth/LoginPage';
 import { LogoutPage } from '@/auth/LogoutPage';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
-import { PublicRoute } from '@/auth/PublicRoute';
 import { DueEdit } from '@/dues/DueEdit';
 import { DueList } from '@/dues/DueList';
 import { DueNew } from '@/dues/DueNew';
 import { DueView } from '@/dues/DueView';
-import { Home } from '@/home/HomePage';
+import { HomePage } from '@/home/HomePage';
 import { MemberLedgerList } from '@/member-ledger/MemberLedgerList';
 import { MemberLedgerNew } from '@/member-ledger/MemberLedgerNew';
 import { MemberLedgerView } from '@/member-ledger/MemberLedgerView';
@@ -29,7 +29,7 @@ import { PricingNew } from '@/pricing/PricingNew';
 import { PricingView } from '@/pricing/PricingView';
 import { ProfilePage } from '@/profile/ProfilePage';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
-import { NotFound } from '@/ui/NotFound';
+import { NotFound } from '@/ui';
 import { UserEdit } from '@/users/UserEdit';
 import { UserListPage } from '@/users/UserList';
 import { UserNew } from '@/users/UserNew';
@@ -49,7 +49,7 @@ export function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route element={<ProtectedRoute />}>
-          <Route element={<Home />} path={appRoutes.home} />
+          <Route element={<HomePage />} path={appRoutes.home} />
 
           <Route path={appRoutes.users.list}>
             <Route element={<UserListPage />} index />
@@ -105,11 +105,12 @@ export function AppRoutes() {
           </Route>
 
           <Route element={<ProfilePage />} path={appRoutes.profile} />
-          <Route element={<LogoutPage />} path={appRoutes.auth.logout} />
+          <Route element={<AppSettingsPage />} path={appRoutes.appSettings} />
         </Route>
 
-        <Route element={<PublicRoute />}>
+        <Route path={appRoutes.auth.root}>
           <Route element={<LoginPage />} path={appRoutes.auth.login} />
+          <Route element={<LogoutPage />} path={appRoutes.auth.logout} />
         </Route>
 
         <Route element={<NotFound />} path="*" />
