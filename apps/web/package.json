@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "UNLICENSED",
-  "author": "Dmitriy Mironov",
+  "author": "Dmitriy Mironov <dima.dev@icloud.com>",
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",

@@ -4,7 +4,7 @@
   "private": true,
   "description": "",
   "license": "UNLICENSED",
-  "author": "Dmitriy Mironov",
+  "author": "Dmitriy Mironov <dima.dev@icloud.com>",
   "scripts": {
     "better-auth:generate": "npx @better-auth/cli@latest generate --config src/infrastructure/auth/better-auth/better-auth.service.ts",
     "build": "nest build",

@@ -4,17 +4,11 @@ import {
   MemberLedgerEntryStatus,
   MemberLedgerEntryType,
 } from '@club-social/shared/members';
-import {
-  MovementCategory,
-  MovementMode,
-  MovementStatus,
-} from '@club-social/shared/movements';
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
 import { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
-import { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -22,13 +16,14 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
-import {
-  UNIT_OF_WORK_PROVIDER,
-  type UnitOfWork,
-} from '@/shared/domain/unit-of-work';
 import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+import {
+  MEMBER_LEDGER_REPOSITORY_PROVIDER,
+  type MemberLedgerRepository,
+} from '../member-ledger.repository';
 
 export interface CreateMemberLedgerEntryParams {
   amount: number;
@@ -44,8 +39,8 @@ export class CreateMemberLedgerEntryUseCase extends UseCase<MemberLedgerEntryEnt
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    @Inject(UNIT_OF_WORK_PROVIDER)
-    private readonly unitOfWork: UnitOfWork,
+    @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
+    private readonly memberLedgerRepository: MemberLedgerRepository,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -100,32 +95,9 @@ export class CreateMemberLedgerEntryUseCase extends UseCase<MemberLedgerEntryEnt
       return err(ledgerEntry.error);
     }
 
-    const movement = MovementEntity.create(
-      {
-        amount: ledgerEntryAmount,
-        category: MovementCategory.MEMBER_LEDGER,
-        date,
-        mode: MovementMode.AUTOMATIC,
-        notes: params.notes,
-        paymentId: null,
-        status: MovementStatus.REGISTERED,
-      },
-      params.createdBy,
-    );
-
-    if (movement.isErr()) {
-      return err(movement.error);
-    }
-
-    await this.unitOfWork.execute(
-      async ({ memberLedgerRepository, movementsRepository }) => {
-        await memberLedgerRepository.save(ledgerEntry.value);
-        await movementsRepository.save(movement.value);
-      },
-    );
+    await this.memberLedgerRepository.save(ledgerEntry.value);
 
     this.eventPublisher.dispatch(ledgerEntry.value);
-    this.eventPublisher.dispatch(movement.value);
 
     return ok(ledgerEntry.value);
   }
