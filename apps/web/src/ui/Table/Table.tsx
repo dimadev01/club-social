@@ -10,6 +10,10 @@ export function Table<RecordType>({
       pagination={
         pagination !== false
           ? {
+              placement:
+                pagination?.pageSize && pagination?.pageSize >= 50
+                  ? ['bottomEnd', 'topEnd']
+                  : ['bottomEnd'],
               showLessItems: true,
               showSizeChanger: true,
               showTotal: (total, range) =>

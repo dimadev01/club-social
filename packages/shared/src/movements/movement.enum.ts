@@ -36,7 +36,7 @@ export const MovementCategoryLabel: Record<MovementCategory, string> = {
   [MovementCategory.EXPENSE]: 'Gastos varios',
   [MovementCategory.FAIR]: 'Feria',
   [MovementCategory.MAINTENANCE]: 'Mantenimiento',
-  [MovementCategory.MEMBER_LEDGER]: 'Ajuste de Cuenta',
+  [MovementCategory.MEMBER_LEDGER]: 'Libro Mayor',
   [MovementCategory.OTHER]: 'Otros',
   [MovementCategory.PARKING]: 'Estacionamiento',
   [MovementCategory.PROFESSIONAL_SERVICES]: 'Honorarios',

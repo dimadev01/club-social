@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "license": "MIT",
+  "author": "Dmitriy Mironov <dima.dev@icloud.com>",
   "exports": {
     "./app-settings": {
       "types": "./src/app-settings/index.ts",
