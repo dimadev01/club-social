@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/dimadev01/club-social/compare/api-v0.1.0...api-v0.1.1) (2026-01-05)
+
+
+### Bug Fixes
+
+* remove MongoDB dependencies, and clean up unused files ([#36](https://github.com/dimadev01/club-social/issues/36)) ([#37](https://github.com/dimadev01/club-social/issues/37)) ([f0997b8](https://github.com/dimadev01/club-social/commit/f0997b857b072df319d61be66bb9186d3de4d142))
+
 ## [0.1.0](https://github.com/dimadev01/club-social/compare/api-v0.0.1...api-v0.1.0) (2026-01-04)
 
 ### Features
