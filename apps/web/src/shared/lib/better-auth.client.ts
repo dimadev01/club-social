@@ -1,6 +1,5 @@
 import { passkeyClient } from '@better-auth/passkey/client';
 import { roleStatements, statements } from '@club-social/shared/roles';
-import { UserRole } from '@club-social/shared/users';
 import {
   adminClient,
   inferAdditionalFields,
@@ -30,7 +29,7 @@ const memberRole = ac.newRole({
 });
 
 const staffRole = ac.newRole({
-  ...userAc.statements,
+  ...adminAc.statements,
   ...roleStatements.staff,
 });
 
@@ -41,7 +40,6 @@ export const betterAuthClient = createAuthClient({
     magicLinkClient(),
     adminClient({
       ac,
-      adminRoles: [UserRole.ADMIN, UserRole.STAFF],
       roles: {
         admin: adminRole,
         member: memberRole,

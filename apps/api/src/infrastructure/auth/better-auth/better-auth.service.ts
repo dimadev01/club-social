@@ -1,6 +1,6 @@
 import { passkey, type PasskeyOptions } from '@better-auth/passkey';
 import { roleStatements, statements } from '@club-social/shared/roles';
-import { UserRole, UserStatus } from '@club-social/shared/users';
+import { UserStatus } from '@club-social/shared/users';
 import { Inject, Injectable } from '@nestjs/common';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
@@ -56,7 +56,6 @@ const buildPasskeyPlugin = (config?: PasskeyOptions) =>
 const buildPlugins = (options?: BuildPluginsOptions) => [
   adminPlugin({
     ac,
-    adminRoles: [UserRole.ADMIN, UserRole.STAFF],
     roles: {
       admin: adminRole,
       member: memberRole,
