@@ -95,7 +95,7 @@ export class PrismaPricingRepository implements PricingRepository {
   public async findOverlapping(
     params: FindOverlappingPricingParams,
   ): Promise<PricingEntity[]> {
-    // Find all pricings for the same category pair that would overlap with the new pricing
+    // Find all prices for the same category pair that would overlap with the new pricing
     // New pricing range: [effectiveFrom, infinity]
     // Existing pricing range: [effectiveFrom, effectiveTo or infinity]
     // Overlap exists if: existing.effectiveFrom < new.infinity AND new.effectiveFrom < existing.effectiveTo
@@ -138,9 +138,8 @@ export class PrismaPricingRepository implements PricingRepository {
     }
 
     const orderBy: PricingOrderByWithRelationInput[] = [
-      { dueCategory: 'asc' },
-      { memberCategory: 'asc' },
-      { effectiveFrom: 'desc' },
+      ...params.sort.map(({ field, order }) => ({ [field]: order })),
+      { createdAt: 'desc' },
     ];
 
     const [prices, total] = await Promise.all([
