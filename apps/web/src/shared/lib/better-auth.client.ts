@@ -29,7 +29,7 @@ const memberRole = ac.newRole({
 });
 
 const staffRole = ac.newRole({
-  ...userAc.statements,
+  ...adminAc.statements,
   ...roleStatements.staff,
 });
 
