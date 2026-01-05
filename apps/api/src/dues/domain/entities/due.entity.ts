@@ -48,7 +48,13 @@ export class DueEntity extends AuditedAggregateRoot {
   }
 
   public get pendingAmount(): Amount {
-    return this._amount.subtract(this.settledAmount)._unsafeUnwrap();
+    const result = this._amount.subtract(this.settledAmount);
+
+    if (result.isErr()) {
+      return Amount.ZERO;
+    }
+
+    return result.value;
   }
 
   public get settledAmount(): Amount {
