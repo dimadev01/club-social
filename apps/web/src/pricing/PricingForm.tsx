@@ -67,7 +67,7 @@ export function PricingForm({
         ]}
       >
         <Select
-          disabled={isEditMode}
+          disabled={isEditMode || disabled}
           options={labelMapToSelectOptions(DueCategoryLabel)}
         />
       </Form.Item>
@@ -80,7 +80,7 @@ export function PricingForm({
         ]}
       >
         <Select
-          disabled={isEditMode}
+          disabled={isEditMode || disabled}
           options={labelMapToSelectOptions(MemberCategoryLabel)}
         />
       </Form.Item>

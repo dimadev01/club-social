@@ -23,7 +23,7 @@ import {
   Typography,
 } from 'antd';
 import { type PropsWithChildren, useMemo, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
 import { useSessionUser } from '@/auth/useUser';
@@ -54,7 +54,6 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   const [isFloatMenuOpen, setIsFloatMenuOpen] = useState(false);
 
-  const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useLocalStorage<boolean>(
     'is-sidebar-collapsed',
@@ -72,7 +71,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       {
         icon: <DashboardIcon />,
         key: appRoutes.home,
-        label: 'Inicio',
+        label: <Link to={appRoutes.home}>Inicio</Link>,
       },
     ];
 
@@ -80,7 +79,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <DuesIcon />,
         key: appRoutes.dues.list,
-        label: 'Deudas',
+        label: <Link to={appRoutes.dues.list}>Deudas</Link>,
       });
     }
 
@@ -88,7 +87,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <PaymentsIcon />,
         key: appRoutes.payments.list,
-        label: 'Pagos',
+        label: <Link to={appRoutes.payments.list}>Pagos</Link>,
       });
     }
 
@@ -96,7 +95,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <MovementsIcon />,
         key: appRoutes.movements.list,
-        label: 'Movimientos',
+        label: <Link to={appRoutes.movements.list}>Movimientos</Link>,
       });
     }
 
@@ -104,7 +103,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <LedgerIcon />,
         key: appRoutes.memberLedger.list,
-        label: 'Libro Mayor',
+        label: <Link to={appRoutes.memberLedger.list}>Libro Mayor</Link>,
       });
     }
 
@@ -112,7 +111,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <UsersIcon />,
         key: appRoutes.members.list,
-        label: 'Socios',
+        label: <Link to={appRoutes.members.list}>Socios</Link>,
       });
     }
 
@@ -120,7 +119,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <UsersIcon />,
         key: appRoutes.users.list,
-        label: 'Usuarios',
+        label: <Link to={appRoutes.users.list}>Usuarios</Link>,
       });
     }
 
@@ -128,7 +127,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <PricingIcon />,
         key: appRoutes.pricing.list,
-        label: 'Precios',
+        label: <Link to={appRoutes.pricing.list}>Precios</Link>,
       });
     }
 
@@ -136,7 +135,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <AuditLogsIcon />,
         key: appRoutes.auditLogs.list,
-        label: 'Auditoría',
+        label: <Link to={appRoutes.auditLogs.list}>Auditoría</Link>,
       });
     }
 
@@ -144,7 +143,9 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <SettingOutlined />,
         key: appRoutes.appSettings,
-        label: 'Configuración del Sistema',
+        label: (
+          <Link to={appRoutes.appSettings}>Configuración del Sistema</Link>
+        ),
       });
     }
 
@@ -152,12 +153,12 @@ export function AppLayout({ children }: PropsWithChildren) {
       {
         icon: <UserOutlined />,
         key: appRoutes.profile,
-        label: 'Mi Perfil',
+        label: <Link to={appRoutes.profile}>Mi Perfil</Link>,
       },
       {
         icon: <LogoutIcon />,
         key: appRoutes.auth.logout,
-        label: 'Cerrar sesión',
+        label: <Link to={appRoutes.auth.logout}>Cerrar sesión</Link>,
       },
     );
 
@@ -214,7 +215,7 @@ export function AppLayout({ children }: PropsWithChildren) {
               className="border-e-0"
               items={menuItems}
               mode="inline"
-              onClick={({ key }) => navigate(key)}
+              // onClick={({ key }) => navigate(key)}
               selectedKeys={selectedKeys}
               theme={themeMode}
             />
