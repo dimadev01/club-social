@@ -1,14 +1,14 @@
 import { DueCategory } from '@club-social/shared/dues';
 import { MemberCategory } from '@club-social/shared/members';
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
 import { PricingEntity } from '@/pricing/domain/entities/pricing.entity';
 import {
-  PRICING_REPOSITORY_PROVIDER,
-  type PricingRepository,
-} from '@/pricing/domain/pricing.repository';
+  PRICING_OVERLAP_SERVICE_PROVIDER,
+  PricingOverlapService,
+} from '@/pricing/domain/services/pricing-overlap.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -31,14 +31,15 @@ interface CreatePricingParams {
   memberCategory: MemberCategory;
 }
 
+@Injectable()
 export class CreatePricingUseCase extends UseCase<PricingEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    @Inject(PRICING_REPOSITORY_PROVIDER)
-    private readonly pricingRepository: PricingRepository,
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
+    @Inject(PRICING_OVERLAP_SERVICE_PROVIDER)
+    private readonly pricingOverlapService: PricingOverlapService,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -77,46 +78,22 @@ export class CreatePricingUseCase extends UseCase<PricingEntity> {
       return err(pricing.error);
     }
 
-    // Find all prices that would overlap with the new pricing
-    const overlapping = await this.pricingRepository.findOverlapping({
-      dueCategory: params.dueCategory,
-      effectiveFrom,
-      memberCategory: params.memberCategory,
-    });
-
-    const pricesToDelete: PricingEntity[] = [];
-    const pricesToClose: PricingEntity[] = [];
-
-    // Handle overlapping prices:
-    // 1. Prices that start before new pricing: close them one day before new pricing starts
-    // 2. Prices that start on or after new pricing: delete them (they're superseded)
-    for (const existing of overlapping) {
-      if (existing.effectiveFrom.isBefore(effectiveFrom)) {
-        // Existing pricing starts before new one - close it one day before new pricing
-        existing.close(effectiveFrom.subtractDays(1), params.createdBy);
-        pricesToClose.push(existing);
-      } else {
-        // Existing pricing starts on or after new one - mark it as deleted (superseded)
-        existing.delete(params.createdBy, new Date());
-        pricesToDelete.push(existing);
-      }
-
-      await this.pricingRepository.save(existing);
-      this.eventPublisher.dispatch(existing);
-    }
+    const { toClose, toDelete } =
+      await this.pricingOverlapService.resolveOverlaps({
+        dueCategory: params.dueCategory,
+        effectiveFrom,
+        memberCategory: params.memberCategory,
+        updatedBy: params.createdBy,
+      });
 
     await this.unitOfWork.execute(async ({ pricingRepository }) => {
-      await Promise.all(
-        pricesToClose.map((price) => pricingRepository.save(price)),
-      );
-      await Promise.all(
-        pricesToDelete.map((price) => pricingRepository.save(price)),
-      );
+      await Promise.all(toClose.map((price) => pricingRepository.save(price)));
+      await Promise.all(toDelete.map((price) => pricingRepository.save(price)));
       await pricingRepository.save(pricing.value);
     });
 
-    pricesToClose.forEach((price) => this.eventPublisher.dispatch(price));
-    pricesToDelete.forEach((price) => this.eventPublisher.dispatch(price));
+    toClose.forEach((price) => this.eventPublisher.dispatch(price));
+    toDelete.forEach((price) => this.eventPublisher.dispatch(price));
     this.eventPublisher.dispatch(pricing.value);
 
     return ok(pricing.value);
