@@ -34,7 +34,7 @@ export const roleStatements = {
     [Resource.USERS]: [],
   },
   [UserRole.STAFF]: {
-    [Resource.AUDIT_LOGS]: ['list'],
+    [Resource.AUDIT_LOGS]: [],
     [Resource.DUES]: ['create', 'list', 'get', 'update', 'void'],
     [Resource.MEMBER_LEDGER]: ['create', 'list', 'get'],
     [Resource.MEMBERS]: ['create', 'list', 'get', 'update'],
