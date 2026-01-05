@@ -32,17 +32,10 @@ export function PricingList() {
   const navigate = useNavigate();
   const permissions = usePermissions();
 
-  const {
-    clearFilters,
-    getFilterValue,
-    getSortOrder,
-    onChange,
-    query,
-    resetFilters,
-    state,
-  } = useTable<IPricingPaginatedDto>({
-    defaultSort: [{ field: 'createdAt', order: 'descend' }],
-  });
+  const { clearFilters, getFilterValue, onChange, query, resetFilters, state } =
+    useTable<IPricingPaginatedDto>({
+      defaultSort: [{ field: 'effectiveFrom', order: 'descend' }],
+    });
 
   const { data: pricing, isLoading } = useQuery({
     ...queryKeys.pricing.paginated(query),
@@ -85,20 +78,12 @@ export function PricingList() {
       <Table<IPricingPaginatedDto>
         columns={[
           {
-            dataIndex: 'createdAt',
-            fixed: 'left',
-            render: (createdAt: string, record) => (
+            dataIndex: 'effectiveFrom',
+            render: (effectiveFrom: string, record: IPricingPaginatedDto) => (
               <Link to={appRoutes.pricing.view(record.id)}>
-                {DateFormat.dateTime(createdAt)}
+                {DateFormat.date(effectiveFrom)}
               </Link>
             ),
-            sorter: true,
-            sortOrder: getSortOrder('createdAt'),
-            title: 'Creado el',
-          },
-          {
-            dataIndex: 'effectiveFrom',
-            render: (effectiveFrom: string) => DateFormat.date(effectiveFrom),
             title: 'Desde',
             width: TABLE_COLUMN_WIDTHS.DATE,
           },
