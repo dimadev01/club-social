@@ -17,7 +17,7 @@ export const roleStatements = {
     [Resource.AUDIT_LOGS]: ['list'],
     [Resource.DUES]: ['create', 'list', 'get', 'update', 'void'],
     [Resource.MEMBER_LEDGER]: ['create', 'list', 'get'],
-    [Resource.MEMBERS]: ['create', 'list', 'get', 'update', 'void'],
+    [Resource.MEMBERS]: ['create', 'list', 'get', 'update'],
     [Resource.MOVEMENTS]: ['create', 'list', 'get', 'void'],
     [Resource.PAYMENTS]: ['create', 'list', 'get', 'void'],
     [Resource.PRICING]: ['create', 'list', 'get', 'update'],
@@ -41,6 +41,6 @@ export const roleStatements = {
     [Resource.MOVEMENTS]: ['get', 'create', 'void', 'list'],
     [Resource.PAYMENTS]: ['get', 'create', 'void', 'list'],
     [Resource.PRICING]: ['get', 'create', 'update', 'list'],
-    [Resource.USERS]: [],
+    [Resource.USERS]: ['update'],
   },
 } satisfies RoleStatements;
