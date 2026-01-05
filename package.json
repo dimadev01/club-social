@@ -8,7 +8,7 @@
     "url": "git@dimadev01:dimadev01/club-social.git"
   },
   "license": "UNLICENSED",
-  "author": "Dmitriy Mironov",
+  "author": "Dmitriy Mironov <dima.dev@icloud.com>",
   "workspaces": [
     "apps/*",
     "packages/*"
