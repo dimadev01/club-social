@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/dimadev01/club-social/compare/api-v0.1.1...api-v0.1.2) (2026-01-06)
+
+
+### Bug Fixes
+
+* update sorting field in PrismaPaymentRepository from 'date' to '… ([#40](https://github.com/dimadev01/club-social/issues/40)) ([77116d2](https://github.com/dimadev01/club-social/commit/77116d2b2fa0dd987036acf5da114e02b4c42b16))
+
 ## [0.1.1](https://github.com/dimadev01/club-social/compare/api-v0.1.0...api-v0.1.1) (2026-01-05)
 
 
