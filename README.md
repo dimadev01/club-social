@@ -85,4 +85,3 @@ When making changes to the Better Auth configuration:
 2. Copy the generated schema to `src/infrastructure/database/prisma/schema.prisma`
 3. Run `npm run generate-schema`
 4. Run `npm run new-migration`
-5. Test

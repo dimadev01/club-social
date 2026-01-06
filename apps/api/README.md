@@ -98,3 +98,5 @@ See `.env.example` for required configuration. Key variables:
 - `BETTER_AUTH_URL` - Auth service URL
 - `TRUSTED_ORIGINS` - Allowed frontend origins
 - `REDIS_HOST`, `REDIS_PORT` - Redis for BullMQ
+
+Test inside /api
