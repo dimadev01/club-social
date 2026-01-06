@@ -1,16 +1,26 @@
 # Changelog
 
+## [0.2.0](https://github.com/dimadev01/club-social/compare/api-v0.1.2...api-v0.2.0) (2026-01-06)
+
+
+### Features
+
+* enhance email functionality and user preferences management ([e63c293](https://github.com/dimadev01/club-social/commit/e63c29330e204e68c2001054680cd19c2a150243))
+* enhance email functionality and user preferences management ([#39](https://github.com/dimadev01/club-social/issues/39)) ([588d3c1](https://github.com/dimadev01/club-social/commit/588d3c12fb41db37b8e1f88cf260c7b4581e497e))
+
 ## [0.1.2](https://github.com/dimadev01/club-social/compare/api-v0.1.1...api-v0.1.2) (2026-01-06)
+
 
 ### Bug Fixes
 
-- update sorting field in PrismaPaymentRepository from 'date' to '… ([#40](https://github.com/dimadev01/club-social/issues/40)) ([77116d2](https://github.com/dimadev01/club-social/commit/77116d2b2fa0dd987036acf5da114e02b4c42b16))
+* update sorting field in PrismaPaymentRepository from 'date' to '… ([#40](https://github.com/dimadev01/club-social/issues/40)) ([77116d2](https://github.com/dimadev01/club-social/commit/77116d2b2fa0dd987036acf5da114e02b4c42b16))
 
 ## [0.1.1](https://github.com/dimadev01/club-social/compare/api-v0.1.0...api-v0.1.1) (2026-01-05)
 
+
 ### Bug Fixes
 
-- remove MongoDB dependencies, and clean up unused files ([#36](https://github.com/dimadev01/club-social/issues/36)) ([#37](https://github.com/dimadev01/club-social/issues/37)) ([f0997b8](https://github.com/dimadev01/club-social/commit/f0997b857b072df319d61be66bb9186d3de4d142))
+* remove MongoDB dependencies, and clean up unused files ([#36](https://github.com/dimadev01/club-social/issues/36)) ([#37](https://github.com/dimadev01/club-social/issues/37)) ([f0997b8](https://github.com/dimadev01/club-social/commit/f0997b857b072df319d61be66bb9186d3de4d142))
 
 ## [0.1.0](https://github.com/dimadev01/club-social/compare/api-v0.0.1...api-v0.1.0) (2026-01-04)
 
