@@ -16,7 +16,8 @@ jobs:
       release_created: ${{ steps.rp.outputs.release_created }}
       paths_released: ${{ steps.rp.outputs.paths_released }}
     steps:
-      - uses: googleapis/release-please-action@v4
+      - id: rp
+        uses: googleapis/release-please-action@v4
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
@@ -46,18 +47,23 @@ jobs:
         run: railway up -s ${{ env.SVC_ID }}
 
   sentry-release:
-    needs: deploy
+    needs: [deploy]
+    if: ${{ contains(fromJSON(needs.release.outputs.paths_released), 'apps/api') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
           cache: npm
+
       - run: npm ci
       - run: npm run build:api
-      - name: Upload sourcemaps
-        uses: getsentry/action-release@v3
+
+      - uses: getsentry/action-release@v3
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
