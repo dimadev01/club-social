@@ -312,7 +312,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
     const orderBy: PaymentOrderByWithRelationInput[] = [
       ...params.sort.map(({ field, order }) => ({ [field]: order })),
-      { date: 'desc' },
+      { createdAt: 'desc' },
     ];
 
     return { orderBy, where };
