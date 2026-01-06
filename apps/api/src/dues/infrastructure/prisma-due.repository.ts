@@ -173,8 +173,9 @@ export class PrismaDueRepository implements DueRepository {
       }),
     ]);
 
-    const totalAmount = sumBy(allDues, (due) =>
-      this.dueMapper.toDomain(due).pendingAmount.toCents(),
+    const totalAmount = sumBy(
+      allDues,
+      (due) => this.dueMapper.toDomain(due).pendingAmount.cents,
     );
 
     return {

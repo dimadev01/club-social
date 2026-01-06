@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
+import { useAppContext } from '@/app/AppContext';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { PageLoader } from '@/ui';
 
@@ -10,6 +11,8 @@ export function LogoutPage() {
 
   const { data: session } = betterAuthClient.useSession();
 
+  const { resetPreferences } = useAppContext();
+
   useEffect(() => {
     const handleLogout = async () => {
       if (session) {
@@ -17,12 +20,13 @@ export function LogoutPage() {
       }
 
       setTimeout(() => {
+        resetPreferences();
         navigate(appRoutes.auth.login, { replace: true });
       }, 1_000);
     };
 
     handleLogout();
-  }, [navigate, session]);
+  }, [navigate, resetPreferences, session]);
 
   return <PageLoader />;
 }

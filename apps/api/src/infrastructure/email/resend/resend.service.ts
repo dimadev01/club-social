@@ -11,7 +11,7 @@ import {
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 
 import { EmailProvider } from '../email.provider';
-import { SendEmailParams } from '../email.types';
+import { SendEmailParams, SendTemplateEmailParams } from '../email.types';
 
 @Injectable()
 export class ResendProvider implements EmailProvider {
@@ -89,6 +89,36 @@ export class ResendProvider implements EmailProvider {
       this.logger.info({
         data,
         message: 'Email sent',
+        params,
+      });
+    }
+  }
+
+  public async sendTemplate(params: SendTemplateEmailParams): Promise<void> {
+    this.logger.info({
+      message: 'Sending template email',
+      params,
+    });
+
+    const { data, error } = await this.resend.emails.send({
+      from: 'Club Social <info@clubsocialmontegrande.ar>',
+      template: {
+        id: 'new-movement',
+        variables: params.variables,
+      },
+      to: params.email,
+    });
+
+    if (error) {
+      this.logger.error({
+        error,
+        message: 'Error sending template email',
+        params,
+      });
+    } else if (data) {
+      this.logger.info({
+        data,
+        message: 'Template email sent',
         params,
       });
     }

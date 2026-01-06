@@ -65,7 +65,7 @@ export const queryKeys = createQueryKeyStore({
 
   users: {
     detail: (id?: string) => [id],
-    myPreferences: null,
+    me: null,
     paginated: (query?: TableQuery) => [query],
   },
 });

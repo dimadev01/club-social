@@ -183,7 +183,7 @@ export class MemberLedgerController extends BaseController {
       UniqueId.raw({ value: request.memberId }),
     );
 
-    return balance.toCents();
+    return balance.cents;
   }
 
   @Get(':id')

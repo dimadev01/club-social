@@ -11,15 +11,16 @@ import {
   UserWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { UserEntity } from '../domain/entities/user.entity';
-import { UserReadableRepository } from '../domain/user.repository';
+import { UserRepository } from '../domain/user.repository';
 import { PrismaUserMapper } from './prisma-user.mapper';
 
 @Injectable()
-export class PrismaUserRepository implements UserReadableRepository {
+export class PrismaUserRepository implements UserRepository {
   public constructor(
     private readonly prismaService: PrismaService,
     private readonly userMapper: PrismaUserMapper,
@@ -80,12 +81,12 @@ export class PrismaUserRepository implements UserReadableRepository {
       }
     });
 
-    const query: UserFindManyArgs = {
+    const query = {
       orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
       where,
-    };
+    } satisfies UserFindManyArgs;
 
     const [users, total] = await Promise.all([
       this.prismaService.user.findMany(query),
@@ -108,5 +109,18 @@ export class PrismaUserRepository implements UserReadableRepository {
     }
 
     return this.userMapper.toDomain(user);
+  }
+
+  public async save(user: UserEntity, tx?: PrismaClientLike): Promise<void> {
+    const client = tx ?? this.prismaService;
+
+    const create = this.userMapper.toCreateInput(user);
+    const update = this.userMapper.toUpdateInput(user);
+
+    await client.user.upsert({
+      create,
+      update,
+      where: { id: user.id.value },
+    });
   }
 }
