@@ -11,15 +11,16 @@ import {
   UserWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { UserEntity } from '../domain/entities/user.entity';
-import { UserReadableRepository } from '../domain/user.repository';
+import { UserRepository } from '../domain/user.repository';
 import { PrismaUserMapper } from './prisma-user.mapper';
 
 @Injectable()
-export class PrismaUserRepository implements UserReadableRepository {
+export class PrismaUserRepository implements UserRepository {
   public constructor(
     private readonly prismaService: PrismaService,
     private readonly userMapper: PrismaUserMapper,
@@ -27,7 +28,6 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findById(id: UniqueId): Promise<null | UserEntity> {
     const user = await this.prismaService.user.findUnique({
-      include: { preferences: true },
       where: { id: id.value },
     });
 
@@ -40,7 +40,6 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findByIdOrThrow(id: UniqueId): Promise<UserEntity> {
     const user = await this.prismaService.user.findUniqueOrThrow({
-      include: { preferences: true },
       where: { id: id.value },
     });
 
@@ -49,7 +48,6 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findByIds(ids: UniqueId[]): Promise<UserEntity[]> {
     const users = await this.prismaService.user.findMany({
-      include: { preferences: true },
       where: {
         id: { in: ids.map((id) => id.value) },
       },
@@ -84,7 +82,6 @@ export class PrismaUserRepository implements UserReadableRepository {
     });
 
     const query = {
-      include: { preferences: true },
       orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
@@ -104,7 +101,6 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {
     const user = await this.prismaService.user.findUnique({
-      include: { preferences: true },
       where: { email: email.value },
     });
 
@@ -113,5 +109,18 @@ export class PrismaUserRepository implements UserReadableRepository {
     }
 
     return this.userMapper.toDomain(user);
+  }
+
+  public async save(user: UserEntity, tx?: PrismaClientLike): Promise<void> {
+    const client = tx ?? this.prismaService;
+
+    const create = this.userMapper.toCreateInput(user);
+    const update = this.userMapper.toUpdateInput(user);
+
+    await client.user.upsert({
+      create,
+      update,
+      where: { id: user.id.value },
+    });
   }
 }

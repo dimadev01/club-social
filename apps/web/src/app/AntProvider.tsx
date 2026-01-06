@@ -1,5 +1,3 @@
-import type { PropsWithChildren } from 'react';
-
 import { StyleProvider } from '@ant-design/cssinjs';
 import {
   Alert,
@@ -9,6 +7,7 @@ import {
   type ThemeConfig,
 } from 'antd';
 import esEs from 'antd/locale/es_ES';
+import { type PropsWithChildren, useMemo } from 'react';
 import { GiTennisBall } from 'react-icons/gi';
 
 import { AntThemeMode, useAppContext } from './AppContext';
@@ -21,24 +20,27 @@ export function AntProvider({ children }: PropsWithChildren) {
       ? antTheme.darkAlgorithm
       : antTheme.defaultAlgorithm;
 
-  const themeConfig: ThemeConfig = {
-    algorithm: [algorithm],
-    components: {
-      Button: {
-        primaryShadow: 'none',
+  const themeConfig: ThemeConfig = useMemo(
+    () => ({
+      algorithm: [algorithm],
+      components: {
+        Button: {
+          primaryShadow: 'none',
+        },
+        Layout: {
+          footerPadding: 0,
+        },
       },
-      Layout: {
-        footerPadding: 0,
+      hashed: false,
+      token: {
+        colorInfo: '#22883e',
+        colorPrimary: '#22883e',
+        motion: false,
       },
-    },
-    hashed: false,
-    token: {
-      colorInfo: '#22883e',
-      colorPrimary: '#22883e',
-      motion: false,
-    },
-    zeroRuntime: true,
-  };
+      zeroRuntime: true,
+    }),
+    [algorithm],
+  );
 
   return (
     <StyleProvider layer>

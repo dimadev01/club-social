@@ -1,19 +1,18 @@
-import type { Theme } from '@club-social/shared/users';
-
 import {
   InteractionOutlined,
   MoonOutlined,
   SunOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
+import { Theme } from '@club-social/shared/users';
 import { Button, Dropdown } from 'antd';
 
-import { AppThemeMode, useAppContext } from '@/app/AppContext';
+import { useAppContext } from '@/app/AppContext';
 
-const THEME_ICONS: Record<AppThemeMode, React.ReactNode> = {
-  [AppThemeMode.AUTO]: <InteractionOutlined />,
-  [AppThemeMode.DARK]: <MoonOutlined />,
-  [AppThemeMode.LIGHT]: <SunOutlined />,
+const THEME_ICONS: Record<Theme, React.ReactNode> = {
+  [Theme.AUTO]: <InteractionOutlined />,
+  [Theme.DARK]: <MoonOutlined />,
+  [Theme.LIGHT]: <SunOutlined />,
 } as const;
 
 export function MenuThemeSwitcher() {
@@ -25,17 +24,17 @@ export function MenuThemeSwitcher() {
         items: [
           {
             icon: <SunOutlined />,
-            key: AppThemeMode.LIGHT,
+            key: Theme.LIGHT,
             label: 'Claro',
           },
           {
             icon: <MoonOutlined />,
-            key: AppThemeMode.DARK,
+            key: Theme.DARK,
             label: 'Oscuro',
           },
           {
             icon: <SyncOutlined />,
-            key: AppThemeMode.AUTO,
+            key: Theme.AUTO,
             label: 'Automático',
           },
         ],

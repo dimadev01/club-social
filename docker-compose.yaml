@@ -30,15 +30,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/17/docker
 
-  mongodb:
-    image: mongo
-    ports:
-      - '28017:27017'
-    volumes:
-      - mongodb_data:/data/db
-
 volumes:
   redis_data:
   postgres_data:
   node_modules:
-  mongodb_data:

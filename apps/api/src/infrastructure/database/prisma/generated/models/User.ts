@@ -85,6 +85,7 @@ export type UserCountAggregateOutputType = {
   lastName: number;
   status: number;
   updatedBy: number;
+  preferences: number;
   _all: number;
 };
 
@@ -149,6 +150,7 @@ export type UserCountAggregateInputType = {
   lastName?: true;
   status?: true;
   updatedBy?: true;
+  preferences?: true;
   _all?: true;
 };
 
@@ -249,7 +251,8 @@ export type UserGroupByOutputType = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy: string | null;
+  preferences: runtime.JsonValue | null;
   _count: UserCountAggregateOutputType | null;
   _min: UserMinAggregateOutputType | null;
   _max: UserMaxAggregateOutputType | null;
@@ -288,17 +291,14 @@ export type UserWhereInput = {
   firstName?: Prisma.StringFilter<'User'> | string;
   lastName?: Prisma.StringFilter<'User'> | string;
   status?: Prisma.StringFilter<'User'> | string;
-  updatedBy?: Prisma.StringFilter<'User'> | string;
+  updatedBy?: Prisma.StringNullableFilter<'User'> | string | null;
+  preferences?: Prisma.JsonNullableFilter<'User'>;
   sessions?: Prisma.SessionListRelationFilter;
   accounts?: Prisma.AccountListRelationFilter;
   passkeys?: Prisma.PasskeyListRelationFilter;
   member?: Prisma.XOR<
     Prisma.MemberNullableScalarRelationFilter,
     Prisma.MemberWhereInput
-  > | null;
-  preferences?: Prisma.XOR<
-    Prisma.UserPreferencesNullableScalarRelationFilter,
-    Prisma.UserPreferencesWhereInput
   > | null;
 };
 
@@ -320,12 +320,12 @@ export type UserOrderByWithRelationInput = {
   firstName?: Prisma.SortOrder;
   lastName?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
-  updatedBy?: Prisma.SortOrder;
+  updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
+  preferences?: Prisma.SortOrderInput | Prisma.SortOrder;
   sessions?: Prisma.SessionOrderByRelationAggregateInput;
   accounts?: Prisma.AccountOrderByRelationAggregateInput;
   passkeys?: Prisma.PasskeyOrderByRelationAggregateInput;
   member?: Prisma.MemberOrderByWithRelationInput;
-  preferences?: Prisma.UserPreferencesOrderByWithRelationInput;
 };
 
 export type UserWhereUniqueInput = Prisma.AtLeast<
@@ -350,17 +350,14 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     firstName?: Prisma.StringFilter<'User'> | string;
     lastName?: Prisma.StringFilter<'User'> | string;
     status?: Prisma.StringFilter<'User'> | string;
-    updatedBy?: Prisma.StringFilter<'User'> | string;
+    updatedBy?: Prisma.StringNullableFilter<'User'> | string | null;
+    preferences?: Prisma.JsonNullableFilter<'User'>;
     sessions?: Prisma.SessionListRelationFilter;
     accounts?: Prisma.AccountListRelationFilter;
     passkeys?: Prisma.PasskeyListRelationFilter;
     member?: Prisma.XOR<
       Prisma.MemberNullableScalarRelationFilter,
       Prisma.MemberWhereInput
-    > | null;
-    preferences?: Prisma.XOR<
-      Prisma.UserPreferencesNullableScalarRelationFilter,
-      Prisma.UserPreferencesWhereInput
     > | null;
   },
   'id' | 'email'
@@ -384,7 +381,8 @@ export type UserOrderByWithAggregationInput = {
   firstName?: Prisma.SortOrder;
   lastName?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
-  updatedBy?: Prisma.SortOrder;
+  updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
+  preferences?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.UserCountOrderByAggregateInput;
   _max?: Prisma.UserMaxOrderByAggregateInput;
   _min?: Prisma.UserMinOrderByAggregateInput;
@@ -423,14 +421,15 @@ export type UserScalarWhereWithAggregatesInput = {
   firstName?: Prisma.StringWithAggregatesFilter<'User'> | string;
   lastName?: Prisma.StringWithAggregatesFilter<'User'> | string;
   status?: Prisma.StringWithAggregatesFilter<'User'> | string;
-  updatedBy?: Prisma.StringWithAggregatesFilter<'User'> | string;
+  updatedBy?: Prisma.StringNullableWithAggregatesFilter<'User'> | string | null;
+  preferences?: Prisma.JsonNullableWithAggregatesFilter<'User'>;
 };
 
 export type UserCreateInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -444,19 +443,19 @@ export type UserCreateInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
   passkeys?: Prisma.PasskeyCreateNestedManyWithoutUserInput;
   member?: Prisma.MemberCreateNestedOneWithoutUserInput;
-  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput;
 };
 
 export type UserUncheckedCreateInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -470,12 +469,12 @@ export type UserUncheckedCreateInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
   passkeys?: Prisma.PasskeyUncheckedCreateNestedManyWithoutUserInput;
   member?: Prisma.MemberUncheckedCreateNestedOneWithoutUserInput;
-  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput;
 };
 
 export type UserUpdateInput = {
@@ -504,12 +503,12 @@ export type UserUpdateInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
   passkeys?: Prisma.PasskeyUpdateManyWithoutUserNestedInput;
   member?: Prisma.MemberUpdateOneWithoutUserNestedInput;
-  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateInput = {
@@ -538,19 +537,19 @@ export type UserUncheckedUpdateInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
   passkeys?: Prisma.PasskeyUncheckedUpdateManyWithoutUserNestedInput;
   member?: Prisma.MemberUncheckedUpdateOneWithoutUserNestedInput;
-  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput;
 };
 
 export type UserCreateManyInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -564,7 +563,8 @@ export type UserCreateManyInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
 };
 
 export type UserUpdateManyMutationInput = {
@@ -593,7 +593,8 @@ export type UserUpdateManyMutationInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
 };
 
 export type UserUncheckedUpdateManyInput = {
@@ -622,7 +623,8 @@ export type UserUncheckedUpdateManyInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
 };
 
 export type UserCountOrderByAggregateInput = {
@@ -644,6 +646,7 @@ export type UserCountOrderByAggregateInput = {
   lastName?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
+  preferences?: Prisma.SortOrder;
 };
 
 export type UserMaxOrderByAggregateInput = {
@@ -715,32 +718,6 @@ export type NullableBoolFieldUpdateOperationsInput = {
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null;
-};
-
-export type UserCreateNestedOneWithoutPreferencesInput = {
-  create?: Prisma.XOR<
-    Prisma.UserCreateWithoutPreferencesInput,
-    Prisma.UserUncheckedCreateWithoutPreferencesInput
-  >;
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPreferencesInput;
-  connect?: Prisma.UserWhereUniqueInput;
-};
-
-export type UserUpdateOneRequiredWithoutPreferencesNestedInput = {
-  create?: Prisma.XOR<
-    Prisma.UserCreateWithoutPreferencesInput,
-    Prisma.UserUncheckedCreateWithoutPreferencesInput
-  >;
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPreferencesInput;
-  upsert?: Prisma.UserUpsertWithoutPreferencesInput;
-  connect?: Prisma.UserWhereUniqueInput;
-  update?: Prisma.XOR<
-    Prisma.XOR<
-      Prisma.UserUpdateToOneWithWhereWithoutPreferencesInput,
-      Prisma.UserUpdateWithoutPreferencesInput
-    >,
-    Prisma.UserUncheckedUpdateWithoutPreferencesInput
-  >;
 };
 
 export type UserCreateNestedOneWithoutSessionsInput = {
@@ -847,155 +824,11 @@ export type UserUpdateOneRequiredWithoutMemberNestedInput = {
   >;
 };
 
-export type UserCreateWithoutPreferencesInput = {
-  id: string;
-  name: string;
-  email: string;
-  emailVerified?: boolean;
-  image?: string | null;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-  role: string;
-  banned?: boolean | null;
-  banReason?: string | null;
-  banExpires?: Date | string | null;
-  createdBy: string;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
-  firstName: string;
-  lastName: string;
-  status: string;
-  updatedBy: string;
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
-  passkeys?: Prisma.PasskeyCreateNestedManyWithoutUserInput;
-  member?: Prisma.MemberCreateNestedOneWithoutUserInput;
-};
-
-export type UserUncheckedCreateWithoutPreferencesInput = {
-  id: string;
-  name: string;
-  email: string;
-  emailVerified?: boolean;
-  image?: string | null;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-  role: string;
-  banned?: boolean | null;
-  banReason?: string | null;
-  banExpires?: Date | string | null;
-  createdBy: string;
-  deletedAt?: Date | string | null;
-  deletedBy?: string | null;
-  firstName: string;
-  lastName: string;
-  status: string;
-  updatedBy: string;
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
-  passkeys?: Prisma.PasskeyUncheckedCreateNestedManyWithoutUserInput;
-  member?: Prisma.MemberUncheckedCreateNestedOneWithoutUserInput;
-};
-
-export type UserCreateOrConnectWithoutPreferencesInput = {
-  where: Prisma.UserWhereUniqueInput;
-  create: Prisma.XOR<
-    Prisma.UserCreateWithoutPreferencesInput,
-    Prisma.UserUncheckedCreateWithoutPreferencesInput
-  >;
-};
-
-export type UserUpsertWithoutPreferencesInput = {
-  update: Prisma.XOR<
-    Prisma.UserUpdateWithoutPreferencesInput,
-    Prisma.UserUncheckedUpdateWithoutPreferencesInput
-  >;
-  create: Prisma.XOR<
-    Prisma.UserCreateWithoutPreferencesInput,
-    Prisma.UserUncheckedCreateWithoutPreferencesInput
-  >;
-  where?: Prisma.UserWhereInput;
-};
-
-export type UserUpdateToOneWithWhereWithoutPreferencesInput = {
-  where?: Prisma.UserWhereInput;
-  data: Prisma.XOR<
-    Prisma.UserUpdateWithoutPreferencesInput,
-    Prisma.UserUncheckedUpdateWithoutPreferencesInput
-  >;
-};
-
-export type UserUpdateWithoutPreferencesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string;
-  name?: Prisma.StringFieldUpdateOperationsInput | string;
-  email?: Prisma.StringFieldUpdateOperationsInput | string;
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  role?: Prisma.StringFieldUpdateOperationsInput | string;
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null;
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  banExpires?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
-  status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
-  passkeys?: Prisma.PasskeyUpdateManyWithoutUserNestedInput;
-  member?: Prisma.MemberUpdateOneWithoutUserNestedInput;
-};
-
-export type UserUncheckedUpdateWithoutPreferencesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string;
-  name?: Prisma.StringFieldUpdateOperationsInput | string;
-  email?: Prisma.StringFieldUpdateOperationsInput | string;
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  role?: Prisma.StringFieldUpdateOperationsInput | string;
-  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null;
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  banExpires?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
-  deletedAt?:
-    | Prisma.NullableDateTimeFieldUpdateOperationsInput
-    | Date
-    | string
-    | null;
-  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string;
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string;
-  status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
-  passkeys?: Prisma.PasskeyUncheckedUpdateManyWithoutUserNestedInput;
-  member?: Prisma.MemberUncheckedUpdateOneWithoutUserNestedInput;
-};
-
 export type UserCreateWithoutSessionsInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1009,18 +842,18 @@ export type UserCreateWithoutSessionsInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
   passkeys?: Prisma.PasskeyCreateNestedManyWithoutUserInput;
   member?: Prisma.MemberCreateNestedOneWithoutUserInput;
-  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutSessionsInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1034,11 +867,11 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
   passkeys?: Prisma.PasskeyUncheckedCreateNestedManyWithoutUserInput;
   member?: Prisma.MemberUncheckedCreateNestedOneWithoutUserInput;
-  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1095,11 +928,11 @@ export type UserUpdateWithoutSessionsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
   passkeys?: Prisma.PasskeyUpdateManyWithoutUserNestedInput;
   member?: Prisma.MemberUpdateOneWithoutUserNestedInput;
-  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1128,18 +961,18 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
   passkeys?: Prisma.PasskeyUncheckedUpdateManyWithoutUserNestedInput;
   member?: Prisma.MemberUncheckedUpdateOneWithoutUserNestedInput;
-  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput;
 };
 
 export type UserCreateWithoutAccountsInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1153,18 +986,18 @@ export type UserCreateWithoutAccountsInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
   passkeys?: Prisma.PasskeyCreateNestedManyWithoutUserInput;
   member?: Prisma.MemberCreateNestedOneWithoutUserInput;
-  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutAccountsInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1178,11 +1011,11 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
   passkeys?: Prisma.PasskeyUncheckedCreateNestedManyWithoutUserInput;
   member?: Prisma.MemberUncheckedCreateNestedOneWithoutUserInput;
-  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1239,11 +1072,11 @@ export type UserUpdateWithoutAccountsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
   passkeys?: Prisma.PasskeyUpdateManyWithoutUserNestedInput;
   member?: Prisma.MemberUpdateOneWithoutUserNestedInput;
-  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1272,18 +1105,18 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
   passkeys?: Prisma.PasskeyUncheckedUpdateManyWithoutUserNestedInput;
   member?: Prisma.MemberUncheckedUpdateOneWithoutUserNestedInput;
-  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput;
 };
 
 export type UserCreateWithoutPasskeysInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1297,18 +1130,18 @@ export type UserCreateWithoutPasskeysInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
   member?: Prisma.MemberCreateNestedOneWithoutUserInput;
-  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutPasskeysInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1322,11 +1155,11 @@ export type UserUncheckedCreateWithoutPasskeysInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
   member?: Prisma.MemberUncheckedCreateNestedOneWithoutUserInput;
-  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutPasskeysInput = {
@@ -1383,11 +1216,11 @@ export type UserUpdateWithoutPasskeysInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
   member?: Prisma.MemberUpdateOneWithoutUserNestedInput;
-  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutPasskeysInput = {
@@ -1416,18 +1249,18 @@ export type UserUncheckedUpdateWithoutPasskeysInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
   member?: Prisma.MemberUncheckedUpdateOneWithoutUserNestedInput;
-  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput;
 };
 
 export type UserCreateWithoutMemberInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1441,18 +1274,18 @@ export type UserCreateWithoutMemberInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput;
   passkeys?: Prisma.PasskeyCreateNestedManyWithoutUserInput;
-  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutMemberInput = {
   id: string;
   name: string;
   email: string;
-  emailVerified?: boolean;
+  emailVerified: boolean;
   image?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1466,11 +1299,11 @@ export type UserUncheckedCreateWithoutMemberInput = {
   firstName: string;
   lastName: string;
   status: string;
-  updatedBy: string;
+  updatedBy?: string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput;
   passkeys?: Prisma.PasskeyUncheckedCreateNestedManyWithoutUserInput;
-  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutMemberInput = {
@@ -1527,11 +1360,11 @@ export type UserUpdateWithoutMemberInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput;
   passkeys?: Prisma.PasskeyUpdateManyWithoutUserNestedInput;
-  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutMemberInput = {
@@ -1560,11 +1393,11 @@ export type UserUncheckedUpdateWithoutMemberInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string;
   lastName?: Prisma.StringFieldUpdateOperationsInput | string;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  updatedBy?: Prisma.StringFieldUpdateOperationsInput | string;
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  preferences?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput;
   passkeys?: Prisma.PasskeyUncheckedUpdateManyWithoutUserNestedInput;
-  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput;
 };
 
 /**
@@ -1652,11 +1485,11 @@ export type UserSelect<
     lastName?: boolean;
     status?: boolean;
     updatedBy?: boolean;
+    preferences?: boolean;
     sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>;
     accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>;
     passkeys?: boolean | Prisma.User$passkeysArgs<ExtArgs>;
     member?: boolean | Prisma.User$memberArgs<ExtArgs>;
-    preferences?: boolean | Prisma.User$preferencesArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['user']
@@ -1685,6 +1518,7 @@ export type UserSelectCreateManyAndReturn<
     lastName?: boolean;
     status?: boolean;
     updatedBy?: boolean;
+    preferences?: boolean;
   },
   ExtArgs['result']['user']
 >;
@@ -1712,6 +1546,7 @@ export type UserSelectUpdateManyAndReturn<
     lastName?: boolean;
     status?: boolean;
     updatedBy?: boolean;
+    preferences?: boolean;
   },
   ExtArgs['result']['user']
 >;
@@ -1735,6 +1570,7 @@ export type UserSelectScalar = {
   lastName?: boolean;
   status?: boolean;
   updatedBy?: boolean;
+  preferences?: boolean;
 };
 
 export type UserOmit<
@@ -1758,7 +1594,8 @@ export type UserOmit<
   | 'firstName'
   | 'lastName'
   | 'status'
-  | 'updatedBy',
+  | 'updatedBy'
+  | 'preferences',
   ExtArgs['result']['user']
 >;
 export type UserInclude<
@@ -1769,7 +1606,6 @@ export type UserInclude<
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>;
   passkeys?: boolean | Prisma.User$passkeysArgs<ExtArgs>;
   member?: boolean | Prisma.User$memberArgs<ExtArgs>;
-  preferences?: boolean | Prisma.User$preferencesArgs<ExtArgs>;
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UserIncludeCreateManyAndReturn<
@@ -1791,7 +1627,6 @@ export type $UserPayload<
     accounts: Prisma.$AccountPayload<ExtArgs>[];
     passkeys: Prisma.$PasskeyPayload<ExtArgs>[];
     member: Prisma.$MemberPayload<ExtArgs> | null;
-    preferences: Prisma.$UserPreferencesPayload<ExtArgs> | null;
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1812,7 +1647,8 @@ export type $UserPayload<
       firstName: string;
       lastName: string;
       status: string;
-      updatedBy: string;
+      updatedBy: string | null;
+      preferences: runtime.JsonValue | null;
     },
     ExtArgs['result']['user']
   >;
@@ -2409,19 +2245,6 @@ export interface Prisma__UserClient<
     ExtArgs,
     GlobalOmitOptions
   >;
-  preferences<T extends Prisma.User$preferencesArgs<ExtArgs> = {}>(
-    args?: Prisma.Subset<T, Prisma.User$preferencesArgs<ExtArgs>>,
-  ): Prisma.Prisma__UserPreferencesClient<
-    runtime.Types.Result.GetResult<
-      Prisma.$UserPreferencesPayload<ExtArgs>,
-      T,
-      'findUniqueOrThrow',
-      GlobalOmitOptions
-    > | null,
-    null,
-    ExtArgs,
-    GlobalOmitOptions
-  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2482,6 +2305,7 @@ export interface UserFieldRefs {
   readonly lastName: Prisma.FieldRef<'User', 'String'>;
   readonly status: Prisma.FieldRef<'User', 'String'>;
   readonly updatedBy: Prisma.FieldRef<'User', 'String'>;
+  readonly preferences: Prisma.FieldRef<'User', 'Json'>;
 }
 
 // Custom InputTypes
@@ -3029,28 +2853,6 @@ export type User$memberArgs<
    */
   include?: Prisma.MemberInclude<ExtArgs> | null;
   where?: Prisma.MemberWhereInput;
-};
-
-/**
- * User.preferences
- */
-export type User$preferencesArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  /**
-   * Select specific fields to fetch from the UserPreferences
-   */
-  select?: Prisma.UserPreferencesSelect<ExtArgs> | null;
-  /**
-   * Omit specific fields from the UserPreferences
-   */
-  omit?: Prisma.UserPreferencesOmit<ExtArgs> | null;
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserPreferencesInclude<ExtArgs> | null;
-  where?: Prisma.UserPreferencesWhereInput;
 };
 
 /**

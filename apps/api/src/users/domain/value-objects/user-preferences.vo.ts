@@ -32,7 +32,7 @@ export class UserPreferences extends ValueObject<UserPreferencesProps> {
   }
 
   public static raw(
-    props: Partial<UserPreferencesProps> = {},
+    props?: null | Partial<UserPreferencesProps>,
   ): UserPreferences {
     return new UserPreferences({
       ...DEFAULT_USER_PREFERENCES,

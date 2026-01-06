@@ -25,13 +25,7 @@ import { PRICING_REPOSITORY_PROVIDER } from '@/pricing/domain/pricing.repository
 import { PrismaPricingMapper } from '@/pricing/infrastructure/prisma-pricing.mapper';
 import { PrismaPricingRepository } from '@/pricing/infrastructure/prisma-pricing.repository';
 import { UNIT_OF_WORK_PROVIDER } from '@/shared/domain/unit-of-work';
-import {
-  USER_READABLE_REPOSITORY_PROVIDER,
-  USER_REPOSITORY_PROVIDER,
-  USER_WRITEABLE_REPOSITORY_PROVIDER,
-} from '@/users/domain/user.repository';
-import { BetterAuthUserRepository } from '@/users/infrastructure/better-auth-user.repository';
-import { CompositeUserRepository } from '@/users/infrastructure/composite-user.repository';
+import { USER_REPOSITORY_PROVIDER } from '@/users/domain/user.repository';
 import { PrismaUserMapper } from '@/users/infrastructure/prisma-user.mapper';
 import { PrismaUserRepository } from '@/users/infrastructure/prisma-user.repository';
 
@@ -50,8 +44,6 @@ import { PrismaService } from './prisma.service';
     MEMBER_LEDGER_REPOSITORY_PROVIDER,
     MOVEMENT_REPOSITORY_PROVIDER,
     PRICING_REPOSITORY_PROVIDER,
-    USER_READABLE_REPOSITORY_PROVIDER,
-    USER_WRITEABLE_REPOSITORY_PROVIDER,
     USER_REPOSITORY_PROVIDER,
     AUDIT_LOG_REPOSITORY_PROVIDER,
     APP_SETTING_REPOSITORY_PROVIDER,
@@ -99,16 +91,8 @@ import { PrismaService } from './prisma.service';
       useClass: PrismaMovementRepository,
     },
     {
-      provide: USER_READABLE_REPOSITORY_PROVIDER,
-      useClass: PrismaUserRepository,
-    },
-    {
-      provide: USER_WRITEABLE_REPOSITORY_PROVIDER,
-      useClass: BetterAuthUserRepository,
-    },
-    {
       provide: USER_REPOSITORY_PROVIDER,
-      useClass: CompositeUserRepository,
+      useClass: PrismaUserRepository,
     },
     {
       provide: AUDIT_LOG_REPOSITORY_PROVIDER,
