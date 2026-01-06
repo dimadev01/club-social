@@ -208,6 +208,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                   itemBg: token.Layout?.bodyBg,
                 },
               },
+              inherit: true,
             }}
           >
             <Menu

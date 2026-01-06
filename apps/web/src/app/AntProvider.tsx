@@ -1,3 +1,5 @@
+import type { PropsWithChildren } from 'react';
+
 import { StyleProvider } from '@ant-design/cssinjs';
 import {
   Alert,
@@ -11,7 +13,7 @@ import { GiTennisBall } from 'react-icons/gi';
 
 import { AntThemeMode, useAppContext } from './AppContext';
 
-export function AntProvider({ children }: { children: React.ReactNode }) {
+export function AntProvider({ children }: PropsWithChildren) {
   const { selectedTheme } = useAppContext();
 
   const algorithm =
@@ -29,9 +31,10 @@ export function AntProvider({ children }: { children: React.ReactNode }) {
         footerPadding: 0,
       },
     },
+    // hashed: false,
     token: {
       colorInfo: '#22883e',
-      colorPrimary: '#22883e',
+      colorPrimary: 'black',
       motion: false,
     },
     zeroRuntime: true,
