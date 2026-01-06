@@ -32,6 +32,7 @@ A monorepo for managing club membership, dues, payments, and financial tracking.
 ## Getting Started
 
 1. **Install dependencies**
+
    ```bash
    npm install
    ```
@@ -41,18 +42,21 @@ A monorepo for managing club membership, dues, payments, and financial tracking.
    - Configure your database connection, auth secrets, etc.
 
 3. **Generate Prisma client**
+
    ```bash
    cd apps/api
    npm run generate-schema
    ```
 
 4. **Run database migrations**
+
    ```bash
    cd apps/api
    npm run new-migration
    ```
 
 5. **Start development servers**
+
    ```bash
    # From root - runs all apps
    npm run build  # Build shared packages first
@@ -64,14 +68,14 @@ A monorepo for managing club membership, dues, payments, and financial tracking.
 
 ## Common Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run build` | Build all apps and packages |
-| `npm run check` | Run type checking, tests, and linting |
-| `npm run check-types` | Type check all workspaces |
-| `npm run lint` | Lint all workspaces |
-| `npm run format` | Format all workspaces |
-| `npm test` | Run tests across all workspaces |
+| Command               | Description                           |
+| --------------------- | ------------------------------------- |
+| `npm run build`       | Build all apps and packages           |
+| `npm run check`       | Run type checking, tests, and linting |
+| `npm run check-types` | Type check all workspaces             |
+| `npm run lint`        | Lint all workspaces                   |
+| `npm run format`      | Format all workspaces                 |
+| `npm test`            | Run tests across all workspaces       |
 
 ## Better Auth
 
@@ -81,3 +85,4 @@ When making changes to the Better Auth configuration:
 2. Copy the generated schema to `src/infrastructure/database/prisma/schema.prisma`
 3. Run `npm run generate-schema`
 4. Run `npm run new-migration`
+5. Test
