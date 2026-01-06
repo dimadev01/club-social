@@ -55,6 +55,7 @@ export const AnyNull = runtime.AnyNull;
 
 export const ModelName = {
   User: 'User',
+  UserPreferences: 'UserPreferences',
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
@@ -105,11 +106,18 @@ export const UserScalarFieldEnum = {
   lastName: 'lastName',
   status: 'status',
   updatedBy: 'updatedBy',
-  preferences: 'preferences',
 } as const;
 
 export type UserScalarFieldEnum =
   (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum];
+
+export const UserPreferencesScalarFieldEnum = {
+  userId: 'userId',
+  value: 'value',
+} as const;
+
+export type UserPreferencesScalarFieldEnum =
+  (typeof UserPreferencesScalarFieldEnum)[keyof typeof UserPreferencesScalarFieldEnum];
 
 export const SessionScalarFieldEnum = {
   id: 'id',
@@ -344,6 +352,13 @@ export const SortOrder = {
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
 
+export const JsonNullValueInput = {
+  JsonNull: 'JsonNull',
+} as const;
+
+export type JsonNullValueInput =
+  (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
+
 export const NullableJsonNullValueInput = {
   DbNull: 'DbNull',
   JsonNull: 'JsonNull',
@@ -352,19 +367,19 @@ export const NullableJsonNullValueInput = {
 export type NullableJsonNullValueInput =
   (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput];
 
-export const JsonNullValueInput = {
-  JsonNull: 'JsonNull',
-} as const;
-
-export type JsonNullValueInput =
-  (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
-
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive',
 } as const;
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last',
+} as const;
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];
 
 export const JsonNullValueFilter = {
   DbNull: 'DbNull',
@@ -374,10 +389,3 @@ export const JsonNullValueFilter = {
 
 export type JsonNullValueFilter =
   (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last',
-} as const;
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];

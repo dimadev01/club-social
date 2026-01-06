@@ -22,6 +22,11 @@ export * from './enums.js';
  */
 export type User = Prisma.UserModel;
 /**
+ * Model UserPreferences
+ *
+ */
+export type UserPreferences = Prisma.UserPreferencesModel;
+/**
  * Model Session
  *
  */

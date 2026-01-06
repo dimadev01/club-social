@@ -1,7 +1,7 @@
 import { UserRole, UserStatus } from '@club-social/shared/users';
 import { Injectable } from '@nestjs/common';
 
-import { UserModel } from '@/infrastructure/database/prisma/generated/models';
+import { UserGetPayload } from '@/infrastructure/database/prisma/generated/models';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -14,7 +14,9 @@ import {
 
 @Injectable()
 export class PrismaUserMapper {
-  public toDomain(user: UserModel): UserEntity {
+  public toDomain(
+    user: UserGetPayload<{ include: { preferences: true } }>,
+  ): UserEntity {
     return UserEntity.fromPersistence(
       {
         banExpires: user.banExpires,
@@ -23,7 +25,7 @@ export class PrismaUserMapper {
         email: Email.raw({ value: user.email }),
         name: Name.raw({ firstName: user.firstName, lastName: user.lastName }),
         preferences: UserPreferences.raw(
-          user.preferences as Partial<UserPreferencesProps>,
+          user.preferences?.value as unknown as UserPreferencesProps,
         ),
         role: user.role as UserRole,
         status: user.status as UserStatus,

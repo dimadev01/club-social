@@ -413,6 +413,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never
 
 export const ModelName = {
   User: 'User',
+  UserPreferences: 'UserPreferences',
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
@@ -449,6 +450,7 @@ export type TypeMap<
   meta: {
     modelProps:
       | 'user'
+      | 'userPreferences'
       | 'session'
       | 'account'
       | 'verification'
@@ -537,6 +539,82 @@ export type TypeMap<
           args: Prisma.UserCountArgs<ExtArgs>;
           result:
             | runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
+    UserPreferences: {
+      payload: Prisma.$UserPreferencesPayload<ExtArgs>;
+      fields: Prisma.UserPreferencesFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.UserPreferencesFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.UserPreferencesFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>;
+        };
+        findFirst: {
+          args: Prisma.UserPreferencesFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.UserPreferencesFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>;
+        };
+        findMany: {
+          args: Prisma.UserPreferencesFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>[];
+        };
+        create: {
+          args: Prisma.UserPreferencesCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>;
+        };
+        createMany: {
+          args: Prisma.UserPreferencesCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.UserPreferencesCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>[];
+        };
+        delete: {
+          args: Prisma.UserPreferencesDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>;
+        };
+        update: {
+          args: Prisma.UserPreferencesUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>;
+        };
+        deleteMany: {
+          args: Prisma.UserPreferencesDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.UserPreferencesUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.UserPreferencesUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>[];
+        };
+        upsert: {
+          args: Prisma.UserPreferencesUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>;
+        };
+        aggregate: {
+          args: Prisma.UserPreferencesAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserPreferences>;
+        };
+        groupBy: {
+          args: Prisma.UserPreferencesGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.UserPreferencesGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.UserPreferencesCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.UserPreferencesCountAggregateOutputType>
             | number;
         };
       };
@@ -1587,11 +1665,18 @@ export const UserScalarFieldEnum = {
   lastName: 'lastName',
   status: 'status',
   updatedBy: 'updatedBy',
-  preferences: 'preferences',
 } as const;
 
 export type UserScalarFieldEnum =
   (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum];
+
+export const UserPreferencesScalarFieldEnum = {
+  userId: 'userId',
+  value: 'value',
+} as const;
+
+export type UserPreferencesScalarFieldEnum =
+  (typeof UserPreferencesScalarFieldEnum)[keyof typeof UserPreferencesScalarFieldEnum];
 
 export const SessionScalarFieldEnum = {
   id: 'id',
@@ -1826,6 +1911,13 @@ export const SortOrder = {
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull,
+} as const;
+
+export type JsonNullValueInput =
+  (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull,
@@ -1834,19 +1926,19 @@ export const NullableJsonNullValueInput = {
 export type NullableJsonNullValueInput =
   (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput];
 
-export const JsonNullValueInput = {
-  JsonNull: JsonNull,
-} as const;
-
-export type JsonNullValueInput =
-  (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
-
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive',
 } as const;
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last',
+} as const;
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];
 
 export const JsonNullValueFilter = {
   DbNull: DbNull,
@@ -1856,13 +1948,6 @@ export const JsonNullValueFilter = {
 
 export type JsonNullValueFilter =
   (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
-
-export const NullsOrder = {
-  first: 'first',
-  last: 'last',
-} as const;
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];
 
 /**
  * Field references
@@ -2060,6 +2145,7 @@ export type PrismaClientOptions = (
 };
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit;
+  userPreferences?: Prisma.UserPreferencesOmit;
   session?: Prisma.SessionOmit;
   account?: Prisma.AccountOmit;
   verification?: Prisma.VerificationOmit;

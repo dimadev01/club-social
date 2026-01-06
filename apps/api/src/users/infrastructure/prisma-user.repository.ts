@@ -27,6 +27,7 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findById(id: UniqueId): Promise<null | UserEntity> {
     const user = await this.prismaService.user.findUnique({
+      include: { preferences: true },
       where: { id: id.value },
     });
 
@@ -39,6 +40,7 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findByIdOrThrow(id: UniqueId): Promise<UserEntity> {
     const user = await this.prismaService.user.findUniqueOrThrow({
+      include: { preferences: true },
       where: { id: id.value },
     });
 
@@ -47,6 +49,7 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findByIds(ids: UniqueId[]): Promise<UserEntity[]> {
     const users = await this.prismaService.user.findMany({
+      include: { preferences: true },
       where: {
         id: { in: ids.map((id) => id.value) },
       },
@@ -80,12 +83,13 @@ export class PrismaUserRepository implements UserReadableRepository {
       }
     });
 
-    const query: UserFindManyArgs = {
+    const query = {
+      include: { preferences: true },
       orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
       where,
-    };
+    } satisfies UserFindManyArgs;
 
     const [users, total] = await Promise.all([
       this.prismaService.user.findMany(query),
@@ -100,6 +104,7 @@ export class PrismaUserRepository implements UserReadableRepository {
 
   public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {
     const user = await this.prismaService.user.findUnique({
+      include: { preferences: true },
       where: { email: email.value },
     });
 

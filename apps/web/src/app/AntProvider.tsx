@@ -31,10 +31,10 @@ export function AntProvider({ children }: PropsWithChildren) {
         footerPadding: 0,
       },
     },
-    // hashed: false,
+    hashed: false,
     token: {
       colorInfo: '#22883e',
-      colorPrimary: 'black',
+      colorPrimary: '#22883e',
       motion: false,
     },
     zeroRuntime: true,

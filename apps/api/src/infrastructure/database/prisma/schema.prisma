@@ -9,15 +9,15 @@ datasource db {
 }
 
 model User {
-  id            String    @id
+  id            String           @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean          @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
   role          String
-  banned        Boolean?  @default(false)
+  banned        Boolean?         @default(false)
   banReason     String?
   banExpires    DateTime?
   createdBy     String
@@ -27,14 +27,24 @@ model User {
   lastName      String
   status        String
   updatedBy     String
-  preferences   Json?
   sessions      Session[]
   accounts      Account[]
   passkeys      Passkey[]
   member        Member?
+  preferences   UserPreferences?
 
   @@unique([email])
   @@map("user")
+}
+
+model UserPreferences {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id])
+
+  value Json
+
+  @@index([userId])
+  @@map("user_preferences")
 }
 
 model Session {
