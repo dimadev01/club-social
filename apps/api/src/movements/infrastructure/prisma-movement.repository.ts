@@ -109,7 +109,9 @@ export class PrismaMovementRepository implements MovementRepository {
   public async findForStatistics(
     params: FindMovementsForStatisticsParams,
   ): Promise<MovementStatisticsModel> {
-    const where: MovementWhereInput = {};
+    const where: MovementWhereInput = {
+      status: MovementStatus.REGISTERED,
+    };
 
     if (params.dateRange) {
       where.date = {

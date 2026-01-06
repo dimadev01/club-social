@@ -20,7 +20,7 @@ export class PrismaPricingMapper {
     Guard.string(entity.createdBy);
 
     return {
-      amount: entity.amount.toCents(),
+      amount: entity.amount.cents,
       createdBy: entity.createdBy,
       dueCategory: entity.dueCategory,
       effectiveFrom: entity.effectiveFrom.value,
@@ -59,7 +59,7 @@ export class PrismaPricingMapper {
 
   public toUpdateInput(entity: PricingEntity): PricingUpdateInput {
     return {
-      amount: entity.amount.toCents(),
+      amount: entity.amount.cents,
       deletedAt: entity.deletedAt,
       deletedBy: entity.deletedBy,
       dueCategory: entity.dueCategory,

@@ -1,4 +1,9 @@
-import { UserRole, UserStatus } from '@club-social/shared/users';
+import {
+  Theme,
+  ThemeVariant,
+  UserRole,
+  UserStatus,
+} from '@club-social/shared/users';
 
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
@@ -16,10 +21,7 @@ import { createTestUser, createUserProps } from '@/shared/test/factories';
 
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
-import {
-  DEFAULT_USER_PREFERENCES,
-  UserPreferencesVO,
-} from '../value-objects/user-preferences.vo';
+import { UserPreferences } from '../value-objects/user-preferences.vo';
 import { UserEntity } from './user.entity';
 
 describe('UserEntity', () => {
@@ -92,7 +94,10 @@ describe('UserEntity', () => {
             firstName: TEST_ALT_FIRST_NAME,
             lastName: TEST_ALT_LAST_NAME,
           }),
-          preferences: UserPreferencesVO.raw(DEFAULT_USER_PREFERENCES),
+          preferences: UserPreferences.raw({
+            theme: Theme.LIGHT,
+            themeVariant: ThemeVariant.DEFAULT,
+          }),
           role: UserRole.ADMIN,
           status: UserStatus.ACTIVE,
         },
@@ -128,7 +133,7 @@ describe('UserEntity', () => {
             firstName: TEST_ALT_FIRST_NAME,
             lastName: TEST_ALT_LAST_NAME,
           }),
-          preferences: UserPreferencesVO.raw(DEFAULT_USER_PREFERENCES),
+          preferences: UserPreferences.raw(),
           role: UserRole.MEMBER,
           status: UserStatus.INACTIVE,
         },
@@ -156,67 +161,6 @@ describe('UserEntity', () => {
       expect(cloned.name.lastName).toBe(original.name.lastName);
       expect(cloned.role).toBe(original.role);
       expect(cloned.status).toBe(original.status);
-    });
-
-    it('should create an independent copy', () => {
-      const original = createTestUser();
-      const cloned = original.clone();
-
-      original.updateStatus(UserStatus.INACTIVE);
-
-      expect(original.status).toBe(UserStatus.INACTIVE);
-      expect(cloned.status).toBe(UserStatus.ACTIVE);
-    });
-  });
-
-  describe('updateEmail', () => {
-    it('should update the email', () => {
-      const user = createTestUser();
-
-      const newEmail = Email.create('new.email@example.com')._unsafeUnwrap();
-      user.updateEmail(newEmail);
-
-      expect(user.email.value).toBe('new.email@example.com');
-    });
-  });
-
-  describe('updateName', () => {
-    it('should update the name', () => {
-      const user = createTestUser();
-
-      const newName = Name.create({
-        firstName: 'Jane',
-        lastName: 'Smith',
-      })._unsafeUnwrap();
-      user.updateName(newName);
-
-      expect(user.name.firstName).toBe('Jane');
-      expect(user.name.lastName).toBe('Smith');
-    });
-  });
-
-  describe('updateStatus', () => {
-    it('should update the status to inactive', () => {
-      const user = createTestUser();
-
-      user.updateStatus(UserStatus.INACTIVE);
-
-      expect(user.status).toBe(UserStatus.INACTIVE);
-    });
-
-    it('should update the status to active using overrides', () => {
-      const user = UserEntity.fromPersistence(
-        createUserProps({ status: UserStatus.INACTIVE }),
-        {
-          audit: { createdBy: TEST_CREATED_BY },
-          deleted: {},
-          id: UniqueId.generate(),
-        },
-      );
-
-      user.updateStatus(UserStatus.ACTIVE);
-
-      expect(user.status).toBe(UserStatus.ACTIVE);
     });
   });
 

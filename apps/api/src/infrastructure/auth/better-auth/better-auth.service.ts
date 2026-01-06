@@ -23,8 +23,8 @@ import { EmailQueueService } from '@/infrastructure/email/email-queue.service';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import {
-  USER_READABLE_REPOSITORY_PROVIDER,
-  type UserReadableRepository,
+  USER_REPOSITORY_PROVIDER,
+  type UserRepository,
 } from '@/users/domain/user.repository';
 
 interface BuildPluginsOptions {
@@ -46,7 +46,6 @@ const memberRole = ac.newRole({
 
 const staffRole = ac.newRole({
   ...adminAc.statements,
-  // ...userAc.statements,
   ...roleStatements.staff,
 });
 
@@ -113,6 +112,10 @@ export const defaultConfig = {
         required: true,
         type: 'string',
       },
+      preferences: {
+        required: false,
+        type: 'json',
+      },
       role: {
         required: true,
         type: 'string',
@@ -153,8 +156,8 @@ export class BetterAuthService {
   public constructor(
     private readonly configService: ConfigService,
     private readonly emailQueueService: EmailQueueService,
-    @Inject(USER_READABLE_REPOSITORY_PROVIDER)
-    private readonly userRepository: UserReadableRepository,
+    @Inject(USER_REPOSITORY_PROVIDER)
+    private readonly userRepository: UserRepository,
   ) {
     this._auth = createBetterAuth({
       emailVerification: {

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 
 import { ConfigService } from '../config/config.service';
 import { QueueModule } from '../queue/queue.module';
@@ -8,6 +8,7 @@ import { EMAIL_PROVIDER_PROVIDER } from './email.provider';
 import { NodemailerProvider } from './nodemailer/nodemailer.service';
 import { ResendProvider } from './resend/resend.service';
 
+@Global()
 @Module({
   exports: [EmailQueueService],
   imports: [QueueModule],

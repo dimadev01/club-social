@@ -366,7 +366,7 @@ export function PaymentForm({
           colon={false}
           layout="vertical"
         >
-          <Descriptions.Item label="Saldo total">
+          <Descriptions.Item label="Saldo del socio">
             {isMemberBalanceLoading ? (
               <Skeleton.Button active />
             ) : (
@@ -626,7 +626,7 @@ export function PaymentForm({
               colon={false}
               layout="vertical"
             >
-              <Descriptions.Item label="Saldo disponible">
+              <Descriptions.Item label="Saldo restante">
                 {isMemberBalanceLoading ? (
                   <Skeleton.Button active />
                 ) : (

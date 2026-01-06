@@ -109,7 +109,7 @@ export class PricingController extends BaseController {
 
     return {
       data: result.data.map((item) => ({
-        amount: item.pricing.amount.toCents(),
+        amount: item.pricing.amount.cents,
         createdAt: item.pricing.createdAt?.toISOString() ?? '',
         createdBy: item.pricing.createdBy ?? '',
         dueCategory: item.pricing.dueCategory,
@@ -143,7 +143,7 @@ export class PricingController extends BaseController {
     Guard.date(pricing.updatedAt);
 
     return {
-      amount: pricing.amount.toCents(),
+      amount: pricing.amount.cents,
       createdAt: pricing.createdAt.toISOString(),
       createdBy: pricing.createdBy,
       dueCategory: pricing.dueCategory,

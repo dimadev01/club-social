@@ -11,9 +11,8 @@ import { StrictOmit } from '@/shared/types/type-utils';
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
 import {
-  DEFAULT_USER_PREFERENCES,
+  UserPreferences,
   UserPreferencesProps,
-  UserPreferencesVO,
 } from '../value-objects/user-preferences.vo';
 
 export type CreateUserProps = StrictOmit<
@@ -27,7 +26,7 @@ export interface UserProps {
   banReason: null | string;
   email: Email;
   name: Name;
-  preferences: UserPreferencesVO;
+  preferences: UserPreferences;
   role: UserRole;
   status: UserStatus;
 }
@@ -53,7 +52,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
     return this._name;
   }
 
-  public get preferences(): UserPreferencesVO {
+  public get preferences(): UserPreferences {
     return this._preferences;
   }
 
@@ -70,7 +69,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
   private _banReason: null | string;
   private _email: Email;
   private _name: Name;
-  private _preferences: UserPreferencesVO;
+  private _preferences: UserPreferences;
   private _role: UserRole;
   private _status: UserStatus;
 
@@ -98,7 +97,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
         banReason: null,
         email: props.email,
         name: props.name,
-        preferences: UserPreferencesVO.raw(DEFAULT_USER_PREFERENCES),
+        preferences: UserPreferences.raw(),
         role: props.role,
         status: UserStatus.ACTIVE,
       },
@@ -140,22 +139,14 @@ export class UserEntity extends SoftDeletableAggregateRoot {
     );
   }
 
-  public updateEmail(email: Email) {
-    this._email = email;
-  }
-
-  public updateName(name: Name) {
-    this._name = name;
-  }
-
   public updatePreferences(
     preferences: Partial<UserPreferencesProps>,
     updatedBy: string,
   ): void {
+    const oldUser = this.clone();
+
     this._preferences = this._preferences.update(preferences);
     this.markAsUpdated(updatedBy);
-
-    const oldUser = this.clone();
 
     this.addEvent(new UserUpdatedEvent(oldUser, this));
   }
@@ -174,9 +165,5 @@ export class UserEntity extends SoftDeletableAggregateRoot {
 
     this.markAsUpdated(props.updatedBy);
     this.addEvent(new UserUpdatedEvent(oldUser, this));
-  }
-
-  public updateStatus(status: UserStatus) {
-    this._status = status;
   }
 }

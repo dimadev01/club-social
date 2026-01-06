@@ -231,13 +231,13 @@ export class DuesController extends BaseController {
     const categories = Object.values(DueCategory).reduce(
       (acc, category) => {
         const items = dues.filter((due) => due.category === category);
-        acc[category] = sumBy(items, (due) => due.pendingAmount.toCents());
+        acc[category] = sumBy(items, (due) => due.pendingAmount.cents);
 
         return acc;
       },
       {} as Record<DueCategory, number>,
     );
-    const total = sumBy(dues, (due) => due.pendingAmount.toCents());
+    const total = sumBy(dues, (due) => due.pendingAmount.cents);
 
     return {
       categories,
@@ -254,7 +254,7 @@ export class DuesController extends BaseController {
     );
 
     return dues.map((due) => ({
-      amount: due.amount.toCents(),
+      amount: due.amount.cents,
       category: due.category,
       date: due.date.value,
       id: due.id.value,

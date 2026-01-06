@@ -9,6 +9,7 @@ import { CacheModule } from './infrastructure/cache/cache.module';
 import { ConfigModule } from './infrastructure/config/config.module';
 import { CsvModule } from './infrastructure/csv/csv.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
+import { EmailModule } from './infrastructure/email/email.module';
 import { EventsModule } from './infrastructure/events/events.module';
 import { HealthCheckModule } from './infrastructure/health-check/health-check.module';
 import { LoggerModule } from './infrastructure/logger/logger.module';
@@ -36,6 +37,7 @@ import { UsersModule } from './users/user.module';
     HealthCheckModule,
     StorageModule,
     CacheModule,
+    EmailModule,
 
     UsersModule,
     MembersModule,

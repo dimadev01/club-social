@@ -290,7 +290,7 @@ export class AuditEventHandler {
 
   private serializeDue(due: DueEntity): Record<string, unknown> {
     return {
-      amount: due.amount.toCents(),
+      amount: due.amount.cents,
       category: due.category,
       createdAt: due.createdAt,
       createdBy: due.createdBy,
@@ -336,7 +336,7 @@ export class AuditEventHandler {
 
   private serializeMovement(movement: MovementEntity): Record<string, unknown> {
     return {
-      amount: movement.amount.toCents(),
+      amount: movement.amount.cents,
       category: movement.category,
       createdAt: movement.createdAt,
       createdBy: movement.createdBy,
@@ -355,7 +355,7 @@ export class AuditEventHandler {
 
   private serializePayment(payment: PaymentEntity): Record<string, unknown> {
     return {
-      amount: payment.amount.toCents(),
+      amount: payment.amount.cents,
       createdAt: payment.createdAt,
       createdBy: payment.createdBy,
       date: payment.date.value,
@@ -375,7 +375,7 @@ export class AuditEventHandler {
 
   private serializePricing(pricing: PricingEntity): Record<string, unknown> {
     return {
-      amount: pricing.amount.toCents(),
+      amount: pricing.amount.cents,
       createdAt: pricing.createdAt,
       createdBy: pricing.createdBy,
       deletedAt: pricing.deletedAt,
