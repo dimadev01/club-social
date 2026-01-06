@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/dimadev01/club-social/compare/web-v0.3.0...web-v0.4.0) (2026-01-06)
+
+
+### Features
+
+* **api:** add unit tests ([7f39104](https://github.com/dimadev01/club-social/commit/7f39104537bd9ac00304b6cc0893e8ba4b3dfb42))
+
 ## [0.3.0](https://github.com/dimadev01/club-social/compare/web-v0.2.0...web-v0.3.0) (2026-01-06)
 
 
