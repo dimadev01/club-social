@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/dimadev01/club-social/compare/api-v0.3.0...api-v0.3.1) (2026-01-06)
+
+
+### Bug Fixes
+
+* test action ([2d66a19](https://github.com/dimadev01/club-social/commit/2d66a1959222d3621d23661079d73064b665a9f4))
+
 ## [0.3.0](https://github.com/dimadev01/club-social/compare/api-v0.2.0...api-v0.3.0) (2026-01-06)
 
 
