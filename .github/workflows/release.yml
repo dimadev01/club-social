@@ -13,7 +13,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      release_created: ${{ steps.rp.outputs.release_created }}
+      releases_created: ${{ steps.rp.outputs.releases_created }}
       paths_released: ${{ steps.rp.outputs.paths_released }}
     steps:
       - id: rp
@@ -24,7 +24,7 @@ jobs:
 
   deploy:
     needs: release
-    if: ${{ needs.release.outputs.release_created == 'true' }}
+    if: ${{ needs.release.outputs.releases_created == 'true' }}
     runs-on: ubuntu-latest
     container: ghcr.io/railwayapp/cli:latest
     env:
@@ -47,8 +47,8 @@ jobs:
         run: railway up -s ${{ env.SVC_ID }}
 
   sentry-release:
-    needs: [deploy]
-    if: ${{ contains(fromJSON(needs.release.outputs.paths_released), 'apps/api') }}
+    needs: [release, deploy]
+    if: ${{ needs.release.outputs.releases_created == 'true' && contains(fromJSON(needs.release.outputs.paths_released), 'apps/api') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
