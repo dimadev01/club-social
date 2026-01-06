@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0](https://github.com/dimadev01/club-social/compare/web-v0.1.0...web-v0.2.0) (2026-01-06)
+
+
+### Features
+
+* enhance email functionality and user preferences management ([e63c293](https://github.com/dimadev01/club-social/commit/e63c29330e204e68c2001054680cd19c2a150243))
+* enhance email functionality and user preferences management ([#39](https://github.com/dimadev01/club-social/issues/39)) ([588d3c1](https://github.com/dimadev01/club-social/commit/588d3c12fb41db37b8e1f88cf260c7b4581e497e))
+
 ## [0.1.0](https://github.com/dimadev01/club-social/compare/web-v0.0.1...web-v0.1.0) (2026-01-04)
 
 ### Features
