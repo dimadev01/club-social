@@ -46,7 +46,6 @@ const memberRole = ac.newRole({
 
 const staffRole = ac.newRole({
   ...adminAc.statements,
-  // ...userAc.statements,
   ...roleStatements.staff,
 });
 
@@ -112,6 +111,10 @@ export const defaultConfig = {
       lastName: {
         required: true,
         type: 'string',
+      },
+      preferences: {
+        required: false,
+        type: 'json',
       },
       role: {
         required: true,

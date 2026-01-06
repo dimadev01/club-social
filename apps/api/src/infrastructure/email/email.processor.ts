@@ -12,6 +12,7 @@ import { EMAIL_PROVIDER_PROVIDER, type EmailProvider } from './email.provider';
 import {
   EmailJobData,
   SendMagicLinkParams,
+  SendNewDueMovementParams,
   SendVerificationEmailParams,
 } from './email.types';
 
@@ -38,6 +39,8 @@ export class EmailProcessor extends WorkerHost {
     switch (job.data.type) {
       case QueueEmailType.SEND_MAGIC_LINK:
         return this.handleMagicLink(job.data.data);
+      case QueueEmailType.SEND_NEW_DUE_MOVEMENT:
+        return this.handleNewDueMovement(job.data.data);
       case QueueEmailType.SEND_VERIFICATION_EMAIL:
         return this.handleVerificationEmail(job.data.data);
       default:
@@ -50,6 +53,25 @@ export class EmailProcessor extends WorkerHost {
       html: `Click here to login: <a href="${data.url}">${data.url}</a>`,
       subject: 'Magic link',
       to: data.email,
+    });
+  }
+
+  private async handleNewDueMovement(
+    data: SendNewDueMovementParams,
+  ): Promise<void> {
+    return this.emailProvider.sendTemplate({
+      email: data.email,
+      template: 'new-movement',
+      variables: {
+        amount: data.amount,
+        category: data.category,
+        date: data.date,
+        memberName: data.memberName,
+        pendingElectricity: data.pendingElectricity,
+        pendingGuest: data.pendingGuest,
+        pendingMembership: data.pendingMembership,
+        pendingTotal: data.pendingTotal,
+      },
     });
   }
 

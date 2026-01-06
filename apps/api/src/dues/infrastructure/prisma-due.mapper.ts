@@ -24,7 +24,7 @@ export class PrismaDueMapper {
     Guard.string(due.createdBy);
 
     return {
-      amount: due.amount.toCents(),
+      amount: due.amount.cents,
       category: due.category,
       createdBy: due.createdBy,
       date: due.date.value,
@@ -70,7 +70,7 @@ export class PrismaDueMapper {
 
   public toUpdateInput(due: DueEntity): DueUpdateInput {
     return {
-      amount: due.amount.toCents(),
+      amount: due.amount.cents,
       category: due.category,
       date: due.date.value,
       id: due.id.value,

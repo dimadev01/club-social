@@ -127,7 +127,7 @@ describe('SignedAmount', () => {
     it('should return the cents value', () => {
       const amount = SignedAmount.raw({ cents: 1250 });
 
-      expect(amount.toCents()).toBe(1250);
+      expect(amount.cents).toBe(1250);
     });
   });
 

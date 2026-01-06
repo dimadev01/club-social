@@ -76,19 +76,26 @@ export class BetterAuthUserRepository implements UserWriteableRepository {
     const headers = this.clsService.get('headers');
     const hasCookies = headers.has('cookie');
 
-    await this.betterAuth.auth.api.adminUpdateUser({
-      body: {
-        data: {
-          email: user.email.value,
-          firstName: user.name.firstName,
-          lastName: user.name.lastName,
-          status: user.status,
-          updatedAt: user.updatedAt,
-          updatedBy: user.createdBy,
+    console.log(user.preferences.toJson());
+
+    try {
+      await this.betterAuth.auth.api.adminUpdateUser({
+        body: {
+          data: {
+            email: user.email.value,
+            firstName: user.name.firstName,
+            lastName: user.name.lastName,
+            preferences: user.preferences.toJson(),
+            status: user.status,
+            updatedAt: user.updatedAt,
+            updatedBy: user.createdBy,
+          },
+          userId: user.id.value,
         },
-        userId: user.id.value,
-      },
-      headers: hasCookies ? headers : undefined,
-    });
+        headers: hasCookies ? headers : undefined,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

@@ -1,3 +1,5 @@
+import type { Theme } from '@club-social/shared/users';
+
 import {
   InteractionOutlined,
   MoonOutlined,
@@ -15,8 +17,7 @@ const THEME_ICONS: Record<AppThemeMode, React.ReactNode> = {
 } as const;
 
 export function MenuThemeSwitcher() {
-  const { appThemeMode: themeMode, setAppThemeMode: setThemeMode } =
-    useAppContext();
+  const { preferences, updatePreferences } = useAppContext();
 
   return (
     <Dropdown
@@ -39,13 +40,13 @@ export function MenuThemeSwitcher() {
           },
         ],
         onClick: ({ key }) => {
-          setThemeMode(key as AppThemeMode);
+          updatePreferences({ theme: key as Theme });
         },
         selectable: true,
-        selectedKeys: [themeMode],
+        selectedKeys: [preferences.theme],
       }}
     >
-      <Button icon={THEME_ICONS[themeMode]} size="small" type="text" />
+      <Button icon={THEME_ICONS[preferences.theme]} size="small" type="text" />
     </Dropdown>
   );
 }

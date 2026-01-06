@@ -23,7 +23,7 @@ import {
   Typography,
 } from 'antd';
 import { type PropsWithChildren, useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
 import { useSessionUser } from '@/auth/useUser';
@@ -49,7 +49,8 @@ import { useAppContext } from './AppContext';
 
 export function AppLayout({ children }: PropsWithChildren) {
   const { sm } = Grid.useBreakpoint();
-  const { themeMode } = useAppContext();
+  const { selectedTheme } = useAppContext();
+  const navigate = useNavigate();
   const { token } = theme.useToken();
 
   const [isFloatMenuOpen, setIsFloatMenuOpen] = useState(false);
@@ -71,7 +72,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       {
         icon: <DashboardIcon />,
         key: appRoutes.home,
-        label: <Link to={appRoutes.home}>Inicio</Link>,
+        label: 'Inicio',
       },
     ];
 
@@ -79,7 +80,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <DuesIcon />,
         key: appRoutes.dues.list,
-        label: <Link to={appRoutes.dues.list}>Deudas</Link>,
+        label: 'Deudas',
       });
     }
 
@@ -87,7 +88,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <PaymentsIcon />,
         key: appRoutes.payments.list,
-        label: <Link to={appRoutes.payments.list}>Pagos</Link>,
+        label: 'Pagos',
       });
     }
 
@@ -95,7 +96,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <MovementsIcon />,
         key: appRoutes.movements.list,
-        label: <Link to={appRoutes.movements.list}>Movimientos</Link>,
+        label: 'Movimientos',
       });
     }
 
@@ -103,7 +104,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <LedgerIcon />,
         key: appRoutes.memberLedger.list,
-        label: <Link to={appRoutes.memberLedger.list}>Libro Mayor</Link>,
+        label: 'Libro Mayor',
       });
     }
 
@@ -111,7 +112,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <UsersIcon />,
         key: appRoutes.members.list,
-        label: <Link to={appRoutes.members.list}>Socios</Link>,
+        label: 'Socios',
       });
     }
 
@@ -119,7 +120,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <UsersIcon />,
         key: appRoutes.users.list,
-        label: <Link to={appRoutes.users.list}>Usuarios</Link>,
+        label: 'Usuarios',
       });
     }
 
@@ -127,7 +128,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <PricingIcon />,
         key: appRoutes.pricing.list,
-        label: <Link to={appRoutes.pricing.list}>Precios</Link>,
+        label: 'Precios',
       });
     }
 
@@ -135,7 +136,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <AuditLogsIcon />,
         key: appRoutes.auditLogs.list,
-        label: <Link to={appRoutes.auditLogs.list}>Auditoría</Link>,
+        label: 'Auditoría',
       });
     }
 
@@ -143,9 +144,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       items.push({
         icon: <SettingOutlined />,
         key: appRoutes.appSettings,
-        label: (
-          <Link to={appRoutes.appSettings}>Configuración del Sistema</Link>
-        ),
+        label: 'Configuración del Sistema',
       });
     }
 
@@ -153,12 +152,12 @@ export function AppLayout({ children }: PropsWithChildren) {
       {
         icon: <UserOutlined />,
         key: appRoutes.profile,
-        label: <Link to={appRoutes.profile}>Mi Perfil</Link>,
+        label: 'Mi Perfil',
       },
       {
         icon: <LogoutIcon />,
         key: appRoutes.auth.logout,
-        label: <Link to={appRoutes.auth.logout}>Cerrar sesión</Link>,
+        label: 'Cerrar sesión',
       },
     );
 
@@ -174,7 +173,7 @@ export function AppLayout({ children }: PropsWithChildren) {
         collapsed={collapsed}
         collapsible
         onCollapse={setCollapsed}
-        theme={themeMode}
+        theme={selectedTheme}
       >
         <Flex className="h-full" vertical>
           <Image
@@ -215,9 +214,9 @@ export function AppLayout({ children }: PropsWithChildren) {
               className="border-e-0"
               items={menuItems}
               mode="inline"
-              // onClick={({ key }) => navigate(key)}
+              onClick={({ key }) => navigate(key)}
               selectedKeys={selectedKeys}
-              theme={themeMode}
+              theme={selectedTheme}
             />
           </ConfigProvider>
         </Flex>

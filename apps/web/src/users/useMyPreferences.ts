@@ -6,7 +6,7 @@ import { queryKeys } from '@/shared/lib/query-keys';
 
 export function useMyPreferences() {
   return useQuery({
-    ...queryKeys.users.myPreferences,
+    ...queryKeys.users.me,
     queryFn: () => $fetch<UserPreferencesDto>('users/me/preferences'),
   });
 }

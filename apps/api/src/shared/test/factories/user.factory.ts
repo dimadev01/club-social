@@ -6,10 +6,7 @@ import {
   UserEntity,
   type UserProps,
 } from '@/users/domain/entities/user.entity';
-import {
-  DEFAULT_USER_PREFERENCES,
-  UserPreferencesVO,
-} from '@/users/domain/value-objects/user-preferences.vo';
+import { UserPreferences } from '@/users/domain/value-objects/user-preferences.vo';
 
 import {
   TEST_CREATED_BY,
@@ -29,7 +26,7 @@ export const createUserProps = (overrides?: UserPropsOverrides): UserProps => ({
     firstName: TEST_FIRST_NAME,
     lastName: TEST_LAST_NAME,
   })._unsafeUnwrap(),
-  preferences: UserPreferencesVO.raw(DEFAULT_USER_PREFERENCES),
+  preferences: UserPreferences.raw(),
   role: UserRole.MEMBER,
   status: UserStatus.ACTIVE,
   ...overrides,

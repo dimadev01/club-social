@@ -1,3 +1,9 @@
+import {
+  Theme,
+  ThemeAlgorithm,
+  ThemeVariant,
+  type UserPreferencesDto,
+} from '@club-social/shared/users';
 import { type ThemeConfig } from 'antd';
 import { createContext, useContext } from 'react';
 
@@ -11,26 +17,40 @@ export const AppThemeMode = {
   LIGHT: 'light',
 } as const;
 
-export type AppTheme = (typeof AppTheme)[keyof typeof AppTheme];
+export type AntThemeMode = (typeof AntThemeMode)[keyof typeof AntThemeMode];
 export type AppThemeMode = (typeof AppThemeMode)[keyof typeof AppThemeMode];
 
-export const AppTheme = {
+export const AntThemeMode = {
   DARK: 'dark',
   LIGHT: 'light',
 } as const;
 
 interface AppContextType {
-  appThemeMode: AppThemeMode;
-  setAppThemeMode: (theme: AppThemeMode) => void;
-  setThemeMode: (theme: 'dark' | 'light') => void;
-  themeMode: 'dark' | 'light';
+  // appThemeMode: AppThemeMode;
+  isLoading: boolean;
+  preferences: UserPreferencesDto;
+  selectedTheme: AntThemeMode;
+
+  ///
+  // setAppThemeMode: (theme: AppThemeMode) => void;
+  // setThemeMode: (theme: 'dark' | 'light') => void;
+  // themeMode: 'dark' | 'light';
+  updatePreferences: (preferences: Partial<UserPreferencesDto>) => void;
 }
 
 export const AppContext = createContext<AppContextType>({
-  appThemeMode: AppThemeMode.AUTO,
-  setAppThemeMode: noop,
-  setThemeMode: noop,
-  themeMode: 'light',
+  isLoading: false,
+  preferences: {
+    theme: Theme.AUTO,
+    themeAlgorithm: ThemeAlgorithm.DEFAULT,
+    themeVariant: ThemeVariant.DEFAULT,
+  },
+  // appThemeMode: AppThemeMode.AUTO,
+  selectedTheme: AntThemeMode.LIGHT,
+  // setAppThemeMode: noop,
+  // setThemeMode: noop,
+  // themeMode: 'light',
+  updatePreferences: noop,
 });
 
 export const useAppContext = () => {

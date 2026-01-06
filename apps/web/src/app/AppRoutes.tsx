@@ -30,6 +30,7 @@ import { PricingView } from '@/pricing/PricingView';
 import { ProfilePage } from '@/profile/ProfilePage';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { NotFound } from '@/ui';
+import { useMyPreferences } from '@/users/useMyPreferences';
 import { UserEdit } from '@/users/UserEdit';
 import { UserListPage } from '@/users/UserList';
 import { UserNew } from '@/users/UserNew';
@@ -40,6 +41,11 @@ import { AppLoading } from './AppLoading';
 
 export function AppRoutes() {
   const { isPending } = betterAuthClient.useSession();
+
+  const { data: userPreferences, isLoading: isLoadingUserPreferences } =
+    useMyPreferences();
+
+  console.log({ isLoadingUserPreferences, userPreferences });
 
   if (isPending) {
     return <AppLoading />;

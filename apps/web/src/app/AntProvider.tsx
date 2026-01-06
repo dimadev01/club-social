@@ -8,35 +8,16 @@ import {
 } from 'antd';
 import esEs from 'antd/locale/es_ES';
 import { GiTennisBall } from 'react-icons/gi';
-import { useMedia } from 'react-use';
 
-import {
-  type AppAlgorithm,
-  AppTheme,
-  AppThemeMode,
-  useAppContext,
-} from './AppContext';
+import { AntThemeMode, useAppContext } from './AppContext';
 
 export function AntProvider({ children }: { children: React.ReactNode }) {
-  const { appThemeMode, setThemeMode } = useAppContext();
-  const prefersDark = useMedia('(prefers-color-scheme: dark)');
+  const { selectedTheme } = useAppContext();
 
-  let algorithm: AppAlgorithm;
-
-  if (appThemeMode === AppThemeMode.AUTO) {
-    algorithm = prefersDark
+  const algorithm =
+    selectedTheme === AntThemeMode.DARK
       ? antTheme.darkAlgorithm
       : antTheme.defaultAlgorithm;
-    setThemeMode(prefersDark ? AppTheme.DARK : AppTheme.LIGHT);
-  } else if (appThemeMode === AppThemeMode.DARK) {
-    algorithm = antTheme.darkAlgorithm;
-    setThemeMode(AppTheme.DARK);
-  } else if (appThemeMode === AppThemeMode.LIGHT) {
-    algorithm = antTheme.defaultAlgorithm;
-    setThemeMode(AppTheme.LIGHT);
-  } else {
-    throw new Error(`Invalid theme mode: ${appThemeMode}`);
-  }
 
   const themeConfig: ThemeConfig = {
     algorithm: [algorithm],

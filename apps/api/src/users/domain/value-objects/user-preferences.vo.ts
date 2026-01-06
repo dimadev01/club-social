@@ -1,52 +1,63 @@
-import { Language, Theme, ThemeVariant } from '@club-social/shared/users';
+import { Theme, ThemeAlgorithm, ThemeVariant } from '@club-social/shared/users';
 
 import { ValueObject } from '@/shared/domain/value-objects/value-object.base';
 
 export interface UserPreferencesProps {
-  language: Language;
   theme: Theme;
+  themeAlgorithm: ThemeAlgorithm;
   themeVariant: ThemeVariant;
-  timezone: string;
 }
 
 export const DEFAULT_USER_PREFERENCES = {
-  language: Language.ES,
   theme: Theme.AUTO,
-  themeVariant: ThemeVariant.OUTLINED,
-  timezone: 'America/Argentina/Buenos_Aires',
+  themeAlgorithm: ThemeAlgorithm.DEFAULT,
+  themeVariant: ThemeVariant.DEFAULT,
 } satisfies UserPreferencesProps;
 
-export class UserPreferencesVO extends ValueObject<UserPreferencesProps> {
-  public get language(): Language {
-    return this.props.language;
-  }
-
+export class UserPreferences extends ValueObject<UserPreferencesProps> {
   public get theme(): Theme {
     return this.props.theme;
+  }
+
+  public get themeAlgorithm(): ThemeAlgorithm {
+    return this.props.themeAlgorithm;
   }
 
   public get themeVariant(): ThemeVariant {
     return this.props.themeVariant;
   }
 
-  public get timezone(): string {
-    return this.props.timezone;
-  }
-
   private constructor(props: UserPreferencesProps) {
     super(props);
   }
 
-  public static raw(props: UserPreferencesProps): UserPreferencesVO {
-    return new UserPreferencesVO(props);
+  public static raw(
+    props: Partial<UserPreferencesProps> = {},
+  ): UserPreferences {
+    return new UserPreferences({
+      ...DEFAULT_USER_PREFERENCES,
+      ...props,
+    });
   }
 
-  public toJSON(): UserPreferencesProps {
-    return { ...this.props };
+  public toJson(): UserPreferencesProps {
+    return {
+      theme: this.props.theme,
+      themeAlgorithm: this.props.themeAlgorithm,
+      themeVariant: this.props.themeVariant,
+    };
   }
 
-  public update(partial: Partial<UserPreferencesProps>): UserPreferencesVO {
-    return new UserPreferencesVO({ ...this.props, ...partial });
+  public update(partial: Partial<UserPreferencesProps>): UserPreferences {
+    const defined = Object.fromEntries(
+      Object.entries(partial).filter(([, v]) => v !== undefined),
+    );
+
+    return new UserPreferences({
+      ...DEFAULT_USER_PREFERENCES,
+      ...this.props,
+      ...defined,
+    });
   }
 
   protected toString(): string {

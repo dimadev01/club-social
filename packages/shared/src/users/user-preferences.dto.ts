@@ -1,10 +1,13 @@
-import { Language, Theme, ThemeVariant } from './user-preferences.enum';
+import { Theme, ThemeAlgorithm, ThemeVariant } from './user-preferences.enum';
 
-export type UpdateUserPreferencesDto = Partial<UserPreferencesDto>;
+export type UpdateUserPreferencesDto = Partial<{
+  theme: Theme;
+  themeAlgorithm: ThemeAlgorithm;
+  themeVariant: ThemeVariant;
+}>;
 
 export interface UserPreferencesDto {
-  language: Language;
   theme: Theme;
+  themeAlgorithm: ThemeAlgorithm;
   themeVariant: ThemeVariant;
-  timezone: string;
 }
