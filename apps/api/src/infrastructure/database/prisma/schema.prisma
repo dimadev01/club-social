@@ -12,12 +12,12 @@ model User {
   id            String    @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   role          String
-  banned        Boolean?  @default(false)
+  banned        Boolean?
   banReason     String?
   banExpires    DateTime?
   createdBy     String
@@ -26,12 +26,12 @@ model User {
   firstName     String
   lastName      String
   status        String
-  updatedBy     String
-  preferences   Json?
+  updatedBy     String?
   sessions      Session[]
   accounts      Account[]
   passkeys      Passkey[]
   member        Member?
+  preferences   Json?
 
   @@unique([email])
   @@map("user")

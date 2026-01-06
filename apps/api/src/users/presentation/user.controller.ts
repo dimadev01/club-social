@@ -123,60 +123,25 @@ export class UsersController extends BaseController {
       UniqueId.raw({ value: session.user.id }),
     );
 
-    return user.preferences.toJSON();
+    return {
+      theme: user.preferences.theme,
+      themeAlgorithm: user.preferences.themeAlgorithm,
+      themeVariant: user.preferences.themeVariant,
+    };
   }
 
   @Patch('me/preferences')
   public async updateMyPreferences(
     @Body() body: UpdateUserPreferencesRequestDto,
     @Session() session: AuthSession,
-  ): Promise<UserPreferencesResponseDto> {
-    const user = this.handleResult(
+  ): Promise<void> {
+    this.handleResult(
       await this.updateUserPreferencesUseCase.execute({
         preferences: body,
         updatedBy: session.user.id,
         userId: session.user.id,
       }),
     );
-
-    return user.preferences.toJSON();
-  }
-
-  @Get(':id/preferences')
-  public async getUserPreferences(
-    @Param() request: ParamIdReqResDto,
-    @Session() session: AuthSession,
-  ): Promise<UserPreferencesResponseDto> {
-    this.requireAdmin(session);
-
-    const user = await this.userRepository.findById(
-      UniqueId.raw({ value: request.id }),
-    );
-
-    if (!user) {
-      throw new NotFoundException();
-    }
-
-    return user.preferences.toJSON();
-  }
-
-  @Patch(':id/preferences')
-  public async updateUserPreferences(
-    @Param() request: ParamIdReqResDto,
-    @Body() body: UpdateUserPreferencesRequestDto,
-    @Session() session: AuthSession,
-  ): Promise<UserPreferencesResponseDto> {
-    this.requireAdmin(session);
-
-    const user = this.handleResult(
-      await this.updateUserPreferencesUseCase.execute({
-        preferences: body,
-        updatedBy: session.user.id,
-        userId: request.id,
-      }),
-    );
-
-    return user.preferences.toJSON();
   }
 
   @Get(':id')

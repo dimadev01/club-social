@@ -23,7 +23,7 @@ export class PrismaMovementMapper {
     Guard.string(entity.createdBy);
 
     return {
-      amount: entity.amount.toCents(),
+      amount: entity.amount.cents,
       category: entity.category,
       createdBy: entity.createdBy,
       date: entity.date.value,
@@ -70,7 +70,7 @@ export class PrismaMovementMapper {
 
   public toUpdateInput(entity: MovementEntity): MovementUpdateInput {
     return {
-      amount: entity.amount.toCents(),
+      amount: entity.amount.cents,
       category: entity.category,
       date: entity.date.value,
       id: entity.id.value,

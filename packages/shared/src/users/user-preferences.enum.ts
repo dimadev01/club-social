@@ -14,33 +14,26 @@ export const ThemeLabel: Record<Theme, string> = {
 
 export const ThemeVariant = {
   BORDERLESS: 'borderless',
+  DEFAULT: 'default',
   FILLED: 'filled',
   OUTLINED: 'outlined',
+  UNDERLINED: 'underlined',
 } as const;
 
 export type ThemeVariant = (typeof ThemeVariant)[keyof typeof ThemeVariant];
 
 export const ThemeVariantLabel: Record<ThemeVariant, string> = {
   [ThemeVariant.BORDERLESS]: 'Sin bordes',
+  [ThemeVariant.DEFAULT]: 'Predeterminado',
   [ThemeVariant.FILLED]: 'Relleno',
   [ThemeVariant.OUTLINED]: 'Con bordes',
+  [ThemeVariant.UNDERLINED]: 'Subrayado',
 } as const;
 
-export const Language = {
-  EN: 'en',
-  ES: 'es',
+export const ThemeAlgorithm = {
+  COMPACT: 'compact',
+  DEFAULT: 'default',
 } as const;
 
-export type Language = (typeof Language)[keyof typeof Language];
-
-export const LanguageLabel: Record<Language, string> = {
-  [Language.EN]: 'English',
-  [Language.ES]: 'Español',
-} as const;
-
-export interface UserPreferences {
-  language: Language;
-  theme: Theme;
-  themeVariant: ThemeVariant;
-  timezone: string;
-}
+export type ThemeAlgorithm =
+  (typeof ThemeAlgorithm)[keyof typeof ThemeAlgorithm];

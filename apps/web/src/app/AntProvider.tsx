@@ -7,54 +7,40 @@ import {
   type ThemeConfig,
 } from 'antd';
 import esEs from 'antd/locale/es_ES';
+import { type PropsWithChildren, useMemo } from 'react';
 import { GiTennisBall } from 'react-icons/gi';
-import { useMedia } from 'react-use';
 
-import {
-  type AppAlgorithm,
-  AppTheme,
-  AppThemeMode,
-  useAppContext,
-} from './AppContext';
+import { AntThemeMode, useAppContext } from './AppContext';
 
-export function AntProvider({ children }: { children: React.ReactNode }) {
-  const { appThemeMode, setThemeMode } = useAppContext();
-  const prefersDark = useMedia('(prefers-color-scheme: dark)');
+export function AntProvider({ children }: PropsWithChildren) {
+  const { selectedTheme } = useAppContext();
 
-  let algorithm: AppAlgorithm;
-
-  if (appThemeMode === AppThemeMode.AUTO) {
-    algorithm = prefersDark
+  const algorithm =
+    selectedTheme === AntThemeMode.DARK
       ? antTheme.darkAlgorithm
       : antTheme.defaultAlgorithm;
-    setThemeMode(prefersDark ? AppTheme.DARK : AppTheme.LIGHT);
-  } else if (appThemeMode === AppThemeMode.DARK) {
-    algorithm = antTheme.darkAlgorithm;
-    setThemeMode(AppTheme.DARK);
-  } else if (appThemeMode === AppThemeMode.LIGHT) {
-    algorithm = antTheme.defaultAlgorithm;
-    setThemeMode(AppTheme.LIGHT);
-  } else {
-    throw new Error(`Invalid theme mode: ${appThemeMode}`);
-  }
 
-  const themeConfig: ThemeConfig = {
-    algorithm: [algorithm],
-    components: {
-      Button: {
-        primaryShadow: 'none',
+  const themeConfig: ThemeConfig = useMemo(
+    () => ({
+      algorithm: [algorithm],
+      components: {
+        Button: {
+          primaryShadow: 'none',
+        },
+        Layout: {
+          footerPadding: 0,
+        },
       },
-      Layout: {
-        footerPadding: 0,
+      hashed: false,
+      token: {
+        colorInfo: '#22883e',
+        colorPrimary: '#22883e',
+        motion: false,
       },
-    },
-    token: {
-      colorInfo: '#22883e',
-      colorPrimary: '#22883e',
-      motion: false,
-    },
-    zeroRuntime: true,
-  };
+      zeroRuntime: true,
+    }),
+    [algorithm],
+  );
 
   return (
     <StyleProvider layer>

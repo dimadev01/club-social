@@ -36,7 +36,7 @@ export class PrismaDueSettlementMapper {
   }[] {
     return due.settlements.map((settlement) => ({
       create: {
-        amount: settlement.amount.toCents(),
+        amount: settlement.amount.cents,
         due: { connect: { id: due.id.value } },
         id: settlement.id.value,
         memberLedgerEntry: {
@@ -48,7 +48,7 @@ export class PrismaDueSettlementMapper {
           : {}),
       },
       update: {
-        amount: settlement.amount.toCents(),
+        amount: settlement.amount.cents,
         status: settlement.status,
         ...(settlement.paymentId
           ? { payment: { connect: { id: settlement.paymentId.value } } }

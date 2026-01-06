@@ -19,7 +19,7 @@ export class PrismaPaymentMapper {
     Guard.string(payment.createdBy);
 
     return {
-      amount: payment.amount.toCents(),
+      amount: payment.amount.cents,
       createdBy: payment.createdBy,
       date: payment.date.value,
       id: payment.id.value,
@@ -65,7 +65,7 @@ export class PrismaPaymentMapper {
 
   public toUpdateInput(payment: PaymentEntity): PaymentUpdateInput {
     return {
-      amount: payment.amount.toCents(),
+      amount: payment.amount.cents,
       date: payment.date.value,
       id: payment.id.value,
       notes: payment.notes,

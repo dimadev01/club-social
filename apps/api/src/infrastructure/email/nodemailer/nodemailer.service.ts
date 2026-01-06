@@ -10,7 +10,7 @@ import {
 } from '@/shared/application/app-logger';
 
 import { EmailProvider } from '../email.provider';
-import { SendEmailParams } from '../email.types';
+import { SendEmailParams, SendTemplateEmailParams } from '../email.types';
 
 @Injectable()
 export class NodemailerProvider implements EmailProvider {
@@ -67,5 +67,15 @@ export class NodemailerProvider implements EmailProvider {
         params,
       });
     }
+  }
+
+  public async sendTemplate(params: SendTemplateEmailParams): Promise<void> {
+    this.logger.info({
+      message: 'Skipping template email for NodeMailer',
+      method: this.sendTemplate.name,
+      params,
+    });
+
+    return;
   }
 }

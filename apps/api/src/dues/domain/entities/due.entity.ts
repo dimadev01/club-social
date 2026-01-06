@@ -8,10 +8,16 @@ import { err, ok, Result } from '@/shared/domain/result';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import { StrictOmit } from '@/shared/types/type-utils';
 
 import { DueCreatedEvent } from '../events/due-created.event';
 import { DueUpdatedEvent } from '../events/due-updated.event';
 import { DueSettlementEntity } from './due-settlement.entity';
+
+export type CreateDueProps = StrictOmit<
+  DueProps,
+  'settlements' | 'status' | 'voidedAt' | 'voidedBy' | 'voidReason'
+>;
 
 export interface DueProps {
   amount: Amount;
@@ -110,10 +116,7 @@ export class DueEntity extends AuditedAggregateRoot {
   }
 
   public static create(
-    props: Omit<
-      DueProps,
-      'settlements' | 'status' | 'voidedAt' | 'voidedBy' | 'voidReason'
-    >,
+    props: CreateDueProps,
     createdBy: string,
   ): Result<DueEntity> {
     const due = new DueEntity(

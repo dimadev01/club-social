@@ -64,6 +64,9 @@ export const betterAuthClient = createAuthClient({
         lastName: {
           type: 'string',
         },
+        preferences: {
+          type: 'json',
+        },
         role: {
           type: 'string',
         },

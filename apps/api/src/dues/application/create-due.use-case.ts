@@ -11,13 +11,14 @@ import {
 import { UseCase } from '@/shared/application/use-case';
 import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok, ResultUtils } from '@/shared/domain/result';
-import {
-  UNIT_OF_WORK_PROVIDER,
-  type UnitOfWork,
-} from '@/shared/domain/unit-of-work';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+import {
+  DUE_REPOSITORY_PROVIDER,
+  type DueRepository,
+} from '../domain/due.repository';
 
 interface CreateDueParams {
   amount: number;
@@ -32,8 +33,8 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    @Inject(UNIT_OF_WORK_PROVIDER)
-    private readonly unitOfWork: UnitOfWork,
+    @Inject(DUE_REPOSITORY_PROVIDER)
+    private readonly dueRepository: DueRepository,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -71,9 +72,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
       return err(due.error);
     }
 
-    await this.unitOfWork.execute(async ({ duesRepository }) => {
-      await duesRepository.save(due.value);
-    });
+    await this.dueRepository.save(due.value);
     this.eventPublisher.dispatch(due.value);
 
     return ok(due.value);

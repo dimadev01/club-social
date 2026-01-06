@@ -6,6 +6,7 @@ import { QueueEmailType } from './email.enum';
 import {
   EmailJobData,
   SendMagicLinkParams,
+  SendNewDueMovementParams,
   SendVerificationEmailParams,
 } from './email.types';
 
@@ -20,6 +21,13 @@ export class EmailQueueService {
     await this.queue.add(QueueEmailType.SEND_MAGIC_LINK, {
       data: params,
       type: QueueEmailType.SEND_MAGIC_LINK,
+    });
+  }
+
+  public async sendNewDueMovement(params: SendNewDueMovementParams) {
+    await this.queue.add(QueueEmailType.SEND_NEW_DUE_MOVEMENT, {
+      data: params,
+      type: QueueEmailType.SEND_NEW_DUE_MOVEMENT,
     });
   }
 

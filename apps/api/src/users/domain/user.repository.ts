@@ -8,12 +8,6 @@ import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UserEntity } from './entities/user.entity';
 
 export const USER_REPOSITORY_PROVIDER = Symbol('UserRepository');
-export const USER_READABLE_REPOSITORY_PROVIDER = Symbol(
-  'UserReadableRepository',
-);
-export const USER_WRITEABLE_REPOSITORY_PROVIDER = Symbol(
-  'UserWriteableRepository',
-);
 
 export interface UserReadableRepository
   extends PaginatedRepository<UserEntity>, ReadableRepository<UserEntity> {
@@ -21,6 +15,9 @@ export interface UserReadableRepository
 }
 
 export interface UserRepository
-  extends UserReadableRepository, UserWriteableRepository {}
+  extends
+    PaginatedRepository<UserEntity>,
+    UserReadableRepository,
+    UserWriteableRepository {}
 
 export type UserWriteableRepository = WriteableRepository<UserEntity>;
