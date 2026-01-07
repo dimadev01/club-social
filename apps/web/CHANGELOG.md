@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/dimadev01/club-social/compare/web-v0.4.0...web-v0.4.1) (2026-01-07)
+
+
+### Bug Fixes
+
+* reorganize theme-related code and update deployment commands ([d96c160](https://github.com/dimadev01/club-social/commit/d96c16098d77e1a5a06ff6502e9293ef4f87a3f4))
+
 ## [0.4.0](https://github.com/dimadev01/club-social/compare/web-v0.3.0...web-v0.4.0) (2026-01-06)
 
 
