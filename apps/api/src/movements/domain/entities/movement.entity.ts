@@ -76,7 +76,6 @@ export class MovementEntity extends AuditedAggregateRoot {
   }
 
   private _amount: SignedAmount;
-
   private _category: MovementCategory;
   private _date: DateOnly;
   private _mode: MovementMode;
@@ -86,6 +85,7 @@ export class MovementEntity extends AuditedAggregateRoot {
   private _voidedAt: Date | null;
   private _voidedBy: null | string;
   private _voidReason: null | string;
+
   private constructor(props: MovementProps, meta?: PersistenceMeta) {
     super(meta?.id, meta?.audit);
 
@@ -184,7 +184,7 @@ export class MovementEntity extends AuditedAggregateRoot {
       );
     }
 
-    if (this._mode === MovementMode.AUTOMATIC) {
+    if (this.isAutomatic()) {
       return err(
         new ApplicationError('No se puede anular un movimiento automático'),
       );

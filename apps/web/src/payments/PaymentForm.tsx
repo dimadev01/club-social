@@ -11,6 +11,7 @@ import {
   Checkbox,
   DatePicker,
   Empty,
+  type FormInstance,
   Input,
   InputNumber,
   Skeleton,
@@ -19,7 +20,7 @@ import dayjs from 'dayjs';
 import { difference, differenceBy, flatMap, orderBy } from 'es-toolkit/array';
 import { flow } from 'es-toolkit/function';
 import { sumBy } from 'es-toolkit/math';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
@@ -53,7 +54,10 @@ interface PaymentFormProps {
   disabled?: boolean;
   initialValues?: FormInitialValues;
   mode: 'create' | 'edit';
-  onSubmit: (data: PaymentFormSchema) => void;
+  onSubmit: (
+    data: PaymentFormSchema,
+    form: FormInstance<PaymentFormSchema>,
+  ) => void;
 }
 
 const calculateSelectedDues = flow(
@@ -76,11 +80,6 @@ export function PaymentForm({
   onSubmit,
 }: PaymentFormProps) {
   /**
-   * State
-   */
-  const [selectedDueIds, setSelectedDueIds] = useState<string[]>([]);
-
-  /**
    * Form
    */
   const [form] = Form.useForm<PaymentFormSchema>();
@@ -90,6 +89,11 @@ export function PaymentForm({
   const formUseSurplusToCredit = Form.useWatch('useSurplusToCredit', form);
   const formDuesRaw = Form.useWatch<FormDueToPaySchema[]>('dues', form);
   const formDues = useMemo(() => formDuesRaw ?? [], [formDuesRaw]);
+
+  const selectedDueIds = useMemo(
+    () => formDues.map((due) => due.dueId),
+    [formDues],
+  );
 
   /**
    * Queries
@@ -296,7 +300,6 @@ export function PaymentForm({
       );
 
       setFieldValue('dues', selectedDues);
-      setSelectedDueIds(newSelectedRowKeys as string[]);
     },
     [getFieldValue, setFieldValue, getRemainingAmountForDue],
   );
@@ -321,7 +324,7 @@ export function PaymentForm({
       id="form"
       initialValues={initialValues}
       name="form"
-      onFinish={onSubmit}
+      onFinish={(values) => onSubmit(values, form)}
     >
       <Form.Item<PaymentFormSchema>
         label="Fecha"
