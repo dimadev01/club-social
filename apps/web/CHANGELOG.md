@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/dimadev01/club-social/compare/web-v0.5.0...web-v0.6.0) (2026-01-07)
+
+
+### Features
+
+* **pricing:** Improve pricing handling ([19142f8](https://github.com/dimadev01/club-social/commit/19142f8b20e25b63df646c66ed272ce8ec43a9b8))
+
 ## [0.5.0](https://github.com/dimadev01/club-social/compare/web-v0.4.3...web-v0.5.0) (2026-01-07)
 
 
