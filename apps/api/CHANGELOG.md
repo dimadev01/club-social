@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/dimadev01/club-social/compare/api-v0.6.0...api-v0.6.1) (2026-01-07)
+
+
+### Bug Fixes
+
+* **member:** streamline member data fetching and enhance export functionality ([0e1a1b7](https://github.com/dimadev01/club-social/commit/0e1a1b7c290c852dec82338d621b801ebbeba7e4))
+
 ## [0.6.0](https://github.com/dimadev01/club-social/compare/api-v0.5.0...api-v0.6.0) (2026-01-07)
 
 
