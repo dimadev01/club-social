@@ -8,12 +8,11 @@ import { useMyPreferences } from '@/users/useMyPreferences';
 
 import { AntThemeMode, DEFAULT_PREFERENCES } from './app.enum';
 import { AppContext } from './AppContext';
-import { AppLoading } from './AppLoading';
 
 export function AppContextProvider({ children }: PropsWithChildren) {
   const queryClient = useQueryClient();
 
-  const { data: preferences, isLoading } = useMyPreferences();
+  const { data: preferences } = useMyPreferences();
 
   const prefersDark = useMedia('(prefers-color-scheme: dark)');
 
@@ -33,10 +32,6 @@ export function AppContextProvider({ children }: PropsWithChildren) {
 
     return isDark ? AntThemeMode.DARK : AntThemeMode.LIGHT;
   }, [resolvedPreferences, prefersDark]);
-
-  if (isLoading) {
-    return <AppLoading />;
-  }
 
   return (
     <AppContext.Provider
