@@ -181,6 +181,14 @@ export class MembersController extends BaseController {
         accessor: (row) => NumberFormat.fromCents(row.guestTotalDueAmount),
         header: 'Deuda invitado',
       },
+      {
+        accessor: (row) => NumberFormat.fromCents(row.totalAmount),
+        header: 'Deuda total',
+      },
+      {
+        accessor: (row) => NumberFormat.fromCents(row.balance),
+        header: 'Saldo',
+      },
     ]);
 
     res.setHeader(
