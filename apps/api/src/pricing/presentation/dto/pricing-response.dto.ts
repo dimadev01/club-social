@@ -10,7 +10,7 @@ export class PricingResponseDto implements PricingDto {
   public effectiveFrom: string;
   public effectiveTo: null | string;
   public id: string;
-  public memberCategory: MemberCategory;
+  public memberCategory: MemberCategory | null;
   public updatedAt: string;
   public updatedBy?: null | string;
 }

@@ -1,8 +1,8 @@
 import { DueCategory } from '@club-social/shared/dues';
 import { MemberCategory } from '@club-social/shared/members';
-import { IPricingPaginatedDto } from '@club-social/shared/pricing';
+import { PricingPaginatedDto } from '@club-social/shared/pricing';
 
-export class PricingPaginatedDto implements IPricingPaginatedDto {
+export class PricingPaginatedResponseDto implements PricingPaginatedDto {
   public amount: number;
   public createdAt: string;
   public createdBy: string;
@@ -10,5 +10,5 @@ export class PricingPaginatedDto implements IPricingPaginatedDto {
   public effectiveFrom: string;
   public effectiveTo: null | string;
   public id: string;
-  public memberCategory: MemberCategory;
+  public memberCategory: MemberCategory | null;
 }

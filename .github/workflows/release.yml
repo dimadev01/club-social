@@ -22,33 +22,35 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
-  deploy:
+  deploy-api:
     needs: release
-    if: ${{ needs.release.outputs.releases_created == 'true' }}
+    if: ${{ needs.release.outputs.releases_created == 'true' && contains(fromJSON(needs.release.outputs.paths_released), 'apps/api') }}
     runs-on: ubuntu-latest
     container: ghcr.io/railwayapp/cli:latest
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     steps:
       - uses: actions/checkout@v5
-
-      # Deploy API only if apps/api was released
-      - name: Deploy API
-        if: ${{ contains(fromJSON(needs.release.outputs.paths_released), 'apps/api') }}
+      - run: railway up -s ${{ env.SVC_ID }} --ci
         env:
           SVC_ID: a65fd5b6-b21d-4a55-a1bd-e7afe2260669
-        run: railway up -s ${{ env.SVC_ID }} --ci
 
-      # Deploy Web only if apps/web was released
-      - name: Deploy Web
-        if: ${{ contains(fromJSON(needs.release.outputs.paths_released), 'apps/web') }}
+  deploy-web:
+    needs: release
+    if: ${{ needs.release.outputs.releases_created == 'true' && contains(fromJSON(needs.release.outputs.paths_released), 'apps/web') }}
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+      - run: railway up -s ${{ env.SVC_ID }} --ci
         env:
           SVC_ID: d1823f35-d242-4f9e-bb83-b0f12f36d79a
-        run: railway up -s ${{ env.SVC_ID }} --ci
 
   sentry-release:
-    needs: [release, deploy]
-    if: ${{ needs.release.outputs.releases_created == 'true' && contains(fromJSON(needs.release.outputs.paths_released), 'apps/api') }}
+    needs: [release, deploy-api]
+    if: ${{ always() && needs.deploy-api.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5

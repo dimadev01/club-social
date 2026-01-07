@@ -28,7 +28,7 @@ interface CreatePricingParams {
   createdBy: string;
   dueCategory: DueCategory;
   effectiveFrom: string;
-  memberCategory: MemberCategory;
+  memberCategory: MemberCategory | null;
 }
 
 @Injectable()

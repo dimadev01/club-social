@@ -20,19 +20,19 @@ export interface PricingRepository
     PaginatedRepository<PricingPaginatedModel, never>,
     ReadableRepository<PricingEntity>,
     WriteableRepository<PricingEntity> {
-  findByDueCategoryAndMemberCategory(
+  findActiveWithFallback(
     dueCategory: DueCategory,
     memberCategory: MemberCategory,
+  ): Promise<null | PricingEntity>;
+  findByDueCategoryAndMemberCategory(
+    dueCategory: DueCategory,
+    memberCategory: MemberCategory | null,
   ): Promise<PricingEntity[]>;
   findOneActive(
     dueCategory: DueCategory,
-    memberCategory: MemberCategory,
+    memberCategory: MemberCategory | null,
   ): Promise<null | PricingEntity>;
   findOverlapping(
     params: FindOverlappingPricingParams,
   ): Promise<PricingEntity[]>;
-  findUniqueActive(
-    dueCategory: DueCategory,
-    memberCategory: MemberCategory,
-  ): Promise<null | PricingEntity>;
 }

@@ -22,7 +22,7 @@
     "@lukemorales/query-key-factory": "^1.3.4",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.16",
-    "antd": "^6.1.3",
+    "antd": "^6.1.4",
     "better-auth": "^1.4.10",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.19",
@@ -60,7 +60,7 @@
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.51.0",
-    "vite": "^7.3.0"
+    "typescript-eslint": "^8.52.0",
+    "vite": "^7.3.1"
   }
 }

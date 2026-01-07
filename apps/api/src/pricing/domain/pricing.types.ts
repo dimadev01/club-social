@@ -10,7 +10,7 @@ export interface FindOverlappingPricingParams {
   dueCategory: DueCategory;
   effectiveFrom: DateOnly;
   excludeId?: UniqueId;
-  memberCategory: MemberCategory;
+  memberCategory: MemberCategory | null;
 }
 
 export interface PricingPaginatedModel {

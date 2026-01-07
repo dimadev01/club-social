@@ -31,9 +31,22 @@ export class PrismaPricingRepository implements PricingRepository {
     private readonly pricingMapper: PrismaPricingMapper,
   ) {}
 
-  public async findByDueCategoryAndMemberCategory(
+  public async findActiveWithFallback(
     dueCategory: DueCategory,
     memberCategory: MemberCategory,
+  ): Promise<null | PricingEntity> {
+    const specific = await this.findOneActive(dueCategory, memberCategory);
+
+    if (specific) {
+      return specific;
+    }
+
+    return this.findOneActive(dueCategory, null);
+  }
+
+  public async findByDueCategoryAndMemberCategory(
+    dueCategory: DueCategory,
+    memberCategory: MemberCategory | null,
   ): Promise<PricingEntity[]> {
     const prices = await this.prismaService.pricing.findMany({
       where: {
@@ -75,7 +88,7 @@ export class PrismaPricingRepository implements PricingRepository {
 
   public async findOneActive(
     dueCategory: DueCategory,
-    memberCategory: MemberCategory,
+    memberCategory: MemberCategory | null,
   ): Promise<null | PricingEntity> {
     const today = DateOnly.today();
 
@@ -134,7 +147,23 @@ export class PrismaPricingRepository implements PricingRepository {
     }
 
     if (params.filters?.memberCategory) {
-      where.memberCategory = { in: params.filters.memberCategory };
+      const categories = params.filters.memberCategory as string[];
+
+      // Check if 'base' is included in filter (represents null memberCategory)
+      if (categories.includes('base')) {
+        const otherCategories = categories.filter((c) => c !== 'base');
+
+        if (otherCategories.length > 0) {
+          where.OR = [
+            { memberCategory: null },
+            { memberCategory: { in: otherCategories } },
+          ];
+        } else {
+          where.memberCategory = null;
+        }
+      } else {
+        where.memberCategory = { in: categories };
+      }
     }
 
     const orderBy: PricingOrderByWithRelationInput[] = [
@@ -158,22 +187,6 @@ export class PrismaPricingRepository implements PricingRepository {
       })),
       total,
     };
-  }
-
-  public async findUniqueActive(
-    dueCategory: DueCategory,
-    memberCategory: MemberCategory,
-  ): Promise<null | PricingEntity> {
-    const pricing = await this.prismaService.pricing.findFirst({
-      where: {
-        deletedAt: null,
-        dueCategory,
-        effectiveTo: null,
-        memberCategory,
-      },
-    });
-
-    return pricing ? this.pricingMapper.toDomain(pricing) : null;
   }
 
   public async save(

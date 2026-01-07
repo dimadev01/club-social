@@ -300,7 +300,7 @@ model AuditLog {
 model Pricing {
   id             String  @id
   dueCategory    String
-  memberCategory String
+  memberCategory String?
   amount         Int
   effectiveFrom  String
   effectiveTo    String?

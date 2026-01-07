@@ -62,7 +62,9 @@ export function PricingView() {
                 label: 'Tipo de deuda',
               },
               {
-                children: MemberCategoryLabel[pricing.memberCategory],
+                children: pricing.memberCategory
+                  ? MemberCategoryLabel[pricing.memberCategory]
+                  : 'Todas las categorías (precio base)',
                 label: 'Categoría de socio',
               },
               {
