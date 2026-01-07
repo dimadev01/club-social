@@ -2,8 +2,9 @@ name: check
 
 on:
   pull_request:
-    branches:
-      - dev
+    branches: [dev, main]
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -19,9 +20,23 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - uses: actions/checkout@v5
+
       - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
           cache: npm
+
       - run: npm ci
+
       - run: npm run check
+
+      - run: npm run test:cov -w @club-social/api
+
+      - name: Upload coverage to Codecov
+        if: ${{ success() }}
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./apps/api/coverage/lcov.info
+          flags: api
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

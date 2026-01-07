@@ -138,7 +138,7 @@ export class UsersController extends BaseController {
     this.handleResult(
       await this.updateUserPreferencesUseCase.execute({
         preferences: body,
-        updatedBy: session.user.id,
+        updatedBy: session.user.name,
         userId: session.user.id,
       }),
     );
