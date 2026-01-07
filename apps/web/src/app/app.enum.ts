@@ -74,7 +74,7 @@ export const AntThemeMode = {
 export type AntThemeMode = (typeof AntThemeMode)[keyof typeof AntThemeMode];
 
 export const DEFAULT_PREFERENCES: UserPreferencesDto = {
-  theme: Theme.LIGHT,
+  theme: Theme.AUTO,
   themeAlgorithm: ThemeAlgorithm.DEFAULT,
   themeVariant: ThemeVariant.DEFAULT,
 };
