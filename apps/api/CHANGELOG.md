@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/dimadev01/club-social/compare/api-v0.4.1...api-v0.5.0) (2026-01-07)
+
+
+### Features
+
+* update form handling and UI components ([4d0641e](https://github.com/dimadev01/club-social/commit/4d0641e5d76416a87d3690993c2bf052bacafbc5))
+
 ## [0.4.1](https://github.com/dimadev01/club-social/compare/api-v0.4.0...api-v0.4.1) (2026-01-07)
 
 
