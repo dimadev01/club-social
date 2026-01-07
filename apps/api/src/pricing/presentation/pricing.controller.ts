@@ -33,7 +33,7 @@ import {
 } from '../domain/pricing.repository';
 import { CreatePricingRequestDto } from './dto/create-pricing.dto';
 import { FindActivePricingRequestDto } from './dto/find-active-pricing.dto';
-import { PricingPaginatedDto } from './dto/pricing-paginated.dto';
+import { PricingPaginatedResponseDto } from './dto/pricing-paginated.dto';
 import { PricingResponseDto } from './dto/pricing-response.dto';
 import { UpdatePricingRequestDto } from './dto/update-pricing.dto';
 
@@ -88,7 +88,8 @@ export class PricingController extends BaseController {
   public async getActive(
     @Query() query: FindActivePricingRequestDto,
   ): Promise<null | PricingResponseDto> {
-    const pricing = await this.pricingRepository.findOneActive(
+    // Use fallback method: first checks for specific price, then falls back to base price
+    const pricing = await this.pricingRepository.findActiveWithFallback(
       query.dueCategory,
       query.memberCategory,
     );
@@ -99,7 +100,7 @@ export class PricingController extends BaseController {
   @Get('paginated')
   public async getPaginated(
     @Query() query: GetPaginatedDataRequestDto,
-  ): Promise<PaginatedDataResponseDto<PricingPaginatedDto>> {
+  ): Promise<PaginatedDataResponseDto<PricingPaginatedResponseDto>> {
     const result = await this.pricingRepository.findPaginated({
       filters: query.filters,
       page: query.page,

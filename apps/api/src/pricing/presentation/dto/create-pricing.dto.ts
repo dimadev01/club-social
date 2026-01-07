@@ -7,7 +7,9 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsPositive,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreatePricingRequestDto implements CreatePricingDto {
@@ -26,6 +28,7 @@ export class CreatePricingRequestDto implements CreatePricingDto {
   public effectiveFrom: string;
 
   @IsEnum(MemberCategory)
-  @IsNotEmpty()
-  public memberCategory: MemberCategory;
+  @IsOptional()
+  @ValidateIf((o) => o.memberCategory !== null)
+  public memberCategory: MemberCategory | null;
 }

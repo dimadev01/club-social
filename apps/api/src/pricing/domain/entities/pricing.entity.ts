@@ -17,7 +17,7 @@ export interface PricingProps {
   dueCategory: DueCategory;
   effectiveFrom: DateOnly;
   effectiveTo: DateOnly | null;
-  memberCategory: MemberCategory;
+  memberCategory: MemberCategory | null;
 }
 
 export class PricingEntity extends SoftDeletableAggregateRoot {
@@ -37,7 +37,11 @@ export class PricingEntity extends SoftDeletableAggregateRoot {
     return this._effectiveTo;
   }
 
-  public get memberCategory(): MemberCategory {
+  public get isBasePrice(): boolean {
+    return this._memberCategory === null;
+  }
+
+  public get memberCategory(): MemberCategory | null {
     return this._memberCategory;
   }
 
@@ -45,7 +49,7 @@ export class PricingEntity extends SoftDeletableAggregateRoot {
   private _dueCategory: DueCategory;
   private _effectiveFrom: DateOnly;
   private _effectiveTo: DateOnly | null;
-  private _memberCategory: MemberCategory;
+  private _memberCategory: MemberCategory | null;
 
   private constructor(
     props: PricingProps,

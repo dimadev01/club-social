@@ -230,7 +230,7 @@ export type PricingGroupByArgs<
 export type PricingGroupByOutputType = {
   id: string;
   dueCategory: string;
-  memberCategory: string;
+  memberCategory: string | null;
   amount: number;
   effectiveFrom: string;
   effectiveTo: string | null;
@@ -266,7 +266,7 @@ export type PricingWhereInput = {
   NOT?: Prisma.PricingWhereInput | Prisma.PricingWhereInput[];
   id?: Prisma.StringFilter<'Pricing'> | string;
   dueCategory?: Prisma.StringFilter<'Pricing'> | string;
-  memberCategory?: Prisma.StringFilter<'Pricing'> | string;
+  memberCategory?: Prisma.StringNullableFilter<'Pricing'> | string | null;
   amount?: Prisma.IntFilter<'Pricing'> | number;
   effectiveFrom?: Prisma.StringFilter<'Pricing'> | string;
   effectiveTo?: Prisma.StringNullableFilter<'Pricing'> | string | null;
@@ -281,7 +281,7 @@ export type PricingWhereInput = {
 export type PricingOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
   dueCategory?: Prisma.SortOrder;
-  memberCategory?: Prisma.SortOrder;
+  memberCategory?: Prisma.SortOrderInput | Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   effectiveFrom?: Prisma.SortOrder;
   effectiveTo?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -300,7 +300,7 @@ export type PricingWhereUniqueInput = Prisma.AtLeast<
     OR?: Prisma.PricingWhereInput[];
     NOT?: Prisma.PricingWhereInput | Prisma.PricingWhereInput[];
     dueCategory?: Prisma.StringFilter<'Pricing'> | string;
-    memberCategory?: Prisma.StringFilter<'Pricing'> | string;
+    memberCategory?: Prisma.StringNullableFilter<'Pricing'> | string | null;
     amount?: Prisma.IntFilter<'Pricing'> | number;
     effectiveFrom?: Prisma.StringFilter<'Pricing'> | string;
     effectiveTo?: Prisma.StringNullableFilter<'Pricing'> | string | null;
@@ -317,7 +317,7 @@ export type PricingWhereUniqueInput = Prisma.AtLeast<
 export type PricingOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
   dueCategory?: Prisma.SortOrder;
-  memberCategory?: Prisma.SortOrder;
+  memberCategory?: Prisma.SortOrderInput | Prisma.SortOrder;
   amount?: Prisma.SortOrder;
   effectiveFrom?: Prisma.SortOrder;
   effectiveTo?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -344,7 +344,10 @@ export type PricingScalarWhereWithAggregatesInput = {
     | Prisma.PricingScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<'Pricing'> | string;
   dueCategory?: Prisma.StringWithAggregatesFilter<'Pricing'> | string;
-  memberCategory?: Prisma.StringWithAggregatesFilter<'Pricing'> | string;
+  memberCategory?:
+    | Prisma.StringNullableWithAggregatesFilter<'Pricing'>
+    | string
+    | null;
   amount?: Prisma.IntWithAggregatesFilter<'Pricing'> | number;
   effectiveFrom?: Prisma.StringWithAggregatesFilter<'Pricing'> | string;
   effectiveTo?:
@@ -372,7 +375,7 @@ export type PricingScalarWhereWithAggregatesInput = {
 export type PricingCreateInput = {
   id: string;
   dueCategory: string;
-  memberCategory: string;
+  memberCategory?: string | null;
   amount: number;
   effectiveFrom: string;
   effectiveTo?: string | null;
@@ -387,7 +390,7 @@ export type PricingCreateInput = {
 export type PricingUncheckedCreateInput = {
   id: string;
   dueCategory: string;
-  memberCategory: string;
+  memberCategory?: string | null;
   amount: number;
   effectiveFrom: string;
   effectiveTo?: string | null;
@@ -402,7 +405,10 @@ export type PricingUncheckedCreateInput = {
 export type PricingUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   dueCategory?: Prisma.StringFieldUpdateOperationsInput | string;
-  memberCategory?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberCategory?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   effectiveFrom?: Prisma.StringFieldUpdateOperationsInput | string;
   effectiveTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -421,7 +427,10 @@ export type PricingUpdateInput = {
 export type PricingUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   dueCategory?: Prisma.StringFieldUpdateOperationsInput | string;
-  memberCategory?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberCategory?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   effectiveFrom?: Prisma.StringFieldUpdateOperationsInput | string;
   effectiveTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -440,7 +449,7 @@ export type PricingUncheckedUpdateInput = {
 export type PricingCreateManyInput = {
   id: string;
   dueCategory: string;
-  memberCategory: string;
+  memberCategory?: string | null;
   amount: number;
   effectiveFrom: string;
   effectiveTo?: string | null;
@@ -455,7 +464,10 @@ export type PricingCreateManyInput = {
 export type PricingUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   dueCategory?: Prisma.StringFieldUpdateOperationsInput | string;
-  memberCategory?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberCategory?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   effectiveFrom?: Prisma.StringFieldUpdateOperationsInput | string;
   effectiveTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -474,7 +486,10 @@ export type PricingUpdateManyMutationInput = {
 export type PricingUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   dueCategory?: Prisma.StringFieldUpdateOperationsInput | string;
-  memberCategory?: Prisma.StringFieldUpdateOperationsInput | string;
+  memberCategory?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   amount?: Prisma.IntFieldUpdateOperationsInput | number;
   effectiveFrom?: Prisma.StringFieldUpdateOperationsInput | string;
   effectiveTo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
@@ -650,7 +665,7 @@ export type $PricingPayload<
     {
       id: string;
       dueCategory: string;
-      memberCategory: string;
+      memberCategory: string | null;
       amount: number;
       effectiveFrom: string;
       effectiveTo: string | null;

@@ -11,11 +11,13 @@ import { DatePicker, InputNumber } from 'antd';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Form, Select } from '@/ui';
 
+const BASE_PRICE_LABEL = 'Todas las categorías (precio base)';
+
 export interface PricingFormData {
   amount: number;
   dueCategory: DueCategory;
   effectiveFrom: dayjs.Dayjs;
-  memberCategory: MemberCategory;
+  memberCategory: MemberCategory | null;
 }
 
 export type PricingFormInitialValues = Partial<PricingFormData>;
@@ -75,13 +77,15 @@ export function PricingForm({
       <Form.Item<PricingFormData>
         label="Categoría de socio"
         name="memberCategory"
-        rules={[
-          { message: 'La categoría de socio es requerida', required: true },
-        ]}
       >
         <Select
+          allowClear
           disabled={isEditMode || disabled}
-          options={labelMapToSelectOptions(MemberCategoryLabel)}
+          options={[
+            { label: BASE_PRICE_LABEL, value: null },
+            ...labelMapToSelectOptions(MemberCategoryLabel),
+          ]}
+          placeholder={BASE_PRICE_LABEL}
         />
       </Form.Item>
 

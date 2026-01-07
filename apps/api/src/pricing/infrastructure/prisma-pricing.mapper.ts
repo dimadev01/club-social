@@ -39,7 +39,7 @@ export class PrismaPricingMapper {
         effectiveTo: pricing.effectiveTo
           ? DateOnly.raw({ value: pricing.effectiveTo })
           : null,
-        memberCategory: pricing.memberCategory as MemberCategory,
+        memberCategory: pricing.memberCategory as MemberCategory | null,
       },
       {
         audit: {

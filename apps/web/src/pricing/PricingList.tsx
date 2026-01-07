@@ -6,7 +6,7 @@ import {
   type MemberCategory,
   MemberCategoryLabel,
 } from '@club-social/shared/members';
-import { type IPricingPaginatedDto } from '@club-social/shared/pricing';
+import { type PricingPaginatedDto } from '@club-social/shared/pricing';
 import { keepPreviousData } from '@tanstack/react-query';
 import { Button, Space } from 'antd';
 import { Link, useNavigate } from 'react-router';
@@ -33,7 +33,7 @@ export function PricingList() {
   const permissions = usePermissions();
 
   const { clearFilters, getFilterValue, onChange, query, resetFilters, state } =
-    useTable<IPricingPaginatedDto>({
+    useTable<PricingPaginatedDto>({
       defaultSort: [{ field: 'effectiveFrom', order: 'descend' }],
     });
 
@@ -42,7 +42,7 @@ export function PricingList() {
     enabled: permissions.pricing.list,
     placeholderData: keepPreviousData,
     queryFn: () =>
-      $fetch<PaginatedDataResultDto<IPricingPaginatedDto>>(
+      $fetch<PaginatedDataResultDto<PricingPaginatedDto>>(
         '/pricing/paginated',
         {
           query,
@@ -75,11 +75,11 @@ export function PricingList() {
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
-      <Table<IPricingPaginatedDto>
+      <Table<PricingPaginatedDto>
         columns={[
           {
             dataIndex: 'effectiveFrom',
-            render: (effectiveFrom: string, record: IPricingPaginatedDto) => (
+            render: (effectiveFrom: string, record: PricingPaginatedDto) => (
               <Link to={appRoutes.pricing.view(record.id)}>
                 {DateFormat.date(effectiveFrom)}
               </Link>
@@ -113,9 +113,14 @@ export function PricingList() {
             dataIndex: 'memberCategory',
             filteredValue: getFilterValue('memberCategory'),
             filterMode: 'tree',
-            filters: labelMapToFilterOptions(MemberCategoryLabel),
-            render: (memberCategory: MemberCategory) =>
-              MemberCategoryLabel[memberCategory],
+            filters: [
+              { text: 'Precio base (todas)', value: 'base' },
+              ...labelMapToFilterOptions(MemberCategoryLabel),
+            ],
+            render: (memberCategory: MemberCategory | null) =>
+              memberCategory
+                ? MemberCategoryLabel[memberCategory]
+                : 'Todas las categorías',
             title: 'Categoría de Socio',
             width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },

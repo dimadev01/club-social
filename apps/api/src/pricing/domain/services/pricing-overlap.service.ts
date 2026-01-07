@@ -19,7 +19,7 @@ export interface ResolveOverlapsParams {
   dueCategory: DueCategory;
   effectiveFrom: DateOnly;
   excludeId?: UniqueId;
-  memberCategory: MemberCategory;
+  memberCategory: MemberCategory | null;
   updatedBy: string;
 }
 
