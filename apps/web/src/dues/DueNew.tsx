@@ -1,16 +1,18 @@
 import type { CreateDueDto } from '@club-social/shared/dues';
 import type { ParamIdDto } from '@club-social/shared/types';
+import type { FormInstance } from 'antd/lib';
 
 import { DueCategory } from '@club-social/shared/dues';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { App } from 'antd';
 import dayjs from 'dayjs';
+import { useRef } from 'react';
 import { useNavigate } from 'react-router';
 
-import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
+import { FormSubmitButtonAndBack } from '@/ui/Form/FormSubmitAndBack';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueForm, type DueFormData } from './DueForm';
@@ -19,12 +21,16 @@ export function DueNew() {
   const { message } = App.useApp();
   const permissions = usePermissions();
   const navigate = useNavigate();
+  const shouldNavigateBack = useRef(false);
 
   const createDueMutation = useMutation<ParamIdDto, Error, CreateDueDto>({
     mutationFn: (body) => $fetch('/dues', { body }),
   });
 
-  const handleSubmit = async (values: DueFormData) => {
+  const handleSubmit = async (
+    values: DueFormData,
+    form: FormInstance<DueFormData>,
+  ) => {
     const amount = NumberFormat.toCents(values.amount);
 
     let date: string;
@@ -68,7 +74,11 @@ export function DueNew() {
       );
     }
 
-    navigate(appRoutes.dues.list, { replace: true });
+    if (shouldNavigateBack.current) {
+      navigate(-1);
+    } else {
+      form.resetFields(['memberIds', 'notes']);
+    }
   };
 
   if (!permissions.dues.create) {
@@ -80,7 +90,16 @@ export function DueNew() {
   return (
     <Card
       actions={[
-        <FormSubmitButton disabled={isMutating} loading={isMutating}>
+        <FormSubmitButtonAndBack
+          disabled={isMutating}
+          loading={isMutating}
+          onClick={() => (shouldNavigateBack.current = true)}
+        />,
+        <FormSubmitButton
+          disabled={isMutating}
+          loading={isMutating}
+          onClick={() => (shouldNavigateBack.current = false)}
+        >
           Crear deuda
         </FormSubmitButton>,
       ]}

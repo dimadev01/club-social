@@ -6,7 +6,7 @@ import {
   MemberLedgerEntryMovementType,
   MemberLedgerEntryMovementTypeLabel,
 } from '@club-social/shared/members';
-import { DatePicker, Input, InputNumber } from 'antd';
+import { DatePicker, type FormInstance, Input, InputNumber } from 'antd';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
@@ -27,7 +27,10 @@ export type MemberLedgerEntryFormInitialValues =
 interface MemberLedgerEntryFormProps {
   disabled?: boolean;
   initialValues?: MemberLedgerEntryFormInitialValues;
-  onSubmit: (data: MemberLedgerEntryFormData) => void;
+  onSubmit: (
+    data: MemberLedgerEntryFormData,
+    form: FormInstance<MemberLedgerEntryFormData>,
+  ) => void;
 }
 
 export function MemberLedgerEntryForm({
@@ -59,7 +62,7 @@ export function MemberLedgerEntryForm({
       id="form"
       initialValues={initialValues}
       name="form"
-      onFinish={onSubmit}
+      onFinish={(values) => onSubmit(values, form)}
     >
       <Form.Item<MemberLedgerEntryFormData>
         label="Fecha"
