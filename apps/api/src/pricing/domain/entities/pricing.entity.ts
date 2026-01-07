@@ -37,10 +37,6 @@ export class PricingEntity extends SoftDeletableAggregateRoot {
     return this._effectiveTo;
   }
 
-  public get isBasePrice(): boolean {
-    return this._memberCategory === null;
-  }
-
   public get memberCategory(): MemberCategory | null {
     return this._memberCategory;
   }
