@@ -1,13 +1,17 @@
 import { DeleteOutlined, MailOutlined } from '@ant-design/icons';
 import { DateFormat } from '@club-social/shared/lib';
-import { App, Empty, Form, Input, Space } from 'antd';
+import { Theme, ThemeLabel } from '@club-social/shared/users';
+import { App, Empty, Input, Space } from 'antd';
 
+import { useAppContext } from '@/app/AppContext';
 import { useSessionUser } from '@/auth/useUser';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { Button, Card, Descriptions } from '@/ui';
+import { labelMapToSelectOptions } from '@/shared/lib/utils';
+import { Button, Card, Descriptions, Form, Select } from '@/ui';
+import { useUpdateMyPreferences } from '@/users/useUpdateMyPreferences';
 
 interface EmailFormSchema {
   email: string;
@@ -23,6 +27,8 @@ export function ProfilePage() {
 
   const user = useSessionUser();
 
+  const { preferences } = useAppContext();
+
   const [profileForm] = Form.useForm<ProfileFormSchema>();
   const [emailForm] = Form.useForm<EmailFormSchema>();
 
@@ -30,6 +36,8 @@ export function ProfilePage() {
     ...queryKeys.passkeys.list,
     queryFn: () => betterAuthClient.passkey.listUserPasskeys(),
   });
+
+  const updatePreferences = useUpdateMyPreferences();
 
   const submitProfileMutation = useMutation({
     mutationFn: (values: ProfileFormSchema) =>
@@ -112,6 +120,9 @@ export function ProfilePage() {
 
     submitEmailMutation.mutate(values);
   };
+
+  const a = labelMapToSelectOptions(ThemeLabel);
+  console.log(a);
 
   return (
     <Space className="flex" vertical>
@@ -232,6 +243,21 @@ export function ProfilePage() {
             </Space>
           </Card.Grid>
         ))}
+      </Card>
+
+      <Card title="Interfaz">
+        <Form layout="horizontal">
+          <Form.Item label="Tema" name="theme">
+            <Select
+              key={preferences.theme}
+              onChange={(value) =>
+                updatePreferences.mutate({ theme: value as Theme })
+              }
+              options={labelMapToSelectOptions(ThemeLabel)}
+              value={preferences.theme}
+            />
+          </Form.Item>
+        </Form>
       </Card>
     </Space>
   );
