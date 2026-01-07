@@ -1,6 +1,14 @@
 import { DeleteOutlined, MailOutlined } from '@ant-design/icons';
 import { DateFormat } from '@club-social/shared/lib';
-import { Theme, ThemeLabel } from '@club-social/shared/users';
+import {
+  Theme,
+  ThemeLabel,
+  ThemeVariant,
+  ThemeVariantLabel,
+  type UpdateUserPreferencesDto,
+  type UserPreferencesDto,
+} from '@club-social/shared/users';
+import { useQueryClient } from '@tanstack/react-query';
 import { App, Empty, Input, Space } from 'antd';
 
 import { useAppContext } from '@/app/AppContext';
@@ -24,6 +32,7 @@ interface ProfileFormSchema {
 
 export function ProfilePage() {
   const { message } = App.useApp();
+  const queryClient = useQueryClient();
 
   const user = useSessionUser();
 
@@ -38,6 +47,22 @@ export function ProfilePage() {
   });
 
   const updatePreferences = useUpdateMyPreferences();
+
+  const handleUpdatePreferences = (values: UpdateUserPreferencesDto) => {
+    updatePreferences.mutate(values, {
+      onSuccess: () => {
+        queryClient.setQueryData(
+          queryKeys.users.me.queryKey,
+          (old: UserPreferencesDto) => {
+            return {
+              ...old,
+              ...values,
+            };
+          },
+        );
+      },
+    });
+  };
 
   const submitProfileMutation = useMutation({
     mutationFn: (values: ProfileFormSchema) =>
@@ -120,9 +145,6 @@ export function ProfilePage() {
 
     submitEmailMutation.mutate(values);
   };
-
-  const a = labelMapToSelectOptions(ThemeLabel);
-  console.log(a);
 
   return (
     <Space className="flex" vertical>
@@ -246,18 +268,37 @@ export function ProfilePage() {
       </Card>
 
       <Card title="Interfaz">
-        <Form layout="horizontal">
-          <Form.Item label="Tema" name="theme">
+        <Descriptions>
+          <Descriptions.Item
+            label="Tema"
+            styles={{
+              label: {
+                width: 150,
+              },
+            }}
+          >
             <Select
+              className="w-full"
               key={preferences.theme}
               onChange={(value) =>
-                updatePreferences.mutate({ theme: value as Theme })
+                handleUpdatePreferences({ theme: value as Theme })
               }
               options={labelMapToSelectOptions(ThemeLabel)}
               value={preferences.theme}
             />
-          </Form.Item>
-        </Form>
+          </Descriptions.Item>
+          <Descriptions.Item label="Variante">
+            <Select
+              className="w-full"
+              key={preferences.theme}
+              onChange={(value) =>
+                handleUpdatePreferences({ themeVariant: value as ThemeVariant })
+              }
+              options={labelMapToSelectOptions(ThemeVariantLabel)}
+              value={preferences.themeVariant}
+            />
+          </Descriptions.Item>
+        </Descriptions>
       </Card>
     </Space>
   );

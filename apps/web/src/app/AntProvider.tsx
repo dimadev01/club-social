@@ -1,4 +1,5 @@
 import { StyleProvider } from '@ant-design/cssinjs';
+import { ThemeVariant } from '@club-social/shared/users';
 import {
   Alert,
   theme as antTheme,
@@ -14,12 +15,17 @@ import { AntThemeMode } from './app.enum';
 import { useAppContext } from './AppContext';
 
 export function AntProvider({ children }: PropsWithChildren) {
-  const { selectedTheme } = useAppContext();
+  const { preferences, selectedTheme } = useAppContext();
 
   const algorithm =
     selectedTheme === AntThemeMode.DARK
       ? antTheme.darkAlgorithm
       : antTheme.defaultAlgorithm;
+
+  const variant =
+    preferences.themeVariant === ThemeVariant.DEFAULT
+      ? ThemeVariant.OUTLINED
+      : preferences.themeVariant;
 
   const themeConfig: ThemeConfig = useMemo(
     () => ({
@@ -64,6 +70,7 @@ export function AntProvider({ children }: PropsWithChildren) {
           rowKey: 'id',
         }}
         theme={themeConfig}
+        variant={variant}
       >
         <App>
           <Alert.ErrorBoundary>{children}</Alert.ErrorBoundary>
