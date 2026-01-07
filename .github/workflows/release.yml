@@ -37,14 +37,14 @@ jobs:
         if: ${{ contains(fromJSON(needs.release.outputs.paths_released), 'apps/api') }}
         env:
           SVC_ID: a65fd5b6-b21d-4a55-a1bd-e7afe2260669
-        run: railway up -s ${{ env.SVC_ID }}
+        run: railway up -s ${{ env.SVC_ID }} --ci
 
       # Deploy Web only if apps/web was released
       - name: Deploy Web
         if: ${{ contains(fromJSON(needs.release.outputs.paths_released), 'apps/web') }}
         env:
           SVC_ID: d1823f35-d242-4f9e-bb83-b0f12f36d79a
-        run: railway up -s ${{ env.SVC_ID }}
+        run: railway up -s ${{ env.SVC_ID }} --ci
 
   sentry-release:
     needs: [release, deploy]

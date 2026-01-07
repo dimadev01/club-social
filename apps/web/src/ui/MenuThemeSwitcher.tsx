@@ -8,6 +8,7 @@ import { Theme } from '@club-social/shared/users';
 import { Button, Dropdown } from 'antd';
 
 import { useAppContext } from '@/app/AppContext';
+import { useUpdateMyPreferences } from '@/users/useUpdateMyPreferences';
 
 const THEME_ICONS: Record<Theme, React.ReactNode> = {
   [Theme.AUTO]: <InteractionOutlined />,
@@ -16,7 +17,8 @@ const THEME_ICONS: Record<Theme, React.ReactNode> = {
 } as const;
 
 export function MenuThemeSwitcher() {
-  const { preferences, updatePreferences } = useAppContext();
+  const { preferences } = useAppContext();
+  const updatePreferences = useUpdateMyPreferences();
 
   return (
     <Dropdown
@@ -39,7 +41,7 @@ export function MenuThemeSwitcher() {
           },
         ],
         onClick: ({ key }) => {
-          updatePreferences({ theme: key as Theme });
+          updatePreferences.mutate({ theme: key as Theme });
         },
         selectable: true,
         selectedKeys: [preferences.theme],

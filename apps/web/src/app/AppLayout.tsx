@@ -62,7 +62,6 @@ export function AppLayout({ children }: PropsWithChildren) {
   );
 
   const user = useSessionUser();
-  console.log(user);
   const isAdmin = user.role === UserRole.ADMIN;
   const isStaff = user.role === UserRole.STAFF;
 

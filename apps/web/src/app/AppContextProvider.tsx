@@ -5,16 +5,15 @@ import { useMedia } from 'react-use';
 
 import { queryKeys } from '@/shared/lib/query-keys';
 import { useMyPreferences } from '@/users/useMyPreferences';
-import { useUpdateMyPreferences } from '@/users/useUpdateMyPreferences';
 
-import { AntThemeMode, AppContext, DEFAULT_PREFERENCES } from './AppContext';
+import { AntThemeMode, DEFAULT_PREFERENCES } from './app.enum';
+import { AppContext } from './AppContext';
 import { AppLoading } from './AppLoading';
 
 export function AppContextProvider({ children }: PropsWithChildren) {
   const queryClient = useQueryClient();
 
   const { data: preferences, isLoading } = useMyPreferences();
-  const { mutate: updatePreferences } = useUpdateMyPreferences();
 
   const prefersDark = useMedia('(prefers-color-scheme: dark)');
 
@@ -22,11 +21,12 @@ export function AppContextProvider({ children }: PropsWithChildren) {
     queryClient.setQueryData(queryKeys.users.me.queryKey, DEFAULT_PREFERENCES);
   }, [queryClient]);
 
-  const resolvedPreferences = useMemo(() => {
-    return preferences ?? DEFAULT_PREFERENCES;
-  }, [preferences]);
+  const resolvedPreferences = useMemo(
+    () => preferences ?? DEFAULT_PREFERENCES,
+    [preferences],
+  );
 
-  const resolvedAntTheme = useMemo(() => {
+  const selectedTheme = useMemo(() => {
     const isDark =
       resolvedPreferences.theme === Theme.DARK ||
       (resolvedPreferences.theme === Theme.AUTO && prefersDark);
@@ -43,8 +43,7 @@ export function AppContextProvider({ children }: PropsWithChildren) {
       value={{
         preferences: resolvedPreferences,
         resetPreferences,
-        selectedTheme: resolvedAntTheme,
-        updatePreferences,
+        selectedTheme,
       }}
     >
       {children}

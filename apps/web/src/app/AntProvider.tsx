@@ -10,7 +10,8 @@ import esEs from 'antd/locale/es_ES';
 import { type PropsWithChildren, useMemo } from 'react';
 import { GiTennisBall } from 'react-icons/gi';
 
-import { AntThemeMode, useAppContext } from './AppContext';
+import { AntThemeMode } from './app.enum';
+import { useAppContext } from './AppContext';
 
 export function AntProvider({ children }: PropsWithChildren) {
   const { selectedTheme } = useAppContext();
