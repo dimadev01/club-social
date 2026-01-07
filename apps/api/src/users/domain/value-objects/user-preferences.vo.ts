@@ -48,6 +48,10 @@ export class UserPreferences extends ValueObject<UserPreferencesProps> {
     };
   }
 
+  public toString(): string {
+    return JSON.stringify(this.props);
+  }
+
   public update(partial: Partial<UserPreferencesProps>): UserPreferences {
     const defined = Object.fromEntries(
       Object.entries(partial).filter(([, v]) => v !== undefined),
@@ -58,9 +62,5 @@ export class UserPreferences extends ValueObject<UserPreferencesProps> {
       ...this.props,
       ...defined,
     });
-  }
-
-  protected toString(): string {
-    return JSON.stringify(this.props);
   }
 }
