@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/dimadev01/club-social/compare/api-v0.4.0...api-v0.4.1) (2026-01-07)
+
+
+### Bug Fixes
+
+* pass user name in controller ([3ae47f4](https://github.com/dimadev01/club-social/commit/3ae47f4d18a6ac6b2888862238aca99eb8202f8b))
+
 ## [0.4.0](https://github.com/dimadev01/club-social/compare/api-v0.3.2...api-v0.4.0) (2026-01-06)
 
 
