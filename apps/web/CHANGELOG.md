@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/dimadev01/club-social/compare/web-v0.4.2...web-v0.4.3) (2026-01-07)
+
+
+### Bug Fixes
+
+* **web:** flashing ui ([ca77d2e](https://github.com/dimadev01/club-social/commit/ca77d2e7aacd20bcf0c939d646217000aab62756))
+
 ## [0.4.2](https://github.com/dimadev01/club-social/compare/web-v0.4.1...web-v0.4.2) (2026-01-07)
 
 
