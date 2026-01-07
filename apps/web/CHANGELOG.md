@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/dimadev01/club-social/compare/web-v0.4.1...web-v0.4.2) (2026-01-07)
+
+
+### Bug Fixes
+
+* update default theme preference to AUTO ([c34c850](https://github.com/dimadev01/club-social/commit/c34c8505524c82eb3008f5bf8f8c78e15ad70e71))
+
 ## [0.4.1](https://github.com/dimadev01/club-social/compare/web-v0.4.0...web-v0.4.1) (2026-01-07)
 
 
