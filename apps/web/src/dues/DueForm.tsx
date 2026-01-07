@@ -3,7 +3,7 @@ import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { DateFormats, NumberFormat } from '@club-social/shared/lib';
-import { DatePicker, Input, InputNumber } from 'antd';
+import { DatePicker, type FormInstance, Input, InputNumber } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
@@ -27,7 +27,7 @@ interface DueFormProps {
   initialValues?: DueFormInitialValues;
   loading?: boolean;
   mode: 'create' | 'edit';
-  onSubmit: (data: DueFormData) => void;
+  onSubmit: (data: DueFormData, form: FormInstance<DueFormData>) => void;
 }
 
 export function DueForm({
@@ -66,8 +66,19 @@ export function DueForm({
       id="form"
       initialValues={initialValues}
       name="form"
-      onFinish={onSubmit}
+      onFinish={(values) => onSubmit(values, form)}
     >
+      <Form.Item<DueFormData>
+        label="Categoría"
+        name="category"
+        rules={[{ message: 'La categoría es requerida', required: true }]}
+      >
+        <Select
+          disabled={isEditMode}
+          options={labelMapToSelectOptions(DueCategoryLabel)}
+        />
+      </Form.Item>
+
       <Form.Item<DueFormData>
         label="Fecha"
         name="date"
@@ -104,17 +115,6 @@ export function DueForm({
             }
           }}
           placeholder="Buscar y seleccionar socios..."
-        />
-      </Form.Item>
-
-      <Form.Item<DueFormData>
-        label="Categoría"
-        name="category"
-        rules={[{ message: 'La categoría es requerida', required: true }]}
-      >
-        <Select
-          disabled={isEditMode}
-          options={labelMapToSelectOptions(DueCategoryLabel)}
         />
       </Form.Item>
 

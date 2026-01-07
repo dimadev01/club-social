@@ -3,14 +3,15 @@ import type { ParamIdDto } from '@club-social/shared/types';
 
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { MemberLedgerEntryMovementType } from '@club-social/shared/members';
-import { App } from 'antd';
+import { App, type FormInstance } from 'antd';
 import dayjs from 'dayjs';
+import { useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 
-import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
+import { FormSubmitButtonAndBack } from '@/ui/Form/FormSubmitAndBack';
 import { usePermissions } from '@/users/use-permissions';
 
 import {
@@ -23,6 +24,7 @@ export function MemberLedgerNew() {
   const permissions = usePermissions();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const shouldNavigateBack = useRef(false);
 
   const memberIdFromUrl = searchParams.get('memberId') ?? undefined;
 
@@ -32,20 +34,32 @@ export function MemberLedgerNew() {
     CreateMemberLedgerEntryDto
   >({
     mutationFn: (body) => $fetch('/member-ledger', { body }),
-    onSuccess: () => {
-      message.success('Ajuste creado correctamente');
-      navigate(appRoutes.memberLedger.list, { replace: true });
-    },
   });
 
-  const handleSubmit = (values: MemberLedgerEntryFormData) => {
-    createMemberLedgerEntryMutation.mutate({
-      amount: NumberFormat.toCents(values.amount),
-      date: DateFormat.isoDate(values.date),
-      memberId: values.memberId,
-      movementType: values.movementType,
-      notes: values.notes || null,
-    });
+  const handleSubmit = (
+    values: MemberLedgerEntryFormData,
+    form: FormInstance<MemberLedgerEntryFormData>,
+  ) => {
+    createMemberLedgerEntryMutation.mutate(
+      {
+        amount: NumberFormat.toCents(values.amount),
+        date: DateFormat.isoDate(values.date),
+        memberId: values.memberId,
+        movementType: values.movementType,
+        notes: values.notes || null,
+      },
+      {
+        onSuccess: () => {
+          message.success('Ajuste creado correctamente');
+
+          if (shouldNavigateBack.current) {
+            navigate(-1);
+          } else {
+            form.resetFields(['amount', 'memberId', 'notes']);
+          }
+        },
+      },
+    );
   };
 
   if (!permissions.memberLedger.create) {
@@ -57,7 +71,16 @@ export function MemberLedgerNew() {
   return (
     <Card
       actions={[
-        <FormSubmitButton disabled={isMutating} loading={isMutating}>
+        <FormSubmitButtonAndBack
+          disabled={isMutating}
+          loading={isMutating}
+          onClick={() => (shouldNavigateBack.current = true)}
+        />,
+        <FormSubmitButton
+          disabled={isMutating}
+          loading={isMutating}
+          onClick={() => (shouldNavigateBack.current = false)}
+        >
           Crear ajuste
         </FormSubmitButton>,
       ]}

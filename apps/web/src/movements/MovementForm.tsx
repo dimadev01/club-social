@@ -7,7 +7,7 @@ import {
   MovementType,
   MovementTypeLabel,
 } from '@club-social/shared/movements';
-import { DatePicker, Input, InputNumber } from 'antd';
+import { DatePicker, type FormInstance, Input, InputNumber } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Form, Select } from '@/ui';
@@ -25,7 +25,10 @@ export type MovementFormInitialValues = Partial<MovementFormData>;
 interface MovementFormProps {
   disabled?: boolean;
   initialValues?: MovementFormInitialValues;
-  onSubmit: (data: MovementFormData) => void;
+  onSubmit: (
+    data: MovementFormData,
+    form: FormInstance<MovementFormData>,
+  ) => void;
 }
 
 export function MovementForm({
@@ -42,7 +45,7 @@ export function MovementForm({
       id="form"
       initialValues={initialValues}
       name="form"
-      onFinish={onSubmit}
+      onFinish={(values) => onSubmit(values, form)}
     >
       <Form.Item<MovementFormData>
         label="Fecha"
