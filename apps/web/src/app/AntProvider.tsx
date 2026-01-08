@@ -1,4 +1,5 @@
 import { StyleProvider } from '@ant-design/cssinjs';
+import { ThemeAlgorithm, ThemeVariant } from '@club-social/shared/users';
 import {
   Alert,
   theme as antTheme,
@@ -14,16 +15,31 @@ import { AntThemeMode } from './app.enum';
 import { useAppContext } from './AppContext';
 
 export function AntProvider({ children }: PropsWithChildren) {
-  const { selectedTheme } = useAppContext();
+  const { preferences, selectedTheme } = useAppContext();
 
-  const algorithm =
+  const modeAlgorithm =
     selectedTheme === AntThemeMode.DARK
       ? antTheme.darkAlgorithm
       : antTheme.defaultAlgorithm;
 
+  const variant =
+    preferences.themeVariant === ThemeVariant.DEFAULT
+      ? ThemeVariant.OUTLINED
+      : preferences.themeVariant;
+
+  const algorithms = useMemo(() => {
+    const algorithms = [modeAlgorithm];
+
+    if (preferences.themeAlgorithm === ThemeAlgorithm.COMPACT) {
+      algorithms.push(antTheme.compactAlgorithm);
+    }
+
+    return algorithms;
+  }, [modeAlgorithm, preferences.themeAlgorithm]);
+
   const themeConfig: ThemeConfig = useMemo(
     () => ({
-      algorithm: [algorithm],
+      algorithm: algorithms,
       components: {
         Button: {
           primaryShadow: 'none',
@@ -40,7 +56,7 @@ export function AntProvider({ children }: PropsWithChildren) {
       },
       zeroRuntime: true,
     }),
-    [algorithm],
+    [algorithms],
   );
 
   return (
@@ -64,6 +80,7 @@ export function AntProvider({ children }: PropsWithChildren) {
           rowKey: 'id',
         }}
         theme={themeConfig}
+        variant={variant}
       >
         <App>
           <Alert.ErrorBoundary>{children}</Alert.ErrorBoundary>

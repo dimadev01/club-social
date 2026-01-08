@@ -13,5 +13,5 @@ export abstract class ValueObject<T> {
     return JSON.stringify(this.props) === JSON.stringify(vo.props);
   }
 
-  protected abstract toString(): string;
+  public abstract toString(): string;
 }

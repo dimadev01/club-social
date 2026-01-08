@@ -6,8 +6,9 @@ import {
   type MemberCategory,
   MemberCategoryLabel,
 } from '@club-social/shared/members';
-import { DatePicker, InputNumber } from 'antd';
+import { DatePicker, InputNumber, Radio } from 'antd';
 
+import { DueCategoryIconLabel } from '@/dues/DueCategoryIconLabel';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Form, Select } from '@/ui';
 
@@ -68,9 +69,14 @@ export function PricingForm({
           { message: 'La categoría de deuda es requerida', required: true },
         ]}
       >
-        <Select
+        <Radio.Group
           disabled={isEditMode || disabled}
-          options={labelMapToSelectOptions(DueCategoryLabel)}
+          options={labelMapToSelectOptions(DueCategoryLabel).map((option) => ({
+            label: DueCategoryIconLabel({
+              category: option.value as DueCategory,
+            }),
+            value: option.value,
+          }))}
         />
       </Form.Item>
 

@@ -1,3 +1,5 @@
+import { DueCategory } from '@club-social/shared/dues';
+
 export type EmailJobData =
   | { data: SendMagicLinkParams; type: 'send-magic-link' }
   | { data: SendNewDueMovementParams; type: 'send-new-due-movement' }
@@ -33,8 +35,17 @@ export interface SendNewDueMovementParams {
 export interface SendNewPaymentParams {
   amount: string;
   date: string;
+  dues: {
+    amount: string;
+    category: DueCategory;
+    date: string;
+  }[];
   email: string;
   memberName: string;
+  pendingElectricity: string;
+  pendingGuest: string;
+  pendingMembership: string;
+  pendingTotal: string;
 }
 
 export interface SendTemplateEmailParams {

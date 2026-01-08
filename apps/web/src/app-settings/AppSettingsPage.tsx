@@ -1,98 +1,114 @@
 import {
+  APP_SETTINGS_LABELS,
   type AppSettingDto,
   AppSettingKey,
   AppSettingScope,
+  type AppSettingValues,
 } from '@club-social/shared/app-settings';
 import { UserRole } from '@club-social/shared/users';
-import { Checkbox } from 'antd';
-import { useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Checkbox, Space } from 'antd';
 
 import { useSessionUser } from '@/auth/useUser';
-import { Card, Form, Page } from '@/ui';
+import { queryKeys } from '@/shared/lib/query-keys';
+import { Card, Descriptions, Page } from '@/ui';
 import { NotFound } from '@/ui/NotFound';
 
 import { useAppSettings } from './useAppSettings';
 import { useUpdateAppSetting } from './useUpdateAppSetting';
 
-const SETTING_LABELS: Record<AppSettingKey, string> = {
-  [AppSettingKey.MAINTENANCE_MODE]: 'Modo de mantenimiento',
-  [AppSettingKey.SEND_EMAILS]: 'Enviar correos electrónicos',
-};
-
 export function AppSettingsPage() {
+  const queryClient = useQueryClient();
+
   const { role } = useSessionUser();
   const isAdmin = role === UserRole.ADMIN;
   const isStaff = role === UserRole.STAFF;
 
-  const { data: appSettings, isLoading, refetch } = useAppSettings();
+  const { data: appSettings, isLoading } = useAppSettings();
   const updateMutation = useUpdateAppSetting();
 
-  const { appScopeSettings, systemSettings } = useMemo(() => {
-    const system = (appSettings ?? []).filter(
-      (setting) => setting.scope === AppSettingScope.SYSTEM,
-    );
-    const app = (appSettings ?? []).filter(
-      (setting) => setting.scope === AppSettingScope.APP,
-    );
+  const appScopeSettings = (appSettings ?? []).filter(
+    (setting) => setting.scope === AppSettingScope.APP,
+  );
+  const systemScopeSettings = (appSettings ?? []).filter(
+    (setting) => setting.scope === AppSettingScope.SYSTEM,
+  );
 
-    return { appScopeSettings: app, systemSettings: system };
-  }, [appSettings]);
+  const onUpdate = (
+    key: AppSettingKey,
+    value: AppSettingValues[AppSettingKey],
+  ) => {
+    updateMutation.mutate(
+      { key, value },
+      {
+        onSuccess: () => {
+          queryClient.setQueryData<AppSettingDto[]>(
+            queryKeys.appSettings.all.queryKey,
+            (old) =>
+              old?.map((setting) => {
+                if (setting.key === key) {
+                  return { ...setting, value };
+                }
+
+                return setting;
+              }),
+          );
+        },
+      },
+    );
+  };
+
+  const getBooleanSettings = (settings: AppSettingDto[]) =>
+    settings.filter((setting) => {
+      const keys = Object.keys(setting.value);
+
+      if (keys.length !== 1) {
+        return false;
+      }
+
+      const [firstKey] = keys;
+      const value = setting.value[firstKey as keyof typeof setting.value];
+
+      return typeof value === 'boolean';
+    });
+
+  const getBooleanItems = (settings: AppSettingDto[]) =>
+    getBooleanSettings(settings).map((setting) => ({
+      children: (
+        <Checkbox
+          checked={setting.value.enabled}
+          onChange={(e) => onUpdate(setting.key, { enabled: e.target.checked })}
+        >
+          {setting.description}
+        </Checkbox>
+      ),
+      key: setting.key,
+      label: APP_SETTINGS_LABELS[setting.key],
+    }));
 
   if (!isAdmin && !isStaff) {
     return <NotFound />;
   }
 
-  const renderBooleanSetting = (setting: AppSettingDto<AppSettingKey>) => {
-    const value = setting.value as { enabled: boolean };
-
-    return (
-      <Form.Item
-        key={setting.key}
-        label={SETTING_LABELS[setting.key]}
-        name={setting.key}
-      >
-        <Checkbox
-          checked={value.enabled}
-          onChange={(e) => {
-            updateMutation.mutate(
-              { key: setting.key, value: { enabled: e.target.checked } },
-              { onSuccess: () => refetch() },
-            );
-          }}
-        >
-          {setting.description}
-        </Checkbox>
-      </Form.Item>
-    );
-  };
+  if (isLoading) {
+    return <Card loading />;
+  }
 
   return (
     <Page>
-      {isAdmin && systemSettings.length > 0 && (
-        <Card
-          className="mb-4"
-          loading={isLoading}
-          title="Configuración del Sistema"
-        >
-          <Form layout="horizontal">
-            {systemSettings.map(renderBooleanSetting)}
-          </Form>
-        </Card>
-      )}
+      <Space className="flex" vertical>
+        {isAdmin && (
+          <Card title="Configuración del Sistema">
+            <Descriptions items={[...getBooleanItems(systemScopeSettings)]} />
+          </Card>
+        )}
 
-      {appScopeSettings.length > 0 && (
-        <Card loading={isLoading} title="Configuración de la Aplicación">
-          <Form layout="horizontal">
-            {appScopeSettings.map(renderBooleanSetting)}
-          </Form>
-        </Card>
-      )}
-
-      {appScopeSettings.length === 0 && isStaff && (
-        <Card loading={isLoading} title="Configuración de la Aplicación">
-          <p>No hay configuración de la aplicación aun para configurar</p>
-        </Card>
-      )}
+        {(isAdmin || isStaff) && (
+          <Card title="Configuración de la Aplicación">
+            <Descriptions items={[...getBooleanItems(appScopeSettings)]} />
+          </Card>
+        )}
+      </Space>
     </Page>
   );
 }

@@ -84,4 +84,16 @@ describe('UserPreferences', () => {
       expect(updated.themeVariant).toBe(ThemeVariant.OUTLINED);
     });
   });
+
+  describe('toString', () => {
+    it('should return a string representation of the preferences', () => {
+      const preferences = UserPreferences.raw({
+        theme: Theme.LIGHT,
+        themeAlgorithm: ThemeAlgorithm.COMPACT,
+        themeVariant: ThemeVariant.OUTLINED,
+      });
+
+      expect(preferences.toString()).toBe(JSON.stringify(preferences.toJson()));
+    });
+  });
 });

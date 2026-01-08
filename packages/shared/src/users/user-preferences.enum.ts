@@ -37,3 +37,8 @@ export const ThemeAlgorithm = {
 
 export type ThemeAlgorithm =
   (typeof ThemeAlgorithm)[keyof typeof ThemeAlgorithm];
+
+export const ThemeAlgorithmLabel: Record<ThemeAlgorithm, string> = {
+  [ThemeAlgorithm.COMPACT]: 'Compacto',
+  [ThemeAlgorithm.DEFAULT]: 'Predeterminado',
+} as const;

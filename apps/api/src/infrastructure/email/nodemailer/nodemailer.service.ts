@@ -70,6 +70,19 @@ export class NodemailerProvider implements EmailProvider {
   }
 
   public async sendTemplate(params: SendTemplateEmailParams): Promise<void> {
+    const sendEmails = await this.appSettingService.getValue(
+      AppSettingKey.SEND_EMAILS,
+    );
+
+    if (!sendEmails.value.enabled) {
+      this.logger.warn({
+        message: 'Sending emails is disabled',
+        params,
+      });
+
+      return;
+    }
+
     this.logger.info({
       message: 'Skipping template email for NodeMailer',
       method: this.sendTemplate.name,

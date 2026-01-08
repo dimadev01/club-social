@@ -43,7 +43,7 @@ export class Name extends ValueObject<Props> {
     return new Name(props);
   }
 
-  protected toString(): string {
+  public toString(): string {
     return `${this.firstName} ${this.lastName}`;
   }
 }
