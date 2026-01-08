@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.1](https://github.com/dimadev01/club-social/compare/api-v0.7.0...api-v0.7.1) (2026-01-08)
+
+
+### Bug Fixes
+
+* **queue:** remove complete jobs from queues ([09ff3f7](https://github.com/dimadev01/club-social/commit/09ff3f7cf4830977dfb33be29d4f75ec5ac655e5))
+* **queue:** remove complete jobs from queues ([2446a5b](https://github.com/dimadev01/club-social/commit/2446a5b329fe185b56f228f18844e680746d8031))
+
 ## [0.7.0](https://github.com/dimadev01/club-social/compare/api-v0.6.1...api-v0.7.0) (2026-01-08)
 
 
