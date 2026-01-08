@@ -17,6 +17,12 @@ import { ConfigService } from '../config/config.service';
       }),
     }),
     BullModule.registerQueue({
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: { delay: 5_000, type: 'exponential' },
+        removeOnComplete: true,
+        removeOnFail: { count: 1000 },
+      },
       name: 'email',
     }),
   ],
