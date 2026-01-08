@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.7.0](https://github.com/dimadev01/club-social/compare/api-v0.6.1...api-v0.7.0) (2026-01-08)
+
+
+### Features
+
+* **app-settings:** add SEND_MEMBER_NOTIFICATIONS setting and update related functionality ([9414977](https://github.com/dimadev01/club-social/commit/94149775cbcf3a3fd2fb64864c67fbdcce7b4a96))
+* **email:** implement new payment notification system and enhance email handling ([c656e2b](https://github.com/dimadev01/club-social/commit/c656e2b017b922a52ea40fc04176b74b9f9c5c60))
+* **value-objects:** change toString method visibility and add unit tests for UserPreferences ([5718ff4](https://github.com/dimadev01/club-social/commit/5718ff46227082af6587087c07e6206118469de9))
+
+
+### Bug Fixes
+
+* **email:** correct conditional logic for nodemailer service initialization ([e352b2b](https://github.com/dimadev01/club-social/commit/e352b2bddca4724e9898bc40b76d664723bbe903))
+
 ## [0.6.1](https://github.com/dimadev01/club-social/compare/api-v0.6.0...api-v0.6.1) (2026-01-07)
 
 

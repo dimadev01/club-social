@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.7.0](https://github.com/dimadev01/club-social/compare/web-v0.6.0...web-v0.7.0) (2026-01-08)
+
+
+### Features
+
+* **app-settings:** add SEND_MEMBER_NOTIFICATIONS setting and update related functionality ([9414977](https://github.com/dimadev01/club-social/commit/94149775cbcf3a3fd2fb64864c67fbdcce7b4a96))
+* **email:** implement new payment notification system and enhance email handling ([c656e2b](https://github.com/dimadev01/club-social/commit/c656e2b017b922a52ea40fc04176b74b9f9c5c60))
+* **profile:** add theme variant selection and update preferences handling ([1c3bbe7](https://github.com/dimadev01/club-social/commit/1c3bbe71f71ced4b19aafb3be3d4cb8117016db6))
+* **value-objects:** change toString method visibility and add unit tests for UserPreferences ([5718ff4](https://github.com/dimadev01/club-social/commit/5718ff46227082af6587087c07e6206118469de9))
+
+
+### Bug Fixes
+
+* **settings:** enhance AppSettingsPage with role-based rendering and update functionality ([3d0c508](https://github.com/dimadev01/club-social/commit/3d0c50818d33e080e2b4ce9148c05108f1f7f96e))
+
 ## [0.6.0](https://github.com/dimadev01/club-social/compare/web-v0.5.0...web-v0.6.0) (2026-01-07)
 
 
