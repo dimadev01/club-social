@@ -4,13 +4,11 @@ import {
 } from '@club-social/shared/app-settings';
 import { UserRole } from '@club-social/shared/users';
 import {
-  BadRequestException,
   Body,
   Controller,
   ForbiddenException,
   Get,
   Inject,
-  NotFoundException,
   Param,
   Patch,
   Session,
@@ -28,11 +26,13 @@ import type { AppSettingRepository } from '../domain/app-setting.repository';
 
 import { UpdateSettingUseCase } from '../application/update-setting.use-case';
 import { APP_SETTING_REPOSITORY_PROVIDER } from '../domain/app-setting.repository';
-import { isValidAppSettingKey } from '../domain/app-setting.types';
 import { AppSettingEntity } from '../domain/entities/app-setting.entity';
 import { AppSettingService } from '../infrastructure/app-setting.service';
 import { AppSettingResponseDto } from './dto/app-setting.dto';
-import { UpdateSettingRequestDto } from './dto/update-setting.dto';
+import {
+  UpdateSettingKeyDto,
+  UpdateSettingRequestDto,
+} from './dto/update-setting.dto';
 
 @Controller('app-settings')
 export class AppSettingsController extends BaseController {
@@ -91,14 +91,10 @@ export class AppSettingsController extends BaseController {
 
   @Get(':key')
   public async getByKey(
-    @Param('key') key: string,
+    @Param() params: UpdateSettingKeyDto,
     @Session() session: AuthSession,
   ): Promise<AppSettingResponseDto<AppSettingKey>> {
-    if (!isValidAppSettingKey(key)) {
-      throw new NotFoundException(`Setting with key "${key}" not found`);
-    }
-
-    const setting = await this.appSettingService.getValue(key);
+    const setting = await this.appSettingService.getValue(params.key);
 
     this.requireAccessToScope(setting.scope, session.user.role as UserRole);
 
@@ -107,21 +103,17 @@ export class AppSettingsController extends BaseController {
 
   @Patch(':key')
   public async updateByKey(
-    @Param('key') key: string,
+    @Param() params: UpdateSettingKeyDto,
     @Body() body: UpdateSettingRequestDto,
     @Session() session: AuthSession,
   ): Promise<void> {
-    if (!isValidAppSettingKey(key)) {
-      throw new BadRequestException(`Invalid setting key: "${key}"`);
-    }
-
-    const setting = await this.appSettingService.getValue(key);
+    const setting = await this.appSettingService.getValue(params.key);
 
     this.requireAccessToScope(setting.scope, session.user.role as UserRole);
 
     this.handleResult(
       await this.updateSettingUseCase.execute({
-        key,
+        key: params.key,
         updatedBy: session.user.name,
         value: body.value,
       }),

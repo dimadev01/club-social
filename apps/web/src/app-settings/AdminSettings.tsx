@@ -15,6 +15,12 @@ interface Props {
   settings: AppSettingDto<AppSettingKey>[];
 }
 
+const APP_SETTINGS_LABELS = {
+  [AppSettingKey.MAINTENANCE_MODE]: 'Modo de mantenimiento',
+  [AppSettingKey.SEND_EMAILS]: 'Enviar correos electrónicos',
+  [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]: 'Enviar notificaciones a socios',
+} as const;
+
 export function AdminSettings({ onUpdate, settings }: Props) {
   const maintenanceMode = settings.find(
     (setting) => setting.key === AppSettingKey.MAINTENANCE_MODE,
@@ -22,6 +28,10 @@ export function AdminSettings({ onUpdate, settings }: Props) {
 
   const sendEmails = settings.find(
     (setting) => setting.key === AppSettingKey.SEND_EMAILS,
+  );
+
+  const sendMemberNotifications = settings.find(
+    (setting) => setting.key === AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
   );
 
   if (settings.length === 0) {
@@ -34,33 +44,29 @@ export function AdminSettings({ onUpdate, settings }: Props) {
     );
   }
 
+  const renderBooleanSetting = (setting: AppSettingDto<AppSettingKey>) => {
+    return (
+      <Descriptions.Item
+        key={setting.key}
+        label={APP_SETTINGS_LABELS[setting.key]}
+      >
+        <Checkbox
+          checked={setting.value.enabled}
+          onChange={(e) => onUpdate(setting.key, { enabled: e.target.checked })}
+        >
+          {setting.description}
+        </Checkbox>
+      </Descriptions.Item>
+    );
+  };
+
   return (
     <Card title="Configuración del Sistema">
       <Descriptions>
-        {maintenanceMode && (
-          <Descriptions.Item label="Modo de mantenimiento">
-            <Checkbox
-              checked={maintenanceMode.value.enabled}
-              onChange={(e) =>
-                onUpdate(maintenanceMode.key, { enabled: e.target.checked })
-              }
-            >
-              {maintenanceMode.description}
-            </Checkbox>
-          </Descriptions.Item>
-        )}
-        {sendEmails && (
-          <Descriptions.Item label="Enviar correos electrónicos">
-            <Checkbox
-              checked={sendEmails.value.enabled}
-              onChange={(e) => {
-                onUpdate(sendEmails.key, { enabled: e.target.checked });
-              }}
-            >
-              {sendEmails.description}
-            </Checkbox>
-          </Descriptions.Item>
-        )}
+        {maintenanceMode && renderBooleanSetting(maintenanceMode)}
+        {sendEmails && renderBooleanSetting(sendEmails)}
+        {sendMemberNotifications &&
+          renderBooleanSetting(sendMemberNotifications)}
       </Descriptions>
     </Card>
   );

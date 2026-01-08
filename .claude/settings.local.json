@@ -23,7 +23,8 @@
       "Bash(npm run new-migration:*)",
       "Bash(npm run generate-schema:*)",
       "Bash(npm ls:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(npm show:*)"
     ]
   },
   "outputStyle": "default"

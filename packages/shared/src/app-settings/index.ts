@@ -1,6 +1,7 @@
 export const AppSettingKey = {
   MAINTENANCE_MODE: 'maintenance-mode',
   SEND_EMAILS: 'send-emails',
+  SEND_MEMBER_NOTIFICATIONS: 'send-member-notifications',
 } as const;
 
 export type AppSettingKey = (typeof AppSettingKey)[keyof typeof AppSettingKey];
@@ -16,6 +17,7 @@ export type AppSettingScope =
 export const SYSTEM_SETTING_KEYS: readonly AppSettingKey[] = [
   AppSettingKey.MAINTENANCE_MODE,
   AppSettingKey.SEND_EMAILS,
+  AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
 ] as const;
 
 export const APP_SETTING_KEYS: readonly AppSettingKey[] = [] as const;
@@ -32,6 +34,7 @@ export interface AppSettingDto<K extends AppSettingKey = AppSettingKey> {
 export interface AppSettingValues {
   [AppSettingKey.MAINTENANCE_MODE]: MaintenanceModeValue;
   [AppSettingKey.SEND_EMAILS]: SendEmailsValue;
+  [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]: SendMemberNotificationsValue;
 }
 
 export interface MaintenanceModeValue {
@@ -39,6 +42,10 @@ export interface MaintenanceModeValue {
 }
 
 export interface SendEmailsValue {
+  enabled: boolean;
+}
+
+export interface SendMemberNotificationsValue {
   enabled: boolean;
 }
 

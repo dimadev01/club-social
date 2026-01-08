@@ -1,7 +1,9 @@
+import { AppSettingKey } from '@club-social/shared/app-settings';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Inject } from '@nestjs/common';
 import { Job } from 'bullmq';
 
+import { AppSettingService } from '@/app-settings/infrastructure/app-setting.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -28,6 +30,7 @@ export class EmailProcessor extends WorkerHost {
     protected readonly logger: AppLogger,
     @Inject(EMAIL_PROVIDER_PROVIDER)
     private readonly emailProvider: EmailProvider,
+    private readonly appSettingService: AppSettingService,
   ) {
     super();
     this.logger.setContext(EmailProcessor.name);
@@ -59,6 +62,19 @@ export class EmailProcessor extends WorkerHost {
   private async handleNewDueMovement(
     data: SendNewDueMovementParams,
   ): Promise<void> {
+    const sendMemberNotifications = await this.appSettingService.getValue(
+      AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
+    );
+
+    if (!sendMemberNotifications.value.enabled) {
+      this.logger.warn({
+        data,
+        message: 'Sending member notifications is disabled',
+      });
+
+      return;
+    }
+
     return this.emailProvider.sendTemplate({
       email: data.email,
       template: 'new-movement',
