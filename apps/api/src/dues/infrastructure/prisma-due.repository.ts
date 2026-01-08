@@ -133,6 +133,29 @@ export class PrismaDueRepository implements DueRepository {
     return dues.map((due) => this.dueMapper.toDomain(due));
   }
 
+  public async findByIdsReadModel(
+    ids: UniqueId[],
+    context?: QueryContext,
+  ): Promise<DueReadModel[]> {
+    const where: DueWhereInput = { id: { in: ids.map((id) => id.value) } };
+
+    if (context?.memberId) {
+      where.memberId = context.memberId.value;
+    }
+
+    const dues = await this.prismaService.due.findMany({
+      include: {
+        member: { include: { user: true } },
+        settlements: {
+          include: { memberLedgerEntry: true, payment: true },
+        },
+      },
+      where,
+    });
+
+    return dues.map((due) => this.toReadModel(due));
+  }
+
   public async findForExport(
     params: ExportDataDto,
     context?: QueryContext,

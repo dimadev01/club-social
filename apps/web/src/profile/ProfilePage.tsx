@@ -2,6 +2,8 @@ import { DeleteOutlined, MailOutlined } from '@ant-design/icons';
 import { DateFormat } from '@club-social/shared/lib';
 import {
   Theme,
+  ThemeAlgorithm,
+  ThemeAlgorithmLabel,
   ThemeLabel,
   ThemeVariant,
   ThemeVariantLabel,
@@ -9,7 +11,7 @@ import {
   type UserPreferencesDto,
 } from '@club-social/shared/users';
 import { useQueryClient } from '@tanstack/react-query';
-import { App, Empty, Input, Space } from 'antd';
+import { App, Empty, Input, Radio, Space } from 'antd';
 
 import { useAppContext } from '@/app/AppContext';
 import { useSessionUser } from '@/auth/useUser';
@@ -270,22 +272,30 @@ export function ProfilePage() {
 
         <Card title="Interfaz">
           <Descriptions>
-            <Descriptions.Item
-              label="Tema"
-              styles={{
-                label: {
-                  width: 150,
-                },
-              }}
-            >
-              <Select
+            <Descriptions.Item label="Tema">
+              <Radio.Group
                 className="w-full"
                 key={preferences.theme}
                 onChange={(value) =>
-                  handleUpdatePreferences({ theme: value as Theme })
+                  handleUpdatePreferences({
+                    theme: value.target.value as Theme,
+                  })
                 }
                 options={labelMapToSelectOptions(ThemeLabel)}
                 value={preferences.theme}
+              />
+            </Descriptions.Item>
+            <Descriptions.Item label="Modo compacto">
+              <Radio.Group
+                className="w-full"
+                key={preferences.themeAlgorithm}
+                onChange={(value) =>
+                  handleUpdatePreferences({
+                    themeAlgorithm: value.target.value as ThemeAlgorithm,
+                  })
+                }
+                options={labelMapToSelectOptions(ThemeAlgorithmLabel)}
+                value={preferences.themeAlgorithm}
               />
             </Descriptions.Item>
             <Descriptions.Item label="Variante">

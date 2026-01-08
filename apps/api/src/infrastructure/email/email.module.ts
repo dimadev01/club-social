@@ -25,7 +25,7 @@ import { ResendProvider } from './resend/resend.service';
         nodemailerService: NodemailerProvider,
         resendService: ResendProvider,
       ) => {
-        if (configService.isLocal) {
+        if (!configService.isLocal) {
           return nodemailerService;
         }
 

@@ -8,6 +8,7 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
+import { INFO_EMAIL } from '@/shared/constants';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 
 import { EmailProvider } from '../email.provider';
@@ -46,37 +47,11 @@ export class ResendProvider implements EmailProvider {
       params,
     });
 
-    /**
-     * There are some users that were migrated from the previous
-     * system and I put them a @clubsocialmontegrande.ar which I
-     * need to skip them.
-     */
-    const toEmails: Email[] = [];
-    const toArray: string[] = Array.isArray(params.to)
-      ? params.to
-      : [params.to];
-
-    for (const to of toArray) {
-      const email = Email.raw({ value: to });
-
-      // Push emails not for the club social domain
-      if (email.domain() !== 'clubsocialmontegrande.ar') {
-        toEmails.push(email);
-      }
-
-      // The admin email needs to be sent
-      if (email.local() === 'info') {
-        toEmails.push(email);
-      }
-
-      // The rest clubsocialmontegrande.ar emails are discarded
-    }
-
     const { data, error } = await this.resend.emails.send({
       from: params.from ?? 'Club Social <info@clubsocialmontegrande.ar>',
       html: params.html,
       subject: params.subject,
-      to: toEmails.map((email) => email.value),
+      to: this.buildToAddresses(params.to),
     });
 
     if (error) {
@@ -85,13 +60,15 @@ export class ResendProvider implements EmailProvider {
         message: 'Error sending email',
         params,
       });
-    } else if (data) {
-      this.logger.info({
-        data,
-        message: 'Email sent',
-        params,
-      });
+
+      return;
     }
+
+    this.logger.info({
+      data,
+      message: 'Email sent',
+      params,
+    });
   }
 
   public async sendTemplate(params: SendTemplateEmailParams): Promise<void> {
@@ -101,12 +78,12 @@ export class ResendProvider implements EmailProvider {
     });
 
     const { data, error } = await this.resend.emails.send({
-      from: 'Club Social <info@clubsocialmontegrande.ar>',
+      from: `Club Social <${INFO_EMAIL}>`,
       template: {
-        id: 'new-movement',
+        id: params.template,
         variables: params.variables,
       },
-      to: params.email,
+      to: this.buildToAddresses(params.email),
     });
 
     if (error) {
@@ -115,12 +92,50 @@ export class ResendProvider implements EmailProvider {
         message: 'Error sending template email',
         params,
       });
-    } else if (data) {
-      this.logger.info({
-        data,
-        message: 'Template email sent',
-        params,
-      });
+
+      return;
     }
+
+    this.logger.info({
+      data,
+      message: 'Template email sent',
+      params,
+    });
+  }
+
+  private buildToAddresses(emails: string | string[]): string[] {
+    if (!this.configService.isProd) {
+      return [INFO_EMAIL];
+    }
+
+    const toArray: string[] = Array.isArray(emails) ? emails : [emails];
+    const toEmails: Email[] = [];
+    const infoEmail = Email.raw({ value: INFO_EMAIL });
+
+    for (const to of toArray) {
+      const email = Email.raw({ value: to });
+
+      /**
+       * We always send the info email to the admin
+       */
+      if (email.equals(infoEmail)) {
+        toEmails.push(email);
+        continue;
+      }
+
+      /**
+       * By default we discard emails for the club social domain
+       */
+      if (email.domain() === 'clubsocialmontegrande.ar') {
+        continue;
+      }
+
+      /**
+       * All other emails are allowed
+       */
+      toEmails.push(email);
+    }
+
+    return toEmails.map((email) => email.value);
   }
 }

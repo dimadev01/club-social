@@ -1,4 +1,5 @@
 import { AppSettingKey } from '@club-social/shared/app-settings';
+import { DueCategoryLabel } from '@club-social/shared/dues';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Inject } from '@nestjs/common';
 import { Job } from 'bullmq';
@@ -15,6 +16,7 @@ import {
   EmailJobData,
   SendMagicLinkParams,
   SendNewDueMovementParams,
+  SendNewPaymentParams,
   SendVerificationEmailParams,
 } from './email.types';
 
@@ -44,6 +46,8 @@ export class EmailProcessor extends WorkerHost {
         return this.handleMagicLink(job.data.data);
       case QueueEmailType.SEND_NEW_DUE_MOVEMENT:
         return this.handleNewDueMovement(job.data.data);
+      case QueueEmailType.SEND_NEW_PAYMENT:
+        return this.handleNewPayment(job.data.data);
       case QueueEmailType.SEND_VERIFICATION_EMAIL:
         return this.handleVerificationEmail(job.data.data);
       default:
@@ -82,6 +86,42 @@ export class EmailProcessor extends WorkerHost {
         amount: data.amount,
         category: data.category,
         date: data.date,
+        memberName: data.memberName,
+        pendingElectricity: data.pendingElectricity,
+        pendingGuest: data.pendingGuest,
+        pendingMembership: data.pendingMembership,
+        pendingTotal: data.pendingTotal,
+      },
+    });
+  }
+
+  private async handleNewPayment(data: SendNewPaymentParams): Promise<void> {
+    const sendMemberNotifications = await this.appSettingService.getValue(
+      AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
+    );
+
+    if (!sendMemberNotifications.value.enabled) {
+      this.logger.warn({
+        data,
+        message: 'Sending member notifications is disabled',
+      });
+
+      return;
+    }
+
+    let detail = '<ul>';
+    data.dues.forEach((due) => {
+      detail += `<li>Pago por movimiento correspondiente al concepto de ${DueCategoryLabel[due.category]} del ${due.date} por un monto de ${due.amount}</li>`;
+    });
+    detail += '</ul>';
+
+    return this.emailProvider.sendTemplate({
+      email: data.email,
+      template: 'new-payment',
+      variables: {
+        amount: data.amount,
+        date: data.date,
+        detail,
         memberName: data.memberName,
         pendingElectricity: data.pendingElectricity,
         pendingGuest: data.pendingGuest,

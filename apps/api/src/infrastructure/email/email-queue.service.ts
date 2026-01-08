@@ -7,6 +7,7 @@ import {
   EmailJobData,
   SendMagicLinkParams,
   SendNewDueMovementParams,
+  SendNewPaymentParams,
   SendVerificationEmailParams,
 } from './email.types';
 
@@ -28,6 +29,13 @@ export class EmailQueueService {
     await this.queue.add(QueueEmailType.SEND_NEW_DUE_MOVEMENT, {
       data: params,
       type: QueueEmailType.SEND_NEW_DUE_MOVEMENT,
+    });
+  }
+
+  public async sendNewPayment(params: SendNewPaymentParams) {
+    await this.queue.add(QueueEmailType.SEND_NEW_PAYMENT, {
+      data: params,
+      type: QueueEmailType.SEND_NEW_PAYMENT,
     });
   }
 

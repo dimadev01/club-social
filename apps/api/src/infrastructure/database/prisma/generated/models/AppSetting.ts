@@ -254,7 +254,7 @@ export type AppSettingCreateInput = {
   id: string;
   value: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   description?: string | null;
-  scope?: string;
+  scope: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
 };
@@ -263,7 +263,7 @@ export type AppSettingUncheckedCreateInput = {
   id: string;
   value: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   description?: string | null;
-  scope?: string;
+  scope: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
 };
@@ -290,7 +290,7 @@ export type AppSettingCreateManyInput = {
   id: string;
   value: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   description?: string | null;
-  scope?: string;
+  scope: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
 };

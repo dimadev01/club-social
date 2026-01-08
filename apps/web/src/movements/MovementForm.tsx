@@ -7,7 +7,7 @@ import {
   MovementType,
   MovementTypeLabel,
 } from '@club-social/shared/movements';
-import { DatePicker, type FormInstance, Input, InputNumber } from 'antd';
+import { DatePicker, type FormInstance, Input, InputNumber, Radio } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Form, Select } from '@/ui';
@@ -64,7 +64,7 @@ export function MovementForm({
         name="type"
         rules={[{ message: 'El tipo es requerido', required: true }]}
       >
-        <Select options={labelMapToSelectOptions(MovementTypeLabel)} />
+        <Radio.Group options={labelMapToSelectOptions(MovementTypeLabel)} />
       </Form.Item>
 
       <Form.Item<MovementFormData>

@@ -3,13 +3,15 @@ import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { DateFormats, NumberFormat } from '@club-social/shared/lib';
-import { DatePicker, type FormInstance, Input, InputNumber } from 'antd';
+import { DatePicker, type FormInstance, Input, InputNumber, Radio } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useActivePricing } from '@/pricing/useActivePricing';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form, Select } from '@/ui';
+import { Form } from '@/ui';
+
+import { DueCategoryIconLabel } from './DueCategoryIconLabel';
 
 export interface DueFormData {
   amount: number;
@@ -73,9 +75,14 @@ export function DueForm({
         name="category"
         rules={[{ message: 'La categoría es requerida', required: true }]}
       >
-        <Select
+        <Radio.Group
           disabled={isEditMode}
-          options={labelMapToSelectOptions(DueCategoryLabel)}
+          options={labelMapToSelectOptions(DueCategoryLabel).map((option) => ({
+            label: DueCategoryIconLabel({
+              category: option.value as DueCategory,
+            }),
+            value: option.value,
+          }))}
         />
       </Form.Item>
 

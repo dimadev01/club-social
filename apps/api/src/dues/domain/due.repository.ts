@@ -26,6 +26,10 @@ export interface DueRepository
     id: UniqueId,
     context?: QueryContext,
   ): Promise<DueReadModel | null>;
+  findByIdsReadModel(
+    ids: UniqueId[],
+    context?: QueryContext,
+  ): Promise<DueReadModel[]>;
   findForExport(
     params: ExportDataDto,
     context?: QueryContext,

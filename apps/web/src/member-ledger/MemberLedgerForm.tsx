@@ -6,12 +6,12 @@ import {
   MemberLedgerEntryMovementType,
   MemberLedgerEntryMovementTypeLabel,
 } from '@club-social/shared/members';
-import { DatePicker, type FormInstance, Input, InputNumber } from 'antd';
+import { DatePicker, type FormInstance, Input, InputNumber, Radio } from 'antd';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form, Select } from '@/ui';
+import { Form } from '@/ui';
 
 export interface MemberLedgerEntryFormData {
   amount: number;
@@ -93,7 +93,7 @@ export function MemberLedgerEntryForm({
         name="movementType"
         rules={[{ message: 'El tipo es requerido', required: true }]}
       >
-        <Select
+        <Radio.Group
           options={labelMapToSelectOptions(MemberLedgerEntryMovementTypeLabel)}
         />
       </Form.Item>

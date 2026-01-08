@@ -15,7 +15,7 @@ import {
   MemberStatus,
   MemberStatusLabel,
 } from '@club-social/shared/members';
-import { Col, DatePicker, Empty, Input, Space } from 'antd';
+import { Col, DatePicker, Empty, Input, Radio, Space } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { AddNewIcon, Button, Card, Form, Row, Select } from '@/ui';
@@ -141,7 +141,9 @@ export function MemberForm({
                 name="fileStatus"
                 rules={[{ required: true }]}
               >
-                <Select options={labelMapToSelectOptions(FileStatusLabel)} />
+                <Radio.Group
+                  options={labelMapToSelectOptions(FileStatusLabel)}
+                />
               </Form.Item>
 
               <Form.Item<MemberFormData>
@@ -159,7 +161,9 @@ export function MemberForm({
                 name="sex"
                 rules={[{ required: false }]}
               >
-                <Select options={labelMapToSelectOptions(MemberSexLabel)} />
+                <Radio.Group
+                  options={labelMapToSelectOptions(MemberSexLabel)}
+                />
               </Form.Item>
 
               <Form.Item<MemberFormData>

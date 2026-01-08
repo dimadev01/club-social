@@ -1,4 +1,5 @@
 import {
+  APP_SETTINGS_LABELS,
   type AppSettingDto,
   AppSettingKey,
   AppSettingScope,
@@ -6,16 +7,13 @@ import {
 } from '@club-social/shared/app-settings';
 import { UserRole } from '@club-social/shared/users';
 import { useQueryClient } from '@tanstack/react-query';
-import { Space } from 'antd';
-import { useMemo } from 'react';
+import { Checkbox, Space } from 'antd';
 
 import { useSessionUser } from '@/auth/useUser';
 import { queryKeys } from '@/shared/lib/query-keys';
-import { Card, Page } from '@/ui';
+import { Card, Descriptions, Page } from '@/ui';
 import { NotFound } from '@/ui/NotFound';
 
-import { AdminSettings } from './AdminSettings';
-import { StaffSettings } from './StaffSettings';
 import { useAppSettings } from './useAppSettings';
 import { useUpdateAppSetting } from './useUpdateAppSetting';
 
@@ -28,6 +26,13 @@ export function AppSettingsPage() {
 
   const { data: appSettings, isLoading } = useAppSettings();
   const updateMutation = useUpdateAppSetting();
+
+  const appScopeSettings = (appSettings ?? []).filter(
+    (setting) => setting.scope === AppSettingScope.APP,
+  );
+  const systemScopeSettings = (appSettings ?? []).filter(
+    (setting) => setting.scope === AppSettingScope.SYSTEM,
+  );
 
   const onUpdate = (
     key: AppSettingKey,
@@ -53,17 +58,33 @@ export function AppSettingsPage() {
     );
   };
 
-  const { appScopeSettings, systemSettings } = useMemo(
-    () => ({
-      appScopeSettings: (appSettings ?? []).filter(
-        (setting) => setting.scope === AppSettingScope.APP,
+  const getBooleanSettings = (settings: AppSettingDto[]) =>
+    settings.filter((setting) => {
+      const keys = Object.keys(setting.value);
+
+      if (keys.length !== 1) {
+        return false;
+      }
+
+      const [firstKey] = keys;
+      const value = setting.value[firstKey as keyof typeof setting.value];
+
+      return typeof value === 'boolean';
+    });
+
+  const getBooleanItems = (settings: AppSettingDto[]) =>
+    getBooleanSettings(settings).map((setting) => ({
+      children: (
+        <Checkbox
+          checked={setting.value.enabled}
+          onChange={(e) => onUpdate(setting.key, { enabled: e.target.checked })}
+        >
+          {setting.description}
+        </Checkbox>
       ),
-      systemSettings: (appSettings ?? []).filter(
-        (setting) => setting.scope === AppSettingScope.SYSTEM,
-      ),
-    }),
-    [appSettings],
-  );
+      key: setting.key,
+      label: APP_SETTINGS_LABELS[setting.key],
+    }));
 
   if (!isAdmin && !isStaff) {
     return <NotFound />;
@@ -77,11 +98,15 @@ export function AppSettingsPage() {
     <Page>
       <Space className="flex" vertical>
         {isAdmin && (
-          <AdminSettings onUpdate={onUpdate} settings={systemSettings} />
+          <Card title="Configuración del Sistema">
+            <Descriptions items={[...getBooleanItems(systemScopeSettings)]} />
+          </Card>
         )}
 
         {(isAdmin || isStaff) && (
-          <StaffSettings onUpdate={onUpdate} settings={appScopeSettings} />
+          <Card title="Configuración de la Aplicación">
+            <Descriptions items={[...getBooleanItems(appScopeSettings)]} />
+          </Card>
         )}
       </Space>
     </Page>

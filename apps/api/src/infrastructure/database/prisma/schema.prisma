@@ -324,7 +324,7 @@ model AppSetting {
   id          String   @id
   value       Json
   description String?
-  scope       String   @default("system")
+  scope       String
   updatedAt   DateTime @updatedAt
   updatedBy   String?
 
