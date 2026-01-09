@@ -1,8 +1,9 @@
-import { DueCategory } from '@club-social/shared/dues';
+import { DueCategory, DueStatus } from '@club-social/shared/dues';
 
 import type { DueProps } from '@/dues/domain/entities/due.entity';
 
 import { DueEntity } from '@/dues/domain/entities/due.entity';
+import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -16,23 +17,38 @@ import {
 
 export type DuePropsOverrides = Partial<DueProps>;
 
-export const createDueProps = (
-  memberId: UniqueId,
-  overrides?: DuePropsOverrides,
-) => ({
+export const createDueProps = (overrides?: DuePropsOverrides) => ({
   amount: Amount.fromCents(TEST_DUE_AMOUNT_CENTS)._unsafeUnwrap(),
   category: DueCategory.MEMBERSHIP,
   date: DateOnly.fromString(TEST_DUE_DATE)._unsafeUnwrap(),
-  memberId,
+  memberId: UniqueId.generate(),
   notes: TEST_DUE_NOTES,
   ...overrides,
 });
 
-export const createTestDue = (
-  memberId: UniqueId,
-  overrides?: DuePropsOverrides,
+export const createTestDue = (overrides?: DuePropsOverrides): DueEntity =>
+  DueEntity.create(createDueProps(overrides), TEST_CREATED_BY)._unsafeUnwrap();
+
+const createPersistedDueProps = (overrides?: DuePropsOverrides): DueProps => ({
+  amount: Amount.fromCents(TEST_DUE_AMOUNT_CENTS)._unsafeUnwrap(),
+  category: DueCategory.MEMBERSHIP,
+  date: DateOnly.fromString(TEST_DUE_DATE)._unsafeUnwrap(),
+  memberId: UniqueId.generate(),
+  notes: TEST_DUE_NOTES,
+  settlements: [],
+  status: DueStatus.PENDING,
+  voidedAt: null,
+  voidedBy: null,
+  voidReason: null,
+  ...overrides,
+});
+
+export const createTestDueFromPersistence = (
+  propsOverrides?: DuePropsOverrides,
+  metaOverrides?: Partial<PersistenceMeta>,
 ): DueEntity =>
-  DueEntity.create(
-    createDueProps(memberId, overrides),
-    TEST_CREATED_BY,
-  )._unsafeUnwrap();
+  DueEntity.fromPersistence(createPersistedDueProps(propsOverrides), {
+    audit: { createdBy: TEST_CREATED_BY },
+    id: UniqueId.generate(),
+    ...metaOverrides,
+  });

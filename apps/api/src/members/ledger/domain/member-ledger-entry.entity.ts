@@ -5,8 +5,9 @@ import {
 } from '@club-social/shared/members';
 
 import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
+import { ApplicationError } from '@/shared/domain/errors/application.error';
 import { PersistenceMeta } from '@/shared/domain/persistence-meta';
-import { ok, Result } from '@/shared/domain/result';
+import { err, ok, Result } from '@/shared/domain/result';
 import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -92,6 +93,12 @@ export class MemberLedgerEntryEntity extends AuditedAggregateRoot {
       audit: { createdBy },
       id: UniqueId.generate(),
     });
+
+    if (entity._amount.isZero()) {
+      return err(
+        new ApplicationError('El monto del movimiento no puede ser cero'),
+      );
+    }
 
     return ok(entity);
   }

@@ -138,6 +138,12 @@ export class DueEntity extends AuditedAggregateRoot {
       },
     );
 
+    if (due._amount.isZero()) {
+      return err(
+        new ApplicationError('El monto de la cuota no puede ser cero'),
+      );
+    }
+
     due.addEvent(new DueCreatedEvent(due));
 
     return ok(due);

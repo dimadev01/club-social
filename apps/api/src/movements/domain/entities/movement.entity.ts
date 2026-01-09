@@ -124,6 +124,12 @@ export class MovementEntity extends AuditedAggregateRoot {
       },
     );
 
+    if (movement._amount.isZero()) {
+      return err(
+        new ApplicationError('El monto del movimiento no puede ser cero'),
+      );
+    }
+
     movement.addEvent(new MovementCreatedEvent(movement));
 
     return ok(movement);

@@ -17,7 +17,6 @@ import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
 } from '@/dues/domain/due.repository';
-import { DueEntity } from '@/dues/domain/entities/due.entity';
 import { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
 import {
   MEMBER_LEDGER_REPOSITORY_PROVIDER,
@@ -88,11 +87,6 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     const dues = await this.dueRepository.findByIds(
       params.dues.map((pd) => UniqueId.raw({ value: pd.dueId })),
     );
-    const duesValidation = await this.validateDuesExistence(dues);
-
-    if (duesValidation.isErr()) {
-      return err(duesValidation.error);
-    }
 
     // Sufficient balance validation
     const sufficientBalanceValidation =
@@ -380,16 +374,6 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     return ok(payment.value);
   }
 
-  private async validateDuesExistence(
-    dues: DueEntity[],
-  ): Promise<Result<void>> {
-    if (dues.length !== dues.length) {
-      return err(new ApplicationError('Una o más cuotas no existen'));
-    }
-
-    return ok();
-  }
-
   private async validateSufficientBalance(
     params: CreatePaymentParams,
   ): Promise<Result> {
@@ -402,7 +386,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return ok();
     }
 
-    const amountFromBalance = SignedAmount.fromCents(amountFromBalanceSum);
+    const amountFromBalance = Amount.fromCents(amountFromBalanceSum);
 
     if (amountFromBalance.isErr()) {
       return err(amountFromBalance.error);

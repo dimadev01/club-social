@@ -14,7 +14,11 @@ import {
   TEST_PAYMENT_NOTES,
   TEST_PAYMENT_RECEIPT_NUMBER,
 } from '@/shared/test/constants';
-import { createPaymentProps, createTestPayment } from '@/shared/test/factories';
+import {
+  createPaymentProps,
+  createTestPayment,
+  createTestPaymentFromPersistence,
+} from '@/shared/test/factories';
 
 import { PaymentCreatedEvent } from '../events/payment-created.event';
 import { PaymentUpdatedEvent } from '../events/payment-updated.event';
@@ -67,6 +71,19 @@ describe('PaymentEntity', () => {
       expect(events[0]).toBeInstanceOf(PaymentCreatedEvent);
       expect((events[0] as PaymentCreatedEvent).payment).toBe(payment);
     });
+
+    it('should fail to create a payment with zero amount', () => {
+      const props = createPaymentProps({
+        amount: Amount.fromCents(0)._unsafeUnwrap(),
+      });
+
+      const result = PaymentEntity.create(props, TEST_CREATED_BY);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe(
+        'El monto del pago no puede ser cero',
+      );
+    });
   });
 
   describe('fromPersistence', () => {
@@ -75,7 +92,7 @@ describe('PaymentEntity', () => {
       const memberId = UniqueId.generate();
       const dueIds = [UniqueId.generate()];
 
-      const payment = PaymentEntity.fromPersistence(
+      const payment = createTestPaymentFromPersistence(
         {
           amount: Amount.fromCents(
             TEST_ALT_PAYMENT_AMOUNT_CENTS,
@@ -85,10 +102,6 @@ describe('PaymentEntity', () => {
           memberId,
           notes: TEST_ALT_PAYMENT_NOTES,
           receiptNumber: TEST_ALT_PAYMENT_RECEIPT_NUMBER,
-          status: PaymentStatus.PAID,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
         },
         {
           audit: {
@@ -110,26 +123,12 @@ describe('PaymentEntity', () => {
     it('should create a voided payment from persisted data', () => {
       const voidedAt = new Date('2024-03-01');
 
-      const payment = PaymentEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(
-            TEST_ALT_PAYMENT_AMOUNT_CENTS,
-          )._unsafeUnwrap(),
-          date: DateOnly.fromString(TEST_ALT_PAYMENT_DATE)._unsafeUnwrap(),
-          dueIds: [],
-          memberId: UniqueId.generate(),
-          notes: null,
-          receiptNumber: null,
-          status: PaymentStatus.VOIDED,
-          voidedAt,
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Duplicate payment',
-        },
-        {
-          audit: { createdBy: 'user' },
-          id: UniqueId.generate(),
-        },
-      );
+      const payment = createTestPaymentFromPersistence({
+        status: PaymentStatus.VOIDED,
+        voidedAt,
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Duplicate payment',
+      });
 
       expect(payment.status).toBe(PaymentStatus.VOIDED);
       expect(payment.voidedAt).toBe(voidedAt);
@@ -173,24 +172,12 @@ describe('PaymentEntity', () => {
     });
 
     it('should return false when status is VOIDED', () => {
-      const payment = PaymentEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          dueIds: [],
-          memberId: UniqueId.generate(),
-          notes: null,
-          receiptNumber: null,
-          status: PaymentStatus.VOIDED,
-          voidedAt: new Date(),
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Test',
-        },
-        {
-          audit: { createdBy: 'user' },
-          id: UniqueId.generate(),
-        },
-      );
+      const payment = createTestPaymentFromPersistence({
+        status: PaymentStatus.VOIDED,
+        voidedAt: new Date(),
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Test',
+      });
 
       expect(payment.isPaid()).toBe(false);
     });
@@ -198,24 +185,12 @@ describe('PaymentEntity', () => {
 
   describe('isVoided', () => {
     it('should return true when status is VOIDED', () => {
-      const payment = PaymentEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          dueIds: [],
-          memberId: UniqueId.generate(),
-          notes: null,
-          receiptNumber: null,
-          status: PaymentStatus.VOIDED,
-          voidedAt: new Date(),
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Test',
-        },
-        {
-          audit: { createdBy: 'user' },
-          id: UniqueId.generate(),
-        },
-      );
+      const payment = createTestPaymentFromPersistence({
+        status: PaymentStatus.VOIDED,
+        voidedAt: new Date(),
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Test',
+      });
 
       expect(payment.isVoided()).toBe(true);
     });
@@ -261,24 +236,12 @@ describe('PaymentEntity', () => {
     });
 
     it('should fail to void an already voided payment', () => {
-      const payment = PaymentEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          dueIds: [],
-          memberId: UniqueId.generate(),
-          notes: null,
-          receiptNumber: null,
-          status: PaymentStatus.VOIDED,
-          voidedAt: new Date(),
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Already voided',
-        },
-        {
-          audit: { createdBy: 'user' },
-          id: UniqueId.generate(),
-        },
-      );
+      const payment = createTestPaymentFromPersistence({
+        status: PaymentStatus.VOIDED,
+        voidedAt: new Date(),
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Already voided',
+      });
 
       const result = payment.void({
         voidedBy: TEST_CREATED_BY,
@@ -295,36 +258,19 @@ describe('PaymentEntity', () => {
   describe('entity equality', () => {
     it('should be equal when ids match', () => {
       const id = UniqueId.generate();
-      const payment1 = PaymentEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          dueIds: [],
-          memberId: UniqueId.generate(),
-          notes: null,
-          receiptNumber: null,
-          status: PaymentStatus.PAID,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
-        },
-        { audit: { createdBy: 'user' }, id },
+
+      const payment1 = createTestPaymentFromPersistence(
+        { status: PaymentStatus.PAID },
+        { id },
       );
 
-      const payment2 = PaymentEntity.fromPersistence(
+      const payment2 = createTestPaymentFromPersistence(
         {
           amount: Amount.fromCents(2000)._unsafeUnwrap(),
-          date: DateOnly.fromString('2024-02-01')._unsafeUnwrap(),
-          dueIds: [],
-          memberId: UniqueId.generate(),
           notes: 'Different',
-          receiptNumber: null,
           status: PaymentStatus.PAID,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
         },
-        { audit: { createdBy: TEST_CREATED_BY }, id },
+        { id },
       );
 
       expect(payment1.equals(payment2)).toBe(true);
