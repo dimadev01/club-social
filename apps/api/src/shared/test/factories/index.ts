@@ -1,7 +1,5 @@
 export {
   type AppSettingPropsOverrides,
-  createAppSettingMeta,
-  createAppSettingProps,
   createTestAppSetting,
 } from './app-setting.factory';
 export {
@@ -12,6 +10,7 @@ export {
 export {
   createDueProps,
   createTestDue,
+  createTestDueFromPersistence,
   type DuePropsOverrides,
 } from './due.factory';
 export {
@@ -21,15 +20,18 @@ export {
 } from './member.factory';
 export {
   createInflowMovementProps,
-  createOutflowMovementProps,
   createTestInflowMovement,
+  createTestMovementFromPersistence,
   createTestOutflowMovement,
   type MovementPropsOverrides,
+  type PersistedMovementPropsOverrides,
 } from './movement.factory';
 export {
   createPaymentProps,
   createTestPayment,
+  createTestPaymentFromPersistence,
   type PaymentPropsOverrides,
+  type PersistedPaymentPropsOverrides,
 } from './payment.factory';
 export {
   createPricingProps,

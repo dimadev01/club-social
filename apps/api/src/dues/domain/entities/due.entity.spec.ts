@@ -2,7 +2,6 @@ import { DueCategory, DueStatus } from '@club-social/shared/dues';
 
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
-import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import {
   TEST_ALT_DUE_AMOUNT_CENTS,
@@ -12,7 +11,11 @@ import {
   TEST_DUE_DATE,
   TEST_DUE_NOTES,
 } from '@/shared/test/constants';
-import { createDueProps, createTestDue } from '@/shared/test/factories';
+import {
+  createDueProps,
+  createTestDue,
+  createTestDueFromPersistence,
+} from '@/shared/test/factories';
 
 import { DueCreatedEvent } from '../events/due-created.event';
 import { DueUpdatedEvent } from '../events/due-updated.event';
@@ -21,8 +24,7 @@ import { DueEntity } from './due.entity';
 describe('DueEntity', () => {
   describe('create', () => {
     it('should create a due with valid props', () => {
-      const memberId = UniqueId.generate();
-      const props = createDueProps(memberId);
+      const props = createDueProps();
 
       const result = DueEntity.create(props, TEST_CREATED_BY);
 
@@ -31,7 +33,7 @@ describe('DueEntity', () => {
       expect(due.amount.cents).toBe(TEST_DUE_AMOUNT_CENTS);
       expect(due.category).toBe(DueCategory.MEMBERSHIP);
       expect(due.date.value).toBe(TEST_DUE_DATE);
-      expect(due.memberId).toBe(memberId);
+      expect(due.memberId).toBe(props.memberId);
       expect(due.notes).toBe(TEST_DUE_NOTES);
       expect(due.status).toBe(DueStatus.PENDING);
       expect(due.settlements).toHaveLength(0);
@@ -42,27 +44,19 @@ describe('DueEntity', () => {
     });
 
     it('should create a due with null notes using overrides', () => {
-      const memberId = UniqueId.generate();
-
-      const due = createTestDue(memberId, { notes: null });
+      const due = createTestDue({ notes: null });
 
       expect(due.notes).toBeNull();
     });
 
     it('should create a due with different category using overrides', () => {
-      const memberId = UniqueId.generate();
-
-      const due = createTestDue(memberId, {
-        category: DueCategory.ELECTRICITY,
-      });
+      const due = createTestDue({ category: DueCategory.ELECTRICITY });
 
       expect(due.category).toBe(DueCategory.ELECTRICITY);
     });
 
     it('should add DueCreatedEvent on creation', () => {
-      const memberId = UniqueId.generate();
-
-      const due = createTestDue(memberId);
+      const due = createTestDue();
       const events = due.pullEvents();
 
       expect(events).toHaveLength(1);
@@ -71,12 +65,23 @@ describe('DueEntity', () => {
     });
 
     it('should generate unique ids for each due', () => {
-      const memberId = UniqueId.generate();
-
-      const due1 = createTestDue(memberId);
-      const due2 = createTestDue(memberId);
+      const due1 = createTestDue();
+      const due2 = createTestDue();
 
       expect(due1.id.value).not.toBe(due2.id.value);
+    });
+
+    it('should fail to create a due with zero amount', () => {
+      const props = createDueProps({
+        amount: Amount.fromCents(0)._unsafeUnwrap(),
+      });
+
+      const result = DueEntity.create(props, TEST_CREATED_BY);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe(
+        'El monto de la cuota no puede ser cero',
+      );
     });
   });
 
@@ -85,18 +90,12 @@ describe('DueEntity', () => {
       const id = UniqueId.generate();
       const memberId = UniqueId.generate();
 
-      const due = DueEntity.fromPersistence(
+      const due = createTestDueFromPersistence(
         {
           amount: Amount.fromCents(5000)._unsafeUnwrap(),
           category: DueCategory.ELECTRICITY,
-          date: DateOnly.fromString('2024-02-01')._unsafeUnwrap(),
           memberId,
           notes: 'Electricity bill',
-          settlements: [],
-          status: DueStatus.PENDING,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
         },
         {
           audit: {
@@ -120,24 +119,12 @@ describe('DueEntity', () => {
     it('should create a voided due from persisted data', () => {
       const voidedAt = new Date('2024-06-01');
 
-      const due = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.VOIDED,
-          voidedAt,
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Duplicate entry',
-        },
-        {
-          audit: { createdBy: TEST_CREATED_BY },
-          id: UniqueId.generate(),
-        },
-      );
+      const due = createTestDueFromPersistence({
+        status: DueStatus.VOIDED,
+        voidedAt,
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Duplicate entry',
+      });
 
       expect(due.status).toBe(DueStatus.VOIDED);
       expect(due.voidedAt).toBe(voidedAt);
@@ -148,8 +135,7 @@ describe('DueEntity', () => {
 
   describe('clone', () => {
     it('should create an exact copy of the due', () => {
-      const memberId = UniqueId.generate();
-      const original = createTestDue(memberId);
+      const original = createTestDue();
 
       const cloned = original.clone();
 
@@ -163,8 +149,7 @@ describe('DueEntity', () => {
     });
 
     it('should create an independent copy', () => {
-      const memberId = UniqueId.generate();
-      const original = createTestDue(memberId);
+      const original = createTestDue();
       original.pullEvents();
       const cloned = original.clone();
 
@@ -181,8 +166,7 @@ describe('DueEntity', () => {
 
   describe('update', () => {
     it('should update amount and notes on pending due', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
       due.pullEvents();
 
       const result = due.update({
@@ -198,8 +182,7 @@ describe('DueEntity', () => {
     });
 
     it('should add DueUpdatedEvent when updating', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
       due.pullEvents();
 
       due.update({
@@ -218,21 +201,7 @@ describe('DueEntity', () => {
     });
 
     it('should fail to update a paid due', () => {
-      const due = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.PAID,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id: UniqueId.generate() },
-      );
+      const due = createTestDueFromPersistence({ status: DueStatus.PAID });
 
       const result = due.update({
         amount: Amount.fromCents(2000)._unsafeUnwrap(),
@@ -247,21 +216,12 @@ describe('DueEntity', () => {
     });
 
     it('should fail to update a voided due', () => {
-      const due = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.VOIDED,
-          voidedAt: new Date(),
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Voided',
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id: UniqueId.generate() },
-      );
+      const due = createTestDueFromPersistence({
+        status: DueStatus.VOIDED,
+        voidedAt: new Date(),
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Voided',
+      });
 
       const result = due.update({
         amount: Amount.fromCents(2000)._unsafeUnwrap(),
@@ -278,8 +238,7 @@ describe('DueEntity', () => {
 
   describe('void', () => {
     it('should void a pending due', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
       due.pullEvents();
 
       const result = due.void({
@@ -295,21 +254,7 @@ describe('DueEntity', () => {
     });
 
     it('should fail to void a paid due', () => {
-      const due = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.PAID,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id: UniqueId.generate() },
-      );
+      const due = createTestDueFromPersistence({ status: DueStatus.PAID });
 
       const result = due.void({
         voidedBy: TEST_CREATED_BY,
@@ -323,21 +268,9 @@ describe('DueEntity', () => {
     });
 
     it('should fail to void a partially paid due', () => {
-      const due = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.PARTIALLY_PAID,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id: UniqueId.generate() },
-      );
+      const due = createTestDueFromPersistence({
+        status: DueStatus.PARTIALLY_PAID,
+      });
 
       const result = due.void({
         voidedBy: TEST_CREATED_BY,
@@ -350,8 +283,7 @@ describe('DueEntity', () => {
 
   describe('applySettlement', () => {
     it('should apply a valid settlement to pending due', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
       due.pullEvents();
 
       const result = due.applySettlement({
@@ -369,8 +301,7 @@ describe('DueEntity', () => {
     });
 
     it('should mark as paid when fully settled', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
 
       due.applySettlement({
         amount: Amount.fromCents(TEST_DUE_AMOUNT_CENTS)._unsafeUnwrap(),
@@ -384,21 +315,12 @@ describe('DueEntity', () => {
     });
 
     it('should fail to apply settlement to voided due', () => {
-      const due = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.VOIDED,
-          voidedAt: new Date(),
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Test',
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id: UniqueId.generate() },
-      );
+      const due = createTestDueFromPersistence({
+        status: DueStatus.VOIDED,
+        voidedAt: new Date(),
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Test',
+      });
 
       const result = due.applySettlement({
         amount: Amount.fromCents(500)._unsafeUnwrap(),
@@ -414,21 +336,7 @@ describe('DueEntity', () => {
     });
 
     it('should fail to apply settlement to paid due', () => {
-      const due = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.PAID,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id: UniqueId.generate() },
-      );
+      const due = createTestDueFromPersistence({ status: DueStatus.PAID });
 
       const result = due.applySettlement({
         amount: Amount.fromCents(500)._unsafeUnwrap(),
@@ -444,8 +352,7 @@ describe('DueEntity', () => {
     });
 
     it('should fail when settlement exceeds due amount', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
 
       const result = due.applySettlement({
         amount: Amount.fromCents(TEST_DUE_AMOUNT_CENTS + 5000)._unsafeUnwrap(),
@@ -461,8 +368,7 @@ describe('DueEntity', () => {
     });
 
     it('should fail when settlement amount is negative', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
 
       const result = due.applySettlement({
         amount: SignedAmount.raw({ cents: -500 }) as Amount,
@@ -480,8 +386,7 @@ describe('DueEntity', () => {
 
   describe('getDueSettlementByPaymentId', () => {
     it('should return the settlement for the given payment id', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
       const paymentId = UniqueId.generate();
 
       due.applySettlement({
@@ -501,8 +406,7 @@ describe('DueEntity', () => {
 
   describe('voidPayment', () => {
     it('should void a payment and recalculate status to pending', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
       const paymentId = UniqueId.generate();
 
       due.applySettlement({
@@ -529,8 +433,7 @@ describe('DueEntity', () => {
     });
 
     it('should void a payment and recalculate status to partially paid', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
       const paymentId1 = UniqueId.generate();
       const paymentId2 = UniqueId.generate();
 
@@ -562,8 +465,7 @@ describe('DueEntity', () => {
     });
 
     it('should void a payment on a paid due and recalculate status', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
       const paymentId = UniqueId.generate();
 
       due.applySettlement({
@@ -589,8 +491,7 @@ describe('DueEntity', () => {
 
   describe('status checks', () => {
     it('isPending should return true for pending dues', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
 
       expect(due.isPending()).toBe(true);
       expect(due.isPaid()).toBe(false);
@@ -599,62 +500,27 @@ describe('DueEntity', () => {
     });
 
     it('isPaid should return true for paid dues', () => {
-      const due = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.PAID,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id: UniqueId.generate() },
-      );
+      const due = createTestDueFromPersistence({ status: DueStatus.PAID });
 
       expect(due.isPaid()).toBe(true);
       expect(due.isPending()).toBe(false);
     });
 
     it('isPartiallyPaid should return true for partially paid dues', () => {
-      const due = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.PARTIALLY_PAID,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id: UniqueId.generate() },
-      );
+      const due = createTestDueFromPersistence({
+        status: DueStatus.PARTIALLY_PAID,
+      });
 
       expect(due.isPartiallyPaid()).toBe(true);
     });
 
     it('isVoided should return true for voided dues', () => {
-      const due = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.VOIDED,
-          voidedAt: new Date(),
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Test',
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id: UniqueId.generate() },
-      );
+      const due = createTestDueFromPersistence({
+        status: DueStatus.VOIDED,
+        voidedAt: new Date(),
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Test',
+      });
 
       expect(due.isVoided()).toBe(true);
     });
@@ -662,8 +528,7 @@ describe('DueEntity', () => {
 
   describe('settledAmount and pendingAmount', () => {
     it('should return zero settled and full pending for dues with no settlements', () => {
-      const memberId = UniqueId.generate();
-      const due = createTestDue(memberId);
+      const due = createTestDue();
 
       expect(due.settledAmount.cents).toBe(0);
       expect(due.pendingAmount.cents).toBe(TEST_DUE_AMOUNT_CENTS);
@@ -674,36 +539,19 @@ describe('DueEntity', () => {
     it('should be equal when ids match', () => {
       const id = UniqueId.generate();
 
-      const due1 = DueEntity.fromPersistence(
-        {
-          amount: Amount.fromCents(1000)._unsafeUnwrap(),
-          category: DueCategory.MEMBERSHIP,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
-          notes: null,
-          settlements: [],
-          status: DueStatus.PENDING,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id },
+      const due1 = createTestDueFromPersistence(
+        { status: DueStatus.PENDING },
+        { id },
       );
 
-      const due2 = DueEntity.fromPersistence(
+      const due2 = createTestDueFromPersistence(
         {
           amount: Amount.fromCents(2000)._unsafeUnwrap(),
           category: DueCategory.ELECTRICITY,
-          date: DateOnly.fromString('2024-02-01')._unsafeUnwrap(),
-          memberId: UniqueId.generate(),
           notes: 'Different',
-          settlements: [],
           status: DueStatus.PAID,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
         },
-        { audit: { createdBy: TEST_CREATED_BY }, id },
+        { id },
       );
 
       expect(due1.equals(due2)).toBe(true);

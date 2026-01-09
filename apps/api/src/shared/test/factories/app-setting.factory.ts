@@ -13,7 +13,7 @@ export type AppSettingPropsOverrides<
   K extends AppSettingKey = typeof AppSettingKey.MAINTENANCE_MODE,
 > = Partial<AppSettingPersistenceMeta & AppSettingProps<K>>;
 
-export const createAppSettingProps = <
+const createAppSettingProps = <
   K extends AppSettingKey = typeof AppSettingKey.MAINTENANCE_MODE,
 >(
   overrides?: AppSettingPropsOverrides<K>,
@@ -29,7 +29,7 @@ export const createAppSettingProps = <
   }) as AppSettingProps<K>['value'],
 });
 
-export const createAppSettingMeta = <K extends AppSettingKey>(
+const createAppSettingMeta = <K extends AppSettingKey>(
   overrides?: AppSettingPropsOverrides<K>,
 ) => ({
   updatedAt: overrides?.updatedAt ?? new Date('2024-01-01'),

@@ -108,6 +108,20 @@ describe('MemberLedgerEntryEntity', () => {
         result2._unsafeUnwrap().id.value,
       );
     });
+
+    it('should fail to create an entry with zero amount', () => {
+      const props = {
+        ...createValidCreditProps(),
+        amount: SignedAmount.fromCents(0)._unsafeUnwrap(),
+      };
+
+      const result = MemberLedgerEntryEntity.create(props, 'user-123');
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe(
+        'El monto del movimiento no puede ser cero',
+      );
+    });
   });
 
   describe('fromPersistence', () => {

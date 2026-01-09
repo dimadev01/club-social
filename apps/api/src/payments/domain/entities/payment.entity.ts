@@ -118,6 +118,10 @@ export class PaymentEntity extends AuditedAggregateRoot {
       },
     );
 
+    if (payment._amount.isZero()) {
+      return err(new ApplicationError('El monto del pago no puede ser cero'));
+    }
+
     payment.addEvent(new PaymentCreatedEvent(payment));
 
     return ok(payment);

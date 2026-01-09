@@ -3,6 +3,8 @@ name: check
 on:
   pull_request:
     branches: [dev, main]
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -18,16 +20,13 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - uses: actions/checkout@v5
-
       - uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
           cache: npm
 
       - run: npm ci
-
       - run: npm run check
-
       - run: npm run test:cov -w @club-social/api
 
       - name: Upload coverage to Codecov

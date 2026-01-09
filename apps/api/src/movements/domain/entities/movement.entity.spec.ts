@@ -19,6 +19,7 @@ import {
 import {
   createInflowMovementProps,
   createTestInflowMovement,
+  createTestMovementFromPersistence,
   createTestOutflowMovement,
 } from '@/shared/test/factories';
 
@@ -90,6 +91,19 @@ describe('MovementEntity', () => {
 
       expect(movement1.id.value).not.toBe(movement2.id.value);
     });
+
+    it('should fail to create a movement with zero amount', () => {
+      const props = createInflowMovementProps({
+        amount: SignedAmount.fromCents(0)._unsafeUnwrap(),
+      });
+
+      const result = MovementEntity.create(props, TEST_CREATED_BY);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe(
+        'El monto del movimiento no puede ser cero',
+      );
+    });
   });
 
   describe('fromPersistence', () => {
@@ -97,7 +111,7 @@ describe('MovementEntity', () => {
       const id = UniqueId.generate();
       const paymentId = UniqueId.generate();
 
-      const movement = MovementEntity.fromPersistence(
+      const movement = createTestMovementFromPersistence(
         {
           amount: SignedAmount.fromCents(
             TEST_ALT_MOVEMENT_AMOUNT_CENTS,
@@ -107,15 +121,8 @@ describe('MovementEntity', () => {
           mode: MovementMode.AUTOMATIC,
           notes: TEST_ALT_MOVEMENT_NOTES,
           paymentId,
-          status: MovementStatus.REGISTERED,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
         },
-        {
-          audit: { createdBy: 'system' },
-          id,
-        },
+        { audit: { createdBy: 'system' }, id },
       );
 
       expect(movement.id).toBe(id);
@@ -126,24 +133,12 @@ describe('MovementEntity', () => {
     it('should create a voided movement from persisted data', () => {
       const voidedAt = new Date('2024-03-01');
 
-      const movement = MovementEntity.fromPersistence(
-        {
-          amount: SignedAmount.fromCents(5000)._unsafeUnwrap(),
-          category: MovementCategory.EXPENSE,
-          date: DateOnly.fromString('2024-02-01')._unsafeUnwrap(),
-          mode: MovementMode.MANUAL,
-          notes: null,
-          paymentId: null,
-          status: MovementStatus.VOIDED,
-          voidedAt,
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Error in entry',
-        },
-        {
-          audit: { createdBy: TEST_CREATED_BY },
-          id: UniqueId.generate(),
-        },
-      );
+      const movement = createTestMovementFromPersistence({
+        status: MovementStatus.VOIDED,
+        voidedAt,
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Error in entry',
+      });
 
       expect(movement.status).toBe(MovementStatus.VOIDED);
       expect(movement.voidedAt).toBe(voidedAt);
@@ -204,24 +199,12 @@ describe('MovementEntity', () => {
     });
 
     it('should return false when status is VOIDED', () => {
-      const movement = MovementEntity.fromPersistence(
-        {
-          amount: SignedAmount.fromCents(1000)._unsafeUnwrap(),
-          category: MovementCategory.OTHER,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          mode: MovementMode.MANUAL,
-          notes: null,
-          paymentId: null,
-          status: MovementStatus.VOIDED,
-          voidedAt: new Date(),
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Test',
-        },
-        {
-          audit: { createdBy: TEST_CREATED_BY },
-          id: UniqueId.generate(),
-        },
-      );
+      const movement = createTestMovementFromPersistence({
+        status: MovementStatus.VOIDED,
+        voidedAt: new Date(),
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Test',
+      });
 
       expect(movement.isRegistered()).toBe(false);
     });
@@ -229,24 +212,12 @@ describe('MovementEntity', () => {
 
   describe('isVoided', () => {
     it('should return true when status is VOIDED', () => {
-      const movement = MovementEntity.fromPersistence(
-        {
-          amount: SignedAmount.fromCents(1000)._unsafeUnwrap(),
-          category: MovementCategory.OTHER,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          mode: MovementMode.MANUAL,
-          notes: null,
-          paymentId: null,
-          status: MovementStatus.VOIDED,
-          voidedAt: new Date(),
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Test',
-        },
-        {
-          audit: { createdBy: TEST_CREATED_BY },
-          id: UniqueId.generate(),
-        },
-      );
+      const movement = createTestMovementFromPersistence({
+        status: MovementStatus.VOIDED,
+        voidedAt: new Date(),
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Test',
+      });
 
       expect(movement.isVoided()).toBe(true);
     });
@@ -292,24 +263,12 @@ describe('MovementEntity', () => {
     });
 
     it('should fail to void an already voided movement', () => {
-      const movement = MovementEntity.fromPersistence(
-        {
-          amount: SignedAmount.fromCents(1000)._unsafeUnwrap(),
-          category: MovementCategory.OTHER,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          mode: MovementMode.MANUAL,
-          notes: null,
-          paymentId: null,
-          status: MovementStatus.VOIDED,
-          voidedAt: new Date(),
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Already voided',
-        },
-        {
-          audit: { createdBy: TEST_CREATED_BY },
-          id: UniqueId.generate(),
-        },
-      );
+      const movement = createTestMovementFromPersistence({
+        status: MovementStatus.VOIDED,
+        voidedAt: new Date(),
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Already voided',
+      });
 
       const result = movement.void({
         voidedBy: TEST_CREATED_BY,
@@ -323,24 +282,10 @@ describe('MovementEntity', () => {
     });
 
     it('should fail to void an automatic movement', () => {
-      const movement = MovementEntity.fromPersistence(
-        {
-          amount: SignedAmount.fromCents(1000)._unsafeUnwrap(),
-          category: MovementCategory.MEMBER_LEDGER,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          mode: MovementMode.AUTOMATIC,
-          notes: null,
-          paymentId: UniqueId.generate(),
-          status: MovementStatus.REGISTERED,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
-        },
-        {
-          audit: { createdBy: 'system' },
-          id: UniqueId.generate(),
-        },
-      );
+      const movement = createTestMovementFromPersistence({
+        mode: MovementMode.AUTOMATIC,
+        paymentId: UniqueId.generate(),
+      });
 
       const result = movement.void({
         voidedBy: TEST_CREATED_BY,
@@ -358,36 +303,15 @@ describe('MovementEntity', () => {
     it('should be equal when ids match', () => {
       const id = UniqueId.generate();
 
-      const movement1 = MovementEntity.fromPersistence(
-        {
-          amount: SignedAmount.fromCents(1000)._unsafeUnwrap(),
-          category: MovementCategory.OTHER,
-          date: DateOnly.fromString('2024-01-01')._unsafeUnwrap(),
-          mode: MovementMode.MANUAL,
-          notes: null,
-          paymentId: null,
-          status: MovementStatus.REGISTERED,
-          voidedAt: null,
-          voidedBy: null,
-          voidReason: null,
-        },
-        { audit: { createdBy: TEST_CREATED_BY }, id },
-      );
+      const movement1 = createTestMovementFromPersistence({}, { id });
 
-      const movement2 = MovementEntity.fromPersistence(
+      const movement2 = createTestMovementFromPersistence(
         {
           amount: SignedAmount.fromCents(2000)._unsafeUnwrap(),
           category: MovementCategory.BUFFET,
-          date: DateOnly.fromString('2024-02-01')._unsafeUnwrap(),
-          mode: MovementMode.AUTOMATIC,
           notes: 'Different',
-          paymentId: null,
-          status: MovementStatus.VOIDED,
-          voidedAt: new Date(),
-          voidedBy: TEST_CREATED_BY,
-          voidReason: 'Voided',
         },
-        { audit: { createdBy: TEST_CREATED_BY }, id },
+        { id },
       );
 
       expect(movement1.equals(movement2)).toBe(true);
