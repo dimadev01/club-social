@@ -1,10 +1,12 @@
 import { DueCategory } from '@club-social/shared/dues';
 
-export type EmailJobData =
+export type EmailCriticalJobData =
   | { data: SendMagicLinkParams; type: 'send-magic-link' }
-  | { data: SendNewDueMovementParams; type: 'send-new-due-movement' }
-  | { data: SendNewPaymentParams; type: 'send-new-payment' }
   | { data: SendVerificationEmailParams; type: 'send-verification-email' };
+
+export type EmailRegularJobData =
+  | { data: SendNewDueMovementParams; type: 'send-new-due-movement' }
+  | { data: SendNewPaymentParams; type: 'send-new-payment' };
 
 export interface SendEmailParams {
   from?: string;
