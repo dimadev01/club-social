@@ -47,11 +47,22 @@ export class ResendProvider implements EmailProvider {
       params,
     });
 
+    const toAddresses = this.buildToAddresses(params.to);
+
+    if (toAddresses.length === 0) {
+      this.logger.warn({
+        message: 'No to addresses found',
+        params,
+      });
+
+      return;
+    }
+
     const { data, error } = await this.resend.emails.send({
       from: params.from ?? 'Club Social <info@clubsocialmontegrande.ar>',
       html: params.html,
       subject: params.subject,
-      to: this.buildToAddresses(params.to),
+      to: toAddresses,
     });
 
     if (error) {
@@ -77,13 +88,24 @@ export class ResendProvider implements EmailProvider {
       params,
     });
 
+    const toAddresses = this.buildToAddresses(params.email);
+
+    if (toAddresses.length === 0) {
+      this.logger.warn({
+        message: 'No to addresses found',
+        params,
+      });
+
+      return;
+    }
+
     const { data, error } = await this.resend.emails.send({
       from: `Club Social <${INFO_EMAIL}>`,
       template: {
         id: params.template,
         variables: params.variables,
       },
-      to: this.buildToAddresses(params.email),
+      to: toAddresses,
     });
 
     if (error) {

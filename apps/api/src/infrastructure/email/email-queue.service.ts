@@ -4,7 +4,8 @@ import { Queue } from 'bullmq';
 
 import { QueueEmailType } from './email.enum';
 import {
-  EmailJobData,
+  EmailCriticalJobData,
+  EmailRegularJobData,
   SendMagicLinkParams,
   SendNewDueMovementParams,
   SendNewPaymentParams,
@@ -14,33 +15,43 @@ import {
 @Injectable()
 export class EmailQueueService {
   public constructor(
-    @InjectQueue('email')
-    private readonly queue: Queue<EmailJobData, void, QueueEmailType>,
+    @InjectQueue('email-critical')
+    private readonly criticalQueue: Queue<
+      EmailCriticalJobData,
+      void,
+      QueueEmailType
+    >,
+    @InjectQueue('email-regular')
+    private readonly regularQueue: Queue<
+      EmailRegularJobData,
+      void,
+      QueueEmailType
+    >,
   ) {}
 
   public async magicLink(params: SendMagicLinkParams) {
-    await this.queue.add(QueueEmailType.SEND_MAGIC_LINK, {
+    await this.criticalQueue.add(QueueEmailType.SEND_MAGIC_LINK, {
       data: params,
       type: QueueEmailType.SEND_MAGIC_LINK,
     });
   }
 
   public async sendNewDueMovement(params: SendNewDueMovementParams) {
-    await this.queue.add(QueueEmailType.SEND_NEW_DUE_MOVEMENT, {
+    await this.regularQueue.add(QueueEmailType.SEND_NEW_DUE_MOVEMENT, {
       data: params,
       type: QueueEmailType.SEND_NEW_DUE_MOVEMENT,
     });
   }
 
   public async sendNewPayment(params: SendNewPaymentParams) {
-    await this.queue.add(QueueEmailType.SEND_NEW_PAYMENT, {
+    await this.regularQueue.add(QueueEmailType.SEND_NEW_PAYMENT, {
       data: params,
       type: QueueEmailType.SEND_NEW_PAYMENT,
     });
   }
 
   public async sendVerificationEmail(params: SendVerificationEmailParams) {
-    await this.queue.add(QueueEmailType.SEND_VERIFICATION_EMAIL, {
+    await this.criticalQueue.add(QueueEmailType.SEND_VERIFICATION_EMAIL, {
       data: params,
       type: QueueEmailType.SEND_VERIFICATION_EMAIL,
     });
