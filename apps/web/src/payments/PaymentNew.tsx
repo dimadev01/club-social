@@ -66,7 +66,14 @@ export function PaymentNew() {
           if (shouldNavigateBack.current) {
             navigate(-1);
           } else {
-            form.resetFields(['memberId', 'dues', 'notes', 'receiptNumber']);
+            form.resetFields([
+              'memberId',
+              'dues',
+              'notes',
+              'receiptNumber',
+              'useSurplusToCredit',
+              'surplusToCreditAmount',
+            ]);
           }
         },
       },
