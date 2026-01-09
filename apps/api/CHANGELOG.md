@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.7.2](https://github.com/dimadev01/club-social/compare/api-v0.7.1...api-v0.7.2) (2026-01-09)
+
+
+### Bug Fixes
+
+* enhance validation for zero amounts in payment, due, and movement entities ([c94d994](https://github.com/dimadev01/club-social/commit/c94d99456fc8a8f9585e7820338643aebcfb7c9d))
+* **payment:** update resetFields in PaymentNew to include new fields ([7870f70](https://github.com/dimadev01/club-social/commit/7870f705567dbd7fc9db1418d627e4acb5c68d7e))
+* **payment:** update resetFields in PaymentNew to include new fields ([26162da](https://github.com/dimadev01/club-social/commit/26162da87f884331fe1fc681ffee0b789ca57c8c))
+
 ## [0.7.1](https://github.com/dimadev01/club-social/compare/api-v0.7.0...api-v0.7.1) (2026-01-08)
 
 

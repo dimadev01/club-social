@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.7.1](https://github.com/dimadev01/club-social/compare/web-v0.7.0...web-v0.7.1) (2026-01-09)
+
+
+### Bug Fixes
+
+* **payment:** update resetFields in PaymentNew to include new fields ([7870f70](https://github.com/dimadev01/club-social/commit/7870f705567dbd7fc9db1418d627e4acb5c68d7e))
+* **payment:** update resetFields in PaymentNew to include new fields ([26162da](https://github.com/dimadev01/club-social/commit/26162da87f884331fe1fc681ffee0b789ca57c8c))
+* ui in list filter ([277cb7e](https://github.com/dimadev01/club-social/commit/277cb7e427e5aea11800ca931d8b11015c25a966))
+* ui in list filter ([9f41536](https://github.com/dimadev01/club-social/commit/9f4153610659cbe14322f117406abffdbfc20a0f))
+
 ## [0.7.0](https://github.com/dimadev01/club-social/compare/web-v0.6.0...web-v0.7.0) (2026-01-08)
 
 
