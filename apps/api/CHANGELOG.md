@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/dimadev01/club-social/compare/api-v0.7.2...api-v0.8.0) (2026-01-09)
+
+
+### Features
+
+* separate email queues ([4d49d60](https://github.com/dimadev01/club-social/commit/4d49d606200d5342e8dacfb8785bfa152693319f))
+
 ## [0.7.2](https://github.com/dimadev01/club-social/compare/api-v0.7.1...api-v0.7.2) (2026-01-09)
 
 
