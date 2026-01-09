@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.1](https://github.com/dimadev01/club-social/compare/api-v0.8.0...api-v0.8.1) (2026-01-09)
+
+
+### Bug Fixes
+
+* **payment:** streamline payment creation process and add validation … ([0603c6b](https://github.com/dimadev01/club-social/commit/0603c6b9001f20d93e7190972b576e92910a6ab2))
+* **payment:** streamline payment creation process and add validation for zero amounts ([4f75034](https://github.com/dimadev01/club-social/commit/4f750340238e402ed5d12f332dbb4f8c0e97752a))
+
 ## [0.8.0](https://github.com/dimadev01/club-social/compare/api-v0.7.2...api-v0.8.0) (2026-01-09)
 
 
