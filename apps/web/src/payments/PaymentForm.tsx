@@ -3,6 +3,7 @@ import type { MemberSearchResultDto } from '@club-social/shared/members';
 import {
   DueCategory,
   DueCategoryLabel,
+  DueSettlementStatus,
   type PendingDueDto,
 } from '@club-social/shared/dues';
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
@@ -136,7 +137,11 @@ export function PaymentForm({
    */
   const getPaidAmountForDue = useCallback(
     (dueId: string) => {
-      const dueSettlements = flatMap(dues, (due) => due.settlements);
+      const dueSettlements = flatMap(dues, (due) =>
+        due.settlements.filter(
+          (ds) => ds.status === DueSettlementStatus.APPLIED,
+        ),
+      );
       const dueSettlementsForDue = dueSettlements.filter(
         (ds) => ds.dueId === dueId,
       );

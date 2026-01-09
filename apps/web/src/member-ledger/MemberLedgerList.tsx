@@ -7,6 +7,7 @@ import {
   type MemberLedgerEntryPaginatedExtraDto,
   MemberLedgerEntrySource,
   MemberLedgerEntrySourceLabel,
+  MemberLedgerEntryStatus,
   MemberLedgerEntryStatusLabel,
   MemberLedgerEntryType,
   MemberLedgerEntryTypeLabel,
@@ -22,10 +23,7 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import {
-  labelMapToFilterOptions,
-  labelMapToSelectOptions,
-} from '@/shared/lib/utils';
+import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Card,
   NavigateToMember,
@@ -33,7 +31,6 @@ import {
   NavigateToPayment,
   NotFound,
   PageTableActions,
-  Select,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -130,14 +127,6 @@ export function MemberLedgerList() {
               value={getFilterValue('memberId') ?? undefined}
             />
           )}
-          <Select
-            className="min-w-full md:min-w-40"
-            mode="multiple"
-            onChange={(value) => setFilter('status', value)}
-            options={labelMapToSelectOptions(MemberLedgerEntryStatusLabel)}
-            placeholder="Filtrar por estado"
-            value={getFilterValue('status') ?? undefined}
-          />
         </Flex>
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -183,6 +172,16 @@ export function MemberLedgerList() {
             render: (value: MemberLedgerEntryType) =>
               MemberLedgerEntryTypeLabel[value],
             title: 'Tipo',
+            width: TABLE_COLUMN_WIDTHS.STATUS,
+          },
+          {
+            align: 'center',
+            dataIndex: 'status',
+            filteredValue: getFilterValue('status'),
+            filters: labelMapToFilterOptions(MemberLedgerEntryStatusLabel),
+            render: (value: MemberLedgerEntryStatus) =>
+              MemberLedgerEntryStatusLabel[value],
+            title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
@@ -238,7 +237,7 @@ export function MemberLedgerList() {
         summary={() => (
           <Table.Summary fixed>
             <Table.Summary.Row>
-              <Table.Summary.Cell align="right" colSpan={4} index={0}>
+              <Table.Summary.Cell align="right" colSpan={5} index={0}>
                 <TableSummaryTotalFilterText title="Balance" />
               </Table.Summary.Cell>
               <Table.Summary.Cell align="center" colSpan={2} index={1}>
