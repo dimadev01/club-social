@@ -10,7 +10,7 @@ import {
   PaymentStatusLabel,
 } from '@club-social/shared/payments';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Divider, Dropdown, Flex, Space, type TableColumnType } from 'antd';
+import { Divider, Dropdown, Space, type TableColumnType } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -21,10 +21,7 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import {
-  labelMapToFilterOptions,
-  labelMapToSelectOptions,
-} from '@/shared/lib/utils';
+import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Button,
   Card,
@@ -33,7 +30,6 @@ import {
   NavigateToPayment,
   NotFound,
   PageTableActions,
-  Select,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -123,25 +119,14 @@ export function PaymentList() {
       title="Pagos"
     >
       <PageTableActions>
-        <Flex gap="middle" wrap>
-          {permissions.payments.listAll && (
-            <TableMembersSearch
-              isLoading={isSelectedMembersLoading}
-              onFilterChange={(value) => setFilter('memberId', value)}
-              selectedMembers={selectedMembers}
-              value={getFilterValue('memberId') ?? undefined}
-            />
-          )}
-
-          <Select
-            className="min-w-full md:min-w-40"
-            mode="multiple"
-            onChange={(value) => setFilter('status', value)}
-            options={labelMapToSelectOptions(PaymentStatusLabel)}
-            placeholder="Filtrar por estado"
-            value={getFilterValue('status') ?? undefined}
+        {permissions.payments.listAll && (
+          <TableMembersSearch
+            isLoading={isSelectedMembersLoading}
+            onFilterChange={(value) => setFilter('memberId', value)}
+            selectedMembers={selectedMembers}
+            value={getFilterValue('memberId') ?? undefined}
           />
-        </Flex>
+        )}
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
 
@@ -207,6 +192,15 @@ export function PaymentList() {
             render: (receiptNumber: null | string) => receiptNumber ?? '-',
             title: 'Recibo',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+          {
+            align: 'center',
+            dataIndex: 'status',
+            filteredValue: getFilterValue('status'),
+            filters: labelMapToFilterOptions(PaymentStatusLabel),
+            render: (value: PaymentStatus) => PaymentStatusLabel[value],
+            title: 'Estado',
+            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           ...(permissions.payments.listAll
             ? [

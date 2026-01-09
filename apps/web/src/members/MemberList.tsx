@@ -9,7 +9,7 @@ import {
 } from '@club-social/shared/members';
 import { type PaginatedDataResultDto } from '@club-social/shared/types';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Dropdown, Flex, Space, Typography } from 'antd';
+import { Dropdown, Space, Typography } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -18,10 +18,7 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import {
-  labelMapToFilterOptions,
-  labelMapToSelectOptions,
-} from '@/shared/lib/utils';
+import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Button,
   Card,
@@ -31,7 +28,6 @@ import {
   NotFound,
   PageTableActions,
   PaymentsIcon,
-  Select,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -117,23 +113,12 @@ export function MemberListPage() {
       title="Socios"
     >
       <PageTableActions>
-        <Flex gap="middle" wrap>
-          <TableMembersSearch
-            isLoading={isSelectedMembersLoading}
-            onFilterChange={(value) => setFilter('id', value ?? [])}
-            selectedMembers={selectedMembers}
-            value={getFilterValue('id') ?? undefined}
-          />
-
-          <Select
-            className="min-w-full md:min-w-40"
-            mode="multiple"
-            onChange={(value) => setFilter('status', value)}
-            options={labelMapToSelectOptions(MemberStatusLabel)}
-            placeholder="Filtrar por estado"
-            value={getFilterValue('status') ?? undefined}
-          />
-        </Flex>
+        <TableMembersSearch
+          isLoading={isSelectedMembersLoading}
+          onFilterChange={(value) => setFilter('id', value ?? [])}
+          selectedMembers={selectedMembers}
+          value={getFilterValue('id') ?? undefined}
+        />
 
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -170,6 +155,15 @@ export function MemberListPage() {
             sorter: true,
             sortOrder: getSortOrder('email'),
             title: 'Email',
+          },
+          {
+            align: 'center',
+            dataIndex: 'status',
+            render: (status: MemberStatus) => MemberStatusLabel[status],
+            sorter: true,
+            sortOrder: getSortOrder('status'),
+            title: 'Estado',
+            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           {
             align: 'right',

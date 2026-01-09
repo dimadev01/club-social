@@ -12,7 +12,7 @@ import {
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { MemberStatus, MemberStatusLabel } from '@club-social/shared/members';
 import { keepPreviousData } from '@tanstack/react-query';
-import { Dropdown, Flex, Space, type TableColumnType } from 'antd';
+import { Dropdown, Space, type TableColumnType } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
@@ -22,10 +22,7 @@ import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
-import {
-  labelMapToFilterOptions,
-  labelMapToSelectOptions,
-} from '@/shared/lib/utils';
+import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Button,
   Card,
@@ -33,7 +30,6 @@ import {
   NotFound,
   PageTableActions,
   PaymentsIcon,
-  Select,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -127,25 +123,14 @@ export function DueList() {
       title="Deudas"
     >
       <PageTableActions>
-        <Flex gap="middle" wrap>
-          {permissions.dues.listAll && (
-            <TableMembersSearch
-              isLoading={isSelectedMembersLoading}
-              onFilterChange={(value) => setFilter('memberId', value)}
-              selectedMembers={selectedMembers}
-              value={getFilterValue('memberId') ?? undefined}
-            />
-          )}
-
-          <Select
-            className="min-w-full md:min-w-48"
-            mode="multiple"
-            onChange={(value) => setFilter('memberStatus', value)}
-            options={labelMapToSelectOptions(MemberStatusLabel)}
-            placeholder="Filtrar por estado socio"
-            value={getFilterValue('memberStatus') ?? undefined}
+        {permissions.dues.listAll && (
+          <TableMembersSearch
+            isLoading={isSelectedMembersLoading}
+            onFilterChange={(value) => setFilter('memberId', value)}
+            selectedMembers={selectedMembers}
+            value={getFilterValue('memberId') ?? undefined}
           />
-        </Flex>
+        )}
 
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -212,6 +197,15 @@ export function DueList() {
             render: (value: DueStatus) => DueStatusLabel[value],
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.DUE_STATUS,
+          },
+          {
+            align: 'center',
+            dataIndex: 'memberStatus',
+            filteredValue: getFilterValue('memberStatus'),
+            filters: labelMapToFilterOptions(MemberStatusLabel),
+            render: (value: MemberStatus) => MemberStatusLabel[value],
+            title: 'Estado socio',
+            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
           ...(permissions.dues.listAll
             ? [
