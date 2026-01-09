@@ -124,55 +124,6 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(payment.error);
     }
 
-    /**
-     * Business reason:
-     * For every payment registered, we must create corresponding member ledger entries
-     * to accurately reflect financial activity. This ensures double-entry accounting:
-     * - A deposit (credit) entry records the reception of the total payment ("abono" to the account).
-     * - For each due being paid, a corresponding debit entry is posted to represent the applied payment
-     *   against each specific due ("aplicar cuota"). This allows granular tracking of which dues are
-     *   cleared, supports reporting, and maintains an auditable ledger history per member.
-     * The member ledger must always remain balanced: sum of credits minus debits must align with outstanding dues and payments.
-     */
-    const creditEntry = MemberLedgerEntryEntity.create(
-      {
-        amount: payment.value.amount,
-        date: paymentDate,
-        memberId,
-        notes: params.notes,
-        paymentId: payment.value.id,
-        reversalOfId: null,
-        source: MemberLedgerEntrySource.PAYMENT,
-        status: MemberLedgerEntryStatus.POSTED,
-        type: MemberLedgerEntryType.DEPOSIT_CREDIT,
-      },
-      params.createdBy,
-    );
-
-    if (creditEntry.isErr()) {
-      return err(creditEntry.error);
-    }
-
-    const creditMovement = MovementEntity.create(
-      {
-        amount: creditEntry.value.amount,
-        category: MovementCategory.MEMBER_LEDGER,
-        date: paymentDate,
-        mode: MovementMode.AUTOMATIC,
-        notes: 'Pago de deuda',
-        paymentId: payment.value.id,
-        status: MovementStatus.REGISTERED,
-      },
-      params.createdBy,
-    );
-
-    if (creditMovement.isErr()) {
-      return err(creditMovement.error);
-    }
-
-    // This holds the credit movement by entering or surplus
-    const movements: MovementEntity[] = [creditMovement.value];
-
     // This holds the cash and balance debit ledger entries
     const debitLedgerEntries: MemberLedgerEntryEntity[] = [];
 
@@ -203,6 +154,12 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
       const totalAmount = cashAmount.add(balanceAmount ?? SignedAmount.ZERO);
 
+      if (totalAmount.isZero()) {
+        return err(
+          new ApplicationError('El monto total a registrar no puede ser cero'),
+        );
+      }
+
       /**
        * Validate that between the cash amount and balance
        * amount is not greater than the due amount
@@ -215,36 +172,38 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         );
       }
 
-      const cashDebitEntry = MemberLedgerEntryEntity.create(
-        {
-          amount: cashAmountResult.value.toNegative(),
-          date: paymentDate,
-          memberId: UniqueId.raw({ value: params.memberId }),
-          notes: params.notes,
+      if (cashAmount.isPositive()) {
+        const cashDebitEntry = MemberLedgerEntryEntity.create(
+          {
+            amount: cashAmountResult.value.toNegative(),
+            date: paymentDate,
+            memberId: UniqueId.raw({ value: params.memberId }),
+            notes: params.notes,
+            paymentId: payment.value.id,
+            reversalOfId: null,
+            source: MemberLedgerEntrySource.PAYMENT,
+            status: MemberLedgerEntryStatus.POSTED,
+            type: MemberLedgerEntryType.DUE_APPLY_DEBIT,
+          },
+          params.createdBy,
+        );
+
+        if (cashDebitEntry.isErr()) {
+          return err(cashDebitEntry.error);
+        }
+
+        debitLedgerEntries.push(cashDebitEntry.value);
+
+        const dueApplySettlementResult = due.applySettlement({
+          amount: cashAmountResult.value,
+          createdBy: params.createdBy,
+          memberLedgerEntryId: cashDebitEntry.value.id,
           paymentId: payment.value.id,
-          reversalOfId: null,
-          source: MemberLedgerEntrySource.PAYMENT,
-          status: MemberLedgerEntryStatus.POSTED,
-          type: MemberLedgerEntryType.DUE_APPLY_DEBIT,
-        },
-        params.createdBy,
-      );
+        });
 
-      if (cashDebitEntry.isErr()) {
-        return err(cashDebitEntry.error);
-      }
-
-      debitLedgerEntries.push(cashDebitEntry.value);
-
-      const dueApplySettlementResult = due.applySettlement({
-        amount: cashAmountResult.value,
-        createdBy: params.createdBy,
-        memberLedgerEntryId: cashDebitEntry.value.id,
-        paymentId: payment.value.id,
-      });
-
-      if (dueApplySettlementResult.isErr()) {
-        return err(dueApplySettlementResult.error);
+        if (dueApplySettlementResult.isErr()) {
+          return err(dueApplySettlementResult.error);
+        }
       }
 
       // If the due has an amount from balance, use it
@@ -281,6 +240,63 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
           return err(dueApplySettlementResult.error);
         }
       }
+    }
+
+    // This holds the credit movement by entering or surplus
+    const movements: MovementEntity[] = [];
+
+    let creditEntry: MemberLedgerEntryEntity | null = null;
+
+    /**
+     * Business reason:
+     * For every payment registered, we must create corresponding member ledger entries
+     * to accurately reflect financial activity. This ensures double-entry accounting:
+     * - A deposit (credit) entry records the reception of the total payment ("abono" to the account).
+     * - For each due being paid, a corresponding debit entry is posted to represent the applied payment
+     *   against each specific due ("aplicar cuota"). This allows granular tracking of which dues are
+     *   cleared, supports reporting, and maintains an auditable ledger history per member.
+     * The member ledger must always remain balanced: sum of credits minus debits must align with outstanding dues and payments.
+     */
+    if (payment.value.amount.isPositive()) {
+      const result = MemberLedgerEntryEntity.create(
+        {
+          amount: payment.value.amount,
+          date: paymentDate,
+          memberId,
+          notes: params.notes,
+          paymentId: payment.value.id,
+          reversalOfId: null,
+          source: MemberLedgerEntrySource.PAYMENT,
+          status: MemberLedgerEntryStatus.POSTED,
+          type: MemberLedgerEntryType.DEPOSIT_CREDIT,
+        },
+        params.createdBy,
+      );
+
+      if (result.isErr()) {
+        return err(result.error);
+      }
+
+      creditEntry = result.value;
+
+      const creditMovement = MovementEntity.create(
+        {
+          amount: creditEntry.amount,
+          category: MovementCategory.MEMBER_LEDGER,
+          date: paymentDate,
+          mode: MovementMode.AUTOMATIC,
+          notes: 'Pago de deuda',
+          paymentId: payment.value.id,
+          status: MovementStatus.REGISTERED,
+        },
+        params.createdBy,
+      );
+
+      if (creditMovement.isErr()) {
+        return err(creditMovement.error);
+      }
+
+      movements.push(creditMovement.value);
     }
 
     // Surplus credit entry creation
@@ -344,7 +360,11 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         paymentsRepository,
       }) => {
         await paymentsRepository.save(payment.value);
-        await memberLedgerRepository.save(creditEntry.value);
+
+        if (creditEntry) {
+          await memberLedgerRepository.save(creditEntry);
+        }
+
         await Promise.all(
           debitLedgerEntries.map((entry) => memberLedgerRepository.save(entry)),
         );
@@ -361,7 +381,11 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     );
 
     this.eventPublisher.dispatch(payment.value);
-    this.eventPublisher.dispatch(creditEntry.value);
+
+    if (creditEntry) {
+      this.eventPublisher.dispatch(creditEntry);
+    }
+
     debitLedgerEntries.forEach((entry) => this.eventPublisher.dispatch(entry));
 
     if (surplusCreditEntry) {

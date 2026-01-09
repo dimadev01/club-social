@@ -71,19 +71,6 @@ describe('PaymentEntity', () => {
       expect(events[0]).toBeInstanceOf(PaymentCreatedEvent);
       expect((events[0] as PaymentCreatedEvent).payment).toBe(payment);
     });
-
-    it('should fail to create a payment with zero amount', () => {
-      const props = createPaymentProps({
-        amount: Amount.fromCents(0)._unsafeUnwrap(),
-      });
-
-      const result = PaymentEntity.create(props, TEST_CREATED_BY);
-
-      expect(result.isErr()).toBe(true);
-      expect(result._unsafeUnwrapErr().message).toBe(
-        'El monto del pago no puede ser cero',
-      );
-    });
   });
 
   describe('fromPersistence', () => {
