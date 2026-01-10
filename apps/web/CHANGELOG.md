@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/dimadev01/club-social/compare/web-v0.7.1...web-v0.7.2) (2026-01-10)
+
+
+### Bug Fixes
+
+* **payment:** update payment structure to use balanceAmount and cashAmount ([b403811](https://github.com/dimadev01/club-social/commit/b403811fcc707abbbe2c673d5b8b3aed818a8e0d))
+
 ## [0.7.1](https://github.com/dimadev01/club-social/compare/web-v0.7.0...web-v0.7.1) (2026-01-09)
 
 

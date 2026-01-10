@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.2](https://github.com/dimadev01/club-social/compare/api-v0.8.1...api-v0.8.2) (2026-01-10)
+
+
+### Bug Fixes
+
+* **email:** adjust email processing limits to 14 minutes and reduce max jobs to 1 ([c12b342](https://github.com/dimadev01/club-social/commit/c12b3426c02da4a741dd64ac6b17cb43eca295fe))
+* **payment:** update payment structure to use balanceAmount and cashAmount ([b403811](https://github.com/dimadev01/club-social/commit/b403811fcc707abbbe2c673d5b8b3aed818a8e0d))
+
 ## [0.8.1](https://github.com/dimadev01/club-social/compare/api-v0.8.0...api-v0.8.1) (2026-01-09)
 
 
