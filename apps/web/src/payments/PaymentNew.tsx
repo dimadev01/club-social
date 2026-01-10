@@ -46,9 +46,11 @@ export function PaymentNew() {
       {
         date: DateFormat.isoDate(values.date.startOf('day')),
         dues: values.dues.map((due) => ({
-          amount: NumberFormat.toCents(due.amount),
-          amountFromBalance: due.amountFromBalance
-            ? NumberFormat.toCents(due.amountFromBalance)
+          balanceAmount: due.balanceAmount
+            ? NumberFormat.toCents(due.balanceAmount)
+            : null,
+          cashAmount: due.cashAmount
+            ? NumberFormat.toCents(due.cashAmount)
             : null,
           dueId: due.dueId,
         })),

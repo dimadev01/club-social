@@ -43,8 +43,8 @@ import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 interface CreatePaymentDueParams {
-  amount: number;
-  amountFromBalance: null | number;
+  balanceAmount: null | number;
+  cashAmount: null | number;
   dueId: string;
 }
 
@@ -83,12 +83,16 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
     const memberId = UniqueId.raw({ value: params.memberId });
 
-    // Dues validation
+    /**
+     * Validation phase:
+     * 1. Fetch dues to validate pending amounts and apply settlements later.
+     * 2. If the member wants to use their credit balance, ensure they have enough.
+     *    This prevents overselling credit that doesn't exist.
+     */
     const dues = await this.dueRepository.findByIds(
       params.dues.map((pd) => UniqueId.raw({ value: pd.dueId })),
     );
 
-    // Sufficient balance validation
     const sufficientBalanceValidation =
       await this.validateSufficientBalance(params);
 
@@ -97,7 +101,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     }
 
     const results = ResultUtils.combine([
-      Amount.fromCents(sumBy(params.dues, (pd) => pd.amount)),
+      Amount.fromCents(sumBy(params.dues, (pd) => pd.cashAmount ?? 0)),
       DateOnly.fromString(params.date),
     ]);
 
@@ -107,7 +111,11 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
     const [paymentAmount, paymentDate] = results.value;
 
-    // Payment creation
+    /**
+     * Create the payment aggregate.
+     * The payment amount is the sum of cash amounts only (not balance usage).
+     * This represents actual money received from the member.
+     */
     const payment = PaymentEntity.create(
       {
         amount: paymentAmount,
@@ -124,35 +132,38 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(payment.error);
     }
 
-    // This holds the cash and balance debit ledger entries
+    /**
+     * Process each due being paid in this transaction.
+     *
+     * A due can be settled using two funding sources:
+     * - Cash: Actual money the member is paying now (creates DUE_APPLY_DEBIT entry)
+     * - Balance: Credit the member has accumulated from previous over payments (creates BALANCE_APPLY_DEBIT entry)
+     *
+     * For each funding source used, we:
+     * 1. Create a debit ledger entry (reduces what the member owes)
+     * 2. Apply the settlement to the due (tracks partial/full payments on the due itself)
+     *
+     * This separation allows accurate reporting of how dues were paid and maintains
+     * the member's balance as a distinct, usable credit line.
+     */
     const debitLedgerEntries: MemberLedgerEntryEntity[] = [];
 
     for (const due of dues) {
       const dueFromParams = params.dues.find((d) => d.dueId === due.id.value);
       Guard.defined(dueFromParams);
 
-      const cashAmountResult = Amount.fromCents(dueFromParams.amount);
+      const amounts = ResultUtils.combine([
+        Amount.fromCents(dueFromParams.cashAmount ?? 0),
+        SignedAmount.fromCents(dueFromParams.balanceAmount ?? 0),
+      ]);
 
-      if (cashAmountResult.isErr()) {
-        return err(cashAmountResult.error);
+      if (amounts.isErr()) {
+        return err(amounts.error);
       }
 
-      const cashAmount: Amount = cashAmountResult.value;
-      let balanceAmount: Amount | null = null;
+      const [cashAmount, balanceAmount] = amounts.value;
 
-      if (dueFromParams.amountFromBalance) {
-        const balanceAmountResult = SignedAmount.fromCents(
-          dueFromParams.amountFromBalance,
-        );
-
-        if (balanceAmountResult.isErr()) {
-          return err(balanceAmountResult.error);
-        }
-
-        balanceAmount = balanceAmountResult.value;
-      }
-
-      const totalAmount = cashAmount.add(balanceAmount ?? SignedAmount.ZERO);
+      const totalAmount = cashAmount.add(balanceAmount);
 
       if (totalAmount.isZero()) {
         return err(
@@ -175,7 +186,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       if (cashAmount.isPositive()) {
         const cashDebitEntry = MemberLedgerEntryEntity.create(
           {
-            amount: cashAmountResult.value.toNegative(),
+            amount: cashAmount.toNegative(),
             date: paymentDate,
             memberId: UniqueId.raw({ value: params.memberId }),
             notes: params.notes,
@@ -195,7 +206,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         debitLedgerEntries.push(cashDebitEntry.value);
 
         const dueApplySettlementResult = due.applySettlement({
-          amount: cashAmountResult.value,
+          amount: cashAmount,
           createdBy: params.createdBy,
           memberLedgerEntryId: cashDebitEntry.value.id,
           paymentId: payment.value.id,
@@ -207,7 +218,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       }
 
       // If the due has an amount from balance, use it
-      if (balanceAmount) {
+      if (balanceAmount.isPositive()) {
         const balanceDebitEntry = MemberLedgerEntryEntity.create(
           {
             amount: balanceAmount.toNegative(),
@@ -242,20 +253,16 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       }
     }
 
-    // This holds the credit movement by entering or surplus
     const movements: MovementEntity[] = [];
-
     let creditEntry: MemberLedgerEntryEntity | null = null;
 
     /**
-     * Business reason:
-     * For every payment registered, we must create corresponding member ledger entries
-     * to accurately reflect financial activity. This ensures double-entry accounting:
-     * - A deposit (credit) entry records the reception of the total payment ("abono" to the account).
-     * - For each due being paid, a corresponding debit entry is posted to represent the applied payment
-     *   against each specific due ("aplicar cuota"). This allows granular tracking of which dues are
-     *   cleared, supports reporting, and maintains an auditable ledger history per member.
-     * The member ledger must always remain balanced: sum of credits minus debits must align with outstanding dues and payments.
+     * Double-entry accounting for cash payments:
+     * When cash is received, we create a DEPOSIT_CREDIT entry representing money coming in.
+     * This balances against the DUE_APPLY_DEBIT entries created above.
+     *
+     * We also create a Movement to track this as actual cash flow into the organization.
+     * Movements feed into financial reports and cash reconciliation.
      */
     if (payment.value.amount.isPositive()) {
       const result = MemberLedgerEntryEntity.create(
@@ -299,21 +306,28 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       movements.push(creditMovement.value);
     }
 
-    // Surplus credit entry creation
+    /**
+     * Surplus handling:
+     * When a member pays more than the total dues amount, the extra money becomes
+     * credit balance they can use for future payments. This creates a DEPOSIT_CREDIT
+     * entry that isn't offset by any debit—it stays as positive balance.
+     *
+     * Example: Dues total $100, member pays $150. The $50 surplus becomes credit.
+     */
     let surplusCreditEntry: MemberLedgerEntryEntity | null = null;
 
-    if (params.surplusToCreditAmount) {
-      const surplusCreditAmount = SignedAmount.fromCents(
-        params.surplusToCreditAmount,
-      );
+    const surplusAmount = SignedAmount.fromCents(
+      params.surplusToCreditAmount ?? 0,
+    );
 
-      if (surplusCreditAmount.isErr()) {
-        return err(surplusCreditAmount.error);
-      }
+    if (surplusAmount.isErr()) {
+      return err(surplusAmount.error);
+    }
 
+    if (surplusAmount.value.isPositive()) {
       const surplusCreditEntryResult = MemberLedgerEntryEntity.create(
         {
-          amount: surplusCreditAmount.value,
+          amount: surplusAmount.value,
           date: paymentDate,
           memberId: UniqueId.raw({ value: params.memberId }),
           notes: params.notes,
@@ -352,6 +366,12 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       movements.push(surplusCreditMovement.value);
     }
 
+    /**
+     * Atomic persistence:
+     * All entities are saved within a single transaction to ensure consistency.
+     * If any save fails, the entire payment is rolled back—we never have partial
+     * payments or orphaned ledger entries.
+     */
     await this.unitOfWork.execute(
       async ({
         duesRepository,
@@ -380,6 +400,11 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       },
     );
 
+    /**
+     * Domain events are dispatched after successful persistence.
+     * These trigger side effects like audit logging, notifications, or cache invalidation.
+     * Events are dispatched outside the transaction—if a handler fails, the payment still succeeds.
+     */
     this.eventPublisher.dispatch(payment.value);
 
     if (creditEntry) {
@@ -401,19 +426,16 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
   private async validateSufficientBalance(
     params: CreatePaymentParams,
   ): Promise<Result> {
-    const amountFromBalanceSum = sumBy(
-      params.dues,
-      (d) => d.amountFromBalance ?? 0,
-    );
+    const balanceAmountSum = sumBy(params.dues, (d) => d.balanceAmount ?? 0);
 
-    if (amountFromBalanceSum === 0) {
+    if (balanceAmountSum === 0) {
       return ok();
     }
 
-    const amountFromBalance = Amount.fromCents(amountFromBalanceSum);
+    const balanceAmount = Amount.fromCents(balanceAmountSum);
 
-    if (amountFromBalance.isErr()) {
-      return err(amountFromBalance.error);
+    if (balanceAmount.isErr()) {
+      return err(balanceAmount.error);
     }
 
     const memberBalance =
@@ -421,7 +443,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         UniqueId.raw({ value: params.memberId }),
       );
 
-    if (memberBalance.isLessThan(amountFromBalance.value)) {
+    if (memberBalance.isLessThan(balanceAmount.value)) {
       return err(new ApplicationError('El saldo disponible no es suficiente'));
     }
 

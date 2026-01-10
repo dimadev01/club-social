@@ -11,8 +11,8 @@ export interface CreatePaymentDto {
 }
 
 export interface CreatePaymentDueDto {
-  amount: number;
-  amountFromBalance: null | number;
+  balanceAmount: null | number;
+  cashAmount: null | number;
   dueId: string;
 }
 

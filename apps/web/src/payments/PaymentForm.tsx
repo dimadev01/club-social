@@ -45,8 +45,8 @@ export interface PaymentFormSchema {
 }
 
 interface FormDueToPaySchema {
-  amount: number;
-  amountFromBalance?: number;
+  balanceAmount?: number;
+  cashAmount?: number;
   dueId: string;
   useBalance: boolean;
 }
@@ -124,9 +124,7 @@ export function PaymentForm({
    */
   const allocatedBalance = useMemo(
     () =>
-      sumBy(formDues, (due) =>
-        NumberFormat.toCents(due.amountFromBalance ?? 0),
-      ),
+      sumBy(formDues, (due) => NumberFormat.toCents(due.balanceAmount ?? 0)),
     [formDues],
   );
 
@@ -172,7 +170,7 @@ export function PaymentForm({
       const dues: FormDueToPaySchema[] = getFieldValue('dues');
       const currentDue = dues[fieldIndex];
       const currentAllocation = NumberFormat.toCents(
-        currentDue.amountFromBalance ?? 0,
+        currentDue.balanceAmount ?? 0,
       );
       const dueRemaining = getRemainingAmountForDue(currentDue.dueId);
       const effectiveAvailable = availableBalance + currentAllocation;
@@ -188,7 +186,7 @@ export function PaymentForm({
       const currentDue = dues[fieldIndex];
       const dueRemaining = getRemainingAmountForDue(currentDue.dueId);
       const balanceAllocated = NumberFormat.toCents(
-        currentDue.amountFromBalance ?? 0,
+        currentDue.balanceAmount ?? 0,
       );
 
       return dueRemaining - balanceAllocated;
@@ -221,15 +219,12 @@ export function PaymentForm({
         const balanceToApply = NumberFormat.fromCents(maxBalance);
         const cashAmount = NumberFormat.fromCents(dueRemaining - maxBalance);
 
-        setFieldValue(
-          ['dues', fieldIndex, 'amountFromBalance'],
-          balanceToApply,
-        );
-        setFieldValue(['dues', fieldIndex, 'amount'], cashAmount);
+        setFieldValue(['dues', fieldIndex, 'balanceAmount'], balanceToApply);
+        setFieldValue(['dues', fieldIndex, 'cashAmount'], cashAmount);
       } else {
-        setFieldValue(['dues', fieldIndex, 'amountFromBalance'], undefined);
+        setFieldValue(['dues', fieldIndex, 'balanceAmount'], undefined);
         setFieldValue(
-          ['dues', fieldIndex, 'amount'],
+          ['dues', fieldIndex, 'cashAmount'],
           NumberFormat.fromCents(dueRemaining),
         );
       }
@@ -254,7 +249,7 @@ export function PaymentForm({
       const balanceAmount = value ?? 0;
       const cashAmount = Math.max(0, dueRemainingDisplay - balanceAmount);
 
-      setFieldValue(['dues', fieldIndex, 'amount'], cashAmount);
+      setFieldValue(['dues', fieldIndex, 'cashAmount'], cashAmount);
     },
     [getFieldValue, setFieldValue, getRemainingAmountForDue],
   );
@@ -282,8 +277,8 @@ export function PaymentForm({
       // Add newly selected dues with full amount
       newSelections.forEach((dueId) => {
         newPaymentDuesToAdd.push({
-          amount: NumberFormat.fromCents(getRemainingAmountForDue(dueId)),
-          amountFromBalance: undefined,
+          balanceAmount: undefined,
+          cashAmount: NumberFormat.fromCents(getRemainingAmountForDue(dueId)),
           dueId,
           useBalance: false,
         });
@@ -292,7 +287,7 @@ export function PaymentForm({
       // Remove deselected dues
       deselected.forEach((dueId) => {
         paymentDuesToRemove.push({
-          amount: NumberFormat.fromCents(getRemainingAmountForDue(dueId)),
+          cashAmount: NumberFormat.fromCents(getRemainingAmountForDue(dueId)),
           dueId,
           useBalance: false,
         });
@@ -471,16 +466,13 @@ export function PaymentForm({
               const totalCash = sumBy(
                 fields,
                 (field) =>
-                  form.getFieldValue(['dues', field.name, 'amount']) ?? 0,
+                  form.getFieldValue(['dues', field.name, 'cashAmount']) ?? 0,
               );
               const totalBalance = sumBy(
                 fields,
                 (field) =>
-                  form.getFieldValue([
-                    'dues',
-                    field.name,
-                    'amountFromBalance',
-                  ]) ?? 0,
+                  form.getFieldValue(['dues', field.name, 'balanceAmount']) ??
+                  0,
               );
 
               return (
@@ -540,7 +532,7 @@ export function PaymentForm({
 
                         <Form.Item
                           label="Monto a registrar"
-                          name={[field.name, 'amount']}
+                          name={[field.name, 'cashAmount']}
                           rules={[
                             {
                               message: 'El monto debe ser mayor a 0',
@@ -590,7 +582,7 @@ export function PaymentForm({
                           <Form.Item
                             className="mt-4"
                             label="Monto desde saldo"
-                            name={[field.name, 'amountFromBalance']}
+                            name={[field.name, 'balanceAmount']}
                             rules={[
                               {
                                 message: 'El monto debe ser mayor a 0',
