@@ -10,20 +10,19 @@ import {
   IsPositive,
   IsString,
   IsUUID,
-  Min,
   ValidateNested,
 } from 'class-validator';
 
 export class CreatePaymentDueDto implements CreatePaymentDueDto {
-  @IsNotEmpty()
   @IsNumber()
-  @Min(0)
-  public amount: number;
+  @IsOptional()
+  @IsPositive()
+  public balanceAmount: null | number;
 
   @IsNumber()
   @IsOptional()
   @IsPositive()
-  public amountFromBalance: null | number;
+  public cashAmount: null | number;
 
   @IsNotEmpty()
   @IsString()
