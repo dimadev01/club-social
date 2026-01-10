@@ -20,8 +20,8 @@ import {
 
 @Processor('email-regular', {
   limiter: {
-    duration: 1_000 * 60 * 60, // 1 hour
-    max: 4,
+    duration: 1_000 * 60 * 14, // 14 minutes
+    max: 1,
   },
 })
 export class EmailRegularProcessor extends WorkerHost {
