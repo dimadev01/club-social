@@ -7,7 +7,7 @@ import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useRef } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
@@ -21,7 +21,9 @@ export function DueNew() {
   const { message } = App.useApp();
   const permissions = usePermissions();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const shouldNavigateBack = useRef(false);
+  const memberIdFromUrl = searchParams.get('memberId') ?? undefined;
 
   const createDueMutation = useMutation<ParamIdDto, Error, CreateDueDto>({
     mutationFn: (body) => $fetch('/dues', { body }),
@@ -112,7 +114,7 @@ export function DueNew() {
           amount: 0,
           category: DueCategory.MEMBERSHIP,
           date: dayjs(),
-          memberIds: [],
+          memberIds: memberIdFromUrl ? [memberIdFromUrl] : [],
           notes: null,
         }}
         mode="create"

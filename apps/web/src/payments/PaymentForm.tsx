@@ -100,9 +100,7 @@ export function PaymentForm({
     [formDues],
   );
 
-  /**
-   * Queries
-   */
+  // Queries
   const { data: member, isLoading: isMemberLoading } = useMemberById(
     initialValues?.memberId,
   );
@@ -123,9 +121,7 @@ export function PaymentForm({
     queries: (pendingDues ?? []).map((due) => getDueQueryOptions(due.id)),
   });
 
-  /**
-   * Calculations
-   */
+  // Calculations
   const allocatedBalance = useMemo(
     () =>
       sumBy(formDues, (due) => NumberFormat.toCents(due.balanceAmount ?? 0)),
@@ -134,9 +130,7 @@ export function PaymentForm({
 
   const availableBalance = (memberBalance ?? 0) - allocatedBalance;
 
-  /**
-   * Due calculations
-   */
+  // Due calculations
   const getPaidAmountForDue = useCallback(
     (dueId: string) => {
       const dueSettlements = flatMap(dues, (due) =>
@@ -166,9 +160,7 @@ export function PaymentForm({
     [pendingDues, getPaidAmountForDue],
   );
 
-  /**
-   * Form dynamic handlers/calculations
-   */
+  // Form dynamic handlers/calculations
   const getMaxBalanceForDue = useCallback(
     (fieldIndex: number): number => {
       const dues: FormDueToPaySchema[] = getFieldValue('dues');

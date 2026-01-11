@@ -26,7 +26,7 @@ export function DueEdit() {
   const updateDueMutation = useMutation<unknown, Error, UpdateDueDto>({
     mutationFn: (body) => $fetch(`dues/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
-      message.success('Cuota actualizada correctamente');
+      message.success('Deuda actualizada correctamente');
       navigate(-1);
     },
   });

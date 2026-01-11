@@ -30,6 +30,7 @@ import {
   NavigateToPayment,
   NotFound,
   PageTableActions,
+  PaymentsIcon,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -237,6 +238,15 @@ export function PaymentList() {
                         <Button
                           icon={<DuesIcon />}
                           tooltip="Ver deudas"
+                          type="text"
+                        />
+                      </Link>
+                      <Link
+                        to={`${appRoutes.payments.new}?memberId=${record.memberId}`}
+                      >
+                        <Button
+                          icon={<PaymentsIcon />}
+                          tooltip="Nuevo pago"
                           type="text"
                         />
                       </Link>
