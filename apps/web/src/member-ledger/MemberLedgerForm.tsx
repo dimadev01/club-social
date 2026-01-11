@@ -124,7 +124,7 @@ export function MemberLedgerEntryForm({
       </Form.Item>
 
       <Form.Item<MemberLedgerEntryFormData> label="Notas" name="notes">
-        <Input.TextArea placeholder="Notas adicionales..." rows={3} />
+        <Input.TextArea placeholder="Notas adicionales..." rows={1} />
       </Form.Item>
     </Form>
   );

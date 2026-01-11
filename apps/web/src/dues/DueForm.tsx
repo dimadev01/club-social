@@ -148,7 +148,7 @@ export function DueForm({
       </Form.Item>
 
       <Form.Item<DueFormData> label="Notas" name="notes">
-        <Input.TextArea placeholder="Notas adicionales..." rows={3} />
+        <Input.TextArea placeholder="Notas adicionales..." rows={1} />
       </Form.Item>
     </Form>
   );

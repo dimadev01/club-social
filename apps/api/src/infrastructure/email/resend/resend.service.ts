@@ -72,7 +72,7 @@ export class ResendProvider implements EmailProvider {
         params,
       });
 
-      return;
+      throw new Error('Error sending template email', { cause: error });
     }
 
     this.logger.info({
@@ -115,7 +115,7 @@ export class ResendProvider implements EmailProvider {
         params,
       });
 
-      return;
+      throw new Error('Error sending template email', { cause: error });
     }
 
     this.logger.info({

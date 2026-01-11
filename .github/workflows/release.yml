@@ -1,56 +1,11 @@
-name: release-please
+name: release
 
 on:
   push:
     branches: [main]
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    outputs:
-      releases_created: ${{ steps.rp.outputs.releases_created }}
-      paths_released: ${{ steps.rp.outputs.paths_released }}
-    steps:
-      - id: rp
-        uses: googleapis/release-please-action@v4
-        with:
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
-
-  deploy-api:
-    needs: release
-    if: ${{ needs.release.outputs.releases_created == 'true' && contains(fromJSON(needs.release.outputs.paths_released), 'apps/api') }}
-    runs-on: ubuntu-latest
-    container: ghcr.io/railwayapp/cli:latest
-    env:
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-    steps:
-      - uses: actions/checkout@v5
-      - run: railway up -s ${{ env.SVC_ID }} --ci
-        env:
-          SVC_ID: a65fd5b6-b21d-4a55-a1bd-e7afe2260669
-
-  deploy-web:
-    needs: release
-    if: ${{ needs.release.outputs.releases_created == 'true' && contains(fromJSON(needs.release.outputs.paths_released), 'apps/web') }}
-    runs-on: ubuntu-latest
-    container: ghcr.io/railwayapp/cli:latest
-    env:
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-    steps:
-      - uses: actions/checkout@v5
-      - run: railway up -s ${{ env.SVC_ID }} --ci
-        env:
-          SVC_ID: d1823f35-d242-4f9e-bb83-b0f12f36d79a
-
-  sentry-release:
-    needs: [release, deploy-api]
-    if: ${{ always() && needs.deploy-api.result == 'success' }}
+  sentry:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
