@@ -1,4 +1,4 @@
-import { DueCategory } from '@club-social/shared/dues';
+import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
@@ -63,7 +63,7 @@ export class DueEventHandler {
 
     await this.emailQueueService.sendNewDueMovement({
       amount: NumberFormat.currencyCents(event.due.amount.cents),
-      category: event.due.category,
+      category: DueCategoryLabel[event.due.category],
       date: DateFormat.date(event.due.date.value),
       email: member.email,
       memberName: member.firstName,
