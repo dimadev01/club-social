@@ -122,7 +122,6 @@ export function PricingList() {
                 ? MemberCategoryLabel[memberCategory]
                 : 'Todas las categorías',
             title: 'Categoría de Socio',
-            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },
           {
             align: 'right',

@@ -55,9 +55,6 @@ export function PaymentList() {
     setFilter,
     state,
   } = useTable<PaymentPaginatedDto>({
-    defaultFilters: {
-      status: [PaymentStatus.PAID],
-    },
     defaultSort: [{ field: 'date', order: 'descend' }],
   });
 
@@ -145,7 +142,6 @@ export function PaymentList() {
             sorter: true,
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
-            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           ...(permissions.payments.listAll
             ? [
@@ -157,6 +153,7 @@ export function PaymentList() {
                     </NavigateToMember>
                   ),
                   title: 'Socio',
+                  width: TABLE_COLUMN_WIDTHS.MEMBER_NAME,
                 } satisfies TableColumnType<PaymentPaginatedDto>,
               ]
             : []),

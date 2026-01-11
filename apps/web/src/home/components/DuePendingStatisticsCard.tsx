@@ -7,10 +7,12 @@ import {
   DueCategorySorted,
 } from '@club-social/shared/dues';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
+import { UserRole } from '@club-social/shared/users';
 import { Space, Statistic, Tooltip } from 'antd';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
+import { useSessionUser } from '@/auth/useUser';
 import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
 import { Card, DuesIcon } from '@/ui';
 
@@ -33,6 +35,10 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
       : undefined,
   });
 
+  const user = useSessionUser();
+
+  const isMember = user.role === UserRole.MEMBER;
+
   return (
     <Card
       extra={<DuesIcon />}
@@ -40,9 +46,11 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
       title={
         <Space size="small">
           Deudas pendientes
-          <Tooltip title="Solamente socios activos">
-            <InfoCircleOutlined />
-          </Tooltip>
+          {!isMember && (
+            <Tooltip title="Solamente socios activos">
+              <InfoCircleOutlined />
+            </Tooltip>
+          )}
         </Space>
       }
       type="inner"

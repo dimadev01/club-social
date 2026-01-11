@@ -210,7 +210,7 @@ export class DuesController extends BaseController {
         status: due.status,
       })),
       extra: {
-        totalAmount: data.extra?.totalAmount ?? 0,
+        pendingAmount: data.extra?.pendingAmount ?? 0,
       },
       total: data.total,
     };

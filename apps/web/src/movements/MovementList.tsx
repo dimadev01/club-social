@@ -49,9 +49,6 @@ export function MovementList() {
     resetFilters,
     state,
   } = useTable<MovementPaginatedDto>({
-    defaultFilters: {
-      status: [MovementStatus.REGISTERED],
-    },
     defaultSort: [{ field: 'date', order: 'descend' }],
   });
 

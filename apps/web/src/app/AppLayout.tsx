@@ -179,6 +179,7 @@ export function AppLayout({ children }: PropsWithChildren) {
           <Image
             alt="Club Social Logo"
             className="mx-auto max-w-[128px]"
+            fetchPriority="high"
             preview={false}
             rootClassName="w-full mb-6 mt-4"
             src="/club-social-logo.png"
