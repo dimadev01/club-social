@@ -378,7 +378,7 @@ export class MembersModule {}
 
 Critical variables (see `.env.example` files):
 
-- `DATABASE_URI`: PostgreSQL connection string
+- `DATABASE_URL`: PostgreSQL connection string
 - `BETTER_AUTH_SECRET`: Auth encryption secret
 - `BETTER_AUTH_URL`: Auth URL
 - `TRUSTED_ORIGINS`: Allowed frontend origins (comma-separated)

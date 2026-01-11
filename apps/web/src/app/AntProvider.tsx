@@ -11,6 +11,8 @@ import esEs from 'antd/locale/es_ES';
 import { type PropsWithChildren, useMemo } from 'react';
 import { GiTennisBall } from 'react-icons/gi';
 
+import { COMPONENT_WIDTHS } from '@/ui/constants';
+
 import { AntThemeMode } from './app.enum';
 import { useAppContext } from './AppContext';
 
@@ -52,7 +54,6 @@ export function AntProvider({ children }: PropsWithChildren) {
       token: {
         colorInfo: '#22883e',
         colorPrimary: '#22883e',
-        motion: false,
       },
       zeroRuntime: true,
     }),
@@ -62,8 +63,15 @@ export function AntProvider({ children }: PropsWithChildren) {
   return (
     <StyleProvider layer>
       <ConfigProvider
+        datePicker={{
+          className: 'w-full sm:w-auto',
+        }}
+        inputNumber={{
+          className: COMPONENT_WIDTHS.INPUT_AMOUNT,
+        }}
         locale={esEs}
         select={{
+          className: COMPONENT_WIDTHS.SELECT,
           showSearch: {
             filterOption: true,
             optionFilterProp: 'label',
@@ -78,6 +86,9 @@ export function AntProvider({ children }: PropsWithChildren) {
         }}
         table={{
           rowKey: 'id',
+        }}
+        textArea={{
+          className: COMPONENT_WIDTHS.TEXT_AREA,
         }}
         theme={themeConfig}
         variant={variant}

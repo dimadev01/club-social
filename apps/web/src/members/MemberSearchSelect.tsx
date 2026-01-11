@@ -12,6 +12,8 @@ import { groupBy } from 'es-toolkit/array';
 import { useCallback, useMemo, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { COMPONENT_WIDTHS } from '@/ui/constants';
+
 import { useMemberSearch } from './useMemberSearch';
 
 export interface MemberSearchSelectProps extends SelectProps {
@@ -109,6 +111,7 @@ export function MemberSearchSelect({
   return (
     <Select
       {...props}
+      className={COMPONENT_WIDTHS.MEMBER_SELECT}
       loading={isLoading}
       notFoundContent={<>{getNotFoundContent()}</>}
       onChange={(value) => {

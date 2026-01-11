@@ -12,8 +12,8 @@ export class ConfigService {
   public readonly appDomain: string;
 
   @IsString()
-  @Value('DATABASE_URI')
-  public readonly databaseUrl: string;
+  @Value('DATABASE_URL')
+  public readonly databaseUri: string;
 
   @IsString()
   @Value('EMAIL_SMTP_HOST', { default: 'localhost' })

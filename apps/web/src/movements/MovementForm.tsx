@@ -105,7 +105,7 @@ export function MovementForm({
       </Form.Item>
 
       <Form.Item<MovementFormData> label="Notas" name="notes">
-        <Input.TextArea placeholder="Notas adicionales..." rows={3} />
+        <Input.TextArea placeholder="Notas adicionales..." rows={1} />
       </Form.Item>
     </Form>
   );

@@ -9,7 +9,7 @@ import { PrismaClient } from './generated/client';
 export class PrismaService extends PrismaClient {
   public constructor(protected readonly configService: ConfigService) {
     const adapter = new PrismaPg({
-      connectionString: configService.databaseUrl,
+      connectionString: configService.databaseUri,
     });
 
     super({ adapter });

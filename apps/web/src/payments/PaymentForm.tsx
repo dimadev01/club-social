@@ -1,5 +1,6 @@
 import type { MemberSearchResultDto } from '@club-social/shared/members';
 
+import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   DueCategory,
   DueCategoryLabel,
@@ -11,11 +12,12 @@ import { useQueries } from '@tanstack/react-query';
 import {
   Checkbox,
   DatePicker,
-  Empty,
   type FormInstance,
   Input,
   InputNumber,
-  Skeleton,
+  Space,
+  Statistic,
+  Tooltip,
 } from 'antd';
 import dayjs from 'dayjs';
 import { difference, differenceBy, flatMap, orderBy } from 'es-toolkit/array';
@@ -30,7 +32,9 @@ import { usePendingDues } from '@/dues/usePendingDues';
 import { useMemberBalance } from '@/member-ledger/useMemberBalance';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
+import { tw } from '@/shared/lib/utils';
 import { Card, Descriptions, Form, Table, TABLE_COLUMN_WIDTHS } from '@/ui';
+import { COMPONENT_WIDTHS } from '@/ui/constants';
 
 export type FormInitialValues = Partial<PaymentFormSchema>;
 
@@ -326,263 +330,238 @@ export function PaymentForm({
       name="form"
       onFinish={(values) => onSubmit(values, form)}
     >
-      <Form.Item<PaymentFormSchema>
-        label="Fecha"
-        name="date"
-        rules={[{ message: 'La fecha es requerida', required: true }]}
-      >
-        <DatePicker
-          allowClear={false}
-          className="w-full"
-          format={DateFormats.date}
-          picker="date"
-        />
-      </Form.Item>
+      <Space className="flex" vertical>
+        <div>
+          <Form.Item<PaymentFormSchema>
+            label="Fecha"
+            name="date"
+            rules={[{ message: 'La fecha es requerida', required: true }]}
+          >
+            <DatePicker
+              allowClear={false}
+              format={DateFormats.date}
+              picker="date"
+            />
+          </Form.Item>
 
-      <Form.Item<PaymentFormSchema>
-        label="Socio"
-        name="memberId"
-        rules={[{ message: 'Debe seleccionar un socio', required: true }]}
-      >
-        <MemberSearchSelect
-          additionalOptions={additionalOptions}
-          loading={isMemberLoading}
-          placeholder="Buscar y seleccionar socio..."
-        />
-      </Form.Item>
+          <Form.Item<PaymentFormSchema>
+            label="Socio"
+            name="memberId"
+            rules={[{ message: 'Debe seleccionar un socio', required: true }]}
+          >
+            <MemberSearchSelect
+              additionalOptions={additionalOptions}
+              loading={isMemberLoading}
+              placeholder="Buscar y seleccionar socio..."
+            />
+          </Form.Item>
 
-      <Form.Item<PaymentFormSchema>
-        label="Número de recibo"
-        name="receiptNumber"
-      >
-        <Input placeholder="Número de recibo (opcional)" />
-      </Form.Item>
+          <Form.Item<PaymentFormSchema>
+            label="Número de recibo"
+            name="receiptNumber"
+          >
+            <Input
+              className="w-full sm:w-auto"
+              placeholder="Número de recibo (opcional)"
+            />
+          </Form.Item>
 
-      <Form.Item<PaymentFormSchema> label="Notas" name="notes">
-        <Input.TextArea placeholder="Notas adicionales..." rows={3} />
-      </Form.Item>
+          <Form.Item<PaymentFormSchema> label="Notas" name="notes">
+            <Input.TextArea
+              className={COMPONENT_WIDTHS.TEXT_AREA}
+              placeholder="Notas adicionales..."
+              rows={1}
+            />
+          </Form.Item>
+        </div>
 
-      {formMemberId && (
-        <Descriptions
-          bordered={false}
-          className="mb-6"
-          colon={false}
-          layout="vertical"
-        >
-          <Descriptions.Item label="Saldo del socio">
-            {isMemberBalanceLoading ? (
-              <Skeleton.Button active />
-            ) : (
-              NumberFormat.currencyCents(memberBalance ?? 0)
-            )}
-          </Descriptions.Item>
-        </Descriptions>
-      )}
-
-      {pendingDues && (
-        <>
-          <Table
-            className="mb-6"
-            columns={[
-              {
-                dataIndex: 'date',
-                defaultSortOrder: 'descend',
-                render: (date: string, record: PendingDueDto) => (
-                  <Link to={appRoutes.dues.view(record.id)}>
-                    {DateFormat.date(date)}
-                  </Link>
-                ),
-                title: 'Fecha',
-              },
-              {
-                align: 'center',
-                dataIndex: 'category',
-                render: (category: DueCategory, record: PendingDueDto) => {
-                  if (category === DueCategory.MEMBERSHIP) {
-                    return `${DueCategoryLabel[category]} (${DateFormat.monthNameShort(record.date)})`;
-                  }
-
-                  return DueCategoryLabel[category];
-                },
-                title: 'Categoría',
-                width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY + 50,
-              },
-              {
-                align: 'right',
-                dataIndex: 'amount',
-                render: (amount: number) => NumberFormat.currencyCents(amount),
-                title: 'Monto',
-                width: TABLE_COLUMN_WIDTHS.AMOUNT,
-              },
-              {
-                align: 'right',
-                render: (_, record: PendingDueDto) => {
-                  return NumberFormat.currencyCents(
-                    getPaidAmountForDue(record.id),
-                  );
-                },
-                title: 'Pagado',
-                width: TABLE_COLUMN_WIDTHS.AMOUNT,
-              },
-              {
-                align: 'right',
-                render: (_, record: PendingDueDto) => {
-                  return NumberFormat.currencyCents(
-                    getRemainingAmountForDue(record.id),
-                  );
-                },
-                title: 'Restante',
-                width: TABLE_COLUMN_WIDTHS.AMOUNT,
-              },
-            ]}
-            dataSource={pendingDues}
-            pagination={false}
-            rowSelection={{
-              onChange: handleRowSelectionChange,
-              selectedRowKeys: selectedDueIds,
-              type: 'checkbox',
+        {formMemberId && (
+          <Space
+            classNames={{
+              item: tw`basis-1/2 sm:basis-40`,
+              root: tw`items-stretch flex`,
             }}
-            size="small"
-            summary={() => (
-              <Table.Summary fixed>
-                <Table.Summary.Row>
-                  <Table.Summary.Cell align="right" colSpan={5} index={0}>
-                    Total
-                  </Table.Summary.Cell>
-                  <Table.Summary.Cell align="right" colSpan={1} index={1}>
-                    {NumberFormat.currencyCents(
-                      sumBy(pendingDues, (due) =>
-                        getRemainingAmountForDue(due.id),
-                      ),
-                    )}
-                  </Table.Summary.Cell>
-                </Table.Summary.Row>
-              </Table.Summary>
-            )}
-          />
+          >
+            <Card className="h-full" size="small">
+              <Statistic
+                loading={isMemberBalanceLoading}
+                title="Crédito total"
+                value={NumberFormat.currencyCents(memberBalance ?? 0)}
+              />
+            </Card>
 
-          <Form.List name="dues">
-            {(fields) => {
-              const totalCash = sumBy(
-                fields,
-                (field) =>
-                  form.getFieldValue(['dues', field.name, 'cashAmount']) ?? 0,
-              );
-              const totalBalance = sumBy(
-                fields,
-                (field) =>
-                  form.getFieldValue(['dues', field.name, 'balanceAmount']) ??
-                  0,
-              );
+            <Card className="h-full" size="small">
+              <Statistic
+                loading={isMemberBalanceLoading}
+                title="Crédito disponible"
+                value={NumberFormat.currencyCents(availableBalance)}
+              />
+            </Card>
+          </Space>
+        )}
 
-              return (
-                <Card
-                  className="mb-6"
-                  extra={`Efectivo: ${NumberFormat.currency(totalCash)} | Balance: ${NumberFormat.currency(totalBalance)} | Total: ${NumberFormat.currency(totalCash + totalBalance)}`}
-                  size="small"
-                  title="Deudas seleccionadas"
-                  type="inner"
-                >
-                  {fields.length === 0 && (
-                    <Empty
-                      description="Seleccione deudas de la tabla para registrar pagos"
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    />
-                  )}
-
-                  {fields.map((field) => {
-                    const formDue = form.getFieldValue(['dues', field.name]);
-
-                    const pendingDue = pendingDues?.find(
-                      (d) => d.id === formDue?.dueId,
-                    );
-
-                    if (!pendingDue) {
-                      return null;
+        {pendingDues && (
+          <>
+            <Table
+              columns={[
+                {
+                  dataIndex: 'date',
+                  defaultSortOrder: 'descend',
+                  render: (date: string, record: PendingDueDto) => (
+                    <Link to={appRoutes.dues.view(record.id)}>
+                      {DateFormat.date(date)}
+                    </Link>
+                  ),
+                  title: 'Fecha',
+                },
+                {
+                  align: 'center',
+                  dataIndex: 'category',
+                  render: (category: DueCategory, record: PendingDueDto) => {
+                    if (category === DueCategory.MEMBERSHIP) {
+                      return `${DueCategoryLabel[category]} (${DateFormat.monthNameShort(record.date)})`;
                     }
 
-                    return (
-                      <Card.Grid
-                        className="w-full md:w-1/2 lg:w-1/3"
-                        key={field.key}
-                      >
-                        <Form.Item hidden name={[field.name, 'dueId']} noStyle>
-                          <Input />
-                        </Form.Item>
+                    return DueCategoryLabel[category];
+                  },
+                  title: 'Categoría',
+                  width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY + 50,
+                },
+                {
+                  align: 'right',
+                  dataIndex: 'amount',
+                  render: (amount: number) =>
+                    NumberFormat.currencyCents(amount),
+                  title: 'Monto',
+                  width: TABLE_COLUMN_WIDTHS.AMOUNT,
+                },
+                {
+                  align: 'right',
+                  render: (_, record: PendingDueDto) => {
+                    return NumberFormat.currencyCents(
+                      getPaidAmountForDue(record.id),
+                    );
+                  },
+                  title: 'Pagado',
+                  width: TABLE_COLUMN_WIDTHS.AMOUNT,
+                },
+                {
+                  align: 'right',
+                  render: (_, record: PendingDueDto) => {
+                    return NumberFormat.currencyCents(
+                      getRemainingAmountForDue(record.id),
+                    );
+                  },
+                  title: 'Restante',
+                  width: TABLE_COLUMN_WIDTHS.AMOUNT,
+                },
+              ]}
+              dataSource={pendingDues}
+              pagination={false}
+              rowSelection={{
+                onChange: handleRowSelectionChange,
+                selectedRowKeys: selectedDueIds,
+                type: 'checkbox',
+              }}
+              size="small"
+              summary={() => (
+                <Table.Summary fixed>
+                  <Table.Summary.Row>
+                    <Table.Summary.Cell align="right" colSpan={5} index={0}>
+                      Total
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell align="right" colSpan={1} index={1}>
+                      {NumberFormat.currencyCents(
+                        sumBy(pendingDues, (due) =>
+                          getRemainingAmountForDue(due.id),
+                        ),
+                      )}
+                    </Table.Summary.Cell>
+                  </Table.Summary.Row>
+                </Table.Summary>
+              )}
+            />
 
-                        <Descriptions
-                          className="mb-6"
-                          items={[
-                            {
-                              children: DateFormat.date(pendingDue.date),
-                              label: 'Fecha',
-                            },
-                            {
-                              children: DueCategoryLabel[pendingDue.category],
-                              label: 'Categoría',
-                            },
-                            {
-                              children: NumberFormat.currencyCents(
-                                getRemainingAmountForDue(pendingDue.id),
-                              ),
-                              label: 'Monto a pagar',
-                            },
-                          ]}
-                        />
+            <Form.List name="dues">
+              {(fields) => {
+                const totalCash = sumBy(
+                  fields,
+                  (field) =>
+                    form.getFieldValue(['dues', field.name, 'cashAmount']) ?? 0,
+                );
+                const totalBalance = sumBy(
+                  fields,
+                  (field) =>
+                    form.getFieldValue(['dues', field.name, 'balanceAmount']) ??
+                    0,
+                );
 
-                        <Form.Item
-                          label="Monto a registrar"
-                          name={[field.name, 'cashAmount']}
-                          rules={[
-                            {
-                              message: 'El monto debe ser mayor a 0',
-                              min: 0,
-                              type: 'number',
-                            },
-                          ]}
+                if (fields.length === 0) {
+                  return null;
+                }
+
+                return (
+                  <Card
+                    extra={`Efectivo: ${NumberFormat.currency(totalCash)} | Balance: ${NumberFormat.currency(totalBalance)} | Total: ${NumberFormat.currency(totalCash + totalBalance)}`}
+                    size="small"
+                    title="Deudas seleccionadas"
+                    type="inner"
+                  >
+                    {fields.map((field) => {
+                      const formDue = form.getFieldValue(['dues', field.name]);
+
+                      const pendingDue = pendingDues?.find(
+                        (d) => d.id === formDue?.dueId,
+                      );
+
+                      if (!pendingDue) {
+                        return null;
+                      }
+
+                      return (
+                        <Card.Grid
+                          className="w-full md:w-1/2 lg:w-1/3"
+                          key={field.key}
                         >
-                          <InputNumber
-                            className="w-full"
-                            formatter={(value) =>
-                              NumberFormat.format(Number(value))
-                            }
-                            max={NumberFormat.fromCents(
-                              getMaxCashForDue(field.name),
-                            )}
-                            min={0}
-                            parser={(value) =>
-                              NumberFormat.parse(String(value))
-                            }
-                            precision={0}
-                            step={1000}
-                          />
-                        </Form.Item>
-
-                        <Form.Item
-                          name={[field.name, 'useBalance']}
-                          valuePropName="checked"
-                        >
-                          <Checkbox
-                            disabled={
-                              isBalanceCheckboxDisabled(field.name) ||
-                              (memberBalance ?? 0) <= 0
-                            }
-                            onChange={(e) =>
-                              handleUseBalanceChange(
-                                field.name,
-                                e.target.checked,
-                              )
-                            }
-                          >
-                            Usar saldo disponible
-                          </Checkbox>
-                        </Form.Item>
-
-                        {formDue?.useBalance && (
                           <Form.Item
-                            className="mt-4"
-                            label="Monto desde saldo"
-                            name={[field.name, 'balanceAmount']}
+                            hidden
+                            name={[field.name, 'dueId']}
+                            noStyle
+                          >
+                            <Input />
+                          </Form.Item>
+
+                          <Descriptions
+                            className="mb-6"
+                            items={[
+                              {
+                                children: DateFormat.date(pendingDue.date),
+                                label: 'Fecha',
+                              },
+                              {
+                                children: DueCategoryLabel[pendingDue.category],
+                                label: 'Categoría',
+                              },
+                              {
+                                children: NumberFormat.currencyCents(
+                                  getRemainingAmountForDue(pendingDue.id),
+                                ),
+                                label: 'Monto a pagar',
+                              },
+                            ]}
+                            size="small"
+                          />
+
+                          <Form.Item
+                            label={
+                              <Space size="small">
+                                Efectivo a registrar
+                                <Tooltip title="Lo que le está entrando al Club">
+                                  <InfoCircleOutlined />
+                                </Tooltip>
+                              </Space>
+                            }
+                            name={[field.name, 'cashAmount']}
                             rules={[
                               {
                                 message: 'El monto debe ser mayor a 0',
@@ -597,12 +576,9 @@ export function PaymentForm({
                                 NumberFormat.format(Number(value))
                               }
                               max={NumberFormat.fromCents(
-                                getMaxBalanceForDue(field.name),
+                                getMaxCashForDue(field.name),
                               )}
                               min={0}
-                              onChange={(value) =>
-                                handleBalanceAmountChange(field.name, value)
-                              }
                               parser={(value) =>
                                 NumberFormat.parse(String(value))
                               }
@@ -610,55 +586,103 @@ export function PaymentForm({
                               step={1000}
                             />
                           </Form.Item>
-                        )}
-                      </Card.Grid>
-                    );
-                  })}
-                </Card>
-              );
-            }}
-          </Form.List>
 
-          {formMemberId && (
-            <Descriptions
-              bordered={false}
-              className="mb-6"
-              colon={false}
-              layout="vertical"
-            >
-              <Descriptions.Item label="Saldo restante">
-                {isMemberBalanceLoading ? (
-                  <Skeleton.Button active />
-                ) : (
-                  NumberFormat.currencyCents(availableBalance)
+                          <Form.Item
+                            name={[field.name, 'useBalance']}
+                            valuePropName="checked"
+                          >
+                            <Checkbox
+                              disabled={
+                                isBalanceCheckboxDisabled(field.name) ||
+                                (memberBalance ?? 0) <= 0
+                              }
+                              onChange={(e) =>
+                                handleUseBalanceChange(
+                                  field.name,
+                                  e.target.checked,
+                                )
+                              }
+                            >
+                              Usar saldo disponible
+                            </Checkbox>
+                          </Form.Item>
+
+                          {formDue?.useBalance && (
+                            <Form.Item
+                              className="mt-4"
+                              label="Monto desde saldo"
+                              name={[field.name, 'balanceAmount']}
+                              rules={[
+                                {
+                                  message: 'El monto debe ser mayor a 0',
+                                  min: 0,
+                                  type: 'number',
+                                },
+                              ]}
+                            >
+                              <InputNumber
+                                className="w-full"
+                                formatter={(value) =>
+                                  NumberFormat.format(Number(value))
+                                }
+                                max={NumberFormat.fromCents(
+                                  getMaxBalanceForDue(field.name),
+                                )}
+                                min={0}
+                                onChange={(value) =>
+                                  handleBalanceAmountChange(field.name, value)
+                                }
+                                parser={(value) =>
+                                  NumberFormat.parse(String(value))
+                                }
+                                precision={0}
+                                step={1000}
+                              />
+                            </Form.Item>
+                          )}
+                        </Card.Grid>
+                      );
+                    })}
+                  </Card>
+                );
+              }}
+            </Form.List>
+
+            {selectedDueIds.length > 0 && (
+              <Card size="small" title="Crédito a favor" type="inner">
+                <Form.Item<PaymentFormSchema>
+                  name="useSurplusToCredit"
+                  valuePropName="checked"
+                >
+                  <Checkbox>Agregar crédito a favor</Checkbox>
+                </Form.Item>
+
+                {formUseSurplusToCredit && (
+                  <Form.Item<PaymentFormSchema>
+                    label={
+                      <Space size="small">
+                        Monto
+                        <Tooltip title="Dinero que le queda al socio en su cuenta">
+                          <InfoCircleOutlined />
+                        </Tooltip>
+                      </Space>
+                    }
+                    name="surplusToCreditAmount"
+                  >
+                    <InputNumber<number>
+                      className="w-full sm:w-auto"
+                      formatter={(value) => NumberFormat.format(Number(value))}
+                      parser={(value) => NumberFormat.parse(String(value))}
+                      precision={0}
+                      step={1000}
+                    />
+                  </Form.Item>
                 )}
-              </Descriptions.Item>
-            </Descriptions>
-          )}
-
-          <Form.Item<PaymentFormSchema>
-            name="useSurplusToCredit"
-            valuePropName="checked"
-          >
-            <Checkbox>Agregar saldo a favor</Checkbox>
-          </Form.Item>
-
-          {formUseSurplusToCredit && (
-            <Form.Item<PaymentFormSchema>
-              label="Monto a agregar a favor"
-              name="surplusToCreditAmount"
-            >
-              <InputNumber<number>
-                className="w-full"
-                formatter={(value) => NumberFormat.format(Number(value))}
-                parser={(value) => NumberFormat.parse(String(value))}
-                precision={0}
-                step={1000}
-              />
-            </Form.Item>
-          )}
-        </>
-      )}
+              </Card>
+            )}
+          </>
+        )}
+      </Space>
     </Form>
   );
 }
