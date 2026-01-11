@@ -26,6 +26,7 @@ import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Button,
   Card,
+  DuesIcon,
   NavigateToDue,
   NotFound,
   PageTableActions,
@@ -236,6 +237,16 @@ export function DueList() {
                       </Link>
 
                       <Link
+                        to={`${appRoutes.dues.new}?memberId=${record.memberId}`}
+                      >
+                        <Button
+                          icon={<DuesIcon />}
+                          tooltip="Nueva deuda"
+                          type="text"
+                        />
+                      </Link>
+
+                      <Link
                         to={`${appRoutes.payments.new}?memberId=${record.memberId}`}
                       >
                         <Button
@@ -244,9 +255,6 @@ export function DueList() {
                             record.status === DueStatus.VOIDED
                           }
                           icon={<PaymentsIcon />}
-                          onClick={() =>
-                            setFilteredMemberIds([record.memberId])
-                          }
                           tooltip="Nuevo pago"
                           type="text"
                         />

@@ -7,6 +7,7 @@ import { DatePicker, type FormInstance, Input, InputNumber, Radio } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
+import { useMemberById } from '@/members/useMemberById';
 import { useActivePricing } from '@/pricing/useActivePricing';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Form } from '@/ui';
@@ -45,7 +46,13 @@ export function DueForm({
 
   const [form] = Form.useForm<DueFormData>();
   const { setFieldValue } = form;
-  const formCategory = Form.useWatch('category', form);
+  const formCategory =
+    Form.useWatch('category', form) ?? initialValues?.category;
+
+  // Queries
+  const { data: member, isLoading: isMemberLoading } = useMemberById(
+    initialValues?.memberIds?.[0],
+  );
 
   const { data: activePricing, isLoading: isActivePricingLoading } =
     useActivePricing({
@@ -60,6 +67,15 @@ export function DueForm({
   }, [activePricing, setFieldValue]);
 
   const isEditMode = mode === 'edit';
+
+  if (member) {
+    additionalMemberOptions.push({
+      category: member.category,
+      id: member.id,
+      name: member.name,
+      status: member.status,
+    });
+  }
 
   return (
     <Form<DueFormData>
@@ -114,7 +130,7 @@ export function DueForm({
         <MemberSearchSelect
           additionalOptions={additionalMemberOptions}
           disabled={isEditMode}
-          loading={loading}
+          loading={loading || isMemberLoading}
           mode={isEditMode ? undefined : 'multiple'}
           onMembersChange={(data) => {
             if (!selectedFirstMember && data?.[0]) {
