@@ -148,7 +148,6 @@ export function MemberLedgerList() {
             sorter: true,
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
-            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           ...(permissions.memberLedger.listAll
             ? [
@@ -160,6 +159,7 @@ export function MemberLedgerList() {
                     </NavigateToMember>
                   ),
                   title: 'Socio',
+                  width: TABLE_COLUMN_WIDTHS.MEMBER_NAME,
                 } satisfies TableColumnType<MemberLedgerEntryPaginatedDto>,
               ]
             : []),
@@ -172,7 +172,7 @@ export function MemberLedgerList() {
             render: (value: MemberLedgerEntryType) =>
               MemberLedgerEntryTypeLabel[value],
             title: 'Tipo',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.STATUS_LARGER,
           },
           {
             align: 'center',

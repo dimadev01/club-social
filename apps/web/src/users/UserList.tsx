@@ -102,7 +102,7 @@ export function UserListPage() {
             sorter: true,
             sortOrder: getSortOrder('email'),
             title: 'Email',
-            width: 400,
+            width: TABLE_COLUMN_WIDTHS.EMAIL,
           },
           {
             align: 'center',

@@ -54,7 +54,7 @@ export interface DuePaginatedDto {
 }
 
 export interface DuePaginatedExtraDto {
-  totalAmount: number;
+  pendingAmount: number;
 }
 
 export interface DuePendingStatisticsDto {

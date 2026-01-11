@@ -59,7 +59,6 @@ export function DueList() {
   } = useTable<DuePaginatedDto>({
     defaultFilters: {
       memberStatus: [MemberStatus.ACTIVE],
-      status: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
     },
     defaultSort: [{ field: 'date', order: 'descend' }],
   });
@@ -144,13 +143,13 @@ export function DueList() {
               <TableDateRangeFilterDropdown {...props} format="date" />
             ),
             filteredValue: getFilterValue('date'),
+            fixed: 'left',
             render: (date: string, record: DuePaginatedDto) => (
               <NavigateToDue id={record.id}>{date}</NavigateToDue>
             ),
             sorter: true,
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
-            width: TABLE_COLUMN_WIDTHS.DATE,
           },
           ...(permissions.dues.listAll
             ? [
@@ -162,6 +161,7 @@ export function DueList() {
                     </Link>
                   ),
                   title: 'Socio',
+                  width: TABLE_COLUMN_WIDTHS.MEMBER_NAME,
                 } satisfies TableColumnType<DuePaginatedDto>,
               ]
             : []),
@@ -196,19 +196,19 @@ export function DueList() {
             filters: labelMapToFilterOptions(DueStatusLabel),
             render: (value: DueStatus) => DueStatusLabel[value],
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.DUE_STATUS,
-          },
-          {
-            align: 'center',
-            dataIndex: 'memberStatus',
-            filteredValue: getFilterValue('memberStatus'),
-            filters: labelMapToFilterOptions(MemberStatusLabel),
-            render: (value: MemberStatus) => MemberStatusLabel[value],
-            title: 'Estado socio',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.STATUS_LARGER,
           },
           ...(permissions.dues.listAll
             ? [
+                {
+                  align: 'center',
+                  dataIndex: 'memberStatus',
+                  filteredValue: getFilterValue('memberStatus'),
+                  filters: labelMapToFilterOptions(MemberStatusLabel),
+                  render: (value: MemberStatus) => MemberStatusLabel[value],
+                  title: 'Estado socio',
+                  width: TABLE_COLUMN_WIDTHS.STATUS,
+                } satisfies TableColumnType<DuePaginatedDto>,
                 {
                   align: 'center',
                   fixed: 'right',
@@ -239,7 +239,10 @@ export function DueList() {
                         to={`${appRoutes.payments.new}?memberId=${record.memberId}`}
                       >
                         <Button
-                          disabled={record.status === DueStatus.PAID}
+                          disabled={
+                            record.status === DueStatus.PAID ||
+                            record.status === DueStatus.VOIDED
+                          }
                           icon={<PaymentsIcon />}
                           onClick={() =>
                             setFilteredMemberIds([record.memberId])
@@ -268,10 +271,10 @@ export function DueList() {
           <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell align="right" colSpan={1} index={0}>
-                <TableSummaryTotalFilterText />
+                <TableSummaryTotalFilterText title="Total pendiente" />
               </Table.Summary.Cell>
               <Table.Summary.Cell colSpan={7} index={1}>
-                {NumberFormat.currencyCents(dues?.extra?.totalAmount ?? 0)}
+                {NumberFormat.currencyCents(dues?.extra?.pendingAmount ?? 0)}
               </Table.Summary.Cell>
             </Table.Summary.Row>
           </Table.Summary>

@@ -12,7 +12,7 @@ import {
 } from '@club-social/shared/members';
 
 export interface DuePaginatedExtraReadModel {
-  totalAmount: number;
+  pendingAmount: number;
 }
 
 export type DuePaginatedReadModel = Pick<

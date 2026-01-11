@@ -150,7 +150,7 @@ export function PaymentView() {
             render: (status: DueSettlementStatus) =>
               DueSettlementStatusLabel[status],
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.DUE_STATUS,
+            width: TABLE_COLUMN_WIDTHS.STATUS_LARGER,
           },
           {
             align: 'right',

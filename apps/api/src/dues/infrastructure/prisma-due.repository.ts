@@ -187,24 +187,29 @@ export class PrismaDueRepository implements DueRepository {
       where,
     } satisfies DueFindManyArgs;
 
-    const [dues, total, allDues] = await Promise.all([
+    const [dues, total, pendingDues] = await Promise.all([
       this.prismaService.due.findMany(query),
       this.prismaService.due.count({ where }),
       this.prismaService.due.findMany({
         include: { settlements: true },
-        where,
+        where: {
+          ...where,
+          status: {
+            in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID],
+          },
+        },
       }),
     ]);
 
-    const totalAmount = sumBy(
-      allDues,
+    const pendingAmount = sumBy(
+      pendingDues,
       (due) => this.dueMapper.toDomain(due).pendingAmount.cents,
     );
 
     return {
       data: dues.map((due) => this.toPaginatedReadModel(due)),
       extra: {
-        totalAmount,
+        pendingAmount,
       },
       total,
     };

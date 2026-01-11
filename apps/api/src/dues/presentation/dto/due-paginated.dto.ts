@@ -7,7 +7,7 @@ import {
 import { MemberStatus } from '@club-social/shared/members';
 
 export class DuePaginatedExtraResponseDto implements DuePaginatedExtraDto {
-  public totalAmount: number;
+  public pendingAmount: number;
 }
 
 export class DuePaginatedResponseDto implements DuePaginatedDto {
