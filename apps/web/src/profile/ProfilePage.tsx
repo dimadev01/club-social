@@ -7,10 +7,7 @@ import {
   ThemeLabel,
   ThemeVariant,
   ThemeVariantLabel,
-  type UpdateUserPreferencesDto,
-  type UserPreferencesDto,
 } from '@club-social/shared/users';
-import { useQueryClient } from '@tanstack/react-query';
 import { App, Empty, Input, Radio, Space } from 'antd';
 
 import { useAppContext } from '@/app/AppContext';
@@ -34,7 +31,6 @@ interface ProfileFormSchema {
 
 export function ProfilePage() {
   const { message } = App.useApp();
-  const queryClient = useQueryClient();
 
   const user = useSessionUser();
 
@@ -49,22 +45,6 @@ export function ProfilePage() {
   });
 
   const updatePreferences = useUpdateMyPreferences();
-
-  const handleUpdatePreferences = (values: UpdateUserPreferencesDto) => {
-    updatePreferences.mutate(values, {
-      onSuccess: () => {
-        queryClient.setQueryData(
-          queryKeys.users.me.queryKey,
-          (old: UserPreferencesDto) => {
-            return {
-              ...old,
-              ...values,
-            };
-          },
-        );
-      },
-    });
-  };
 
   const submitProfileMutation = useMutation({
     mutationFn: (values: ProfileFormSchema) =>
@@ -277,7 +257,7 @@ export function ProfilePage() {
                 className="w-full"
                 key={preferences.theme}
                 onChange={(value) =>
-                  handleUpdatePreferences({
+                  updatePreferences.mutate({
                     theme: value.target.value as Theme,
                   })
                 }
@@ -290,7 +270,7 @@ export function ProfilePage() {
                 className="w-full"
                 key={preferences.themeAlgorithm}
                 onChange={(value) =>
-                  handleUpdatePreferences({
+                  updatePreferences.mutate({
                     themeAlgorithm: value.target.value as ThemeAlgorithm,
                   })
                 }
@@ -303,7 +283,7 @@ export function ProfilePage() {
                 className="w-full"
                 key={preferences.theme}
                 onChange={(value) =>
-                  handleUpdatePreferences({
+                  updatePreferences.mutate({
                     themeVariant: value as ThemeVariant,
                   })
                 }
