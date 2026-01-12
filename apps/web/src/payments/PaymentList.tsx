@@ -270,7 +270,7 @@ export function PaymentList() {
           <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell align="right" colSpan={1} index={0}>
-                <TableSummaryTotalFilterText />
+                <TableSummaryTotalFilterText tooltip="Considera los pagos pagados y los filtros aplicados" />
               </Table.Summary.Cell>
               <Table.Summary.Cell colSpan={6} index={1}>
                 {NumberFormat.currencyCents(payments?.extra?.totalAmount ?? 0)}

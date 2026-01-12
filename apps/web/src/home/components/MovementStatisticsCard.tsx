@@ -46,7 +46,7 @@ export function MovementStatisticsCard({ dateRange }: Props) {
         <Statistic
           loading={isLoading}
           title={
-            <Space>
+            <Space size="small">
               Balance
               <Tooltip title="Diferencia entre ingresos y egresos para el período filtrado">
                 <InfoCircleOutlined />
@@ -61,7 +61,7 @@ export function MovementStatisticsCard({ dateRange }: Props) {
           loading={isLoading}
           title={
             dateRange ? (
-              <Space>
+              <Space size="small">
                 Total acumulado
                 <Tooltip
                   title={`Incluye saldo de caja al ${DateFormat.parse(dateRange[1]).subtract(1, 'day').format(DateFormats.date)}`}

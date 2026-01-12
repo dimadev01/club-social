@@ -201,7 +201,10 @@ export function MovementList() {
                 index={0}
                 rowSpan={2}
               >
-                <TableSummaryTotalFilterText title="Totales" />
+                <TableSummaryTotalFilterText
+                  title="Totales"
+                  tooltip="Considera los movimientos registrados y los filtros aplicados"
+                />
               </Table.Summary.Cell>
               <Table.Summary.Cell align="right" colSpan={1} index={1}>
                 {NumberFormat.currencyCents(
