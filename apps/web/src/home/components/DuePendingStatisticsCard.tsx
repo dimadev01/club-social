@@ -47,7 +47,7 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
         <Space size="small">
           Deudas pendientes
           {!isMember && (
-            <Tooltip title="Solamente socios activos">
+            <Tooltip title="Deudas pendientes y parcialmente pagadas de socios activos">
               <InfoCircleOutlined />
             </Tooltip>
           )}

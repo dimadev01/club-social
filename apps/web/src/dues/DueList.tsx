@@ -279,7 +279,7 @@ export function DueList() {
           <Table.Summary fixed>
             <Table.Summary.Row>
               <Table.Summary.Cell align="right" colSpan={1} index={0}>
-                <TableSummaryTotalFilterText title="Total pendiente" />
+                <TableSummaryTotalFilterText tooltip="Considera las deudas pendientes y parcialmente pagadas y los filtros aplicados" />
               </Table.Summary.Cell>
               <Table.Summary.Cell colSpan={7} index={1}>
                 {NumberFormat.currencyCents(dues?.extra?.pendingAmount ?? 0)}

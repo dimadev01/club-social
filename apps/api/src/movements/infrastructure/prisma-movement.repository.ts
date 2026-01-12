@@ -220,7 +220,9 @@ export class PrismaMovementRepository implements MovementRepository {
     orderBy: MovementOrderByWithRelationInput[];
     where: MovementWhereInput;
   } {
-    const where: MovementWhereInput = {};
+    const where: MovementWhereInput = {
+      status: MovementStatus.REGISTERED,
+    };
 
     if (params.filters?.createdAt) {
       const dateRangeResult = DateRange.fromUserInput(

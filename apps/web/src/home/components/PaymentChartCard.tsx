@@ -86,7 +86,7 @@ export function PaymentChartCard() {
       <Form.Item label="Mes">
         <DatePicker
           allowClear={false}
-          className="w-40"
+          className="sm:w-44!"
           format={DateFormats.monthYear}
           onChange={(date) => date && setSelectedMonth(date)}
           picker="month"
