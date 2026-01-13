@@ -6,11 +6,11 @@ import {
   type MemberCategory,
   MemberCategoryLabel,
 } from '@club-social/shared/members';
-import { DatePicker, InputNumber, Radio } from 'antd';
+import { DatePicker, Radio } from 'antd';
 
 import { DueCategoryIconLabel } from '@/dues/DueCategoryIconLabel';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form, Select } from '@/ui';
+import { Form, InputNumber, Select } from '@/ui';
 
 const BASE_PRICE_LABEL = 'Todas las categorías (precio base)';
 
@@ -107,7 +107,6 @@ export function PricingForm({
         ]}
       >
         <InputNumber<number>
-          className="w-full"
           formatter={(value) => NumberFormat.format(Number(value))}
           min={0}
           parser={(value) => NumberFormat.parse(String(value))}

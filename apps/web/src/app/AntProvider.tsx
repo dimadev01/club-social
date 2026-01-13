@@ -1,5 +1,5 @@
 import { StyleProvider } from '@ant-design/cssinjs';
-import { ThemeAlgorithm, ThemeVariant } from '@club-social/shared/users';
+import { ThemeAlgorithm } from '@club-social/shared/users';
 import {
   Alert,
   theme as antTheme,
@@ -23,11 +23,6 @@ export function AntProvider({ children }: PropsWithChildren) {
     selectedTheme === AntThemeMode.DARK
       ? antTheme.darkAlgorithm
       : antTheme.defaultAlgorithm;
-
-  const variant =
-    preferences.themeVariant === ThemeVariant.DEFAULT
-      ? ThemeVariant.OUTLINED
-      : preferences.themeVariant;
 
   const algorithms = useMemo(() => {
     const algorithms = [modeAlgorithm];
@@ -63,12 +58,6 @@ export function AntProvider({ children }: PropsWithChildren) {
   return (
     <StyleProvider layer>
       <ConfigProvider
-        datePicker={{
-          className: 'w-full sm:w-auto',
-        }}
-        inputNumber={{
-          className: COMPONENT_WIDTHS.INPUT_AMOUNT,
-        }}
         locale={esEs}
         select={{
           className: COMPONENT_WIDTHS.SELECT,
@@ -91,7 +80,7 @@ export function AntProvider({ children }: PropsWithChildren) {
           className: COMPONENT_WIDTHS.TEXT_AREA,
         }}
         theme={themeConfig}
-        variant={variant}
+        variant="outlined"
       >
         <App>
           <Alert.ErrorBoundary>{children}</Alert.ErrorBoundary>

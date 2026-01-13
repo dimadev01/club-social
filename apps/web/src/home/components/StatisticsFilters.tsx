@@ -1,9 +1,8 @@
 import type { Dayjs } from 'dayjs';
 
 import { DateFormats } from '@club-social/shared/lib';
-import { DatePicker } from 'antd';
 
-import { getPresets } from '@/ui';
+import { DatePicker, getPresets } from '@/ui';
 
 interface StatisticsFiltersProps {
   onChange: (dates: [Dayjs, Dayjs] | null) => void;

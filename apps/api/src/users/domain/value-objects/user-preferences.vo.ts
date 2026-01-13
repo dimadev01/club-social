@@ -1,17 +1,15 @@
-import { Theme, ThemeAlgorithm, ThemeVariant } from '@club-social/shared/users';
+import { Theme, ThemeAlgorithm } from '@club-social/shared/users';
 
 import { ValueObject } from '@/shared/domain/value-objects/value-object.base';
 
 export interface UserPreferencesProps {
   theme: Theme;
   themeAlgorithm: ThemeAlgorithm;
-  themeVariant: ThemeVariant;
 }
 
 export const DEFAULT_USER_PREFERENCES = {
   theme: Theme.AUTO,
   themeAlgorithm: ThemeAlgorithm.DEFAULT,
-  themeVariant: ThemeVariant.DEFAULT,
 } satisfies UserPreferencesProps;
 
 export class UserPreferences extends ValueObject<UserPreferencesProps> {
@@ -21,10 +19,6 @@ export class UserPreferences extends ValueObject<UserPreferencesProps> {
 
   public get themeAlgorithm(): ThemeAlgorithm {
     return this.props.themeAlgorithm;
-  }
-
-  public get themeVariant(): ThemeVariant {
-    return this.props.themeVariant;
   }
 
   private constructor(props: UserPreferencesProps) {
@@ -44,7 +38,6 @@ export class UserPreferences extends ValueObject<UserPreferencesProps> {
     return {
       theme: this.props.theme,
       themeAlgorithm: this.props.themeAlgorithm,
-      themeVariant: this.props.themeVariant,
     };
   }
 

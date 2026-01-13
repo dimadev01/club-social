@@ -2,7 +2,7 @@ import type { PaymentDailyStatisticsItemDto } from '@club-social/shared/payments
 
 import { BarChartOutlined } from '@ant-design/icons';
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
-import { DatePicker, Empty, theme } from 'antd';
+import { Empty, theme } from 'antd';
 import { type Dayjs } from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
@@ -16,7 +16,7 @@ import {
   YAxis,
 } from 'recharts';
 
-import { Card, Descriptions, Form } from '@/ui';
+import { Card, DatePicker, Descriptions, Form } from '@/ui';
 
 import { usePaymentDailyStatistics } from '../usePaymentDailyStatistics';
 
@@ -86,7 +86,7 @@ export function PaymentChartCard() {
       <Form.Item label="Mes">
         <DatePicker
           allowClear={false}
-          className="sm:w-44!"
+          className="sm:w-44"
           format={DateFormats.monthYear}
           onChange={(date) => date && setSelectedMonth(date)}
           picker="month"

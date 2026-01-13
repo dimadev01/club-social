@@ -1,9 +1,4 @@
-import {
-  Theme,
-  ThemeVariant,
-  UserRole,
-  UserStatus,
-} from '@club-social/shared/users';
+import { Theme, UserRole, UserStatus } from '@club-social/shared/users';
 
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
@@ -96,7 +91,6 @@ describe('UserEntity', () => {
           }),
           preferences: UserPreferences.raw({
             theme: Theme.LIGHT,
-            themeVariant: ThemeVariant.DEFAULT,
           }),
           role: UserRole.ADMIN,
           status: UserStatus.ACTIVE,

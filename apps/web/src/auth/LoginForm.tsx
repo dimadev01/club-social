@@ -8,13 +8,13 @@ import {
   Flex,
   Form,
   Image,
-  Input,
   Space,
 } from 'antd';
 import { useState } from 'react';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { Input } from '@/ui';
 
 interface FormSchema {
   email: string;

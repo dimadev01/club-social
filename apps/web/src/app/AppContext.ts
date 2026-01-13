@@ -1,9 +1,12 @@
-import { type UserPreferencesDto } from '@club-social/shared/users';
+import {
+  DEFAULT_PREFERENCES,
+  type UserPreferencesDto,
+} from '@club-social/shared/users';
 import { createContext, useContext } from 'react';
 
 import { noop } from '@/shared/lib/utils';
 
-import { AntThemeMode, DEFAULT_PREFERENCES } from './app.enum';
+import { AntThemeMode } from './app.enum';
 
 interface AppContextType {
   preferences: UserPreferencesDto;

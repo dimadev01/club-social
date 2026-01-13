@@ -1,4 +1,4 @@
-import { Theme, ThemeAlgorithm, ThemeVariant } from '@club-social/shared/users';
+import { Theme, ThemeAlgorithm } from '@club-social/shared/users';
 
 import { UserPreferences } from './user-preferences.vo';
 
@@ -9,7 +9,6 @@ describe('UserPreferences', () => {
 
       expect(preferences.theme).toBe(Theme.AUTO);
       expect(preferences.themeAlgorithm).toBe(ThemeAlgorithm.DEFAULT);
-      expect(preferences.themeVariant).toBe(ThemeVariant.DEFAULT);
     });
 
     it('should create preferences with defaults when props are null', () => {
@@ -17,19 +16,16 @@ describe('UserPreferences', () => {
 
       expect(preferences.theme).toBe(Theme.AUTO);
       expect(preferences.themeAlgorithm).toBe(ThemeAlgorithm.DEFAULT);
-      expect(preferences.themeVariant).toBe(ThemeVariant.DEFAULT);
     });
 
     it('should create preferences using overrides', () => {
       const preferences = UserPreferences.raw({
         theme: Theme.DARK,
         themeAlgorithm: ThemeAlgorithm.COMPACT,
-        themeVariant: ThemeVariant.FILLED,
       });
 
       expect(preferences.theme).toBe(Theme.DARK);
       expect(preferences.themeAlgorithm).toBe(ThemeAlgorithm.COMPACT);
-      expect(preferences.themeVariant).toBe(ThemeVariant.FILLED);
     });
   });
 
@@ -38,13 +34,11 @@ describe('UserPreferences', () => {
       const preferences = UserPreferences.raw({
         theme: Theme.LIGHT,
         themeAlgorithm: ThemeAlgorithm.COMPACT,
-        themeVariant: ThemeVariant.OUTLINED,
       });
 
       expect(preferences.toJson()).toEqual({
         theme: Theme.LIGHT,
         themeAlgorithm: ThemeAlgorithm.COMPACT,
-        themeVariant: ThemeVariant.OUTLINED,
       });
     });
   });
@@ -54,34 +48,28 @@ describe('UserPreferences', () => {
       const preferences = UserPreferences.raw({
         theme: Theme.LIGHT,
         themeAlgorithm: ThemeAlgorithm.DEFAULT,
-        themeVariant: ThemeVariant.DEFAULT,
       });
 
       const updated = preferences.update({
         themeAlgorithm: ThemeAlgorithm.COMPACT,
-        themeVariant: ThemeVariant.BORDERLESS,
       });
 
       expect(updated.theme).toBe(Theme.LIGHT);
       expect(updated.themeAlgorithm).toBe(ThemeAlgorithm.COMPACT);
-      expect(updated.themeVariant).toBe(ThemeVariant.BORDERLESS);
     });
 
     it('should ignore undefined values in updates', () => {
       const preferences = UserPreferences.raw({
         theme: Theme.DARK,
         themeAlgorithm: ThemeAlgorithm.COMPACT,
-        themeVariant: ThemeVariant.UNDERLINED,
       });
 
       const updated = preferences.update({
         theme: undefined,
-        themeVariant: ThemeVariant.OUTLINED,
       });
 
       expect(updated.theme).toBe(Theme.DARK);
       expect(updated.themeAlgorithm).toBe(ThemeAlgorithm.COMPACT);
-      expect(updated.themeVariant).toBe(ThemeVariant.OUTLINED);
     });
   });
 
@@ -90,7 +78,6 @@ describe('UserPreferences', () => {
       const preferences = UserPreferences.raw({
         theme: Theme.LIGHT,
         themeAlgorithm: ThemeAlgorithm.COMPACT,
-        themeVariant: ThemeVariant.OUTLINED,
       });
 
       expect(preferences.toString()).toBe(JSON.stringify(preferences.toJson()));

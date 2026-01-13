@@ -1,7 +1,6 @@
 import {
   Theme,
   ThemeAlgorithm,
-  ThemeVariant,
   UpdateUserPreferencesDto,
   UserPreferencesDto,
 } from '@club-social/shared/users';
@@ -15,14 +14,9 @@ export class UpdateUserPreferencesRequestDto implements UpdateUserPreferencesDto
   @IsEnum(ThemeAlgorithm)
   @IsOptional()
   public themeAlgorithm?: ThemeAlgorithm;
-
-  @IsEnum(ThemeVariant)
-  @IsOptional()
-  public themeVariant?: ThemeVariant;
 }
 
 export class UserPreferencesResponseDto implements UserPreferencesDto {
   public theme: Theme;
   public themeAlgorithm: ThemeAlgorithm;
-  public themeVariant: ThemeVariant;
 }
