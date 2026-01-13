@@ -126,7 +126,6 @@ export class UsersController extends BaseController {
     return {
       theme: user.preferences.theme,
       themeAlgorithm: user.preferences.themeAlgorithm,
-      themeVariant: user.preferences.themeVariant,
     };
   }
 

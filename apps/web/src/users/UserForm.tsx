@@ -1,7 +1,8 @@
 import { UserStatus, UserStatusLabel } from '@club-social/shared/users';
-import { Form, Input, Select } from 'antd';
+import { Form, Select } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
+import { Input } from '@/ui';
 
 export interface UserFormData {
   email: string;

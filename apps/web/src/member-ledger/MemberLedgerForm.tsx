@@ -6,12 +6,12 @@ import {
   MemberLedgerEntryMovementType,
   MemberLedgerEntryMovementTypeLabel,
 } from '@club-social/shared/members';
-import { DatePicker, type FormInstance, Input, InputNumber, Radio } from 'antd';
+import { DatePicker, type FormInstance, Input, Radio } from 'antd';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form } from '@/ui';
+import { Form, InputNumber } from '@/ui';
 
 export interface MemberLedgerEntryFormData {
   amount: number;
@@ -114,7 +114,6 @@ export function MemberLedgerEntryForm({
         ]}
       >
         <InputNumber<number>
-          className="w-full"
           formatter={(value) => NumberFormat.format(Number(value))}
           min={0}
           parser={(value) => NumberFormat.parse(String(value))}

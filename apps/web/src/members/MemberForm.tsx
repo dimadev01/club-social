@@ -15,10 +15,10 @@ import {
   MemberStatus,
   MemberStatusLabel,
 } from '@club-social/shared/members';
-import { Col, DatePicker, Empty, Input, Radio, Space } from 'antd';
+import { Col, DatePicker, Empty, Radio, Space } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { AddNewIcon, Button, Card, Form, Row, Select } from '@/ui';
+import { AddNewIcon, Button, Card, Form, Input, Row, Select } from '@/ui';
 
 export interface MemberFormData {
   address: {

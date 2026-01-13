@@ -3,14 +3,14 @@ import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { DateFormats, NumberFormat } from '@club-social/shared/lib';
-import { DatePicker, type FormInstance, Input, InputNumber, Radio } from 'antd';
+import { DatePicker, type FormInstance, Input, Radio } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { useActivePricing } from '@/pricing/useActivePricing';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form } from '@/ui';
+import { Form, InputNumber } from '@/ui';
 
 import { DueCategoryIconLabel } from './DueCategoryIconLabel';
 
@@ -153,7 +153,6 @@ export function DueForm({
         ]}
       >
         <InputNumber<number>
-          className="w-full"
           disabled={isActivePricingLoading}
           formatter={(value) => NumberFormat.format(Number(value))}
           min={0}

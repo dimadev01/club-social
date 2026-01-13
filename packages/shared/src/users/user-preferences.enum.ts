@@ -1,3 +1,5 @@
+import { UserPreferencesDto } from './user-preferences.dto';
+
 export const Theme = {
   AUTO: 'auto',
   DARK: 'dark',
@@ -12,24 +14,6 @@ export const ThemeLabel: Record<Theme, string> = {
   [Theme.LIGHT]: 'Claro',
 } as const;
 
-export const ThemeVariant = {
-  BORDERLESS: 'borderless',
-  DEFAULT: 'default',
-  FILLED: 'filled',
-  OUTLINED: 'outlined',
-  UNDERLINED: 'underlined',
-} as const;
-
-export type ThemeVariant = (typeof ThemeVariant)[keyof typeof ThemeVariant];
-
-export const ThemeVariantLabel: Record<ThemeVariant, string> = {
-  [ThemeVariant.BORDERLESS]: 'Sin bordes',
-  [ThemeVariant.DEFAULT]: 'Predeterminado',
-  [ThemeVariant.FILLED]: 'Relleno',
-  [ThemeVariant.OUTLINED]: 'Con bordes',
-  [ThemeVariant.UNDERLINED]: 'Subrayado',
-} as const;
-
 export const ThemeAlgorithm = {
   COMPACT: 'compact',
   DEFAULT: 'default',
@@ -42,3 +26,8 @@ export const ThemeAlgorithmLabel: Record<ThemeAlgorithm, string> = {
   [ThemeAlgorithm.COMPACT]: 'Compacto',
   [ThemeAlgorithm.DEFAULT]: 'Predeterminado',
 } as const;
+
+export const DEFAULT_PREFERENCES: UserPreferencesDto = {
+  theme: Theme.AUTO,
+  themeAlgorithm: ThemeAlgorithm.DEFAULT,
+};

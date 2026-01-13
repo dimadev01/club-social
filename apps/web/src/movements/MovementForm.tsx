@@ -7,10 +7,10 @@ import {
   MovementType,
   MovementTypeLabel,
 } from '@club-social/shared/movements';
-import { DatePicker, type FormInstance, Input, InputNumber, Radio } from 'antd';
+import { DatePicker, type FormInstance, Input, Radio } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form, Select } from '@/ui';
+import { Form, InputNumber, Select } from '@/ui';
 
 export interface MovementFormData {
   amount: number;
@@ -87,7 +87,6 @@ export function MovementForm({
         ]}
       >
         <InputNumber<number>
-          className="w-full"
           formatter={(value) =>
             NumberFormat.format(Number(value), {
               maximumFractionDigits: 2,

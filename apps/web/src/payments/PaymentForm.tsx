@@ -13,8 +13,6 @@ import {
   Checkbox,
   DatePicker,
   type FormInstance,
-  Input,
-  InputNumber,
   Space,
   Statistic,
   Tooltip,
@@ -33,8 +31,15 @@ import { useMemberBalance } from '@/member-ledger/useMemberBalance';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { tw } from '@/shared/lib/utils';
-import { Card, Descriptions, Form, Table, TABLE_COLUMN_WIDTHS } from '@/ui';
-import { COMPONENT_WIDTHS } from '@/ui/constants';
+import {
+  Card,
+  Descriptions,
+  Form,
+  Input,
+  InputNumber,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+} from '@/ui';
 
 export type FormInitialValues = Partial<PaymentFormSchema>;
 
@@ -352,18 +357,11 @@ export function PaymentForm({
             label="Número de recibo"
             name="receiptNumber"
           >
-            <Input
-              className="w-full sm:w-auto"
-              placeholder="Número de recibo (opcional)"
-            />
+            <Input placeholder="Número de recibo (opcional)" />
           </Form.Item>
 
           <Form.Item<PaymentFormSchema> label="Notas" name="notes">
-            <Input.TextArea
-              className={COMPONENT_WIDTHS.TEXT_AREA}
-              placeholder="Notas adicionales..."
-              rows={1}
-            />
+            <Input.TextArea placeholder="Notas adicionales..." rows={1} />
           </Form.Item>
         </div>
 
@@ -563,7 +561,6 @@ export function PaymentForm({
                             ]}
                           >
                             <InputNumber
-                              className="w-full"
                               formatter={(value) =>
                                 NumberFormat.format(Number(value))
                               }
@@ -613,7 +610,6 @@ export function PaymentForm({
                               ]}
                             >
                               <InputNumber
-                                className="w-full"
                                 formatter={(value) =>
                                   NumberFormat.format(Number(value))
                                 }
@@ -662,7 +658,6 @@ export function PaymentForm({
                     name="surplusToCreditAmount"
                   >
                     <InputNumber<number>
-                      className="w-full sm:w-auto"
                       formatter={(value) => NumberFormat.format(Number(value))}
                       parser={(value) => NumberFormat.parse(String(value))}
                       precision={0}
