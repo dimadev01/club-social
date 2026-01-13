@@ -1,4 +1,4 @@
-import { Theme } from '@club-social/shared/users';
+import { DEFAULT_PREFERENCES, Theme } from '@club-social/shared/users';
 import { useQueryClient } from '@tanstack/react-query';
 import { type PropsWithChildren, useCallback, useMemo } from 'react';
 import { useMedia } from 'react-use';
@@ -6,7 +6,7 @@ import { useMedia } from 'react-use';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { useMyPreferences } from '@/users/useMyPreferences';
 
-import { AntThemeMode, DEFAULT_PREFERENCES } from './app.enum';
+import { AntThemeMode } from './app.enum';
 import { AppContext } from './AppContext';
 
 export function AppContextProvider({ children }: PropsWithChildren) {
