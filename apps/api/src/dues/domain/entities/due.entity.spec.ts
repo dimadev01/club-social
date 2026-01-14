@@ -197,7 +197,7 @@ describe('DueEntity', () => {
 
       const event = events[0] as DueUpdatedEvent;
       expect(event.oldDue.amount.cents).toBe(TEST_DUE_AMOUNT_CENTS);
-      expect(event.due.amount.cents).toBe(TEST_ALT_DUE_AMOUNT_CENTS);
+      expect(event.newDue.amount.cents).toBe(TEST_ALT_DUE_AMOUNT_CENTS);
     });
 
     it('should fail to update a paid due', () => {

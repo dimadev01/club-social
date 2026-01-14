@@ -13,6 +13,9 @@ import { DueUpdatedEvent } from '@/dues/domain/events/due-updated.event';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import { MemberCreatedEvent } from '@/members/domain/events/member-created.event';
 import { MemberUpdatedEvent } from '@/members/domain/events/member-updated.event';
+import { MemberLedgerEntryEntity } from '@/members/ledger/domain/entities/member-ledger-entry.entity';
+import { MemberLedgerEntryCreatedEvent } from '@/members/ledger/domain/events/member-ledger-entry-created.event';
+import { MemberLedgerEntryUpdatedEvent } from '@/members/ledger/domain/events/member-ledger-entry-updated.event';
 import { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import { MovementCreatedEvent } from '@/movements/domain/events/movement-created.event';
 import { MovementUpdatedEvent } from '@/movements/domain/events/movement-updated.event';
@@ -61,20 +64,20 @@ export class AuditEventHandler {
 
   @OnEvent(DueUpdatedEvent.name)
   public async handleDueUpdated(event: DueUpdatedEvent): Promise<void> {
-    Guard.string(event.due.createdBy);
+    Guard.string(event.newDue.createdBy);
 
-    const action = event.due.isVoided()
+    const action = event.newDue.isVoided()
       ? AuditAction.VOIDED
       : AuditAction.UPDATED;
-    const message = event.due.isVoided() ? 'Due voided' : 'Due updated';
+    const message = event.newDue.isVoided() ? 'Due voided' : 'Due updated';
 
     await this.createAuditLog({
       action,
-      createdBy: event.due.createdBy,
+      createdBy: event.newDue.createdBy,
       entity: AuditEntity.DUE,
-      entityId: event.due.id.value,
+      entityId: event.newDue.id.value,
       message,
-      newData: this.serializeDue(event.due),
+      newData: this.serializeDue(event.newDue),
       oldData: this.serializeDue(event.oldDue),
     });
   }
@@ -92,6 +95,41 @@ export class AuditEventHandler {
       message: 'Member created',
       newData: this.serializeMember(event.member),
       oldData: null,
+    });
+  }
+
+  // Member Ledger Entry Events
+  @OnEvent(MemberLedgerEntryCreatedEvent.name)
+  public async handleMemberLedgerEntryCreated(
+    event: MemberLedgerEntryCreatedEvent,
+  ): Promise<void> {
+    Guard.string(event.memberLedgerEntry.createdBy);
+
+    await this.createAuditLog({
+      action: AuditAction.CREATED,
+      createdBy: event.memberLedgerEntry.createdBy,
+      entity: AuditEntity.MEMBER_LEDGER_ENTRY,
+      entityId: event.memberLedgerEntry.id.value,
+      message: 'Member ledger entry created',
+      newData: this.serializeMemberLedgerEntry(event.memberLedgerEntry),
+      oldData: null,
+    });
+  }
+
+  @OnEvent(MemberLedgerEntryUpdatedEvent.name)
+  public async handleMemberLedgerEntryUpdated(
+    event: MemberLedgerEntryUpdatedEvent,
+  ): Promise<void> {
+    Guard.string(event.newMemberLedgerEntry.createdBy);
+
+    await this.createAuditLog({
+      action: AuditAction.UPDATED,
+      createdBy: event.newMemberLedgerEntry.createdBy,
+      entity: AuditEntity.MEMBER_LEDGER_ENTRY,
+      entityId: event.newMemberLedgerEntry.id.value,
+      message: 'Member ledger entry updated',
+      newData: this.serializeMemberLedgerEntry(event.newMemberLedgerEntry),
+      oldData: this.serializeMemberLedgerEntry(event.oldMemberLedgerEntry),
     });
   }
 
@@ -331,6 +369,27 @@ export class AuditEventHandler {
       updatedAt: member.updatedAt,
       updatedBy: member.updatedBy,
       userId: member.userId.value,
+    };
+  }
+
+  private serializeMemberLedgerEntry(
+    memberLedgerEntry: MemberLedgerEntryEntity,
+  ): Record<string, unknown> {
+    return {
+      amount: memberLedgerEntry.amount.cents,
+      createdAt: memberLedgerEntry.createdAt,
+      createdBy: memberLedgerEntry.createdBy,
+      date: memberLedgerEntry.date.value,
+      id: memberLedgerEntry.id.value,
+      memberId: memberLedgerEntry.memberId.value,
+      notes: memberLedgerEntry.notes,
+      paymentId: memberLedgerEntry.paymentId?.value ?? null,
+      reversalOfId: memberLedgerEntry.reversalOfId?.value ?? null,
+      source: memberLedgerEntry.source,
+      status: memberLedgerEntry.status,
+      type: memberLedgerEntry.type,
+      updatedAt: memberLedgerEntry.updatedAt,
+      updatedBy: memberLedgerEntry.updatedBy,
     };
   }
 

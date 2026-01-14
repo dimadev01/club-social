@@ -2,8 +2,8 @@ import {
   APP_SETTINGS_LABELS,
   type AppSettingDto,
   AppSettingKey,
-  AppSettingScope,
   type AppSettingValues,
+  isGroupDiscountTiersSetting,
 } from '@club-social/shared/app-settings';
 import { UserRole } from '@club-social/shared/users';
 import { useQueryClient } from '@tanstack/react-query';
@@ -14,6 +14,7 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { Card, Descriptions, Page } from '@/ui';
 import { NotFound } from '@/ui/NotFound';
 
+import { GroupDiscountTiersEditor } from './GroupDiscountTiersEditor';
 import { useAppSettings } from './useAppSettings';
 import { useUpdateAppSetting } from './useUpdateAppSetting';
 
@@ -26,13 +27,6 @@ export function AppSettingsPage() {
 
   const { data: appSettings, isLoading } = useAppSettings();
   const updateMutation = useUpdateAppSetting();
-
-  const appScopeSettings = (appSettings ?? []).filter(
-    (setting) => setting.scope === AppSettingScope.APP,
-  );
-  const systemScopeSettings = (appSettings ?? []).filter(
-    (setting) => setting.scope === AppSettingScope.SYSTEM,
-  );
 
   const onUpdate = (
     key: AppSettingKey,
@@ -58,33 +52,9 @@ export function AppSettingsPage() {
     );
   };
 
-  const getBooleanSettings = (settings: AppSettingDto[]) =>
-    settings.filter((setting) => {
-      const keys = Object.keys(setting.value);
-
-      if (keys.length !== 1) {
-        return false;
-      }
-
-      const [firstKey] = keys;
-      const value = setting.value[firstKey as keyof typeof setting.value];
-
-      return typeof value === 'boolean';
-    });
-
-  const getBooleanItems = (settings: AppSettingDto[]) =>
-    getBooleanSettings(settings).map((setting) => ({
-      children: (
-        <Checkbox
-          checked={setting.value.enabled}
-          onChange={(e) => onUpdate(setting.key, { enabled: e.target.checked })}
-        >
-          {setting.description}
-        </Checkbox>
-      ),
-      key: setting.key,
-      label: APP_SETTINGS_LABELS[setting.key],
-    }));
+  const groupDiscountTiersSetting = (appSettings ?? []).find(
+    isGroupDiscountTiersSetting,
+  );
 
   if (!isAdmin && !isStaff) {
     return <NotFound />;
@@ -94,18 +64,111 @@ export function AppSettingsPage() {
     return <Card loading />;
   }
 
+  const maintenanceModeSetting = appSettings?.find(
+    (
+      setting,
+    ): setting is AppSettingDto<typeof AppSettingKey.MAINTENANCE_MODE> =>
+      setting.key === AppSettingKey.MAINTENANCE_MODE,
+  );
+
+  const sendEmailsSetting = appSettings?.find(
+    (setting): setting is AppSettingDto<typeof AppSettingKey.SEND_EMAILS> =>
+      setting.key === AppSettingKey.SEND_EMAILS,
+  );
+
+  const sendMemberNotificationsSetting = appSettings?.find(
+    (
+      setting,
+    ): setting is AppSettingDto<
+      typeof AppSettingKey.SEND_MEMBER_NOTIFICATIONS
+    > => setting.key === AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
+  );
+
   return (
     <Page>
       <Space className="flex" vertical>
         {isAdmin && (
           <Card title="Configuración del Sistema">
-            <Descriptions items={[...getBooleanItems(systemScopeSettings)]} />
+            <Descriptions
+              items={[
+                {
+                  children: (
+                    <Checkbox
+                      checked={maintenanceModeSetting?.value.enabled}
+                      onChange={(e) =>
+                        onUpdate(AppSettingKey.MAINTENANCE_MODE, {
+                          enabled: e.target.checked,
+                        })
+                      }
+                    >
+                      {maintenanceModeSetting?.description}
+                    </Checkbox>
+                  ),
+                  key: AppSettingKey.MAINTENANCE_MODE,
+                  label: APP_SETTINGS_LABELS[AppSettingKey.MAINTENANCE_MODE],
+                },
+                {
+                  children: (
+                    <Checkbox
+                      checked={sendEmailsSetting?.value.enabled}
+                      onChange={(e) =>
+                        onUpdate(AppSettingKey.SEND_EMAILS, {
+                          enabled: e.target.checked,
+                        })
+                      }
+                    >
+                      {sendEmailsSetting?.description}
+                    </Checkbox>
+                  ),
+                  key: AppSettingKey.SEND_EMAILS,
+                  label: APP_SETTINGS_LABELS[AppSettingKey.SEND_EMAILS],
+                },
+              ]}
+            />
           </Card>
         )}
 
         {(isAdmin || isStaff) && (
           <Card title="Configuración de la Aplicación">
-            <Descriptions items={[...getBooleanItems(appScopeSettings)]} />
+            <Space className="flex" vertical>
+              <Descriptions
+                items={[
+                  {
+                    children: (
+                      <Checkbox
+                        checked={sendMemberNotificationsSetting?.value.enabled}
+                        onChange={(e) =>
+                          onUpdate(AppSettingKey.SEND_MEMBER_NOTIFICATIONS, {
+                            enabled: e.target.checked,
+                          })
+                        }
+                      >
+                        {sendMemberNotificationsSetting?.description}
+                      </Checkbox>
+                    ),
+                    key: AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
+                    label:
+                      APP_SETTINGS_LABELS[
+                        AppSettingKey.SEND_MEMBER_NOTIFICATIONS
+                      ],
+                  },
+                ]}
+              />
+
+              <Card
+                size="small"
+                title={APP_SETTINGS_LABELS[AppSettingKey.GROUP_DISCOUNT_TIERS]}
+                type="inner"
+              >
+                <GroupDiscountTiersEditor
+                  disabled={updateMutation.isPending}
+                  onChange={(tiers) =>
+                    onUpdate(AppSettingKey.GROUP_DISCOUNT_TIERS, tiers)
+                  }
+                  value={groupDiscountTiersSetting?.value ?? []}
+                />
+              </Card>
+            </Space>
           </Card>
         )}
       </Space>

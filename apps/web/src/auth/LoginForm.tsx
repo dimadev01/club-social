@@ -100,7 +100,11 @@ export function LoginForm() {
               rules={[{ required: true, type: 'email', whitespace: true }]}
               tooltip="Recibirás un link para iniciar sesión"
             >
-              <Input placeholder="juan.perez@example.com" type="email" />
+              <Input
+                className="w-full"
+                placeholder="juan.perez@example.com"
+                type="email"
+              />
             </Form.Item>
           </Form>
 

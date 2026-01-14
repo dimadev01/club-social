@@ -19,7 +19,9 @@ export class AppSettingService {
     private cacheManager: Cache,
   ) {}
 
-  public async getMaintenanceMode(): Promise<AppSettingEntity> {
+  public async getMaintenanceMode(): Promise<
+    AppSettingEntity<typeof AppSettingKey.MAINTENANCE_MODE>
+  > {
     return this.getValue(AppSettingKey.MAINTENANCE_MODE);
   }
 

@@ -8,7 +8,7 @@ export function Descriptions({
   layout,
   size = 'small',
   ...props
-}: DescriptionsProps & { bordered?: boolean }) {
+}: DescriptionsProps) {
   const { sm } = Grid.useBreakpoint();
 
   const descriptionsLayout = layout ?? (sm ? 'horizontal' : 'vertical');

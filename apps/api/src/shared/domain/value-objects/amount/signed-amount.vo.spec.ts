@@ -238,6 +238,58 @@ describe('SignedAmount', () => {
     });
   });
 
+  describe('divide', () => {
+    it('should divide by a positive divisor', () => {
+      const amount = SignedAmount.raw({ cents: 1000 });
+      const result = amount.divide(2);
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(500);
+    });
+
+    it('should divide by a decimal divisor', () => {
+      const amount = SignedAmount.raw({ cents: 1000 });
+      const result = amount.divide(0.5);
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(2000);
+    });
+
+    it('should round to nearest cent', () => {
+      const amount = SignedAmount.raw({ cents: 100 });
+      const result = amount.divide(3);
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(33);
+    });
+
+    it('should return error for division by zero', () => {
+      const amount = SignedAmount.raw({ cents: 1000 });
+      const result = amount.divide(0);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe('Division by zero');
+    });
+
+    it('should return error for negative divisor', () => {
+      const amount = SignedAmount.raw({ cents: 1000 });
+      const result = amount.divide(-2);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe(
+        'Divisor cannot be negative',
+      );
+    });
+
+    it('should handle dividing zero', () => {
+      const amount = SignedAmount.raw({ cents: 0 });
+      const result = amount.divide(5);
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(0);
+    });
+  });
+
   describe('comparison methods', () => {
     const small = SignedAmount.raw({ cents: 100 });
     const medium = SignedAmount.raw({ cents: 500 });

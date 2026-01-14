@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { DueEntity } from '@/dues/domain/entities/due.entity';
-import type { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
+import type { MemberLedgerEntryEntity } from '@/members/ledger/domain/entities/member-ledger-entry.entity';
 import type { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import type { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import type {

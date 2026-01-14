@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { useActivePricing } from '@/pricing/useActivePricing';
+import { useMembershipPricingForMember } from '@/pricing/useMembershipPricingForMember';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import { Form, InputNumber } from '@/ui';
 
@@ -54,17 +55,28 @@ export function DueForm({
     initialValues?.memberIds?.[0],
   );
 
+  const isMembershipCategory = formCategory === DueCategory.MEMBERSHIP;
+
   const { data: activePricing, isLoading: isActivePricingLoading } =
     useActivePricing({
       dueCategory: formCategory,
       memberCategory: selectedFirstMember?.category,
     });
 
+  const { data: membershipPricing, isLoading: isMembershipPricingLoading } =
+    useMembershipPricingForMember({ memberId: selectedFirstMember?.id });
+
+  const isPricingLoading = isMembershipCategory
+    ? isMembershipPricingLoading
+    : isActivePricingLoading;
+
   useEffect(() => {
-    if (activePricing) {
+    if (membershipPricing) {
+      setFieldValue('amount', NumberFormat.fromCents(membershipPricing.amount));
+    } else if (activePricing) {
       setFieldValue('amount', NumberFormat.fromCents(activePricing.amount));
     }
-  }, [activePricing, setFieldValue]);
+  }, [activePricing, membershipPricing, setFieldValue]);
 
   const isEditMode = mode === 'edit';
 
@@ -153,7 +165,7 @@ export function DueForm({
         ]}
       >
         <InputNumber<number>
-          disabled={isActivePricingLoading}
+          disabled={isPricingLoading}
           formatter={(value) => NumberFormat.format(Number(value))}
           min={0}
           parser={(value) => NumberFormat.parse(String(value))}

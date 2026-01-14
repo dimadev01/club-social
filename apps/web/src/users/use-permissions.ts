@@ -26,6 +26,13 @@ export const usePermissions = () => {
       update: useHasPermission(Resource.DUES, Action.UPDATE),
       void: useHasPermission(Resource.DUES, Action.VOID),
     } as const,
+    groups: {
+      create: useHasPermission(Resource.GROUPS, Action.CREATE),
+      delete: useHasPermission(Resource.GROUPS, Action.DELETE),
+      get: useHasPermission(Resource.GROUPS, Action.GET),
+      list: useHasPermission(Resource.GROUPS, Action.LIST),
+      update: useHasPermission(Resource.GROUPS, Action.UPDATE),
+    } as const,
     memberLedger: {
       create: useHasPermission(Resource.MEMBER_LEDGER, Action.CREATE),
       get: useHasPermission(Resource.MEMBER_LEDGER, Action.GET),

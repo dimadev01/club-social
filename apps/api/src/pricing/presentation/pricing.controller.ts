@@ -25,6 +25,7 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePricingUseCase } from '../application/create-pricing.use-case';
+import { GetMembershipPricingUseCase } from '../application/get-membership-pricing.use-case';
 import { UpdatePricingUseCase } from '../application/update-pricing.use-case';
 import { PricingEntity } from '../domain/entities/pricing.entity';
 import {
@@ -33,6 +34,8 @@ import {
 } from '../domain/pricing.repository';
 import { CreatePricingRequestDto } from './dto/create-pricing.dto';
 import { FindActivePricingRequestDto } from './dto/find-active-pricing.dto';
+import { FindMembershipPricingRequestDto } from './dto/find-membership-pricing.dto';
+import { MembershipPricingResponseDto } from './dto/membership-pricing.dto';
 import { PricingPaginatedResponseDto } from './dto/pricing-paginated.dto';
 import { PricingResponseDto } from './dto/pricing-response.dto';
 import { UpdatePricingRequestDto } from './dto/update-pricing.dto';
@@ -44,6 +47,7 @@ export class PricingController extends BaseController {
     protected readonly logger: AppLogger,
     private readonly createPricingUseCase: CreatePricingUseCase,
     private readonly updatePricingUseCase: UpdatePricingUseCase,
+    private readonly getMembershipPricingUseCase: GetMembershipPricingUseCase,
     @Inject(PRICING_REPOSITORY_PROVIDER)
     private readonly pricingRepository: PricingRepository,
   ) {
@@ -95,6 +99,26 @@ export class PricingController extends BaseController {
     );
 
     return pricing ? this.toDetailDto(pricing) : null;
+  }
+
+  @Get('membership/for-member')
+  public async getMembershipPricing(
+    @Query() query: FindMembershipPricingRequestDto,
+  ): Promise<MembershipPricingResponseDto | null> {
+    const pricing = this.handleResult(
+      await this.getMembershipPricingUseCase.execute({
+        memberId: query.memberId,
+      }),
+    );
+
+    return pricing
+      ? {
+          amount: pricing.amount,
+          baseAmount: pricing.baseAmount,
+          discountPercent: pricing.discountPercent,
+          groupSize: pricing.groupSize,
+        }
+      : null;
   }
 
   @Get('paginated')

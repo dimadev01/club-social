@@ -1,0 +1,189 @@
+import {
+  GetPaginatedDataDto,
+  PaginatedDataResultDto,
+} from '@club-social/shared/types';
+import { Injectable } from '@nestjs/common';
+
+import {
+  GroupFindManyArgs,
+  GroupGetPayload,
+  GroupOrderByWithRelationInput,
+  GroupWhereInput,
+} from '@/infrastructure/database/prisma/generated/models';
+import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
+import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
+import { EntityNotFoundError } from '@/shared/domain/errors/entity-not-found.error';
+import { Name } from '@/shared/domain/value-objects/name/name.vo';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+import { GroupEntity } from '../domain/entities/group.entity';
+import {
+  GroupPaginatedReadModel,
+  GroupReadModel,
+} from '../domain/group-read-models';
+import { GroupRepository } from '../domain/group.repository';
+import { PrismaGroupMapper } from './prisma-group.mapper';
+
+@Injectable()
+export class PrismaGroupRepository implements GroupRepository {
+  public constructor(
+    private readonly prismaService: PrismaService,
+    private readonly groupMapper: PrismaGroupMapper,
+  ) {}
+
+  public async findById(id: UniqueId): Promise<GroupEntity | null> {
+    const group = await this.prismaService.group.findUnique({
+      include: { members: true },
+      where: { id: id.value },
+    });
+
+    if (!group) {
+      return null;
+    }
+
+    return this.groupMapper.toDomain(group);
+  }
+
+  public async findByIdOrThrow(id: UniqueId): Promise<GroupEntity> {
+    const group = await this.findById(id);
+
+    if (!group) {
+      throw new EntityNotFoundError();
+    }
+
+    return group;
+  }
+
+  public async findByIdReadModel(id: UniqueId): Promise<GroupReadModel | null> {
+    const group = await this.prismaService.group.findUnique({
+      include: {
+        members: { include: { member: { include: { user: true } } } },
+      },
+      where: { id: id.value },
+    });
+
+    if (!group) {
+      return null;
+    }
+
+    return this.toReadModel(group);
+  }
+
+  public async findByIds(ids: UniqueId[]): Promise<GroupEntity[]> {
+    const groups = await this.prismaService.group.findMany({
+      include: { members: true },
+      where: { id: { in: ids.map((id) => id.value) } },
+    });
+
+    return groups.map((group) => this.groupMapper.toDomain(group));
+  }
+
+  public async findGroupSizeByMemberId(memberId: UniqueId): Promise<number> {
+    const membership = await this.prismaService.groupMember.findUnique({
+      where: { memberId: memberId.value },
+    });
+
+    if (!membership) {
+      return 0;
+    }
+
+    return this.prismaService.groupMember.count({
+      where: { groupId: membership.groupId },
+    });
+  }
+
+  public async findPaginated(
+    params: GetPaginatedDataDto,
+  ): Promise<PaginatedDataResultDto<GroupPaginatedReadModel, never>> {
+    const { orderBy, where } = this.buildWhereAndOrderBy(params);
+
+    const query = {
+      include: {
+        members: { include: { member: { include: { user: true } } } },
+      },
+      orderBy,
+      skip: (params.page - 1) * params.pageSize,
+      take: params.pageSize,
+      where,
+    } satisfies GroupFindManyArgs;
+
+    const [groups, total] = await Promise.all([
+      this.prismaService.group.findMany(query),
+      this.prismaService.group.count({ where }),
+    ]);
+
+    return {
+      data: groups.map((group) => ({
+        id: group.id,
+        members: group.members.map((groupMember) => ({
+          id: groupMember.memberId,
+          name: Name.raw({
+            firstName: groupMember.member.user.firstName,
+            lastName: groupMember.member.user.lastName,
+          }).fullName,
+        })),
+        name: group.name,
+      })),
+      total,
+    };
+  }
+
+  public async save(entity: GroupEntity, tx?: PrismaClientLike): Promise<void> {
+    const client = tx ?? this.prismaService;
+
+    const create = this.groupMapper.toCreateInput(entity);
+    const update = this.groupMapper.toUpdateInput(entity);
+
+    await client.group.upsert({
+      create,
+      update,
+      where: { id: entity.id.value },
+    });
+  }
+
+  private buildWhereAndOrderBy(params: GetPaginatedDataDto): {
+    orderBy: GroupOrderByWithRelationInput[];
+    where: GroupWhereInput;
+  } {
+    const where: GroupWhereInput = {};
+
+    if (params.filters?.memberId) {
+      where.members = {
+        some: {
+          memberId: { in: params.filters.memberId },
+        },
+      };
+    }
+
+    const orderBy: GroupOrderByWithRelationInput[] = [
+      ...params.sort.map(({ field, order }) => ({ [field]: order })),
+      { createdAt: 'desc' },
+    ];
+
+    return { orderBy, where };
+  }
+
+  private toReadModel(
+    group: GroupGetPayload<{
+      include: {
+        members: { include: { member: { include: { user: true } } } };
+      };
+    }>,
+  ): GroupReadModel {
+    return {
+      createdAt: group.createdAt,
+      createdBy: group.createdBy,
+      id: group.id,
+      members: group.members.map((groupMember) => ({
+        id: groupMember.memberId,
+        name: Name.raw({
+          firstName: groupMember.member.user.firstName,
+          lastName: groupMember.member.user.lastName,
+        }).fullName,
+      })),
+      name: group.name,
+      updatedAt: group.updatedAt,
+      updatedBy: group.updatedBy,
+    };
+  }
+}

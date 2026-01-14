@@ -23,6 +23,11 @@ export const queryKeys = createQueryKeyStore({
     pendingStatistics: (query?: DateRangeDto) => [query],
   },
 
+  groups: {
+    detail: (id?: string) => [id],
+    paginated: (query?: TableQuery) => [query],
+  },
+
   memberLedger: {
     balance: (memberId?: string) => [memberId],
     detail: (id?: string) => [id],
@@ -60,6 +65,7 @@ export const queryKeys = createQueryKeyStore({
       memberCategory,
     ],
     detail: (id?: string) => [id],
+    membershipForMember: (memberId?: string) => [memberId],
     paginated: (query?: TableQuery) => [query],
   },
 

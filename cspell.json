@@ -1,6 +1,7 @@
 {
   "version": "0.2",
   "ignorePaths": [
+    "cspell.json",
     "package.json",
     "package-lock.json",
     "node_modules",
@@ -19,7 +20,8 @@
     "docker-compose.yaml",
     ".github",
     "migrations",
-    "CLAUDE.md"
+    "CLAUDE.md",
+    ".claude"
   ],
   "words": [
     "aaguid",

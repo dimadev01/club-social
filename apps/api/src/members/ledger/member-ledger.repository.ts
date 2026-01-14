@@ -18,7 +18,7 @@ import type {
   MemberLedgerEntryPaginatedModel,
 } from './member-ledger-entry-read-models';
 
-import { MemberLedgerEntryEntity } from './domain/member-ledger-entry.entity';
+import { MemberLedgerEntryEntity } from './domain/entities/member-ledger-entry.entity';
 
 export const MEMBER_LEDGER_REPOSITORY_PROVIDER = Symbol(
   'MemberLedgerRepository',

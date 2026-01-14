@@ -23,6 +23,7 @@ import {
   Typography,
 } from 'antd';
 import { type PropsWithChildren, useMemo, useState } from 'react';
+import { GrGroup } from 'react-icons/gr';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
 
@@ -140,11 +141,19 @@ export function AppLayout({ children }: PropsWithChildren) {
       });
     }
 
+    if (permissions.groups.list) {
+      items.push({
+        icon: <GrGroup />,
+        key: appRoutes.groups.list,
+        label: 'Grupos',
+      });
+    }
+
     if (isAdmin || isStaff) {
       items.push({
         icon: <SettingOutlined />,
         key: appRoutes.appSettings,
-        label: 'Configuración del Sistema',
+        label: 'Configuración',
       });
     }
 
@@ -267,7 +276,7 @@ export function AppLayout({ children }: PropsWithChildren) {
           icon={<AddNewIcon />}
           onOpenChange={setIsFloatMenuOpen}
           open={isFloatMenuOpen}
-          trigger="click"
+          trigger="hover"
           type="primary"
         >
           {permissions.members.create && (

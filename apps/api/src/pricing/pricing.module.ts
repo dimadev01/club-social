@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { CreatePricingUseCase } from './application/create-pricing.use-case';
+import { GetMembershipPricingUseCase } from './application/get-membership-pricing.use-case';
 import { UpdatePricingUseCase } from './application/update-pricing.use-case';
 import {
   PRICING_OVERLAP_SERVICE_PROVIDER,
@@ -14,6 +15,7 @@ import { PricingController } from './presentation/pricing.controller';
   imports: [],
   providers: [
     CreatePricingUseCase,
+    GetMembershipPricingUseCase,
     UpdatePricingUseCase,
     {
       provide: PRICING_OVERLAP_SERVICE_PROVIDER,

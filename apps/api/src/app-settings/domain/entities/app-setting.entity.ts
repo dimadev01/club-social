@@ -8,6 +8,7 @@ import { AggregateRoot } from '@/shared/domain/aggregate-root';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { AppSettingUpdatedEvent } from '../events/app-setting-updated.event';
+import { AppSettingValidators } from './app-setting.validator';
 
 export interface AppSettingPersistenceMeta {
   updatedAt: Date;
@@ -70,11 +71,13 @@ export class AppSettingEntity<
     return new AppSettingEntity(props, meta);
   }
 
-  public updateValue(value: AppSettingValues[K], updatedBy: string): void {
-    this._value = value;
-    this._updatedBy = updatedBy;
-    this._updatedAt = new Date();
+  public updateValue(value: unknown, updatedBy: string) {
+    const validator = AppSettingValidators[this._id.value as K];
 
+    validator(value);
+
+    this._value = value as AppSettingValues[K];
+    this._updatedBy = updatedBy;
     this.addEvent(new AppSettingUpdatedEvent(this));
   }
 }

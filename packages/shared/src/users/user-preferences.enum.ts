@@ -1,4 +1,4 @@
-import { UserPreferencesDto } from './user-preferences.dto';
+import type { UserPreferencesDto } from './user-preferences.dto';
 
 export const Theme = {
   AUTO: 'auto',

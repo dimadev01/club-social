@@ -13,6 +13,17 @@ export interface FindActivePricingDto {
   memberCategory: MemberCategory;
 }
 
+export interface FindMembershipPricingDto {
+  memberId: string;
+}
+
+export interface MembershipPricingDto {
+  amount: number;
+  baseAmount: number;
+  discountPercent: number;
+  groupSize: number;
+}
+
 export interface PricingDto {
   amount: number;
   createdAt: string;

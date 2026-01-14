@@ -75,6 +75,22 @@ export class SignedAmount extends ValueObject<Props> {
     return new SignedAmount({ cents: this.cents + other.cents });
   }
 
+  public divide(divisor: number): Result<SignedAmount> {
+    Guard.number(divisor);
+
+    if (divisor === 0) {
+      return err(new ApplicationError('Division by zero'));
+    }
+
+    if (divisor < 0) {
+      return err(new ApplicationError('Division by negative number'));
+    }
+
+    const result = Math.round(this.cents / divisor);
+
+    return SignedAmount.fromCents(result);
+  }
+
   public equals(vo?: ValueObject<Props>): boolean {
     if (!vo || !(vo instanceof SignedAmount)) {
       return false;

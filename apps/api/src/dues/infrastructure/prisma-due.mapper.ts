@@ -73,7 +73,6 @@ export class PrismaDueMapper {
       amount: due.amount.cents,
       category: due.category,
       date: due.date.value,
-      id: due.id.value,
       notes: due.notes,
       status: due.status,
       updatedBy: due.updatedBy,

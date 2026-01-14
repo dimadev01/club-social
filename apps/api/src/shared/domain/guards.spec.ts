@@ -176,6 +176,18 @@ describe('Guard', () => {
       });
     });
 
+    describe('hasProperty', () => {
+      it('should not throw for objects with the property', () => {
+        expect(() => Guard.hasProperty({ key: 'value' }, 'key')).not.toThrow();
+      });
+
+      it('should throw for objects without the property', () => {
+        expect(() => Guard.hasProperty({ key: 'value' }, 'notKey')).toThrow(
+          'Target does not have property notKey',
+        );
+      });
+    });
+
     describe('boolean', () => {
       it('should not throw for booleans', () => {
         expect(() => Guard.boolean(true)).not.toThrow();
