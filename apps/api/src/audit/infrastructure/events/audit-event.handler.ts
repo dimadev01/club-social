@@ -10,6 +10,9 @@ import {
 import { DueEntity } from '@/dues/domain/entities/due.entity';
 import { DueCreatedEvent } from '@/dues/domain/events/due-created.event';
 import { DueUpdatedEvent } from '@/dues/domain/events/due-updated.event';
+import { GroupEntity } from '@/groups/domain/entities/group.entity';
+import { GroupCreatedEvent } from '@/groups/domain/events/group-created.event';
+import { GroupUpdatedEvent } from '@/groups/domain/events/group-updated.event';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import { MemberCreatedEvent } from '@/members/domain/events/member-created.event';
 import { MemberUpdatedEvent } from '@/members/domain/events/member-updated.event';
@@ -79,6 +82,37 @@ export class AuditEventHandler {
       message,
       newData: this.serializeDue(event.newDue),
       oldData: this.serializeDue(event.oldDue),
+    });
+  }
+
+  // Group Events
+  @OnEvent(GroupCreatedEvent.name)
+  public async handleGroupCreated(event: GroupCreatedEvent): Promise<void> {
+    Guard.string(event.group.createdBy);
+
+    await this.createAuditLog({
+      action: AuditAction.CREATED,
+      createdBy: event.group.createdBy,
+      entity: AuditEntity.GROUP,
+      entityId: event.group.id.value,
+      message: 'Group created',
+      newData: this.serializeGroup(event.group),
+      oldData: null,
+    });
+  }
+
+  @OnEvent(GroupUpdatedEvent.name)
+  public async handleGroupUpdated(event: GroupUpdatedEvent): Promise<void> {
+    Guard.string(event.newGroup.createdBy);
+
+    await this.createAuditLog({
+      action: AuditAction.UPDATED,
+      createdBy: event.newGroup.createdBy,
+      entity: AuditEntity.GROUP,
+      entityId: event.newGroup.id.value,
+      message: 'Group updated',
+      newData: this.serializeGroup(event.newGroup),
+      oldData: this.serializeGroup(event.oldGroup),
     });
   }
 
@@ -336,12 +370,34 @@ export class AuditEventHandler {
       id: due.id.value,
       memberId: due.memberId.value,
       notes: due.notes,
+      settlements: due.settlements.map((settlement) => ({
+        amount: settlement.amount.cents,
+        dueId: settlement.dueId.value,
+        id: settlement.id.value,
+        memberLedgerEntryId: settlement.memberLedgerEntryId.value,
+        paymentId: settlement.paymentId?.value ?? null,
+        status: settlement.status,
+      })),
       status: due.status,
       updatedAt: due.updatedAt,
       updatedBy: due.updatedBy,
       voidedAt: due.voidedAt,
       voidedBy: due.voidedBy,
       voidReason: due.voidReason,
+    };
+  }
+
+  private serializeGroup(group: GroupEntity): Record<string, unknown> {
+    return {
+      createdAt: group.createdAt,
+      createdBy: group.createdBy,
+      id: group.id.value,
+      members: group.members.map((member) => ({
+        groupId: member.groupId.value,
+        id: member.memberId.value,
+        memberId: member.memberId.value,
+      })),
+      name: group.name,
     };
   }
 

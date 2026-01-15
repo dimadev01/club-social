@@ -10,6 +10,7 @@ import { PrismaDueSettlementMapper } from '@/dues/infrastructure/prisma-due-sett
 import { PrismaDueMapper } from '@/dues/infrastructure/prisma-due.mapper';
 import { PrismaDueRepository } from '@/dues/infrastructure/prisma-due.repository';
 import { GROUP_REPOSITORY_PROVIDER } from '@/groups/domain/group.repository';
+import { PrismaGroupMemberMapper } from '@/groups/infrastructure/prisma-group-member.mapper';
 import { PrismaGroupMapper } from '@/groups/infrastructure/prisma-group.mapper';
 import { PrismaGroupRepository } from '@/groups/infrastructure/prisma-group.repository';
 import { MEMBER_REPOSITORY_PROVIDER } from '@/members/domain/member.repository';
@@ -59,6 +60,7 @@ import { PrismaService } from './prisma.service';
     PrismaPaymentMapper,
     PrismaDueMapper,
     PrismaGroupMapper,
+    PrismaGroupMemberMapper,
     PrismaDueSettlementMapper,
     PrismaMemberMapper,
     PrismaUserMapper,

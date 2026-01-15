@@ -22,6 +22,7 @@ import {
   GroupReadModel,
 } from '../domain/group-read-models';
 import { GroupRepository } from '../domain/group.repository';
+import { PrismaGroupMemberMapper } from './prisma-group-member.mapper';
 import { PrismaGroupMapper } from './prisma-group.mapper';
 
 @Injectable()
@@ -29,6 +30,7 @@ export class PrismaGroupRepository implements GroupRepository {
   public constructor(
     private readonly prismaService: PrismaService,
     private readonly groupMapper: PrismaGroupMapper,
+    private readonly prismaGroupMemberMapper: PrismaGroupMemberMapper,
   ) {}
 
   public async findById(id: UniqueId): Promise<GroupEntity | null> {
@@ -57,7 +59,10 @@ export class PrismaGroupRepository implements GroupRepository {
   public async findByIdReadModel(id: UniqueId): Promise<GroupReadModel | null> {
     const group = await this.prismaService.group.findUnique({
       include: {
-        members: { include: { member: { include: { user: true } } } },
+        members: {
+          include: { member: { include: { user: true } } },
+          orderBy: { member: { user: { lastName: 'asc' } } },
+        },
       },
       where: { id: id.value },
     });
@@ -76,6 +81,19 @@ export class PrismaGroupRepository implements GroupRepository {
     });
 
     return groups.map((group) => this.groupMapper.toDomain(group));
+  }
+
+  public async findByMemberId(
+    memberId: UniqueId,
+  ): Promise<GroupReadModel | null> {
+    const group = await this.prismaService.group.findFirst({
+      include: {
+        members: { include: { member: { include: { user: true } } } },
+      },
+      where: { members: { some: { memberId: memberId.value } } },
+    });
+
+    return group ? this.toReadModel(group) : null;
   }
 
   public async findGroupSizeByMemberId(memberId: UniqueId): Promise<number> {
@@ -99,7 +117,10 @@ export class PrismaGroupRepository implements GroupRepository {
 
     const query = {
       include: {
-        members: { include: { member: { include: { user: true } } } },
+        members: {
+          include: { member: { include: { user: true } } },
+          orderBy: { member: { user: { lastName: 'asc' } } },
+        },
       },
       orderBy,
       skip: (params.page - 1) * params.pageSize,
@@ -134,11 +155,21 @@ export class PrismaGroupRepository implements GroupRepository {
     const create = this.groupMapper.toCreateInput(entity);
     const update = this.groupMapper.toUpdateInput(entity);
 
+    const groupMemberUpserts = this.prismaGroupMemberMapper.toUpserts(entity);
+
     await client.group.upsert({
       create,
       update,
       where: { id: entity.id.value },
     });
+
+    for (const groupMemberUpsert of groupMemberUpserts) {
+      await client.groupMember.upsert({
+        create: groupMemberUpsert.create,
+        update: groupMemberUpsert.update,
+        where: groupMemberUpsert.where,
+      });
+    }
   }
 
   private buildWhereAndOrderBy(params: GetPaginatedDataDto): {

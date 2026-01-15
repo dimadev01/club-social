@@ -16,5 +16,6 @@ export interface GroupRepository
     ReadableRepository<GroupEntity>,
     WriteableRepository<GroupEntity> {
   findByIdReadModel(id: UniqueId): Promise<GroupReadModel | null>;
+  findByMemberId(memberId: UniqueId): Promise<GroupReadModel | null>;
   findGroupSizeByMemberId(memberId: UniqueId): Promise<number>;
 }

@@ -1,4 +1,7 @@
-import type { GroupPaginatedDto } from '@club-social/shared/groups';
+import type {
+  GroupMemberDto,
+  GroupPaginatedDto,
+} from '@club-social/shared/groups';
 import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { keepPreviousData } from '@tanstack/react-query';
@@ -11,6 +14,7 @@ import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import {
   Card,
+  NavigateToMember,
   NotFound,
   PageTableActions,
   Table,
@@ -72,12 +76,22 @@ export function GroupList() {
             ),
             sorter: true,
             title: 'Nombre',
+            width: TABLE_COLUMN_WIDTHS.DATE_TIME,
           },
           {
-            align: 'center',
-            dataIndex: 'memberCount',
+            dataIndex: 'members',
+            render: (members: GroupMemberDto[]) => (
+              <>
+                {members.map((member) => (
+                  <Button key={member.id} type="link">
+                    <NavigateToMember id={member.id}>
+                      {member.name}
+                    </NavigateToMember>
+                  </Button>
+                ))}
+              </>
+            ),
             title: 'Miembros',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
           },
         ]}
         dataSource={groups?.data}

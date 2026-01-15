@@ -1,8 +1,10 @@
-import { Input } from 'antd';
+import { type FormInstance } from 'antd';
 
-import { Form } from '@/ui';
+import { MemberSearchSelect } from '@/members/MemberSearchSelect';
+import { Form, Input } from '@/ui';
 
 export interface GroupFormData {
+  memberIds: string[];
   name: string;
 }
 
@@ -11,7 +13,7 @@ export type GroupFormInitialValues = Partial<GroupFormData>;
 interface GroupFormProps {
   disabled?: boolean;
   initialValues?: GroupFormInitialValues;
-  onSubmit: (data: GroupFormData) => void;
+  onSubmit: (data: GroupFormData, form: FormInstance<GroupFormData>) => void;
 }
 
 export function GroupForm({
@@ -28,7 +30,7 @@ export function GroupForm({
       id="form"
       initialValues={initialValues}
       name="form"
-      onFinish={onSubmit}
+      onFinish={(values) => onSubmit(values, form)}
     >
       <Form.Item<GroupFormData>
         label="Nombre"
@@ -42,6 +44,16 @@ export function GroupForm({
         ]}
       >
         <Input placeholder="Nombre del grupo" />
+      </Form.Item>
+
+      <Form.Item<GroupFormData>
+        label="Socios"
+        name="memberIds"
+        rules={[
+          { message: 'Debe seleccionar al menos un socio', required: true },
+        ]}
+      >
+        <MemberSearchSelect mode="multiple" />
       </Form.Item>
     </Form>
   );

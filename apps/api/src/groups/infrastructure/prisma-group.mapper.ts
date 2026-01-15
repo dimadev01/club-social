@@ -8,11 +8,15 @@ import {
 import { Guard } from '@/shared/domain/guards';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import { GroupMemberEntity } from '../domain/entities/group-member.entity';
 import { GroupEntity } from '../domain/entities/group.entity';
+import { PrismaGroupMemberMapper } from './prisma-group-member.mapper';
 
 @Injectable()
 export class PrismaGroupMapper {
+  public constructor(
+    private readonly prismaGroupMemberMapper: PrismaGroupMemberMapper,
+  ) {}
+
   public toCreateInput(group: GroupEntity): GroupCreateInput {
     Guard.string(group.createdBy);
 
@@ -29,10 +33,7 @@ export class PrismaGroupMapper {
     return GroupEntity.fromPersistence(
       {
         members: group.members.map((groupMember) =>
-          GroupMemberEntity.fromPersistence({
-            groupId: UniqueId.raw({ value: groupMember.groupId }),
-            memberId: UniqueId.raw({ value: groupMember.memberId }),
-          }),
+          this.prismaGroupMemberMapper.toDomain(groupMember),
         ),
         name: group.name,
       },

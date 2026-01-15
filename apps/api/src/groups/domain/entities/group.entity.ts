@@ -4,6 +4,8 @@ import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { err, ok, Result } from '@/shared/domain/result';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
+import { GroupCreatedEvent } from '../events/group-created.event';
+import { GroupUpdatedEvent } from '../events/group-updated.event';
 import { GroupMemberEntity } from './group-member.entity';
 
 export interface CreateGroupProps {
@@ -60,7 +62,7 @@ export class GroupEntity extends AuditedAggregateRoot {
         return err(groupMember.error);
       }
 
-      group.addMember(groupMember.value);
+      group._members.push(groupMember.value);
     }
 
     if (group._members.length === 0) {
@@ -75,6 +77,8 @@ export class GroupEntity extends AuditedAggregateRoot {
       );
     }
 
+    group.addEvent(new GroupCreatedEvent(group));
+
     return ok(group);
   }
 
@@ -85,19 +89,52 @@ export class GroupEntity extends AuditedAggregateRoot {
     return new GroupEntity(props, meta);
   }
 
-  public addMember(groupMember: GroupMemberEntity): void {
+  public addMember(groupMember: GroupMemberEntity): Result {
+    if (this._members.some((m) => m.memberId.equals(groupMember.memberId))) {
+      return err(new ApplicationError('El miembro ya existe en el grupo'));
+    }
+
+    const oldGroup = this.clone();
+
     this._members.push(groupMember);
+
+    this.addEvent(new GroupUpdatedEvent(oldGroup, this));
+
+    return ok();
   }
 
-  public removeMember(groupMember: GroupMemberEntity): void {
-    this._members = this._members.filter(
-      (m) => !m.memberId.equals(groupMember.memberId),
+  public clone(): GroupEntity {
+    return GroupEntity.fromPersistence(
+      {
+        members: [...this._members],
+        name: this._name,
+      },
+      { audit: { ...this._audit }, id: this.id },
     );
   }
 
+  public removeMember(groupMember: GroupMemberEntity): Result {
+    if (!this._members.some((m) => m.memberId.equals(groupMember.memberId))) {
+      return err(new ApplicationError('El miembro no existe en el grupo'));
+    }
+
+    const oldGroup = this.clone();
+
+    this._members = this._members.filter(
+      (m) => !m.memberId.equals(groupMember.memberId),
+    );
+
+    this.addEvent(new GroupUpdatedEvent(oldGroup, this));
+
+    return ok();
+  }
+
   public updateName(name: string, updatedBy: string): void {
+    const oldGroup = this.clone();
+
     this._name = name;
 
     this.markAsUpdated(updatedBy);
+    this.addEvent(new GroupUpdatedEvent(oldGroup, this));
   }
 }

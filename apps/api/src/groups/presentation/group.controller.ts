@@ -55,7 +55,7 @@ export class GroupController extends BaseController {
     const { id } = this.handleResult(
       await this.createGroupUseCase.execute({
         createdBy: session.user.name,
-        memberIds: [],
+        memberIds: body.memberIds,
         name: body.name,
       }),
     );

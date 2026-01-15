@@ -3,6 +3,7 @@ export interface AddGroupMemberDto {
 }
 
 export interface CreateGroupDto {
+  memberIds: string[];
   name: string;
 }
 

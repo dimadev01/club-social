@@ -13,6 +13,9 @@ import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
 } from '@/dues/domain/due.repository';
+import { GroupEntity } from '@/groups/domain/entities/group.entity';
+import { GROUP_REPOSITORY_PROVIDER } from '@/groups/domain/group.repository';
+import { type GroupRepository } from '@/groups/domain/group.repository';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import {
   MEMBER_REPOSITORY_PROVIDER,
@@ -64,6 +67,8 @@ export class PrismaUnitOfWork implements UnitOfWork {
     private readonly userRepository: UserRepository,
     @Inject(PRICING_REPOSITORY_PROVIDER)
     private readonly pricingRepository: PricingRepository,
+    @Inject(GROUP_REPOSITORY_PROVIDER)
+    private readonly groupRepository: GroupRepository,
   ) {}
 
   public async execute<T>(
@@ -72,6 +77,7 @@ export class PrismaUnitOfWork implements UnitOfWork {
     return this.prisma.$transaction(async (tx) => {
       const repos: TransactionalRepositories = {
         duesRepository: this.createDueRepository(tx),
+        groupRepository: this.createGroupRepository(tx),
         memberLedgerRepository: this.createMemberLedgerRepository(tx),
         memberRepository: this.createMemberRepository(tx),
         movementsRepository: this.createMovementRepository(tx),
@@ -89,6 +95,15 @@ export class PrismaUnitOfWork implements UnitOfWork {
   ): WriteableRepository<DueEntity> {
     return {
       save: (due: DueEntity): Promise<void> => this.dueRepository.save(due, tx),
+    };
+  }
+
+  private createGroupRepository(
+    tx: PrismaTransactionClient,
+  ): WriteableRepository<GroupEntity> {
+    return {
+      save: (group: GroupEntity): Promise<void> =>
+        this.groupRepository.save(group, tx),
     };
   }
 
