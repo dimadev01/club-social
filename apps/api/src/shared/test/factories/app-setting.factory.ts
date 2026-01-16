@@ -35,9 +35,7 @@ const getDefaultScope = (key: AppSettingKey) =>
     ? AppSettingScope.SYSTEM
     : AppSettingScope.APP;
 
-const createAppSettingProps = <
-  K extends AppSettingKey = typeof AppSettingKey.MAINTENANCE_MODE,
->(
+const createAppSettingProps = <K extends AppSettingKey>(
   overrides?: AppSettingPropsOverrides<K>,
 ) => {
   const key = (overrides?.key ?? AppSettingKey.MAINTENANCE_MODE) as K;

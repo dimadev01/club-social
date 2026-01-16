@@ -52,6 +52,14 @@ describe('AppSettingEntity', () => {
 
       expect(setting.id.value).toBe(AppSettingKey.MAINTENANCE_MODE);
     });
+
+    it('should default to APP scope for non-system keys', () => {
+      const setting = createTestAppSetting({
+        key: AppSettingKey.GROUP_DISCOUNT_TIERS,
+      });
+
+      expect(setting.scope).toBe(AppSettingScope.APP);
+    });
   });
 
   describe('updateValue', () => {
