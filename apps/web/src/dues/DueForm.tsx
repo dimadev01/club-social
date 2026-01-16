@@ -132,7 +132,10 @@ export function DueForm({
           loading={loading || isMemberLoading}
           mode={isEditMode ? undefined : 'multiple'}
           onMembersChange={(data) => {
-            if (!selectedFirstMember && data?.[0]) {
+            if (!data || data.length === 0) {
+              setSelectedFirstMember(undefined);
+              form.resetFields(['amount']);
+            } else {
               setSelectedFirstMember(data[0]);
             }
           }}
@@ -142,7 +145,9 @@ export function DueForm({
 
       <Form.Item<DueFormData>
         help={
-          pricing?.isGroupPricing ? 'Aplicado descuento de grupo' : undefined
+          pricing?.isGroupPricing
+            ? `Aplicado descuento de grupo: ${pricing.discountPercent}%`
+            : undefined
         }
         label="Monto"
         name="amount"
