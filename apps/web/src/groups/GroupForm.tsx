@@ -1,11 +1,12 @@
 import type { MemberSearchResultDto } from '@club-social/shared/members';
 
-import { type FormInstance } from 'antd';
+import { type FormInstance, InputNumber } from 'antd';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { Form, Input } from '@/ui';
 
 export interface GroupFormData {
+  discountPercent: number;
   memberIds: string[];
   name: string;
 }
@@ -50,6 +51,22 @@ export function GroupForm({
         ]}
       >
         <Input placeholder="Nombre del grupo" />
+      </Form.Item>
+
+      <Form.Item<GroupFormData>
+        label="Descuento"
+        name="discountPercent"
+        rules={[
+          { message: 'El descuento es requerido', required: true },
+          {
+            max: 99,
+            message: 'El descuento debe estar entre 0 y 99',
+            min: 0,
+            type: 'number',
+          },
+        ]}
+      >
+        <InputNumber max={99} min={0} precision={0} suffix="%" />
       </Form.Item>
 
       <Form.Item<GroupFormData>

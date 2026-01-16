@@ -11,6 +11,7 @@ export class GroupMemberResponseDto implements GroupMemberDto {
 export class GroupResponseDto implements GroupDto {
   public createdAt: string;
   public createdBy: string;
+  public discountPercent: number;
   public id: string;
   public members: GroupMemberResponseDto[];
   public name: string;

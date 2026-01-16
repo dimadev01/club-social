@@ -8,20 +8,6 @@ export const AppSettingValidators: Record<
   AppSettingKey,
   AppSettingValidatorFn
 > = {
-  [AppSettingKey.GROUP_DISCOUNT_TIERS]: (value: unknown) => {
-    Guard.defined(value);
-    Guard.array(value);
-
-    (value as unknown[]).forEach((tier) => {
-      Guard.object(tier);
-      Guard.hasProperty(tier, 'minSize');
-      Guard.hasProperty(tier, 'maxSize');
-      Guard.hasProperty(tier, 'percent');
-      Guard.number(tier.minSize);
-      Guard.number(tier.maxSize);
-      Guard.number(tier.percent);
-    });
-  },
   [AppSettingKey.MAINTENANCE_MODE]: (value: unknown) => {
     Guard.defined(value);
     Guard.object(value);

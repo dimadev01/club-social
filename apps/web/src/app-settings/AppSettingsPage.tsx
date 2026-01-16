@@ -3,7 +3,6 @@ import {
   type AppSettingDto,
   AppSettingKey,
   type AppSettingValues,
-  isGroupDiscountTiersSetting,
 } from '@club-social/shared/app-settings';
 import { UserRole } from '@club-social/shared/users';
 import { useQueryClient } from '@tanstack/react-query';
@@ -14,7 +13,6 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { Card, Descriptions, Page } from '@/ui';
 import { NotFound } from '@/ui/NotFound';
 
-import { GroupDiscountTiersEditor } from './GroupDiscountTiersEditor';
 import { useAppSettings } from './useAppSettings';
 import { useUpdateAppSetting } from './useUpdateAppSetting';
 
@@ -51,10 +49,6 @@ export function AppSettingsPage() {
       },
     );
   };
-
-  const groupDiscountTiersSetting = (appSettings ?? []).find(
-    isGroupDiscountTiersSetting,
-  );
 
   if (!isAdmin && !isStaff) {
     return <NotFound />;
@@ -130,45 +124,29 @@ export function AppSettingsPage() {
 
         {(isAdmin || isStaff) && (
           <Card title="Configuración de la Aplicación">
-            <Space className="flex" vertical>
-              <Descriptions
-                items={[
-                  {
-                    children: (
-                      <Checkbox
-                        checked={sendMemberNotificationsSetting?.value.enabled}
-                        onChange={(e) =>
-                          onUpdate(AppSettingKey.SEND_MEMBER_NOTIFICATIONS, {
-                            enabled: e.target.checked,
-                          })
-                        }
-                      >
-                        {sendMemberNotificationsSetting?.description}
-                      </Checkbox>
-                    ),
-                    key: AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
-                    label:
-                      APP_SETTINGS_LABELS[
-                        AppSettingKey.SEND_MEMBER_NOTIFICATIONS
-                      ],
-                  },
-                ]}
-              />
-
-              <Card
-                size="small"
-                title={APP_SETTINGS_LABELS[AppSettingKey.GROUP_DISCOUNT_TIERS]}
-                type="inner"
-              >
-                <GroupDiscountTiersEditor
-                  disabled={updateMutation.isPending}
-                  onChange={(tiers) =>
-                    onUpdate(AppSettingKey.GROUP_DISCOUNT_TIERS, tiers)
-                  }
-                  value={groupDiscountTiersSetting?.value ?? []}
-                />
-              </Card>
-            </Space>
+            <Descriptions
+              items={[
+                {
+                  children: (
+                    <Checkbox
+                      checked={sendMemberNotificationsSetting?.value.enabled}
+                      onChange={(e) =>
+                        onUpdate(AppSettingKey.SEND_MEMBER_NOTIFICATIONS, {
+                          enabled: e.target.checked,
+                        })
+                      }
+                    >
+                      {sendMemberNotificationsSetting?.description}
+                    </Checkbox>
+                  ),
+                  key: AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
+                  label:
+                    APP_SETTINGS_LABELS[
+                      AppSettingKey.SEND_MEMBER_NOTIFICATIONS
+                    ],
+                },
+              ]}
+            />
           </Card>
         )}
       </Space>

@@ -23,6 +23,7 @@ import {
 
 interface CreateGroupParams {
   createdBy: string;
+  discountPercent: number;
   memberIds: string[];
   name: string;
 }
@@ -50,7 +51,11 @@ export class CreateGroupUseCase extends UseCase<GroupEntity> {
     });
 
     const group = GroupEntity.create(
-      { memberIds: params.memberIds, name: params.name },
+      {
+        discount: params.discountPercent,
+        memberIds: params.memberIds,
+        name: params.name,
+      },
       params.createdBy,
     );
 
@@ -59,7 +64,7 @@ export class CreateGroupUseCase extends UseCase<GroupEntity> {
     }
 
     for (const memberId of params.memberIds) {
-      const existingGroup = await this.groupRepository.findByMemberId(
+      const existingGroup = await this.groupRepository.findByMemberIdReadModel(
         UniqueId.raw({ value: memberId }),
       );
 
