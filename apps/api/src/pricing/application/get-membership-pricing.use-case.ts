@@ -130,14 +130,6 @@ export class GetMembershipPricingUseCase extends UseCase<MembershipPricingRespon
     });
   }
 
-  private applyDiscount(baseAmount: number, discountPercent: number): number {
-    if (discountPercent <= 0) {
-      return baseAmount;
-    }
-
-    return Math.round((baseAmount * (100 - discountPercent)) / 100);
-  }
-
   private getDiscountPercent(
     tiers: GroupDiscountTier[],
     groupSize: number,

@@ -5,7 +5,7 @@ import type {
 import type { PaginatedDataResultDto } from '@club-social/shared/types';
 
 import { keepPreviousData } from '@tanstack/react-query';
-import { Button, Space } from 'antd';
+import { Button, Space, Tag } from 'antd';
 import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
@@ -14,7 +14,6 @@ import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import {
   Card,
-  NavigateToMember,
   NotFound,
   PageTableActions,
   Table,
@@ -28,7 +27,7 @@ export function GroupList() {
   const navigate = useNavigate();
   const permissions = usePermissions();
 
-  const { clearFilters, onChange, query, resetFilters, state } =
+  const { clearFilters, getSortOrder, onChange, query, resetFilters, state } =
     useTable<GroupPaginatedDto>({
       defaultSort: [{ field: 'name', order: 'ascend' }],
     });
@@ -75,23 +74,27 @@ export function GroupList() {
               <Link to={appRoutes.groups.view(record.id)}>{name}</Link>
             ),
             sorter: true,
+            sortOrder: getSortOrder('name'),
             title: 'Nombre',
-            width: TABLE_COLUMN_WIDTHS.DATE_TIME,
           },
           {
             dataIndex: 'members',
             render: (members: GroupMemberDto[]) => (
-              <>
+              <Space size="small" wrap>
                 {members.map((member) => (
-                  <Button key={member.id} type="link">
-                    <NavigateToMember id={member.id}>
-                      {member.name}
-                    </NavigateToMember>
-                  </Button>
+                  <Tag>{member.name}</Tag>
                 ))}
-              </>
+              </Space>
             ),
             title: 'Miembros',
+            width: 500,
+          },
+          {
+            align: 'center',
+            dataIndex: 'discountPercentage',
+            render: (discountPercentage: number) => `${discountPercentage}%`,
+            title: 'Descuento',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
         ]}
         dataSource={groups?.data}

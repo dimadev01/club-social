@@ -15,20 +15,21 @@ import {
 } from '@/shared/domain/unit-of-work';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import { GroupEntity } from '../domain/entities/group.entity';
+import { GroupMemberEntity } from '../domain/entities/group-member.entity';
 import {
   GROUP_REPOSITORY_PROVIDER,
   type GroupRepository,
 } from '../domain/group.repository';
 
-interface CreateGroupParams {
-  createdBy: string;
+interface UpdateGroupParams {
+  id: string;
   memberIds: string[];
   name: string;
+  updatedBy: string;
 }
 
 @Injectable()
-export class CreateGroupUseCase extends UseCase<GroupEntity> {
+export class UpdateGroupUseCase extends UseCase<void> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
@@ -41,29 +42,18 @@ export class CreateGroupUseCase extends UseCase<GroupEntity> {
     super(logger);
   }
 
-  public async execute(
-    params: CreateGroupParams,
-  ): Promise<Result<GroupEntity>> {
+  public async execute(params: UpdateGroupParams): Promise<Result<void>> {
     this.logger.info({
-      message: 'Creating group',
+      message: 'Updating group',
       params,
     });
-
-    const group = GroupEntity.create(
-      { memberIds: params.memberIds, name: params.name },
-      params.createdBy,
-    );
-
-    if (group.isErr()) {
-      return err(group.error);
-    }
 
     for (const memberId of params.memberIds) {
       const existingGroup = await this.groupRepository.findByMemberId(
         UniqueId.raw({ value: memberId }),
       );
 
-      if (existingGroup) {
+      if (existingGroup && existingGroup.id !== params.id) {
         const member = existingGroup.members.find((m) => m.id === memberId);
         Guard.defined(member);
 
@@ -75,12 +65,53 @@ export class CreateGroupUseCase extends UseCase<GroupEntity> {
       }
     }
 
+    const group = await this.groupRepository.findByIdOrThrow(
+      UniqueId.raw({ value: params.id }),
+    );
+
+    const memberIdsToAdd = params.memberIds.filter(
+      (memberId) => !group.members.some((m) => m.memberId.value === memberId),
+    );
+    const memberIdsToRemove = group.members
+      .map((m) => m.memberId.value)
+      .filter((memberId) => !params.memberIds.includes(memberId));
+
+    for (const memberId of memberIdsToAdd) {
+      const groupMember = GroupMemberEntity.create({
+        groupId: group.id,
+        memberId: UniqueId.raw({ value: memberId }),
+      });
+
+      if (groupMember.isErr()) {
+        return err(groupMember.error);
+      }
+
+      group.addMember(groupMember.value);
+    }
+
+    for (const memberId of memberIdsToRemove) {
+      const groupMember = group.members.find(
+        (m) => m.memberId.value === memberId,
+      );
+      Guard.defined(groupMember);
+
+      group.removeMember(groupMember);
+    }
+
+    const isGroupValid = group.isValid();
+
+    if (!isGroupValid) {
+      return err(
+        new ApplicationError('El grupo debe tener al menos 3 miembros'),
+      );
+    }
+
     await this.unitOfWork.execute(async ({ groupRepository }) => {
-      await groupRepository.save(group.value);
+      await groupRepository.save(group);
     });
 
-    this.eventPublisher.dispatch(group.value);
+    this.eventPublisher.dispatch(group);
 
-    return ok(group.value);
+    return ok();
   }
 }

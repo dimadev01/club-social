@@ -28,8 +28,8 @@ export class GroupEntity extends AuditedAggregateRoot {
   }
 
   private _members: GroupMemberEntity[];
-  private _name: string;
 
+  private _name: string;
   private constructor(props: GroupProps, meta?: PersistenceMeta) {
     super(meta?.id, meta?.audit);
 
@@ -111,6 +111,18 @@ export class GroupEntity extends AuditedAggregateRoot {
       },
       { audit: { ...this._audit }, id: this.id },
     );
+  }
+
+  public isValid() {
+    if (this._members.length === 0) {
+      return false;
+    }
+
+    if (this._members.length < 3) {
+      return false;
+    }
+
+    return true;
   }
 
   public removeMember(groupMember: GroupMemberEntity): Result {

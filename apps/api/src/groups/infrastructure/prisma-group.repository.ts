@@ -1,3 +1,4 @@
+import { MemberCategory, MemberStatus } from '@club-social/shared/members';
 import {
   GetPaginatedDataDto,
   PaginatedDataResultDto,
@@ -206,11 +207,13 @@ export class PrismaGroupRepository implements GroupRepository {
       createdBy: group.createdBy,
       id: group.id,
       members: group.members.map((groupMember) => ({
+        category: groupMember.member.category as MemberCategory,
         id: groupMember.memberId,
         name: Name.raw({
           firstName: groupMember.member.user.firstName,
           lastName: groupMember.member.user.lastName,
         }).fullName,
+        status: groupMember.member.status as MemberStatus,
       })),
       name: group.name,
       updatedAt: group.updatedAt,

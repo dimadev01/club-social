@@ -1,4 +1,5 @@
 import type { GroupDto, UpdateGroupDto } from '@club-social/shared/groups';
+import type { MemberSearchResultDto } from '@club-social/shared/members';
 
 import { App } from 'antd';
 import { useNavigate, useParams } from 'react-router';
@@ -29,6 +30,7 @@ export function GroupEdit() {
 
   const handleSubmit = (values: GroupFormData) => {
     updateGroupMutation.mutate({
+      memberIds: values.memberIds,
       name: values.name,
     });
   };
@@ -47,6 +49,15 @@ export function GroupEdit() {
 
   const isMutating = updateGroupMutation.isPending;
 
+  const memberAdditionalOptions: MemberSearchResultDto[] = group.members.map(
+    (member) => ({
+      category: member.category,
+      id: member.id,
+      name: member.name,
+      status: member.status,
+    }),
+  );
+
   return (
     <Card
       actions={[
@@ -58,8 +69,10 @@ export function GroupEdit() {
       title="Editar grupo"
     >
       <GroupForm
+        additionalMemberOptions={memberAdditionalOptions}
         disabled={isMutating}
         initialValues={{
+          memberIds: group.members.map((member) => member.id),
           name: group.name,
         }}
         onSubmit={handleSubmit}

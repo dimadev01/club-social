@@ -1,3 +1,4 @@
+import { AppSettingKey } from '@club-social/shared/app-settings';
 import {
   Body,
   Controller,
@@ -5,13 +6,14 @@ import {
   Inject,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Query,
   Session,
 } from '@nestjs/common';
 
+import { AppSettingService } from '@/app-settings/infrastructure/app-setting.service';
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
-import { CsvService } from '@/infrastructure/csv/csv.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -24,7 +26,7 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateGroupUseCase } from '../application/create-group.use-case';
-// import { UpdateGroupUseCase } from '../application/update-group.use-case';
+import { UpdateGroupUseCase } from '../application/update-group.use-case';
 import {
   GROUP_REPOSITORY_PROVIDER,
   type GroupRepository,
@@ -32,6 +34,7 @@ import {
 import { CreateGroupRequestDto } from './dto/create-group.dto';
 import { GroupPaginatedResponseDto } from './dto/group-paginated.dto';
 import { GroupResponseDto } from './dto/group-response.dto';
+import { UpdateGroupRequestDto } from './dto/update-group.dto';
 
 @Controller('groups')
 export class GroupController extends BaseController {
@@ -39,10 +42,10 @@ export class GroupController extends BaseController {
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
     private readonly createGroupUseCase: CreateGroupUseCase,
-    // private readonly updateGroupUseCase: UpdateGroupUseCase,
+    private readonly updateGroupUseCase: UpdateGroupUseCase,
     @Inject(GROUP_REPOSITORY_PROVIDER)
     private readonly groupRepository: GroupRepository,
-    private readonly csvService: CsvService,
+    private readonly appSettingService: AppSettingService,
   ) {
     super(logger);
   }
@@ -63,21 +66,21 @@ export class GroupController extends BaseController {
     return { id: id.value };
   }
 
-  // @Patch(':id')
-  // public async update(
-  //   @Param() request: ParamIdReqResDto,
-  //   @Body() body: UpdateGroupRequestDto,
-  //   @Session() session: AuthSession,
-  // ): Promise<void> {
-  //   this.handleResult(
-  //     await this.updateGroupUseCase.execute({
-  //       amount: body.amount,
-  //       id: request.id,
-  //       notes: body.notes,
-  //       updatedBy: session.user.name,
-  //     }),
-  //   );
-  // }
+  @Patch(':id')
+  public async update(
+    @Param() request: ParamIdReqResDto,
+    @Body() body: UpdateGroupRequestDto,
+    @Session() session: AuthSession,
+  ): Promise<void> {
+    this.handleResult(
+      await this.updateGroupUseCase.execute({
+        id: request.id,
+        memberIds: body.memberIds,
+        name: body.name,
+        updatedBy: session.user.name,
+      }),
+    );
+  }
 
   @ApiPaginatedResponse(GroupPaginatedResponseDto)
   @Get('paginated')
@@ -95,8 +98,18 @@ export class GroupController extends BaseController {
       this.buildQueryContext(session),
     );
 
+    const groupDiscountTiers = await this.appSettingService.getValue(
+      AppSettingKey.GROUP_DISCOUNT_TIERS,
+    );
+
     return {
       data: data.data.map((group) => ({
+        discountPercentage:
+          groupDiscountTiers.value.find(
+            (tier) =>
+              group.members.length >= tier.minSize &&
+              group.members.length <= tier.maxSize,
+          )?.percent ?? 0,
         id: group.id,
         members: group.members.map((member) => ({
           id: member.id,
@@ -125,8 +138,10 @@ export class GroupController extends BaseController {
       createdBy: group.createdBy,
       id: group.id,
       members: group.members.map((member) => ({
+        category: member.category,
         id: member.id,
         name: member.name,
+        status: member.status,
       })),
       name: group.name,
       updatedAt: group.updatedAt.toISOString(),

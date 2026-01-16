@@ -1,8 +1,11 @@
 import { GroupDto, GroupMemberDto } from '@club-social/shared/groups';
+import { MemberCategory, MemberStatus } from '@club-social/shared/members';
 
 export class GroupMemberResponseDto implements GroupMemberDto {
+  public category: MemberCategory;
   public id: string;
   public name: string;
+  public status: MemberStatus;
 }
 
 export class GroupResponseDto implements GroupDto {
