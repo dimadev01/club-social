@@ -5,8 +5,8 @@ import { DueEntity } from '../entities/due.entity';
 export class DueUpdatedEvent extends DomainEvent {
   public constructor(
     public readonly oldDue: DueEntity,
-    public readonly due: DueEntity,
+    public readonly newDue: DueEntity,
   ) {
-    super(due.id);
+    super(newDue.id);
   }
 }

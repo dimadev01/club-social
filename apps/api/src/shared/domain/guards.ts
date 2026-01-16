@@ -31,6 +31,15 @@ export abstract class Guard {
     }
   }
 
+  public static hasProperty(
+    target: object,
+    property: string,
+  ): asserts target is Record<string, unknown> {
+    if (!Object.prototype.hasOwnProperty.call(target, property)) {
+      throw new Error(`Target does not have property ${property}`);
+    }
+  }
+
   public static isArray: TypeGuard<unknown[]> = (
     target: unknown,
   ): target is unknown[] => Array.isArray(target);

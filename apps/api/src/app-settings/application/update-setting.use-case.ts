@@ -1,7 +1,4 @@
-import {
-  AppSettingKey,
-  AppSettingValues,
-} from '@club-social/shared/app-settings';
+import { AppSettingKey } from '@club-social/shared/app-settings';
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { AppLogger } from '@/shared/application/app-logger';
@@ -14,7 +11,6 @@ import { ok, Result } from '@/shared/domain/result';
 import type { AppSettingRepository } from '../domain/app-setting.repository';
 
 import { APP_SETTING_REPOSITORY_PROVIDER } from '../domain/app-setting.repository';
-import { AppSettingEntity } from '../domain/entities/app-setting.entity';
 
 interface UpdateSettingParams<K extends AppSettingKey> {
   key: K;
@@ -23,7 +19,7 @@ interface UpdateSettingParams<K extends AppSettingKey> {
 }
 
 @Injectable()
-export class UpdateSettingUseCase extends UseCase<AppSettingEntity> {
+export class UpdateSettingUseCase extends UseCase {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
@@ -36,17 +32,14 @@ export class UpdateSettingUseCase extends UseCase<AppSettingEntity> {
 
   public async execute<K extends AppSettingKey>(
     params: UpdateSettingParams<K>,
-  ): Promise<Result<AppSettingEntity<K>>> {
+  ): Promise<Result> {
     this.logger.info({
       key: params.key,
       message: 'Updating app setting',
     });
 
-    const value = params.value as AppSettingValues[K];
-
-    const setting = await this.repository.findByKeyOrThrow<K>(params.key);
-
-    setting.updateValue(value, params.updatedBy);
+    const setting = await this.repository.findByKeyOrThrow(params.key);
+    setting.updateValue(params.value, params.updatedBy);
 
     await this.repository.save(setting);
     this.eventPublisher.dispatch(setting);
@@ -56,6 +49,6 @@ export class UpdateSettingUseCase extends UseCase<AppSettingEntity> {
       message: 'App setting updated successfully',
     });
 
-    return ok(setting);
+    return ok();
   }
 }

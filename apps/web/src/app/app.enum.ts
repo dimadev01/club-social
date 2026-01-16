@@ -19,6 +19,12 @@ export const appRoutes = {
     new: 'new',
     view: ':id',
   } as const,
+  groups: {
+    edit: (id?: string) => `/groups/${id}/edit`,
+    list: '/groups',
+    new: '/groups/new',
+    view: (id?: string) => `/groups/${id}`,
+  } as const,
   home: '/',
   memberLedger: {
     list: '/member-ledger',

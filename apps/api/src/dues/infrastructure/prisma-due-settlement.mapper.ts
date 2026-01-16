@@ -2,10 +2,8 @@ import { DueSettlementStatus } from '@club-social/shared/dues';
 import { Injectable } from '@nestjs/common';
 
 import {
-  DueSettlementCreateInput,
   DueSettlementModel,
-  DueSettlementUpdateInput,
-  DueSettlementWhereUniqueInput,
+  DueSettlementUpsertArgs,
 } from '@/infrastructure/database/prisma/generated/models';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -29,11 +27,7 @@ export class PrismaDueSettlementMapper {
     });
   }
 
-  public toUpserts(due: DueEntity): {
-    create: DueSettlementCreateInput;
-    update: DueSettlementUpdateInput;
-    where: DueSettlementWhereUniqueInput;
-  }[] {
+  public toUpserts(due: DueEntity): DueSettlementUpsertArgs[] {
     return due.settlements.map((settlement) => ({
       create: {
         amount: settlement.amount.cents,

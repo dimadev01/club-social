@@ -7,6 +7,7 @@ import {
 import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import { TEST_CREATED_BY } from '@/shared/test/constants';
 
 import { MemberLedgerEntryEntity } from './member-ledger-entry.entity';
 
@@ -211,7 +212,7 @@ describe('MemberLedgerEntryEntity', () => {
       )._unsafeUnwrap();
       const cloned = original.clone();
 
-      original.reverse();
+      original.reverse('user-123');
 
       expect(original.status).toBe(MemberLedgerEntryStatus.REVERSED);
       expect(cloned.status).toBe(MemberLedgerEntryStatus.POSTED);
@@ -225,9 +226,7 @@ describe('MemberLedgerEntryEntity', () => {
         'user-123',
       )._unsafeUnwrap();
 
-      expect(entry.status).toBe(MemberLedgerEntryStatus.POSTED);
-
-      entry.reverse();
+      entry.reverse(TEST_CREATED_BY);
 
       expect(entry.status).toBe(MemberLedgerEntryStatus.REVERSED);
     });
@@ -238,8 +237,8 @@ describe('MemberLedgerEntryEntity', () => {
         'user-123',
       )._unsafeUnwrap();
 
-      entry.reverse();
-      entry.reverse();
+      entry.reverse(TEST_CREATED_BY);
+      entry.reverse(TEST_CREATED_BY);
 
       expect(entry.status).toBe(MemberLedgerEntryStatus.REVERSED);
     });

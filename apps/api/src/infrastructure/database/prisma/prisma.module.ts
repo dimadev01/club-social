@@ -9,6 +9,10 @@ import { DUE_REPOSITORY_PROVIDER } from '@/dues/domain/due.repository';
 import { PrismaDueSettlementMapper } from '@/dues/infrastructure/prisma-due-settlement.mapper';
 import { PrismaDueMapper } from '@/dues/infrastructure/prisma-due.mapper';
 import { PrismaDueRepository } from '@/dues/infrastructure/prisma-due.repository';
+import { GROUP_REPOSITORY_PROVIDER } from '@/groups/domain/group.repository';
+import { PrismaGroupMemberMapper } from '@/groups/infrastructure/prisma-group-member.mapper';
+import { PrismaGroupMapper } from '@/groups/infrastructure/prisma-group.mapper';
+import { PrismaGroupRepository } from '@/groups/infrastructure/prisma-group.repository';
 import { MEMBER_REPOSITORY_PROVIDER } from '@/members/domain/member.repository';
 import { PrismaMemberMapper } from '@/members/infrastructure/prisma-member.mapper';
 import { PrismaMemberRepository } from '@/members/infrastructure/prisma-member.repository';
@@ -47,6 +51,7 @@ import { PrismaService } from './prisma.service';
     USER_REPOSITORY_PROVIDER,
     AUDIT_LOG_REPOSITORY_PROVIDER,
     APP_SETTING_REPOSITORY_PROVIDER,
+    GROUP_REPOSITORY_PROVIDER,
   ],
   imports: [],
   providers: [
@@ -54,6 +59,8 @@ import { PrismaService } from './prisma.service';
 
     PrismaPaymentMapper,
     PrismaDueMapper,
+    PrismaGroupMapper,
+    PrismaGroupMemberMapper,
     PrismaDueSettlementMapper,
     PrismaMemberMapper,
     PrismaUserMapper,
@@ -81,6 +88,10 @@ import { PrismaService } from './prisma.service';
     {
       provide: MEMBER_LEDGER_REPOSITORY_PROVIDER,
       useClass: PrismaMemberLedgerRepository,
+    },
+    {
+      provide: GROUP_REPOSITORY_PROVIDER,
+      useClass: PrismaGroupRepository,
     },
     {
       provide: PRICING_REPOSITORY_PROVIDER,

@@ -1,5 +1,5 @@
 import { AppSettingKey } from '@club-social/shared/app-settings';
-import { IsEnum, IsNotEmpty, IsObject } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
 export class UpdateSettingKeyDto {
   @IsEnum(AppSettingKey)
@@ -8,6 +8,5 @@ export class UpdateSettingKeyDto {
 
 export class UpdateSettingRequestDto {
   @IsNotEmpty()
-  @IsObject()
-  public value: Record<string, unknown>;
+  public value: unknown;
 }

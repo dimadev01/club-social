@@ -1,4 +1,9 @@
-import { Theme, UserRole, UserStatus } from '@club-social/shared/users';
+import {
+  Theme,
+  ThemeAlgorithm,
+  UserRole,
+  UserStatus,
+} from '@club-social/shared/users';
 
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
@@ -205,6 +210,91 @@ describe('UserEntity', () => {
       const event = events[0] as UserUpdatedEvent;
       expect(event.oldUser.email.value).toBe(TEST_EMAIL);
       expect(event.user.email.value).toBe('new@example.com');
+    });
+  });
+
+  describe('updatePreferences', () => {
+    it('should update theme preference', () => {
+      const user = createTestUser();
+
+      user.updatePreferences({ theme: Theme.DARK }, TEST_CREATED_BY);
+
+      expect(user.preferences.theme).toBe(Theme.DARK);
+      expect(user.updatedBy).toBe(TEST_CREATED_BY);
+    });
+
+    it('should preserve unspecified preferences when updating', () => {
+      const user = UserEntity.fromPersistence(
+        {
+          banExpires: null,
+          banned: null,
+          banReason: null,
+          email: Email.raw({ value: TEST_EMAIL }),
+          name: Name.raw({
+            firstName: TEST_FIRST_NAME,
+            lastName: TEST_LAST_NAME,
+          }),
+          preferences: UserPreferences.raw({
+            theme: Theme.LIGHT,
+          }),
+          role: UserRole.MEMBER,
+          status: UserStatus.ACTIVE,
+        },
+        {
+          audit: { createdBy: TEST_CREATED_BY },
+          deleted: {},
+          id: UniqueId.generate(),
+        },
+      );
+
+      const originalTheme = user.preferences.theme;
+      user.updatePreferences(
+        { themeAlgorithm: ThemeAlgorithm.DEFAULT },
+        TEST_CREATED_BY,
+      );
+
+      expect(user.preferences.theme).toBe(originalTheme);
+      expect(user.preferences.themeAlgorithm).toBe(ThemeAlgorithm.DEFAULT);
+    });
+
+    it('should mark user as updated', () => {
+      const user = createTestUser();
+
+      user.updatePreferences({ theme: Theme.LIGHT }, 'updater-id');
+
+      expect(user.updatedAt).not.toBeNull();
+      expect(user.updatedBy).toBe('updater-id');
+    });
+
+    it('should add UserUpdatedEvent when updating preferences', () => {
+      const user = createTestUser();
+      user.pullEvents();
+
+      user.updatePreferences({ theme: Theme.DARK }, TEST_CREATED_BY);
+
+      const events = user.pullEvents();
+      expect(events).toHaveLength(1);
+      expect(events[0]).toBeInstanceOf(UserUpdatedEvent);
+
+      const event = events[0] as UserUpdatedEvent;
+      expect(event.oldUser.preferences.theme).not.toBe(Theme.DARK);
+      expect(event.user.preferences.theme).toBe(Theme.DARK);
+    });
+
+    it('should capture old user state in UserUpdatedEvent', () => {
+      const user = createTestUser();
+      user.pullEvents();
+
+      const originalTheme = user.preferences.theme;
+
+      user.updatePreferences({ theme: Theme.LIGHT }, TEST_CREATED_BY);
+
+      const events = user.pullEvents();
+      const event = events[0] as UserUpdatedEvent;
+
+      expect(event.oldUser.id.value).toBe(user.id.value);
+      expect(event.oldUser.preferences.theme).toBe(originalTheme);
+      expect(event.user.preferences.theme).toBe(Theme.LIGHT);
     });
   });
 });

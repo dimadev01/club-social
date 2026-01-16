@@ -12,6 +12,9 @@ import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
+import { MemberLedgerEntryCreatedEvent } from '../events/member-ledger-entry-created.event';
+import { MemberLedgerEntryUpdatedEvent } from '../events/member-ledger-entry-updated.event';
+
 interface MemberLedgerEntryProps {
   amount: SignedAmount;
   date: DateOnly;
@@ -89,18 +92,22 @@ export class MemberLedgerEntryEntity extends AuditedAggregateRoot {
     props: MemberLedgerEntryProps,
     createdBy: string,
   ): Result<MemberLedgerEntryEntity> {
-    const entity = new MemberLedgerEntryEntity(props, {
+    const memberLedgerEntry = new MemberLedgerEntryEntity(props, {
       audit: { createdBy },
       id: UniqueId.generate(),
     });
 
-    if (entity._amount.isZero()) {
+    if (memberLedgerEntry._amount.isZero()) {
       return err(
         new ApplicationError('El monto del movimiento no puede ser cero'),
       );
     }
 
-    return ok(entity);
+    memberLedgerEntry.addEvent(
+      new MemberLedgerEntryCreatedEvent(memberLedgerEntry),
+    );
+
+    return ok(memberLedgerEntry);
   }
 
   public static fromPersistence(
@@ -130,7 +137,14 @@ export class MemberLedgerEntryEntity extends AuditedAggregateRoot {
     );
   }
 
-  public reverse() {
+  public reverse(updatedBy: string) {
     this._status = MemberLedgerEntryStatus.REVERSED;
+
+    const oldMemberLedgerEntry = this.clone();
+
+    this.markAsUpdated(updatedBy);
+    this.addEvent(
+      new MemberLedgerEntryUpdatedEvent(oldMemberLedgerEntry, this),
+    );
   }
 }

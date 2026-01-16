@@ -1,14 +1,15 @@
 import { DueCategory } from '@club-social/shared/dues';
 import { MemberCategory } from '@club-social/shared/members';
-import { FindActivePricingDto } from '@club-social/shared/pricing';
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { FindPricingDto } from '@club-social/shared/pricing';
+import { IsEnum, IsUUID } from 'class-validator';
 
-export class FindActivePricingRequestDto implements FindActivePricingDto {
+export class FindMembershipPricingRequestDto implements FindPricingDto {
   @IsEnum(DueCategory)
-  @IsNotEmpty()
   public dueCategory: DueCategory;
 
   @IsEnum(MemberCategory)
-  @IsNotEmpty()
   public memberCategory: MemberCategory;
+
+  @IsUUID()
+  public memberId: string;
 }

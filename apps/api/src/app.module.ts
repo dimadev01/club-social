@@ -4,6 +4,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { AppSettingsModule } from './app-settings/app-settings.module';
 import { AuditModule } from './audit/audit.module';
 import { DuesModule } from './dues/due.module';
+import { GroupModule } from './groups/group.module';
 import { AuthModule } from './infrastructure/auth/auth.module';
 import { CacheModule } from './infrastructure/cache/cache.module';
 import { ConfigModule } from './infrastructure/config/config.module';
@@ -45,6 +46,7 @@ import { UsersModule } from './users/user.module';
     PaymentsModule,
     PricingModule,
     MovementsModule,
+    GroupModule,
     AuditModule,
     AppSettingsModule,
   ],

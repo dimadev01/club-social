@@ -25,6 +25,7 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePricingUseCase } from '../application/create-pricing.use-case';
+import { FindPricingUseCase } from '../application/find-pricing.use-case';
 import { UpdatePricingUseCase } from '../application/update-pricing.use-case';
 import { PricingEntity } from '../domain/entities/pricing.entity';
 import {
@@ -32,7 +33,8 @@ import {
   type PricingRepository,
 } from '../domain/pricing.repository';
 import { CreatePricingRequestDto } from './dto/create-pricing.dto';
-import { FindActivePricingRequestDto } from './dto/find-active-pricing.dto';
+import { FindMembershipPricingRequestDto } from './dto/find-membership-pricing.dto';
+import { MembershipPricingResponseDto } from './dto/membership-pricing.dto';
 import { PricingPaginatedResponseDto } from './dto/pricing-paginated.dto';
 import { PricingResponseDto } from './dto/pricing-response.dto';
 import { UpdatePricingRequestDto } from './dto/update-pricing.dto';
@@ -44,6 +46,7 @@ export class PricingController extends BaseController {
     protected readonly logger: AppLogger,
     private readonly createPricingUseCase: CreatePricingUseCase,
     private readonly updatePricingUseCase: UpdatePricingUseCase,
+    private readonly getMembershipPricingUseCase: FindPricingUseCase,
     @Inject(PRICING_REPOSITORY_PROVIDER)
     private readonly pricingRepository: PricingRepository,
   ) {
@@ -84,17 +87,26 @@ export class PricingController extends BaseController {
     );
   }
 
-  @Get('active')
-  public async getActive(
-    @Query() query: FindActivePricingRequestDto,
-  ): Promise<null | PricingResponseDto> {
-    // Use fallback method: first checks for specific price, then falls back to base price
-    const pricing = await this.pricingRepository.findActiveWithFallback(
-      query.dueCategory,
-      query.memberCategory,
+  @Get('find')
+  public async getMembershipPricing(
+    @Query() query: FindMembershipPricingRequestDto,
+  ): Promise<MembershipPricingResponseDto | null> {
+    const pricing = this.handleResult(
+      await this.getMembershipPricingUseCase.execute({
+        dueCategory: query.dueCategory,
+        memberCategory: query.memberCategory,
+        memberId: query.memberId,
+      }),
     );
 
-    return pricing ? this.toDetailDto(pricing) : null;
+    return pricing
+      ? {
+          amount: pricing.amount,
+          baseAmount: pricing.baseAmount,
+          discountPercent: pricing.discountPercent,
+          isGroupPricing: pricing.isGroupPricing,
+        }
+      : null;
   }
 
   @Get('paginated')

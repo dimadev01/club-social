@@ -9,6 +9,10 @@ import { DueEdit } from '@/dues/DueEdit';
 import { DueList } from '@/dues/DueList';
 import { DueNew } from '@/dues/DueNew';
 import { DueView } from '@/dues/DueView';
+import { GroupEdit } from '@/groups/GroupEdit';
+import { GroupList } from '@/groups/GroupList';
+import { GroupNew } from '@/groups/GroupNew';
+import { GroupView } from '@/groups/GroupView';
 import { HomePage } from '@/home/HomePage';
 import { MemberLedgerList } from '@/member-ledger/MemberLedgerList';
 import { MemberLedgerNew } from '@/member-ledger/MemberLedgerNew';
@@ -79,6 +83,13 @@ export function AppRoutes() {
             <Route element={<DueNew />} path={appRoutes.generic.new} />
             <Route element={<DueView />} path={appRoutes.generic.view} />
             <Route element={<DueEdit />} path={appRoutes.generic.edit} />
+          </Route>
+
+          <Route path={appRoutes.groups.list}>
+            <Route element={<GroupList />} index />
+            <Route element={<GroupNew />} path={appRoutes.generic.new} />
+            <Route element={<GroupView />} path={appRoutes.generic.view} />
+            <Route element={<GroupEdit />} path={appRoutes.generic.edit} />
           </Route>
 
           <Route path={appRoutes.movements.list}>

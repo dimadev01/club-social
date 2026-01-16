@@ -156,11 +156,7 @@ export function DueList() {
             ? [
                 {
                   dataIndex: 'memberId',
-                  render: (memberId: string, record: DuePaginatedDto) => (
-                    <Link to={appRoutes.members.view(memberId)}>
-                      {record.memberName}
-                    </Link>
-                  ),
+                  render: (_, record: DuePaginatedDto) => record.memberName,
                   title: 'Socio',
                   width: TABLE_COLUMN_WIDTHS.MEMBER_NAME,
                 } satisfies TableColumnType<DuePaginatedDto>,

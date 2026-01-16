@@ -15,7 +15,7 @@ import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import { MemberLedgerEntryEntity } from '../domain/member-ledger-entry.entity';
+import { MemberLedgerEntryEntity } from '../domain/entities/member-ledger-entry.entity';
 
 @Injectable()
 export class PrismaMemberLedgerEntryMapper {

@@ -75,6 +75,36 @@ export class SignedAmount extends ValueObject<Props> {
     return new SignedAmount({ cents: this.cents + other.cents });
   }
 
+  public applyDiscount(discountPercent: number): Result<SignedAmount> {
+    Guard.number(discountPercent);
+
+    if (discountPercent < 0 || discountPercent > 100) {
+      return err(
+        new ApplicationError('Discount percentage must be between 0 and 100'),
+      );
+    }
+
+    const factor = (100 - discountPercent) / 100;
+
+    return ok(this.multiply(factor));
+  }
+
+  public divide(divisor: number): Result<SignedAmount> {
+    Guard.number(divisor);
+
+    if (divisor === 0) {
+      return err(new ApplicationError('Division by zero'));
+    }
+
+    if (divisor < 0) {
+      return err(new ApplicationError('Division by negative number'));
+    }
+
+    const result = Math.round(this.cents / divisor);
+
+    return SignedAmount.fromCents(result);
+  }
+
   public equals(vo?: ValueObject<Props>): boolean {
     if (!vo || !(vo instanceof SignedAmount)) {
       return false;
@@ -111,30 +141,14 @@ export class SignedAmount extends ValueObject<Props> {
     return this.cents === 0;
   }
 
-  public multiply(factor: number): Result<SignedAmount> {
-    Guard.number(factor);
-
-    if (factor < 0) {
-      return err(
-        new ApplicationError('Multiplication factor cannot be negative'),
-      );
-    }
-
+  public multiply(factor: number): SignedAmount {
     const result = Math.round(this.cents * factor);
 
-    return SignedAmount.fromCents(result);
+    return new SignedAmount({ cents: result });
   }
 
-  public subtract(other: SignedAmount): Result<SignedAmount> {
-    const result = this.cents - other.cents;
-
-    if (result < 0) {
-      return err(
-        new ApplicationError('Subtraction would result in negative amount'),
-      );
-    }
-
-    return ok(new SignedAmount({ cents: result }));
+  public subtract(other: SignedAmount): SignedAmount {
+    return new SignedAmount({ cents: this.cents - other.cents });
   }
 
   public toCents(): number {

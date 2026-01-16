@@ -27,5 +27,9 @@
       "Bash(npm show:*)"
     ]
   },
-  "outputStyle": "default"
+  "outputStyle": "default",
+  "fileSuggestion": {
+    "type": "command",
+    "command": "~/.claude/file-suggestion.sh"
+  }
 }

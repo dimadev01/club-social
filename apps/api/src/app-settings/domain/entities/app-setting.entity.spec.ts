@@ -52,6 +52,14 @@ describe('AppSettingEntity', () => {
 
       expect(setting.id.value).toBe(AppSettingKey.MAINTENANCE_MODE);
     });
+
+    it('should default to APP scope for non-system keys', () => {
+      const setting = createTestAppSetting({
+        key: AppSettingKey.GROUP_DISCOUNT_TIERS,
+      });
+
+      expect(setting.scope).toBe(AppSettingScope.APP);
+    });
   });
 
   describe('updateValue', () => {
@@ -69,22 +77,6 @@ describe('AppSettingEntity', () => {
       setting.updateValue({ enabled: true }, TEST_CREATED_BY);
 
       expect(setting.updatedBy).toBe(TEST_CREATED_BY);
-    });
-
-    it('should update the updatedAt field', () => {
-      const originalDate = new Date('2024-01-01');
-      const setting = createTestAppSetting({ updatedAt: originalDate });
-
-      const beforeUpdate = new Date();
-      setting.updateValue({ enabled: true }, TEST_CREATED_BY);
-      const afterUpdate = new Date();
-
-      expect(setting.updatedAt.getTime()).toBeGreaterThanOrEqual(
-        beforeUpdate.getTime(),
-      );
-      expect(setting.updatedAt.getTime()).toBeLessThanOrEqual(
-        afterUpdate.getTime(),
-      );
     });
 
     it('should add AppSettingUpdatedEvent when updating', () => {

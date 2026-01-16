@@ -10,9 +10,15 @@ import {
 import { DueEntity } from '@/dues/domain/entities/due.entity';
 import { DueCreatedEvent } from '@/dues/domain/events/due-created.event';
 import { DueUpdatedEvent } from '@/dues/domain/events/due-updated.event';
+import { GroupEntity } from '@/groups/domain/entities/group.entity';
+import { GroupCreatedEvent } from '@/groups/domain/events/group-created.event';
+import { GroupUpdatedEvent } from '@/groups/domain/events/group-updated.event';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import { MemberCreatedEvent } from '@/members/domain/events/member-created.event';
 import { MemberUpdatedEvent } from '@/members/domain/events/member-updated.event';
+import { MemberLedgerEntryEntity } from '@/members/ledger/domain/entities/member-ledger-entry.entity';
+import { MemberLedgerEntryCreatedEvent } from '@/members/ledger/domain/events/member-ledger-entry-created.event';
+import { MemberLedgerEntryUpdatedEvent } from '@/members/ledger/domain/events/member-ledger-entry-updated.event';
 import { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import { MovementCreatedEvent } from '@/movements/domain/events/movement-created.event';
 import { MovementUpdatedEvent } from '@/movements/domain/events/movement-updated.event';
@@ -61,21 +67,52 @@ export class AuditEventHandler {
 
   @OnEvent(DueUpdatedEvent.name)
   public async handleDueUpdated(event: DueUpdatedEvent): Promise<void> {
-    Guard.string(event.due.createdBy);
+    Guard.string(event.newDue.createdBy);
 
-    const action = event.due.isVoided()
+    const action = event.newDue.isVoided()
       ? AuditAction.VOIDED
       : AuditAction.UPDATED;
-    const message = event.due.isVoided() ? 'Due voided' : 'Due updated';
+    const message = event.newDue.isVoided() ? 'Due voided' : 'Due updated';
 
     await this.createAuditLog({
       action,
-      createdBy: event.due.createdBy,
+      createdBy: event.newDue.createdBy,
       entity: AuditEntity.DUE,
-      entityId: event.due.id.value,
+      entityId: event.newDue.id.value,
       message,
-      newData: this.serializeDue(event.due),
+      newData: this.serializeDue(event.newDue),
       oldData: this.serializeDue(event.oldDue),
+    });
+  }
+
+  // Group Events
+  @OnEvent(GroupCreatedEvent.name)
+  public async handleGroupCreated(event: GroupCreatedEvent): Promise<void> {
+    Guard.string(event.group.createdBy);
+
+    await this.createAuditLog({
+      action: AuditAction.CREATED,
+      createdBy: event.group.createdBy,
+      entity: AuditEntity.GROUP,
+      entityId: event.group.id.value,
+      message: 'Group created',
+      newData: this.serializeGroup(event.group),
+      oldData: null,
+    });
+  }
+
+  @OnEvent(GroupUpdatedEvent.name)
+  public async handleGroupUpdated(event: GroupUpdatedEvent): Promise<void> {
+    Guard.string(event.newGroup.createdBy);
+
+    await this.createAuditLog({
+      action: AuditAction.UPDATED,
+      createdBy: event.newGroup.createdBy,
+      entity: AuditEntity.GROUP,
+      entityId: event.newGroup.id.value,
+      message: 'Group updated',
+      newData: this.serializeGroup(event.newGroup),
+      oldData: this.serializeGroup(event.oldGroup),
     });
   }
 
@@ -92,6 +129,41 @@ export class AuditEventHandler {
       message: 'Member created',
       newData: this.serializeMember(event.member),
       oldData: null,
+    });
+  }
+
+  // Member Ledger Entry Events
+  @OnEvent(MemberLedgerEntryCreatedEvent.name)
+  public async handleMemberLedgerEntryCreated(
+    event: MemberLedgerEntryCreatedEvent,
+  ): Promise<void> {
+    Guard.string(event.memberLedgerEntry.createdBy);
+
+    await this.createAuditLog({
+      action: AuditAction.CREATED,
+      createdBy: event.memberLedgerEntry.createdBy,
+      entity: AuditEntity.MEMBER_LEDGER_ENTRY,
+      entityId: event.memberLedgerEntry.id.value,
+      message: 'Member ledger entry created',
+      newData: this.serializeMemberLedgerEntry(event.memberLedgerEntry),
+      oldData: null,
+    });
+  }
+
+  @OnEvent(MemberLedgerEntryUpdatedEvent.name)
+  public async handleMemberLedgerEntryUpdated(
+    event: MemberLedgerEntryUpdatedEvent,
+  ): Promise<void> {
+    Guard.string(event.newMemberLedgerEntry.createdBy);
+
+    await this.createAuditLog({
+      action: AuditAction.UPDATED,
+      createdBy: event.newMemberLedgerEntry.createdBy,
+      entity: AuditEntity.MEMBER_LEDGER_ENTRY,
+      entityId: event.newMemberLedgerEntry.id.value,
+      message: 'Member ledger entry updated',
+      newData: this.serializeMemberLedgerEntry(event.newMemberLedgerEntry),
+      oldData: this.serializeMemberLedgerEntry(event.oldMemberLedgerEntry),
     });
   }
 
@@ -298,12 +370,34 @@ export class AuditEventHandler {
       id: due.id.value,
       memberId: due.memberId.value,
       notes: due.notes,
+      settlements: due.settlements.map((settlement) => ({
+        amount: settlement.amount.cents,
+        dueId: settlement.dueId.value,
+        id: settlement.id.value,
+        memberLedgerEntryId: settlement.memberLedgerEntryId.value,
+        paymentId: settlement.paymentId?.value ?? null,
+        status: settlement.status,
+      })),
       status: due.status,
       updatedAt: due.updatedAt,
       updatedBy: due.updatedBy,
       voidedAt: due.voidedAt,
       voidedBy: due.voidedBy,
       voidReason: due.voidReason,
+    };
+  }
+
+  private serializeGroup(group: GroupEntity): Record<string, unknown> {
+    return {
+      createdAt: group.createdAt,
+      createdBy: group.createdBy,
+      id: group.id.value,
+      members: group.members.map((member) => ({
+        groupId: member.groupId.value,
+        id: member.memberId.value,
+        memberId: member.memberId.value,
+      })),
+      name: group.name,
     };
   }
 
@@ -331,6 +425,27 @@ export class AuditEventHandler {
       updatedAt: member.updatedAt,
       updatedBy: member.updatedBy,
       userId: member.userId.value,
+    };
+  }
+
+  private serializeMemberLedgerEntry(
+    memberLedgerEntry: MemberLedgerEntryEntity,
+  ): Record<string, unknown> {
+    return {
+      amount: memberLedgerEntry.amount.cents,
+      createdAt: memberLedgerEntry.createdAt,
+      createdBy: memberLedgerEntry.createdBy,
+      date: memberLedgerEntry.date.value,
+      id: memberLedgerEntry.id.value,
+      memberId: memberLedgerEntry.memberId.value,
+      notes: memberLedgerEntry.notes,
+      paymentId: memberLedgerEntry.paymentId?.value ?? null,
+      reversalOfId: memberLedgerEntry.reversalOfId?.value ?? null,
+      source: memberLedgerEntry.source,
+      status: memberLedgerEntry.status,
+      type: memberLedgerEntry.type,
+      updatedAt: memberLedgerEntry.updatedAt,
+      updatedBy: memberLedgerEntry.updatedBy,
     };
   }
 

@@ -24,7 +24,7 @@ import type {
   MemberLedgerEntryPaginatedModel,
 } from '../member-ledger-entry-read-models';
 
-import { MemberLedgerEntryEntity } from '../domain/member-ledger-entry.entity';
+import { MemberLedgerEntryEntity } from '../domain/entities/member-ledger-entry.entity';
 import { MemberLedgerRepository } from '../member-ledger.repository';
 import { PrismaMemberLedgerEntryMapper } from './prisma-member-ledger.mapper';
 

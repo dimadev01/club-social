@@ -14,6 +14,7 @@ export type Action = (typeof Action)[keyof typeof Action];
 export const Resource = {
   AUDIT_LOGS: 'audit-logs',
   DUES: 'dues',
+  GROUPS: 'groups',
   MEMBER_LEDGER: 'member-ledger',
   MEMBERS: 'members',
   MOVEMENTS: 'movements',
