@@ -33,7 +33,6 @@ import {
   type PricingRepository,
 } from '../domain/pricing.repository';
 import { CreatePricingRequestDto } from './dto/create-pricing.dto';
-import { FindActivePricingRequestDto } from './dto/find-active-pricing.dto';
 import { FindMembershipPricingRequestDto } from './dto/find-membership-pricing.dto';
 import { MembershipPricingResponseDto } from './dto/membership-pricing.dto';
 import { PricingPaginatedResponseDto } from './dto/pricing-paginated.dto';
@@ -88,25 +87,14 @@ export class PricingController extends BaseController {
     );
   }
 
-  @Get('active')
-  public async getActive(
-    @Query() query: FindActivePricingRequestDto,
-  ): Promise<null | PricingResponseDto> {
-    // Use fallback method: first checks for specific price, then falls back to base price
-    const pricing = await this.pricingRepository.findActiveWithFallback(
-      query.dueCategory,
-      query.memberCategory,
-    );
-
-    return pricing ? this.toDetailDto(pricing) : null;
-  }
-
-  @Get('membership/for-member')
+  @Get('find')
   public async getMembershipPricing(
     @Query() query: FindMembershipPricingRequestDto,
   ): Promise<MembershipPricingResponseDto | null> {
     const pricing = this.handleResult(
       await this.getMembershipPricingUseCase.execute({
+        dueCategory: query.dueCategory,
+        memberCategory: query.memberCategory,
         memberId: query.memberId,
       }),
     );
@@ -116,7 +104,7 @@ export class PricingController extends BaseController {
           amount: pricing.amount,
           baseAmount: pricing.baseAmount,
           discountPercent: pricing.discountPercent,
-          groupSize: pricing.groupSize,
+          isGroupPricing: pricing.isGroupPricing,
         }
       : null;
   }

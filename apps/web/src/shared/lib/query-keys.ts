@@ -1,5 +1,6 @@
 import type { DueCategory } from '@club-social/shared/dues';
 import type { MemberCategory } from '@club-social/shared/members';
+import type { FindPricingDto } from '@club-social/shared/pricing';
 import type { DateRangeDto } from '@club-social/shared/types';
 
 import { createQueryKeyStore } from '@lukemorales/query-key-factory';
@@ -65,7 +66,7 @@ export const queryKeys = createQueryKeyStore({
       memberCategory,
     ],
     detail: (id?: string) => [id],
-    membershipForMember: (memberId?: string) => [memberId],
+    find: (query?: FindPricingDto) => [query],
     paginated: (query?: TableQuery) => [query],
   },
 

@@ -3,15 +3,14 @@ import type dayjs from 'dayjs';
 
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { DateFormats, NumberFormat } from '@club-social/shared/lib';
-import { DatePicker, type FormInstance, Input, Radio } from 'antd';
+import { type FormInstance, Radio } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
-import { useActivePricing } from '@/pricing/useActivePricing';
-import { useMembershipPricingForMember } from '@/pricing/useMembershipPricingForMember';
+import { useFindPrice } from '@/pricing/useFindPrice';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form, InputNumber } from '@/ui';
+import { DatePicker, Form, Input, InputNumber } from '@/ui';
 
 import { DueCategoryIconLabel } from './DueCategoryIconLabel';
 
@@ -55,28 +54,17 @@ export function DueForm({
     initialValues?.memberIds?.[0],
   );
 
-  const isMembershipCategory = formCategory === DueCategory.MEMBERSHIP;
-
-  const { data: activePricing, isLoading: isActivePricingLoading } =
-    useActivePricing({
-      dueCategory: formCategory,
-      memberCategory: selectedFirstMember?.category,
-    });
-
-  const { data: membershipPricing, isLoading: isMembershipPricingLoading } =
-    useMembershipPricingForMember({ memberId: selectedFirstMember?.id });
-
-  const isPricingLoading = isMembershipCategory
-    ? isMembershipPricingLoading
-    : isActivePricingLoading;
+  const { data: pricing, isLoading: isPriceLoading } = useFindPrice({
+    dueCategory: formCategory,
+    memberCategory: selectedFirstMember?.category,
+    memberId: selectedFirstMember?.id,
+  });
 
   useEffect(() => {
-    if (membershipPricing) {
-      setFieldValue('amount', NumberFormat.fromCents(membershipPricing.amount));
-    } else if (activePricing) {
-      setFieldValue('amount', NumberFormat.fromCents(activePricing.amount));
+    if (pricing) {
+      setFieldValue('amount', NumberFormat.fromCents(pricing.amount));
     }
-  }, [activePricing, membershipPricing, setFieldValue]);
+  }, [pricing, setFieldValue]);
 
   const isEditMode = mode === 'edit';
 
@@ -121,7 +109,6 @@ export function DueForm({
       >
         <DatePicker
           allowClear={false}
-          className="w-full"
           disabled={isEditMode}
           format={
             formCategory === DueCategory.MEMBERSHIP
@@ -154,6 +141,9 @@ export function DueForm({
       </Form.Item>
 
       <Form.Item<DueFormData>
+        help={
+          pricing?.isGroupPricing ? 'Aplicado descuento de grupo' : undefined
+        }
         label="Monto"
         name="amount"
         rules={[
@@ -165,7 +155,7 @@ export function DueForm({
         ]}
       >
         <InputNumber<number>
-          disabled={isPricingLoading}
+          disabled={isPriceLoading}
           formatter={(value) => NumberFormat.format(Number(value))}
           min={0}
           parser={(value) => NumberFormat.parse(String(value))}

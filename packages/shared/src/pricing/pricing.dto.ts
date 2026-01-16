@@ -8,20 +8,17 @@ export interface CreatePricingDto {
   memberCategory: MemberCategory | null;
 }
 
-export interface FindActivePricingDto {
+export interface FindPricingDto {
   dueCategory: DueCategory;
   memberCategory: MemberCategory;
-}
-
-export interface FindMembershipPricingDto {
   memberId: string;
 }
 
-export interface MembershipPricingDto {
+export interface FoundPricingDto {
   amount: number;
   baseAmount: number;
   discountPercent: number;
-  groupSize: number;
+  isGroupPricing: boolean;
 }
 
 export interface PricingDto {

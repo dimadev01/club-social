@@ -1,11 +1,10 @@
-import type { MembershipPricingDto } from '@club-social/shared/pricing';
-
 import {
   AppSettingKey,
   type GroupDiscountTier,
 } from '@club-social/shared/app-settings';
 import { DueCategory } from '@club-social/shared/dues';
-import { Inject } from '@nestjs/common';
+import { MemberCategory } from '@club-social/shared/members';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { AppSettingService } from '@/app-settings/infrastructure/app-setting.service';
 import {
@@ -31,10 +30,20 @@ import {
 } from '../domain/pricing.repository';
 
 interface GetMembershipPricingParams {
+  dueCategory: DueCategory;
+  memberCategory: MemberCategory;
   memberId: string;
 }
 
-export class GetMembershipPricingUseCase extends UseCase<MembershipPricingDto | null> {
+interface MembershipPricingResponse {
+  amount: number;
+  baseAmount: number;
+  discountPercent: number;
+  isGroupPricing: boolean;
+}
+
+@Injectable()
+export class GetMembershipPricingUseCase extends UseCase<MembershipPricingResponse | null> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
@@ -51,44 +60,73 @@ export class GetMembershipPricingUseCase extends UseCase<MembershipPricingDto | 
 
   public async execute(
     params: GetMembershipPricingParams,
-  ): Promise<Result<MembershipPricingDto | null>> {
+  ): Promise<Result<MembershipPricingResponse | null>> {
     this.logger.info({
       message: 'Fetching membership pricing for member',
       params,
     });
 
+    const pricing = await this.pricingRepository.findActiveWithFallback(
+      params.dueCategory,
+      params.memberCategory,
+    );
+
+    if (!pricing) {
+      return ok(null);
+    }
+
+    if (params.dueCategory !== DueCategory.MEMBERSHIP) {
+      return ok({
+        amount: pricing.amount.cents,
+        baseAmount: pricing.amount.cents,
+        discountPercent: 0,
+        isGroupPricing: false,
+      });
+    }
+
     const memberId = UniqueId.raw({ value: params.memberId });
     const member = await this.memberRepository.findById(memberId);
 
     if (!member) {
-      return err(new EntityNotFoundError('Member not found'));
-    }
-
-    const activePricing = await this.pricingRepository.findActiveWithFallback(
-      DueCategory.MEMBERSHIP,
-      member.category,
-    );
-
-    if (!activePricing) {
-      return ok(null);
+      return err(new EntityNotFoundError());
     }
 
     const groupSize = await this.groupRepository.findGroupSizeByMemberId(
       member.id,
     );
+
+    if (groupSize === 0) {
+      return ok({
+        amount: pricing.amount.cents,
+        baseAmount: pricing.amount.cents,
+        discountPercent: 0,
+        isGroupPricing: false,
+      });
+    }
+
     const tiersSetting = await this.appSettingService.getValue(
       AppSettingKey.GROUP_DISCOUNT_TIERS,
     );
-    const tiers = tiersSetting.value as GroupDiscountTier[];
-    const discountPercent = this.getDiscountPercent(tiers, groupSize);
-    const baseAmount = activePricing.amount.cents;
-    const amount = this.applyDiscount(baseAmount, discountPercent);
+
+    const discountPercent = this.getDiscountPercent(
+      tiersSetting.value,
+      groupSize,
+    );
+
+    const baseAmount = pricing.amount;
+    const applyDiscountResult = baseAmount.applyDiscount(discountPercent);
+
+    if (applyDiscountResult.isErr()) {
+      return err(applyDiscountResult.error);
+    }
+
+    const amount = applyDiscountResult.value;
 
     return ok({
-      amount,
-      baseAmount,
+      amount: amount.cents,
+      baseAmount: baseAmount.cents,
       discountPercent,
-      groupSize,
+      isGroupPricing: true,
     });
   }
 
