@@ -29,13 +29,13 @@ import {
   type PricingRepository,
 } from '../domain/pricing.repository';
 
-interface GetMembershipPricingParams {
+interface FindPricingParams {
   dueCategory: DueCategory;
   memberCategory: MemberCategory;
   memberId: string;
 }
 
-interface MembershipPricingResponse {
+interface FindPricingResponse {
   amount: number;
   baseAmount: number;
   discountPercent: number;
@@ -43,7 +43,7 @@ interface MembershipPricingResponse {
 }
 
 @Injectable()
-export class GetMembershipPricingUseCase extends UseCase<MembershipPricingResponse | null> {
+export class FindPricingUseCase extends UseCase<FindPricingResponse | null> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
@@ -59,8 +59,8 @@ export class GetMembershipPricingUseCase extends UseCase<MembershipPricingRespon
   }
 
   public async execute(
-    params: GetMembershipPricingParams,
-  ): Promise<Result<MembershipPricingResponse | null>> {
+    params: FindPricingParams,
+  ): Promise<Result<FindPricingResponse | null>> {
     this.logger.info({
       message: 'Fetching membership pricing for member',
       params,

@@ -164,6 +164,10 @@ export class PrismaGroupRepository implements GroupRepository {
       where: { id: entity.id.value },
     });
 
+    await client.groupMember.deleteMany({
+      where: { groupId: entity.id.value },
+    });
+
     for (const groupMemberUpsert of groupMemberUpserts) {
       await client.groupMember.upsert({
         create: groupMemberUpsert.create,

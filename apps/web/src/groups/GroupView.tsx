@@ -1,15 +1,8 @@
-import { Button, Col } from 'antd';
+import { Button, Col, Space, Tag } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
-import {
-  Card,
-  Descriptions,
-  DescriptionsAudit,
-  NavigateToMember,
-  NotFound,
-  Row,
-} from '@/ui';
+import { Card, Descriptions, DescriptionsAudit, NotFound, Row } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { useGroup } from './useGroup';
@@ -52,13 +45,13 @@ export function GroupView() {
           <Descriptions
             items={[
               {
-                children: group.members.map((member) => (
-                  <Button key={member.id} type="link">
-                    <NavigateToMember id={member.id}>
-                      {member.name}
-                    </NavigateToMember>
-                  </Button>
-                )),
+                children: (
+                  <Space size="small" wrap>
+                    {group.members.map((member) => (
+                      <Tag key={member.id}>{member.name}</Tag>
+                    ))}
+                  </Space>
+                ),
                 label: 'Miembros',
               },
             ]}

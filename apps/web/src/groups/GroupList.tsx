@@ -82,7 +82,7 @@ export function GroupList() {
             render: (members: GroupMemberDto[]) => (
               <Space size="small" wrap>
                 {members.map((member) => (
-                  <Tag>{member.name}</Tag>
+                  <Tag key={member.id}>{member.name}</Tag>
                 ))}
               </Space>
             ),

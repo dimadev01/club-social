@@ -25,7 +25,7 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreatePricingUseCase } from '../application/create-pricing.use-case';
-import { GetMembershipPricingUseCase } from '../application/get-membership-pricing.use-case';
+import { FindPricingUseCase } from '../application/find-pricing.use-case';
 import { UpdatePricingUseCase } from '../application/update-pricing.use-case';
 import { PricingEntity } from '../domain/entities/pricing.entity';
 import {
@@ -46,7 +46,7 @@ export class PricingController extends BaseController {
     protected readonly logger: AppLogger,
     private readonly createPricingUseCase: CreatePricingUseCase,
     private readonly updatePricingUseCase: UpdatePricingUseCase,
-    private readonly getMembershipPricingUseCase: GetMembershipPricingUseCase,
+    private readonly getMembershipPricingUseCase: FindPricingUseCase,
     @Inject(PRICING_REPOSITORY_PROVIDER)
     private readonly pricingRepository: PricingRepository,
   ) {
