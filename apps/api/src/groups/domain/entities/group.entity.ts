@@ -6,19 +6,26 @@ import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { GroupCreatedEvent } from '../events/group-created.event';
 import { GroupUpdatedEvent } from '../events/group-updated.event';
+import { GroupDiscount } from '../value-objects/group-discount.vo';
 import { GroupMemberEntity } from './group-member.entity';
 
 export interface CreateGroupProps {
+  discount: number;
   memberIds: string[];
   name: string;
 }
 
 export interface GroupProps {
+  discount: GroupDiscount;
   members: GroupMemberEntity[];
   name: string;
 }
 
 export class GroupEntity extends AuditedAggregateRoot {
+  public get discount(): GroupDiscount {
+    return this._discount;
+  }
+
   public get members(): GroupMemberEntity[] {
     return [...this._members];
   }
@@ -26,6 +33,8 @@ export class GroupEntity extends AuditedAggregateRoot {
   public get name(): string {
     return this._name;
   }
+
+  private _discount: GroupDiscount;
 
   private _members: GroupMemberEntity[];
 
@@ -35,14 +44,22 @@ export class GroupEntity extends AuditedAggregateRoot {
 
     this._name = props.name;
     this._members = props.members;
+    this._discount = props.discount;
   }
 
   public static create(
     props: CreateGroupProps,
     createdBy: string,
   ): Result<GroupEntity> {
+    const discountResult = GroupDiscount.create(props.discount);
+
+    if (discountResult.isErr()) {
+      return err(discountResult.error);
+    }
+
     const group = new GroupEntity(
       {
+        discount: discountResult.value,
         members: [],
         name: props.name,
       },
@@ -106,6 +123,7 @@ export class GroupEntity extends AuditedAggregateRoot {
   public clone(): GroupEntity {
     return GroupEntity.fromPersistence(
       {
+        discount: this._discount,
         members: [...this._members],
         name: this._name,
       },
@@ -139,6 +157,15 @@ export class GroupEntity extends AuditedAggregateRoot {
     this.addEvent(new GroupUpdatedEvent(oldGroup, this));
 
     return ok();
+  }
+
+  public updateDiscount(discount: GroupDiscount, updatedBy: string) {
+    const oldGroup = this.clone();
+
+    this._discount = discount;
+
+    this.markAsUpdated(updatedBy);
+    this.addEvent(new GroupUpdatedEvent(oldGroup, this));
   }
 
   public updateName(name: string, updatedBy: string): void {

@@ -9,6 +9,7 @@ import { Guard } from '@/shared/domain/guards';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { GroupEntity } from '../domain/entities/group.entity';
+import { GroupDiscount } from '../domain/value-objects/group-discount.vo';
 import { PrismaGroupMemberMapper } from './prisma-group-member.mapper';
 
 @Injectable()
@@ -22,6 +23,7 @@ export class PrismaGroupMapper {
 
     return {
       createdBy: group.createdBy,
+      discountPercent: group.discount.value,
       id: group.id.value,
       name: group.name,
     };
@@ -32,6 +34,7 @@ export class PrismaGroupMapper {
   ): GroupEntity {
     return GroupEntity.fromPersistence(
       {
+        discount: GroupDiscount.raw({ value: group.discountPercent }),
         members: group.members.map((groupMember) =>
           this.prismaGroupMemberMapper.toDomain(groupMember),
         ),
@@ -51,6 +54,7 @@ export class PrismaGroupMapper {
 
   public toUpdateInput(group: GroupEntity): GroupUpdateInput {
     return {
+      discountPercent: group.discount.value,
       name: group.name,
       updatedBy: group.updatedBy,
     };

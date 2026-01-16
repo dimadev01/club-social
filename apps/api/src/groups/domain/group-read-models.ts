@@ -13,6 +13,7 @@ export interface GroupPaginatedMemberReadModel {
 }
 
 export interface GroupPaginatedReadModel {
+  discountPercent: number;
   id: string;
   members: GroupPaginatedMemberReadModel[];
   name: string;
@@ -21,6 +22,7 @@ export interface GroupPaginatedReadModel {
 export interface GroupReadModel {
   createdAt: Date;
   createdBy: string;
+  discountPercent: number;
   id: string;
   members: GroupMemberReadModel[];
   name: string;

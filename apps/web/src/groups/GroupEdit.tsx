@@ -30,6 +30,7 @@ export function GroupEdit() {
 
   const handleSubmit = (values: GroupFormData) => {
     updateGroupMutation.mutate({
+      discountPercent: values.discountPercent,
       memberIds: values.memberIds,
       name: values.name,
     });
@@ -72,6 +73,7 @@ export function GroupEdit() {
         additionalMemberOptions={memberAdditionalOptions}
         disabled={isMutating}
         initialValues={{
+          discountPercent: group.discountPercent,
           memberIds: group.members.map((member) => member.id),
           name: group.name,
         }}

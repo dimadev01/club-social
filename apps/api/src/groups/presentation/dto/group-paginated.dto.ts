@@ -9,7 +9,7 @@ export class GroupPaginatedMemberResponseDto implements GroupPaginatedMemberDto 
 }
 
 export class GroupPaginatedResponseDto implements GroupPaginatedDto {
-  public discountPercentage: number;
+  public discountPercent: number;
   public id: string;
   public members: GroupPaginatedMemberResponseDto[];
   public name: string;

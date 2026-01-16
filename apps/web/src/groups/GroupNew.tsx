@@ -29,6 +29,7 @@ export function GroupNew() {
   ) => {
     createGroupMutation.mutate(
       {
+        discountPercent: values.discountPercent,
         memberIds: values.memberIds,
         name: values.name,
       },
@@ -39,7 +40,7 @@ export function GroupNew() {
           if (shouldNavigateBack.current) {
             navigate(-1);
           } else {
-            form.resetFields(['memberIds', 'name']);
+            form.resetFields(['discountPercent', 'memberIds', 'name']);
           }
         },
       },
@@ -73,7 +74,7 @@ export function GroupNew() {
     >
       <GroupForm
         disabled={isMutating}
-        initialValues={{ memberIds: [], name: undefined }}
+        initialValues={{ discountPercent: 0, memberIds: [], name: undefined }}
         onSubmit={handleSubmit}
       />
     </Card>

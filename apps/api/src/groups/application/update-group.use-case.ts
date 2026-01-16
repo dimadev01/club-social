@@ -20,8 +20,10 @@ import {
   GROUP_REPOSITORY_PROVIDER,
   type GroupRepository,
 } from '../domain/group.repository';
+import { GroupDiscount } from '../domain/value-objects/group-discount.vo';
 
 interface UpdateGroupParams {
+  discountPercent: number;
   id: string;
   memberIds: string[];
   name: string;
@@ -49,7 +51,7 @@ export class UpdateGroupUseCase extends UseCase<void> {
     });
 
     for (const memberId of params.memberIds) {
-      const existingGroup = await this.groupRepository.findByMemberId(
+      const existingGroup = await this.groupRepository.findByMemberIdReadModel(
         UniqueId.raw({ value: memberId }),
       );
 
@@ -96,6 +98,16 @@ export class UpdateGroupUseCase extends UseCase<void> {
       Guard.defined(groupMember);
 
       group.removeMember(groupMember);
+    }
+
+    if (params.discountPercent !== group.discount.value) {
+      const discount = GroupDiscount.create(params.discountPercent);
+
+      if (discount.isErr()) {
+        return err(discount.error);
+      }
+
+      group.updateDiscount(discount.value, params.updatedBy);
     }
 
     const isGroupValid = group.isValid();

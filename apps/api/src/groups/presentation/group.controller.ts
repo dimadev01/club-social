@@ -1,4 +1,3 @@
-import { AppSettingKey } from '@club-social/shared/app-settings';
 import {
   Body,
   Controller,
@@ -12,7 +11,6 @@ import {
   Session,
 } from '@nestjs/common';
 
-import { AppSettingService } from '@/app-settings/infrastructure/app-setting.service';
 import { type AuthSession } from '@/infrastructure/auth/better-auth/better-auth.types';
 import {
   APP_LOGGER_PROVIDER,
@@ -45,7 +43,6 @@ export class GroupController extends BaseController {
     private readonly updateGroupUseCase: UpdateGroupUseCase,
     @Inject(GROUP_REPOSITORY_PROVIDER)
     private readonly groupRepository: GroupRepository,
-    private readonly appSettingService: AppSettingService,
   ) {
     super(logger);
   }
@@ -58,6 +55,7 @@ export class GroupController extends BaseController {
     const { id } = this.handleResult(
       await this.createGroupUseCase.execute({
         createdBy: session.user.name,
+        discountPercent: body.discountPercent,
         memberIds: body.memberIds,
         name: body.name,
       }),
@@ -74,6 +72,7 @@ export class GroupController extends BaseController {
   ): Promise<void> {
     this.handleResult(
       await this.updateGroupUseCase.execute({
+        discountPercent: body.discountPercent,
         id: request.id,
         memberIds: body.memberIds,
         name: body.name,
@@ -98,18 +97,9 @@ export class GroupController extends BaseController {
       this.buildQueryContext(session),
     );
 
-    const groupDiscountTiers = await this.appSettingService.getValue(
-      AppSettingKey.GROUP_DISCOUNT_TIERS,
-    );
-
     return {
       data: data.data.map((group) => ({
-        discountPercentage:
-          groupDiscountTiers.value.find(
-            (tier) =>
-              group.members.length >= tier.minSize &&
-              group.members.length <= tier.maxSize,
-          )?.percent ?? 0,
+        discountPercent: group.discountPercent,
         id: group.id,
         members: group.members.map((member) => ({
           id: member.id,
@@ -136,6 +126,7 @@ export class GroupController extends BaseController {
     return {
       createdAt: group.createdAt.toISOString(),
       createdBy: group.createdBy,
+      discountPercent: group.discountPercent,
       id: group.id,
       members: group.members.map((member) => ({
         category: member.category,

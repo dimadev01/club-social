@@ -91,8 +91,8 @@ export function GroupList() {
           },
           {
             align: 'center',
-            dataIndex: 'discountPercentage',
-            render: (discountPercentage: number) => `${discountPercentage}%`,
+            dataIndex: 'discountPercent',
+            render: (discountPercent: number) => `${discountPercent}%`,
             title: 'Descuento',
             width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
