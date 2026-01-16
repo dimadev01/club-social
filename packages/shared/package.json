@@ -55,6 +55,11 @@
       "require": "./dist/pricing/index.js",
       "import": "./dist/pricing/index.mjs"
     },
+    "./groups": {
+      "types": "./src/groups/index.ts",
+      "require": "./dist/groups/index.js",
+      "import": "./dist/groups/index.mjs"
+    },
     "./lib": {
       "types": "./src/lib/index.ts",
       "require": "./dist/lib/index.js",

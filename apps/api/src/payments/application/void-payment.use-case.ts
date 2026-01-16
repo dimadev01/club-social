@@ -11,7 +11,7 @@ import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
 } from '@/dues/domain/due.repository';
-import { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
+import { MemberLedgerEntryEntity } from '@/members/ledger/domain/entities/member-ledger-entry.entity';
 import {
   MEMBER_LEDGER_REPOSITORY_PROVIDER,
   type MemberLedgerRepository,
@@ -110,7 +110,7 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
         entry.id.equals(dueSettlement.memberLedgerEntryId),
       );
       Guard.defined(originalDebitEntry);
-      originalDebitEntry.reverse();
+      originalDebitEntry.reverse(params.voidedBy);
 
       const reversedEntry = MemberLedgerEntryEntity.create(
         {

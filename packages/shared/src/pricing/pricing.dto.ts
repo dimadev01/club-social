@@ -8,9 +8,17 @@ export interface CreatePricingDto {
   memberCategory: MemberCategory | null;
 }
 
-export interface FindActivePricingDto {
+export interface FindPricingDto {
   dueCategory: DueCategory;
   memberCategory: MemberCategory;
+  memberId: string;
+}
+
+export interface FoundPricingDto {
+  amount: number;
+  baseAmount: number;
+  discountPercent: number;
+  isGroupPricing: boolean;
 }
 
 export interface PricingDto {

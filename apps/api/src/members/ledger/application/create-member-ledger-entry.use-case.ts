@@ -8,7 +8,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
-import { MemberLedgerEntryEntity } from '@/members/ledger/domain/member-ledger-entry.entity';
+import { MemberLedgerEntryEntity } from '@/members/ledger/domain/entities/member-ledger-entry.entity';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,

@@ -131,6 +131,7 @@ model Member {
   dues          Due[]
   payments      Payment[]
   ledgerEntries MemberLedgerEntry[]
+  groups        GroupMember[]
 
   @@index([userId])
   @@map("member")
@@ -329,4 +330,31 @@ model AppSetting {
   updatedBy   String?
 
   @@map("app_setting")
+}
+
+model Group {
+  id   String @id
+  name String
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  members GroupMember[]
+
+  @@map("group")
+}
+
+model GroupMember {
+  id String @id
+
+  groupId  String
+  group    Group  @relation(fields: [groupId], references: [id])
+  memberId String @unique
+  member   Member @relation(fields: [memberId], references: [id])
+
+  @@index([groupId])
+  @@index([memberId])
+  @@map("group_member")
 }

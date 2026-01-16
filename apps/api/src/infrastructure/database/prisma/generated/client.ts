@@ -112,3 +112,13 @@ export type Pricing = Prisma.PricingModel;
  *
  */
 export type AppSetting = Prisma.AppSettingModel;
+/**
+ * Model Group
+ *
+ */
+export type Group = Prisma.GroupModel;
+/**
+ * Model GroupMember
+ *
+ */
+export type GroupMember = Prisma.GroupMemberModel;

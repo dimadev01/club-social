@@ -26,9 +26,7 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Card,
-  NavigateToMember,
   NavigateToMemberLedgerEntry,
-  NavigateToPayment,
   NotFound,
   PageTableActions,
   Table,
@@ -153,11 +151,7 @@ export function MemberLedgerList() {
             ? [
                 {
                   dataIndex: 'memberFullName',
-                  render: (memberFullName: string, record) => (
-                    <NavigateToMember id={record.memberId}>
-                      {memberFullName}
-                    </NavigateToMember>
-                  ),
+                  render: (name: string) => name,
                   title: 'Socio',
                   width: TABLE_COLUMN_WIDTHS.MEMBER_NAME,
                 } satisfies TableColumnType<MemberLedgerEntryPaginatedDto>,
@@ -189,23 +183,8 @@ export function MemberLedgerList() {
             dataIndex: 'source',
             filteredValue: getFilterValue('source'),
             filters: labelMapToFilterOptions(MemberLedgerEntrySourceLabel),
-            render: (
-              value: MemberLedgerEntrySource,
-              record: MemberLedgerEntryPaginatedDto,
-            ) => {
-              if (
-                value === MemberLedgerEntrySource.PAYMENT &&
-                record.paymentId
-              ) {
-                return (
-                  <NavigateToPayment formatDate={false} id={record.paymentId}>
-                    {MemberLedgerEntrySourceLabel[value]}
-                  </NavigateToPayment>
-                );
-              }
-
-              return MemberLedgerEntrySourceLabel[value];
-            },
+            render: (value: MemberLedgerEntrySource) =>
+              MemberLedgerEntrySourceLabel[value],
             title: 'Origen',
             width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },

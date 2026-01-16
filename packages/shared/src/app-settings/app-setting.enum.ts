@@ -1,4 +1,5 @@
 export const AppSettingKey = {
+  GROUP_DISCOUNT_TIERS: 'group-discount-tiers',
   MAINTENANCE_MODE: 'maintenance-mode',
   SEND_EMAILS: 'send-emails',
   SEND_MEMBER_NOTIFICATIONS: 'send-member-notifications',
@@ -21,6 +22,7 @@ export const SYSTEM_SETTING_KEYS: readonly AppSettingKey[] = [
 
 export const APP_SETTING_KEYS: readonly AppSettingKey[] = [
   AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
+  AppSettingKey.GROUP_DISCOUNT_TIERS,
 ] as const;
 
 export interface AppSettingDto<K extends AppSettingKey = AppSettingKey> {
@@ -33,9 +35,25 @@ export interface AppSettingDto<K extends AppSettingKey = AppSettingKey> {
 }
 
 export interface AppSettingValues {
+  [AppSettingKey.GROUP_DISCOUNT_TIERS]: GroupDiscountTier[];
   [AppSettingKey.MAINTENANCE_MODE]: MaintenanceModeValue;
   [AppSettingKey.SEND_EMAILS]: SendEmailsValue;
   [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]: SendMemberNotificationsValue;
+}
+
+export type BooleanAppSettingKey =
+  | typeof AppSettingKey.MAINTENANCE_MODE
+  | typeof AppSettingKey.SEND_EMAILS
+  | typeof AppSettingKey.SEND_MEMBER_NOTIFICATIONS;
+
+export interface BooleanAppSettingValue {
+  enabled: boolean;
+}
+
+export interface GroupDiscountTier {
+  maxSize: number;
+  minSize: number;
+  percent: number;
 }
 
 export interface MaintenanceModeValue {
@@ -54,7 +72,24 @@ export interface UpdateAppSettingDto<K extends AppSettingKey = AppSettingKey> {
   value: AppSettingValues[K];
 }
 
+export function isBooleanAppSetting(
+  setting: AppSettingDto,
+): setting is AppSettingDto<BooleanAppSettingKey> {
+  return (
+    setting.key === AppSettingKey.MAINTENANCE_MODE ||
+    setting.key === AppSettingKey.SEND_EMAILS ||
+    setting.key === AppSettingKey.SEND_MEMBER_NOTIFICATIONS
+  );
+}
+
+export function isGroupDiscountTiersSetting(
+  setting: AppSettingDto,
+): setting is AppSettingDto<typeof AppSettingKey.GROUP_DISCOUNT_TIERS> {
+  return setting.key === AppSettingKey.GROUP_DISCOUNT_TIERS;
+}
+
 export const APP_SETTINGS_LABELS = {
+  [AppSettingKey.GROUP_DISCOUNT_TIERS]: 'Descuentos por grupo',
   [AppSettingKey.MAINTENANCE_MODE]: 'Modo de mantenimiento',
   [AppSettingKey.SEND_EMAILS]: 'Enviar correos electrónicos',
   [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]: 'Enviar notificaciones a socios',

@@ -68,6 +68,8 @@ export const ModelName = {
   AuditLog: 'AuditLog',
   Pricing: 'Pricing',
   AppSetting: 'AppSetting',
+  Group: 'Group',
+  GroupMember: 'GroupMember',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -336,6 +338,27 @@ export const AppSettingScalarFieldEnum = {
 
 export type AppSettingScalarFieldEnum =
   (typeof AppSettingScalarFieldEnum)[keyof typeof AppSettingScalarFieldEnum];
+
+export const GroupScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+} as const;
+
+export type GroupScalarFieldEnum =
+  (typeof GroupScalarFieldEnum)[keyof typeof GroupScalarFieldEnum];
+
+export const GroupMemberScalarFieldEnum = {
+  id: 'id',
+  groupId: 'groupId',
+  memberId: 'memberId',
+} as const;
+
+export type GroupMemberScalarFieldEnum =
+  (typeof GroupMemberScalarFieldEnum)[keyof typeof GroupMemberScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',

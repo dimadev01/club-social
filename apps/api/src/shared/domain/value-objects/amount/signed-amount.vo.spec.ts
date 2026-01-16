@@ -164,24 +164,20 @@ describe('SignedAmount', () => {
   });
 
   describe('subtract', () => {
-    it('should subtract and return result when positive', () => {
+    it('should subtract two amounts', () => {
       const amount1 = SignedAmount.raw({ cents: 1000 });
       const amount2 = SignedAmount.raw({ cents: 300 });
       const result = amount1.subtract(amount2);
 
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().cents).toBe(700);
+      expect(result.cents).toBe(700);
     });
 
-    it('should return error when result would be negative', () => {
+    it('should allow negative results', () => {
       const amount1 = SignedAmount.raw({ cents: 300 });
       const amount2 = SignedAmount.raw({ cents: 500 });
       const result = amount1.subtract(amount2);
 
-      expect(result.isErr()).toBe(true);
-      expect(result._unsafeUnwrapErr().message).toBe(
-        'Subtraction would result in negative amount',
-      );
+      expect(result.cents).toBe(-200);
     });
 
     it('should allow subtracting to zero', () => {
@@ -189,8 +185,7 @@ describe('SignedAmount', () => {
       const amount2 = SignedAmount.raw({ cents: 500 });
       const result = amount1.subtract(amount2);
 
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().cents).toBe(0);
+      expect(result.cents).toBe(0);
     });
   });
 
@@ -199,39 +194,84 @@ describe('SignedAmount', () => {
       const amount = SignedAmount.raw({ cents: 1000 });
       const result = amount.multiply(2);
 
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().cents).toBe(2000);
+      expect(result.cents).toBe(2000);
     });
 
     it('should multiply by a decimal factor', () => {
       const amount = SignedAmount.raw({ cents: 1000 });
       const result = amount.multiply(0.5);
 
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().cents).toBe(500);
+      expect(result.cents).toBe(500);
     });
 
     it('should round to nearest cent', () => {
       const amount = SignedAmount.raw({ cents: 100 });
       const result = amount.multiply(0.333);
 
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().cents).toBe(33);
+      expect(result.cents).toBe(33);
     });
 
-    it('should return error for negative factor', () => {
+    it('should allow negative factor', () => {
       const amount = SignedAmount.raw({ cents: 1000 });
       const result = amount.multiply(-2);
 
-      expect(result.isErr()).toBe(true);
-      expect(result._unsafeUnwrapErr().message).toBe(
-        'Multiplication factor cannot be negative',
-      );
+      expect(result.cents).toBe(-2000);
     });
 
     it('should handle multiplying by zero', () => {
       const amount = SignedAmount.raw({ cents: 1000 });
       const result = amount.multiply(0);
+
+      expect(result.cents).toBe(0);
+    });
+  });
+
+  describe('divide', () => {
+    it('should divide by a positive divisor', () => {
+      const amount = SignedAmount.raw({ cents: 1000 });
+      const result = amount.divide(2);
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(500);
+    });
+
+    it('should divide by a decimal divisor', () => {
+      const amount = SignedAmount.raw({ cents: 1000 });
+      const result = amount.divide(0.5);
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(2000);
+    });
+
+    it('should round to nearest cent', () => {
+      const amount = SignedAmount.raw({ cents: 100 });
+      const result = amount.divide(3);
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(33);
+    });
+
+    it('should return error for division by zero', () => {
+      const amount = SignedAmount.raw({ cents: 1000 });
+      const result = amount.divide(0);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe('Division by zero');
+    });
+
+    it('should return error for negative divisor', () => {
+      const amount = SignedAmount.raw({ cents: 1000 });
+      const result = amount.divide(-2);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe(
+        'Division by negative number',
+      );
+    });
+
+    it('should handle dividing zero', () => {
+      const amount = SignedAmount.raw({ cents: 0 });
+      const result = amount.divide(5);
 
       expect(result.isOk()).toBe(true);
       expect(result._unsafeUnwrap().cents).toBe(0);
@@ -415,6 +455,92 @@ describe('SignedAmount', () => {
       const amount = SignedAmount.raw({ cents: 1050 });
 
       expect(amount.equals(undefined)).toBe(false);
+    });
+  });
+
+  describe('applyDiscount', () => {
+    it('should apply a discount percentage correctly', () => {
+      const amount = SignedAmount.raw({ cents: 10000 }); // $100.00
+      const result = amount.applyDiscount(20); // 20% discount
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(8000); // $80.00
+    });
+
+    it('should handle zero discount', () => {
+      const amount = SignedAmount.raw({ cents: 10000 });
+      const result = amount.applyDiscount(0);
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(10000);
+    });
+
+    it('should handle 100% discount', () => {
+      const amount = SignedAmount.raw({ cents: 10000 });
+      const result = amount.applyDiscount(100);
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(0);
+    });
+
+    it('should round to nearest cent', () => {
+      const amount = SignedAmount.raw({ cents: 1000 }); // $10.00
+      const result = amount.applyDiscount(33); // 33% discount
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(670); // $6.70 (rounded from $6.70)
+    });
+
+    it('should handle decimal discount percentages', () => {
+      const amount = SignedAmount.raw({ cents: 10000 }); // $100.00
+      const result = amount.applyDiscount(12.5); // 12.5% discount
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(8750); // $87.50
+    });
+
+    it('should return error for negative discount', () => {
+      const amount = SignedAmount.raw({ cents: 10000 });
+      const result = amount.applyDiscount(-10);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe(
+        'Discount percentage must be between 0 and 100',
+      );
+    });
+
+    it('should return error for discount greater than 100', () => {
+      const amount = SignedAmount.raw({ cents: 10000 });
+      const result = amount.applyDiscount(101);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe(
+        'Discount percentage must be between 0 and 100',
+      );
+    });
+
+    it('should work with small amounts', () => {
+      const amount = SignedAmount.raw({ cents: 100 }); // $1.00
+      const result = amount.applyDiscount(10); // 10% discount
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(90); // $0.90
+    });
+
+    it('should apply discount to zero amount', () => {
+      const amount = SignedAmount.raw({ cents: 0 });
+      const result = amount.applyDiscount(50);
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(0);
+    });
+
+    it('should apply discount to negative amounts', () => {
+      const amount = SignedAmount.raw({ cents: -10000 }); // -$100.00
+      const result = amount.applyDiscount(20); // 20% discount
+
+      expect(result.isOk()).toBe(true);
+      expect(result._unsafeUnwrap().cents).toBe(-8000); // -$80.00
     });
   });
 

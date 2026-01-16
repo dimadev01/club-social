@@ -28,6 +28,7 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
+import { EntityNotFoundError } from '@/shared/domain/errors/entity-not-found.error';
 import { QueryContext } from '@/shared/domain/repository';
 import { DateRange } from '@/shared/domain/value-objects/date-range';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
@@ -83,12 +84,13 @@ export class PrismaDueRepository implements DueRepository {
       where.memberId = context.memberId.value;
     }
 
-    const due = await this.prismaService.due.findFirstOrThrow({
-      include: { settlements: true },
-      where,
-    });
+    const due = await this.findById(id, context);
 
-    return this.dueMapper.toDomain(due);
+    if (!due) {
+      throw new EntityNotFoundError();
+    }
+
+    return due;
   }
 
   public async findByIdReadModel(

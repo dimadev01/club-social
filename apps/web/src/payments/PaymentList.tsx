@@ -26,7 +26,6 @@ import {
   Button,
   Card,
   DuesIcon,
-  NavigateToMember,
   NavigateToPayment,
   NotFound,
   PageTableActions,
@@ -148,11 +147,7 @@ export function PaymentList() {
             ? [
                 {
                   dataIndex: 'memberId',
-                  render: (memberId: string, record: PaymentPaginatedDto) => (
-                    <NavigateToMember id={memberId}>
-                      {record.memberName}
-                    </NavigateToMember>
-                  ),
+                  render: (_, record: PaymentPaginatedDto) => record.memberName,
                   title: 'Socio',
                   width: TABLE_COLUMN_WIDTHS.MEMBER_NAME,
                 } satisfies TableColumnType<PaymentPaginatedDto>,
