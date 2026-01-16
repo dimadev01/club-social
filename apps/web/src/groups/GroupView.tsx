@@ -54,8 +54,11 @@ export function GroupView() {
                 ),
                 label: 'Miembros',
               },
+              {
+                children: `${group.discountPercent}%`,
+                label: 'Descuento',
+              },
             ]}
-            layout="vertical"
           />
         </Col>
         <Col md={12} xs={24}>

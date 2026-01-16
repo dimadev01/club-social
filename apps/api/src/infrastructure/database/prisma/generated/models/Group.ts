@@ -20,13 +20,24 @@ export type GroupModel =
 
 export type AggregateGroup = {
   _count: GroupCountAggregateOutputType | null;
+  _avg: GroupAvgAggregateOutputType | null;
+  _sum: GroupSumAggregateOutputType | null;
   _min: GroupMinAggregateOutputType | null;
   _max: GroupMaxAggregateOutputType | null;
+};
+
+export type GroupAvgAggregateOutputType = {
+  discountPercent: number | null;
+};
+
+export type GroupSumAggregateOutputType = {
+  discountPercent: number | null;
 };
 
 export type GroupMinAggregateOutputType = {
   id: string | null;
   name: string | null;
+  discountPercent: number | null;
   createdAt: Date | null;
   createdBy: string | null;
   updatedAt: Date | null;
@@ -36,6 +47,7 @@ export type GroupMinAggregateOutputType = {
 export type GroupMaxAggregateOutputType = {
   id: string | null;
   name: string | null;
+  discountPercent: number | null;
   createdAt: Date | null;
   createdBy: string | null;
   updatedAt: Date | null;
@@ -45,6 +57,7 @@ export type GroupMaxAggregateOutputType = {
 export type GroupCountAggregateOutputType = {
   id: number;
   name: number;
+  discountPercent: number;
   createdAt: number;
   createdBy: number;
   updatedAt: number;
@@ -52,9 +65,18 @@ export type GroupCountAggregateOutputType = {
   _all: number;
 };
 
+export type GroupAvgAggregateInputType = {
+  discountPercent?: true;
+};
+
+export type GroupSumAggregateInputType = {
+  discountPercent?: true;
+};
+
 export type GroupMinAggregateInputType = {
   id?: true;
   name?: true;
+  discountPercent?: true;
   createdAt?: true;
   createdBy?: true;
   updatedAt?: true;
@@ -64,6 +86,7 @@ export type GroupMinAggregateInputType = {
 export type GroupMaxAggregateInputType = {
   id?: true;
   name?: true;
+  discountPercent?: true;
   createdAt?: true;
   createdBy?: true;
   updatedAt?: true;
@@ -73,6 +96,7 @@ export type GroupMaxAggregateInputType = {
 export type GroupCountAggregateInputType = {
   id?: true;
   name?: true;
+  discountPercent?: true;
   createdAt?: true;
   createdBy?: true;
   updatedAt?: true;
@@ -123,6 +147,18 @@ export type GroupAggregateArgs<
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    *
+   * Select which fields to average
+   **/
+  _avg?: GroupAvgAggregateInputType;
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
+   * Select which fields to sum
+   **/
+  _sum?: GroupSumAggregateInputType;
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
    * Select which fields to find the minimum value
    **/
   _min?: GroupMinAggregateInputType;
@@ -155,6 +191,8 @@ export type GroupGroupByArgs<
   take?: number;
   skip?: number;
   _count?: GroupCountAggregateInputType | true;
+  _avg?: GroupAvgAggregateInputType;
+  _sum?: GroupSumAggregateInputType;
   _min?: GroupMinAggregateInputType;
   _max?: GroupMaxAggregateInputType;
 };
@@ -162,11 +200,14 @@ export type GroupGroupByArgs<
 export type GroupGroupByOutputType = {
   id: string;
   name: string;
+  discountPercent: number;
   createdAt: Date;
   createdBy: string;
   updatedAt: Date;
   updatedBy: string | null;
   _count: GroupCountAggregateOutputType | null;
+  _avg: GroupAvgAggregateOutputType | null;
+  _sum: GroupSumAggregateOutputType | null;
   _min: GroupMinAggregateOutputType | null;
   _max: GroupMaxAggregateOutputType | null;
 };
@@ -189,6 +230,7 @@ export type GroupWhereInput = {
   NOT?: Prisma.GroupWhereInput | Prisma.GroupWhereInput[];
   id?: Prisma.StringFilter<'Group'> | string;
   name?: Prisma.StringFilter<'Group'> | string;
+  discountPercent?: Prisma.IntFilter<'Group'> | number;
   createdAt?: Prisma.DateTimeFilter<'Group'> | Date | string;
   createdBy?: Prisma.StringFilter<'Group'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Group'> | Date | string;
@@ -199,6 +241,7 @@ export type GroupWhereInput = {
 export type GroupOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
   name?: Prisma.SortOrder;
+  discountPercent?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -213,6 +256,7 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<
     OR?: Prisma.GroupWhereInput[];
     NOT?: Prisma.GroupWhereInput | Prisma.GroupWhereInput[];
     name?: Prisma.StringFilter<'Group'> | string;
+    discountPercent?: Prisma.IntFilter<'Group'> | number;
     createdAt?: Prisma.DateTimeFilter<'Group'> | Date | string;
     createdBy?: Prisma.StringFilter<'Group'> | string;
     updatedAt?: Prisma.DateTimeFilter<'Group'> | Date | string;
@@ -225,13 +269,16 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<
 export type GroupOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
   name?: Prisma.SortOrder;
+  discountPercent?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.GroupCountOrderByAggregateInput;
+  _avg?: Prisma.GroupAvgOrderByAggregateInput;
   _max?: Prisma.GroupMaxOrderByAggregateInput;
   _min?: Prisma.GroupMinOrderByAggregateInput;
+  _sum?: Prisma.GroupSumOrderByAggregateInput;
 };
 
 export type GroupScalarWhereWithAggregatesInput = {
@@ -244,6 +291,7 @@ export type GroupScalarWhereWithAggregatesInput = {
     | Prisma.GroupScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<'Group'> | string;
   name?: Prisma.StringWithAggregatesFilter<'Group'> | string;
+  discountPercent?: Prisma.IntWithAggregatesFilter<'Group'> | number;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<'Group'> | Date | string;
   createdBy?: Prisma.StringWithAggregatesFilter<'Group'> | string;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<'Group'> | Date | string;
@@ -256,6 +304,7 @@ export type GroupScalarWhereWithAggregatesInput = {
 export type GroupCreateInput = {
   id: string;
   name: string;
+  discountPercent?: number;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -266,6 +315,7 @@ export type GroupCreateInput = {
 export type GroupUncheckedCreateInput = {
   id: string;
   name: string;
+  discountPercent?: number;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -276,6 +326,7 @@ export type GroupUncheckedCreateInput = {
 export type GroupUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
+  discountPercent?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -286,6 +337,7 @@ export type GroupUpdateInput = {
 export type GroupUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
+  discountPercent?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -296,6 +348,7 @@ export type GroupUncheckedUpdateInput = {
 export type GroupCreateManyInput = {
   id: string;
   name: string;
+  discountPercent?: number;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -305,6 +358,7 @@ export type GroupCreateManyInput = {
 export type GroupUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
+  discountPercent?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -314,6 +368,7 @@ export type GroupUpdateManyMutationInput = {
 export type GroupUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
+  discountPercent?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -323,15 +378,21 @@ export type GroupUncheckedUpdateManyInput = {
 export type GroupCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   name?: Prisma.SortOrder;
+  discountPercent?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
 };
 
+export type GroupAvgOrderByAggregateInput = {
+  discountPercent?: Prisma.SortOrder;
+};
+
 export type GroupMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   name?: Prisma.SortOrder;
+  discountPercent?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -341,10 +402,15 @@ export type GroupMaxOrderByAggregateInput = {
 export type GroupMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   name?: Prisma.SortOrder;
+  discountPercent?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
+};
+
+export type GroupSumOrderByAggregateInput = {
+  discountPercent?: Prisma.SortOrder;
 };
 
 export type GroupScalarRelationFilter = {
@@ -381,6 +447,7 @@ export type GroupUpdateOneRequiredWithoutMembersNestedInput = {
 export type GroupCreateWithoutMembersInput = {
   id: string;
   name: string;
+  discountPercent?: number;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -390,6 +457,7 @@ export type GroupCreateWithoutMembersInput = {
 export type GroupUncheckedCreateWithoutMembersInput = {
   id: string;
   name: string;
+  discountPercent?: number;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -427,6 +495,7 @@ export type GroupUpdateToOneWithWhereWithoutMembersInput = {
 export type GroupUpdateWithoutMembersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
+  discountPercent?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -436,6 +505,7 @@ export type GroupUpdateWithoutMembersInput = {
 export type GroupUncheckedUpdateWithoutMembersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
+  discountPercent?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -487,6 +557,7 @@ export type GroupSelect<
   {
     id?: boolean;
     name?: boolean;
+    discountPercent?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -504,6 +575,7 @@ export type GroupSelectCreateManyAndReturn<
   {
     id?: boolean;
     name?: boolean;
+    discountPercent?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -519,6 +591,7 @@ export type GroupSelectUpdateManyAndReturn<
   {
     id?: boolean;
     name?: boolean;
+    discountPercent?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -530,6 +603,7 @@ export type GroupSelectUpdateManyAndReturn<
 export type GroupSelectScalar = {
   id?: boolean;
   name?: boolean;
+  discountPercent?: boolean;
   createdAt?: boolean;
   createdBy?: boolean;
   updatedAt?: boolean;
@@ -540,7 +614,13 @@ export type GroupOmit<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
-  'id' | 'name' | 'createdAt' | 'createdBy' | 'updatedAt' | 'updatedBy',
+  | 'id'
+  | 'name'
+  | 'discountPercent'
+  | 'createdAt'
+  | 'createdBy'
+  | 'updatedAt'
+  | 'updatedBy',
   ExtArgs['result']['group']
 >;
 export type GroupInclude<
@@ -571,6 +651,7 @@ export type $GroupPayload<
     {
       id: string;
       name: string;
+      discountPercent: number;
       createdAt: Date;
       createdBy: string;
       updatedAt: Date;
@@ -1180,6 +1261,7 @@ export interface Prisma__GroupClient<
 export interface GroupFieldRefs {
   readonly id: Prisma.FieldRef<'Group', 'String'>;
   readonly name: Prisma.FieldRef<'Group', 'String'>;
+  readonly discountPercent: Prisma.FieldRef<'Group', 'Int'>;
   readonly createdAt: Prisma.FieldRef<'Group', 'DateTime'>;
   readonly createdBy: Prisma.FieldRef<'Group', 'String'>;
   readonly updatedAt: Prisma.FieldRef<'Group', 'DateTime'>;

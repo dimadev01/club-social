@@ -16,14 +16,12 @@ export type AppSettingPropsOverrides<
 const DEFAULT_VALUES: {
   [K in AppSettingKey]: AppSettingProps<K>['value'];
 } = {
-  [AppSettingKey.GROUP_DISCOUNT_TIERS]: [],
   [AppSettingKey.MAINTENANCE_MODE]: { enabled: false },
   [AppSettingKey.SEND_EMAILS]: { enabled: false },
   [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]: { enabled: false },
 };
 
 const DEFAULT_DESCRIPTIONS: Record<AppSettingKey, string> = {
-  [AppSettingKey.GROUP_DISCOUNT_TIERS]: 'Group discount tiers setting',
   [AppSettingKey.MAINTENANCE_MODE]: 'Maintenance mode setting',
   [AppSettingKey.SEND_EMAILS]: 'Send emails setting',
   [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]:

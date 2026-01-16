@@ -5,6 +5,7 @@ export interface AddGroupMemberDto {
 }
 
 export interface CreateGroupDto {
+  discountPercent: number;
   memberIds: string[];
   name: string;
 }
@@ -12,6 +13,7 @@ export interface CreateGroupDto {
 export interface GroupDto {
   createdAt: string;
   createdBy: string;
+  discountPercent: number;
   id: string;
   members: GroupMemberDto[];
   name: string;
@@ -27,7 +29,7 @@ export interface GroupMemberDto {
 }
 
 export interface GroupPaginatedDto {
-  discountPercentage: number;
+  discountPercent: number;
   id: string;
   members: GroupPaginatedMemberDto[];
   name: string;
@@ -43,11 +45,7 @@ export interface RemoveGroupMemberDto {
 }
 
 export interface UpdateGroupDto {
-  memberIds: string[];
-  name: string;
-}
-
-export interface UpdateGroupDto {
+  discountPercent: number;
   memberIds: string[];
   name: string;
 }

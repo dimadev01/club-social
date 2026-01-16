@@ -333,8 +333,9 @@ model AppSetting {
 }
 
 model Group {
-  id   String @id
-  name String
+  id              String @id
+  name            String
+  discountPercent Int
 
   createdAt DateTime @default(now())
   createdBy String

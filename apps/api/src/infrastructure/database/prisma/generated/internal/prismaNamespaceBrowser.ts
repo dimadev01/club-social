@@ -342,6 +342,7 @@ export type AppSettingScalarFieldEnum =
 export const GroupScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  discountPercent: 'discountPercent',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',

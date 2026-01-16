@@ -84,7 +84,16 @@ export class PrismaGroupRepository implements GroupRepository {
     return groups.map((group) => this.groupMapper.toDomain(group));
   }
 
-  public async findByMemberId(
+  public async findByMemberId(memberId: UniqueId): Promise<GroupEntity | null> {
+    const group = await this.prismaService.group.findFirst({
+      include: { members: true },
+      where: { members: { some: { memberId: memberId.value } } },
+    });
+
+    return group ? this.groupMapper.toDomain(group) : null;
+  }
+
+  public async findByMemberIdReadModel(
     memberId: UniqueId,
   ): Promise<GroupReadModel | null> {
     const group = await this.prismaService.group.findFirst({
@@ -95,6 +104,21 @@ export class PrismaGroupRepository implements GroupRepository {
     });
 
     return group ? this.toReadModel(group) : null;
+  }
+
+  public async findDiscountPercentByMemberId(
+    memberId: UniqueId,
+  ): Promise<number> {
+    const membership = await this.prismaService.groupMember.findUnique({
+      include: { group: true },
+      where: { memberId: memberId.value },
+    });
+
+    if (!membership) {
+      return 0;
+    }
+
+    return membership.group.discountPercent;
   }
 
   public async findGroupSizeByMemberId(memberId: UniqueId): Promise<number> {
@@ -136,6 +160,7 @@ export class PrismaGroupRepository implements GroupRepository {
 
     return {
       data: groups.map((group) => ({
+        discountPercent: group.discountPercent,
         id: group.id,
         members: group.members.map((groupMember) => ({
           id: groupMember.memberId,
@@ -209,6 +234,7 @@ export class PrismaGroupRepository implements GroupRepository {
     return {
       createdAt: group.createdAt,
       createdBy: group.createdBy,
+      discountPercent: group.discountPercent,
       id: group.id,
       members: group.members.map((groupMember) => ({
         category: groupMember.member.category as MemberCategory,
