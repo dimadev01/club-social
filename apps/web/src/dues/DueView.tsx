@@ -25,7 +25,6 @@ import {
   Card,
   Descriptions,
   DescriptionsAudit,
-  NavigateToMember,
   NavigateToMemberLedgerEntry,
   NavigateToPayment,
   NotFound,
@@ -103,11 +102,7 @@ export function DueView() {
                 label: 'Fecha',
               },
               {
-                children: (
-                  <NavigateToMember id={due.member.id}>
-                    {due.member.name}
-                  </NavigateToMember>
-                ),
+                children: due.member.name,
                 label: 'Socio',
               },
               {

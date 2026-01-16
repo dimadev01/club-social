@@ -21,7 +21,6 @@ import {
   Descriptions,
   DescriptionsAudit,
   NavigateToDue,
-  NavigateToMember,
   NavigateToMemberLedgerEntry,
   NotFound,
   Row,
@@ -88,11 +87,7 @@ export function PaymentView() {
                 label: 'Fecha',
               },
               {
-                children: (
-                  <NavigateToMember id={payment.member.id}>
-                    {payment.member.name}
-                  </NavigateToMember>
-                ),
+                children: payment.member.name,
                 label: 'Socio',
               },
               {

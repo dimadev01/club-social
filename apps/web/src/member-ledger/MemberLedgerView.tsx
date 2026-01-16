@@ -12,7 +12,6 @@ import {
   Card,
   Descriptions,
   DescriptionsAudit,
-  NavigateToMember,
   NavigateToPayment,
   NotFound,
   Row,
@@ -56,11 +55,7 @@ export function MemberLedgerView() {
                 label: 'Fecha',
               },
               {
-                children: (
-                  <NavigateToMember id={entry.memberId}>
-                    {entry.memberFullName}
-                  </NavigateToMember>
-                ),
+                children: entry.memberFullName,
                 label: 'Socio',
               },
               {
