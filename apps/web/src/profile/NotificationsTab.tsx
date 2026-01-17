@@ -28,9 +28,7 @@ export function NotificationsTab() {
       }),
     );
 
-    updateNotificationPreferences.mutate({
-      [key]: checked,
-    });
+    updateNotificationPreferences.mutate({ [key]: checked });
   };
 
   return (
@@ -38,9 +36,7 @@ export function NotificationsTab() {
       <Descriptions styles={{ label: { width: 250 } }}>
         <Descriptions.Item label="Notificar nueva cuota">
           <Switch
-            checked={
-              member?.notificationPreferences.notifyOnDueCreated ?? false
-            }
+            checked={member?.notificationPreferences.notifyOnDueCreated}
             onChange={(checked) =>
               handlePreferenceChange('notifyOnDueCreated', checked)
             }
@@ -48,9 +44,7 @@ export function NotificationsTab() {
         </Descriptions.Item>
         <Descriptions.Item label="Notificar pago realizado">
           <Switch
-            checked={
-              member?.notificationPreferences.notifyOnPaymentMade ?? false
-            }
+            checked={member?.notificationPreferences.notifyOnPaymentMade}
             onChange={(checked) =>
               handlePreferenceChange('notifyOnPaymentMade', checked)
             }

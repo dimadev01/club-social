@@ -1,5 +1,5 @@
 import { UpdateMemberNotificationPreferencesDto } from '@club-social/shared/members';
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
@@ -22,6 +22,7 @@ export interface UpdateMemberNotificationPreferencesParams {
   updatedBy: string;
 }
 
+@Injectable()
 export class UpdateMemberNotificationPreferencesUseCase extends UseCase<MemberEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
