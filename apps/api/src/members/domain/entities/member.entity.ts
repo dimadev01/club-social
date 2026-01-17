@@ -115,15 +115,12 @@ export class MemberEntity extends AuditedAggregateRoot {
   }
 
   public static create(
-    props: StrictOmit<MemberProps, 'notificationPreferences' | 'status'> & {
-      notificationPreferences?: MemberNotification;
-    },
+    props: StrictOmit<MemberProps, 'status'>,
     user: UserEntity,
   ): Result<MemberEntity> {
     const member = new MemberEntity(
       {
         ...props,
-        notificationPreferences: MemberNotification.raw(),
         status: MemberStatus.ACTIVE,
       },
       {

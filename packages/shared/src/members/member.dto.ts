@@ -18,6 +18,7 @@ export interface CreateMemberDto {
   lastName: string;
   maritalStatus: MaritalStatus | null;
   nationality: MemberNationality | null;
+  notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
   sex: MemberSex | null;
 }
@@ -48,7 +49,6 @@ export interface MemberDto {
   status: MemberStatus;
   userId: string;
 }
-
 
 export interface MemberNotificationPreferencesDto {
   notifyOnDueCreated: boolean;

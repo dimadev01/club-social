@@ -266,5 +266,64 @@ describe('MemberEntity', () => {
       expect(member.status).toBe(MemberStatus.ACTIVE);
       expect(member.updatedBy).toBe(TEST_CREATED_BY);
     });
+
+    it('should update notification preferences', () => {
+      const user = createTestUser();
+      const member = createTestMember(user);
+
+      member.updateProfile({
+        ...createMemberProps(user.id),
+        notificationPreferences: MemberNotification.raw({
+          notifyOnDueCreated: false,
+          notifyOnPaymentMade: true,
+        }),
+        updatedBy: TEST_CREATED_BY,
+      });
+
+      expect(member.notificationPreferences.notifyOnDueCreated).toBe(false);
+      expect(member.notificationPreferences.notifyOnPaymentMade).toBe(true);
+    });
+  });
+
+  describe('notificationPreferences', () => {
+    it('should have default notification preferences on creation', () => {
+      const user = createTestUser();
+      const member = createTestMember(user);
+
+      expect(member.notificationPreferences.notifyOnDueCreated).toBe(true);
+      expect(member.notificationPreferences.notifyOnPaymentMade).toBe(true);
+    });
+
+    it('should preserve notification preferences when cloning', () => {
+      const user = createTestUser();
+
+      const original = createTestMember(user, {
+        notificationPreferences: MemberNotification.raw({
+          notifyOnDueCreated: false,
+          notifyOnPaymentMade: true,
+        }),
+      });
+
+      const cloned = original.clone();
+
+      expect(cloned.notificationPreferences.notifyOnDueCreated).toBe(false);
+      expect(cloned.notificationPreferences.notifyOnPaymentMade).toBe(true);
+    });
+
+    it('should allow partial notification preference updates', () => {
+      const user = createTestUser();
+      const member = createTestMember(user);
+
+      member.updateProfile({
+        ...createMemberProps(user.id),
+        notificationPreferences: MemberNotification.raw({
+          notifyOnDueCreated: false,
+        }),
+        updatedBy: TEST_CREATED_BY,
+      });
+
+      expect(member.notificationPreferences.notifyOnDueCreated).toBe(false);
+      expect(member.notificationPreferences.notifyOnPaymentMade).toBe(true);
+    });
   });
 });

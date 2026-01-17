@@ -15,6 +15,7 @@ import { MemberNotification } from '@/members/domain/value-objects/member-notifi
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import { StrictOmit } from '@/shared/types/type-utils';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 
 import {
@@ -24,7 +25,9 @@ import {
   TEST_PHONE,
 } from '../constants';
 
-export type MemberPropsOverrides = Partial<Omit<MemberProps, 'userId'>>;
+export type MemberPropsOverrides = Partial<
+  StrictOmit<MemberProps, 'status' | 'userId'>
+>;
 
 export const createMemberProps = (
   userId: UniqueId,

@@ -109,7 +109,24 @@ export function MemberView() {
             children: formatAddress(member.address),
             label: 'Dirección',
           },
+          {
+            children: member.notificationPreferences.notifyOnDueCreated
+              ? 'Si'
+              : 'No',
+            label: 'Notificar deuda creada',
+          },
+          {
+            children: member.notificationPreferences.notifyOnPaymentMade
+              ? 'Si'
+              : 'No',
+            label: 'Notificar pago realizado',
+          },
         ]}
+        styles={{
+          label: {
+            width: 250,
+          },
+        }}
       />
     </Card>
   );
