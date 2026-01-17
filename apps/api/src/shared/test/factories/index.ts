@@ -11,7 +11,6 @@ export {
   createDueProps,
   createTestDue,
   createTestDueFromPersistence,
-  type DuePropsOverrides,
 } from './due.factory';
 export {
   createMemberProps,

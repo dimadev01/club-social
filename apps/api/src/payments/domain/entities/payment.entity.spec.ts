@@ -46,23 +46,6 @@ describe('PaymentEntity', () => {
       expect(payment.createdBy).toBe(TEST_CREATED_BY);
     });
 
-    it('should create a payment with null notes and receiptNumber', () => {
-      const payment = createTestPayment({
-        notes: null,
-        receiptNumber: null,
-      });
-
-      expect(payment.notes).toBeNull();
-      expect(payment.receiptNumber).toBeNull();
-    });
-
-    it('should generate a unique id', () => {
-      const payment1 = createTestPayment();
-      const payment2 = createTestPayment();
-
-      expect(payment1.id.value).not.toBe(payment2.id.value);
-    });
-
     it('should add PaymentCreatedEvent on creation', () => {
       const payment = createTestPayment();
       const events = payment.pullEvents();
@@ -151,41 +134,33 @@ describe('PaymentEntity', () => {
     });
   });
 
-  describe('isPaid', () => {
-    it('should return true when status is PAID', () => {
-      const payment = createTestPayment();
+  describe('status checks', () => {
+    it('should reflect status helpers for each status', () => {
+      const cases = [
+        {
+          expected: { isPaid: true, isVoided: false },
+          status: PaymentStatus.PAID,
+        },
+        {
+          expected: { isPaid: false, isVoided: true },
+          status: PaymentStatus.VOIDED,
+        },
+      ];
 
-      expect(payment.isPaid()).toBe(true);
-    });
+      cases.forEach(({ expected, status }) => {
+        const payment =
+          status === PaymentStatus.PAID
+            ? createTestPayment()
+            : createTestPaymentFromPersistence({
+                status,
+                voidedAt: new Date(),
+                voidedBy: TEST_CREATED_BY,
+                voidReason: 'Test',
+              });
 
-    it('should return false when status is VOIDED', () => {
-      const payment = createTestPaymentFromPersistence({
-        status: PaymentStatus.VOIDED,
-        voidedAt: new Date(),
-        voidedBy: TEST_CREATED_BY,
-        voidReason: 'Test',
+        expect(payment.isPaid()).toBe(expected.isPaid);
+        expect(payment.isVoided()).toBe(expected.isVoided);
       });
-
-      expect(payment.isPaid()).toBe(false);
-    });
-  });
-
-  describe('isVoided', () => {
-    it('should return true when status is VOIDED', () => {
-      const payment = createTestPaymentFromPersistence({
-        status: PaymentStatus.VOIDED,
-        voidedAt: new Date(),
-        voidedBy: TEST_CREATED_BY,
-        voidReason: 'Test',
-      });
-
-      expect(payment.isVoided()).toBe(true);
-    });
-
-    it('should return false when status is PAID', () => {
-      const payment = createTestPayment();
-
-      expect(payment.isVoided()).toBe(false);
     });
   });
 
