@@ -1,6 +1,7 @@
 import type { DueEntity } from '@/dues/domain/entities/due.entity';
 import type { MemberLedgerEntryEntity } from '@/members/ledger/domain/entities/member-ledger-entry.entity';
 import type { MovementEntity } from '@/movements/domain/entities/movement.entity';
+import type { NotificationEntity } from '@/notifications/domain/entities/notification.entity';
 import type { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 
 import { GroupEntity } from '@/groups/domain/entities/group.entity';
@@ -20,6 +21,7 @@ export interface TransactionalRepositories {
   memberLedgerRepository: WriteableRepository<MemberLedgerEntryEntity>;
   memberRepository: WriteableRepository<MemberEntity>;
   movementsRepository: WriteableRepository<MovementEntity>;
+  notificationRepository: WriteableRepository<NotificationEntity>;
   paymentsRepository: WriteableRepository<PaymentEntity>;
   pricingRepository: WriteableRepository<PricingEntity>;
   userRepository: WriteableRepository<UserEntity>;

@@ -428,6 +428,8 @@ export const ModelName = {
   AppSetting: 'AppSetting',
   Group: 'Group',
   GroupMember: 'GroupMember',
+  Notification: 'Notification',
+  EmailSuppression: 'EmailSuppression',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -465,7 +467,9 @@ export type TypeMap<
       | 'pricing'
       | 'appSetting'
       | 'group'
-      | 'groupMember';
+      | 'groupMember'
+      | 'notification'
+      | 'emailSuppression';
     txIsolationLevel: TransactionIsolationLevel;
   };
   model: {
@@ -1685,6 +1689,158 @@ export type TypeMap<
         };
       };
     };
+    Notification: {
+      payload: Prisma.$NotificationPayload<ExtArgs>;
+      fields: Prisma.NotificationFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.NotificationFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.NotificationFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
+        };
+        findFirst: {
+          args: Prisma.NotificationFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.NotificationFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
+        };
+        findMany: {
+          args: Prisma.NotificationFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>[];
+        };
+        create: {
+          args: Prisma.NotificationCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
+        };
+        createMany: {
+          args: Prisma.NotificationCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.NotificationCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>[];
+        };
+        delete: {
+          args: Prisma.NotificationDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
+        };
+        update: {
+          args: Prisma.NotificationUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
+        };
+        deleteMany: {
+          args: Prisma.NotificationDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.NotificationUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.NotificationUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>[];
+        };
+        upsert: {
+          args: Prisma.NotificationUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NotificationPayload>;
+        };
+        aggregate: {
+          args: Prisma.NotificationAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNotification>;
+        };
+        groupBy: {
+          args: Prisma.NotificationGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.NotificationGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.NotificationCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.NotificationCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
+    EmailSuppression: {
+      payload: Prisma.$EmailSuppressionPayload<ExtArgs>;
+      fields: Prisma.EmailSuppressionFieldRefs;
+      operations: {
+        findUnique: {
+          args: Prisma.EmailSuppressionFindUniqueArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload> | null;
+        };
+        findUniqueOrThrow: {
+          args: Prisma.EmailSuppressionFindUniqueOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload>;
+        };
+        findFirst: {
+          args: Prisma.EmailSuppressionFindFirstArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload> | null;
+        };
+        findFirstOrThrow: {
+          args: Prisma.EmailSuppressionFindFirstOrThrowArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload>;
+        };
+        findMany: {
+          args: Prisma.EmailSuppressionFindManyArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload>[];
+        };
+        create: {
+          args: Prisma.EmailSuppressionCreateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload>;
+        };
+        createMany: {
+          args: Prisma.EmailSuppressionCreateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        createManyAndReturn: {
+          args: Prisma.EmailSuppressionCreateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload>[];
+        };
+        delete: {
+          args: Prisma.EmailSuppressionDeleteArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload>;
+        };
+        update: {
+          args: Prisma.EmailSuppressionUpdateArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload>;
+        };
+        deleteMany: {
+          args: Prisma.EmailSuppressionDeleteManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateMany: {
+          args: Prisma.EmailSuppressionUpdateManyArgs<ExtArgs>;
+          result: BatchPayload;
+        };
+        updateManyAndReturn: {
+          args: Prisma.EmailSuppressionUpdateManyAndReturnArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload>[];
+        };
+        upsert: {
+          args: Prisma.EmailSuppressionUpsertArgs<ExtArgs>;
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailSuppressionPayload>;
+        };
+        aggregate: {
+          args: Prisma.EmailSuppressionAggregateArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmailSuppression>;
+        };
+        groupBy: {
+          args: Prisma.EmailSuppressionGroupByArgs<ExtArgs>;
+          result: runtime.Types.Utils.Optional<Prisma.EmailSuppressionGroupByOutputType>[];
+        };
+        count: {
+          args: Prisma.EmailSuppressionCountArgs<ExtArgs>;
+          result:
+            | runtime.Types.Utils.Optional<Prisma.EmailSuppressionCountAggregateOutputType>
+            | number;
+        };
+      };
+    };
   };
 } & {
   other: {
@@ -1998,6 +2154,47 @@ export const GroupMemberScalarFieldEnum = {
 export type GroupMemberScalarFieldEnum =
   (typeof GroupMemberScalarFieldEnum)[keyof typeof GroupMemberScalarFieldEnum];
 
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  memberId: 'memberId',
+  channel: 'channel',
+  recipientAddress: 'recipientAddress',
+  type: 'type',
+  payload: 'payload',
+  sourceEntity: 'sourceEntity',
+  sourceEntityId: 'sourceEntityId',
+  status: 'status',
+  attempts: 'attempts',
+  maxAttempts: 'maxAttempts',
+  lastError: 'lastError',
+  providerMessageId: 'providerMessageId',
+  scheduledAt: 'scheduledAt',
+  queuedAt: 'queuedAt',
+  processedAt: 'processedAt',
+  sentAt: 'sentAt',
+  deliveredAt: 'deliveredAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+} as const;
+
+export type NotificationScalarFieldEnum =
+  (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum];
+
+export const EmailSuppressionScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  reason: 'reason',
+  providerEventId: 'providerEventId',
+  providerData: 'providerData',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+} as const;
+
+export type EmailSuppressionScalarFieldEnum =
+  (typeof EmailSuppressionScalarFieldEnum)[keyof typeof EmailSuppressionScalarFieldEnum];
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc',
@@ -2254,6 +2451,8 @@ export type GlobalOmitConfig = {
   appSetting?: Prisma.AppSettingOmit;
   group?: Prisma.GroupOmit;
   groupMember?: Prisma.GroupMemberOmit;
+  notification?: Prisma.NotificationOmit;
+  emailSuppression?: Prisma.EmailSuppressionOmit;
 };
 
 /* Types for Logging */

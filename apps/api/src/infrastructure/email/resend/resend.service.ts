@@ -12,7 +12,11 @@ import { INFO_EMAIL } from '@/shared/constants';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 
 import { EmailProvider } from '../email.provider';
-import { SendEmailParams, SendTemplateEmailParams } from '../email.types';
+import {
+  EmailSendResult,
+  SendEmailParams,
+  SendTemplateEmailParams,
+} from '../email.types';
 
 @Injectable()
 export class ResendProvider implements EmailProvider {
@@ -28,7 +32,7 @@ export class ResendProvider implements EmailProvider {
     this.logger.setContext(ResendProvider.name);
   }
 
-  public async sendEmail(params: SendEmailParams): Promise<void> {
+  public async sendEmail(params: SendEmailParams): Promise<EmailSendResult> {
     const sendEmails = await this.appSettingService.getValue(
       AppSettingKey.SEND_EMAILS,
     );
@@ -39,7 +43,7 @@ export class ResendProvider implements EmailProvider {
         params,
       });
 
-      return;
+      return { id: 'disabled' };
     }
 
     this.logger.info({
@@ -55,7 +59,7 @@ export class ResendProvider implements EmailProvider {
         params,
       });
 
-      return;
+      return { id: 'no-recipients' };
     }
 
     const { data, error } = await this.resend.emails.send({
@@ -80,9 +84,13 @@ export class ResendProvider implements EmailProvider {
       message: 'Email sent',
       params,
     });
+
+    return { id: data?.id ?? 'unknown' };
   }
 
-  public async sendTemplate(params: SendTemplateEmailParams): Promise<void> {
+  public async sendTemplate(
+    params: SendTemplateEmailParams,
+  ): Promise<EmailSendResult> {
     this.logger.info({
       message: 'Sending template email',
       params,
@@ -96,7 +104,7 @@ export class ResendProvider implements EmailProvider {
         params,
       });
 
-      return;
+      return { id: 'no-recipients' };
     }
 
     const { data, error } = await this.resend.emails.send({
@@ -123,6 +131,8 @@ export class ResendProvider implements EmailProvider {
       message: 'Template email sent',
       params,
     });
+
+    return { id: data?.id ?? 'unknown' };
   }
 
   private buildToAddresses(emails: string | string[]): string[] {

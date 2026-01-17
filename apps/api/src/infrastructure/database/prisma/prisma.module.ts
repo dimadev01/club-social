@@ -22,6 +22,12 @@ import { MEMBER_LEDGER_REPOSITORY_PROVIDER } from '@/members/ledger/member-ledge
 import { MOVEMENT_REPOSITORY_PROVIDER } from '@/movements/domain/movement.repository';
 import { PrismaMovementMapper } from '@/movements/infrastructure/prisma-movement.mapper';
 import { PrismaMovementRepository } from '@/movements/infrastructure/prisma-movement.repository';
+import { EMAIL_SUPPRESSION_REPOSITORY_PROVIDER } from '@/notifications/domain/email-suppression.repository';
+import { NOTIFICATION_REPOSITORY_PROVIDER } from '@/notifications/domain/notification.repository';
+import { PrismaEmailSuppressionMapper } from '@/notifications/infrastructure/prisma-email-suppression.mapper';
+import { PrismaEmailSuppressionRepository } from '@/notifications/infrastructure/prisma-email-suppression.repository';
+import { PrismaNotificationMapper } from '@/notifications/infrastructure/prisma-notification.mapper';
+import { PrismaNotificationRepository } from '@/notifications/infrastructure/prisma-notification.repository';
 import { PAYMENT_REPOSITORY_PROVIDER } from '@/payments/domain/payment.repository';
 import { PrismaPaymentMapper } from '@/payments/infrastructure/prisma-payment.mapper';
 import { PrismaPaymentRepository } from '@/payments/infrastructure/prisma-payment.repository';
@@ -52,8 +58,10 @@ import { PrismaService } from './prisma.service';
     AUDIT_LOG_REPOSITORY_PROVIDER,
     APP_SETTING_REPOSITORY_PROVIDER,
     GROUP_REPOSITORY_PROVIDER,
+    NOTIFICATION_REPOSITORY_PROVIDER,
+    EMAIL_SUPPRESSION_REPOSITORY_PROVIDER,
   ],
-  imports: [],
+
   providers: [
     PrismaService,
 
@@ -68,6 +76,8 @@ import { PrismaService } from './prisma.service';
     PrismaMovementMapper,
     PrismaMemberLedgerEntryMapper,
     PrismaAppSettingMapper,
+    PrismaNotificationMapper,
+    PrismaEmailSuppressionMapper,
 
     {
       provide: UNIT_OF_WORK_PROVIDER,
@@ -112,6 +122,14 @@ import { PrismaService } from './prisma.service';
     {
       provide: APP_SETTING_REPOSITORY_PROVIDER,
       useClass: PrismaAppSettingRepository,
+    },
+    {
+      provide: NOTIFICATION_REPOSITORY_PROVIDER,
+      useClass: PrismaNotificationRepository,
+    },
+    {
+      provide: EMAIL_SUPPRESSION_REPOSITORY_PROVIDER,
+      useClass: PrismaEmailSuppressionRepository,
     },
   ],
 })

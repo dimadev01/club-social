@@ -1,22 +1,19 @@
 import { Global, Module } from '@nestjs/common';
 
 import { ConfigService } from '../config/config.service';
-import { QueueModule } from '../queue/queue.module';
 import { EmailCriticalProcessor } from './email-critical.processor';
 import { EmailQueueService } from './email-queue.service';
-import { EmailRegularProcessor } from './email-regular.processor';
 import { EMAIL_PROVIDER_PROVIDER } from './email.provider';
 import { NodemailerProvider } from './nodemailer/nodemailer.service';
 import { ResendProvider } from './resend/resend.service';
 
 @Global()
 @Module({
-  exports: [EmailQueueService],
-  imports: [QueueModule],
+  exports: [EmailQueueService, EMAIL_PROVIDER_PROVIDER],
+
   providers: [
     EmailQueueService,
     EmailCriticalProcessor,
-    EmailRegularProcessor,
     NodemailerProvider,
     ResendProvider,
     {

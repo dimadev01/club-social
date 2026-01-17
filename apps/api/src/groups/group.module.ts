@@ -6,8 +6,7 @@ import { GroupController } from './presentation/group.controller';
 
 @Module({
   controllers: [GroupController],
-  exports: [],
-  imports: [],
+
   providers: [CreateGroupUseCase, UpdateGroupUseCase],
 })
 export class GroupModule {}

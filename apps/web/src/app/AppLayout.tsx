@@ -3,6 +3,7 @@ import type { MenuItemType } from 'antd/es/menu/interface';
 import {
   FilePdfOutlined,
   FileTextOutlined,
+  NotificationOutlined,
   SettingOutlined,
   UserAddOutlined,
   UserOutlined,
@@ -133,6 +134,14 @@ export function AppLayout({ children }: PropsWithChildren) {
       });
     }
 
+    if (permissions.groups.list) {
+      items.push({
+        icon: <GrGroup />,
+        key: appRoutes.groups.list,
+        label: 'Grupos',
+      });
+    }
+
     if (permissions.auditLogs.list) {
       items.push({
         icon: <AuditLogsIcon />,
@@ -141,11 +150,11 @@ export function AppLayout({ children }: PropsWithChildren) {
       });
     }
 
-    if (permissions.groups.list) {
+    if (isAdmin) {
       items.push({
-        icon: <GrGroup />,
-        key: appRoutes.groups.list,
-        label: 'Grupos',
+        icon: <NotificationOutlined />,
+        key: appRoutes.notifications.list,
+        label: 'Notificaciones',
       });
     }
 

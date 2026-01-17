@@ -6,7 +6,7 @@ import { MovementsController } from './presentation/movement.controller';
 
 @Module({
   controllers: [MovementsController],
-  exports: [],
+
   providers: [CreateMovementUseCase, VoidMovementUseCase],
 })
 export class MovementsModule {}

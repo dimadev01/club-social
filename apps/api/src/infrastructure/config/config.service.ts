@@ -48,8 +48,12 @@ export class ConfigService {
   public readonly redisPort: number;
 
   @IsString()
-  @Value('RESEND_API_KEY')
+  @Value('RESEND_API_KEY', { default: '' })
   public readonly resendApiKey: string;
+
+  @IsString()
+  @Value('RESEND_WEBHOOK_SECRET', { default: '' })
+  public readonly resendWebhookSecret: string;
 
   @IsString({ each: true })
   @Value('TRUSTED_ORIGINS', {

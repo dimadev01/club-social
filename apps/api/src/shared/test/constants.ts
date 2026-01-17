@@ -80,3 +80,13 @@ export const TEST_PRICING_EFFECTIVE_FROM = '2024-01-01';
 export const TEST_ALT_PRICING_AMOUNT_CENTS = 75000;
 export const TEST_ALT_PRICING_EFFECTIVE_FROM = '2024-03-01';
 export const TEST_ALT_PRICING_EFFECTIVE_TO = '2024-06-30';
+
+// Notification constants
+export const TEST_NOTIFICATION_RECIPIENT = 'recipient@example.com';
+export const TEST_NOTIFICATION_PAYLOAD = {
+  html: '<p>Test content</p>',
+  subject: 'Test Subject',
+} as const;
+export const TEST_NOTIFICATION_SOURCE_ENTITY = 'Due';
+export const TEST_NOTIFICATION_PROVIDER_MESSAGE_ID = 'msg-123456';
+export const TEST_NOTIFICATION_ERROR = 'Email delivery failed';

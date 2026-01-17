@@ -55,6 +55,10 @@ export const usePermissions = () => {
       update: useHasPermission(Resource.MOVEMENTS, Action.UPDATE),
       void: useHasPermission(Resource.MOVEMENTS, Action.VOID),
     },
+    notifications: {
+      get: useHasPermission(Resource.NOTIFICATIONS, Action.GET),
+      list: useHasPermission(Resource.NOTIFICATIONS, Action.LIST),
+    } as const,
     payments: {
       create: useHasPermission(Resource.PAYMENTS, Action.CREATE),
       get: useHasPermission(Resource.PAYMENTS, Action.GET),

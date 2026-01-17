@@ -7,8 +7,7 @@ import { UsersController } from './presentation/user.controller';
 
 @Module({
   controllers: [UsersController],
-  exports: [],
-  imports: [],
+
   providers: [
     CreateUserUseCase,
     UpdateUserPreferencesUseCase,

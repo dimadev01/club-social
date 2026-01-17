@@ -38,11 +38,11 @@ npm run test:e2e           # Run end-to-end tests
 npm run test:cov           # Run tests with coverage
 
 # Prisma commands (all use dotenvx for env loading)
-npm run prisma:generate    # Generate Prisma client
-npm run prisma:new         # Create and apply new migration
-npm run prisma:new:create-only  # Create migration without applying
-npm run prisma:migrate     # Apply migrations (production)
-npm run prisma:reset       # Reset database (destructive)
+npm run prisma:generate-schema        # Generate Prisma client
+npm run prisma:migration:new          # Create and apply new migration
+npm run prisma:migration:new:create-only  # Create migration without applying
+npm run migrate                       # Apply migrations (production)
+npm run prisma:reset-database         # Reset database (destructive)
 
 # Better Auth
 npm run better-auth:generate  # Generate Better Auth client
@@ -109,6 +109,9 @@ Current domain modules:
 - `movements/` - Financial movements with status tracking
 - `pricing/` - Pricing configuration
 - `audit/` - Audit logging
+- `notifications/` - Notification management and delivery
+- `groups/` - Member groups management
+- `app-settings/` - Application-level settings
 
 #### Key Architectural Patterns
 
@@ -317,6 +320,9 @@ import { ... } from '@club-social/shared/audit-logs';
 import { ... } from '@club-social/shared/roles';
 import { ... } from '@club-social/shared/types';
 import { ... } from '@club-social/shared/lib';
+import { ... } from '@club-social/shared/groups';
+import { ... } from '@club-social/shared/notifications';
+import { ... } from '@club-social/shared/app-settings';
 ```
 
 Built with tsup for dual CJS/ESM output. Must be built before dependent packages.
@@ -362,9 +368,9 @@ export class MembersModule {}
 ### Database Changes
 
 1. Update `schema.prisma`
-2. Run `npm run prisma:new:create-only` to generate migration
+2. Run `npm run prisma:migration:new:create-only` to generate migration
 3. Review generated SQL in `prisma/migrations/`
-4. Apply with `npm run prisma:new`
+4. Apply with `npm run prisma:migration:new`
 5. Update mappers and entities
 
 ### Shared Types

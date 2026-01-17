@@ -4,6 +4,7 @@ import {
   MovementStatus,
 } from '@club-social/shared/movements';
 
+import { SYSTEM_USER } from '@/shared/domain/constants';
 import { SignedAmount } from '@/shared/domain/value-objects/amount/signed-amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -87,7 +88,7 @@ describe('MovementEntity', () => {
           notes: TEST_ALT_MOVEMENT_NOTES,
           paymentId,
         },
-        { audit: { createdBy: 'system' }, id },
+        { audit: { createdBy: SYSTEM_USER }, id },
       );
 
       expect(movement.id).toBe(id);

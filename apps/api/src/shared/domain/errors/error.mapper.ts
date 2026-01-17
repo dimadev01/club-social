@@ -10,11 +10,7 @@ export abstract class ErrorMapper {
       return new Error(value);
     }
 
-    if (Guard.isNull(value)) {
-      return new Error('Unknown error');
-    }
-
-    if (Guard.isUndefined(value)) {
+    if (Guard.isNil(value)) {
       return new Error('Unknown error');
     }
 

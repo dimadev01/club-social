@@ -10,7 +10,11 @@ import {
 } from '@/shared/application/app-logger';
 
 import { EmailProvider } from '../email.provider';
-import { SendEmailParams, SendTemplateEmailParams } from '../email.types';
+import {
+  EmailSendResult,
+  SendEmailParams,
+  SendTemplateEmailParams,
+} from '../email.types';
 
 @Injectable()
 export class NodemailerProvider implements EmailProvider {
@@ -29,7 +33,7 @@ export class NodemailerProvider implements EmailProvider {
     this.logger.setContext(NodemailerProvider.name);
   }
 
-  public async sendEmail(params: SendEmailParams): Promise<void> {
+  public async sendEmail(params: SendEmailParams): Promise<EmailSendResult> {
     const sendEmails = await this.appSettingService.getValue(
       AppSettingKey.SEND_EMAILS,
     );
@@ -40,7 +44,7 @@ export class NodemailerProvider implements EmailProvider {
         params,
       });
 
-      return;
+      return { id: 'disabled' };
     }
 
     this.logger.info({
@@ -49,7 +53,7 @@ export class NodemailerProvider implements EmailProvider {
     });
 
     try {
-      await this.nodemailer.sendMail({
+      const result = await this.nodemailer.sendMail({
         from: params.from ?? 'Club Social <info@clubsocialmontegrande.ar>',
         html: params.html,
         subject: params.subject,
@@ -60,16 +64,22 @@ export class NodemailerProvider implements EmailProvider {
         message: 'Email sent',
         params,
       });
+
+      return { id: result.messageId ?? 'nodemailer' };
     } catch (error) {
       this.logger.error({
         error,
         message: 'Error sending email',
         params,
       });
+
+      throw error;
     }
   }
 
-  public async sendTemplate(params: SendTemplateEmailParams): Promise<void> {
+  public async sendTemplate(
+    params: SendTemplateEmailParams,
+  ): Promise<EmailSendResult> {
     const sendEmails = await this.appSettingService.getValue(
       AppSettingKey.SEND_EMAILS,
     );
@@ -80,7 +90,7 @@ export class NodemailerProvider implements EmailProvider {
         params,
       });
 
-      return;
+      return { id: 'disabled' };
     }
 
     this.logger.info({
@@ -89,6 +99,6 @@ export class NodemailerProvider implements EmailProvider {
       params,
     });
 
-    return;
+    return { id: 'nodemailer-no-template-support' };
   }
 }
