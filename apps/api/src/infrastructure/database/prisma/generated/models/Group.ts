@@ -304,7 +304,7 @@ export type GroupScalarWhereWithAggregatesInput = {
 export type GroupCreateInput = {
   id: string;
   name: string;
-  discountPercent?: number;
+  discountPercent: number;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -315,7 +315,7 @@ export type GroupCreateInput = {
 export type GroupUncheckedCreateInput = {
   id: string;
   name: string;
-  discountPercent?: number;
+  discountPercent: number;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -348,7 +348,7 @@ export type GroupUncheckedUpdateInput = {
 export type GroupCreateManyInput = {
   id: string;
   name: string;
-  discountPercent?: number;
+  discountPercent: number;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -447,7 +447,7 @@ export type GroupUpdateOneRequiredWithoutMembersNestedInput = {
 export type GroupCreateWithoutMembersInput = {
   id: string;
   name: string;
-  discountPercent?: number;
+  discountPercent: number;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -457,7 +457,7 @@ export type GroupCreateWithoutMembersInput = {
 export type GroupUncheckedCreateWithoutMembersInput = {
   id: string;
   name: string;
-  discountPercent?: number;
+  discountPercent: number;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;

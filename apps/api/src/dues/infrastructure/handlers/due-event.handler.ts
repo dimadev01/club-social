@@ -40,6 +40,15 @@ export class DueEventHandler {
       event.due.memberId,
     );
 
+    if (!member.notificationPreferences.notifyOnDueCreated) {
+      this.logger.info({
+        memberId: member.id,
+        message: 'Skipping due created email - member opted out',
+      });
+
+      return;
+    }
+
     const pendingDues = await this.dueRepository.findPendingByMemberId(
       event.due.memberId,
     );

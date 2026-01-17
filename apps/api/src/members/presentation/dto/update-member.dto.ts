@@ -4,6 +4,7 @@ import {
   MemberAddressDto,
   MemberCategory,
   MemberNationality,
+  MemberNotificationPreferencesDto,
   MemberSex,
   MemberStatus,
   UpdateMemberDto,
@@ -11,6 +12,7 @@ import {
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsDateString,
   IsEmail,
   IsEnum,
@@ -37,6 +39,14 @@ export class AddressRequestDto implements MemberAddressDto {
   @IsOptional()
   @IsString()
   public zipCode: null | string;
+}
+
+export class NotificationPreferencesRequestDto implements MemberNotificationPreferencesDto {
+  @IsBoolean()
+  public notifyOnDueCreated: boolean;
+
+  @IsBoolean()
+  public notifyOnPaymentMade: boolean;
 }
 
 export class UpdateMemberRequestDto implements UpdateMemberDto {
@@ -81,6 +91,11 @@ export class UpdateMemberRequestDto implements UpdateMemberDto {
   @IsEnum(MemberNationality)
   @IsOptional()
   public nationality: MemberNationality | null;
+
+  @IsObject()
+  @Type(() => NotificationPreferencesRequestDto)
+  @ValidateNested()
+  public notificationPreferences: NotificationPreferencesRequestDto;
 
   @IsArray()
   @IsString({ each: true })

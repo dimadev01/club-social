@@ -15,10 +15,19 @@ import {
   MemberStatus,
   MemberStatusLabel,
 } from '@club-social/shared/members';
-import { Col, DatePicker, Empty, Radio, Space } from 'antd';
+import { Checkbox, Col, Empty, Radio, Space } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { AddNewIcon, Button, Card, Form, Input, Row, Select } from '@/ui';
+import {
+  AddNewIcon,
+  Button,
+  Card,
+  DatePicker,
+  Form,
+  Input,
+  Row,
+  Select,
+} from '@/ui';
 
 export interface MemberFormData {
   address: {
@@ -36,6 +45,10 @@ export interface MemberFormData {
   lastName: string;
   maritalStatus?: MaritalStatus;
   nationality?: MemberNationality;
+  notificationPreferences: {
+    notifyOnDueCreated: boolean;
+    notifyOnPaymentMade: boolean;
+  };
   phones: string[];
   sex?: MemberSex;
   status: MemberStatus;
@@ -108,11 +121,7 @@ export function MemberForm({
               </Form.Item>
 
               {isEditMode && (
-                <Form.Item<MemberFormData>
-                  label="Estado"
-                  name="status"
-                  rules={[{ required: true }]}
-                >
+                <Form.Item<MemberFormData> label="Estado" name="status">
                   <Select
                     options={labelMapToSelectOptions(MemberStatusLabel)}
                   />
@@ -123,15 +132,14 @@ export function MemberForm({
               <Form.Item<MemberFormData>
                 label="Fecha de nacimiento"
                 name="birthDate"
-                rules={[{ required: false }]}
               >
-                <DatePicker className="w-full" format="DD/MM/YYYY" />
+                <DatePicker />
               </Form.Item>
 
               <Form.Item<MemberFormData>
                 label="Documento de identidad"
                 name="documentID"
-                rules={[{ required: false, whitespace: true }]}
+                rules={[{ whitespace: true }]}
               >
                 <Input placeholder="12.345.678" />
               </Form.Item>
@@ -254,6 +262,22 @@ export function MemberForm({
                 rules={[{ required: false, whitespace: true }]}
               >
                 <Input placeholder="1842" />
+              </Form.Item>
+            </Card>
+
+            <Card size="small" title="Notificaciones" type="inner">
+              <Form.Item<MemberFormData>
+                name={['notificationPreferences', 'notifyOnDueCreated']}
+                valuePropName="checked"
+              >
+                <Checkbox>Notificar nueva cuota</Checkbox>
+              </Form.Item>
+
+              <Form.Item<MemberFormData>
+                name={['notificationPreferences', 'notifyOnPaymentMade']}
+                valuePropName="checked"
+              >
+                <Checkbox>Notificar pago realizado</Checkbox>
               </Form.Item>
             </Card>
           </Space>

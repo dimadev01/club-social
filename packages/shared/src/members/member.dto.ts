@@ -42,10 +42,17 @@ export interface MemberDto {
   maritalStatus: MaritalStatus | null;
   name: string;
   nationality: MemberNationality | null;
+  notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
   sex: MemberSex | null;
   status: MemberStatus;
   userId: string;
+}
+
+
+export interface MemberNotificationPreferencesDto {
+  notifyOnDueCreated: boolean;
+  notifyOnPaymentMade: boolean;
 }
 
 export interface MemberPaginatedDto {
@@ -86,6 +93,7 @@ export interface UpdateMemberDto {
   lastName: string;
   maritalStatus: MaritalStatus | null;
   nationality: MemberNationality | null;
+  notificationPreferences?: MemberNotificationPreferencesDto;
   phones: string[];
   sex: MemberSex | null;
   status: MemberStatus;

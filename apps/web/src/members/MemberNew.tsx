@@ -83,6 +83,10 @@ export function MemberNew() {
           lastName: '',
           maritalStatus: undefined,
           nationality: undefined,
+          notificationPreferences: {
+            notifyOnDueCreated: true,
+            notifyOnPaymentMade: true,
+          },
           phones: [],
           sex: undefined,
         }}

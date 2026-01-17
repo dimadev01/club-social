@@ -29,6 +29,7 @@ import {
 
 import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
+import { MemberNotification } from '../value-objects/member-notification.vo';
 import { MemberEntity } from './member.entity';
 
 describe('MemberEntity', () => {
@@ -125,6 +126,7 @@ describe('MemberEntity', () => {
           fileStatus: FileStatus.PENDING,
           maritalStatus: null,
           nationality: MemberNationality.COLOMBIA,
+          notificationPreferences: MemberNotification.raw(),
           phones: [TEST_ALT_PHONE],
           sex: MemberSex.FEMALE,
           status: MemberStatus.INACTIVE,
@@ -196,6 +198,7 @@ describe('MemberEntity', () => {
         fileStatus: FileStatus.PENDING,
         maritalStatus: MaritalStatus.MARRIED,
         nationality: MemberNationality.UKRAINE,
+        notificationPreferences: MemberNotification.raw(),
         phones: [TEST_ALT_PHONE, '+54 351 765-4321'],
         sex: MemberSex.FEMALE,
         status: MemberStatus.ACTIVE,
@@ -246,6 +249,7 @@ describe('MemberEntity', () => {
         fileStatus: FileStatus.PENDING,
         maritalStatus: null,
         nationality: null,
+        notificationPreferences: MemberNotification.raw(),
         phones: [],
         sex: null,
         status: MemberStatus.ACTIVE,
