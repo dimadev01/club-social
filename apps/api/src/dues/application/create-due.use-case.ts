@@ -4,9 +4,10 @@ import {
   NotificationChannel,
   NotificationType,
 } from '@club-social/shared/notifications';
-import { Inject } from '@nestjs/common';
-import { filter, flow, sumBy } from 'es-toolkit/compat';
+import { Inject, Injectable } from '@nestjs/common';
+import { sumBy } from 'es-toolkit/compat';
 
+import type { MemberReadModel } from '@/members/domain/member-read-models';
 import type { Result } from '@/shared/domain/result';
 
 import { DueEntity } from '@/dues/domain/entities/due.entity';
@@ -44,6 +45,7 @@ interface CreateDueParams {
   notes: null | string;
 }
 
+@Injectable()
 export class CreateDueUseCase extends UseCase<DueEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
@@ -95,63 +97,17 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
       UniqueId.raw({ value: params.memberId }),
     );
 
-    let notification: NotificationEntity | null = null;
+    const notificationResult = await this.createDueNotification(
+      due.value,
+      member,
+      params.createdBy,
+    );
 
-    if (member.notificationPreferences.notifyOnDueCreated) {
-      const pendingDues = await this.dueRepository.findPendingByMemberId(
-        UniqueId.raw({ value: params.memberId }),
-      );
-
-      const allPendingDues = [...pendingDues, due.value];
-
-      const getPendingAmount = flow(
-        (dues: DueEntity[], category: DueCategory) =>
-          filter(dues, (d) => d.category === category),
-        (dues: DueEntity[]) => sumBy(dues, (d) => d.pendingAmount.cents),
-      );
-
-      const pendingElectricity = getPendingAmount(
-        allPendingDues,
-        DueCategory.ELECTRICITY,
-      );
-      const pendingGuest = getPendingAmount(allPendingDues, DueCategory.GUEST);
-      const pendingMembership = getPendingAmount(
-        allPendingDues,
-        DueCategory.MEMBERSHIP,
-      );
-      const pendingTotal =
-        pendingElectricity + pendingGuest + pendingMembership;
-
-      const notificationResult = NotificationEntity.create(
-        {
-          channel: NotificationChannel.EMAIL,
-          memberId: UniqueId.raw({ value: params.memberId }),
-          payload: {
-            template: 'new-movement',
-            variables: {
-              amount: NumberFormat.currencyCents(params.amount),
-              category: DueCategoryLabel[params.category],
-              date: DateFormat.date(date.value),
-              memberName: member.firstName,
-              pendingElectricity:
-                NumberFormat.currencyCents(pendingElectricity),
-              pendingGuest: NumberFormat.currencyCents(pendingGuest),
-              pendingMembership: NumberFormat.currencyCents(pendingMembership),
-              pendingTotal: NumberFormat.currencyCents(pendingTotal),
-            },
-          },
-          recipientAddress: member.email,
-          sourceEntity: 'due',
-          sourceEntityId: due.value.id,
-          type: NotificationType.DUE_CREATED,
-        },
-        params.createdBy,
-      );
-
-      if (notificationResult.isOk()) {
-        notification = notificationResult.value;
-      }
+    if (notificationResult.isErr()) {
+      return err(notificationResult.error);
     }
+
+    const notification = notificationResult.value;
 
     await this.unitOfWork.execute(async (repos) => {
       await repos.duesRepository.save(due.value);
@@ -164,5 +120,78 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
     this.eventPublisher.dispatch(due.value);
 
     return ok(due.value);
+  }
+
+  private calculatePendingByCategory(dues: DueEntity[]): {
+    pendingElectricity: string;
+    pendingGuest: string;
+    pendingMembership: string;
+    pendingTotal: string;
+  } {
+    const getPendingAmount = (category: DueCategory) =>
+      sumBy(
+        dues.filter((d) => d.category === category),
+        (d) => d.pendingAmount.cents,
+      );
+
+    const electricity = getPendingAmount(DueCategory.ELECTRICITY);
+    const guest = getPendingAmount(DueCategory.GUEST);
+    const membership = getPendingAmount(DueCategory.MEMBERSHIP);
+
+    return {
+      pendingElectricity: NumberFormat.currencyCents(electricity),
+      pendingGuest: NumberFormat.currencyCents(guest),
+      pendingMembership: NumberFormat.currencyCents(membership),
+      pendingTotal: NumberFormat.currencyCents(
+        electricity + guest + membership,
+      ),
+    };
+  }
+
+  private async createDueNotification(
+    due: DueEntity,
+    member: MemberReadModel,
+    createdBy: string,
+  ): Promise<Result<NotificationEntity | null>> {
+    if (!member.notificationPreferences.notifyOnDueCreated) {
+      return ok(null);
+    }
+
+    const pendingDues = await this.dueRepository.findPendingByMemberId(
+      due.memberId,
+    );
+    const allPendingDues = [...pendingDues, due];
+    const pendingByCategory = this.calculatePendingByCategory(allPendingDues);
+
+    const result = NotificationEntity.create(
+      {
+        channel: NotificationChannel.EMAIL,
+        memberId: due.memberId,
+        payload: {
+          template: 'new-movement',
+          variables: {
+            amount: NumberFormat.currencyCents(due.amount.cents),
+            category: DueCategoryLabel[due.category],
+            date: DateFormat.date(due.date.value),
+            memberName: member.firstName,
+            pendingElectricity: pendingByCategory.pendingElectricity,
+            pendingGuest: pendingByCategory.pendingGuest,
+            pendingMembership: pendingByCategory.pendingMembership,
+            pendingTotal: pendingByCategory.pendingTotal,
+          },
+        },
+        recipientAddress: member.email,
+        sourceEntity: 'due',
+        sourceEntityId: due.id,
+        type: NotificationType.DUE_CREATED,
+      },
+      createdBy,
+    );
+
+    if (result.isErr()) {
+      return err(result.error);
+    }
+
+    return ok(result.value);
   }
 }

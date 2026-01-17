@@ -6,7 +6,6 @@ import { PaymentsController } from './presentation/payment.controller';
 
 @Module({
   controllers: [PaymentsController],
-
   providers: [CreatePaymentUseCase, VoidPaymentUseCase],
 })
 export class PaymentsModule {}

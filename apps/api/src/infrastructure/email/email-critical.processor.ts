@@ -2,7 +2,6 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Inject } from '@nestjs/common';
 import { Job } from 'bullmq';
 
-import { AppSettingService } from '@/app-settings/infrastructure/app-setting.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -28,7 +27,6 @@ export class EmailCriticalProcessor extends WorkerHost {
     protected readonly logger: AppLogger,
     @Inject(EMAIL_PROVIDER_PROVIDER)
     private readonly emailProvider: EmailProvider,
-    private readonly appSettingService: AppSettingService,
   ) {
     super();
     this.logger.setContext(EmailCriticalProcessor.name);

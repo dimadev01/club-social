@@ -23,8 +23,11 @@ import { NotificationJobData } from './outbox-worker.processor';
 
 @Injectable()
 @Processor('notification', {
+  autorun: true,
+  concurrency: 1,
   limiter: {
-    duration: 1_000 * 60 * 15, // 15 minutes
+    // duration: 1_000 * 60 * 15, // 15 minutes
+    duration: 1_000,
     max: 1,
   },
 })

@@ -10,7 +10,6 @@ import { ResendProvider } from './resend/resend.service';
 @Global()
 @Module({
   exports: [EmailQueueService, EMAIL_PROVIDER_PROVIDER],
-
   providers: [
     EmailQueueService,
     EmailCriticalProcessor,
@@ -24,7 +23,7 @@ import { ResendProvider } from './resend/resend.service';
         nodemailerService: NodemailerProvider,
         resendService: ResendProvider,
       ) => {
-        if (configService.isLocal) {
+        if (!configService.isLocal) {
           return nodemailerService;
         }
 

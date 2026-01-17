@@ -11,7 +11,6 @@ import { WebhookController } from './presentation/webhook.controller';
 
 @Module({
   controllers: [NotificationController, WebhookController],
-
   imports: [ScheduleModule.forRoot(), EmailModule],
   providers: [
     HandleDeliveryWebhookUseCase,
