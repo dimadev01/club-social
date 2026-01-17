@@ -1,3 +1,5 @@
+import type { MemberDto } from '@club-social/shared/members';
+
 import { DeleteOutlined, MailOutlined } from '@ant-design/icons';
 import { DateFormat } from '@club-social/shared/lib';
 import {
@@ -5,11 +7,16 @@ import {
   ThemeAlgorithm,
   ThemeAlgorithmLabel,
   ThemeLabel,
+  UserRole,
 } from '@club-social/shared/users';
-import { App, Empty, Radio, Space, Tabs } from 'antd';
+import { useQueryClient } from '@tanstack/react-query';
+import { App, Empty, Radio, Space, Switch, Tabs } from 'antd';
+import { useLocation, useNavigate } from 'react-router';
 
 import { useAppContext } from '@/app/AppContext';
 import { useSessionUser } from '@/auth/useUser';
+import { useMyMember } from '@/members/useMyMember';
+import { useUpdateMyNotificationPreferences } from '@/members/useUpdateMyNotificationPreferences';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
@@ -29,18 +36,31 @@ interface ProfileFormSchema {
 
 export function ProfilePage() {
   const { message } = App.useApp();
+  const location = useLocation();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const user = useSessionUser();
+  const isMember = user.role === UserRole.MEMBER;
 
   const { preferences } = useAppContext();
 
   const [profileForm] = Form.useForm<ProfileFormSchema>();
   const [emailForm] = Form.useForm<EmailFormSchema>();
 
+  const activeTab = location.hash.slice(1) || 'profile';
+
+  const handleTabChange = (key: string) => {
+    navigate(`#${key}`, { replace: true });
+  };
+
   const { data: passkeys, refetch: refetchPasskeys } = useQuery({
     ...queryKeys.passkeys.list,
     queryFn: () => betterAuthClient.passkey.listUserPasskeys(),
   });
+
+  const { data: member, isLoading: isLoadingMember } = useMyMember();
+  const updateNotificationPreferences = useUpdateMyNotificationPreferences();
 
   const updatePreferences = useUpdateMyPreferences();
 
@@ -53,14 +73,14 @@ export function ProfilePage() {
         updatedAt: new Date(),
         updatedBy: user.name,
       }),
-    onSuccess: ({ data, error }) => {
-      if (data) {
-        message.success('Perfil actualizado');
-      }
-
+    onSuccess: ({ error }) => {
       if (error) {
         message.error('Error al actualizar perfil');
+
+        return;
       }
+
+      message.success('Perfil actualizado');
     },
   });
 
@@ -70,14 +90,14 @@ export function ProfilePage() {
         callbackURL: window.location.origin,
         newEmail: values.email,
       }),
-    onSuccess: ({ data, error }) => {
-      if (data) {
-        message.success('Link de verificación enviado');
-      }
-
+    onSuccess: ({ error }) => {
       if (error) {
         message.error('Error al cambiar email');
+
+        return;
       }
+
+      message.success('Link de verificación enviado');
     },
   });
 
@@ -86,29 +106,29 @@ export function ProfilePage() {
       betterAuthClient.passkey.addPasskey({
         authenticatorAttachment: 'platform',
       }),
-    onSuccess: ({ data, error }) => {
-      if (data) {
-        message.success('Passkey agregada');
-        refetchPasskeys();
-      }
-
+    onSuccess: ({ error }) => {
       if (error) {
         message.error('Error al agregar passkey');
+
+        return;
       }
+
+      message.success('Passkey agregada');
+      refetchPasskeys();
     },
   });
 
   const deletePasskeyMutation = useMutation({
     mutationFn: (id: string) => betterAuthClient.passkey.deletePasskey({ id }),
-    onSuccess: ({ data, error }) => {
-      if (data) {
-        message.success('Passkey eliminada');
-        refetchPasskeys();
-      }
-
+    onSuccess: ({ error }) => {
       if (error) {
         message.error('Error al eliminar passkey');
+
+        return;
       }
+
+      message.success('Passkey eliminada');
+      refetchPasskeys();
     },
   });
 
@@ -129,6 +149,7 @@ export function ProfilePage() {
   return (
     <Page>
       <Tabs
+        activeKey={activeTab}
         items={[
           {
             children: (
@@ -312,7 +333,72 @@ export function ProfilePage() {
             key: 'interface',
             label: 'Interfaz',
           },
+          ...(isMember
+            ? [
+                {
+                  children: (
+                    <Card
+                      loading={isLoadingMember}
+                      title="Preferencias de notificación"
+                    >
+                      <Descriptions styles={{ label: { width: 250 } }}>
+                        <Descriptions.Item label="Notificar nueva cuota">
+                          <Switch
+                            checked={
+                              member?.notificationPreferences.notifyOnDueCreated
+                            }
+                            onChange={(checked) => {
+                              queryClient.setQueryData(
+                                queryKeys.members.me.queryKey,
+                                (old: MemberDto) => ({
+                                  ...old,
+                                  notificationPreferences: {
+                                    ...old.notificationPreferences,
+                                    notifyOnDueCreated: checked,
+                                  },
+                                }),
+                              );
+
+                              updateNotificationPreferences.mutate({
+                                notifyOnDueCreated: checked,
+                              });
+                            }}
+                          />
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Notificar pago realizado">
+                          <Switch
+                            checked={
+                              member?.notificationPreferences
+                                .notifyOnPaymentMade
+                            }
+                            onChange={(checked) => {
+                              queryClient.setQueryData(
+                                queryKeys.members.me.queryKey,
+                                (old: MemberDto) => ({
+                                  ...old,
+                                  notificationPreferences: {
+                                    ...old.notificationPreferences,
+                                    notifyOnPaymentMade: checked,
+                                  },
+                                }),
+                              );
+
+                              updateNotificationPreferences.mutate({
+                                notifyOnPaymentMade: checked,
+                              });
+                            }}
+                          />
+                        </Descriptions.Item>
+                      </Descriptions>
+                    </Card>
+                  ),
+                  key: 'notifications',
+                  label: 'Notificaciones',
+                },
+              ]
+            : []),
         ]}
+        onChange={handleTabChange}
       />
     </Page>
   );

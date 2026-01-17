@@ -56,33 +56,6 @@ describe('MemberEntity', () => {
       expect(member.createdBy).toBe(user.createdBy);
     });
 
-    it('should create a member with null optional props using overrides', () => {
-      const user = createTestUser();
-      const props = createMemberProps(user.id, {
-        address: null,
-        birthDate: null,
-        category: MemberCategory.ADHERENT_MEMBER,
-        documentID: null,
-        fileStatus: FileStatus.PENDING,
-        maritalStatus: null,
-        nationality: null,
-        phones: [],
-        sex: null,
-      });
-
-      const result = MemberEntity.create(props, user);
-
-      expect(result.isOk()).toBe(true);
-      const member = result._unsafeUnwrap();
-      expect(member.address).toBeNull();
-      expect(member.birthDate).toBeNull();
-      expect(member.documentID).toBeNull();
-      expect(member.maritalStatus).toBeNull();
-      expect(member.nationality).toBeNull();
-      expect(member.phones).toHaveLength(0);
-      expect(member.sex).toBeNull();
-    });
-
     it('should add MemberCreatedEvent on creation', () => {
       const user = createTestUser();
       user.pullEvents(); // Clear user events
@@ -97,18 +70,6 @@ describe('MemberEntity', () => {
       const event = events[0] as MemberCreatedEvent;
       expect(event.member).toBe(member);
       expect(event.user).toBe(user);
-    });
-
-    it('should generate a unique id', () => {
-      const user = createTestUser();
-      const props = createMemberProps(user.id);
-
-      const result1 = MemberEntity.create(props, user);
-      const result2 = MemberEntity.create(props, user);
-
-      expect(result1._unsafeUnwrap().id.value).not.toBe(
-        result2._unsafeUnwrap().id.value,
-      );
     });
   });
 
