@@ -8,14 +8,13 @@ import {
 } from '@club-social/shared/members';
 
 import {
+  type CreateMemberProps,
   MemberEntity,
-  type MemberProps,
 } from '@/members/domain/entities/member.entity';
 import { MemberNotification } from '@/members/domain/value-objects/member-notification.vo';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
-import { StrictOmit } from '@/shared/types/type-utils';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 
 import {
@@ -25,13 +24,9 @@ import {
   TEST_PHONE,
 } from '../constants';
 
-export type MemberPropsOverrides = Partial<
-  StrictOmit<MemberProps, 'status' | 'userId'>
->;
-
 export const createMemberProps = (
   userId: UniqueId,
-  overrides?: MemberPropsOverrides,
+  overrides?: Partial<CreateMemberProps>,
 ) => ({
   address: Address.create(TEST_ADDRESS)._unsafeUnwrap(),
   birthDate: DateOnly.fromString(TEST_BIRTH_DATE)._unsafeUnwrap(),
@@ -50,7 +45,7 @@ export const createMemberProps = (
 
 export const createTestMember = (
   user: UserEntity,
-  overrides?: MemberPropsOverrides,
+  overrides?: Partial<CreateMemberProps>,
 ): MemberEntity =>
   MemberEntity.create(
     createMemberProps(user.id, overrides),

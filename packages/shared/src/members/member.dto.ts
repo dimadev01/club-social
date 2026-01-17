@@ -98,3 +98,8 @@ export interface UpdateMemberDto {
   sex: MemberSex | null;
   status: MemberStatus;
 }
+
+export interface UpdateMemberNotificationPreferencesDto {
+  notifyOnDueCreated?: boolean;
+  notifyOnPaymentMade?: boolean;
+}

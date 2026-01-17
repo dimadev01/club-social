@@ -1,6 +1,7 @@
 import { PaymentStatus } from '@club-social/shared/payments';
 
 import {
+  type CreatePaymentProps,
   PaymentEntity,
   type PaymentProps,
 } from '@/payments/domain/entities/payment.entity';
@@ -17,13 +18,9 @@ import {
   TEST_PAYMENT_RECEIPT_NUMBER,
 } from '../constants';
 
-export type PaymentPropsOverrides = Partial<
-  Omit<PaymentProps, 'status' | 'voidedAt' | 'voidedBy' | 'voidReason'>
->;
-
-export type PersistedPaymentPropsOverrides = Partial<PaymentProps>;
-
-export const createPaymentProps = (overrides?: PaymentPropsOverrides) => ({
+export const createPaymentProps = (
+  overrides?: Partial<CreatePaymentProps>,
+) => ({
   amount: Amount.fromCents(TEST_PAYMENT_AMOUNT_CENTS)._unsafeUnwrap(),
   date: DateOnly.fromString(TEST_PAYMENT_DATE)._unsafeUnwrap(),
   dueIds: [UniqueId.generate()],
@@ -34,7 +31,7 @@ export const createPaymentProps = (overrides?: PaymentPropsOverrides) => ({
 });
 
 export const createTestPayment = (
-  overrides?: PaymentPropsOverrides,
+  overrides?: Partial<CreatePaymentProps>,
 ): PaymentEntity =>
   PaymentEntity.create(
     createPaymentProps(overrides),
@@ -42,7 +39,7 @@ export const createTestPayment = (
   )._unsafeUnwrap();
 
 const createPersistedPaymentProps = (
-  overrides?: PersistedPaymentPropsOverrides,
+  overrides?: Partial<PaymentProps>,
 ): PaymentProps => ({
   amount: Amount.fromCents(TEST_PAYMENT_AMOUNT_CENTS)._unsafeUnwrap(),
   date: DateOnly.fromString(TEST_PAYMENT_DATE)._unsafeUnwrap(),
@@ -58,7 +55,7 @@ const createPersistedPaymentProps = (
 });
 
 export const createTestPaymentFromPersistence = (
-  propsOverrides?: PersistedPaymentPropsOverrides,
+  propsOverrides?: Partial<PaymentProps>,
   metaOverrides?: Partial<PersistenceMeta>,
 ): PaymentEntity =>
   PaymentEntity.fromPersistence(createPersistedPaymentProps(propsOverrides), {

@@ -12,6 +12,11 @@ import { StrictOmit } from '@/shared/types/type-utils';
 import { PaymentCreatedEvent } from '../events/payment-created.event';
 import { PaymentUpdatedEvent } from '../events/payment-updated.event';
 
+export type CreatePaymentProps = StrictOmit<
+  PaymentProps,
+  'status' | 'voidedAt' | 'voidedBy' | 'voidReason'
+>;
+
 export interface PaymentProps {
   amount: Amount;
   date: DateOnly;
@@ -93,10 +98,7 @@ export class PaymentEntity extends AuditedAggregateRoot {
   }
 
   public static create(
-    props: StrictOmit<
-      PaymentProps,
-      'status' | 'voidedAt' | 'voidedBy' | 'voidReason'
-    >,
+    props: CreatePaymentProps,
     createdBy: string,
   ): Result<PaymentEntity> {
     const payment = new PaymentEntity(

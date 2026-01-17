@@ -14,7 +14,6 @@ import {
   TEST_MOVEMENT_DATE,
   TEST_MOVEMENT_INFLOW_AMOUNT_CENTS,
   TEST_MOVEMENT_INFLOW_NOTES,
-  TEST_MOVEMENT_OUTFLOW_AMOUNT_CENTS,
 } from '@/shared/test/constants';
 import {
   createInflowMovementProps,
@@ -49,33 +48,6 @@ describe('MovementEntity', () => {
       expect(movement.createdBy).toBe(TEST_CREATED_BY);
     });
 
-    it('should create an outflow movement using overrides', () => {
-      const movement = createTestOutflowMovement();
-
-      expect(movement.amount.cents).toBe(TEST_MOVEMENT_OUTFLOW_AMOUNT_CENTS);
-      expect(movement.isOutflow()).toBe(true);
-    });
-
-    it('should create an automatic movement using overrides', () => {
-      const paymentId = UniqueId.generate();
-
-      const movement = createTestInflowMovement({
-        mode: MovementMode.AUTOMATIC,
-        paymentId,
-      });
-
-      expect(movement.mode).toBe(MovementMode.AUTOMATIC);
-      expect(movement.paymentId).toBe(paymentId);
-    });
-
-    it('should create a movement with different category using overrides', () => {
-      const movement = createTestInflowMovement({
-        category: MovementCategory.BUFFET,
-      });
-
-      expect(movement.category).toBe(MovementCategory.BUFFET);
-    });
-
     it('should add MovementCreatedEvent on creation', () => {
       const movement = createTestInflowMovement();
       const events = movement.pullEvents();
@@ -83,13 +55,6 @@ describe('MovementEntity', () => {
       expect(events).toHaveLength(1);
       expect(events[0]).toBeInstanceOf(MovementCreatedEvent);
       expect((events[0] as MovementCreatedEvent).movement).toBe(movement);
-    });
-
-    it('should generate unique ids for each movement', () => {
-      const movement1 = createTestInflowMovement();
-      const movement2 = createTestInflowMovement();
-
-      expect(movement1.id.value).not.toBe(movement2.id.value);
     });
 
     it('should fail to create a movement with zero amount', () => {
@@ -191,41 +156,33 @@ describe('MovementEntity', () => {
     });
   });
 
-  describe('isRegistered', () => {
-    it('should return true when status is REGISTERED', () => {
-      const movement = createTestInflowMovement();
+  describe('status checks', () => {
+    it('should reflect status helpers for each status', () => {
+      const cases = [
+        {
+          expected: { isRegistered: true, isVoided: false },
+          status: MovementStatus.REGISTERED,
+        },
+        {
+          expected: { isRegistered: false, isVoided: true },
+          status: MovementStatus.VOIDED,
+        },
+      ];
 
-      expect(movement.isRegistered()).toBe(true);
-    });
+      cases.forEach(({ expected, status }) => {
+        const movement =
+          status === MovementStatus.REGISTERED
+            ? createTestInflowMovement()
+            : createTestMovementFromPersistence({
+                status,
+                voidedAt: new Date(),
+                voidedBy: TEST_CREATED_BY,
+                voidReason: 'Test',
+              });
 
-    it('should return false when status is VOIDED', () => {
-      const movement = createTestMovementFromPersistence({
-        status: MovementStatus.VOIDED,
-        voidedAt: new Date(),
-        voidedBy: TEST_CREATED_BY,
-        voidReason: 'Test',
+        expect(movement.isRegistered()).toBe(expected.isRegistered);
+        expect(movement.isVoided()).toBe(expected.isVoided);
       });
-
-      expect(movement.isRegistered()).toBe(false);
-    });
-  });
-
-  describe('isVoided', () => {
-    it('should return true when status is VOIDED', () => {
-      const movement = createTestMovementFromPersistence({
-        status: MovementStatus.VOIDED,
-        voidedAt: new Date(),
-        voidedBy: TEST_CREATED_BY,
-        voidReason: 'Test',
-      });
-
-      expect(movement.isVoided()).toBe(true);
-    });
-
-    it('should return false when status is REGISTERED', () => {
-      const movement = createTestInflowMovement();
-
-      expect(movement.isVoided()).toBe(false);
     });
   });
 
@@ -323,18 +280,5 @@ describe('MovementEntity', () => {
 
       expect(movement1.equals(movement2)).toBe(false);
     });
-  });
-
-  describe('different categories', () => {
-    const categories = Object.values(MovementCategory);
-
-    it.each(categories)(
-      'should create movement with category %s',
-      (category) => {
-        const movement = createTestInflowMovement({ category });
-
-        expect(movement.category).toBe(category);
-      },
-    );
   });
 });

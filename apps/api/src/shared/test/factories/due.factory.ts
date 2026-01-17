@@ -1,6 +1,9 @@
 import { DueCategory, DueStatus } from '@club-social/shared/dues';
 
-import type { DueProps } from '@/dues/domain/entities/due.entity';
+import type {
+  CreateDueProps,
+  DueProps,
+} from '@/dues/domain/entities/due.entity';
 
 import { DueEntity } from '@/dues/domain/entities/due.entity';
 import { PersistenceMeta } from '@/shared/domain/persistence-meta';
@@ -15,9 +18,7 @@ import {
   TEST_DUE_NOTES,
 } from '../constants';
 
-export type DuePropsOverrides = Partial<DueProps>;
-
-export const createDueProps = (overrides?: DuePropsOverrides) => ({
+export const createDueProps = (overrides?: Partial<CreateDueProps>) => ({
   amount: Amount.fromCents(TEST_DUE_AMOUNT_CENTS)._unsafeUnwrap(),
   category: DueCategory.MEMBERSHIP,
   date: DateOnly.fromString(TEST_DUE_DATE)._unsafeUnwrap(),
@@ -26,10 +27,10 @@ export const createDueProps = (overrides?: DuePropsOverrides) => ({
   ...overrides,
 });
 
-export const createTestDue = (overrides?: DuePropsOverrides): DueEntity =>
+export const createTestDue = (overrides?: Partial<CreateDueProps>): DueEntity =>
   DueEntity.create(createDueProps(overrides), TEST_CREATED_BY)._unsafeUnwrap();
 
-const createPersistedDueProps = (overrides?: DuePropsOverrides): DueProps => ({
+const createPersistedDueProps = (overrides?: Partial<DueProps>): DueProps => ({
   amount: Amount.fromCents(TEST_DUE_AMOUNT_CENTS)._unsafeUnwrap(),
   category: DueCategory.MEMBERSHIP,
   date: DateOnly.fromString(TEST_DUE_DATE)._unsafeUnwrap(),
@@ -44,7 +45,7 @@ const createPersistedDueProps = (overrides?: DuePropsOverrides): DueProps => ({
 });
 
 export const createTestDueFromPersistence = (
-  propsOverrides?: DuePropsOverrides,
+  propsOverrides?: Partial<DueProps>,
   metaOverrides?: Partial<PersistenceMeta>,
 ): DueEntity =>
   DueEntity.fromPersistence(createPersistedDueProps(propsOverrides), {
