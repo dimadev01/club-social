@@ -21,7 +21,7 @@ import {
     max: 1,
   },
 })
-export class EmailCriticalProcessor extends WorkerHost {
+export class EmailCriticalQueueProcessor extends WorkerHost {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
@@ -29,7 +29,7 @@ export class EmailCriticalProcessor extends WorkerHost {
     private readonly emailProvider: EmailProvider,
   ) {
     super();
-    this.logger.setContext(EmailCriticalProcessor.name);
+    this.logger.setContext(EmailCriticalQueueProcessor.name);
   }
 
   public async process(
