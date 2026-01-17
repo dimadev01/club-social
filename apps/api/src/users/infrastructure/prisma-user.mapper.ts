@@ -50,9 +50,7 @@ export class PrismaUserMapper {
         email: Email.raw({ value: user.email }),
         name: Name.raw({ firstName: user.firstName, lastName: user.lastName }),
         preferences: UserPreferences.raw(
-          user.preferences
-            ? (user.preferences as unknown as UserPreferencesProps)
-            : null,
+          user.preferences as unknown as UserPreferencesProps,
         ),
         role: user.role as UserRole,
         status: user.status as UserStatus,

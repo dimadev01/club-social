@@ -36,6 +36,10 @@ import {
   MemberSearchReadModel,
 } from '../domain/member-read-models';
 import { MemberRepository } from '../domain/member.repository';
+import {
+  MemberNotification,
+  MemberNotificationProps,
+} from '../domain/value-objects/member-notification.vo';
 import { PrismaMemberMapper } from './prisma-member.mapper';
 
 type MemberPayload = MemberGetPayload<{ include: { user: true } }>;
@@ -490,6 +494,10 @@ export class PrismaMemberRepository implements MemberRepository {
   }
 
   private toReadModel(model: MemberPayload): MemberReadModel {
+    const notificationPreferences = MemberNotification.raw(
+      model.notificationPreferences as unknown as MemberNotificationProps,
+    );
+
     return {
       address:
         model.street || model.cityName || model.stateName || model.zipCode
@@ -514,6 +522,7 @@ export class PrismaMemberRepository implements MemberRepository {
         lastName: model.user.lastName,
       }).fullName,
       nationality: model.nationality as MemberNationality | null,
+      notificationPreferences: notificationPreferences.toJson(),
       phones: model.phones,
       sex: model.sex as MemberSex | null,
       status: model.status as MemberStatus,

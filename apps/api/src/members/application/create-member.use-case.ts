@@ -33,6 +33,8 @@ import {
   type UserRepository,
 } from '@/users/domain/user.repository';
 
+import { MemberNotification } from '../domain/value-objects/member-notification.vo';
+
 interface CreateMemberParams {
   address: Address | null;
   birthDate: null | string;
@@ -45,6 +47,10 @@ interface CreateMemberParams {
   lastName: string;
   maritalStatus: MaritalStatus | null;
   nationality: MemberNationality | null;
+  notificationPreferences: {
+    notifyOnDueCreated: boolean;
+    notifyOnPaymentMade: boolean;
+  };
   phones: string[];
   sex: MemberSex | null;
 }
@@ -73,13 +79,17 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
     const results = ResultUtils.combine([
       Email.create(params.email),
       params.birthDate ? DateOnly.fromString(params.birthDate) : ok(),
+      Name.create({
+        firstName: params.firstName,
+        lastName: params.lastName,
+      }),
     ]);
 
     if (results.isErr()) {
       return err(results.error);
     }
 
-    const [email, birthDate] = results.value;
+    const [email, birthDate, name] = results.value;
 
     const existingUserByEmail =
       await this.userRepository.findUniqueByEmail(email);
@@ -88,21 +98,8 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       return err(new ConflictError('El email ya está en uso'));
     }
 
-    const name = Name.create({
-      firstName: params.firstName,
-      lastName: params.lastName,
-    });
-
-    if (name.isErr()) {
-      return err(name.error);
-    }
-
     const user = UserEntity.create(
-      {
-        email,
-        name: name.value,
-        role: UserRole.MEMBER,
-      },
+      { email, name, role: UserRole.MEMBER },
       params.createdBy,
     );
 
@@ -119,6 +116,11 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
         fileStatus: params.fileStatus,
         maritalStatus: params.maritalStatus,
         nationality: params.nationality,
+        notificationPreferences: MemberNotification.raw({
+          notifyOnDueCreated: params.notificationPreferences.notifyOnDueCreated,
+          notifyOnPaymentMade:
+            params.notificationPreferences.notifyOnPaymentMade,
+        }),
         phones: params.phones,
         sex: params.sex,
         userId: user.value.id,

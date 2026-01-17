@@ -5,6 +5,7 @@ import {
   MemberCategory,
   MemberDto,
   MemberNationality,
+  MemberNotificationPreferencesDto,
   MemberSex,
   MemberStatus,
 } from '@club-social/shared/members';
@@ -22,6 +23,7 @@ export class MemberResponseDto implements MemberDto {
   public maritalStatus: MaritalStatus | null;
   public name: string;
   public nationality: MemberNationality | null;
+  public notificationPreferences: MemberNotificationPreferencesDto;
   public phones: string[];
   public sex: MemberSex | null;
   public status: MemberStatus;
