@@ -5,11 +5,13 @@ import {
   MemberAddressDto,
   MemberCategory,
   MemberNationality,
+  MemberNotificationPreferencesDto,
   MemberSex,
 } from '@club-social/shared/members';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsDateString,
   IsEmail,
   IsEnum,
@@ -36,6 +38,14 @@ export class AddressRequestDto implements MemberAddressDto {
   @IsOptional()
   @IsString()
   public zipCode: null | string;
+}
+
+export class NotificationPreferencesRequestDto implements MemberNotificationPreferencesDto {
+  @IsBoolean()
+  public notifyOnDueCreated: boolean;
+
+  @IsBoolean()
+  public notifyOnPaymentMade: boolean;
 }
 
 export class CreateMemberRequestDto implements CreateMemberDto {
@@ -80,6 +90,11 @@ export class CreateMemberRequestDto implements CreateMemberDto {
   @IsEnum(MemberNationality)
   @IsOptional()
   public nationality: MemberNationality | null;
+
+  @IsObject()
+  @Type(() => NotificationPreferencesRequestDto)
+  @ValidateNested()
+  public notificationPreferences: NotificationPreferencesRequestDto;
 
   @IsArray()
   @IsString({ each: true })

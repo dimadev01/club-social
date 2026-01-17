@@ -41,6 +41,15 @@ export class PaymentEventHandler {
       event.payment.memberId,
     );
 
+    if (!member.notificationPreferences.notifyOnPaymentMade) {
+      this.logger.info({
+        memberId: member.id,
+        message: 'Skipping payment made email - member opted out',
+      });
+
+      return;
+    }
+
     const affectedDues = await this.dueRepository.findByIdsReadModel(
       event.payment.dueIds,
     );

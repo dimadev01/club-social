@@ -46,6 +46,10 @@ export function MemberEdit() {
       lastName: values.lastName,
       maritalStatus: values.maritalStatus ?? null,
       nationality: values.nationality ?? null,
+      notificationPreferences: {
+        notifyOnDueCreated: values.notificationPreferences.notifyOnDueCreated,
+        notifyOnPaymentMade: values.notificationPreferences.notifyOnPaymentMade,
+      },
       phones: values.phones,
       sex: values.sex ?? null,
       status: values.status,
@@ -94,6 +98,12 @@ export function MemberEdit() {
           lastName: member.lastName,
           maritalStatus: member.maritalStatus ?? undefined,
           nationality: member.nationality ?? undefined,
+          notificationPreferences: {
+            notifyOnDueCreated:
+              member.notificationPreferences.notifyOnDueCreated,
+            notifyOnPaymentMade:
+              member.notificationPreferences.notifyOnPaymentMade,
+          },
           phones: member.phones,
           sex: member.sex ?? undefined,
           status: member.status,

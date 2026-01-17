@@ -98,6 +98,7 @@ export class MembersController extends BaseController {
         lastName: body.lastName,
         maritalStatus: body.maritalStatus,
         nationality: body.nationality,
+        notificationPreferences: body.notificationPreferences,
         phones: body.phones,
         sex: body.sex,
         status: body.status,
@@ -137,6 +138,12 @@ export class MembersController extends BaseController {
         lastName: createMemberDto.lastName,
         maritalStatus: createMemberDto.maritalStatus,
         nationality: createMemberDto.nationality,
+        notificationPreferences: {
+          notifyOnDueCreated:
+            createMemberDto.notificationPreferences.notifyOnDueCreated,
+          notifyOnPaymentMade:
+            createMemberDto.notificationPreferences.notifyOnPaymentMade,
+        },
         phones: createMemberDto.phones,
         sex: createMemberDto.sex,
       }),
@@ -275,6 +282,7 @@ export class MembersController extends BaseController {
       maritalStatus: member.maritalStatus,
       name: member.name,
       nationality: member.nationality,
+      notificationPreferences: member.notificationPreferences,
       phones: member.phones,
       sex: member.sex,
       status: member.status,

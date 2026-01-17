@@ -371,7 +371,7 @@ describe('DueEntity', () => {
       const due = createTestDue();
 
       const result = due.applySettlement({
-        amount: SignedAmount.raw({ cents: -500 }) as Amount,
+        amount: SignedAmount.raw({ cents: -500 }),
         createdBy: TEST_CREATED_BY,
         memberLedgerEntryId: UniqueId.generate(),
         paymentId: UniqueId.generate(),

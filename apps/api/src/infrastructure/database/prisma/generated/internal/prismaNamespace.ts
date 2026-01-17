@@ -1828,6 +1828,7 @@ export const MemberScalarFieldEnum = {
   stateName: 'stateName',
   zipCode: 'zipCode',
   status: 'status',
+  notificationPreferences: 'notificationPreferences',
   createdAt: 'createdAt',
   createdBy: 'createdBy',
   updatedAt: 'updatedAt',

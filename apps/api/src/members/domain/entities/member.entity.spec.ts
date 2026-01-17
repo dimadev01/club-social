@@ -29,6 +29,7 @@ import {
 
 import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
+import { MemberNotification } from '../value-objects/member-notification.vo';
 import { MemberEntity } from './member.entity';
 
 describe('MemberEntity', () => {
@@ -125,6 +126,7 @@ describe('MemberEntity', () => {
           fileStatus: FileStatus.PENDING,
           maritalStatus: null,
           nationality: MemberNationality.COLOMBIA,
+          notificationPreferences: MemberNotification.raw(),
           phones: [TEST_ALT_PHONE],
           sex: MemberSex.FEMALE,
           status: MemberStatus.INACTIVE,
@@ -196,6 +198,7 @@ describe('MemberEntity', () => {
         fileStatus: FileStatus.PENDING,
         maritalStatus: MaritalStatus.MARRIED,
         nationality: MemberNationality.UKRAINE,
+        notificationPreferences: MemberNotification.raw(),
         phones: [TEST_ALT_PHONE, '+54 351 765-4321'],
         sex: MemberSex.FEMALE,
         status: MemberStatus.ACTIVE,
@@ -246,6 +249,7 @@ describe('MemberEntity', () => {
         fileStatus: FileStatus.PENDING,
         maritalStatus: null,
         nationality: null,
+        notificationPreferences: MemberNotification.raw(),
         phones: [],
         sex: null,
         status: MemberStatus.ACTIVE,
@@ -261,6 +265,65 @@ describe('MemberEntity', () => {
       expect(member.sex).toBeNull();
       expect(member.status).toBe(MemberStatus.ACTIVE);
       expect(member.updatedBy).toBe(TEST_CREATED_BY);
+    });
+
+    it('should update notification preferences', () => {
+      const user = createTestUser();
+      const member = createTestMember(user);
+
+      member.updateProfile({
+        ...createMemberProps(user.id),
+        notificationPreferences: MemberNotification.raw({
+          notifyOnDueCreated: false,
+          notifyOnPaymentMade: true,
+        }),
+        updatedBy: TEST_CREATED_BY,
+      });
+
+      expect(member.notificationPreferences.notifyOnDueCreated).toBe(false);
+      expect(member.notificationPreferences.notifyOnPaymentMade).toBe(true);
+    });
+  });
+
+  describe('notificationPreferences', () => {
+    it('should have default notification preferences on creation', () => {
+      const user = createTestUser();
+      const member = createTestMember(user);
+
+      expect(member.notificationPreferences.notifyOnDueCreated).toBe(true);
+      expect(member.notificationPreferences.notifyOnPaymentMade).toBe(true);
+    });
+
+    it('should preserve notification preferences when cloning', () => {
+      const user = createTestUser();
+
+      const original = createTestMember(user, {
+        notificationPreferences: MemberNotification.raw({
+          notifyOnDueCreated: false,
+          notifyOnPaymentMade: true,
+        }),
+      });
+
+      const cloned = original.clone();
+
+      expect(cloned.notificationPreferences.notifyOnDueCreated).toBe(false);
+      expect(cloned.notificationPreferences.notifyOnPaymentMade).toBe(true);
+    });
+
+    it('should allow partial notification preference updates', () => {
+      const user = createTestUser();
+      const member = createTestMember(user);
+
+      member.updateProfile({
+        ...createMemberProps(user.id),
+        notificationPreferences: MemberNotification.raw({
+          notifyOnDueCreated: false,
+        }),
+        updatedBy: TEST_CREATED_BY,
+      });
+
+      expect(member.notificationPreferences.notifyOnDueCreated).toBe(false);
+      expect(member.notificationPreferences.notifyOnPaymentMade).toBe(true);
     });
   });
 });

@@ -14,6 +14,11 @@ export interface MemberAddressReadModel {
   zipCode: null | string;
 }
 
+export interface MemberNotificationPreferencesReadModel {
+  notifyOnDueCreated: boolean;
+  notifyOnPaymentMade: boolean;
+}
+
 export interface MemberPaginatedExtraReadModel {
   electricityTotalDueAmount: number;
   guestTotalDueAmount: number;
@@ -47,6 +52,7 @@ export interface MemberReadModel {
   maritalStatus: MaritalStatus | null;
   name: string;
   nationality: MemberNationality | null;
+  notificationPreferences: MemberNotificationPreferencesReadModel;
   phones: string[];
   sex: MemberSex | null;
   status: MemberStatus;

@@ -44,6 +44,10 @@ export function MemberNew() {
       lastName: values.lastName,
       maritalStatus: values.maritalStatus ?? null,
       nationality: values.nationality ?? null,
+      notificationPreferences: {
+        notifyOnDueCreated: values.notificationPreferences.notifyOnDueCreated,
+        notifyOnPaymentMade: values.notificationPreferences.notifyOnPaymentMade,
+      },
       phones: values.phones,
       sex: values.sex ?? null,
     });
@@ -83,6 +87,10 @@ export function MemberNew() {
           lastName: '',
           maritalStatus: undefined,
           nationality: undefined,
+          notificationPreferences: {
+            notifyOnDueCreated: true,
+            notifyOnPaymentMade: true,
+          },
           phones: [],
           sex: undefined,
         }}
