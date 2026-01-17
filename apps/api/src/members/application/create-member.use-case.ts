@@ -3,10 +3,11 @@ import {
   MaritalStatus,
   MemberCategory,
   MemberNationality,
+  MemberNotificationPreferencesDto,
   MemberSex,
 } from '@club-social/shared/members';
 import { UserRole } from '@club-social/shared/users';
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
@@ -47,14 +48,12 @@ interface CreateMemberParams {
   lastName: string;
   maritalStatus: MaritalStatus | null;
   nationality: MemberNationality | null;
-  notificationPreferences: {
-    notifyOnDueCreated: boolean;
-    notifyOnPaymentMade: boolean;
-  };
+  notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
   sex: MemberSex | null;
 }
 
+@Injectable()
 export class CreateMemberUseCase extends UseCase<MemberEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)

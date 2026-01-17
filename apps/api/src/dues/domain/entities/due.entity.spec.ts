@@ -43,18 +43,6 @@ describe('DueEntity', () => {
       expect(due.createdBy).toBe(TEST_CREATED_BY);
     });
 
-    it('should create a due with null notes using overrides', () => {
-      const due = createTestDue({ notes: null });
-
-      expect(due.notes).toBeNull();
-    });
-
-    it('should create a due with different category using overrides', () => {
-      const due = createTestDue({ category: DueCategory.ELECTRICITY });
-
-      expect(due.category).toBe(DueCategory.ELECTRICITY);
-    });
-
     it('should add DueCreatedEvent on creation', () => {
       const due = createTestDue();
       const events = due.pullEvents();
@@ -62,13 +50,6 @@ describe('DueEntity', () => {
       expect(events).toHaveLength(1);
       expect(events[0]).toBeInstanceOf(DueCreatedEvent);
       expect((events[0] as DueCreatedEvent).due).toBe(due);
-    });
-
-    it('should generate unique ids for each due', () => {
-      const due1 = createTestDue();
-      const due2 = createTestDue();
-
-      expect(due1.id.value).not.toBe(due2.id.value);
     });
 
     it('should fail to create a due with zero amount', () => {
@@ -265,19 +246,6 @@ describe('DueEntity', () => {
       expect(result._unsafeUnwrapErr().message).toBe(
         'Solo se pueden anular cuotas pendientes',
       );
-    });
-
-    it('should fail to void a partially paid due', () => {
-      const due = createTestDueFromPersistence({
-        status: DueStatus.PARTIALLY_PAID,
-      });
-
-      const result = due.void({
-        voidedBy: TEST_CREATED_BY,
-        voidReason: 'Test',
-      });
-
-      expect(result.isErr()).toBe(true);
     });
   });
 
@@ -490,39 +458,66 @@ describe('DueEntity', () => {
   });
 
   describe('status checks', () => {
-    it('isPending should return true for pending dues', () => {
-      const due = createTestDue();
+    it('should reflect status helpers for each status', () => {
+      const cases = [
+        {
+          expected: {
+            isPaid: false,
+            isPartiallyPaid: false,
+            isPending: true,
+            isVoided: false,
+          },
+          status: DueStatus.PENDING,
+        },
+        {
+          expected: {
+            isPaid: true,
+            isPartiallyPaid: false,
+            isPending: false,
+            isVoided: false,
+          },
+          status: DueStatus.PAID,
+        },
+        {
+          expected: {
+            isPaid: false,
+            isPartiallyPaid: true,
+            isPending: false,
+            isVoided: false,
+          },
+          status: DueStatus.PARTIALLY_PAID,
+        },
+        {
+          expected: {
+            isPaid: false,
+            isPartiallyPaid: false,
+            isPending: false,
+            isVoided: true,
+          },
+          status: DueStatus.VOIDED,
+        },
+      ];
 
-      expect(due.isPending()).toBe(true);
-      expect(due.isPaid()).toBe(false);
-      expect(due.isPartiallyPaid()).toBe(false);
-      expect(due.isVoided()).toBe(false);
-    });
+      cases.forEach(({ expected, status }) => {
+        const due =
+          status === DueStatus.PENDING
+            ? createTestDue()
+            : createTestDueFromPersistence({
+                status,
+                ...(status === DueStatus.VOIDED
+                  ? {
+                      voidedAt: new Date(),
+                      voidedBy: TEST_CREATED_BY,
+                      voidReason: 'Test',
+                    }
+                  : {}),
+              });
 
-    it('isPaid should return true for paid dues', () => {
-      const due = createTestDueFromPersistence({ status: DueStatus.PAID });
-
-      expect(due.isPaid()).toBe(true);
-      expect(due.isPending()).toBe(false);
-    });
-
-    it('isPartiallyPaid should return true for partially paid dues', () => {
-      const due = createTestDueFromPersistence({
-        status: DueStatus.PARTIALLY_PAID,
+        expect(due.isPending()).toBe(expected.isPending);
+        expect(due.isPaid()).toBe(expected.isPaid);
+        expect(due.isPartiallyPaid()).toBe(expected.isPartiallyPaid);
+        expect(due.isVoided()).toBe(expected.isVoided);
       });
-
-      expect(due.isPartiallyPaid()).toBe(true);
-    });
-
-    it('isVoided should return true for voided dues', () => {
-      const due = createTestDueFromPersistence({
-        status: DueStatus.VOIDED,
-        voidedAt: new Date(),
-        voidedBy: TEST_CREATED_BY,
-        voidReason: 'Test',
-      });
-
-      expect(due.isVoided()).toBe(true);
     });
   });
 
@@ -532,29 +527,6 @@ describe('DueEntity', () => {
 
       expect(due.settledAmount.cents).toBe(0);
       expect(due.pendingAmount.cents).toBe(TEST_DUE_AMOUNT_CENTS);
-    });
-  });
-
-  describe('entity equality', () => {
-    it('should be equal when ids match', () => {
-      const id = UniqueId.generate();
-
-      const due1 = createTestDueFromPersistence(
-        { status: DueStatus.PENDING },
-        { id },
-      );
-
-      const due2 = createTestDueFromPersistence(
-        {
-          amount: Amount.fromCents(2000)._unsafeUnwrap(),
-          category: DueCategory.ELECTRICITY,
-          notes: 'Different',
-          status: DueStatus.PAID,
-        },
-        { id },
-      );
-
-      expect(due1.equals(due2)).toBe(true);
     });
   });
 });

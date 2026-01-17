@@ -9,6 +9,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Header,
   Inject,
@@ -37,6 +38,7 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateMemberUseCase } from '../application/create-member.use-case';
+import { UpdateMemberNotificationPreferencesUseCase } from '../application/update-member-notification-preferences.use-case';
 import { UpdateMemberUseCase } from '../application/update-member.use-case';
 import {
   MEMBER_REPOSITORY_PROVIDER,
@@ -50,6 +52,7 @@ import {
 import { MemberResponseDto } from './dto/member-response.dto';
 import { MemberSearchRequestDto } from './dto/member-search-request.dto';
 import { MemberSearchResponseDto } from './dto/member-search.dto';
+import { UpdateMemberNotificationPreferencesRequestDto } from './dto/update-member-notification-preferences.dto';
 import { UpdateMemberRequestDto } from './dto/update-member.dto';
 
 @Controller('members')
@@ -59,6 +62,7 @@ export class MembersController extends BaseController {
     protected readonly logger: AppLogger,
     private readonly createMemberUseCase: CreateMemberUseCase,
     private readonly updateMemberUseCase: UpdateMemberUseCase,
+    private readonly updateMemberNotificationPreferencesUseCase: UpdateMemberNotificationPreferencesUseCase,
     @Inject(MEMBER_REPOSITORY_PROVIDER)
     private readonly memberRepository: MemberRepository,
     private readonly csvService: CsvService,
@@ -255,6 +259,64 @@ export class MembersController extends BaseController {
       name: member.name,
       status: member.status,
     }));
+  }
+
+  @Get('me')
+  public async getMyMember(
+    @Session() session: AuthSession,
+  ): Promise<MemberResponseDto> {
+    if (!session.memberId) {
+      throw new ForbiddenException();
+    }
+
+    const member = await this.memberRepository.findByIdReadModel(
+      UniqueId.raw({ value: session.memberId }),
+    );
+
+    if (!member) {
+      throw new NotFoundException();
+    }
+
+    return {
+      address: member.address,
+      birthDate: member.birthDate,
+      category: member.category,
+      documentID: member.documentID,
+      email: member.email,
+      fileStatus: member.fileStatus,
+      firstName: member.firstName,
+      id: member.id,
+      lastName: member.lastName,
+      maritalStatus: member.maritalStatus,
+      name: member.name,
+      nationality: member.nationality,
+      notificationPreferences: {
+        notifyOnDueCreated: member.notificationPreferences.notifyOnDueCreated,
+        notifyOnPaymentMade: member.notificationPreferences.notifyOnPaymentMade,
+      },
+      phones: member.phones,
+      sex: member.sex,
+      status: member.status,
+      userId: member.userId,
+    };
+  }
+
+  @Patch('me/notification-preferences')
+  public async updateMyNotificationPreferences(
+    @Body() body: UpdateMemberNotificationPreferencesRequestDto,
+    @Session() session: AuthSession,
+  ): Promise<void> {
+    if (!session.memberId) {
+      throw new ForbiddenException();
+    }
+
+    this.handleResult(
+      await this.updateMemberNotificationPreferencesUseCase.execute({
+        memberId: session.memberId,
+        notificationPreferences: body,
+        updatedBy: session.user.name,
+      }),
+    );
   }
 
   @Get(':id')

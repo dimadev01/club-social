@@ -5,6 +5,7 @@ import {
 } from '@club-social/shared/movements';
 
 import {
+  type CreateMovementProps,
   MovementEntity,
   type MovementProps,
 } from '@/movements/domain/entities/movement.entity';
@@ -22,17 +23,11 @@ import {
   TEST_MOVEMENT_OUTFLOW_NOTES,
 } from '../constants';
 
-export type MovementPropsOverrides = Partial<
-  Omit<MovementProps, 'voidedAt' | 'voidedBy' | 'voidReason'>
->;
-
-export type PersistedMovementPropsOverrides = Partial<MovementProps>;
-
 const createBaseMovementProps = (
   amountCents: number,
   category: MovementCategory,
   notes: string,
-  overrides?: MovementPropsOverrides,
+  overrides?: Partial<CreateMovementProps>,
 ) => ({
   amount: SignedAmount.fromCents(amountCents)._unsafeUnwrap(),
   category,
@@ -44,7 +39,9 @@ const createBaseMovementProps = (
   ...overrides,
 });
 
-export const createInflowMovementProps = (overrides?: MovementPropsOverrides) =>
+export const createInflowMovementProps = (
+  overrides?: Partial<CreateMovementProps>,
+) =>
   createBaseMovementProps(
     TEST_MOVEMENT_INFLOW_AMOUNT_CENTS,
     MovementCategory.MEMBER_LEDGER,
@@ -52,7 +49,7 @@ export const createInflowMovementProps = (overrides?: MovementPropsOverrides) =>
     overrides,
   );
 
-const createOutflowMovementProps = (overrides?: MovementPropsOverrides) =>
+const createOutflowMovementProps = (overrides?: Partial<CreateMovementProps>) =>
   createBaseMovementProps(
     TEST_MOVEMENT_OUTFLOW_AMOUNT_CENTS,
     MovementCategory.EXPENSE,
@@ -61,7 +58,7 @@ const createOutflowMovementProps = (overrides?: MovementPropsOverrides) =>
   );
 
 export const createTestInflowMovement = (
-  overrides?: MovementPropsOverrides,
+  overrides?: Partial<CreateMovementProps>,
 ): MovementEntity =>
   MovementEntity.create(
     createInflowMovementProps(overrides),
@@ -69,7 +66,7 @@ export const createTestInflowMovement = (
   )._unsafeUnwrap();
 
 export const createTestOutflowMovement = (
-  overrides?: MovementPropsOverrides,
+  overrides?: Partial<CreateMovementProps>,
 ): MovementEntity =>
   MovementEntity.create(
     createOutflowMovementProps(overrides),
@@ -77,7 +74,7 @@ export const createTestOutflowMovement = (
   )._unsafeUnwrap();
 
 const createPersistedMovementProps = (
-  overrides?: PersistedMovementPropsOverrides,
+  overrides?: Partial<MovementProps>,
 ): MovementProps => ({
   amount: SignedAmount.fromCents(
     TEST_MOVEMENT_INFLOW_AMOUNT_CENTS,
@@ -95,7 +92,7 @@ const createPersistedMovementProps = (
 });
 
 export const createTestMovementFromPersistence = (
-  propsOverrides?: PersistedMovementPropsOverrides,
+  propsOverrides?: Partial<MovementProps>,
   metaOverrides?: Partial<PersistenceMeta>,
 ): MovementEntity =>
   MovementEntity.fromPersistence(createPersistedMovementProps(propsOverrides), {

@@ -20,6 +20,8 @@ import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
 import { MemberNotification } from '../value-objects/member-notification.vo';
 
+export type CreateMemberProps = StrictOmit<MemberProps, 'status'>;
+
 export interface MemberProps {
   address: Address | null;
   birthDate: DateOnly | null;
@@ -115,7 +117,7 @@ export class MemberEntity extends AuditedAggregateRoot {
   }
 
   public static create(
-    props: StrictOmit<MemberProps, 'status'>,
+    props: CreateMemberProps,
     user: UserEntity,
   ): Result<MemberEntity> {
     const member = new MemberEntity(
@@ -162,6 +164,16 @@ export class MemberEntity extends AuditedAggregateRoot {
         id: this.id,
       },
     );
+  }
+
+  public updateNotificationPreferences(
+    notificationPreferences: MemberNotification,
+    updatedBy: string,
+  ): void {
+    const oldMember = this.clone();
+    this._notificationPreferences = notificationPreferences;
+    this.markAsUpdated(updatedBy);
+    this.addEvent(new MemberUpdatedEvent(oldMember, this));
   }
 
   public updateProfile(props: {

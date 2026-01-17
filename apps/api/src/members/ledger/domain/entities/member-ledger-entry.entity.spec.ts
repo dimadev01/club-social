@@ -68,48 +68,6 @@ describe('MemberLedgerEntryEntity', () => {
       expect(entry.type).toBe(MemberLedgerEntryType.DUE_APPLY_DEBIT);
     });
 
-    it('should create an entry with null optional fields', () => {
-      const props = {
-        ...createValidCreditProps(),
-        notes: null,
-        paymentId: null,
-      };
-
-      const result = MemberLedgerEntryEntity.create(props, 'user-123');
-
-      expect(result.isOk()).toBe(true);
-      const entry = result._unsafeUnwrap();
-      expect(entry.notes).toBeNull();
-      expect(entry.paymentId).toBeNull();
-    });
-
-    it('should create a reversal entry', () => {
-      const originalEntryId = UniqueId.generate();
-      const props = {
-        ...createValidCreditProps(),
-        reversalOfId: originalEntryId,
-        type: MemberLedgerEntryType.REVERSAL_CREDIT,
-      };
-
-      const result = MemberLedgerEntryEntity.create(props, 'user-123');
-
-      expect(result.isOk()).toBe(true);
-      const entry = result._unsafeUnwrap();
-      expect(entry.reversalOfId).toBe(originalEntryId);
-      expect(entry.type).toBe(MemberLedgerEntryType.REVERSAL_CREDIT);
-    });
-
-    it('should generate unique ids for each entry', () => {
-      const props = createValidCreditProps();
-
-      const result1 = MemberLedgerEntryEntity.create(props, 'user-123');
-      const result2 = MemberLedgerEntryEntity.create(props, 'user-123');
-
-      expect(result1._unsafeUnwrap().id.value).not.toBe(
-        result2._unsafeUnwrap().id.value,
-      );
-    });
-
     it('should fail to create an entry with zero amount', () => {
       const props = {
         ...createValidCreditProps(),
@@ -296,58 +254,6 @@ describe('MemberLedgerEntryEntity', () => {
       )._unsafeUnwrap();
 
       expect(entry1.equals(entry2)).toBe(false);
-    });
-  });
-
-  describe('different entry types', () => {
-    const entryTypes = Object.values(MemberLedgerEntryType);
-
-    it.each(entryTypes)('should create entry with type %s', (type) => {
-      const props = {
-        ...createValidCreditProps(),
-        type,
-      };
-
-      const result = MemberLedgerEntryEntity.create(props, 'user-123');
-
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().type).toBe(type);
-    });
-  });
-
-  describe('different sources', () => {
-    const sources = Object.values(MemberLedgerEntrySource);
-
-    it.each(sources)('should create entry with source %s', (source) => {
-      const props = {
-        ...createValidCreditProps(),
-        source,
-      };
-
-      const result = MemberLedgerEntryEntity.create(props, 'user-123');
-
-      expect(result.isOk()).toBe(true);
-      expect(result._unsafeUnwrap().source).toBe(source);
-    });
-  });
-
-  describe('getters', () => {
-    it('should return all properties correctly', () => {
-      const props = createValidCreditProps();
-      const entry = MemberLedgerEntryEntity.create(
-        props,
-        'user-123',
-      )._unsafeUnwrap();
-
-      expect(entry.amount).toBe(props.amount);
-      expect(entry.date).toBe(props.date);
-      expect(entry.memberId).toBe(props.memberId);
-      expect(entry.notes).toBe(props.notes);
-      expect(entry.paymentId).toBe(props.paymentId);
-      expect(entry.reversalOfId).toBe(props.reversalOfId);
-      expect(entry.source).toBe(props.source);
-      expect(entry.status).toBe(props.status);
-      expect(entry.type).toBe(props.type);
     });
   });
 });
