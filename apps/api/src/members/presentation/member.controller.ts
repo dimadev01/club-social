@@ -307,9 +307,7 @@ export class MembersController extends BaseController {
     @Session() session: AuthSession,
   ): Promise<void> {
     if (!session.memberId) {
-      throw new ForbiddenException(
-        'Only members can update notification preferences',
-      );
+      throw new ForbiddenException();
     }
 
     this.handleResult(
