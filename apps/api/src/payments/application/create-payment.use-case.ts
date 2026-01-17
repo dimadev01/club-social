@@ -1,3 +1,5 @@
+import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   MemberLedgerEntrySource,
   MemberLedgerEntryStatus,
@@ -8,8 +10,12 @@ import {
   MovementMode,
   MovementStatus,
 } from '@club-social/shared/movements';
+import {
+  NotificationChannel,
+  NotificationType,
+} from '@club-social/shared/notifications';
 import { Inject } from '@nestjs/common';
-import { sumBy } from 'es-toolkit/compat';
+import { filter, flow, sumBy } from 'es-toolkit/compat';
 
 import type { Result } from '@/shared/domain/result';
 
@@ -17,12 +23,18 @@ import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
 } from '@/dues/domain/due.repository';
+import { DueEntity } from '@/dues/domain/entities/due.entity';
+import {
+  MEMBER_REPOSITORY_PROVIDER,
+  type MemberRepository,
+} from '@/members/domain/member.repository';
 import { MemberLedgerEntryEntity } from '@/members/ledger/domain/entities/member-ledger-entry.entity';
 import {
   MEMBER_LEDGER_REPOSITORY_PROVIDER,
   type MemberLedgerRepository,
 } from '@/members/ledger/member-ledger.repository';
 import { MovementEntity } from '@/movements/domain/entities/movement.entity';
+import { NotificationEntity } from '@/notifications/domain/entities/notification.entity';
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import {
   APP_LOGGER_PROVIDER,
@@ -64,6 +76,8 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     protected readonly logger: AppLogger,
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
+    @Inject(MEMBER_REPOSITORY_PROVIDER)
+    private readonly memberRepository: MemberRepository,
     @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
     private readonly memberLedgerRepository: MemberLedgerRepository,
     @Inject(UNIT_OF_WORK_PROVIDER)
@@ -366,6 +380,85 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       movements.push(surplusCreditMovement.value);
     }
 
+    const member =
+      await this.memberRepository.findByIdReadModelOrThrow(memberId);
+
+    let notification: NotificationEntity | null = null;
+
+    if (member.notificationPreferences.notifyOnPaymentMade) {
+      const pendingDues =
+        await this.dueRepository.findPendingByMemberId(memberId);
+
+      const getPendingAmount = flow(
+        (pendingDueList: DueEntity[], category: DueCategory) =>
+          filter(pendingDueList, (d) => d.category === category),
+        (pendingDueList: DueEntity[]) =>
+          sumBy(pendingDueList, (d) => d.pendingAmount.cents),
+      );
+
+      const pendingElectricity = getPendingAmount(
+        pendingDues,
+        DueCategory.ELECTRICITY,
+      );
+      const pendingGuest = getPendingAmount(pendingDues, DueCategory.GUEST);
+      const pendingMembership = getPendingAmount(
+        pendingDues,
+        DueCategory.MEMBERSHIP,
+      );
+      const pendingTotal =
+        pendingElectricity + pendingGuest + pendingMembership;
+
+      const duesDetail = dues.map((due) => {
+        const dueFromParams = params.dues.find((d) => d.dueId === due.id.value);
+        Guard.defined(dueFromParams);
+
+        const totalPaid =
+          (dueFromParams.cashAmount ?? 0) + (dueFromParams.balanceAmount ?? 0);
+
+        return {
+          amount: NumberFormat.currencyCents(totalPaid),
+          category: due.category,
+          date: DateFormat.date(due.date.value),
+        };
+      });
+
+      let duesDetailHtml = '<ul>';
+      duesDetail.forEach((due) => {
+        duesDetailHtml += `<li>Pago por movimiento correspondiente al concepto de ${DueCategoryLabel[due.category]} del ${due.date} por un monto de ${due.amount}</li>`;
+      });
+      duesDetailHtml += '</ul>';
+
+      const notificationResult = NotificationEntity.create(
+        {
+          channel: NotificationChannel.EMAIL,
+          memberId,
+          payload: {
+            template: 'new-payment',
+            variables: {
+              amount: NumberFormat.currencyCents(payment.value.amount.cents),
+              date: DateFormat.date(paymentDate.value),
+              detail: duesDetailHtml,
+              memberName: member.firstName,
+              pendingElectricity:
+                NumberFormat.currencyCents(pendingElectricity),
+              pendingGuest: NumberFormat.currencyCents(pendingGuest),
+              pendingMembership: NumberFormat.currencyCents(pendingMembership),
+              pendingTotal: NumberFormat.currencyCents(pendingTotal),
+            },
+          },
+          recipientAddress: member.email,
+          sourceEntity: 'payment',
+          sourceEntityId: payment.value.id,
+          type: NotificationType.PAYMENT_MADE,
+        },
+        params.createdBy,
+      );
+
+      if (notificationResult.isOk()) {
+        notification = notificationResult.value;
+      }
+    }
+
     /**
      * Atomic persistence:
      * All entities are saved within a single transaction to ensure consistency.
@@ -377,6 +470,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         duesRepository,
         memberLedgerRepository,
         movementsRepository,
+        notificationRepository,
         paymentsRepository,
       }) => {
         await paymentsRepository.save(payment.value);
@@ -397,6 +491,10 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         await Promise.all(
           movements.map((movement) => movementsRepository.save(movement)),
         );
+
+        if (notification) {
+          await notificationRepository.save(notification);
+        }
       },
     );
 

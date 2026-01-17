@@ -8,6 +8,10 @@ export type EmailRegularJobData =
   | { data: SendNewDueMovementParams; type: 'send-new-due-movement' }
   | { data: SendNewPaymentParams; type: 'send-new-payment' };
 
+export interface EmailSendResult {
+  id: string;
+}
+
 export interface SendEmailParams {
   from?: string;
   html: string;

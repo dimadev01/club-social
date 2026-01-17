@@ -1,6 +1,7 @@
 import { DueCategory } from '@club-social/shared/dues';
 import { MemberCategory } from '@club-social/shared/members';
 
+import { SYSTEM_USER } from '@/shared/domain/constants';
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -87,7 +88,7 @@ describe('PricingEntity', () => {
         {
           audit: {
             createdAt: new Date(TEST_ALT_PRICING_EFFECTIVE_FROM),
-            createdBy: 'system',
+            createdBy: SYSTEM_USER,
             updatedAt: null,
             updatedBy: null,
           },
@@ -100,7 +101,7 @@ describe('PricingEntity', () => {
       expect(pricing.amount.cents).toBe(TEST_ALT_PRICING_AMOUNT_CENTS);
       expect(pricing.dueCategory).toBe(DueCategory.GUEST);
       expect(pricing.memberCategory).toBe(MemberCategory.ADHERENT_MEMBER);
-      expect(pricing.createdBy).toBe('system');
+      expect(pricing.createdBy).toBe(SYSTEM_USER);
     });
 
     it('should create a closed pricing from persisted data', () => {
@@ -412,7 +413,7 @@ describe('PricingEntity', () => {
           effectiveTo: DateOnly.fromString('2024-12-31')._unsafeUnwrap(),
           memberCategory: MemberCategory.CADET,
         },
-        { audit: { createdBy: 'system' }, deleted: {}, id },
+        { audit: { createdBy: SYSTEM_USER }, deleted: {}, id },
       );
 
       expect(pricing1.equals(pricing2)).toBe(true);

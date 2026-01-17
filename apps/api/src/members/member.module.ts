@@ -11,7 +11,7 @@ import { MembersController } from './presentation/member.controller';
 
 @Module({
   controllers: [MembersController, MemberLedgerController],
-  exports: [],
+
   imports: [UsersModule],
   providers: [
     CreateMemberUseCase,

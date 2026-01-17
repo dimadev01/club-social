@@ -44,6 +44,10 @@ export const appRoutes = {
     view: (id?: string) => `/movements/${id}`,
   } as const,
   notFound: '*',
+  notifications: {
+    list: '/notifications',
+    view: (id?: string) => `/notifications/${id}`,
+  } as const,
   payments: {
     edit: (id?: string) => `/payments/${id}/edit`,
     list: '/payments',

@@ -122,3 +122,13 @@ export type Group = Prisma.GroupModel;
  *
  */
 export type GroupMember = Prisma.GroupMemberModel;
+/**
+ * Model Notification
+ *
+ */
+export type Notification = Prisma.NotificationModel;
+/**
+ * Model EmailSuppression
+ *
+ */
+export type EmailSuppression = Prisma.EmailSuppressionModel;

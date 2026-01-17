@@ -24,6 +24,8 @@ import { MemberView } from '@/members/MemberView';
 import { MovementList } from '@/movements/MovementList';
 import { MovementNew } from '@/movements/MovementNew';
 import { MovementView } from '@/movements/MovementView';
+import { NotificationList } from '@/notifications/NotificationList';
+import { NotificationView } from '@/notifications/NotificationView';
 import { PaymentList } from '@/payments/PaymentList';
 import { PaymentNew } from '@/payments/PaymentNew';
 import { PaymentView } from '@/payments/PaymentView';
@@ -96,6 +98,14 @@ export function AppRoutes() {
             <Route element={<MovementList />} index />
             <Route element={<MovementNew />} path={appRoutes.generic.new} />
             <Route element={<MovementView />} path={appRoutes.generic.view} />
+          </Route>
+
+          <Route path={appRoutes.notifications.list}>
+            <Route element={<NotificationList />} index />
+            <Route
+              element={<NotificationView />}
+              path={appRoutes.generic.view}
+            />
           </Route>
 
           <Route path={appRoutes.payments.list}>

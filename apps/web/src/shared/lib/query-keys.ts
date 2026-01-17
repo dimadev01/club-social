@@ -49,6 +49,11 @@ export const queryKeys = createQueryKeyStore({
     statistics: (query?: DateRangeDto) => [query],
   },
 
+  notifications: {
+    detail: (id?: string) => [id],
+    paginated: (query?: TableQuery) => [query],
+  },
+
   passkeys: {
     list: null,
   },

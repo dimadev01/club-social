@@ -23,4 +23,6 @@ export type * from './models/Pricing.js';
 export type * from './models/AppSetting.js';
 export type * from './models/Group.js';
 export type * from './models/GroupMember.js';
+export type * from './models/Notification.js';
+export type * from './models/EmailSuppression.js';
 export type * from './commonInputTypes.js';

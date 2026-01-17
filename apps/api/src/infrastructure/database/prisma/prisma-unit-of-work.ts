@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { DueEntity } from '@/dues/domain/entities/due.entity';
 import type { MemberLedgerEntryEntity } from '@/members/ledger/domain/entities/member-ledger-entry.entity';
 import type { MovementEntity } from '@/movements/domain/entities/movement.entity';
+import type { NotificationEntity } from '@/notifications/domain/entities/notification.entity';
 import type { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import type {
   TransactionalRepositories,
@@ -29,6 +30,10 @@ import {
   MOVEMENT_REPOSITORY_PROVIDER,
   type MovementRepository,
 } from '@/movements/domain/movement.repository';
+import {
+  NOTIFICATION_REPOSITORY_PROVIDER,
+  type NotificationRepository,
+} from '@/notifications/domain/notification.repository';
 import {
   PAYMENT_REPOSITORY_PROVIDER,
   type PaymentRepository,
@@ -69,6 +74,8 @@ export class PrismaUnitOfWork implements UnitOfWork {
     private readonly pricingRepository: PricingRepository,
     @Inject(GROUP_REPOSITORY_PROVIDER)
     private readonly groupRepository: GroupRepository,
+    @Inject(NOTIFICATION_REPOSITORY_PROVIDER)
+    private readonly notificationRepository: NotificationRepository,
   ) {}
 
   public async execute<T>(
@@ -81,6 +88,7 @@ export class PrismaUnitOfWork implements UnitOfWork {
         memberLedgerRepository: this.createMemberLedgerRepository(tx),
         memberRepository: this.createMemberRepository(tx),
         movementsRepository: this.createMovementRepository(tx),
+        notificationRepository: this.createNotificationRepository(tx),
         paymentsRepository: this.createPaymentRepository(tx),
         pricingRepository: this.createPricingRepository(tx),
         userRepository: this.createUserRepository(tx),
@@ -131,6 +139,15 @@ export class PrismaUnitOfWork implements UnitOfWork {
     return {
       save: (movement: MovementEntity): Promise<void> =>
         this.movementRepository.save(movement, tx),
+    };
+  }
+
+  private createNotificationRepository(
+    tx: PrismaTransactionClient,
+  ): WriteableRepository<NotificationEntity> {
+    return {
+      save: (notification: NotificationEntity): Promise<void> =>
+        this.notificationRepository.save(notification, tx),
     };
   }
 

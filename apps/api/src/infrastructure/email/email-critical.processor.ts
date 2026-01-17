@@ -48,7 +48,7 @@ export class EmailCriticalProcessor extends WorkerHost {
   }
 
   private async handleMagicLink(data: SendMagicLinkParams): Promise<void> {
-    return this.emailProvider.sendEmail({
+    await this.emailProvider.sendEmail({
       html: `Click here to login: <a href="${data.url}">${data.url}</a>`,
       subject: 'Magic link',
       to: data.email,
@@ -58,7 +58,7 @@ export class EmailCriticalProcessor extends WorkerHost {
   private async handleVerificationEmail(
     data: SendVerificationEmailParams,
   ): Promise<void> {
-    return this.emailProvider.sendEmail({
+    await this.emailProvider.sendEmail({
       html: `Click here to verify your email: <a href="${data.url}">${data.url}</a>`,
       subject: 'Verify your email',
       to: data.email,
