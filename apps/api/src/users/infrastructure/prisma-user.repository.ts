@@ -12,6 +12,7 @@ import {
 } from '@/infrastructure/database/prisma/generated/models';
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
+import { EntityNotFoundError } from '@/shared/domain/errors/entity-not-found.error';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -104,11 +105,17 @@ export class PrismaUserRepository implements UserRepository {
       where: { email: email.value },
     });
 
+    return user ? this.userMapper.toDomain(user) : null;
+  }
+
+  public async findUniqueByEmailOrThrow(email: Email): Promise<UserEntity> {
+    const user = await this.findUniqueByEmail(email);
+
     if (!user) {
-      return null;
+      throw new EntityNotFoundError();
     }
 
-    return this.userMapper.toDomain(user);
+    return user;
   }
 
   public async save(user: UserEntity, tx?: PrismaClientLike): Promise<void> {

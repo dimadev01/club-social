@@ -7,6 +7,12 @@ import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
+import { Email } from '@/shared/domain/value-objects/email/email.vo';
+import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import {
+  USER_REPOSITORY_PROVIDER,
+  type UserRepository,
+} from '@/users/domain/user.repository';
 
 import {
   EmailCategory,
@@ -32,6 +38,8 @@ export class EmailCriticalQueueProcessor extends WorkerHost {
     protected readonly logger: AppLogger,
     @Inject(EMAIL_PROVIDER_PROVIDER)
     private readonly emailProvider: EmailProvider,
+    @Inject(USER_REPOSITORY_PROVIDER)
+    private readonly userRepository: UserRepository,
     private readonly emailRateLimitService: EmailRateLimitService,
   ) {
     super();
@@ -70,20 +78,34 @@ export class EmailCriticalQueueProcessor extends WorkerHost {
   }
 
   private async handleMagicLink(data: SendMagicLinkParams): Promise<void> {
-    await this.emailProvider.sendEmail({
-      html: `Click here to login: <a href="${data.url}">${data.url}</a>`,
-      subject: 'Magic link',
-      to: data.email,
+    const user = await this.userRepository.findUniqueByEmailOrThrow(
+      Email.raw({ value: data.email }),
+    );
+
+    await this.emailProvider.sendTemplate({
+      email: data.email,
+      template: 'magic-link',
+      variables: {
+        url: data.url,
+        userName: user.name.firstName,
+      },
     });
   }
 
   private async handleVerificationEmail(
     data: SendVerificationEmailParams,
   ): Promise<void> {
-    await this.emailProvider.sendEmail({
-      html: `Click here to verify your email: <a href="${data.url}">${data.url}</a>`,
-      subject: 'Verify your email',
-      to: data.email,
+    const user = await this.userRepository.findByIdOrThrow(
+      UniqueId.raw({ value: data.userId }),
+    );
+
+    await this.emailProvider.sendTemplate({
+      email: data.email,
+      template: 'email-verification',
+      variables: {
+        url: data.url,
+        userName: user.name.firstName,
+      },
     });
   }
 }
