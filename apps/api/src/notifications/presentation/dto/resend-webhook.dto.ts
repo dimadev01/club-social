@@ -1,4 +1,4 @@
-import { IsEnum, IsObject } from 'class-validator';
+import { IsObject, IsString } from 'class-validator';
 
 import { ResendWebhookEventType } from '@/infrastructure/email/resend/resend.types';
 
@@ -14,6 +14,6 @@ export class ResendWebhookEventDto {
   @IsObject()
   public data: ResendWebhookEventDataDto;
 
-  @IsEnum(ResendWebhookEventType)
+  @IsString()
   public type: ResendWebhookEventType;
 }
