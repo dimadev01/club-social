@@ -31,6 +31,7 @@
     "egresos",
     "Egresos",
     "Idcard",
+    "svix",
     "Upserts"
   ],
   "ignoreWords": [

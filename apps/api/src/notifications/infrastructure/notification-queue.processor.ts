@@ -104,7 +104,7 @@ export class NotificationQueueProcessor extends WorkerHost {
       notification.fail(errorMessage, SYSTEM_USER);
 
       if (!notification.canRetry()) {
-        notification.markAsFailed(SYSTEM_USER);
+        notification.markAsFailed(errorMessage, SYSTEM_USER);
 
         this.logger.error({
           error,

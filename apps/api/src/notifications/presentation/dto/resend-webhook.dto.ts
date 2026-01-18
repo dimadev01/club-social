@@ -1,36 +1,22 @@
-import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsIn,
-  IsObject,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { IsObject, IsString } from 'class-validator';
 
-const ResendWebhookEventType = {
-  EMAIL_BOUNCED: 'email.bounced',
-  EMAIL_COMPLAINED: 'email.complained',
-  EMAIL_DELIVERED: 'email.delivered',
-} as const;
+import { ResendWebhookEventType } from '@/infrastructure/email/resend/resend.types';
 
-type ResendWebhookEventType =
-  (typeof ResendWebhookEventType)[keyof typeof ResendWebhookEventType];
-
-class ResendWebhookDataDto {
-  @IsString()
+export class ResendWebhookEventDataDto {
   public email_id: string;
-
-  @IsArray()
-  @IsString({ each: true })
+  public from: string;
+  public subject: string;
+  public template_id: string;
   public to: string[];
 }
 
-export class ResendWebhookDto {
-  @IsObject()
-  @Type(() => ResendWebhookDataDto)
-  @ValidateNested()
-  public data: ResendWebhookDataDto;
+export class ResendWebhookEventDto {
+  @IsString()
+  public created_at: string;
 
-  @IsIn(Object.values(ResendWebhookEventType))
+  @IsObject()
+  public data: ResendWebhookEventDataDto;
+
+  @IsString()
   public type: ResendWebhookEventType;
 }

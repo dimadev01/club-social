@@ -2,7 +2,6 @@ import { UserRole } from '@club-social/shared/users';
 import {
   Body,
   Controller,
-  ForbiddenException,
   Get,
   Inject,
   NotFoundException,
@@ -164,11 +163,5 @@ export class UsersController extends BaseController {
       role: user.role,
       status: user.status,
     };
-  }
-
-  private requireAdmin(session: AuthSession): void {
-    if (session.user.role !== UserRole.ADMIN) {
-      throw new ForbiddenException('Only admins can access this resource');
-    }
   }
 }
