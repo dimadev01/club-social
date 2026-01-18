@@ -22,6 +22,7 @@ import {
   EMAIL_SUPPRESSION_REPOSITORY_PROVIDER,
   type EmailSuppressionRepository,
 } from '../domain/email-suppression.repository';
+import { NotificationEntity } from '../domain/entities/notification.entity';
 import {
   NOTIFICATION_REPOSITORY_PROVIDER,
   type NotificationRepository,
@@ -106,12 +107,9 @@ export class OutboxWorkerProcessor {
     }
   }
 
-  private async shouldSuppressNotification(notification: {
-    channel: NotificationChannel;
-    memberId: { value: string };
-    recipientAddress: string;
-    type: NotificationType;
-  }): Promise<false | string> {
+  private async shouldSuppressNotification(
+    notification: NotificationEntity,
+  ): Promise<false | string> {
     if (notification.channel === NotificationChannel.EMAIL) {
       const isSuppressed =
         await this.emailSuppressionRepository.isEmailSuppressed(
@@ -123,13 +121,9 @@ export class OutboxWorkerProcessor {
       }
     }
 
-    const member = await this.memberRepository.findByIdReadModel(
+    const member = await this.memberRepository.findByIdReadModelOrThrow(
       UniqueId.raw({ value: notification.memberId.value }),
     );
-
-    if (!member) {
-      return 'Member not found';
-    }
 
     if (
       notification.type === NotificationType.DUE_CREATED &&

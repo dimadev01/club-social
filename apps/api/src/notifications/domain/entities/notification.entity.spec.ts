@@ -41,6 +41,7 @@ describe('NotificationEntity', () => {
       expect(notification.maxAttempts).toBe(3);
       expect(notification.queuedAt).toBeNull();
       expect(notification.processedAt).toBeNull();
+      expect(notification.scheduledAt).toBeNull();
       expect(notification.sentAt).toBeNull();
       expect(notification.deliveredAt).toBeNull();
       expect(notification.providerMessageId).toBeNull();

@@ -97,25 +97,23 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
       UniqueId.raw({ value: params.memberId }),
     );
 
-    const notificationResult = await this.createDueNotification(
+    const notification = await this.createNotification(
       due.value,
       member,
       params.createdBy,
     );
 
-    if (notificationResult.isErr()) {
-      return err(notificationResult.error);
+    if (notification.isErr()) {
+      return err(notification.error);
     }
 
-    const notification = notificationResult.value;
+    await this.unitOfWork.execute(
+      async ({ duesRepository, notificationRepository }) => {
+        await duesRepository.save(due.value);
 
-    await this.unitOfWork.execute(async (repos) => {
-      await repos.duesRepository.save(due.value);
-
-      if (notification) {
-        await repos.notificationRepository.save(notification);
-      }
-    });
+        await notificationRepository.save(notification.value);
+      },
+    );
 
     this.eventPublisher.dispatch(due.value);
 
@@ -148,15 +146,11 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
     };
   }
 
-  private async createDueNotification(
+  private async createNotification(
     due: DueEntity,
     member: MemberReadModel,
     createdBy: string,
-  ): Promise<Result<NotificationEntity | null>> {
-    if (!member.notificationPreferences.notifyOnDueCreated) {
-      return ok(null);
-    }
-
+  ): Promise<Result<NotificationEntity>> {
     const pendingDues = await this.dueRepository.findPendingByMemberId(
       due.memberId,
     );

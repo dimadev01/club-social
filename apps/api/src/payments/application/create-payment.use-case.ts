@@ -385,7 +385,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     const member =
       await this.memberRepository.findByIdReadModelOrThrow(memberId);
 
-    const notificationResult = await this.createPaymentNotification({
+    const notification = await this.createNotification({
       createdBy: params.createdBy,
       dues,
       duesParams: params.dues,
@@ -395,11 +395,9 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       paymentDate,
     });
 
-    if (notificationResult.isErr()) {
-      return err(notificationResult.error);
+    if (notification.isErr()) {
+      return err(notification.error);
     }
-
-    const notification = notificationResult.value;
 
     /**
      * Atomic persistence:
@@ -434,9 +432,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
           movements.map((movement) => movementsRepository.save(movement)),
         );
 
-        if (notification) {
-          await notificationRepository.save(notification);
-        }
+        await notificationRepository.save(notification.value);
       },
     );
 
@@ -516,7 +512,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     };
   }
 
-  private async createPaymentNotification(params: {
+  private async createNotification(params: {
     createdBy: string;
     dues: DueEntity[];
     duesParams: CreatePaymentDueParams[];
@@ -524,11 +520,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     memberId: UniqueId;
     payment: PaymentEntity;
     paymentDate: DateOnly;
-  }): Promise<Result<NotificationEntity | null>> {
-    if (!params.member.notificationPreferences.notifyOnPaymentMade) {
-      return ok(null);
-    }
-
+  }): Promise<Result<NotificationEntity>> {
     const paidDuesIds = new Set(params.dues.map((d) => d.id.value));
 
     const allPendingDues = await this.dueRepository.findPendingByMemberId(

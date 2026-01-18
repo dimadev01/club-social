@@ -21,11 +21,9 @@ export class PrismaEmailSuppressionRepository implements EmailSuppressionReposit
       where: { email: email.toLowerCase() },
     });
 
-    if (!suppression) {
-      return null;
-    }
-
-    return this.emailSuppressionMapper.toDomain(suppression);
+    return suppression
+      ? this.emailSuppressionMapper.toDomain(suppression)
+      : null;
   }
 
   public async isEmailSuppressed(email: string): Promise<boolean> {
@@ -33,7 +31,7 @@ export class PrismaEmailSuppressionRepository implements EmailSuppressionReposit
       where: { email: email.toLowerCase() },
     });
 
-    return suppression !== null;
+    return !!suppression;
   }
 
   public async save(

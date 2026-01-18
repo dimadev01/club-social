@@ -48,11 +48,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
       where: { id: id.value },
     });
 
-    if (!notification) {
-      return null;
-    }
-
-    return this.notificationMapper.toDomain(notification);
+    return notification ? this.notificationMapper.toDomain(notification) : null;
   }
 
   public async findByIdOrThrow(id: UniqueId): Promise<NotificationEntity> {
@@ -93,11 +89,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
       where: { providerMessageId: messageId },
     });
 
-    if (!notification) {
-      return null;
-    }
-
-    return this.notificationMapper.toDomain(notification);
+    return notification ? this.notificationMapper.toDomain(notification) : null;
   }
 
   public async findPaginated(
