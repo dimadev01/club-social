@@ -30,7 +30,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@better-auth/passkey": "^1.4.13",
+    "@better-auth/passkey": "^1.4.15",
     "@club-social/shared": "^0.0.1",
     "@dotenvx/dotenvx": "^1.51.4",
     "@faker-js/faker": "^9.9.0",
@@ -51,7 +51,7 @@
     "@sentry/cli": "^3.1.0",
     "@sentry/nestjs": "^10.34.0",
     "@sentry/profiling-node": "^10.34.0",
-    "better-auth": "^1.4.13",
+    "better-auth": "^1.4.15",
     "bullmq": "^5.66.5",
     "cache-manager": "^7.2.8",
     "class-transformer": "^0.5.1",
@@ -73,7 +73,7 @@
     "winston": "^3.19.0"
   },
   "devDependencies": {
-    "@better-auth/cli": "^1.4.13",
+    "@better-auth/cli": "^1.4.15",
     "@club-social/eslint-config": "*",
     "@club-social/prettier-config": "*",
     "@eslint/eslintrc": "^3.3.3",
