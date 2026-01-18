@@ -54,7 +54,12 @@ src/
 ├── pricing/          # Pricing configuration
 ├── audit-logs/       # Audit log viewer
 ├── profile/          # User profile
-└── home/             # Dashboard
+├── home/             # Dashboard
+├── notifications/    # Notifications
+├── groups/           # Member groups
+├── app-settings/     # Application settings
+├── users/            # User management
+└── maintenance/      # Maintenance pages
 ```
 
 ## Environment Variables

@@ -1,3 +1,5 @@
+import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   MemberLedgerEntrySource,
   MemberLedgerEntryStatus,
@@ -8,21 +10,32 @@ import {
   MovementMode,
   MovementStatus,
 } from '@club-social/shared/movements';
-import { Inject } from '@nestjs/common';
+import {
+  NotificationChannel,
+  NotificationType,
+} from '@club-social/shared/notifications';
+import { Inject, Injectable } from '@nestjs/common';
 import { sumBy } from 'es-toolkit/compat';
 
+import type { MemberReadModel } from '@/members/domain/member-read-models';
 import type { Result } from '@/shared/domain/result';
 
 import {
   DUE_REPOSITORY_PROVIDER,
   type DueRepository,
 } from '@/dues/domain/due.repository';
+import { DueEntity } from '@/dues/domain/entities/due.entity';
+import {
+  MEMBER_REPOSITORY_PROVIDER,
+  type MemberRepository,
+} from '@/members/domain/member.repository';
 import { MemberLedgerEntryEntity } from '@/members/ledger/domain/entities/member-ledger-entry.entity';
 import {
   MEMBER_LEDGER_REPOSITORY_PROVIDER,
   type MemberLedgerRepository,
 } from '@/members/ledger/member-ledger.repository';
 import { MovementEntity } from '@/movements/domain/entities/movement.entity';
+import { NotificationEntity } from '@/notifications/domain/entities/notification.entity';
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import {
   APP_LOGGER_PROVIDER,
@@ -58,12 +71,15 @@ interface CreatePaymentParams {
   surplusToCreditAmount: null | number;
 }
 
+@Injectable()
 export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
+    @Inject(MEMBER_REPOSITORY_PROVIDER)
+    private readonly memberRepository: MemberRepository,
     @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
     private readonly memberLedgerRepository: MemberLedgerRepository,
     @Inject(UNIT_OF_WORK_PROVIDER)
@@ -366,6 +382,23 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       movements.push(surplusCreditMovement.value);
     }
 
+    const member =
+      await this.memberRepository.findByIdReadModelOrThrow(memberId);
+
+    const notification = await this.createNotification({
+      createdBy: params.createdBy,
+      dues,
+      duesParams: params.dues,
+      member,
+      memberId,
+      payment: payment.value,
+      paymentDate,
+    });
+
+    if (notification.isErr()) {
+      return err(notification.error);
+    }
+
     /**
      * Atomic persistence:
      * All entities are saved within a single transaction to ensure consistency.
@@ -377,6 +410,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         duesRepository,
         memberLedgerRepository,
         movementsRepository,
+        notificationRepository,
         paymentsRepository,
       }) => {
         await paymentsRepository.save(payment.value);
@@ -397,6 +431,8 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         await Promise.all(
           movements.map((movement) => movementsRepository.save(movement)),
         );
+
+        await notificationRepository.save(notification.value);
       },
     );
 
@@ -421,6 +457,118 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     movements.forEach((movement) => this.eventPublisher.dispatch(movement));
 
     return ok(payment.value);
+  }
+
+  private buildDuesDetailHtml(
+    dues: DueEntity[],
+    duesParams: CreatePaymentDueParams[],
+  ): string {
+    const duesDetail = dues.map((due) => {
+      const dueFromParams = duesParams.find((d) => d.dueId === due.id.value);
+      Guard.defined(dueFromParams);
+
+      const totalPaid =
+        (dueFromParams.cashAmount ?? 0) + (dueFromParams.balanceAmount ?? 0);
+
+      return {
+        amount: NumberFormat.currencyCents(totalPaid),
+        category: due.category,
+        date: DateFormat.date(due.date.value),
+      };
+    });
+
+    let html = '<ul>';
+    duesDetail.forEach((due) => {
+      html += `<li>Pago por movimiento correspondiente al concepto de ${DueCategoryLabel[due.category]} del ${due.date} por un monto de ${due.amount}</li>`;
+    });
+    html += '</ul>';
+
+    return html;
+  }
+
+  private calculatePendingByCategory(dues: DueEntity[]): {
+    pendingElectricity: string;
+    pendingGuest: string;
+    pendingMembership: string;
+    pendingTotal: string;
+  } {
+    const getPendingAmount = (category: DueCategory) =>
+      sumBy(
+        dues.filter((d) => d.category === category),
+        (d) => d.pendingAmount.cents,
+      );
+
+    const electricity = getPendingAmount(DueCategory.ELECTRICITY);
+    const guest = getPendingAmount(DueCategory.GUEST);
+    const membership = getPendingAmount(DueCategory.MEMBERSHIP);
+
+    return {
+      pendingElectricity: NumberFormat.currencyCents(electricity),
+      pendingGuest: NumberFormat.currencyCents(guest),
+      pendingMembership: NumberFormat.currencyCents(membership),
+      pendingTotal: NumberFormat.currencyCents(
+        electricity + guest + membership,
+      ),
+    };
+  }
+
+  private async createNotification(params: {
+    createdBy: string;
+    dues: DueEntity[];
+    duesParams: CreatePaymentDueParams[];
+    member: MemberReadModel;
+    memberId: UniqueId;
+    payment: PaymentEntity;
+    paymentDate: DateOnly;
+  }): Promise<Result<NotificationEntity>> {
+    const paidDuesIds = new Set(params.dues.map((d) => d.id.value));
+
+    const allPendingDues = await this.dueRepository.findPendingByMemberId(
+      params.memberId,
+    );
+
+    // Filter out the dues that are being paid in this payment
+    const eligibleDues = allPendingDues.filter(
+      (d) => !paidDuesIds.has(d.id.value),
+    );
+
+    const pendingByCategory = this.calculatePendingByCategory(eligibleDues);
+
+    const duesDetailHtml = this.buildDuesDetailHtml(
+      params.dues,
+      params.duesParams,
+    );
+
+    const result = NotificationEntity.create(
+      {
+        channel: NotificationChannel.EMAIL,
+        memberId: params.memberId,
+        payload: {
+          template: 'new-payment',
+          variables: {
+            amount: NumberFormat.currencyCents(params.payment.amount.cents),
+            date: DateFormat.date(params.paymentDate.value),
+            detail: duesDetailHtml,
+            memberName: params.member.firstName,
+            pendingElectricity: pendingByCategory.pendingElectricity,
+            pendingGuest: pendingByCategory.pendingGuest,
+            pendingMembership: pendingByCategory.pendingMembership,
+            pendingTotal: pendingByCategory.pendingTotal,
+          },
+        },
+        recipientAddress: params.member.email,
+        sourceEntity: 'payment',
+        sourceEntityId: params.payment.id,
+        type: NotificationType.PAYMENT_MADE,
+      },
+      params.createdBy,
+    );
+
+    if (result.isErr()) {
+      return err(result.error);
+    }
+
+    return ok(result.value);
   }
 
   private async validateSufficientBalance(

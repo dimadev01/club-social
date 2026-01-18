@@ -1,8 +1,9 @@
 import { BullModule } from '@nestjs/bullmq';
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 
 import { ConfigService } from '../config/config.service';
 
+@Global()
 @Module({
   exports: [BullModule],
   imports: [
@@ -32,7 +33,7 @@ import { ConfigService } from '../config/config.service';
         removeOnComplete: true,
         removeOnFail: { count: 1000 },
       },
-      name: 'email-regular',
+      name: 'notification',
     }),
   ],
   providers: [],

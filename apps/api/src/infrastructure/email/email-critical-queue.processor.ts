@@ -1,13 +1,17 @@
+import { DateUtils } from '@club-social/shared/lib';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Inject } from '@nestjs/common';
-import { Job } from 'bullmq';
+import { DelayedError, Job } from 'bullmq';
 
-import { AppSettingService } from '@/app-settings/infrastructure/app-setting.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
 
+import {
+  EmailCategory,
+  EmailRateLimitService,
+} from './email-rate-limit.service';
 import { QueueEmailType } from './email.enum';
 import { EMAIL_PROVIDER_PROVIDER, type EmailProvider } from './email.provider';
 import {
@@ -18,25 +22,43 @@ import {
 
 @Processor('email-critical', {
   limiter: {
-    duration: 1_000 * 3, // 3 seconds
+    duration: 5_000, // 5 seconds
     max: 1,
   },
 })
-export class EmailCriticalProcessor extends WorkerHost {
+export class EmailCriticalQueueProcessor extends WorkerHost {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
     @Inject(EMAIL_PROVIDER_PROVIDER)
     private readonly emailProvider: EmailProvider,
-    private readonly appSettingService: AppSettingService,
+    private readonly emailRateLimitService: EmailRateLimitService,
   ) {
     super();
-    this.logger.setContext(EmailCriticalProcessor.name);
+    this.logger.setContext(EmailCriticalQueueProcessor.name);
   }
 
   public async process(
     job: Job<EmailCriticalJobData, void, QueueEmailType>,
   ): Promise<void> {
+    const { allowed, count, limit } =
+      await this.emailRateLimitService.incrementAndCheck(
+        EmailCategory.CRITICAL,
+      );
+
+    if (!allowed) {
+      this.logger.warn({
+        count,
+        limit,
+        message: 'Daily critical email limit reached',
+      });
+
+      const delayMs = DateUtils.getDelayUntilMidnight();
+      await job.moveToDelayed(Date.now() + delayMs, job.token);
+
+      throw new DelayedError();
+    }
+
     switch (job.data.type) {
       case QueueEmailType.SEND_MAGIC_LINK:
         return this.handleMagicLink(job.data.data);
@@ -48,7 +70,7 @@ export class EmailCriticalProcessor extends WorkerHost {
   }
 
   private async handleMagicLink(data: SendMagicLinkParams): Promise<void> {
-    return this.emailProvider.sendEmail({
+    await this.emailProvider.sendEmail({
       html: `Click here to login: <a href="${data.url}">${data.url}</a>`,
       subject: 'Magic link',
       to: data.email,
@@ -58,7 +80,7 @@ export class EmailCriticalProcessor extends WorkerHost {
   private async handleVerificationEmail(
     data: SendVerificationEmailParams,
   ): Promise<void> {
-    return this.emailProvider.sendEmail({
+    await this.emailProvider.sendEmail({
       html: `Click here to verify your email: <a href="${data.url}">${data.url}</a>`,
       subject: 'Verify your email',
       to: data.email,

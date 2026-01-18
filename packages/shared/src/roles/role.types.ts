@@ -18,6 +18,7 @@ export const Resource = {
   MEMBER_LEDGER: 'member-ledger',
   MEMBERS: 'members',
   MOVEMENTS: 'movements',
+  NOTIFICATIONS: 'notifications',
   PAYMENTS: 'payments',
   PRICING: 'pricing',
   USERS: 'users',

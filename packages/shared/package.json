@@ -64,6 +64,11 @@
       "types": "./src/lib/index.ts",
       "require": "./dist/lib/index.js",
       "import": "./dist/lib/index.mjs"
+    },
+    "./notifications": {
+      "types": "./src/notifications/index.ts",
+      "require": "./dist/notifications/index.js",
+      "import": "./dist/notifications/index.mjs"
     }
   },
   "scripts": {

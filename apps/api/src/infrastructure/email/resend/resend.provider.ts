@@ -12,7 +12,15 @@ import { INFO_EMAIL } from '@/shared/constants';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 
 import { EmailProvider } from '../email.provider';
-import { SendEmailParams, SendTemplateEmailParams } from '../email.types';
+import {
+  EmailSendResult,
+  SendEmailParams,
+  SendTemplateEmailParams,
+} from '../email.types';
+
+const RESEND_DELIVERED_EMAIL = 'delivered@resend.dev';
+// const BOUNCED_EMAIL = 'bounced@resend.dev';
+// const COMPLAINED_EMAIL = 'complained@resend.dev';
 
 @Injectable()
 export class ResendProvider implements EmailProvider {
@@ -28,41 +36,23 @@ export class ResendProvider implements EmailProvider {
     this.logger.setContext(ResendProvider.name);
   }
 
-  public async sendEmail(params: SendEmailParams): Promise<void> {
-    const sendEmails = await this.appSettingService.getValue(
-      AppSettingKey.SEND_EMAILS,
-    );
-
-    if (!sendEmails.value.enabled) {
-      this.logger.warn({
-        message: 'Sending emails is disabled',
-        params,
-      });
-
-      return;
-    }
-
+  public async sendEmail(params: SendEmailParams): Promise<EmailSendResult> {
     this.logger.info({
       message: 'Sending email',
       params,
     });
 
-    const toAddresses = this.buildToAddresses(params.to);
-
-    if (toAddresses.length === 0) {
-      this.logger.warn({
-        message: 'No to addresses found',
-        params,
-      });
-
-      return;
+    if (!(await this.isEmailsEnabled())) {
+      return { id: 'emails-disabled' };
     }
+
+    const toAddress = this.buildToAddress(params.to);
 
     const { data, error } = await this.resend.emails.send({
       from: params.from ?? 'Club Social <info@clubsocialmontegrande.ar>',
       html: params.html,
       subject: params.subject,
-      to: toAddresses,
+      to: toAddress.value,
     });
 
     if (error) {
@@ -72,7 +62,7 @@ export class ResendProvider implements EmailProvider {
         params,
       });
 
-      throw new Error('Error sending template email', { cause: error });
+      throw new Error('Error sending email', { cause: error });
     }
 
     this.logger.info({
@@ -80,24 +70,23 @@ export class ResendProvider implements EmailProvider {
       message: 'Email sent',
       params,
     });
+
+    return { id: data?.id ?? 'unknown' };
   }
 
-  public async sendTemplate(params: SendTemplateEmailParams): Promise<void> {
+  public async sendTemplate(
+    params: SendTemplateEmailParams,
+  ): Promise<EmailSendResult> {
     this.logger.info({
       message: 'Sending template email',
       params,
     });
 
-    const toAddresses = this.buildToAddresses(params.email);
-
-    if (toAddresses.length === 0) {
-      this.logger.warn({
-        message: 'No to addresses found',
-        params,
-      });
-
-      return;
+    if (!(await this.isEmailsEnabled())) {
+      return { id: 'emails-disabled' };
     }
+
+    const toAddress = this.buildToAddress(params.email);
 
     const { data, error } = await this.resend.emails.send({
       from: `Club Social <${INFO_EMAIL}>`,
@@ -105,7 +94,7 @@ export class ResendProvider implements EmailProvider {
         id: params.template,
         variables: params.variables,
       },
-      to: toAddresses,
+      to: toAddress.value,
     });
 
     if (error) {
@@ -123,41 +112,42 @@ export class ResendProvider implements EmailProvider {
       message: 'Template email sent',
       params,
     });
+
+    return { id: data?.id ?? 'unknown' };
   }
 
-  private buildToAddresses(emails: string | string[]): string[] {
-    if (!this.configService.isProd) {
-      return [INFO_EMAIL];
-    }
-
-    const toArray: string[] = Array.isArray(emails) ? emails : [emails];
-    const toEmails: Email[] = [];
+  private buildToAddress(to: string): Email {
     const infoEmail = Email.raw({ value: INFO_EMAIL });
 
-    for (const to of toArray) {
-      const email = Email.raw({ value: to });
-
-      /**
-       * We always send the info email to the admin
-       */
-      if (email.equals(infoEmail)) {
-        toEmails.push(email);
-        continue;
-      }
-
-      /**
-       * By default we discard emails for the club social domain
-       */
-      if (email.domain() === 'clubsocialmontegrande.ar') {
-        continue;
-      }
-
-      /**
-       * All other emails are allowed
-       */
-      toEmails.push(email);
+    if (!this.configService.isProd) {
+      return Email.raw({ value: RESEND_DELIVERED_EMAIL });
     }
 
-    return toEmails.map((email) => email.value);
+    const email = Email.raw({ value: to });
+
+    // We always send the info email to the admin
+    if (email.equals(infoEmail)) {
+      return infoEmail;
+    }
+
+    // By default every email with the club social domain is sent to the info email
+    if (email.domain() === 'clubsocialmontegrande.ar') {
+      this.logger.warn({
+        message: 'Email is the club social domain',
+        to,
+      });
+
+      return infoEmail;
+    }
+
+    return email;
+  }
+
+  private async isEmailsEnabled(): Promise<boolean> {
+    const sendEmails = await this.appSettingService.getValue(
+      AppSettingKey.SEND_EMAILS,
+    );
+
+    return sendEmails.value.enabled;
   }
 }

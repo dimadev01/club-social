@@ -11,8 +11,7 @@ import { PricingController } from './presentation/pricing.controller';
 
 @Module({
   controllers: [PricingController],
-  exports: [],
-  imports: [],
+
   providers: [
     CreatePricingUseCase,
     FindPricingUseCase,
