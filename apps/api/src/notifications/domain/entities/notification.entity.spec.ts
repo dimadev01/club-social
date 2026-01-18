@@ -206,7 +206,7 @@ describe('NotificationEntity', () => {
           status: NotificationStatus.PROCESSING,
         });
 
-        notification.markAsFailed(TEST_CREATED_BY);
+        notification.markAsFailed('Email failed', TEST_CREATED_BY);
 
         expect(notification.status).toBe(NotificationStatus.FAILED);
         expect(notification.updatedBy).toBe(TEST_CREATED_BY);
