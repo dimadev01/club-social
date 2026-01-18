@@ -70,6 +70,8 @@ export const ModelName = {
   AppSetting: 'AppSetting',
   Group: 'Group',
   GroupMember: 'GroupMember',
+  Notification: 'Notification',
+  EmailSuppression: 'EmailSuppression',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -361,6 +363,47 @@ export const GroupMemberScalarFieldEnum = {
 
 export type GroupMemberScalarFieldEnum =
   (typeof GroupMemberScalarFieldEnum)[keyof typeof GroupMemberScalarFieldEnum];
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  memberId: 'memberId',
+  channel: 'channel',
+  recipientAddress: 'recipientAddress',
+  type: 'type',
+  payload: 'payload',
+  sourceEntity: 'sourceEntity',
+  sourceEntityId: 'sourceEntityId',
+  status: 'status',
+  attempts: 'attempts',
+  maxAttempts: 'maxAttempts',
+  lastError: 'lastError',
+  providerMessageId: 'providerMessageId',
+  scheduledAt: 'scheduledAt',
+  queuedAt: 'queuedAt',
+  processedAt: 'processedAt',
+  sentAt: 'sentAt',
+  deliveredAt: 'deliveredAt',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+  updatedAt: 'updatedAt',
+  updatedBy: 'updatedBy',
+} as const;
+
+export type NotificationScalarFieldEnum =
+  (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum];
+
+export const EmailSuppressionScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  reason: 'reason',
+  providerEventId: 'providerEventId',
+  providerData: 'providerData',
+  createdAt: 'createdAt',
+  createdBy: 'createdBy',
+} as const;
+
+export type EmailSuppressionScalarFieldEnum =
+  (typeof EmailSuppressionScalarFieldEnum)[keyof typeof EmailSuppressionScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',

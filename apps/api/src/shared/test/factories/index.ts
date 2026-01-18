@@ -20,6 +20,11 @@ export {
   createTestOutflowMovement,
 } from './movement.factory';
 export {
+  createNotificationProps,
+  createTestNotification,
+  createTestNotificationFromPersistence,
+} from './notification.factory';
+export {
   createPaymentProps,
   createTestPayment,
   createTestPaymentFromPersistence,

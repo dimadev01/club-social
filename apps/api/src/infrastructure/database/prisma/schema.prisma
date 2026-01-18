@@ -133,6 +133,7 @@ model Member {
   payments      Payment[]
   ledgerEntries MemberLedgerEntry[]
   groups        GroupMember[]
+  notifications Notification[]
 
   @@index([userId])
   @@map("member")
@@ -359,4 +360,55 @@ model GroupMember {
   @@index([groupId])
   @@index([memberId])
   @@map("group_member")
+}
+
+model Notification {
+  id       String @id
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id])
+
+  channel          String
+  recipientAddress String
+
+  type    String
+  payload Json
+
+  sourceEntity   String?
+  sourceEntityId String?
+
+  status            String
+  attempts          Int
+  maxAttempts       Int
+  lastError         String?
+  providerMessageId String?
+
+  scheduledAt DateTime?
+  queuedAt    DateTime?
+  processedAt DateTime?
+  sentAt      DateTime?
+  deliveredAt DateTime?
+
+  createdAt DateTime @default(now())
+  createdBy String
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+
+  @@index([status, scheduledAt])
+  @@index([memberId])
+  @@index([providerMessageId])
+  @@map("notification")
+}
+
+model EmailSuppression {
+  id    String @id
+  email String @unique
+
+  reason          String
+  providerEventId String?
+  providerData    Json?
+
+  createdAt DateTime @default(now())
+  createdBy String
+
+  @@map("email_suppression")
 }

@@ -1,38 +1,29 @@
 import { Global, Module } from '@nestjs/common';
 
-import { ConfigService } from '../config/config.service';
-import { QueueModule } from '../queue/queue.module';
-import { EmailCriticalProcessor } from './email-critical.processor';
+import { EmailCriticalQueueProcessor } from './email-critical-queue.processor';
 import { EmailQueueService } from './email-queue.service';
-import { EmailRegularProcessor } from './email-regular.processor';
+import { EmailRateLimitService } from './email-rate-limit.service';
 import { EMAIL_PROVIDER_PROVIDER } from './email.provider';
-import { NodemailerProvider } from './nodemailer/nodemailer.service';
-import { ResendProvider } from './resend/resend.service';
+import { NodemailerProvider } from './nodemailer/nodemailer.provider';
+import { ResendProvider } from './resend/resend.provider';
 
 @Global()
 @Module({
-  exports: [EmailQueueService],
-  imports: [QueueModule],
+  exports: [
+    EmailQueueService,
+    EmailRateLimitService,
+    ResendProvider,
+    EMAIL_PROVIDER_PROVIDER,
+  ],
   providers: [
     EmailQueueService,
-    EmailCriticalProcessor,
-    EmailRegularProcessor,
+    EmailCriticalQueueProcessor,
+    EmailRateLimitService,
     NodemailerProvider,
     ResendProvider,
     {
-      inject: [ConfigService, NodemailerProvider, ResendProvider],
       provide: EMAIL_PROVIDER_PROVIDER,
-      useFactory: (
-        configService: ConfigService,
-        nodemailerService: NodemailerProvider,
-        resendService: ResendProvider,
-      ) => {
-        if (configService.isLocal) {
-          return nodemailerService;
-        }
-
-        return resendService;
-      },
+      useClass: ResendProvider,
     },
   ],
 })

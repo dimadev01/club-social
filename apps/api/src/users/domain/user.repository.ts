@@ -12,6 +12,7 @@ export const USER_REPOSITORY_PROVIDER = Symbol('UserRepository');
 export interface UserReadableRepository
   extends PaginatedRepository<UserEntity>, ReadableRepository<UserEntity> {
   findUniqueByEmail(email: Email): Promise<null | UserEntity>;
+  findUniqueByEmailOrThrow(email: Email): Promise<UserEntity>;
 }
 
 export interface UserRepository

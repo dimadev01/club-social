@@ -165,6 +165,7 @@ export class BetterAuthService {
           this.emailQueueService.sendVerificationEmail({
             email: data.user.email,
             url: data.url,
+            userId: data.user.id,
           }),
       },
       hooks: {

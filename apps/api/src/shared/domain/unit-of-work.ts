@@ -1,10 +1,12 @@
 import type { DueEntity } from '@/dues/domain/entities/due.entity';
 import type { MemberLedgerEntryEntity } from '@/members/ledger/domain/entities/member-ledger-entry.entity';
 import type { MovementEntity } from '@/movements/domain/entities/movement.entity';
+import type { NotificationEntity } from '@/notifications/domain/entities/notification.entity';
 import type { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 
 import { GroupEntity } from '@/groups/domain/entities/group.entity';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
+import { EmailSuppressionEntity } from '@/notifications/domain/entities/email-suppression.entity';
 import { PricingEntity } from '@/pricing/domain/entities/pricing.entity';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 
@@ -16,10 +18,12 @@ import type { WriteableRepository } from './repository';
  */
 export interface TransactionalRepositories {
   duesRepository: WriteableRepository<DueEntity>;
+  emailSuppressionRepository: WriteableRepository<EmailSuppressionEntity>;
   groupRepository: WriteableRepository<GroupEntity>;
   memberLedgerRepository: WriteableRepository<MemberLedgerEntryEntity>;
   memberRepository: WriteableRepository<MemberEntity>;
   movementsRepository: WriteableRepository<MovementEntity>;
+  notificationRepository: WriteableRepository<NotificationEntity>;
   paymentsRepository: WriteableRepository<PaymentEntity>;
   pricingRepository: WriteableRepository<PricingEntity>;
   userRepository: WriteableRepository<UserEntity>;

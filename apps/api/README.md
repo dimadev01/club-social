@@ -27,16 +27,19 @@ npm run start:prod
 
 ```bash
 # Generate Prisma client
-npm run generate-schema
+npm run prisma:generate-schema
 
 # Create and apply a new migration
-npm run new-migration
+npm run prisma:migration:new
+
+# Create migration without applying
+npm run prisma:migration:new:create-only
 
 # Apply migrations only (production)
 npm run migrate
 
 # Reset database (destructive!)
-npm run reset-database
+npm run prisma:reset-database
 ```
 
 ## Testing
@@ -85,6 +88,9 @@ src/
 ├── movements/         # Financial movements domain
 ├── pricing/           # Pricing configuration domain
 ├── audit/             # Audit logging domain
+├── notifications/     # Notification management domain
+├── groups/            # Member groups domain
+├── app-settings/      # Application settings domain
 ├── shared/            # Shared utilities, base classes, value objects
 └── infrastructure/    # Database, auth, logging, queue, email
 ```
