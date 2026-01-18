@@ -16,6 +16,7 @@ import { HealthCheckModule } from './infrastructure/health-check/health-check.mo
 import { LoggerModule } from './infrastructure/logger/logger.module';
 import { ObservabilityModule } from './infrastructure/observability/observability.module';
 import { QueueModule } from './infrastructure/queue/queue.module';
+import { RedisModule } from './infrastructure/redis/redis.module';
 import { StorageModule } from './infrastructure/storage/storage.module';
 import { TraceModule } from './infrastructure/trace/trace.module';
 import { MembersModule } from './members/member.module';
@@ -40,6 +41,7 @@ import { UsersModule } from './users/user.module';
     HealthCheckModule,
     StorageModule,
     CacheModule,
+    RedisModule,
     EmailModule,
     QueueModule,
 

@@ -1,8 +1,13 @@
+import { DateUtils } from '@club-social/shared/lib';
 import { NotificationChannel } from '@club-social/shared/notifications';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Inject, Injectable } from '@nestjs/common';
-import { Job } from 'bullmq';
+import { DelayedError, Job } from 'bullmq';
 
+import {
+  EmailCategory,
+  EmailRateLimitService,
+} from '@/infrastructure/email/email-rate-limit.service';
 import {
   EMAIL_PROVIDER_PROVIDER,
   type EmailProvider,
@@ -23,8 +28,10 @@ import { NotificationJobData } from './outbox-worker.processor';
 
 @Injectable()
 @Processor('notification', {
+  autorun: true,
+  concurrency: 1,
   limiter: {
-    duration: 1_000 * 60 * 15, // 15 minutes
+    duration: 5_000, // 5 seconds
     max: 1,
   },
 })
@@ -36,12 +43,31 @@ export class NotificationQueueProcessor extends WorkerHost {
     private readonly notificationRepository: NotificationRepository,
     @Inject(EMAIL_PROVIDER_PROVIDER)
     private readonly emailProvider: EmailProvider,
+    private readonly emailRateLimitService: EmailRateLimitService,
   ) {
     super();
     this.logger.setContext(NotificationQueueProcessor.name);
   }
 
   public async process(job: Job<NotificationJobData>): Promise<void> {
+    const { allowed, count, limit } =
+      await this.emailRateLimitService.incrementAndCheck(
+        EmailCategory.NOTIFICATION,
+      );
+
+    if (!allowed) {
+      this.logger.warn({
+        count,
+        limit,
+        message: 'Daily notification email limit reached',
+      });
+
+      const delayMs = DateUtils.getDelayUntilMidnight();
+      await job.moveToDelayed(Date.now() + delayMs, job.token);
+
+      throw new DelayedError();
+    }
+
     this.logger.info({
       jobId: job.id,
       message: 'Processing notification job',
