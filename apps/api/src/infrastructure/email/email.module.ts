@@ -9,7 +9,12 @@ import { ResendProvider } from './resend/resend.provider';
 
 @Global()
 @Module({
-  exports: [EmailQueueService, EmailRateLimitService, EMAIL_PROVIDER_PROVIDER],
+  exports: [
+    EmailQueueService,
+    EmailRateLimitService,
+    ResendProvider,
+    EMAIL_PROVIDER_PROVIDER,
+  ],
   providers: [
     EmailQueueService,
     EmailCriticalQueueProcessor,

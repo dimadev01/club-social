@@ -17,10 +17,11 @@ import {
   SendEmailParams,
   SendTemplateEmailParams,
 } from '../email.types';
+import { VerifyWebhookParams } from './resend.types';
 
 const RESEND_DELIVERED_EMAIL = 'delivered@resend.dev';
-// const BOUNCED_EMAIL = 'bounced@resend.dev';
-// const COMPLAINED_EMAIL = 'complained@resend.dev';
+// const RESEND_BOUNCED_EMAIL = 'bounced@resend.dev';
+// const RESEND_COMPLAINED_EMAIL = 'complained@resend.dev';
 
 @Injectable()
 export class ResendProvider implements EmailProvider {
@@ -114,6 +115,30 @@ export class ResendProvider implements EmailProvider {
     });
 
     return { id: data?.id ?? 'unknown' };
+  }
+
+  public verifyWebhook(params: VerifyWebhookParams): boolean {
+    try {
+      this.resend.webhooks.verify({
+        headers: {
+          id: params.id,
+          signature: params.signature,
+          timestamp: params.timestamp,
+        },
+        payload: params.payload,
+        webhookSecret: this.configService.resendWebhookSecret,
+      });
+
+      return true;
+    } catch (error) {
+      this.logger.error({
+        error,
+        message: 'Error verifying webhook',
+        params,
+      });
+
+      return false;
+    }
   }
 
   private buildToAddress(to: string): Email {

@@ -1,100 +1,85 @@
+import type { Request } from 'express';
+
 import {
   Body,
   Controller,
   Headers,
   HttpCode,
-  HttpStatus,
   Inject,
   Post,
+  type RawBodyRequest,
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiExcludeController } from '@nestjs/swagger';
-import { Webhook } from 'svix';
 
-import { ConfigService } from '@/infrastructure/config/config.service';
+import { ResendProvider } from '@/infrastructure/email/resend/resend.provider';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
+import { BaseController } from '@/shared/presentation/controller';
+import { PublicRoute } from '@/shared/presentation/decorators/public-route.decorator';
 
 import { HandleDeliveryWebhookUseCase } from '../application/handle-delivery-webhook.use-case';
-import { ResendWebhookDto } from './dto/resend-webhook.dto';
+import { ResendWebhookEventDto } from './dto/resend-webhook.dto';
 
 @ApiExcludeController()
 @Controller('webhooks')
-export class WebhookController {
+export class WebhookController extends BaseController {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
-    private readonly logger: AppLogger,
-    private readonly configService: ConfigService,
+    protected readonly logger: AppLogger,
     private readonly handleDeliveryWebhookUseCase: HandleDeliveryWebhookUseCase,
+    private readonly resendProvider: ResendProvider,
   ) {
-    this.logger.setContext(WebhookController.name);
+    super(logger);
   }
 
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(200)
   @Post('resend')
+  @PublicRoute()
   public async handleResendWebhook(
-    @Req() req: { rawBody?: Buffer },
+    @Req() req: RawBodyRequest<Request>,
     @Headers('svix-id') svixId: string,
     @Headers('svix-timestamp') svixTimestamp: string,
     @Headers('svix-signature') svixSignature: string,
-    @Body() body: ResendWebhookDto,
-  ): Promise<{ success: boolean }> {
+    @Body() body: ResendWebhookEventDto,
+  ): Promise<void> {
     this.logger.info({
       message: 'Received Resend webhook',
       type: body.type,
     });
 
-    const webhookSecret = this.configService.resendWebhookSecret;
+    const rawBody = req.rawBody;
 
-    if (webhookSecret) {
-      const rawBody = req.rawBody;
-
-      if (!rawBody) {
-        this.logger.error({
-          error: new Error('Missing raw body'),
-          message: 'Missing raw body for webhook verification',
-        });
-        throw new UnauthorizedException('Invalid webhook signature');
-      }
-
-      try {
-        const webhook = new Webhook(webhookSecret);
-
-        webhook.verify(rawBody.toString(), {
-          'svix-id': svixId,
-          'svix-signature': svixSignature,
-          'svix-timestamp': svixTimestamp,
-        });
-      } catch (error) {
-        this.logger.error({
-          error,
-          message: 'Invalid webhook signature',
-        });
-
-        throw new UnauthorizedException('Invalid webhook signature');
-      }
-    } else {
-      this.logger.warn({
-        message:
-          'Webhook signature verification skipped - no secret configured',
+    if (!rawBody) {
+      this.logger.error({
+        error: new Error('Missing raw body'),
+        message: 'Missing raw body for webhook verification',
       });
+      throw new UnauthorizedException('Invalid webhook signature');
     }
 
-    const result = await this.handleDeliveryWebhookUseCase.execute({
-      data: body.data,
-      type: body.type,
+    const isWebhookValid = this.resendProvider.verifyWebhook({
+      id: svixId,
+      payload: rawBody.toString(),
+      signature: svixSignature,
+      timestamp: svixTimestamp,
     });
 
-    if (result.isErr()) {
-      this.logger.error({
-        error: result.error,
-        message: 'Failed to handle webhook',
-      });
+    if (!isWebhookValid) {
+      throw new UnauthorizedException('Invalid webhook signature');
     }
 
-    return { success: true };
+    this.handleResult(
+      await this.handleDeliveryWebhookUseCase.execute({
+        data: {
+          providerId: body.data.email_id,
+          to: body.data.to,
+        },
+        type: body.type,
+      }),
+    );
   }
 }

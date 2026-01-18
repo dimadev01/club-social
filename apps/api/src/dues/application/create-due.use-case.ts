@@ -11,6 +11,7 @@ import type { MemberReadModel } from '@/members/domain/member-read-models';
 import type { Result } from '@/shared/domain/result';
 
 import { DueEntity } from '@/dues/domain/entities/due.entity';
+import { ResendNotificationEmailTemplate } from '@/infrastructure/email/resend/resend.types';
 import {
   MEMBER_REPOSITORY_PROVIDER,
   type MemberRepository,
@@ -162,7 +163,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
         channel: NotificationChannel.EMAIL,
         memberId: due.memberId,
         payload: {
-          template: 'new-movement',
+          template: ResendNotificationEmailTemplate.NEW_DUE,
           variables: {
             amount: NumberFormat.currencyCents(due.amount.cents),
             category: DueCategoryLabel[due.category],

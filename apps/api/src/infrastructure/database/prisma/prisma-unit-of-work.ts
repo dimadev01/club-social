@@ -31,6 +31,11 @@ import {
   type MovementRepository,
 } from '@/movements/domain/movement.repository';
 import {
+  EMAIL_SUPPRESSION_REPOSITORY_PROVIDER,
+  type EmailSuppressionRepository,
+} from '@/notifications/domain/email-suppression.repository';
+import { EmailSuppressionEntity } from '@/notifications/domain/entities/email-suppression.entity';
+import {
   NOTIFICATION_REPOSITORY_PROVIDER,
   type NotificationRepository,
 } from '@/notifications/domain/notification.repository';
@@ -76,6 +81,8 @@ export class PrismaUnitOfWork implements UnitOfWork {
     private readonly groupRepository: GroupRepository,
     @Inject(NOTIFICATION_REPOSITORY_PROVIDER)
     private readonly notificationRepository: NotificationRepository,
+    @Inject(EMAIL_SUPPRESSION_REPOSITORY_PROVIDER)
+    private readonly emailSuppressionRepository: EmailSuppressionRepository,
   ) {}
 
   public async execute<T>(
@@ -84,6 +91,7 @@ export class PrismaUnitOfWork implements UnitOfWork {
     return this.prisma.$transaction(async (tx) => {
       const repos: TransactionalRepositories = {
         duesRepository: this.createDueRepository(tx),
+        emailSuppressionRepository: this.createEmailSuppressionRepository(tx),
         groupRepository: this.createGroupRepository(tx),
         memberLedgerRepository: this.createMemberLedgerRepository(tx),
         memberRepository: this.createMemberRepository(tx),
@@ -103,6 +111,15 @@ export class PrismaUnitOfWork implements UnitOfWork {
   ): WriteableRepository<DueEntity> {
     return {
       save: (due: DueEntity): Promise<void> => this.dueRepository.save(due, tx),
+    };
+  }
+
+  private createEmailSuppressionRepository(
+    tx: PrismaTransactionClient,
+  ): WriteableRepository<EmailSuppressionEntity> {
+    return {
+      save: (suppression: EmailSuppressionEntity): Promise<void> =>
+        this.emailSuppressionRepository.save(suppression, tx),
     };
   }
 

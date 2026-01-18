@@ -11,6 +11,7 @@ import { ConfigService } from './infrastructure/config/config.service';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
+    rawBody: true,
   });
 
   app.set('query parser', 'extended');
@@ -26,7 +27,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      forbidNonWhitelisted: true,
+      // forbidNonWhitelisted: true,
       transform: true,
       whitelist: true,
     }),

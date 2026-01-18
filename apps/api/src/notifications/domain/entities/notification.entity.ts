@@ -248,7 +248,8 @@ export class NotificationEntity extends AuditedAggregateRoot {
     this.markAsUpdated(updatedBy);
   }
 
-  public markAsFailed(updatedBy: string): void {
+  public markAsFailed(error: string, updatedBy: string): void {
+    this._lastError = error;
     this._status = NotificationStatus.FAILED;
     this.markAsUpdated(updatedBy);
   }

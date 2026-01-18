@@ -25,6 +25,7 @@ import {
   type DueRepository,
 } from '@/dues/domain/due.repository';
 import { DueEntity } from '@/dues/domain/entities/due.entity';
+import { ResendNotificationEmailTemplate } from '@/infrastructure/email/resend/resend.types';
 import {
   MEMBER_REPOSITORY_PROVIDER,
   type MemberRepository,
@@ -544,7 +545,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         channel: NotificationChannel.EMAIL,
         memberId: params.memberId,
         payload: {
-          template: 'new-payment',
+          template: ResendNotificationEmailTemplate.NEW_PAYMENT,
           variables: {
             amount: NumberFormat.currencyCents(params.payment.amount.cents),
             date: DateFormat.date(params.paymentDate.value),
