@@ -28,7 +28,7 @@ import {
 
 export interface HandleDeliveryWebhookParams {
   data: {
-    providerId: string;
+    providerEmailId: string;
     to: string[];
   };
   type: ResendWebhookEventType;
@@ -59,13 +59,13 @@ export class HandleDeliveryWebhookUseCase extends UseCase<void> {
 
     const notification =
       await this.notificationRepository.findByProviderMessageId(
-        params.data.providerId,
+        params.data.providerEmailId,
       );
 
     if (!notification) {
       this.logger.warn({
         message: 'Notification not found for provider message ID',
-        providerMessageId: params.data.providerId,
+        providerMessageId: params.data.providerEmailId,
       });
 
       return ok();
@@ -80,7 +80,7 @@ export class HandleDeliveryWebhookUseCase extends UseCase<void> {
         const suppression = await this.createSuppression(
           params.data.to,
           EmailSuppressionReason.BOUNCE,
-          params.data.providerId,
+          params.data.providerEmailId,
         );
 
         if (suppression.isErr()) {
@@ -97,7 +97,7 @@ export class HandleDeliveryWebhookUseCase extends UseCase<void> {
         const suppression = await this.createSuppression(
           params.data.to,
           EmailSuppressionReason.COMPLAINT,
-          params.data.providerId,
+          params.data.providerEmailId,
         );
 
         if (suppression.isErr()) {

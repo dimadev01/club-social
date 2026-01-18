@@ -75,7 +75,7 @@ export class WebhookController extends BaseController {
     this.handleResult(
       await this.handleDeliveryWebhookUseCase.execute({
         data: {
-          providerId: body.data.email_id,
+          providerEmailId: body.data.email_id,
           to: body.data.to,
         },
         type: body.type,

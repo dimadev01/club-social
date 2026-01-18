@@ -11,6 +11,9 @@ export class ResendWebhookEventDataDto {
 }
 
 export class ResendWebhookEventDto {
+  @IsString()
+  public created_at: string;
+
   @IsObject()
   public data: ResendWebhookEventDataDto;
 
