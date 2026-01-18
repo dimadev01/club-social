@@ -29,4 +29,5 @@ export interface SendTemplateEmailParams {
 export interface SendVerificationEmailParams {
   email: string;
   url: string;
+  userId: string;
 }
