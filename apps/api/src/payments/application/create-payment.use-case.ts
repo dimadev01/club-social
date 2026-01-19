@@ -543,7 +543,6 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     const result = NotificationEntity.create(
       {
         channel: NotificationChannel.EMAIL,
-        memberId: params.memberId,
         payload: {
           template: ResendNotificationEmailTemplate.NEW_PAYMENT,
           variables: {
@@ -561,6 +560,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         sourceEntity: 'payment',
         sourceEntityId: params.payment.id,
         type: NotificationType.PAYMENT_MADE,
+        userId: UniqueId.raw({ value: params.member.userId }),
       },
       params.createdBy,
     );

@@ -104,8 +104,8 @@ export function NotificationList() {
             title: 'Destinatario',
           },
           {
-            dataIndex: 'memberName',
-            title: 'Socio',
+            dataIndex: 'userName',
+            title: 'Usuario',
           },
           {
             align: 'center',

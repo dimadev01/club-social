@@ -39,7 +39,13 @@ export const NotificationStatusLabel = {
 } as const;
 
 export const NotificationType = {
+  // Member-facing
   DUE_CREATED: 'due_created',
+  // User-facing
+  DUE_OVERDUE: 'due_overdue',
+  MEMBER_CREATED: 'member_created',
+  MOVEMENT_CREATED: 'movement_created',
+  MOVEMENT_VOIDED: 'movement_voided',
   PAYMENT_MADE: 'payment_made',
 } as const;
 
@@ -48,6 +54,10 @@ export type NotificationType =
 
 export const NotificationTypeLabel = {
   [NotificationType.DUE_CREATED]: 'Deuda creada',
+  [NotificationType.DUE_OVERDUE]: 'Deuda vencida',
+  [NotificationType.MEMBER_CREATED]: 'Socio creado',
+  [NotificationType.MOVEMENT_CREATED]: 'Movimiento creado',
+  [NotificationType.MOVEMENT_VOIDED]: 'Movimiento anulado',
   [NotificationType.PAYMENT_MADE]: 'Pago realizado',
 } as const;
 

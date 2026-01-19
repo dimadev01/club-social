@@ -19,11 +19,11 @@ import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import { MemberEntity } from '../domain/entities/member.entity';
 import {
   MemberNotification,
   MemberNotificationProps,
-} from '../domain/value-objects/member-notification.vo';
+} from '../domain/entities/member-notification';
+import { MemberEntity } from '../domain/entities/member.entity';
 
 @Injectable()
 export class PrismaMemberMapper {

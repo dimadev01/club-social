@@ -1,6 +1,6 @@
 import { Theme, ThemeAlgorithm } from '@club-social/shared/users';
 
-import { UserPreferences } from './user-preferences.vo';
+import { UserPreferences } from './user-preferences';
 
 describe('UserPreferences', () => {
   describe('raw', () => {

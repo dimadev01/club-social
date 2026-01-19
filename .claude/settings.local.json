@@ -1,4 +1,8 @@
 {
+  "fileSuggestion": {
+    "type": "command",
+    "command": "~/.claude/file-suggestion.sh"
+  },
   "permissions": {
     "allow": [
       "Bash(npm run build:*)",
@@ -24,12 +28,9 @@
       "Bash(npm run generate-schema:*)",
       "Bash(npm ls:*)",
       "Bash(npm run:*)",
-      "Bash(npm show:*)"
+      "Bash(npm show:*)",
+      "Bash(npx dotenvx run:*)"
     ]
   },
-  "outputStyle": "default",
-  "fileSuggestion": {
-    "type": "command",
-    "command": "~/.claude/file-suggestion.sh"
-  }
+  "outputStyle": "default"
 }

@@ -32,7 +32,6 @@ export interface NotificationProps {
   deliveredAt: Date | null;
   lastError: null | string;
   maxAttempts: number;
-  memberId: UniqueId;
   payload: Record<string, unknown>;
   processedAt: Date | null;
   providerMessageId: null | string;
@@ -44,6 +43,7 @@ export interface NotificationProps {
   sourceEntityId: null | UniqueId;
   status: NotificationStatus;
   type: NotificationType;
+  userId: UniqueId;
 }
 
 export class NotificationEntity extends AuditedAggregateRoot {
@@ -65,10 +65,6 @@ export class NotificationEntity extends AuditedAggregateRoot {
 
   public get maxAttempts(): number {
     return this._maxAttempts;
-  }
-
-  public get memberId(): UniqueId {
-    return this._memberId;
   }
 
   public get payload(): Record<string, unknown> {
@@ -115,12 +111,15 @@ export class NotificationEntity extends AuditedAggregateRoot {
     return this._type;
   }
 
+  public get userId(): UniqueId {
+    return this._userId;
+  }
+
   private _attempts: number;
   private _channel: NotificationChannel;
   private _deliveredAt: Date | null;
   private _lastError: null | string;
   private _maxAttempts: number;
-  private _memberId: UniqueId;
   private _payload: Record<string, unknown>;
   private _processedAt: Date | null;
   private _providerMessageId: null | string;
@@ -132,6 +131,7 @@ export class NotificationEntity extends AuditedAggregateRoot {
   private _sourceEntityId: null | UniqueId;
   private _status: NotificationStatus;
   private _type: NotificationType;
+  private _userId: UniqueId;
 
   private constructor(props: NotificationProps, meta?: PersistenceMeta) {
     super(meta?.id, meta?.audit);
@@ -141,7 +141,7 @@ export class NotificationEntity extends AuditedAggregateRoot {
     this._deliveredAt = props.deliveredAt;
     this._lastError = props.lastError;
     this._maxAttempts = props.maxAttempts;
-    this._memberId = props.memberId;
+    this._userId = props.userId;
     this._payload = props.payload;
     this._processedAt = props.processedAt;
     this._providerMessageId = props.providerMessageId;
@@ -166,7 +166,6 @@ export class NotificationEntity extends AuditedAggregateRoot {
         deliveredAt: null,
         lastError: null,
         maxAttempts: DEFAULT_MAX_ATTEMPTS,
-        memberId: props.memberId,
         payload: props.payload,
         processedAt: null,
         providerMessageId: null,
@@ -178,6 +177,7 @@ export class NotificationEntity extends AuditedAggregateRoot {
         sourceEntityId: props.sourceEntityId,
         status: NotificationStatus.PENDING,
         type: props.type,
+        userId: props.userId,
       },
       {
         audit: { createdBy },

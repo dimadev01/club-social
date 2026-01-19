@@ -21,7 +21,8 @@ import { createTestUser, createUserProps } from '@/shared/test/factories';
 
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
-import { UserPreferences } from '../value-objects/user-preferences.vo';
+import { UserNotification } from './user-notification';
+import { UserPreferences } from './user-preferences';
 import { UserEntity } from './user.entity';
 
 describe('UserEntity', () => {
@@ -94,6 +95,7 @@ describe('UserEntity', () => {
             firstName: TEST_ALT_FIRST_NAME,
             lastName: TEST_ALT_LAST_NAME,
           }),
+          notificationPreferences: UserNotification.raw(),
           preferences: UserPreferences.raw({
             theme: Theme.LIGHT,
           }),
@@ -132,6 +134,7 @@ describe('UserEntity', () => {
             firstName: TEST_ALT_FIRST_NAME,
             lastName: TEST_ALT_LAST_NAME,
           }),
+          notificationPreferences: UserNotification.raw(),
           preferences: UserPreferences.raw(),
           role: UserRole.MEMBER,
           status: UserStatus.INACTIVE,
@@ -234,6 +237,7 @@ describe('UserEntity', () => {
             firstName: TEST_FIRST_NAME,
             lastName: TEST_LAST_NAME,
           }),
+          notificationPreferences: UserNotification.raw(),
           preferences: UserPreferences.raw({
             theme: Theme.LIGHT,
           }),

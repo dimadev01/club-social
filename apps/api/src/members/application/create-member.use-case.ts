@@ -34,7 +34,7 @@ import {
   type UserRepository,
 } from '@/users/domain/user.repository';
 
-import { MemberNotification } from '../domain/value-objects/member-notification.vo';
+import { MemberNotification } from '../domain/entities/member-notification';
 
 interface CreateMemberParams {
   address: Address | null;

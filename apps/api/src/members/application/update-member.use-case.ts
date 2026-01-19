@@ -10,12 +10,12 @@ import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
+import { MemberNotification } from '@/members/domain/entities/member-notification';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import {
   MEMBER_REPOSITORY_PROVIDER,
   type MemberRepository,
 } from '@/members/domain/member.repository';
-import { MemberNotification } from '@/members/domain/value-objects/member-notification.vo';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,

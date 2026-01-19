@@ -27,6 +27,10 @@ import { EntityNotFoundError } from '@/shared/domain/errors/entity-not-found.err
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
+import {
+  MemberNotification,
+  MemberNotificationProps,
+} from '../domain/entities/member-notification';
 import { MemberEntity } from '../domain/entities/member.entity';
 import {
   MemberPaginatedExtraReadModel,
@@ -36,14 +40,10 @@ import {
   MemberSearchReadModel,
 } from '../domain/member-read-models';
 import { MemberRepository } from '../domain/member.repository';
-import {
-  MemberNotification,
-  MemberNotificationProps,
-} from '../domain/value-objects/member-notification.vo';
 import { PrismaMemberMapper } from './prisma-member.mapper';
 
-type MemberPayload = MemberGetPayload<{ include: { user: true } }>;
-type MemberPayloadWithLedgerEntries = MemberGetPayload<{
+type MemberWithUserPayload = MemberGetPayload<{ include: { user: true } }>;
+type MemberWithUserWithLedgerEntriesPayload = MemberGetPayload<{
   include: { ledgerEntries: true; user: true };
 }>;
 
@@ -77,7 +77,7 @@ export class PrismaMemberRepository implements MemberRepository {
   public async findByIdReadModel(
     id: UniqueId,
   ): Promise<MemberReadModel | null> {
-    const member: MemberPayload | null =
+    const member: MemberWithUserPayload | null =
       await this.prismaService.member.findUnique({
         include: { user: true },
         where: { id: id.value },
@@ -110,6 +110,18 @@ export class PrismaMemberRepository implements MemberRepository {
     });
 
     return members.map((member) => this.memberMapper.toDomain(member));
+  }
+
+  public async findByUserIdReadModel(
+    userId: UniqueId,
+  ): Promise<MemberReadModel | null> {
+    const member: MemberWithUserPayload | null =
+      await this.prismaService.member.findUnique({
+        include: { user: true },
+        where: { userId: userId.value },
+      });
+
+    return member ? this.toReadModel(member) : null;
   }
 
   public async findForExport(
@@ -314,7 +326,7 @@ export class PrismaMemberRepository implements MemberRepository {
   private async findAllByBalanceSort(params: {
     order: SortOrder;
     where: MemberWhereInput;
-  }): Promise<MemberPayloadWithLedgerEntries[]> {
+  }): Promise<MemberWithUserWithLedgerEntriesPayload[]> {
     const allMembers = await this.prismaService.member.findMany({
       include: { ledgerEntries: true, user: true },
       where: params.where,
@@ -338,7 +350,7 @@ export class PrismaMemberRepository implements MemberRepository {
     category?: DueCategory;
     order: SortOrder;
     where: MemberWhereInput;
-  }): Promise<MemberPayloadWithLedgerEntries[]> {
+  }): Promise<MemberWithUserWithLedgerEntriesPayload[]> {
     const allMembers = await this.prismaService.member.findMany({
       select: { id: true },
       where: params.where,
@@ -373,19 +385,22 @@ export class PrismaMemberRepository implements MemberRepository {
       where: { id: { in: sortedMemberIds } },
     });
 
-    const memberMap = new Map<string, MemberPayloadWithLedgerEntries>(
+    const memberMap = new Map<string, MemberWithUserWithLedgerEntriesPayload>(
       fetchedMembers.map((m) => [m.id, m]),
     );
 
     return sortedMemberIds.map(
-      (id) => memberMap.get(id) as MemberPayloadWithLedgerEntries,
+      (id) => memberMap.get(id) as MemberWithUserWithLedgerEntriesPayload,
     );
   }
 
   private async findAllSorted(
     params: ExportDataDto,
     pagination?: { page: number; pageSize: number },
-  ): Promise<{ members: MemberPayloadWithLedgerEntries[]; total: number }> {
+  ): Promise<{
+    members: MemberWithUserWithLedgerEntriesPayload[];
+    total: number;
+  }> {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const dueSortField = this.extractDueSortField(params);
@@ -395,7 +410,7 @@ export class PrismaMemberRepository implements MemberRepository {
     );
 
     // Computed sorts: fetch all, sort in memory, then paginate
-    let allMembers: MemberPayloadWithLedgerEntries[] | null = null;
+    let allMembers: MemberWithUserWithLedgerEntriesPayload[] | null = null;
 
     if (dueSortField) {
       allMembers = await this.findAllByCategoryOrTotalSort({
@@ -455,7 +470,7 @@ export class PrismaMemberRepository implements MemberRepository {
   }
 
   private toPaginatedReadModel(
-    member: MemberPayloadWithLedgerEntries,
+    member: MemberWithUserWithLedgerEntriesPayload,
     duesByMemberAndCategory: Map<string, Map<DueCategory, number>>,
   ): MemberPaginatedReadModel {
     const memberDues = duesByMemberAndCategory.get(member.id);
@@ -493,7 +508,7 @@ export class PrismaMemberRepository implements MemberRepository {
     };
   }
 
-  private toReadModel(model: MemberPayload): MemberReadModel {
+  private toReadModel(model: MemberWithUserPayload): MemberReadModel {
     const notificationPreferences = MemberNotification.raw(
       model.notificationPreferences as unknown as MemberNotificationProps,
     );

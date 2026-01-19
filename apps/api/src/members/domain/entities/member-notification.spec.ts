@@ -1,6 +1,6 @@
-import { MemberNotification } from './member-notification.vo';
+import { MemberNotification } from './member-notification';
 
-describe('MemberNotification', () => {
+describe(MemberNotification.name, () => {
   describe('raw', () => {
     it('should create notification preferences with defaults when no props are provided', () => {
       const preferences = MemberNotification.raw();

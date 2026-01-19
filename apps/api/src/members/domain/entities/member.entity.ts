@@ -18,7 +18,7 @@ import { UserEntity } from '@/users/domain/entities/user.entity';
 
 import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
-import { MemberNotification } from '../value-objects/member-notification.vo';
+import { MemberNotification } from './member-notification';
 
 export type CreateMemberProps = StrictOmit<MemberProps, 'status'>;
 

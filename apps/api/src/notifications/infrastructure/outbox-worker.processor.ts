@@ -16,7 +16,10 @@ import {
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { SYSTEM_USER } from '@/shared/domain/constants';
-import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import {
+  USER_REPOSITORY_PROVIDER,
+  type UserRepository,
+} from '@/users/domain/user.repository';
 
 import {
   EMAIL_SUPPRESSION_REPOSITORY_PROVIDER,
@@ -45,6 +48,8 @@ export class OutboxWorkerProcessor {
     private readonly emailSuppressionRepository: EmailSuppressionRepository,
     @Inject(MEMBER_REPOSITORY_PROVIDER)
     private readonly memberRepository: MemberRepository,
+    @Inject(USER_REPOSITORY_PROVIDER)
+    private readonly userRepository: UserRepository,
     @Inject(APP_LOGGER_PROVIDER)
     private readonly logger: AppLogger,
   ) {
@@ -107,6 +112,35 @@ export class OutboxWorkerProcessor {
     }
   }
 
+  private async shouldSuppressMemberNotification(
+    notification: NotificationEntity,
+  ): Promise<false | string> {
+    // For member notifications, we need to find the member by userId
+    const member = await this.memberRepository.findByUserIdReadModel(
+      notification.userId,
+    );
+
+    if (!member) {
+      return 'Member not found for user';
+    }
+
+    if (
+      notification.type === NotificationType.DUE_CREATED &&
+      !member.notificationPreferences.notifyOnDueCreated
+    ) {
+      return 'Member opted out of due created notifications';
+    }
+
+    if (
+      notification.type === NotificationType.PAYMENT_MADE &&
+      !member.notificationPreferences.notifyOnPaymentMade
+    ) {
+      return 'Member opted out of payment made notifications';
+    }
+
+    return false;
+  }
+
   private async shouldSuppressNotification(
     notification: NotificationEntity,
   ): Promise<false | string> {
@@ -121,22 +155,49 @@ export class OutboxWorkerProcessor {
       }
     }
 
-    const member = await this.memberRepository.findByIdReadModelOrThrow(
-      UniqueId.raw({ value: notification.memberId.value }),
-    );
+    // Member-facing notifications: check member preferences
+    if (
+      notification.type === NotificationType.DUE_CREATED ||
+      notification.type === NotificationType.PAYMENT_MADE
+    ) {
+      return this.shouldSuppressMemberNotification(notification);
+    }
+
+    // User-facing notifications: check user preferences
+    return this.shouldSuppressUserNotification(notification);
+  }
+
+  private async shouldSuppressUserNotification(
+    notification: NotificationEntity,
+  ): Promise<false | string> {
+    const user = await this.userRepository.findByIdOrThrow(notification.userId);
 
     if (
-      notification.type === NotificationType.DUE_CREATED &&
-      !member.notificationPreferences.notifyOnDueCreated
+      notification.type === NotificationType.MOVEMENT_CREATED &&
+      !user.notificationPreferences.notifyOnMovementCreated
     ) {
-      return 'Member opted out of due created notifications';
+      return 'User opted out of movement created notifications';
     }
 
     if (
-      notification.type === NotificationType.PAYMENT_MADE &&
-      !member.notificationPreferences.notifyOnPaymentMade
+      notification.type === NotificationType.MOVEMENT_VOIDED &&
+      !user.notificationPreferences.notifyOnMovementVoided
     ) {
-      return 'Member opted out of payment made notifications';
+      return 'User opted out of movement voided notifications';
+    }
+
+    if (
+      notification.type === NotificationType.MEMBER_CREATED &&
+      !user.notificationPreferences.notifyOnMemberCreated
+    ) {
+      return 'User opted out of member created notifications';
+    }
+
+    if (
+      notification.type === NotificationType.DUE_OVERDUE &&
+      !user.notificationPreferences.notifyOnDueOverdue
+    ) {
+      return 'User opted out of due overdue notifications';
     }
 
     return false;

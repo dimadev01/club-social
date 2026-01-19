@@ -1,5 +1,3 @@
-import { ValueObject } from '@/shared/domain/value-objects/value-object.base';
-
 export interface MemberNotificationProps {
   notifyOnDueCreated: boolean;
   notifyOnPaymentMade: boolean;
@@ -10,17 +8,13 @@ export const DEFAULT_MEMBER_NOTIFICATION = {
   notifyOnPaymentMade: true,
 } satisfies MemberNotificationProps;
 
-export class MemberNotification extends ValueObject<MemberNotificationProps> {
-  public get notifyOnDueCreated(): boolean {
-    return this.props.notifyOnDueCreated;
-  }
-
-  public get notifyOnPaymentMade(): boolean {
-    return this.props.notifyOnPaymentMade;
-  }
+export class MemberNotification {
+  public readonly notifyOnDueCreated: boolean;
+  public readonly notifyOnPaymentMade: boolean;
 
   private constructor(props: MemberNotificationProps) {
-    super(props);
+    this.notifyOnDueCreated = props.notifyOnDueCreated;
+    this.notifyOnPaymentMade = props.notifyOnPaymentMade;
   }
 
   public static raw(
@@ -34,13 +28,13 @@ export class MemberNotification extends ValueObject<MemberNotificationProps> {
 
   public toJson(): MemberNotificationProps {
     return {
-      notifyOnDueCreated: this.props.notifyOnDueCreated,
-      notifyOnPaymentMade: this.props.notifyOnPaymentMade,
+      notifyOnDueCreated: this.notifyOnDueCreated,
+      notifyOnPaymentMade: this.notifyOnPaymentMade,
     };
   }
 
   public toString(): string {
-    return JSON.stringify(this.props);
+    return JSON.stringify(this.toJson());
   }
 
   public update(partial: Partial<MemberNotificationProps>): MemberNotification {
@@ -50,7 +44,7 @@ export class MemberNotification extends ValueObject<MemberNotificationProps> {
 
     return new MemberNotification({
       ...DEFAULT_MEMBER_NOTIFICATION,
-      ...this.props,
+      ...this.toJson(),
       ...defined,
     });
   }

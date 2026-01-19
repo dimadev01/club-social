@@ -1,7 +1,5 @@
 import { Theme, ThemeAlgorithm } from '@club-social/shared/users';
 
-import { ValueObject } from '@/shared/domain/value-objects/value-object.base';
-
 export interface UserPreferencesProps {
   theme: Theme;
   themeAlgorithm: ThemeAlgorithm;
@@ -12,17 +10,13 @@ export const DEFAULT_USER_PREFERENCES = {
   themeAlgorithm: ThemeAlgorithm.DEFAULT,
 } satisfies UserPreferencesProps;
 
-export class UserPreferences extends ValueObject<UserPreferencesProps> {
-  public get theme(): Theme {
-    return this.props.theme;
-  }
-
-  public get themeAlgorithm(): ThemeAlgorithm {
-    return this.props.themeAlgorithm;
-  }
+export class UserPreferences {
+  public readonly theme: Theme;
+  public readonly themeAlgorithm: ThemeAlgorithm;
 
   private constructor(props: UserPreferencesProps) {
-    super(props);
+    this.theme = props.theme;
+    this.themeAlgorithm = props.themeAlgorithm;
   }
 
   public static raw(
@@ -36,13 +30,13 @@ export class UserPreferences extends ValueObject<UserPreferencesProps> {
 
   public toJson(): UserPreferencesProps {
     return {
-      theme: this.props.theme,
-      themeAlgorithm: this.props.themeAlgorithm,
+      theme: this.theme,
+      themeAlgorithm: this.themeAlgorithm,
     };
   }
 
   public toString(): string {
-    return JSON.stringify(this.props);
+    return JSON.stringify(this.toJson());
   }
 
   public update(partial: Partial<UserPreferencesProps>): UserPreferences {
@@ -52,7 +46,7 @@ export class UserPreferences extends ValueObject<UserPreferencesProps> {
 
     return new UserPreferences({
       ...DEFAULT_USER_PREFERENCES,
-      ...this.props,
+      ...this.toJson(),
       ...defined,
     });
   }

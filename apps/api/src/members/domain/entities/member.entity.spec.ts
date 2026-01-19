@@ -29,7 +29,7 @@ import {
 
 import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
-import { MemberNotification } from '../value-objects/member-notification.vo';
+import { MemberNotification } from './member-notification';
 import { MemberEntity } from './member.entity';
 
 describe('MemberEntity', () => {

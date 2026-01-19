@@ -10,14 +10,17 @@ import { StrictOmit } from '@/shared/types/type-utils';
 
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
-import {
-  UserPreferences,
-  UserPreferencesProps,
-} from '../value-objects/user-preferences.vo';
+import { UserNotification, UserNotificationProps } from './user-notification';
+import { UserPreferences, UserPreferencesProps } from './user-preferences';
 
 export type CreateUserProps = StrictOmit<
   UserProps,
-  'banExpires' | 'banned' | 'banReason' | 'preferences' | 'status'
+  | 'banExpires'
+  | 'banned'
+  | 'banReason'
+  | 'notificationPreferences'
+  | 'preferences'
+  | 'status'
 >;
 
 export interface UserProps {
@@ -26,6 +29,7 @@ export interface UserProps {
   banReason: null | string;
   email: Email;
   name: Name;
+  notificationPreferences: UserNotification;
   preferences: UserPreferences;
   role: UserRole;
   status: UserStatus;
@@ -52,6 +56,10 @@ export class UserEntity extends SoftDeletableAggregateRoot {
     return this._name;
   }
 
+  public get notificationPreferences(): UserNotification {
+    return this._notificationPreferences;
+  }
+
   public get preferences(): UserPreferences {
     return this._preferences;
   }
@@ -69,6 +77,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
   private _banReason: null | string;
   private _email: Email;
   private _name: Name;
+  private _notificationPreferences: UserNotification;
   private _preferences: UserPreferences;
   private _role: UserRole;
   private _status: UserStatus;
@@ -83,6 +92,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
     this._banReason = props.banReason;
     this._banExpires = props.banExpires;
     this._status = props.status;
+    this._notificationPreferences = props.notificationPreferences;
     this._preferences = props.preferences;
   }
 
@@ -97,6 +107,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
         banReason: null,
         email: props.email,
         name: props.name,
+        notificationPreferences: UserNotification.raw(),
         preferences: UserPreferences.raw(),
         role: props.role,
         status: UserStatus.ACTIVE,
@@ -127,6 +138,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
         banReason: this._banReason,
         email: this._email,
         name: this._name,
+        notificationPreferences: this._notificationPreferences,
         preferences: this._preferences,
         role: this._role,
         status: this._status,
@@ -137,6 +149,19 @@ export class UserEntity extends SoftDeletableAggregateRoot {
         id: this.id,
       },
     );
+  }
+
+  public updateNotificationPreferences(
+    preferences: Partial<UserNotificationProps>,
+    updatedBy: string,
+  ): void {
+    const oldUser = this.clone();
+
+    this._notificationPreferences =
+      this._notificationPreferences.update(preferences);
+    this.markAsUpdated(updatedBy);
+
+    this.addEvent(new UserUpdatedEvent(oldUser, this));
   }
 
   public updatePreferences(

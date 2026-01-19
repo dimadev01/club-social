@@ -53,10 +53,10 @@ export class NotificationController extends BaseController {
         channel: notification.channel,
         createdAt: notification.createdAt.toISOString(),
         id: notification.id,
-        memberName: notification.memberName,
         recipientAddress: notification.recipientAddress,
         status: notification.status,
         type: notification.type,
+        userName: notification.userName,
       })),
       total: result.total,
     };
@@ -83,8 +83,6 @@ export class NotificationController extends BaseController {
       id: notification.id,
       lastError: notification.lastError,
       maxAttempts: notification.maxAttempts,
-      memberId: notification.memberId,
-      memberName: notification.memberName,
       payload: notification.payload,
       processedAt: notification.processedAt?.toISOString() ?? null,
       providerMessageId: notification.providerMessageId,
@@ -98,6 +96,8 @@ export class NotificationController extends BaseController {
       type: notification.type,
       updatedAt: notification.updatedAt.toISOString(),
       updatedBy: notification.updatedBy,
+      userId: notification.userId,
+      userName: notification.userName,
     };
   }
 }

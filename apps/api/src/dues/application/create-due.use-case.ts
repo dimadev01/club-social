@@ -161,7 +161,6 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
     const result = NotificationEntity.create(
       {
         channel: NotificationChannel.EMAIL,
-        memberId: due.memberId,
         payload: {
           template: ResendNotificationEmailTemplate.NEW_DUE,
           variables: {
@@ -179,6 +178,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
         sourceEntity: 'due',
         sourceEntityId: due.id,
         type: NotificationType.DUE_CREATED,
+        userId: UniqueId.raw({ value: member.userId }),
       },
       createdBy,
     );

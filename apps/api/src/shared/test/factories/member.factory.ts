@@ -7,11 +7,11 @@ import {
   MemberStatus,
 } from '@club-social/shared/members';
 
+import { MemberNotification } from '@/members/domain/entities/member-notification';
 import {
   type CreateMemberProps,
   MemberEntity,
 } from '@/members/domain/entities/member.entity';
-import { MemberNotification } from '@/members/domain/value-objects/member-notification.vo';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';

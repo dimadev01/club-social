@@ -2,11 +2,12 @@ import { UserRole, UserStatus } from '@club-social/shared/users';
 
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
+import { UserNotification } from '@/users/domain/entities/user-notification';
+import { UserPreferences } from '@/users/domain/entities/user-preferences';
 import {
   UserEntity,
   type UserProps,
 } from '@/users/domain/entities/user.entity';
-import { UserPreferences } from '@/users/domain/value-objects/user-preferences.vo';
 
 import {
   TEST_CREATED_BY,
@@ -26,6 +27,7 @@ export const createUserProps = (overrides?: UserPropsOverrides): UserProps => ({
     firstName: TEST_FIRST_NAME,
     lastName: TEST_LAST_NAME,
   })._unsafeUnwrap(),
+  notificationPreferences: UserNotification.raw(),
   preferences: UserPreferences.raw(),
   role: UserRole.MEMBER,
   status: UserStatus.ACTIVE,

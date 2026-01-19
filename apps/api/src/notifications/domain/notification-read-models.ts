@@ -9,10 +9,10 @@ export type NotificationPaginatedReadModel = Pick<
   | 'channel'
   | 'createdAt'
   | 'id'
-  | 'memberName'
   | 'recipientAddress'
   | 'status'
   | 'type'
+  | 'userName'
 >;
 
 export interface NotificationReadModel {
@@ -24,8 +24,6 @@ export interface NotificationReadModel {
   id: string;
   lastError: null | string;
   maxAttempts: number;
-  memberId: string;
-  memberName: string;
   payload: Record<string, unknown>;
   processedAt: Date | null;
   providerMessageId: null | string;
@@ -39,4 +37,6 @@ export interface NotificationReadModel {
   type: NotificationType;
   updatedAt: Date;
   updatedBy: null | string;
+  userId: string;
+  userName: string;
 }
