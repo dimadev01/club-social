@@ -7,10 +7,10 @@ import {
   MovementType,
   MovementTypeLabel,
 } from '@club-social/shared/movements';
-import { DatePicker, type FormInstance, Input, Radio } from 'antd';
+import { type FormInstance, Radio } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form, InputNumber, Select } from '@/ui';
+import { DatePicker, Form, Input, InputNumber, Select } from '@/ui';
 
 export interface MovementFormData {
   amount: number;
@@ -52,11 +52,7 @@ export function MovementForm({
         name="date"
         rules={[{ message: 'La fecha es requerida', required: true }]}
       >
-        <DatePicker
-          allowClear={false}
-          className="w-full"
-          format={DateFormats.date}
-        />
+        <DatePicker allowClear={false} format={DateFormats.date} />
       </Form.Item>
 
       <Form.Item<MovementFormData>
