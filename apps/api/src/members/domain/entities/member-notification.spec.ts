@@ -3,21 +3,14 @@ import { MemberNotification } from './member-notification';
 describe(MemberNotification.name, () => {
   describe('raw', () => {
     it('should create notification preferences with defaults when no props are provided', () => {
-      const preferences = MemberNotification.raw();
-
-      expect(preferences.notifyOnDueCreated).toBe(true);
-      expect(preferences.notifyOnPaymentMade).toBe(true);
-    });
-
-    it('should create notification preferences with defaults when props are null', () => {
-      const preferences = MemberNotification.raw(null);
+      const preferences = new MemberNotification();
 
       expect(preferences.notifyOnDueCreated).toBe(true);
       expect(preferences.notifyOnPaymentMade).toBe(true);
     });
 
     it('should create notification preferences using overrides', () => {
-      const preferences = MemberNotification.raw({
+      const preferences = new MemberNotification({
         notifyOnDueCreated: false,
         notifyOnPaymentMade: true,
       });
@@ -27,7 +20,7 @@ describe(MemberNotification.name, () => {
     });
 
     it('should create notification preferences with partial overrides', () => {
-      const preferences = MemberNotification.raw({
+      const preferences = new MemberNotification({
         notifyOnDueCreated: false,
       });
 
@@ -38,7 +31,7 @@ describe(MemberNotification.name, () => {
 
   describe('toJson', () => {
     it('should return a plain object representation', () => {
-      const preferences = MemberNotification.raw({
+      const preferences = new MemberNotification({
         notifyOnDueCreated: true,
         notifyOnPaymentMade: false,
       });
@@ -50,7 +43,7 @@ describe(MemberNotification.name, () => {
     });
 
     it('should return a plain object with default values', () => {
-      const preferences = MemberNotification.raw();
+      const preferences = new MemberNotification();
 
       expect(preferences.toJson()).toEqual({
         notifyOnDueCreated: true,
@@ -61,7 +54,7 @@ describe(MemberNotification.name, () => {
 
   describe('update', () => {
     it('should update defined values and keep existing ones', () => {
-      const preferences = MemberNotification.raw({
+      const preferences = new MemberNotification({
         notifyOnDueCreated: true,
         notifyOnPaymentMade: true,
       });
@@ -75,7 +68,7 @@ describe(MemberNotification.name, () => {
     });
 
     it('should ignore undefined values in updates', () => {
-      const preferences = MemberNotification.raw({
+      const preferences = new MemberNotification({
         notifyOnDueCreated: false,
         notifyOnPaymentMade: false,
       });
@@ -89,7 +82,7 @@ describe(MemberNotification.name, () => {
     });
 
     it('should update all preferences at once', () => {
-      const preferences = MemberNotification.raw({
+      const preferences = new MemberNotification({
         notifyOnDueCreated: true,
         notifyOnPaymentMade: true,
       });
@@ -106,7 +99,7 @@ describe(MemberNotification.name, () => {
 
   describe('toString', () => {
     it('should return a string representation of the preferences', () => {
-      const preferences = MemberNotification.raw({
+      const preferences = new MemberNotification({
         notifyOnDueCreated: true,
         notifyOnPaymentMade: false,
       });
@@ -115,7 +108,7 @@ describe(MemberNotification.name, () => {
     });
 
     it('should return a string representation of default preferences', () => {
-      const preferences = MemberNotification.raw();
+      const preferences = new MemberNotification();
 
       expect(preferences.toString()).toBe(
         JSON.stringify({

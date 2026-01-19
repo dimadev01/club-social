@@ -87,7 +87,7 @@ describe('MemberEntity', () => {
           fileStatus: FileStatus.PENDING,
           maritalStatus: null,
           nationality: MemberNationality.COLOMBIA,
-          notificationPreferences: MemberNotification.raw(),
+          notificationPreferences: new MemberNotification(),
           phones: [TEST_ALT_PHONE],
           sex: MemberSex.FEMALE,
           status: MemberStatus.INACTIVE,
@@ -159,7 +159,7 @@ describe('MemberEntity', () => {
         fileStatus: FileStatus.PENDING,
         maritalStatus: MaritalStatus.MARRIED,
         nationality: MemberNationality.UKRAINE,
-        notificationPreferences: MemberNotification.raw(),
+        notificationPreferences: new MemberNotification(),
         phones: [TEST_ALT_PHONE, '+54 351 765-4321'],
         sex: MemberSex.FEMALE,
         status: MemberStatus.ACTIVE,
@@ -210,7 +210,7 @@ describe('MemberEntity', () => {
         fileStatus: FileStatus.PENDING,
         maritalStatus: null,
         nationality: null,
-        notificationPreferences: MemberNotification.raw(),
+        notificationPreferences: new MemberNotification(),
         phones: [],
         sex: null,
         status: MemberStatus.ACTIVE,
@@ -234,7 +234,7 @@ describe('MemberEntity', () => {
 
       member.updateProfile({
         ...createMemberProps(user.id),
-        notificationPreferences: MemberNotification.raw({
+        notificationPreferences: new MemberNotification({
           notifyOnDueCreated: false,
           notifyOnPaymentMade: true,
         }),
@@ -259,7 +259,7 @@ describe('MemberEntity', () => {
       const user = createTestUser();
 
       const original = createTestMember(user, {
-        notificationPreferences: MemberNotification.raw({
+        notificationPreferences: new MemberNotification({
           notifyOnDueCreated: false,
           notifyOnPaymentMade: true,
         }),
@@ -277,7 +277,7 @@ describe('MemberEntity', () => {
 
       member.updateProfile({
         ...createMemberProps(user.id),
-        notificationPreferences: MemberNotification.raw({
+        notificationPreferences: new MemberNotification({
           notifyOnDueCreated: false,
         }),
         updatedBy: TEST_CREATED_BY,

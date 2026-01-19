@@ -74,7 +74,7 @@ export class PrismaMemberMapper {
         fileStatus: member.fileStatus as FileStatus,
         maritalStatus: member.maritalStatus as MaritalStatus | null,
         nationality: member.nationality as MemberNationality | null,
-        notificationPreferences: MemberNotification.raw(
+        notificationPreferences: new MemberNotification(
           member.notificationPreferences as unknown as MemberNotificationProps,
         ),
         phones: member.phones,

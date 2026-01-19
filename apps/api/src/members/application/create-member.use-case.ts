@@ -115,7 +115,7 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
         fileStatus: params.fileStatus,
         maritalStatus: params.maritalStatus,
         nationality: params.nationality,
-        notificationPreferences: MemberNotification.raw({
+        notificationPreferences: new MemberNotification({
           notifyOnDueCreated: params.notificationPreferences.notifyOnDueCreated,
           notifyOnPaymentMade:
             params.notificationPreferences.notifyOnPaymentMade,

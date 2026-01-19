@@ -12,18 +12,13 @@ export class MemberNotification {
   public readonly notifyOnDueCreated: boolean;
   public readonly notifyOnPaymentMade: boolean;
 
-  private constructor(props: MemberNotificationProps) {
-    this.notifyOnDueCreated = props.notifyOnDueCreated;
-    this.notifyOnPaymentMade = props.notifyOnPaymentMade;
-  }
-
-  public static raw(
-    props?: null | Partial<MemberNotificationProps>,
-  ): MemberNotification {
-    return new MemberNotification({
-      ...DEFAULT_MEMBER_NOTIFICATION,
-      ...props,
-    });
+  public constructor(props?: Partial<MemberNotificationProps>) {
+    this.notifyOnDueCreated =
+      props?.notifyOnDueCreated ??
+      DEFAULT_MEMBER_NOTIFICATION.notifyOnDueCreated;
+    this.notifyOnPaymentMade =
+      props?.notifyOnPaymentMade ??
+      DEFAULT_MEMBER_NOTIFICATION.notifyOnPaymentMade;
   }
 
   public toJson(): MemberNotificationProps {

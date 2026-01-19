@@ -132,7 +132,7 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       maritalStatus: params.maritalStatus,
       nationality: params.nationality,
       notificationPreferences: params.notificationPreferences
-        ? MemberNotification.raw(params.notificationPreferences)
+        ? new MemberNotification(params.notificationPreferences)
         : member.notificationPreferences,
       phones: params.phones,
       sex: params.sex,

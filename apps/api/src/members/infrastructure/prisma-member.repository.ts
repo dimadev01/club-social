@@ -509,7 +509,7 @@ export class PrismaMemberRepository implements MemberRepository {
   }
 
   private toReadModel(model: MemberWithUserPayload): MemberReadModel {
-    const notificationPreferences = MemberNotification.raw(
+    const notificationPreferences = new MemberNotification(
       model.notificationPreferences as unknown as MemberNotificationProps,
     );
 

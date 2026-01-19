@@ -35,7 +35,7 @@ export const createMemberProps = (
   fileStatus: FileStatus.COMPLETED,
   maritalStatus: MaritalStatus.SINGLE,
   nationality: MemberNationality.ARGENTINA,
-  notificationPreferences: MemberNotification.raw(),
+  notificationPreferences: new MemberNotification(),
   phones: [TEST_PHONE],
   sex: MemberSex.MALE,
   status: MemberStatus.ACTIVE,

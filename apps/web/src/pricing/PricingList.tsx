@@ -122,13 +122,13 @@ export function PricingList() {
                 ? MemberCategoryLabel[memberCategory]
                 : 'Todas las categorías',
             title: 'Categoría de Socio',
+            width: TABLE_COLUMN_WIDTHS.MOVEMENT_CATEGORY,
           },
           {
             align: 'right',
             dataIndex: 'amount',
             render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
           },
         ]}
         dataSource={pricing?.data}

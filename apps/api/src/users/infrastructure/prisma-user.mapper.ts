@@ -57,10 +57,10 @@ export class PrismaUserMapper {
         banReason: user.banReason,
         email: Email.raw({ value: user.email }),
         name: Name.raw({ firstName: user.firstName, lastName: user.lastName }),
-        notificationPreferences: UserNotification.raw(
+        notificationPreferences: new UserNotification(
           user.notificationPreferences as unknown as UserNotificationProps,
         ),
-        preferences: UserPreferences.raw(
+        preferences: new UserPreferences(
           user.preferences as unknown as UserPreferencesProps,
         ),
         role: user.role as UserRole,

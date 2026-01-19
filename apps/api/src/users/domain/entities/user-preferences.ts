@@ -14,18 +14,10 @@ export class UserPreferences {
   public readonly theme: Theme;
   public readonly themeAlgorithm: ThemeAlgorithm;
 
-  private constructor(props: UserPreferencesProps) {
-    this.theme = props.theme;
-    this.themeAlgorithm = props.themeAlgorithm;
-  }
-
-  public static raw(
-    props?: null | Partial<UserPreferencesProps>,
-  ): UserPreferences {
-    return new UserPreferences({
-      ...DEFAULT_USER_PREFERENCES,
-      ...props,
-    });
+  public constructor(props?: Partial<UserPreferencesProps>) {
+    this.theme = props?.theme ?? DEFAULT_USER_PREFERENCES.theme;
+    this.themeAlgorithm =
+      props?.themeAlgorithm ?? DEFAULT_USER_PREFERENCES.themeAlgorithm;
   }
 
   public toJson(): UserPreferencesProps {

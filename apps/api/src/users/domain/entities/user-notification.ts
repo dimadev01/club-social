@@ -18,20 +18,18 @@ export class UserNotification {
   public readonly notifyOnMovementCreated: boolean;
   public readonly notifyOnMovementVoided: boolean;
 
-  private constructor(props: UserNotificationProps) {
-    this.notifyOnMovementCreated = props.notifyOnMovementCreated;
-    this.notifyOnMovementVoided = props.notifyOnMovementVoided;
-    this.notifyOnMemberCreated = props.notifyOnMemberCreated;
-    this.notifyOnDueOverdue = props.notifyOnDueOverdue;
-  }
-
-  public static raw(
-    props?: null | Partial<UserNotificationProps>,
-  ): UserNotification {
-    return new UserNotification({
-      ...DEFAULT_USER_NOTIFICATION,
-      ...props,
-    });
+  public constructor(props?: Partial<UserNotificationProps>) {
+    this.notifyOnDueOverdue =
+      props?.notifyOnDueOverdue ?? DEFAULT_USER_NOTIFICATION.notifyOnDueOverdue;
+    this.notifyOnMemberCreated =
+      props?.notifyOnMemberCreated ??
+      DEFAULT_USER_NOTIFICATION.notifyOnMemberCreated;
+    this.notifyOnMovementCreated =
+      props?.notifyOnMovementCreated ??
+      DEFAULT_USER_NOTIFICATION.notifyOnMovementCreated;
+    this.notifyOnMovementVoided =
+      props?.notifyOnMovementVoided ??
+      DEFAULT_USER_NOTIFICATION.notifyOnMovementVoided;
   }
 
   public toJson(): UserNotificationProps {

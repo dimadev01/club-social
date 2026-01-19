@@ -5,21 +5,14 @@ import { UserPreferences } from './user-preferences';
 describe('UserPreferences', () => {
   describe('raw', () => {
     it('should create preferences with defaults when no props are provided', () => {
-      const preferences = UserPreferences.raw();
-
-      expect(preferences.theme).toBe(Theme.AUTO);
-      expect(preferences.themeAlgorithm).toBe(ThemeAlgorithm.DEFAULT);
-    });
-
-    it('should create preferences with defaults when props are null', () => {
-      const preferences = UserPreferences.raw(null);
+      const preferences = new UserPreferences();
 
       expect(preferences.theme).toBe(Theme.AUTO);
       expect(preferences.themeAlgorithm).toBe(ThemeAlgorithm.DEFAULT);
     });
 
     it('should create preferences using overrides', () => {
-      const preferences = UserPreferences.raw({
+      const preferences = new UserPreferences({
         theme: Theme.DARK,
         themeAlgorithm: ThemeAlgorithm.COMPACT,
       });
@@ -31,7 +24,7 @@ describe('UserPreferences', () => {
 
   describe('toJson', () => {
     it('should return a plain object representation', () => {
-      const preferences = UserPreferences.raw({
+      const preferences = new UserPreferences({
         theme: Theme.LIGHT,
         themeAlgorithm: ThemeAlgorithm.COMPACT,
       });
@@ -45,7 +38,7 @@ describe('UserPreferences', () => {
 
   describe('update', () => {
     it('should update defined values and keep existing ones', () => {
-      const preferences = UserPreferences.raw({
+      const preferences = new UserPreferences({
         theme: Theme.LIGHT,
         themeAlgorithm: ThemeAlgorithm.DEFAULT,
       });
@@ -59,7 +52,7 @@ describe('UserPreferences', () => {
     });
 
     it('should ignore undefined values in updates', () => {
-      const preferences = UserPreferences.raw({
+      const preferences = new UserPreferences({
         theme: Theme.DARK,
         themeAlgorithm: ThemeAlgorithm.COMPACT,
       });
@@ -75,7 +68,7 @@ describe('UserPreferences', () => {
 
   describe('toString', () => {
     it('should return a string representation of the preferences', () => {
-      const preferences = UserPreferences.raw({
+      const preferences = new UserPreferences({
         theme: Theme.LIGHT,
         themeAlgorithm: ThemeAlgorithm.COMPACT,
       });
