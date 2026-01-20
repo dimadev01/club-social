@@ -1,7 +1,7 @@
-import { Input, Modal } from 'antd';
+import { Modal } from 'antd';
 import { useState } from 'react';
 
-import { Form } from '@/ui';
+import { Form, Input } from '@/ui';
 
 interface FormSchema {
   reason: string;
@@ -59,7 +59,11 @@ export function VoidModal({ onCancel, onConfirm, open }: Props) {
             },
           ]}
         >
-          <Input.TextArea placeholder="Razón de la anulación" rows={3} />
+          <Input.TextArea
+            className="sm:w-full"
+            placeholder="Razón de la anulación"
+            rows={3}
+          />
         </Form.Item>
       </Form>
     </Modal>

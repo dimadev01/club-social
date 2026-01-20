@@ -3,14 +3,22 @@ import {
   MaritalStatus,
   MemberCategory,
   MemberNationality,
+  MemberNotificationPreferencesDto,
   MemberSex,
 } from '@club-social/shared/members';
+import {
+  NotificationChannel,
+  NotificationSourceEntity,
+  NotificationType,
+} from '@club-social/shared/notifications';
 import { UserRole } from '@club-social/shared/users';
 import { Inject, Injectable } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
+import { ResendNotificationEmailTemplate } from '@/infrastructure/email/resend/resend.types';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
+import { NotificationEntity } from '@/notifications/domain/entities/notification.entity';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -27,6 +35,7 @@ import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
+import { UserNotification } from '@/users/domain/entities/user-notification';
 import { UserEntity } from '@/users/domain/entities/user.entity';
 import {
   USER_REPOSITORY_PROVIDER,
@@ -38,6 +47,7 @@ interface CreateMemberParams {
   birthDate: null | string;
   category: MemberCategory;
   createdBy: string;
+  createdByUserId: string;
   documentID: null | string;
   email: string;
   fileStatus: FileStatus;
@@ -45,6 +55,7 @@ interface CreateMemberParams {
   lastName: string;
   maritalStatus: MaritalStatus | null;
   nationality: MemberNationality | null;
+  notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
   sex: MemberSex | null;
 }
@@ -94,7 +105,14 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
     }
 
     const user = UserEntity.create(
-      { email, name, role: UserRole.MEMBER },
+      {
+        email,
+        name,
+        notificationPreferences: UserNotification.forMember(
+          params.notificationPreferences,
+        ),
+        role: UserRole.MEMBER,
+      },
       params.createdBy,
     );
 
@@ -122,15 +140,80 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       return err(member.error);
     }
 
+    const subscriberNotifications = await this.createSubscriberNotifications({
+      createdBy: params.createdBy,
+      createdByUserId: params.createdByUserId,
+      member: member.value,
+      user: user.value,
+    });
+
+    if (subscriberNotifications.isErr()) {
+      return err(subscriberNotifications.error);
+    }
+
     await this.unitOfWork.execute(
-      async ({ memberRepository, userRepository }) => {
+      async ({ memberRepository, notificationRepository, userRepository }) => {
         await userRepository.save(user.value);
         await memberRepository.save(member.value);
+        await Promise.all(
+          subscriberNotifications.value.map((notification) =>
+            notificationRepository.save(notification),
+          ),
+        );
       },
     );
 
+    this.eventPublisher.dispatch(user.value);
     this.eventPublisher.dispatch(member.value);
+    subscriberNotifications.value.forEach((notification) =>
+      this.eventPublisher.dispatch(notification),
+    );
 
     return ok(member.value);
+  }
+
+  private async createSubscriberNotifications(props: {
+    createdBy: string;
+    createdByUserId: string;
+    member: MemberEntity;
+    user: UserEntity;
+  }): Promise<Result<NotificationEntity[]>> {
+    const optedInUsers =
+      await this.userRepository.findWithNotifyOnMemberCreated();
+
+    // Exclude the member's own user to avoid duplicate notification
+    const subscribers = optedInUsers.filter(
+      (user) => user.id.value !== props.createdByUserId,
+    );
+
+    const result = ResultUtils.combine(
+      subscribers.map((subscriber) =>
+        NotificationEntity.create(
+          {
+            channel: NotificationChannel.EMAIL,
+            payload: {
+              template: ResendNotificationEmailTemplate.MEMBER_CREATED,
+              variables: {
+                createdBy: props.createdBy,
+                memberName: props.user.name.fullName,
+                userName: subscriber.name.firstName,
+              },
+            },
+            recipientAddress: subscriber.email.value,
+            sourceEntity: NotificationSourceEntity.MEMBER,
+            sourceEntityId: props.member.id,
+            type: NotificationType.MEMBER_CREATED,
+            userId: subscriber.id,
+          },
+          props.createdBy,
+        ),
+      ),
+    );
+
+    if (result.isErr()) {
+      return err(result.error);
+    }
+
+    return ok(result.value);
   }
 }

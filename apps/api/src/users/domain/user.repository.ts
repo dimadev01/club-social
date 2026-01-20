@@ -14,6 +14,9 @@ export interface UserReadableRepository
   findUniqueByEmail(email: Email): Promise<null | UserEntity>;
   findUniqueByEmailOrThrow(email: Email): Promise<UserEntity>;
   findWithNotifyOnDueCreated(): Promise<UserEntity[]>;
+  findWithNotifyOnMemberCreated(): Promise<UserEntity[]>;
+  findWithNotifyOnMovementCreated(): Promise<UserEntity[]>;
+  findWithNotifyOnMovementVoided(): Promise<UserEntity[]>;
   findWithNotifyOnPaymentMade(): Promise<UserEntity[]>;
 }
 

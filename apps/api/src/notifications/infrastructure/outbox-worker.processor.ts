@@ -1,3 +1,4 @@
+import { AppSettingKey } from '@club-social/shared/app-settings';
 import {
   NotificationChannel,
   NotificationType,
@@ -7,6 +8,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Queue } from 'bullmq';
 
+import { AppSettingService } from '@/app-settings/infrastructure/app-setting.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -37,6 +39,8 @@ const PENDING_NOTIFICATIONS_LIMIT = 10;
 @Injectable()
 export class OutboxWorkerProcessor {
   public constructor(
+    @Inject(APP_LOGGER_PROVIDER)
+    private readonly logger: AppLogger,
     @InjectQueue('notification')
     private readonly notificationQueue: Queue<NotificationJobData>,
     @Inject(NOTIFICATION_REPOSITORY_PROVIDER)
@@ -45,8 +49,7 @@ export class OutboxWorkerProcessor {
     private readonly emailSuppressionRepository: EmailSuppressionRepository,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
-    @Inject(APP_LOGGER_PROVIDER)
-    private readonly logger: AppLogger,
+    private readonly appSettingService: AppSettingService,
   ) {
     this.logger.setContext(OutboxWorkerProcessor.name);
   }
@@ -56,6 +59,14 @@ export class OutboxWorkerProcessor {
     this.logger.info({
       message: 'Processing outbox',
     });
+
+    if (!(await this.isNotificationsEnabled())) {
+      this.logger.info({
+        message: 'Notifications are disabled',
+      });
+
+      return;
+    }
 
     const pending = await this.notificationRepository.findPendingForProcessing(
       PENDING_NOTIFICATIONS_LIMIT,
@@ -105,6 +116,14 @@ export class OutboxWorkerProcessor {
         notificationId: notification.id.value,
       });
     }
+  }
+
+  private async isNotificationsEnabled(): Promise<boolean> {
+    const sendNotifications = await this.appSettingService.getValue(
+      AppSettingKey.SEND_NOTIFICATIONS,
+    );
+
+    return sendNotifications.value.enabled;
   }
 
   private async shouldSuppressNotification(

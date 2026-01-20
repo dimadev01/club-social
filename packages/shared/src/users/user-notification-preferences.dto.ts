@@ -1,10 +1,5 @@
-export type UpdateUserNotificationPreferencesDto = Partial<{
-  notifyOnDueCreated: boolean;
-  notifyOnMemberCreated: boolean;
-  notifyOnMovementCreated: boolean;
-  notifyOnMovementVoided: boolean;
-  notifyOnPaymentMade: boolean;
-}>;
+export type UpdateUserNotificationPreferencesDto =
+  Partial<UserNotificationPreferencesDto>;
 
 export interface UserNotificationPreferencesDto {
   notifyOnDueCreated: boolean;

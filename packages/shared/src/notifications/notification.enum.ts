@@ -110,3 +110,13 @@ export const EmailSuppressionReasonLabel = {
   [EmailSuppressionReason.BOUNCE]: 'Rebote',
   [EmailSuppressionReason.COMPLAINT]: 'Queja de spam',
 } as const;
+
+export const NotificationSourceEntity = {
+  DUE: 'due',
+  MEMBER: 'member',
+  MOVEMENT: 'movement',
+  PAYMENT: 'payment',
+} as const;
+
+export type NotificationSourceEntity =
+  (typeof NotificationSourceEntity)[keyof typeof NotificationSourceEntity];

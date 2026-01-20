@@ -45,6 +45,7 @@ interface CreateDueParams {
   amount: number;
   category: DueCategory;
   createdBy: string;
+  createdByUserId: string;
   date: string;
   memberId: string;
   notes: null | string;
@@ -114,11 +115,12 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
       return err(memberNotification.error);
     }
 
-    const subscriberNotifications = await this.createSubscriberNotifications(
-      due.value,
+    const subscriberNotifications = await this.createSubscriberNotifications({
+      createdBy: params.createdBy,
+      createdByUserId: params.createdByUserId,
+      due: due.value,
       member,
-      params.createdBy,
-    );
+    });
 
     if (subscriberNotifications.isErr()) {
       return err(subscriberNotifications.error);
@@ -188,7 +190,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
       {
         channel: NotificationChannel.EMAIL,
         payload: {
-          template: ResendNotificationEmailTemplate.NEW_DUE_TO_MEMBER,
+          template: ResendNotificationEmailTemplate.DUE_CREATED_TO_MEMBER,
           variables: {
             amount: NumberFormat.currencyCents(due.amount.cents),
             category: DueCategoryLabel[due.category],
@@ -216,41 +218,46 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
     return ok(result.value);
   }
 
-  private async createSubscriberNotifications(
-    due: DueEntity,
-    member: MemberReadModel,
-    createdBy: string,
-  ): Promise<Result<NotificationEntity[]>> {
+  private async createSubscriberNotifications(props: {
+    createdBy: string;
+    createdByUserId: string;
+    due: DueEntity;
+    member: MemberReadModel;
+  }): Promise<Result<NotificationEntity[]>> {
     const optedInUsers = await this.userRepository.findWithNotifyOnDueCreated();
 
-    // Exclude the member's own user to avoid duplicate notification
-    const subscribers = optedInUsers.filter(
-      (user) => user.id.value !== member.userId,
-    );
+    /**
+     * Exclude the member's own user to avoid duplicate notification
+     * Exclude the user who created the due
+     */
+    const subscribers = optedInUsers
+      .filter((user) => user.id.value !== props.member.userId)
+      .filter((user) => user.id.value !== props.createdByUserId);
 
     const result = ResultUtils.combine(
-      subscribers.map((user) =>
+      subscribers.map((subscriber) =>
         NotificationEntity.create(
           {
             channel: NotificationChannel.EMAIL,
             payload: {
-              template: ResendNotificationEmailTemplate.NEW_DUE_TO_SUBSCRIBERS,
+              template:
+                ResendNotificationEmailTemplate.DUE_CREATED_TO_SUBSCRIBERS,
               variables: {
-                amount: NumberFormat.currencyCents(due.amount.cents),
-                category: DueCategoryLabel[due.category],
-                createdBy: due.createdBy,
-                date: DateFormat.date(due.date.value),
-                memberName: member.name,
-                userName: user.name.firstName,
+                amount: NumberFormat.currencyCents(props.due.amount.cents),
+                category: DueCategoryLabel[props.due.category],
+                createdBy: props.due.createdBy,
+                date: DateFormat.date(props.due.date.value),
+                memberName: props.member.name,
+                userName: subscriber.name.firstName,
               },
             },
-            recipientAddress: user.email.value,
+            recipientAddress: subscriber.email.value,
             sourceEntity: 'due',
-            sourceEntityId: due.id,
+            sourceEntityId: props.due.id,
             type: NotificationType.DUE_CREATED,
-            userId: user.id,
+            userId: subscriber.id,
           },
-          createdBy,
+          props.createdBy,
         ),
       ),
     );

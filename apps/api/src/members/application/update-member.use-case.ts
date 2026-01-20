@@ -3,6 +3,7 @@ import {
   MaritalStatus,
   MemberCategory,
   MemberNationality,
+  MemberNotificationPreferencesDto,
   MemberSex,
 } from '@club-social/shared/members';
 import { UserStatus } from '@club-social/shared/users';
@@ -49,6 +50,7 @@ interface UpdateMemberParams {
   lastName: string;
   maritalStatus: MaritalStatus | null;
   nationality: MemberNationality | null;
+  notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
   sex: MemberSex | null;
   status: UserStatus;
@@ -117,6 +119,14 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       status: params.status,
       updatedBy: params.updatedBy,
     });
+
+    user.updateNotificationPreferences(
+      {
+        notifyOnDueCreated: params.notificationPreferences.notifyOnDueCreated,
+        notifyOnPaymentMade: params.notificationPreferences.notifyOnPaymentMade,
+      },
+      params.updatedBy,
+    );
 
     member.updateProfile({
       address: params.address,

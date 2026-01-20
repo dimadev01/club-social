@@ -1,7 +1,7 @@
 export const AppSettingKey = {
   MAINTENANCE_MODE: 'maintenance-mode',
   SEND_EMAILS: 'send-emails',
-  SEND_MEMBER_NOTIFICATIONS: 'send-member-notifications',
+  SEND_NOTIFICATIONS: 'send-notifications',
 } as const;
 
 export type AppSettingKey = (typeof AppSettingKey)[keyof typeof AppSettingKey];
@@ -20,7 +20,7 @@ export const SYSTEM_SETTING_KEYS: readonly AppSettingKey[] = [
 ] as const;
 
 export const APP_SETTING_KEYS: readonly AppSettingKey[] = [
-  AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
+  AppSettingKey.SEND_NOTIFICATIONS,
 ] as const;
 
 export interface AppSettingDto<K extends AppSettingKey = AppSettingKey> {
@@ -35,17 +35,13 @@ export interface AppSettingDto<K extends AppSettingKey = AppSettingKey> {
 export interface AppSettingValues {
   [AppSettingKey.MAINTENANCE_MODE]: MaintenanceModeValue;
   [AppSettingKey.SEND_EMAILS]: SendEmailsValue;
-  [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]: SendMemberNotificationsValue;
+  [AppSettingKey.SEND_NOTIFICATIONS]: SendNotificationsValue;
 }
 
 export type BooleanAppSettingKey =
   | typeof AppSettingKey.MAINTENANCE_MODE
   | typeof AppSettingKey.SEND_EMAILS
-  | typeof AppSettingKey.SEND_MEMBER_NOTIFICATIONS;
-
-export interface BooleanAppSettingValue {
-  enabled: boolean;
-}
+  | typeof AppSettingKey.SEND_NOTIFICATIONS;
 
 export interface MaintenanceModeValue {
   enabled: boolean;
@@ -55,7 +51,7 @@ export interface SendEmailsValue {
   enabled: boolean;
 }
 
-export interface SendMemberNotificationsValue {
+export interface SendNotificationsValue {
   enabled: boolean;
 }
 
@@ -69,12 +65,12 @@ export function isBooleanAppSetting(
   return (
     setting.key === AppSettingKey.MAINTENANCE_MODE ||
     setting.key === AppSettingKey.SEND_EMAILS ||
-    setting.key === AppSettingKey.SEND_MEMBER_NOTIFICATIONS
+    setting.key === AppSettingKey.SEND_NOTIFICATIONS
   );
 }
 
 export const APP_SETTINGS_LABELS = {
   [AppSettingKey.MAINTENANCE_MODE]: 'Modo de mantenimiento',
   [AppSettingKey.SEND_EMAILS]: 'Enviar correos electrónicos',
-  [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]: 'Enviar notificaciones a socios',
+  [AppSettingKey.SEND_NOTIFICATIONS]: 'Enviar notificaciones',
 } as const;

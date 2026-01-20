@@ -1,4 +1,8 @@
 import {
+  NotificationType,
+  NotificationTypeToPreferenceKey,
+} from '@club-social/shared/notifications';
+import {
   GetPaginatedDataDto,
   PaginatedDataResultDto,
 } from '@club-social/shared/types';
@@ -123,7 +127,52 @@ export class PrismaUserRepository implements UserRepository {
       where: {
         notificationPreferences: {
           equals: true,
-          path: ['notifyOnDueCreated'],
+          path: [NotificationTypeToPreferenceKey[NotificationType.DUE_CREATED]],
+        },
+      },
+    });
+
+    return users.map((user) => this.userMapper.toDomain(user));
+  }
+
+  public async findWithNotifyOnMemberCreated(): Promise<UserEntity[]> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        notificationPreferences: {
+          equals: true,
+          path: [
+            NotificationTypeToPreferenceKey[NotificationType.MEMBER_CREATED],
+          ],
+        },
+      },
+    });
+
+    return users.map((user) => this.userMapper.toDomain(user));
+  }
+
+  public async findWithNotifyOnMovementCreated(): Promise<UserEntity[]> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        notificationPreferences: {
+          equals: true,
+          path: [
+            NotificationTypeToPreferenceKey[NotificationType.MOVEMENT_CREATED],
+          ],
+        },
+      },
+    });
+
+    return users.map((user) => this.userMapper.toDomain(user));
+  }
+
+  public async findWithNotifyOnMovementVoided(): Promise<UserEntity[]> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        notificationPreferences: {
+          equals: true,
+          path: [
+            NotificationTypeToPreferenceKey[NotificationType.MOVEMENT_VOIDED],
+          ],
         },
       },
     });
@@ -136,7 +185,9 @@ export class PrismaUserRepository implements UserRepository {
       where: {
         notificationPreferences: {
           equals: true,
-          path: ['notifyOnPaymentMade'],
+          path: [
+            NotificationTypeToPreferenceKey[NotificationType.PAYMENT_MADE],
+          ],
         },
       },
     });

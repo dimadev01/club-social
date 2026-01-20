@@ -30,6 +30,9 @@
       "Bash(npm run:*)",
       "Bash(npm show:*)",
       "Bash(npx dotenvx run:*)"
+    ],
+    "additionalDirectories": [
+      "/Users/dmitriy.mironov/Dev/club-social-nest/apps/api/src/infrastructure/database/prisma/migrations"
     ]
   },
   "outputStyle": "default"

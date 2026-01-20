@@ -138,7 +138,7 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
       async ({
         duesRepository,
         memberLedgerRepository,
-        paymentsRepository,
+        paymentRepository: paymentsRepository,
       }) => {
         await paymentsRepository.save(payment);
         await Promise.all(dues.map((due) => duesRepository.save(due)));

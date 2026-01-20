@@ -15,12 +15,7 @@ import { UserPreferences, UserPreferencesProps } from './user-preferences';
 
 export type CreateUserProps = StrictOmit<
   UserProps,
-  | 'banExpires'
-  | 'banned'
-  | 'banReason'
-  | 'notificationPreferences'
-  | 'preferences'
-  | 'status'
+  'banExpires' | 'banned' | 'banReason' | 'preferences' | 'status'
 >;
 
 export interface UserProps {
@@ -194,7 +189,6 @@ export class UserEntity extends SoftDeletableAggregateRoot {
     this._email = props.email;
     this._name = props.name;
     this._status = props.status;
-
     this.markAsUpdated(props.updatedBy);
     this.addEvent(new UserUpdatedEvent(oldUser, this));
   }

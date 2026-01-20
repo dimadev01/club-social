@@ -55,7 +55,7 @@ describe('AppSettingEntity', () => {
 
     it('should default to APP scope for non-system keys', () => {
       const setting = createTestAppSetting({
-        key: AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
+        key: AppSettingKey.SEND_NOTIFICATIONS,
       });
 
       expect(setting.scope).toBe(AppSettingScope.APP);

@@ -429,9 +429,9 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       async ({
         duesRepository,
         memberLedgerRepository,
-        movementsRepository,
+        movementRepository,
         notificationRepository,
-        paymentsRepository,
+        paymentRepository: paymentsRepository,
       }) => {
         await paymentsRepository.save(payment.value);
 
@@ -449,7 +449,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
         await Promise.all(dues.map((due) => duesRepository.save(due)));
         await Promise.all(
-          movements.map((movement) => movementsRepository.save(movement)),
+          movements.map((movement) => movementRepository.save(movement)),
         );
 
         await notificationRepository.save(memberNotification.value);
@@ -575,7 +575,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       {
         channel: NotificationChannel.EMAIL,
         payload: {
-          template: ResendNotificationEmailTemplate.NEW_PAYMENT_TO_MEMBER,
+          template: ResendNotificationEmailTemplate.PAYMENT_CREATED_TO_MEMBER,
           variables: {
             amount: NumberFormat.currencyCents(params.payment.amount.cents),
             date: DateFormat.date(params.paymentDate.value),
@@ -630,7 +630,8 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
           {
             channel: NotificationChannel.EMAIL,
             payload: {
-              template: ResendNotificationEmailTemplate.NEW_PAYMENT_TO_MEMBER,
+              template:
+                ResendNotificationEmailTemplate.PAYMENT_CREATED_TO_MEMBER,
               variables: {
                 amount: NumberFormat.currencyCents(params.payment.amount.cents),
                 date: DateFormat.date(params.paymentDate.value),

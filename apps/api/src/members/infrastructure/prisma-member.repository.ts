@@ -83,11 +83,7 @@ export class PrismaMemberRepository implements MemberRepository {
         where: { id: id.value },
       });
 
-    if (!member) {
-      return null;
-    }
-
-    return this.toReadModel(member);
+    return member ? this.toReadModel(member) : null;
   }
 
   public async findByIdReadModelOrThrow(
