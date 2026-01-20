@@ -1,3 +1,5 @@
+import { NotificationType } from '@club-social/shared/notifications';
+
 import {
   PaginatedRepository,
   ReadableRepository,
@@ -11,13 +13,9 @@ export const USER_REPOSITORY_PROVIDER = Symbol('UserRepository');
 
 export interface UserReadableRepository
   extends PaginatedRepository<UserEntity>, ReadableRepository<UserEntity> {
+  findByNotificationType(type: NotificationType): Promise<UserEntity[]>;
   findUniqueByEmail(email: Email): Promise<null | UserEntity>;
   findUniqueByEmailOrThrow(email: Email): Promise<UserEntity>;
-  findWithNotifyOnDueCreated(): Promise<UserEntity[]>;
-  findWithNotifyOnMemberCreated(): Promise<UserEntity[]>;
-  findWithNotifyOnMovementCreated(): Promise<UserEntity[]>;
-  findWithNotifyOnMovementVoided(): Promise<UserEntity[]>;
-  findWithNotifyOnPaymentCreated(): Promise<UserEntity[]>;
 }
 
 export interface UserRepository

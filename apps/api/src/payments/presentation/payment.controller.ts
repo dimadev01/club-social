@@ -81,6 +81,7 @@ export class PaymentsController extends BaseController {
     const { id } = this.handleResult(
       await this.createPaymentUseCase.execute({
         createdBy: session.user.name,
+        createdByUserId: session.user.id,
         date: body.date,
         dues: body.dues,
         memberId: body.memberId,

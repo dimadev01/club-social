@@ -11,6 +11,7 @@ import type { MemberReadModel } from '@/members/domain/member-read-models';
 import type { Result } from '@/shared/domain/result';
 
 import { DueEntity } from '@/dues/domain/entities/due.entity';
+import { ConfigService } from '@/infrastructure/config/config.service';
 import { ResendNotificationEmailTemplate } from '@/infrastructure/email/resend/resend.types';
 import {
   MEMBER_REPOSITORY_PROVIDER,
@@ -65,6 +66,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
+    private readonly configService: ConfigService,
   ) {
     super(logger);
   }
@@ -193,6 +195,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
           template: ResendNotificationEmailTemplate.DUE_CREATED_TO_MEMBER,
           variables: {
             amount: NumberFormat.currencyCents(due.amount.cents),
+            appUrl: this.configService.appDomain,
             category: DueCategoryLabel[due.category],
             date: DateFormat.date(due.date.value),
             pendingElectricity: pendingByCategory.pendingElectricity,
@@ -224,7 +227,9 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
     due: DueEntity;
     member: MemberReadModel;
   }): Promise<Result<NotificationEntity[]>> {
-    const optedInUsers = await this.userRepository.findWithNotifyOnDueCreated();
+    const optedInUsers = await this.userRepository.findByNotificationType(
+      NotificationType.DUE_CREATED,
+    );
 
     /**
      * Exclude the member's own user to avoid duplicate notification

@@ -15,6 +15,7 @@ import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
+import { ConfigService } from '@/infrastructure/config/config.service';
 import { ResendNotificationEmailTemplate } from '@/infrastructure/email/resend/resend.types';
 import { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import { NotificationEntity } from '@/notifications/domain/entities/notification.entity';
@@ -54,6 +55,7 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
     private readonly userRepository: UserRepository,
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
+    private readonly configService: ConfigService,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -127,8 +129,9 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
     createdByUserId: string;
     movement: MovementEntity;
   }): Promise<Result<NotificationEntity[]>> {
-    const optedInUsers =
-      await this.userRepository.findWithNotifyOnMemberCreated();
+    const optedInUsers = await this.userRepository.findByNotificationType(
+      NotificationType.MOVEMENT_CREATED,
+    );
 
     // Exclude the member's own user to avoid duplicate notification
     const subscribers = optedInUsers.filter(
@@ -144,6 +147,7 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
               template: ResendNotificationEmailTemplate.MOVEMENT_CREATED,
               variables: {
                 amount: NumberFormat.currencyCents(props.movement.amount.cents),
+                appUrl: this.configService.appDomain,
                 category: MovementCategoryLabel[props.movement.category],
                 createdBy: props.createdBy,
                 date: DateFormat.date(props.movement.date.value),
