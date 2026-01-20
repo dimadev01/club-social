@@ -180,13 +180,13 @@ export class PrismaUserRepository implements UserRepository {
     return users.map((user) => this.userMapper.toDomain(user));
   }
 
-  public async findWithNotifyOnPaymentMade(): Promise<UserEntity[]> {
+  public async findWithNotifyOnPaymentCreated(): Promise<UserEntity[]> {
     const users = await this.prismaService.user.findMany({
       where: {
         notificationPreferences: {
           equals: true,
           path: [
-            NotificationTypeToPreferenceKey[NotificationType.PAYMENT_MADE],
+            NotificationTypeToPreferenceKey[NotificationType.PAYMENT_CREATED],
           ],
         },
       },

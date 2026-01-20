@@ -23,7 +23,7 @@ export class UpdateUserNotificationPreferencesRequestDto implements UpdateUserNo
 
   @IsBoolean()
   @IsOptional()
-  public notifyOnPaymentMade?: boolean;
+  public notifyOnPaymentCreated?: boolean;
 }
 
 export class UserNotificationPreferencesResponseDto implements UserNotificationPreferencesDto {
@@ -31,5 +31,5 @@ export class UserNotificationPreferencesResponseDto implements UserNotificationP
   public notifyOnMemberCreated: boolean;
   public notifyOnMovementCreated: boolean;
   public notifyOnMovementVoided: boolean;
-  public notifyOnPaymentMade: boolean;
+  public notifyOnPaymentCreated: boolean;
 }

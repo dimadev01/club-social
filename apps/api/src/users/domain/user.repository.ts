@@ -17,7 +17,7 @@ export interface UserReadableRepository
   findWithNotifyOnMemberCreated(): Promise<UserEntity[]>;
   findWithNotifyOnMovementCreated(): Promise<UserEntity[]>;
   findWithNotifyOnMovementVoided(): Promise<UserEntity[]>;
-  findWithNotifyOnPaymentMade(): Promise<UserEntity[]>;
+  findWithNotifyOnPaymentCreated(): Promise<UserEntity[]>;
 }
 
 export interface UserRepository

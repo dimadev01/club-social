@@ -6,5 +6,5 @@ export interface UserNotificationPreferencesDto {
   notifyOnMemberCreated: boolean;
   notifyOnMovementCreated: boolean;
   notifyOnMovementVoided: boolean;
-  notifyOnPaymentMade: boolean;
+  notifyOnPaymentCreated: boolean;
 }

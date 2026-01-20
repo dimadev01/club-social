@@ -3,7 +3,7 @@ export interface UserNotificationProps {
   notifyOnMemberCreated: boolean;
   notifyOnMovementCreated: boolean;
   notifyOnMovementVoided: boolean;
-  notifyOnPaymentMade: boolean;
+  notifyOnPaymentCreated: boolean;
 }
 
 export const DEFAULT_USER_NOTIFICATION = {
@@ -11,27 +11,27 @@ export const DEFAULT_USER_NOTIFICATION = {
   notifyOnMemberCreated: false,
   notifyOnMovementCreated: false,
   notifyOnMovementVoided: false,
-  notifyOnPaymentMade: false,
+  notifyOnPaymentCreated: false,
 } satisfies UserNotificationProps;
 
 /**
  * Default notification preferences for members.
  * Members default to receiving notifications about their own account activity.
  */
-export const DEFAULT_MEMBER_USER_NOTIFICATION = {
+export const DEFAULT_MEMBER_USER_NOTIFICATION: UserNotificationProps = {
   notifyOnDueCreated: true,
   notifyOnMemberCreated: false,
   notifyOnMovementCreated: false,
   notifyOnMovementVoided: false,
-  notifyOnPaymentMade: true,
-} satisfies UserNotificationProps;
+  notifyOnPaymentCreated: true,
+};
 
 export class UserNotification {
   public readonly notifyOnDueCreated: boolean;
   public readonly notifyOnMemberCreated: boolean;
   public readonly notifyOnMovementCreated: boolean;
   public readonly notifyOnMovementVoided: boolean;
-  public readonly notifyOnPaymentMade: boolean;
+  public readonly notifyOnPaymentCreated: boolean;
 
   private constructor(props?: Partial<UserNotificationProps>) {
     this.notifyOnMemberCreated =
@@ -43,9 +43,9 @@ export class UserNotification {
     this.notifyOnMovementVoided =
       props?.notifyOnMovementVoided ??
       DEFAULT_USER_NOTIFICATION.notifyOnMovementVoided;
-    this.notifyOnPaymentMade =
-      props?.notifyOnPaymentMade ??
-      DEFAULT_USER_NOTIFICATION.notifyOnPaymentMade;
+    this.notifyOnPaymentCreated =
+      props?.notifyOnPaymentCreated ??
+      DEFAULT_USER_NOTIFICATION.notifyOnPaymentCreated;
     this.notifyOnDueCreated =
       props?.notifyOnDueCreated ?? DEFAULT_USER_NOTIFICATION.notifyOnDueCreated;
   }
@@ -78,7 +78,7 @@ export class UserNotification {
       notifyOnMemberCreated: this.notifyOnMemberCreated,
       notifyOnMovementCreated: this.notifyOnMovementCreated,
       notifyOnMovementVoided: this.notifyOnMovementVoided,
-      notifyOnPaymentMade: this.notifyOnPaymentMade,
+      notifyOnPaymentCreated: this.notifyOnPaymentCreated,
     };
   }
 

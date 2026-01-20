@@ -167,8 +167,8 @@ export class OutboxWorkerProcessor {
     }
 
     if (
-      notification.type === NotificationType.PAYMENT_MADE &&
-      !user.notificationPreferences.notifyOnPaymentMade
+      notification.type === NotificationType.PAYMENT_CREATED &&
+      !user.notificationPreferences.notifyOnPaymentCreated
     ) {
       return 'User opted out of payment made notifications';
     }

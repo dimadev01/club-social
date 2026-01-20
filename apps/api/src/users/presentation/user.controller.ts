@@ -163,7 +163,8 @@ export class UsersController extends BaseController {
         user.notificationPreferences.notifyOnMovementCreated,
       notifyOnMovementVoided:
         user.notificationPreferences.notifyOnMovementVoided,
-      notifyOnPaymentMade: user.notificationPreferences.notifyOnPaymentMade,
+      notifyOnPaymentCreated:
+        user.notificationPreferences.notifyOnPaymentCreated,
     };
   }
 

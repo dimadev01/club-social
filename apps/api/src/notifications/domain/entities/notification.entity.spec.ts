@@ -72,7 +72,7 @@ describe('NotificationEntity', () => {
       const notification = createTestNotificationFromPersistence(
         {
           channel: NotificationChannel.EMAIL,
-          type: NotificationType.PAYMENT_MADE,
+          type: NotificationType.PAYMENT_CREATED,
           userId,
         },
         {
@@ -88,7 +88,7 @@ describe('NotificationEntity', () => {
 
       expect(notification.id).toBe(id);
       expect(notification.userId).toBe(userId);
-      expect(notification.type).toBe(NotificationType.PAYMENT_MADE);
+      expect(notification.type).toBe(NotificationType.PAYMENT_CREATED);
       expect(notification.status).toBe(NotificationStatus.PENDING);
       expect(notification.createdBy).toBe(TEST_CREATED_BY);
     });

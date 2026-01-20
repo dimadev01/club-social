@@ -43,7 +43,7 @@ export const NotificationType = {
   MEMBER_CREATED: 'member_created',
   MOVEMENT_CREATED: 'movement_created',
   MOVEMENT_VOIDED: 'movement_voided',
-  PAYMENT_MADE: 'payment_made',
+  PAYMENT_CREATED: 'payment_created',
 } as const;
 
 export type NotificationType =
@@ -51,11 +51,11 @@ export type NotificationType =
 
 /**
  * Notification types that can be sent to members about their own account.
- * Members can opt in/out of these via notifyOnDueCreated and notifyOnPaymentMade.
+ * Members can opt in/out of these via notifyOnDueCreated and notifyOnPaymentCreated.
  */
 export const MemberNotificationTypes = [
   NotificationType.DUE_CREATED,
-  NotificationType.PAYMENT_MADE,
+  NotificationType.PAYMENT_CREATED,
 ] as const;
 
 export type MemberNotificationType = (typeof MemberNotificationTypes)[number];
@@ -69,7 +69,7 @@ export const SubscriberNotificationTypes = [
   NotificationType.MEMBER_CREATED,
   NotificationType.MOVEMENT_CREATED,
   NotificationType.MOVEMENT_VOIDED,
-  NotificationType.PAYMENT_MADE,
+  NotificationType.PAYMENT_CREATED,
 ] as const;
 
 export type SubscriberNotificationType =
@@ -80,7 +80,7 @@ export const NotificationTypeLabel = {
   [NotificationType.MEMBER_CREATED]: 'Socio creado',
   [NotificationType.MOVEMENT_CREATED]: 'Movimiento creado',
   [NotificationType.MOVEMENT_VOIDED]: 'Movimiento anulado',
-  [NotificationType.PAYMENT_MADE]: 'Pago realizado',
+  [NotificationType.PAYMENT_CREATED]: 'Pago realizado',
 } as const;
 
 /**
@@ -92,7 +92,7 @@ export const NotificationTypeToPreferenceKey = {
   [NotificationType.MEMBER_CREATED]: 'notifyOnMemberCreated',
   [NotificationType.MOVEMENT_CREATED]: 'notifyOnMovementCreated',
   [NotificationType.MOVEMENT_VOIDED]: 'notifyOnMovementVoided',
-  [NotificationType.PAYMENT_MADE]: 'notifyOnPaymentMade',
+  [NotificationType.PAYMENT_CREATED]: 'notifyOnPaymentCreated',
 } as const;
 
 export type NotificationPreferenceKey =

@@ -143,8 +143,8 @@ export class MembersController extends BaseController {
         notificationPreferences: {
           notifyOnDueCreated:
             createMemberDto.notificationPreferences.notifyOnDueCreated,
-          notifyOnPaymentMade:
-            createMemberDto.notificationPreferences.notifyOnPaymentMade,
+          notifyOnPaymentCreated:
+            createMemberDto.notificationPreferences.notifyOnPaymentCreated,
         },
         phones: createMemberDto.phones,
         sex: createMemberDto.sex,
@@ -290,7 +290,8 @@ export class MembersController extends BaseController {
       nationality: member.nationality,
       notificationPreferences: {
         notifyOnDueCreated: member.notificationPreferences.notifyOnDueCreated,
-        notifyOnPaymentMade: member.notificationPreferences.notifyOnPaymentMade,
+        notifyOnPaymentCreated:
+          member.notificationPreferences.notifyOnPaymentCreated,
       },
       phones: member.phones,
       sex: member.sex,

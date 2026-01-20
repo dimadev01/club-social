@@ -10,6 +10,7 @@ import {
   MemberCategoryLabel,
   MemberNationality,
   MemberNationalityLabel,
+  type MemberNotificationPreferencesDto,
   MemberSex,
   MemberSexLabel,
   MemberStatus,
@@ -46,10 +47,7 @@ export interface MemberFormData {
   lastName: string;
   maritalStatus?: MaritalStatus;
   nationality?: MemberNationality;
-  notificationPreferences: {
-    notifyOnDueCreated: boolean;
-    notifyOnPaymentMade: boolean;
-  };
+  notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
   sex?: MemberSex;
   status: MemberStatus;
@@ -279,7 +277,7 @@ export function MemberForm({
                 </Descriptions.Item>
                 <Descriptions.Item label="Notificar pago realizado">
                   <Form.Item<MemberFormData>
-                    name={['notificationPreferences', 'notifyOnPaymentMade']}
+                    name={['notificationPreferences', 'notifyOnPaymentCreated']}
                     noStyle
                     valuePropName="checked"
                   >

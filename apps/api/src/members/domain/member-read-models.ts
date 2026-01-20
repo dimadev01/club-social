@@ -16,7 +16,7 @@ export interface MemberAddressReadModel {
 
 export interface MemberNotificationPreferencesReadModel {
   notifyOnDueCreated: boolean;
-  notifyOnPaymentMade: boolean;
+  notifyOnPaymentCreated: boolean;
 }
 
 export interface MemberPaginatedExtraReadModel {

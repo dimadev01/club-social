@@ -590,7 +590,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
         recipientAddress: params.member.email,
         sourceEntity: 'payment',
         sourceEntityId: params.payment.id,
-        type: NotificationType.PAYMENT_MADE,
+        type: NotificationType.PAYMENT_CREATED,
         userId: UniqueId.raw({ value: params.member.userId }),
       },
       params.createdBy,
@@ -612,7 +612,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     paymentDate: DateOnly;
   }): Promise<Result<NotificationEntity[]>> {
     const optedInUsers =
-      await this.userRepository.findWithNotifyOnPaymentMade();
+      await this.userRepository.findWithNotifyOnPaymentCreated();
 
     // Exclude the member's own user to avoid duplicate notification
     const subscribers = optedInUsers.filter(
@@ -646,7 +646,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
             recipientAddress: user.email.value,
             sourceEntity: 'payment',
             sourceEntityId: params.payment.id,
-            type: NotificationType.PAYMENT_MADE,
+            type: NotificationType.PAYMENT_CREATED,
             userId: user.id,
           },
           params.createdBy,

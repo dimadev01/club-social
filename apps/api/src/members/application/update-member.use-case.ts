@@ -123,7 +123,8 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
     user.updateNotificationPreferences(
       {
         notifyOnDueCreated: params.notificationPreferences.notifyOnDueCreated,
-        notifyOnPaymentMade: params.notificationPreferences.notifyOnPaymentMade,
+        notifyOnPaymentCreated:
+          params.notificationPreferences.notifyOnPaymentCreated,
       },
       params.updatedBy,
     );

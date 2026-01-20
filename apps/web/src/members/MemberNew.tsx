@@ -46,7 +46,8 @@ export function MemberNew() {
       nationality: values.nationality ?? null,
       notificationPreferences: {
         notifyOnDueCreated: values.notificationPreferences.notifyOnDueCreated,
-        notifyOnPaymentMade: values.notificationPreferences.notifyOnPaymentMade,
+        notifyOnPaymentCreated:
+          values.notificationPreferences.notifyOnPaymentCreated,
       },
       phones: values.phones,
       sex: values.sex ?? null,
@@ -89,7 +90,7 @@ export function MemberNew() {
           nationality: undefined,
           notificationPreferences: {
             notifyOnDueCreated: true,
-            notifyOnPaymentMade: true,
+            notifyOnPaymentCreated: true,
           },
           phones: [],
           sex: undefined,
