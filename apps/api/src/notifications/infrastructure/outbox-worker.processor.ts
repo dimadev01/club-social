@@ -54,7 +54,7 @@ export class OutboxWorkerProcessor {
     this.logger.setContext(OutboxWorkerProcessor.name);
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_MINUTE)
   public async processOutbox(): Promise<void> {
     this.logger.info({
       message: 'Processing outbox',
