@@ -301,4 +301,31 @@ describe('UserEntity', () => {
       expect(event.user.preferences.theme).toBe(Theme.LIGHT);
     });
   });
+
+  describe('updateNotificationPreferences', () => {
+    it('should update notification preferences and emit UserUpdatedEvent', () => {
+      const user = createTestUser();
+      user.pullEvents();
+
+      user.updateNotificationPreferences(
+        { notifyOnMemberCreated: true },
+        TEST_CREATED_BY,
+      );
+
+      expect(user.notificationPreferences.notifyOnMemberCreated).toBe(true);
+      expect(user.updatedBy).toBe(TEST_CREATED_BY);
+
+      const events = user.pullEvents();
+      expect(events).toHaveLength(1);
+      expect(events[0]).toBeInstanceOf(UserUpdatedEvent);
+
+      const event = events[0] as UserUpdatedEvent;
+      expect(event.oldUser.notificationPreferences.notifyOnMemberCreated).toBe(
+        false,
+      );
+      expect(event.user.notificationPreferences.notifyOnMemberCreated).toBe(
+        true,
+      );
+    });
+  });
 });
