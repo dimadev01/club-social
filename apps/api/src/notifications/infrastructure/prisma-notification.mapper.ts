@@ -32,7 +32,6 @@ export class PrismaNotificationMapper {
       id: notification.id.value,
       lastError: notification.lastError,
       maxAttempts: notification.maxAttempts,
-      member: { connect: { id: notification.memberId.value } },
       payload: notification.payload as unknown as InputJsonValue,
       processedAt: notification.processedAt,
       providerMessageId: notification.providerMessageId,
@@ -44,6 +43,7 @@ export class PrismaNotificationMapper {
       sourceEntityId: notification.sourceEntityId?.value ?? null,
       status: notification.status,
       type: notification.type,
+      user: { connect: { id: notification.userId.value } },
     };
   }
 
@@ -57,7 +57,6 @@ export class PrismaNotificationMapper {
         deliveredAt: notification.deliveredAt,
         lastError: notification.lastError,
         maxAttempts: notification.maxAttempts,
-        memberId: UniqueId.raw({ value: notification.memberId }),
         payload: notification.payload as Record<string, unknown>,
         processedAt: notification.processedAt,
         providerMessageId: notification.providerMessageId,
@@ -71,6 +70,7 @@ export class PrismaNotificationMapper {
           : null,
         status: notification.status as NotificationStatus,
         type: notification.type as NotificationType,
+        userId: UniqueId.raw({ value: notification.userId }),
       },
       {
         audit: {

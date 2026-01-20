@@ -9,8 +9,8 @@ export class NotificationPaginatedResponseDto implements NotificationPaginatedDt
   public channel: NotificationChannel;
   public createdAt: string;
   public id: string;
-  public memberName: string;
   public recipientAddress: string;
   public status: NotificationStatus;
   public type: NotificationType;
+  public userName: string;
 }

@@ -21,7 +21,8 @@ import { createTestUser, createUserProps } from '@/shared/test/factories';
 
 import { UserCreatedEvent } from '../events/user-created.event';
 import { UserUpdatedEvent } from '../events/user-updated.event';
-import { UserPreferences } from '../value-objects/user-preferences.vo';
+import { UserNotification } from './user-notification';
+import { UserPreferences } from './user-preferences';
 import { UserEntity } from './user.entity';
 
 describe('UserEntity', () => {
@@ -94,7 +95,8 @@ describe('UserEntity', () => {
             firstName: TEST_ALT_FIRST_NAME,
             lastName: TEST_ALT_LAST_NAME,
           }),
-          preferences: UserPreferences.raw({
+          notificationPreferences: UserNotification.forUser(),
+          preferences: new UserPreferences({
             theme: Theme.LIGHT,
           }),
           role: UserRole.ADMIN,
@@ -132,7 +134,8 @@ describe('UserEntity', () => {
             firstName: TEST_ALT_FIRST_NAME,
             lastName: TEST_ALT_LAST_NAME,
           }),
-          preferences: UserPreferences.raw(),
+          notificationPreferences: UserNotification.forUser(),
+          preferences: new UserPreferences(),
           role: UserRole.MEMBER,
           status: UserStatus.INACTIVE,
         },
@@ -234,7 +237,8 @@ describe('UserEntity', () => {
             firstName: TEST_FIRST_NAME,
             lastName: TEST_LAST_NAME,
           }),
-          preferences: UserPreferences.raw({
+          notificationPreferences: UserNotification.forUser(),
+          preferences: new UserPreferences({
             theme: Theme.LIGHT,
           }),
           role: UserRole.MEMBER,
@@ -295,6 +299,33 @@ describe('UserEntity', () => {
       expect(event.oldUser.id.value).toBe(user.id.value);
       expect(event.oldUser.preferences.theme).toBe(originalTheme);
       expect(event.user.preferences.theme).toBe(Theme.LIGHT);
+    });
+  });
+
+  describe('updateNotificationPreferences', () => {
+    it('should update notification preferences and emit UserUpdatedEvent', () => {
+      const user = createTestUser();
+      user.pullEvents();
+
+      user.updateNotificationPreferences(
+        { notifyOnMemberCreated: true },
+        TEST_CREATED_BY,
+      );
+
+      expect(user.notificationPreferences.notifyOnMemberCreated).toBe(true);
+      expect(user.updatedBy).toBe(TEST_CREATED_BY);
+
+      const events = user.pullEvents();
+      expect(events).toHaveLength(1);
+      expect(events[0]).toBeInstanceOf(UserUpdatedEvent);
+
+      const event = events[0] as UserUpdatedEvent;
+      expect(event.oldUser.notificationPreferences.notifyOnMemberCreated).toBe(
+        false,
+      );
+      expect(event.user.notificationPreferences.notifyOnMemberCreated).toBe(
+        true,
+      );
     });
   });
 });

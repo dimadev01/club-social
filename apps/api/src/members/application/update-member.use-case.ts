@@ -3,6 +3,7 @@ import {
   MaritalStatus,
   MemberCategory,
   MemberNationality,
+  MemberNotificationPreferencesDto,
   MemberSex,
 } from '@club-social/shared/members';
 import { UserStatus } from '@club-social/shared/users';
@@ -15,7 +16,6 @@ import {
   MEMBER_REPOSITORY_PROVIDER,
   type MemberRepository,
 } from '@/members/domain/member.repository';
-import { MemberNotification } from '@/members/domain/value-objects/member-notification.vo';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -50,10 +50,7 @@ interface UpdateMemberParams {
   lastName: string;
   maritalStatus: MaritalStatus | null;
   nationality: MemberNationality | null;
-  notificationPreferences?: {
-    notifyOnDueCreated: boolean;
-    notifyOnPaymentMade: boolean;
-  };
+  notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
   sex: MemberSex | null;
   status: UserStatus;
@@ -123,6 +120,15 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       updatedBy: params.updatedBy,
     });
 
+    user.updateNotificationPreferences(
+      {
+        notifyOnDueCreated: params.notificationPreferences.notifyOnDueCreated,
+        notifyOnPaymentCreated:
+          params.notificationPreferences.notifyOnPaymentCreated,
+      },
+      params.updatedBy,
+    );
+
     member.updateProfile({
       address: params.address,
       birthDate: birthDate ?? null,
@@ -131,9 +137,6 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       fileStatus: params.fileStatus,
       maritalStatus: params.maritalStatus,
       nationality: params.nationality,
-      notificationPreferences: params.notificationPreferences
-        ? MemberNotification.raw(params.notificationPreferences)
-        : member.notificationPreferences,
       phones: params.phones,
       sex: params.sex,
       status: params.status,

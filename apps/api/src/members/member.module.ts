@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from '@/users/user.module';
 
 import { CreateMemberUseCase } from './application/create-member.use-case';
-import { UpdateMemberNotificationPreferencesUseCase } from './application/update-member-notification-preferences.use-case';
 import { UpdateMemberUseCase } from './application/update-member.use-case';
 import { CreateMemberLedgerEntryUseCase } from './ledger/application/create-member-ledger-entry.use-case';
 import { MemberLedgerController } from './ledger/presentation/member-ledger.controller';
@@ -16,7 +15,6 @@ import { MembersController } from './presentation/member.controller';
   providers: [
     CreateMemberUseCase,
     CreateMemberLedgerEntryUseCase,
-    UpdateMemberNotificationPreferencesUseCase,
     UpdateMemberUseCase,
   ],
 })

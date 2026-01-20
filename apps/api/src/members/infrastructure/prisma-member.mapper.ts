@@ -7,7 +7,6 @@ import {
   MemberStatus,
 } from '@club-social/shared/members';
 import { Injectable } from '@nestjs/common';
-import { InputJsonValue } from '@prisma/client/runtime/client';
 
 import {
   MemberCreateInput,
@@ -20,10 +19,6 @@ import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { MemberEntity } from '../domain/entities/member.entity';
-import {
-  MemberNotification,
-  MemberNotificationProps,
-} from '../domain/value-objects/member-notification.vo';
 
 @Injectable()
 export class PrismaMemberMapper {
@@ -40,8 +35,6 @@ export class PrismaMemberMapper {
       id: member.id.value,
       maritalStatus: member.maritalStatus,
       nationality: member.nationality,
-      notificationPreferences:
-        member.notificationPreferences.toJson() as unknown as InputJsonValue,
       phones: member.phones,
       sex: member.sex,
       stateName: member.address?.stateName,
@@ -74,9 +67,6 @@ export class PrismaMemberMapper {
         fileStatus: member.fileStatus as FileStatus,
         maritalStatus: member.maritalStatus as MaritalStatus | null,
         nationality: member.nationality as MemberNationality | null,
-        notificationPreferences: MemberNotification.raw(
-          member.notificationPreferences as unknown as MemberNotificationProps,
-        ),
         phones: member.phones,
         sex: member.sex as MemberSex,
         status: member.status as MemberStatus,
@@ -104,8 +94,6 @@ export class PrismaMemberMapper {
       id: member.id.value,
       maritalStatus: member.maritalStatus,
       nationality: member.nationality,
-      notificationPreferences:
-        member.notificationPreferences.toJson() as unknown as InputJsonValue,
       phones: member.phones,
       sex: member.sex,
       stateName: member.address?.stateName,

@@ -48,7 +48,8 @@ export function MemberEdit() {
       nationality: values.nationality ?? null,
       notificationPreferences: {
         notifyOnDueCreated: values.notificationPreferences.notifyOnDueCreated,
-        notifyOnPaymentMade: values.notificationPreferences.notifyOnPaymentMade,
+        notifyOnPaymentCreated:
+          values.notificationPreferences.notifyOnPaymentCreated,
       },
       phones: values.phones,
       sex: values.sex ?? null,
@@ -101,8 +102,8 @@ export function MemberEdit() {
           notificationPreferences: {
             notifyOnDueCreated:
               member.notificationPreferences.notifyOnDueCreated,
-            notifyOnPaymentMade:
-              member.notificationPreferences.notifyOnPaymentMade,
+            notifyOnPaymentCreated:
+              member.notificationPreferences.notifyOnPaymentCreated,
           },
           phones: member.phones,
           sex: member.sex ?? undefined,

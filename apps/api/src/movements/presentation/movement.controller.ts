@@ -73,6 +73,7 @@ export class MovementsController extends BaseController {
         amount: body.amount,
         category: body.category,
         createdBy: session.user.name,
+        createdByUserId: session.user.id,
         date: body.date,
         notes: body.notes || null,
         type: body.type,
@@ -217,6 +218,7 @@ export class MovementsController extends BaseController {
   ): Promise<void> {
     this.handleResult(
       await this.voidMovementUseCase.execute({
+        createdByUserId: session.user.id,
         id: params.id,
         voidedBy: session.user.name,
         voidReason: body.voidReason,

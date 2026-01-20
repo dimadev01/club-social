@@ -35,7 +35,7 @@ describe('NotificationEntity', () => {
       expect(notification.recipientAddress).toBe(TEST_NOTIFICATION_RECIPIENT);
       expect(notification.payload).toEqual(TEST_NOTIFICATION_PAYLOAD);
       expect(notification.sourceEntity).toBe(TEST_NOTIFICATION_SOURCE_ENTITY);
-      expect(notification.memberId).toBe(props.memberId);
+      expect(notification.userId).toBe(props.userId);
       expect(notification.status).toBe(NotificationStatus.PENDING);
       expect(notification.attempts).toBe(0);
       expect(notification.maxAttempts).toBe(3);
@@ -67,13 +67,13 @@ describe('NotificationEntity', () => {
   describe('fromPersistence', () => {
     it('should create a notification from persisted data', () => {
       const id = UniqueId.generate();
-      const memberId = UniqueId.generate();
+      const userId = UniqueId.generate();
 
       const notification = createTestNotificationFromPersistence(
         {
           channel: NotificationChannel.EMAIL,
-          memberId,
-          type: NotificationType.PAYMENT_MADE,
+          type: NotificationType.PAYMENT_CREATED,
+          userId,
         },
         {
           audit: {
@@ -87,8 +87,8 @@ describe('NotificationEntity', () => {
       );
 
       expect(notification.id).toBe(id);
-      expect(notification.memberId).toBe(memberId);
-      expect(notification.type).toBe(NotificationType.PAYMENT_MADE);
+      expect(notification.userId).toBe(userId);
+      expect(notification.type).toBe(NotificationType.PAYMENT_CREATED);
       expect(notification.status).toBe(NotificationStatus.PENDING);
       expect(notification.createdBy).toBe(TEST_CREATED_BY);
     });

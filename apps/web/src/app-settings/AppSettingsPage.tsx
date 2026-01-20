@@ -73,9 +73,8 @@ export function AppSettingsPage() {
   const sendMemberNotificationsSetting = appSettings?.find(
     (
       setting,
-    ): setting is AppSettingDto<
-      typeof AppSettingKey.SEND_MEMBER_NOTIFICATIONS
-    > => setting.key === AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
+    ): setting is AppSettingDto<typeof AppSettingKey.SEND_NOTIFICATIONS> =>
+      setting.key === AppSettingKey.SEND_NOTIFICATIONS,
   );
 
   return (
@@ -118,6 +117,7 @@ export function AppSettingsPage() {
                   label: APP_SETTINGS_LABELS[AppSettingKey.SEND_EMAILS],
                 },
               ]}
+              styles={{ label: { width: 250 } }}
             />
           </Card>
         )}
@@ -131,7 +131,7 @@ export function AppSettingsPage() {
                     <Checkbox
                       checked={sendMemberNotificationsSetting?.value.enabled}
                       onChange={(e) =>
-                        onUpdate(AppSettingKey.SEND_MEMBER_NOTIFICATIONS, {
+                        onUpdate(AppSettingKey.SEND_NOTIFICATIONS, {
                           enabled: e.target.checked,
                         })
                       }
@@ -139,13 +139,11 @@ export function AppSettingsPage() {
                       {sendMemberNotificationsSetting?.description}
                     </Checkbox>
                   ),
-                  key: AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
-                  label:
-                    APP_SETTINGS_LABELS[
-                      AppSettingKey.SEND_MEMBER_NOTIFICATIONS
-                    ],
+                  key: AppSettingKey.SEND_NOTIFICATIONS,
+                  label: APP_SETTINGS_LABELS[AppSettingKey.SEND_NOTIFICATIONS],
                 },
               ]}
+              styles={{ label: { width: 250 } }}
             />
           </Card>
         )}

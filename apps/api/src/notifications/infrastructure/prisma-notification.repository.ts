@@ -32,8 +32,8 @@ import { NotificationEntity } from '../domain/entities/notification.entity';
 import { NotificationRepository } from '../domain/notification.repository';
 import { PrismaNotificationMapper } from './prisma-notification.mapper';
 
-type NotificationWithMemberUser = NotificationGetPayload<{
-  include: { member: { include: { user: true } } };
+type NotificationWithUserPayload = NotificationGetPayload<{
+  include: { user: true };
 }>;
 
 @Injectable()
@@ -65,7 +65,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
     id: UniqueId,
   ): Promise<NotificationReadModel | null> {
     const notification = await this.prismaService.notification.findUnique({
-      include: { member: { include: { user: true } } },
+      include: { user: true },
       where: { id: id.value },
     });
 
@@ -98,7 +98,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
-      include: { member: { include: { user: true } } },
+      include: { user: true },
       orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
@@ -176,24 +176,24 @@ export class PrismaNotificationRepository implements NotificationRepository {
   }
 
   private toPaginatedReadModel(
-    model: NotificationWithMemberUser,
+    model: NotificationWithUserPayload,
   ): NotificationPaginatedReadModel {
     return {
       channel: model.channel as NotificationChannel,
       createdAt: model.createdAt,
       id: model.id,
-      memberName: Name.raw({
-        firstName: model.member.user.firstName,
-        lastName: model.member.user.lastName,
-      }).fullName,
       recipientAddress: model.recipientAddress,
       status: model.status as NotificationStatus,
       type: model.type as NotificationType,
+      userName: Name.raw({
+        firstName: model.user.firstName,
+        lastName: model.user.lastName,
+      }).fullName,
     };
   }
 
   private toReadModel(
-    model: NotificationWithMemberUser,
+    model: NotificationWithUserPayload,
   ): NotificationReadModel {
     return {
       attempts: model.attempts,
@@ -204,11 +204,6 @@ export class PrismaNotificationRepository implements NotificationRepository {
       id: model.id,
       lastError: model.lastError,
       maxAttempts: model.maxAttempts,
-      memberId: model.memberId,
-      memberName: Name.raw({
-        firstName: model.member.user.firstName,
-        lastName: model.member.user.lastName,
-      }).fullName,
       payload: model.payload as Record<string, unknown>,
       processedAt: model.processedAt,
       providerMessageId: model.providerMessageId,
@@ -222,6 +217,11 @@ export class PrismaNotificationRepository implements NotificationRepository {
       type: model.type as NotificationType,
       updatedAt: model.updatedAt,
       updatedBy: model.updatedBy,
+      userId: model.userId,
+      userName: Name.raw({
+        firstName: model.user.firstName,
+        lastName: model.user.lastName,
+      }).fullName,
     };
   }
 }

@@ -20,7 +20,7 @@ export const AppSettingValidators: Record<
     Guard.hasProperty(value, 'enabled');
     Guard.boolean(value.enabled);
   },
-  [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]: (value: unknown) => {
+  [AppSettingKey.SEND_NOTIFICATIONS]: (value: unknown) => {
     Guard.defined(value);
     Guard.object(value);
     Guard.hasProperty(value, 'enabled');

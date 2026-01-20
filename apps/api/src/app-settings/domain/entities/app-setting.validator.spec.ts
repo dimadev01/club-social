@@ -6,7 +6,7 @@ describe('AppSettingValidators', () => {
   describe.each([
     AppSettingKey.MAINTENANCE_MODE,
     AppSettingKey.SEND_EMAILS,
-    AppSettingKey.SEND_MEMBER_NOTIFICATIONS,
+    AppSettingKey.SEND_NOTIFICATIONS,
   ])('%s', (key) => {
     const validator = AppSettingValidators[key];
 

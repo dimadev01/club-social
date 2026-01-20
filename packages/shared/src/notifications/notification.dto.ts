@@ -13,8 +13,6 @@ export interface NotificationDto {
   id: string;
   lastError: null | string;
   maxAttempts: number;
-  memberId: string;
-  memberName: string;
   payload: Record<string, unknown>;
   processedAt: null | string;
   providerMessageId: null | string;
@@ -28,14 +26,16 @@ export interface NotificationDto {
   type: NotificationType;
   updatedAt: string;
   updatedBy: null | string;
+  userId: string;
+  userName: string;
 }
 
 export interface NotificationPaginatedDto {
   channel: NotificationChannel;
   createdAt: string;
   id: string;
-  memberName: string;
   recipientAddress: string;
   status: NotificationStatus;
   type: NotificationType;
+  userName: string;
 }

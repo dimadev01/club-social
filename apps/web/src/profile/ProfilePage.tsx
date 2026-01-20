@@ -1,8 +1,6 @@
-import { UserRole } from '@club-social/shared/users';
 import { Tabs } from 'antd';
 import { useLocation, useNavigate } from 'react-router';
 
-import { useSessionUser } from '@/auth/useUser';
 import { Page } from '@/ui';
 
 import { AccessTab } from './AccessTab';
@@ -14,8 +12,6 @@ import { ProfileTab } from './ProfileTab';
 export function ProfilePage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const user = useSessionUser();
-  const isMember = user.role === UserRole.MEMBER;
 
   const activeTab = location.hash.slice(1) || 'profile';
 
@@ -48,15 +44,11 @@ export function ProfilePage() {
             key: 'interface',
             label: 'Interfaz',
           },
-          ...(isMember
-            ? [
-                {
-                  children: <NotificationsTab />,
-                  key: 'notifications',
-                  label: 'Notificaciones',
-                },
-              ]
-            : []),
+          {
+            children: <NotificationsTab />,
+            key: 'notifications',
+            label: 'Notificaciones',
+          },
         ]}
         onChange={handleTabChange}
       />

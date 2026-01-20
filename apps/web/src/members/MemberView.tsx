@@ -116,7 +116,7 @@ export function MemberView() {
             label: 'Notificar deuda creada',
           },
           {
-            children: member.notificationPreferences.notifyOnPaymentMade
+            children: member.notificationPreferences.notifyOnPaymentCreated
               ? 'Si'
               : 'No',
             label: 'Notificar pago realizado',

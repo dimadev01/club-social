@@ -31,7 +31,9 @@ model User {
   accounts      Account[]
   passkeys      Passkey[]
   member        Member?
-  preferences   Json?
+  preferences               Json?
+  notificationPreferences   Json?
+  notifications             Notification[]
 
   @@unique([email])
   @@map("user")
@@ -133,7 +135,6 @@ model Member {
   payments      Payment[]
   ledgerEntries MemberLedgerEntry[]
   groups        GroupMember[]
-  notifications Notification[]
 
   @@index([userId])
   @@map("member")
@@ -363,9 +364,9 @@ model GroupMember {
 }
 
 model Notification {
-  id       String @id
-  memberId String
-  member   Member @relation(fields: [memberId], references: [id])
+  id     String @id
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
   channel          String
   recipientAddress String
@@ -394,7 +395,7 @@ model Notification {
   updatedBy String?
 
   @@index([status, scheduledAt])
-  @@index([memberId])
+  @@index([userId])
   @@index([providerMessageId])
   @@map("notification")
 }

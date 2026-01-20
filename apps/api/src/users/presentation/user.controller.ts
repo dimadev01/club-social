@@ -25,6 +25,7 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateUserUseCase } from '../application/create-user.use-case';
+import { UpdateUserNotificationPreferencesUseCase } from '../application/update-user-notification-preferences.use-case';
 import { UpdateUserPreferencesUseCase } from '../application/update-user-preferences.use-case';
 import { UpdateUserUseCase } from '../application/update-user.use-case';
 import {
@@ -33,6 +34,10 @@ import {
 } from '../domain/user.repository';
 import { CreateUserRequestDto } from './dto/create-user.dto';
 import { UpdateUserRequestDto } from './dto/update-user.dto';
+import {
+  UpdateUserNotificationPreferencesRequestDto,
+  UserNotificationPreferencesResponseDto,
+} from './dto/user-notification-preferences.dto';
 import { UserPaginatedResponseDto } from './dto/user-paginated.dto';
 import {
   UpdateUserPreferencesRequestDto,
@@ -49,6 +54,7 @@ export class UsersController extends BaseController {
     private readonly userRepository: UserRepository,
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
+    private readonly updateUserNotificationPreferencesUseCase: UpdateUserNotificationPreferencesUseCase,
     private readonly updateUserPreferencesUseCase: UpdateUserPreferencesUseCase,
   ) {
     super(logger);
@@ -136,6 +142,40 @@ export class UsersController extends BaseController {
     this.handleResult(
       await this.updateUserPreferencesUseCase.execute({
         preferences: body,
+        updatedBy: session.user.name,
+        userId: session.user.id,
+      }),
+    );
+  }
+
+  @Get('me/notification-preferences')
+  public async getMyNotificationPreferences(
+    @Session() session: AuthSession,
+  ): Promise<UserNotificationPreferencesResponseDto> {
+    const user = await this.userRepository.findByIdOrThrow(
+      UniqueId.raw({ value: session.user.id }),
+    );
+
+    return {
+      notifyOnDueCreated: user.notificationPreferences.notifyOnDueCreated,
+      notifyOnMemberCreated: user.notificationPreferences.notifyOnMemberCreated,
+      notifyOnMovementCreated:
+        user.notificationPreferences.notifyOnMovementCreated,
+      notifyOnMovementVoided:
+        user.notificationPreferences.notifyOnMovementVoided,
+      notifyOnPaymentCreated:
+        user.notificationPreferences.notifyOnPaymentCreated,
+    };
+  }
+
+  @Patch('me/notification-preferences')
+  public async updateMyNotificationPreferences(
+    @Body() body: UpdateUserNotificationPreferencesRequestDto,
+    @Session() session: AuthSession,
+  ): Promise<void> {
+    this.handleResult(
+      await this.updateUserNotificationPreferencesUseCase.execute({
+        notificationPreferences: body,
         updatedBy: session.user.name,
         userId: session.user.id,
       }),
