@@ -11,7 +11,6 @@ import {
   type CreateMemberProps,
   MemberEntity,
 } from '@/members/domain/entities/member.entity';
-import { MemberNotification } from '@/members/domain/value-objects/member-notification.vo';
 import { Address } from '@/shared/domain/value-objects/address/address.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
@@ -35,7 +34,6 @@ export const createMemberProps = (
   fileStatus: FileStatus.COMPLETED,
   maritalStatus: MaritalStatus.SINGLE,
   nationality: MemberNationality.ARGENTINA,
-  notificationPreferences: MemberNotification.raw(),
   phones: [TEST_PHONE],
   sex: MemberSex.MALE,
   status: MemberStatus.ACTIVE,

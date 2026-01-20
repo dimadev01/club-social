@@ -46,7 +46,7 @@ export class NotificationPreferencesRequestDto implements MemberNotificationPref
   public notifyOnDueCreated: boolean;
 
   @IsBoolean()
-  public notifyOnPaymentMade: boolean;
+  public notifyOnPaymentCreated: boolean;
 }
 
 export class UpdateMemberRequestDto implements UpdateMemberDto {

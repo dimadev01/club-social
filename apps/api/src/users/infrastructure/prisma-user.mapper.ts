@@ -12,11 +12,15 @@ import { Email } from '@/shared/domain/value-objects/email/email.vo';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
-import { UserEntity } from '../domain/entities/user.entity';
+import {
+  UserNotification,
+  UserNotificationProps,
+} from '../domain/entities/user-notification';
 import {
   UserPreferences,
   UserPreferencesProps,
-} from '../domain/value-objects/user-preferences.vo';
+} from '../domain/entities/user-preferences';
+import { UserEntity } from '../domain/entities/user.entity';
 
 @Injectable()
 export class PrismaUserMapper {
@@ -33,6 +37,10 @@ export class PrismaUserMapper {
       id: user.id.value,
       lastName: user.name.lastName,
       name: user.name.fullNameFirstNameFirst,
+      notificationPreferences:
+        user.notificationPreferences.toJson() as unknown as
+          | InputJsonValue
+          | JsonNullClass,
       preferences: user.preferences.toJson() as unknown as
         | InputJsonValue
         | JsonNullClass,
@@ -42,6 +50,15 @@ export class PrismaUserMapper {
   }
 
   public toDomain(user: UserModel): UserEntity {
+    const notificationPreferences =
+      user.role === UserRole.MEMBER
+        ? UserNotification.forMember(
+            user.notificationPreferences as unknown as UserNotificationProps,
+          )
+        : UserNotification.forUser(
+            user.notificationPreferences as unknown as UserNotificationProps,
+          );
+
     return UserEntity.fromPersistence(
       {
         banExpires: user.banExpires,
@@ -49,7 +66,8 @@ export class PrismaUserMapper {
         banReason: user.banReason,
         email: Email.raw({ value: user.email }),
         name: Name.raw({ firstName: user.firstName, lastName: user.lastName }),
-        preferences: UserPreferences.raw(
+        notificationPreferences: notificationPreferences,
+        preferences: new UserPreferences(
           user.preferences as unknown as UserPreferencesProps,
         ),
         role: user.role as UserRole,
@@ -76,6 +94,10 @@ export class PrismaUserMapper {
       email: user.email.value,
       firstName: user.name.firstName,
       lastName: user.name.lastName,
+      notificationPreferences:
+        user.notificationPreferences.toJson() as unknown as
+          | InputJsonValue
+          | JsonNullClass,
       preferences: user.preferences.toJson() as unknown as
         | InputJsonValue
         | JsonNullClass,

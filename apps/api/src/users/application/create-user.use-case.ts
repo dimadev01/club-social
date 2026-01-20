@@ -19,6 +19,8 @@ import {
   type UserRepository,
 } from '@/users/domain/user.repository';
 
+import { UserNotification } from '../domain/entities/user-notification';
+
 export interface CreateUserParams {
   createdBy: string;
   email: string;
@@ -71,6 +73,7 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
       {
         email: email.value,
         name: name.value,
+        notificationPreferences: UserNotification.forUser(),
         role: params.role,
       },
       params.createdBy,

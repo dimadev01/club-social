@@ -45,8 +45,8 @@ export function NotificationView() {
                 label: 'Destinatario',
               },
               {
-                children: notification.memberName,
-                label: 'Socio',
+                children: notification.userName,
+                label: 'Usuario',
               },
               {
                 children: NotificationStatusLabel[notification.status],

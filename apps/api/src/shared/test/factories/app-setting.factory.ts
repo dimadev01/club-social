@@ -18,14 +18,13 @@ const DEFAULT_VALUES: {
 } = {
   [AppSettingKey.MAINTENANCE_MODE]: { enabled: false },
   [AppSettingKey.SEND_EMAILS]: { enabled: false },
-  [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]: { enabled: false },
+  [AppSettingKey.SEND_NOTIFICATIONS]: { enabled: false },
 };
 
 const DEFAULT_DESCRIPTIONS: Record<AppSettingKey, string> = {
   [AppSettingKey.MAINTENANCE_MODE]: 'Maintenance mode setting',
   [AppSettingKey.SEND_EMAILS]: 'Send emails setting',
-  [AppSettingKey.SEND_MEMBER_NOTIFICATIONS]:
-    'Send member notifications setting',
+  [AppSettingKey.SEND_NOTIFICATIONS]: 'Send member notifications setting',
 };
 
 const getDefaultScope = (key: AppSettingKey) =>

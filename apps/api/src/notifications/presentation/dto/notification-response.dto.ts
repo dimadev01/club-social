@@ -14,8 +14,6 @@ export class NotificationResponseDto implements NotificationDto {
   public id: string;
   public lastError: null | string;
   public maxAttempts: number;
-  public memberId: string;
-  public memberName: string;
   public payload: Record<string, unknown>;
   public processedAt: null | string;
   public providerMessageId: null | string;
@@ -29,4 +27,6 @@ export class NotificationResponseDto implements NotificationDto {
   public type: NotificationType;
   public updatedAt: string;
   public updatedBy: null | string;
+  public userId: string;
+  public userName: string;
 }

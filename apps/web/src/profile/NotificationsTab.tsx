@@ -1,30 +1,43 @@
-import type { MemberDto } from '@club-social/shared/members';
+import type { UserNotificationPreferencesDto } from '@club-social/shared/users';
 
+import {
+  MemberNotificationTypes,
+  type NotificationPreferenceKey,
+  NotificationTypeLabel,
+  NotificationTypeToPreferenceKey,
+  SubscriberNotificationTypes,
+} from '@club-social/shared/notifications';
+import { UserRole } from '@club-social/shared/users';
 import { useQueryClient } from '@tanstack/react-query';
 import { Switch } from 'antd';
 
-import { useMyMember } from '@/members/useMyMember';
-import { useUpdateMyNotificationPreferences } from '@/members/useUpdateMyNotificationPreferences';
+import { useSessionUser } from '@/auth/useUser';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { Card, Descriptions } from '@/ui';
+import { useMyNotificationPreferences } from '@/users/useMyNotificationPreferences';
+import { useUpdateMyNotificationPreferences } from '@/users/useUpdateMyNotificationPreferences';
 
 export function NotificationsTab() {
+  const user = useSessionUser();
   const queryClient = useQueryClient();
-  const { data: member, isLoading } = useMyMember();
+  const { data: notificationPreferences, isLoading } =
+    useMyNotificationPreferences();
   const updateNotificationPreferences = useUpdateMyNotificationPreferences();
 
+  const notificationTypes =
+    user.role === UserRole.MEMBER
+      ? MemberNotificationTypes
+      : SubscriberNotificationTypes;
+
   const handlePreferenceChange = (
-    key: 'notifyOnDueCreated' | 'notifyOnPaymentMade',
+    key: NotificationPreferenceKey,
     checked: boolean,
   ) => {
     queryClient.setQueryData(
-      queryKeys.members.me.queryKey,
-      (old: MemberDto) => ({
+      queryKeys.users.meNotificationPreferences.queryKey,
+      (old: UserNotificationPreferencesDto) => ({
         ...old,
-        notificationPreferences: {
-          ...old.notificationPreferences,
-          [key]: checked,
-        },
+        [key]: checked,
       }),
     );
 
@@ -34,22 +47,23 @@ export function NotificationsTab() {
   return (
     <Card loading={isLoading} title="Preferencias de notificación">
       <Descriptions styles={{ label: { width: 250 } }}>
-        <Descriptions.Item label="Notificar nueva cuota">
-          <Switch
-            checked={member?.notificationPreferences.notifyOnDueCreated}
-            onChange={(checked) =>
-              handlePreferenceChange('notifyOnDueCreated', checked)
-            }
-          />
-        </Descriptions.Item>
-        <Descriptions.Item label="Notificar pago realizado">
-          <Switch
-            checked={member?.notificationPreferences.notifyOnPaymentMade}
-            onChange={(checked) =>
-              handlePreferenceChange('notifyOnPaymentMade', checked)
-            }
-          />
-        </Descriptions.Item>
+        {notificationTypes.map((type) => {
+          const preferenceKey = NotificationTypeToPreferenceKey[type];
+
+          return (
+            <Descriptions.Item
+              key={type}
+              label={`Notificar ${NotificationTypeLabel[type].toLowerCase()}`}
+            >
+              <Switch
+                checked={notificationPreferences?.[preferenceKey]}
+                onChange={(checked) =>
+                  handlePreferenceChange(preferenceKey, checked)
+                }
+              />
+            </Descriptions.Item>
+          );
+        })}
       </Descriptions>
     </Card>
   );

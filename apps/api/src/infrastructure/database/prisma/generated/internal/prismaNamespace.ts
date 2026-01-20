@@ -1900,6 +1900,7 @@ export const UserScalarFieldEnum = {
   status: 'status',
   updatedBy: 'updatedBy',
   preferences: 'preferences',
+  notificationPreferences: 'notificationPreferences',
 } as const;
 
 export type UserScalarFieldEnum =
@@ -2156,7 +2157,7 @@ export type GroupMemberScalarFieldEnum =
 
 export const NotificationScalarFieldEnum = {
   id: 'id',
-  memberId: 'memberId',
+  userId: 'userId',
   channel: 'channel',
   recipientAddress: 'recipientAddress',
   type: 'type',

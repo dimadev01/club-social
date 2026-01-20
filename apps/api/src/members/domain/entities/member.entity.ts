@@ -18,7 +18,6 @@ import { UserEntity } from '@/users/domain/entities/user.entity';
 
 import { MemberCreatedEvent } from '../events/member-created.event';
 import { MemberUpdatedEvent } from '../events/member-updated.event';
-import { MemberNotification } from '../value-objects/member-notification.vo';
 
 export type CreateMemberProps = StrictOmit<MemberProps, 'status'>;
 
@@ -30,7 +29,6 @@ export interface MemberProps {
   fileStatus: FileStatus;
   maritalStatus: MaritalStatus | null;
   nationality: MemberNationality | null;
-  notificationPreferences: MemberNotification;
   phones: string[];
   sex: MemberSex | null;
   status: MemberStatus;
@@ -66,10 +64,6 @@ export class MemberEntity extends AuditedAggregateRoot {
     return this._nationality;
   }
 
-  public get notificationPreferences(): MemberNotification {
-    return this._notificationPreferences;
-  }
-
   public get phones(): string[] {
     return this._phones;
   }
@@ -93,7 +87,6 @@ export class MemberEntity extends AuditedAggregateRoot {
   private _fileStatus: FileStatus;
   private _maritalStatus: MaritalStatus | null;
   private _nationality: MemberNationality | null;
-  private _notificationPreferences: MemberNotification;
   private _phones: string[];
   private _sex: MemberSex | null;
   private _status: MemberStatus;
@@ -109,7 +102,6 @@ export class MemberEntity extends AuditedAggregateRoot {
     this._fileStatus = props.fileStatus;
     this._maritalStatus = props.maritalStatus;
     this._nationality = props.nationality;
-    this._notificationPreferences = props.notificationPreferences;
     this._phones = props.phones;
     this._sex = props.sex;
     this._status = props.status;
@@ -153,7 +145,6 @@ export class MemberEntity extends AuditedAggregateRoot {
         fileStatus: this._fileStatus,
         maritalStatus: this._maritalStatus,
         nationality: this._nationality,
-        notificationPreferences: this._notificationPreferences,
         phones: [...this._phones],
         sex: this._sex,
         status: this._status,
@@ -166,16 +157,6 @@ export class MemberEntity extends AuditedAggregateRoot {
     );
   }
 
-  public updateNotificationPreferences(
-    notificationPreferences: MemberNotification,
-    updatedBy: string,
-  ): void {
-    const oldMember = this.clone();
-    this._notificationPreferences = notificationPreferences;
-    this.markAsUpdated(updatedBy);
-    this.addEvent(new MemberUpdatedEvent(oldMember, this));
-  }
-
   public updateProfile(props: {
     address: Address | null;
     birthDate: DateOnly | null;
@@ -184,7 +165,6 @@ export class MemberEntity extends AuditedAggregateRoot {
     fileStatus: FileStatus;
     maritalStatus: MaritalStatus | null;
     nationality: MemberNationality | null;
-    notificationPreferences: MemberNotification;
     phones: string[];
     sex: MemberSex | null;
     status: MemberStatus;
@@ -199,7 +179,6 @@ export class MemberEntity extends AuditedAggregateRoot {
     this._fileStatus = props.fileStatus;
     this._maritalStatus = props.maritalStatus;
     this._nationality = props.nationality;
-    this._notificationPreferences = props.notificationPreferences;
     this._status = props.status;
     this._phones = props.phones;
     this._sex = props.sex;

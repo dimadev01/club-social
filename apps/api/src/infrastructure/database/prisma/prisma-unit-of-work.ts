@@ -95,9 +95,9 @@ export class PrismaUnitOfWork implements UnitOfWork {
         groupRepository: this.createGroupRepository(tx),
         memberLedgerRepository: this.createMemberLedgerRepository(tx),
         memberRepository: this.createMemberRepository(tx),
-        movementsRepository: this.createMovementRepository(tx),
+        movementRepository: this.createMovementRepository(tx),
         notificationRepository: this.createNotificationRepository(tx),
-        paymentsRepository: this.createPaymentRepository(tx),
+        paymentRepository: this.createPaymentRepository(tx),
         pricingRepository: this.createPricingRepository(tx),
         userRepository: this.createUserRepository(tx),
       };

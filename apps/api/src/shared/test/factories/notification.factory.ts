@@ -24,12 +24,12 @@ export const createNotificationProps = (
   overrides?: Partial<CreateNotificationProps>,
 ): CreateNotificationProps => ({
   channel: NotificationChannel.EMAIL,
-  memberId: UniqueId.generate(),
   payload: { ...TEST_NOTIFICATION_PAYLOAD },
   recipientAddress: TEST_NOTIFICATION_RECIPIENT,
   sourceEntity: TEST_NOTIFICATION_SOURCE_ENTITY,
   sourceEntityId: UniqueId.generate(),
   type: NotificationType.DUE_CREATED,
+  userId: UniqueId.generate(),
   ...overrides,
 });
 
@@ -49,7 +49,6 @@ const createPersistedNotificationProps = (
   deliveredAt: null,
   lastError: null,
   maxAttempts: 3,
-  memberId: UniqueId.generate(),
   payload: { ...TEST_NOTIFICATION_PAYLOAD },
   processedAt: null,
   providerMessageId: null,
@@ -61,6 +60,7 @@ const createPersistedNotificationProps = (
   sourceEntityId: UniqueId.generate(),
   status: NotificationStatus.PENDING,
   type: NotificationType.DUE_CREATED,
+  userId: UniqueId.generate(),
   ...overrides,
 });
 

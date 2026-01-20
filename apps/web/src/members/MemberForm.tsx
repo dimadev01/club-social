@@ -10,12 +10,13 @@ import {
   MemberCategoryLabel,
   MemberNationality,
   MemberNationalityLabel,
+  type MemberNotificationPreferencesDto,
   MemberSex,
   MemberSexLabel,
   MemberStatus,
   MemberStatusLabel,
 } from '@club-social/shared/members';
-import { Checkbox, Col, Empty, Radio, Space } from 'antd';
+import { Col, Empty, Radio, Space, Switch } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
 import {
@@ -23,6 +24,7 @@ import {
   Button,
   Card,
   DatePicker,
+  Descriptions,
   Form,
   Input,
   Row,
@@ -45,10 +47,7 @@ export interface MemberFormData {
   lastName: string;
   maritalStatus?: MaritalStatus;
   nationality?: MemberNationality;
-  notificationPreferences: {
-    notifyOnDueCreated: boolean;
-    notifyOnPaymentMade: boolean;
-  };
+  notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
   sex?: MemberSex;
   status: MemberStatus;
@@ -266,19 +265,26 @@ export function MemberForm({
             </Card>
 
             <Card size="small" title="Notificaciones" type="inner">
-              <Form.Item<MemberFormData>
-                name={['notificationPreferences', 'notifyOnDueCreated']}
-                valuePropName="checked"
-              >
-                <Checkbox>Notificar nueva cuota</Checkbox>
-              </Form.Item>
-
-              <Form.Item<MemberFormData>
-                name={['notificationPreferences', 'notifyOnPaymentMade']}
-                valuePropName="checked"
-              >
-                <Checkbox>Notificar pago realizado</Checkbox>
-              </Form.Item>
+              <Descriptions styles={{ label: { width: 250 } }}>
+                <Descriptions.Item label="Notificar nueva cuota">
+                  <Form.Item<MemberFormData>
+                    name={['notificationPreferences', 'notifyOnDueCreated']}
+                    noStyle
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Descriptions.Item>
+                <Descriptions.Item label="Notificar pago realizado">
+                  <Form.Item<MemberFormData>
+                    name={['notificationPreferences', 'notifyOnPaymentCreated']}
+                    noStyle
+                    valuePropName="checked"
+                  >
+                    <Switch />
+                  </Form.Item>
+                </Descriptions.Item>
+              </Descriptions>
             </Card>
           </Space>
         </Col>

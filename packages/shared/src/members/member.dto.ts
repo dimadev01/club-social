@@ -52,7 +52,7 @@ export interface MemberDto {
 
 export interface MemberNotificationPreferencesDto {
   notifyOnDueCreated: boolean;
-  notifyOnPaymentMade: boolean;
+  notifyOnPaymentCreated: boolean;
 }
 
 export interface MemberPaginatedDto {
@@ -101,5 +101,5 @@ export interface UpdateMemberDto {
 
 export interface UpdateMemberNotificationPreferencesDto {
   notifyOnDueCreated?: boolean;
-  notifyOnPaymentMade?: boolean;
+  notifyOnPaymentCreated?: boolean;
 }

@@ -22,9 +22,9 @@ export interface TransactionalRepositories {
   groupRepository: WriteableRepository<GroupEntity>;
   memberLedgerRepository: WriteableRepository<MemberLedgerEntryEntity>;
   memberRepository: WriteableRepository<MemberEntity>;
-  movementsRepository: WriteableRepository<MovementEntity>;
+  movementRepository: WriteableRepository<MovementEntity>;
   notificationRepository: WriteableRepository<NotificationEntity>;
-  paymentsRepository: WriteableRepository<PaymentEntity>;
+  paymentRepository: WriteableRepository<PaymentEntity>;
   pricingRepository: WriteableRepository<PricingEntity>;
   userRepository: WriteableRepository<UserEntity>;
 }

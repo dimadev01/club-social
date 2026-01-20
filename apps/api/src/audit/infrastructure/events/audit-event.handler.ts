@@ -22,6 +22,10 @@ import { MemberLedgerEntryUpdatedEvent } from '@/members/ledger/domain/events/me
 import { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import { MovementCreatedEvent } from '@/movements/domain/events/movement-created.event';
 import { MovementUpdatedEvent } from '@/movements/domain/events/movement-updated.event';
+import { EmailSuppressionEntity } from '@/notifications/domain/entities/email-suppression.entity';
+import { NotificationEntity } from '@/notifications/domain/entities/notification.entity';
+import { EmailSuppressionCreatedEvent } from '@/notifications/domain/events/email-suppression-created.event';
+import { NotificationCreatedEvent } from '@/notifications/domain/events/notification-created.event';
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import { PaymentCreatedEvent } from '@/payments/domain/events/payment-created.event';
 import { PaymentUpdatedEvent } from '@/payments/domain/events/payment-updated.event';
@@ -82,6 +86,22 @@ export class AuditEventHandler {
       message,
       newData: this.serializeDue(event.newDue),
       oldData: this.serializeDue(event.oldDue),
+    });
+  }
+
+  // Email Suppression Events
+  @OnEvent(EmailSuppressionCreatedEvent.name)
+  public async handleEmailSuppressionCreated(
+    event: EmailSuppressionCreatedEvent,
+  ): Promise<void> {
+    await this.createAuditLog({
+      action: AuditAction.CREATED,
+      createdBy: event.emailSuppression.createdBy,
+      entity: AuditEntity.EMAIL_SUPPRESSION,
+      entityId: event.emailSuppression.id.value,
+      message: 'Email suppression created',
+      newData: this.serializeEmailSuppression(event.emailSuppression),
+      oldData: null,
     });
   }
 
@@ -221,6 +241,24 @@ export class AuditEventHandler {
       message,
       newData: this.serializeMovement(event.movement),
       oldData: this.serializeMovement(event.oldMovement),
+    });
+  }
+
+  // Notification Events
+  @OnEvent(NotificationCreatedEvent.name)
+  public async handleNotificationCreated(
+    event: NotificationCreatedEvent,
+  ): Promise<void> {
+    Guard.string(event.notification.createdBy);
+
+    await this.createAuditLog({
+      action: AuditAction.CREATED,
+      createdBy: event.notification.createdBy,
+      entity: AuditEntity.NOTIFICATION,
+      entityId: event.notification.id.value,
+      message: 'Notification created',
+      newData: this.serializeNotification(event.notification),
+      oldData: null,
     });
   }
 
@@ -387,6 +425,20 @@ export class AuditEventHandler {
     };
   }
 
+  private serializeEmailSuppression(
+    emailSuppression: EmailSuppressionEntity,
+  ): Record<string, unknown> {
+    return {
+      createdAt: emailSuppression.createdAt,
+      createdBy: emailSuppression.createdBy,
+      email: emailSuppression.email,
+      id: emailSuppression.id.value,
+      providerData: emailSuppression.providerData,
+      providerEventId: emailSuppression.providerEventId,
+      reason: emailSuppression.reason,
+    };
+  }
+
   private serializeGroup(group: GroupEntity): Record<string, unknown> {
     return {
       createdAt: group.createdAt,
@@ -468,6 +520,35 @@ export class AuditEventHandler {
     };
   }
 
+  private serializeNotification(
+    notification: NotificationEntity,
+  ): Record<string, unknown> {
+    return {
+      attempts: notification.attempts,
+      channel: notification.channel,
+      createdAt: notification.createdAt,
+      createdBy: notification.createdBy,
+      deliveredAt: notification.deliveredAt,
+      id: notification.id.value,
+      lastError: notification.lastError,
+      maxAttempts: notification.maxAttempts,
+      payload: notification.payload,
+      processedAt: notification.processedAt,
+      providerMessageId: notification.providerMessageId,
+      queuedAt: notification.queuedAt,
+      recipientAddress: notification.recipientAddress,
+      scheduledAt: notification.scheduledAt,
+      sentAt: notification.sentAt,
+      sourceEntity: notification.sourceEntity,
+      sourceEntityId: notification.sourceEntityId?.value ?? null,
+      status: notification.status,
+      type: notification.type,
+      updatedAt: notification.updatedAt,
+      updatedBy: notification.updatedBy,
+      userId: notification.userId.value,
+    };
+  }
+
   private serializePayment(payment: PaymentEntity): Record<string, unknown> {
     return {
       amount: payment.amount.cents,
@@ -518,6 +599,8 @@ export class AuditEventHandler {
       firstName: user.name.firstName,
       id: user.id.value,
       lastName: user.name.lastName,
+      notificationPreferences: user.notificationPreferences.toJson(),
+      preferences: user.preferences.toJson(),
       role: user.role,
       status: user.status,
       updatedAt: user.updatedAt,
