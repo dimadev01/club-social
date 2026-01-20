@@ -25,6 +25,7 @@ import {
   type DueRepository,
 } from '@/dues/domain/due.repository';
 import { DueEntity } from '@/dues/domain/entities/due.entity';
+import { ConfigService } from '@/infrastructure/config/config.service';
 import { ResendNotificationEmailTemplate } from '@/infrastructure/email/resend/resend.types';
 import {
   MEMBER_REPOSITORY_PROVIDER,
@@ -68,6 +69,7 @@ interface CreatePaymentDueParams {
 
 interface CreatePaymentParams {
   createdBy: string;
+  createdByUserId: string;
   date: string;
   dues: CreatePaymentDueParams[];
   memberId: string;
@@ -92,6 +94,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
+    private readonly configService: ConfigService,
   ) {
     super(logger);
   }
@@ -406,18 +409,19 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       return err(memberNotification.error);
     }
 
-    const subscriberNotifications = await this.createSubscriberNotifications({
-      createdBy: params.createdBy,
-      dues,
-      duesParams: params.dues,
-      member,
-      payment: payment.value,
-      paymentDate,
-    });
+    // const subscriberNotifications = await this.createSubscriberNotifications({
+    //   createdBy: params.createdBy,
+    //   createdByUserId: params.createdByUserId,
+    //   dues,
+    //   duesParams: params.dues,
+    //   member,
+    //   payment: payment.value,
+    //   paymentDate,
+    // });
 
-    if (subscriberNotifications.isErr()) {
-      return err(subscriberNotifications.error);
-    }
+    // if (subscriberNotifications.isErr()) {
+    //   return err(subscriberNotifications.error);
+    // }
 
     /**
      * Atomic persistence:
@@ -454,11 +458,11 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
         await notificationRepository.save(memberNotification.value);
 
-        await Promise.all(
-          subscriberNotifications.value.map((subscriberNotification) =>
-            notificationRepository.save(subscriberNotification),
-          ),
-        );
+        // await Promise.all(
+        //   subscriberNotifications.value.map((subscriberNotification) =>
+        //     notificationRepository.save(subscriberNotification),
+        //   ),
+        // );
       },
     );
 
@@ -484,9 +488,9 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
     this.eventPublisher.dispatch(memberNotification.value);
 
-    subscriberNotifications.value.forEach((subscriberNotification) =>
-      this.eventPublisher.dispatch(subscriberNotification),
-    );
+    // subscriberNotifications.value.forEach((subscriberNotification) =>
+    //   this.eventPublisher.dispatch(subscriberNotification),
+    // );
 
     return ok(payment.value);
   }
@@ -578,6 +582,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
           template: ResendNotificationEmailTemplate.PAYMENT_CREATED_TO_MEMBER,
           variables: {
             amount: NumberFormat.currencyCents(params.payment.amount.cents),
+            appUrl: this.configService.appDomain,
             date: DateFormat.date(params.paymentDate.value),
             detail: duesDetailHtml,
             memberName: params.member.firstName,
@@ -603,63 +608,65 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     return ok(result.value);
   }
 
-  private async createSubscriberNotifications(params: {
-    createdBy: string;
-    dues: DueEntity[];
-    duesParams: CreatePaymentDueParams[];
-    member: MemberReadModel;
-    payment: PaymentEntity;
-    paymentDate: DateOnly;
-  }): Promise<Result<NotificationEntity[]>> {
-    const optedInUsers =
-      await this.userRepository.findWithNotifyOnPaymentCreated();
+  // private async createSubscriberNotifications(params: {
+  //   createdBy: string;
+  //   createdByUserId: string;
+  //   dues: DueEntity[];
+  //   duesParams: CreatePaymentDueParams[];
+  //   member: MemberReadModel;
+  //   payment: PaymentEntity;
+  //   paymentDate: DateOnly;
+  // }): Promise<Result<NotificationEntity[]>> {
+  //   const optedInUsers = await this.userRepository.findByNotificationType(
+  //     NotificationType.PAYMENT_CREATED,
+  //   );
 
-    // Exclude the member's own user to avoid duplicate notification
-    const subscribers = optedInUsers.filter(
-      (user) => user.id.value !== params.member.userId,
-    );
+  //   // Exclude the member's own user to avoid duplicate notification
+  //   const subscribers = optedInUsers
+  //     .filter((user) => user.id.value !== params.member.userId)
+  //     .filter((user) => user.id.value !== params.createdByUserId);
 
-    const duesDetailHtml = this.buildDuesDetailHtml(
-      params.dues,
-      params.duesParams,
-    );
+  //   const duesDetailHtml = this.buildDuesDetailHtml(
+  //     params.dues,
+  //     params.duesParams,
+  //   );
 
-    const result = ResultUtils.combine(
-      subscribers.map((user) =>
-        NotificationEntity.create(
-          {
-            channel: NotificationChannel.EMAIL,
-            payload: {
-              template:
-                ResendNotificationEmailTemplate.PAYMENT_CREATED_TO_MEMBER,
-              variables: {
-                amount: NumberFormat.currencyCents(params.payment.amount.cents),
-                date: DateFormat.date(params.paymentDate.value),
-                detail: duesDetailHtml,
-                memberName: user.name.firstName,
-                pendingElectricity: '-',
-                pendingGuest: '-',
-                pendingMembership: '-',
-                pendingTotal: '-',
-              },
-            },
-            recipientAddress: user.email.value,
-            sourceEntity: 'payment',
-            sourceEntityId: params.payment.id,
-            type: NotificationType.PAYMENT_CREATED,
-            userId: user.id,
-          },
-          params.createdBy,
-        ),
-      ),
-    );
+  //   const result = ResultUtils.combine(
+  //     subscribers.map((user) =>
+  //       NotificationEntity.create(
+  //         {
+  //           channel: NotificationChannel.EMAIL,
+  //           payload: {
+  //             template:
+  //               ResendNotificationEmailTemplate.PAYMENT_CREATED_TO_MEMBER,
+  //             variables: {
+  //               amount: NumberFormat.currencyCents(params.payment.amount.cents),
+  //               date: DateFormat.date(params.paymentDate.value),
+  //               detail: duesDetailHtml,
+  //               memberName: user.name.firstName,
+  //               pendingElectricity: '-',
+  //               pendingGuest: '-',
+  //               pendingMembership: '-',
+  //               pendingTotal: '-',
+  //             },
+  //           },
+  //           recipientAddress: user.email.value,
+  //           sourceEntity: 'payment',
+  //           sourceEntityId: params.payment.id,
+  //           type: NotificationType.PAYMENT_CREATED,
+  //           userId: user.id,
+  //         },
+  //         params.createdBy,
+  //       ),
+  //     ),
+  //   );
 
-    if (result.isErr()) {
-      return err(result.error);
-    }
+  //   if (result.isErr()) {
+  //     return err(result.error);
+  //   }
 
-    return ok(result.value);
-  }
+  //   return ok(result.value);
+  // }
 
   private async validateSufficientBalance(
     params: CreatePaymentParams,

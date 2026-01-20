@@ -113,8 +113,9 @@ export class VoidMovementUseCase extends UseCase {
     movement: MovementEntity;
     voidReason: string;
   }): Promise<Result<NotificationEntity[]>> {
-    const optedInUsers =
-      await this.userRepository.findWithNotifyOnMovementVoided();
+    const optedInUsers = await this.userRepository.findByNotificationType(
+      NotificationType.MOVEMENT_VOIDED,
+    );
 
     // Exclude the member's own user to avoid duplicate notification
     const subscribers = optedInUsers.filter(

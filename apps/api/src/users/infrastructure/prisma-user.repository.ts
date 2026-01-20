@@ -61,6 +61,22 @@ export class PrismaUserRepository implements UserRepository {
     return users.map((user) => this.userMapper.toDomain(user));
   }
 
+  public async findByNotificationType(
+    type: NotificationType,
+  ): Promise<UserEntity[]> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        notificationPreferences: {
+          equals: true,
+          path: [NotificationTypeToPreferenceKey[type]],
+        },
+        role: { in: [UserRole.STAFF, UserRole.ADMIN] },
+      },
+    });
+
+    return users.map((user) => this.userMapper.toDomain(user));
+  }
+
   public async findPaginated(
     params: GetPaginatedDataDto,
   ): Promise<PaginatedDataResultDto<UserEntity>> {
@@ -120,79 +136,6 @@ export class PrismaUserRepository implements UserRepository {
     }
 
     return user;
-  }
-
-  public async findWithNotifyOnDueCreated(): Promise<UserEntity[]> {
-    const users = await this.prismaService.user.findMany({
-      where: {
-        notificationPreferences: {
-          equals: true,
-          path: [NotificationTypeToPreferenceKey[NotificationType.DUE_CREATED]],
-        },
-      },
-    });
-
-    return users.map((user) => this.userMapper.toDomain(user));
-  }
-
-  public async findWithNotifyOnMemberCreated(): Promise<UserEntity[]> {
-    const users = await this.prismaService.user.findMany({
-      where: {
-        notificationPreferences: {
-          equals: true,
-          path: [
-            NotificationTypeToPreferenceKey[NotificationType.MEMBER_CREATED],
-          ],
-        },
-      },
-    });
-
-    return users.map((user) => this.userMapper.toDomain(user));
-  }
-
-  public async findWithNotifyOnMovementCreated(): Promise<UserEntity[]> {
-    const users = await this.prismaService.user.findMany({
-      where: {
-        notificationPreferences: {
-          equals: true,
-          path: [
-            NotificationTypeToPreferenceKey[NotificationType.MOVEMENT_CREATED],
-          ],
-        },
-      },
-    });
-
-    return users.map((user) => this.userMapper.toDomain(user));
-  }
-
-  public async findWithNotifyOnMovementVoided(): Promise<UserEntity[]> {
-    const users = await this.prismaService.user.findMany({
-      where: {
-        notificationPreferences: {
-          equals: true,
-          path: [
-            NotificationTypeToPreferenceKey[NotificationType.MOVEMENT_VOIDED],
-          ],
-        },
-      },
-    });
-
-    return users.map((user) => this.userMapper.toDomain(user));
-  }
-
-  public async findWithNotifyOnPaymentCreated(): Promise<UserEntity[]> {
-    const users = await this.prismaService.user.findMany({
-      where: {
-        notificationPreferences: {
-          equals: true,
-          path: [
-            NotificationTypeToPreferenceKey[NotificationType.PAYMENT_CREATED],
-          ],
-        },
-      },
-    });
-
-    return users.map((user) => this.userMapper.toDomain(user));
   }
 
   public async save(user: UserEntity, tx?: PrismaClientLike): Promise<void> {

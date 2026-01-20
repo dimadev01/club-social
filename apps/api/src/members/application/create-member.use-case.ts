@@ -16,6 +16,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
+import { ConfigService } from '@/infrastructure/config/config.service';
 import { ResendNotificationEmailTemplate } from '@/infrastructure/email/resend/resend.types';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import { NotificationEntity } from '@/notifications/domain/entities/notification.entity';
@@ -70,6 +71,7 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
+    private readonly configService: ConfigService,
   ) {
     super(logger);
   }
@@ -178,10 +180,11 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
     member: MemberEntity;
     user: UserEntity;
   }): Promise<Result<NotificationEntity[]>> {
-    const optedInUsers =
-      await this.userRepository.findWithNotifyOnMemberCreated();
+    const optedInUsers = await this.userRepository.findByNotificationType(
+      NotificationType.MEMBER_CREATED,
+    );
 
-    // Exclude the member's own user to avoid duplicate notification
+    // Exclude the user who created the member to avoid duplicate notification
     const subscribers = optedInUsers.filter(
       (user) => user.id.value !== props.createdByUserId,
     );
@@ -194,6 +197,7 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
             payload: {
               template: ResendNotificationEmailTemplate.MEMBER_CREATED,
               variables: {
+                appUrl: this.configService.appDomain,
                 createdBy: props.createdBy,
                 memberName: props.user.name.fullName,
                 userName: subscriber.name.firstName,
