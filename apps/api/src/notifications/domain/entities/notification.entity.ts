@@ -4,6 +4,7 @@ import {
   NotificationType,
 } from '@club-social/shared/notifications';
 
+import { NotificationCreatedEvent } from '@/notifications/domain/events/notification-created.event';
 import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { PersistenceMeta } from '@/shared/domain/persistence-meta';
 import { ok, Result } from '@/shared/domain/result';
@@ -184,6 +185,8 @@ export class NotificationEntity extends AuditedAggregateRoot {
         id: UniqueId.generate(),
       },
     );
+
+    notification.addEvent(new NotificationCreatedEvent(notification));
 
     return ok(notification);
   }

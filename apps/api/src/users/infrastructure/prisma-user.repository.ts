@@ -118,6 +118,32 @@ export class PrismaUserRepository implements UserRepository {
     return user;
   }
 
+  public async findWithNotifyOnDueCreated(): Promise<UserEntity[]> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        notificationPreferences: {
+          equals: true,
+          path: ['notifyOnDueCreated'],
+        },
+      },
+    });
+
+    return users.map((user) => this.userMapper.toDomain(user));
+  }
+
+  public async findWithNotifyOnPaymentMade(): Promise<UserEntity[]> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        notificationPreferences: {
+          equals: true,
+          path: ['notifyOnPaymentMade'],
+        },
+      },
+    });
+
+    return users.map((user) => this.userMapper.toDomain(user));
+  }
+
   public async save(user: UserEntity, tx?: PrismaClientLike): Promise<void> {
     const client = tx ?? this.prismaService;
 

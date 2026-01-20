@@ -39,10 +39,7 @@ export const NotificationStatusLabel = {
 } as const;
 
 export const NotificationType = {
-  // Member-facing
   DUE_CREATED: 'due_created',
-  // User-facing
-  DUE_OVERDUE: 'due_overdue',
   MEMBER_CREATED: 'member_created',
   MOVEMENT_CREATED: 'movement_created',
   MOVEMENT_VOIDED: 'movement_voided',
@@ -52,14 +49,54 @@ export const NotificationType = {
 export type NotificationType =
   (typeof NotificationType)[keyof typeof NotificationType];
 
+/**
+ * Notification types that can be sent to members about their own account.
+ * Members can opt in/out of these via notifyOnDueCreated and notifyOnPaymentMade.
+ */
+export const MemberNotificationTypes = [
+  NotificationType.DUE_CREATED,
+  NotificationType.PAYMENT_MADE,
+] as const;
+
+export type MemberNotificationType = (typeof MemberNotificationTypes)[number];
+
+/**
+ * Notification types that can be sent to staff/admin about system-wide activity.
+ * Staff can opt in/out of these via all 5 notification preference flags.
+ */
+export const SubscriberNotificationTypes = [
+  NotificationType.DUE_CREATED,
+  NotificationType.MEMBER_CREATED,
+  NotificationType.MOVEMENT_CREATED,
+  NotificationType.MOVEMENT_VOIDED,
+  NotificationType.PAYMENT_MADE,
+] as const;
+
+export type SubscriberNotificationType =
+  (typeof SubscriberNotificationTypes)[number];
+
 export const NotificationTypeLabel = {
   [NotificationType.DUE_CREATED]: 'Deuda creada',
-  [NotificationType.DUE_OVERDUE]: 'Deuda vencida',
   [NotificationType.MEMBER_CREATED]: 'Socio creado',
   [NotificationType.MOVEMENT_CREATED]: 'Movimiento creado',
   [NotificationType.MOVEMENT_VOIDED]: 'Movimiento anulado',
   [NotificationType.PAYMENT_MADE]: 'Pago realizado',
 } as const;
+
+/**
+ * Maps NotificationType to the corresponding user notification preference key.
+ * Used to check if a user has opted in/out of a specific notification type.
+ */
+export const NotificationTypeToPreferenceKey = {
+  [NotificationType.DUE_CREATED]: 'notifyOnDueCreated',
+  [NotificationType.MEMBER_CREATED]: 'notifyOnMemberCreated',
+  [NotificationType.MOVEMENT_CREATED]: 'notifyOnMovementCreated',
+  [NotificationType.MOVEMENT_VOIDED]: 'notifyOnMovementVoided',
+  [NotificationType.PAYMENT_MADE]: 'notifyOnPaymentMade',
+} as const;
+
+export type NotificationPreferenceKey =
+  (typeof NotificationTypeToPreferenceKey)[NotificationType];
 
 export const EmailSuppressionReason = {
   BOUNCE: 'bounce',

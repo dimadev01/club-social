@@ -26,11 +26,11 @@ import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types'
 import { EntityNotFoundError } from '@/shared/domain/errors/entity-not-found.error';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
-
 import {
-  MemberNotification,
-  MemberNotificationProps,
-} from '../domain/entities/member-notification';
+  UserNotification,
+  UserNotificationProps,
+} from '@/users/domain/entities/user-notification';
+
 import { MemberEntity } from '../domain/entities/member.entity';
 import {
   MemberPaginatedExtraReadModel,
@@ -509,10 +509,6 @@ export class PrismaMemberRepository implements MemberRepository {
   }
 
   private toReadModel(model: MemberWithUserPayload): MemberReadModel {
-    const notificationPreferences = new MemberNotification(
-      model.notificationPreferences as unknown as MemberNotificationProps,
-    );
-
     return {
       address:
         model.street || model.cityName || model.stateName || model.zipCode
@@ -537,7 +533,9 @@ export class PrismaMemberRepository implements MemberRepository {
         lastName: model.user.lastName,
       }).fullName,
       nationality: model.nationality as MemberNationality | null,
-      notificationPreferences: notificationPreferences.toJson(),
+      notificationPreferences: UserNotification.forMember(
+        model.user.notificationPreferences as unknown as UserNotificationProps,
+      ),
       phones: model.phones,
       sex: model.sex as MemberSex | null,
       status: model.status as MemberStatus,

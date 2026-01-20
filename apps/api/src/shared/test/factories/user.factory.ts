@@ -27,7 +27,7 @@ export const createUserProps = (overrides?: UserPropsOverrides): UserProps => ({
     firstName: TEST_FIRST_NAME,
     lastName: TEST_LAST_NAME,
   })._unsafeUnwrap(),
-  notificationPreferences: new UserNotification(),
+  notificationPreferences: UserNotification.forUser(),
   preferences: new UserPreferences(),
   role: UserRole.MEMBER,
   status: UserStatus.ACTIVE,

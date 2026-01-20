@@ -10,6 +10,7 @@ import {
 } from '@/shared/application/app-logger';
 import { UseCase } from '@/shared/application/use-case';
 import { SYSTEM_USER } from '@/shared/domain/constants';
+import { DomainEventPublisher } from '@/shared/domain/events/domain-event-publisher';
 import { err, ok } from '@/shared/domain/result';
 import {
   UNIT_OF_WORK_PROVIDER,
@@ -45,6 +46,7 @@ export class HandleDeliveryWebhookUseCase extends UseCase<void> {
     private readonly emailSuppressionRepository: EmailSuppressionRepository,
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
+    private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
   }
@@ -138,6 +140,11 @@ export class HandleDeliveryWebhookUseCase extends UseCase<void> {
       },
     );
 
+    this.eventPublisher.dispatch(notification);
+    suppressions.forEach((suppression) =>
+      this.eventPublisher.dispatch(suppression),
+    );
+
     this.logger.info({
       message: 'Delivery webhook handled',
       notificationId: notification.id.value,
@@ -165,7 +172,7 @@ export class HandleDeliveryWebhookUseCase extends UseCase<void> {
         continue;
       }
 
-      const suppressionResult = EmailSuppressionEntity.create({
+      const suppression = EmailSuppressionEntity.create({
         createdBy: SYSTEM_USER,
         email,
         providerData: null,
@@ -173,11 +180,11 @@ export class HandleDeliveryWebhookUseCase extends UseCase<void> {
         reason,
       });
 
-      if (suppressionResult.isErr()) {
-        return err(suppressionResult.error);
+      if (suppression.isErr()) {
+        return err(suppression.error);
       }
 
-      suppressions.push(suppressionResult.value);
+      suppressions.push(suppression.value);
     }
 
     return ok(suppressions);

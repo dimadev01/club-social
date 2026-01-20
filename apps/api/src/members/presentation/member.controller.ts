@@ -38,7 +38,6 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateMemberUseCase } from '../application/create-member.use-case';
-import { UpdateMemberNotificationPreferencesUseCase } from '../application/update-member-notification-preferences.use-case';
 import { UpdateMemberUseCase } from '../application/update-member.use-case';
 import {
   MEMBER_REPOSITORY_PROVIDER,
@@ -52,7 +51,6 @@ import {
 import { MemberResponseDto } from './dto/member-response.dto';
 import { MemberSearchRequestDto } from './dto/member-search-request.dto';
 import { MemberSearchResponseDto } from './dto/member-search.dto';
-import { UpdateMemberNotificationPreferencesRequestDto } from './dto/update-member-notification-preferences.dto';
 import { UpdateMemberRequestDto } from './dto/update-member.dto';
 
 @Controller('members')
@@ -62,7 +60,6 @@ export class MembersController extends BaseController {
     protected readonly logger: AppLogger,
     private readonly createMemberUseCase: CreateMemberUseCase,
     private readonly updateMemberUseCase: UpdateMemberUseCase,
-    private readonly updateMemberNotificationPreferencesUseCase: UpdateMemberNotificationPreferencesUseCase,
     @Inject(MEMBER_REPOSITORY_PROVIDER)
     private readonly memberRepository: MemberRepository,
     private readonly csvService: CsvService,
@@ -102,7 +99,6 @@ export class MembersController extends BaseController {
         lastName: body.lastName,
         maritalStatus: body.maritalStatus,
         nationality: body.nationality,
-        notificationPreferences: body.notificationPreferences,
         phones: body.phones,
         sex: body.sex,
         status: body.status,
@@ -142,12 +138,6 @@ export class MembersController extends BaseController {
         lastName: createMemberDto.lastName,
         maritalStatus: createMemberDto.maritalStatus,
         nationality: createMemberDto.nationality,
-        notificationPreferences: {
-          notifyOnDueCreated:
-            createMemberDto.notificationPreferences.notifyOnDueCreated,
-          notifyOnPaymentMade:
-            createMemberDto.notificationPreferences.notifyOnPaymentMade,
-        },
         phones: createMemberDto.phones,
         sex: createMemberDto.sex,
       }),
@@ -299,24 +289,6 @@ export class MembersController extends BaseController {
       status: member.status,
       userId: member.userId,
     };
-  }
-
-  @Patch('me/notification-preferences')
-  public async updateMyNotificationPreferences(
-    @Body() body: UpdateMemberNotificationPreferencesRequestDto,
-    @Session() session: AuthSession,
-  ): Promise<void> {
-    if (!session.memberId) {
-      throw new ForbiddenException();
-    }
-
-    this.handleResult(
-      await this.updateMemberNotificationPreferencesUseCase.execute({
-        memberId: session.memberId,
-        notificationPreferences: body,
-        updatedBy: session.user.name,
-      }),
-    );
   }
 
   @Get(':id')

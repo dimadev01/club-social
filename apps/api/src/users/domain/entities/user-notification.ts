@@ -1,26 +1,39 @@
 export interface UserNotificationProps {
-  notifyOnDueOverdue: boolean;
+  notifyOnDueCreated: boolean;
   notifyOnMemberCreated: boolean;
   notifyOnMovementCreated: boolean;
   notifyOnMovementVoided: boolean;
+  notifyOnPaymentMade: boolean;
 }
 
 export const DEFAULT_USER_NOTIFICATION = {
-  notifyOnDueOverdue: false,
+  notifyOnDueCreated: false,
   notifyOnMemberCreated: false,
   notifyOnMovementCreated: false,
   notifyOnMovementVoided: false,
+  notifyOnPaymentMade: false,
+} satisfies UserNotificationProps;
+
+/**
+ * Default notification preferences for members.
+ * Members default to receiving notifications about their own account activity.
+ */
+export const DEFAULT_MEMBER_USER_NOTIFICATION = {
+  notifyOnDueCreated: true,
+  notifyOnMemberCreated: false,
+  notifyOnMovementCreated: false,
+  notifyOnMovementVoided: false,
+  notifyOnPaymentMade: true,
 } satisfies UserNotificationProps;
 
 export class UserNotification {
-  public readonly notifyOnDueOverdue: boolean;
+  public readonly notifyOnDueCreated: boolean;
   public readonly notifyOnMemberCreated: boolean;
   public readonly notifyOnMovementCreated: boolean;
   public readonly notifyOnMovementVoided: boolean;
+  public readonly notifyOnPaymentMade: boolean;
 
-  public constructor(props?: Partial<UserNotificationProps>) {
-    this.notifyOnDueOverdue =
-      props?.notifyOnDueOverdue ?? DEFAULT_USER_NOTIFICATION.notifyOnDueOverdue;
+  private constructor(props?: Partial<UserNotificationProps>) {
     this.notifyOnMemberCreated =
       props?.notifyOnMemberCreated ??
       DEFAULT_USER_NOTIFICATION.notifyOnMemberCreated;
@@ -30,14 +43,42 @@ export class UserNotification {
     this.notifyOnMovementVoided =
       props?.notifyOnMovementVoided ??
       DEFAULT_USER_NOTIFICATION.notifyOnMovementVoided;
+    this.notifyOnPaymentMade =
+      props?.notifyOnPaymentMade ??
+      DEFAULT_USER_NOTIFICATION.notifyOnPaymentMade;
+    this.notifyOnDueCreated =
+      props?.notifyOnDueCreated ?? DEFAULT_USER_NOTIFICATION.notifyOnDueCreated;
+  }
+
+  /**
+   * Creates notification preferences with member defaults.
+   * Use this when creating a new member user.
+   */
+  public static forMember(
+    props?: Partial<UserNotificationProps>,
+  ): UserNotification {
+    return new UserNotification({
+      ...DEFAULT_MEMBER_USER_NOTIFICATION,
+      ...props,
+    });
+  }
+
+  public static forUser(
+    props?: Partial<UserNotificationProps>,
+  ): UserNotification {
+    return new UserNotification({
+      ...DEFAULT_USER_NOTIFICATION,
+      ...props,
+    });
   }
 
   public toJson(): UserNotificationProps {
     return {
-      notifyOnDueOverdue: this.notifyOnDueOverdue,
+      notifyOnDueCreated: this.notifyOnDueCreated,
       notifyOnMemberCreated: this.notifyOnMemberCreated,
       notifyOnMovementCreated: this.notifyOnMovementCreated,
       notifyOnMovementVoided: this.notifyOnMovementVoided,
+      notifyOnPaymentMade: this.notifyOnPaymentMade,
     };
   }
 

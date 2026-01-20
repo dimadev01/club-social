@@ -1,6 +1,7 @@
 import { EmailSuppressionReason } from '@club-social/shared/notifications';
 
-import { Entity } from '@/shared/domain/entity';
+import { EmailSuppressionCreatedEvent } from '@/notifications/domain/events/email-suppression-created.event';
+import { AggregateRoot } from '@/shared/domain/aggregate-root';
 import { ok, Result } from '@/shared/domain/result';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
@@ -17,7 +18,7 @@ export interface EmailSuppressionProps {
   reason: EmailSuppressionReason;
 }
 
-export class EmailSuppressionEntity extends Entity {
+export class EmailSuppressionEntity extends AggregateRoot {
   public get createdAt(): Date {
     return this._createdAt;
   }
@@ -67,6 +68,8 @@ export class EmailSuppressionEntity extends Entity {
     props: EmailSuppressionProps,
   ): Result<EmailSuppressionEntity> {
     const suppression = new EmailSuppressionEntity(props);
+
+    suppression.addEvent(new EmailSuppressionCreatedEvent(suppression));
 
     return ok(suppression);
   }

@@ -95,7 +95,7 @@ describe('UserEntity', () => {
             firstName: TEST_ALT_FIRST_NAME,
             lastName: TEST_ALT_LAST_NAME,
           }),
-          notificationPreferences: new UserNotification(),
+          notificationPreferences: UserNotification.forUser(),
           preferences: new UserPreferences({
             theme: Theme.LIGHT,
           }),
@@ -134,7 +134,7 @@ describe('UserEntity', () => {
             firstName: TEST_ALT_FIRST_NAME,
             lastName: TEST_ALT_LAST_NAME,
           }),
-          notificationPreferences: new UserNotification(),
+          notificationPreferences: UserNotification.forUser(),
           preferences: new UserPreferences(),
           role: UserRole.MEMBER,
           status: UserStatus.INACTIVE,
@@ -237,7 +237,7 @@ describe('UserEntity', () => {
             firstName: TEST_FIRST_NAME,
             lastName: TEST_LAST_NAME,
           }),
-          notificationPreferences: new UserNotification(),
+          notificationPreferences: UserNotification.forUser(),
           preferences: new UserPreferences({
             theme: Theme.LIGHT,
           }),

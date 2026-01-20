@@ -3,7 +3,6 @@ import {
   MaritalStatus,
   MemberCategory,
   MemberNationality,
-  MemberNotificationPreferencesDto,
   MemberSex,
 } from '@club-social/shared/members';
 import { UserRole } from '@club-social/shared/users';
@@ -34,8 +33,6 @@ import {
   type UserRepository,
 } from '@/users/domain/user.repository';
 
-import { MemberNotification } from '../domain/entities/member-notification';
-
 interface CreateMemberParams {
   address: Address | null;
   birthDate: null | string;
@@ -48,7 +45,6 @@ interface CreateMemberParams {
   lastName: string;
   maritalStatus: MaritalStatus | null;
   nationality: MemberNationality | null;
-  notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
   sex: MemberSex | null;
 }
@@ -115,11 +111,6 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
         fileStatus: params.fileStatus,
         maritalStatus: params.maritalStatus,
         nationality: params.nationality,
-        notificationPreferences: new MemberNotification({
-          notifyOnDueCreated: params.notificationPreferences.notifyOnDueCreated,
-          notifyOnPaymentMade:
-            params.notificationPreferences.notifyOnPaymentMade,
-        }),
         phones: params.phones,
         sex: params.sex,
         userId: user.value.id,

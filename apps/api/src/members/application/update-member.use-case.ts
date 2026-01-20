@@ -10,7 +10,6 @@ import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
 
-import { MemberNotification } from '@/members/domain/entities/member-notification';
 import { MemberEntity } from '@/members/domain/entities/member.entity';
 import {
   MEMBER_REPOSITORY_PROVIDER,
@@ -50,10 +49,6 @@ interface UpdateMemberParams {
   lastName: string;
   maritalStatus: MaritalStatus | null;
   nationality: MemberNationality | null;
-  notificationPreferences?: {
-    notifyOnDueCreated: boolean;
-    notifyOnPaymentMade: boolean;
-  };
   phones: string[];
   sex: MemberSex | null;
   status: UserStatus;
@@ -131,9 +126,6 @@ export class UpdateMemberUseCase extends UseCase<MemberEntity> {
       fileStatus: params.fileStatus,
       maritalStatus: params.maritalStatus,
       nationality: params.nationality,
-      notificationPreferences: params.notificationPreferences
-        ? new MemberNotification(params.notificationPreferences)
-        : member.notificationPreferences,
       phones: params.phones,
       sex: params.sex,
       status: params.status,

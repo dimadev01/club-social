@@ -14,8 +14,9 @@ export type ResendCriticalEmailTemplate =
   (typeof ResendCriticalEmailTemplate)[keyof typeof ResendCriticalEmailTemplate];
 
 export const ResendNotificationEmailTemplate = {
-  NEW_DUE: 'new-due',
-  NEW_PAYMENT: 'new-payment',
+  NEW_DUE_TO_MEMBER: 'new-due-to-member',
+  NEW_DUE_TO_SUBSCRIBERS: 'new-due-to-subscribers',
+  NEW_PAYMENT_TO_MEMBER: 'new-payment-to-member',
 } as const;
 
 export type ResendEmailTemplate =

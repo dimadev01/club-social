@@ -13,6 +13,8 @@ export interface UserReadableRepository
   extends PaginatedRepository<UserEntity>, ReadableRepository<UserEntity> {
   findUniqueByEmail(email: Email): Promise<null | UserEntity>;
   findUniqueByEmailOrThrow(email: Email): Promise<UserEntity>;
+  findWithNotifyOnDueCreated(): Promise<UserEntity[]>;
+  findWithNotifyOnPaymentMade(): Promise<UserEntity[]>;
 }
 
 export interface UserRepository

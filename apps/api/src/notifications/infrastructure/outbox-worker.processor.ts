@@ -8,14 +8,11 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { Queue } from 'bullmq';
 
 import {
-  MEMBER_REPOSITORY_PROVIDER,
-  type MemberRepository,
-} from '@/members/domain/member.repository';
-import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
 import { SYSTEM_USER } from '@/shared/domain/constants';
+import { UserEntity } from '@/users/domain/entities/user.entity';
 import {
   USER_REPOSITORY_PROVIDER,
   type UserRepository,
@@ -46,8 +43,6 @@ export class OutboxWorkerProcessor {
     private readonly notificationRepository: NotificationRepository,
     @Inject(EMAIL_SUPPRESSION_REPOSITORY_PROVIDER)
     private readonly emailSuppressionRepository: EmailSuppressionRepository,
-    @Inject(MEMBER_REPOSITORY_PROVIDER)
-    private readonly memberRepository: MemberRepository,
     @Inject(USER_REPOSITORY_PROVIDER)
     private readonly userRepository: UserRepository,
     @Inject(APP_LOGGER_PROVIDER)
@@ -112,35 +107,6 @@ export class OutboxWorkerProcessor {
     }
   }
 
-  private async shouldSuppressMemberNotification(
-    notification: NotificationEntity,
-  ): Promise<false | string> {
-    // For member notifications, we need to find the member by userId
-    const member = await this.memberRepository.findByUserIdReadModel(
-      notification.userId,
-    );
-
-    if (!member) {
-      return 'Member not found for user';
-    }
-
-    if (
-      notification.type === NotificationType.DUE_CREATED &&
-      !member.notificationPreferences.notifyOnDueCreated
-    ) {
-      return 'Member opted out of due created notifications';
-    }
-
-    if (
-      notification.type === NotificationType.PAYMENT_MADE &&
-      !member.notificationPreferences.notifyOnPaymentMade
-    ) {
-      return 'Member opted out of payment made notifications';
-    }
-
-    return false;
-  }
-
   private async shouldSuppressNotification(
     notification: NotificationEntity,
   ): Promise<false | string> {
@@ -155,22 +121,38 @@ export class OutboxWorkerProcessor {
       }
     }
 
-    // Member-facing notifications: check member preferences
-    if (
-      notification.type === NotificationType.DUE_CREATED ||
-      notification.type === NotificationType.PAYMENT_MADE
-    ) {
-      return this.shouldSuppressMemberNotification(notification);
-    }
+    // Fetch user to determine which preferences to check
+    const user = await this.userRepository.findByIdOrThrow(notification.userId);
 
-    // User-facing notifications: check user preferences
-    return this.shouldSuppressUserNotification(notification);
+    // Check user preferences
+    return this.shouldSuppressUserNotification(notification, user);
   }
 
-  private async shouldSuppressUserNotification(
+  /**
+   * Check user notification preferences to determine if the notification should be suppressed.
+   * All notification preferences are stored on the user entity.
+   * For members, these preferences control notifications about their own account.
+   * For staff/admin, these preferences control notifications about all system activity.
+   *
+   * @returns `false` if the notification should be sent, or a string with the suppression reason
+   */
+  private shouldSuppressUserNotification(
     notification: NotificationEntity,
-  ): Promise<false | string> {
-    const user = await this.userRepository.findByIdOrThrow(notification.userId);
+    user: UserEntity,
+  ): false | string {
+    if (
+      notification.type === NotificationType.DUE_CREATED &&
+      !user.notificationPreferences.notifyOnDueCreated
+    ) {
+      return 'User opted out of due created notifications';
+    }
+
+    if (
+      notification.type === NotificationType.PAYMENT_MADE &&
+      !user.notificationPreferences.notifyOnPaymentMade
+    ) {
+      return 'User opted out of payment made notifications';
+    }
 
     if (
       notification.type === NotificationType.MOVEMENT_CREATED &&
@@ -191,13 +173,6 @@ export class OutboxWorkerProcessor {
       !user.notificationPreferences.notifyOnMemberCreated
     ) {
       return 'User opted out of member created notifications';
-    }
-
-    if (
-      notification.type === NotificationType.DUE_OVERDUE &&
-      !user.notificationPreferences.notifyOnDueOverdue
-    ) {
-      return 'User opted out of due overdue notifications';
     }
 
     return false;

@@ -50,6 +50,15 @@ export class PrismaUserMapper {
   }
 
   public toDomain(user: UserModel): UserEntity {
+    const notificationPreferences =
+      user.role === UserRole.MEMBER
+        ? UserNotification.forMember(
+            user.notificationPreferences as unknown as UserNotificationProps,
+          )
+        : UserNotification.forUser(
+            user.notificationPreferences as unknown as UserNotificationProps,
+          );
+
     return UserEntity.fromPersistence(
       {
         banExpires: user.banExpires,
@@ -57,9 +66,7 @@ export class PrismaUserMapper {
         banReason: user.banReason,
         email: Email.raw({ value: user.email }),
         name: Name.raw({ firstName: user.firstName, lastName: user.lastName }),
-        notificationPreferences: new UserNotification(
-          user.notificationPreferences as unknown as UserNotificationProps,
-        ),
+        notificationPreferences: notificationPreferences,
         preferences: new UserPreferences(
           user.preferences as unknown as UserPreferencesProps,
         ),

@@ -31,6 +31,10 @@ import {
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+import {
+  USER_REPOSITORY_PROVIDER,
+  type UserRepository,
+} from '@/users/domain/user.repository';
 
 import {
   DUE_REPOSITORY_PROVIDER,
@@ -55,6 +59,8 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
     private readonly dueRepository: DueRepository,
     @Inject(MEMBER_REPOSITORY_PROVIDER)
     private readonly memberRepository: MemberRepository,
+    @Inject(USER_REPOSITORY_PROVIDER)
+    private readonly userRepository: UserRepository,
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
@@ -98,25 +104,45 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
       UniqueId.raw({ value: params.memberId }),
     );
 
-    const notification = await this.createNotification(
+    const memberNotification = await this.createMemberNotification(
       due.value,
       member,
       params.createdBy,
     );
 
-    if (notification.isErr()) {
-      return err(notification.error);
+    if (memberNotification.isErr()) {
+      return err(memberNotification.error);
+    }
+
+    const subscriberNotifications = await this.createSubscriberNotifications(
+      due.value,
+      member,
+      params.createdBy,
+    );
+
+    if (subscriberNotifications.isErr()) {
+      return err(subscriberNotifications.error);
     }
 
     await this.unitOfWork.execute(
       async ({ duesRepository, notificationRepository }) => {
         await duesRepository.save(due.value);
 
-        await notificationRepository.save(notification.value);
+        await notificationRepository.save(memberNotification.value);
+
+        await Promise.all(
+          subscriberNotifications.value.map((subscriberNotification) =>
+            notificationRepository.save(subscriberNotification),
+          ),
+        );
       },
     );
 
     this.eventPublisher.dispatch(due.value);
+    this.eventPublisher.dispatch(memberNotification.value);
+    subscriberNotifications.value.forEach((subscriberNotification) =>
+      this.eventPublisher.dispatch(subscriberNotification),
+    );
 
     return ok(due.value);
   }
@@ -147,7 +173,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
     };
   }
 
-  private async createNotification(
+  private async createMemberNotification(
     due: DueEntity,
     member: MemberReadModel,
     createdBy: string,
@@ -162,16 +188,16 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
       {
         channel: NotificationChannel.EMAIL,
         payload: {
-          template: ResendNotificationEmailTemplate.NEW_DUE,
+          template: ResendNotificationEmailTemplate.NEW_DUE_TO_MEMBER,
           variables: {
             amount: NumberFormat.currencyCents(due.amount.cents),
             category: DueCategoryLabel[due.category],
             date: DateFormat.date(due.date.value),
-            memberName: member.firstName,
             pendingElectricity: pendingByCategory.pendingElectricity,
             pendingGuest: pendingByCategory.pendingGuest,
             pendingMembership: pendingByCategory.pendingMembership,
             pendingTotal: pendingByCategory.pendingTotal,
+            userName: member.firstName,
           },
         },
         recipientAddress: member.email,
@@ -181,6 +207,52 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
         userId: UniqueId.raw({ value: member.userId }),
       },
       createdBy,
+    );
+
+    if (result.isErr()) {
+      return err(result.error);
+    }
+
+    return ok(result.value);
+  }
+
+  private async createSubscriberNotifications(
+    due: DueEntity,
+    member: MemberReadModel,
+    createdBy: string,
+  ): Promise<Result<NotificationEntity[]>> {
+    const optedInUsers = await this.userRepository.findWithNotifyOnDueCreated();
+
+    // Exclude the member's own user to avoid duplicate notification
+    const subscribers = optedInUsers.filter(
+      (user) => user.id.value !== member.userId,
+    );
+
+    const result = ResultUtils.combine(
+      subscribers.map((user) =>
+        NotificationEntity.create(
+          {
+            channel: NotificationChannel.EMAIL,
+            payload: {
+              template: ResendNotificationEmailTemplate.NEW_DUE_TO_SUBSCRIBERS,
+              variables: {
+                amount: NumberFormat.currencyCents(due.amount.cents),
+                category: DueCategoryLabel[due.category],
+                createdBy: due.createdBy,
+                date: DateFormat.date(due.date.value),
+                memberName: member.name,
+                userName: user.name.firstName,
+              },
+            },
+            recipientAddress: user.email.value,
+            sourceEntity: 'due',
+            sourceEntityId: due.id,
+            type: NotificationType.DUE_CREATED,
+            userId: user.id,
+          },
+          createdBy,
+        ),
+      ),
     );
 
     if (result.isErr()) {

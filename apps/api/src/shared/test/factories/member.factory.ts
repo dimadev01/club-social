@@ -7,7 +7,6 @@ import {
   MemberStatus,
 } from '@club-social/shared/members';
 
-import { MemberNotification } from '@/members/domain/entities/member-notification';
 import {
   type CreateMemberProps,
   MemberEntity,
@@ -35,7 +34,6 @@ export const createMemberProps = (
   fileStatus: FileStatus.COMPLETED,
   maritalStatus: MaritalStatus.SINGLE,
   nationality: MemberNationality.ARGENTINA,
-  notificationPreferences: new MemberNotification(),
   phones: [TEST_PHONE],
   sex: MemberSex.MALE,
   status: MemberStatus.ACTIVE,
