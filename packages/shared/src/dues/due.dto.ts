@@ -91,6 +91,30 @@ export interface PendingDueDto {
   status: DueStatus;
 }
 
+export interface PreviewBulkDuesDto {
+  memberCategory: MemberCategory;
+}
+
+export interface PreviewBulkDuesMemberDto {
+  amount: number;
+  baseAmount: number;
+  discountPercent: number;
+  isGroupPricing: boolean;
+  memberCategory: MemberCategory;
+  memberId: string;
+  memberName: string;
+}
+
+export interface PreviewBulkDuesResultDto {
+  members: PreviewBulkDuesMemberDto[];
+  summary: PreviewBulkDuesSummaryDto;
+}
+
+export interface PreviewBulkDuesSummaryDto {
+  totalAmount: number;
+  totalMembers: number;
+}
+
 export interface UpdateDueDto {
   amount: number;
   notes: null | string;

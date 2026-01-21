@@ -1,3 +1,4 @@
+import { MemberCategory, MemberStatus } from '@club-social/shared/members';
 import { ExportDataDto } from '@club-social/shared/types';
 
 import {
@@ -18,6 +19,11 @@ import {
 
 export const MEMBER_REPOSITORY_PROVIDER = Symbol('MemberRepository');
 
+export interface FindMembersByCategoryParams {
+  category: MemberCategory;
+  status: MemberStatus;
+}
+
 export interface MemberRepository
   extends
     PaginatedRepository<
@@ -26,6 +32,9 @@ export interface MemberRepository
     >,
     ReadableRepository<MemberEntity>,
     WriteableRepository<MemberEntity> {
+  findByCategoryReadModel(
+    params: FindMembersByCategoryParams,
+  ): Promise<MemberSearchReadModel[]>;
   findByIdReadModel(id: UniqueId): Promise<MemberReadModel | null>;
   findByIdReadModelOrThrow(id: UniqueId): Promise<MemberReadModel>;
   findByUserIdReadModel(userId: UniqueId): Promise<MemberReadModel | null>;

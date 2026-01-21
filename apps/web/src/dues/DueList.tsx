@@ -108,6 +108,12 @@ export function DueList() {
             menu={{
               items: [
                 {
+                  disabled: !permissions.dues.create,
+                  key: 'bulk-create',
+                  label: 'Crear cuotas mensuales',
+                  onClick: () => navigate(appRoutes.dues.newBulk),
+                },
+                {
                   disabled: isExporting,
                   key: 'export',
                   label: 'Exportar',

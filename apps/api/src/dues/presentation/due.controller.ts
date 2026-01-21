@@ -39,6 +39,7 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateDueUseCase } from '../application/create-due.use-case';
+import { PreviewBulkDuesUseCase } from '../application/preview-bulk-dues/preview-bulk-dues.use-case';
 import { UpdateDueUseCase } from '../application/update-due.use-case';
 import { VoidDueUseCase } from '../application/void-due.use-case';
 import {
@@ -53,6 +54,10 @@ import {
 import { DuePendingStatisticsResponseDto } from './dto/due-pending-statistics.dto';
 import { DueResponseDto } from './dto/due-response.dto';
 import { PendingDueResponseDto } from './dto/pending-due.dto';
+import {
+  PreviewBulkDuesRequestDto,
+  PreviewBulkDuesResponseDto,
+} from './dto/preview-bulk-dues.dto';
 import { UpdateDueRequestDto } from './dto/update-due.dto';
 import { VoidDueRequestDto } from './dto/void-due.dto';
 
@@ -61,11 +66,12 @@ export class DuesController extends BaseController {
   public constructor(
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
-    private readonly createDueUseCase: CreateDueUseCase,
-    private readonly updateDueUseCase: UpdateDueUseCase,
-    private readonly voidDueUseCase: VoidDueUseCase,
     @Inject(DUE_REPOSITORY_PROVIDER)
     private readonly dueRepository: DueRepository,
+    private readonly createDueUseCase: CreateDueUseCase,
+    private readonly previewBulkDuesUseCase: PreviewBulkDuesUseCase,
+    private readonly updateDueUseCase: UpdateDueUseCase,
+    private readonly voidDueUseCase: VoidDueUseCase,
     private readonly csvService: CsvService,
   ) {
     super(logger);
@@ -89,6 +95,17 @@ export class DuesController extends BaseController {
     );
 
     return { id: id.value };
+  }
+
+  @Post('preview-bulk')
+  public async previewBulk(
+    @Body() body: PreviewBulkDuesRequestDto,
+  ): Promise<PreviewBulkDuesResponseDto> {
+    return this.handleResult(
+      await this.previewBulkDuesUseCase.execute({
+        memberCategory: body.memberCategory,
+      }),
+    );
   }
 
   @Patch(':id')

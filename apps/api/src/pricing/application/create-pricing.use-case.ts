@@ -5,10 +5,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import type { Result } from '@/shared/domain/result';
 
 import { PricingEntity } from '@/pricing/domain/entities/pricing.entity';
-import {
-  PRICING_OVERLAP_SERVICE_PROVIDER,
-  PricingOverlapService,
-} from '@/pricing/domain/services/pricing-overlap.service';
+import { PricingService } from '@/pricing/domain/services/pricing.service';
 import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
@@ -38,8 +35,7 @@ export class CreatePricingUseCase extends UseCase<PricingEntity> {
     protected readonly logger: AppLogger,
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
-    @Inject(PRICING_OVERLAP_SERVICE_PROVIDER)
-    private readonly pricingOverlapService: PricingOverlapService,
+    private readonly pricingService: PricingService,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -78,13 +74,12 @@ export class CreatePricingUseCase extends UseCase<PricingEntity> {
       return err(pricing.error);
     }
 
-    const { toClose, toDelete } =
-      await this.pricingOverlapService.resolveOverlaps({
-        dueCategory: params.dueCategory,
-        effectiveFrom,
-        memberCategory: params.memberCategory,
-        updatedBy: params.createdBy,
-      });
+    const { toClose, toDelete } = await this.pricingService.resolveOverlaps({
+      dueCategory: params.dueCategory,
+      effectiveFrom,
+      memberCategory: params.memberCategory,
+      updatedBy: params.createdBy,
+    });
 
     await this.unitOfWork.execute(async ({ pricingRepository }) => {
       await Promise.all(toClose.map((price) => pricingRepository.save(price)));
