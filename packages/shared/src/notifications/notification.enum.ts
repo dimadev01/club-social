@@ -1,3 +1,5 @@
+import { UserRole } from '../users/user.enum';
+
 export const NotificationChannel = {
   EMAIL: 'email',
   PUSH: 'push',
@@ -50,6 +52,14 @@ export type NotificationType =
   (typeof NotificationType)[keyof typeof NotificationType];
 
 /**
+ * Notification types for admin users.
+ * Currently empty - future system notifications will go here.
+ */
+export const AdminNotificationTypes = [] as const;
+
+export type AdminNotificationType = (typeof AdminNotificationTypes)[number];
+
+/**
  * Notification types that can be sent to members about their own account.
  * Members can opt in/out of these via notifyOnDueCreated and notifyOnPaymentCreated.
  */
@@ -61,10 +71,10 @@ export const MemberNotificationTypes = [
 export type MemberNotificationType = (typeof MemberNotificationTypes)[number];
 
 /**
- * Notification types that can be sent to staff/admin about system-wide activity.
- * Staff can opt in/out of these via all 5 notification preference flags.
+ * Notification types for staff users.
+ * Staff can subscribe to all entity creation/update notifications.
  */
-export const SubscriberNotificationTypes = [
+export const StaffNotificationTypes = [
   NotificationType.DUE_CREATED,
   NotificationType.MEMBER_CREATED,
   NotificationType.MOVEMENT_CREATED,
@@ -72,8 +82,21 @@ export const SubscriberNotificationTypes = [
   NotificationType.PAYMENT_CREATED,
 ] as const;
 
-export type SubscriberNotificationType =
-  (typeof SubscriberNotificationTypes)[number];
+export type StaffNotificationType = (typeof StaffNotificationTypes)[number];
+
+/**
+ * Maps user role to the notification types available for that role.
+ * Used by both frontend and backend to determine which notifications
+ * a user can configure based on their role.
+ */
+export const NotificationTypesByRole: Record<
+  UserRole,
+  readonly NotificationType[]
+> = {
+  [UserRole.ADMIN]: AdminNotificationTypes,
+  [UserRole.MEMBER]: MemberNotificationTypes,
+  [UserRole.STAFF]: StaffNotificationTypes,
+};
 
 export const NotificationTypeLabel = {
   [NotificationType.DUE_CREATED]: 'Deuda creada',
