@@ -16,6 +16,10 @@ import {
   MemberStatus,
   MemberStatusLabel,
 } from '@club-social/shared/members';
+import {
+  NotificationType,
+  NotificationTypeToPreferenceKey,
+} from '@club-social/shared/notifications';
 import { Col, Empty, Radio, Space, Switch } from 'antd';
 
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
@@ -268,7 +272,12 @@ export function MemberForm({
               <Descriptions styles={{ label: { width: 250 } }}>
                 <Descriptions.Item label="Notificar nueva cuota">
                   <Form.Item<MemberFormData>
-                    name={['notificationPreferences', 'notifyOnDueCreated']}
+                    name={[
+                      'notificationPreferences',
+                      NotificationTypeToPreferenceKey[
+                        NotificationType.DUE_CREATED
+                      ],
+                    ]}
                     noStyle
                     valuePropName="checked"
                   >
@@ -277,7 +286,12 @@ export function MemberForm({
                 </Descriptions.Item>
                 <Descriptions.Item label="Notificar pago realizado">
                   <Form.Item<MemberFormData>
-                    name={['notificationPreferences', 'notifyOnPaymentCreated']}
+                    name={[
+                      'notificationPreferences',
+                      NotificationTypeToPreferenceKey[
+                        NotificationType.PAYMENT_CREATED
+                      ],
+                    ]}
                     noStyle
                     valuePropName="checked"
                   >
