@@ -2,6 +2,7 @@ import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   NotificationChannel,
+  NotificationSourceEntity,
   NotificationType,
 } from '@club-social/shared/notifications';
 import { Inject, Injectable } from '@nestjs/common';
@@ -206,7 +207,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
           },
         },
         recipientAddress: member.email,
-        sourceEntity: 'due',
+        sourceEntity: NotificationSourceEntity.DUE,
         sourceEntityId: due.id,
         type: NotificationType.DUE_CREATED,
         userId: UniqueId.raw({ value: member.userId }),
@@ -249,6 +250,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
                 ResendNotificationEmailTemplate.DUE_CREATED_TO_SUBSCRIBERS,
               variables: {
                 amount: NumberFormat.currencyCents(props.due.amount.cents),
+                appUrl: this.configService.appDomain,
                 category: DueCategoryLabel[props.due.category],
                 createdBy: props.due.createdBy,
                 date: DateFormat.date(props.due.date.value),
@@ -257,7 +259,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
               },
             },
             recipientAddress: subscriber.email.value,
-            sourceEntity: 'due',
+            sourceEntity: NotificationSourceEntity.DUE,
             sourceEntityId: props.due.id,
             type: NotificationType.DUE_CREATED,
             userId: subscriber.id,

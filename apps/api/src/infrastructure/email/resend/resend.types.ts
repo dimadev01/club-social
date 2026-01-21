@@ -20,6 +20,7 @@ export const ResendNotificationEmailTemplate = {
   MOVEMENT_CREATED: 'movement-created',
   MOVEMENT_VOIDED: 'movement-voided',
   PAYMENT_CREATED_TO_MEMBER: 'payment-created-to-member',
+  PAYMENT_CREATED_TO_SUBSCRIBERS: 'payment-created-to-subscribers',
 } as const;
 
 export type ResendEmailTemplate =

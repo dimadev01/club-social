@@ -70,7 +70,6 @@ export class PrismaUserRepository implements UserRepository {
           equals: true,
           path: [NotificationTypeToPreferenceKey[type]],
         },
-        role: { in: [UserRole.STAFF, UserRole.ADMIN] },
       },
     });
 

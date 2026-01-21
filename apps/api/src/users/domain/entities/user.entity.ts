@@ -95,12 +95,7 @@ export class UserEntity extends SoftDeletableAggregateRoot {
     props: CreateUserProps,
     createdBy: string,
   ): Result<UserEntity> {
-    // Members get member-specific notification defaults (notify on own dues/payments)
-    // Staff/Admin get standard defaults (no notifications by default)
-    const notificationPreferences =
-      props.role === UserRole.MEMBER
-        ? UserNotification.forMember()
-        : UserNotification.forUser();
+    const notificationPreferences = UserNotification.forRole(props.role);
 
     const user = new UserEntity(
       {

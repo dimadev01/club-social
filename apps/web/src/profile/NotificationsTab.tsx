@@ -1,15 +1,14 @@
 import type { UserNotificationPreferencesDto } from '@club-social/shared/users';
 
 import {
-  MemberNotificationTypes,
   type NotificationPreferenceKey,
   NotificationTypeLabel,
+  NotificationTypesByRole,
   NotificationTypeToPreferenceKey,
-  SubscriberNotificationTypes,
 } from '@club-social/shared/notifications';
 import { UserRole } from '@club-social/shared/users';
 import { useQueryClient } from '@tanstack/react-query';
-import { Switch } from 'antd';
+import { Empty, Switch } from 'antd';
 
 import { useSessionUser } from '@/auth/useUser';
 import { queryKeys } from '@/shared/lib/query-keys';
@@ -24,10 +23,7 @@ export function NotificationsTab() {
     useMyNotificationPreferences();
   const updateNotificationPreferences = useUpdateMyNotificationPreferences();
 
-  const notificationTypes =
-    user.role === UserRole.MEMBER
-      ? MemberNotificationTypes
-      : SubscriberNotificationTypes;
+  const notificationTypes = NotificationTypesByRole[user.role as UserRole];
 
   const handlePreferenceChange = (
     key: NotificationPreferenceKey,
@@ -43,6 +39,14 @@ export function NotificationsTab() {
 
     updateNotificationPreferences.mutate({ [key]: checked });
   };
+
+  if (notificationTypes.length === 0) {
+    return (
+      <Card title="Preferencias de notificación">
+        <Empty description="No hay preferencias de notificación disponibles para tu rol" />
+      </Card>
+    );
+  }
 
   return (
     <Card loading={isLoading} title="Preferencias de notificación">

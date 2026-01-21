@@ -13,6 +13,7 @@ import {
   PaginatedDataResultDto,
   SortOrder,
 } from '@club-social/shared/types';
+import { UserRole } from '@club-social/shared/users';
 import { Injectable } from '@nestjs/common';
 import { orderBy, sumBy } from 'es-toolkit/compat';
 
@@ -529,7 +530,8 @@ export class PrismaMemberRepository implements MemberRepository {
         lastName: model.user.lastName,
       }).fullName,
       nationality: model.nationality as MemberNationality | null,
-      notificationPreferences: UserNotification.forMember(
+      notificationPreferences: UserNotification.forRole(
+        UserRole.MEMBER,
         model.user.notificationPreferences as unknown as UserNotificationProps,
       ),
       phones: model.phones,

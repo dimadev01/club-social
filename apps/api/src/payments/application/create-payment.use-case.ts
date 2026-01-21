@@ -12,6 +12,7 @@ import {
 } from '@club-social/shared/movements';
 import {
   NotificationChannel,
+  NotificationSourceEntity,
   NotificationType,
 } from '@club-social/shared/notifications';
 import { Inject, Injectable } from '@nestjs/common';
@@ -76,6 +77,13 @@ interface CreatePaymentParams {
   notes: null | string;
   receiptNumber: null | string;
   surplusToCreditAmount: null | number;
+}
+
+interface NotificationContext {
+  createdBy: string;
+  duesDetailHtml: string;
+  member: MemberReadModel;
+  payment: PaymentEntity;
 }
 
 @Injectable()
@@ -392,36 +400,38 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       movements.push(surplusCreditMovement.value);
     }
 
+    /**
+     * Notifications creation
+     */
     const member =
       await this.memberRepository.findByIdReadModelOrThrow(memberId);
 
-    const memberNotification = await this.createMemberNotification({
+    const duesDetailHtml = this.buildDuesDetailHtml(dues, params.dues);
+
+    const notificationContext: NotificationContext = {
       createdBy: params.createdBy,
-      dues,
-      duesParams: params.dues,
+      duesDetailHtml,
       member,
-      memberId,
       payment: payment.value,
-      paymentDate,
+    };
+
+    const memberNotification = await this.createMemberNotification({
+      ...notificationContext,
+      memberId,
     });
 
     if (memberNotification.isErr()) {
       return err(memberNotification.error);
     }
 
-    // const subscriberNotifications = await this.createSubscriberNotifications({
-    //   createdBy: params.createdBy,
-    //   createdByUserId: params.createdByUserId,
-    //   dues,
-    //   duesParams: params.dues,
-    //   member,
-    //   payment: payment.value,
-    //   paymentDate,
-    // });
+    const subscriberNotifications = await this.createSubscriberNotifications({
+      ...notificationContext,
+      createdByUserId: params.createdByUserId,
+    });
 
-    // if (subscriberNotifications.isErr()) {
-    //   return err(subscriberNotifications.error);
-    // }
+    if (subscriberNotifications.isErr()) {
+      return err(subscriberNotifications.error);
+    }
 
     /**
      * Atomic persistence:
@@ -458,11 +468,11 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
         await notificationRepository.save(memberNotification.value);
 
-        // await Promise.all(
-        //   subscriberNotifications.value.map((subscriberNotification) =>
-        //     notificationRepository.save(subscriberNotification),
-        //   ),
-        // );
+        await Promise.all(
+          subscriberNotifications.value.map((subscriberNotification) =>
+            notificationRepository.save(subscriberNotification),
+          ),
+        );
       },
     );
 
@@ -488,9 +498,9 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
 
     this.eventPublisher.dispatch(memberNotification.value);
 
-    // subscriberNotifications.value.forEach((subscriberNotification) =>
-    //   this.eventPublisher.dispatch(subscriberNotification),
-    // );
+    subscriberNotifications.value.forEach((subscriberNotification) =>
+      this.eventPublisher.dispatch(subscriberNotification),
+    );
 
     return ok(payment.value);
   }
@@ -548,32 +558,14 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     };
   }
 
-  private async createMemberNotification(params: {
-    createdBy: string;
-    dues: DueEntity[];
-    duesParams: CreatePaymentDueParams[];
-    member: MemberReadModel;
-    memberId: UniqueId;
-    payment: PaymentEntity;
-    paymentDate: DateOnly;
-  }): Promise<Result<NotificationEntity>> {
-    const paidDuesIds = new Set(params.dues.map((d) => d.id.value));
-
+  private async createMemberNotification(
+    params: NotificationContext & { memberId: UniqueId },
+  ): Promise<Result<NotificationEntity>> {
     const allPendingDues = await this.dueRepository.findPendingByMemberId(
       params.memberId,
     );
 
-    // Filter out the dues that are being paid in this payment
-    const eligibleDues = allPendingDues.filter(
-      (d) => !paidDuesIds.has(d.id.value),
-    );
-
-    const pendingByCategory = this.calculatePendingByCategory(eligibleDues);
-
-    const duesDetailHtml = this.buildDuesDetailHtml(
-      params.dues,
-      params.duesParams,
-    );
+    const pendingByCategory = this.calculatePendingByCategory(allPendingDues);
 
     const result = NotificationEntity.create(
       {
@@ -583,8 +575,8 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
           variables: {
             amount: NumberFormat.currencyCents(params.payment.amount.cents),
             appUrl: this.configService.appDomain,
-            date: DateFormat.date(params.paymentDate.value),
-            detail: duesDetailHtml,
+            date: DateFormat.date(params.payment.date.value),
+            detail: params.duesDetailHtml,
             memberName: params.member.firstName,
             pendingElectricity: pendingByCategory.pendingElectricity,
             pendingGuest: pendingByCategory.pendingGuest,
@@ -593,7 +585,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
           },
         },
         recipientAddress: params.member.email,
-        sourceEntity: 'payment',
+        sourceEntity: NotificationSourceEntity.PAYMENT,
         sourceEntityId: params.payment.id,
         type: NotificationType.PAYMENT_CREATED,
         userId: UniqueId.raw({ value: params.member.userId }),
@@ -608,65 +600,53 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
     return ok(result.value);
   }
 
-  // private async createSubscriberNotifications(params: {
-  //   createdBy: string;
-  //   createdByUserId: string;
-  //   dues: DueEntity[];
-  //   duesParams: CreatePaymentDueParams[];
-  //   member: MemberReadModel;
-  //   payment: PaymentEntity;
-  //   paymentDate: DateOnly;
-  // }): Promise<Result<NotificationEntity[]>> {
-  //   const optedInUsers = await this.userRepository.findByNotificationType(
-  //     NotificationType.PAYMENT_CREATED,
-  //   );
+  private async createSubscriberNotifications(
+    params: NotificationContext & { createdByUserId: string },
+  ): Promise<Result<NotificationEntity[]>> {
+    const optedInUsers = await this.userRepository.findByNotificationType(
+      NotificationType.PAYMENT_CREATED,
+    );
 
-  //   // Exclude the member's own user to avoid duplicate notification
-  //   const subscribers = optedInUsers
-  //     .filter((user) => user.id.value !== params.member.userId)
-  //     .filter((user) => user.id.value !== params.createdByUserId);
+    // Exclude the member's own user to avoid duplicate notification
+    const subscribers = optedInUsers
+      .filter((user) => user.id.value !== params.member.userId)
+      .filter((user) => user.id.value !== params.createdByUserId);
 
-  //   const duesDetailHtml = this.buildDuesDetailHtml(
-  //     params.dues,
-  //     params.duesParams,
-  //   );
+    const result = ResultUtils.combine(
+      subscribers.map((subscriber) =>
+        NotificationEntity.create(
+          {
+            channel: NotificationChannel.EMAIL,
+            payload: {
+              template:
+                ResendNotificationEmailTemplate.PAYMENT_CREATED_TO_SUBSCRIBERS,
+              variables: {
+                amount: NumberFormat.currencyCents(params.payment.amount.cents),
+                appUrl: this.configService.appDomain,
+                createdBy: params.createdBy,
+                date: DateFormat.date(params.payment.date.value),
+                detail: params.duesDetailHtml,
+                memberName: subscriber.name.fullName,
+                userName: subscriber.name.firstName,
+              },
+            },
+            recipientAddress: subscriber.email.value,
+            sourceEntity: NotificationSourceEntity.PAYMENT,
+            sourceEntityId: params.payment.id,
+            type: NotificationType.PAYMENT_CREATED,
+            userId: subscriber.id,
+          },
+          params.createdBy,
+        ),
+      ),
+    );
 
-  //   const result = ResultUtils.combine(
-  //     subscribers.map((user) =>
-  //       NotificationEntity.create(
-  //         {
-  //           channel: NotificationChannel.EMAIL,
-  //           payload: {
-  //             template:
-  //               ResendNotificationEmailTemplate.PAYMENT_CREATED_TO_MEMBER,
-  //             variables: {
-  //               amount: NumberFormat.currencyCents(params.payment.amount.cents),
-  //               date: DateFormat.date(params.paymentDate.value),
-  //               detail: duesDetailHtml,
-  //               memberName: user.name.firstName,
-  //               pendingElectricity: '-',
-  //               pendingGuest: '-',
-  //               pendingMembership: '-',
-  //               pendingTotal: '-',
-  //             },
-  //           },
-  //           recipientAddress: user.email.value,
-  //           sourceEntity: 'payment',
-  //           sourceEntityId: params.payment.id,
-  //           type: NotificationType.PAYMENT_CREATED,
-  //           userId: user.id,
-  //         },
-  //         params.createdBy,
-  //       ),
-  //     ),
-  //   );
+    if (result.isErr()) {
+      return err(result.error);
+    }
 
-  //   if (result.isErr()) {
-  //     return err(result.error);
-  //   }
-
-  //   return ok(result.value);
-  // }
+    return ok(result.value);
+  }
 
   private async validateSufficientBalance(
     params: CreatePaymentParams,

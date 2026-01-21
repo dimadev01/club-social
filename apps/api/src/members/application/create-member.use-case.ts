@@ -110,7 +110,8 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
       {
         email,
         name,
-        notificationPreferences: UserNotification.forMember(
+        notificationPreferences: UserNotification.forRole(
+          UserRole.MEMBER,
           params.notificationPreferences,
         ),
         role: UserRole.MEMBER,

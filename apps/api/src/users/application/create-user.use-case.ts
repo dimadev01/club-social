@@ -73,7 +73,7 @@ export class CreateUserUseCase extends UseCase<UserEntity> {
       {
         email: email.value,
         name: name.value,
-        notificationPreferences: UserNotification.forUser(),
+        notificationPreferences: UserNotification.forRole(params.role),
         role: params.role,
       },
       params.createdBy,

@@ -1,3 +1,9 @@
+import {
+  NotificationTypesByRole,
+  NotificationTypeToPreferenceKey,
+} from '@club-social/shared/notifications';
+import { UserRole } from '@club-social/shared/users';
+
 export interface UserNotificationProps {
   notifyOnDueCreated: boolean;
   notifyOnMemberCreated: boolean;
@@ -6,25 +12,45 @@ export interface UserNotificationProps {
   notifyOnPaymentCreated: boolean;
 }
 
-export const DEFAULT_USER_NOTIFICATION = {
+/**
+ * Base notification preferences with all fields set to false.
+ */
+const BASE_NOTIFICATION: UserNotificationProps = {
   notifyOnDueCreated: false,
   notifyOnMemberCreated: false,
   notifyOnMovementCreated: false,
   notifyOnMovementVoided: false,
   notifyOnPaymentCreated: false,
-} satisfies UserNotificationProps;
+};
 
 /**
- * Default notification preferences for members.
- * Members default to receiving notifications about their own account activity.
+ * Role-specific default overrides. Only specify what differs from BASE_NOTIFICATION.
  */
-export const DEFAULT_MEMBER_USER_NOTIFICATION: UserNotificationProps = {
-  notifyOnDueCreated: true,
-  notifyOnMemberCreated: false,
-  notifyOnMovementCreated: false,
-  notifyOnMovementVoided: false,
-  notifyOnPaymentCreated: true,
+const DEFAULT_NOTIFICATION_OVERRIDES: Record<
+  UserRole,
+  Partial<UserNotificationProps>
+> = {
+  [UserRole.ADMIN]: {},
+  [UserRole.MEMBER]: {
+    notifyOnDueCreated: true,
+    notifyOnPaymentCreated: true,
+  },
+  [UserRole.STAFF]: {},
 };
+
+/**
+ * Map of role to notification preference keys that should be persisted.
+ * Derived from the shared NotificationTypesByRole configuration.
+ */
+const NOTIFICATION_KEYS_BY_ROLE = Object.fromEntries(
+  Object.values(UserRole).map((role) => [
+    role,
+    NotificationTypesByRole[role].map(
+      (type) =>
+        NotificationTypeToPreferenceKey[type] as keyof UserNotificationProps,
+    ),
+  ]),
+) as Record<UserRole, (keyof UserNotificationProps)[]>;
 
 export class UserNotification {
   public readonly notifyOnDueCreated: boolean;
@@ -33,41 +59,25 @@ export class UserNotification {
   public readonly notifyOnMovementVoided: boolean;
   public readonly notifyOnPaymentCreated: boolean;
 
-  private constructor(props?: Partial<UserNotificationProps>) {
-    this.notifyOnMemberCreated =
-      props?.notifyOnMemberCreated ??
-      DEFAULT_USER_NOTIFICATION.notifyOnMemberCreated;
-    this.notifyOnMovementCreated =
-      props?.notifyOnMovementCreated ??
-      DEFAULT_USER_NOTIFICATION.notifyOnMovementCreated;
-    this.notifyOnMovementVoided =
-      props?.notifyOnMovementVoided ??
-      DEFAULT_USER_NOTIFICATION.notifyOnMovementVoided;
-    this.notifyOnPaymentCreated =
-      props?.notifyOnPaymentCreated ??
-      DEFAULT_USER_NOTIFICATION.notifyOnPaymentCreated;
-    this.notifyOnDueCreated =
-      props?.notifyOnDueCreated ?? DEFAULT_USER_NOTIFICATION.notifyOnDueCreated;
+  private constructor(props: UserNotificationProps) {
+    this.notifyOnDueCreated = props.notifyOnDueCreated;
+    this.notifyOnMemberCreated = props.notifyOnMemberCreated;
+    this.notifyOnMovementCreated = props.notifyOnMovementCreated;
+    this.notifyOnMovementVoided = props.notifyOnMovementVoided;
+    this.notifyOnPaymentCreated = props.notifyOnPaymentCreated;
   }
 
   /**
-   * Creates notification preferences with member defaults.
-   * Use this when creating a new member user.
+   * Creates notification preferences with role-specific defaults.
+   * Use this when creating a new user or hydrating from persistence.
    */
-  public static forMember(
+  public static forRole(
+    role: UserRole,
     props?: Partial<UserNotificationProps>,
   ): UserNotification {
     return new UserNotification({
-      ...DEFAULT_MEMBER_USER_NOTIFICATION,
-      ...props,
-    });
-  }
-
-  public static forUser(
-    props?: Partial<UserNotificationProps>,
-  ): UserNotification {
-    return new UserNotification({
-      ...DEFAULT_USER_NOTIFICATION,
+      ...BASE_NOTIFICATION,
+      ...DEFAULT_NOTIFICATION_OVERRIDES[role],
       ...props,
     });
   }
@@ -82,6 +92,17 @@ export class UserNotification {
     };
   }
 
+  /**
+   * Returns only the role-relevant fields for database storage.
+   */
+  public toJsonForRole(role: UserRole): Partial<UserNotificationProps> {
+    const keys = NOTIFICATION_KEYS_BY_ROLE[role];
+
+    return Object.fromEntries(
+      keys.map((key) => [key, this[key]]),
+    ) as Partial<UserNotificationProps>;
+  }
+
   public toString(): string {
     return JSON.stringify(this.toJson());
   }
@@ -92,7 +113,7 @@ export class UserNotification {
     );
 
     return new UserNotification({
-      ...DEFAULT_USER_NOTIFICATION,
+      ...BASE_NOTIFICATION,
       ...this.toJson(),
       ...defined,
     });
