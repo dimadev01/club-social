@@ -5,6 +5,7 @@ import type {
 import type { MemberCategory } from '@club-social/shared/members';
 import type dayjs from 'dayjs';
 
+import { SearchOutlined } from '@ant-design/icons';
 import { DateFormats, NumberFormat } from '@club-social/shared/lib';
 import {
   MemberCategoryLabel,
@@ -20,6 +21,7 @@ import {
   Select,
   Table,
   TABLE_COLUMN_WIDTHS,
+  TableSearchFilterDropdown,
 } from '@/ui';
 
 import { usePreviewBulkDues } from './usePreviewBulkDues';
@@ -77,6 +79,7 @@ export function DueBulkForm({ disabled = false, onSubmit }: DueBulkFormProps) {
       >
         <DatePicker
           allowClear={false}
+          className="w-40"
           format={DateFormats.monthYear}
           picker="month"
         />
@@ -101,18 +104,24 @@ export function DueBulkForm({ disabled = false, onSubmit }: DueBulkFormProps) {
       </Form.Item>
 
       <Table<PreviewBulkDuesMemberDto>
+        className="mb-6"
         columns={[
           {
             dataIndex: 'memberName',
+            filterDropdown: (props) => (
+              <TableSearchFilterDropdown
+                {...props}
+                placeholder="Buscar socio..."
+                title="Buscar socio"
+              />
+            ),
+            filterIcon: <SearchOutlined />,
+            onFilter: (value, record) =>
+              record.memberName
+                .toLowerCase()
+                .includes((value as string).toLowerCase()),
             sorter: (a, b) => a.memberName.localeCompare(b.memberName),
             title: 'Socio',
-          },
-          {
-            align: 'center',
-            dataIndex: 'memberCategory',
-            render: (cat: MemberCategory) => MemberCategoryLabel[cat],
-            title: 'Categoría',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
           },
           {
             align: 'right',
@@ -139,6 +148,7 @@ export function DueBulkForm({ disabled = false, onSubmit }: DueBulkFormProps) {
         ]}
         dataSource={preview?.members}
         loading={isLoading}
+        pagination={false}
         rowKey="memberId"
         rowSelection={{
           onChange: (keys) => setSelectedKeys(keys as string[]),
@@ -148,7 +158,7 @@ export function DueBulkForm({ disabled = false, onSubmit }: DueBulkFormProps) {
         summary={() => (
           <Table.Summary>
             <Table.Summary.Row>
-              <Table.Summary.Cell colSpan={5} index={0}>
+              <Table.Summary.Cell colSpan={4} index={0}>
                 Total ({filteredPreview?.summary.totalMembers ?? 0} socios
                 seleccionados)
               </Table.Summary.Cell>

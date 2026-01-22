@@ -1,7 +1,7 @@
 import type { Dayjs } from 'dayjs';
 
 import { DateFormats } from '@club-social/shared/lib';
-import { Card, DatePicker, Space } from 'antd';
+import { Card, DatePicker } from 'antd';
 import { useMemo } from 'react';
 
 import { getPresets } from '../DatePicker/datepicker-presets';
@@ -26,22 +26,20 @@ export function TableDateRangeFilter({
 
   return (
     <Card size="small" title="Filtro de fecha">
-      <Space className="flex-1" vertical>
-        <DatePicker.RangePicker
-          format={DateFormats.date}
-          onChange={(dates) => {
-            if (dates && dates[0] && dates[1]) {
-              onChange([dates[0], dates[1]]);
-            } else {
-              onChange(null);
-            }
+      <DatePicker.RangePicker
+        format={DateFormats.date}
+        onChange={(dates) => {
+          if (dates && dates[0] && dates[1]) {
+            onChange([dates[0], dates[1]]);
+          } else {
+            onChange(null);
+          }
 
-            onClose?.();
-          }}
-          presets={presetOptions}
-          value={value}
-        />
-      </Space>
+          onClose?.();
+        }}
+        presets={presetOptions}
+        value={value}
+      />
     </Card>
   );
 }

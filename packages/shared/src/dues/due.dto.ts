@@ -6,11 +6,12 @@ import {
   MemberStatus,
 } from '../members';
 import { DueSettlementStatus } from './due-settlement.enum';
-import { DueCategory, DueStatus } from './due.enum';
+import { DueCategory, DueCreationMode, DueStatus } from './due.enum';
 
 export interface CreateDueDto {
   amount: number;
   category: DueCategory;
+  creationMode: DueCreationMode;
   date: string;
   memberId: string;
   notes: null | string;

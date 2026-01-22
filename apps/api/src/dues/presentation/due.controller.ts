@@ -88,6 +88,7 @@ export class DuesController extends BaseController {
         category: body.category,
         createdBy: session.user.name,
         createdByUserId: session.user.id,
+        creationMode: body.creationMode,
         date: body.date,
         memberId: body.memberId,
         notes: body.notes,
