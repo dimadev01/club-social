@@ -37,7 +37,7 @@ export function MemberEdit() {
         street: values.address.street || null,
         zipCode: values.address.zipCode || null,
       },
-      birthDate: values.birthDate ? DateFormat.isoDate(values.birthDate) : null,
+      birthDate: DateFormat.isoDate(values.birthDate),
       category: values.category,
       documentID: values.documentID || null,
       email: values.email,
@@ -52,7 +52,7 @@ export function MemberEdit() {
           values.notificationPreferences.notifyOnPaymentCreated,
       },
       phones: values.phones,
-      sex: values.sex ?? null,
+      sex: values.sex,
       status: values.status,
     });
   };

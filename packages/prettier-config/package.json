@@ -7,8 +7,8 @@
   "type": "module",
   "exports": "./index.mjs",
   "devDependencies": {
-    "prettier": "3.8.0",
-    "prettier-plugin-packagejson": "^2.5.22"
+    "prettier": "3.8.1",
+    "prettier-plugin-packagejson": "^3.0.0"
   },
   "peerDependencies": {
     "prettier": "3.7.3"

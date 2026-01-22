@@ -89,7 +89,7 @@ export class MembersController extends BaseController {
     this.handleResult(
       await this.updateMemberUseCase.execute({
         address: address ? address.value : null,
-        birthDate: body.birthDate ? body.birthDate : null,
+        birthDate: body.birthDate,
         category: body.category,
         documentID: body.documentID,
         email: body.email,
@@ -129,7 +129,7 @@ export class MembersController extends BaseController {
     const { id } = this.handleResult(
       await this.createMemberUseCase.execute({
         address: address ? address.value : null,
-        birthDate: createMemberDto.birthDate ? createMemberDto.birthDate : null,
+        birthDate: createMemberDto.birthDate,
         category: createMemberDto.category,
         createdBy: session.user.name,
         createdByUserId: session.user.id,

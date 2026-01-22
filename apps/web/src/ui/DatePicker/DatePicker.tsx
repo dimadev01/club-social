@@ -10,7 +10,6 @@ import {
 
 import { cn } from '@/shared/lib/utils';
 
-import { COMPONENT_WIDTHS } from '../constants';
 import { RangePicker } from './RangePicker';
 
 type DatePickerRef = GetRef<typeof AntDatePicker>;
@@ -25,7 +24,7 @@ export function DatePickerWithRef<
 }: DatePickerProps<ValueType, IsMultiple> & { ref?: Ref<DatePickerRef> }) {
   return (
     <AntDatePicker<ValueType, IsMultiple>
-      className={cn(COMPONENT_WIDTHS.DATE_PICKER, props.className)}
+      className={cn('w-full sm:w-auto', props.className)}
       format={format}
       ref={ref}
       {...props}

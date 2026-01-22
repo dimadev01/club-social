@@ -42,7 +42,7 @@ export interface MemberFormData {
     street?: string;
     zipCode?: string;
   };
-  birthDate?: dayjs.Dayjs | null;
+  birthDate: dayjs.Dayjs;
   category: MemberCategory;
   documentID?: string;
   email: string;
@@ -53,7 +53,7 @@ export interface MemberFormData {
   nationality?: MemberNationality;
   notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
-  sex?: MemberSex;
+  sex: MemberSex;
   status: MemberStatus;
 }
 
@@ -135,6 +135,7 @@ export function MemberForm({
               <Form.Item<MemberFormData>
                 label="Fecha de nacimiento"
                 name="birthDate"
+                rules={[{ required: true }]}
               >
                 <DatePicker />
               </Form.Item>
@@ -170,7 +171,7 @@ export function MemberForm({
               <Form.Item<MemberFormData>
                 label="Sexo"
                 name="sex"
-                rules={[{ required: false }]}
+                rules={[{ required: true }]}
               >
                 <Radio.Group
                   options={labelMapToSelectOptions(MemberSexLabel)}

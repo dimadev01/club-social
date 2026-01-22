@@ -8,8 +8,6 @@ import {
 
 import { cn } from '@/shared/lib/utils';
 
-import { COMPONENT_WIDTHS } from './constants';
-
 type InputNumberRef = GetRef<typeof AntInputNumber>;
 
 export function InputNumber<T extends number | string = number>({
@@ -18,7 +16,7 @@ export function InputNumber<T extends number | string = number>({
 }: InputNumberProps<T> & { ref?: Ref<InputNumberRef> }) {
   return (
     <AntInputNumber<T>
-      className={cn(COMPONENT_WIDTHS.INPUT_AMOUNT, props.className)}
+      className={cn('w-full sm:w-32', props.className)}
       ref={ref}
       {...props}
     />

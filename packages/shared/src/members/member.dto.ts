@@ -9,7 +9,7 @@ import {
 
 export interface CreateMemberDto {
   address: MemberAddressDto | null;
-  birthDate: null | string;
+  birthDate: string;
   category: MemberCategory;
   documentID: null | string;
   email: string;
@@ -20,7 +20,7 @@ export interface CreateMemberDto {
   nationality: MemberNationality | null;
   notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
-  sex: MemberSex | null;
+  sex: MemberSex;
 }
 
 export interface MemberAddressDto {
@@ -84,7 +84,7 @@ export interface MemberSearchResultDto {
 
 export interface UpdateMemberDto {
   address: MemberAddressDto | null;
-  birthDate: null | string;
+  birthDate: string;
   category: MemberCategory;
   documentID: null | string;
   email: string;
@@ -95,7 +95,7 @@ export interface UpdateMemberDto {
   nationality: MemberNationality | null;
   notificationPreferences?: MemberNotificationPreferencesDto;
   phones: string[];
-  sex: MemberSex | null;
+  sex: MemberSex;
   status: MemberStatus;
 }
 
