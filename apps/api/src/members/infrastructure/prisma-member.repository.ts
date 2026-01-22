@@ -40,7 +40,10 @@ import {
   MemberSearchParams,
   MemberSearchReadModel,
 } from '../domain/member-read-models';
-import { MemberRepository } from '../domain/member.repository';
+import {
+  type FindMembersByCategoryParams,
+  MemberRepository,
+} from '../domain/member.repository';
 import { PrismaMemberMapper } from './prisma-member.mapper';
 
 type MemberWithUserPayload = MemberGetPayload<{ include: { user: true } }>;
@@ -54,6 +57,29 @@ export class PrismaMemberRepository implements MemberRepository {
     private readonly prismaService: PrismaService,
     private readonly memberMapper: PrismaMemberMapper,
   ) {}
+
+  public async findByCategoryReadModel(
+    params: FindMembersByCategoryParams,
+  ): Promise<MemberSearchReadModel[]> {
+    const members = await this.prismaService.member.findMany({
+      include: { user: true },
+      orderBy: [{ user: { lastName: 'asc' } }, { user: { firstName: 'asc' } }],
+      where: {
+        category: params.category,
+        status: params.status,
+      },
+    });
+
+    return members.map((member) => ({
+      category: member.category as MemberCategory,
+      id: member.id,
+      name: Name.raw({
+        firstName: member.user.firstName,
+        lastName: member.user.lastName,
+      }).fullName,
+      status: member.status as MemberStatus,
+    }));
+  }
 
   public async findById(id: UniqueId): Promise<MemberEntity | null> {
     const member = await this.prismaService.member.findUnique({

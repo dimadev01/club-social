@@ -10,7 +10,9 @@ export function Form<T>(props: FormProps<T>) {
   return (
     <AntForm
       autoComplete="off"
+      id="form"
       layout="vertical"
+      name="form"
       scrollToFirstError
       {...props}
     />
