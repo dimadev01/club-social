@@ -1,4 +1,8 @@
-import { CreateDueDto, DueCategory } from '@club-social/shared/dues';
+import {
+  CreateDueDto,
+  DueCategory,
+  DueCreationMode,
+} from '@club-social/shared/dues';
 import {
   IsDateString,
   IsEnum,
@@ -21,6 +25,10 @@ export class CreateDueRequestDto implements CreateDueDto {
   @IsEnum(DueCategory)
   @IsNotEmpty()
   public category: DueCategory;
+
+  @IsEnum(DueCreationMode)
+  @IsNotEmpty()
+  public creationMode: DueCreationMode;
 
   @IsDateString()
   @IsNotEmpty()

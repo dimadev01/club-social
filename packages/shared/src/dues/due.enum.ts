@@ -37,3 +37,11 @@ export const DueStatusLabel = {
   [DueStatus.PENDING]: 'Pendiente',
   [DueStatus.VOIDED]: 'Anulado',
 } as const;
+
+export const DueCreationMode = {
+  BULK: 'bulk',
+  MANUAL: 'manual',
+} as const;
+
+export type DueCreationMode =
+  (typeof DueCreationMode)[keyof typeof DueCreationMode];

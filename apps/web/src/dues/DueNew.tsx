@@ -2,7 +2,7 @@ import type { CreateDueDto } from '@club-social/shared/dues';
 import type { ParamIdDto } from '@club-social/shared/types';
 import type { FormInstance } from 'antd/lib';
 
-import { DueCategory } from '@club-social/shared/dues';
+import { DueCategory, DueCreationMode } from '@club-social/shared/dues';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { App } from 'antd';
 import dayjs from 'dayjs';
@@ -48,6 +48,7 @@ export function DueNew() {
         createDueMutation.mutateAsync({
           amount,
           category: values.category,
+          creationMode: DueCreationMode.MANUAL,
           date,
           memberId,
           notes: values.notes || null,

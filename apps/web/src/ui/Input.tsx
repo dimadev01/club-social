@@ -17,5 +17,6 @@ const InputWithRef = forwardRef<InputRef, InputProps>((props, ref) => (
 InputWithRef.displayName = 'Input';
 
 export const Input = Object.assign(InputWithRef, {
+  Search: AntInput.Search,
   TextArea,
 });

@@ -12,6 +12,7 @@ export const appRoutes = {
     edit: (id?: string) => `/dues/${id}/edit`,
     list: '/dues',
     new: '/dues/new',
+    newBulk: '/dues/new-bulk',
     view: (id?: string) => `/dues/${id}`,
   } as const,
   generic: {

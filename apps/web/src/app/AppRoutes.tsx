@@ -5,6 +5,7 @@ import { AuditLogsList } from '@/audit-logs/AuditLogsList';
 import { LoginPage } from '@/auth/LoginPage';
 import { LogoutPage } from '@/auth/LogoutPage';
 import { ProtectedRoute } from '@/auth/ProtectedRoute';
+import { DueBulkNew } from '@/dues/DueBulkNew';
 import { DueEdit } from '@/dues/DueEdit';
 import { DueList } from '@/dues/DueList';
 import { DueNew } from '@/dues/DueNew';
@@ -83,6 +84,7 @@ export function AppRoutes() {
           <Route path={appRoutes.dues.list}>
             <Route element={<DueList />} index />
             <Route element={<DueNew />} path={appRoutes.generic.new} />
+            <Route element={<DueBulkNew />} path="new-bulk" />
             <Route element={<DueView />} path={appRoutes.generic.view} />
             <Route element={<DueEdit />} path={appRoutes.generic.edit} />
           </Route>

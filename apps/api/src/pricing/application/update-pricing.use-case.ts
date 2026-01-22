@@ -7,10 +7,6 @@ import {
   type PricingRepository,
 } from '@/pricing/domain/pricing.repository';
 import {
-  PRICING_OVERLAP_SERVICE_PROVIDER,
-  type PricingOverlapService,
-} from '@/pricing/domain/services/pricing-overlap.service';
-import {
   APP_LOGGER_PROVIDER,
   type AppLogger,
 } from '@/shared/application/app-logger';
@@ -24,6 +20,8 @@ import {
 import { Amount } from '@/shared/domain/value-objects/amount/amount.vo';
 import { DateOnly } from '@/shared/domain/value-objects/date-only/date-only.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
+
+import { PricingService } from '../domain/services/pricing.service';
 
 interface UpdatePricingParams {
   amount: number;
@@ -41,8 +39,7 @@ export class UpdatePricingUseCase extends UseCase<void> {
     private readonly pricingRepository: PricingRepository,
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
-    @Inject(PRICING_OVERLAP_SERVICE_PROVIDER)
-    private readonly pricingOverlapService: PricingOverlapService,
+    private readonly pricingService: PricingService,
     private readonly eventPublisher: DomainEventPublisher,
   ) {
     super(logger);
@@ -79,14 +76,13 @@ export class UpdatePricingUseCase extends UseCase<void> {
       return err(updateResult.error);
     }
 
-    const { toClose, toDelete } =
-      await this.pricingOverlapService.resolveOverlaps({
-        dueCategory: pricing.dueCategory,
-        effectiveFrom,
-        excludeId: pricing.id,
-        memberCategory: pricing.memberCategory,
-        updatedBy: params.updatedBy,
-      });
+    const { toClose, toDelete } = await this.pricingService.resolveOverlaps({
+      dueCategory: pricing.dueCategory,
+      effectiveFrom,
+      excludeId: pricing.id,
+      memberCategory: pricing.memberCategory,
+      updatedBy: params.updatedBy,
+    });
 
     await this.unitOfWork.execute(async ({ pricingRepository }) => {
       await Promise.all(toClose.map((price) => pricingRepository.save(price)));

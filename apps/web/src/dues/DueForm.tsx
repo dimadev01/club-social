@@ -81,9 +81,7 @@ export function DueForm({
     <Form<DueFormData>
       disabled={disabled}
       form={form}
-      id="form"
       initialValues={initialValues}
-      name="form"
       onFinish={(values) => onSubmit(values, form)}
     >
       <Form.Item<DueFormData>

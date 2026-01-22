@@ -6,11 +6,12 @@ import {
   MemberStatus,
 } from '../members';
 import { DueSettlementStatus } from './due-settlement.enum';
-import { DueCategory, DueStatus } from './due.enum';
+import { DueCategory, DueCreationMode, DueStatus } from './due.enum';
 
 export interface CreateDueDto {
   amount: number;
   category: DueCategory;
+  creationMode: DueCreationMode;
   date: string;
   memberId: string;
   notes: null | string;
@@ -89,6 +90,30 @@ export interface PendingDueDto {
   date: string;
   id: string;
   status: DueStatus;
+}
+
+export interface PreviewBulkDuesDto {
+  memberCategory: MemberCategory;
+}
+
+export interface PreviewBulkDuesMemberDto {
+  amount: number;
+  baseAmount: number;
+  discountPercent: number;
+  isGroupPricing: boolean;
+  memberCategory: MemberCategory;
+  memberId: string;
+  memberName: string;
+}
+
+export interface PreviewBulkDuesResultDto {
+  members: PreviewBulkDuesMemberDto[];
+  summary: PreviewBulkDuesSummaryDto;
+}
+
+export interface PreviewBulkDuesSummaryDto {
+  totalAmount: number;
+  totalMembers: number;
 }
 
 export interface UpdateDueDto {

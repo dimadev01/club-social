@@ -1,4 +1,8 @@
-import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
+import {
+  DueCategory,
+  DueCategoryLabel,
+  DueCreationMode,
+} from '@club-social/shared/dues';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import {
   NotificationChannel,
@@ -48,6 +52,7 @@ interface CreateDueParams {
   category: DueCategory;
   createdBy: string;
   createdByUserId: string;
+  creationMode: DueCreationMode;
   date: string;
   memberId: string;
   notes: null | string;
@@ -118,15 +123,21 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
       return err(memberNotification.error);
     }
 
-    const subscriberNotifications = await this.createSubscriberNotifications({
-      createdBy: params.createdBy,
-      createdByUserId: params.createdByUserId,
-      due: due.value,
-      member,
-    });
+    const subscriberNotifications: NotificationEntity[] = [];
 
-    if (subscriberNotifications.isErr()) {
-      return err(subscriberNotifications.error);
+    if (params.creationMode === DueCreationMode.MANUAL) {
+      const result = await this.createSubscriberNotifications({
+        createdBy: params.createdBy,
+        createdByUserId: params.createdByUserId,
+        due: due.value,
+        member,
+      });
+
+      if (result.isErr()) {
+        return err(result.error);
+      }
+
+      subscriberNotifications.push(...result.value);
     }
 
     await this.unitOfWork.execute(
@@ -136,7 +147,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
         await notificationRepository.save(memberNotification.value);
 
         await Promise.all(
-          subscriberNotifications.value.map((subscriberNotification) =>
+          subscriberNotifications.map((subscriberNotification) =>
             notificationRepository.save(subscriberNotification),
           ),
         );
@@ -145,7 +156,7 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
 
     this.eventPublisher.dispatch(due.value);
     this.eventPublisher.dispatch(memberNotification.value);
-    subscriberNotifications.value.forEach((subscriberNotification) =>
+    subscriberNotifications.forEach((subscriberNotification) =>
       this.eventPublisher.dispatch(subscriberNotification),
     );
 
