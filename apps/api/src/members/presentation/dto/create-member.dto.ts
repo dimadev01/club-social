@@ -56,8 +56,7 @@ export class CreateMemberRequestDto implements CreateMemberDto {
   public address: AddressRequestDto | null;
 
   @IsDateString()
-  @IsOptional()
-  public birthDate: null | string;
+  public birthDate: string;
 
   @IsEnum(MemberCategory)
   @IsNotEmpty()
@@ -101,6 +100,5 @@ export class CreateMemberRequestDto implements CreateMemberDto {
   public phones: string[];
 
   @IsEnum(MemberSex)
-  @IsOptional()
-  public sex: MemberSex | null;
+  public sex: MemberSex;
 }

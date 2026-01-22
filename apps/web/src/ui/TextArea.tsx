@@ -6,11 +6,9 @@ import { forwardRef } from 'react';
 
 import { cn } from '@/shared/lib/utils';
 
-import { COMPONENT_WIDTHS } from './constants';
-
 export const TextArea = forwardRef<TextAreaRef, TextAreaProps>((props, ref) => (
   <Input.TextArea
-    className={cn(COMPONENT_WIDTHS.TEXT_AREA, props.className)}
+    className={cn('w-full sm:w-80', props.className)}
     ref={ref}
     {...props}
   />

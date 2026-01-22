@@ -11,8 +11,6 @@ import esEs from 'antd/locale/es_ES';
 import { type PropsWithChildren, useMemo } from 'react';
 import { GiTennisBall } from 'react-icons/gi';
 
-import { COMPONENT_WIDTHS } from '@/ui/constants';
-
 import { AntThemeMode } from './app.enum';
 import { useAppContext } from './AppContext';
 
@@ -38,15 +36,12 @@ export function AntProvider({ children }: PropsWithChildren) {
     () => ({
       algorithm: algorithms,
       components: {
-        Button: {
-          primaryShadow: 'none',
-        },
-        Layout: {
-          footerPadding: 0,
-        },
+        Button: { primaryShadow: 'none' },
+        Layout: { footerPadding: 0 },
       },
       hashed: false,
       token: {
+        borderRadius: 6,
         colorInfo: '#22883e',
         colorPrimary: '#22883e',
       },
@@ -60,7 +55,6 @@ export function AntProvider({ children }: PropsWithChildren) {
       <ConfigProvider
         locale={esEs}
         select={{
-          className: COMPONENT_WIDTHS.SELECT,
           showSearch: {
             filterOption: true,
             optionFilterProp: 'label',
@@ -75,9 +69,6 @@ export function AntProvider({ children }: PropsWithChildren) {
         }}
         table={{
           rowKey: 'id',
-        }}
-        textArea={{
-          className: COMPONENT_WIDTHS.TEXT_AREA,
         }}
         theme={themeConfig}
         variant="outlined"

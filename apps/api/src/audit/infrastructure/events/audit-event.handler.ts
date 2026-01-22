@@ -474,6 +474,7 @@ export class AuditEventHandler {
       nationality: member.nationality,
       phones: member.phones,
       sex: member.sex,
+      status: member.status,
       updatedAt: member.updatedAt,
       updatedBy: member.updatedBy,
       userId: member.userId.value,

@@ -45,7 +45,7 @@ import {
 
 interface CreateMemberParams {
   address: Address | null;
-  birthDate: null | string;
+  birthDate: string;
   category: MemberCategory;
   createdBy: string;
   createdByUserId: string;
@@ -58,7 +58,7 @@ interface CreateMemberParams {
   nationality: MemberNationality | null;
   notificationPreferences: MemberNotificationPreferencesDto;
   phones: string[];
-  sex: MemberSex | null;
+  sex: MemberSex;
 }
 
 @Injectable()
