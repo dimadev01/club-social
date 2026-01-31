@@ -61,21 +61,6 @@ export class PrismaUserRepository implements UserRepository {
     return users.map((user) => this.userMapper.toDomain(user));
   }
 
-  public async findByNotificationType(
-    type: NotificationType,
-  ): Promise<UserEntity[]> {
-    const users = await this.prismaService.user.findMany({
-      where: {
-        notificationPreferences: {
-          equals: true,
-          path: [NotificationTypeToPreferenceKey[type]],
-        },
-      },
-    });
-
-    return users.map((user) => this.userMapper.toDomain(user));
-  }
-
   public async findPaginated(
     params: GetPaginatedDataDto,
   ): Promise<PaginatedDataResultDto<UserEntity>> {
@@ -117,6 +102,26 @@ export class PrismaUserRepository implements UserRepository {
       data: users.map((user) => this.userMapper.toDomain(user)),
       total,
     };
+  }
+
+  public async findToNotify(
+    type: NotificationType,
+    roles?: UserRole[],
+  ): Promise<UserEntity[]> {
+    const where: UserWhereInput = {
+      notificationPreferences: {
+        equals: true,
+        path: [NotificationTypeToPreferenceKey[type]],
+      },
+    };
+
+    if (roles?.length) {
+      where.role = { in: roles };
+    }
+
+    const users = await this.prismaService.user.findMany({ where });
+
+    return users.map((user) => this.userMapper.toDomain(user));
   }
 
   public async findUniqueByEmail(email: Email): Promise<null | UserEntity> {

@@ -5,6 +5,7 @@ import {
   NotificationSourceEntity,
   NotificationType,
 } from '@club-social/shared/notifications';
+import { UserRole } from '@club-social/shared/users';
 import { Inject } from '@nestjs/common';
 
 import { ResendNotificationEmailTemplate } from '@/infrastructure/email/resend/resend.types';
@@ -113,8 +114,9 @@ export class VoidMovementUseCase extends UseCase {
     movement: MovementEntity;
     voidReason: string;
   }): Promise<Result<NotificationEntity[]>> {
-    const optedInUsers = await this.userRepository.findByNotificationType(
+    const optedInUsers = await this.userRepository.findToNotify(
       NotificationType.MOVEMENT_VOIDED,
+      [UserRole.STAFF, UserRole.ADMIN],
     );
 
     // Exclude the member's own user to avoid duplicate notification
