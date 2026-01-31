@@ -181,8 +181,9 @@ export class CreateMemberUseCase extends UseCase<MemberEntity> {
     member: MemberEntity;
     user: UserEntity;
   }): Promise<Result<NotificationEntity[]>> {
-    const optedInUsers = await this.userRepository.findByNotificationType(
+    const optedInUsers = await this.userRepository.findToNotify(
       NotificationType.MEMBER_CREATED,
+      [UserRole.STAFF, UserRole.ADMIN],
     );
 
     // Exclude the user who created the member to avoid duplicate notification

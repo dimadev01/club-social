@@ -9,31 +9,31 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  role          String
-  banned        Boolean?
-  banReason     String?
-  banExpires    DateTime?
-  createdBy     String
-  deletedAt     DateTime?
-  deletedBy     String?
-  firstName     String
-  lastName      String
-  status        String
-  updatedBy     String?
-  sessions      Session[]
-  accounts      Account[]
-  passkeys      Passkey[]
-  member        Member?
-  preferences               Json?
-  notificationPreferences   Json?
-  notifications             Notification[]
+  id                      String         @id
+  name                    String
+  email                   String
+  emailVerified           Boolean
+  image                   String?
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+  role                    String
+  banned                  Boolean?
+  banReason               String?
+  banExpires              DateTime?
+  createdBy               String
+  deletedAt               DateTime?
+  deletedBy               String?
+  firstName               String
+  lastName                String
+  status                  String
+  updatedBy               String?
+  sessions                Session[]
+  accounts                Account[]
+  passkeys                Passkey[]
+  member                  Member?
+  preferences             Json?
+  notificationPreferences Json?
+  notifications           Notification[]
 
   @@unique([email])
   @@map("user")
@@ -108,23 +108,22 @@ model Passkey {
 }
 
 model Member {
-  id                      String   @id
-  userId                  String   @unique
-  user                    User     @relation(fields: [userId], references: [id])
-  birthDate               String?
-  category                String
-  maritalStatus           String?
-  documentID              String?
-  fileStatus              String
-  nationality             String?
-  phones                  String[]
-  sex                     String?
-  street                  String?
-  cityName                String?
-  stateName               String?
-  zipCode                 String?
-  status                  String
-  notificationPreferences Json?
+  id            String   @id
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  birthDate     String?
+  category      String
+  maritalStatus String?
+  documentID    String?
+  fileStatus    String
+  nationality   String?
+  phones        String[]
+  sex           String?
+  street        String?
+  cityName      String?
+  stateName     String?
+  zipCode       String?
+  status        String
 
   createdAt DateTime @default(now())
   createdBy String

@@ -1,4 +1,5 @@
 import { NotificationType } from '@club-social/shared/notifications';
+import { UserRole } from '@club-social/shared/users';
 
 import {
   PaginatedRepository,
@@ -13,7 +14,10 @@ export const USER_REPOSITORY_PROVIDER = Symbol('UserRepository');
 
 export interface UserReadableRepository
   extends PaginatedRepository<UserEntity>, ReadableRepository<UserEntity> {
-  findByNotificationType(type: NotificationType): Promise<UserEntity[]>;
+  findToNotify(
+    type: NotificationType,
+    roles?: UserRole[],
+  ): Promise<UserEntity[]>;
   findUniqueByEmail(email: Email): Promise<null | UserEntity>;
   findUniqueByEmailOrThrow(email: Email): Promise<UserEntity>;
 }

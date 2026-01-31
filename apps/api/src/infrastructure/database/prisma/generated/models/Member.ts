@@ -82,7 +82,6 @@ export type MemberCountAggregateOutputType = {
   stateName: number;
   zipCode: number;
   status: number;
-  notificationPreferences: number;
   createdAt: number;
   createdBy: number;
   updatedAt: number;
@@ -148,7 +147,6 @@ export type MemberCountAggregateInputType = {
   stateName?: true;
   zipCode?: true;
   status?: true;
-  notificationPreferences?: true;
   createdAt?: true;
   createdBy?: true;
   updatedAt?: true;
@@ -251,7 +249,6 @@ export type MemberGroupByOutputType = {
   stateName: string | null;
   zipCode: string | null;
   status: string;
-  notificationPreferences: runtime.JsonValue | null;
   createdAt: Date;
   createdBy: string;
   updatedAt: Date;
@@ -293,7 +290,6 @@ export type MemberWhereInput = {
   stateName?: Prisma.StringNullableFilter<'Member'> | string | null;
   zipCode?: Prisma.StringNullableFilter<'Member'> | string | null;
   status?: Prisma.StringFilter<'Member'> | string;
-  notificationPreferences?: Prisma.JsonNullableFilter<'Member'>;
   createdAt?: Prisma.DateTimeFilter<'Member'> | Date | string;
   createdBy?: Prisma.StringFilter<'Member'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Member'> | Date | string;
@@ -321,7 +317,6 @@ export type MemberOrderByWithRelationInput = {
   stateName?: Prisma.SortOrderInput | Prisma.SortOrder;
   zipCode?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
-  notificationPreferences?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -353,7 +348,6 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<
     stateName?: Prisma.StringNullableFilter<'Member'> | string | null;
     zipCode?: Prisma.StringNullableFilter<'Member'> | string | null;
     status?: Prisma.StringFilter<'Member'> | string;
-    notificationPreferences?: Prisma.JsonNullableFilter<'Member'>;
     createdAt?: Prisma.DateTimeFilter<'Member'> | Date | string;
     createdBy?: Prisma.StringFilter<'Member'> | string;
     updatedAt?: Prisma.DateTimeFilter<'Member'> | Date | string;
@@ -383,7 +377,6 @@ export type MemberOrderByWithAggregationInput = {
   stateName?: Prisma.SortOrderInput | Prisma.SortOrder;
   zipCode?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
-  notificationPreferences?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -434,7 +427,6 @@ export type MemberScalarWhereWithAggregatesInput = {
     | null;
   zipCode?: Prisma.StringNullableWithAggregatesFilter<'Member'> | string | null;
   status?: Prisma.StringWithAggregatesFilter<'Member'> | string;
-  notificationPreferences?: Prisma.JsonNullableWithAggregatesFilter<'Member'>;
   createdAt?: Prisma.DateTimeWithAggregatesFilter<'Member'> | Date | string;
   createdBy?: Prisma.StringWithAggregatesFilter<'Member'> | string;
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<'Member'> | Date | string;
@@ -459,9 +451,6 @@ export type MemberCreateInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -489,9 +478,6 @@ export type MemberUncheckedCreateInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -520,9 +506,6 @@ export type MemberUpdateInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -553,9 +536,6 @@ export type MemberUncheckedUpdateInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -582,9 +562,6 @@ export type MemberCreateManyInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -609,9 +586,6 @@ export type MemberUpdateManyMutationInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -637,9 +611,6 @@ export type MemberUncheckedUpdateManyInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -675,7 +646,6 @@ export type MemberCountOrderByAggregateInput = {
   stateName?: Prisma.SortOrder;
   zipCode?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
-  notificationPreferences?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -913,9 +883,6 @@ export type MemberCreateWithoutUserInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -941,9 +908,6 @@ export type MemberUncheckedCreateWithoutUserInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1000,9 +964,6 @@ export type MemberUpdateWithoutUserInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1031,9 +992,6 @@ export type MemberUncheckedUpdateWithoutUserInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1059,9 +1017,6 @@ export type MemberCreateWithoutLedgerEntriesInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1088,9 +1043,6 @@ export type MemberUncheckedCreateWithoutLedgerEntriesInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1146,9 +1098,6 @@ export type MemberUpdateWithoutLedgerEntriesInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1178,9 +1127,6 @@ export type MemberUncheckedUpdateWithoutLedgerEntriesInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1205,9 +1151,6 @@ export type MemberCreateWithoutDuesInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1234,9 +1177,6 @@ export type MemberUncheckedCreateWithoutDuesInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1292,9 +1232,6 @@ export type MemberUpdateWithoutDuesInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1324,9 +1261,6 @@ export type MemberUncheckedUpdateWithoutDuesInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1351,9 +1285,6 @@ export type MemberCreateWithoutPaymentsInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1380,9 +1311,6 @@ export type MemberUncheckedCreateWithoutPaymentsInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1438,9 +1366,6 @@ export type MemberUpdateWithoutPaymentsInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1470,9 +1395,6 @@ export type MemberUncheckedUpdateWithoutPaymentsInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1497,9 +1419,6 @@ export type MemberCreateWithoutGroupsInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1526,9 +1445,6 @@ export type MemberUncheckedCreateWithoutGroupsInput = {
   stateName?: string | null;
   zipCode?: string | null;
   status: string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Date | string;
   createdBy: string;
   updatedAt?: Date | string;
@@ -1584,9 +1500,6 @@ export type MemberUpdateWithoutGroupsInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1616,9 +1529,6 @@ export type MemberUncheckedUpdateWithoutGroupsInput = {
   stateName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   zipCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   status?: Prisma.StringFieldUpdateOperationsInput | string;
-  notificationPreferences?:
-    | Prisma.NullableJsonNullValueInput
-    | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1722,7 +1632,6 @@ export type MemberSelect<
     stateName?: boolean;
     zipCode?: boolean;
     status?: boolean;
-    notificationPreferences?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -1757,7 +1666,6 @@ export type MemberSelectCreateManyAndReturn<
     stateName?: boolean;
     zipCode?: boolean;
     status?: boolean;
-    notificationPreferences?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -1787,7 +1695,6 @@ export type MemberSelectUpdateManyAndReturn<
     stateName?: boolean;
     zipCode?: boolean;
     status?: boolean;
-    notificationPreferences?: boolean;
     createdAt?: boolean;
     createdBy?: boolean;
     updatedAt?: boolean;
@@ -1813,7 +1720,6 @@ export type MemberSelectScalar = {
   stateName?: boolean;
   zipCode?: boolean;
   status?: boolean;
-  notificationPreferences?: boolean;
   createdAt?: boolean;
   createdBy?: boolean;
   updatedAt?: boolean;
@@ -1839,7 +1745,6 @@ export type MemberOmit<
   | 'stateName'
   | 'zipCode'
   | 'status'
-  | 'notificationPreferences'
   | 'createdAt'
   | 'createdBy'
   | 'updatedAt'
@@ -1899,7 +1804,6 @@ export type $MemberPayload<
       stateName: string | null;
       zipCode: string | null;
       status: string;
-      notificationPreferences: runtime.JsonValue | null;
       createdAt: Date;
       createdBy: string;
       updatedAt: Date;
@@ -2569,7 +2473,6 @@ export interface MemberFieldRefs {
   readonly stateName: Prisma.FieldRef<'Member', 'String'>;
   readonly zipCode: Prisma.FieldRef<'Member', 'String'>;
   readonly status: Prisma.FieldRef<'Member', 'String'>;
-  readonly notificationPreferences: Prisma.FieldRef<'Member', 'Json'>;
   readonly createdAt: Prisma.FieldRef<'Member', 'DateTime'>;
   readonly createdBy: Prisma.FieldRef<'Member', 'String'>;
   readonly updatedAt: Prisma.FieldRef<'Member', 'DateTime'>;
