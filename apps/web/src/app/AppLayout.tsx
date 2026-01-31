@@ -1,10 +1,12 @@
-import type { MenuItemType } from 'antd/es/menu/interface';
+import type { ItemType } from 'antd/es/menu/interface';
 
 import {
+  BarChartOutlined,
   FilePdfOutlined,
   FileTextOutlined,
   NotificationOutlined,
   SettingOutlined,
+  TeamOutlined,
   UserAddOutlined,
   UserOutlined,
   WhatsAppOutlined,
@@ -70,7 +72,7 @@ export function AppLayout({ children }: PropsWithChildren) {
   const permissions = usePermissions();
 
   const menuItems = useMemo(() => {
-    const items: MenuItemType[] = [
+    const items: ItemType[] = [
       {
         icon: <DashboardIcon />,
         key: appRoutes.home,
@@ -150,6 +152,26 @@ export function AppLayout({ children }: PropsWithChildren) {
       });
     }
 
+    if (isAdmin || isStaff) {
+      items.push({
+        children: [
+          {
+            icon: <PaymentsIcon />,
+            key: appRoutes.statistics.finance,
+            label: 'Finanzas',
+          },
+          {
+            icon: <TeamOutlined />,
+            key: appRoutes.statistics.members,
+            label: 'Socios',
+          },
+        ],
+        icon: <BarChartOutlined />,
+        key: 'statistics',
+        label: 'Estadísticas',
+      });
+    }
+
     if (isAdmin) {
       items.push({
         icon: <NotificationOutlined />,
@@ -182,7 +204,16 @@ export function AppLayout({ children }: PropsWithChildren) {
     return items;
   }, [isAdmin, isStaff, permissions]);
 
-  const selectedKeys = [`/${location.pathname.split('/')[1]}`];
+  const selectedKeys = useMemo(() => {
+    const pathname = location.pathname;
+
+    // Handle statistics sub-routes
+    if (pathname.startsWith('/statistics')) {
+      return [pathname];
+    }
+
+    return [`/${pathname.split('/')[1]}`];
+  }, [location.pathname]);
 
   return (
     <Layout className="min-h-screen" hasSider>

@@ -36,6 +36,7 @@ import { PricingNew } from '@/pricing/PricingNew';
 import { PricingView } from '@/pricing/PricingView';
 import { ProfilePage } from '@/profile/ProfilePage';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { FinanceStatisticsPage, MemberStatisticsPage } from '@/statistics';
 import { NotFound } from '@/ui';
 import { UserEdit } from '@/users/UserEdit';
 import { UserListPage } from '@/users/UserList';
@@ -126,6 +127,15 @@ export function AppRoutes() {
           <Route path={appRoutes.auditLogs.list}>
             <Route element={<AuditLogsList />} index />
           </Route>
+
+          <Route
+            element={<FinanceStatisticsPage />}
+            path={appRoutes.statistics.finance}
+          />
+          <Route
+            element={<MemberStatisticsPage />}
+            path={appRoutes.statistics.members}
+          />
 
           <Route element={<ProfilePage />} path={appRoutes.profile} />
           <Route element={<AppSettingsPage />} path={appRoutes.appSettings} />

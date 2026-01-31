@@ -39,6 +39,7 @@ import {
   MemberReadModel,
   MemberSearchParams,
   MemberSearchReadModel,
+  MemberStatisticsReadModel,
 } from '../domain/member-read-models';
 import {
   type FindMembersByCategoryParams,
@@ -192,6 +193,94 @@ export class PrismaMemberRepository implements MemberRepository {
     });
 
     return this.memberMapper.toDomain(member);
+  }
+
+  public async getStatistics(
+    topDebtorsLimit = 10,
+  ): Promise<MemberStatisticsReadModel> {
+    const activeWhere = { status: MemberStatus.ACTIVE };
+
+    // Count by category
+    const categoryGroups = await this.prismaService.member.groupBy({
+      _count: true,
+      by: ['category'],
+      where: activeWhere,
+    });
+
+    const byCategory = Object.fromEntries(
+      Object.values(MemberCategory).map((cat) => [cat, 0]),
+    ) as Record<MemberCategory, number>;
+
+    categoryGroups.forEach((group) => {
+      byCategory[group.category as MemberCategory] = group._count;
+    });
+
+    // Count by sex
+    const sexGroups = await this.prismaService.member.groupBy({
+      _count: true,
+      by: ['sex'],
+      where: activeWhere,
+    });
+
+    const bySex = { female: 0, male: 0, unknown: 0 };
+
+    sexGroups.forEach((group) => {
+      if (group.sex === MemberSex.MALE) {
+        bySex.male = group._count;
+      } else if (group.sex === MemberSex.FEMALE) {
+        bySex.female = group._count;
+      } else {
+        bySex.unknown = group._count;
+      }
+    });
+
+    // Total active members
+    const total = Object.values(byCategory).reduce(
+      (sum, count) => sum + count,
+      0,
+    );
+
+    // Top debtors: aggregate pending/partially paid dues by member
+    const dueAggregates = await this.prismaService.due.groupBy({
+      _sum: { amount: true },
+      by: ['memberId'],
+      orderBy: { _sum: { amount: 'desc' } },
+      take: topDebtorsLimit,
+      where: {
+        member: activeWhere,
+        status: { in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID] },
+      },
+    });
+
+    // Get member details for top debtors
+    const debtorIds = dueAggregates.map((agg) => agg.memberId);
+    const debtorMembers = await this.prismaService.member.findMany({
+      include: { user: true },
+      where: { id: { in: debtorIds } },
+    });
+
+    const debtorMap = new Map(debtorMembers.map((m) => [m.id, m]));
+
+    const topDebtors = dueAggregates
+      .filter((agg) => (agg._sum.amount ?? 0) > 0)
+      .map((agg) => {
+        const member = debtorMap.get(agg.memberId);
+
+        return {
+          category:
+            (member?.category as MemberCategory) ?? MemberCategory.MEMBER,
+          id: agg.memberId,
+          name: member
+            ? Name.raw({
+                firstName: member.user.firstName,
+                lastName: member.user.lastName,
+              }).fullName
+            : '',
+          totalDebt: agg._sum.amount ?? 0,
+        };
+      });
+
+    return { byCategory, bySex, topDebtors, total };
   }
 
   public async save(

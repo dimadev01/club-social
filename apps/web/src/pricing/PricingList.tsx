@@ -44,9 +44,7 @@ export function PricingList() {
     queryFn: () =>
       $fetch<PaginatedDataResultDto<PricingPaginatedDto>>(
         '/pricing/paginated',
-        {
-          query,
-        },
+        { query },
       ),
   });
 
