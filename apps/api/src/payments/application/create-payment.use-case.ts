@@ -566,7 +566,12 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       params.memberId,
     );
 
-    const pendingByCategory = this.calculatePendingByCategory(allPendingDues);
+    const paidDueIds = params.payment.dueIds.map((id) => id.value);
+    const pendingDues = allPendingDues.filter(
+      (pd) => !paidDueIds.includes(pd.id.value),
+    );
+
+    const pendingByCategory = this.calculatePendingByCategory(pendingDues);
 
     const result = NotificationEntity.create(
       {
