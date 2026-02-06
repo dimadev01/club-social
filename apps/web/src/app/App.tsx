@@ -44,7 +44,6 @@ if (appConfig.isProduction) {
       maskInputOptions: {
         password: true,
       },
-      maskTextSelector: '*',
     },
   });
 }
