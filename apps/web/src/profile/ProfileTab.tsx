@@ -1,8 +1,10 @@
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 
 import { useSessionUser } from '@/auth/useUser';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Button, Card, Form, Input } from '@/ui';
 
 interface ProfileFormSchema {
@@ -12,6 +14,7 @@ interface ProfileFormSchema {
 
 export function ProfileTab() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const user = useSessionUser();
   const [form] = Form.useForm<ProfileFormSchema>();
 
@@ -32,6 +35,7 @@ export function ProfileTab() {
       }
 
       message.success('Perfil actualizado');
+      posthog.capture(PostHogEvent.PROFILE_UPDATED);
     },
   });
 

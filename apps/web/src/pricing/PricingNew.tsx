@@ -4,6 +4,7 @@ import type { ParamIdDto } from '@club-social/shared/types';
 import { DueCategory } from '@club-social/shared/dues';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { MemberCategory } from '@club-social/shared/members';
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router';
@@ -11,6 +12,7 @@ import { useNavigate } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -18,6 +20,7 @@ import { PricingForm, type PricingFormData } from './PricingForm';
 
 export function PricingNew() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const navigate = useNavigate();
 
@@ -27,8 +30,12 @@ export function PricingNew() {
     CreatePricingDto
   >({
     mutationFn: (body) => $fetch('/pricing', { body, method: 'POST' }),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       message.success('Precio creado correctamente');
+      posthog.capture(PostHogEvent.PRICING_CREATED, {
+        due_category: variables.dueCategory,
+        member_category: variables.memberCategory,
+      });
       navigate(appRoutes.pricing.list, { replace: true });
     },
   });

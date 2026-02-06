@@ -1,0 +1,32 @@
+export const PostHogEvent = {
+  APP_SETTING_UPDATED: 'app_setting_updated',
+  DATA_EXPORTED: 'data_exported',
+  DUE_BULK_CREATED: 'due_bulk_created',
+  DUE_CREATED: 'due_created',
+  DUE_UPDATED: 'due_updated',
+  DUE_VOIDED: 'due_voided',
+  EMAIL_CHANGE_REQUESTED: 'email_change_requested',
+  GROUP_CREATED: 'group_created',
+  GROUP_UPDATED: 'group_updated',
+  LOGIN_ATTEMPTED: 'login_attempted',
+  LOGOUT_COMPLETED: 'logout_completed',
+  MEMBER_CREATED: 'member_created',
+  MEMBER_LEDGER_ENTRY_CREATED: 'member_ledger_entry_created',
+  MEMBER_UPDATED: 'member_updated',
+  MOVEMENT_CREATED: 'movement_created',
+  MOVEMENT_VOIDED: 'movement_voided',
+  PASSKEY_CREATED: 'passkey_created',
+  PASSKEY_DELETED: 'passkey_deleted',
+  PAYMENT_CREATED: 'payment_created',
+  PAYMENT_VOIDED: 'payment_voided',
+  PRICING_CREATED: 'pricing_created',
+  PRICING_UPDATED: 'pricing_updated',
+  PROFILE_UPDATED: 'profile_updated',
+  USER_CREATED: 'user_created',
+  USER_NOTIFICATION_PREFERENCES_UPDATED:
+    'user_notification_preferences_updated',
+  USER_PREFERENCES_UPDATED: 'user_preferences_updated',
+  USER_UPDATED: 'user_updated',
+} as const;
+
+export type PostHogEvent = (typeof PostHogEvent)[keyof typeof PostHogEvent];

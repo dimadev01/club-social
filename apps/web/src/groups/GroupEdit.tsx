@@ -1,11 +1,13 @@
 import type { GroupDto, UpdateGroupDto } from '@club-social/shared/groups';
 import type { MemberSearchResultDto } from '@club-social/shared/members';
 
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -14,6 +16,7 @@ import { useGroup } from './useGroup';
 
 export function GroupEdit() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,8 +25,12 @@ export function GroupEdit() {
 
   const updateGroupMutation = useMutation<GroupDto, Error, UpdateGroupDto>({
     mutationFn: (body) => $fetch(`groups/${id}`, { body, method: 'PATCH' }),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       message.success('Grupo actualizado correctamente');
+      posthog.capture(PostHogEvent.GROUP_UPDATED, {
+        has_discount: variables.discountPercent > 0,
+        members_count: variables.memberIds.length,
+      });
       navigate(-1);
     },
   });

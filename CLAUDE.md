@@ -380,6 +380,45 @@ export class MembersModule {}
 3. Run `npm run build` in `packages/shared`
 4. Import: `@club-social/shared/domain-name`
 
+## Development Guidelines
+
+### Architecture Approach
+
+- **Prefer proper DDD refactoring over quick-fix approaches**. When encountering NestJS dependency injection errors or module boundary issues, fix them with correct architectural patterns rather than workarounds.
+- Always verify module imports and dependency injection configuration after changes.
+- When suggesting solutions, respect the established DDD layer boundaries (domain → application → infrastructure → presentation).
+
+### Task Completion
+
+- Complete the full scope of a task before moving on. If implementing multiple related features (e.g., bulk operations + row selection), finish each feature fully.
+- For refactoring work, complete analysis and implementation in full rather than leaving partial results.
+
+### Concurrency & Performance
+
+- Use `p-limit` for bulk operations to control concurrency.
+- Prefer batch database operations over individual saves in loops.
+
+### Error Handling
+
+- Always return `Result<T, E>` from use cases, never throw exceptions.
+- Use specific error classes (`ConflictError`, `EntityNotFoundError`) not generic errors.
+- In controllers, use `ErrorMapper` to convert domain errors to HTTP responses.
+
+### Value Objects
+
+- Use `create()` for user input (validates), `raw()` only for hydration from persistence.
+- Never bypass validation for external data.
+
+### Repository Patterns
+
+- Return read models (DTOs) for queries, domain entities for commands.
+- Use `findByIdOrThrow` when entity must exist, `findById` when checking existence.
+
+### Testing & Validation
+
+- Run `npm run check-types` after TypeScript changes.
+- Run `npm run test` after modifying use cases or domain logic.
+
 ## Environment Variables
 
 Critical variables (see `.env.example` files):

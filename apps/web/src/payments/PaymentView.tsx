@@ -10,12 +10,14 @@ import {
   PaymentStatusLabel,
   type VoidPaymentDto,
 } from '@club-social/shared/payments';
+import { usePostHog } from '@posthog/react';
 import { Button, Col, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { DueCategoryIconLabel } from '@/dues/DueCategoryIconLabel';
 import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import {
   Card,
   Descriptions,
@@ -33,6 +35,7 @@ import { usePermissions } from '@/users/use-permissions';
 import { usePayment } from './usePayment';
 
 export function PaymentView() {
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -44,6 +47,7 @@ export function PaymentView() {
   const voidPaymentMutation = useVoidMutation<unknown, Error, VoidPaymentDto>({
     endpoint: `payments/${payment?.id}/void`,
     onSuccess: () => {
+      posthog.capture(PostHogEvent.PAYMENT_VOIDED);
       navigate(-1);
     },
     successMessage: 'Pago anulado correctamente',
