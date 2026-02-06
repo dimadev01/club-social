@@ -6,11 +6,13 @@ import type { ParamIdDto } from '@club-social/shared/types';
 
 import { DueCategory, DueCreationMode } from '@club-social/shared/dues';
 import { DateFormat } from '@club-social/shared/lib';
+import { usePostHog } from '@posthog/react';
 import { App, Typography } from 'antd';
 import { useNavigate } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -18,6 +20,7 @@ import { DueBulkForm, type DueBulkFormData } from './DueBulkForm';
 
 export function DueBulkNew() {
   const { message, modal } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const navigate = useNavigate();
 
@@ -79,6 +82,11 @@ export function DueBulkNew() {
 
           return;
         }
+
+        posthog.capture(PostHogEvent.DUE_BULK_CREATED, {
+          creation_mode: DueCreationMode.BULK,
+          members_count: successfulResults.length,
+        });
 
         message.success(
           `${successfulResults.length} deudas creadas exitosamente`,

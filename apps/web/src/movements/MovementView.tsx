@@ -7,11 +7,13 @@ import {
   MovementStatusLabel,
   type VoidMovementDto,
 } from '@club-social/shared/movements';
+import { usePostHog } from '@posthog/react';
 import { Button, Col } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import {
   Card,
   Descriptions,
@@ -26,6 +28,7 @@ import { usePermissions } from '@/users/use-permissions';
 import { useMovement } from './useMovement';
 
 export function MovementView() {
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -38,6 +41,7 @@ export function MovementView() {
     {
       endpoint: `movements/${id}/void`,
       onSuccess: () => {
+        posthog.capture(PostHogEvent.MOVEMENT_VOIDED);
         navigate(-1);
       },
       successMessage: 'Entrada/Salida anulada correctamente',

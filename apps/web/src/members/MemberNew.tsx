@@ -3,12 +3,14 @@ import type { ParamIdDto } from '@club-social/shared/types';
 
 import { DateFormat } from '@club-social/shared/lib';
 import { FileStatus, MemberCategory } from '@club-social/shared/members';
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 import { useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -16,13 +18,18 @@ import { MemberForm, type MemberFormData } from './MemberForm';
 
 export function MemberNew() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const navigate = useNavigate();
 
   const createMemberMutation = useMutation<ParamIdDto, Error, CreateMemberDto>({
     mutationFn: (body) => $fetch('members', { body }),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       message.success('Socio creado correctamente');
+      posthog.capture(PostHogEvent.MEMBER_CREATED, {
+        category: variables.category,
+        file_status: variables.fileStatus,
+      });
       navigate(appRoutes.members.view(data.id), { replace: true });
     },
   });

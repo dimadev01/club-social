@@ -1,12 +1,14 @@
 import type { UpdatePricingDto } from '@club-social/shared/pricing';
 
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -15,6 +17,7 @@ import { usePricing } from './usePricing';
 
 export function PricingEdit() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -25,6 +28,7 @@ export function PricingEdit() {
     mutationFn: (body) => $fetch(`pricing/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       message.success('Precio actualizado correctamente');
+      posthog.capture(PostHogEvent.PRICING_UPDATED);
       navigate(-1);
     },
   });
