@@ -1,7 +1,11 @@
+import { usePostHog } from '@posthog/react';
 import { message } from 'antd';
 import { useCallback, useState } from 'react';
 
 import type { ExportQuery } from '@/ui';
+
+import { appConfig } from '@/app/app.config';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 
 interface UseExportOptions {
   endpoint: string;
@@ -17,6 +21,7 @@ export function useExport({
   endpoint,
   filename,
 }: UseExportOptions): UseExportResult {
+  const posthog = usePostHog();
   const [isExporting, setIsExporting] = useState(false);
 
   const exportData = useCallback(
@@ -37,7 +42,7 @@ export function useExport({
           }
         });
 
-        const url = `${import.meta.env.VITE_API_URL}${endpoint}?${params.toString()}`;
+        const url = `${appConfig.apiUrl}${endpoint}?${params.toString()}`;
 
         const response = await fetch(url, {
           credentials: 'include',
@@ -62,13 +67,17 @@ export function useExport({
         URL.revokeObjectURL(downloadUrl);
 
         message.success('Exportación completada');
+        posthog.capture(PostHogEvent.DATA_EXPORTED, {
+          endpoint,
+          filename,
+        });
       } catch (error) {
         message.error('Error al exportar');
       } finally {
         setIsExporting(false);
       }
     },
-    [endpoint, filename],
+    [endpoint, filename, posthog],
   );
 
   return { exportData, isExporting };

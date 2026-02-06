@@ -1,12 +1,14 @@
 import type { ParamIdDto } from '@club-social/shared/types';
 import type { CreateUserDto } from '@club-social/shared/users';
 
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 import { useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 
 import { usePermissions } from './use-permissions';
@@ -14,6 +16,7 @@ import { UserForm, type UserFormData } from './UserForm';
 
 export function UserNew() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const navigate = useNavigate();
 
@@ -21,6 +24,7 @@ export function UserNew() {
     mutationFn: (body) => $fetch('users', { body }),
     onSuccess: (data) => {
       message.success('Usuario creado correctamente');
+      posthog.capture(PostHogEvent.USER_CREATED);
       navigate(appRoutes.users.view(data.id), { replace: true });
     },
   });

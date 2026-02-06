@@ -1,12 +1,14 @@
 import type { MemberDto, UpdateMemberDto } from '@club-social/shared/members';
 
 import { DateFormat } from '@club-social/shared/lib';
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -15,6 +17,7 @@ import { useMemberById } from './useMemberById';
 
 export function MemberEdit() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,8 +26,12 @@ export function MemberEdit() {
 
   const updateMemberMutation = useMutation<MemberDto, Error, UpdateMemberDto>({
     mutationFn: (body) => $fetch(`members/${id}`, { body, method: 'PATCH' }),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       message.success('Socio actualizado correctamente');
+      posthog.capture(PostHogEvent.MEMBER_UPDATED, {
+        category: variables.category,
+        file_status: variables.fileStatus,
+      });
       navigate(-1);
     },
   });

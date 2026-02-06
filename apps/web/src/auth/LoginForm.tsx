@@ -1,4 +1,5 @@
 import { KeyOutlined, MailOutlined } from '@ant-design/icons';
+import { usePostHog } from '@posthog/react';
 import {
   Alert,
   App,
@@ -14,6 +15,7 @@ import { useState } from 'react';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Input } from '@/ui';
 
 interface FormSchema {
@@ -28,6 +30,8 @@ type LoginMode = (typeof LoginMode)[keyof typeof LoginMode];
 
 export function LoginForm() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
+
   const [mode, setMode] = useState<LoginMode | null>(null);
   const [form] = Form.useForm<FormSchema>();
 
@@ -40,10 +44,18 @@ export function LoginForm() {
     onSuccess: ({ data, error }) => {
       if (data) {
         setMode(LoginMode.MAGIC_LINK_SENT);
+        posthog.capture(PostHogEvent.LOGIN_ATTEMPTED, {
+          method: 'magic_link',
+          success: true,
+        });
       }
 
       if (error) {
         message.error('Error al iniciar sesión con email');
+        posthog.capture(PostHogEvent.LOGIN_ATTEMPTED, {
+          method: 'magic_link',
+          success: false,
+        });
       }
     },
   });
@@ -53,6 +65,15 @@ export function LoginForm() {
     onSuccess: ({ error }) => {
       if (error) {
         message.error('Error al iniciar sesión con passkey');
+        posthog.capture(PostHogEvent.LOGIN_ATTEMPTED, {
+          method: 'passkey',
+          success: false,
+        });
+      } else {
+        posthog.capture(PostHogEvent.LOGIN_ATTEMPTED, {
+          method: 'passkey',
+          success: true,
+        });
       }
     },
   });

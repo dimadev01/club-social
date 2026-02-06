@@ -3,6 +3,7 @@ import type { ParamIdDto } from '@club-social/shared/types';
 
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { MemberLedgerEntryMovementType } from '@club-social/shared/members';
+import { usePostHog } from '@posthog/react';
 import { App, type FormInstance } from 'antd';
 import dayjs from 'dayjs';
 import { useRef } from 'react';
@@ -10,6 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { FormSubmitButtonAndBack } from '@/ui/Form/FormSubmitAndBack';
 import { usePermissions } from '@/users/use-permissions';
@@ -21,6 +23,7 @@ import {
 
 export function MemberLedgerNew() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -51,6 +54,9 @@ export function MemberLedgerNew() {
       {
         onSuccess: () => {
           message.success('Ajuste creado correctamente');
+          posthog.capture(PostHogEvent.MEMBER_LEDGER_ENTRY_CREATED, {
+            movement_type: values.movementType,
+          });
 
           if (shouldNavigateBack.current) {
             navigate(-1);

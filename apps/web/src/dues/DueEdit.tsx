@@ -3,12 +3,14 @@ import type { MemberSearchResultDto } from '@club-social/shared/members';
 
 import { DueStatus } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -17,6 +19,7 @@ import { useDue } from './useDue';
 
 export function DueEdit() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,6 +30,7 @@ export function DueEdit() {
     mutationFn: (body) => $fetch(`dues/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       message.success('Deuda actualizada correctamente');
+      posthog.capture(PostHogEvent.DUE_UPDATED);
       navigate(-1);
     },
   });

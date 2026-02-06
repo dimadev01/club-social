@@ -15,12 +15,14 @@ import {
   MemberLedgerEntryType,
   MemberLedgerEntryTypeLabel,
 } from '@club-social/shared/members';
+import { usePostHog } from '@posthog/react';
 import { Button, Col, Divider } from 'antd';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useVoidMutation } from '@/shared/hooks/useVoidMutation';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import {
   Card,
   Descriptions,
@@ -39,6 +41,7 @@ import { DueCategoryIconLabel } from './DueCategoryIconLabel';
 import { useDue } from './useDue';
 
 export function DueView() {
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -50,6 +53,7 @@ export function DueView() {
   const voidDueMutation = useVoidMutation<unknown, Error, VoidDueDto>({
     endpoint: `dues/${id}/void`,
     onSuccess: () => {
+      posthog.capture(PostHogEvent.DUE_VOIDED);
       navigate(-1);
     },
     successMessage: 'Cuota anulada correctamente',
