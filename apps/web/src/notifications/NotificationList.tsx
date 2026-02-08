@@ -14,11 +14,13 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
+import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
+  Button,
   Card,
   NotFound,
   PageTableActions,
@@ -55,12 +57,29 @@ export function NotificationList() {
       ),
   });
 
+  const processOutbox = useMutation({
+    mutationFn: () =>
+      $fetch('/notifications/outbox/process', { method: 'POST' }),
+  });
+
   if (!permissions.notifications.list) {
     return <NotFound />;
   }
 
   return (
-    <Card title="Notificaciones">
+    <Card
+      extra={
+        <Button
+          disabled={processOutbox.isPending}
+          loading={processOutbox.isPending}
+          onClick={() => processOutbox.mutate()}
+          type="primary"
+        >
+          Procesar outbox
+        </Button>
+      }
+      title="Notificaciones"
+    >
       <PageTableActions justify="end">
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
