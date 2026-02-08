@@ -1,15 +1,18 @@
 import { DeleteOutlined } from '@ant-design/icons';
 import { DateFormat } from '@club-social/shared/lib';
+import { usePostHog } from '@posthog/react';
 import { App, Empty, Space } from 'antd';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { useQuery } from '@/shared/hooks/useQuery';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { Button, Card, Descriptions } from '@/ui';
 
 export function PasskeysTab() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
 
   const { data: passkeys, refetch: refetchPasskeys } = useQuery({
     ...queryKeys.passkeys.list,
@@ -29,6 +32,7 @@ export function PasskeysTab() {
       }
 
       message.success('Passkey agregada');
+      posthog.capture(PostHogEvent.PASSKEY_CREATED);
       refetchPasskeys();
     },
   });
@@ -43,6 +47,7 @@ export function PasskeysTab() {
       }
 
       message.success('Passkey eliminada');
+      posthog.capture(PostHogEvent.PASSKEY_DELETED);
       refetchPasskeys();
     },
   });

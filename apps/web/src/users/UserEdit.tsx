@@ -1,10 +1,12 @@
 import type { UpdateUserDto } from '@club-social/shared/users';
 
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 
 import { usePermissions } from './use-permissions';
@@ -13,6 +15,7 @@ import { useUser } from './useUser';
 
 export function UserEdit() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,6 +26,7 @@ export function UserEdit() {
     mutationFn: (body) => $fetch(`users/${id}`, { body, method: 'PATCH' }),
     onSuccess: () => {
       message.success('Usuario actualizado correctamente');
+      posthog.capture(PostHogEvent.USER_UPDATED);
       navigate(-1);
     },
   });

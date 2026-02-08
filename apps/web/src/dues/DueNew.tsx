@@ -4,6 +4,7 @@ import type { FormInstance } from 'antd/lib';
 
 import { DueCategory, DueCreationMode } from '@club-social/shared/dues';
 import { DateFormat, NumberFormat } from '@club-social/shared/lib';
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 import dayjs from 'dayjs';
 import { useRef } from 'react';
@@ -11,6 +12,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Card, FormSubmitButton, NotFound } from '@/ui';
 import { FormSubmitButtonAndBack } from '@/ui/Form/FormSubmitAndBack';
 import { usePermissions } from '@/users/use-permissions';
@@ -19,6 +21,7 @@ import { DueForm, type DueFormData } from './DueForm';
 
 export function DueNew() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const permissions = usePermissions();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -68,6 +71,12 @@ export function DueNew() {
 
       return;
     }
+
+    posthog.capture(PostHogEvent.DUE_CREATED, {
+      category: values.category,
+      creation_mode: DueCreationMode.MANUAL,
+      members_count: successfulResults.length,
+    });
 
     if (successfulResults.length === 1) {
       message.success('1 deuda creada correctamente');

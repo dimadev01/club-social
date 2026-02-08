@@ -4,6 +4,7 @@ import {
   Inject,
   NotFoundException,
   Param,
+  Post,
   Query,
 } from '@nestjs/common';
 
@@ -22,6 +23,7 @@ import {
   NOTIFICATION_REPOSITORY_PROVIDER,
   type NotificationRepository,
 } from '../domain/notification.repository';
+import { OutboxWorkerProcessor } from '../infrastructure/outbox-worker.processor';
 import { NotificationPaginatedResponseDto } from './dto/notification-paginated.dto';
 import { NotificationResponseDto } from './dto/notification-response.dto';
 
@@ -32,6 +34,7 @@ export class NotificationController extends BaseController {
     protected readonly logger: AppLogger,
     @Inject(NOTIFICATION_REPOSITORY_PROVIDER)
     private readonly notificationRepository: NotificationRepository,
+    private readonly outboxWorkerProcessor: OutboxWorkerProcessor,
   ) {
     super(logger);
   }
@@ -60,6 +63,11 @@ export class NotificationController extends BaseController {
       })),
       total: result.total,
     };
+  }
+
+  @Post('outbox/process')
+  public async processOutbox(): Promise<void> {
+    return this.outboxWorkerProcessor.processOutbox();
   }
 
   @Get(':id')

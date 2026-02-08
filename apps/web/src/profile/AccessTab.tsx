@@ -1,9 +1,11 @@
 import { MailOutlined } from '@ant-design/icons';
+import { usePostHog } from '@posthog/react';
 import { App } from 'antd';
 
 import { useSessionUser } from '@/auth/useUser';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { betterAuthClient } from '@/shared/lib/better-auth.client';
+import { PostHogEvent } from '@/shared/lib/posthog-events';
 import { Button, Card, Form, Input } from '@/ui';
 
 interface EmailFormSchema {
@@ -12,6 +14,7 @@ interface EmailFormSchema {
 
 export function AccessTab() {
   const { message } = App.useApp();
+  const posthog = usePostHog();
   const user = useSessionUser();
   const [form] = Form.useForm<EmailFormSchema>();
 
@@ -29,6 +32,7 @@ export function AccessTab() {
       }
 
       message.success('Link de verificación enviado');
+      posthog.capture(PostHogEvent.EMAIL_CHANGE_REQUESTED);
     },
   });
 

@@ -15,6 +15,7 @@ import {
   NotificationSourceEntity,
   NotificationType,
 } from '@club-social/shared/notifications';
+import { UserRole } from '@club-social/shared/users';
 import { Inject, Injectable } from '@nestjs/common';
 import { sumBy } from 'es-toolkit/compat';
 
@@ -565,7 +566,12 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
       params.memberId,
     );
 
-    const pendingByCategory = this.calculatePendingByCategory(allPendingDues);
+    const paidDueIds = params.payment.dueIds.map((id) => id.value);
+    const pendingDues = allPendingDues.filter(
+      (pd) => !paidDueIds.includes(pd.id.value),
+    );
+
+    const pendingByCategory = this.calculatePendingByCategory(pendingDues);
 
     const result = NotificationEntity.create(
       {
@@ -603,8 +609,9 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
   private async createSubscriberNotifications(
     params: NotificationContext & { createdByUserId: string },
   ): Promise<Result<NotificationEntity[]>> {
-    const optedInUsers = await this.userRepository.findByNotificationType(
+    const optedInUsers = await this.userRepository.findToNotify(
       NotificationType.PAYMENT_CREATED,
+      [UserRole.STAFF, UserRole.ADMIN],
     );
 
     // Exclude the member's own user to avoid duplicate notification

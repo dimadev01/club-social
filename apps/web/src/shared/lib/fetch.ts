@@ -1,7 +1,9 @@
 import { createFetch } from '@better-fetch/fetch';
 
+import { appConfig } from '@/app/app.config';
+
 export const $fetch = createFetch({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: appConfig.apiUrl,
   credentials: 'include',
   throw: true,
 });

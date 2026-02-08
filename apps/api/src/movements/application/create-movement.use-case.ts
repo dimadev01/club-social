@@ -11,6 +11,7 @@ import {
   NotificationSourceEntity,
   NotificationType,
 } from '@club-social/shared/notifications';
+import { UserRole } from '@club-social/shared/users';
 import { Inject } from '@nestjs/common';
 
 import type { Result } from '@/shared/domain/result';
@@ -129,8 +130,9 @@ export class CreateMovementUseCase extends UseCase<MovementEntity> {
     createdByUserId: string;
     movement: MovementEntity;
   }): Promise<Result<NotificationEntity[]>> {
-    const optedInUsers = await this.userRepository.findByNotificationType(
+    const optedInUsers = await this.userRepository.findToNotify(
       NotificationType.MOVEMENT_CREATED,
+      [UserRole.STAFF, UserRole.ADMIN],
     );
 
     // Exclude the member's own user to avoid duplicate notification

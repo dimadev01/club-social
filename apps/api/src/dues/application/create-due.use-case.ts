@@ -9,6 +9,7 @@ import {
   NotificationSourceEntity,
   NotificationType,
 } from '@club-social/shared/notifications';
+import { UserRole } from '@club-social/shared/users';
 import { Inject, Injectable } from '@nestjs/common';
 import { sumBy } from 'es-toolkit/compat';
 
@@ -239,11 +240,13 @@ export class CreateDueUseCase extends UseCase<DueEntity> {
     due: DueEntity;
     member: MemberReadModel;
   }): Promise<Result<NotificationEntity[]>> {
-    const optedInUsers = await this.userRepository.findByNotificationType(
+    const optedInUsers = await this.userRepository.findToNotify(
       NotificationType.DUE_CREATED,
+      [UserRole.STAFF, UserRole.ADMIN],
     );
 
     /**
+     * Exclude users who are not members
      * Exclude the member's own user to avoid duplicate notification
      * Exclude the user who created the due
      */

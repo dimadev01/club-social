@@ -31,6 +31,7 @@
     "egresos",
     "Egresos",
     "Idcard",
+    "posthog",
     "svix",
     "Upserts"
   ],
