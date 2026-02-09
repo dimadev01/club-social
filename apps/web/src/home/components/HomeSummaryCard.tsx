@@ -1,38 +1,42 @@
-import {
-  DollarOutlined,
-  TeamOutlined,
-  WarningOutlined,
-} from '@ant-design/icons';
+import { TeamOutlined } from '@ant-design/icons';
 import { NumberFormat } from '@club-social/shared/lib';
 import { MemberCategoryLabel } from '@club-social/shared/members';
-import { Col, Row, Statistic, Table, Typography } from 'antd';
+import { Col, Space, Statistic } from 'antd';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
 import { useMemberStatistics } from '@/statistics';
-import { Card } from '@/ui';
+import {
+  Button,
+  Card,
+  DuesIcon,
+  PaymentsIcon,
+  Row,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+} from '@/ui';
 
 import { useMovementStatistics } from '../useMovementStatistics';
 
 export function HomeSummaryCard() {
   const { data: movementStats, isLoading: movementLoading } =
     useMovementStatistics({});
+
   const { data: memberStats, isLoading: memberLoading } = useMemberStatistics({
     limit: 5,
   });
 
   return (
     <Card title="Resumen">
-      <Row gutter={[24, 24]}>
-        <Col lg={8} md={12} xs={24}>
+      <Row>
+        <Col md={12} xl={8} xs={24}>
           <Statistic
             loading={movementLoading}
-            prefix={<DollarOutlined />}
-            title="Total acumulado"
+            title="Caja acumulada"
             value={NumberFormat.currencyCents(movementStats?.total ?? 0)}
           />
         </Col>
-        <Col lg={8} md={12} xs={24}>
+        <Col md={12} xl={8} xs={24}>
           <Statistic
             loading={memberLoading}
             prefix={<TeamOutlined />}
@@ -40,10 +44,7 @@ export function HomeSummaryCard() {
             value={memberStats?.total ?? 0}
           />
         </Col>
-        <Col lg={8} xs={24}>
-          <Typography.Text strong>
-            <WarningOutlined /> Top 5 deudores
-          </Typography.Text>
+        <Col xl={8} xs={24}>
           <Table
             columns={[
               {
@@ -59,6 +60,45 @@ export function HomeSummaryCard() {
                 dataIndex: 'totalDebt',
                 render: (debt: number) => NumberFormat.currencyCents(debt),
                 title: 'Deuda',
+                width: TABLE_COLUMN_WIDTHS.AMOUNT,
+              },
+              {
+                align: 'center',
+                fixed: 'right',
+                render: (_, record) => (
+                  <Space.Compact size="small">
+                    <Link
+                      to={{
+                        pathname: appRoutes.dues.list,
+                        search: new URLSearchParams({
+                          filters: `memberId:${record.id}`,
+                        }).toString(),
+                      }}
+                    >
+                      <Button
+                        icon={<DuesIcon />}
+                        tooltip="Ver deudas"
+                        type="text"
+                      />
+                    </Link>
+                    <Link
+                      to={{
+                        pathname: appRoutes.payments.list,
+                        search: new URLSearchParams({
+                          filters: `memberId:${record.id}`,
+                        }).toString(),
+                      }}
+                    >
+                      <Button
+                        icon={<PaymentsIcon />}
+                        tooltip="Ver pagos"
+                        type="text"
+                      />
+                    </Link>
+                  </Space.Compact>
+                ),
+                title: 'Acciones',
+                width: TABLE_COLUMN_WIDTHS.ACTIONS,
               },
             ]}
             dataSource={memberStats?.topDebtors.map((d) => ({
@@ -69,6 +109,7 @@ export function HomeSummaryCard() {
             loading={memberLoading}
             pagination={false}
             size="small"
+            title={() => 'Top 5 deudores'}
           />
         </Col>
       </Row>

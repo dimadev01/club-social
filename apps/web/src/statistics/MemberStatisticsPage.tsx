@@ -1,17 +1,25 @@
-import { TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { NumberFormat } from '@club-social/shared/lib';
 import {
   MemberCategory,
   MemberCategoryLabel,
   MemberCategorySort,
 } from '@club-social/shared/members';
-import { Col, Row, Space, Statistic, Table, theme } from 'antd';
+import { Col, Space, Statistic, theme } from 'antd';
 import { useMemo } from 'react';
 import { Link } from 'react-router';
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 import { appRoutes } from '@/app/app.enum';
-import { Card, Page } from '@/ui';
+import {
+  Button,
+  Card,
+  DuesIcon,
+  Page,
+  PaymentsIcon,
+  Row,
+  Table,
+  TABLE_COLUMN_WIDTHS,
+} from '@/ui';
 
 import { useMemberStatistics } from './useMemberStatistics';
 
@@ -63,7 +71,9 @@ function MembersByCategoryCard({
   total,
 }: MembersByCategoryCardProps) {
   const tableData = useMemo(() => {
-    if (!data) return [];
+    if (!data) {
+      return [];
+    }
 
     return Object.entries(data)
       .map(([category, count]) => ({
@@ -78,48 +88,35 @@ function MembersByCategoryCard({
   }, [data]);
 
   return (
-    <Card extra={<TeamOutlined />} title="Socios por categoría">
-      <Row gutter={[16, 16]}>
-        <Col lg={12} xs={24}>
-          <Table
-            columns={[
-              {
-                dataIndex: 'category',
-                render: (category: MemberCategory) =>
-                  MemberCategoryLabel[category],
-                title: 'Categoría',
-              },
-              {
-                align: 'right',
-                dataIndex: 'count',
-                title: 'Cantidad',
-              },
-            ]}
-            dataSource={tableData}
-            loading={isLoading}
-            pagination={false}
-            size="small"
-            summary={() => (
-              <Table.Summary.Row>
-                <Table.Summary.Cell index={0}>
-                  <strong>Total</strong>
-                </Table.Summary.Cell>
-                <Table.Summary.Cell align="right" index={1}>
-                  <strong>{total}</strong>
-                </Table.Summary.Cell>
-              </Table.Summary.Row>
-            )}
-          />
-        </Col>
-        <Col className="flex items-center justify-center" lg={12} xs={24}>
-          <Statistic
-            loading={isLoading}
-            prefix={<TeamOutlined />}
-            title="Total socios activos"
-            value={total}
-          />
-        </Col>
-      </Row>
+    <Card title="Socios por categoría">
+      <Table
+        columns={[
+          {
+            dataIndex: 'category',
+            render: (category: MemberCategory) => MemberCategoryLabel[category],
+            title: 'Categoría',
+          },
+          {
+            align: 'right',
+            dataIndex: 'count',
+            title: 'Cantidad',
+          },
+        ]}
+        dataSource={tableData}
+        loading={isLoading}
+        pagination={false}
+        size="small"
+        summary={() => (
+          <Table.Summary.Row>
+            <Table.Summary.Cell index={0}>
+              <strong>Total</strong>
+            </Table.Summary.Cell>
+            <Table.Summary.Cell align="right" index={1}>
+              <strong>{total}</strong>
+            </Table.Summary.Cell>
+          </Table.Summary.Row>
+        )}
+      />
     </Card>
   );
 }
@@ -128,16 +125,18 @@ function MembersBySexCard({ data, isLoading }: MembersBySexCardProps) {
   const { token } = theme.useToken();
 
   const chartData = useMemo(() => {
-    if (!data) return [];
+    if (!data) {
+      return [];
+    }
 
     const items = [
-      { color: token.blue6, name: 'Masculino', value: data.male },
-      { color: token.magenta6, name: 'Femenino', value: data.female },
+      { fill: token.blue7, name: 'Masculino', value: data.male },
+      { fill: token.magenta7, name: 'Femenino', value: data.female },
     ];
 
     if (data.unknown > 0) {
       items.push({
-        color: token.colorTextQuaternary,
+        fill: token.colorTextTertiary,
         name: 'Sin especificar',
         value: data.unknown,
       });
@@ -149,8 +148,8 @@ function MembersBySexCard({ data, isLoading }: MembersBySexCardProps) {
   const total = (data?.male ?? 0) + (data?.female ?? 0) + (data?.unknown ?? 0);
 
   return (
-    <Card extra={<UserOutlined />} loading={isLoading} title="Socios por sexo">
-      <Row gutter={[16, 16]}>
+    <Card loading={isLoading} title="Socios por sexo">
+      <Row>
         <Col lg={12} xs={24}>
           <div className="h-64">
             {total > 0 && (
@@ -168,11 +167,7 @@ function MembersBySexCard({ data, isLoading }: MembersBySexCardProps) {
                     labelLine={false}
                     outerRadius={100}
                     paddingAngle={2}
-                  >
-                    {chartData.map((entry) => (
-                      <Cell fill={entry.color} key={entry.name} />
-                    ))}
-                  </Pie>
+                  />
                   <Tooltip formatter={(value) => [value, 'Cantidad']} />
                 </PieChart>
               </ResponsiveContainer>
@@ -180,22 +175,22 @@ function MembersBySexCard({ data, isLoading }: MembersBySexCardProps) {
           </div>
         </Col>
         <Col lg={12} xs={24}>
-          <Space direction="vertical" size="large">
+          <Space className="flex" size="large" vertical>
             <Statistic
+              loading={isLoading}
               title="Masculino"
               value={data?.male ?? 0}
-              valueStyle={{ color: token.blue6 }}
             />
             <Statistic
+              loading={isLoading}
               title="Femenino"
               value={data?.female ?? 0}
-              valueStyle={{ color: token.magenta6 }}
             />
             {(data?.unknown ?? 0) > 0 && (
               <Statistic
+                loading={isLoading}
                 title="Sin especificar"
                 value={data?.unknown ?? 0}
-                valueStyle={{ color: token.colorTextQuaternary }}
               />
             )}
           </Space>
@@ -218,15 +213,56 @@ function TopDebtorsCard({ data, isLoading }: TopDebtorsCardProps) {
             title: 'Socio',
           },
           {
+            align: 'center',
             dataIndex: 'category',
             render: (category: MemberCategory) => MemberCategoryLabel[category],
             title: 'Categoría',
+            width: TABLE_COLUMN_WIDTHS.CATEGORY,
           },
           {
             align: 'right',
             dataIndex: 'totalDebt',
             render: (debt: number) => NumberFormat.currencyCents(debt),
             title: 'Deuda total',
+            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+          },
+          {
+            align: 'center',
+            fixed: 'right',
+            render: (_, record) => (
+              <Space.Compact size="small">
+                <Link
+                  to={{
+                    pathname: appRoutes.dues.list,
+                    search: new URLSearchParams({
+                      filters: `memberId:${record.id}`,
+                    }).toString(),
+                  }}
+                >
+                  <Button
+                    icon={<DuesIcon />}
+                    tooltip="Ver deudas"
+                    type="text"
+                  />
+                </Link>
+                <Link
+                  to={{
+                    pathname: appRoutes.payments.list,
+                    search: new URLSearchParams({
+                      filters: `memberId:${record.id}`,
+                    }).toString(),
+                  }}
+                >
+                  <Button
+                    icon={<PaymentsIcon />}
+                    tooltip="Ver pagos"
+                    type="text"
+                  />
+                </Link>
+              </Space.Compact>
+            ),
+            title: 'Acciones',
+            width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
         ]}
         dataSource={data.map((item) => ({ ...item, key: item.id }))}

@@ -25,6 +25,7 @@ import {
 import { PrismaService } from '@/infrastructure/database/prisma/prisma.service';
 import { PrismaClientLike } from '@/infrastructure/database/prisma/prisma.types';
 import { EntityNotFoundError } from '@/shared/domain/errors/entity-not-found.error';
+import { Guard } from '@/shared/domain/guards';
 import { Name } from '@/shared/domain/value-objects/name/name.vo';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 import {
@@ -198,13 +199,18 @@ export class PrismaMemberRepository implements MemberRepository {
   public async getStatistics(
     topDebtorsLimit = 10,
   ): Promise<MemberStatisticsReadModel> {
-    const activeWhere = { status: MemberStatus.ACTIVE };
+    const where: MemberWhereInput = {
+      status: MemberStatus.ACTIVE,
+      user: {
+        deletedAt: null,
+      },
+    };
 
     // Count by category
     const categoryGroups = await this.prismaService.member.groupBy({
       _count: true,
       by: ['category'],
-      where: activeWhere,
+      where,
     });
 
     const byCategory = Object.fromEntries(
@@ -219,7 +225,7 @@ export class PrismaMemberRepository implements MemberRepository {
     const sexGroups = await this.prismaService.member.groupBy({
       _count: true,
       by: ['sex'],
-      where: activeWhere,
+      where: where,
     });
 
     const bySex = { female: 0, male: 0, unknown: 0 };
@@ -247,7 +253,7 @@ export class PrismaMemberRepository implements MemberRepository {
       orderBy: { _sum: { amount: 'desc' } },
       take: topDebtorsLimit,
       where: {
-        member: activeWhere,
+        member: where,
         status: { in: [DueStatus.PENDING, DueStatus.PARTIALLY_PAID] },
       },
     });
@@ -265,17 +271,15 @@ export class PrismaMemberRepository implements MemberRepository {
       .filter((agg) => (agg._sum.amount ?? 0) > 0)
       .map((agg) => {
         const member = debtorMap.get(agg.memberId);
+        Guard.defined(member);
 
         return {
-          category:
-            (member?.category as MemberCategory) ?? MemberCategory.MEMBER,
+          category: member.category as MemberCategory,
           id: agg.memberId,
-          name: member
-            ? Name.raw({
-                firstName: member.user.firstName,
-                lastName: member.user.lastName,
-              }).fullName
-            : '',
+          name: Name.raw({
+            firstName: member.user.firstName,
+            lastName: member.user.lastName,
+          }).fullName,
           totalDebt: agg._sum.amount ?? 0,
         };
       });

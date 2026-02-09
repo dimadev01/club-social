@@ -80,6 +80,26 @@ export function AppLayout({ children }: PropsWithChildren) {
       },
     ];
 
+    if (isAdmin || isStaff) {
+      items.push({
+        children: [
+          {
+            icon: <PaymentsIcon />,
+            key: appRoutes.statistics.finance,
+            label: 'Finanzas',
+          },
+          {
+            icon: <TeamOutlined />,
+            key: appRoutes.statistics.members,
+            label: 'Socios',
+          },
+        ],
+        icon: <BarChartOutlined />,
+        key: '/statistics',
+        label: 'Estadísticas',
+      });
+    }
+
     if (permissions.dues.list) {
       items.push({
         icon: <DuesIcon />,
@@ -152,26 +172,6 @@ export function AppLayout({ children }: PropsWithChildren) {
       });
     }
 
-    if (isAdmin || isStaff) {
-      items.push({
-        children: [
-          {
-            icon: <PaymentsIcon />,
-            key: appRoutes.statistics.finance,
-            label: 'Finanzas',
-          },
-          {
-            icon: <TeamOutlined />,
-            key: appRoutes.statistics.members,
-            label: 'Socios',
-          },
-        ],
-        icon: <BarChartOutlined />,
-        key: 'statistics',
-        label: 'Estadísticas',
-      });
-    }
-
     if (isAdmin) {
       items.push({
         icon: <NotificationOutlined />,
@@ -204,16 +204,9 @@ export function AppLayout({ children }: PropsWithChildren) {
     return items;
   }, [isAdmin, isStaff, permissions]);
 
-  const selectedKeys = useMemo(() => {
-    const pathname = location.pathname;
-
-    // Handle statistics sub-routes
-    if (pathname.startsWith('/statistics')) {
-      return [pathname];
-    }
-
-    return [`/${pathname.split('/')[1]}`];
-  }, [location.pathname]);
+  const topLevelPath = `/${location.pathname.split('/')[1] ?? ''}`;
+  const selectedKeys = [location.pathname, topLevelPath];
+  const defaultOpenKeys = [topLevelPath];
 
   return (
     <Layout className="min-h-screen" hasSider>
@@ -263,6 +256,7 @@ export function AppLayout({ children }: PropsWithChildren) {
           >
             <Menu
               className="border-e-0"
+              defaultOpenKeys={defaultOpenKeys}
               items={menuItems}
               mode="inline"
               onClick={({ key }) => navigate(key)}

@@ -7,13 +7,15 @@ export interface MemberDebtorDto {
   totalDebt: number;
 }
 
+export interface MemberStatisticsBySexDto {
+  female: number;
+  male: number;
+  unknown: number;
+}
+
 export interface MemberStatisticsDto {
   byCategory: Record<MemberCategory, number>;
-  bySex: {
-    female: number;
-    male: number;
-    unknown: number;
-  };
+  bySex: MemberStatisticsBySexDto;
   topDebtors: MemberDebtorDto[];
   total: number;
 }
