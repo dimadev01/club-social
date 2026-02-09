@@ -31,6 +31,8 @@
     "egresos",
     "Egresos",
     "Idcard",
+    "opentelemetry",
+    "otlp",
     "posthog",
     "svix",
     "Upserts"

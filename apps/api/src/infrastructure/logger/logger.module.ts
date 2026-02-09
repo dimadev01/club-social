@@ -10,6 +10,7 @@ import { TraceService } from '@/infrastructure/trace/trace.service';
 import { APP_LOGGER_PROVIDER } from '@/shared/application/app-logger';
 
 import { AppLoggerService } from './logger.service';
+import { createPosthogTransport } from './posthog-logger-provider';
 import { traceIdFormat } from './trace-id.format';
 
 @Global()
@@ -54,15 +55,24 @@ import { traceIdFormat } from './trace-id.format';
         const SentryWinstonTransport =
           Sentry.createSentryWinstonTransport(Transport);
 
-        return {
-          transports: [
-            new SentryWinstonTransport(),
-            new winston.transports.Console({
-              format: commonFormat,
-              level: 'info',
-            }),
-          ],
-        };
+        const transports: winston.transport[] = [
+          new SentryWinstonTransport(),
+          new winston.transports.Console({
+            format: commonFormat,
+            level: 'info',
+          }),
+        ];
+
+        if (configService.posthogApiKey) {
+          transports.push(
+            createPosthogTransport(
+              configService.posthogApiKey,
+              configService.environment,
+            ),
+          );
+        }
+
+        return { transports };
       },
     }),
   ],

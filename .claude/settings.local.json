@@ -25,7 +25,10 @@
       "Bash(npm ls:*)",
       "Bash(npm run:*)",
       "Bash(npm show:*)",
-      "Bash(npx dotenvx run:*)"
+      "Bash(npx dotenvx run:*)",
+      "WebFetch(domain:posthog.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:open-telemetry.github.io)"
     ],
     "additionalDirectories": [
       "/Users/dmitriy.mironov/Dev/club-social-nest/apps/api/src/infrastructure/database/prisma/migrations"
