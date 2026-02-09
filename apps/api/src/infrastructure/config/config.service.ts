@@ -36,6 +36,10 @@ export class ConfigService {
   public readonly port: number;
 
   @IsString()
+  @Value('POSTHOG_API_KEY', { default: '' })
+  public readonly posthogApiKey: string;
+
+  @IsString()
   @Value('REDIS_HOST')
   public readonly redisHost: string;
 
