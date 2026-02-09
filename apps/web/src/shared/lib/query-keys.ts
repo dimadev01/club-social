@@ -40,6 +40,7 @@ export const queryKeys = createQueryKeyStore({
     me: null,
     paginated: (query?: TableQuery) => [query],
     search: (query?: string) => [query],
+    statistics: (limit?: number) => [limit],
   },
 
   movements: {

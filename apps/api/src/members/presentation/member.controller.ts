@@ -51,6 +51,10 @@ import {
 import { MemberResponseDto } from './dto/member-response.dto';
 import { MemberSearchRequestDto } from './dto/member-search-request.dto';
 import { MemberSearchResponseDto } from './dto/member-search.dto';
+import {
+  MemberStatisticsRequestDto,
+  MemberStatisticsResponseDto,
+} from './dto/member-statistics.dto';
 import { UpdateMemberRequestDto } from './dto/update-member.dto';
 
 @Controller('members')
@@ -257,6 +261,13 @@ export class MembersController extends BaseController {
       name: member.name,
       status: member.status,
     }));
+  }
+
+  @Get('statistics')
+  public async getStatistics(
+    @Query() query: MemberStatisticsRequestDto,
+  ): Promise<MemberStatisticsResponseDto> {
+    return this.memberRepository.getStatistics(query.limit ?? 10);
   }
 
   @Get('me')

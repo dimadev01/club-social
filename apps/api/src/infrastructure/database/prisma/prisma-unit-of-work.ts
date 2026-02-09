@@ -88,8 +88,8 @@ export class PrismaUnitOfWork implements UnitOfWork {
   public async execute<T>(
     fn: (repos: TransactionalRepositories) => Promise<T>,
   ): Promise<T> {
-    return this.prisma.$transaction(async (tx) => {
-      const repos: TransactionalRepositories = {
+    return this.prisma.$transaction(async (tx) =>
+      fn({
         duesRepository: this.createDueRepository(tx),
         emailSuppressionRepository: this.createEmailSuppressionRepository(tx),
         groupRepository: this.createGroupRepository(tx),
@@ -100,10 +100,8 @@ export class PrismaUnitOfWork implements UnitOfWork {
         paymentRepository: this.createPaymentRepository(tx),
         pricingRepository: this.createPricingRepository(tx),
         userRepository: this.createUserRepository(tx),
-      };
-
-      return fn(repos);
-    });
+      }),
+    );
   }
 
   private createDueRepository(

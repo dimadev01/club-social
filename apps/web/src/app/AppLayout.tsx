@@ -1,10 +1,12 @@
-import type { MenuItemType } from 'antd/es/menu/interface';
+import type { ItemType } from 'antd/es/menu/interface';
 
 import {
+  BarChartOutlined,
   FilePdfOutlined,
   FileTextOutlined,
   NotificationOutlined,
   SettingOutlined,
+  TeamOutlined,
   UserAddOutlined,
   UserOutlined,
   WhatsAppOutlined,
@@ -70,13 +72,33 @@ export function AppLayout({ children }: PropsWithChildren) {
   const permissions = usePermissions();
 
   const menuItems = useMemo(() => {
-    const items: MenuItemType[] = [
+    const items: ItemType[] = [
       {
         icon: <DashboardIcon />,
         key: appRoutes.home,
         label: 'Inicio',
       },
     ];
+
+    if (isAdmin || isStaff) {
+      items.push({
+        children: [
+          {
+            icon: <PaymentsIcon />,
+            key: appRoutes.statistics.finance,
+            label: 'Finanzas',
+          },
+          {
+            icon: <TeamOutlined />,
+            key: appRoutes.statistics.members,
+            label: 'Socios',
+          },
+        ],
+        icon: <BarChartOutlined />,
+        key: '/statistics',
+        label: 'Estadísticas',
+      });
+    }
 
     if (permissions.dues.list) {
       items.push({
@@ -182,7 +204,9 @@ export function AppLayout({ children }: PropsWithChildren) {
     return items;
   }, [isAdmin, isStaff, permissions]);
 
-  const selectedKeys = [`/${location.pathname.split('/')[1]}`];
+  const topLevelPath = `/${location.pathname.split('/')[1] ?? ''}`;
+  const selectedKeys = [location.pathname, topLevelPath];
+  const defaultOpenKeys = [topLevelPath];
 
   return (
     <Layout className="min-h-screen" hasSider>
@@ -232,6 +256,7 @@ export function AppLayout({ children }: PropsWithChildren) {
           >
             <Menu
               className="border-e-0"
+              defaultOpenKeys={defaultOpenKeys}
               items={menuItems}
               mode="inline"
               onClick={({ key }) => navigate(key)}
