@@ -1,3 +1,5 @@
+import type { MemberStatisticsDto } from '@club-social/shared/members';
+
 import {
   FileStatus,
   MaritalStatus,
@@ -70,3 +72,5 @@ export interface MemberSearchReadModel {
   name: string;
   status: MemberStatus;
 }
+
+export type MemberStatisticsReadModel = MemberStatisticsDto;

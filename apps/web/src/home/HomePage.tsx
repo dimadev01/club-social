@@ -4,8 +4,8 @@ import { Space } from 'antd';
 import { useSessionUser } from '@/auth/useUser';
 import { Page } from '@/ui';
 
-import { MainStatisticsCard } from './components/MainStatisticsCard';
-import { PaymentChartCard } from './components/PaymentChartCard';
+import { HomeSummaryCard } from './components/HomeSummaryCard';
+import { QuickActionsCard } from './components/QuickActionsCard';
 import { MemberHomePage } from './MemberHomePage';
 
 export function HomePage() {
@@ -18,8 +18,8 @@ export function HomePage() {
   return (
     <Page>
       <Space className="flex" vertical>
-        <MainStatisticsCard />
-        <PaymentChartCard />
+        <QuickActionsCard />
+        <HomeSummaryCard />
       </Space>
     </Page>
   );

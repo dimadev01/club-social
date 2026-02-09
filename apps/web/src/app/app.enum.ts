@@ -62,6 +62,10 @@ export const appRoutes = {
     view: (id?: string) => `/pricing/${id}`,
   } as const,
   profile: '/profile',
+  statistics: {
+    finance: '/statistics/finance',
+    members: '/statistics/members',
+  } as const,
   users: {
     edit: (id?: string) => `/users/${id}/edit`,
     list: '/users',

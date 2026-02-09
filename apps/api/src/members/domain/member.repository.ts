@@ -15,6 +15,7 @@ import {
   MemberReadModel,
   MemberSearchParams,
   MemberSearchReadModel,
+  MemberStatisticsReadModel,
 } from './member-read-models';
 
 export const MEMBER_REPOSITORY_PROVIDER = Symbol('MemberRepository');
@@ -40,5 +41,6 @@ export interface MemberRepository
   findByUserIdReadModel(userId: UniqueId): Promise<MemberReadModel | null>;
   findForExport(params: ExportDataDto): Promise<MemberPaginatedReadModel[]>;
   findUniqueByUserId(userId: UniqueId): Promise<MemberEntity>;
+  getStatistics(topDebtorsLimit?: number): Promise<MemberStatisticsReadModel>;
   search(params: MemberSearchParams): Promise<MemberSearchReadModel[]>;
 }

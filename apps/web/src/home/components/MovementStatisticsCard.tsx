@@ -62,7 +62,7 @@ export function MovementStatisticsCard({ dateRange }: Props) {
           title={
             dateRange ? (
               <Space size="small">
-                Total acumulado
+                Caja acumulada
                 <Tooltip
                   title={`Incluye saldo de caja al ${DateFormat.parse(dateRange[1]).subtract(1, 'day').format(DateFormats.date)}`}
                 >
@@ -70,7 +70,7 @@ export function MovementStatisticsCard({ dateRange }: Props) {
                 </Tooltip>
               </Space>
             ) : (
-              'Total acumulado'
+              'Caja acumulada'
             )
           }
           value={NumberFormat.currencyCents(statistics?.total ?? 0)}
