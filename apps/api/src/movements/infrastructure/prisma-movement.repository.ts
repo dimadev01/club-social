@@ -13,7 +13,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   MovementFindManyArgs,
-  MovementModel,
+  MovementGetPayload,
   MovementOrderByWithRelationInput,
   MovementWhereInput,
 } from '@/infrastructure/database/prisma/generated/models';
@@ -65,6 +65,7 @@ export class PrismaMovementRepository implements MovementRepository {
     id: UniqueId,
   ): Promise<MovementReadModel | null> {
     const movement = await this.prismaService.movement.findUnique({
+      include: { payment: true },
       where: { id: id.value },
     });
 
@@ -99,6 +100,7 @@ export class PrismaMovementRepository implements MovementRepository {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const movements = await this.prismaService.movement.findMany({
+      include: { payment: true },
       orderBy,
       where,
     });
@@ -166,6 +168,7 @@ export class PrismaMovementRepository implements MovementRepository {
     const { orderBy, where } = this.buildWhereAndOrderBy(params);
 
     const query = {
+      include: { payment: true },
       orderBy,
       skip: (params.page - 1) * params.pageSize,
       take: params.pageSize,
@@ -267,7 +270,9 @@ export class PrismaMovementRepository implements MovementRepository {
     return { orderBy, where };
   }
 
-  private toReadModel(model: MovementModel): MovementReadModel {
+  private toReadModel(
+    model: MovementGetPayload<{ include: { payment: true } }>,
+  ): MovementReadModel {
     return {
       amount: model.amount,
       category: model.category as MovementCategory,
@@ -277,7 +282,12 @@ export class PrismaMovementRepository implements MovementRepository {
       id: model.id,
       mode: model.mode as MovementMode,
       notes: model.notes,
-      paymentId: model.paymentId,
+      payment: model.payment
+        ? {
+            id: model.payment.id,
+            receiptNumber: model.payment.receiptNumber,
+          }
+        : null,
       status: model.status as MovementStatus,
       updatedAt: model.updatedAt,
       updatedBy: model.updatedBy,

@@ -283,6 +283,7 @@ export class PaymentsController extends BaseController {
           date: settlement.due.date,
           id: settlement.due.id,
         },
+        id: settlement.id,
         memberLedgerEntry: {
           date: settlement.memberLedgerEntry.date,
           id: settlement.memberLedgerEntry.id,

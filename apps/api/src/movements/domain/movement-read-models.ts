@@ -19,9 +19,14 @@ export type MovementPaginatedReadModel = Pick<
   | 'id'
   | 'mode'
   | 'notes'
-  | 'paymentId'
+  | 'payment'
   | 'status'
 >;
+
+export interface MovementPaymentReadModel {
+  id: string;
+  receiptNumber: null | string;
+}
 
 export interface MovementReadModel {
   amount: number;
@@ -32,7 +37,7 @@ export interface MovementReadModel {
   id: string;
   mode: MovementMode;
   notes: null | string;
-  paymentId: null | string;
+  payment: MovementPaymentReadModel | null;
   status: MovementStatus;
   updatedAt: Date;
   updatedBy: null | string;
@@ -40,7 +45,6 @@ export interface MovementReadModel {
   voidedBy: null | string;
   voidReason: null | string;
 }
-
 export interface MovementStatisticsModel {
   balance: number;
   cumulativeTotal: number;

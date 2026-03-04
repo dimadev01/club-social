@@ -106,8 +106,11 @@ export function MovementView() {
                 label: 'Modo',
               },
               {
-                children: movement.paymentId ? (
-                  <NavigateToPayment formatDate={false} id={movement.paymentId}>
+                children: movement.payment ? (
+                  <NavigateToPayment
+                    formatDate={false}
+                    id={movement.payment.id}
+                  >
                     Ver pago
                   </NavigateToPayment>
                 ) : (

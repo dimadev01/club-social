@@ -5,6 +5,8 @@ import {
   MovementStatus,
 } from '@club-social/shared/movements';
 
+import { MovementPaymentResponseDto } from './movement-payment.dto';
+
 export class MovementResponseDto implements MovementDto {
   public amount: number;
   public category: MovementCategory;
@@ -14,7 +16,7 @@ export class MovementResponseDto implements MovementDto {
   public id: string;
   public mode: MovementMode;
   public notes: null | string;
-  public paymentId: null | string;
+  public payment: MovementPaymentResponseDto | null;
   public status: MovementStatus;
   public updatedAt: string;
   public updatedBy?: null | string;
