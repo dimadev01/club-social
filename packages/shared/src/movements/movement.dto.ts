@@ -22,7 +22,7 @@ export interface MovementDto {
   id: string;
   mode: MovementMode;
   notes: null | string;
-  paymentId: null | string;
+  payment: MovementPaymentDto | null;
   status: MovementStatus;
   updatedAt: string;
   updatedBy?: null | string;
@@ -39,7 +39,7 @@ export interface MovementPaginatedDto {
   id: string;
   mode: MovementMode;
   notes: null | string;
-  paymentId: null | string;
+  payment: MovementPaymentDto | null;
   status: MovementStatus;
 }
 
@@ -47,6 +47,11 @@ export interface MovementPaginatedExtraDto {
   totalAmount: number;
   totalAmountInflow: number;
   totalAmountOutflow: number;
+}
+
+export interface MovementPaymentDto {
+  id: string;
+  receiptNumber: null | string;
 }
 
 export interface UpdateMovementDto {

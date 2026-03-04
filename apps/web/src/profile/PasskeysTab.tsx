@@ -26,7 +26,7 @@ export function PasskeysTab() {
       }),
     onSuccess: ({ error }) => {
       if (error) {
-        message.error('Error al agregar passkey');
+        message.error('Error al agregar Passkey');
 
         return;
       }
@@ -41,7 +41,7 @@ export function PasskeysTab() {
     mutationFn: (id: string) => betterAuthClient.passkey.deletePasskey({ id }),
     onSuccess: ({ error }) => {
       if (error) {
-        message.error('Error al eliminar passkey');
+        message.error('Error al eliminar Passkey');
 
         return;
       }
@@ -56,13 +56,13 @@ export function PasskeysTab() {
     <Card
       actions={[
         <Button onClick={() => addPasskeyMutation.mutate()} type="primary">
-          Agregar passkey
+          Agregar Passkey
         </Button>,
       ]}
       title="Passkeys"
     >
       {passkeys?.data && passkeys.data.length === 0 && (
-        <Empty description="No hay passkeys agregadas" />
+        <Empty description="No hay Passkeys agregadas" />
       )}
 
       {passkeys?.data?.map((passkey) => (

@@ -133,18 +133,26 @@ export function MovementList() {
           },
           {
             dataIndex: 'notes',
-            render: (notes: null | string) => {
+            render: (notes: null | string, record: MovementPaginatedDto) => {
+              const receipt = record.payment?.receiptNumber;
+
               if (!notes) {
                 return '-';
               }
 
-              if (notes.length <= TABLE_DESCRIPTION_MAX_LENGTH) {
-                return notes;
+              let content = notes;
+
+              if (receipt) {
+                content = `${content} - Recibo ${receipt}`;
+              }
+
+              if (content.length <= TABLE_DESCRIPTION_MAX_LENGTH) {
+                return content;
               }
 
               return (
-                <Tooltip title={notes}>
-                  {notes.substring(0, TABLE_DESCRIPTION_MAX_LENGTH)}...
+                <Tooltip title={content}>
+                  {content.substring(0, TABLE_DESCRIPTION_MAX_LENGTH)}...
                 </Tooltip>
               );
             },

@@ -150,7 +150,12 @@ export class MovementsController extends BaseController {
         id: movement.id,
         mode: movement.mode,
         notes: movement.notes,
-        paymentId: movement.paymentId,
+        payment: movement.payment
+          ? {
+              id: movement.payment.id,
+              receiptNumber: movement.payment.receiptNumber,
+            }
+          : null,
         status: movement.status,
       })),
       extra: {
@@ -200,7 +205,12 @@ export class MovementsController extends BaseController {
       id: movement.id,
       mode: movement.mode,
       notes: movement.notes,
-      paymentId: movement.paymentId,
+      payment: movement.payment
+        ? {
+            id: movement.payment.id,
+            receiptNumber: movement.payment.receiptNumber,
+          }
+        : null,
       status: movement.status,
       updatedAt: movement.updatedAt.toISOString(),
       updatedBy: movement.updatedBy,
