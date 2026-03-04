@@ -55,6 +55,7 @@ export interface PaymentDto {
 export interface PaymentDueSettlementDto {
   amount: number;
   due: PaymentDueSettlementDueDto;
+  id: string;
   memberLedgerEntry: PaymentMemberLedgerEntryDto;
   status: DueSettlementStatus;
 }

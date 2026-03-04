@@ -129,7 +129,6 @@ export function PaymentView() {
             ),
             title: 'Fecha de deuda',
           },
-
           {
             align: 'center',
             dataIndex: ['due', 'category'],
@@ -142,7 +141,6 @@ export function PaymentView() {
             title: 'Categoría',
             width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
           },
-
           {
             align: 'center',
             dataIndex: 'status',

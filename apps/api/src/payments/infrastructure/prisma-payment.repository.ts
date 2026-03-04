@@ -374,6 +374,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
           date: settlement.due.date,
           id: settlement.due.id,
         },
+        id: settlement.id,
         memberLedgerEntry: {
           date: settlement.memberLedgerEntry.date,
           id: settlement.memberLedgerEntry.id,

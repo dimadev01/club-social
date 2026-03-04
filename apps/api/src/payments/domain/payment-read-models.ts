@@ -51,6 +51,7 @@ export interface PaymentStatisticsReadModel {
 interface PaymentDueSettlement {
   amount: number;
   due: PaymentDueSettlementDue;
+  id: string;
   memberLedgerEntry: PaymentDueSettlementMemberLedgerEntry;
   status: DueSettlementStatus;
 }

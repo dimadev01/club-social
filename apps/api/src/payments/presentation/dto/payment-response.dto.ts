@@ -33,6 +33,7 @@ export class PaymentResponseDto implements PaymentDto {
   public id: string;
   public member: PaymentMemberResponseDto;
   public memberId: string;
+
   public memberName: string;
   public notes: null | string;
   public receiptNumber: null | string;
@@ -48,6 +49,7 @@ export class PaymentResponseDto implements PaymentDto {
 export class PaymentSettlementResponseDto implements PaymentDueSettlementDto {
   public amount: number;
   public due: PaymentDueSettlementDueResponseDto;
+  public id: string;
   public memberLedgerEntry: PaymentMemberLedgerEntryResponseDto;
   public status: DueSettlementStatus;
 }
