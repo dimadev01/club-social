@@ -108,22 +108,32 @@ export class PrismaPricingRepository implements PricingRepository {
   public async findOverlapping(
     params: FindOverlappingPricingParams,
   ): Promise<PricingEntity[]> {
-    // Find all prices for the same category pair that would overlap with the new pricing
-    // New pricing range: [effectiveFrom, infinity]
-    // Existing pricing range: [effectiveFrom, effectiveTo or infinity]
-    // Overlap exists if: existing.effectiveFrom < new.infinity AND new.effectiveFrom < existing.effectiveTo
-    // Since new.effectiveTo is always null (infinity), this simplifies to:
-    // - existing.effectiveFrom is any date (could be before or after new.effectiveFrom)
-    // - AND (existing.effectiveTo is null OR existing.effectiveTo >= new.effectiveFrom)
+    /*
+     * Overlap condition: existing range [effectiveFrom, effectiveTo|∞] intersects new range [effectiveFrom, ∞]
+     * → existing.effectiveTo is null OR existing.effectiveTo >= new.effectiveFrom
+     *
+     * memberCategory: null (all members) overlaps with any category.
+     * A specific category overlaps with itself OR null.
+     */
     const where: PricingWhereInput = {
       deletedAt: null,
       dueCategory: params.dueCategory,
-      memberCategory: params.memberCategory,
       OR: [
         { effectiveTo: null },
         { effectiveTo: { gte: params.effectiveFrom.value } },
       ],
     };
+
+    if (params.memberCategory !== null) {
+      where.AND = [
+        {
+          OR: [
+            { memberCategory: params.memberCategory },
+            { memberCategory: null },
+          ],
+        },
+      ];
+    }
 
     if (params.excludeId) {
       where.id = { not: params.excludeId.value };
