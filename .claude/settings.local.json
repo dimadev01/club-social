@@ -28,7 +28,13 @@
       "Bash(npx dotenvx run:*)",
       "WebFetch(domain:posthog.com)",
       "WebFetch(domain:www.npmjs.com)",
-      "WebFetch(domain:open-telemetry.github.io)"
+      "WebFetch(domain:open-telemetry.github.io)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_tabs",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_evaluate"
     ],
     "additionalDirectories": [
       "/Users/dmitriy.mironov/Dev/club-social-nest/apps/api/src/infrastructure/database/prisma/migrations"

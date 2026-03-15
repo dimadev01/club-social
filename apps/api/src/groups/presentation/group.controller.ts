@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   NotFoundException,
@@ -24,6 +25,7 @@ import { PaginatedDataResponseDto } from '@/shared/presentation/dto/paginated-re
 import { ParamIdReqResDto } from '@/shared/presentation/dto/param-id.dto';
 
 import { CreateGroupUseCase } from '../application/create-group.use-case';
+import { DeleteGroupUseCase } from '../application/delete-group.use-case';
 import { UpdateGroupUseCase } from '../application/update-group.use-case';
 import {
   GROUP_REPOSITORY_PROVIDER,
@@ -40,6 +42,7 @@ export class GroupController extends BaseController {
     @Inject(APP_LOGGER_PROVIDER)
     protected readonly logger: AppLogger,
     private readonly createGroupUseCase: CreateGroupUseCase,
+    private readonly deleteGroupUseCase: DeleteGroupUseCase,
     private readonly updateGroupUseCase: UpdateGroupUseCase,
     @Inject(GROUP_REPOSITORY_PROVIDER)
     private readonly groupRepository: GroupRepository,
@@ -62,6 +65,19 @@ export class GroupController extends BaseController {
     );
 
     return { id: id.value };
+  }
+
+  @Delete(':id')
+  public async delete(
+    @Param() request: ParamIdReqResDto,
+    @Session() session: AuthSession,
+  ): Promise<void> {
+    this.handleResult(
+      await this.deleteGroupUseCase.execute({
+        deletedBy: session.user.name,
+        id: request.id,
+      }),
+    );
   }
 
   @Patch(':id')

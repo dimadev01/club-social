@@ -3,5 +3,8 @@
     "allow": [
       "Bash(npm search:*)"
     ]
+  },
+  "enabledPlugins": {
+    "playwright@claude-plugins-official": true
   }
 }

@@ -1,7 +1,7 @@
-import { AuditedAggregateRoot } from '@/shared/domain/audited-aggregate-root';
 import { ApplicationError } from '@/shared/domain/errors/application.error';
-import { PersistenceMeta } from '@/shared/domain/persistence-meta';
+import { SoftDeletablePersistenceMeta } from '@/shared/domain/persistence-meta';
 import { err, ok, Result } from '@/shared/domain/result';
+import { SoftDeletableAggregateRoot } from '@/shared/domain/soft-deletable-aggregate-root';
 import { UniqueId } from '@/shared/domain/value-objects/unique-id/unique-id.vo';
 
 import { GroupCreatedEvent } from '../events/group-created.event';
@@ -21,7 +21,7 @@ export interface GroupProps {
   name: string;
 }
 
-export class GroupEntity extends AuditedAggregateRoot {
+export class GroupEntity extends SoftDeletableAggregateRoot {
   public get discount(): GroupDiscount {
     return this._discount;
   }
@@ -39,8 +39,8 @@ export class GroupEntity extends AuditedAggregateRoot {
   private _members: GroupMemberEntity[];
 
   private _name: string;
-  private constructor(props: GroupProps, meta?: PersistenceMeta) {
-    super(meta?.id, meta?.audit);
+  private constructor(props: GroupProps, meta?: SoftDeletablePersistenceMeta) {
+    super(meta?.id, meta?.audit, meta?.deleted);
 
     this._name = props.name;
     this._members = props.members;
@@ -101,7 +101,7 @@ export class GroupEntity extends AuditedAggregateRoot {
 
   public static fromPersistence(
     props: GroupProps,
-    meta: PersistenceMeta,
+    meta: SoftDeletablePersistenceMeta,
   ): GroupEntity {
     return new GroupEntity(props, meta);
   }
@@ -127,7 +127,7 @@ export class GroupEntity extends AuditedAggregateRoot {
         members: [...this._members],
         name: this._name,
       },
-      { audit: { ...this._audit }, id: this.id },
+      { audit: { ...this._audit }, deleted: { ...this._deleted }, id: this.id },
     );
   }
 

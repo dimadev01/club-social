@@ -14,6 +14,19 @@ import { GiTennisBall } from 'react-icons/gi';
 import { AntThemeMode } from './app.enum';
 import { useAppContext } from './AppContext';
 
+const PRIMARY_GREEN = '#22883e';
+
+const THEME_TOKEN: ThemeConfig['token'] = {
+  borderRadius: 6,
+  colorInfo: PRIMARY_GREEN,
+  colorPrimary: PRIMARY_GREEN,
+};
+
+const THEME_COMPONENTS: ThemeConfig['components'] = {
+  Button: { primaryShadow: 'none' },
+  Layout: { footerPadding: 0 },
+};
+
 export function AntProvider({ children }: PropsWithChildren) {
   const { preferences, selectedTheme } = useAppContext();
 
@@ -35,16 +48,9 @@ export function AntProvider({ children }: PropsWithChildren) {
   const themeConfig: ThemeConfig = useMemo(
     () => ({
       algorithm: algorithms,
-      components: {
-        Button: { primaryShadow: 'none' },
-        Layout: { footerPadding: 0 },
-      },
+      components: THEME_COMPONENTS,
       hashed: false,
-      token: {
-        borderRadius: 6,
-        colorInfo: '#22883e',
-        colorPrimary: '#22883e',
-      },
+      token: THEME_TOKEN,
       zeroRuntime: true,
     }),
     [algorithms],

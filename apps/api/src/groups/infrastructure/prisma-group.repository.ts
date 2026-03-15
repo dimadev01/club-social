@@ -35,9 +35,9 @@ export class PrismaGroupRepository implements GroupRepository {
   ) {}
 
   public async findById(id: UniqueId): Promise<GroupEntity | null> {
-    const group = await this.prismaService.group.findUnique({
+    const group = await this.prismaService.group.findFirst({
       include: { members: true },
-      where: { id: id.value },
+      where: { deletedAt: null, id: id.value },
     });
 
     if (!group) {
@@ -58,14 +58,14 @@ export class PrismaGroupRepository implements GroupRepository {
   }
 
   public async findByIdReadModel(id: UniqueId): Promise<GroupReadModel | null> {
-    const group = await this.prismaService.group.findUnique({
+    const group = await this.prismaService.group.findFirst({
       include: {
         members: {
           include: { member: { include: { user: true } } },
           orderBy: { member: { user: { lastName: 'asc' } } },
         },
       },
-      where: { id: id.value },
+      where: { deletedAt: null, id: id.value },
     });
 
     if (!group) {
@@ -78,7 +78,7 @@ export class PrismaGroupRepository implements GroupRepository {
   public async findByIds(ids: UniqueId[]): Promise<GroupEntity[]> {
     const groups = await this.prismaService.group.findMany({
       include: { members: true },
-      where: { id: { in: ids.map((id) => id.value) } },
+      where: { deletedAt: null, id: { in: ids.map((id) => id.value) } },
     });
 
     return groups.map((group) => this.groupMapper.toDomain(group));
@@ -87,7 +87,10 @@ export class PrismaGroupRepository implements GroupRepository {
   public async findByMemberId(memberId: UniqueId): Promise<GroupEntity | null> {
     const group = await this.prismaService.group.findFirst({
       include: { members: true },
-      where: { members: { some: { memberId: memberId.value } } },
+      where: {
+        deletedAt: null,
+        members: { some: { memberId: memberId.value } },
+      },
     });
 
     return group ? this.groupMapper.toDomain(group) : null;
@@ -100,7 +103,10 @@ export class PrismaGroupRepository implements GroupRepository {
       include: {
         members: { include: { member: { include: { user: true } } } },
       },
-      where: { members: { some: { memberId: memberId.value } } },
+      where: {
+        deletedAt: null,
+        members: { some: { memberId: memberId.value } },
+      },
     });
 
     return group ? this.toReadModel(group) : null;
@@ -109,9 +115,9 @@ export class PrismaGroupRepository implements GroupRepository {
   public async findDiscountPercentByMemberId(
     memberId: UniqueId,
   ): Promise<number> {
-    const membership = await this.prismaService.groupMember.findUnique({
+    const membership = await this.prismaService.groupMember.findFirst({
       include: { group: true },
-      where: { memberId: memberId.value },
+      where: { group: { deletedAt: null }, memberId: memberId.value },
     });
 
     if (!membership) {
@@ -122,8 +128,8 @@ export class PrismaGroupRepository implements GroupRepository {
   }
 
   public async findGroupSizeByMemberId(memberId: UniqueId): Promise<number> {
-    const membership = await this.prismaService.groupMember.findUnique({
-      where: { memberId: memberId.value },
+    const membership = await this.prismaService.groupMember.findFirst({
+      where: { group: { deletedAt: null }, memberId: memberId.value },
     });
 
     if (!membership) {
@@ -131,7 +137,7 @@ export class PrismaGroupRepository implements GroupRepository {
     }
 
     return this.prismaService.groupMember.count({
-      where: { groupId: membership.groupId },
+      where: { group: { deletedAt: null }, groupId: membership.groupId },
     });
   }
 
@@ -206,7 +212,7 @@ export class PrismaGroupRepository implements GroupRepository {
     orderBy: GroupOrderByWithRelationInput[];
     where: GroupWhereInput;
   } {
-    const where: GroupWhereInput = {};
+    const where: GroupWhereInput = { deletedAt: null };
 
     if (params.filters?.memberId) {
       where.members = {
