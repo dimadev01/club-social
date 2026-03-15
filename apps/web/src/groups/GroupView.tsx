@@ -1,7 +1,11 @@
-import { Button, Col, Space, Tag } from 'antd';
+import { useQueryClient } from '@tanstack/react-query';
+import { App, Button, Col, Space, Tag } from 'antd';
 import { useNavigate, useParams } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
+import { useMutation } from '@/shared/hooks/useMutation';
+import { $fetch } from '@/shared/lib/fetch';
+import { queryKeys } from '@/shared/lib/query-keys';
 import { Card, Descriptions, DescriptionsAudit, NotFound, Row } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -11,8 +15,19 @@ export function GroupView() {
   const permissions = usePermissions();
   const { id } = useParams();
   const navigate = useNavigate();
+  const { message, modal } = App.useApp();
+  const queryClient = useQueryClient();
 
   const { data: group, isLoading } = useGroup(id);
+
+  const { isPending: isDeleting, mutate: deleteGroup } = useMutation({
+    mutationFn: () => $fetch(`groups/${id}`, { method: 'DELETE' }),
+    onSuccess: () => {
+      message.success('Grupo eliminado');
+      navigate(appRoutes.groups.list);
+      queryClient.invalidateQueries({ queryKey: queryKeys.groups._def });
+    },
+  });
 
   if (isLoading) {
     return <Card loading />;
@@ -23,10 +38,31 @@ export function GroupView() {
   }
 
   const canEdit = permissions.groups.update;
+  const canDelete = permissions.groups.delete;
+
+  const handleDelete = () => {
+    modal.confirm({
+      content: 'Esta acción no se puede deshacer.',
+      okButtonProps: { danger: true },
+      okText: 'Eliminar',
+      onOk: () => deleteGroup(),
+      title: '¿Eliminar grupo?',
+    });
+  };
 
   return (
     <Card
       actions={[
+        canDelete && (
+          <Button
+            danger
+            key="delete"
+            loading={isDeleting}
+            onClick={handleDelete}
+          >
+            Eliminar
+          </Button>
+        ),
         canEdit && (
           <Button
             key="edit"

@@ -47,6 +47,10 @@ export class PrismaGroupMapper {
           updatedAt: group.updatedAt,
           updatedBy: group.updatedBy,
         },
+        deleted: {
+          deletedAt: group.deletedAt,
+          deletedBy: group.deletedBy,
+        },
         id: UniqueId.raw({ value: group.id }),
       },
     );
@@ -54,6 +58,8 @@ export class PrismaGroupMapper {
 
   public toUpdateInput(group: GroupEntity): GroupUpdateInput {
     return {
+      deletedAt: group.deletedAt,
+      deletedBy: group.deletedBy,
       discountPercent: group.discount.value,
       name: group.name,
       updatedBy: group.updatedBy,

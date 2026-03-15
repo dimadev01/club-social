@@ -42,6 +42,8 @@ export type GroupMinAggregateOutputType = {
   createdBy: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
+  deletedAt: Date | null;
+  deletedBy: string | null;
 };
 
 export type GroupMaxAggregateOutputType = {
@@ -52,6 +54,8 @@ export type GroupMaxAggregateOutputType = {
   createdBy: string | null;
   updatedAt: Date | null;
   updatedBy: string | null;
+  deletedAt: Date | null;
+  deletedBy: string | null;
 };
 
 export type GroupCountAggregateOutputType = {
@@ -62,6 +66,8 @@ export type GroupCountAggregateOutputType = {
   createdBy: number;
   updatedAt: number;
   updatedBy: number;
+  deletedAt: number;
+  deletedBy: number;
   _all: number;
 };
 
@@ -81,6 +87,8 @@ export type GroupMinAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
+  deletedAt?: true;
+  deletedBy?: true;
 };
 
 export type GroupMaxAggregateInputType = {
@@ -91,6 +99,8 @@ export type GroupMaxAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
+  deletedAt?: true;
+  deletedBy?: true;
 };
 
 export type GroupCountAggregateInputType = {
@@ -101,6 +111,8 @@ export type GroupCountAggregateInputType = {
   createdBy?: true;
   updatedAt?: true;
   updatedBy?: true;
+  deletedAt?: true;
+  deletedBy?: true;
   _all?: true;
 };
 
@@ -205,6 +217,8 @@ export type GroupGroupByOutputType = {
   createdBy: string;
   updatedAt: Date;
   updatedBy: string | null;
+  deletedAt: Date | null;
+  deletedBy: string | null;
   _count: GroupCountAggregateOutputType | null;
   _avg: GroupAvgAggregateOutputType | null;
   _sum: GroupSumAggregateOutputType | null;
@@ -235,6 +249,8 @@ export type GroupWhereInput = {
   createdBy?: Prisma.StringFilter<'Group'> | string;
   updatedAt?: Prisma.DateTimeFilter<'Group'> | Date | string;
   updatedBy?: Prisma.StringNullableFilter<'Group'> | string | null;
+  deletedAt?: Prisma.DateTimeNullableFilter<'Group'> | Date | string | null;
+  deletedBy?: Prisma.StringNullableFilter<'Group'> | string | null;
   members?: Prisma.GroupMemberListRelationFilter;
 };
 
@@ -246,6 +262,8 @@ export type GroupOrderByWithRelationInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   members?: Prisma.GroupMemberOrderByRelationAggregateInput;
 };
 
@@ -261,6 +279,8 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<
     createdBy?: Prisma.StringFilter<'Group'> | string;
     updatedAt?: Prisma.DateTimeFilter<'Group'> | Date | string;
     updatedBy?: Prisma.StringNullableFilter<'Group'> | string | null;
+    deletedAt?: Prisma.DateTimeNullableFilter<'Group'> | Date | string | null;
+    deletedBy?: Prisma.StringNullableFilter<'Group'> | string | null;
     members?: Prisma.GroupMemberListRelationFilter;
   },
   'id'
@@ -274,6 +294,8 @@ export type GroupOrderByWithAggregationInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.GroupCountOrderByAggregateInput;
   _avg?: Prisma.GroupAvgOrderByAggregateInput;
   _max?: Prisma.GroupMaxOrderByAggregateInput;
@@ -299,6 +321,15 @@ export type GroupScalarWhereWithAggregatesInput = {
     | Prisma.StringNullableWithAggregatesFilter<'Group'>
     | string
     | null;
+  deletedAt?:
+    | Prisma.DateTimeNullableWithAggregatesFilter<'Group'>
+    | Date
+    | string
+    | null;
+  deletedBy?:
+    | Prisma.StringNullableWithAggregatesFilter<'Group'>
+    | string
+    | null;
 };
 
 export type GroupCreateInput = {
@@ -309,6 +340,8 @@ export type GroupCreateInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
   members?: Prisma.GroupMemberCreateNestedManyWithoutGroupInput;
 };
 
@@ -320,6 +353,8 @@ export type GroupUncheckedCreateInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
   members?: Prisma.GroupMemberUncheckedCreateNestedManyWithoutGroupInput;
 };
 
@@ -331,6 +366,12 @@ export type GroupUpdateInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   members?: Prisma.GroupMemberUpdateManyWithoutGroupNestedInput;
 };
 
@@ -342,6 +383,12 @@ export type GroupUncheckedUpdateInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   members?: Prisma.GroupMemberUncheckedUpdateManyWithoutGroupNestedInput;
 };
 
@@ -353,6 +400,8 @@ export type GroupCreateManyInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
 };
 
 export type GroupUpdateManyMutationInput = {
@@ -363,6 +412,12 @@ export type GroupUpdateManyMutationInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type GroupUncheckedUpdateManyInput = {
@@ -373,6 +428,12 @@ export type GroupUncheckedUpdateManyInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type GroupCountOrderByAggregateInput = {
@@ -383,6 +444,8 @@ export type GroupCountOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
+  deletedAt?: Prisma.SortOrder;
+  deletedBy?: Prisma.SortOrder;
 };
 
 export type GroupAvgOrderByAggregateInput = {
@@ -397,6 +460,8 @@ export type GroupMaxOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
+  deletedAt?: Prisma.SortOrder;
+  deletedBy?: Prisma.SortOrder;
 };
 
 export type GroupMinOrderByAggregateInput = {
@@ -407,6 +472,8 @@ export type GroupMinOrderByAggregateInput = {
   createdBy?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   updatedBy?: Prisma.SortOrder;
+  deletedAt?: Prisma.SortOrder;
+  deletedBy?: Prisma.SortOrder;
 };
 
 export type GroupSumOrderByAggregateInput = {
@@ -452,6 +519,8 @@ export type GroupCreateWithoutMembersInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
 };
 
 export type GroupUncheckedCreateWithoutMembersInput = {
@@ -462,6 +531,8 @@ export type GroupUncheckedCreateWithoutMembersInput = {
   createdBy: string;
   updatedAt?: Date | string;
   updatedBy?: string | null;
+  deletedAt?: Date | string | null;
+  deletedBy?: string | null;
 };
 
 export type GroupCreateOrConnectWithoutMembersInput = {
@@ -500,6 +571,12 @@ export type GroupUpdateWithoutMembersInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 export type GroupUncheckedUpdateWithoutMembersInput = {
@@ -510,6 +587,12 @@ export type GroupUncheckedUpdateWithoutMembersInput = {
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 
 /**
@@ -562,6 +645,8 @@ export type GroupSelect<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
+    deletedAt?: boolean;
+    deletedBy?: boolean;
     members?: boolean | Prisma.Group$membersArgs<ExtArgs>;
     _count?: boolean | Prisma.GroupCountOutputTypeDefaultArgs<ExtArgs>;
   },
@@ -580,6 +665,8 @@ export type GroupSelectCreateManyAndReturn<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
+    deletedAt?: boolean;
+    deletedBy?: boolean;
   },
   ExtArgs['result']['group']
 >;
@@ -596,6 +683,8 @@ export type GroupSelectUpdateManyAndReturn<
     createdBy?: boolean;
     updatedAt?: boolean;
     updatedBy?: boolean;
+    deletedAt?: boolean;
+    deletedBy?: boolean;
   },
   ExtArgs['result']['group']
 >;
@@ -608,6 +697,8 @@ export type GroupSelectScalar = {
   createdBy?: boolean;
   updatedAt?: boolean;
   updatedBy?: boolean;
+  deletedAt?: boolean;
+  deletedBy?: boolean;
 };
 
 export type GroupOmit<
@@ -620,7 +711,9 @@ export type GroupOmit<
   | 'createdAt'
   | 'createdBy'
   | 'updatedAt'
-  | 'updatedBy',
+  | 'updatedBy'
+  | 'deletedAt'
+  | 'deletedBy',
   ExtArgs['result']['group']
 >;
 export type GroupInclude<
@@ -656,6 +749,8 @@ export type $GroupPayload<
       createdBy: string;
       updatedAt: Date;
       updatedBy: string | null;
+      deletedAt: Date | null;
+      deletedBy: string | null;
     },
     ExtArgs['result']['group']
   >;
@@ -1266,6 +1361,8 @@ export interface GroupFieldRefs {
   readonly createdBy: Prisma.FieldRef<'Group', 'String'>;
   readonly updatedAt: Prisma.FieldRef<'Group', 'DateTime'>;
   readonly updatedBy: Prisma.FieldRef<'Group', 'String'>;
+  readonly deletedAt: Prisma.FieldRef<'Group', 'DateTime'>;
+  readonly deletedBy: Prisma.FieldRef<'Group', 'String'>;
 }
 
 // Custom InputTypes

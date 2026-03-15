@@ -4,6 +4,7 @@ export const appRoutes = {
     list: '/audit-logs',
   } as const,
   auth: {
+    featureBaseSso: '/auth/feature-base/sso',
     login: '/auth/login',
     logout: '/auth/logout',
     root: '/auth',

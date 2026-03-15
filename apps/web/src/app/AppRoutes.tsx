@@ -143,6 +143,7 @@ export function AppRoutes() {
 
         <Route path={appRoutes.auth.root}>
           <Route element={<LoginPage />} path={appRoutes.auth.login} />
+          <Route element={<LoginPage />} path={appRoutes.auth.featureBaseSso} />
           <Route element={<LogoutPage />} path={appRoutes.auth.logout} />
         </Route>
 

@@ -65,12 +65,13 @@ export function QuickActionsCard() {
             <Link to={action.to}>
               <Flex
                 align="center"
-                className="rounded-lg px-4 py-6 transition-colors hover:bg-(--hover-bg)"
+                className="px-4 py-6 transition-colors hover:bg-(--hover-bg)"
                 gap="small"
                 style={
                   {
                     '--hover-bg': token.colorBgTextHover,
                     border: `1px solid ${token.colorBorderSecondary}`,
+                    borderRadius: token.borderRadius,
                   } as React.CSSProperties
                 }
                 vertical
