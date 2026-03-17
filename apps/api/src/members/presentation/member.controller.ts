@@ -200,7 +200,7 @@ export class MembersController extends BaseController {
       },
       {
         accessor: (row) => NumberFormat.fromCents(row.balance),
-        header: 'Saldo',
+        header: 'Saldo a favor',
       },
     ]);
 
