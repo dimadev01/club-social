@@ -4,6 +4,7 @@ import {
   BarChartOutlined,
   FilePdfOutlined,
   FileTextOutlined,
+  MenuOutlined,
   NotificationOutlined,
   SettingOutlined,
   TeamOutlined,
@@ -25,7 +26,7 @@ import {
   theme,
   Typography,
 } from 'antd';
-import { type PropsWithChildren, useMemo, useState } from 'react';
+import { type PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { GrGroup } from 'react-icons/gr';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
@@ -53,6 +54,11 @@ import { useAppContext } from './AppContext';
 
 export function AppLayout({ children }: PropsWithChildren) {
   const { sm } = Grid.useBreakpoint();
+  // sm === undefined during initial render, false on mobile, true on desktop
+  const isMobile = sm === false;
+  // For collapsedWidth: treat undefined (loading) same as mobile so the
+  // hamburger trigger is rendered from the very first paint on mobile
+  const isMobileOrLoading = sm !== true;
   const { selectedTheme } = useAppContext();
   const navigate = useNavigate();
   const { token } = theme.useToken();
@@ -64,6 +70,16 @@ export function AppLayout({ children }: PropsWithChildren) {
     'is-sidebar-collapsed',
     true,
   );
+  // normalize: treat undefined (pre-hydration) as collapsed
+  const isCollapsed = collapsed !== false;
+
+  useEffect(() => {
+    if (isMobile) {
+      setCollapsed(true);
+    } else if (sm !== undefined) {
+      setCollapsed(false);
+    }
+  }, [isMobile]);
 
   const user = useSessionUser();
   const isAdmin = user.role === UserRole.ADMIN;
@@ -209,34 +225,45 @@ export function AppLayout({ children }: PropsWithChildren) {
   const defaultOpenKeys = [topLevelPath];
 
   return (
-    <Layout className="min-h-screen" hasSider>
+    <Layout className="min-h-screen" hasSider={!isMobile}>
       <Layout.Sider
-        className="min-h-screen overflow-auto [scrollbar-gutter:stable] [scrollbar-width:thin]"
-        collapsed={collapsed}
+        breakpoint="sm"
+        className={cn(
+          'overflow-auto [scrollbar-gutter:stable] [scrollbar-width:thin]',
+          isMobile
+            ? 'fixed inset-y-0 left-0 z-50 min-h-screen'
+            : 'min-h-screen',
+        )}
+        collapsed={isCollapsed}
+        collapsedWidth={isMobileOrLoading ? 0 : 80}
         collapsible
         onCollapse={setCollapsed}
         theme={selectedTheme}
+        trigger={isMobile ? null : undefined}
+        zeroWidthTriggerStyle={{ position: 'fixed', top: 0 }}
       >
         <Flex className="h-full" vertical>
-          <Image
-            alt="Club Social Logo"
-            className="mx-auto max-w-[128px]"
-            fetchPriority="high"
-            preview={false}
-            rootClassName="w-full mb-6 mt-4"
-            src="/club-social-logo.png"
-          />
+          {!isMobile && (
+            <Image
+              alt="Club Social Logo"
+              className="mx-auto max-w-[128px]"
+              fetchPriority="high"
+              preview={false}
+              rootClassName="w-full mb-6 mt-4"
+              src="/club-social-logo.png"
+            />
+          )}
 
           <Space
             align="center"
-            className={cn('mx-auto mb-6 flex px-4')}
-            size={collapsed ? 0 : undefined}
+            className={cn('mx-auto mb-6 flex px-4', isMobile ? 'mt-4' : '')}
+            size={isCollapsed ? 0 : undefined}
           >
             <Avatar className="text-center" size="default">
               {user.firstName.charAt(0)}
               {user.lastName.charAt(0)}
             </Avatar>
-            {!collapsed && (
+            {!isCollapsed && (
               <Typography.Text>
                 Hola {user.firstName} {user.lastName}
               </Typography.Text>
@@ -259,7 +286,10 @@ export function AppLayout({ children }: PropsWithChildren) {
               defaultOpenKeys={defaultOpenKeys}
               items={menuItems}
               mode="inline"
-              onClick={({ key }) => navigate(key)}
+              onClick={({ key }) => {
+                navigate(key);
+                if (isMobile) setCollapsed(true);
+              }}
               selectedKeys={selectedKeys}
               theme={selectedTheme}
             />
@@ -268,6 +298,39 @@ export function AppLayout({ children }: PropsWithChildren) {
       </Layout.Sider>
 
       <Layout>
+        {isMobile && (
+          <>
+            <div
+              className={cn(
+                'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
+                isCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100',
+              )}
+              onClick={() => setCollapsed(true)}
+            />
+            <Layout.Header
+              className="flex items-center gap-3 px-4"
+              style={{
+                background: token.colorBgContainer,
+                height: 52,
+                lineHeight: '52px',
+                padding: '0 16px',
+              }}
+            >
+              <Button
+                icon={<MenuOutlined />}
+                onClick={() => setCollapsed(!isCollapsed)}
+                type="text"
+              />
+              <Image
+                alt="Club Social Logo"
+                preview={false}
+                src="/club-social-logo.png"
+                style={{ height: 36, width: 'auto' }}
+              />
+            </Layout.Header>
+          </>
+        )}
+
         <Layout.Content className="p-4 xl:px-10">{children}</Layout.Content>
 
         <Layout.Footer className="p-4">
