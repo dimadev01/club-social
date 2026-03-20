@@ -42,7 +42,6 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
   return (
     <Card
       extra={<DuesIcon />}
-      size="small"
       title={
         <Space size="small">
           Deudas pendientes

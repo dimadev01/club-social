@@ -4,7 +4,7 @@ import {
   MemberCategoryLabel,
   MemberCategorySort,
 } from '@club-social/shared/members';
-import { Col, Space, Statistic, theme } from 'antd';
+import { Col, Space, Statistic, theme, Typography } from 'antd';
 import { useMemo } from 'react';
 import { Link } from 'react-router';
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
@@ -15,6 +15,8 @@ import {
   Card,
   DuesIcon,
   Page,
+  PageHeader,
+  PageTitle,
   PaymentsIcon,
   Row,
   Table,
@@ -49,6 +51,9 @@ export function MemberStatisticsPage() {
 
   return (
     <Page>
+      <PageHeader>
+        <PageTitle>Estadísticas de socios</PageTitle>
+      </PageHeader>
       <Space className="flex" vertical>
         <MembersByCategoryCard
           data={statistics?.byCategory}
@@ -88,7 +93,8 @@ function MembersByCategoryCard({
   }, [data]);
 
   return (
-    <Card title="Socios por categoría">
+    <>
+      <Typography.Title level={3}>Socios por categoría</Typography.Title>
       <Table
         columns={[
           {
@@ -117,7 +123,7 @@ function MembersByCategoryCard({
           </Table.Summary.Row>
         )}
       />
-    </Card>
+    </>
   );
 }
 
@@ -148,61 +154,67 @@ function MembersBySexCard({ data, isLoading }: MembersBySexCardProps) {
   const total = (data?.male ?? 0) + (data?.female ?? 0) + (data?.unknown ?? 0);
 
   return (
-    <Card loading={isLoading} title="Socios por sexo">
-      <Row>
-        <Col lg={12} xs={24}>
-          <div className="h-64">
-            {total > 0 && (
-              <ResponsiveContainer height="100%" width="100%">
-                <PieChart>
-                  <Pie
-                    cx="50%"
-                    cy="50%"
-                    data={chartData}
-                    dataKey="value"
-                    innerRadius={60}
-                    label={({ name, percent }) =>
-                      `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`
-                    }
-                    labelLine={false}
-                    outerRadius={100}
-                    paddingAngle={2}
-                  />
-                  <Tooltip formatter={(value) => [value, 'Cantidad']} />
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </Col>
-        <Col lg={12} xs={24}>
-          <Space className="flex" size="large" vertical>
-            <Statistic
-              loading={isLoading}
-              title="Masculino"
-              value={data?.male ?? 0}
-            />
-            <Statistic
-              loading={isLoading}
-              title="Femenino"
-              value={data?.female ?? 0}
-            />
-            {(data?.unknown ?? 0) > 0 && (
+    <>
+      <Typography.Title level={3}>Socios por sexo</Typography.Title>
+      <Card>
+        <Row>
+          <Col lg={12} xs={24}>
+            <div className="h-64">
+              {total > 0 && (
+                <ResponsiveContainer height="100%" width="100%">
+                  <PieChart>
+                    <Pie
+                      cx="50%"
+                      cy="50%"
+                      data={chartData}
+                      dataKey="value"
+                      innerRadius={60}
+                      label={({ name, percent }) =>
+                        `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`
+                      }
+                      labelLine={false}
+                      outerRadius={100}
+                      paddingAngle={2}
+                    />
+                    <Tooltip formatter={(value) => [value, 'Cantidad']} />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
+            </div>
+          </Col>
+          <Col lg={12} xs={24}>
+            <Space className="flex" size="large" vertical>
               <Statistic
                 loading={isLoading}
-                title="Sin especificar"
-                value={data?.unknown ?? 0}
+                title="Masculino"
+                value={data?.male ?? 0}
               />
-            )}
-          </Space>
-        </Col>
-      </Row>
-    </Card>
+              <Statistic
+                loading={isLoading}
+                title="Femenino"
+                value={data?.female ?? 0}
+              />
+              {(data?.unknown ?? 0) > 0 && (
+                <Statistic
+                  loading={isLoading}
+                  title="Sin especificar"
+                  value={data?.unknown ?? 0}
+                />
+              )}
+            </Space>
+          </Col>
+        </Row>
+      </Card>
+    </>
   );
 }
 
 function TopDebtorsCard({ data, isLoading }: TopDebtorsCardProps) {
   return (
-    <Card title="Top 10 socios con mayor deuda">
+    <>
+      <Typography.Title level={3}>
+        Top 10 socios con mayor deuda
+      </Typography.Title>
       <Table
         columns={[
           {
@@ -270,6 +282,6 @@ function TopDebtorsCard({ data, isLoading }: TopDebtorsCardProps) {
         pagination={false}
         size="small"
       />
-    </Card>
+    </>
   );
 }

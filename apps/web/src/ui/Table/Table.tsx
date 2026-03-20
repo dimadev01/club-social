@@ -6,8 +6,7 @@ export function Table<RecordType>({
 }: TableProps<RecordType>) {
   return (
     <AntTable
-      // bordered={false}
-      bordered
+      bordered={false}
       pagination={
         pagination !== false
           ? {

@@ -12,7 +12,14 @@ import { useNavigate } from 'react-router';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { PostHogEvent } from '@/shared/lib/posthog-events';
-import { Card, FormSubmitButton, NotFound } from '@/ui';
+import {
+  Card,
+  FormSubmitButton,
+  NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
+} from '@/ui';
 import { FormSubmitButtonAndBack } from '@/ui/Form/FormSubmitAndBack';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -73,35 +80,38 @@ export function MovementNew() {
   const isMutating = createMovementMutation.isPending;
 
   return (
-    <Card
-      actions={[
-        <FormSubmitButtonAndBack
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>Nuevo movimiento</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          <FormSubmitButtonAndBack
+            disabled={isMutating}
+            loading={isMutating}
+            onClick={() => (shouldNavigateBack.current = true)}
+          />,
+          <FormSubmitButton
+            disabled={isMutating}
+            loading={isMutating}
+            onClick={() => (shouldNavigateBack.current = false)}
+          >
+            Crear movimiento
+          </FormSubmitButton>,
+        ]}
+      >
+        <MovementForm
           disabled={isMutating}
-          loading={isMutating}
-          onClick={() => (shouldNavigateBack.current = true)}
-        />,
-        <FormSubmitButton
-          disabled={isMutating}
-          loading={isMutating}
-          onClick={() => (shouldNavigateBack.current = false)}
-        >
-          Crear movimiento
-        </FormSubmitButton>,
-      ]}
-      backButton
-      title="Nuevo movimiento"
-    >
-      <MovementForm
-        disabled={isMutating}
-        initialValues={{
-          amount: 0,
-          category: MovementCategory.OTHER,
-          date: dayjs(),
-          notes: null,
-          type: MovementType.OUTFLOW,
-        }}
-        onSubmit={handleSubmit}
-      />
-    </Card>
+          initialValues={{
+            amount: 0,
+            category: MovementCategory.OTHER,
+            date: dayjs(),
+            notes: null,
+            type: MovementType.OUTFLOW,
+          }}
+          onSubmit={handleSubmit}
+        />
+      </Card>
+    </Page>
   );
 }

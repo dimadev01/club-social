@@ -20,12 +20,7 @@ export function MovementStatisticsCard({ dateRange }: Props) {
   });
 
   return (
-    <Card
-      extra={<MovementsIcon />}
-      size="small"
-      title="Movimientos"
-      type="inner"
-    >
+    <Card extra={<MovementsIcon />} title="Movimientos" type="inner">
       <Card.Grid className="w-full md:w-1/3">
         <Statistic
           loading={isLoading}

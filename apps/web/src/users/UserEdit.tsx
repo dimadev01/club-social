@@ -7,7 +7,14 @@ import { useNavigate, useParams } from 'react-router';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { PostHogEvent } from '@/shared/lib/posthog-events';
-import { Card, FormSubmitButton, NotFound } from '@/ui';
+import {
+  Card,
+  FormSubmitButton,
+  NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
+} from '@/ui';
 
 import { usePermissions } from './use-permissions';
 import { UserForm, type UserFormData } from './UserForm';
@@ -45,7 +52,7 @@ export function UserEdit() {
   }
 
   if (isLoading) {
-    return <Card loading title="Editar usuario" />;
+    return <Card loading />;
   }
 
   if (!user) {
@@ -55,26 +62,29 @@ export function UserEdit() {
   const isMutating = updateUserMutation.isPending;
 
   return (
-    <Card
-      actions={[
-        <FormSubmitButton disabled={isMutating} loading={isMutating}>
-          Actualizar usuario
-        </FormSubmitButton>,
-      ]}
-      backButton
-      title={user.name}
-    >
-      <UserForm
-        disabled={isMutating}
-        initialValues={{
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          status: user.status,
-        }}
-        mode="edit"
-        onSubmit={handleSubmit}
-      />
-    </Card>
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>{user.name}</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          <FormSubmitButton disabled={isMutating} loading={isMutating}>
+            Actualizar usuario
+          </FormSubmitButton>,
+        ]}
+      >
+        <UserForm
+          disabled={isMutating}
+          initialValues={{
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            status: user.status,
+          }}
+          mode="edit"
+          onSubmit={handleSubmit}
+        />
+      </Card>
+    </Page>
   );
 }

@@ -1,11 +1,11 @@
 import type { Dayjs } from 'dayjs';
 
 import { DateFormat } from '@club-social/shared/lib';
-import { Space } from 'antd';
+import { Space, Typography } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 
-import { Card, Form } from '@/ui';
+import { Form } from '@/ui';
 
 import { DuePendingStatisticsCard } from './DuePendingStatisticsCard';
 import { MovementStatisticsCard } from './MovementStatisticsCard';
@@ -62,7 +62,9 @@ export function MainStatisticsCard() {
   );
 
   return (
-    <Card title="Balance">
+    <>
+      <Typography.Title level={3}>Balance</Typography.Title>
+
       <Form.Item label="Período de tiempo">
         <StatisticsFilters
           onChange={(dates) => setDateRange(dates)}
@@ -74,6 +76,6 @@ export function MainStatisticsCard() {
         <MovementStatisticsCard dateRange={dateRange} />
         <DuePendingStatisticsCard dateRange={dateRange} />
       </Space>
-    </Card>
+    </>
   );
 }

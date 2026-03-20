@@ -342,6 +342,13 @@ export function PaymentForm({
           </Form.Item>
 
           <Form.Item<PaymentFormSchema>
+            label="Número de recibo"
+            name="receiptNumber"
+          >
+            <Input placeholder="Número de recibo (opcional)" />
+          </Form.Item>
+
+          <Form.Item<PaymentFormSchema>
             label="Socio"
             name="memberId"
             rules={[{ message: 'Debe seleccionar un socio', required: true }]}
@@ -351,13 +358,6 @@ export function PaymentForm({
               loading={isMemberLoading}
               placeholder="Buscar y seleccionar socio..."
             />
-          </Form.Item>
-
-          <Form.Item<PaymentFormSchema>
-            label="Número de recibo"
-            name="receiptNumber"
-          >
-            <Input placeholder="Número de recibo (opcional)" />
           </Form.Item>
 
           <Form.Item<PaymentFormSchema> label="Notas" name="notes">

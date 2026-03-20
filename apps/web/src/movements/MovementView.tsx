@@ -20,6 +20,9 @@ import {
   DescriptionsAudit,
   NavigateToPayment,
   NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
   Row,
   VoidModal,
 } from '@/ui';
@@ -63,81 +66,84 @@ export function MovementView() {
     movement.mode === MovementMode.MANUAL;
 
   return (
-    <Card
-      actions={[
-        canVoid && (
-          <Button
-            danger
-            disabled={isMutating}
-            onClick={() => setIsVoidModalOpen(true)}
-            type="primary"
-          >
-            Anular movimiento
-          </Button>
-        ),
-      ].filter(Boolean)}
-      backButton
-      title="Detalle de movimiento"
-    >
-      <Row>
-        <Col md={12} xs={24}>
-          <Descriptions
-            items={[
-              {
-                children: DateFormat.date(movement.date),
-                label: 'Fecha',
-              },
-              {
-                children: MovementCategoryLabel[movement.category],
-                label: 'Categoría',
-              },
-              {
-                children: NumberFormat.currencyCents(movement.amount, {
-                  maximumFractionDigits: 2,
-                }),
-                label: 'Monto',
-              },
-              {
-                children: MovementStatusLabel[movement.status],
-                label: 'Estado',
-              },
-              {
-                children: MovementModeLabel[movement.mode],
-                label: 'Modo',
-              },
-              {
-                children: movement.payment ? (
-                  <NavigateToPayment
-                    formatDate={false}
-                    id={movement.payment.id}
-                  >
-                    Ver pago
-                  </NavigateToPayment>
-                ) : (
-                  '-'
-                ),
-                label: 'Pago',
-              },
-              {
-                children: movement.notes ?? '-',
-                label: 'Notas',
-              },
-            ]}
-          />
-        </Col>
-        <Col md={12} xs={24}>
-          <DescriptionsAudit {...movement} />
-        </Col>
-      </Row>
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>Detalle de movimiento</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          canVoid && (
+            <Button
+              danger
+              disabled={isMutating}
+              onClick={() => setIsVoidModalOpen(true)}
+              type="primary"
+            >
+              Anular movimiento
+            </Button>
+          ),
+        ].filter(Boolean)}
+      >
+        <Row>
+          <Col md={12} xs={24}>
+            <Descriptions
+              items={[
+                {
+                  children: DateFormat.date(movement.date),
+                  label: 'Fecha',
+                },
+                {
+                  children: MovementCategoryLabel[movement.category],
+                  label: 'Categoría',
+                },
+                {
+                  children: NumberFormat.currencyCents(movement.amount, {
+                    maximumFractionDigits: 2,
+                  }),
+                  label: 'Monto',
+                },
+                {
+                  children: MovementStatusLabel[movement.status],
+                  label: 'Estado',
+                },
+                {
+                  children: MovementModeLabel[movement.mode],
+                  label: 'Modo',
+                },
+                {
+                  children: movement.payment ? (
+                    <NavigateToPayment
+                      formatDate={false}
+                      id={movement.payment.id}
+                    >
+                      Ver pago
+                    </NavigateToPayment>
+                  ) : (
+                    '-'
+                  ),
+                  label: 'Pago',
+                },
+                {
+                  children: movement.notes ?? '-',
+                  label: 'Notas',
+                },
+              ]}
+            />
+          </Col>
+          <Col md={12} xs={24}>
+            <DescriptionsAudit {...movement} />
+          </Col>
+        </Row>
 
-      <VoidModal
-        onCancel={() => setIsVoidModalOpen(false)}
-        onConfirm={(reason) => {
-          voidMovementMutation.mutate({ voidReason: reason });
-          setIsVoidModalOpen(false);
-        }}
-        open={isVoidModalOpen}
-      />
-    </Card>
+        <VoidModal
+          onCancel={() => setIsVoidModalOpen(false)}
+          onConfirm={(reason) => {
+            voidMovementMutation.mutate({ voidReason: reason });
+            setIsVoidModalOpen(false);
+          }}
+          open={isVoidModalOpen}
+        />
+      </Card>
+    </Page>
   );
 }

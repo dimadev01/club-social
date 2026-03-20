@@ -5,7 +5,12 @@ import { Flex, type FlexProps, Spin, Typography } from 'antd';
 
 import { cn } from '@/shared/lib/utils';
 
+import { BackButton } from './BackButton';
 import { Card } from './Card';
+
+interface PageHeaderProps extends FlexProps {
+  backButton?: boolean;
+}
 
 export function Page(props: React.HTMLAttributes<HTMLDivElement>) {
   return <div {...props} />;
@@ -18,7 +23,12 @@ export function PageActions({
   return <div className={cn(className)} {...props} />;
 }
 
-export function PageHeader({ children, className, ...props }: FlexProps) {
+export function PageHeader({
+  backButton = false,
+  children,
+  className,
+  ...props
+}: PageHeaderProps) {
   return (
     <Flex
       align="center"
@@ -28,7 +38,14 @@ export function PageHeader({ children, className, ...props }: FlexProps) {
       wrap
       {...props}
     >
-      {children}
+      {backButton ? (
+        <Flex align="center" gap="small">
+          <BackButton size="large" />
+          {children}
+        </Flex>
+      ) : (
+        children
+      )}
     </Flex>
   );
 }
@@ -45,7 +62,7 @@ export function PageTableActions({ className, ...props }: FlexProps) {
   return (
     <Flex
       align="flex-start"
-      className={cn('mb-2', className)}
+      className={cn('mb-4', className)}
       gap="middle"
       {...props}
     />

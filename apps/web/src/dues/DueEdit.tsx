@@ -11,7 +11,14 @@ import { useNavigate, useParams } from 'react-router';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { PostHogEvent } from '@/shared/lib/posthog-events';
-import { Card, FormSubmitButton, NotFound } from '@/ui';
+import {
+  Card,
+  FormSubmitButton,
+  NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueForm, type DueFormData } from './DueForm';
@@ -68,29 +75,33 @@ export function DueEdit() {
   ];
 
   return (
-    <Card
-      actions={[
-        <FormSubmitButton disabled={isMutating} loading={isMutating}>
-          Actualizar deuda
-        </FormSubmitButton>,
-      ]}
-      backButton
-      title="Editar deuda"
-    >
-      <DueForm
-        additionalMemberOptions={memberAdditionalOptions}
-        disabled={isMutating}
-        initialValues={{
-          amount: NumberFormat.fromCents(due.amount),
-          category: due.category,
-          date: dayjs.utc(due.date),
-          memberIds: [due.member.id],
-          notes: due.notes,
-        }}
-        loading={isLoading}
-        mode="edit"
-        onSubmit={handleSubmit}
-      />
-    </Card>
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>Editar deuda</PageTitle>
+      </PageHeader>
+
+      <Card
+        actions={[
+          <FormSubmitButton disabled={isMutating} loading={isMutating}>
+            Actualizar deuda
+          </FormSubmitButton>,
+        ]}
+      >
+        <DueForm
+          additionalMemberOptions={memberAdditionalOptions}
+          disabled={isMutating}
+          initialValues={{
+            amount: NumberFormat.fromCents(due.amount),
+            category: due.category,
+            date: dayjs.utc(due.date),
+            memberIds: [due.member.id],
+            notes: due.notes,
+          }}
+          loading={isLoading}
+          mode="edit"
+          onSubmit={handleSubmit}
+        />
+      </Card>
+    </Page>
   );
 }

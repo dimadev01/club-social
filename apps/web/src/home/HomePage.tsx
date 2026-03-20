@@ -2,10 +2,10 @@ import { UserRole } from '@club-social/shared/users';
 import { Space } from 'antd';
 
 import { useSessionUser } from '@/auth/useUser';
-import { Page } from '@/ui';
+import { Page, PageHeader, PageTitle } from '@/ui';
 
-import { HomeSummaryCard } from './components/HomeSummaryCard';
-import { QuickActionsCard } from './components/QuickActionsCard';
+import { HomeSummaryCards } from './components/HomeSummaryCards';
+import { QuickActionsCards } from './components/QuickActionsCards';
 import { MemberHomePage } from './MemberHomePage';
 
 export function HomePage() {
@@ -17,9 +17,12 @@ export function HomePage() {
 
   return (
     <Page>
+      <PageHeader>
+        <PageTitle>Club Social Monte Grande</PageTitle>
+      </PageHeader>
       <Space className="flex" vertical>
-        <QuickActionsCard />
-        <HomeSummaryCard />
+        <QuickActionsCards />
+        <HomeSummaryCards />
       </Space>
     </Page>
   );

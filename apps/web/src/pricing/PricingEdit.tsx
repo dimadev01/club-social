@@ -9,7 +9,14 @@ import { useNavigate, useParams } from 'react-router';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { PostHogEvent } from '@/shared/lib/posthog-events';
-import { Card, FormSubmitButton, NotFound } from '@/ui';
+import {
+  Card,
+  FormSubmitButton,
+  NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { PricingForm, type PricingFormData } from './PricingForm';
@@ -46,7 +53,7 @@ export function PricingEdit() {
   }
 
   if (isLoading) {
-    return <Card loading title="Editar precio" />;
+    return <Card loading />;
   }
 
   if (!pricing) {
@@ -56,26 +63,29 @@ export function PricingEdit() {
   const isMutating = updatePricingMutation.isPending;
 
   return (
-    <Card
-      actions={[
-        <FormSubmitButton disabled={isMutating} loading={isMutating}>
-          Actualizar precio
-        </FormSubmitButton>,
-      ]}
-      backButton
-      title="Editar precio"
-    >
-      <PricingForm
-        disabled={isMutating}
-        initialValues={{
-          amount: NumberFormat.fromCents(pricing.amount),
-          dueCategory: pricing.dueCategory,
-          effectiveFrom: dayjs.utc(pricing.effectiveFrom),
-          memberCategory: pricing.memberCategory,
-        }}
-        mode="edit"
-        onSubmit={handleSubmit}
-      />
-    </Card>
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>Editar precio</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          <FormSubmitButton disabled={isMutating} loading={isMutating}>
+            Actualizar precio
+          </FormSubmitButton>,
+        ]}
+      >
+        <PricingForm
+          disabled={isMutating}
+          initialValues={{
+            amount: NumberFormat.fromCents(pricing.amount),
+            dueCategory: pricing.dueCategory,
+            effectiveFrom: dayjs.utc(pricing.effectiveFrom),
+            memberCategory: pricing.memberCategory,
+          }}
+          mode="edit"
+          onSubmit={handleSubmit}
+        />
+      </Card>
+    </Page>
   );
 }

@@ -11,7 +11,14 @@ import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { PostHogEvent } from '@/shared/lib/posthog-events';
-import { Card, FormSubmitButton, NotFound } from '@/ui';
+import {
+  Card,
+  FormSubmitButton,
+  NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { MemberForm, type MemberFormData } from './MemberForm';
@@ -68,43 +75,46 @@ export function MemberNew() {
   const isMutating = createMemberMutation.isPending;
 
   return (
-    <Card
-      actions={[
-        <FormSubmitButton disabled={isMutating} loading={isMutating}>
-          Crear socio
-        </FormSubmitButton>,
-      ]}
-      backButton
-      title="Nuevo socio"
-    >
-      <MemberForm
-        disabled={isMutating}
-        initialValues={{
-          address: {
-            cityName: '',
-            stateName: '',
-            street: '',
-            zipCode: '',
-          },
-          birthDate: undefined,
-          category: MemberCategory.MEMBER,
-          documentID: '',
-          email: '',
-          fileStatus: FileStatus.PENDING,
-          firstName: '',
-          lastName: '',
-          maritalStatus: undefined,
-          nationality: undefined,
-          notificationPreferences: {
-            notifyOnDueCreated: true,
-            notifyOnPaymentCreated: true,
-          },
-          phones: [],
-          sex: undefined,
-        }}
-        mode="create"
-        onSubmit={handleSubmit}
-      />
-    </Card>
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>Nuevo socio</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          <FormSubmitButton disabled={isMutating} loading={isMutating}>
+            Crear socio
+          </FormSubmitButton>,
+        ]}
+      >
+        <MemberForm
+          disabled={isMutating}
+          initialValues={{
+            address: {
+              cityName: '',
+              stateName: '',
+              street: '',
+              zipCode: '',
+            },
+            birthDate: undefined,
+            category: MemberCategory.MEMBER,
+            documentID: '',
+            email: '',
+            fileStatus: FileStatus.PENDING,
+            firstName: '',
+            lastName: '',
+            maritalStatus: undefined,
+            nationality: undefined,
+            notificationPreferences: {
+              notifyOnDueCreated: true,
+              notifyOnPaymentCreated: true,
+            },
+            phones: [],
+            sex: undefined,
+          }}
+          mode="create"
+          onSubmit={handleSubmit}
+        />
+      </Card>
+    </Page>
   );
 }
