@@ -1,11 +1,11 @@
 import type { Dayjs } from 'dayjs';
 
 import { DateFormat } from '@club-social/shared/lib';
-import { Space, Typography } from 'antd';
+import { Space } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 
-import { Form } from '@/ui';
+import { Form, PageHeading } from '@/ui';
 
 import { DuePendingStatisticsCard } from './DuePendingStatisticsCard';
 import { MovementStatisticsCard } from './MovementStatisticsCard';
@@ -63,7 +63,7 @@ export function MainStatisticsCard() {
 
   return (
     <>
-      <Typography.Title level={3}>Balance</Typography.Title>
+      <PageHeading>Balance</PageHeading>
 
       <Form.Item label="Período de tiempo">
         <StatisticsFilters

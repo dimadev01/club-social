@@ -31,10 +31,12 @@ import {
   Row,
   Table,
   TABLE_COLUMN_WIDTHS,
+  Tag,
   VoidModal,
 } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
+import { PaymentStatusColor, PaymentStatusIcon } from './PaymentUtils';
 import { usePayment } from './usePayment';
 
 export function PaymentView() {
@@ -104,7 +106,14 @@ export function PaymentView() {
                   label: 'Monto',
                 },
                 {
-                  children: PaymentStatusLabel[payment.status],
+                  children: (
+                    <Tag
+                      color={PaymentStatusColor[payment.status]}
+                      icon={PaymentStatusIcon[payment.status]}
+                    >
+                      {PaymentStatusLabel[payment.status]}
+                    </Tag>
+                  ),
                   label: 'Estado',
                 },
                 {

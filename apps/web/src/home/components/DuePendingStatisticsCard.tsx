@@ -57,6 +57,7 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
       {DueCategorySorted.map((category) => (
         <Link
           className="w-full md:w-1/3"
+          key={category}
           to={{
             pathname: LinkCategoryMap[category],
             search: new URLSearchParams({

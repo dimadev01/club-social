@@ -20,6 +20,7 @@ const THEME_TOKEN: ThemeConfig['token'] = {
   borderRadius: 8,
   colorInfo: PRIMARY_GREEN,
   colorPrimary: PRIMARY_GREEN,
+  fontFamily: "'Nunito Sans', sans-serif",
 };
 
 const THEME_COMPONENTS: ThemeConfig['components'] = {

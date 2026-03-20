@@ -37,10 +37,16 @@ import {
   TableActions,
   TableDateRangeFilterDropdown,
   TableMembersSearch,
+  Tag,
   useTable,
 } from '@/ui';
 import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
+
+import {
+  MemberLedgerEntryStatusColor,
+  MemberLedgerEntryStatusIcon,
+} from './MemberLedgerUtils';
 
 export function MemberLedgerList() {
   const navigate = useNavigate();
@@ -177,8 +183,14 @@ export function MemberLedgerList() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: labelMapToFilterOptions(MemberLedgerEntryStatusLabel),
-            render: (value: MemberLedgerEntryStatus) =>
-              MemberLedgerEntryStatusLabel[value],
+            render: (value: MemberLedgerEntryStatus) => (
+              <Tag
+                color={MemberLedgerEntryStatusColor[value]}
+                icon={MemberLedgerEntryStatusIcon[value]}
+              >
+                {MemberLedgerEntryStatusLabel[value]}
+              </Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },

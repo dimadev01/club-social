@@ -1,11 +1,13 @@
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { NumberFormat } from '@club-social/shared/lib';
 import {
   MemberCategory,
   MemberCategoryLabel,
   MemberCategorySort,
 } from '@club-social/shared/members';
-import { Col, Space, Statistic, theme, Typography } from 'antd';
+import { Col, Space, Statistic, theme } from 'antd';
 import { useMemo } from 'react';
+import { FaFemale, FaMale } from 'react-icons/fa';
 import { Link } from 'react-router';
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
@@ -16,6 +18,7 @@ import {
   DuesIcon,
   Page,
   PageHeader,
+  PageHeading,
   PageTitle,
   PaymentsIcon,
   Row,
@@ -94,7 +97,7 @@ function MembersByCategoryCard({
 
   return (
     <>
-      <Typography.Title level={3}>Socios por categoría</Typography.Title>
+      <PageHeading>Socios por categoría</PageHeading>
       <Table
         columns={[
           {
@@ -111,7 +114,6 @@ function MembersByCategoryCard({
         dataSource={tableData}
         loading={isLoading}
         pagination={false}
-        size="small"
         summary={() => (
           <Table.Summary.Row>
             <Table.Summary.Cell index={0}>
@@ -155,9 +157,9 @@ function MembersBySexCard({ data, isLoading }: MembersBySexCardProps) {
 
   return (
     <>
-      <Typography.Title level={3}>Socios por sexo</Typography.Title>
+      <PageHeading>Socios por sexo</PageHeading>
       <Card>
-        <Row>
+        <Row gutter={[16, 16]}>
           <Col lg={12} xs={24}>
             <div className="h-64">
               {total > 0 && (
@@ -183,25 +185,32 @@ function MembersBySexCard({ data, isLoading }: MembersBySexCardProps) {
             </div>
           </Col>
           <Col lg={12} xs={24}>
-            <Space className="flex" size="large" vertical>
+            <Card.Grid className="w-full">
               <Statistic
                 loading={isLoading}
+                prefix={<FaMale />}
                 title="Masculino"
                 value={data?.male ?? 0}
               />
+            </Card.Grid>
+            <Card.Grid className="w-full">
               <Statistic
                 loading={isLoading}
+                prefix={<FaFemale />}
                 title="Femenino"
                 value={data?.female ?? 0}
               />
-              {(data?.unknown ?? 0) > 0 && (
+            </Card.Grid>
+            {(data?.unknown ?? 0) > 0 && (
+              <Card.Grid className="w-full">
                 <Statistic
                   loading={isLoading}
+                  prefix={<QuestionCircleOutlined />}
                   title="Sin especificar"
                   value={data?.unknown ?? 0}
                 />
-              )}
-            </Space>
+              </Card.Grid>
+            )}
           </Col>
         </Row>
       </Card>
@@ -212,9 +221,7 @@ function MembersBySexCard({ data, isLoading }: MembersBySexCardProps) {
 function TopDebtorsCard({ data, isLoading }: TopDebtorsCardProps) {
   return (
     <>
-      <Typography.Title level={3}>
-        Top 10 socios con mayor deuda
-      </Typography.Title>
+      <PageHeading>Top 10 socios con mayor deuda</PageHeading>
       <Table
         columns={[
           {
@@ -280,7 +287,6 @@ function TopDebtorsCard({ data, isLoading }: TopDebtorsCardProps) {
         dataSource={data.map((item) => ({ ...item, key: item.id }))}
         loading={isLoading}
         pagination={false}
-        size="small"
       />
     </>
   );

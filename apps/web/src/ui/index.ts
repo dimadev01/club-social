@@ -15,6 +15,7 @@ export * from './Page';
 export * from './Row';
 export * from './Select';
 export * from './Table';
+export * from './Tag';
 export * from './TextArea';
 export * from './Unauthorized';
 export * from './VoidModal';

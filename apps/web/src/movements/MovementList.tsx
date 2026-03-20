@@ -33,10 +33,13 @@ import {
   TABLE_DESCRIPTION_MAX_LENGTH,
   TableActions,
   TableDateRangeFilterDropdown,
+  Tag,
   useTable,
 } from '@/ui';
 import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
+
+import { MovementStatusColor, MovementStatusIcon } from './MovementUtils';
 
 export function MovementList() {
   const navigate = useNavigate();
@@ -168,7 +171,14 @@ export function MovementList() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: labelMapToFilterOptions(MovementStatusLabel),
-            render: (value: MovementStatus) => MovementStatusLabel[value],
+            render: (value: MovementStatus) => (
+              <Tag
+                color={MovementStatusColor[value]}
+                icon={MovementStatusIcon[value]}
+              >
+                {MovementStatusLabel[value]}
+              </Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },

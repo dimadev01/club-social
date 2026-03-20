@@ -36,11 +36,13 @@ import {
   Row,
   Table,
   TABLE_COLUMN_WIDTHS,
+  Tag,
   VoidModal,
 } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueCategoryIconLabel } from './DueCategoryIconLabel';
+import { DueStatusColor, DueStatusIcon } from './DueUtils';
 import { useDue } from './useDue';
 
 export function DueView() {
@@ -128,7 +130,14 @@ export function DueView() {
                   label: 'Categoría',
                 },
                 {
-                  children: DueStatusLabel[due.status],
+                  children: (
+                    <Tag
+                      color={DueStatusColor[due.status]}
+                      icon={DueStatusIcon[due.status]}
+                    >
+                      {DueStatusLabel[due.status]}
+                    </Tag>
+                  ),
                   label: 'Estado',
                 },
                 {
@@ -214,7 +223,6 @@ export function DueView() {
           dataSource={due.settlements}
           loading={isLoading}
           pagination={false}
-          size="small"
           title={() => 'Movimientos asociados'}
         />
 

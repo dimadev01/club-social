@@ -24,10 +24,12 @@ import {
   PageHeader,
   PageTitle,
   Row,
+  Tag,
   VoidModal,
 } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
+import { MovementStatusColor, MovementStatusIcon } from './MovementUtils';
 import { useMovement } from './useMovement';
 
 export function MovementView() {
@@ -103,7 +105,14 @@ export function MovementView() {
                   label: 'Monto',
                 },
                 {
-                  children: MovementStatusLabel[movement.status],
+                  children: (
+                    <Tag
+                      color={MovementStatusColor[movement.status]}
+                      icon={MovementStatusIcon[movement.status]}
+                    >
+                      {MovementStatusLabel[movement.status]}
+                    </Tag>
+                  ),
                   label: 'Estado',
                 },
                 {

@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
+import { MemberStatusColor } from '@/members/MemberUtils';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
@@ -39,12 +40,14 @@ import {
   TableActions,
   TableDateRangeFilterDropdown,
   TableMembersSearch,
+  Tag,
   useTable,
 } from '@/ui';
 import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueCategoryIconLabel } from './DueCategoryIconLabel';
+import { DueStatusColor, DueStatusIcon } from './DueUtils';
 
 export function DueList() {
   const navigate = useNavigate();
@@ -161,6 +164,9 @@ export function DueList() {
             sorter: true,
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
+            width: permissions.dues.listAll
+              ? TABLE_COLUMN_WIDTHS.DATE
+              : undefined,
           },
           ...(permissions.dues.listAll
             ? [
@@ -168,7 +174,9 @@ export function DueList() {
                   dataIndex: 'memberId',
                   render: (_, record: DuePaginatedDto) => record.memberName,
                   title: 'Socio',
-                  width: TABLE_COLUMN_WIDTHS.MEMBER_NAME,
+                  width: permissions.dues.listAll
+                    ? undefined
+                    : TABLE_COLUMN_WIDTHS.MEMBER_NAME,
                 } satisfies TableColumnType<DuePaginatedDto>,
               ]
             : []),
@@ -178,7 +186,7 @@ export function DueList() {
             filteredValue: getFilterValue('category'),
             filters: labelMapToFilterOptions(DueCategoryLabel).map(
               ({ value }) => ({
-                text: <DueCategoryIconLabel category={value as DueCategory} />,
+                text: DueCategoryLabel[value as DueCategory],
                 value,
               }),
             ),
@@ -201,7 +209,11 @@ export function DueList() {
             filteredValue: getFilterValue('status'),
             filterMode: 'tree',
             filters: labelMapToFilterOptions(DueStatusLabel),
-            render: (value: DueStatus) => DueStatusLabel[value],
+            render: (value: DueStatus) => (
+              <Tag color={DueStatusColor[value]} icon={DueStatusIcon[value]}>
+                {DueStatusLabel[value]}
+              </Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS_LARGER,
           },
@@ -212,7 +224,11 @@ export function DueList() {
                   dataIndex: 'memberStatus',
                   filteredValue: getFilterValue('memberStatus'),
                   filters: labelMapToFilterOptions(MemberStatusLabel),
-                  render: (value: MemberStatus) => MemberStatusLabel[value],
+                  render: (value: MemberStatus) => (
+                    <Tag color={MemberStatusColor[value]}>
+                      {MemberStatusLabel[value]}
+                    </Tag>
+                  ),
                   title: 'Estado socio',
                   width: TABLE_COLUMN_WIDTHS.STATUS,
                 } satisfies TableColumnType<DuePaginatedDto>,

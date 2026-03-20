@@ -25,10 +25,12 @@ import {
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
+  Tag,
   useTable,
 } from '@/ui';
 
 import { usePermissions } from './use-permissions';
+import { UserStatusColor } from './UserUtil';
 
 export function UserListPage() {
   const navigate = useNavigate();
@@ -113,7 +115,9 @@ export function UserListPage() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: labelMapToFilterOptions(UserStatusLabel),
-            render: (value: UserStatus) => UserStatusLabel[value],
+            render: (value: UserStatus) => (
+              <Tag color={UserStatusColor[value]}>{UserStatusLabel[value]}</Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },

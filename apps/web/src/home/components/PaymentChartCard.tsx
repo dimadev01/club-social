@@ -1,7 +1,7 @@
 import type { PaymentDailyStatisticsItemDto } from '@club-social/shared/payments';
 
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
-import { Empty, theme, Typography } from 'antd';
+import { Empty, theme } from 'antd';
 import { type Dayjs } from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
@@ -15,7 +15,7 @@ import {
   YAxis,
 } from 'recharts';
 
-import { Card, DatePicker, Descriptions, Form } from '@/ui';
+import { Card, DatePicker, Descriptions, Form, PageHeading } from '@/ui';
 
 import { usePaymentDailyStatistics } from '../usePaymentDailyStatistics';
 
@@ -78,7 +78,7 @@ export function PaymentChartCard() {
 
   return (
     <>
-      <Typography.Title level={3}>Estadísticas de pagos</Typography.Title>
+      <PageHeading>Pagos</PageHeading>
 
       <Card>
         <Form.Item label="Mes">

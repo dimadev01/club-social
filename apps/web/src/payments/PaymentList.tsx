@@ -38,10 +38,13 @@ import {
   TableActions,
   TableDateRangeFilterDropdown,
   TableMembersSearch,
+  Tag,
   useTable,
 } from '@/ui';
 import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
+
+import { PaymentStatusColor, PaymentStatusIcon } from './PaymentUtils';
 
 export function PaymentList() {
   const navigate = useNavigate();
@@ -195,7 +198,14 @@ export function PaymentList() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: labelMapToFilterOptions(PaymentStatusLabel),
-            render: (value: PaymentStatus) => PaymentStatusLabel[value],
+            render: (value: PaymentStatus) => (
+              <Tag
+                color={PaymentStatusColor[value]}
+                icon={PaymentStatusIcon[value]}
+              >
+                {PaymentStatusLabel[value]}
+              </Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },

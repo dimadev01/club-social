@@ -35,10 +35,12 @@ import {
   TABLE_COLUMN_WIDTHS,
   TableActions,
   TableMembersSearch,
+  Tag,
   useTable,
 } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
+import { MemberStatusColor } from './MemberUtils';
 import { useMembersForSelect } from './useMembersForSelect';
 
 export function MemberListPage() {
@@ -166,7 +168,11 @@ export function MemberListPage() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: labelMapToFilterOptions(MemberStatusLabel),
-            render: (status: MemberStatus) => MemberStatusLabel[status],
+            render: (status: MemberStatus) => (
+              <Tag color={MemberStatusColor[status]}>
+                {MemberStatusLabel[status]}
+              </Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },

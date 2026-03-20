@@ -50,6 +50,14 @@ export function PageHeader({
   );
 }
 
+export function PageHeading({ children, className, ...props }: TitleProps) {
+  return (
+    <Typography.Title className={cn(className)} level={3} {...props}>
+      {children}
+    </Typography.Title>
+  );
+}
+
 export function PageLoader() {
   return (
     <Card className="flex h-screen items-center justify-center">

@@ -1,6 +1,7 @@
 import { DueCategory, DueCategoryLabel } from '@club-social/shared/dues';
 import { DateFormat } from '@club-social/shared/lib';
-import { Space } from 'antd';
+
+import { Tag } from '@/ui';
 
 import { DueCategoryIconMap } from './DueCategoryIconMap';
 
@@ -14,12 +15,9 @@ export function DueCategoryIconLabel({ category, date }: Props) {
   const renderDate = !!date && isMembership;
 
   return (
-    <Space size="small">
-      {DueCategoryIconMap[category]}
-      <span>
-        {DueCategoryLabel[category]}{' '}
-        {renderDate ? `(${DateFormat.monthNameShort(date)})` : ''}
-      </span>
-    </Space>
+    <Tag icon={DueCategoryIconMap[category]}>
+      {DueCategoryLabel[category]}{' '}
+      {renderDate ? `(${DateFormat.monthNameShort(date)})` : ''}
+    </Tag>
   );
 }
