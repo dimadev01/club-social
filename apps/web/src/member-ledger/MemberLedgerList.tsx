@@ -25,10 +25,13 @@ import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
-  Card,
   NavigateToMemberLedgerEntry,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -85,36 +88,37 @@ export function MemberLedgerList() {
   }
 
   return (
-    <Card
-      extra={
-        <Space.Compact>
-          {permissions.memberLedger.create && (
-            <Button
-              icon={<PlusOutlined />}
-              onClick={() => navigate(appRoutes.memberLedger.new)}
-              type="primary"
+    <Page>
+      <PageHeader>
+        <PageTitle>Libro mayor de socios</PageTitle>
+        <PageActions>
+          <Space.Compact>
+            {permissions.memberLedger.create && (
+              <Button
+                icon={<PlusOutlined />}
+                onClick={() => navigate(appRoutes.memberLedger.new)}
+                type="primary"
+              >
+                Nuevo ajuste
+              </Button>
+            )}
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    disabled: isExporting,
+                    key: 'export',
+                    label: 'Exportar',
+                    onClick: () => exportData(exportQuery),
+                  },
+                ],
+              }}
             >
-              Nuevo ajuste
-            </Button>
-          )}
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  disabled: isExporting,
-                  key: 'export',
-                  label: 'Exportar',
-                  onClick: () => exportData(exportQuery),
-                },
-              ],
-            }}
-          >
-            <Button icon={<MoreOutlined />} />
-          </Dropdown>
-        </Space.Compact>
-      }
-      title="Libro mayor de socios"
-    >
+              <Button icon={<MoreOutlined />} />
+            </Dropdown>
+          </Space.Compact>
+        </PageActions>
+      </PageHeader>
       <PageTableActions justify="end">
         <Flex gap="middle" wrap>
           {permissions.memberLedger.listAll && (
@@ -226,6 +230,6 @@ export function MemberLedgerList() {
           </Table.Summary>
         )}
       />
-    </Card>
+    </Page>
   );
 }

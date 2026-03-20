@@ -25,11 +25,14 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Button,
-  Card,
   DuesIcon,
   NavigateToDue,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   PaymentsIcon,
   Table,
   TABLE_COLUMN_WIDTHS,
@@ -92,42 +95,43 @@ export function DueList() {
   }
 
   return (
-    <Card
-      extra={
-        <Space.Compact>
-          {permissions.dues.create && (
-            <Button
-              disabled={!permissions.dues.create}
-              onClick={() => navigate(appRoutes.dues.new)}
-              type="primary"
+    <Page>
+      <PageHeader>
+        <PageTitle>Deudas</PageTitle>
+        <PageActions>
+          <Space.Compact>
+            {permissions.dues.create && (
+              <Button
+                disabled={!permissions.dues.create}
+                onClick={() => navigate(appRoutes.dues.new)}
+                type="primary"
+              >
+                Nueva deuda
+              </Button>
+            )}
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    disabled: !permissions.dues.create,
+                    key: 'bulk-create',
+                    label: 'Crear cuotas mensuales',
+                    onClick: () => navigate(appRoutes.dues.newBulk),
+                  },
+                  {
+                    disabled: isExporting,
+                    key: 'export',
+                    label: 'Exportar',
+                    onClick: () => exportData(exportQuery),
+                  },
+                ],
+              }}
             >
-              Nueva deuda
-            </Button>
-          )}
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  disabled: !permissions.dues.create,
-                  key: 'bulk-create',
-                  label: 'Crear cuotas mensuales',
-                  onClick: () => navigate(appRoutes.dues.newBulk),
-                },
-                {
-                  disabled: isExporting,
-                  key: 'export',
-                  label: 'Exportar',
-                  onClick: () => exportData(exportQuery),
-                },
-              ],
-            }}
-          >
-            <Button icon={<MoreOutlined />} />
-          </Dropdown>
-        </Space.Compact>
-      }
-      title="Deudas"
-    >
+              <Button icon={<MoreOutlined />} />
+            </Dropdown>
+          </Space.Compact>
+        </PageActions>
+      </PageHeader>
       <PageTableActions>
         {permissions.dues.listAll && (
           <TableMembersSearch
@@ -290,6 +294,6 @@ export function DueList() {
           </Table.Summary>
         )}
       />
-    </Card>
+    </Page>
   );
 }

@@ -21,9 +21,12 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Button,
-  Card,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -67,19 +70,20 @@ export function NotificationList() {
   }
 
   return (
-    <Card
-      extra={
-        <Button
-          disabled={processOutbox.isPending}
-          loading={processOutbox.isPending}
-          onClick={() => processOutbox.mutate()}
-          type="primary"
-        >
-          Procesar outbox
-        </Button>
-      }
-      title="Notificaciones"
-    >
+    <Page>
+      <PageHeader>
+        <PageTitle>Notificaciones</PageTitle>
+        <PageActions>
+          <Button
+            disabled={processOutbox.isPending}
+            loading={processOutbox.isPending}
+            onClick={() => processOutbox.mutate()}
+            type="primary"
+          >
+            Procesar outbox
+          </Button>
+        </PageActions>
+      </PageHeader>
       <PageTableActions justify="end">
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -147,6 +151,6 @@ export function NotificationList() {
           total: notifications?.total,
         }}
       />
-    </Card>
+    </Page>
   );
 }

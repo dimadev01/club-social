@@ -17,7 +17,7 @@ import { useAppContext } from './AppContext';
 const PRIMARY_GREEN = '#22883e';
 
 const THEME_TOKEN: ThemeConfig['token'] = {
-  borderRadius: 6,
+  borderRadius: 8,
   colorInfo: PRIMARY_GREEN,
   colorPrimary: PRIMARY_GREEN,
 };

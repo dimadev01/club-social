@@ -26,7 +26,7 @@ import {
   theme,
   Typography,
 } from 'antd';
-import { type PropsWithChildren, useEffect, useMemo, useState } from 'react';
+import { type PropsWithChildren, useMemo, useState } from 'react';
 import { GrGroup } from 'react-icons/gr';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useLocalStorage } from 'react-use';
@@ -54,11 +54,9 @@ import { useAppContext } from './AppContext';
 
 export function AppLayout({ children }: PropsWithChildren) {
   const { sm } = Grid.useBreakpoint();
-  // sm === undefined during initial render, false on mobile, true on desktop
   const isMobile = sm === false;
-  // For collapsedWidth: treat undefined (loading) same as mobile so the
-  // hamburger trigger is rendered from the very first paint on mobile
   const isMobileOrLoading = sm !== true;
+
   const { selectedTheme } = useAppContext();
   const navigate = useNavigate();
   const { token } = theme.useToken();
@@ -66,20 +64,13 @@ export function AppLayout({ children }: PropsWithChildren) {
   const [isFloatMenuOpen, setIsFloatMenuOpen] = useState(false);
 
   const location = useLocation();
-  const [collapsed, setCollapsed] = useLocalStorage<boolean>(
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useLocalStorage<boolean>(
     'is-sidebar-collapsed',
-    true,
+    false,
   );
-  // normalize: treat undefined (pre-hydration) as collapsed
-  const isCollapsed = collapsed !== false;
 
-  useEffect(() => {
-    if (isMobile) {
-      setCollapsed(true);
-    } else if (sm !== undefined) {
-      setCollapsed(false);
-    }
-  }, [isMobile]);
+  const isCollapsed = isMobile ? !mobileOpen : desktopCollapsed !== false;
 
   const user = useSessionUser();
   const isAdmin = user.role === UserRole.ADMIN;
@@ -227,7 +218,6 @@ export function AppLayout({ children }: PropsWithChildren) {
   return (
     <Layout className="min-h-screen" hasSider={!isMobile}>
       <Layout.Sider
-        breakpoint="sm"
         className={cn(
           'overflow-auto [scrollbar-gutter:stable] [scrollbar-width:thin]',
           isMobile
@@ -236,8 +226,8 @@ export function AppLayout({ children }: PropsWithChildren) {
         )}
         collapsed={isCollapsed}
         collapsedWidth={isMobileOrLoading ? 0 : 80}
-        collapsible
-        onCollapse={setCollapsed}
+        collapsible={!isMobile}
+        onCollapse={setDesktopCollapsed}
         theme={selectedTheme}
         trigger={isMobile ? null : undefined}
         zeroWidthTriggerStyle={{ position: 'fixed', top: 0 }}
@@ -288,7 +278,7 @@ export function AppLayout({ children }: PropsWithChildren) {
               mode="inline"
               onClick={({ key }) => {
                 navigate(key);
-                if (isMobile) setCollapsed(true);
+                if (isMobile) setMobileOpen(false);
               }}
               selectedKeys={selectedKeys}
               theme={selectedTheme}
@@ -305,7 +295,7 @@ export function AppLayout({ children }: PropsWithChildren) {
                 'fixed inset-0 z-40 bg-black/40 transition-opacity duration-300',
                 isCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100',
               )}
-              onClick={() => setCollapsed(true)}
+              onClick={() => setMobileOpen(false)}
             />
             <Layout.Header
               className="flex items-center gap-3 px-4"
@@ -318,7 +308,7 @@ export function AppLayout({ children }: PropsWithChildren) {
             >
               <Button
                 icon={<MenuOutlined />}
-                onClick={() => setCollapsed(!isCollapsed)}
+                onClick={() => setMobileOpen(!mobileOpen)}
                 type="text"
               />
               <Image
@@ -331,7 +321,7 @@ export function AppLayout({ children }: PropsWithChildren) {
           </>
         )}
 
-        <Layout.Content className="p-4 xl:px-10">{children}</Layout.Content>
+        <Layout.Content className="p-4 lg:p-6">{children}</Layout.Content>
 
         <Layout.Footer className="p-4">
           <Flex align="center" gap="small" justify="space-between">
