@@ -16,16 +16,21 @@ import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
-  Card,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
+  Tag,
   useTable,
 } from '@/ui';
 
 import { usePermissions } from './use-permissions';
+import { UserStatusColor } from './UserUtil';
 
 export function UserListPage() {
   const navigate = useNavigate();
@@ -62,20 +67,21 @@ export function UserListPage() {
   }
 
   return (
-    <Card
-      extra={
-        <Space.Compact>
-          <Button
-            disabled={!permissions.users.create}
-            onClick={() => navigate(appRoutes.users.new)}
-            type="primary"
-          >
-            Nuevo usuario
-          </Button>
-        </Space.Compact>
-      }
-      title="Usuarios"
-    >
+    <Page>
+      <PageHeader>
+        <PageTitle>Usuarios</PageTitle>
+        <PageActions>
+          <Space.Compact>
+            <Button
+              disabled={!permissions.users.create}
+              onClick={() => navigate(appRoutes.users.new)}
+              type="primary"
+            >
+              Nuevo usuario
+            </Button>
+          </Space.Compact>
+        </PageActions>
+      </PageHeader>
       <PageTableActions justify="end">
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -109,7 +115,9 @@ export function UserListPage() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: labelMapToFilterOptions(UserStatusLabel),
-            render: (value: UserStatus) => UserStatusLabel[value],
+            render: (value: UserStatus) => (
+              <Tag color={UserStatusColor[value]}>{UserStatusLabel[value]}</Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },
@@ -123,6 +131,6 @@ export function UserListPage() {
           total: users?.total,
         }}
       />
-    </Card>
+    </Page>
   );
 }

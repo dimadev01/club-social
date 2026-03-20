@@ -25,13 +25,18 @@ import {
   NavigateToDue,
   NavigateToMemberLedgerEntry,
   NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
   Row,
   Table,
   TABLE_COLUMN_WIDTHS,
+  Tag,
   VoidModal,
 } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
+import { PaymentStatusColor, PaymentStatusIcon } from './PaymentUtils';
 import { usePayment } from './usePayment';
 
 export function PaymentView() {
@@ -66,130 +71,140 @@ export function PaymentView() {
     permissions.payments.void && payment.status === PaymentStatus.PAID;
 
   return (
-    <Card
-      actions={[
-        canVoid && (
-          <Button
-            danger
-            disabled={isMutating}
-            onClick={() => setIsVoidModalOpen(true)}
-            type="primary"
-          >
-            Anular pago
-          </Button>
-        ),
-      ].filter(Boolean)}
-      backButton
-      title="Detalle de pago"
-    >
-      <Row>
-        <Col md={12} xs={24}>
-          <Descriptions
-            items={[
-              {
-                children: DateFormat.date(payment.date),
-                label: 'Fecha',
-              },
-              {
-                children: payment.member.name,
-                label: 'Socio',
-              },
-              {
-                children: NumberFormat.currencyCents(payment.amount),
-                label: 'Monto',
-              },
-              {
-                children: PaymentStatusLabel[payment.status],
-                label: 'Estado',
-              },
-              {
-                children: payment.receiptNumber ?? '-',
-                label: 'Número de recibo',
-              },
-              {
-                children: payment.notes ?? '-',
-                label: 'Notas',
-              },
-            ]}
-          />
-        </Col>
-        <Col md={12} xs={24}>
-          <DescriptionsAudit {...payment} />
-        </Col>
-      </Row>
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>Detalle de pago</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          canVoid && (
+            <Button
+              danger
+              disabled={isMutating}
+              onClick={() => setIsVoidModalOpen(true)}
+              type="primary"
+            >
+              Anular pago
+            </Button>
+          ),
+        ].filter(Boolean)}
+      >
+        <Row>
+          <Col md={12} xs={24}>
+            <Descriptions
+              items={[
+                {
+                  children: DateFormat.date(payment.date),
+                  label: 'Fecha',
+                },
+                {
+                  children: payment.member.name,
+                  label: 'Socio',
+                },
+                {
+                  children: NumberFormat.currencyCents(payment.amount),
+                  label: 'Monto',
+                },
+                {
+                  children: (
+                    <Tag
+                      color={PaymentStatusColor[payment.status]}
+                      icon={PaymentStatusIcon[payment.status]}
+                    >
+                      {PaymentStatusLabel[payment.status]}
+                    </Tag>
+                  ),
+                  label: 'Estado',
+                },
+                {
+                  children: payment.receiptNumber ?? '-',
+                  label: 'Número de recibo',
+                },
+                {
+                  children: payment.notes ?? '-',
+                  label: 'Notas',
+                },
+              ]}
+            />
+          </Col>
+          <Col md={12} xs={24}>
+            <DescriptionsAudit {...payment} />
+          </Col>
+        </Row>
 
-      <Divider />
+        <Divider />
 
-      <Table<PaymentDueSettlementDto>
-        columns={[
-          {
-            dataIndex: ['due', 'date'],
-            render: (date: string, record: PaymentDueSettlementDto) => (
-              <NavigateToDue id={record.due.id}>{date}</NavigateToDue>
-            ),
-            title: 'Fecha de deuda',
-          },
-          {
-            align: 'center',
-            dataIndex: ['due', 'category'],
-            render: (dueCategory: DueCategory, record) => (
-              <DueCategoryIconLabel
-                category={dueCategory}
-                date={record.due.date}
-              />
-            ),
-            title: 'Categoría',
-            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
-          },
-          {
-            align: 'center',
-            dataIndex: 'status',
-            render: (status: DueSettlementStatus) =>
-              DueSettlementStatusLabel[status],
-            title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS_LARGER,
-          },
-          {
-            align: 'right',
-            dataIndex: ['due', 'amount'],
-            render: (amount: number) => NumberFormat.currencyCents(amount),
-            title: 'Monto deuda',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
-          },
-          {
-            align: 'right',
-            dataIndex: 'amount',
-            render: (amount: number) => NumberFormat.currencyCents(amount),
-            title: 'Monto pago',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
-          },
-          {
-            align: 'center',
-            dataIndex: ['memberLedgerEntry', 'id'],
-            render: (id: string) => (
-              <NavigateToMemberLedgerEntry formatDate={false} id={id}>
-                Ver movimiento
-              </NavigateToMemberLedgerEntry>
-            ),
-            title: 'Movimiento',
-            width: 150,
-          },
-        ]}
-        dataSource={payment.settlements}
-        loading={isLoading}
-        pagination={false}
-        size="small"
-        title={() => 'Deudas asociadas'}
-      />
+        <Table<PaymentDueSettlementDto>
+          columns={[
+            {
+              dataIndex: ['due', 'date'],
+              render: (date: string, record: PaymentDueSettlementDto) => (
+                <NavigateToDue id={record.due.id}>{date}</NavigateToDue>
+              ),
+              title: 'Fecha de deuda',
+            },
+            {
+              align: 'center',
+              dataIndex: ['due', 'category'],
+              render: (dueCategory: DueCategory, record) => (
+                <DueCategoryIconLabel
+                  category={dueCategory}
+                  date={record.due.date}
+                />
+              ),
+              title: 'Categoría',
+              width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
+            },
+            {
+              align: 'center',
+              dataIndex: 'status',
+              render: (status: DueSettlementStatus) =>
+                DueSettlementStatusLabel[status],
+              title: 'Estado',
+              width: TABLE_COLUMN_WIDTHS.STATUS_LARGER,
+            },
+            {
+              align: 'right',
+              dataIndex: ['due', 'amount'],
+              render: (amount: number) => NumberFormat.currencyCents(amount),
+              title: 'Monto deuda',
+              width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            },
+            {
+              align: 'right',
+              dataIndex: 'amount',
+              render: (amount: number) => NumberFormat.currencyCents(amount),
+              title: 'Monto pago',
+              width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            },
+            {
+              align: 'center',
+              dataIndex: ['memberLedgerEntry', 'id'],
+              render: (id: string) => (
+                <NavigateToMemberLedgerEntry formatDate={false} id={id}>
+                  Ver movimiento
+                </NavigateToMemberLedgerEntry>
+              ),
+              title: 'Movimiento',
+              width: 150,
+            },
+          ]}
+          dataSource={payment.settlements}
+          loading={isLoading}
+          pagination={false}
+          size="small"
+          title={() => 'Deudas asociadas'}
+        />
 
-      <VoidModal
-        onCancel={() => setIsVoidModalOpen(false)}
-        onConfirm={(reason) => {
-          voidPaymentMutation.mutate({ voidReason: reason });
-          setIsVoidModalOpen(false);
-        }}
-        open={isVoidModalOpen}
-      />
-    </Card>
+        <VoidModal
+          onCancel={() => setIsVoidModalOpen(false)}
+          onConfirm={(reason) => {
+            voidPaymentMutation.mutate({ voidReason: reason });
+            setIsVoidModalOpen(false);
+          }}
+          open={isVoidModalOpen}
+        />
+      </Card>
+    </Page>
   );
 }

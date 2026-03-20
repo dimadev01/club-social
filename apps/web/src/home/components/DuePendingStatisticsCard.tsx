@@ -42,7 +42,6 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
   return (
     <Card
       extra={<DuesIcon />}
-      size="small"
       title={
         <Space size="small">
           Deudas pendientes
@@ -58,6 +57,7 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
       {DueCategorySorted.map((category) => (
         <Link
           className="w-full md:w-1/3"
+          key={category}
           to={{
             pathname: LinkCategoryMap[category],
             search: new URLSearchParams({

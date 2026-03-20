@@ -9,7 +9,14 @@ import { useNavigate } from 'react-router';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { PostHogEvent } from '@/shared/lib/posthog-events';
-import { Card, FormSubmitButton, NotFound } from '@/ui';
+import {
+  Card,
+  FormSubmitButton,
+  NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
+} from '@/ui';
 import { FormSubmitButtonAndBack } from '@/ui/Form/FormSubmitAndBack';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -61,29 +68,32 @@ export function GroupNew() {
   const isMutating = createGroupMutation.isPending;
 
   return (
-    <Card
-      actions={[
-        <FormSubmitButtonAndBack
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>Nuevo grupo</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          <FormSubmitButtonAndBack
+            disabled={isMutating}
+            loading={isMutating}
+            onClick={() => (shouldNavigateBack.current = true)}
+          />,
+          <FormSubmitButton
+            disabled={isMutating}
+            loading={isMutating}
+            onClick={() => (shouldNavigateBack.current = false)}
+          >
+            Crear grupo
+          </FormSubmitButton>,
+        ]}
+      >
+        <GroupForm
           disabled={isMutating}
-          loading={isMutating}
-          onClick={() => (shouldNavigateBack.current = true)}
-        />,
-        <FormSubmitButton
-          disabled={isMutating}
-          loading={isMutating}
-          onClick={() => (shouldNavigateBack.current = false)}
-        >
-          Crear grupo
-        </FormSubmitButton>,
-      ]}
-      backButton
-      title="Nuevo grupo"
-    >
-      <GroupForm
-        disabled={isMutating}
-        initialValues={{ discountPercent: 0, memberIds: [], name: undefined }}
-        onSubmit={handleSubmit}
-      />
-    </Card>
+          initialValues={{ discountPercent: 0, memberIds: [], name: undefined }}
+          onSubmit={handleSubmit}
+        />
+      </Card>
+    </Page>
   );
 }

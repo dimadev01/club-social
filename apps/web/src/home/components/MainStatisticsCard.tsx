@@ -5,7 +5,7 @@ import { Space } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 
-import { Card, Form } from '@/ui';
+import { Form, PageHeading } from '@/ui';
 
 import { DuePendingStatisticsCard } from './DuePendingStatisticsCard';
 import { MovementStatisticsCard } from './MovementStatisticsCard';
@@ -62,7 +62,9 @@ export function MainStatisticsCard() {
   );
 
   return (
-    <Card title="Balance">
+    <>
+      <PageHeading>Balance</PageHeading>
+
       <Form.Item label="Período de tiempo">
         <StatisticsFilters
           onChange={(dates) => setDateRange(dates)}
@@ -74,6 +76,6 @@ export function MainStatisticsCard() {
         <MovementStatisticsCard dateRange={dateRange} />
         <DuePendingStatisticsCard dateRange={dateRange} />
       </Space>
-    </Card>
+    </>
   );
 }

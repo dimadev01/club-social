@@ -16,9 +16,11 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import {
-  Card,
   NotFound,
+  Page,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   Row,
   Table,
   TABLE_COLUMN_WIDTHS,
@@ -59,7 +61,10 @@ export function AuditLogsList() {
   }
 
   return (
-    <Card title="Auditoría">
+    <Page>
+      <PageHeader>
+        <PageTitle>Auditoría</PageTitle>
+      </PageHeader>
       <PageTableActions justify="end">
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -148,6 +153,6 @@ export function AuditLogsList() {
           total: auditLogs?.total,
         }}
       />
-    </Card>
+    </Page>
   );
 }

@@ -7,16 +7,9 @@ import {
   DueSettlementStatus,
   type PendingDueDto,
 } from '@club-social/shared/dues';
-import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
+import { DateFormat, NumberFormat } from '@club-social/shared/lib';
 import { useQueries } from '@tanstack/react-query';
-import {
-  Checkbox,
-  DatePicker,
-  type FormInstance,
-  Space,
-  Statistic,
-  Tooltip,
-} from 'antd';
+import { Checkbox, type FormInstance, Space, Statistic, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import { difference, differenceBy, flatMap, orderBy } from 'es-toolkit/array';
 import { flow } from 'es-toolkit/function';
@@ -33,6 +26,7 @@ import { useMemberById } from '@/members/useMemberById';
 import { tw } from '@/shared/lib/utils';
 import {
   Card,
+  DatePicker,
   Descriptions,
   Form,
   Input,
@@ -334,11 +328,14 @@ export function PaymentForm({
             name="date"
             rules={[{ message: 'La fecha es requerida', required: true }]}
           >
-            <DatePicker
-              allowClear={false}
-              format={DateFormats.date}
-              picker="date"
-            />
+            <DatePicker allowClear={false} picker="date" />
+          </Form.Item>
+
+          <Form.Item<PaymentFormSchema>
+            label="Número de recibo"
+            name="receiptNumber"
+          >
+            <Input placeholder="Número de recibo (opcional)" />
           </Form.Item>
 
           <Form.Item<PaymentFormSchema>
@@ -351,13 +348,6 @@ export function PaymentForm({
               loading={isMemberLoading}
               placeholder="Buscar y seleccionar socio..."
             />
-          </Form.Item>
-
-          <Form.Item<PaymentFormSchema>
-            label="Número de recibo"
-            name="receiptNumber"
-          >
-            <Input placeholder="Número de recibo (opcional)" />
           </Form.Item>
 
           <Form.Item<PaymentFormSchema> label="Notas" name="notes">

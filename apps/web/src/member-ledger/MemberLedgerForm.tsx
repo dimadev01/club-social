@@ -1,17 +1,17 @@
 import type { MemberSearchResultDto } from '@club-social/shared/members';
 import type dayjs from 'dayjs';
 
-import { DateFormats, NumberFormat } from '@club-social/shared/lib';
+import { NumberFormat } from '@club-social/shared/lib';
 import {
   MemberLedgerEntryMovementType,
   MemberLedgerEntryMovementTypeLabel,
 } from '@club-social/shared/members';
-import { DatePicker, type FormInstance, Input, Radio } from 'antd';
+import { type FormInstance, Input, Radio } from 'antd';
 
 import { MemberSearchSelect } from '@/members/MemberSearchSelect';
 import { useMemberById } from '@/members/useMemberById';
 import { labelMapToSelectOptions } from '@/shared/lib/utils';
-import { Form, InputNumber } from '@/ui';
+import { DatePicker, Form, InputNumber } from '@/ui';
 
 export interface MemberLedgerEntryFormData {
   amount: number;
@@ -69,11 +69,7 @@ export function MemberLedgerEntryForm({
         name="date"
         rules={[{ message: 'La fecha es requerida', required: true }]}
       >
-        <DatePicker
-          allowClear={false}
-          className="w-full"
-          format={DateFormats.date}
-        />
+        <DatePicker allowClear={false} />
       </Form.Item>
 
       <Form.Item<MemberLedgerEntryFormData>

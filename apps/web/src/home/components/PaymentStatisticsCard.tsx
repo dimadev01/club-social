@@ -21,7 +21,7 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
   });
 
   return (
-    <Card extra={<PaymentsIcon />} size="small" title="Pagos" type="inner">
+    <Card extra={<PaymentsIcon />} title="Pagos" type="inner">
       <Card.Grid className="w-full sm:w-1/2 lg:w-1/4">
         <Statistic
           loading={isLoading}

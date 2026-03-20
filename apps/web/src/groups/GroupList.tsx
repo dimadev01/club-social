@@ -13,9 +13,12 @@ import { useQuery } from '@/shared/hooks/useQuery';
 import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import {
-  Card,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -47,21 +50,22 @@ export function GroupList() {
   }
 
   return (
-    <Card
-      extra={
-        <Space.Compact>
-          {permissions.groups.create && (
-            <Button
-              onClick={() => navigate(appRoutes.groups.new)}
-              type="primary"
-            >
-              Nuevo grupo
-            </Button>
-          )}
-        </Space.Compact>
-      }
-      title="Grupos"
-    >
+    <Page>
+      <PageHeader>
+        <PageTitle>Grupos</PageTitle>
+        <PageActions>
+          <Space.Compact>
+            {permissions.groups.create && (
+              <Button
+                onClick={() => navigate(appRoutes.groups.new)}
+                type="primary"
+              >
+                Nuevo grupo
+              </Button>
+            )}
+          </Space.Compact>
+        </PageActions>
+      </PageHeader>
       <PageTableActions>
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -106,6 +110,6 @@ export function GroupList() {
           total: groups?.total,
         }}
       />
-    </Card>
+    </Page>
   );
 }

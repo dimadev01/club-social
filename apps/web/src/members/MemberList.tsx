@@ -21,21 +21,26 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Button,
-  Card,
   DuesIcon,
   LedgerIcon,
   NavigateToMember,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   PaymentsIcon,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
   TableMembersSearch,
+  Tag,
   useTable,
 } from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
+import { MemberStatusColor } from './MemberUtils';
 import { useMembersForSelect } from './useMembersForSelect';
 
 export function MemberListPage() {
@@ -84,34 +89,35 @@ export function MemberListPage() {
   }
 
   return (
-    <Card
-      extra={
-        <Space.Compact>
-          <Button
-            disabled={!permissions.members.create}
-            onClick={() => navigate(appRoutes.members.new)}
-            type="primary"
-          >
-            Nuevo socio
-          </Button>
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  disabled: isExporting,
-                  key: 'export',
-                  label: 'Exportar',
-                  onClick: () => exportData(exportQuery),
-                },
-              ],
-            }}
-          >
-            <Button icon={<MoreOutlined />} loading={isExporting} />
-          </Dropdown>
-        </Space.Compact>
-      }
-      title="Socios"
-    >
+    <Page>
+      <PageHeader>
+        <PageTitle>Socios</PageTitle>
+        <PageActions>
+          <Space.Compact>
+            <Button
+              disabled={!permissions.members.create}
+              onClick={() => navigate(appRoutes.members.new)}
+              type="primary"
+            >
+              Nuevo socio
+            </Button>
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    disabled: isExporting,
+                    key: 'export',
+                    label: 'Exportar',
+                    onClick: () => exportData(exportQuery),
+                  },
+                ],
+              }}
+            >
+              <Button icon={<MoreOutlined />} loading={isExporting} />
+            </Dropdown>
+          </Space.Compact>
+        </PageActions>
+      </PageHeader>
       <PageTableActions>
         <TableMembersSearch
           isLoading={isSelectedMembersLoading}
@@ -162,7 +168,11 @@ export function MemberListPage() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: labelMapToFilterOptions(MemberStatusLabel),
-            render: (status: MemberStatus) => MemberStatusLabel[status],
+            render: (status: MemberStatus) => (
+              <Tag color={MemberStatusColor[status]}>
+                {MemberStatusLabel[status]}
+              </Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },
@@ -273,6 +283,6 @@ export function MemberListPage() {
           total: members?.total,
         }}
       />
-    </Card>
+    </Page>
   );
 }

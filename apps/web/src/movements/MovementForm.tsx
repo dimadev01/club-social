@@ -1,6 +1,6 @@
 import type dayjs from 'dayjs';
 
-import { DateFormats, NumberFormat } from '@club-social/shared/lib';
+import { NumberFormat } from '@club-social/shared/lib';
 import {
   MovementCategory,
   MovementCategoryLabel,
@@ -52,7 +52,7 @@ export function MovementForm({
         name="date"
         rules={[{ message: 'La fecha es requerida', required: true }]}
       >
-        <DatePicker allowClear={false} format={DateFormats.date} />
+        <DatePicker allowClear={false} />
       </Form.Item>
 
       <Form.Item<MovementFormData>

@@ -24,21 +24,27 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Button,
-  Card,
   DuesIcon,
   NavigateToPayment,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   PaymentsIcon,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
   TableDateRangeFilterDropdown,
   TableMembersSearch,
+  Tag,
   useTable,
 } from '@/ui';
 import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
+
+import { PaymentStatusColor, PaymentStatusIcon } from './PaymentUtils';
 
 export function PaymentList() {
   const navigate = useNavigate();
@@ -85,36 +91,37 @@ export function PaymentList() {
   }
 
   return (
-    <Card
-      extra={
-        <Space.Compact>
-          {permissions.payments.create && (
-            <Button
-              disabled={!permissions.payments.create}
-              onClick={() => navigate(appRoutes.payments.new)}
-              type="primary"
+    <Page>
+      <PageHeader>
+        <PageTitle>Pagos</PageTitle>
+        <PageActions>
+          <Space.Compact>
+            {permissions.payments.create && (
+              <Button
+                disabled={!permissions.payments.create}
+                onClick={() => navigate(appRoutes.payments.new)}
+                type="primary"
+              >
+                Nuevo pago
+              </Button>
+            )}
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    disabled: isExporting,
+                    key: 'export',
+                    label: 'Exportar',
+                    onClick: () => exportData(exportQuery),
+                  },
+                ],
+              }}
             >
-              Nuevo pago
-            </Button>
-          )}
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  disabled: isExporting,
-                  key: 'export',
-                  label: 'Exportar',
-                  onClick: () => exportData(exportQuery),
-                },
-              ],
-            }}
-          >
-            <Button icon={<MoreOutlined />} />
-          </Dropdown>
-        </Space.Compact>
-      }
-      title="Pagos"
-    >
+              <Button icon={<MoreOutlined />} />
+            </Dropdown>
+          </Space.Compact>
+        </PageActions>
+      </PageHeader>
       <PageTableActions>
         {permissions.payments.listAll && (
           <TableMembersSearch
@@ -191,7 +198,14 @@ export function PaymentList() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: labelMapToFilterOptions(PaymentStatusLabel),
-            render: (value: PaymentStatus) => PaymentStatusLabel[value],
+            render: (value: PaymentStatus) => (
+              <Tag
+                color={PaymentStatusColor[value]}
+                icon={PaymentStatusIcon[value]}
+              >
+                {PaymentStatusLabel[value]}
+              </Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },
@@ -274,6 +288,6 @@ export function PaymentList() {
           </Table.Summary>
         )}
       />
-    </Card>
+    </Page>
   );
 }

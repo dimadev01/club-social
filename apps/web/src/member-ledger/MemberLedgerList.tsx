@@ -25,19 +25,28 @@ import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
-  Card,
   NavigateToMemberLedgerEntry,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
   TableDateRangeFilterDropdown,
   TableMembersSearch,
+  Tag,
   useTable,
 } from '@/ui';
 import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
+
+import {
+  MemberLedgerEntryStatusColor,
+  MemberLedgerEntryStatusIcon,
+} from './MemberLedgerUtils';
 
 export function MemberLedgerList() {
   const navigate = useNavigate();
@@ -85,36 +94,37 @@ export function MemberLedgerList() {
   }
 
   return (
-    <Card
-      extra={
-        <Space.Compact>
-          {permissions.memberLedger.create && (
-            <Button
-              icon={<PlusOutlined />}
-              onClick={() => navigate(appRoutes.memberLedger.new)}
-              type="primary"
+    <Page>
+      <PageHeader>
+        <PageTitle>Libro mayor de socios</PageTitle>
+        <PageActions>
+          <Space.Compact>
+            {permissions.memberLedger.create && (
+              <Button
+                icon={<PlusOutlined />}
+                onClick={() => navigate(appRoutes.memberLedger.new)}
+                type="primary"
+              >
+                Nuevo ajuste
+              </Button>
+            )}
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    disabled: isExporting,
+                    key: 'export',
+                    label: 'Exportar',
+                    onClick: () => exportData(exportQuery),
+                  },
+                ],
+              }}
             >
-              Nuevo ajuste
-            </Button>
-          )}
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  disabled: isExporting,
-                  key: 'export',
-                  label: 'Exportar',
-                  onClick: () => exportData(exportQuery),
-                },
-              ],
-            }}
-          >
-            <Button icon={<MoreOutlined />} />
-          </Dropdown>
-        </Space.Compact>
-      }
-      title="Libro mayor de socios"
-    >
+              <Button icon={<MoreOutlined />} />
+            </Dropdown>
+          </Space.Compact>
+        </PageActions>
+      </PageHeader>
       <PageTableActions justify="end">
         <Flex gap="middle" wrap>
           {permissions.memberLedger.listAll && (
@@ -173,8 +183,14 @@ export function MemberLedgerList() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: labelMapToFilterOptions(MemberLedgerEntryStatusLabel),
-            render: (value: MemberLedgerEntryStatus) =>
-              MemberLedgerEntryStatusLabel[value],
+            render: (value: MemberLedgerEntryStatus) => (
+              <Tag
+                color={MemberLedgerEntryStatusColor[value]}
+                icon={MemberLedgerEntryStatusIcon[value]}
+              >
+                {MemberLedgerEntryStatusLabel[value]}
+              </Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },
@@ -226,6 +242,6 @@ export function MemberLedgerList() {
           </Table.Summary>
         )}
       />
-    </Card>
+    </Page>
   );
 }

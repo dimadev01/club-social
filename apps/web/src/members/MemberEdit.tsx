@@ -9,7 +9,14 @@ import { useNavigate, useParams } from 'react-router';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { PostHogEvent } from '@/shared/lib/posthog-events';
-import { Card, FormSubmitButton, NotFound } from '@/ui';
+import {
+  Card,
+  FormSubmitButton,
+  NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { MemberForm, type MemberFormData } from './MemberForm';
@@ -69,7 +76,7 @@ export function MemberEdit() {
   }
 
   if (isLoading) {
-    return <Card loading title="Editar socio" />;
+    return <Card loading />;
   }
 
   if (!member) {
@@ -79,46 +86,51 @@ export function MemberEdit() {
   const isMutating = updateMemberMutation.isPending;
 
   return (
-    <Card
-      actions={[
-        <FormSubmitButton disabled={isMutating} loading={isMutating}>
-          Actualizar socio
-        </FormSubmitButton>,
-      ]}
-      backButton
-      title={member.name}
-    >
-      <MemberForm
-        disabled={isMutating}
-        initialValues={{
-          address: {
-            cityName: member.address?.cityName ?? '',
-            stateName: member.address?.stateName ?? '',
-            street: member.address?.street ?? '',
-            zipCode: member.address?.zipCode ?? '',
-          },
-          birthDate: member.birthDate ? dayjs.utc(member.birthDate) : undefined,
-          category: member.category,
-          documentID: member.documentID ?? '',
-          email: member.email,
-          fileStatus: member.fileStatus,
-          firstName: member.firstName,
-          lastName: member.lastName,
-          maritalStatus: member.maritalStatus ?? undefined,
-          nationality: member.nationality ?? undefined,
-          notificationPreferences: {
-            notifyOnDueCreated:
-              member.notificationPreferences.notifyOnDueCreated,
-            notifyOnPaymentCreated:
-              member.notificationPreferences.notifyOnPaymentCreated,
-          },
-          phones: member.phones,
-          sex: member.sex ?? undefined,
-          status: member.status,
-        }}
-        mode="edit"
-        onSubmit={handleSubmit}
-      />
-    </Card>
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>{member.name}</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          <FormSubmitButton disabled={isMutating} loading={isMutating}>
+            Actualizar socio
+          </FormSubmitButton>,
+        ]}
+      >
+        <MemberForm
+          disabled={isMutating}
+          initialValues={{
+            address: {
+              cityName: member.address?.cityName ?? '',
+              stateName: member.address?.stateName ?? '',
+              street: member.address?.street ?? '',
+              zipCode: member.address?.zipCode ?? '',
+            },
+            birthDate: member.birthDate
+              ? dayjs.utc(member.birthDate)
+              : undefined,
+            category: member.category,
+            documentID: member.documentID ?? '',
+            email: member.email,
+            fileStatus: member.fileStatus,
+            firstName: member.firstName,
+            lastName: member.lastName,
+            maritalStatus: member.maritalStatus ?? undefined,
+            nationality: member.nationality ?? undefined,
+            notificationPreferences: {
+              notifyOnDueCreated:
+                member.notificationPreferences.notifyOnDueCreated,
+              notifyOnPaymentCreated:
+                member.notificationPreferences.notifyOnPaymentCreated,
+            },
+            phones: member.phones,
+            sex: member.sex ?? undefined,
+            status: member.status,
+          }}
+          mode="edit"
+          onSubmit={handleSubmit}
+        />
+      </Card>
+    </Page>
   );
 }

@@ -8,7 +8,14 @@ import { useNavigate, useParams } from 'react-router';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { PostHogEvent } from '@/shared/lib/posthog-events';
-import { Card, FormSubmitButton, NotFound } from '@/ui';
+import {
+  Card,
+  FormSubmitButton,
+  NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
+} from '@/ui';
 import { usePermissions } from '@/users/use-permissions';
 
 import { GroupForm, type GroupFormData } from './GroupForm';
@@ -48,7 +55,7 @@ export function GroupEdit() {
   }
 
   if (isLoading) {
-    return <Card loading title="Editar grupo" />;
+    return <Card loading />;
   }
 
   if (!group) {
@@ -67,25 +74,28 @@ export function GroupEdit() {
   );
 
   return (
-    <Card
-      actions={[
-        <FormSubmitButton disabled={isMutating} loading={isMutating}>
-          Actualizar grupo
-        </FormSubmitButton>,
-      ]}
-      backButton
-      title="Editar grupo"
-    >
-      <GroupForm
-        additionalMemberOptions={memberAdditionalOptions}
-        disabled={isMutating}
-        initialValues={{
-          discountPercent: group.discountPercent,
-          memberIds: group.members.map((member) => member.id),
-          name: group.name,
-        }}
-        onSubmit={handleSubmit}
-      />
-    </Card>
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>Editar grupo</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          <FormSubmitButton disabled={isMutating} loading={isMutating}>
+            Actualizar grupo
+          </FormSubmitButton>,
+        ]}
+      >
+        <GroupForm
+          additionalMemberOptions={memberAdditionalOptions}
+          disabled={isMutating}
+          initialValues={{
+            discountPercent: group.discountPercent,
+            memberIds: group.members.map((member) => member.id),
+            name: group.name,
+          }}
+          onSubmit={handleSubmit}
+        />
+      </Card>
+    </Page>
   );
 }

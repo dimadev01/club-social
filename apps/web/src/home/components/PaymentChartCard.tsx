@@ -1,6 +1,5 @@
 import type { PaymentDailyStatisticsItemDto } from '@club-social/shared/payments';
 
-import { BarChartOutlined } from '@ant-design/icons';
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { Empty, theme } from 'antd';
 import { type Dayjs } from 'dayjs';
@@ -16,7 +15,7 @@ import {
   YAxis,
 } from 'recharts';
 
-import { Card, DatePicker, Descriptions, Form } from '@/ui';
+import { Card, DatePicker, Descriptions, Form, PageHeading } from '@/ui';
 
 import { usePaymentDailyStatistics } from '../usePaymentDailyStatistics';
 
@@ -64,7 +63,7 @@ export function PaymentChartCard() {
 
   const monthStr = selectedMonth.startOf('month').format(DateFormats.isoDate);
 
-  const { data: statistics, isLoading } = usePaymentDailyStatistics({
+  const { data: statistics } = usePaymentDailyStatistics({
     month: monthStr,
   });
 
@@ -78,66 +77,65 @@ export function PaymentChartCard() {
   const hasData = chartData.some((d) => d.amount > 0);
 
   return (
-    <Card
-      extra={<BarChartOutlined />}
-      loading={isLoading}
-      title="Estadísticas de pagos"
-    >
-      <Form.Item label="Mes">
-        <DatePicker
-          allowClear={false}
-          className="sm:w-44"
-          format={DateFormats.monthYear}
-          onChange={(date) => date && setSelectedMonth(date)}
-          picker="month"
-          value={selectedMonth}
-        />
-      </Form.Item>
+    <>
+      <PageHeading>Pagos</PageHeading>
 
-      <div className="h-64">
-        {!hasData && (
-          <div className="flex h-full items-center justify-center">
-            <Empty description="Sin pagos en este mes" />
-          </div>
-        )}
+      <Card>
+        <Form.Item label="Mes">
+          <DatePicker
+            allowClear={false}
+            className="sm:w-44"
+            format={DateFormats.monthYear}
+            onChange={(date) => date && setSelectedMonth(date)}
+            picker="month"
+            value={selectedMonth}
+          />
+        </Form.Item>
+        <div className="h-64">
+          {!hasData && (
+            <div className="flex h-full items-center justify-center">
+              <Empty description="Sin pagos en este mes" />
+            </div>
+          )}
 
-        {hasData && (
-          <ResponsiveContainer height="100%" width="100%">
-            <BarChart
-              data={chartData}
-              margin={{ bottom: 0, left: 0, right: 10, top: 10 }}
-            >
-              <CartesianGrid
-                stroke={token.colorBorderSecondary}
-                strokeDasharray="3 3"
-                vertical={false}
-              />
-              <XAxis
-                dataKey="day"
-                fontSize={12}
-                stroke={token.colorTextSecondary}
-                tickLine={false}
-              />
-              <YAxis
-                fontSize={12}
-                stroke={token.colorTextSecondary}
-                tickFormatter={(value: number) =>
-                  NumberFormat.currencyCents(value)
-                }
-                tickLine={false}
-                width={80}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar
-                dataKey="amount"
-                fill={token.colorPrimary}
-                radius={[4, 4, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-      </div>
-    </Card>
+          {hasData && (
+            <ResponsiveContainer height="100%" width="100%">
+              <BarChart
+                data={chartData}
+                margin={{ bottom: 0, left: 0, right: 10, top: 10 }}
+              >
+                <CartesianGrid
+                  stroke={token.colorBorderSecondary}
+                  strokeDasharray="3 3"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="day"
+                  fontSize={12}
+                  stroke={token.colorTextSecondary}
+                  tickLine={false}
+                />
+                <YAxis
+                  fontSize={12}
+                  stroke={token.colorTextSecondary}
+                  tickFormatter={(value: number) =>
+                    NumberFormat.currencyCents(value)
+                  }
+                  tickLine={false}
+                  width={80}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar
+                  dataKey="amount"
+                  fill={token.colorPrimary}
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </Card>
+    </>
   );
 }
 

@@ -13,7 +13,14 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { PostHogEvent } from '@/shared/lib/posthog-events';
-import { Card, FormSubmitButton, NotFound } from '@/ui';
+import {
+  Card,
+  FormSubmitButton,
+  NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
+} from '@/ui';
 import { FormSubmitButtonAndBack } from '@/ui/Form/FormSubmitAndBack';
 import { usePermissions } from '@/users/use-permissions';
 
@@ -100,36 +107,39 @@ export function DueNew() {
   const isMutating = createDueMutation.isPending;
 
   return (
-    <Card
-      actions={[
-        <FormSubmitButtonAndBack
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>Nueva deuda</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          <FormSubmitButtonAndBack
+            disabled={isMutating}
+            loading={isMutating}
+            onClick={() => (shouldNavigateBack.current = true)}
+          />,
+          <FormSubmitButton
+            disabled={isMutating}
+            loading={isMutating}
+            onClick={() => (shouldNavigateBack.current = false)}
+          >
+            Crear deuda
+          </FormSubmitButton>,
+        ]}
+      >
+        <DueForm
           disabled={isMutating}
-          loading={isMutating}
-          onClick={() => (shouldNavigateBack.current = true)}
-        />,
-        <FormSubmitButton
-          disabled={isMutating}
-          loading={isMutating}
-          onClick={() => (shouldNavigateBack.current = false)}
-        >
-          Crear deuda
-        </FormSubmitButton>,
-      ]}
-      backButton
-      title="Nueva deuda"
-    >
-      <DueForm
-        disabled={isMutating}
-        initialValues={{
-          amount: 0,
-          category: DueCategory.MEMBERSHIP,
-          date: dayjs(),
-          memberIds: memberIdFromUrl ? [memberIdFromUrl] : [],
-          notes: null,
-        }}
-        mode="create"
-        onSubmit={handleSubmit}
-      />
-    </Card>
+          initialValues={{
+            amount: 0,
+            category: DueCategory.MEMBERSHIP,
+            date: dayjs(),
+            memberIds: memberIdFromUrl ? [memberIdFromUrl] : [],
+            notes: null,
+          }}
+          mode="create"
+          onSubmit={handleSubmit}
+        />
+      </Card>
+    </Page>
   );
 }

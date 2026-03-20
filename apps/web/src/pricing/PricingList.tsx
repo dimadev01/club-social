@@ -18,9 +18,12 @@ import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
-  Card,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
@@ -53,22 +56,23 @@ export function PricingList() {
   }
 
   return (
-    <Card
-      extra={
-        <Space.Compact>
-          {permissions.pricing.create && (
-            <Button
-              disabled={!permissions.pricing.create}
-              onClick={() => navigate(appRoutes.pricing.new)}
-              type="primary"
-            >
-              Nuevo precio
-            </Button>
-          )}
-        </Space.Compact>
-      }
-      title="Precios"
-    >
+    <Page>
+      <PageHeader>
+        <PageTitle>Precios</PageTitle>
+        <PageActions>
+          <Space.Compact>
+            {permissions.pricing.create && (
+              <Button
+                disabled={!permissions.pricing.create}
+                onClick={() => navigate(appRoutes.pricing.new)}
+                type="primary"
+              >
+                Nuevo precio
+              </Button>
+            )}
+          </Space.Compact>
+        </PageActions>
+      </PageHeader>
       <PageTableActions>
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -138,6 +142,6 @@ export function PricingList() {
           total: pricing?.total,
         }}
       />
-    </Card>
+    </Page>
   );
 }

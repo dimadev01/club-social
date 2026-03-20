@@ -9,7 +9,14 @@ import { appRoutes } from '@/app/app.enum';
 import { useMutation } from '@/shared/hooks/useMutation';
 import { $fetch } from '@/shared/lib/fetch';
 import { PostHogEvent } from '@/shared/lib/posthog-events';
-import { Card, FormSubmitButton, NotFound } from '@/ui';
+import {
+  Card,
+  FormSubmitButton,
+  NotFound,
+  Page,
+  PageHeader,
+  PageTitle,
+} from '@/ui';
 
 import { usePermissions } from './use-permissions';
 import { UserForm, type UserFormData } from './UserForm';
@@ -44,25 +51,28 @@ export function UserNew() {
   const isMutating = createUserMutation.isPending;
 
   return (
-    <Card
-      actions={[
-        <FormSubmitButton disabled={isMutating} loading={isMutating}>
-          Crear usuario
-        </FormSubmitButton>,
-      ]}
-      backButton
-      title="Nuevo usuario"
-    >
-      <UserForm
-        disabled={isMutating}
-        initialValues={{
-          email: '',
-          firstName: '',
-          lastName: '',
-        }}
-        mode="create"
-        onSubmit={handleSubmit}
-      />
-    </Card>
+    <Page>
+      <PageHeader backButton>
+        <PageTitle>Nuevo usuario</PageTitle>
+      </PageHeader>
+      <Card
+        actions={[
+          <FormSubmitButton disabled={isMutating} loading={isMutating}>
+            Crear usuario
+          </FormSubmitButton>,
+        ]}
+      >
+        <UserForm
+          disabled={isMutating}
+          initialValues={{
+            email: '',
+            firstName: '',
+            lastName: '',
+          }}
+          mode="create"
+          onSubmit={handleSubmit}
+        />
+      </Card>
+    </Page>
   );
 }

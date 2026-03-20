@@ -21,19 +21,25 @@ import { $fetch } from '@/shared/lib/fetch';
 import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
-  Card,
   NavigateToMovement,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   Table,
   TABLE_COLUMN_WIDTHS,
   TABLE_DESCRIPTION_MAX_LENGTH,
   TableActions,
   TableDateRangeFilterDropdown,
+  Tag,
   useTable,
 } from '@/ui';
 import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
+
+import { MovementStatusColor, MovementStatusIcon } from './MovementUtils';
 
 export function MovementList() {
   const navigate = useNavigate();
@@ -72,35 +78,37 @@ export function MovementList() {
   }
 
   return (
-    <Card
-      extra={
-        <Space.Compact>
-          {permissions.movements.create && (
-            <Button
-              onClick={() => navigate(appRoutes.movements.new)}
-              type="primary"
+    <Page>
+      <PageHeader>
+        <PageTitle>Movimientos</PageTitle>
+        <PageActions>
+          <Space.Compact>
+            {permissions.movements.create && (
+              <Button
+                onClick={() => navigate(appRoutes.movements.new)}
+                type="primary"
+              >
+                Nuevo movimiento
+              </Button>
+            )}
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    disabled: isExporting,
+                    key: 'export',
+                    label: 'Exportar',
+                    onClick: () => exportData(exportQuery),
+                  },
+                ],
+              }}
             >
-              Nuevo movimiento
-            </Button>
-          )}
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  disabled: isExporting,
-                  key: 'export',
-                  label: 'Exportar',
-                  onClick: () => exportData(exportQuery),
-                },
-              ],
-            }}
-          >
-            <Button icon={<MoreOutlined />} />
-          </Dropdown>
-        </Space.Compact>
-      }
-      title="Movimientos"
-    >
+              <Button icon={<MoreOutlined />} />
+            </Dropdown>
+          </Space.Compact>
+        </PageActions>
+      </PageHeader>
+
       <PageTableActions justify="end">
         <TableActions clearFilters={clearFilters} resetFilters={resetFilters} />
       </PageTableActions>
@@ -163,7 +171,14 @@ export function MovementList() {
             dataIndex: 'status',
             filteredValue: getFilterValue('status'),
             filters: labelMapToFilterOptions(MovementStatusLabel),
-            render: (value: MovementStatus) => MovementStatusLabel[value],
+            render: (value: MovementStatus) => (
+              <Tag
+                color={MovementStatusColor[value]}
+                icon={MovementStatusIcon[value]}
+              >
+                {MovementStatusLabel[value]}
+              </Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS,
           },
@@ -234,6 +249,6 @@ export function MovementList() {
           </Table.Summary>
         )}
       />
-    </Card>
+    </Page>
   );
 }

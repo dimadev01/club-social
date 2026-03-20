@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
+import { MemberStatusColor } from '@/members/MemberUtils';
 import { useMembersForSelect } from '@/members/useMembersForSelect';
 import { useExport } from '@/shared/hooks/useExport';
 import { useQuery } from '@/shared/hooks/useQuery';
@@ -25,23 +26,28 @@ import { queryKeys } from '@/shared/lib/query-keys';
 import { labelMapToFilterOptions } from '@/shared/lib/utils';
 import {
   Button,
-  Card,
   DuesIcon,
   NavigateToDue,
   NotFound,
+  Page,
+  PageActions,
+  PageHeader,
   PageTableActions,
+  PageTitle,
   PaymentsIcon,
   Table,
   TABLE_COLUMN_WIDTHS,
   TableActions,
   TableDateRangeFilterDropdown,
   TableMembersSearch,
+  Tag,
   useTable,
 } from '@/ui';
 import { TableSummaryTotalFilterText } from '@/ui/Table/TableSummaryTotalFilterText';
 import { usePermissions } from '@/users/use-permissions';
 
 import { DueCategoryIconLabel } from './DueCategoryIconLabel';
+import { DueStatusColor, DueStatusIcon } from './DueUtils';
 
 export function DueList() {
   const navigate = useNavigate();
@@ -92,42 +98,43 @@ export function DueList() {
   }
 
   return (
-    <Card
-      extra={
-        <Space.Compact>
-          {permissions.dues.create && (
-            <Button
-              disabled={!permissions.dues.create}
-              onClick={() => navigate(appRoutes.dues.new)}
-              type="primary"
+    <Page>
+      <PageHeader>
+        <PageTitle>Deudas</PageTitle>
+        <PageActions>
+          <Space.Compact>
+            {permissions.dues.create && (
+              <Button
+                disabled={!permissions.dues.create}
+                onClick={() => navigate(appRoutes.dues.new)}
+                type="primary"
+              >
+                Nueva deuda
+              </Button>
+            )}
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    disabled: !permissions.dues.create,
+                    key: 'bulk-create',
+                    label: 'Crear cuotas mensuales',
+                    onClick: () => navigate(appRoutes.dues.newBulk),
+                  },
+                  {
+                    disabled: isExporting,
+                    key: 'export',
+                    label: 'Exportar',
+                    onClick: () => exportData(exportQuery),
+                  },
+                ],
+              }}
             >
-              Nueva deuda
-            </Button>
-          )}
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  disabled: !permissions.dues.create,
-                  key: 'bulk-create',
-                  label: 'Crear cuotas mensuales',
-                  onClick: () => navigate(appRoutes.dues.newBulk),
-                },
-                {
-                  disabled: isExporting,
-                  key: 'export',
-                  label: 'Exportar',
-                  onClick: () => exportData(exportQuery),
-                },
-              ],
-            }}
-          >
-            <Button icon={<MoreOutlined />} />
-          </Dropdown>
-        </Space.Compact>
-      }
-      title="Deudas"
-    >
+              <Button icon={<MoreOutlined />} />
+            </Dropdown>
+          </Space.Compact>
+        </PageActions>
+      </PageHeader>
       <PageTableActions>
         {permissions.dues.listAll && (
           <TableMembersSearch
@@ -157,6 +164,9 @@ export function DueList() {
             sorter: true,
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
+            width: permissions.dues.listAll
+              ? TABLE_COLUMN_WIDTHS.DATE
+              : undefined,
           },
           ...(permissions.dues.listAll
             ? [
@@ -164,7 +174,9 @@ export function DueList() {
                   dataIndex: 'memberId',
                   render: (_, record: DuePaginatedDto) => record.memberName,
                   title: 'Socio',
-                  width: TABLE_COLUMN_WIDTHS.MEMBER_NAME,
+                  width: permissions.dues.listAll
+                    ? undefined
+                    : TABLE_COLUMN_WIDTHS.MEMBER_NAME,
                 } satisfies TableColumnType<DuePaginatedDto>,
               ]
             : []),
@@ -174,7 +186,7 @@ export function DueList() {
             filteredValue: getFilterValue('category'),
             filters: labelMapToFilterOptions(DueCategoryLabel).map(
               ({ value }) => ({
-                text: <DueCategoryIconLabel category={value as DueCategory} />,
+                text: DueCategoryLabel[value as DueCategory],
                 value,
               }),
             ),
@@ -197,7 +209,11 @@ export function DueList() {
             filteredValue: getFilterValue('status'),
             filterMode: 'tree',
             filters: labelMapToFilterOptions(DueStatusLabel),
-            render: (value: DueStatus) => DueStatusLabel[value],
+            render: (value: DueStatus) => (
+              <Tag color={DueStatusColor[value]} icon={DueStatusIcon[value]}>
+                {DueStatusLabel[value]}
+              </Tag>
+            ),
             title: 'Estado',
             width: TABLE_COLUMN_WIDTHS.STATUS_LARGER,
           },
@@ -208,7 +224,11 @@ export function DueList() {
                   dataIndex: 'memberStatus',
                   filteredValue: getFilterValue('memberStatus'),
                   filters: labelMapToFilterOptions(MemberStatusLabel),
-                  render: (value: MemberStatus) => MemberStatusLabel[value],
+                  render: (value: MemberStatus) => (
+                    <Tag color={MemberStatusColor[value]}>
+                      {MemberStatusLabel[value]}
+                    </Tag>
+                  ),
                   title: 'Estado socio',
                   width: TABLE_COLUMN_WIDTHS.STATUS,
                 } satisfies TableColumnType<DuePaginatedDto>,
@@ -290,6 +310,6 @@ export function DueList() {
           </Table.Summary>
         )}
       />
-    </Card>
+    </Page>
   );
 }

@@ -1,8 +1,30 @@
 @layer theme, base, antd, components, utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&display=swap');
+
 @import url('antd/dist/antd.css') layer(antd);
 
 @import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Nunito Sans', sans-serif;
+  --font-heading: 'Nunito', sans-serif;
+}
+
+@layer components {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+  }
+
+  .ant-tag {
+    font-size: 14px;
+  }
+}
 
 @keyframes bounce {
   0%,
