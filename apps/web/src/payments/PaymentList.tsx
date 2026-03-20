@@ -149,6 +149,9 @@ export function PaymentList() {
             sorter: true,
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
+            width: permissions.payments.listAll
+              ? TABLE_COLUMN_WIDTHS.DATE
+              : undefined,
           },
           ...(permissions.payments.listAll
             ? [
@@ -156,7 +159,9 @@ export function PaymentList() {
                   dataIndex: 'memberId',
                   render: (_, record: PaymentPaginatedDto) => record.memberName,
                   title: 'Socio',
-                  width: TABLE_COLUMN_WIDTHS.MEMBER_NAME,
+                  width: permissions.payments.listAll
+                    ? undefined
+                    : TABLE_COLUMN_WIDTHS.MEMBER_NAME,
                 } satisfies TableColumnType<PaymentPaginatedDto>,
               ]
             : []),

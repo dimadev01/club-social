@@ -156,6 +156,9 @@ export function MemberLedgerList() {
             sorter: true,
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
+            width: permissions.memberLedger.listAll
+              ? TABLE_COLUMN_WIDTHS.DATE
+              : undefined,
           },
           ...(permissions.memberLedger.listAll
             ? [
@@ -163,7 +166,9 @@ export function MemberLedgerList() {
                   dataIndex: 'memberFullName',
                   render: (name: string) => name,
                   title: 'Socio',
-                  width: TABLE_COLUMN_WIDTHS.MEMBER_NAME,
+                  width: permissions.memberLedger.listAll
+                    ? undefined
+                    : TABLE_COLUMN_WIDTHS.MEMBER_NAME,
                 } satisfies TableColumnType<MemberLedgerEntryPaginatedDto>,
               ]
             : []),
