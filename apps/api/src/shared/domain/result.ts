@@ -8,7 +8,7 @@ export type Result<T = unknown, E = Error> = NeverThrowResult<T, E>;
 
 export function ok(): Result<void>;
 export function ok<T>(value: T): Result<T>;
-
+// eslint-disable-next-line @stylistic/padding-line-between-statements
 export function ok<T>(value?: T): Result<T | void> {
   return neverThrowOk<T | void>(value as T | void);
 }

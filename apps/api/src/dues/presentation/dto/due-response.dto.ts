@@ -23,24 +23,6 @@ export class DueMemberResponseDto implements DueMemberDto {
   public status: MemberStatus;
 }
 
-export class DueResponseDto implements DueDto {
-  public amount: number;
-  public category: DueCategory;
-  public createdAt: string;
-  public createdBy: string;
-  public date: string;
-  public id: string;
-  public member: DueMemberResponseDto;
-  public notes: null | string;
-  public settlements: DueSettlementResponseDto[];
-  public status: DueStatus;
-  public updatedAt: string;
-  public updatedBy: null | string;
-  public voidedAt: null | string;
-  public voidedBy: null | string;
-  public voidReason: null | string;
-}
-
 export class DueSettlementMemberLedgerEntryResponseDto implements DueSettlementMemberLedgerEntryDto {
   public date: string;
   public id: string;
@@ -60,4 +42,22 @@ export class DueSettlementResponseDto implements DueSettlementDto {
   public memberLedgerEntry: DueSettlementMemberLedgerEntryResponseDto;
   public payment: DueSettlementPaymentResponseDto | null;
   public status: DueSettlementStatus;
+}
+
+export class DueResponseDto implements DueDto {
+  public amount: number;
+  public category: DueCategory;
+  public createdAt: string;
+  public createdBy: string;
+  public date: string;
+  public id: string;
+  public member: DueMemberResponseDto;
+  public notes: null | string;
+  public settlements: DueSettlementResponseDto[];
+  public status: DueStatus;
+  public updatedAt: string;
+  public updatedBy: null | string;
+  public voidedAt: null | string;
+  public voidedBy: null | string;
+  public voidReason: null | string;
 }
