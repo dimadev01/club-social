@@ -56,15 +56,15 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    req.session = session;
+    req.session = session as AuthSession;
 
-    if (session.user.role === UserRole.MEMBER) {
-      const cacheKey = `member:userId:${session.user.id}`;
+    if (req.session.user.role === UserRole.MEMBER) {
+      const cacheKey = `member:userId:${req.session.user.id}`;
       let memberId = await this.cacheManager.get<string>(cacheKey);
 
       if (!memberId) {
         const member = await this.memberRepository.findUniqueByUserId(
-          UniqueId.raw({ value: session.user.id }),
+          UniqueId.raw({ value: req.session.user.id }),
         );
         memberId = member.id.value;
         await this.cacheManager.set(cacheKey, memberId, MEMBER_CACHE_TTL_MS);

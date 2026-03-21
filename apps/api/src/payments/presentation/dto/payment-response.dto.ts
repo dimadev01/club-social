@@ -25,6 +25,14 @@ export class PaymentMemberResponseDto implements PaymentMemberDto {
   public name: string;
 }
 
+export class PaymentSettlementResponseDto implements PaymentDueSettlementDto {
+  public amount: number;
+  public due: PaymentDueSettlementDueResponseDto;
+  public id: string;
+  public memberLedgerEntry: PaymentMemberLedgerEntryResponseDto;
+  public status: DueSettlementStatus;
+}
+
 export class PaymentResponseDto implements PaymentDto {
   public amount: number;
   public createdAt: string;
@@ -44,12 +52,4 @@ export class PaymentResponseDto implements PaymentDto {
   public voidedAt: null | string;
   public voidedBy: null | string;
   public voidReason: null | string;
-}
-
-export class PaymentSettlementResponseDto implements PaymentDueSettlementDto {
-  public amount: number;
-  public due: PaymentDueSettlementDueResponseDto;
-  public id: string;
-  public memberLedgerEntry: PaymentMemberLedgerEntryResponseDto;
-  public status: DueSettlementStatus;
 }
