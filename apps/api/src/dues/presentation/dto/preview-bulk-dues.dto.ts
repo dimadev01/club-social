@@ -23,12 +23,12 @@ export class PreviewBulkDuesRequestDto implements PreviewBulkDuesDto {
   public memberCategory: MemberCategory;
 }
 
-export class PreviewBulkDuesResponseDto implements PreviewBulkDuesResultDto {
-  public members: PreviewBulkDuesMemberResponseDto[];
-  public summary: PreviewBulkDuesSummaryResponseDto;
-}
-
 export class PreviewBulkDuesSummaryResponseDto implements PreviewBulkDuesSummaryDto {
   public totalAmount: number;
   public totalMembers: number;
+}
+
+export class PreviewBulkDuesResponseDto implements PreviewBulkDuesResultDto {
+  public members: PreviewBulkDuesMemberResponseDto[];
+  public summary: PreviewBulkDuesSummaryResponseDto;
 }

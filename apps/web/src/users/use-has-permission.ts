@@ -8,7 +8,7 @@ export function useHasPermission(resource: Resource, action: Action): boolean {
   const user = useSessionUser();
 
   return betterAuthClient.admin.checkRolePermission({
-    permission: { [resource]: [action] },
+    permissions: { [resource]: [action] },
     role: user.role as UserRole,
   });
 }
