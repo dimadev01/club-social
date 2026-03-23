@@ -3,6 +3,7 @@ import type { PaginatedDataResultDto } from '@club-social/shared/types';
 import {
   type UserDto,
   UserRole,
+  UserRoleLabel,
   UserStatus,
   UserStatusLabel,
 } from '@club-social/shared/users';
@@ -109,6 +110,13 @@ export function UserListPage() {
             sortOrder: getSortOrder('email'),
             title: 'Email',
             width: TABLE_COLUMN_WIDTHS.EMAIL,
+          },
+          {
+            align: 'center',
+            dataIndex: 'role',
+            render: (value: UserRole) => UserRoleLabel[value],
+            title: 'Rol',
+            width: TABLE_COLUMN_WIDTHS.ACTIONS,
           },
           {
             align: 'center',
