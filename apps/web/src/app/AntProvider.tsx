@@ -21,6 +21,7 @@ const THEME_TOKEN: ThemeConfig['token'] = {
   colorInfo: PRIMARY_GREEN,
   colorPrimary: PRIMARY_GREEN,
   fontFamily: "'Nunito Sans', sans-serif",
+  // wireframe: true,
 };
 
 const THEME_COMPONENTS: ThemeConfig['components'] = {

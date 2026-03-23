@@ -181,7 +181,7 @@ export function DueList() {
               ]
             : []),
           {
-            align: 'left',
+            align: 'center',
             dataIndex: 'category',
             filteredValue: getFilterValue('category'),
             filters: labelMapToFilterOptions(DueCategoryLabel).map(
