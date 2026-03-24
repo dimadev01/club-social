@@ -128,7 +128,7 @@ export function DueBulkForm({ disabled = false, onSubmit }: DueBulkFormProps) {
             dataIndex: 'baseAmount',
             render: (amt: number) => NumberFormat.currencyCents(amt),
             title: 'Monto Base',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -136,14 +136,14 @@ export function DueBulkForm({ disabled = false, onSubmit }: DueBulkFormProps) {
             render: (percent: number, record) =>
               record.isGroupPricing ? `${percent}%` : '',
             title: 'Descuento',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'right',
             dataIndex: 'amount',
             render: (amt: number) => NumberFormat.currencyCents(amt),
             title: 'Monto Final',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
         ]}
         dataSource={preview?.members}

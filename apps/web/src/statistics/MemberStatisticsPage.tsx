@@ -236,14 +236,14 @@ function TopDebtorsCard({ data, isLoading }: TopDebtorsCardProps) {
             dataIndex: 'category',
             render: (category: MemberCategory) => MemberCategoryLabel[category],
             title: 'Categoría',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.SM,
           },
           {
             align: 'right',
             dataIndex: 'totalDebt',
             render: (debt: number) => NumberFormat.currencyCents(debt),
             title: 'Deuda total',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -281,7 +281,7 @@ function TopDebtorsCard({ data, isLoading }: TopDebtorsCardProps) {
               </Space.Compact>
             ),
             title: 'Acciones',
-            width: TABLE_COLUMN_WIDTHS.ACTIONS,
+            width: TABLE_COLUMN_WIDTHS.SM,
           },
         ]}
         dataSource={data.map((item) => ({ ...item, key: item.id }))}

@@ -80,6 +80,7 @@ export function GroupList() {
             sorter: true,
             sortOrder: getSortOrder('name'),
             title: 'Nombre',
+            width: TABLE_COLUMN_WIDTHS.XL,
           },
           {
             dataIndex: 'members',
@@ -91,14 +92,13 @@ export function GroupList() {
               </Space>
             ),
             title: 'Miembros',
-            width: 500,
           },
           {
             align: 'center',
             dataIndex: 'discountPercent',
             render: (discountPercent: number) => `${discountPercent}%`,
             title: 'Descuento',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
         ]}
         dataSource={groups?.data}

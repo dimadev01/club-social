@@ -127,7 +127,7 @@ export function MovementList() {
             sorter: true,
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
-            width: TABLE_COLUMN_WIDTHS.DATE,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -137,7 +137,7 @@ export function MovementList() {
             filters: labelMapToFilterOptions(MovementCategoryLabel),
             render: (value: MovementCategory) => MovementCategoryLabel[value],
             title: 'Categoría',
-            width: TABLE_COLUMN_WIDTHS.MOVEMENT_CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.XL,
           },
           {
             dataIndex: 'notes',
@@ -180,7 +180,7 @@ export function MovementList() {
               </Tag>
             ),
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'right',
@@ -192,7 +192,7 @@ export function MovementList() {
                   })
                 : '',
             title: 'Egreso',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'right',
@@ -204,7 +204,7 @@ export function MovementList() {
                   })
                 : '',
             title: 'Ingreso',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
         ]}
         dataSource={movements?.data}

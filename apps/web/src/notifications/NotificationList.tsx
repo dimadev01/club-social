@@ -109,7 +109,7 @@ export function NotificationList() {
             filters: labelMapToFilterOptions(NotificationTypeLabel),
             render: (value: NotificationType) => NotificationTypeLabel[value],
             title: 'Tipo',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -120,7 +120,7 @@ export function NotificationList() {
             render: (value: NotificationChannel) =>
               NotificationChannelLabel[value],
             title: 'Canal',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             dataIndex: 'recipientAddress',
@@ -139,7 +139,7 @@ export function NotificationList() {
             render: (value: NotificationStatus) =>
               NotificationStatusLabel[value],
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
         ]}
         dataSource={notifications?.data}

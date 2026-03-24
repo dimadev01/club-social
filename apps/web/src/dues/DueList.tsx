@@ -165,7 +165,7 @@ export function DueList() {
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
             width: permissions.dues.listAll
-              ? TABLE_COLUMN_WIDTHS.DATE
+              ? TABLE_COLUMN_WIDTHS.MD
               : undefined,
           },
           ...(permissions.dues.listAll
@@ -176,7 +176,7 @@ export function DueList() {
                   title: 'Socio',
                   width: permissions.dues.listAll
                     ? undefined
-                    : TABLE_COLUMN_WIDTHS.MEMBER_NAME,
+                    : TABLE_COLUMN_WIDTHS.XXL,
                 } satisfies TableColumnType<DuePaginatedDto>,
               ]
             : []),
@@ -194,14 +194,14 @@ export function DueList() {
               <DueCategoryIconLabel category={value} date={record.date} />
             ),
             title: 'Categoría',
-            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.LG,
           },
           {
             align: 'right',
             dataIndex: 'amount',
             render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -215,7 +215,7 @@ export function DueList() {
               </Tag>
             ),
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS_LARGER,
+            width: TABLE_COLUMN_WIDTHS.LG,
           },
           ...(permissions.dues.listAll
             ? [
@@ -230,7 +230,7 @@ export function DueList() {
                     </Tag>
                   ),
                   title: 'Estado socio',
-                  width: TABLE_COLUMN_WIDTHS.STATUS,
+                  width: TABLE_COLUMN_WIDTHS.MD,
                 } satisfies TableColumnType<DuePaginatedDto>,
                 {
                   align: 'center',
@@ -284,7 +284,7 @@ export function DueList() {
                     </Space.Compact>
                   ),
                   title: 'Acciones',
-                  width: TABLE_COLUMN_WIDTHS.ACTIONS,
+                  width: TABLE_COLUMN_WIDTHS.SM,
                 } satisfies TableColumnType<DuePaginatedDto>,
               ]
             : []),

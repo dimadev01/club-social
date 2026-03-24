@@ -81,7 +81,7 @@ export function AuditLogsList() {
             sorter: true,
             sortOrder: getSortOrder('createdAt'),
             title: 'Creado el',
-            width: TABLE_COLUMN_WIDTHS.DATE_TIME,
+            width: TABLE_COLUMN_WIDTHS.XL,
           },
           {
             dataIndex: 'createdBy',
@@ -99,7 +99,7 @@ export function AuditLogsList() {
             })),
             render: (entity: AuditEntity) => AuditEntityLabel[entity],
             title: 'Entidad',
-            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.LG,
           },
           {
             align: 'center',
@@ -112,7 +112,7 @@ export function AuditLogsList() {
             })),
             render: (action: AuditAction) => AuditActionLabel[action],
             title: 'Acción',
-            width: TABLE_COLUMN_WIDTHS.ACTIONS,
+            width: TABLE_COLUMN_WIDTHS.SM,
           },
           {
             dataIndex: 'entityId',

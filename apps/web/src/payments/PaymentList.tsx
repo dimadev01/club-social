@@ -150,7 +150,7 @@ export function PaymentList() {
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
             width: permissions.payments.listAll
-              ? TABLE_COLUMN_WIDTHS.DATE
+              ? TABLE_COLUMN_WIDTHS.MD
               : undefined,
           },
           ...(permissions.payments.listAll
@@ -161,7 +161,7 @@ export function PaymentList() {
                   title: 'Socio',
                   width: permissions.payments.listAll
                     ? undefined
-                    : TABLE_COLUMN_WIDTHS.MEMBER_NAME,
+                    : TABLE_COLUMN_WIDTHS.XXL,
                 } satisfies TableColumnType<PaymentPaginatedDto>,
               ]
             : []),
@@ -189,14 +189,14 @@ export function PaymentList() {
             dataIndex: 'amount',
             render: (amount: number) => NumberFormat.currencyCents(amount),
             title: 'Monto',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'right',
             dataIndex: 'receiptNumber',
             render: (receiptNumber: null | string) => receiptNumber ?? '-',
             title: 'Recibo',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -212,7 +212,7 @@ export function PaymentList() {
               </Tag>
             ),
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           ...(permissions.payments.listAll
             ? [
@@ -267,7 +267,7 @@ export function PaymentList() {
                     </Space.Compact>
                   ),
                   title: 'Acciones',
-                  width: TABLE_COLUMN_WIDTHS.ACTIONS,
+                  width: TABLE_COLUMN_WIDTHS.SM,
                 } satisfies TableColumnType<PaymentPaginatedDto>,
               ]
             : []),

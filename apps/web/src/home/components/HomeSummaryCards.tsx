@@ -69,7 +69,7 @@ export function HomeSummaryCards() {
             dataIndex: 'totalDebt',
             render: (debt: number) => NumberFormat.currencyCents(debt),
             title: 'Deuda',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -107,7 +107,7 @@ export function HomeSummaryCards() {
               </Space.Compact>
             ),
             title: 'Acciones',
-            width: TABLE_COLUMN_WIDTHS.ACTIONS,
+            width: TABLE_COLUMN_WIDTHS.SM,
           },
         ]}
         dataSource={memberStats?.topDebtors.map((d) => ({

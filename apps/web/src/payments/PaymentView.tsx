@@ -153,7 +153,7 @@ export function PaymentView() {
                 />
               ),
               title: 'Categoría',
-              width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
+              width: TABLE_COLUMN_WIDTHS.LG,
             },
             {
               align: 'center',
@@ -161,21 +161,21 @@ export function PaymentView() {
               render: (status: DueSettlementStatus) =>
                 DueSettlementStatusLabel[status],
               title: 'Estado',
-              width: TABLE_COLUMN_WIDTHS.STATUS_LARGER,
+              width: TABLE_COLUMN_WIDTHS.LG,
             },
             {
               align: 'right',
               dataIndex: ['due', 'amount'],
               render: (amount: number) => NumberFormat.currencyCents(amount),
               title: 'Monto deuda',
-              width: TABLE_COLUMN_WIDTHS.AMOUNT,
+              width: TABLE_COLUMN_WIDTHS.MD,
             },
             {
               align: 'right',
               dataIndex: 'amount',
               render: (amount: number) => NumberFormat.currencyCents(amount),
               title: 'Monto pago',
-              width: TABLE_COLUMN_WIDTHS.AMOUNT,
+              width: TABLE_COLUMN_WIDTHS.MD,
             },
             {
               align: 'center',

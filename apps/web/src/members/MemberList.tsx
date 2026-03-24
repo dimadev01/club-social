@@ -151,7 +151,7 @@ export function MemberListPage() {
             filters: labelMapToFilterOptions(MemberCategoryLabel),
             render: (value: MemberCategory) => MemberCategoryLabel[value],
             title: 'Categoría',
-            width: TABLE_COLUMN_WIDTHS.CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.SM,
           },
           {
             dataIndex: 'email',
@@ -161,7 +161,7 @@ export function MemberListPage() {
             sorter: true,
             sortOrder: getSortOrder('email'),
             title: 'Email',
-            width: TABLE_COLUMN_WIDTHS.EMAIL,
+            width: TABLE_COLUMN_WIDTHS.XXXL,
           },
           {
             align: 'center',
@@ -174,7 +174,7 @@ export function MemberListPage() {
               </Tag>
             ),
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'right',
@@ -183,7 +183,7 @@ export function MemberListPage() {
             sorter: true,
             sortOrder: getSortOrder('memberShipTotalDueAmount'),
             title: 'Deuda cuota',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'right',
@@ -192,7 +192,7 @@ export function MemberListPage() {
             sorter: true,
             sortOrder: getSortOrder('electricityTotalDueAmount'),
             title: 'Deuda luz',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'right',
@@ -201,7 +201,7 @@ export function MemberListPage() {
             sorter: true,
             sortOrder: getSortOrder('guestTotalDueAmount'),
             title: 'Deuda invitado',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'right',
@@ -210,7 +210,7 @@ export function MemberListPage() {
             sorter: true,
             sortOrder: getSortOrder('totalAmount'),
             title: 'Deuda total',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'right',
@@ -219,7 +219,7 @@ export function MemberListPage() {
             sorter: true,
             sortOrder: getSortOrder('balance'),
             title: 'Saldo',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -271,7 +271,7 @@ export function MemberListPage() {
               </Space.Compact>
             ),
             title: 'Acciones',
-            width: TABLE_COLUMN_WIDTHS.ACTIONS,
+            width: TABLE_COLUMN_WIDTHS.SM,
           },
         ]}
         dataSource={members?.data}

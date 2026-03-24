@@ -87,14 +87,14 @@ export function PricingList() {
               </Link>
             ),
             title: 'Desde',
-            width: TABLE_COLUMN_WIDTHS.DATE,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             dataIndex: 'effectiveTo',
             render: (effectiveTo: null | string) =>
               effectiveTo ? DateFormat.date(effectiveTo) : '-',
             title: 'Hasta',
-            width: TABLE_COLUMN_WIDTHS.DATE,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -108,7 +108,7 @@ export function PricingList() {
             ),
             render: (value: DueCategory) => DueCategoryLabel[value],
             title: 'Categoría de Deuda',
-            width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.LG,
           },
           {
             align: 'center',
@@ -124,7 +124,7 @@ export function PricingList() {
                 ? MemberCategoryLabel[memberCategory]
                 : 'Todas las categorías',
             title: 'Categoría de Socio',
-            width: TABLE_COLUMN_WIDTHS.MOVEMENT_CATEGORY,
+            width: TABLE_COLUMN_WIDTHS.XL,
           },
           {
             align: 'right',
