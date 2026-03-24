@@ -5,6 +5,7 @@ import {
 } from '@club-social/shared/members';
 import { Inject } from '@nestjs/common';
 
+import type { MovementEntity } from '@/movements/domain/entities/movement.entity';
 import type { Result } from '@/shared/domain/result';
 
 import {
@@ -16,6 +17,10 @@ import {
   MEMBER_LEDGER_REPOSITORY_PROVIDER,
   type MemberLedgerRepository,
 } from '@/members/ledger/member-ledger.repository';
+import {
+  MOVEMENT_REPOSITORY_PROVIDER,
+  type MovementRepository,
+} from '@/movements/domain/movement.repository';
 import { PaymentEntity } from '@/payments/domain/entities/payment.entity';
 import {
   PAYMENT_REPOSITORY_PROVIDER,
@@ -52,6 +57,8 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
     private readonly dueRepository: DueRepository,
     @Inject(MEMBER_LEDGER_REPOSITORY_PROVIDER)
     private readonly memberLedgerRepository: MemberLedgerRepository,
+    @Inject(MOVEMENT_REPOSITORY_PROVIDER)
+    private readonly movementRepository: MovementRepository,
     @Inject(UNIT_OF_WORK_PROVIDER)
     private readonly unitOfWork: UnitOfWork,
     private readonly eventPublisher: DomainEventPublisher,
@@ -81,6 +88,7 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
     }
 
     const dues = await this.dueRepository.findByIds(payment.dueIds);
+
     const ledgerEntryIds = dues.flatMap((due) =>
       due.settlements.map((s) => s.memberLedgerEntryId),
     );
@@ -110,6 +118,11 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
         entry.id.equals(dueSettlement.memberLedgerEntryId),
       );
       Guard.defined(originalDebitEntry);
+
+      if (!originalDebitEntry.isPosted()) {
+        continue;
+      }
+
       originalDebitEntry.reverse(params.voidedBy);
 
       const reversedEntry = MemberLedgerEntryEntity.create(
@@ -134,10 +147,63 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
       ledgerEntriesToSave.push(originalDebitEntry, reversedEntry.value);
     }
 
+    /**
+     * Reverse credit ledger entries (DEPOSIT_CREDIT) for this payment.
+     * Without this, voiding leaves a phantom positive balance on the member's account.
+     */
+    const allPaymentLedgerEntries =
+      await this.memberLedgerRepository.findByPaymentId(payment.id);
+
+    const creditEntries = allPaymentLedgerEntries.filter(
+      (entry) => entry.isDepositCredit() && entry.isPosted(),
+    );
+
+    for (const creditEntry of creditEntries) {
+      creditEntry.reverse(params.voidedBy);
+
+      const reversalDebitEntry = MemberLedgerEntryEntity.create(
+        {
+          amount: creditEntry.amount.toNegative(),
+          date: DateOnly.today(),
+          memberId: creditEntry.memberId,
+          notes: creditEntry.notes,
+          paymentId: creditEntry.paymentId,
+          reversalOfId: creditEntry.id,
+          source: MemberLedgerEntrySource.PAYMENT,
+          status: MemberLedgerEntryStatus.POSTED,
+          type: MemberLedgerEntryType.REVERSAL_DEBIT,
+        },
+        params.voidedBy,
+      );
+
+      if (reversalDebitEntry.isErr()) {
+        return err(reversalDebitEntry.error);
+      }
+
+      ledgerEntriesToSave.push(creditEntry, reversalDebitEntry.value);
+    }
+
+    /**
+     * Void all movements associated with this payment.
+     */
+    const movements = await this.movementRepository.findByPaymentId(payment.id);
+    const movementsToSave: MovementEntity[] = [];
+
+    for (const movement of movements) {
+      const voidResult = movement.voidByPaymentReversal(params.voidedBy);
+
+      if (voidResult.isErr()) {
+        return err(voidResult.error);
+      }
+
+      movementsToSave.push(movement);
+    }
+
     await this.unitOfWork.execute(
       async ({
         duesRepository,
         memberLedgerRepository,
+        movementRepository,
         paymentRepository: paymentsRepository,
       }) => {
         await paymentsRepository.save(payment);
@@ -147,12 +213,18 @@ export class VoidPaymentUseCase extends UseCase<PaymentEntity> {
             memberLedgerRepository.save(entry),
           ),
         );
+        await Promise.all(
+          movementsToSave.map((movement) => movementRepository.save(movement)),
+        );
       },
     );
 
     this.eventPublisher.dispatch(payment);
     ledgerEntriesToSave.forEach((entry) => this.eventPublisher.dispatch(entry));
     dues.forEach((due) => this.eventPublisher.dispatch(due));
+    movementsToSave.forEach((movement) =>
+      this.eventPublisher.dispatch(movement),
+    );
 
     return ok(payment);
   }

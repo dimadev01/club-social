@@ -133,6 +133,16 @@ export class PrismaMemberLedgerRepository implements MemberLedgerRepository {
     );
   }
 
+  public async findByPaymentId(
+    paymentId: UniqueId,
+  ): Promise<MemberLedgerEntryEntity[]> {
+    const entries = await this.prismaService.memberLedgerEntry.findMany({
+      where: { paymentId: paymentId.value },
+    });
+
+    return entries.map((e) => this.memberLedgerEntryMapper.toDomain(e));
+  }
+
   public async findForExport(
     params: ExportDataDto,
     context?: QueryContext,

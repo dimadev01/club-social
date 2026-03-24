@@ -208,4 +208,24 @@ export class MovementEntity extends AuditedAggregateRoot {
 
     return ok();
   }
+
+  public voidByPaymentReversal(voidedBy: string): Result<void> {
+    if (this.isVoided()) {
+      return err(
+        new ApplicationError('No se puede anular un movimiento anulado'),
+      );
+    }
+
+    const oldMovement = this.clone();
+
+    this._status = MovementStatus.VOIDED;
+    this._voidReason = 'Anulación de pago';
+    this._voidedAt = new Date();
+    this._voidedBy = voidedBy;
+
+    this.markAsUpdated(voidedBy);
+    this.addEvent(new MovementUpdatedEvent(oldMovement, this));
+
+    return ok();
+  }
 }

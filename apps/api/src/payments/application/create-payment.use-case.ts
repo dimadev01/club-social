@@ -387,7 +387,7 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
           category: MovementCategory.MEMBER_LEDGER,
           date: paymentDate,
           mode: MovementMode.AUTOMATIC,
-          notes: null,
+          notes: 'Ingreso de saldo a favor',
           paymentId: payment.value.id,
           status: MovementStatus.REGISTERED,
         },
@@ -454,13 +454,13 @@ export class CreatePaymentUseCase extends UseCase<PaymentEntity> {
           await memberLedgerRepository.save(creditEntry);
         }
 
-        await Promise.all(
-          debitLedgerEntries.map((entry) => memberLedgerRepository.save(entry)),
-        );
-
         if (surplusCreditEntry) {
           await memberLedgerRepository.save(surplusCreditEntry);
         }
+
+        await Promise.all(
+          debitLedgerEntries.map((entry) => memberLedgerRepository.save(entry)),
+        );
 
         await Promise.all(dues.map((due) => duesRepository.save(due)));
         await Promise.all(

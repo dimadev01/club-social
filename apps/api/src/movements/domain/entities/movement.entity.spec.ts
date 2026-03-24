@@ -257,6 +257,59 @@ describe('MovementEntity', () => {
     });
   });
 
+  describe('voidByPaymentReversal', () => {
+    it('should void an automatic movement', () => {
+      const movement = createTestMovementFromPersistence({
+        mode: MovementMode.AUTOMATIC,
+        paymentId: UniqueId.generate(),
+      });
+      movement.pullEvents();
+
+      const result = movement.voidByPaymentReversal(TEST_CREATED_BY);
+
+      expect(result.isOk()).toBe(true);
+      expect(movement.status).toBe(MovementStatus.VOIDED);
+      expect(movement.voidedBy).toBe(TEST_CREATED_BY);
+      expect(movement.voidReason).toBe('Anulación de pago');
+      expect(movement.voidedAt).toBeInstanceOf(Date);
+      expect(movement.updatedBy).toBe(TEST_CREATED_BY);
+    });
+
+    it('should fail to void an already voided movement', () => {
+      const movement = createTestMovementFromPersistence({
+        status: MovementStatus.VOIDED,
+        voidedAt: new Date(),
+        voidedBy: TEST_CREATED_BY,
+        voidReason: 'Already voided',
+      });
+
+      const result = movement.voidByPaymentReversal(TEST_CREATED_BY);
+
+      expect(result.isErr()).toBe(true);
+      expect(result._unsafeUnwrapErr().message).toBe(
+        'No se puede anular un movimiento anulado',
+      );
+    });
+
+    it('should add MovementUpdatedEvent when voiding by payment reversal', () => {
+      const movement = createTestMovementFromPersistence({
+        mode: MovementMode.AUTOMATIC,
+        paymentId: UniqueId.generate(),
+      });
+      movement.pullEvents();
+
+      movement.voidByPaymentReversal(TEST_CREATED_BY);
+
+      const events = movement.pullEvents();
+      expect(events).toHaveLength(1);
+      expect(events[0]).toBeInstanceOf(MovementUpdatedEvent);
+
+      const event = events[0] as MovementUpdatedEvent;
+      expect(event.oldMovement.status).toBe(MovementStatus.REGISTERED);
+      expect(event.movement.status).toBe(MovementStatus.VOIDED);
+    });
+  });
+
   describe('entity equality', () => {
     it('should be equal when ids match', () => {
       const id = UniqueId.generate();

@@ -82,16 +82,14 @@ export class PrismaMovementRepository implements MovementRepository {
     return movements.map((m) => this.movementMapper.toDomain(m));
   }
 
-  public async findByPaymentId(
-    paymentId: UniqueId,
-  ): Promise<MovementEntity | null> {
-    const movement = await this.prismaService.movement.findFirst({
+  public async findByPaymentId(paymentId: UniqueId): Promise<MovementEntity[]> {
+    const movements = await this.prismaService.movement.findMany({
       where: {
         paymentId: paymentId.value,
       },
     });
 
-    return movement ? this.movementMapper.toDomain(movement) : null;
+    return movements.map((m) => this.movementMapper.toDomain(m));
   }
 
   public async findForExport(
@@ -223,9 +221,7 @@ export class PrismaMovementRepository implements MovementRepository {
     orderBy: MovementOrderByWithRelationInput[];
     where: MovementWhereInput;
   } {
-    const where: MovementWhereInput = {
-      status: MovementStatus.REGISTERED,
-    };
+    const where: MovementWhereInput = {};
 
     if (params.filters?.createdAt) {
       const dateRangeResult = DateRange.fromUserInput(
