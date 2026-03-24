@@ -269,9 +269,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
     orderBy: PaymentOrderByWithRelationInput[];
     where: PaymentWhereInput;
   } {
-    const where: PaymentWhereInput = {
-      status: PaymentStatus.PAID,
-    };
+    const where: PaymentWhereInput = {};
 
     if (params.filters?.createdAt) {
       const dateRangeResult = DateRange.fromUserInput(

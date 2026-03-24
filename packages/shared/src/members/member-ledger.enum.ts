@@ -23,7 +23,8 @@ export const MemberLedgerEntryType = {
   ADJUSTMENT_DEBIT: 'adjustment-debit', // Manual negative adjustment
 
   // Corrections
-  REVERSAL_CREDIT: 'reversal-credit', // Reverses another entry
+  REVERSAL_CREDIT: 'reversal-credit', // Reverses a debit entry
+  REVERSAL_DEBIT: 'reversal-debit', // Reverses a credit entry
 } as const;
 
 export type MemberLedgerEntryType =
@@ -48,7 +49,8 @@ export const MemberLedgerEntryTypeLabel = {
   [MemberLedgerEntryType.DUE_APPLY_DEBIT]: 'Pago de deuda',
   [MemberLedgerEntryType.BALANCE_APPLY_DEBIT]: 'Aplicación de saldo',
   [MemberLedgerEntryType.ADJUSTMENT_DEBIT]: 'Ajuste negativo',
-  [MemberLedgerEntryType.REVERSAL_CREDIT]: 'Reversión',
+  [MemberLedgerEntryType.REVERSAL_CREDIT]: `Reversión de pago de deuda`,
+  [MemberLedgerEntryType.REVERSAL_DEBIT]: 'Reversión de depósito',
 } as const;
 
 export const MemberLedgerEntryTypeSorted = Object.entries(

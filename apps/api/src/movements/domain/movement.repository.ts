@@ -30,7 +30,7 @@ export interface MovementRepository
     ReadableRepository<MovementEntity>,
     WriteableRepository<MovementEntity> {
   findByIdReadModel(id: UniqueId): Promise<MovementReadModel | null>;
-  findByPaymentId(paymentId: UniqueId): Promise<MovementEntity | null>;
+  findByPaymentId(paymentId: UniqueId): Promise<MovementEntity[]>;
   findForExport(params: ExportDataDto): Promise<MovementPaginatedReadModel[]>;
   findForStatistics(
     params: FindMovementsForStatisticsParams,

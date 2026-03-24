@@ -137,10 +137,18 @@ export class MemberLedgerEntryEntity extends AuditedAggregateRoot {
     );
   }
 
-  public reverse(updatedBy: string) {
-    this._status = MemberLedgerEntryStatus.REVERSED;
+  public isDepositCredit(): boolean {
+    return this._type === MemberLedgerEntryType.DEPOSIT_CREDIT;
+  }
 
+  public isPosted(): boolean {
+    return this._status === MemberLedgerEntryStatus.POSTED;
+  }
+
+  public reverse(updatedBy: string) {
     const oldMemberLedgerEntry = this.clone();
+
+    this._status = MemberLedgerEntryStatus.REVERSED;
 
     this.markAsUpdated(updatedBy);
     this.addEvent(
