@@ -1,3 +1,4 @@
+import { MovementMonthlyTrendItemDto } from '@club-social/shared/movements';
 import { DateRangeDto, ExportDataDto } from '@club-social/shared/types';
 
 import {
@@ -35,4 +36,5 @@ export interface MovementRepository
   findForStatistics(
     params: FindMovementsForStatisticsParams,
   ): Promise<MovementStatisticsModel>;
+  findMonthlyTrend(months: number): Promise<MovementMonthlyTrendItemDto[]>;
 }

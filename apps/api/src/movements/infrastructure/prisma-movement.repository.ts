@@ -7,10 +7,12 @@ import type {
 import {
   MovementCategory,
   MovementMode,
+  MovementMonthlyTrendItemDto,
   MovementStatus,
 } from '@club-social/shared/movements';
 import { Injectable } from '@nestjs/common';
 
+import { Prisma } from '@/infrastructure/database/prisma/generated/client';
 import {
   MovementFindManyArgs,
   MovementGetPayload,
@@ -155,6 +157,43 @@ export class PrismaMovementRepository implements MovementRepository {
       totalInflow,
       totalOutflow,
     };
+  }
+
+  public async findMonthlyTrend(
+    months: number,
+  ): Promise<MovementMonthlyTrendItemDto[]> {
+    interface RawRow {
+      month: string;
+      total_inflow: bigint | null;
+      total_outflow: bigint | null;
+    }
+
+    const rows = await this.prismaService.$queryRaw<RawRow[]>(Prisma.sql`
+      SELECT
+        LEFT(date, 7) AS month,
+        SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS total_inflow,
+        SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS total_outflow
+      FROM "movement"
+      WHERE status = ${MovementStatus.REGISTERED}
+        AND date >= TO_CHAR(
+          DATE_TRUNC('month', CURRENT_DATE) - make_interval(months => ${months - 1}),
+          'YYYY-MM-DD'
+        )
+      GROUP BY LEFT(date, 7)
+      ORDER BY LEFT(date, 7) ASC
+    `);
+
+    return rows.map((row) => {
+      const totalInflow = Number(row.total_inflow ?? 0);
+      const totalOutflow = Number(row.total_outflow ?? 0);
+
+      return {
+        balance: totalInflow + totalOutflow,
+        month: row.month,
+        totalInflow,
+        totalOutflow,
+      };
+    });
   }
 
   public async findPaginated(

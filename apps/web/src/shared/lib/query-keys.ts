@@ -17,6 +17,8 @@ export const queryKeys = createQueryKeyStore({
   },
 
   dues: {
+    aging: null,
+    collectionRate: (query?: DateRangeDto) => [query],
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
     payments: (id?: string) => [id],
@@ -46,6 +48,7 @@ export const queryKeys = createQueryKeyStore({
   movements: {
     balance: () => [undefined],
     detail: (id?: string) => [id],
+    monthlyTrend: (query?: { months?: number }) => [query],
     paginated: (query?: TableQuery) => [query],
     statistics: (query?: DateRangeDto) => [query],
   },

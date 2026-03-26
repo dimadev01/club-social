@@ -47,6 +47,11 @@ import {
   type DueRepository,
 } from '../domain/due.repository';
 import { CreateDueRequestDto } from './dto/create-due.dto';
+import { DueAgingResponseDto } from './dto/due-aging.dto';
+import {
+  DueCollectionRateResponseDto,
+  GetCollectionRateQueryRequestDto,
+} from './dto/due-collection-rate.dto';
 import {
   DuePaginatedExtraResponseDto,
   DuePaginatedResponseDto,
@@ -233,6 +238,18 @@ export class DuesController extends BaseController {
       },
       total: data.total,
     };
+  }
+
+  @Get('aging')
+  public async getAging(): Promise<DueAgingResponseDto> {
+    return this.dueRepository.findAging();
+  }
+
+  @Get('collection-rate')
+  public async getCollectionRate(
+    @Query() query: GetCollectionRateQueryRequestDto,
+  ): Promise<DueCollectionRateResponseDto> {
+    return this.dueRepository.findCollectionRate(query.dateRange);
   }
 
   @Get('pending-statistics')

@@ -6,10 +6,13 @@ import type {
 } from '@club-social/shared/types';
 
 import {
+  DueAgingDto,
   DueCategory,
+  DueCollectionRateDto,
   DueSettlementStatus,
   DueStatus,
 } from '@club-social/shared/dues';
+import { MathUtils } from '@club-social/shared/lib';
 import {
   MemberCategory,
   MemberLedgerEntrySource,
@@ -51,6 +54,56 @@ export class PrismaDueRepository implements DueRepository {
     private readonly dueMapper: PrismaDueMapper,
     private readonly dueSettlementMapper: PrismaDueSettlementMapper,
   ) {}
+
+  public async findAging(): Promise<DueAgingDto> {
+    interface RawRow {
+      amount: bigint;
+      bracket: string;
+      count: bigint;
+    }
+
+    const rows = await this.prismaService.$queryRaw<RawRow[]>`
+      SELECT
+        CASE
+          WHEN CURRENT_DATE - "date"::date <= 30 THEN '0-30'
+          WHEN CURRENT_DATE - "date"::date <= 60 THEN '30-60'
+          WHEN CURRENT_DATE - "date"::date <= 90 THEN '60-90'
+          ELSE '90+'
+        END AS bracket,
+        COUNT(*)::bigint AS count,
+        SUM(amount)::bigint AS amount
+      FROM "due"
+      WHERE status IN (${DueStatus.PENDING}, ${DueStatus.PARTIALLY_PAID})
+      GROUP BY bracket
+    `;
+
+    const agingBrackets = [
+      { label: '0-30', maxDays: 30, minDays: 0 },
+      { label: '30-60', maxDays: 60, minDays: 30 },
+      { label: '60-90', maxDays: 90, minDays: 60 },
+      { label: '90+', maxDays: null, minDays: 90 },
+    ];
+
+    const brackets = agingBrackets.map((bracket) => {
+      const row = rows.find((r) => r.bracket === bracket.label);
+
+      return {
+        ...bracket,
+        amount: row ? Number(row.amount) : 0,
+        count: row ? Number(row.count) : 0,
+      };
+    });
+
+    const total = brackets.reduce((sum, b) => sum + b.amount, 0);
+
+    return {
+      brackets: brackets.map((b) => ({
+        ...b,
+        percentage: MathUtils.percentage(b.amount, total),
+      })),
+      total,
+    };
+  }
 
   public async findById(
     id: UniqueId,
@@ -156,6 +209,61 @@ export class PrismaDueRepository implements DueRepository {
     });
 
     return dues.map((due) => this.toReadModel(due));
+  }
+
+  public async findCollectionRate(
+    dateRange?: [string, string],
+  ): Promise<DueCollectionRateDto> {
+    const where: DueWhereInput = {
+      status: { not: DueStatus.VOIDED },
+    };
+
+    if (dateRange) {
+      where.date = { gte: dateRange[0], lte: dateRange[1] };
+    }
+
+    const [statusGroups, settlementSum] = await Promise.all([
+      this.prismaService.due.groupBy({
+        _count: { _all: true },
+        _sum: { amount: true },
+        by: ['status'],
+        where,
+      }),
+      this.prismaService.dueSettlement.aggregate({
+        _sum: { amount: true },
+        where: {
+          due: where,
+          status: { not: DueSettlementStatus.VOIDED },
+        },
+      }),
+    ]);
+
+    const getGroup = (status: DueStatus) =>
+      statusGroups.find((g) => g.status === status);
+
+    const paidDues = getGroup(DueStatus.PAID)?._count._all ?? 0;
+    const partiallyPaidDues =
+      getGroup(DueStatus.PARTIALLY_PAID)?._count._all ?? 0;
+    const pendingDues = getGroup(DueStatus.PENDING)?._count._all ?? 0;
+    const totalAmount = statusGroups.reduce(
+      (sum, g) => sum + (g._sum.amount ?? 0),
+      0,
+    );
+    const totalDues = paidDues + partiallyPaidDues + pendingDues;
+    const collectedAmount = settlementSum._sum.amount ?? 0;
+    const pendingAmount = totalAmount - collectedAmount;
+    const collectionRate = MathUtils.percentage(paidDues, totalDues);
+
+    return {
+      collectedAmount,
+      collectionRate,
+      paidDues,
+      partiallyPaidDues,
+      pendingAmount,
+      pendingDues,
+      totalAmount,
+      totalDues,
+    };
   }
 
   public async findForExport(

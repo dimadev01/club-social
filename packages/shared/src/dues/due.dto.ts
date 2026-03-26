@@ -124,3 +124,28 @@ export interface UpdateDueDto {
 export interface VoidDueDto {
   voidReason: string;
 }
+
+export interface DueAgingBracketDto {
+  amount: number;
+  count: number;
+  label: string;
+  maxDays: null | number;
+  minDays: number;
+  percentage: number;
+}
+
+export interface DueAgingDto {
+  brackets: DueAgingBracketDto[];
+  total: number;
+}
+
+export interface DueCollectionRateDto {
+  collectedAmount: number;
+  collectionRate: number;
+  partiallyPaidDues: number;
+  paidDues: number;
+  pendingAmount: number;
+  pendingDues: number;
+  totalAmount: number;
+  totalDues: number;
+}
