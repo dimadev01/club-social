@@ -5,7 +5,7 @@ import { Col, Divider, Space, Statistic } from 'antd';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
-import { useMemberStatistics } from '@/statistics';
+import { useMemberStatistics } from '@/statistics/useMemberStatistics';
 import {
   Button,
   Card,
@@ -69,7 +69,7 @@ export function HomeSummaryCards() {
             dataIndex: 'totalDebt',
             render: (debt: number) => NumberFormat.currencyCents(debt),
             title: 'Deuda',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -107,7 +107,7 @@ export function HomeSummaryCards() {
               </Space.Compact>
             ),
             title: 'Acciones',
-            width: TABLE_COLUMN_WIDTHS.ACTIONS,
+            width: TABLE_COLUMN_WIDTHS.SM,
           },
         ]}
         dataSource={memberStats?.topDebtors.map((d) => ({

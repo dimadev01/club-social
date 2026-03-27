@@ -405,7 +405,7 @@ export function PaymentForm({
                     return DueCategoryLabel[category];
                   },
                   title: 'Categoría',
-                  width: TABLE_COLUMN_WIDTHS.DUE_CATEGORY + 50,
+                  width: TABLE_COLUMN_WIDTHS.LG + 50,
                 },
                 {
                   align: 'right',
@@ -413,7 +413,7 @@ export function PaymentForm({
                   render: (amount: number) =>
                     NumberFormat.currencyCents(amount),
                   title: 'Monto',
-                  width: TABLE_COLUMN_WIDTHS.AMOUNT,
+                  width: TABLE_COLUMN_WIDTHS.MD,
                 },
                 {
                   align: 'right',
@@ -423,7 +423,7 @@ export function PaymentForm({
                     );
                   },
                   title: 'Pagado',
-                  width: TABLE_COLUMN_WIDTHS.AMOUNT,
+                  width: TABLE_COLUMN_WIDTHS.MD,
                 },
                 {
                   align: 'right',
@@ -433,7 +433,7 @@ export function PaymentForm({
                     );
                   },
                   title: 'Restante',
-                  width: TABLE_COLUMN_WIDTHS.AMOUNT,
+                  width: TABLE_COLUMN_WIDTHS.MD,
                 },
               ]}
               dataSource={pendingDues}

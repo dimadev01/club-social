@@ -171,7 +171,7 @@ export function DueView() {
               render: (status: DueSettlementStatus) =>
                 DueSettlementStatusLabel[status],
               title: 'Estado',
-              width: TABLE_COLUMN_WIDTHS.STATUS,
+              width: TABLE_COLUMN_WIDTHS.MD,
             },
             {
               align: 'center',
@@ -179,7 +179,7 @@ export function DueView() {
               render: (type: MemberLedgerEntryType) =>
                 MemberLedgerEntryTypeLabel[type],
               title: 'Tipo de movimiento',
-              width: TABLE_COLUMN_WIDTHS.STATUS,
+              width: TABLE_COLUMN_WIDTHS.MD,
             },
             {
               align: 'center',
@@ -187,14 +187,14 @@ export function DueView() {
               render: (status: MemberLedgerEntryStatus) =>
                 MemberLedgerEntryStatusLabel[status],
               title: 'Estado de movimiento',
-              width: TABLE_COLUMN_WIDTHS.STATUS,
+              width: TABLE_COLUMN_WIDTHS.MD,
             },
             {
               align: 'right',
               dataIndex: 'amount',
               render: (amount: number) => NumberFormat.currencyCents(amount),
               title: 'Monto',
-              width: TABLE_COLUMN_WIDTHS.AMOUNT,
+              width: TABLE_COLUMN_WIDTHS.MD,
             },
             {
               align: 'center',
@@ -217,7 +217,7 @@ export function DueView() {
                 return MemberLedgerEntrySourceLabel[source];
               },
               title: 'Origen',
-              width: TABLE_COLUMN_WIDTHS.ACTIONS,
+              width: TABLE_COLUMN_WIDTHS.SM,
             },
           ]}
           dataSource={due.settlements}

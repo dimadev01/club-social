@@ -1,5 +1,6 @@
 import type { DueCategory } from '@club-social/shared/dues';
 import type { MemberCategory } from '@club-social/shared/members';
+import type { MovementType } from '@club-social/shared/movements';
 import type { FindPricingDto } from '@club-social/shared/pricing';
 import type { DateRangeDto } from '@club-social/shared/types';
 
@@ -17,6 +18,8 @@ export const queryKeys = createQueryKeyStore({
   },
 
   dues: {
+    aging: null,
+    collectionRate: (query?: DateRangeDto) => [query],
     detail: (id?: string) => [id],
     paginated: (query?: TableQuery) => [query],
     payments: (id?: string) => [id],
@@ -45,7 +48,12 @@ export const queryKeys = createQueryKeyStore({
 
   movements: {
     balance: () => [undefined],
+    byCategory: (query?: {
+      dateRange?: [string, string];
+      type?: MovementType;
+    }) => [query],
     detail: (id?: string) => [id],
+    monthlyTrend: (query?: { months?: number }) => [query],
     paginated: (query?: TableQuery) => [query],
     statistics: (query?: DateRangeDto) => [query],
   },

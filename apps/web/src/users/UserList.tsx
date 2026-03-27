@@ -109,14 +109,14 @@ export function UserListPage() {
             sorter: true,
             sortOrder: getSortOrder('email'),
             title: 'Email',
-            width: TABLE_COLUMN_WIDTHS.EMAIL,
+            width: TABLE_COLUMN_WIDTHS.XXXL,
           },
           {
             align: 'center',
             dataIndex: 'role',
             render: (value: UserRole) => UserRoleLabel[value],
             title: 'Rol',
-            width: TABLE_COLUMN_WIDTHS.ACTIONS,
+            width: TABLE_COLUMN_WIDTHS.SM,
           },
           {
             align: 'center',
@@ -127,7 +127,7 @@ export function UserListPage() {
               <Tag color={UserStatusColor[value]}>{UserStatusLabel[value]}</Tag>
             ),
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
         ]}
         dataSource={users?.data}

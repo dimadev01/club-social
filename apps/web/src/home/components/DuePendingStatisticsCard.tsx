@@ -1,12 +1,10 @@
-import type { Dayjs } from 'dayjs';
-
 import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   DueCategory,
   DueCategoryLabel,
   DueCategorySorted,
 } from '@club-social/shared/dues';
-import { DateFormat, NumberFormat } from '@club-social/shared/lib';
+import { NumberFormat } from '@club-social/shared/lib';
 import { UserRole } from '@club-social/shared/users';
 import { Space, Statistic, Tooltip } from 'antd';
 import { Link } from 'react-router';
@@ -19,7 +17,7 @@ import { Card, DuesIcon } from '@/ui';
 import { useDuePendingStatistics } from '../useDuePendingStatistics';
 
 interface Props {
-  dateRange: [Dayjs, Dayjs] | null;
+  dateRange?: [string, string];
 }
 
 const LinkCategoryMap = {
@@ -29,11 +27,7 @@ const LinkCategoryMap = {
 };
 
 export function DuePendingStatisticsCard({ dateRange }: Props) {
-  const { data, isLoading } = useDuePendingStatistics({
-    dateRange: dateRange
-      ? [DateFormat.isoDate(dateRange[0]), DateFormat.isoDate(dateRange[1])]
-      : undefined,
-  });
+  const { data, isLoading } = useDuePendingStatistics({ dateRange });
 
   const user = useSessionUser();
 

@@ -4,13 +4,18 @@ import type {
   PaginatedDataResultDto,
 } from '@club-social/shared/types';
 
+import { MathUtils } from '@club-social/shared/lib';
 import {
+  MovementByCategoryDto,
   MovementCategory,
   MovementMode,
+  MovementMonthlyTrendItemDto,
   MovementStatus,
+  MovementType,
 } from '@club-social/shared/movements';
 import { Injectable } from '@nestjs/common';
 
+import { Prisma } from '@/infrastructure/database/prisma/generated/client';
 import {
   MovementFindManyArgs,
   MovementGetPayload,
@@ -44,6 +49,48 @@ export class PrismaMovementRepository implements MovementRepository {
     private readonly prismaService: PrismaService,
     private readonly movementMapper: PrismaMovementMapper,
   ) {}
+
+  public async findByCategory(params: {
+    dateRange?: [string, string];
+    type?: MovementType;
+  }): Promise<MovementByCategoryDto> {
+    const where: MovementWhereInput = {
+      status: MovementStatus.REGISTERED,
+    };
+
+    if (params.dateRange) {
+      where.date = { gte: params.dateRange[0], lte: params.dateRange[1] };
+    }
+
+    if (params.type === MovementType.INFLOW) {
+      where.amount = { gt: 0 };
+    } else if (params.type === MovementType.OUTFLOW) {
+      where.amount = { lt: 0 };
+    }
+
+    const groups = await this.prismaService.movement.groupBy({
+      _count: { _all: true },
+      _sum: { amount: true },
+      by: ['category'],
+      where,
+    });
+
+    const total = groups.reduce(
+      (sum, g) => sum + Math.abs(g._sum.amount ?? 0),
+      0,
+    );
+
+    const categories = groups
+      .map((g) => ({
+        amount: Math.abs(g._sum.amount ?? 0),
+        category: g.category as MovementCategory,
+        count: g._count._all,
+        percentage: MathUtils.percentage(Math.abs(g._sum.amount ?? 0), total),
+      }))
+      .sort((a, b) => b.amount - a.amount);
+
+    return { categories, total };
+  }
 
   public async findById(id: UniqueId): Promise<MovementEntity | null> {
     const movement = await this.prismaService.movement.findUnique({
@@ -153,6 +200,43 @@ export class PrismaMovementRepository implements MovementRepository {
       totalInflow,
       totalOutflow,
     };
+  }
+
+  public async findMonthlyTrend(
+    months: number,
+  ): Promise<MovementMonthlyTrendItemDto[]> {
+    interface RawRow {
+      month: string;
+      total_inflow: bigint | null;
+      total_outflow: bigint | null;
+    }
+
+    const rows = await this.prismaService.$queryRaw<RawRow[]>(Prisma.sql`
+      SELECT
+        LEFT(date, 7) AS month,
+        SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS total_inflow,
+        SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) AS total_outflow
+      FROM "movement"
+      WHERE status = ${MovementStatus.REGISTERED}
+        AND date >= TO_CHAR(
+          DATE_TRUNC('month', CURRENT_DATE) - make_interval(months => ${months - 1}),
+          'YYYY-MM-DD'
+        )
+      GROUP BY LEFT(date, 7)
+      ORDER BY LEFT(date, 7) ASC
+    `);
+
+    return rows.map((row) => {
+      const totalInflow = Number(row.total_inflow ?? 0);
+      const totalOutflow = Number(row.total_outflow ?? 0);
+
+      return {
+        balance: totalInflow + totalOutflow,
+        month: row.month,
+        totalInflow,
+        totalOutflow,
+      };
+    });
   }
 
   public async findPaginated(

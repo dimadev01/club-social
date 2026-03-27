@@ -157,7 +157,7 @@ export function MemberLedgerList() {
             sortOrder: getSortOrder('date'),
             title: 'Fecha',
             width: permissions.memberLedger.listAll
-              ? TABLE_COLUMN_WIDTHS.DATE
+              ? TABLE_COLUMN_WIDTHS.MD
               : undefined,
           },
           ...(permissions.memberLedger.listAll
@@ -168,7 +168,7 @@ export function MemberLedgerList() {
                   title: 'Socio',
                   width: permissions.memberLedger.listAll
                     ? undefined
-                    : TABLE_COLUMN_WIDTHS.MEMBER_NAME,
+                    : TABLE_COLUMN_WIDTHS.XXL,
                 } satisfies TableColumnType<MemberLedgerEntryPaginatedDto>,
               ]
             : []),
@@ -181,7 +181,7 @@ export function MemberLedgerList() {
             render: (value: MemberLedgerEntryType) =>
               MemberLedgerEntryTypeLabel[value],
             title: 'Tipo',
-            width: TABLE_COLUMN_WIDTHS.STATUS_LARGER,
+            width: TABLE_COLUMN_WIDTHS.LG,
           },
           {
             align: 'center',
@@ -197,7 +197,7 @@ export function MemberLedgerList() {
               </Tag>
             ),
             title: 'Estado',
-            width: TABLE_COLUMN_WIDTHS.STATUS,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'center',
@@ -207,7 +207,7 @@ export function MemberLedgerList() {
             render: (value: MemberLedgerEntrySource) =>
               MemberLedgerEntrySourceLabel[value],
             title: 'Origen',
-            width: TABLE_COLUMN_WIDTHS.ACTIONS,
+            width: TABLE_COLUMN_WIDTHS.SM,
           },
           {
             align: 'right',
@@ -215,7 +215,7 @@ export function MemberLedgerList() {
             render: (amount: number) =>
               amount < 0 ? NumberFormat.currencyCents(Math.abs(amount)) : '',
             title: 'Egresos',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
             align: 'right',
@@ -223,7 +223,7 @@ export function MemberLedgerList() {
             render: (amount: number) =>
               amount > 0 ? NumberFormat.currencyCents(amount) : '',
             title: 'Ingresos',
-            width: TABLE_COLUMN_WIDTHS.AMOUNT,
+            width: TABLE_COLUMN_WIDTHS.MD,
           },
         ]}
         dataSource={entries?.data}

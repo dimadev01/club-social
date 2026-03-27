@@ -44,6 +44,10 @@ import {
 } from './dto/movement-paginated.dto';
 import { MovementResponseDto } from './dto/movement-response.dto';
 import {
+  GetByCategoryQueryRequestDto,
+  GetMonthlyTrendQueryRequestDto,
+  MovementByCategoryResponseDto,
+  MovementMonthlyTrendResponseDto,
   MovementStatisticsQueryRequestDto,
   MovementStatisticsResponseDto,
 } from './dto/movement-statistics.dto';
@@ -165,6 +169,27 @@ export class MovementsController extends BaseController {
       },
       total: result.total,
     };
+  }
+
+  @Get('statistics/by-category')
+  public async getByCategory(
+    @Query() query: GetByCategoryQueryRequestDto,
+  ): Promise<MovementByCategoryResponseDto> {
+    return this.movementRepository.findByCategory({
+      dateRange: query.dateRange,
+      type: query.type,
+    });
+  }
+
+  @Get('statistics/monthly-trend')
+  public async getMonthlyTrend(
+    @Query() query: GetMonthlyTrendQueryRequestDto,
+  ): Promise<MovementMonthlyTrendResponseDto> {
+    const months = await this.movementRepository.findMonthlyTrend(
+      query.months ?? 12,
+    );
+
+    return { months };
   }
 
   @Get('statistics')

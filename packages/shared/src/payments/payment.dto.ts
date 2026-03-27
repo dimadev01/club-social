@@ -98,6 +98,7 @@ export interface PaymentStatisticsCategoryDto {
   amount: number;
   average: number;
   count: number;
+  percentage: number;
 }
 
 export interface PaymentStatisticsDto {
