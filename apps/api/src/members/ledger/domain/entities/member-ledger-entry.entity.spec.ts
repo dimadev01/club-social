@@ -177,6 +177,48 @@ describe('MemberLedgerEntryEntity', () => {
     });
   });
 
+  describe('isDepositCredit', () => {
+    it('should return true for DEPOSIT_CREDIT entries', () => {
+      const entry = MemberLedgerEntryEntity.create(
+        createValidCreditProps(),
+        'user-123',
+      )._unsafeUnwrap();
+
+      expect(entry.isDepositCredit()).toBe(true);
+    });
+
+    it('should return false for non-DEPOSIT_CREDIT entries', () => {
+      const entry = MemberLedgerEntryEntity.create(
+        createValidDebitProps(),
+        'user-123',
+      )._unsafeUnwrap();
+
+      expect(entry.isDepositCredit()).toBe(false);
+    });
+  });
+
+  describe('isPosted', () => {
+    it('should return true for POSTED entries', () => {
+      const entry = MemberLedgerEntryEntity.create(
+        createValidCreditProps(),
+        'user-123',
+      )._unsafeUnwrap();
+
+      expect(entry.isPosted()).toBe(true);
+    });
+
+    it('should return false for REVERSED entries', () => {
+      const entry = MemberLedgerEntryEntity.create(
+        createValidCreditProps(),
+        'user-123',
+      )._unsafeUnwrap();
+
+      entry.reverse(TEST_CREATED_BY);
+
+      expect(entry.isPosted()).toBe(false);
+    });
+  });
+
   describe('reverse', () => {
     it('should change status to REVERSED', () => {
       const entry = MemberLedgerEntryEntity.create(

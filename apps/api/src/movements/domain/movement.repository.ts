@@ -39,7 +39,7 @@ export interface MovementRepository
     type?: MovementType;
   }): Promise<MovementByCategoryDto>;
   findByIdReadModel(id: UniqueId): Promise<MovementReadModel | null>;
-  findByPaymentId(paymentId: UniqueId): Promise<MovementEntity | null>;
+  findByPaymentId(paymentId: UniqueId): Promise<MovementEntity[]>;
   findForExport(params: ExportDataDto): Promise<MovementPaginatedReadModel[]>;
   findForStatistics(
     params: FindMovementsForStatisticsParams,

@@ -32,6 +32,7 @@ export interface MemberLedgerRepository
     id: UniqueId,
     context?: QueryContext,
   ): Promise<MemberLedgerEntryDetailReadModel | null>;
+  findByPaymentId(paymentId: UniqueId): Promise<MemberLedgerEntryEntity[]>;
   findForExport(
     params: ExportDataDto,
     context?: QueryContext,

@@ -218,7 +218,7 @@ export function MemberListPage() {
             render: (amount: number) => NumberFormat.currencyCents(amount),
             sorter: true,
             sortOrder: getSortOrder('balance'),
-            title: 'Saldo',
+            title: 'Saldo a favor',
             width: TABLE_COLUMN_WIDTHS.MD,
           },
           {
