@@ -18,6 +18,7 @@ export class PaymentStatisticsCategoryResponseDto implements PaymentStatisticsCa
   public amount: number;
   public average: number;
   public count: number;
+  public percentage: number;
 }
 
 export class PaymentStatisticsResponseDto implements PaymentStatisticsDto {

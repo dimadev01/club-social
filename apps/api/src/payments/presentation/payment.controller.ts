@@ -1,7 +1,7 @@
 import type { Response } from 'express';
 
 import { DueCategory } from '@club-social/shared/dues';
-import { NumberFormat } from '@club-social/shared/lib';
+import { MathUtils, NumberFormat } from '@club-social/shared/lib';
 import {
   PaymentStatisticsCategoryDto,
   PaymentStatusLabel,
@@ -176,9 +176,10 @@ export class PaymentsController extends BaseController {
           const amount = sumBy(dueSettlementsInCategory, (ds) => ds.amount);
           const average = meanBy(dueSettlementsInCategory, (pd) => pd.amount);
           const count = dueSettlementsInCategory.length;
-          acc[category] = { amount, average, count };
+          const percentage = MathUtils.percentage(amount, total, 1);
+          acc[category] = { amount, average, count, percentage };
         } else {
-          acc[category] = { amount: 0, average: 0, count: 0 };
+          acc[category] = { amount: 0, average: 0, count: 0, percentage: 0 };
         }
 
         return acc;

@@ -1,7 +1,6 @@
 import type { Dayjs } from 'dayjs';
 
 import { DateFormat, DateFormats } from '@club-social/shared/lib';
-import { Space } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 
@@ -81,9 +80,7 @@ export function FinanceStatisticsPage() {
     <Page>
       <PageHeader>
         <PageTitle>Estadísticas de Finanzas</PageTitle>
-      </PageHeader>
-      <Space className="flex" vertical>
-        <Form.Item label="Período de tiempo">
+        <Form.Item className="mb-0" label="Período">
           <DatePicker.RangePicker
             format={DateFormats.date}
             onChange={(dates) => {
@@ -99,16 +96,27 @@ export function FinanceStatisticsPage() {
             value={dayjsRange ?? undefined}
           />
         </Form.Item>
+      </PageHeader>
+
+      <div className="flex flex-col gap-4">
         <PaymentStatisticsCard dateRange={dateRange} />
         <MovementStatisticsCard dateRange={dateRange} />
         <DuePendingStatisticsCard dateRange={dateRange} />
+
         <RevenueTrendChart />
-        <CollectionRateCard dateRange={dateRange} />
-        <DebtAgingCard />
-        <ExpenseCategoryChart dateRange={dateRange} />
-        <IncomeCategoryChart dateRange={dateRange} />
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <CollectionRateCard dateRange={dateRange} />
+          <DebtAgingCard />
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <ExpenseCategoryChart dateRange={dateRange} />
+          <IncomeCategoryChart dateRange={dateRange} />
+        </div>
+
         <PaymentChartCard />
-      </Space>
+      </div>
     </Page>
   );
 }
