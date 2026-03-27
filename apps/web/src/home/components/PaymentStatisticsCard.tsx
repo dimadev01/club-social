@@ -1,7 +1,5 @@
-import type { Dayjs } from 'dayjs';
-
 import { DueCategorySorted } from '@club-social/shared/dues';
-import { DateFormat, NumberFormat } from '@club-social/shared/lib';
+import { NumberFormat } from '@club-social/shared/lib';
 import { Statistic } from 'antd';
 
 import { Card, PaymentsIcon } from '@/ui';
@@ -10,15 +8,11 @@ import { usePaymentStatistics } from '../usePaymentStatistics';
 import { DueCategoryDescriptions } from './DueCategoryDescriptions';
 
 interface Props {
-  dateRange: [Dayjs, Dayjs] | null;
+  dateRange?: [string, string];
 }
 
 export function PaymentStatisticsCard({ dateRange }: Props) {
-  const { data: statistics, isLoading } = usePaymentStatistics({
-    dateRange: dateRange
-      ? [DateFormat.isoDate(dateRange[0]), DateFormat.isoDate(dateRange[1])]
-      : undefined,
-  });
+  const { data: statistics, isLoading } = usePaymentStatistics({ dateRange });
 
   return (
     <Card extra={<PaymentsIcon />} title="Pagos" type="inner">

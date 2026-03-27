@@ -44,7 +44,9 @@ import {
 } from './dto/movement-paginated.dto';
 import { MovementResponseDto } from './dto/movement-response.dto';
 import {
+  GetByCategoryQueryRequestDto,
   GetMonthlyTrendQueryRequestDto,
+  MovementByCategoryResponseDto,
   MovementMonthlyTrendResponseDto,
   MovementStatisticsQueryRequestDto,
   MovementStatisticsResponseDto,
@@ -167,6 +169,16 @@ export class MovementsController extends BaseController {
       },
       total: result.total,
     };
+  }
+
+  @Get('statistics/by-category')
+  public async getByCategory(
+    @Query() query: GetByCategoryQueryRequestDto,
+  ): Promise<MovementByCategoryResponseDto> {
+    return this.movementRepository.findByCategory({
+      dateRange: query.dateRange,
+      type: query.type,
+    });
   }
 
   @Get('statistics/monthly-trend')

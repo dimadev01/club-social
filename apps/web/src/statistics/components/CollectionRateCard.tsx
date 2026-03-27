@@ -1,32 +1,14 @@
-import { DateFormat, NumberFormat } from '@club-social/shared/lib';
+import { NumberFormat } from '@club-social/shared/lib';
 import { Progress, Statistic, theme } from 'antd';
-import { useMemo } from 'react';
-import { useSearchParams } from 'react-router';
 
 import { useDueCollectionRate } from '@/home/useDueCollectionRate';
 import { Card } from '@/ui';
 
-export function CollectionRateCard() {
-  const [searchParams] = useSearchParams();
+interface Props {
+  dateRange?: [string, string];
+}
 
-  const dateRange = useMemo<[string, string] | undefined>(() => {
-    const startDate = searchParams.get('startDate');
-    const endDate = searchParams.get('endDate');
-
-    if (startDate === '' || !startDate || !endDate) {
-      return undefined;
-    }
-
-    const start = DateFormat.parse(startDate);
-    const end = DateFormat.parse(endDate);
-
-    if (!start.isValid() || !end.isValid()) {
-      return undefined;
-    }
-
-    return [DateFormat.isoDate(start), DateFormat.isoDate(end)];
-  }, [searchParams]);
-
+export function CollectionRateCard({ dateRange }: Props) {
   const { data, isLoading } = useDueCollectionRate(
     dateRange ? { dateRange } : undefined,
   );

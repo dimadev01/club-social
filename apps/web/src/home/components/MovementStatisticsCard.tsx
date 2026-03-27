@@ -1,5 +1,3 @@
-import type { Dayjs } from 'dayjs';
-
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { Space, Statistic, Tooltip } from 'antd';
@@ -9,15 +7,11 @@ import { Card, MovementsIcon } from '@/ui';
 import { useMovementStatistics } from '../useMovementStatistics';
 
 interface Props {
-  dateRange: [Dayjs, Dayjs] | null;
+  dateRange?: [string, string];
 }
 
 export function MovementStatisticsCard({ dateRange }: Props) {
-  const { data: statistics, isLoading } = useMovementStatistics({
-    dateRange: dateRange
-      ? [DateFormat.isoDate(dateRange[0]), DateFormat.isoDate(dateRange[1])]
-      : undefined,
-  });
+  const { data: statistics, isLoading } = useMovementStatistics({ dateRange });
 
   return (
     <Card extra={<MovementsIcon />} title="Movimientos" type="inner">

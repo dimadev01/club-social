@@ -6,7 +6,7 @@ export function MemberHomePage() {
   return (
     <Page>
       <Card title="Mi Club Social">
-        <DuePendingStatisticsCard dateRange={null} />
+        <DuePendingStatisticsCard />
       </Card>
     </Page>
   );

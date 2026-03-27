@@ -4,11 +4,14 @@ import type {
   PaginatedDataResultDto,
 } from '@club-social/shared/types';
 
+import { MathUtils } from '@club-social/shared/lib';
 import {
+  MovementByCategoryDto,
   MovementCategory,
   MovementMode,
   MovementMonthlyTrendItemDto,
   MovementStatus,
+  MovementType,
 } from '@club-social/shared/movements';
 import { Injectable } from '@nestjs/common';
 
@@ -46,6 +49,48 @@ export class PrismaMovementRepository implements MovementRepository {
     private readonly prismaService: PrismaService,
     private readonly movementMapper: PrismaMovementMapper,
   ) {}
+
+  public async findByCategory(params: {
+    dateRange?: [string, string];
+    type?: MovementType;
+  }): Promise<MovementByCategoryDto> {
+    const where: MovementWhereInput = {
+      status: MovementStatus.REGISTERED,
+    };
+
+    if (params.dateRange) {
+      where.date = { gte: params.dateRange[0], lte: params.dateRange[1] };
+    }
+
+    if (params.type === MovementType.INFLOW) {
+      where.amount = { gt: 0 };
+    } else if (params.type === MovementType.OUTFLOW) {
+      where.amount = { lt: 0 };
+    }
+
+    const groups = await this.prismaService.movement.groupBy({
+      _count: { _all: true },
+      _sum: { amount: true },
+      by: ['category'],
+      where,
+    });
+
+    const total = groups.reduce(
+      (sum, g) => sum + Math.abs(g._sum.amount ?? 0),
+      0,
+    );
+
+    const categories = groups
+      .map((g) => ({
+        amount: Math.abs(g._sum.amount ?? 0),
+        category: g.category as MovementCategory,
+        count: g._count._all,
+        percentage: MathUtils.percentage(Math.abs(g._sum.amount ?? 0), total),
+      }))
+      .sort((a, b) => b.amount - a.amount);
+
+    return { categories, total };
+  }
 
   public async findById(id: UniqueId): Promise<MovementEntity | null> {
     const movement = await this.prismaService.movement.findUnique({

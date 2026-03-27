@@ -29,7 +29,7 @@ export const MemberCategory = {
 export type MemberCategory =
   (typeof MemberCategory)[keyof typeof MemberCategory];
 
-export const MemberCategoryLabel = {
+export const MemberCategoryLabel: Record<MemberCategory, string> = {
   [MemberCategory.ADHERENT_MEMBER]: 'Adherente',
   [MemberCategory.CADET]: 'Cadete',
   [MemberCategory.MEMBER]: 'Socio',

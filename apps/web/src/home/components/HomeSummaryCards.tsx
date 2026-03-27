@@ -5,7 +5,7 @@ import { Col, Divider, Space, Statistic } from 'antd';
 import { Link } from 'react-router';
 
 import { appRoutes } from '@/app/app.enum';
-import { useMemberStatistics } from '@/statistics';
+import { useMemberStatistics } from '@/statistics/useMemberStatistics';
 import {
   Button,
   Card,

@@ -1,4 +1,8 @@
-import { MovementMonthlyTrendItemDto } from '@club-social/shared/movements';
+import {
+  MovementByCategoryDto,
+  MovementMonthlyTrendItemDto,
+  MovementType,
+} from '@club-social/shared/movements';
 import { DateRangeDto, ExportDataDto } from '@club-social/shared/types';
 
 import {
@@ -30,6 +34,10 @@ export interface MovementRepository
     >,
     ReadableRepository<MovementEntity>,
     WriteableRepository<MovementEntity> {
+  findByCategory(params: {
+    dateRange?: [string, string];
+    type?: MovementType;
+  }): Promise<MovementByCategoryDto>;
   findByIdReadModel(id: UniqueId): Promise<MovementReadModel | null>;
   findByPaymentId(paymentId: UniqueId): Promise<MovementEntity | null>;
   findForExport(params: ExportDataDto): Promise<MovementPaginatedReadModel[]>;
