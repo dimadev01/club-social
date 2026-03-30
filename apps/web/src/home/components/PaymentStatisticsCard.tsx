@@ -5,7 +5,7 @@ import {
   DueCategorySorted,
 } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
-import { Flex, Progress, Statistic, theme, Typography } from 'antd';
+import { Flex, Grid, Space, Statistic, theme, Typography } from 'antd';
 
 import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
 import { Card, PageHeading } from '@/ui';
@@ -19,6 +19,10 @@ interface Props {
 export function PaymentStatisticsCard({ dateRange }: Props) {
   const { data: statistics, isLoading } = usePaymentStatistics({ dateRange });
   const { token } = theme.useToken();
+  const { lg, md } = Grid.useBreakpoint();
+  const heroSecondaryTextColor = 'rgba(255, 255, 255, 0.75)';
+  const heroTitleColor = 'rgba(255, 255, 255, 0.85)';
+  const heroSupportTitleColor = 'rgba(255, 255, 255, 0.8)';
 
   const isDark = token.colorBgBase === '#000000';
   const categoryColor: Record<DueCategory, string> = {
@@ -37,18 +41,31 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
           background: `linear-gradient(135deg, ${token.colorPrimary}, ${token.colorSuccessActive})`,
         }}
       >
-        <Flex align="center" gap="middle" justify="space-between" wrap>
-          <Statistic
-            classNames={{
-              content: 'text-4xl text-white font-bold',
-              title: 'text-white uppercase font-bold',
-            }}
-            loading={isLoading}
-            title="Pagos realizados"
-            value={statistics?.count ?? 0}
-          />
+        <Flex gap="large" justify="space-between" vertical={!lg}>
+          <Flex gap={6} vertical>
+            <Statistic
+              loading={isLoading}
+              styles={{
+                content: {
+                  color: token.colorWhite,
+                  fontSize: token.fontSizeHeading3,
+                },
+                title: {
+                  color: heroTitleColor,
+                  fontSize: token.fontSizeSM,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                },
+              }}
+              title="Pagos realizados"
+              value={statistics?.count ?? 0}
+            />
+            <Typography.Text style={{ color: heroSecondaryTextColor }}>
+              Actividad de pagos registrada en el período seleccionado
+            </Typography.Text>
+          </Flex>
 
-          <Flex align="center" gap="middle" wrap>
+          <Flex gap={!lg ? 20 : 28} vertical={!md}>
             {[
               {
                 format: 'number' as const,
@@ -67,12 +84,20 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
               },
             ].map(({ format, label, value }) => (
               <Statistic
-                classNames={{
-                  content: 'text-white text-right text-base font-bold',
-                  title: 'text-white text-right text-sm',
-                }}
                 key={label}
                 loading={isLoading}
+                styles={{
+                  content: {
+                    color: token.colorWhite,
+                    fontSize: token.fontSizeXL,
+                    textAlign: lg ? 'right' : 'left',
+                  },
+                  title: {
+                    color: heroSupportTitleColor,
+                    fontSize: token.fontSizeSM,
+                    textAlign: lg ? 'right' : 'left',
+                  },
+                }}
                 title={label}
                 value={
                   format === 'currency'
@@ -90,56 +115,37 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
         {DueCategorySorted.map((category) => {
           const categoryData = statistics?.categories[category];
           const isEmpty = !categoryData || categoryData.count === 0;
-          const percentage = categoryData?.percentage ?? 0;
           const color = categoryColor[category];
 
           return (
-            <Card key={category} size="small">
+            <Card className="h-full" key={category}>
               <Flex gap="middle" vertical>
-                <Flex align="center" justify="space-between">
-                  <Flex align="center" gap="small">
-                    {DueCategoryIconMap[category]}
-                    <Typography.Text
-                      className="text-sm font-semibold"
-                      disabled={isEmpty}
-                    >
-                      {DueCategoryLabel[category]}
-                    </Typography.Text>
-                  </Flex>
-                  <Typography.Text className="text-xs" type="secondary">
-                    {isEmpty ? '0%' : `${percentage}%`}
-                  </Typography.Text>
-                </Flex>
-
-                <Flex gap="small" vertical>
-                  <Typography.Text
-                    className="text-xs"
-                    disabled={isEmpty}
-                    type={isEmpty ? undefined : 'secondary'}
-                  >
-                    Cantidad ·{' '}
-                    <Typography.Text
-                      className="text-xs font-semibold"
-                      disabled={isEmpty}
-                    >
-                      {categoryData?.count ?? 0}
-                    </Typography.Text>
-                  </Typography.Text>
-                  <Typography.Text
-                    className="text-sm font-bold"
-                    disabled={isEmpty}
-                    style={{ color: isEmpty ? undefined : color }}
-                  >
-                    {NumberFormat.currencyCents(categoryData?.amount ?? 0)}
-                  </Typography.Text>
-
-                  <Progress
-                    percent={percentage}
-                    showInfo={false}
-                    size="small"
-                    strokeColor={isEmpty ? token.colorBorder : color}
-                  />
-                </Flex>
+                <Statistic
+                  loading={isLoading}
+                  styles={{
+                    content: {
+                      color: isEmpty ? token.colorTextDisabled : color,
+                    },
+                  }}
+                  title={
+                    <Space size="small">
+                      <span
+                        style={{
+                          color: isEmpty ? token.colorTextDisabled : color,
+                        }}
+                      >
+                        {DueCategoryIconMap[category]}
+                      </span>
+                      <Typography.Text strong type="secondary">
+                        {DueCategoryLabel[category]}
+                      </Typography.Text>
+                      <Typography.Text type="secondary">
+                        ({categoryData?.count ?? 0})
+                      </Typography.Text>
+                    </Space>
+                  }
+                  value={NumberFormat.currencyCents(categoryData?.amount ?? 0)}
+                />
               </Flex>
             </Card>
           );

@@ -1,6 +1,7 @@
 import type { Dayjs } from 'dayjs';
 
 import { DateFormat, DateFormats } from '@club-social/shared/lib';
+import { Flex } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 
@@ -80,27 +81,31 @@ export function FinanceStatisticsPage() {
     <Page>
       <PageHeader>
         <PageTitle>Estadísticas de Finanzas</PageTitle>
-        <Form.Item className="mb-0" label="Período">
-          <DatePicker.RangePicker
-            format={DateFormats.date}
-            onChange={(dates) => {
-              if (dates && dates[0] && dates[1]) {
-                const [start, end] = dates;
-                setDateRange([start.startOf('day'), end.startOf('day')]);
-              } else {
-                setDateRange(null);
-              }
-            }}
-            placeholder={['Fecha desde', 'Fecha hasta']}
-            presets={getPresets()}
-            value={dayjsRange ?? undefined}
-          />
-        </Form.Item>
+        <Form>
+          <Form.Item className="mb-0" label="Período">
+            <DatePicker.RangePicker
+              format={DateFormats.date}
+              onChange={(dates) => {
+                if (dates && dates[0] && dates[1]) {
+                  const [start, end] = dates;
+                  setDateRange([start.startOf('day'), end.startOf('day')]);
+                } else {
+                  setDateRange(null);
+                }
+              }}
+              placeholder={['Fecha desde', 'Fecha hasta']}
+              presets={getPresets()}
+              value={dayjsRange ?? undefined}
+            />
+          </Form.Item>
+        </Form>
       </PageHeader>
 
-      <div className="flex flex-col gap-4">
+      <Flex gap="large" vertical>
         <PaymentStatisticsCard dateRange={dateRange} />
+
         <MovementStatisticsCard dateRange={dateRange} />
+
         <DuePendingStatisticsCard dateRange={dateRange} />
 
         <RevenueTrendChart />
@@ -116,7 +121,7 @@ export function FinanceStatisticsPage() {
         </div>
 
         <PaymentChartCard />
-      </div>
+      </Flex>
     </Page>
   );
 }
