@@ -8,7 +8,6 @@ import { NumberFormat } from '@club-social/shared/lib';
 import { Flex, Grid, Space, Statistic, theme, Typography } from 'antd';
 
 import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
-import { cn } from '@/shared/lib/utils';
 import { Card, PageHeading } from '@/ui';
 
 import { usePaymentStatistics } from '../usePaymentStatistics';
@@ -21,6 +20,9 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
   const { data: statistics, isLoading } = usePaymentStatistics({ dateRange });
   const { token } = theme.useToken();
   const { lg, md } = Grid.useBreakpoint();
+  const heroSecondaryTextColor = 'rgba(255, 255, 255, 0.75)';
+  const heroTitleColor = 'rgba(255, 255, 255, 0.85)';
+  const heroSupportTitleColor = 'rgba(255, 255, 255, 0.8)';
 
   const isDark = token.colorBgBase === '#000000';
   const categoryColor: Record<DueCategory, string> = {
@@ -40,17 +42,30 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
         }}
       >
         <Flex gap="large" justify="space-between" vertical={!lg}>
-          <Statistic
-            classNames={{
-              content: 'text-4xl text-white font-bold',
-              title: 'text-white text-base uppercase font-bold',
-            }}
-            loading={isLoading}
-            title="Pagos realizados"
-            value={statistics?.count ?? 0}
-          />
+          <Flex gap={6} vertical>
+            <Statistic
+              loading={isLoading}
+              styles={{
+                content: {
+                  color: token.colorWhite,
+                  fontSize: token.fontSizeHeading3,
+                },
+                title: {
+                  color: heroTitleColor,
+                  fontSize: token.fontSizeSM,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                },
+              }}
+              title="Pagos realizados"
+              value={statistics?.count ?? 0}
+            />
+            <Typography.Text style={{ color: heroSecondaryTextColor }}>
+              Actividad de pagos registrada en el período seleccionado
+            </Typography.Text>
+          </Flex>
 
-          <Flex gap={!lg ? 24 : 36} vertical={!md}>
+          <Flex gap={!lg ? 20 : 28} vertical={!md}>
             {[
               {
                 format: 'number' as const,
@@ -69,16 +84,20 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
               },
             ].map(({ format, label, value }) => (
               <Statistic
-                classNames={{
-                  content: cn('text-white text-2xl font-bold', {
-                    'text-right': lg,
-                  }),
-                  title: cn('text-white text-base', {
-                    'text-right': lg,
-                  }),
-                }}
                 key={label}
                 loading={isLoading}
+                styles={{
+                  content: {
+                    color: token.colorWhite,
+                    fontSize: token.fontSizeXL,
+                    textAlign: lg ? 'right' : 'left',
+                  },
+                  title: {
+                    color: heroSupportTitleColor,
+                    fontSize: token.fontSizeSM,
+                    textAlign: lg ? 'right' : 'left',
+                  },
+                }}
                 title={label}
                 value={
                   format === 'currency'
@@ -99,11 +118,10 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
           const color = categoryColor[category];
 
           return (
-            <Card key={category}>
+            <Card className="h-full" key={category}>
               <Flex gap="middle" vertical>
                 <Statistic
                   loading={isLoading}
-                  prefix={DueCategoryIconMap[category]}
                   styles={{
                     content: {
                       color: isEmpty ? token.colorTextDisabled : color,
@@ -111,6 +129,13 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
                   }}
                   title={
                     <Space size="small">
+                      <span
+                        style={{
+                          color: isEmpty ? token.colorTextDisabled : color,
+                        }}
+                      >
+                        {DueCategoryIconMap[category]}
+                      </span>
                       <Typography.Text strong type="secondary">
                         {DueCategoryLabel[category]}
                       </Typography.Text>

@@ -1,6 +1,15 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
-import { Flex, Grid, Space, Statistic, theme, Tooltip, Typography } from 'antd';
+import {
+  Flex,
+  Grid,
+  Space,
+  Statistic,
+  Tag,
+  theme,
+  Tooltip,
+  Typography,
+} from 'antd';
 
 import { Card, PageHeading } from '@/ui';
 
@@ -19,14 +28,29 @@ export function MovementStatisticsCard({ dateRange }: Props) {
   const totalInflow = statistics?.totalInflow ?? 0;
   const totalOutflow = Math.abs(statistics?.totalOutflow ?? 0);
   const total = statistics?.total ?? 0;
-
   const isPositiveBalance = balance >= 0;
-  const heroAccentColor =
-    balance === 0
-      ? token.colorTextSecondary
-      : isPositiveBalance
-        ? token.colorSuccess
-        : token.colorError;
+
+  function getStatusLabel() {
+    if (balance === 0) return 'Equilibrado';
+    if (isPositiveBalance) return 'Superávit';
+
+    return 'Déficit';
+  }
+
+  function getHeroAccentColor() {
+    if (balance === 0) return token.colorTextSecondary;
+    if (isPositiveBalance) return token.colorSuccess;
+
+    return token.colorError;
+  }
+
+  function getStatusTagColor() {
+    if (balance === 0) return 'default';
+    if (isPositiveBalance) return 'success';
+
+    return 'error';
+  }
+
   const heroBackground = isPositiveBalance
     ? token.colorSuccessBg
     : token.colorErrorBg;
@@ -45,44 +69,52 @@ export function MovementStatisticsCard({ dateRange }: Props) {
       >
         <Flex gap="middle" justify="space-between" vertical={!lg}>
           <Flex gap="small" vertical>
-            <Space size="small">
-              <Typography.Text
-                className="uppercase"
-                strong
-                style={{
-                  color: heroAccentColor,
-                }}
-              >
-                Balance
-              </Typography.Text>
-              <Tooltip title="Diferencia entre ingresos y egresos para el período filtrado">
-                <InfoCircleOutlined style={{ color: heroAccentColor }} />
-              </Tooltip>
-            </Space>
+            <Typography.Text
+              strong
+              style={{
+                color: getHeroAccentColor(),
+                fontSize: token.fontSizeSM,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+              }}
+            >
+              Balance
+            </Typography.Text>
 
             <Statistic
-              classNames={{
-                content: 'text-4xl font-bold',
-              }}
               loading={isLoading}
               styles={{
                 content: {
-                  color: heroAccentColor,
+                  color: getHeroAccentColor(),
+                  fontSize: token.fontSizeHeading3,
                 },
               }}
               value={NumberFormat.currencyCents(balance)}
             />
+
+            <Typography.Text style={{ color: token.colorTextSecondary }}>
+              Diferencia entre ingresos y egresos del período
+            </Typography.Text>
+          </Flex>
+
+          <Flex align={lg ? 'flex-end' : 'flex-start'} gap={8} vertical>
+            <Tag color={getStatusTagColor()} variant="solid">
+              {getStatusLabel()}
+            </Tag>
           </Flex>
         </Flex>
       </Card>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Card>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <Card className="h-full">
           <Statistic
             loading={isLoading}
             styles={{
               content: {
                 color: token.colorSuccess,
+              },
+              title: {
+                fontSize: token.fontSizeSM,
               },
             }}
             title="Ingresos"
@@ -90,24 +122,38 @@ export function MovementStatisticsCard({ dateRange }: Props) {
           />
         </Card>
 
-        <Card>
+        <Card className="h-full">
           <Statistic
             loading={isLoading}
             styles={{
               content: {
                 color: token.colorError,
               },
+              title: {
+                fontSize: token.fontSizeSM,
+              },
             }}
             title="Egresos"
             value={NumberFormat.currencyCents(totalOutflow)}
           />
         </Card>
-        <Card>
+        <Card className="h-full md:col-span-2 xl:col-span-1">
           <Statistic
             loading={isLoading}
+            styles={{
+              content: {
+                fontSize: token.fontSizeXL,
+              },
+              title: {
+                color: token.colorTextSecondary,
+                fontSize: token.fontSizeSM,
+              },
+            }}
             title={
               <Space size="small">
-                Caja acumulada
+                <Typography.Text type="secondary">
+                  Caja acumulada
+                </Typography.Text>
                 <Tooltip
                   title={
                     dateRange

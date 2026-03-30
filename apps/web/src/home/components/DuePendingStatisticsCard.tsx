@@ -54,35 +54,41 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
         }}
       >
         <Flex gap="small" vertical>
-          <Space size="small">
-            <Typography.Text
-              className="uppercase"
-              strong
-              style={{
-                color: token.colorWarning,
-              }}
-            >
-              Total pendiente
-            </Typography.Text>
-            {!isMember && (
-              <Tooltip title="Deudas pendientes y parcialmente pagadas de socios activos">
-                <InfoCircleOutlined style={{ color: token.colorWarning }} />
-              </Tooltip>
-            )}
-          </Space>
+          <Flex gap="small" vertical>
+            <Space size="small">
+              <Typography.Text
+                strong
+                style={{
+                  color: token.colorWarning,
+                  fontSize: token.fontSizeSM,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Total pendiente
+              </Typography.Text>
+              {!isMember && (
+                <Tooltip title="Deudas pendientes y parcialmente pagadas de socios activos">
+                  <InfoCircleOutlined style={{ color: token.colorWarning }} />
+                </Tooltip>
+              )}
+            </Space>
 
-          <Statistic
-            classNames={{
-              content: 'text-4xl font-bold',
-            }}
-            loading={isLoading}
-            styles={{
-              content: {
-                color: token.colorWarning,
-              },
-            }}
-            value={NumberFormat.currencyCents(data?.total ?? 0)}
-          />
+            <Statistic
+              loading={isLoading}
+              styles={{
+                content: {
+                  color: token.colorWarning,
+                  fontSize: token.fontSizeHeading3,
+                },
+              }}
+              value={NumberFormat.currencyCents(data?.total ?? 0)}
+            />
+
+            <Typography.Text style={{ color: token.colorTextSecondary }}>
+              Saldo pendiente por cobrar
+            </Typography.Text>
+          </Flex>
         </Flex>
       </Card>
 
@@ -101,13 +107,24 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
             <Card className="h-full">
               <Statistic
                 loading={isLoading}
-                prefix={DueCategoryIconMap[category]}
                 styles={{
                   content: {
                     color: categoryColor[category],
                   },
+                  title: {
+                    fontSize: token.fontSizeSM,
+                  },
                 }}
-                title={DueCategoryLabel[category]}
+                title={
+                  <Space size="small">
+                    <span style={{ color: categoryColor[category] }}>
+                      {DueCategoryIconMap[category]}
+                    </span>
+                    <Typography.Text strong type="secondary">
+                      {DueCategoryLabel[category]}
+                    </Typography.Text>
+                  </Space>
+                }
                 value={NumberFormat.currencyCents(
                   data?.categories[category] ?? 0,
                 )}

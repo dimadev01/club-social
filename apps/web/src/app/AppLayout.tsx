@@ -213,7 +213,7 @@ export function AppLayout({ children }: PropsWithChildren) {
 
   const topLevelPath = `/${location.pathname.split('/')[1] ?? ''}`;
   const selectedKeys = [location.pathname, topLevelPath];
-  const defaultOpenKeys = [topLevelPath];
+  const defaultOpenKeys = isCollapsed ? [] : [topLevelPath];
 
   return (
     <Layout className="min-h-screen" hasSider={!isMobile}>
