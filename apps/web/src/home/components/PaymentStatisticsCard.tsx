@@ -1,16 +1,13 @@
-import { purple, purpleDark } from '@ant-design/colors';
-import {
-  DueCategory,
-  DueCategoryLabel,
-  DueCategorySorted,
-} from '@club-social/shared/dues';
+import { DueCategoryLabel, DueCategorySorted } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
 import { Flex, Grid, Space, Statistic, theme, Typography } from 'antd';
 
 import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
+import { useDueCategoryColors } from '@/dues/useDueCategoryColors';
 import { Card, PageHeading } from '@/ui';
 
 import { usePaymentStatistics } from '../usePaymentStatistics';
+import { HeroStatCard } from './HeroStatCard';
 
 interface Props {
   dateRange?: [string, string];
@@ -20,51 +17,19 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
   const { data: statistics, isLoading } = usePaymentStatistics({ dateRange });
   const { token } = theme.useToken();
   const { lg, md } = Grid.useBreakpoint();
-  const heroSecondaryTextColor = 'rgba(255, 255, 255, 0.75)';
-  const heroTitleColor = 'rgba(255, 255, 255, 0.85)';
-  const heroSupportTitleColor = 'rgba(255, 255, 255, 0.8)';
-
-  const isDark = token.colorBgBase === '#000000';
-  const categoryColor: Record<DueCategory, string> = {
-    [DueCategory.ELECTRICITY]: token.colorWarning,
-    [DueCategory.GUEST]: isDark ? purpleDark[5] : purple[5],
-    [DueCategory.MEMBERSHIP]: token.colorSuccess,
-  };
+  const categoryColor = useDueCategoryColors();
 
   return (
     <Flex gap="middle" vertical>
       <PageHeading className="mb-0">Pagos</PageHeading>
 
-      {/* Hero banner */}
-      <Card
-        style={{
-          background: `linear-gradient(135deg, ${token.colorPrimary}, ${token.colorSuccessActive})`,
-        }}
-      >
-        <Flex gap="large" justify="space-between" vertical={!lg}>
-          <Flex gap={6} vertical>
-            <Statistic
-              loading={isLoading}
-              styles={{
-                content: {
-                  color: token.colorWhite,
-                  fontSize: token.fontSizeHeading3,
-                },
-                title: {
-                  color: heroTitleColor,
-                  fontSize: token.fontSizeSM,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                },
-              }}
-              title="Pagos realizados"
-              value={statistics?.count ?? 0}
-            />
-            <Typography.Text style={{ color: heroSecondaryTextColor }}>
-              Actividad de pagos registrada en el período seleccionado
-            </Typography.Text>
-          </Flex>
-
+      <HeroStatCard
+        accentColor={token.colorWhite}
+        background={`linear-gradient(135deg, ${token.colorPrimary}, ${token.colorSuccessActive})`}
+        gap="large"
+        label="Pagos realizados"
+        loading={isLoading}
+        rightSlot={
           <Flex gap={!lg ? 20 : 28} vertical={!md}>
             {[
               {
@@ -93,7 +58,7 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
                     textAlign: lg ? 'right' : 'left',
                   },
                   title: {
-                    color: heroSupportTitleColor,
+                    color: 'rgba(255, 255, 255, 0.8)',
                     fontSize: token.fontSizeSM,
                     textAlign: lg ? 'right' : 'left',
                   },
@@ -107,8 +72,11 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
               />
             ))}
           </Flex>
-        </Flex>
-      </Card>
+        }
+        subtitle="Actividad de pagos registrada en el período seleccionado"
+        subtitleColor="rgba(255, 255, 255, 0.75)"
+        value={statistics?.count ?? 0}
+      />
 
       {/* Category cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

@@ -1,19 +1,11 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
-import {
-  Flex,
-  Grid,
-  Space,
-  Statistic,
-  Tag,
-  theme,
-  Tooltip,
-  Typography,
-} from 'antd';
+import { Flex, Space, Statistic, Tag, theme, Tooltip, Typography } from 'antd';
 
 import { Card, PageHeading } from '@/ui';
 
 import { useMovementStatistics } from '../useMovementStatistics';
+import { HeroStatCard } from './HeroStatCard';
 
 interface Props {
   dateRange?: [string, string];
@@ -22,8 +14,6 @@ interface Props {
 export function MovementStatisticsCard({ dateRange }: Props) {
   const { data: statistics, isLoading } = useMovementStatistics({ dateRange });
   const { token } = theme.useToken();
-  const { lg } = Grid.useBreakpoint();
-
   const balance = statistics?.balance ?? 0;
   const totalInflow = statistics?.totalInflow ?? 0;
   const totalOutflow = Math.abs(statistics?.totalOutflow ?? 0);
@@ -59,51 +49,21 @@ export function MovementStatisticsCard({ dateRange }: Props) {
     <Flex gap="middle" vertical>
       <PageHeading className="mb-0">Movimientos</PageHeading>
 
-      <Card
-        styles={{
-          body: {
-            background: heroBackground,
-            border: `1px solid ${token.colorBorderSecondary}`,
-          },
-        }}
-      >
-        <Flex gap="middle" justify="space-between" vertical={!lg}>
-          <Flex gap="small" vertical>
-            <Typography.Text
-              strong
-              style={{
-                color: getHeroAccentColor(),
-                fontSize: token.fontSizeSM,
-                letterSpacing: '0.08em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Balance
-            </Typography.Text>
-
-            <Statistic
-              loading={isLoading}
-              styles={{
-                content: {
-                  color: getHeroAccentColor(),
-                  fontSize: token.fontSizeHeading3,
-                },
-              }}
-              value={NumberFormat.currencyCents(balance)}
-            />
-
-            <Typography.Text style={{ color: token.colorTextSecondary }}>
-              Diferencia entre ingresos y egresos del período
-            </Typography.Text>
-          </Flex>
-
-          <Flex align={lg ? 'flex-end' : 'flex-start'} gap={8} vertical>
-            <Tag color={getStatusTagColor()} variant="solid">
-              {getStatusLabel()}
-            </Tag>
-          </Flex>
-        </Flex>
-      </Card>
+      <HeroStatCard
+        accentColor={getHeroAccentColor()}
+        background={heroBackground}
+        label="Balance"
+        loading={isLoading}
+        rightSlot={
+          <Tag color={getStatusTagColor()} variant="solid">
+            {getStatusLabel()}
+          </Tag>
+        }
+        showBorder
+        subtitle="Diferencia entre ingresos y egresos del período"
+        subtitleColor={token.colorTextSecondary}
+        value={NumberFormat.currencyCents(balance)}
+      />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card className="h-full">
