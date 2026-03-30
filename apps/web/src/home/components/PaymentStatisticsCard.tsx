@@ -5,9 +5,10 @@ import {
   DueCategorySorted,
 } from '@club-social/shared/dues';
 import { NumberFormat } from '@club-social/shared/lib';
-import { Flex, Grid, Statistic, theme } from 'antd';
+import { Flex, Grid, Space, Statistic, theme, Typography } from 'antd';
 
 import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
+import { cn } from '@/shared/lib/utils';
 import { Card, PageHeading } from '@/ui';
 
 import { usePaymentStatistics } from '../usePaymentStatistics';
@@ -19,7 +20,7 @@ interface Props {
 export function PaymentStatisticsCard({ dateRange }: Props) {
   const { data: statistics, isLoading } = usePaymentStatistics({ dateRange });
   const { token } = theme.useToken();
-  const { lg } = Grid.useBreakpoint();
+  const { lg, md } = Grid.useBreakpoint();
 
   const isDark = token.colorBgBase === '#000000';
   const categoryColor: Record<DueCategory, string> = {
@@ -38,18 +39,18 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
           background: `linear-gradient(135deg, ${token.colorPrimary}, ${token.colorSuccessActive})`,
         }}
       >
-        <Flex align="center" gap="large" justify="space-between" vertical={!lg}>
+        <Flex gap="large" justify="space-between" vertical={!lg}>
           <Statistic
             classNames={{
-              content: 'text-4xl text-white font-bold text-center',
-              title: 'text-white text-base uppercase font-bold text-center',
+              content: 'text-4xl text-white font-bold',
+              title: 'text-white text-base uppercase font-bold',
             }}
             loading={isLoading}
             title="Pagos realizados"
             value={statistics?.count ?? 0}
           />
 
-          <Flex gap={!lg ? 24 : 36} vertical={!lg}>
+          <Flex gap={!lg ? 24 : 36} vertical={!md}>
             {[
               {
                 format: 'number' as const,
@@ -69,8 +70,12 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
             ].map(({ format, label, value }) => (
               <Statistic
                 classNames={{
-                  content: 'text-white text-center text-2xl font-bold',
-                  title: 'text-white text-center text-base',
+                  content: cn('text-white text-2xl font-bold', {
+                    'text-right': lg,
+                  }),
+                  title: cn('text-white text-base', {
+                    'text-right': lg,
+                  }),
                 }}
                 key={label}
                 loading={isLoading}
@@ -94,30 +99,26 @@ export function PaymentStatisticsCard({ dateRange }: Props) {
           const color = categoryColor[category];
 
           return (
-            <Card
-              extra={DueCategoryIconMap[category]}
-              key={category}
-              title={DueCategoryLabel[category]}
-            >
+            <Card key={category}>
               <Flex gap="middle" vertical>
                 <Statistic
                   loading={isLoading}
+                  prefix={DueCategoryIconMap[category]}
                   styles={{
                     content: {
                       color: isEmpty ? token.colorTextDisabled : color,
                     },
                   }}
-                  title="Cantidad"
-                  value={categoryData?.count ?? 0}
-                />
-                <Statistic
-                  loading={isLoading}
-                  styles={{
-                    content: {
-                      color: isEmpty ? token.colorTextDisabled : color,
-                    },
-                  }}
-                  title="Total"
+                  title={
+                    <Space size="small">
+                      <Typography.Text strong type="secondary">
+                        {DueCategoryLabel[category]}
+                      </Typography.Text>
+                      <Typography.Text type="secondary">
+                        ({categoryData?.count ?? 0})
+                      </Typography.Text>
+                    </Space>
+                  }
                   value={NumberFormat.currencyCents(categoryData?.amount ?? 0)}
                 />
               </Flex>

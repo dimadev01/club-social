@@ -1,8 +1,8 @@
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
-import { Space, Statistic, Tooltip } from 'antd';
+import { Flex, Grid, Space, Statistic, theme, Tooltip, Typography } from 'antd';
 
-import { Card, MovementsIcon } from '@/ui';
+import { Card, PageHeading } from '@/ui';
 
 import { useMovementStatistics } from '../useMovementStatistics';
 
@@ -12,59 +12,117 @@ interface Props {
 
 export function MovementStatisticsCard({ dateRange }: Props) {
   const { data: statistics, isLoading } = useMovementStatistics({ dateRange });
+  const { token } = theme.useToken();
+  const { lg } = Grid.useBreakpoint();
+
+  const balance = statistics?.balance ?? 0;
+  const totalInflow = statistics?.totalInflow ?? 0;
+  const totalOutflow = Math.abs(statistics?.totalOutflow ?? 0);
+  const total = statistics?.total ?? 0;
+
+  const isPositiveBalance = balance >= 0;
+  const heroAccentColor =
+    balance === 0
+      ? token.colorTextSecondary
+      : isPositiveBalance
+        ? token.colorSuccess
+        : token.colorError;
+  const heroBackground = isPositiveBalance
+    ? token.colorSuccessBg
+    : token.colorErrorBg;
 
   return (
-    <Card extra={<MovementsIcon />} title="Movimientos" type="inner">
-      <Card.Grid className="w-full md:w-1/3">
-        <Statistic
-          loading={isLoading}
-          title="Ingresos"
-          value={NumberFormat.currencyCents(statistics?.totalInflow ?? 0)}
-        />
-      </Card.Grid>
-      <Card.Grid className="w-full md:w-1/3">
-        <Statistic
-          loading={isLoading}
-          title="Egresos"
-          value={NumberFormat.currencyCents(
-            Math.abs(statistics?.totalOutflow ?? 0),
-          )}
-        />
-      </Card.Grid>
-      <Card.Grid className="w-full md:w-1/3">
-        <Statistic
-          loading={isLoading}
-          title={
+    <Flex gap="middle" vertical>
+      <PageHeading className="mb-0">Movimientos</PageHeading>
+
+      <Card
+        styles={{
+          body: {
+            background: heroBackground,
+            border: `1px solid ${token.colorBorderSecondary}`,
+          },
+        }}
+      >
+        <Flex gap="middle" justify="space-between" vertical={!lg}>
+          <Flex gap="small" vertical>
             <Space size="small">
-              Balance
+              <Typography.Text
+                className="uppercase"
+                strong
+                style={{
+                  color: heroAccentColor,
+                }}
+              >
+                Balance
+              </Typography.Text>
               <Tooltip title="Diferencia entre ingresos y egresos para el período filtrado">
-                <InfoCircleOutlined />
+                <InfoCircleOutlined style={{ color: heroAccentColor }} />
               </Tooltip>
             </Space>
-          }
-          value={NumberFormat.currencyCents(statistics?.balance ?? 0)}
-        />
-      </Card.Grid>
-      <Card.Grid className="w-full">
-        <Statistic
-          loading={isLoading}
-          title={
-            dateRange ? (
+
+            <Statistic
+              classNames={{
+                content: 'text-4xl font-bold',
+              }}
+              loading={isLoading}
+              styles={{
+                content: {
+                  color: heroAccentColor,
+                },
+              }}
+              value={NumberFormat.currencyCents(balance)}
+            />
+          </Flex>
+        </Flex>
+      </Card>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Card>
+          <Statistic
+            loading={isLoading}
+            styles={{
+              content: {
+                color: token.colorSuccess,
+              },
+            }}
+            title="Ingresos"
+            value={NumberFormat.currencyCents(totalInflow)}
+          />
+        </Card>
+
+        <Card>
+          <Statistic
+            loading={isLoading}
+            styles={{
+              content: {
+                color: token.colorError,
+              },
+            }}
+            title="Egresos"
+            value={NumberFormat.currencyCents(totalOutflow)}
+          />
+        </Card>
+        <Card>
+          <Statistic
+            loading={isLoading}
+            title={
               <Space size="small">
                 Caja acumulada
                 <Tooltip
-                  title={`Incluye saldo de caja al ${DateFormat.parse(dateRange[1]).subtract(1, 'day').format(DateFormats.date)}`}
+                  title={
+                    dateRange
+                      ? `Incluye saldo de caja al ${DateFormat.parse(dateRange[1]).subtract(1, 'day').format(DateFormats.date)}`
+                      : 'Saldo de caja acumulado hasta la fecha'
+                  }
                 >
                   <InfoCircleOutlined />
                 </Tooltip>
               </Space>
-            ) : (
-              'Caja acumulada'
-            )
-          }
-          value={NumberFormat.currencyCents(statistics?.total ?? 0)}
-        />
-      </Card.Grid>
-    </Card>
+            }
+            value={NumberFormat.currencyCents(total)}
+          />
+        </Card>
+      </div>
+    </Flex>
   );
 }
