@@ -1,4 +1,4 @@
-import { DueAgingDto, DueCollectionRateDto } from '@club-social/shared/dues';
+import { DueAgingDto } from '@club-social/shared/dues';
 import { DateRangeDto, ExportDataDto } from '@club-social/shared/types';
 
 import {
@@ -23,7 +23,7 @@ export interface DueRepository
     PaginatedRepository<DuePaginatedReadModel, DuePaginatedExtraReadModel>,
     ReadableRepository<DueEntity>,
     WriteableRepository<DueEntity> {
-  findAging(): Promise<DueAgingDto>;
+  findAging(params?: DateRangeDto): Promise<DueAgingDto>;
   findByIdReadModel(
     id: UniqueId,
     context?: QueryContext,
@@ -32,9 +32,6 @@ export interface DueRepository
     ids: UniqueId[],
     context?: QueryContext,
   ): Promise<DueReadModel[]>;
-  findCollectionRate(
-    dateRange?: [string, string],
-  ): Promise<DueCollectionRateDto>;
   findForExport(
     params: ExportDataDto,
     context?: QueryContext,

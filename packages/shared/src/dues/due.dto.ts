@@ -31,17 +31,6 @@ export interface DueAgingDto {
   total: number;
 }
 
-export interface DueCollectionRateDto {
-  collectedAmount: number;
-  collectionRate: number;
-  paidDues: number;
-  partiallyPaidDues: number;
-  pendingAmount: number;
-  pendingDues: number;
-  totalAmount: number;
-  totalDues: number;
-}
-
 export interface DueDto {
   amount: number;
   category: DueCategory;

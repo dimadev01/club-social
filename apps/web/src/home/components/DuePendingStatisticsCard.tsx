@@ -1,4 +1,3 @@
-import { purple, purpleDark } from '@ant-design/colors';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   DueCategory,
@@ -13,9 +12,11 @@ import { Link } from 'react-router';
 import { appRoutes } from '@/app/app.enum';
 import { useSessionUser } from '@/auth/useUser';
 import { DueCategoryIconMap } from '@/dues/DueCategoryIconMap';
+import { useDueCategoryColors } from '@/dues/useDueCategoryColors';
 import { Card, PageHeading } from '@/ui';
 
 import { useDuePendingStatistics } from '../useDuePendingStatistics';
+import { HeroStatCard } from './HeroStatCard';
 
 interface Props {
   dateRange?: [string, string];
@@ -33,106 +34,74 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
 
   const user = useSessionUser();
   const isMember = user.role === UserRole.MEMBER;
-  const isDark = token.colorBgBase === '#000000';
-
-  const categoryColor: Record<DueCategory, string> = {
-    [DueCategory.ELECTRICITY]: token.colorWarning,
-    [DueCategory.GUEST]: isDark ? purpleDark[5] : purple[5],
-    [DueCategory.MEMBERSHIP]: token.colorSuccess,
-  };
+  const categoryColor = useDueCategoryColors();
 
   return (
-    <Flex gap="middle" vertical>
-      <PageHeading className="mb-0">Deudas pendientes</PageHeading>
-
-      <Card
-        styles={{
-          body: {
-            background: token.colorWarningBg,
-            border: `1px solid ${token.colorBorderSecondary}`,
-          },
-        }}
-      >
-        <Flex gap="small" vertical>
-          <Flex gap="small" vertical>
+    <div>
+      <PageHeading>Deudas pendientes</PageHeading>
+      <Flex gap="middle" vertical>
+        <HeroStatCard
+          accentColor={token.colorWarning}
+          background={`linear-gradient(135deg, ${token.colorWarningBg}, ${token.colorWarningBgHover})`}
+          label={
             <Space size="small">
-              <Typography.Text
-                strong
-                style={{
-                  color: token.colorWarning,
-                  fontSize: token.fontSizeSM,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                }}
-              >
-                Total pendiente
-              </Typography.Text>
+              Total pendiente
               {!isMember && (
                 <Tooltip title="Deudas pendientes y parcialmente pagadas de socios activos">
                   <InfoCircleOutlined style={{ color: token.colorWarning }} />
                 </Tooltip>
               )}
             </Space>
+          }
+          loading={isLoading}
+          showBorder
+          subtitle="Saldo pendiente por cobrar"
+          subtitleColor={token.colorTextSecondary}
+          value={NumberFormat.currencyCents(data?.total ?? 0)}
+        />
 
-            <Statistic
-              loading={isLoading}
-              styles={{
-                content: {
-                  color: token.colorWarning,
-                  fontSize: token.fontSizeHeading3,
-                },
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {DueCategorySorted.map((category) => (
+            <Link
+              className="block"
+              key={category}
+              to={{
+                pathname: LinkCategoryMap[category],
+                search: new URLSearchParams({
+                  filters: `category:${category}`,
+                }).toString(),
               }}
-              value={NumberFormat.currencyCents(data?.total ?? 0)}
-            />
-
-            <Typography.Text style={{ color: token.colorTextSecondary }}>
-              Saldo pendiente por cobrar
-            </Typography.Text>
-          </Flex>
-        </Flex>
-      </Card>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {DueCategorySorted.map((category) => (
-          <Link
-            className="block"
-            key={category}
-            to={{
-              pathname: LinkCategoryMap[category],
-              search: new URLSearchParams({
-                filters: `category:${category}`,
-              }).toString(),
-            }}
-          >
-            <Card className="h-full">
-              <Statistic
-                loading={isLoading}
-                styles={{
-                  content: {
-                    color: categoryColor[category],
-                  },
-                  title: {
-                    fontSize: token.fontSizeSM,
-                  },
-                }}
-                title={
-                  <Space size="small">
-                    <span style={{ color: categoryColor[category] }}>
-                      {DueCategoryIconMap[category]}
-                    </span>
-                    <Typography.Text strong type="secondary">
-                      {DueCategoryLabel[category]}
-                    </Typography.Text>
-                  </Space>
-                }
-                value={NumberFormat.currencyCents(
-                  data?.categories[category] ?? 0,
-                )}
-              />
-            </Card>
-          </Link>
-        ))}
-      </div>
-    </Flex>
+            >
+              <Card className="h-full">
+                <Statistic
+                  loading={isLoading}
+                  styles={{
+                    content: {
+                      color: categoryColor[category],
+                    },
+                    title: {
+                      fontSize: token.fontSizeSM,
+                    },
+                  }}
+                  title={
+                    <Space size="small">
+                      <span style={{ color: categoryColor[category] }}>
+                        {DueCategoryIconMap[category]}
+                      </span>
+                      <Typography.Text strong type="secondary">
+                        {DueCategoryLabel[category]}
+                      </Typography.Text>
+                    </Space>
+                  }
+                  value={NumberFormat.currencyCents(
+                    data?.categories[category] ?? 0,
+                  )}
+                />
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </Flex>
+    </div>
   );
 }

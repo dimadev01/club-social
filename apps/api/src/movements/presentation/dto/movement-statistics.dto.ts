@@ -1,6 +1,7 @@
 import type {
   MovementBalanceDto,
   MovementByCategoryDto,
+  MovementCategory,
   MovementCategoryBreakdownDto,
   MovementMonthlyTrendDto,
   MovementMonthlyTrendItemDto,
@@ -46,7 +47,7 @@ export class MovementBalanceResponseDto implements MovementBalanceDto {
 
 export class MovementCategoryBreakdownResponseDto implements MovementCategoryBreakdownDto {
   public amount: number;
-  public category: string;
+  public category: MovementCategory;
   public count: number;
   public percentage: number;
 }

@@ -1,5 +1,5 @@
 import { NumberFormat } from '@club-social/shared/lib';
-import { Empty, theme } from 'antd';
+import { Empty, theme, Typography } from 'antd';
 import {
   Bar,
   BarChart,
@@ -18,6 +18,10 @@ interface CustomTooltipProps {
   payload?: TooltipPayloadItem[];
 }
 
+interface DebtAgingCardProps {
+  dateRange?: [string, string];
+}
+
 interface TooltipPayloadItem {
   color: string;
   name: string;
@@ -25,34 +29,45 @@ interface TooltipPayloadItem {
   value: number;
 }
 
-export function DebtAgingCard() {
-  const { data, isLoading } = useDueAging();
+export function DebtAgingCard({ dateRange }: DebtAgingCardProps) {
+  const { data, isLoading } = useDueAging({ dateRange });
   const { token } = theme.useToken();
 
   const barColors = [
     token.colorSuccess,
     token.colorWarning,
-    '#fa8c16',
+    token.colorWarningActive,
     token.colorError,
   ];
 
   const hasData = data?.brackets.some((b) => b.count > 0) ?? false;
+  const totalAmount = data?.brackets.reduce((sum, b) => sum + b.amount, 0) ?? 0;
 
   return (
-    <Card loading={isLoading} title="Antigüedad de deuda">
+    <Card
+      extra={
+        data && (
+          <Typography.Text type="secondary">
+            {NumberFormat.currencyCents(totalAmount)}
+          </Typography.Text>
+        )
+      }
+      loading={isLoading}
+      title="Antigüedad de deuda"
+    >
       {!isLoading && !data && (
-        <div className="flex h-48 items-center justify-center">
+        <div className="flex h-56 items-center justify-center">
           <Empty description="Sin datos disponibles" />
         </div>
       )}
       {!isLoading && data && !hasData && (
-        <div className="flex h-48 items-center justify-center">
+        <div className="flex h-56 items-center justify-center">
           <Empty description="Sin deudas pendientes" />
         </div>
       )}
 
       {hasData && (
-        <div className="h-48">
+        <div className="h-56">
           <ResponsiveContainer height="100%" width="100%">
             <BarChart
               data={data?.brackets}
@@ -73,7 +88,6 @@ export function DebtAgingCard() {
                 dataKey="label"
                 fontSize={12}
                 stroke={token.colorTextSecondary}
-                tickFormatter={(value: string) => `${value}d`}
                 tickLine={false}
                 type="category"
                 width={40}
