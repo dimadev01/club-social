@@ -37,70 +37,71 @@ export function DuePendingStatisticsCard({ dateRange }: Props) {
   const categoryColor = useDueCategoryColors();
 
   return (
-    <Flex gap="middle" vertical>
-      <PageHeading className="mb-0">Deudas pendientes</PageHeading>
+    <div>
+      <PageHeading>Deudas pendientes</PageHeading>
+      <Flex gap="middle" vertical>
+        <HeroStatCard
+          accentColor={token.colorWarning}
+          background={`linear-gradient(135deg, ${token.colorWarningBg}, ${token.colorWarningBgHover})`}
+          label={
+            <Space size="small">
+              Total pendiente
+              {!isMember && (
+                <Tooltip title="Deudas pendientes y parcialmente pagadas de socios activos">
+                  <InfoCircleOutlined style={{ color: token.colorWarning }} />
+                </Tooltip>
+              )}
+            </Space>
+          }
+          loading={isLoading}
+          showBorder
+          subtitle="Saldo pendiente por cobrar"
+          subtitleColor={token.colorTextSecondary}
+          value={NumberFormat.currencyCents(data?.total ?? 0)}
+        />
 
-      <HeroStatCard
-        accentColor={token.colorWarning}
-        background={token.colorWarningBg}
-        label={
-          <Space size="small">
-            Total pendiente
-            {!isMember && (
-              <Tooltip title="Deudas pendientes y parcialmente pagadas de socios activos">
-                <InfoCircleOutlined style={{ color: token.colorWarning }} />
-              </Tooltip>
-            )}
-          </Space>
-        }
-        loading={isLoading}
-        showBorder
-        subtitle="Saldo pendiente por cobrar"
-        subtitleColor={token.colorTextSecondary}
-        value={NumberFormat.currencyCents(data?.total ?? 0)}
-      />
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        {DueCategorySorted.map((category) => (
-          <Link
-            className="block"
-            key={category}
-            to={{
-              pathname: LinkCategoryMap[category],
-              search: new URLSearchParams({
-                filters: `category:${category}`,
-              }).toString(),
-            }}
-          >
-            <Card className="h-full">
-              <Statistic
-                loading={isLoading}
-                styles={{
-                  content: {
-                    color: categoryColor[category],
-                  },
-                  title: {
-                    fontSize: token.fontSizeSM,
-                  },
-                }}
-                title={
-                  <Space size="small">
-                    <span style={{ color: categoryColor[category] }}>
-                      {DueCategoryIconMap[category]}
-                    </span>
-                    <Typography.Text strong type="secondary">
-                      {DueCategoryLabel[category]}
-                    </Typography.Text>
-                  </Space>
-                }
-                value={NumberFormat.currencyCents(
-                  data?.categories[category] ?? 0,
-                )}
-              />
-            </Card>
-          </Link>
-        ))}
-      </div>
-    </Flex>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {DueCategorySorted.map((category) => (
+            <Link
+              className="block"
+              key={category}
+              to={{
+                pathname: LinkCategoryMap[category],
+                search: new URLSearchParams({
+                  filters: `category:${category}`,
+                }).toString(),
+              }}
+            >
+              <Card className="h-full">
+                <Statistic
+                  loading={isLoading}
+                  styles={{
+                    content: {
+                      color: categoryColor[category],
+                    },
+                    title: {
+                      fontSize: token.fontSizeSM,
+                    },
+                  }}
+                  title={
+                    <Space size="small">
+                      <span style={{ color: categoryColor[category] }}>
+                        {DueCategoryIconMap[category]}
+                      </span>
+                      <Typography.Text strong type="secondary">
+                        {DueCategoryLabel[category]}
+                      </Typography.Text>
+                    </Space>
+                  }
+                  value={NumberFormat.currencyCents(
+                    data?.categories[category] ?? 0,
+                  )}
+                />
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </Flex>
+    </div>
   );
 }

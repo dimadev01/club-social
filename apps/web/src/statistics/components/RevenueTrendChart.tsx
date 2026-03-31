@@ -1,4 +1,4 @@
-import { DateFormat, NumberFormat } from '@club-social/shared/lib';
+import { DateFormat, DateFormats, NumberFormat } from '@club-social/shared/lib';
 import { Empty, theme } from 'antd';
 import {
   Area,
@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 
 import { useMovementMonthlyTrend } from '@/home/useMovementMonthlyTrend';
-import { Card } from '@/ui';
+import { Card, PageHeading } from '@/ui';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -33,111 +33,121 @@ export function RevenueTrendChart() {
   const hasData = (data?.months.length ?? 0) > 0;
 
   return (
-    <Card loading={isLoading} title="Tendencia mensual (últimos 12 meses)">
-      {!isLoading && !hasData && (
-        <div className="flex h-64 items-center justify-center">
-          <Empty description="Sin movimientos registrados" />
-        </div>
-      )}
+    <div>
+      <PageHeading>Tendencia mensual (últimos 12 meses)</PageHeading>
 
-      {hasData && (
-        <div className="h-72">
-          <ResponsiveContainer height="100%" width="100%">
-            <AreaChart
-              data={data?.months}
-              margin={{ bottom: 0, left: 0, right: 10, top: 10 }}
-            >
-              <defs>
-                <linearGradient id="inflowGradient" x1="0" x2="0" y1="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor={token.colorSuccess}
-                    stopOpacity={0.3}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor={token.colorSuccess}
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-                <linearGradient
-                  id="outflowGradient"
-                  x1="0"
-                  x2="0"
-                  y1="0"
-                  y2="1"
-                >
-                  <stop
-                    offset="5%"
-                    stopColor={token.colorError}
-                    stopOpacity={0.3}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor={token.colorError}
-                    stopOpacity={0}
-                  />
-                </linearGradient>
-              </defs>
+      <Card loading={isLoading}>
+        {!isLoading && !hasData && (
+          <div className="flex h-64 items-center justify-center">
+            <Empty description="Sin movimientos registrados" />
+          </div>
+        )}
 
-              <CartesianGrid
-                stroke={token.colorBorderSecondary}
-                strokeDasharray="3 3"
-                vertical={false}
-              />
+        {hasData && (
+          <div className="h-72">
+            <ResponsiveContainer height="100%" width="100%">
+              <AreaChart
+                data={data?.months}
+                margin={{ bottom: 0, left: 0, right: 10, top: 10 }}
+              >
+                <defs>
+                  <linearGradient
+                    id="inflowGradient"
+                    x1="0"
+                    x2="0"
+                    y1="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="5%"
+                      stopColor={token.colorSuccess}
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor={token.colorSuccess}
+                      stopOpacity={0}
+                    />
+                  </linearGradient>
+                  <linearGradient
+                    id="outflowGradient"
+                    x1="0"
+                    x2="0"
+                    y1="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="5%"
+                      stopColor={token.colorError}
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor={token.colorError}
+                      stopOpacity={0}
+                    />
+                  </linearGradient>
+                </defs>
 
-              <XAxis
-                dataKey="month"
-                fontSize={12}
-                stroke={token.colorTextSecondary}
-                tickFormatter={(value: string) =>
-                  DateFormat.parse(`${value}-01`).format('MMM')
-                }
-                tickLine={false}
-              />
+                <CartesianGrid
+                  stroke={token.colorBorderSecondary}
+                  strokeDasharray="3 3"
+                  vertical={false}
+                />
 
-              <YAxis
-                fontSize={12}
-                stroke={token.colorTextSecondary}
-                tickFormatter={(value: number) =>
-                  NumberFormat.currencyCents(Math.abs(value))
-                }
-                tickLine={false}
-                width={80}
-              />
+                <XAxis
+                  dataKey="month"
+                  fontSize={12}
+                  stroke={token.colorTextSecondary}
+                  tickFormatter={(value: string) =>
+                    DateFormat.parse(`${value}-01`).format('MMM')
+                  }
+                  tickLine={false}
+                />
 
-              <Tooltip content={<CustomTooltip />} />
+                <YAxis
+                  fontSize={12}
+                  stroke={token.colorTextSecondary}
+                  tickFormatter={(value: number) =>
+                    NumberFormat.currencyCents(Math.abs(value))
+                  }
+                  tickLine={false}
+                  width={80}
+                />
 
-              <Legend
-                formatter={(value) => (
-                  <span style={{ color: token.colorText, fontSize: 12 }}>
-                    {value}
-                  </span>
-                )}
-              />
+                <Tooltip content={<CustomTooltip />} />
 
-              <Area
-                dataKey="totalInflow"
-                fill="url(#inflowGradient)"
-                name="Ingresos"
-                stroke={token.colorSuccess}
-                strokeWidth={2}
-                type="monotone"
-              />
+                <Legend
+                  formatter={(value) => (
+                    <span style={{ color: token.colorText, fontSize: 12 }}>
+                      {value}
+                    </span>
+                  )}
+                />
 
-              <Area
-                dataKey="totalOutflow"
-                fill="url(#outflowGradient)"
-                name="Egresos"
-                stroke={token.colorError}
-                strokeWidth={2}
-                type="monotone"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-    </Card>
+                <Area
+                  dataKey="totalInflow"
+                  fill="url(#inflowGradient)"
+                  name="Ingresos"
+                  stroke={token.colorSuccess}
+                  strokeWidth={2}
+                  type="monotone"
+                />
+
+                <Area
+                  dataKey="totalOutflow"
+                  fill="url(#outflowGradient)"
+                  name="Egresos"
+                  stroke={token.colorError}
+                  strokeWidth={2}
+                  type="monotone"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+      </Card>
+    </div>
   );
 }
 
@@ -146,7 +156,9 @@ function CustomTooltip({ active, label, payload }: CustomTooltipProps) {
     return null;
   }
 
-  const monthLabel = DateFormat.parse(`${label}-01`).format('MMMM YYYY');
+  const monthLabel = DateFormat.parse(`${label}-01`).format(
+    DateFormats.monthYear,
+  );
 
   return (
     <Card size="small" title={monthLabel}>
