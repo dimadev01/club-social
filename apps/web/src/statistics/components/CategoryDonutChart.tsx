@@ -19,6 +19,8 @@ import { useMovementByCategory } from '@/home/useMovementByCategory';
 const TOP_N = 5;
 
 interface CenterLabelProps {
+  colorText: string;
+  colorTextSecondary: string;
   total: number;
   viewBox?: { cx: number; cy: number };
 }
@@ -82,7 +84,7 @@ export function CategoryDonutChart({ dateRange, title, type }: Props) {
     const computedTotal = data.categories.reduce((sum, c) => sum + c.amount, 0);
 
     return { chartData: items, total: computedTotal };
-  }, [data, token]);
+  }, [data, token, colors]);
 
   const hasData = chartData.length > 0;
 
@@ -131,6 +133,8 @@ export function CategoryDonutChart({ dateRange, title, type }: Props) {
                 <Label
                   content={(props) => (
                     <CenterLabel
+                      colorText={token.colorText}
+                      colorTextSecondary={token.colorTextSecondary}
                       total={total}
                       viewBox={props.viewBox as { cx: number; cy: number }}
                     />
@@ -154,7 +158,12 @@ export function CategoryDonutChart({ dateRange, title, type }: Props) {
   );
 }
 
-function CenterLabel({ total, viewBox }: CenterLabelProps) {
+function CenterLabel({
+  colorText,
+  colorTextSecondary,
+  total,
+  viewBox,
+}: CenterLabelProps) {
   if (!viewBox) return null;
   const { cx, cy } = viewBox;
 
@@ -162,7 +171,7 @@ function CenterLabel({ total, viewBox }: CenterLabelProps) {
     <>
       <text
         dominantBaseline="middle"
-        fill="currentColor"
+        fill={colorText}
         style={{ fontSize: 13, fontWeight: 700 }}
         textAnchor="middle"
         x={cx}
@@ -172,8 +181,8 @@ function CenterLabel({ total, viewBox }: CenterLabelProps) {
       </text>
       <text
         dominantBaseline="middle"
-        fill="currentColor"
-        style={{ fontSize: 10, opacity: 0.55 }}
+        fill={colorTextSecondary}
+        style={{ fontSize: 10 }}
         textAnchor="middle"
         x={cx}
         y={cy + 10}
