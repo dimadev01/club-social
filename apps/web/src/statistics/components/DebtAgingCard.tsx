@@ -1,9 +1,9 @@
+import { orange } from '@ant-design/colors';
 import { NumberFormat } from '@club-social/shared/lib';
-import { Empty, theme, Typography } from 'antd';
+import { Empty, theme } from 'antd';
 import {
   Bar,
   BarChart,
-  Cell,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 
 import { useDueAging } from '@/home/useDueAging';
-import { Card } from '@/ui';
+import { Card, PageHeading } from '@/ui';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -36,79 +36,71 @@ export function DebtAgingCard({ dateRange }: DebtAgingCardProps) {
   const barColors = [
     token.colorSuccess,
     token.colorWarning,
-    token.colorWarningActive,
+    orange[5],
     token.colorError,
   ];
 
-  const hasData = data?.brackets.some((b) => b.count > 0) ?? false;
-  const totalAmount = data?.brackets.reduce((sum, b) => sum + b.amount, 0) ?? 0;
+  const chartData =
+    data?.brackets.map((bracket, index) => ({
+      ...bracket,
+      fill: barColors[index % barColors.length],
+    })) ?? [];
+
+  const hasData = chartData.some((b) => b.count > 0);
 
   return (
-    <Card
-      extra={
-        data && (
-          <Typography.Text type="secondary">
-            {NumberFormat.currencyCents(totalAmount)}
-          </Typography.Text>
-        )
-      }
-      loading={isLoading}
-      title="Antigüedad de deuda"
-    >
-      {!isLoading && !data && (
-        <div className="flex h-56 items-center justify-center">
-          <Empty description="Sin datos disponibles" />
-        </div>
-      )}
-      {!isLoading && data && !hasData && (
-        <div className="flex h-56 items-center justify-center">
-          <Empty description="Sin deudas pendientes" />
-        </div>
-      )}
+    <div>
+      <PageHeading>Antigüedad de deuda</PageHeading>
+      <Card loading={isLoading}>
+        {!isLoading && !data && (
+          <div className="flex h-56 items-center justify-center">
+            <Empty description="Sin datos disponibles" />
+          </div>
+        )}
 
-      {hasData && (
-        <div className="h-56">
-          <ResponsiveContainer height="100%" width="100%">
-            <BarChart
-              data={data?.brackets}
-              layout="vertical"
-              margin={{ bottom: 0, left: 0, right: 16, top: 0 }}
-            >
-              <XAxis
-                axisLine={false}
-                fontSize={12}
-                stroke={token.colorTextSecondary}
-                tickFormatter={(value: number) =>
-                  NumberFormat.currencyCents(value)
-                }
-                tickLine={false}
-                type="number"
-              />
-              <YAxis
-                dataKey="label"
-                fontSize={12}
-                stroke={token.colorTextSecondary}
-                tickLine={false}
-                type="category"
-                width={40}
-              />
-              <Tooltip
-                content={<CustomTooltip />}
-                cursor={{ fill: token.colorFillSecondary }}
-              />
-              <Bar dataKey="amount" maxBarSize={24} radius={[0, 4, 4, 0]}>
-                {data?.brackets.map((_, index) => (
-                  <Cell
-                    fill={barColors[index % barColors.length]}
-                    key={index}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-    </Card>
+        {!isLoading && data && !hasData && (
+          <div className="flex h-56 items-center justify-center">
+            <Empty description="Sin deudas pendientes" />
+          </div>
+        )}
+
+        {hasData && (
+          <div className="h-56">
+            <ResponsiveContainer height="100%" width="100%">
+              <BarChart
+                data={chartData}
+                layout="vertical"
+                margin={{ bottom: 0, left: 0, right: 16, top: 0 }}
+              >
+                <XAxis
+                  axisLine={false}
+                  fontSize={12}
+                  stroke={token.colorTextSecondary}
+                  tickFormatter={(value: number) =>
+                    NumberFormat.currencyCents(value)
+                  }
+                  tickLine={false}
+                  type="number"
+                />
+                <YAxis
+                  dataKey="label"
+                  fontSize={12}
+                  stroke={token.colorTextSecondary}
+                  tickLine={false}
+                  type="category"
+                  width={40}
+                />
+                <Tooltip
+                  content={<CustomTooltip />}
+                  cursor={{ fill: token.colorFillSecondary }}
+                />
+                <Bar dataKey="amount" maxBarSize={24} radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+      </Card>
+    </div>
   );
 }
 

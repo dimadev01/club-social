@@ -140,9 +140,7 @@ export function PaymentChartCard() {
 }
 
 function CustomTooltip({ active, payload }: CustomTooltipProps) {
-  if (!active || !payload?.length) {
-    return null;
-  }
+  if (!active || !payload?.length) return null;
 
   const data = payload[0].payload;
 
