@@ -15,6 +15,7 @@ import {
   getPresets,
   Page,
   PageHeader,
+  PageHeading,
   PageTitle,
 } from '@/ui';
 
@@ -113,9 +114,12 @@ export function FinanceStatisticsPage() {
           <DebtAgingCard />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <ExpenseCategoryChart dateRange={dateRange} />
-          <IncomeCategoryChart dateRange={dateRange} />
+        <div>
+          <PageHeading>Movimientos por categoría</PageHeading>
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <ExpenseCategoryChart dateRange={dateRange} />
+            <IncomeCategoryChart dateRange={dateRange} />
+          </div>
         </div>
 
         <PaymentChartCard />
