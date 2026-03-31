@@ -3,7 +3,7 @@ import {
   MovementCategoryLabel,
   MovementType,
 } from '@club-social/shared/movements';
-import { Empty, theme } from 'antd';
+import { Empty, theme, Typography } from 'antd';
 import { useMemo } from 'react';
 import {
   Label,
@@ -30,6 +30,7 @@ interface CustomTooltipProps {
 
 interface Props {
   dateRange?: [string, string];
+  title: string;
   type: MovementType;
 }
 
@@ -37,7 +38,7 @@ interface TooltipPayloadItem {
   payload: { amount: number; name: string; percentage: number };
 }
 
-export function CategoryDonutChart({ dateRange, type }: Props) {
+export function CategoryDonutChart({ dateRange, title, type }: Props) {
   const { token } = theme.useToken();
 
   const { data, isLoading } = useMovementByCategory({ dateRange, type });
@@ -85,21 +86,26 @@ export function CategoryDonutChart({ dateRange, type }: Props) {
 
   const hasData = chartData.length > 0;
 
-  if (isLoading) {
-    return (
-      <div
-        className="h-64"
-        style={{
-          background: token.colorBgContainer,
-          borderRadius: token.borderRadiusLG,
-        }}
-      />
-    );
-  }
-
   return (
     <div>
-      {!hasData && (
+      <Typography.Text
+        strong
+        style={{ color: token.colorText, display: 'block', marginBottom: 12 }}
+      >
+        {title}
+      </Typography.Text>
+
+      {isLoading && (
+        <div
+          className="h-64"
+          style={{
+            background: token.colorBgContainer,
+            borderRadius: token.borderRadiusLG,
+          }}
+        />
+      )}
+
+      {!isLoading && !hasData && (
         <div className="flex h-64 items-center justify-center">
           <Empty
             description={`Sin ${type === MovementType.OUTFLOW ? 'egresos' : 'ingresos'} registrados`}
@@ -107,7 +113,7 @@ export function CategoryDonutChart({ dateRange, type }: Props) {
         </div>
       )}
 
-      {hasData && (
+      {!isLoading && hasData && (
         <div className="h-64">
           <ResponsiveContainer height="100%" width="100%">
             <PieChart>

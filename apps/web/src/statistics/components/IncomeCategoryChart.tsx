@@ -8,6 +8,10 @@ interface Props {
 
 export function IncomeCategoryChart({ dateRange }: Props) {
   return (
-    <CategoryDonutChart dateRange={dateRange} type={MovementType.INFLOW} />
+    <CategoryDonutChart
+      dateRange={dateRange}
+      title="Ingresos por categoría"
+      type={MovementType.INFLOW}
+    />
   );
 }

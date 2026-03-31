@@ -8,6 +8,10 @@ interface Props {
 
 export function ExpenseCategoryChart({ dateRange }: Props) {
   return (
-    <CategoryDonutChart dateRange={dateRange} type={MovementType.OUTFLOW} />
+    <CategoryDonutChart
+      dateRange={dateRange}
+      title="Egresos por categoría"
+      type={MovementType.OUTFLOW}
+    />
   );
 }

@@ -110,9 +110,7 @@ export function FinanceStatisticsPage() {
 
         <RevenueTrendChart />
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <DebtAgingCard />
-        </div>
+        <DebtAgingCard />
 
         <div>
           <PageHeading>Movimientos por categoría</PageHeading>
