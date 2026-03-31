@@ -18,7 +18,6 @@ import {
   PageTitle,
 } from '@/ui';
 
-import { CollectionRateCard } from './components/CollectionRateCard';
 import { DebtAgingCard } from './components/DebtAgingCard';
 import { ExpenseCategoryChart } from './components/ExpenseCategoryChart';
 import { IncomeCategoryChart } from './components/IncomeCategoryChart';
@@ -111,7 +110,6 @@ export function FinanceStatisticsPage() {
         <RevenueTrendChart />
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <CollectionRateCard dateRange={dateRange} />
           <DebtAgingCard />
         </div>
 
