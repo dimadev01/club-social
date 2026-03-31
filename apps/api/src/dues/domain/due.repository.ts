@@ -23,7 +23,7 @@ export interface DueRepository
     PaginatedRepository<DuePaginatedReadModel, DuePaginatedExtraReadModel>,
     ReadableRepository<DueEntity>,
     WriteableRepository<DueEntity> {
-  findAging(): Promise<DueAgingDto>;
+  findAging(params?: DateRangeDto): Promise<DueAgingDto>;
   findByIdReadModel(
     id: UniqueId,
     context?: QueryContext,

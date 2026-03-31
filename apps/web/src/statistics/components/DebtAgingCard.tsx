@@ -18,6 +18,10 @@ interface CustomTooltipProps {
   payload?: TooltipPayloadItem[];
 }
 
+interface DebtAgingCardProps {
+  dateRange?: [string, string];
+}
+
 interface TooltipPayloadItem {
   color: string;
   name: string;
@@ -25,8 +29,8 @@ interface TooltipPayloadItem {
   value: number;
 }
 
-export function DebtAgingCard() {
-  const { data, isLoading } = useDueAging();
+export function DebtAgingCard({ dateRange }: DebtAgingCardProps) {
+  const { data, isLoading } = useDueAging({ dateRange });
   const { token } = theme.useToken();
 
   const barColors = [
@@ -63,57 +67,46 @@ export function DebtAgingCard() {
       )}
 
       {hasData && (
-        <>
-          <Typography.Text
-            style={{
-              color: token.colorTextSecondary,
-              fontSize: token.fontSizeSM,
-            }}
-          >
-            Cuotas pendientes agrupadas por antigüedad. No se filtra por
-            período.
-          </Typography.Text>
-          <div className="h-56 pt-4">
-            <ResponsiveContainer height="100%" width="100%">
-              <BarChart
-                data={data?.brackets}
-                layout="vertical"
-                margin={{ bottom: 0, left: 0, right: 16, top: 0 }}
-              >
-                <XAxis
-                  axisLine={false}
-                  fontSize={12}
-                  stroke={token.colorTextSecondary}
-                  tickFormatter={(value: number) =>
-                    NumberFormat.currencyCents(value)
-                  }
-                  tickLine={false}
-                  type="number"
-                />
-                <YAxis
-                  dataKey="label"
-                  fontSize={12}
-                  stroke={token.colorTextSecondary}
-                  tickLine={false}
-                  type="category"
-                  width={40}
-                />
-                <Tooltip
-                  content={<CustomTooltip />}
-                  cursor={{ fill: token.colorFillSecondary }}
-                />
-                <Bar dataKey="amount" maxBarSize={24} radius={[0, 4, 4, 0]}>
-                  {data?.brackets.map((_, index) => (
-                    <Cell
-                      fill={barColors[index % barColors.length]}
-                      key={index}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </>
+        <div className="h-56">
+          <ResponsiveContainer height="100%" width="100%">
+            <BarChart
+              data={data?.brackets}
+              layout="vertical"
+              margin={{ bottom: 0, left: 0, right: 16, top: 0 }}
+            >
+              <XAxis
+                axisLine={false}
+                fontSize={12}
+                stroke={token.colorTextSecondary}
+                tickFormatter={(value: number) =>
+                  NumberFormat.currencyCents(value)
+                }
+                tickLine={false}
+                type="number"
+              />
+              <YAxis
+                dataKey="label"
+                fontSize={12}
+                stroke={token.colorTextSecondary}
+                tickLine={false}
+                type="category"
+                width={40}
+              />
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={{ fill: token.colorFillSecondary }}
+              />
+              <Bar dataKey="amount" maxBarSize={24} radius={[0, 4, 4, 0]}>
+                {data?.brackets.map((_, index) => (
+                  <Cell
+                    fill={barColors[index % barColors.length]}
+                    key={index}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       )}
     </Card>
   );

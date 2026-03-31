@@ -26,7 +26,7 @@ interface TooltipPayloadItem {
   value: number;
 }
 
-export function RevenueTrendChart() {
+export function RevenueTrendCard() {
   const { data, isLoading } = useMovementMonthlyTrend({ months: 12 });
   const { token } = theme.useToken();
 

@@ -237,8 +237,10 @@ export class DuesController extends BaseController {
   }
 
   @Get('aging')
-  public async getAging(): Promise<DueAgingResponseDto> {
-    return this.dueRepository.findAging();
+  public async getAging(
+    @Query() query: DateRangeRequestDto,
+  ): Promise<DueAgingResponseDto> {
+    return this.dueRepository.findAging({ dateRange: query.dateRange });
   }
 
   @Get('pending-statistics')

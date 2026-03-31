@@ -1,9 +1,19 @@
+import {
+  blue,
+  cyan,
+  gold,
+  green,
+  lime,
+  magenta,
+  purple,
+  volcano,
+} from '@ant-design/colors';
 import { NumberFormat } from '@club-social/shared/lib';
 import {
   MovementCategoryLabel,
   MovementType,
 } from '@club-social/shared/movements';
-import { Empty, theme, Typography } from 'antd';
+import { Alert, Button, Empty, theme } from 'antd';
 import { useMemo } from 'react';
 import {
   Label,
@@ -17,12 +27,22 @@ import {
 import { useMovementByCategory } from '@/home/useMovementByCategory';
 
 const TOP_N = 5;
+const CHART_COLORS = [
+  blue[5],
+  purple[5],
+  gold[5],
+  cyan[5],
+  volcano[5],
+  green[5],
+  lime[5],
+  magenta[5],
+] as const;
 
-interface CenterLabelProps {
-  colorText: string;
-  colorTextSecondary: string;
-  total: number;
-  viewBox?: { cx: number; cy: number };
+interface ChartDataItem {
+  amount: number;
+  fill: string;
+  name: string;
+  percentage: number;
 }
 
 interface CustomTooltipProps {
@@ -32,7 +52,6 @@ interface CustomTooltipProps {
 
 interface Props {
   dateRange?: [string, string];
-  title: string;
   type: MovementType;
 }
 
@@ -40,63 +59,49 @@ interface TooltipPayloadItem {
   payload: { amount: number; name: string; percentage: number };
 }
 
-export function CategoryDonutChart({ dateRange, title, type }: Props) {
+export function CategoryDonutChart({ dateRange, type }: Props) {
   const { token } = theme.useToken();
 
-  const { data, isLoading } = useMovementByCategory({ dateRange, type });
+  const { data, isError, isLoading, refetch } = useMovementByCategory({
+    dateRange,
+    type,
+  });
 
-  const colors = [
-    token.colorPrimary,
-    token.colorSuccess,
-    token.colorWarning,
-    token.colorError,
-    token.colorInfo,
-    token.colorTextSecondary,
-  ];
+  const total = data?.total ?? 0;
 
-  const { chartData, total } = useMemo(() => {
-    if (!data?.categories.length) return { chartData: [], total: 0 };
+  const chartData = useMemo<ChartDataItem[]>(() => {
+    if (!data?.categories.length) return [];
 
     const top = data.categories.slice(0, TOP_N);
     const rest = data.categories.slice(TOP_N);
 
-    const items = top.map((c, index) => ({
-      amount: c.amount,
-      fill: colors[index % colors.length],
-      name:
-        MovementCategoryLabel[
-          c.category as keyof typeof MovementCategoryLabel
-        ] ?? c.category,
-      percentage: c.percentage,
+    const items = top.map((category, index) => ({
+      amount: category.amount,
+      fill: CHART_COLORS[index % CHART_COLORS.length],
+      name: MovementCategoryLabel[category.category],
+      percentage: category.percentage,
     }));
 
     if (rest.length > 0) {
-      const othersAmount = rest.reduce((sum, c) => sum + c.amount, 0);
-      const othersPercentage = rest.reduce((sum, c) => sum + c.percentage, 0);
+      const othersAmount = rest.reduce(
+        (sum, category) => sum + category.amount,
+        0,
+      );
       items.push({
         amount: othersAmount,
-        fill: colors[top.length % colors.length],
+        fill: CHART_COLORS[top.length % CHART_COLORS.length],
         name: `Otros (${rest.length})`,
-        percentage: othersPercentage,
+        percentage: toPercentage(othersAmount, total),
       });
     }
 
-    const computedTotal = data.categories.reduce((sum, c) => sum + c.amount, 0);
-
-    return { chartData: items, total: computedTotal };
-  }, [data, token, colors]);
+    return items;
+  }, [data, total]);
 
   const hasData = chartData.length > 0;
 
   return (
     <div>
-      <Typography.Text
-        strong
-        style={{ color: token.colorText, display: 'block', marginBottom: 12 }}
-      >
-        {title}
-      </Typography.Text>
-
       {isLoading && (
         <div
           className="h-64"
@@ -107,7 +112,26 @@ export function CategoryDonutChart({ dateRange, title, type }: Props) {
         />
       )}
 
-      {!isLoading && !hasData && (
+      {!isLoading && isError && (
+        <div className="flex h-64 items-center justify-center">
+          <Alert
+            action={
+              <Button
+                onClick={() => void refetch()}
+                size="small"
+                type="primary"
+              >
+                Reintentar
+              </Button>
+            }
+            message="No se pudieron cargar los datos"
+            showIcon
+            type="error"
+          />
+        </div>
+      )}
+
+      {!isLoading && !isError && !hasData && (
         <div className="flex h-64 items-center justify-center">
           <Empty
             description={`Sin ${type === MovementType.OUTFLOW ? 'egresos' : 'ingresos'} registrados`}
@@ -115,7 +139,7 @@ export function CategoryDonutChart({ dateRange, title, type }: Props) {
         </div>
       )}
 
-      {!isLoading && hasData && (
+      {!isLoading && !isError && hasData && (
         <div className="h-64">
           <ResponsiveContainer height="100%" width="100%">
             <PieChart>
@@ -131,21 +155,32 @@ export function CategoryDonutChart({ dateRange, title, type }: Props) {
                 stroke="none"
               >
                 <Label
-                  content={(props) => (
-                    <CenterLabel
-                      colorText={token.colorText}
-                      colorTextSecondary={token.colorTextSecondary}
-                      total={total}
-                      viewBox={props.viewBox as { cx: number; cy: number }}
-                    />
-                  )}
+                  dy={-8}
+                  fill={token.colorText}
+                  fontSize={13}
+                  fontWeight={700}
                   position="center"
+                  value={NumberFormat.currencyCents(total)}
+                />
+                <Label
+                  dy={10}
+                  fill={token.colorTextSecondary}
+                  fontSize={10}
+                  position="center"
+                  value="total"
                 />
               </Pie>
-              <Tooltip content={<CustomTooltip />} />
+
+              <Tooltip content={<CustomTooltip />} cursor={false} />
+
               <Legend
                 formatter={(value) => (
-                  <span style={{ color: token.colorText, fontSize: 12 }}>
+                  <span
+                    style={{
+                      color: token.colorText,
+                      fontSize: token.fontSizeSM,
+                    }}
+                  >
                     {value}
                   </span>
                 )}
@@ -158,52 +193,21 @@ export function CategoryDonutChart({ dateRange, title, type }: Props) {
   );
 }
 
-function CenterLabel({
-  colorText,
-  colorTextSecondary,
-  total,
-  viewBox,
-}: CenterLabelProps) {
-  if (!viewBox) return null;
-  const { cx, cy } = viewBox;
-
-  return (
-    <>
-      <text
-        dominantBaseline="middle"
-        fill={colorText}
-        style={{ fontSize: 13, fontWeight: 700 }}
-        textAnchor="middle"
-        x={cx}
-        y={cy - 8}
-      >
-        {NumberFormat.currencyCents(total)}
-      </text>
-      <text
-        dominantBaseline="middle"
-        fill={colorTextSecondary}
-        style={{ fontSize: 10 }}
-        textAnchor="middle"
-        x={cx}
-        y={cy + 10}
-      >
-        total
-      </text>
-    </>
-  );
-}
-
 function CustomTooltip({ active, payload }: CustomTooltipProps) {
+  const { token } = theme.useToken();
+
   if (!active || !payload?.length) return null;
   const { amount, name, percentage } = payload[0].payload;
 
   return (
     <div
       style={{
-        background: 'white',
-        border: '1px solid #e8e8e8',
-        borderRadius: 8,
-        fontSize: 13,
+        background: token.colorBgElevated,
+        border: `1px solid ${token.colorBorderSecondary}`,
+        borderRadius: token.borderRadiusLG,
+        boxShadow: token.boxShadowSecondary,
+        color: token.colorText,
+        fontSize: token.fontSizeSM,
         padding: '8px 12px',
       }}
     >
@@ -211,7 +215,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
       <div
         style={{ display: 'flex', gap: 16, justifyContent: 'space-between' }}
       >
-        <span style={{ color: '#888' }}>Monto:</span>
+        <span style={{ color: token.colorTextSecondary }}>Monto:</span>
         <span style={{ fontWeight: 500 }}>
           {NumberFormat.currencyCents(amount)}
         </span>
@@ -219,9 +223,15 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
       <div
         style={{ display: 'flex', gap: 16, justifyContent: 'space-between' }}
       >
-        <span style={{ color: '#888' }}>Del total:</span>
+        <span style={{ color: token.colorTextSecondary }}>Del total:</span>
         <span style={{ fontWeight: 500 }}>{percentage}%</span>
       </div>
     </div>
   );
+}
+
+function toPercentage(amount: number, total: number) {
+  if (total === 0) return 0;
+
+  return Math.round((amount / total) * 10000) / 100;
 }

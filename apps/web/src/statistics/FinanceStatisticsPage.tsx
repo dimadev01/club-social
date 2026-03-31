@@ -1,6 +1,7 @@
 import type { Dayjs } from 'dayjs';
 
 import { DateFormat, DateFormats } from '@club-social/shared/lib';
+import { MovementType } from '@club-social/shared/movements';
 import { Flex } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
@@ -10,6 +11,7 @@ import { MovementStatisticsCard } from '@/home/components/MovementStatisticsCard
 import { PaymentChartCard } from '@/home/components/PaymentChartCard';
 import { PaymentStatisticsCard } from '@/home/components/PaymentStatisticsCard';
 import {
+  Card,
   DatePicker,
   Form,
   getPresets,
@@ -19,10 +21,9 @@ import {
   PageTitle,
 } from '@/ui';
 
+import { CategoryDonutChart } from './components/CategoryDonutChart';
 import { DebtAgingCard } from './components/DebtAgingCard';
-import { ExpenseCategoryChart } from './components/ExpenseCategoryChart';
-import { IncomeCategoryChart } from './components/IncomeCategoryChart';
-import { RevenueTrendChart } from './components/RevenueTrendChart';
+import { RevenueTrendCard } from './components/RevenueTrendCard';
 
 export function FinanceStatisticsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -103,23 +104,27 @@ export function FinanceStatisticsPage() {
 
       <Flex gap="large" vertical>
         <PaymentStatisticsCard dateRange={dateRange} />
-
         <MovementStatisticsCard dateRange={dateRange} />
-
         <DuePendingStatisticsCard dateRange={dateRange} />
-
-        <RevenueTrendChart />
-
-        <DebtAgingCard />
-
+        <RevenueTrendCard />
+        <DebtAgingCard dateRange={dateRange} />
         <div>
           <PageHeading>Movimientos por categoría</PageHeading>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <ExpenseCategoryChart dateRange={dateRange} />
-            <IncomeCategoryChart dateRange={dateRange} />
+            <Card title="Ingresos">
+              <CategoryDonutChart
+                dateRange={dateRange}
+                type={MovementType.INFLOW}
+              />
+            </Card>
+            <Card title="Egresos">
+              <CategoryDonutChart
+                dateRange={dateRange}
+                type={MovementType.OUTFLOW}
+              />
+            </Card>
           </div>
         </div>
-
         <PaymentChartCard />
       </Flex>
     </Page>

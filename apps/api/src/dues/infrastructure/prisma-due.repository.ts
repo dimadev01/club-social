@@ -54,27 +54,62 @@ export class PrismaDueRepository implements DueRepository {
     private readonly dueSettlementMapper: PrismaDueSettlementMapper,
   ) {}
 
-  public async findAging(): Promise<DueAgingDto> {
+  public async findAging(params?: DateRangeDto): Promise<DueAgingDto> {
     interface RawRow {
       amount: bigint;
       bracket: string;
       count: bigint;
     }
 
-    const rows = await this.prismaService.$queryRaw<RawRow[]>`
-      SELECT
-        CASE
-          WHEN CURRENT_DATE - "date"::date <= 30 THEN '0-30'
-          WHEN CURRENT_DATE - "date"::date <= 60 THEN '30-60'
-          WHEN CURRENT_DATE - "date"::date <= 90 THEN '60-90'
-          ELSE '90+'
-        END AS bracket,
-        COUNT(*)::bigint AS count,
-        SUM(amount)::bigint AS amount
-      FROM "due"
-      WHERE status IN (${DueStatus.PENDING}, ${DueStatus.PARTIALLY_PAID})
-      GROUP BY bracket
-    `;
+    let rows: RawRow[];
+
+    if (params?.dateRange) {
+      rows = await this.prismaService.$queryRaw<RawRow[]>`
+        SELECT
+          CASE
+            WHEN CURRENT_DATE - d."date"::date <= 30 THEN '0-30'
+            WHEN CURRENT_DATE - d."date"::date <= 60 THEN '30-60'
+            WHEN CURRENT_DATE - d."date"::date <= 90 THEN '60-90'
+            ELSE '90+'
+          END AS bracket,
+          COUNT(*)::bigint AS count,
+          SUM(d.amount - COALESCE(s.settled, 0))::bigint AS amount
+        FROM "due" d
+        JOIN "member" m ON m.id = d."memberId"
+        LEFT JOIN LATERAL (
+          SELECT SUM(amount) AS settled
+          FROM "due_settlement"
+          WHERE "dueId" = d.id AND status = ${DueSettlementStatus.APPLIED}
+        ) s ON true
+        WHERE d.status IN (${DueStatus.PENDING}, ${DueStatus.PARTIALLY_PAID})
+          AND m.status = ${MemberStatus.ACTIVE}
+          AND d."date" >= ${params.dateRange[0]}
+          AND d."date" <= ${params.dateRange[1]}
+        GROUP BY bracket
+      `;
+    } else {
+      rows = await this.prismaService.$queryRaw<RawRow[]>`
+        SELECT
+          CASE
+            WHEN CURRENT_DATE - d."date"::date <= 30 THEN '0-30'
+            WHEN CURRENT_DATE - d."date"::date <= 60 THEN '30-60'
+            WHEN CURRENT_DATE - d."date"::date <= 90 THEN '60-90'
+            ELSE '90+'
+          END AS bracket,
+          COUNT(*)::bigint AS count,
+          SUM(d.amount - COALESCE(s.settled, 0))::bigint AS amount
+        FROM "due" d
+        JOIN "member" m ON m.id = d."memberId"
+        LEFT JOIN LATERAL (
+          SELECT SUM(amount) AS settled
+          FROM "due_settlement"
+          WHERE "dueId" = d.id AND status = ${DueSettlementStatus.APPLIED}
+        ) s ON true
+        WHERE d.status IN (${DueStatus.PENDING}, ${DueStatus.PARTIALLY_PAID})
+          AND m.status = ${MemberStatus.ACTIVE}
+        GROUP BY bracket
+      `;
+    }
 
     const agingBrackets = [
       { label: '0-30', maxDays: 30, minDays: 0 },

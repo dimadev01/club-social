@@ -77,7 +77,7 @@ export function PaymentChartCard() {
   const hasData = chartData.some((d) => d.amount > 0);
 
   return (
-    <>
+    <div>
       <PageHeading>Pagos</PageHeading>
 
       <Card>
@@ -135,7 +135,7 @@ export function PaymentChartCard() {
           )}
         </div>
       </Card>
-    </>
+    </div>
   );
 }
 

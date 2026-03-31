@@ -1,3 +1,5 @@
+import { MovementCategory } from './movement.enum';
+
 export interface MovementBalanceDto {
   balance: number;
 }
@@ -9,7 +11,7 @@ export interface MovementByCategoryDto {
 
 export interface MovementCategoryBreakdownDto {
   amount: number;
-  category: string;
+  category: MovementCategory;
   count: number;
   percentage: number;
 }
