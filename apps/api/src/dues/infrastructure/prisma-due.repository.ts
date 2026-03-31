@@ -8,7 +8,6 @@ import type {
 import {
   DueAgingDto,
   DueCategory,
-  DueCollectionRateDto,
   DueSettlementStatus,
   DueStatus,
 } from '@club-social/shared/dues';
@@ -209,61 +208,6 @@ export class PrismaDueRepository implements DueRepository {
     });
 
     return dues.map((due) => this.toReadModel(due));
-  }
-
-  public async findCollectionRate(
-    dateRange?: [string, string],
-  ): Promise<DueCollectionRateDto> {
-    const where: DueWhereInput = {
-      status: { not: DueStatus.VOIDED },
-    };
-
-    if (dateRange) {
-      where.date = { gte: dateRange[0], lte: dateRange[1] };
-    }
-
-    const [statusGroups, settlementSum] = await Promise.all([
-      this.prismaService.due.groupBy({
-        _count: { _all: true },
-        _sum: { amount: true },
-        by: ['status'],
-        where,
-      }),
-      this.prismaService.dueSettlement.aggregate({
-        _sum: { amount: true },
-        where: {
-          due: where,
-          status: { not: DueSettlementStatus.VOIDED },
-        },
-      }),
-    ]);
-
-    const getGroup = (status: DueStatus) =>
-      statusGroups.find((g) => g.status === status);
-
-    const paidDues = getGroup(DueStatus.PAID)?._count._all ?? 0;
-    const partiallyPaidDues =
-      getGroup(DueStatus.PARTIALLY_PAID)?._count._all ?? 0;
-    const pendingDues = getGroup(DueStatus.PENDING)?._count._all ?? 0;
-    const totalAmount = statusGroups.reduce(
-      (sum, g) => sum + (g._sum.amount ?? 0),
-      0,
-    );
-    const totalDues = paidDues + partiallyPaidDues + pendingDues;
-    const collectedAmount = settlementSum._sum.amount ?? 0;
-    const pendingAmount = totalAmount - collectedAmount;
-    const collectionRate = MathUtils.percentage(paidDues, totalDues);
-
-    return {
-      collectedAmount,
-      collectionRate,
-      paidDues,
-      partiallyPaidDues,
-      pendingAmount,
-      pendingDues,
-      totalAmount,
-      totalDues,
-    };
   }
 
   public async findForExport(
