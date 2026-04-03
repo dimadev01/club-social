@@ -1,13 +1,3 @@
-import {
-  blue,
-  cyan,
-  gold,
-  green,
-  lime,
-  magenta,
-  purple,
-  volcano,
-} from '@ant-design/colors';
 import { NumberFormat } from '@club-social/shared/lib';
 import {
   MovementCategoryLabel,
@@ -25,18 +15,10 @@ import {
 } from 'recharts';
 
 import { useMovementByCategory } from '@/home/useMovementByCategory';
+import { CHART_COLORS } from '@/statistics/chartColors';
+import { Card, Descriptions } from '@/ui';
 
 const TOP_N = 5;
-const CHART_COLORS = [
-  blue[5],
-  purple[5],
-  gold[5],
-  cyan[5],
-  volcano[5],
-  green[5],
-  lime[5],
-  magenta[5],
-] as const;
 
 interface ChartDataItem {
   amount: number;
@@ -194,39 +176,26 @@ export function CategoryDonutChart({ dateRange, type }: Props) {
 }
 
 function CustomTooltip({ active, payload }: CustomTooltipProps) {
-  const { token } = theme.useToken();
-
   if (!active || !payload?.length) return null;
   const { amount, name, percentage } = payload[0].payload;
 
   return (
-    <div
-      style={{
-        background: token.colorBgElevated,
-        border: `1px solid ${token.colorBorderSecondary}`,
-        borderRadius: token.borderRadiusLG,
-        boxShadow: token.boxShadowSecondary,
-        color: token.colorText,
-        fontSize: token.fontSizeSM,
-        padding: '8px 12px',
-      }}
-    >
-      <div style={{ fontWeight: 600, marginBottom: 4 }}>{name}</div>
-      <div
-        style={{ display: 'flex', gap: 16, justifyContent: 'space-between' }}
-      >
-        <span style={{ color: token.colorTextSecondary }}>Monto:</span>
-        <span style={{ fontWeight: 500 }}>
-          {NumberFormat.currencyCents(amount)}
-        </span>
-      </div>
-      <div
-        style={{ display: 'flex', gap: 16, justifyContent: 'space-between' }}
-      >
-        <span style={{ color: token.colorTextSecondary }}>Del total:</span>
-        <span style={{ fontWeight: 500 }}>{percentage}%</span>
-      </div>
-    </div>
+    <Card size="small" title={name}>
+      <Descriptions
+        bordered={false}
+        className="max-w-44"
+        items={[
+          {
+            children: NumberFormat.currencyCents(amount),
+            label: 'Monto',
+          },
+          {
+            children: `${percentage}%`,
+            label: 'Del total',
+          },
+        ]}
+      />
+    </Card>
   );
 }
 
