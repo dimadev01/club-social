@@ -2,6 +2,10 @@ import type { Response } from 'express';
 
 import { NumberFormat } from '@club-social/shared/lib';
 import {
+  MovementCategoryLabel,
+  MovementStatusLabel,
+} from '@club-social/shared/movements';
+import {
   Body,
   Controller,
   Get,
@@ -52,7 +56,6 @@ import {
   MovementStatisticsResponseDto,
 } from './dto/movement-statistics.dto';
 import { VoidMovementRequestDto } from './dto/void-movement.dto';
-
 @Controller('movements')
 export class MovementsController extends BaseController {
   public constructor(
@@ -105,8 +108,11 @@ export class MovementsController extends BaseController {
         header: 'Creado el',
       },
       { accessor: (row) => row.date, header: 'Fecha' },
-      { accessor: (row) => row.category, header: 'Categoría' },
-      { accessor: (row) => row.status, header: 'Estado' },
+      {
+        accessor: (row) => MovementCategoryLabel[row.category],
+        header: 'Categoría',
+      },
+      { accessor: (row) => MovementStatusLabel[row.status], header: 'Estado' },
       { accessor: (row) => row.notes, header: 'Descripción' },
       {
         accessor: (row) =>
