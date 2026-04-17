@@ -234,7 +234,13 @@ export class PrismaPaymentRepository implements PaymentRepository {
     const [payments, total, totalAmount] = await Promise.all([
       this.prismaService.payment.findMany(query),
       this.prismaService.payment.count({ where }),
-      this.prismaService.payment.aggregate({ _sum: { amount: true }, where }),
+      this.prismaService.payment.aggregate({
+        _sum: { amount: true },
+        where: {
+          ...where,
+          status: PaymentStatus.PAID,
+        },
+      }),
     ]);
 
     return {

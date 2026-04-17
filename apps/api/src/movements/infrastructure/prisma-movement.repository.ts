@@ -262,11 +262,19 @@ export class PrismaMovementRepository implements MovementRepository {
       this.prismaService.movement.count({ where }),
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
-        where: { ...where, amount: { gt: 0 } },
+        where: {
+          ...where,
+          amount: { gt: 0 },
+          status: MovementStatus.REGISTERED,
+        },
       }),
       this.prismaService.movement.aggregate({
         _sum: { amount: true },
-        where: { ...where, amount: { lt: 0 } },
+        where: {
+          ...where,
+          amount: { lt: 0 },
+          status: MovementStatus.REGISTERED,
+        },
       }),
     ]);
 
